@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current UI action; waiting for QA/HCI rerun after rejected-art fixes
+Priority: no current UI action; waiting for Gameplay/Art selected first-control readability fixes
 
 ## Assignment
 
-Stand by while QA/HCI reruns focused Gate 4 validation after the rejected temporary-art/runtime fixes.
+Stand by while Gameplay and Art/Atlas fix selected first-control readability after PM rejected the QA captures.
 
 UI has delivered and PM accepted the infantry-only HUD scope fix:
 
@@ -18,14 +18,15 @@ Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD re
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+Gameplay, Art/Atlas, then QA/HCI
 
 Waiting on exact file/report/decision:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 Owner of next action:
-QA/HCI.
+Gameplay and Art/Atlas.
 
 Can my lane still continue fallback work? no
 

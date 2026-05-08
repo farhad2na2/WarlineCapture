@@ -1,58 +1,46 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: accepted rejected-art scale/readability handoff; waiting for QA/HCI rerun
+Status: active
+Priority: review individual-soldier frame/source issue after PM rejected QA captures
 
 ## Assignment
 
-Wait for QA/HCI to rerun focused Gate 4 validation against the rejected-art fixes.
+QA/HCI passed automated rejected-art validation, but PM visual review found the selected first-control captures are not ready for user approval.
 
-Art/Atlas delivered:
+Read first:
 
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-rejected-temp-art-scale-readability.md`
-- `Design/AgentReports/2026-05-08_art-atlas_designer-metric-contract-watch.md`
+- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
 
-PM accepted the handoff for QA/HCI rerun in:
+## Required Work
 
-- `Design/AgentReports/2026-05-08_pm_rejected-art-fixes-ready-for-qa-review.md`
+Determine whether the current atlas/source frame makes each runtime soldier read like a mini-squad/cluster instead of one individual soldier.
 
-Do not regenerate or broaden art work unless QA/HCI or PM reports a concrete issue.
+Provide a focused recommendation:
+
+- If the atlas frame is suitable for one soldier, state the needed Gameplay layout/spacing/marker changes.
+- If the atlas frame itself is unsuitable, identify the required individual-soldier frame/manifest replacement.
+- Confirm how the selected marker should read under one soldier at public camera scale.
+- Keep death/destroyed as atlas state; do not reintroduce separate `Destroyed` child visuals.
+- Do not broaden to final Chapter 1 art or M02.
 
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
-
-Waiting on exact report:
-
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+none
 
 Owner of next action:
-QA/HCI
+Art/Atlas
 
-Can my lane still continue fallback work? no
-
-## Known Remaining Art Gaps
-
-These are not blockers for the next QA rerun, but remain final-art gaps:
-
-- final multi-frame run/walk loops
-- enemy red-accent/final patrol variant
-- final impact VFX
-- final destroyed/death VFX
-
-## Cross-Lane Notes
-
-- Gameplay owns runtime behavior and tests.
-- Designer owns the metric scale/readability contract.
-- QA/HCI owns the next evidence pass.
-- PM/user owns final visual approval after QA/HCI provides reviewable evidence.
+Can my lane still continue fallback work? yes, only the focused review above.
 
 ## Completion Report
 
-If QA/HCI or PM assigns new Art/Atlas follow-up work, write:
+Write:
 
-`Design/AgentReports/2026-05-08_art-atlas_<specific-followup>.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 Use the standard WarlineCapture handoff format.

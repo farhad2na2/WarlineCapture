@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting for QA/HCI rerun after rejected-art fixes
+Priority: no current Support/FTUE action; waiting for Gameplay/Art selected first-control readability fixes
 
 ## Assignment
 
-Stand by while QA/HCI reruns focused Gate 4 validation after the rejected temporary-art/runtime fixes.
+Stand by while Gameplay and Art/Atlas fix selected first-control readability after PM rejected the QA captures.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -42,7 +42,8 @@ QA/HCI owns:
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 ## Guardrails While Waiting
 

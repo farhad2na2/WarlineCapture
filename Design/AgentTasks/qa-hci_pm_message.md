@@ -1,34 +1,23 @@
 # PM Message To QA/HCI
 
 Date: 2026-05-08
-Priority: second active-silence follow-up; report rerun or blocker now
+Priority: wait for selected-readability fixes
 
-The rejected-art prerequisite reports are present and PM accepted them for QA/HCI rerun.
-
-PM heartbeat found this lane still active with no visible rerun report and no visible blocked report twice. Do not stay silent while `qa-hci_current.md` says `Status: active`.
+Your rejected-art rerun report is accepted as automated proof but not ready for user approval.
 
 Read:
 
-- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
-- `Design/AgentReports/2026-05-08_pm_rejected-art-fixes-ready-for-qa-review.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-active-silence.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-second-silence.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
 - `Design/AgentTasks/qa-hci_current.md`
 
-Run the focused Gate 4 validation from:
+Wait for:
 
-`/Users/farhad/Projects/WarlineCapture-CodexUnity3`
+- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
-Write:
+Then rerun focused validation and write:
 
-`Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
-
-If blocked, write:
-
-`Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun-blocked.md`
-
-Include the exact command, workspace, log path, failure reason, and unblock owner.
-
-If no report appears by the next PM heartbeat, PM should stop waiting and run or reassign the validation.
+`Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
 
 Do not commit or push.

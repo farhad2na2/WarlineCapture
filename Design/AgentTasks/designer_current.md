@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: accepted M01 metric scale/readability contract; waiting for QA/HCI rerun
+Priority: accepted M01 metric scale/readability contract; waiting for Gameplay/Art selected readability fixes
 
 ## Assignment
 
-Wait for QA/HCI to rerun focused Gate 4 validation against the rejected-art fixes.
+Wait for Gameplay and Art/Atlas to fix selected first-control readability after PM rejected the QA captures.
 
 Designer delivered:
 
@@ -21,14 +21,15 @@ Do not start another broad documentation rewrite, canonicalize the offensive-com
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+Gameplay and Art/Atlas, then QA/HCI
 
 Waiting on exact report:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 Owner of next action:
-QA/HCI
+Gameplay and Art/Atlas
 
 Can my lane still continue fallback work? no
 

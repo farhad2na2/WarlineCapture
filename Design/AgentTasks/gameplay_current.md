@@ -1,64 +1,66 @@
 # Gameplay Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: accepted rejected-art runtime fix handoff; waiting for QA/HCI rerun
+Status: active
+Priority: fix M01 selected first-control soldier readability before user review
 
 ## Assignment
 
-Wait for QA/HCI to rerun focused Gate 4 validation against the rejected-art fixes.
+QA/HCI passed automated rejected-art validation, but PM visual review found the fresh selected first-control captures are not ready for user approval.
 
-Gameplay delivered:
+Read first:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`
-
-PM accepted the handoff for QA/HCI rerun in:
-
-- `Design/AgentReports/2026-05-08_pm_rejected-art-fixes-ready-for-qa-review.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
+- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
+- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
 
 Do not start M02-M05, vehicles, base/build mechanics, broad combat rebalance, or unrelated polish.
+
+## Required Fix
+
+Fix the selected first-control public composition:
+
+- The player squad must read as four distinct individual soldiers, not a crowded duplicated blob/cluster.
+- Soldier spacing/layout must be readable at public 16:9 and 20:9 gameplay scale.
+- Selected-state treatment must be visible as small grounded markers under/near each soldier.
+- The selected markers must not become huge overlays or unclear blue/green UI-like effects.
+- Keep ECS atlas quad presentation.
+- Keep no public player/enemy unit `SpriteRenderer` components.
+- Keep no public `MissionRuntimeSpriteRendererRuntime` component.
+- Keep realistic movement speed and move/run animation proof.
+- Keep the public M01 golden path intact.
+- Keep M01 infantry-only.
 
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
-
-Waiting on exact report:
-
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+Art/Atlas may need to confirm individual-soldier frame/source readiness, but Gameplay can begin layout/marker visibility fixes now.
 
 Owner of next action:
-QA/HCI
+Gameplay
 
-Can my lane still continue fallback work? no
+Can my lane still continue fallback work? yes, only the required fix above.
 
-## Accepted QA Checklist Inputs
+## Validation Required
 
-QA/HCI should validate the Gameplay handoff claims:
+Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` unless PM routes otherwise.
 
-- public M01 unit visuals use ECS atlas quad presentation
-- no public player/enemy unit `SpriteRenderer` components
-- no public `MissionRuntimeSpriteRendererRuntime` component on player/enemy units
-- no `M01RuntimeSpriteRenderers` public unit root naming
-- infantry scale near `0.20`
-- building/decor readability direction near `0.80` where visible as door/road-context anchor
-- small grounded per-soldier selection markers
-- realistic infantry movement speed around the reported `0.42` run / `0.28` walk values
-- visible move/run animation while moving
-- public M01 golden path still reaches result popup
-- M01 remains infantry-only
+Rerun focused PlayMode validation and generate fresh selected first-control captures.
 
-## Cross-Lane Notes
+Required proof:
 
-- Art/Atlas final art gaps remain but do not block the QA rerun.
-- Designer metric contract is accepted as the visual/readability checklist source.
-- UI and Support/FTUE have no current action unless QA/HCI finds a concrete issue.
-- PM/user owns final visual approval after QA/HCI provides reviewable evidence.
+- selected first-control 16:9 capture
+- selected first-control 20:9 capture
+- four distinct individual soldiers visible in world
+- selected marker visible under/near each soldier
+- no public SpriteRenderer unit presentation
+- golden path still reaches result popup
 
 ## Completion Report
 
-If QA/HCI or PM assigns a concrete Gameplay follow-up, write:
+Write:
 
-`Design/AgentReports/2026-05-08_gameplay_<specific-followup>.md`
+`Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
 
-Use the standard WarlineCapture handoff format.
+Use the standard WarlineCapture handoff format and include capture paths.

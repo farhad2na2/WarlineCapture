@@ -2,30 +2,22 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; selected-readability gate waiting on PM/user review decision
+Priority: no current Support/FTUE action; final visual approval paused for Gameplay Visual Target package
 
 ## Assignment
 
-Stand by while the selected-readability rejection gate is resolved.
+Stand by while the gameplay visual target package is created.
 
 Read:
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
-- `Design/AgentTasks/user_feedback_review_gate.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-visual-target-lane-routing.md`
+- `Design/AgentTasks/visual-target_current.md`
 
 Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 
-## Current Blockers Owned By Other Lanes
-
-Gameplay, Art/Atlas, UI, Designer, and QA/HCI have delivered their current inputs and are waiting on PM/user review.
-
-QA/HCI delivered:
-
-- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
-
 ## Waiting On
 
-- PM/user review decision on selected-readability pass
+- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
 
 ## Guardrails While Waiting
 

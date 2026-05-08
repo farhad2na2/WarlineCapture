@@ -2,32 +2,32 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability art package delivered and QA/HCI passed; waiting on PM/user review decision
+Priority: selected-readability art package delivered and QA/HCI passed; final visual approval paused for Gameplay Visual Target package
 
 ## Assignment
 
-Art/Atlas has delivered the M01 marker, animation-frame, scale/aspect, and enemy/patrol visual package:
+Art/Atlas delivered the M01 marker, animation-frame, scale/aspect, and enemy/patrol visual package:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
 
-PM accepted this as the current Art/Atlas input for Gameplay/QA in:
+PM/user paused final visual approval to create a gameplay visual target package first:
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-lane-handoffs-review.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-visual-target-lane-routing.md`
+- `Design/AgentTasks/visual-target_current.md`
 
 Do not broaden to final Chapter 1 art, M02, vehicles, or unrelated VFX unless PM routes a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Visual Target
 
-Waiting on exact decision:
+Waiting on exact report:
 
-- approve selected-readability pass
-- reject selected-readability pass with specific notes
+- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
 
 Owner of next action:
-PM/user
+Visual Target
 
 Can my lane still continue fallback work? no
 

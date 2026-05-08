@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: UI marker/selection overlay audit delivered and QA/HCI passed; waiting on PM/user review decision
+Priority: UI marker/selection overlay audit delivered; waiting while Gameplay Visual Target package is created separately from UI targets
 
 ## Assignment
 
@@ -10,26 +10,28 @@ UI delivered the marker/selection overlay ownership audit:
 
 - `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
 
-PM accepted the UI-owned portion in:
+The new gameplay visual target package must not be mixed into UI target folders. UI targets remain under:
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-lane-handoffs-review.md`
+- `Design/VisualLock/`
+- `Design/VisualLockLayered/`
 
-Remaining selected marker square, target/move/attack runtime placement, and click-affordance issues are Gameplay-owned with Art/Atlas style input.
+Gameplay visual targets are under:
 
-Do not broaden to M02, vehicles, build UI, or unrelated HUD redesign unless PM assigns a concrete follow-up.
+- `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
+
+UI should re-engage only if Visual Target or QA/HCI reports a concrete HUD/screen-space mismatch.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Visual Target
 
-Waiting on exact decision:
+Waiting on exact report:
 
-- approve selected-readability pass
-- reject selected-readability pass with specific notes
+- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
 
 Owner of next action:
-PM/user
+Visual Target
 
 Can UI continue fallback work? no
 

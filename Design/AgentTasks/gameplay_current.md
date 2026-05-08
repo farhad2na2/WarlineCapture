@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; waiting on PM/user review decision
+Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; final visual approval paused for Gameplay Visual Target package
 
 ## Assignment
 
@@ -14,24 +14,24 @@ QA/HCI accepted it in:
 
 - `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
 
-PM routed it for user review in:
+PM/user paused final visual approval to create a gameplay visual target package first:
 
-- `Design/AgentReports/2026-05-08_pm_qa-hci-user-feedback-regression-review.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-visual-target-lane-routing.md`
+- `Design/AgentTasks/visual-target_current.md`
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Visual Target
 
-Waiting on exact decision:
+Waiting on exact report:
 
-- approve selected-readability pass
-- reject selected-readability pass with specific notes
+- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
 
 Owner of next action:
-PM/user
+Visual Target
 
 Can Gameplay continue fallback work? no
 

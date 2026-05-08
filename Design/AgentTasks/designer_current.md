@@ -2,32 +2,31 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: rejection-informed M01 visual/scale/readability contract delivered and QA/HCI passed; waiting on PM/user review decision
+Priority: rejection-informed M01 contract delivered; final visual approval paused for Gameplay Visual Target package
 
 ## Assignment
 
-Designer has delivered the rejection-informed visual scale/readability contract:
+Designer delivered the rejection-informed visual scale/readability contract:
 
 - `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 
-PM accepted this as the current design bar for Gameplay/Art/UI/QA in:
+The new active visual target work is owned by the separate Visual Target lane:
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-lane-handoffs-review.md`
+- `Design/AgentTasks/visual-target_current.md`
 
 Do not start another broad documentation rewrite, M02 work, or unrelated design pass unless PM assigns a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Visual Target
 
-Waiting on exact decision:
+Waiting on exact report:
 
-- approve selected-readability pass
-- reject selected-readability pass with specific notes
+- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
 
 Owner of next action:
-PM/user
+Visual Target
 
 Can my lane still continue fallback work? no
 

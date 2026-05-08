@@ -1,32 +1,25 @@
-# PM Message To Gameplay
+# PM Message For Gameplay
 
 Date: 2026-05-08
-Priority: P0 Game_Legecy scene isolation
 
-The user assigned a new priority task.
+The user rejected the selected-readability pass. This is a P0 process failure, not polish.
 
-Read:
+Do not continue broad scene cleanup or M02 work until the current rejection gate is resolved. `Game_Legecy` was reported separately; pause it unless PM/user explicitly resumes.
 
-- `Design/AgentReports/2026-05-08_pm_game-legecy-scene-isolation-routing.md`
-- `Design/AgentTasks/gameplay_current.md`
+The most important correction: public M01 visible units/buildings must be ECS entity visuals. The user saw `MeshRenderer` objects and rejected that. Existing validation that only blocks `SpriteRenderer` is not enough.
 
-Implement:
+Fix and prove these items:
 
-- create `Assets/Game/Scenes/Game_Legecy.unity`
-- move or copy the old legacy 3D prototype world/content and its legacy gameplay canvas into `Game_Legecy.unity`
-- keep `Assets/Game/Scenes/Game.unity` clean for the 2D/isometric production version
-- preserve the production M01/isometric route through `Game.unity`
-- do not delete legacy assets outright
-- do not wait for QA/HCI approval; user will validate this task directly
+- no visible unit/building presentation through scene/runtime `MeshRenderer`, `MeshFilter`, or `SpriteRenderer` GameObjects,
+- no `M01RuntimeEcsAtlasQuads` style GameObject renderer wrapper as the accepted visible path,
+- small target marker, about two soldier footsteps wide,
+- idle and moving soldiers animate correctly,
+- no crouched/sitting run frames, no stray foot artifact,
+- no vertical squash and current visual scale near the user's readable `0.15` target unless Art/Atlas gives a verified replacement,
+- red flashing sitting object/enemy identified and fixed,
+- selection works on the soldier/body/formation, not only foot pixels,
+- placeholder yellow marker is replaced or explicitly blocked on Art/Atlas.
 
-Write:
+Expected report:
 
-`Design/AgentReports/2026-05-08_gameplay_game-legecy-scene-isolation.md`
-
-If blocked, write:
-
-`Design/AgentReports/2026-05-08_gameplay_game-legecy-scene-isolation-blocked.md`
-
-Include exact command/Unity action attempted, failure reason, and unblock owner.
-
-Do not commit or push.
+`Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`

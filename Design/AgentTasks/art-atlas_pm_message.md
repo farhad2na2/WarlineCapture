@@ -1,25 +1,25 @@
-# PM Message To Art/Atlas
+# PM Message For Art/Atlas
 
 Date: 2026-05-08
-Priority: review individual-soldier frame/source issue
 
-QA/HCI passed the automated rejected-art rerun, but PM rejected the fresh selected first-control captures as not ready for user approval.
+The user rejected the selected-readability pass. Art/Atlas now owns the marker, animation-frame, scale/aspect, and visual-artifact parts of the fix.
 
-Read:
+Focus only on M01 infantry:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
-- `Design/AgentTasks/art-atlas_current.md`
+- one player rifle squad,
+- one enemy patrol,
+- no vehicles for this gate.
 
-Answer the focused art question:
+Provide the atlas/frame/asset package that lets Gameplay replace placeholders and fix:
 
-- Is the current atlas frame suitable as one individual soldier?
-- Or is Gameplay duplicating a mini-squad/cluster frame four times?
-- What exact source/manifest/frame correction is needed so the world squad reads as four distinct individual soldiers?
-- What should the per-soldier selected marker look like at public camera scale?
+- wrong crouched/sitting movement frames,
+- missing idle animation,
+- stray foot/top artifact,
+- oversized or squashed soldiers,
+- huge green target marker,
+- yellow placeholder selected-state square,
+- unclear red flashing enemy/object.
 
-Write:
+Expected report:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
-
-Do not commit or push.
+`Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`

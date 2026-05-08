@@ -2,48 +2,56 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting for PM/user selected-readability decision
+Priority: no current Support/FTUE action; waiting on M01 rejection gate fixes from Gameplay, Art/Atlas, UI, Designer, and QA/HCI
 
 ## Assignment
 
-Stand by while PM/user reviews the selected-readability pass.
+Stand by while the selected-readability rejection gate is resolved.
 
-Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
+Read:
 
-Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, or FTUE behavior issue.
+- `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
+- `Design/AgentTasks/user_feedback_review_gate.md`
+
+Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 
 ## Current Blockers Owned By Other Lanes
 
+Gameplay owns:
+
+- true ECS entity visual presentation for public M01 units/buildings, not `MeshRenderer`, `MeshFilter`, or `SpriteRenderer` GameObject wrappers,
+- target marker sizing,
+- animation integration,
+- selection hit targeting,
+- red artifact/enemy fix,
+- scale/aspect application.
+
+Art/Atlas owns:
+
+- marker art,
+- idle/run frame mapping,
+- scale/aspect guidance,
+- enemy/artifact visual guidance.
+
 UI owns:
 
-- M01 HUD showing APC, Tank, air support, Build, vehicle production, transport, or base/build affordances in an infantry-only tutorial.
+- marker/selection overlay ownership audit and fix if UI-owned.
 
-Gameplay now owns rejected-runtime fixes:
+Designer owns:
 
-- remove SpriteRenderer-era unit presentation/naming from the public M01 unit path
-- consume automated scale rules
-- replace huge/unclear selection markers
-- calibrate realistic infantry movement speed
-- prove run animation while moving
-
-Art/Atlas now owns rejected-art fixes:
-
-- metric scale/readability package for infantry and visible M01 buildings/decor
-- selected-state art treatment source
-- confirmation that run frames and destroyed/death atlas states are covered or blocked
-
-PM/user already rejected:
-
-- temporary Gate 4 art/runtime review
+- rejection-informed visual scale/readability contract refresh.
 
 QA/HCI owns:
 
-- no current Support/FTUE issue; QA/HCI rerun found no concrete assistant regression.
+- user-feedback regression gate and later focused validation.
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-rerun-user-review.md`
-- PM/user decision: approve or reject selected-readability pass
+- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
+- `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
+- `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
+- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
 
 ## Guardrails While Waiting
 
@@ -59,4 +67,4 @@ If QA/HCI or PM assigns a concrete Support/FTUE issue, write the next report to:
 
 `Design/AgentReports/2026-05-08_support-ftue_<specific-qa-rerun-issue>.md`
 
-Use the exact format from `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
+Use the standard WarlineCapture handoff format.

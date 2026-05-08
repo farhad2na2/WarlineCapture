@@ -1,15 +1,24 @@
-# PM Message To QA/HCI
+# PM Message For QA/HCI
 
 Date: 2026-05-08
-Priority: wait for PM/user selected-readability decision
 
-PM ran the selected-readability validation directly after the active QA/HCI lane stayed silent.
+The user rejected the selected-readability pass and called out that repeated feedback was missed. QA/HCI must treat this as a validation-process failure.
 
-Read:
+Do not pass another M01 selected-readability or Gate 4 review by checking only a proxy such as "no SpriteRenderer." The user-visible requirement is stronger: public M01 visible units/buildings must not be scene/runtime GameObject renderer wrappers. They must be ECS entity visuals.
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-rerun-user-review.md`
-- `Design/AgentTasks/qa-hci_current.md`
+Prepare and then run a rejection matrix covering:
 
-Do not rerun unless PM assigns a concrete QA/HCI follow-up.
+- MeshRenderer/MeshFilter/SpriteRenderer wrapper rejection,
+- huge green target marker,
+- wrong/missing idle and run animation,
+- crouched/sitting movement frames,
+- foot/top artifact,
+- scale/aspect and vertical squash,
+- hard-to-select soldiers,
+- yellow placeholder selected marker,
+- unexplained red flashing enemy/object,
+- M01 infantry-only scope.
 
-Do not commit or push.
+Expected report:
+
+`Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`

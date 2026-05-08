@@ -1,23 +1,22 @@
 # PM Message To Designer
 
 Date: 2026-05-08
-Priority: P0 scale/readability contract
+Priority: P0 rejection-informed M01 visual/scale/readability contract refresh
 
-The user rejected temporary Gate 4 art partly because scale and selection readability were not contract-driven. Read:
+The user rejected the selected-readability pass. Refresh the design contract so agents stop guessing and QA has concrete checks.
 
-- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
-- `Design/AgentTasks/designer_current.md`
+Use the user's concrete anchors:
 
-Your lane owns a concise design contract, not implementation:
+- soldier about `1.8m`,
+- building door about `2.3m`,
+- roads and building footprints calibrate scale,
+- current soldier visual looked better near `0.15` than `0.2` because it became too large/squashed,
+- selected marker must be small and under each soldier/footprint,
+- target marker should be about two soldier footsteps wide,
+- idle and run animation must be visibly correct.
 
-- Define M01 tactical scale/readability rules so Art/Atlas and Gameplay do not guess.
-- Include the anchors the user gave: soldier about `1.8m`, building door about `2.3m`, road/context as calibration.
-- State that building scale must be derived from door/building footprint readability, not tiny hand-tuned values.
-- State selected state should be small, grounded, under each soldier or equivalent subtle readable treatment.
-- State movement should look like realistic soldier movement and must show a run animation while moving.
+Expected report:
 
-Write:
-
-`Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
+`Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 
 Do not commit or push.

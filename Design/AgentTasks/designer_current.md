@@ -1,48 +1,46 @@
 # Designer Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: accepted M01 metric scale/readability contract; waiting for PM/user selected-readability decision
+Status: active
+Priority: P0 rejection-informed M01 visual/scale/readability contract refresh
 
 ## Assignment
 
-Wait for PM/user selected-readability decision after PM ran validation directly.
+The user rejected the selected-readability review and specifically called out scale, marker readability, selection affordance, animation pose, and repeated feedback getting missed.
 
-Designer delivered:
+Refresh the concise M01 design contract so Art/Atlas, Gameplay, UI, and QA/HCI have no room to guess.
 
-- `Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
+Read first:
 
-PM accepted the handoff for QA/HCI checklist use in:
+- `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
+- `Design/AgentTasks/designer_pm_message.md`
+- `Design/AgentTasks/user_feedback_review_gate.md`
+- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 
-- `Design/AgentReports/2026-05-08_pm_rejected-art-fixes-ready-for-qa-review.md`
+## Required Behavior
 
-Do not start another broad documentation rewrite, canonicalize the offensive-command premise, or change lane priorities unless PM explicitly assigns it.
+- Define tactical visual scale anchors using the user's rules: soldier about `1.8m`, building door about `2.3m`, roads/building footprints as calibration.
+- State how to decide soldier/building atlas scale without hand-tuned tiny/huge values.
+- Define acceptable selected-state marker size and placement: subtle, grounded, under each soldier/footprint, not screen-covering.
+- Define acceptable target/move/attack marker size: about two soldier footsteps wide.
+- Define animation expectations: idle animates while idle, run/move animates while moving, no crouched/sitting movement frames unless the unit is intentionally crouching.
+- Define selection usability expectation: selection should work on the body/formation footprint, not only exact foot pixels.
+- Include QA-readable rejection checks for the repeated issues.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
-
-Waiting on exact report:
-
-- `Design/AgentReports/2026-05-08_pm_selected-readability-rerun-user-review.md`
-- PM/user decision: approve or reject selected-readability pass
+none
 
 Owner of next action:
-PM/user
+Designer
 
-Can my lane still continue fallback work? no
-
-## Cross-Lane Notes
-
-- Art/Atlas and Gameplay have aligned to the metric scale/readability contract for the next QA rerun.
-- UI and Support/FTUE have no current action unless QA/HCI finds a concrete issue.
-- PM owns final acceptance and commit/push.
+Can my lane still continue fallback work? yes, only this contract refresh.
 
 ## Completion Report
 
-If PM assigns a new Designer task, write:
+Write:
 
-`Design/AgentReports/2026-05-08_designer_<specific-task>.md`
+`Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 
 Use the standard WarlineCapture handoff format.

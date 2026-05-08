@@ -3,6 +3,7 @@
 ## Source Of Truth
 
 Treat `Design/AgentTasks/*_current.md` as the only source of current lane priorities.
+Treat `Design/AgentTasks/user_feedback_review_gate.md` as the required PM process for user rejection feedback.
 
 ## On Every Heartbeat
 
@@ -33,6 +34,9 @@ Treat `Design/AgentTasks/*_current.md` as the only source of current lane priori
 - The notification must clearly say that the project needs user attention, name the blocker, list affected lanes, and state the exact decision needed.
 - For approval requests, include a short targeted review instruction: what to open/run, what to look for, and what answer PM needs.
 - For any blocker notification, explain it like a simple action request: what is blocked, what PM already wrote for the agent, what file/report the user can inspect, and whether the user needs to approve/reject or simply wait one heartbeat.
+- User rejection feedback is a hard gate. If a user rejects a review, PM must write a feedback matrix report, route every bullet to an owner lane, and keep the next user review blocked until every item is fixed with evidence, blocked with a named unblock owner, or waived by the user.
+- Repeated user feedback is P0 by default. Do not let QA/HCI or PM pass the same visible issue again by validating only a narrower technical proxy.
+- Before asking user approval, PM must check the latest rejection matrix and include short validation steps that let the user verify the exact prior rejection items.
 - Keep Gate 4 blocked unless QA/HCI proves the public M01 golden path and current lane-specific blockers are resolved.
 - Write a PM review report under `Design/AgentReports/` only when a concrete acceptance, issue, blocker, routing change, or user decision is found.
 - Notify in-thread only when PM/user attention is needed; otherwise stay quiet.

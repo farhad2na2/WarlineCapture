@@ -20,6 +20,8 @@ Treat `Design/AgentTasks/*_current.md` as the only source of current lane priori
   - Next recommended task
 - Assess each new handoff as accepted, needs fixes, or blocked.
 - Identify cross-lane impacts and whether PM/user needs to make a decision.
+- Always notify in-thread when a PM/user decision is blocking one or more lanes.
+- The notification must clearly say that the project needs user attention, name the blocker, list affected lanes, and state the exact decision needed.
 - Keep Gate 4 blocked unless QA/HCI proves the public M01 golden path and current lane-specific blockers are resolved.
 - Write a PM review report under `Design/AgentReports/` only when a concrete acceptance, issue, blocker, routing change, or user decision is found.
 - Notify in-thread only when PM/user attention is needed; otherwise stay quiet.

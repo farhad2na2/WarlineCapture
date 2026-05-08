@@ -17,3 +17,4 @@ Treat `Design/AgentTasks/gameplay_current.md` as the only source of current Game
 
 - Do not assume a task outside `Design/AgentTasks/gameplay_current.md`.
 - Do not modify source docs or other lane task files unless explicitly asked.
+- Do not run `git add`, `git commit`, or `git push` unless PM/user explicitly assigns that git operation to Gameplay for a named file set.

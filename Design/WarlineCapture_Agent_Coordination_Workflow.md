@@ -192,7 +192,7 @@ Use the dedicated Unity workspace assigned to the lane before asking the user to
 
 | Lane | Primary Unity workspace | Fallback rule |
 |---|---|---|
-| Gameplay | `/Users/farhad/Projects/WarlineCapture-CodexUnity` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take UI/QA workspaces unless PM explicitly reassigns. |
+| Gameplay | `/Users/farhad/Projects/WarlineCapture-CodexUnity1` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take UI/QA workspaces unless PM explicitly reassigns. |
 | UI | `/Users/farhad/Projects/WarlineCapture-CodexUnity2` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/QA workspaces unless PM explicitly reassigns. |
 | QA/HCI | `/Users/farhad/Projects/WarlineCapture-CodexUnity3` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/UI workspaces unless PM explicitly reassigns. |
 | Support/FTUE | No default Unity workspace. | Run docs/tests that do not need Unity. If Unity validation becomes necessary, PM assigns a temporary workspace before the command runs. |
@@ -221,7 +221,7 @@ Codex needs tool permission to stop the stuck Unity validation process after rep
 
 Avoid wording that sounds like the agent is asking whether validation should happen.
 
-If a third Unity workspace is missing, the PM assistant may create `/Users/farhad/Projects/WarlineCapture-CodexUnity3` by linking the main project `Assets`, `Packages`, and `ProjectSettings` folders.
+If a Unity lane workspace is missing, recreate it as a plain sibling Unity project copy from `/Users/farhad/Projects/WarlineCapture`, excluding generated folders such as `Library`, `Temp`, `Obj`, `Logs`, `Build`, `Builds`, and `UserSettings` so Unity generates an independent Library for that lane.
 
 ## Visual Target Lock Quality Gate
 
@@ -304,6 +304,8 @@ WarlineCapture tactical gameplay is ECS-first. Only Canvas UI is allowed to be n
 
 The PM assistant should commit and push coherent accepted WarlineCapture work when it is safe to do so.
 
+Lane agents must not run `git add`, `git commit`, or `git push` unless the user or PM assistant explicitly asks that lane to do so for a named file set. By default, lane agents write reports and leave changed files in the worktree for PM review.
+
 Safe means:
 
 - The task or PM update is complete enough to preserve.
@@ -311,12 +313,14 @@ Safe means:
 - The staged set is related and does not mix unrelated user changes into the PM batch.
 - Active task files and critical-path routing are not left stale.
 - The worktree is not in the middle of a partially edited file set.
+- The PM assistant has checked `git status --short` and staged only the accepted, coherent file set for the commit.
 
 Default behavior:
 
 - Commit after accepted handoff reviews, PM task-board reconciliation, tracking/dashboard updates, or validated implementation batches.
 - Push the commit to the active remote branch after the commit succeeds.
 - Do not commit/push if the repo contains unrelated or ambiguous changes that need user confirmation first.
+- Keep commits scoped by lane or PM coordination topic. Do not sweep all dirty files into a single mixed commit.
 
 ## PM Assistant Review Response
 

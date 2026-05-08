@@ -17,3 +17,4 @@ Treat `Design/AgentTasks/art-atlas_current.md` as the only source of current Art
 
 - Do not assume a task outside `Design/AgentTasks/art-atlas_current.md`.
 - Do not modify source docs or other lane task files unless explicitly asked.
+- Do not run `git add`, `git commit`, or `git push` unless PM/user explicitly assigns that git operation to Art/Atlas for a named file set.

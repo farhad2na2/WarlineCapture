@@ -50,6 +50,8 @@ On each heartbeat:
 
 Do not start a task from another lane. Do not invent new tasks. Do not modify `Design/AgentTasks/` unless explicitly assigned by the PM assistant or user.
 
+Do not run `git add`, `git commit`, or `git push` unless PM/user explicitly assigns that git operation to your lane for a named file set. Default lane behavior is to write the required report and leave changed files for PM review and commit/push.
+
 ## M01 Golden Playthrough Rule
 
 The current product goal is one playable M01 infantry mission, not disconnected proof artifacts.

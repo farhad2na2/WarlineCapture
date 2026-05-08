@@ -2,31 +2,80 @@
 
 Use this when an agent should keep checking for work without the user manually typing `continue`.
 
+## Recommended Heartbeat Prompt Pattern
+
+Keep each automation prompt short and load behavior from the repo:
+
+```text
+Read Design/AgentTasks/<lane>_heartbeat.md and follow it. Treat Design/AgentTasks/<lane>_current.md as the only source of current <Lane> priorities.
+```
+
+For PM:
+
+```text
+Read Design/AgentTasks/pm_heartbeat.md and follow it. Treat Design/AgentTasks/*_current.md as the only source of current lane priorities.
+```
+
 ## Agent Instruction
 
-Set a 15-minute heartbeat/reminder in your own thread.
+Set a recurring heartbeat/reminder in your own thread.
 
 On each heartbeat:
 
-1. Read the critical path gate:
+1. Read your lane heartbeat file:
+   - PM: `Design/AgentTasks/pm_heartbeat.md`
+   - Gameplay: `Design/AgentTasks/gameplay_heartbeat.md`
+   - UI: `Design/AgentTasks/ui_heartbeat.md`
+   - Art/Atlas: `Design/AgentTasks/art-atlas_heartbeat.md`
+   - QA/HCI: `Design/AgentTasks/qa-hci_heartbeat.md`
+   - Support/FTUE: `Design/AgentTasks/support-ftue_heartbeat.md`
+2. Read the critical path gate:
    - `Design/AgentTasks/M01_CRITICAL_PATH.md`
-2. Read your lane task file:
+3. Read your lane task file:
    - Gameplay: `Design/AgentTasks/gameplay_current.md`
    - UI: `Design/AgentTasks/ui_current.md`
+   - Art/Atlas: `Design/AgentTasks/art-atlas_current.md`
    - Support/FTUE: `Design/AgentTasks/support-ftue_current.md`
    - QA/HCI: `Design/AgentTasks/qa-hci_current.md`
-3. Check whether your current task is still active and advances the M01 critical path.
-4. If your task is active and not completed, continue it.
-5. If you have changed files, generated captures, or completed/attempted validation and no matching report exists under `Design/AgentReports/`, stop and write the report before doing anything else.
-6. If validation just finished, immediately update the required report with the command/checks, output paths, pass/fail result, known gaps, cross-lane impacts, and next recommended task.
-7. If validation failed, was interrupted, or could not run because Codex/tool sandbox approval is required, immediately write the report with the exact command/log path and blocker owner.
-8. If your task is completed, verify that you wrote the required report under `Design/AgentReports/`.
-9. Before reporting `waiting`, `blocked`, or `idle`, identify who owns the next concrete deliverable.
-10. If your lane owns the next deliverable, do not wait. Continue the task or write the exact technical blocker in your required report file.
-11. If another lane owns the next deliverable, report the blocker clearly and wait.
-12. If no active lane task exists, the task is blocked by another lane, or the next task would drift outside the critical path, report the blocker clearly and wait.
+4. Check whether your current task is still active and advances the M01 critical path.
+5. If your task is active and not completed, continue it.
+6. If you have changed files, generated captures, or completed/attempted validation and no matching report exists under `Design/AgentReports/`, stop and write the report before doing anything else.
+7. If validation just finished, immediately update the required report with the command/checks, output paths, pass/fail result, known gaps, cross-lane impacts, and next recommended task.
+8. If validation failed, was interrupted, or could not run because Codex/tool sandbox approval is required, immediately write the report with the exact command/log path and blocker owner.
+9. If your task is completed, verify that you wrote the required report under `Design/AgentReports/`.
+10. Before reporting `waiting`, `blocked`, or `idle`, identify who owns the next concrete deliverable.
+11. If your lane owns the next deliverable, do not wait. Continue the task or write the exact technical blocker in your required report file.
+12. If another lane owns the next deliverable, report the blocker clearly and wait.
+13. If no active lane task exists, the task is blocked by another lane, or the next task would drift outside the critical path, report the blocker clearly and wait.
 
 Do not start a task from another lane. Do not invent new tasks. Do not modify `Design/AgentTasks/` unless explicitly assigned by the PM assistant or user.
+
+## M01 Golden Playthrough Rule
+
+The current product goal is one playable M01 infantry mission, not disconnected proof artifacts.
+
+No lane may claim Gate 4 readiness, M01 readiness, or M02 unlock based only on screenshots, safe-area matrices, route wiring, isolated unit tests, or editor-only scenes.
+
+Before Gate 4 can pass, the public player path must support this golden playthrough:
+
+`Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup`.
+
+Pass/fail requirements:
+
+- one player infantry/rifle squad type only: `unit.player.rifle_squad_01`
+- one enemy infantry/patrol type only: `unit.enemy.patrol_01`
+- no player-controlled vehicles, vehicle production, transport, base/build mechanics, or additional player unit types
+- player survives long enough to understand and issue the first move order
+- movement uses tactical walkable/pathing metadata, not a visual-only jump
+- blocked/unreachable cells are rejected with visible feedback
+- visible units are ECS runtime entities with animated atlas-backed idle/move/attack/death or destroyed states
+- no legacy 3D combat units or design-target SpriteRenderer proxies appear in the public M01 path
+- attack/objective/result flow is reachable
+- UI/assistant supports the flow without blocking player control
+
+If your active task does not advance this golden playthrough or remove a named blocker to it, stop and report that the lane is waiting for PM refresh.
+
+Every report that claims progress toward M01 readiness must include a short `Golden playthrough impact` section stating which step became more playable, which step remains blocked, and whether the report is sufficient or insufficient for Gate 4.
 
 ## Heartbeat Ownership
 
@@ -68,9 +117,10 @@ Use the dedicated Unity workspace assigned to your lane before asking the user t
 
 | Lane | Primary Unity workspace | Fallback rule |
 |---|---|---|
-| Gameplay | `/Users/farhad/Projects/WarlineCapture-CodexUnity` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take UI/QA workspaces unless PM explicitly reassigns. |
+| Gameplay | `/Users/farhad/Projects/WarlineCapture-CodexUnity1` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take UI/QA workspaces unless PM explicitly reassigns. |
 | UI | `/Users/farhad/Projects/WarlineCapture-CodexUnity2` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/QA workspaces unless PM explicitly reassigns. |
 | QA/HCI | `/Users/farhad/Projects/WarlineCapture-CodexUnity3` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/UI workspaces unless PM explicitly reassigns. |
+| Art/Atlas | No default Unity workspace. | Produce/review assets and approval packages from project files. If Unity validation becomes necessary, ask PM to assign a temporary workspace before running it. |
 | Support/FTUE | No default Unity workspace. | Run docs/tests that do not need Unity. If Unity validation becomes necessary, ask PM to assign a temporary workspace before running it. |
 
 Agents are authorized to use their assigned workspace for focused validation without asking for product permission. Do not run validation in another active lane's primary workspace just because it is available; workspace switching is a PM coordination decision, not a lane-local optimization.
@@ -120,8 +170,14 @@ Required timing:
 
 ## One-Time User Prompt
 
-The user can send this once to an agent:
+The user can send one of these once to an agent:
 
 ```text
-Set up a 15-minute heartbeat in this thread. On each heartbeat, read Design/AgentTasks/AUTO_CONTINUE.md, Design/AgentTasks/M01_CRITICAL_PATH.md, and your lane file under Design/AgentTasks/. If your task is active and advances the M01 critical path, continue it. Keep this heartbeat active as a standing lane monitor; do not delete, pause, disable, or stop it unless the user or PM assistant explicitly says to stop this lane heartbeat. You are authorized to run focused Unity EditMode/PlayMode validation, prefab builders, capture builders, graphics-enabled Unity capture passes, and report generation required by your lane task in your assigned Unity workspace: Gameplay uses /Users/farhad/Projects/WarlineCapture-CodexUnity, UI uses /Users/farhad/Projects/WarlineCapture-CodexUnity2, QA/HCI uses /Users/farhad/Projects/WarlineCapture-CodexUnity3, and Support/FTUE uses no Unity workspace unless PM assigns one. Do not pause to ask whether required validation should run. Only pause if the Codex/tool sandbox itself requires approval, and state that it is tool permission. If the tool UI allows it, request that Codex remember the narrow Unity batchmode permission for required WarlineCapture validation commands so future focused validation does not need repeated approval. After any validation, capture, build, log scan, or failed validation attempt, immediately write or update the required report under Design/AgentReports/ before starting new work, reporting idle/waiting, or handing off to another lane.
+Set up a recurring heartbeat in this thread. On each heartbeat, read Design/AgentTasks/<lane>_heartbeat.md and follow it. Treat Design/AgentTasks/<lane>_current.md as the only source of current <Lane> priorities.
+```
+
+For PM:
+
+```text
+Set up a recurring heartbeat in this thread. On each heartbeat, read Design/AgentTasks/pm_heartbeat.md and follow it. Treat Design/AgentTasks/*_current.md as the only source of current lane priorities.
 ```

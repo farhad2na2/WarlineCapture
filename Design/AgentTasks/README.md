@@ -7,13 +7,21 @@ Agents should read their lane file when the user says `continue`:
 - Critical path gate: `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - Gameplay agent: `Design/AgentTasks/gameplay_current.md`
 - UI agent: `Design/AgentTasks/ui_current.md`
+- Art/Atlas agent: `Design/AgentTasks/art-atlas_current.md`
 - Support/FTUE agent: `Design/AgentTasks/support-ftue_current.md`
 - QA/HCI agent: `Design/AgentTasks/qa-hci_current.md`
 - PM assistant idle audit: `Design/AgentTasks/pm_design-audit.md`
 
-For agents that should wake up automatically every 15 minutes, use:
+For agents that should wake up automatically, keep the automation prompt short and route behavior through the lane heartbeat file:
 
-- `Design/AgentTasks/AUTO_CONTINUE.md`
+- PM: `Read Design/AgentTasks/pm_heartbeat.md and follow it. Treat Design/AgentTasks/*_current.md as the only source of current lane priorities.`
+- Gameplay: `Read Design/AgentTasks/gameplay_heartbeat.md and follow it. Treat Design/AgentTasks/gameplay_current.md as the only source of current Gameplay priorities.`
+- UI: `Read Design/AgentTasks/ui_heartbeat.md and follow it. Treat Design/AgentTasks/ui_current.md as the only source of current UI priorities.`
+- Art/Atlas: `Read Design/AgentTasks/art-atlas_heartbeat.md and follow it. Treat Design/AgentTasks/art-atlas_current.md as the only source of current Art/Atlas priorities.`
+- QA/HCI: `Read Design/AgentTasks/qa-hci_heartbeat.md and follow it. Treat Design/AgentTasks/qa-hci_current.md as the only source of current QA/HCI priorities.`
+- Support/FTUE: `Read Design/AgentTasks/support-ftue_heartbeat.md and follow it. Treat Design/AgentTasks/support-ftue_current.md as the only source of current Support/FTUE priorities.`
+
+`Design/AgentTasks/AUTO_CONTINUE.md` remains the shared detailed protocol for lane monitors and validation/reporting rules.
 
 Rules:
 

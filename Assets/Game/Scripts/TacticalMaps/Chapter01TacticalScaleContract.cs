@@ -55,10 +55,10 @@ public sealed class Chapter01TacticalScaleContract : ScriptableObject
         defaultGridHeight = 36;
         visualScales = new[]
         {
-            new TacticalVisualScaleEntry(TacticalVisualScaleRole.InfantrySquad, 0.07f, "Approved M01 infantry readability scale from playable prototype review."),
+            new TacticalVisualScaleEntry(TacticalVisualScaleRole.InfantrySquad, 0.20f, "M01 metric infantry scale: roughly 1.8m soldier readability at public close camera scale."),
             new TacticalVisualScaleEntry(TacticalVisualScaleRole.BattleTank, 0.085f, "Approved tactical vehicle scale anchor."),
             new TacticalVisualScaleEntry(TacticalVisualScaleRole.Apc, 0.095f, "Approved tactical vehicle scale anchor."),
-            new TacticalVisualScaleEntry(TacticalVisualScaleRole.CommandBuilding, 0.14f, "Small command/decor building scale."),
+            new TacticalVisualScaleEntry(TacticalVisualScaleRole.CommandBuilding, 0.80f, "M01 building/decor scale calibrated from door and road context instead of tiny decor sizing."),
             new TacticalVisualScaleEntry(TacticalVisualScaleRole.TentCluster, 0.13f, "Small camp/tent cluster scale."),
             new TacticalVisualScaleEntry(TacticalVisualScaleRole.FuelRefineryModule, 0.30f, "Large industrial building scale anchor."),
             new TacticalVisualScaleEntry(TacticalVisualScaleRole.Helicopter, 0.18f, "Strategic/tactical validation air-unit scale anchor."),

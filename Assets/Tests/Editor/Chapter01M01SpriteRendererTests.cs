@@ -3,14 +3,14 @@ using Unity.Entities;
 using Unity.Rendering;
 using Unity.Transforms;
 
-public sealed class Chapter01M01SpriteRendererTests
+public sealed class Chapter01M01AtlasQuadPresentationTests
 {
     private World _world;
 
     [SetUp]
     public void SetUp()
     {
-        _world = new World("Chapter01M01SpriteRendererTests");
+        _world = new World("Chapter01M01AtlasQuadPresentationTests");
     }
 
     [TearDown]
@@ -36,7 +36,7 @@ public sealed class Chapter01M01SpriteRendererTests
         presenter.CurrentState = (byte)MissionRuntimeSpriteVisualState.Move;
         presenter.CurrentSpriteId = Chapter01M01SpritePresenterCatalog.ResolveSpriteId(presenter, MissionRuntimeSpriteVisualState.Move);
 
-        Assert.IsTrue(MissionRuntimeSpriteRendererSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite));
+        Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite));
         Assert.NotNull(sprite);
         StringAssert.Contains("infantry_squad", sprite.name);
         Assert.AreEqual(299, sprite.texture.width);
@@ -58,7 +58,7 @@ public sealed class Chapter01M01SpriteRendererTests
         Assert.IsFalse(em.HasComponent<DisableRendering>(model));
         Assert.IsFalse(em.HasComponent<DisableRendering>(child));
 
-        Assert.IsTrue(MissionRuntimeSpriteRendererSystem.SuppressLegacyModelRendering(em, unit));
+        Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.SuppressLegacyModelRendering(em, unit));
 
         Assert.IsTrue(em.HasComponent<DisableRendering>(model));
         Assert.IsTrue(em.HasComponent<DisableRendering>(child));
@@ -78,7 +78,7 @@ public sealed class Chapter01M01SpriteRendererTests
     private static void AssertRendererResolves(string runtimeEntityId)
     {
         Assert.IsTrue(Chapter01M01SpritePresenterCatalog.TryCreatePresenter(runtimeEntityId, out MissionRuntimeSpritePresenter presenter), $"{runtimeEntityId} presenter must resolve.");
-        Assert.IsTrue(MissionRuntimeSpriteRendererSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite), $"{runtimeEntityId} sprite must resolve from manifest path.");
+        Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite), $"{runtimeEntityId} sprite must resolve from manifest path.");
         Assert.NotNull(sprite);
         Assert.AreEqual(1, presenter.RequiresFixedDirectionBakedContactShadow);
         Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild);

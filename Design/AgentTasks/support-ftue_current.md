@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting for rejected temporary-art fixes by Art/Atlas, Designer, and Gameplay
+Priority: no current Support/FTUE action; waiting for QA/HCI rerun after rejected-art fixes
 
 ## Assignment
 
-Stand by while Art/Atlas, Designer, and Gameplay handle the rejected temporary-art/runtime review.
+Stand by while QA/HCI reruns focused Gate 4 validation after the rejected temporary-art/runtime fixes.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -42,9 +42,6 @@ QA/HCI owns:
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-rejected-temp-art-scale-readability.md`
-- `Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
-- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`
 - `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
 
 ## Guardrails While Waiting

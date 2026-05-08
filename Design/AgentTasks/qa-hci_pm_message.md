@@ -1,23 +1,28 @@
 # PM Message To QA/HCI
 
 Date: 2026-05-08
-Priority: wait for rejected-art fixes
+Priority: run rejected-art Gate 4 rerun now
 
-The user rejected the temporary Gate 4 art/runtime review. Read:
+The rejected-art prerequisite reports are present and PM accepted them for QA/HCI rerun.
+
+Read:
 
 - `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
+- `Design/AgentReports/2026-05-08_pm_rejected-art-fixes-ready-for-qa-review.md`
 - `Design/AgentTasks/qa-hci_current.md`
 
-Do not rerun yet.
+Run the focused Gate 4 validation from:
 
-Wait for these reports:
+`/Users/farhad/Projects/WarlineCapture-CodexUnity3`
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-rejected-temp-art-scale-readability.md`
-- `Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
-- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`
-
-Then rerun focused Gate 4 validation and write:
+Write:
 
 `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
+
+If blocked, write:
+
+`Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun-blocked.md`
+
+Include the exact command, workspace, log path, failure reason, and unblock owner.
 
 Do not commit or push.

@@ -76,7 +76,7 @@ public static class WarlineCaptureM01SpriteRendererCaptureBuilder
     {
         if (!Chapter01M01SpritePresenterCatalog.TryCreatePresenter(runtimeEntityId, out MissionRuntimeSpritePresenter presenter) ||
             !definition.TryGetAnchor(anchorId, out TacticalMapAnchor anchor) ||
-            !MissionRuntimeSpriteRendererSystem.TryResolveSprite(presenter, out Sprite sprite))
+            !MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out Sprite sprite))
         {
             Debug.LogError($"WARLINECAPTURE_M01_SPRITE_RENDERER_CAPTURE_ENTITY_FAILED id={runtimeEntityId} anchor={anchorId}");
             return;

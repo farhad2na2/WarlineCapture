@@ -16,11 +16,17 @@ IsoMapId: iso.ch01.district_edge_01
 Use this after:
 
 - `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
 - `WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
 - `WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`
 - `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`
 
 The goal is to make M01 implementable without guessing about map ids, UI feedback, metadata anchors, assets, tutorial targets, audio/VFX, or validation.
+
+Movement scope note: the large-scale movement design does not expand M01 beyond select, move, attack, objective, and result. For M01 it only raises the acceptance bar: the first movement lesson must be readable through squad selection, a destination marker, attack marker/target highlight, invalid target feedback, HUD current-order state, tactical camera bounds, and objective/result confirmation.
+
+Metric scale/readability note: M01 public visual approval must follow `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`. Soldiers should calibrate around a `1.8m` human anchor, visible building doors around a `2.3m` anchor, and buildings should scale from doors/footprints/road context rather than tiny decorative values. Selection must be subtle and grounded, movement must show plausible infantry motion with run animation, and public infantry presentation must be ECS entity / atlas-backed rather than accepted through SpriteRenderer unit presentation.
 
 ## Locked Mission Contract
 
@@ -180,7 +186,7 @@ ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions us
 | `iso.ch01.district_edge_01.metadata` | tactical metadata | `Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset` | Required for any playable validation. |
 | `preview.ch01.first_contact` | strategic map preview | `Assets/Game/Art/UI/Generated/MissionArt/saga_ch01_m01_first_contact_MapPreview.png` | Approved in Mission Briefing/Saga context. |
 | `minimap.ch01.first_contact` | minimap | `Assets/Game/Art/UI/Generated/MissionArt/saga_ch01_m01_first_contact_Minimap.png` | Approved in Battle HUD with markers visible. |
-| `unit.player.rifle_squad_01` | runtime sprite/entity | Chapter 1 units atlas | Must match accepted `0.10` infantry scale anchor. |
+| `unit.player.rifle_squad_01` | runtime sprite/entity | Chapter 1 units atlas | Must match `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`: about `1.8m` soldier scale, four readable soldiers under one squad entity, ECS/atlas-backed presentation. |
 | `unit.enemy.patrol_01` | runtime sprite/entity | Chapter 1 units atlas | Can reuse enemy-tinted infantry variant if approved. |
 | `marker.selection.ring` | world overlay | UI/VFX marker atlas | Separate from unit sprite. |
 | `marker.move.destination` | world overlay | UI/VFX marker atlas | Separate from ground art. |
@@ -227,9 +233,13 @@ ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions us
 ### Visual Gate
 
 - Tactical ground is reviewed at close gameplay camera scale, not only as a full image.
-- Infantry at `0.10` scale reads correctly over the map.
+- Infantry reads at about `1.8m` human scale against road/building/door context.
+- Visible building doors read around `2.3m`, and buildings scale from doors/footprints/readability instead of tiny decor values.
 - Enemy patrol reads as hostile without relying only on color.
-- Selection, move, attack, invalid, and objective markers are visible without covering units.
+- Selection is small, grounded, per-soldier or equivalent subtle formation treatment, and does not cover units or screen context.
+- Movement shows plausible infantry run/move animation while units travel.
+- Public M01 unit visuals are ECS entity / atlas-backed and do not expose SpriteRenderer unit presentation as the accepted path.
+- Move, attack, invalid, and objective markers are visible without covering units.
 - HUD capture at 16:9 and 20:9 does not hide the selected squad, enemy patrol, objective tracker, or minimap.
 
 ### Metadata Gate

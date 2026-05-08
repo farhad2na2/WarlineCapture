@@ -24,8 +24,9 @@ MonoBehaviour:
   defaultGridHeight: 36
   visualScales:
   - role: 0
-    defaultScale: 0.07
-    notes: Approved M01 infantry readability scale from playable prototype review.
+    defaultScale: 0.2
+    notes: M01 metric infantry scale: roughly 1.8m soldier readability at public close
+      camera scale.
   - role: 1
     defaultScale: 0.085
     notes: Approved tactical vehicle scale anchor.
@@ -33,8 +34,9 @@ MonoBehaviour:
     defaultScale: 0.095
     notes: Approved tactical vehicle scale anchor.
   - role: 3
-    defaultScale: 0.14
-    notes: Small command/decor building scale.
+    defaultScale: 0.8
+    notes: M01 building/decor scale calibrated from door and road context instead of
+      tiny decor sizing.
   - role: 4
     defaultScale: 0.13
     notes: Small camp/tent cluster scale.

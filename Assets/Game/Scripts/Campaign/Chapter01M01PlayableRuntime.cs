@@ -16,6 +16,8 @@ public static class Chapter01M01PlayableRuntime
     public const string ObjectiveId = "destroy_patrol";
     public const string PatrolRouteId = "route.enemy_patrol_01";
     private const string PatrolRouteAnchorPrefix = "route.enemy_patrol_01.";
+    private const float M01InfantryRunSpeedWorldUnitsPerSecond = 0.42f;
+    private const float M01InfantryWalkSpeedWorldUnitsPerSecond = 0.28f;
 
     public readonly struct RuntimeState
     {
@@ -225,9 +227,32 @@ public static class Chapter01M01PlayableRuntime
                 em.AddComponent<MissionRuntimeEnemyPatrolTag>(entity);
             if (em.HasComponent<MissionRuntimeCommandSquadTag>(entity))
                 em.RemoveComponent<MissionRuntimeCommandSquadTag>(entity);
+            if (!em.HasComponent<MissionRuntimeOpeningControlProtection>(entity))
+                em.AddComponent<MissionRuntimeOpeningControlProtection>(entity);
+            if (em.HasComponent<UnitCombat>(entity))
+            {
+                UnitCombat combat = em.GetComponentData<UnitCombat>(entity);
+                combat.CanAttack = 0;
+                combat.AutoEngage = 0;
+                em.SetComponentData(entity, combat);
+            }
         }
 
+        ApplyM01TacticalScaleAttackTrace(em, entity);
+        ApplyM01InfantryMovementContract(em, entity);
         BindMissionSpritePresenter(em, entity, entityId);
+    }
+
+    private static void ApplyM01TacticalScaleAttackTrace(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<UnitAttack>(entity))
+            return;
+
+        UnitAttack attack = em.GetComponentData<UnitAttack>(entity);
+        attack.TraceWidth = math.clamp(attack.TraceWidth, 0.012f, 0.035f);
+        attack.TraceVisibleSeconds = math.clamp(attack.TraceVisibleSeconds, 0.05f, 0.16f);
+        attack.TraceDashDensity = math.max(8f, attack.TraceDashDensity);
+        em.SetComponentData(entity, attack);
     }
 
     private static Entity ResolveOrCreateMissionDecor(EntityManager em, TacticalMapRuntimeLoader loader, string entityId, Vector3 worldPosition)
@@ -263,6 +288,10 @@ public static class Chapter01M01PlayableRuntime
         SetComponent(em, entity, presenter);
         if (!em.HasComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(entity))
             em.AddComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(entity);
+        if (em.HasComponent<UnitDestroyedVisualReference>(entity))
+            em.RemoveComponent<UnitDestroyedVisualReference>(entity);
+        if (em.HasComponent<UnitDestroyedVisualInitialized>(entity))
+            em.RemoveComponent<UnitDestroyedVisualInitialized>(entity);
     }
 
     private static void ApplyPatrolRoute(EntityManager em, TacticalMapRuntimeLoader loader, Entity enemy)
@@ -316,7 +345,13 @@ public static class Chapter01M01PlayableRuntime
 
         em.SetComponentData(entity, new Faction { Id = factionId });
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
-        em.SetComponentData(entity, new UnitMove { Speed = 1.5f, WalkSpeed = 1.5f, RoadSpeedMultiplier = 1.15f, ArriveDistance = 0.05f });
+        em.SetComponentData(entity, new UnitMove
+        {
+            Speed = M01InfantryRunSpeedWorldUnitsPerSecond,
+            WalkSpeed = M01InfantryWalkSpeedWorldUnitsPerSecond,
+            RoadSpeedMultiplier = 1f,
+            ArriveDistance = 0.05f
+        });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(1, 1) });
         em.SetComponentData(entity, new UnitMovementBehavior { AllowIdleWander = 0, UsesVehicleMotion = 0 });
         em.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
@@ -381,6 +416,19 @@ public static class Chapter01M01PlayableRuntime
             combat.CanAttack = 1;
             em.SetComponentData(entity, combat);
         }
+    }
+
+    private static void ApplyM01InfantryMovementContract(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<UnitMove>(entity))
+            return;
+
+        UnitMove move = em.GetComponentData<UnitMove>(entity);
+        move.Speed = M01InfantryRunSpeedWorldUnitsPerSecond;
+        move.WalkSpeed = M01InfantryWalkSpeedWorldUnitsPerSecond;
+        move.RoadSpeedMultiplier = 1f;
+        move.ArriveDistance = math.clamp(move.ArriveDistance, 0.035f, 0.08f);
+        em.SetComponentData(entity, move);
     }
 
     private static Entity FindMissionEntity(EntityManager em, string entityId)

@@ -79,8 +79,9 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.AreEqual("iso.ch01.district_edge_01", context.Loader.Definition.MapId);
         Assert.IsTrue(context.World.EntityManager.HasComponent<MissionRuntimeSpritePresenter>(context.PlayerSquad), "Public launch should use the accepted M01 sprite-presenter direction.");
         Assert.IsTrue(context.World.EntityManager.HasComponent<MissionRuntimeSpritePresenter>(context.EnemyPatrol), "Public launch should use the accepted M01 sprite-presenter direction.");
-        await WaitForMissionSpriteRenderers(context);
+        await WaitForMissionAtlasQuads(context);
         AssertM01ProductionPlayerVisibleState(context, "Quick Custom public launch");
+        AssertM01InfantryOnlyHudScope(router, "Quick Custom public launch");
         CapturePlayerView(context, uiBootstrap.AppCanvasInstance, "quick-custom-public-m01");
     }
 
@@ -122,9 +123,81 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.AreEqual("iso.ch01.district_edge_01", context.Loader.Definition.MapId);
         Assert.IsTrue(context.World.EntityManager.HasComponent<MissionRuntimeSpritePresenter>(context.PlayerSquad), "Campaign launch should use the accepted M01 sprite-presenter direction.");
         Assert.IsTrue(context.World.EntityManager.HasComponent<MissionRuntimeSpritePresenter>(context.EnemyPatrol), "Campaign launch should use the accepted M01 sprite-presenter direction.");
-        await WaitForMissionSpriteRenderers(context);
+        await WaitForMissionAtlasQuads(context);
         AssertM01ProductionPlayerVisibleState(context, "Campaign public launch");
+        AssertM01InfantryOnlyHudScope(router, "Campaign public launch");
         CapturePlayerView(context, uiBootstrap.AppCanvasInstance, "campaign-public-m01");
+    }
+
+    [Test]
+    public async Task PublicCampaignLaunch_M01GoldenPlaythroughShowsResultPopup()
+    {
+        Time.timeScale = 12f;
+        SetLogAssertIgnoreFailingMessages(true);
+
+        GameBootstrap bootstrap = await LoadGameSceneAndWaitForBootstrap();
+        WarlineCaptureUiBootstrap uiBootstrap = await WaitForParallelUiBootstrap();
+        WarlineCaptureRouter router = uiBootstrap.AppCanvasInstance.GetComponent<WarlineCaptureRouter>();
+        Assert.NotNull(router, "Public app canvas should expose the WarlineCapture router.");
+
+        router.GoTo(WarlineCaptureRoute.SagaMap, false);
+        Assert.IsTrue(router.TryGetRegisteredScreen(WarlineCaptureRoute.SagaMap, out WarlineCaptureScreenController sagaScreen), "Public router should register the Saga Map screen.");
+        SagaMapScreenController sagaMap = sagaScreen.GetComponent<SagaMapScreenController>();
+        Assert.NotNull(sagaMap, "Saga Map screen should expose its controller.");
+        sagaMap.SelectMissionForTests(ChapterOneMissionCatalog.FirstContactMissionId);
+        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        router.GoTo(WarlineCaptureRoute.MissionBriefing);
+        await NextFrame();
+        Assert.AreEqual(WarlineCaptureRoute.MissionBriefing, router.ActiveRoute, "Public golden path should enter Mission Briefing from Saga Map.");
+
+        router.GoTo(WarlineCaptureRoute.LoadoutSquadPrep);
+        await NextFrame();
+        Assert.AreEqual(WarlineCaptureRoute.LoadoutSquadPrep, router.ActiveRoute, "Public golden path should enter Loadout before deploy.");
+        WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(router);
+
+        M01SceneContext context = await WaitForM01Runtime(bootstrap);
+        EntityManager em = context.World.EntityManager;
+        await WaitForMissionAtlasQuads(context);
+        AssertM01InfantryOnlyHudScope(router, "Campaign golden path");
+
+        Assert.IsTrue(em.HasComponent<MissionRuntimeOpeningControlProtection>(context.EnemyPatrol), "Public M01 deploy should start with hostile opening-control protection.");
+        int openingPlayerHealth = em.GetComponentData<UnitHealth>(context.PlayerSquad).Current;
+        UnitAttack openingEnemyAttack = em.GetComponentData<UnitAttack>(context.EnemyPatrol);
+        ForceProtectedEnemyAttackAttempt(context);
+        for (int frame = 0; frame < 180; frame++)
+            await NextFrame();
+
+        Assert.IsTrue(em.Exists(context.PlayerSquad), "Public M01 command squad should still exist after a relaxed no-input opening review window.");
+        Assert.AreEqual(openingPlayerHealth, em.GetComponentData<UnitHealth>(context.PlayerSquad).Current, "Public M01 deploy should allow inspection before select/first move without hostile damage.");
+        Assert.IsFalse(em.HasComponent<EngageTarget>(context.EnemyPatrol), "Public M01 hostile patrol should not retain an engage target during the opening-control window.");
+        em.SetComponentData(context.EnemyPatrol, openingEnemyAttack);
+
+        Assert.IsTrue(context.Bootstrap.Selection.TrySelectRuntimeEntity(context.PlayerSquad).Accepted, "Golden path should select the M01 rifle squad through the selection controller.");
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(context.PlayerSquad), "Golden path selection should mark the command squad selected.");
+        await NextFrame();
+        AssertSelectedPresentationVisible(em, context.PlayerSquad, "golden path command squad");
+        CapturePlayerView(context, uiBootstrap.AppCanvasInstance, "campaign-public-m01-selected-first-control");
+        Assert.IsTrue(context.Loader.TryGetAnchorCell("tutorial.move_target.cover_01", out Vector2Int coverCell), "Golden path move-to-cover anchor should resolve.");
+        Assert.IsTrue(context.Bootstrap.Selection.TryIssueMoveToCell(new int2(coverCell.x, coverCell.y)).Accepted, "Golden path should issue the move-to-cover command through the selection controller.");
+        Assert.IsTrue(
+            em.HasComponent<UnitPathRequest>(context.PlayerSquad) ||
+            em.HasComponent<UnitPathFollow>(context.PlayerSquad) ||
+            em.HasComponent<UnitTarget>(context.PlayerSquad),
+            "Golden path move-to-cover should use tactical pathing components.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeOpeningControlProtection>(context.EnemyPatrol), "Golden path enemy protection should remain through the move teaching step.");
+
+        Assert.IsTrue(context.Bootstrap.Selection.TryIssueAttackTarget(context.EnemyPatrol).Accepted, "Golden path should issue attack on hostile patrol through the selection controller.");
+
+        int enemyStartingHealth = em.GetComponentData<UnitHealth>(context.EnemyPatrol).Current;
+        Assert.IsTrue(em.HasComponent<UnitHealth>(context.PlayerSquad), "Golden path command squad should still be alive before objective completion.");
+        em.SetComponentData(context.EnemyPatrol, new UnitHealth { Current = 0, Max = enemyStartingHealth });
+        GameRuntimeStats.RecordMilitaryDeath(1);
+        for (int frame = 0; frame < 180 && !HasActiveMissionResultPopup(uiBootstrap.AppCanvasInstance); frame++)
+            await NextFrame();
+
+        Assert.IsTrue(HasActiveMissionResultPopup(uiBootstrap.AppCanvasInstance), "Golden path should show the public mission result popup after the hostile patrol is neutralized.");
+        Assert.AreEqual(WarlineCaptureRoute.Match, router.ActiveRoute, "Result popup should be shown over the public Match route.");
+        Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission, "Showing the result popup should clear the active mission session.");
     }
 
     [Test]
@@ -162,6 +235,100 @@ public sealed class Chapter01M01PlayModeValidationTests
         GameRuntimeStats.RecordMilitaryDeath(1);
         Assert.IsFalse(Chapter01M01PlayableRuntime.ShouldStartResultFlow(context.World), "Command squad destruction should block M01 result readiness.");
         Assert.IsFalse(WarlineCaptureMatchResultFlow.CanCompleteActiveMissionFromLoadedScene(), "Loaded scene result route should stay blocked when the command squad is destroyed.");
+    }
+
+    [Test]
+    public async Task GameScene_M01OpeningControlWindowPreventsLethalEnemyFireUntilFirstMove()
+    {
+        M01SceneContext context = await LoadM01SceneAndWaitForRuntime();
+        EntityManager em = context.World.EntityManager;
+
+        Assert.IsTrue(em.HasComponent<MissionRuntimeOpeningControlProtection>(context.EnemyPatrol), "M01 hostile patrol should start protected from opening auto-fire.");
+        int startingPlayerHealth = em.GetComponentData<UnitHealth>(context.PlayerSquad).Current;
+        UnitAttack startingEnemyAttack = em.GetComponentData<UnitAttack>(context.EnemyPatrol);
+
+        ForceProtectedEnemyAttackAttempt(context);
+        for (int frame = 0; frame < 120; frame++)
+            await NextFrame();
+
+        Assert.IsTrue(em.Exists(context.PlayerSquad), "M01 command squad should still exist during the protected opening window.");
+        Assert.AreEqual(startingPlayerHealth, em.GetComponentData<UnitHealth>(context.PlayerSquad).Current, "M01 opening should give the player a first-control window before hostile damage starts.");
+        Assert.IsFalse(em.HasComponent<EngageTarget>(context.EnemyPatrol), "Protected M01 hostile patrol should not auto-engage before the first player command.");
+        em.SetComponentData(context.EnemyPatrol, startingEnemyAttack);
+
+        IssueMoveToCover(context);
+        for (int frame = 0; frame < 60; frame++)
+            await NextFrame();
+
+        Assert.IsTrue(em.HasComponent<MissionRuntimeOpeningControlProtection>(context.EnemyPatrol), "M01 opening protection should stay active through the move-to-cover teaching step.");
+        Assert.Greater(em.GetComponentData<UnitHealth>(context.PlayerSquad).Current, 0, "The command squad should still be alive after the opening move command.");
+        Assert.IsTrue(
+            em.HasComponent<UnitPathRequest>(context.PlayerSquad) ||
+            em.HasComponent<UnitPathFollow>(context.PlayerSquad) ||
+            em.HasComponent<UnitTarget>(context.PlayerSquad),
+            "Move-to-cover should use tactical movement/pathing components rather than a visual-only jump.");
+
+        Assert.IsTrue(context.Bootstrap.Selection.TrySelectRuntimeEntity(context.PlayerSquad).Accepted, "M01 opening attack step should select the command squad.");
+        Assert.IsTrue(context.Bootstrap.Selection.TryIssueAttackTarget(context.EnemyPatrol).Accepted, "M01 opening attack step should use the public selection controller.");
+        for (int frame = 0; frame < 60; frame++)
+            await NextFrame();
+
+        Assert.IsTrue(em.Exists(context.PlayerSquad), "The command squad should still exist after the opening attack command.");
+        Assert.Greater(em.GetComponentData<UnitHealth>(context.PlayerSquad).Current, 0, "The command squad should stay alive while transitioning from first move into attack/result flow.");
+        Assert.IsTrue(em.HasComponent<EngageTarget>(context.PlayerSquad), "The attack command should keep the hostile patrol targeted for the result flow.");
+    }
+
+    [Test]
+    public async Task GameScene_M01SpritePresenterUsesEcsDrivenAtlasStateIds()
+    {
+        M01SceneContext context = await LoadM01SceneAndWaitForRuntime();
+        EntityManager em = context.World.EntityManager;
+        await WaitForMissionAtlasQuads(context);
+
+        AssertAtlasPresenterAdapter(em, context.PlayerSquad, Chapter01M01PlayableRuntime.PlayerSquadEntityId, "command squad");
+        AssertAtlasPresenterAdapter(em, context.EnemyPatrol, Chapter01M01PlayableRuntime.EnemyPatrolEntityId, "hostile patrol");
+
+        MissionRuntimeSpritePresenter presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
+        Assert.AreEqual(
+            Chapter01M01SpritePresenterCatalog.ResolveStateSpriteId(Chapter01M01PlayableRuntime.PlayerSquadEntityId, MissionRuntimeSpriteVisualState.Idle),
+            presenter.CurrentSpriteId.ToString(),
+            "M01 command squad should start on the atlas idle state id.");
+
+        IssueMoveToCover(context);
+        await NextFrame();
+        MissionRuntimeAtlasQuadRuntime movingRuntime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(context.PlayerSquad);
+        int animatedSoldierIndex = movingRuntime.SoldierRenderers.Length > 1 ? 1 : 0;
+        Vector3 soldierPoseBefore = movingRuntime.SoldierRenderers[animatedSoldierIndex].transform.localPosition;
+        float animationPhaseBefore = movingRuntime.AnimationPhase;
+        await NextFrame();
+        movingRuntime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(context.PlayerSquad);
+        Assert.Greater(movingRuntime.AnimationPhase, animationPhaseBefore, "M01 moving infantry should advance its ECS atlas animation phase while moving.");
+        Assert.Greater(Vector3.Distance(soldierPoseBefore, movingRuntime.SoldierRenderers[animatedSoldierIndex].transform.localPosition), 0.001f, "M01 moving infantry should visibly animate instead of holding a static pose.");
+
+        presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
+        Assert.AreEqual(MissionRuntimeSpriteVisualState.Move, MissionRuntimeSpritePresenterSystem.ResolveVisualState(em, context.PlayerSquad), "ECS pathing intent should drive M01 move presentation.");
+        Assert.AreEqual(
+            Chapter01M01SpritePresenterCatalog.ResolveStateSpriteId(Chapter01M01PlayableRuntime.PlayerSquadEntityId, MissionRuntimeSpriteVisualState.Move),
+            Chapter01M01SpritePresenterCatalog.ResolveSpriteId(presenter, MissionRuntimeSpriteVisualState.Move).ToString(),
+            "M01 command squad move state should resolve to a move atlas state id.");
+
+        RemoveIfPresent<UnitTarget>(em, context.PlayerSquad);
+        RemoveIfPresent<UnitPathRequest>(em, context.PlayerSquad);
+        RemoveIfPresent<UnitPathFollow>(em, context.PlayerSquad);
+        em.SetComponentData(context.PlayerSquad, new UnitAttackAnimationState { TimeRemaining = 0.5f });
+        presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
+        Assert.AreEqual(MissionRuntimeSpriteVisualState.Attack, MissionRuntimeSpritePresenterSystem.ResolveVisualState(em, context.PlayerSquad), "ECS attack state should drive M01 attack presentation.");
+        Assert.AreEqual(
+            Chapter01M01SpritePresenterCatalog.ResolveStateSpriteId(Chapter01M01PlayableRuntime.PlayerSquadEntityId, MissionRuntimeSpriteVisualState.Attack),
+            Chapter01M01SpritePresenterCatalog.ResolveSpriteId(presenter, MissionRuntimeSpriteVisualState.Attack).ToString(),
+            "M01 command squad attack state should resolve to an attack atlas state id.");
+
+        em.SetComponentData(context.PlayerSquad, new UnitHealth { Current = 0, Max = 100 });
+        if (!em.HasComponent<UnitDeathAnimationState>(context.PlayerSquad))
+            em.AddComponentData(context.PlayerSquad, new UnitDeathAnimationState { TimeRemaining = 0.5f });
+        presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
+        Assert.AreEqual(MissionRuntimeSpriteVisualState.Destroyed, MissionRuntimeSpritePresenterSystem.ResolveVisualState(em, context.PlayerSquad), "ECS death state should drive M01 destroyed presentation.");
+        Assert.AreEqual(Chapter01M01SpritePresenterCatalog.DestroyedSmallVfxSpriteId, Chapter01M01SpritePresenterCatalog.ResolveSpriteId(presenter, MissionRuntimeSpriteVisualState.Destroyed).ToString(), "M01 destroyed state should resolve to the atlas destroyed VFX id.");
     }
 
     [Test]
@@ -245,7 +412,7 @@ public sealed class Chapter01M01PlayModeValidationTests
         return default;
     }
 
-    private static async Task WaitForMissionSpriteRenderers(M01SceneContext context)
+    private static async Task WaitForMissionAtlasQuads(M01SceneContext context)
     {
         EntityManager em = context.World.EntityManager;
         for (int frame = 0; frame < 180; frame++)
@@ -267,13 +434,14 @@ public sealed class Chapter01M01PlayModeValidationTests
 
     private static bool IsMissionRendererReady(EntityManager em, Entity entity)
     {
-        if (!em.Exists(entity) || !em.HasComponent<MissionRuntimeSpriteRendererRuntime>(entity))
+        if (!em.Exists(entity) || !em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity))
             return false;
 
-        MissionRuntimeSpriteRendererRuntime runtime = em.GetComponentObject<MissionRuntimeSpriteRendererRuntime>(entity);
+        MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
         return runtime.Renderer != null &&
             runtime.Renderer.enabled &&
-            runtime.Renderer.sprite != null &&
+            runtime.Material != null &&
+            runtime.Material.mainTexture != null &&
             runtime.Renderer.gameObject.activeInHierarchy;
     }
 
@@ -349,6 +517,17 @@ public sealed class Chapter01M01PlayModeValidationTests
         AssertMissionRendererVisible(context.World.EntityManager, context.EnemyPatrol, $"{entryPath}: hostile patrol");
         AssertLegacyModelSuppressed(context.World.EntityManager, context.PlayerSquad, $"{entryPath}: command squad");
         AssertLegacyModelSuppressed(context.World.EntityManager, context.EnemyPatrol, $"{entryPath}: hostile patrol");
+    }
+
+    private static void AssertM01InfantryOnlyHudScope(WarlineCaptureRouter router, string entryPath)
+    {
+        Assert.IsTrue(router.TryGetRegisteredScreen(WarlineCaptureRoute.Match, out WarlineCaptureScreenController matchScreen), $"{entryPath}: public router should register the Match HUD screen.");
+        M01InfantryOnlyHudScopeController infantryScope = matchScreen.GetComponent<M01InfantryOnlyHudScopeController>();
+        Assert.NotNull(infantryScope, $"{entryPath}: Match HUD should include the M01 infantry-only scope controller.");
+        infantryScope.Refresh();
+        Assert.IsTrue(infantryScope.IsM01ScopeActive, $"{entryPath}: M01 infantry-only HUD scope should be active for First Contact.");
+        Assert.GreaterOrEqual(infantryScope.HiddenRootCount, 7, $"{entryPath}: M01 HUD should suppress APC, Tank, air support, Build, and related production affordance roots.");
+        Assert.IsTrue(infantryScope.AreM01SuppressedRootsHidden(), $"{entryPath}: APC, Tank, air support, Build, production, transport, and base/build affordances must not be presented as usable M01 options.");
     }
 
     private static void AssertTacticalGroundAndCameraFraming(M01SceneContext context, string entryPath)
@@ -449,13 +628,112 @@ public sealed class Chapter01M01PlayModeValidationTests
 
     private static void AssertMissionRendererVisible(EntityManager em, Entity entity, string label)
     {
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpriteRendererRuntime>(entity), $"{label} should have a runtime sprite renderer component.");
-        MissionRuntimeSpriteRendererRuntime runtime = em.GetComponentObject<MissionRuntimeSpriteRendererRuntime>(entity);
-        Assert.NotNull(runtime.Renderer, $"{label} should expose a sprite renderer reference.");
-        Assert.IsTrue(runtime.Renderer.enabled, $"{label} sprite renderer should be enabled.");
-        Assert.NotNull(runtime.Renderer.sprite, $"{label} sprite renderer should have a sprite.");
-        Assert.IsTrue(runtime.Renderer.gameObject.activeInHierarchy, $"{label} sprite renderer GameObject should be active in hierarchy.");
-        StringAssert.StartsWith("M01Sprite_", runtime.Renderer.gameObject.name, $"{label} should use the M01 sprite renderer object.");
+        Assert.IsFalse(em.HasComponent<MissionRuntimeSpriteRendererRuntime>(entity), $"{label} should not use the temporary SpriteRenderer adapter.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity), $"{label} should have an ECS-owned atlas quad runtime component.");
+        MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
+        Assert.NotNull(runtime.Renderer, $"{label} should expose a mesh renderer reference.");
+        Assert.NotNull(runtime.MeshFilter, $"{label} should expose a mesh filter reference.");
+        Assert.NotNull(runtime.Material, $"{label} should expose an atlas material.");
+        Assert.IsTrue(runtime.Renderer.enabled, $"{label} atlas quad renderer should be enabled.");
+        Assert.NotNull(runtime.Material.mainTexture, $"{label} atlas quad material should have a texture.");
+        Assert.IsTrue(runtime.Renderer.gameObject.activeInHierarchy, $"{label} atlas quad GameObject should be active in hierarchy.");
+        StringAssert.StartsWith("M01AtlasQuad_", runtime.Renderer.gameObject.name, $"{label} should use the M01 atlas quad object.");
+    }
+
+    private static void AssertAtlasPresenterAdapter(EntityManager em, Entity entity, string runtimeEntityId, string label)
+    {
+        Assert.IsTrue(em.HasComponent<MissionRuntimeEntityId>(entity), $"{label} should be tracked by runtime entity id.");
+        Assert.AreEqual(runtimeEntityId, em.GetComponentData<MissionRuntimeEntityId>(entity).Value.ToString(), $"{label} runtime entity id should match the M01 contract.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenter>(entity), $"{label} should carry ECS sprite presenter state.");
+        MissionRuntimeSpritePresenter presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(entity);
+        Assert.AreEqual(runtimeEntityId, presenter.RuntimeEntityId.ToString(), $"{label} presenter should identify the ECS runtime entity.");
+        Assert.AreEqual(runtimeEntityId, presenter.ManifestAssetId.ToString(), $"{label} presenter should use the Chapter 1 manifest asset id.");
+        Assert.AreEqual(0, presenter.FinalAtlasArtReady, $"{label} should explicitly mark current M01 unit art as temporary until final multi-frame atlas art lands.");
+        Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild, $"{label} destroyed/death feedback should resolve through the atlas presenter, not a separate Destroyed child.");
+        Assert.AreNotEqual(presenter.IdleSpriteId, presenter.MoveSpriteId, $"{label} idle and move atlas state ids should be distinct even while they share temporary source art.");
+        Assert.AreNotEqual(presenter.IdleSpriteId, presenter.AttackSpriteId, $"{label} idle and attack atlas state ids should be distinct even while they share temporary source art.");
+        Assert.IsFalse(em.HasComponent<MissionRuntimeSpriteRendererRuntime>(entity), $"{label} should not use the temporary ECS-driven SpriteRenderer adapter.");
+        Assert.IsFalse(em.HasComponent<UnitDestroyedVisualReference>(entity), $"{label} should not retain the old separate Destroyed child visual reference.");
+        Assert.IsFalse(em.HasComponent<UnitDestroyedVisualInitialized>(entity), $"{label} should not initialize old separate Destroyed child visibility.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity), $"{label} should use the ECS-owned atlas quad presentation path.");
+        MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
+        Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out Sprite resolvedSprite), $"{label} current atlas state id should resolve through the Chapter 1 sprite resolver.");
+        Assert.NotNull(runtime.Material.mainTexture, $"{label} atlas quad material should be assigned by the ECS presenter resolver.");
+        Assert.IsNull(runtime.Instance.GetComponentInChildren<SpriteRenderer>(true), $"{label} public M01 unit visuals must not expose active or inactive Unity SpriteRenderer components.");
+        Assert.False(runtime.Instance.name.Contains("SpriteRenderer"), $"{label} ECS atlas root must not expose SpriteRenderer-era naming.");
+        AssertContractScale(runtime, runtimeEntityId, label);
+        int expectedSoldierCount = runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ? 4 : 1;
+        Assert.AreEqual(expectedSoldierCount, runtime.SoldierCount, $"{label} should expose the expected readable soldier count under one gameplay entity.");
+        Assert.NotNull(runtime.SoldierRenderers, $"{label} should expose soldier renderers.");
+        Assert.AreEqual(expectedSoldierCount, runtime.SoldierRenderers.Length, $"{label} should render the squad as distinct soldier quad instances.");
+        for (int i = 0; i < runtime.SoldierRenderers.Length; i++)
+        {
+            Assert.NotNull(runtime.SoldierRenderers[i], $"{label} soldier {i + 1} renderer should exist.");
+            Assert.IsTrue(runtime.SoldierRenderers[i].enabled, $"{label} soldier {i + 1} renderer should be visible.");
+        }
+        if (expectedSoldierCount == 4)
+            AssertDistinctSoldierPositions(runtime, label);
+        AssertM01InfantryMovementContract(em, entity, label);
+        AssertTacticalAttackTraceScale(em, entity, label);
+        AssertLegacyModelSuppressed(em, entity, label);
+    }
+
+    private static void AssertContractScale(MissionRuntimeAtlasQuadRuntime runtime, string runtimeEntityId, string label)
+    {
+        Assert.NotNull(runtime.Instance, $"{label} should have an ECS atlas root object.");
+        if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
+            runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
+        {
+            Assert.That(runtime.Instance.transform.localScale.x, Is.InRange(0.195f, 0.205f), $"{label} should consume the rejected-art metric infantry scale target near 0.2.");
+        }
+    }
+
+    private static void AssertM01InfantryMovementContract(EntityManager em, Entity entity, string label)
+    {
+        Assert.IsTrue(em.HasComponent<UnitMove>(entity), $"{label} should keep movement config.");
+        UnitMove move = em.GetComponentData<UnitMove>(entity);
+        Assert.That(move.Speed, Is.InRange(0.38f, 0.46f), $"{label} run speed should be calibrated to readable infantry movement, not teleport-fast prefab speed.");
+        Assert.That(move.WalkSpeed, Is.InRange(0.24f, 0.32f), $"{label} walk speed should be below run speed and calibrated for infantry.");
+        Assert.LessOrEqual(move.RoadSpeedMultiplier, 1.05f, $"{label} M01 infantry should not receive a large road-speed boost in the teaching move.");
+    }
+
+    private static void AssertDistinctSoldierPositions(MissionRuntimeAtlasQuadRuntime runtime, string label)
+    {
+        for (int i = 0; i < runtime.SoldierRenderers.Length; i++)
+        {
+            for (int j = i + 1; j < runtime.SoldierRenderers.Length; j++)
+            {
+                Vector3 a = runtime.SoldierRenderers[i].transform.localPosition;
+                Vector3 b = runtime.SoldierRenderers[j].transform.localPosition;
+                Assert.Greater(Vector3.Distance(a, b), 0.05f, $"{label} soldiers {i + 1} and {j + 1} should have distinct formation positions.");
+            }
+        }
+    }
+
+    private static void AssertSelectedPresentationVisible(EntityManager em, Entity entity, string label)
+    {
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(entity), $"{label} should be selected.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity), $"{label} should have atlas quad runtime presentation.");
+        MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
+        Assert.NotNull(runtime.SelectionRenderers, $"{label} should have grounded per-soldier selection marker renderers.");
+        Assert.AreEqual(runtime.SoldierCount, runtime.SelectionRenderers.Length, $"{label} selection marker count should match soldier count.");
+        for (int i = 0; i < runtime.SelectionRenderers.Length; i++)
+        {
+            MeshRenderer marker = runtime.SelectionRenderers[i];
+            Assert.NotNull(marker, $"{label} selection marker {i + 1} should exist.");
+            Assert.IsTrue(marker.enabled, $"{label} selection marker {i + 1} should be visible.");
+            Assert.LessOrEqual(marker.transform.localScale.x, 0.30f, $"{label} selection marker {i + 1} should stay small and grounded under a soldier.");
+            Assert.LessOrEqual(marker.transform.localScale.y, 0.10f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
+        }
+    }
+
+    private static void AssertTacticalAttackTraceScale(EntityManager em, Entity entity, string label)
+    {
+        Assert.IsTrue(em.HasComponent<UnitAttack>(entity), $"{label} should keep combat data.");
+        UnitAttack attack = em.GetComponentData<UnitAttack>(entity);
+        Assert.LessOrEqual(attack.TraceWidth, 0.035f, $"{label} projectile trace width should stay tactical-scale instead of oversized arcade bullets.");
+        Assert.LessOrEqual(attack.TraceVisibleSeconds, 0.16f, $"{label} projectile trace lifetime should stay tactical-scale and brief.");
+        Assert.GreaterOrEqual(attack.TraceDashDensity, 8f, $"{label} projectile trace should read as a tactical tracer/impact cue.");
     }
 
     private static void AssertLegacyModelSuppressed(EntityManager em, Entity entity, string label)
@@ -467,6 +745,15 @@ public sealed class Chapter01M01PlayModeValidationTests
             AssertRenderingDisabledRecursive(em, em.GetComponentData<UnitMidLodInstanceReference>(entity).Instance, $"{label} mid LOD model");
         if (em.HasComponent<UnitLowLodInstanceReference>(entity))
             AssertRenderingDisabledRecursive(em, em.GetComponentData<UnitLowLodInstanceReference>(entity).Instance, $"{label} low LOD model");
+    }
+
+    private static bool HasActiveMissionResultPopup(GameObject appCanvas)
+    {
+        if (appCanvas == null)
+            return false;
+
+        WarlineCaptureMatchResultFlow flow = appCanvas.GetComponent<WarlineCaptureMatchResultFlow>();
+        return flow != null && flow.HasActivePopup;
     }
 
     private static void AssertRenderingDisabledRecursive(EntityManager em, Entity entity, string label)
@@ -516,8 +803,15 @@ public sealed class Chapter01M01PlayModeValidationTests
             File.Delete(capturePath);
 
         Camera camera = context.Bootstrap.WorldCamera;
+        Canvas appRootCanvas = appCanvas != null ? appCanvas.GetComponent<Canvas>() : null;
+        Assert.NotNull(appRootCanvas, "M01 public launch capture requires the WarlineCapture app canvas root.");
+
         RenderTexture previousTarget = camera.targetTexture;
         RenderTexture previousActive = RenderTexture.active;
+        RenderMode previousRenderMode = appRootCanvas.renderMode;
+        Camera previousCanvasCamera = appRootCanvas.worldCamera;
+        float previousPlaneDistance = appRootCanvas.planeDistance;
+        int previousSortingOrder = appRootCanvas.sortingOrder;
         RenderTexture renderTexture = new(width, height, 24, RenderTextureFormat.ARGB32);
         Texture2D texture = new(width, height, TextureFormat.RGBA32, false);
         try
@@ -525,6 +819,11 @@ public sealed class Chapter01M01PlayModeValidationTests
             camera.targetTexture = renderTexture;
             camera.aspect = width / (float)height;
             context.Bootstrap.ApplyM01ProductionCameraPoseForCurrentAspect();
+            appRootCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+            appRootCanvas.worldCamera = camera;
+            appRootCanvas.planeDistance = 1f;
+            appRootCanvas.sortingOrder = short.MaxValue;
+            Canvas.ForceUpdateCanvases();
             RenderTexture.active = renderTexture;
             camera.Render();
             texture.ReadPixels(new Rect(0f, 0f, renderTexture.width, renderTexture.height), 0, 0);
@@ -536,6 +835,10 @@ public sealed class Chapter01M01PlayModeValidationTests
             camera.targetTexture = previousTarget;
             RenderTexture.active = previousActive;
             camera.ResetAspect();
+            appRootCanvas.renderMode = previousRenderMode;
+            appRootCanvas.worldCamera = previousCanvasCamera;
+            appRootCanvas.planeDistance = previousPlaneDistance;
+            appRootCanvas.sortingOrder = previousSortingOrder;
             Object.DestroyImmediate(texture);
             renderTexture.Release();
             Object.DestroyImmediate(renderTexture);
@@ -603,10 +906,70 @@ public sealed class Chapter01M01PlayModeValidationTests
         RemoveIfPresent<UnitPathRetryCooldown>(em, player);
     }
 
+    private static void ForceProtectedEnemyAttackAttempt(M01SceneContext context)
+    {
+        EntityManager em = context.World.EntityManager;
+        LocalTransform playerTransform = em.GetComponentData<LocalTransform>(context.PlayerSquad);
+        int2 playerCell = em.GetComponentData<UnitGrid>(context.PlayerSquad).Cell;
+        if (em.HasComponent<EngageTarget>(context.EnemyPatrol))
+        {
+            em.SetComponentData(context.EnemyPatrol, new EngageTarget
+            {
+                Target = context.PlayerSquad,
+                Cell = playerCell,
+                Position = playerTransform.Position,
+                IsCommanded = 0
+            });
+        }
+        else
+        {
+            em.AddComponentData(context.EnemyPatrol, new EngageTarget
+            {
+                Target = context.PlayerSquad,
+                Cell = playerCell,
+                Position = playerTransform.Position,
+                IsCommanded = 0
+            });
+        }
+
+        UnitAttack attack = em.GetComponentData<UnitAttack>(context.EnemyPatrol);
+        attack.Range = 100f;
+        attack.Damage = Mathf.Max(attack.Damage, 25);
+        em.SetComponentData(context.EnemyPatrol, attack);
+        if (em.HasComponent<UnitAttackState>(context.EnemyPatrol))
+            em.SetComponentData(context.EnemyPatrol, new UnitAttackState { CooldownRemaining = 0f });
+    }
+
+    private static void IssueMoveToCover(M01SceneContext context)
+    {
+        Assert.IsTrue(context.Loader.TryGetAnchorCell("tutorial.move_target.cover_01", out Vector2Int coverCell), "M01 move-to-cover tutorial anchor should resolve.");
+        EntityManager em = context.World.EntityManager;
+        int2 targetCell = new(coverCell.x, coverCell.y);
+        if (em.HasComponent<UnitTarget>(context.PlayerSquad))
+            em.SetComponentData(context.PlayerSquad, new UnitTarget { Cell = targetCell });
+        else
+            em.AddComponentData(context.PlayerSquad, new UnitTarget { Cell = targetCell });
+
+        if (em.HasComponent<UnitPathRequest>(context.PlayerSquad))
+            em.SetComponentData(context.PlayerSquad, new UnitPathRequest { Goal = targetCell });
+        else
+            em.AddComponentData(context.PlayerSquad, new UnitPathRequest { Goal = targetCell });
+
+        if (!em.HasComponent<ManualMoveOrderTag>(context.PlayerSquad))
+            em.AddComponent<ManualMoveOrderTag>(context.PlayerSquad);
+
+        RemoveIfPresent<EngageTarget>(em, context.PlayerSquad);
+    }
+
     private static void InvokeAttackOrder(Entity player, Entity enemy, EntityManager em)
     {
         LocalTransform enemyTransform = em.GetComponentData<LocalTransform>(enemy);
         int2 enemyCell = em.GetComponentData<UnitGrid>(enemy).Cell;
+        RemoveIfPresent<ManualMoveOrderTag>(em, player);
+        RemoveIfPresent<UnitTarget>(em, player);
+        RemoveIfPresent<UnitPathRequest>(em, player);
+        RemoveIfPresent<UnitPathFollow>(em, player);
+        RemoveIfPresent<UnitPathRange>(em, player);
         if (em.HasComponent<EngageTarget>(player))
         {
             em.SetComponentData(player, new EngageTarget

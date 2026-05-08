@@ -70,6 +70,23 @@ public sealed class MissionRuntimeSpriteRendererRuntime : IComponentData
     public string CurrentSpriteId;
 }
 
+public sealed class MissionRuntimeAtlasQuadRuntime : IComponentData
+{
+    public GameObject Instance;
+    public MeshRenderer Renderer;
+    public MeshFilter MeshFilter;
+    public Material Material;
+    public MeshRenderer[] SoldierRenderers;
+    public Material[] SoldierMaterials;
+    public MeshRenderer SelectionRenderer;
+    public Material SelectionMaterial;
+    public MeshRenderer[] SelectionRenderers;
+    public Material[] SelectionMaterials;
+    public string CurrentSpriteId;
+    public int SoldierCount;
+    public float AnimationPhase;
+}
+
 public sealed class MissionRuntimeTerrainSurfaceRendererRuntime : IComponentData
 {
     public GameObject Instance;
@@ -85,4 +102,8 @@ public struct MissionRuntimePatrolRoute : IComponentData
     public byte WaypointCount;
     public byte CurrentWaypointIndex;
     public byte HoldAtEnd;
+}
+
+public struct MissionRuntimeOpeningControlProtection : IComponentData
+{
 }

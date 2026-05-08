@@ -10,6 +10,8 @@ Rerun focused Gate 4 after PM accepted Gameplay's manual M01 opening-control pro
 
 Do not ask PM/user for temporary art approval until this rerun confirms the route is stable enough for a relaxed art/readability review.
 
+Do not stay silent while marked active. If the rerun cannot start or cannot complete, write a blocker report immediately with the exact failed command, workspace, log path, missing dependency, or manual validation blocker.
+
 ## Waiting On
 
 UI report:
@@ -82,3 +84,21 @@ If a rerun finds blockers, write:
 `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
 
 Use the exact format from `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
+
+If the rerun cannot be executed, write:
+
+`Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun-blocked.md`
+
+Include:
+
+- Lane
+- Task
+- Files changed
+- Contracts touched
+- User-visible behavior
+- Validation run or attempted
+- Validation result
+- Known gaps
+- Cross-lane impacts
+- Next recommended task
+- Exact owner of the unblock action

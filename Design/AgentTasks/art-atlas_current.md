@@ -1,8 +1,8 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: P0 regenerate AAA gameplay visual target package with true isometric perspective
+Status: waiting
+Priority: true-isometric AAA gameplay visual target package delivered; waiting on PM/user approval
 
 ## Assignment
 
@@ -23,9 +23,11 @@ User review result:
 
 Regenerate the package with the same high-quality bar, but with a true isometric gameplay perspective.
 
-New expected replacement report:
+True-isometric replacement report delivered:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+
+PM/user approval is now required before downstream lanes move forward.
 
 Read first:
 
@@ -64,16 +66,16 @@ Read first:
 ## Waiting On
 
 Waiting on lane:
-none
+PM/user
 
 Owner of next action:
-Art/Atlas
+PM/user
 
-Can my lane still continue fallback work? no. Replace the non-isometric package first.
+Can my lane still continue fallback work? no. Wait for approval or rejection notes.
 
 ## Completion Report
 
-Write:
+Delivered:
 
 `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 

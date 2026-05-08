@@ -2,41 +2,30 @@
 
 Date: 2026-05-08
 
-The user clarified that Art/Atlas should create the M01 gameplay visual target mockups. There is no separate Visual Target agent ownership.
+The user rejected the gameplay visual target package. Treat this as a hard art-direction failure, not a small revision.
 
-Create the gameplay-only target package under:
+Rejected issues:
+
+- visual quality is far below the UI Visual Lock mockups,
+- inconsistent soldier sizes,
+- some soldiers appear half underground,
+- placeholder/low-quality assets,
+- inconsistent style and grounding,
+- not an AAA AI-generated mockup target.
+
+Create a new gameplay-only AAA visual target package under:
 
 `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
 
-Keep it separate from UI targets:
-
-- Do not put gameplay target files under `Design/VisualLock/`.
-- Do not put gameplay target files under `Design/VisualLockLayered/`.
-- Use UI mockups only for style alignment, not ownership.
-
-Reference for UI/HUD alignment:
+Use UI Visual Lock targets only as quality/style references:
 
 - `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
-- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
+- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_one_go/layers_contact_sheet.png`
 
-Required target package:
-
-- full M01 gameplay target or paintover,
-- soldier/building/road scale board,
-- selected-state marker target,
-- move/attack target marker target,
-- enemy readability target,
-- idle/run pose contact sheet guidance,
-- rejected bad-example sheet.
-
-User approval is required before anyone moves forward from your package. Your report must include short review steps:
-
-1. Open these target files.
-2. Compare these specific items.
-3. Answer approve or reject with notes.
+The new package must look like a high-quality production mockup target, not a placeholder board.
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
 
-Do not commit or push.
+Include short user review steps. Do not commit or push.

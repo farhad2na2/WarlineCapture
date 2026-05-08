@@ -57,3 +57,17 @@ Gameplay, Art/Atlas, and QA/HCI cannot claim final selected-readability visual a
 The package itself also requires explicit PM/user approval. Until the user approves the gameplay visual target package, downstream lanes must not treat it as the accepted visual bar.
 
 Every target package report must include a short `User Review Steps` section naming the exact files to open and the exact approve/reject decision needed.
+
+## Rejected Package
+
+The first package was rejected by the user for low quality, inconsistent soldier scale, poor grounding, placeholder assets, and not matching the AAA AI-generated quality bar of the UI Visual Lock targets.
+
+Rejected report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
+
+Replacement report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+
+The replacement must be a polished AAA gameplay mockup target, not a placeholder collage or board with inconsistent pasted assets.

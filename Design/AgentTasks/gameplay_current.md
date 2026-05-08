@@ -2,40 +2,34 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; waiting on PM/user approval of Art/Atlas gameplay visual target package
+Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; waiting on rejected Art/Atlas visual target replacement
 
 ## Assignment
 
-Gameplay delivered:
+Gameplay remains blocked from final selected-readability visual approval until Art/Atlas replaces the rejected gameplay visual target package.
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
-
-QA/HCI accepted it in:
-
-- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
-
-Art/Atlas delivered the gameplay visual target package:
+Rejected package:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 
-PM routed it for user review in:
+Waiting for replacement:
 
-- `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-visual-target-review.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Art/Atlas, then PM/user approval
 
-Waiting on exact decision:
+Waiting on exact report and decision:
 
-- approve gameplay visual target package
-- reject gameplay visual target package with notes
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+- PM/user approval of that replacement visual target package
 
 Owner of next action:
-PM/user
+Art/Atlas, then PM/user
 
 Can Gameplay continue fallback work? no
 

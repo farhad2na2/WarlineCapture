@@ -2,11 +2,15 @@
 
 Date: 2026-05-08
 Status: active
-Priority: P0 root README and Design index dedupe pass
+Priority: revise README dedupe to avoid canonicalizing unapproved offensive-command premise
 
 ## Assignment
 
-Continue the project-facing documentation optimization pass. The Designer lane setup is accepted; the next task is to reduce duplication between the root `README.md` and `Design/README.md`.
+Revise the README/design-index dedupe handoff after PM review.
+
+The dedupe structure is directionally correct, but the current root README diff also promotes the offensive-command premise as canonical. PM has not accepted that premise yet because it requires PM/user decision first.
+
+Keep the root README as a concise project entry point and `Design/README.md` as the complete design index, but do not make the offensive-command premise canonical unless PM/user explicitly accepts it.
 
 Focus on documentation structure and clarity, not implementation. Do not edit gameplay/UI source, Unity prefabs, captures, or runtime assets.
 
@@ -17,6 +21,7 @@ Focus on documentation structure and clarity, not implementation. Do not edit ga
 - Keep `Design/README.md` as the complete design index.
 - Remove or shorten duplicated long inventories from the root README when `Design/README.md` already owns the complete list.
 - Preserve useful top-level context already added to the root README: Saga/Operation/Quick Custom structure, 2D isometric tactical/strategic split, and Designer workflow link.
+- Remove, neutralize, or clearly mark as pending any root README wording that makes `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md` the accepted product premise before PM/user approval.
 - Preserve active contracts and current lane ownership. Do not change product scope, M01 Gate 4 criteria, agent ownership, validation requirements, or current lane priorities unless PM explicitly asks.
 - The root `README.md` contains uncommitted documentation-only changes. Work with those changes; do not revert them.
 
@@ -33,6 +38,9 @@ Read first:
 - `Design/WarlineCapture_Agent_Coordination_Workflow.md`
 - `Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`
 - `Design/AgentReports/2026-05-08_pm_designer-docs-readme-optimization-review.md`
+- `Design/AgentReports/2026-05-08_designer_readme-design-index-dedupe.md`
+- `Design/AgentReports/2026-05-08_pm_designer-readme-dedupe-review.md`
+- `Design/AgentReports/2026-05-08_pm_designer-offensive-command-premise-review.md`
 
 ## Validation Required
 
@@ -51,7 +59,7 @@ Read first:
 
 Write the report to:
 
-`Design/AgentReports/2026-05-08_designer_readme-design-index-dedupe.md`
+`Design/AgentReports/2026-05-08_designer_readme-dedupe-neutral-premise.md`
 
 Use the standard WarlineCapture handoff format and include:
 

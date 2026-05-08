@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting for Gameplay/Art selected first-control readability fixes
+Priority: no current Support/FTUE action; waiting for Gameplay individual-soldier source/layout fix
 
 ## Assignment
 
-Stand by while Gameplay and Art/Atlas fix selected first-control readability after PM rejected the QA captures.
+Stand by while Gameplay fixes selected first-control readability after PM rejected the QA captures. Art/Atlas has confirmed the source issue.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -43,7 +43,6 @@ QA/HCI owns:
 ## Waiting On
 
 - `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 ## Guardrails While Waiting
 

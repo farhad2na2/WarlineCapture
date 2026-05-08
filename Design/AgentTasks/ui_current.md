@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current UI action; waiting for Gameplay/Art selected first-control readability fixes
+Priority: no current UI action; waiting for Gameplay individual-soldier source/layout fix
 
 ## Assignment
 
-Stand by while Gameplay and Art/Atlas fix selected first-control readability after PM rejected the QA captures.
+Stand by while Gameplay fixes selected first-control readability after PM rejected the QA captures. Art/Atlas has confirmed the source issue.
 
 UI has delivered and PM accepted the infantry-only HUD scope fix:
 
@@ -18,15 +18,14 @@ Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD re
 ## Waiting On
 
 Waiting on lane:
-Gameplay, Art/Atlas, then QA/HCI
+Gameplay, then QA/HCI
 
 Waiting on exact file/report/decision:
 
 - `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 Owner of next action:
-Gameplay and Art/Atlas.
+Gameplay.
 
 Can my lane still continue fallback work? no
 
@@ -61,8 +60,9 @@ No new UI validation is required while waiting. If QA/HCI reports a concrete UI 
 
 ## Cross-Lane Notes
 
-- Gameplay/Art owns world-scale unit readability, four-soldier presentation, selected marker clarity, projectile scale, and atlas art readiness.
-- QA/HCI owns final Gate 4 rerun after UI and Gameplay/Art fixes land.
+- Gameplay owns the current individual-soldier source/layout and selected-marker readability fix.
+- Art/Atlas owns final art readiness, but its current individual-soldier source review is accepted and waiting on Gameplay.
+- QA/HCI owns final Gate 4 rerun after Gameplay lands the source/layout fix.
 - Support/FTUE owns no action unless QA/HCI finds assistant, Stop, Show Me, result explanation, or invalid-command recovery issues.
 
 ## Completion Report

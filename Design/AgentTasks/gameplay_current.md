@@ -12,6 +12,8 @@ Read first:
 
 - `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
 - `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
+- `Design/AgentReports/2026-05-08_pm_art-atlas-individual-soldier-frame-review.md`
 - `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
 - `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
 
@@ -22,6 +24,14 @@ Do not start M02-M05, vehicles, base/build mechanics, broad combat rebalance, or
 Fix the selected first-control public composition:
 
 - The player squad must read as four distinct individual soldiers, not a crowded duplicated blob/cluster.
+- Replace the current group-sprite source. Art/Atlas found `unit.player.rifle_squad_01` and `unit.enemy.patrol_01` still resolve to `Assets/Game/Art/Generated/IsometricMaps/TacticalProductionBatch_A/Sprites/infantry_squad.png`, so duplicating it creates mini-squads.
+- Use individual `Unit_Chr_Soldier_Male_02` cells from `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png`.
+- Minimum temporary state mapping:
+  - `unit.player.rifle_squad_01.idle` -> `Unit_Chr_Soldier_Male_02_Idle_SE`
+  - `unit.player.rifle_squad_01.move` -> `Unit_Chr_Soldier_Male_02_Run_SE` or `Unit_Chr_Soldier_Male_02_Walk_SE`
+  - `unit.player.rifle_squad_01.attack` -> `Unit_Chr_Soldier_Male_02_Aim_SE` or `Unit_Chr_Soldier_Male_02_Fire_SE`
+  - `unit.player.rifle_squad_01.damaged` -> `Unit_Chr_Soldier_Male_02_Hit_SE`
+  - destroyed/death remains atlas-state based; do not reintroduce separate `Destroyed` child visuals.
 - Soldier spacing/layout must be readable at public 16:9 and 20:9 gameplay scale.
 - Selected-state treatment must be visible as small grounded markers under/near each soldier.
 - The selected markers must not become huge overlays or unclear blue/green UI-like effects.
@@ -35,7 +45,7 @@ Fix the selected first-control public composition:
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas may need to confirm individual-soldier frame/source readiness, but Gameplay can begin layout/marker visibility fixes now.
+none. Art/Atlas has identified the exact source issue.
 
 Owner of next action:
 Gameplay

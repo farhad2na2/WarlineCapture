@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: accepted M01 metric scale/readability contract; waiting for Gameplay/Art selected readability fixes
+Priority: accepted M01 metric scale/readability contract; waiting for Gameplay individual-soldier source/layout fix
 
 ## Assignment
 
-Wait for Gameplay and Art/Atlas to fix selected first-control readability after PM rejected the QA captures.
+Wait for Gameplay to fix selected first-control readability after PM rejected the QA captures. Art/Atlas has confirmed the source issue.
 
 Designer delivered:
 
@@ -21,15 +21,14 @@ Do not start another broad documentation rewrite, canonicalize the offensive-com
 ## Waiting On
 
 Waiting on lane:
-Gameplay and Art/Atlas, then QA/HCI
+Gameplay, then QA/HCI
 
 Waiting on exact report:
 
 - `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
 
 Owner of next action:
-Gameplay and Art/Atlas
+Gameplay
 
 Can my lane still continue fallback work? no
 

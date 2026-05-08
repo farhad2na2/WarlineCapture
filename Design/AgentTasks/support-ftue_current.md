@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no concrete assistant/FTUE issue from accepted QA/HCI rerun; waiting for PM/user temporary-art decision
+Priority: no current Support/FTUE action; waiting for rejected temporary-art fixes by Art/Atlas, Designer, and Gameplay
 
 ## Assignment
 
-Stand by while PM/user decides temporary Gate 4 infantry art.
+Stand by while Art/Atlas, Designer, and Gameplay handle the rejected temporary-art/runtime review.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -18,23 +18,23 @@ UI owns:
 
 - M01 HUD showing APC, Tank, air support, Build, vehicle production, transport, or base/build affordances in an infantry-only tutorial.
 
-Gameplay has delivered:
+Gameplay now owns rejected-runtime fixes:
 
-- manual M01 opening-control proof so the player can wait, select, and move before hostile fire kills or critically damages the squad
-- public camera-scale readability of four distinct soldiers under one squad identity
-- selected-state clarity in the world
-- projectile/impact visual scale assertions
+- remove SpriteRenderer-era unit presentation/naming from the public M01 unit path
+- consume automated scale rules
+- replace huge/unclear selection markers
+- calibrate realistic infantry movement speed
+- prove run animation while moving
 
-Art/Atlas has delivered:
+Art/Atlas now owns rejected-art fixes:
 
-- temporary-art approval package
-- player/enemy infantry atlas state coverage
-- selected-state visual treatment source art
-- destroyed/death atlas-state art
+- metric scale/readability package for infantry and visible M01 buildings/decor
+- selected-state art treatment source
+- confirmation that run frames and destroyed/death atlas states are covered or blocked
 
-PM/user later owns:
+PM/user already rejected:
 
-- approve or reject the temporary M01 infantry art package only after Gameplay proves the review route is stable
+- temporary Gate 4 art/runtime review
 
 QA/HCI owns:
 
@@ -42,11 +42,10 @@ QA/HCI owns:
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
-- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
-- `Design/AgentReports/2026-05-08_pm_gameplay-m01-manual-opening-control-review.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-rejected-temp-art-scale-readability.md`
+- `Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
 
 ## Guardrails While Waiting
 

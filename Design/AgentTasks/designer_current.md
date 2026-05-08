@@ -1,61 +1,54 @@
 # Designer Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: accepted README/design-index dedupe; waiting for next PM documentation priority
+Status: active
+Priority: P0 M01 metric scale/readability contract after rejected temporary art
 
 ## Assignment
 
-Wait for the next PM documentation priority.
-
-Designer delivered the neutral-premise README/design-index dedupe:
-
-- `Design/AgentReports/2026-05-08_designer_readme-dedupe-neutral-premise.md`
-
-PM accepted it in:
-
-- `Design/AgentReports/2026-05-08_pm_designer-readme-dedupe-neutral-premise-review.md`
-
-Focus on documentation structure and clarity, not implementation. Do not edit gameplay/UI source, Unity prefabs, captures, or runtime assets.
-
-## Required Work
-
-- Do not start another broad documentation rewrite without PM/user assignment.
-- Do not canonicalize the offensive-command premise unless PM/user explicitly accepts it.
-- Preserve active contracts and current lane ownership. Do not change product scope, M01 Gate 4 criteria, agent ownership, validation requirements, or current lane priorities unless PM explicitly asks.
-
-## Current Accepted Inputs
+The user rejected temporary Gate 4 art partly because scale and readability were not contract-driven. Designer must provide a concise design contract so Art/Atlas and Gameplay do not guess.
 
 Read first:
 
-- `README.md`
-- `Design/README.md`
-- `Design/AgentTasks/README.md`
-- `Design/AgentTasks/pm_heartbeat.md`
+- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
+- `Design/AgentTasks/designer_pm_message.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-- `Design/WarlineCapture_Agent_Coordination_Workflow.md`
-- `Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`
-- `Design/AgentReports/2026-05-08_pm_designer-docs-readme-optimization-review.md`
-- `Design/AgentReports/2026-05-08_designer_readme-design-index-dedupe.md`
-- `Design/AgentReports/2026-05-08_pm_designer-readme-dedupe-review.md`
-- `Design/AgentReports/2026-05-08_pm_designer-offensive-command-premise-review.md`
+- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
 
-## Validation Required
+Focus on documentation/contract clarity, not implementation. Do not edit gameplay/UI source, Unity prefabs, captures, or other lane task files.
 
-No new Designer validation is required while waiting.
+## Required Work
+
+- Define concise M01 tactical scale/readability rules.
+- Use the user's anchors: soldier about `1.8m`, building door about `2.3m`, road/context as calibration.
+- State how buildings should scale from doors/footprint/readability instead of tiny decor values.
+- State selection treatment should be small, grounded, under each soldier or equivalent subtle readable treatment.
+- State movement should look like realistic soldier movement and must animate while moving.
+- State public M01 unit visuals must be ECS entity / atlas-backed and must not expose SpriteRenderer unit presentation as the accepted path.
+
+## Waiting On
+
+Waiting on lane:
+none
+
+Owner of next action:
+Designer
+
+Can my lane still continue fallback work? yes, only the required contract above.
 
 ## Cross-Lane Notes
 
+- Art/Atlas consumes the scale/readability contract for asset recommendations.
+- Gameplay consumes the scale/readability contract for runtime scale, marker, speed, and animation implementation.
+- QA/HCI consumes the contract for the next Gate 4 rerun.
 - PM owns final acceptance and commit/push.
-- Designer may propose docs cleanup that affects all lanes, but PM decides whether to route it immediately or defer it.
-- Designer must not modify `Design/AgentTasks/*_current.md` except `designer_current.md` unless PM explicitly assigns a routing update.
 
 ## Completion Report
 
-If PM/user assigns new Designer work, write the report to:
+Write:
 
-`Design/AgentReports/2026-05-08_designer_<specific-task>.md`
+`Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
 
 Use the standard WarlineCapture handoff format and include:
 

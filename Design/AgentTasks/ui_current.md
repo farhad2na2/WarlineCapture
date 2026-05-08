@@ -2,30 +2,30 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: accepted QA/HCI focused rerun; waiting for PM/user temporary-art decision
+Priority: no current UI action; waiting for rejected temporary-art fixes by Art/Atlas, Designer, and Gameplay
 
 ## Assignment
 
-Wait for PM/user temporary-art decision.
+Stand by while Art/Atlas, Designer, and Gameplay handle the rejected temporary-art/runtime review.
 
 UI has delivered and PM accepted the infantry-only HUD scope fix:
 
 - `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
 - `Design/AgentReports/2026-05-08_pm_ui-m01-infantry-only-hud-scope-review.md`
 
-Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD redesign, or unrelated polish.
+Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD redesign, or unrelated polish. Re-engage only if QA/HCI reports a concrete HUD/UI regression after the rejected-art fixes land.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Art/Atlas, Designer, Gameplay, then QA/HCI
 
 Waiting on exact file/report/decision:
 
-- approve or reject temporary Gate 4 infantry art
+- rejected temporary Gate 4 art/runtime fixes and QA/HCI rerun
 
 Owner of next action:
-PM/user owns the temporary-art decision.
+Art/Atlas, Designer, Gameplay, then QA/HCI.
 
 Can my lane still continue fallback work? no
 

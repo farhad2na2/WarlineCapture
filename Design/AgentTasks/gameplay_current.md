@@ -1,134 +1,95 @@
 # Gameplay Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: accepted QA/HCI focused rerun; waiting for PM/user temporary-art decision
+Status: active
+Priority: P0 rejected temporary Gate 4 runtime: ECS-only visuals, scale, selection, motion
 
 ## Assignment
 
-Wait for PM/user temporary-art decision.
+The user rejected the temporary Gate 4 art/runtime review. Gameplay must fix and prove the public M01 runtime before QA/HCI or PM asks the user to review again.
 
-Gameplay has delivered the focused manual opening-control fix/proof:
+Read first:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
+- `Design/AgentTasks/gameplay_pm_message.md`
+- `Design/AgentTasks/art-atlas_current.md`
+- `Design/AgentTasks/designer_current.md`
+- `Design/AgentTasks/M01_CRITICAL_PATH.md`
+- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 
-PM accepted it for QA/HCI rerun in:
+Do not start M02-M05, vehicles, base/build mechanics, broad combat rebalance, or unrelated polish.
 
-- `Design/AgentReports/2026-05-08_pm_gameplay-m01-manual-opening-control-review.md`
+## Required Behavior
 
-QA/HCI delivered and PM accepted the focused rerun:
+M01 First Contact must open with a believable readable infantry teaching sequence:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-gate4-final-rerun-review.md`
+- Visible public M01 units are ECS entity / atlas-backed presentation, not Unity `SpriteRenderer` public unit visuals.
+- Remove or replace SpriteRenderer-era runtime naming and components for public M01 unit visuals, including the user-visible `M01RuntimeSpriteRenderers` smell.
+- `MissionRuntimeSpriteRendererRuntime` must not be an accepted public M01 unit presentation path.
+- Existing prefab/config identity may remain as authoring/data source, but visible child `Model` and separate child `Destroyed` runtime visual dependencies must not be used for public M01 units.
+- Scale is automated/contract-driven from Art/Atlas/Designer scale roles, not tiny hardcoded/readability multipliers.
+- Soldier scale must read near the user's expected `~0.2` target after metric calibration, unless a scale contract proves a better value.
+- Building/decor scale must be calibrated from door/building/road context and must not stay around tiny `0.14` values if visible in the M01 review composition.
+- Selection state must be small and grounded under each soldier or equivalent subtle readable treatment.
+- No huge green marker covering the screen.
+- No unclear blue marker unless Art/Atlas/QA accepts a defined purpose.
+- Player rifle squad movement speed must read as realistic soldier movement, not teleporting.
+- Movement must use intended tactical pathing metadata.
+- The rifle squad must visibly animate while moving/running.
+- Enemy projectile/impact visuals must remain tactical-scale and not oversized arcade bullets.
+- M01 remains infantry-only: one player rifle squad type, one enemy patrol type, no player vehicles, no vehicle production, no transport, no base/build mechanics.
 
-Gameplay has delivered the current M01 public first-control readability and selected-marker handoff:
+## Required Validation
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-unit-readability-selection-art.md`
+Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` unless PM routes otherwise.
 
-PM previously accepted it as temporary-art/runtime readability integration evidence in:
+Run focused validation that proves:
 
-- `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-readability-review.md`
+- Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy still works.
+- The player can wait briefly, select the rifle squad, move to cover, attack the patrol, and reach result popup.
+- The public M01 unit visuals have no active Unity `SpriteRenderer` components and no `MissionRuntimeSpriteRendererRuntime` component for player/enemy unit visuals.
+- Public captures no longer expose `M01RuntimeSpriteRenderers` / SpriteRenderer-era naming for unit presentation.
+- Selection markers stay under/near individual soldiers and do not cover the screen.
+- Movement speed is bounded/calibrated from config and reads like infantry movement.
+- Run/move atlas animation visibly advances while moving.
+- M01 remains infantry-only.
 
-Do not start M02-M05, broaden combat rebalance, add vehicle work, add base/build mechanics, or do unrelated visual polish.
+If any of this cannot be proven, write a blocker report instead of a completion report.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
-
-Waiting on exact file/report/decision:
-
-- approve or reject temporary Gate 4 infantry art
+Art/Atlas and Designer inputs are useful but do not block initial runtime cleanup.
 
 Owner of next action:
-PM/user owns the temporary-art decision.
+Gameplay
 
-Can my lane still continue fallback work? no
-
-## Required Behavior
-
-M01 First Contact must open with a readable infantry teaching sequence:
-
-- Player can immediately understand they control `unit.player.rifle_squad_01`.
-- The player must be able to wait briefly after Deploy without the hostile patrol killing or critically damaging the squad.
-- The rifle squad reads as four distinct soldiers under one command/squad identity at actual public gameplay camera scale.
-- Selection produces a clear world selected state after selecting the squad: ring, outline, marker, grounding treatment, or equivalent that is readable in public captures.
-- The selected state must remain consistent with the existing HUD selected state.
-- Player can issue a move order toward `tutorial.move_target.cover_01`.
-- Movement uses intended tactical walkable metadata/pathing.
-- Attack and result flow remain reachable.
-- Enemy projectile/impact visuals remain tactical-scale and do not regress into oversized bullets.
-- Visible M01 infantry remains ECS runtime atlas-backed presentation through the accepted `MissionRuntimeAtlasQuadRuntime` path, not `MissionRuntimeSpriteRendererRuntime`, legacy visible `Model`, or separate child `Destroyed` runtime dependency.
-- M01 remains infantry-only: one player rifle squad type, one enemy patrol type, no player vehicles, no player vehicle production, no transport, no base/build mechanics.
-
-## Art/Atlas Dependency
-
-Art/Atlas owns the asset/readiness package:
-
-- `Design/AgentTasks/art-atlas_current.md`
-- Expected report: `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
-
-Gameplay has already integrated the current temporary package enough to produce public selected first-control captures, but PM/user manual review found the route is not safe enough for review. Do not ask for temporary art approval again until this manual opening-control blocker is fixed/proven.
-
-Do not claim final visual/art readiness unless the Art/Atlas report says final-ready or PM/user explicitly accepts the temporary-art package.
-
-## Current Accepted Inputs
-
-Read first:
-
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-focused-rerun.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-gate4-focused-rerun-review.md`
-- `Design/AgentReports/2026-05-08_gameplay_m01-opening-control-window.md`
-- `Design/AgentReports/2026-05-08_qa-hci_gameplay-m01-opening-control-window-validation.md`
-- `Design/AgentTasks/M01_CRITICAL_PATH.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-
-Accepted but not sufficient for final Gate 4:
-
-- automated public golden path to result popup
-- opening-control protection test
-- ECS atlas architecture assertions
-- four-soldier renderer count assertions
-- tactical projectile trace assertions
-
-The current task is about player-facing readability and art readiness in the public first-control composition.
-
-## Validation Required
-
-No new Gameplay validation is required while waiting. If QA/HCI reports a concrete Gameplay regression, use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` and rerun focused validation for the affected public M01 route, golden path, ECS atlas presentation, selected state, infantry-only scope, scene-search guardrail, and public captures.
-
-Required proof:
-
-- Open/deploy M01 through the same public route the user reviews.
-- Let the mission run briefly without input after Deploy.
-- Confirm the hostile patrol cannot kill or critically damage the rifle squad before selection/first move.
-- Select the rifle squad.
-- Issue the first move toward `tutorial.move_target.cover_01`.
-- Confirm the squad remains alive and controllable through the first move.
-- Then confirm attack/objective/result flow remains reachable.
+Can my lane still continue fallback work? yes, only the required work above.
 
 ## Cross-Lane Notes
 
-- UI HUD scope handoff is accepted by PM, but QA/HCI may still report concrete UI findings after the next rerun.
-- QA/HCI owns final Gate 4 rerun after this Gameplay proof.
-- Support/FTUE owns no action unless the next QA/HCI pass finds assistant, Stop, Show Me, result explanation, or invalid-command recovery issues.
+- Art/Atlas owns scale/readability art package and selected-state art treatment source.
+- Designer owns concise metric scale/readability contract.
+- QA/HCI reruns only after Gameplay, Art/Atlas, and Designer reports land.
+- UI owns no current follow-up unless QA/HCI finds a HUD regression.
+- Support/FTUE owns no current follow-up unless QA/HCI finds assistant/FTUE regression.
 
 ## Completion Report
 
-If new Gameplay follow-up work is assigned, write the report to:
+Write:
 
-`Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+`Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`
 
 Use the exact format from `Design/WarlineCapture_Agent_Coordination_Workflow.md`, and include:
 
-- squad readability before/after
-- manual opening-control behavior before/after
-- selected-marker implementation before/after
-- Art/Atlas package consumed, pending, or blocked
+- SpriteRenderer/proxy removal proof
+- ECS atlas presentation proof
+- automated scale consumption and target values
+- selected-marker before/after
+- movement speed before/after
+- run animation proof
 - files changed
 - validation command and result
-- generated capture paths, if any
-- golden playthrough impact
+- generated capture paths
 - confirmation that M01 remains infantry-only
-- confirmation that ECS atlas presentation remains the public visible path
 - known gaps or blocked steps

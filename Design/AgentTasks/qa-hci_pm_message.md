@@ -1,27 +1,23 @@
 # PM Message To QA/HCI
 
 Date: 2026-05-08
+Priority: wait for rejected-art fixes
 
-QA/HCI is blocking the project while marked active.
+The user rejected the temporary Gate 4 art/runtime review. Read:
 
-Do one of these now:
+- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
+- `Design/AgentTasks/qa-hci_current.md`
 
-1. If you ran the focused Gate 4 rerun, write:
-   `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+Do not rerun yet.
 
-2. If you cannot run it, write:
-   `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun-blocked.md`
+Wait for these reports:
 
-Use this workspace:
+- `Design/AgentReports/2026-05-08_art-atlas_m01-rejected-temp-art-scale-readability.md`
+- `Design/AgentReports/2026-05-08_designer_m01-metric-scale-readability-contract.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-scale-selection-motion-fix.md`
 
-`/Users/farhad/Projects/WarlineCapture-CodexUnity3`
+Then rerun focused Gate 4 validation and write:
 
-If blocked, include:
+`Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
 
-- exact command attempted
-- workspace used
-- log path
-- exact failure reason
-- who owns the unblock action
-
-Do not stay silent while `qa-hci_current.md` says `Status: active`.
+Do not commit or push.

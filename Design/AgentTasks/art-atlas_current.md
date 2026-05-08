@@ -1,18 +1,22 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: P0 rejected gameplay visual target package; create AAA Visual Lock quality AI-generated M01 gameplay mockup targets
+Status: waiting
+Priority: AAA gameplay visual target package delivered; waiting on PM/user approval
 
 ## Assignment
 
-The user rejected the M01 gameplay visual target package as low quality and inconsistent.
+The user rejected the first M01 gameplay visual target package as low quality and inconsistent.
 
 Rejected package:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 
-Create a new AAA-quality gameplay visual target package that matches the production level of the existing UI Visual Lock targets.
+Replacement package delivered:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+
+PM/user approval is now required before downstream lanes move forward.
 
 Read first:
 
@@ -25,7 +29,7 @@ Read first:
   - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
   - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_one_go/layers_contact_sheet.png`
 
-## Required Behavior
+## Required Behavior For Approval
 
 - Produce high-quality AI-generated or AI-assisted gameplay target mockups, not placeholder collages.
 - The target must look like an AAA production visual target, comparable in polish to the UI Visual Lock targets.
@@ -49,16 +53,16 @@ Read first:
 ## Waiting On
 
 Waiting on lane:
-none
+PM/user
 
 Owner of next action:
-Art/Atlas
+PM/user
 
-Can my lane still continue fallback work? no. Replace the rejected package first.
+Can my lane still continue fallback work? no. Wait for approval or rejection notes.
 
 ## Completion Report
 
-Write:
+Delivered:
 
 `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
 

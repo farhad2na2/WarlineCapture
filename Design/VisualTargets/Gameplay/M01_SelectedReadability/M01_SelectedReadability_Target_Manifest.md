@@ -5,29 +5,29 @@ Owner: Art/Atlas
 
 ## Target Files
 
-- `M01_SelectedReadability_Gameplay_Target.png` - full in-world gameplay target / paintover board.
-- `M01_SelectedReadability_Scale_Board.png` - soldier, road, building, and marker scale board.
-- `M01_SelectedReadability_Selected_Marker_Target.png` - per-soldier selected-state marker target.
-- `M01_SelectedReadability_Move_Attack_Marker_Target.png` - move and attack marker target sizing.
-- `M01_SelectedReadability_Enemy_Readability_Target.png` - friendly/enemy readability and rejected enemy artifact guidance.
-- `M01_SelectedReadability_Idle_Run_Pose_Guide.png` - acceptable idle/walk/run/aim rows and rejected hit/death usage.
-- `M01_SelectedReadability_Rejected_Bad_Examples.png` - named visual cases that must not reappear.
+- `M01_SelectedReadability_AAA_AI_Source.png` - resized source frame from the AI-generated AAA gameplay mockup.
+- `M01_SelectedReadability_Gameplay_Target.png` - polished in-world M01 gameplay target.
+- `M01_SelectedReadability_Scale_Board.png` - scale and grounding target using believable road/building/soldier relationships.
+- `M01_SelectedReadability_Selected_Marker_Target.png` - selected-state target with consistent soldiers and cyan grounded contact rings.
+- `M01_SelectedReadability_Move_Attack_Marker_Target.png` - move and attack marker target using amber and red ground-plane tactical feedback.
+- `M01_SelectedReadability_Enemy_Readability_Target.png` - enemy readability target with restrained hostile markers and consistent lighting.
+- `M01_SelectedReadability_Idle_Run_Pose_Guide.png` - high-quality pose/contact guidance from the same gameplay mockup.
+- `M01_SelectedReadability_Rejected_Bad_Examples.png` - compact rejected-case sheet for known failure modes.
 
 ## Source References Used
 
-- `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png`
-- `Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/selection_ring.png`
-- `Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/move_destination_ring.png`
-- `Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/attack_target_ring.png`
-- `Design/AgentReports/Captures/2026-05-08_m01-public-launch/campaign-public-m01-selected-first-control.png`
 - `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
+- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_one_go/layers_contact_sheet.png`
+- Built-in image generation output copied into this package as `M01_SelectedReadability_AAA_AI_Source.png`.
+- Prompt intent: AAA isometric RTS M01 selected-readability gameplay mockup with consistent soldiers, grounded selection rings, amber move marker, red hostile markers, no HUD, no text, no yellow square, no giant green marker, no buried/floating/squashed soldiers.
 
 ## Acceptance Checks
 
 - Runtime capture should align to the target boards before another selected-readability approval request.
 - Unit visuals must be ECS/atlas-backed and not accepted through visible renderer-wrapper GameObjects.
-- Infantry scale should read near the 0.15 target and preserve aspect ratio.
-- Selected state should use small per-soldier warm grounded rings/brackets/contact marks, not yellow squares.
-- Move/attack markers should read around two soldier footsteps wide.
-- Alive enemy patrol must use standing/walking/aiming rows with restrained hostile tint, not hit/death/sitting artifacts.
-- Normal movement must use walk/run rows and must not sample adjacent-cell foot/top artifacts.
+- Infantry scale should stay consistent across the squad and read correctly against road lanes, sidewalks, and buildings.
+- Selected state should use subtle grounded cyan contact rings/brackets; reject yellow squares, half-buried feet, and giant selection blobs.
+- Move marker should be an amber ground-plane destination cue that does not cover units or terrain context.
+- Attack marker should use restrained red hostile ground-plane feedback around enemies, not over-tinting or floating marks.
+- Enemy readability should preserve standing silhouettes, consistent lighting, and believable perspective.
+- Bad-example cases remain rejected: huge green marker, yellow square, squashed soldier, half underground, red sitting artifact, and mixed-size squad.

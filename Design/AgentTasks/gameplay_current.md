@@ -12,6 +12,9 @@ Read first:
 
 - `Design/AgentReports/2026-05-08_pm_game-legecy-scene-accepted.md`
 - `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
+- `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
+- `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
 - `Design/AgentTasks/gameplay_pm_message.md`
 - `Design/AgentTasks/user_feedback_review_gate.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
@@ -47,7 +50,7 @@ Read first:
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas for marker/animation/scale art package if required.
+none. Art/Atlas, Designer, and UI have delivered their current inputs.
 
 Owner of next action:
 Gameplay

@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting on M01 rejection gate fixes from Gameplay, Art/Atlas, UI, Designer, and QA/HCI
+Priority: no current Support/FTUE action; waiting on M01 rejection gate fixes from Gameplay and QA/HCI
 
 ## Assignment
 
@@ -26,20 +26,7 @@ Gameplay owns:
 - red artifact/enemy fix,
 - scale/aspect application.
 
-Art/Atlas owns:
-
-- marker art,
-- idle/run frame mapping,
-- scale/aspect guidance,
-- enemy/artifact visual guidance.
-
-UI owns:
-
-- marker/selection overlay ownership audit and fix if UI-owned.
-
-Designer owns:
-
-- rejection-informed visual scale/readability contract refresh.
+Art/Atlas, UI, and Designer have delivered their current inputs and are waiting on Gameplay/QA.
 
 QA/HCI owns:
 
@@ -48,9 +35,6 @@ QA/HCI owns:
 ## Waiting On
 
 - `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
-- `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
-- `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 - `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
 
 ## Guardrails While Waiting

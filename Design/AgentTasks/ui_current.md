@@ -1,47 +1,42 @@
 # UI Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: P0 audit M01 target/selection overlay ownership after user rejection
+Status: waiting
+Priority: UI marker/selection overlay audit delivered; waiting on Gameplay runtime marker/selection implementation and QA/HCI feedback matrix
 
 ## Assignment
 
-Audit whether UI owns any part of the huge green target marker, selected-state marker, unit selection affordance, or placeholder square seen in the rejected M01 review.
+UI delivered the marker/selection overlay ownership audit:
 
-Read first:
+- `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
 
-- `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
-- `Design/AgentTasks/user_feedback_review_gate.md`
-- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+PM accepted the UI-owned portion in:
 
-## Required Behavior
+- `Design/AgentReports/2026-05-08_pm_selected-readability-lane-handoffs-review.md`
 
-- If UI owns the huge green target marker, make or route the fix so it is about two soldier footsteps wide and does not cover units or the screen.
-- If UI owns the selected-state marker or placeholder yellow square, make or route the fix so the marker is small, under each soldier/footprint, and not placeholder-looking.
-- If UI owns selection affordance/hit feedback, ensure selecting a soldier does not require clicking only foot pixels.
-- If UI does not own these issues, write a short report naming the owning lane and evidence.
-- Do not broaden to M02, vehicles, build UI, or unrelated HUD redesign.
+Remaining selected marker square, target/move/attack runtime placement, and click-affordance issues are Gameplay-owned with Art/Atlas style input.
 
-## Validation Required
-
-- Inspect affected UI/world-overlay code and prefab ownership.
-- If UI changes are made, validate the public M01 route and include capture paths.
-- If no UI change is needed, report why and who owns the fix.
+Do not broaden to M02, vehicles, build UI, or unrelated HUD redesign unless PM assigns a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-none
+Gameplay and QA/HCI
+
+Waiting on exact reports:
+
+- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
+- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
 
 Owner of next action:
-UI
+Gameplay, then QA/HCI
 
-Can UI continue fallback work? yes, only this ownership audit/fix.
+Can UI continue fallback work? no
 
 ## Completion Report
 
-Write:
+If PM assigns a concrete UI follow-up, write:
 
-`Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
+`Design/AgentReports/2026-05-08_ui_<specific-followup>.md`
 
 Use the standard WarlineCapture handoff format.

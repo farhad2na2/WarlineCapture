@@ -11,6 +11,10 @@ Create the rejection-aware QA gate for the latest user feedback and use it for t
 Read first:
 
 - `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
+- `Design/AgentReports/2026-05-08_pm_selected-readability-lane-handoffs-review.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
+- `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
+- `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
 - `Design/AgentTasks/qa-hci_pm_message.md`
 - `Design/AgentTasks/user_feedback_review_gate.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
@@ -41,7 +45,7 @@ The next QA validation must explicitly prove:
 ## Waiting On
 
 Waiting on lane:
-Gameplay and Art/Atlas implementation reports for final validation.
+Gameplay for final implementation validation. Do not wait to write the regression gate/checklist report.
 
 Owner of next action:
 QA/HCI, to prepare the gate now and validate when fixes land.

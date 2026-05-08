@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa52095b99a8a4e55a8d351a0910cd08, type: 3}
+  m_Name: Game_GameStrings_Config
+  m_EditorClassIdentifier: 
+  entries:
+  - key: confirm_destroy
+    value: Are you sure you want to destroy {0}?
+  - key: not_enough_money
+    value: Not enough money
+  - key: create_first
+    value: Create {0} first
+  - key: drag_building_to_final_position
+    value: Drag to final position
+  - key: warning_ground_attack_type
+    value: Ground vehicle attack detected
+  - key: warning_air_attack_type
+    value: Air attack detected
+  - key: warning_attack_eta_seconds
+    value: 'Estimated time to base: {0} seconds'

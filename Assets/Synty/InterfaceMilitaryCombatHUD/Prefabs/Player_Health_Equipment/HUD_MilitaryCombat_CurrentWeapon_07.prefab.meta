@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: a85422aba01cbee40aa888990a5d0a4a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Player_Health_Equipment/HUD_MilitaryCombat_CurrentWeapon_07.prefab
+  uploadId: 782058

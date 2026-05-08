@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 57a9930ee84bbeb499d7db927006c790
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_HUD_MilitaryCombat_Objective_Item_01_In.anim
+  uploadId: 782058

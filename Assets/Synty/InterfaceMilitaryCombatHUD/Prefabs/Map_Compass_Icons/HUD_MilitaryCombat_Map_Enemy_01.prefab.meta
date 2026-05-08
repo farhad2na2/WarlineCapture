@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 97f4fe602b74de74999735d91c3f101a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Map_Compass_Icons/HUD_MilitaryCombat_Map_Enemy_01.prefab
+  uploadId: 782058

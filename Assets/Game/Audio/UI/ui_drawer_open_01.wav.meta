@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: c3e723873d204929fb555d7a9e632340
+AudioImporter:
+  externalObjects: {}
+  serializedVersion: 7
+  defaultSettings:
+    loadType: 0
+    sampleRateSetting: 0
+    sampleRateOverride: 44100
+    compressionFormat: 1
+    quality: 1
+    conversionMode: 0
+  platformSettingOverrides: {}
+  forceToMono: 1
+  normalize: 1
+  preloadAudioData: 1
+  loadInBackground: 0
+  ambisonic: 0
+  3D: 1
+  userData: WarlineCapture generated ui audio
+  assetBundleName: 
+  assetBundleVariant: 

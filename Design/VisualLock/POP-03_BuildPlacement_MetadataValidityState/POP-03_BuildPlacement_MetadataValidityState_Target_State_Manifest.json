@@ -1,0 +1,50 @@
+{
+  "surfaceId": "POP-03_BuildPlacement_MetadataValidityState",
+  "sourceBase": "Design/VisualLock/POP-03_BuildPlacement/POP-03_BuildPlacement_Landscape_Target.png",
+  "blocks": [
+    {
+      "rect": [
+        356,
+        228,
+        908,
+        508
+      ],
+      "title": "FOOTPRINT OVERLAY",
+      "accent": [
+        98,
+        202,
+        123,
+        220
+      ],
+      "lines": [
+        "Valid cells use green outline.",
+        "Blocked/socket mismatch uses red.",
+        "Socket: pad.forward_command_01"
+      ]
+    },
+    {
+      "rect": [
+        958,
+        228,
+        1398,
+        508
+      ],
+      "title": "CONFIRM STATE",
+      "accent": [
+        232,
+        72,
+        68,
+        230
+      ],
+      "lines": [
+        "Confirm disabled until footprint,",
+        "cost, socket, and rotation are valid."
+      ],
+      "buttons": [
+        "ROTATE",
+        "CANCEL",
+        "CONFIRM"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c1d0be879523fb14fbb4a6ecb0301a96
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/ActionBar/HUD_MilitaryCombat_ARPGBar_01.prefab
+  uploadId: 782058

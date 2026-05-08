@@ -1,0 +1,169 @@
+{
+  "video": "Design/Marketing/SampleVideo/WarlineCapture_Sample_Marketing_Video.mp4",
+  "preview": "Design/Marketing/SampleVideo/WarlineCapture_Sample_Marketing_Video_Preview.png",
+  "resolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "fps": 24,
+  "durationSeconds": 20.0,
+  "frameCount": 480,
+  "sourceDocs": [
+    "Design/WarlineCapture_Economy_Reward_Design.md",
+    "Design/Monetization/WarlineCapture_Monetization_Strategy.md",
+    "Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md"
+  ],
+  "sourceImages": [
+    "Design/VisualReferences/2DIsometricProduction/ISO-01_CityCommand_Target/ISO-01_CityCommand_ProductionTarget.png",
+    "Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png",
+    "Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png",
+    "generated:fair_store_panel",
+    "Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png"
+  ],
+  "scenes": [
+    {
+      "name": "City Command",
+      "source": "Design/VisualReferences/2DIsometricProduction/ISO-01_CityCommand_Target/ISO-01_CityCommand_ProductionTarget.png",
+      "duration": 4.0,
+      "eyebrow": "PROJECT CITY",
+      "title": "Command the city under pressure",
+      "body": "Build, deploy, and stabilize districts through tactical RTS decisions.",
+      "cta": null
+    },
+    {
+      "name": "Battle HUD",
+      "source": "Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png",
+      "duration": 4.0,
+      "eyebrow": "REAL-TIME COMMAND",
+      "title": "Move squads. Hold lines. Control objectives.",
+      "body": "Every button maps to battlefield intent: move, attack, build, stop, hold, special.",
+      "cta": null
+    },
+    {
+      "name": "Operation Dashboard",
+      "source": "Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png",
+      "duration": 4.0,
+      "eyebrow": "PERSISTENT OPERATION",
+      "title": "Recover districts between missions",
+      "body": "Operation supplies become trust, security, intel, and infrastructure through authored actions.",
+      "cta": null
+    },
+    {
+      "name": "Commander Store",
+      "source": "generated:fair_store_panel",
+      "duration": 4.0,
+      "eyebrow": "FAIR MONETIZATION",
+      "title": "Starter packs and cosmetics stay economy-safe",
+      "body": "Purchases grant designed resources and unlocks; mission stars and district metrics are earned.",
+      "cta": null
+    },
+    {
+      "name": "Mission Result",
+      "source": "Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png",
+      "duration": 4.0,
+      "eyebrow": "PLAYER SKILL FIRST",
+      "title": "Win through objectives, not purchases",
+      "body": "Rewards, progression, and store grants follow the economy lifecycle spec.",
+      "cta": "Wishlist build sample"
+    }
+  ],
+  "verification": {
+    "fileExists": true,
+    "fileSizeBytes": 40435302,
+    "blockedEconomyTermCount": 5,
+    "blankFrameSamples": [],
+    "bannedTermsFound": []
+  },
+  "frameSamples": [
+    {
+      "scene": "City Command",
+      "frame": 1,
+      "mean": 47.61730227623457,
+      "stddev": 37.90148211435234
+    },
+    {
+      "scene": "City Command",
+      "frame": 49,
+      "mean": 39.122407889660494,
+      "stddev": 33.387180298200796
+    },
+    {
+      "scene": "City Command",
+      "frame": 96,
+      "mean": 49.2973013117284,
+      "stddev": 37.879236195698965
+    },
+    {
+      "scene": "Battle HUD",
+      "frame": 97,
+      "mean": 49.167591145833335,
+      "stddev": 36.01923465801352
+    },
+    {
+      "scene": "Battle HUD",
+      "frame": 145,
+      "mean": 40.120258969907404,
+      "stddev": 37.35667960953085
+    },
+    {
+      "scene": "Battle HUD",
+      "frame": 192,
+      "mean": 49.60486352237654,
+      "stddev": 42.28038138491316
+    },
+    {
+      "scene": "Operation Dashboard",
+      "frame": 193,
+      "mean": 48.27701244212963,
+      "stddev": 39.87180501304285
+    },
+    {
+      "scene": "Operation Dashboard",
+      "frame": 241,
+      "mean": 28.03374855324074,
+      "stddev": 38.57419373968948
+    },
+    {
+      "scene": "Operation Dashboard",
+      "frame": 288,
+      "mean": 33.27364535108025,
+      "stddev": 44.91490350839676
+    },
+    {
+      "scene": "Commander Store",
+      "frame": 289,
+      "mean": 33.30790943287037,
+      "stddev": 42.426283817733164
+    },
+    {
+      "scene": "Commander Store",
+      "frame": 337,
+      "mean": 28.859508584104937,
+      "stddev": 38.766511656733556
+    },
+    {
+      "scene": "Commander Store",
+      "frame": 384,
+      "mean": 35.08380594135802,
+      "stddev": 44.631144233505495
+    },
+    {
+      "scene": "Mission Result",
+      "frame": 385,
+      "mean": 35.17048225308642,
+      "stddev": 42.10393023921187
+    },
+    {
+      "scene": "Mission Result",
+      "frame": 433,
+      "mean": 31.942380883487655,
+      "stddev": 38.771616859293644
+    },
+    {
+      "scene": "Mission Result",
+      "frame": 480,
+      "mean": 37.04676697530864,
+      "stddev": 41.50306071101778
+    }
+  ]
+}

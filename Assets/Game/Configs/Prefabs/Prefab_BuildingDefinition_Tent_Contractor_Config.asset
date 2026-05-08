@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
+  m_Name: Prefab_BuildingDefinition_Tent_Contractor_Config
+  m_EditorClassIdentifier: 
+  displayName: Contractor Tent
+  description: Field tent for contractors, workers, and temporary support staff.
+  maxHealth: 350
+  role: 0
+  isWall: 0
+  canRequest: 1
+  price: 8000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  productions:
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: f7fab5771a1744644b5f6b8efff8b6ec, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 058513b35b4a14b9cb012570502d1259, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 45e248593e3114d24a968047f55ca26e, type: 3}

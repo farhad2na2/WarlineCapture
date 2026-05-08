@@ -1,0 +1,201 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "warlinecapture_iso_map_schema_v0_1",
+  "title": "WarlineCapture Usable Iso Map",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "mapId",
+    "displayName",
+    "styleId",
+    "grid",
+    "macroTileGrid",
+    "streaming",
+    "roadGraph",
+    "regions",
+    "sockets",
+    "spawnGroups",
+    "performanceTargets"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "0.1" },
+    "mapId": { "type": "string" },
+    "displayName": { "type": "string" },
+    "styleId": { "type": "string" },
+    "sourceReference": { "type": "string" },
+    "grid": {
+      "type": "object",
+      "required": [ "widthCells", "heightCells", "cellSizeWorld", "sectorSizeCells" ],
+      "properties": {
+        "widthCells": { "type": "integer", "minimum": 1 },
+        "heightCells": { "type": "integer", "minimum": 1 },
+        "cellSizeWorld": { "type": "number", "exclusiveMinimum": 0 },
+        "sectorSizeCells": { "type": "integer", "minimum": 8 },
+        "originWorld": {
+          "type": "array",
+          "items": { "type": "number" },
+          "minItems": 3,
+          "maxItems": 3
+        }
+      }
+    },
+    "macroTileGrid": {
+      "type": "object",
+      "required": [ "macroTileSizeCells", "sourcePixels", "placements" ],
+      "properties": {
+        "macroTileSizeCells": { "type": "integer", "minimum": 16 },
+        "sourcePixels": { "type": "integer", "minimum": 512 },
+        "placements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [ "x", "y", "tileId", "variant" ],
+            "properties": {
+              "x": { "type": "integer", "minimum": 0 },
+              "y": { "type": "integer", "minimum": 0 },
+              "tileId": { "type": "string" },
+              "variant": { "type": "string" },
+              "rotation": { "type": "integer", "enum": [ 0, 90, 180, 270 ] }
+            }
+          }
+        }
+      }
+    },
+    "streaming": {
+      "type": "object",
+      "required": [ "visualChunkRadius", "preloadRing", "maxResidentVisualChunks" ],
+      "properties": {
+        "visualChunkRadius": { "type": "integer", "minimum": 1 },
+        "preloadRing": { "type": "integer", "minimum": 0 },
+        "maxResidentVisualChunks": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "roadGraph": {
+      "type": "object",
+      "required": [ "nodes", "edges" ],
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [ "id", "cell" ],
+            "properties": {
+              "id": { "type": "string" },
+              "cell": {
+                "type": "array",
+                "items": { "type": "integer" },
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "kind": { "type": "string" }
+            }
+          }
+        },
+        "edges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [ "from", "to", "widthCells", "surface" ],
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "widthCells": { "type": "integer", "minimum": 1 },
+              "surface": { "type": "string", "enum": [ "asphalt", "service", "sidewalk", "dirt", "seawall" ] },
+              "vehiclePreferred": { "type": "boolean" },
+              "infantryPreferred": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "regions": {
+      "type": "object",
+      "properties": {
+        "blocked": { "$ref": "#/$defs/rectRegionArray" },
+        "water": { "$ref": "#/$defs/rectRegionArray" },
+        "roadCorridors": { "$ref": "#/$defs/rectRegionArray" },
+        "sidewalkCorridors": { "$ref": "#/$defs/rectRegionArray" },
+        "combatZones": { "$ref": "#/$defs/rectRegionArray" },
+        "cameraZones": { "$ref": "#/$defs/rectRegionArray" }
+      }
+    },
+    "sockets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "id", "kind", "cell", "sizeCells", "faction" ],
+        "properties": {
+          "id": { "type": "string" },
+          "kind": { "type": "string" },
+          "cell": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "sizeCells": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "faction": { "type": "string", "enum": [ "friendly", "enemy", "neutral", "any" ] }
+        }
+      }
+    },
+    "spawnGroups": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "id", "faction", "kind", "cells", "maxUnits" ],
+        "properties": {
+          "id": { "type": "string" },
+          "faction": { "type": "string", "enum": [ "friendly", "enemy", "neutral" ] },
+          "kind": { "type": "string" },
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": { "type": "integer" },
+              "minItems": 2,
+              "maxItems": 2
+            }
+          },
+          "maxUnits": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "performanceTargets": {
+      "type": "object",
+      "required": [ "targetLiveUnits", "stressLiveUnits", "maxPathRequestsPerFrame", "maxResidentTextureMb" ],
+      "properties": {
+        "targetLiveUnits": { "type": "integer", "minimum": 1 },
+        "stressLiveUnits": { "type": "integer", "minimum": 1 },
+        "maxPathRequestsPerFrame": { "type": "integer", "minimum": 1 },
+        "maxResidentTextureMb": { "type": "integer", "minimum": 1 }
+      }
+    }
+  },
+  "$defs": {
+    "rectRegionArray": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [ "id", "rect" ],
+        "properties": {
+          "id": { "type": "string" },
+          "rect": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "minItems": 4,
+            "maxItems": 4
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

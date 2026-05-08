@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 58e5add04c4c1f24c8cd08a5d1db947f
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scenes/03_Demo_MilitaryCombat_Components_Compass-Minimap-Comms.unity
+  uploadId: 782058

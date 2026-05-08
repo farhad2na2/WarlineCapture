@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d5fda723d5b5d0049949b91336208135
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Controllers/AC_HUD_MilitaryCombat_WorldSpace_Objective_01.controller
+  uploadId: 782058

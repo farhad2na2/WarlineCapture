@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: fbe02e3bab2755644aac4c3427733583
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/WeaponWheel_WeaponCross/_Parts/Button_MilitaryCombat_WeaponWheel_Item_01.prefab
+  uploadId: 782058

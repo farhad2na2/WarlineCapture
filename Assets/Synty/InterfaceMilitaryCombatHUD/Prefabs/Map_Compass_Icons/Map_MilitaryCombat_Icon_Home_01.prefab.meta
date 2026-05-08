@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7bca4703aa6d4ee4aa5431b43eea09e9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Map_Compass_Icons/Map_MilitaryCombat_Icon_Home_01.prefab
+  uploadId: 782058

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 426b3ccd4a1f6704588ea13089387900
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Prefabs/AssetDemo_MilitaryCombat_Button_Item_01.prefab
+  uploadId: 782058

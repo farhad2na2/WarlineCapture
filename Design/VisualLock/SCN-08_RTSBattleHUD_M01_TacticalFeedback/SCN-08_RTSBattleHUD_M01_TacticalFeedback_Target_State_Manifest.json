@@ -1,0 +1,12 @@
+{
+  "surfaceId": "SCN-08_RTSBattleHUD_M01_TacticalFeedback",
+  "sourceBase": "Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png",
+  "purpose": "M01 tactical command feedback state target",
+  "newElements": [
+    "BattleHud.SelectedEntityPanel",
+    "BattleHud.CommandModeBanner",
+    "BattleHud.WorldCommandMarkerLayer",
+    "BattleHud.InvalidCommandToast",
+    "BattleHud.MinimapCameraBridge"
+  ]
+}

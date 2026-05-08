@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8637e5c5d253ab64593d2982896739e9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Input_Interactions/HUD_MilitaryCombat_ItemPickupInfo_03.prefab
+  uploadId: 782058

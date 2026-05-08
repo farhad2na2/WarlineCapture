@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 40fe4a1bf3a631041befa89c7da70b01
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Player_Health_Equipment/HUD_MilitaryCombat_XPLog_01.prefab
+  uploadId: 782058

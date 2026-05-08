@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: bb949e403f2519b449cc9da347c944a4
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Prefabs/AssetDemo_MilitaryCombat_Bottom_FX_01.prefab
+  uploadId: 782058

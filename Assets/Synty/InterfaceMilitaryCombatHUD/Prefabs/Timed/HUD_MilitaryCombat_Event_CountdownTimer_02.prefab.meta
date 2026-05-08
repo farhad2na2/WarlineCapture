@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2081daa304561fc4c93f79d81d1b1e05
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Timed/HUD_MilitaryCombat_Event_CountdownTimer_02.prefab
+  uploadId: 782058

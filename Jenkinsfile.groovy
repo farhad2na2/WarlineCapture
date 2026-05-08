@@ -1,0 +1,256 @@
+def PROJECT_NAME = 'WarlineCapture'
+def UNITY_VERSION = '6000.4.0f1'
+def CUSTOM_WORKSPACE = "D:\\Projects\\Jenkins\\${PROJECT_NAME}"
+def UNITY_EDITOR = "D:\\Program Files\\Unity\\${UNITY_VERSION}\\Editor\\Unity.exe"
+
+pipeline {
+    agent {
+        node {
+            label ''
+            customWorkspace "${CUSTOM_WORKSPACE}"
+        }
+    }
+
+    environment {
+        PROJECT_PATH = "${CUSTOM_WORKSPACE}"
+        UNITY_EXE = "${UNITY_EDITOR}"
+        BUILD_LOG = "${CUSTOM_WORKSPACE}\\build.log"
+        MAC_PASSWORD = credentials('MAC_PASSWORD')
+    }
+
+    stages {
+        stage('Run Unity Tests') {
+            when {
+                expression {
+                    return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_WEBGL == true || params.BUILD_WEBGL?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_IOS == true || params.BUILD_IOS?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') ||
+                        params.BUILD_ANDROID_AAB == true || params.BUILD_ANDROID_AAB?.toString()?.equalsIgnoreCase('true')
+                }
+            }
+            steps {
+                bat '''
+                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
+                if not exist "%PROJECT_PATH%\\TestResults" mkdir "%PROJECT_PATH%\\TestResults"
+
+                "%UNITY_EXE%" -batchmode -nographics -projectPath "%PROJECT_PATH%" -runTests -testPlatform EditMode -testResults "%PROJECT_PATH%\\TestResults\\EditMode.xml" -logFile "%PROJECT_PATH%\\TestResults\\EditMode.log"
+                set EDITMODE_EXIT=%ERRORLEVEL%
+                powershell -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "%PROJECT_PATH%\\TestResults\\EditMode.xml" -PlatformName "EditMode"
+
+                "%UNITY_EXE%" -batchmode -nographics -projectPath "%PROJECT_PATH%" -runTests -testPlatform PlayMode -testResults "%PROJECT_PATH%\\TestResults\\PlayMode.xml" -logFile "%PROJECT_PATH%\\TestResults\\PlayMode.log"
+                set PLAYMODE_EXIT=%ERRORLEVEL%
+                powershell -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "%PROJECT_PATH%\\TestResults\\PlayMode.xml" -PlatformName "PlayMode"
+
+                if not "%EDITMODE_EXIT%"=="0" (
+                    echo [BuildGate] EditMode tests failed. Build stopped.
+                    exit /b %EDITMODE_EXIT%
+                )
+                if not "%PLAYMODE_EXIT%"=="0" (
+                    echo [BuildGate] PlayMode tests failed. Build stopped.
+                    exit /b %PLAYMODE_EXIT%
+                )
+
+                echo [BuildGate] All EditMode and PlayMode tests passed. Continuing build.
+                '''
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'TestResults/*.xml,TestResults/*.log', allowEmptyArchive: true
+                }
+            }
+        }
+
+        stage('Build Windows') {
+            when { expression { return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                bat '''
+                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
+                "%UNITY_EXE%" -executeMethod BuildScript.BuildWindows -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'Build/Windows.zip', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy Windows') {
+            when { expression { return params.DEPLOY_WINDOWS == true || params.DEPLOY_WINDOWS?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                script {
+                    def buildDate = new Date().format('yyyyMMdd_HHmm')
+                    env.ARTIFACT_NAME = "Windows_Build_${buildDate}.zip"
+                    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        bat '''
+                        if not exist "%PROJECT_PATH%\\Build\\Windows.zip" (
+                            echo Build artifact not found: "%PROJECT_PATH%\\Build\\Windows.zip"
+                            exit /b 1
+                        )
+                        curl.exe --fail --show-error --location --user "%NEXUS_USER%:%NEXUS_PASSWORD%" --upload-file "%PROJECT_PATH%\\Build\\Windows.zip" "http://localhost:8081/repository/jenkins-unity/Windows_Build/%ARTIFACT_NAME%"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build WebGL') {
+            when { expression { return params.BUILD_WEBGL == true || params.BUILD_WEBGL?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                bat '''
+                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
+                "%UNITY_EXE%" -executeMethod BuildScript.BuildWebGL -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'Build/WebGL.zip', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy WebGL') {
+            when { expression { return params.DEPLOY_WEBGL == true || params.DEPLOY_WEBGL?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                script {
+                    def buildDate = new Date().format('yyyyMMdd_HHmm')
+                    env.ARTIFACT_NAME = "WebGL_Build_${buildDate}.zip"
+                    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        bat '''
+                        if not exist "%PROJECT_PATH%\\Build\\WebGL.zip" (
+                            echo Build artifact not found: "%PROJECT_PATH%\\Build\\WebGL.zip"
+                            exit /b 1
+                        )
+                        curl.exe --fail --show-error --location --user "%NEXUS_USER%:%NEXUS_PASSWORD%" --upload-file "%PROJECT_PATH%\\Build\\WebGL.zip" "http://localhost:8081/repository/jenkins-unity/WebGL_Build/%ARTIFACT_NAME%"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build iOS') {
+            when { expression { return params.BUILD_IOS == true || params.BUILD_IOS?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                bat '''
+                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
+                "%UNITY_EXE%" -executeMethod BuildScript.BuildIOS -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'Build/iOS.zip', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy iOS Nexus') {
+            when { expression { return params.DEPLOY_IOS_NEXUS == true || params.DEPLOY_IOS_NEXUS?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                script {
+                    def buildDate = new Date().format('yyyyMMdd_HHmm')
+                    env.ARTIFACT_NAME = "iOS_Build_${buildDate}.zip"
+                    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        bat '''
+                        if not exist "%PROJECT_PATH%\\Build\\iOS.zip" (
+                            echo Build artifact not found: "%PROJECT_PATH%\\Build\\iOS.zip"
+                            exit /b 1
+                        )
+                        curl.exe --fail --show-error --location --user "%NEXUS_USER%:%NEXUS_PASSWORD%" --upload-file "%PROJECT_PATH%\\Build\\iOS.zip" "http://localhost:8081/repository/jenkins-unity/iOS_Build/%ARTIFACT_NAME%"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Deploy iOS Mac') {
+            when { expression { return params.DEPLOY_IOS_MAC == true || params.DEPLOY_IOS_MAC?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                script {
+                    env.PROJECT_NAME = PROJECT_NAME
+                    powershell '''
+                    net use \\\\192.168.2.175 /user:farhad $env:MAC_PASSWORD
+                    Remove-Item -Path \\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\$env:PROJECT_NAME -Recurse -Force -ErrorAction Ignore
+                    New-Item -ItemType directory -Path \\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\$env:PROJECT_NAME -Force
+                    Copy-Item -Path "$env:PROJECT_PATH\\Build\\iOS" -Destination \\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\$env:PROJECT_NAME -Recurse -Force
+                    net use \\\\192.168.2.175 /delete
+                    '''
+                }
+            }
+        }
+
+        stage('Build Android APK') {
+            when { expression { return params.BUILD_ANDROID_APK == true || params.BUILD_ANDROID_APK?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                bat '''
+                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
+                "%UNITY_EXE%" -executeMethod BuildScript.BuildAndroid -buildType APK -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'Build/AndroidAPK/WarlineCapture.apk', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy Android APK') {
+            when { expression { return params.DEPLOY_ANDROID_APK == true || params.DEPLOY_ANDROID_APK?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                script {
+                    def buildDate = new Date().format('yyyyMMdd_HHmm')
+                    env.ARTIFACT_NAME = "Android_Build_${buildDate}.apk"
+                    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        bat '''
+                        if not exist "%PROJECT_PATH%\\Build\\AndroidAPK\\WarlineCapture.apk" (
+                            echo Build artifact not found: "%PROJECT_PATH%\\Build\\AndroidAPK\\WarlineCapture.apk"
+                            exit /b 1
+                        )
+                        curl.exe --fail --show-error --location --user "%NEXUS_USER%:%NEXUS_PASSWORD%" --upload-file "%PROJECT_PATH%\\Build\\AndroidAPK\\WarlineCapture.apk" "http://localhost:8081/repository/jenkins-unity/AndroidAPK_Build/%ARTIFACT_NAME%"
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Build Android AAB') {
+            when { expression { return params.BUILD_ANDROID_AAB == true || params.BUILD_ANDROID_AAB?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                bat '''
+                if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
+                "%UNITY_EXE%" -executeMethod BuildScript.BuildAndroid -buildType AAB -batchmode -quit -projectPath "%PROJECT_PATH%" -logFile "%BUILD_LOG%"
+                '''
+            }
+            post {
+                success {
+                    archiveArtifacts artifacts: 'Build/AndroidAAB/WarlineCapture.aab', fingerprint: true
+                }
+            }
+        }
+
+        stage('Deploy Android AAB') {
+            when { expression { return params.DEPLOY_ANDROID_AAB == true || params.DEPLOY_ANDROID_AAB?.toString()?.equalsIgnoreCase('true') } }
+            steps {
+                script {
+                    def buildDate = new Date().format('yyyyMMdd_HHmm')
+                    env.ARTIFACT_NAME = "Android_Build_${buildDate}.aab"
+                    withCredentials([usernamePassword(credentialsId: 'nexus-admin', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASSWORD')]) {
+                        bat '''
+                        if not exist "%PROJECT_PATH%\\Build\\AndroidAAB\\WarlineCapture.aab" (
+                            echo Build artifact not found: "%PROJECT_PATH%\\Build\\AndroidAAB\\WarlineCapture.aab"
+                            exit /b 1
+                        )
+                        curl.exe --fail --show-error --location --user "%NEXUS_USER%:%NEXUS_PASSWORD%" --upload-file "%PROJECT_PATH%\\Build\\AndroidAAB\\WarlineCapture.aab" "http://localhost:8081/repository/jenkins-unity/AndroidAAB_Build/%ARTIFACT_NAME%"
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'build.log,TestResults/*.xml,TestResults/*.log', allowEmptyArchive: true
+        }
+    }
+}

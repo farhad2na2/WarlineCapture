@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 234d24d6f4face7458733547f17dbf1e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_Overlay_MilitaryCombat_FadeToBlack_02_In.anim
+  uploadId: 782058

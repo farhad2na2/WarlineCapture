@@ -1,0 +1,249 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 735e12cf8f094a818c62b48975156882, type: 3}
+  m_Name: OperationActionConfigSet
+  m_EditorClassIdentifier: 
+  actionConfigs:
+  - actionType: 0
+    stabilityDelta: 3
+    threatDelta: -5
+    intelDelta: 2
+    supplyCost: 0
+    supplyReward: 0
+    startsRaidMission: 0
+    eventSeverity: 0
+    trustDelta: 1
+    securityDelta: 5
+    infrastructureDelta: 0
+    enemyInfluenceDelta: -5
+    heatDelta: 2
+    civilianRiskDelta: -2
+    eventTitle: Patrol Sweep
+    eventBody: Ground patrol reduced visible enemy pressure.
+  - actionType: 1
+    stabilityDelta: 0
+    threatDelta: 0
+    intelDelta: 12
+    supplyCost: 1
+    supplyReward: 0
+    startsRaidMission: 0
+    eventSeverity: 0
+    trustDelta: 0
+    securityDelta: 0
+    infrastructureDelta: 0
+    enemyInfluenceDelta: -1
+    heatDelta: 1
+    civilianRiskDelta: 0
+    eventTitle: Drone Scan
+    eventBody: New intel evidence is ready for review.
+  - actionType: 2
+    stabilityDelta: 7
+    threatDelta: -1
+    intelDelta: 0
+    supplyCost: 1
+    supplyReward: 0
+    startsRaidMission: 0
+    eventSeverity: 0
+    trustDelta: 8
+    securityDelta: 0
+    infrastructureDelta: 3
+    enemyInfluenceDelta: 0
+    heatDelta: 0
+    civilianRiskDelta: -5
+    eventTitle: Aid Convoy
+    eventBody: Civilian support convoy improved district stability.
+  - actionType: 3
+    stabilityDelta: -4
+    threatDelta: -14
+    intelDelta: -6
+    supplyCost: 2
+    supplyReward: 0
+    startsRaidMission: 1
+    eventSeverity: 1
+    trustDelta: -4
+    securityDelta: 8
+    infrastructureDelta: -3
+    enemyInfluenceDelta: -12
+    heatDelta: 8
+    civilianRiskDelta: 6
+    eventTitle: Raid Authorized
+    eventBody: Raid team committed to a tactical mission route.
+  - actionType: 4
+    stabilityDelta: 6
+    threatDelta: -2
+    intelDelta: 0
+    supplyCost: 1
+    supplyReward: 0
+    startsRaidMission: 0
+    eventSeverity: 0
+    trustDelta: 3
+    securityDelta: 2
+    infrastructureDelta: 12
+    enemyInfluenceDelta: 0
+    heatDelta: -2
+    civilianRiskDelta: -4
+    eventTitle: Infrastructure Repair
+    eventBody: Engineering crews restored critical district services.
+  - actionType: 5
+    stabilityDelta: -3
+    threatDelta: 1
+    intelDelta: 0
+    supplyCost: 1
+    supplyReward: 0
+    startsRaidMission: 0
+    eventSeverity: 1
+    trustDelta: -5
+    securityDelta: 1
+    infrastructureDelta: 0
+    enemyInfluenceDelta: 0
+    heatDelta: 3
+    civilianRiskDelta: -15
+    eventTitle: Civilian Evacuation
+    eventBody: Civilian evacuation reduced immediate harm but strained local trust.
+  - actionType: 6
+    stabilityDelta: 4
+    threatDelta: -7
+    intelDelta: 1
+    supplyCost: 2
+    supplyReward: 0
+    startsRaidMission: 0
+    eventSeverity: 0
+    trustDelta: 1
+    securityDelta: 14
+    infrastructureDelta: 4
+    enemyInfluenceDelta: -8
+    heatDelta: 5
+    civilianRiskDelta: -3
+    eventTitle: Forward Outpost Built
+    eventBody: A forward outpost improved district security and response readiness.
+  districtModifiers:
+  - districtId: old_market
+    actionType: 2
+    stabilityDelta: 3
+    threatDelta: 0
+    intelDelta: 0
+    supplyReward: 1
+    eventSeverity: 0
+    trustDelta: 4
+    securityDelta: 0
+    infrastructureDelta: 3
+    enemyInfluenceDelta: 0
+    heatDelta: -1
+    civilianRiskDelta: -4
+    eventTitle: Old Market Aid Distribution
+    eventBody: Medical and water distribution stabilized crowded market blocks and recovered one operation supply.
+  - districtId: port_breach
+    actionType: 3
+    stabilityDelta: -2
+    threatDelta: -4
+    intelDelta: 0
+    supplyReward: 0
+    eventSeverity: 1
+    trustDelta: 0
+    securityDelta: 4
+    infrastructureDelta: -2
+    enemyInfluenceDelta: -5
+    heatDelta: 3
+    civilianRiskDelta: 4
+    eventTitle: Port Breach Strike
+    eventBody: Raid pressure disrupted a port-side command cell, but stability took a short-term hit.
+  - districtId: port_breach
+    actionType: 1
+    stabilityDelta: 0
+    threatDelta: 0
+    intelDelta: 4
+    supplyReward: 0
+    eventSeverity: 0
+    trustDelta: 0
+    securityDelta: 0
+    infrastructureDelta: 0
+    enemyInfluenceDelta: -1
+    heatDelta: 1
+    civilianRiskDelta: 0
+    eventTitle: Port Sensor Sweep
+    eventBody: Drone scan mapped container-lane movement and improved port intel confidence.
+  - districtId: north_bridge
+    actionType: 6
+    stabilityDelta: 1
+    threatDelta: -2
+    intelDelta: 0
+    supplyReward: 0
+    eventSeverity: 1
+    trustDelta: 0
+    securityDelta: 4
+    infrastructureDelta: 1
+    enemyInfluenceDelta: -3
+    heatDelta: 2
+    civilianRiskDelta: -1
+    eventTitle: Bridge Outpost Established
+    eventBody: A checkpoint outpost locked down bridge access and gave patrol teams faster response coverage.
+  - districtId: old_market
+    actionType: 5
+    stabilityDelta: -2
+    threatDelta: 0
+    intelDelta: 0
+    supplyReward: 0
+    eventSeverity: 1
+    trustDelta: -3
+    securityDelta: 0
+    infrastructureDelta: 0
+    enemyInfluenceDelta: 0
+    heatDelta: 1
+    civilianRiskDelta: -5
+    eventTitle: Market Evacuation Corridor
+    eventBody: Evacuation corridors reduced immediate crowd risk but created political pressure among shop owners.
+  - districtId: port_breach
+    actionType: 4
+    stabilityDelta: 2
+    threatDelta: -1
+    intelDelta: 0
+    supplyReward: 0
+    eventSeverity: 0
+    trustDelta: 0
+    securityDelta: 0
+    infrastructureDelta: 5
+    enemyInfluenceDelta: 0
+    heatDelta: -1
+    civilianRiskDelta: -3
+    eventTitle: Port Utility Repair
+    eventBody: Repair crews restored port utilities under security escort, reducing civilian exposure.
+  eventRules:
+  - metric: 7
+    warningThreshold: 65
+    criticalThreshold: 82
+    category: 7
+    warningTitle: District Heat Rising
+    warningBody: '{district} heat reached {value}. Expect faster enemy reaction if pressure
+      is ignored.'
+    criticalTitle: District Heat Critical
+    criticalBody: '{district} heat reached {value}. Enemy response cells are close to open
+      escalation.'
+  - metric: 8
+    warningThreshold: 65
+    criticalThreshold: 82
+    category: 8
+    warningTitle: Civilian Risk Elevated
+    warningBody: '{district} civilian risk reached {value}. Aid or evacuation should be
+      prioritized.'
+    criticalTitle: Civilian Risk Critical
+    criticalBody: '{district} civilian risk reached {value}. Civilian losses are likely
+      without immediate intervention.'
+  - metric: 6
+    warningThreshold: 75
+    criticalThreshold: 90
+    category: 7
+    warningTitle: Enemy Influence Entrenched
+    warningBody: '{district} enemy influence reached {value}. Patrol, scan, or raid pressure
+      is recommended.'
+    criticalTitle: Enemy Influence Critical
+    criticalBody: '{district} enemy influence reached {value}. Hostile command can reinforce
+      nearby objectives.'

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9ae59862219a0b546b91d5ac19fda946
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/_CommonComponents/Dial_MilitaryCombat_Simple_01.prefab
+  uploadId: 782058

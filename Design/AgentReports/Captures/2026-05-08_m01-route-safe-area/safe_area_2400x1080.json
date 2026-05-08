@@ -1,0 +1,9 @@
+{
+  "capture_type": "route-driven WarlineCaptureAppCanvas via WarlineCaptureRouter.Match",
+  "resolution": "2400x1080",
+  "width": 2400,
+  "height": 1080,
+  "safe_area_mode": "simulated landscape inset",
+  "insets_px": { "left": 112, "right": 112, "top": 44, "bottom": 28 },
+  "notes": "SafeAreaRoot is inset before route capture; visible outer margins represent excluded device cutout/rounded-corner regions."
+}

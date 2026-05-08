@@ -1,0 +1,139 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1991306402745376521
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1583377538552285671}
+  - component: {fileID: 9062442417979468539}
+  m_Layer: 0
+  m_Name: Animator_SM_Chr_Contractor_Male_02_CombinedSkinned_7
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1583377538552285671
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991306402745376521}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9062442417979468539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1991306402745376521}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 504dc24498f4cea4885be3b19e1bda76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: sniveler-code.gpu-animation::SnivelerCode.GpuAnimation.Scripts.Authoring.MaterialAnimatorAuthoring
+  bonesCount: 50
+  animations:
+  - fps: 0
+    start: 235650
+    frames: 1
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 235700
+    frames: 20
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 236700
+    frames: 141
+    speed: 1
+    loop: 1
+    transitions: []
+  - fps: 60
+    start: 243750
+    frames: 49
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 246200
+    frames: 141
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 253250
+    frames: 49
+    speed: 1
+    loop: 1
+    transitions: []
+  - fps: 60
+    start: 255700
+    frames: 49
+    speed: 1
+    loop: 1
+    transitions: []
+  - fps: 60
+    start: 258150
+    frames: 49
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 260600
+    frames: 36
+    speed: 1
+    loop: 1
+    transitions: []
+  - fps: 60
+    start: 262400
+    frames: 36
+    speed: 1
+    loop: 1
+    transitions: []
+  - fps: 60
+    start: 264200
+    frames: 36
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 266000
+    frames: 102
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 271100
+    frames: 44
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 273300
+    frames: 40
+    speed: 1
+    loop: 0
+    transitions: []
+  - fps: 60
+    start: 275300
+    frames: 94
+    speed: 1
+    loop: 0
+    transitions: []
+  alphas: 000000000000

@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "0.1",
+  "date": "2026-05-05",
+  "purpose": "First actual WarlineCapture 2D isometric in-game and UI assets for visual review.",
+  "status": "readyForReview",
+  "sourceGenerationFolder": "/Users/farhad/.codex/generated_images/019df907-fb84-74c1-a2cd-a9bed0c53d09",
+  "assets": [
+    {
+      "assetId": "fg01.review.unit.rifle_soldier.idle.se",
+      "assetKind": "inGameWorldSprite",
+      "visualCatalogId": "visual.unit.chr.soldier.male.02",
+      "entityId": "Unit_Chr_Soldier_Male_02",
+      "displayName": "Rifle Soldier Idle SE",
+      "state": "idle",
+      "facing": "SE",
+      "sourceChromaPath": "Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SourceChroma/Unit_Chr_Soldier_Male_02_SE_Idle_SourceChroma.png",
+      "transparentPath": "Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/Transparent/Unit_Chr_Soldier_Male_02_SE_Idle.png",
+      "reviewNotes": "Single static runtime sprite for style/scale review. Not yet a full animation set."
+    },
+    {
+      "assetId": "fg01.review.vehicle.apc.idle.se",
+      "assetKind": "inGameWorldSprite",
+      "visualCatalogId": "visual.unit.veh.apc.slow",
+      "entityId": "Unit_Veh_APC_Slow",
+      "displayName": "APC Idle SE",
+      "state": "idle",
+      "facing": "SE",
+      "sourceChromaPath": "Assets/Game/Art/Generated/2DISO/Vehicles/Unit_Veh_APC_Slow/SourceChroma/Unit_Veh_APC_Slow_SE_Idle_SourceChroma.png",
+      "transparentPath": "Assets/Game/Art/Generated/2DISO/Vehicles/Unit_Veh_APC_Slow/Transparent/Unit_Veh_APC_Slow_SE_Idle.png",
+      "reviewNotes": "Single static runtime sprite for style/scale review. Not yet a full animation/state set."
+    },
+    {
+      "assetId": "fg01.review.ui.portrait.rifle_soldier",
+      "assetKind": "uiPortrait",
+      "visualCatalogId": "visual.unit.chr.soldier.male.02",
+      "entityId": "Unit_Chr_Soldier_Male_02",
+      "displayName": "Rifle Soldier Portrait",
+      "path": "Assets/Game/Art/UI/Generated/2DISO/Portraits/Unit_Chr_Soldier_Male_02/Portrait_Unit_Chr_Soldier_Male_02.png",
+      "reviewNotes": "Square UI portrait content only. No frame, labels, stats, or health UI baked in."
+    },
+    {
+      "assetId": "fg01.review.ui.thumbnail.apc",
+      "assetKind": "uiThumbnail",
+      "visualCatalogId": "visual.unit.veh.apc.slow",
+      "entityId": "Unit_Veh_APC_Slow",
+      "displayName": "APC Thumbnail",
+      "path": "Assets/Game/Art/UI/Generated/2DISO/Thumbnails/Unit_Veh_APC_Slow/Thumbnail_Unit_Veh_APC_Slow.png",
+      "reviewNotes": "Square UI thumbnail content only. No frame, labels, stats, lock icon, or health UI baked in."
+    }
+  ],
+  "nextIfApproved": [
+    "Create full rifle soldier animation states and facings.",
+    "Create full APC state/facing set.",
+    "Generate transparent cutout variants for UI assets where needed.",
+    "Bind review-approved paths into VisualConfigs and Unity importer settings."
+  ]
+}

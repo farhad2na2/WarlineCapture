@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0bd564d1117cad340bea14ef8fb367f2
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Subtitles/HUD_MilitaryCombat_Subtitles_01.prefab
+  uploadId: 782058

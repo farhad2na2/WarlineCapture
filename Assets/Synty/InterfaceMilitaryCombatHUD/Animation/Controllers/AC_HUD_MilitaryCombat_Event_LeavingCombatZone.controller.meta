@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 80fb2e110e722e444a370e94d06f93a5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Controllers/AC_HUD_MilitaryCombat_Event_LeavingCombatZone.controller
+  uploadId: 782058

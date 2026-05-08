@@ -1,0 +1,174 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 266ded38e393d4a46a4b4dbb0a4d379a, type: 3}
+  m_Name: iso.ch01.district_edge_01
+  m_EditorClassIdentifier: Assembly-CSharp::TacticalMapDefinition
+  mapId: iso.ch01.district_edge_01
+  levelId: level.ch01.district_edge_01
+  missionId: saga.ch01.m01.first_contact
+  scenarioSetupId: scenario.ch01.m01.first_contact
+  groundSprite: {fileID: 21300000, guid: 44d56268106842c9905dd67959638cc1, type: 3}
+  mapPreviewArtId: preview.ch01.first_contact
+  minimapArtId: minimap.ch01.first_contact
+  gridWidth: 64
+  gridHeight: 36
+  cellSize: 0.053125
+  worldOrigin: {x: -1.7, y: -0.96}
+  visibleWorldSize: {x: 3.4, y: 1.92}
+  cameraDefaultCenter: {x: -0.748, y: 0.038399935}
+  defaultOrthographicSize: 0.597
+  cameraBounds:
+    serializedVersion: 2
+    x: -1.35
+    y: -0.68
+    width: 2.7
+    height: 1.36
+  anchors:
+  - id: player_spawn.command_squad
+    type: 0
+    normalizedPosition: {x: 0.22, y: 0.52}
+    notes: Initial player rifle squad.
+  - id: decor.command_point
+    type: 4
+    normalizedPosition: {x: 0.18, y: 0.72}
+    notes: Visual-only command point proxy, kept off the road corridor.
+  - id: decor.tent_cluster_01
+    type: 4
+    normalizedPosition: {x: 0.36, y: 0.76}
+    notes: Visual-only tent proxy, kept off the road corridor.
+  - id: camera.default_start
+    type: 1
+    normalizedPosition: {x: 0.28, y: 0.52}
+    notes: Close tactical start camera.
+  - id: tutorial.move_target.cover_01
+    type: 2
+    normalizedPosition: {x: 0.42, y: 0.54}
+    notes: First move/cover destination.
+  - id: enemy_spawn.patrol_start
+    type: 0
+    normalizedPosition: {x: 0.78, y: 0.54}
+    notes: Initial enemy patrol.
+  - id: route.enemy_patrol_01.a
+    type: 3
+    normalizedPosition: {x: 0.78, y: 0.54}
+    notes: 
+  - id: route.enemy_patrol_01.b
+    type: 3
+    normalizedPosition: {x: 0.68, y: 0.53}
+    notes: 
+  - id: route.enemy_patrol_01.c
+    type: 3
+    normalizedPosition: {x: 0.58, y: 0.52}
+    notes: 
+  - id: objective.destroy_patrol_group
+    type: 4
+    normalizedPosition: {x: 0.64, y: 0.53}
+    notes: 
+  - id: threat.patrol_warning_01
+    type: 5
+    normalizedPosition: {x: 0.7, y: 0.53}
+    notes: 
+  - id: minimap.viewport_start
+    type: 6
+    normalizedPosition: {x: 0.28, y: 0.52}
+    notes: 
+  surfaces:
+  - id: walk.main_road
+    type: 1
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0.14
+      y: 0.46
+      width: 0.74
+      height: 0.16
+    notes: Primary movement/vehicle corridor.
+  - id: walk.road_shoulders
+    type: 2
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0.12
+      y: 0.4
+      width: 0.78
+      height: 0.28
+    notes: Infantry valid shoulder movement.
+  - id: walk.command_point_pad
+    type: 3
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0.16
+      y: 0.47
+      width: 0.12
+      height: 0.12
+    notes: Player-side command pad.
+  - id: walk.cover_pullout_01
+    type: 4
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0.37
+      y: 0.49
+      width: 0.12
+      height: 0.11
+    notes: First tutorial cover pullout.
+  - id: block.map_edge
+    type: 5
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0
+      y: 0
+      width: 1
+      height: 1
+    notes: Outer grid rows blocked by generated edge art.
+  - id: block.civilian_structures
+    type: 5
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0.48
+      y: 0.18
+      width: 0.18
+      height: 0.18
+    notes: Sample civilian blocker footprint for runtime hookup.
+  - id: zone.civilian_edge
+    type: 6
+    normalizedBounds:
+      serializedVersion: 2
+      x: 0.02
+      y: 0.05
+      width: 0.18
+      height: 0.28
+    notes: No-fire/no-build civilian edge zone.
+  routes:
+  - id: route.enemy_patrol_01
+    normalizedWaypoints:
+    - {x: 0.78, y: 0.54}
+    - {x: 0.68, y: 0.53}
+    - {x: 0.58, y: 0.52}
+    notes: First visible enemy patrol route.
+  entityFootprints:
+  - entityId: unit.player.rifle_squad_01
+    footprintCells: {x: 1, y: 1}
+    notes: Infantry squad test footprint.
+  - entityId: unit.enemy.patrol_01
+    footprintCells: {x: 1, y: 1}
+    notes: Enemy patrol test footprint.
+  - entityId: decor.command_point
+    footprintCells: {x: 4, y: 3}
+    notes: Command/decor footprint for blocker validation.
+  commandReasonCodes:
+  - NoSelection
+  - TargetOutOfBounds
+  - TargetBlocked
+  - TargetUnreachable
+  - TargetNotEnemy
+  - TargetNotAttackable
+  - CommandUnavailable
+  - MissionDoesNotAllowBuild
+  - CameraJumpUnavailable

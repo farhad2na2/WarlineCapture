@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b389f26e62d85174286cad0b3f18b4b4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_FX_MilitaryCombat_Heal_Vignette_01_Inactive.anim
+  uploadId: 782058

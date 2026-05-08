@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f16e7ccde0068de44b1b2847769dbb91
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scenes/00_Demo_MilitaryCombat_Title.unity
+  uploadId: 782058

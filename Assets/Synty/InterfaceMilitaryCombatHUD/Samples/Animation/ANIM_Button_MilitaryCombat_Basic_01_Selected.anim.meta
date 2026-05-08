@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3a99e618a7e9a4842abb62365958c089
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Animation/ANIM_Button_MilitaryCombat_Basic_01_Selected.anim
+  uploadId: 782058

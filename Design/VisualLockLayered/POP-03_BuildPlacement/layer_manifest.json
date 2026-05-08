@@ -1,0 +1,695 @@
+{
+  "surfaceId": "POP-03_BuildPlacement",
+  "title": "Build Placement Popup",
+  "workflow": "VisualLockLayered popup gate",
+  "referenceResolution": {
+    "width": 1672,
+    "height": 941
+  },
+  "referenceTarget": "reference/POP-03_BuildPlacement_Landscape_Target.png",
+  "contactSheet": "generated_one_go/layers_contact_sheet.png",
+  "rules": [
+    "Do not implement or rebuild the popup prefab unless this manifest and contact sheet exist.",
+    "Use layer PNGs as the source of truth for Unity sprites; do not crop icons or controls from a baked target during prefab construction.",
+    "Frame and button assets must be separate transparent 9-sliced sprites with transparent corners where the target implies cut or rounded corners.",
+    "Icons must stay separate transparent sprites and must never be baked into button or card backgrounds.",
+    "After prefab rebuild, capture 16:9 and 20:9 screenshots and compare against the reference target before marking visual work complete."
+  ],
+  "layers": [
+    {
+      "id": "build_panel_frame",
+      "file": "layers/build_panel_frame.png",
+      "role": "placement_modal_chrome_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_PanelFrame_9Slice.png",
+      "sourceAsset": "target-derived frame/background layer; text/icons/content removed with solid interior fill",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          44,
+          42,
+          44,
+          42
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 994,
+          "height": 352
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "building_card_frame",
+      "file": "layers/building_card_frame.png",
+      "role": "building_card_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_CardFrame_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_CardFrame_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          32,
+          28,
+          32,
+          28
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 278,
+          "height": 244
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "build_info_row_background",
+      "file": "layers/build_info_row_background.png",
+      "role": "placement_info_row_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_InfoRow_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_InfoRow_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          24,
+          18,
+          24,
+          18
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 346,
+          "height": 64
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "build_button_normal_background",
+      "file": "layers/build_button_normal_background.png",
+      "role": "secondary_action_button_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Button_Normal_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Button_Normal_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          28,
+          22,
+          28,
+          22
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 226,
+          "height": 72
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "build_button_confirm_background",
+      "file": "layers/build_button_confirm_background.png",
+      "role": "confirm_action_button_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Button_Confirm_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Button_Confirm_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          28,
+          22,
+          28,
+          22
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 226,
+          "height": 72
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "build_checklist_panel",
+      "file": "layers/build_checklist_panel.png",
+      "role": "validation_checklist_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_ChecklistPanel_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_ChecklistPanel_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          22,
+          20,
+          22,
+          20
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 236,
+          "height": 126
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "build_coordinate_panel",
+      "file": "layers/build_coordinate_panel.png",
+      "role": "coordinate_status_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_CoordinatePanel_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_CoordinatePanel_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          18,
+          14,
+          18,
+          14
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 228,
+          "height": 48
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "power_plant_preview",
+      "file": "layers/power_plant_preview.png",
+      "role": "building_preview_image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_PowerPlantPreview.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_PowerPlantPreview.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 236,
+          "height": 168
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "ghost_power_plant",
+      "file": "layers/ghost_power_plant.png",
+      "role": "transparent_placement_ghost",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_GhostPowerPlant.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_GhostPowerPlant.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 236,
+          "height": 168
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "grid_overlay",
+      "file": "layers/grid_overlay.png",
+      "role": "world_grid_overlay",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_GridOverlay.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_GridOverlay.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 724,
+          "height": 396
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "rotate_icon",
+      "file": "layers/rotate_icon.png",
+      "role": "rotate_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Icon_Rotate.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Icon_Rotate.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "check_icon",
+      "file": "layers/check_icon.png",
+      "role": "check_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Icon_Check.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Icon_Check.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 64,
+          "height": 64
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "grid_icon",
+      "file": "layers/grid_icon.png",
+      "role": "grid_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Icon_Grid.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/BuildPlacement_Icon_Grid.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 64,
+          "height": 64
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "resource_bar_frame",
+      "file": "layers/resource_bar_frame.png",
+      "role": "resource_bar_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Frames/MatchHUD_ResourceBar_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/resource_bar_frame.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          32,
+          18,
+          32,
+          18
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 282,
+          "height": 46
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "resource_bar_fill",
+      "file": "layers/resource_bar_fill.png",
+      "role": "resource_bar_fill",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Frames/MatchHUD_ResourceBar_Fill_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/resource_bar_fill.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          32,
+          18,
+          32,
+          18
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 217,
+          "height": 79
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "command_button_normal_background",
+      "file": "layers/command_button_normal_background.png",
+      "role": "rail_button_normal_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Buttons/MatchHUD_Button_Normal_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Buttons/command_button_normal_background.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          22,
+          24,
+          22,
+          24
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 125,
+          "height": 112
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "build_button_selected_background",
+      "file": "layers/build_button_selected_background.png",
+      "role": "rail_button_selected_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Buttons/MatchHUD_Button_Build_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Buttons/build_button_selected_background.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          26,
+          28,
+          26,
+          28
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 137,
+          "height": 178
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "resource_money_icon",
+      "file": "layers/resource_money_icon.png",
+      "role": "money_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Money.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_money_icon.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 82,
+          "height": 130
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "resource_crate_icon",
+      "file": "layers/resource_crate_icon.png",
+      "role": "materials_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Materials.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_crate_icon.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 117,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "resource_population_icon",
+      "file": "layers/resource_population_icon.png",
+      "role": "population_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Population.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_population_icon.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 95,
+          "height": 104
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "resource_time_icon",
+      "file": "layers/resource_time_icon.png",
+      "role": "time_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Time.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Time.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "command_build_icon",
+      "file": "layers/command_build_icon.png",
+      "role": "build_command_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Command_Build.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_build_icon.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 124,
+          "height": 127
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "command_stop_icon",
+      "file": "layers/command_stop_icon.png",
+      "role": "stop_command_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Command_Stop.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_stop_icon.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 109,
+          "height": 111
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "command_special_icon",
+      "file": "layers/command_special_icon.png",
+      "role": "special_command_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Command_Special.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_special_icon.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 97,
+          "height": 144
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "threat_flag_icon",
+      "file": "layers/threat_flag_icon.png",
+      "role": "threat_flag_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Threat_Flag.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Threat_Flag.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    }
+  ]
+}

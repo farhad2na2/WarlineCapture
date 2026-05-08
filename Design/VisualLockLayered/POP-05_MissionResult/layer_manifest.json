@@ -1,0 +1,336 @@
+{
+  "schema": "warlinecapture.ui.oneGoLayerPack.v1",
+  "status": "ReadyForCanvasImplementation",
+  "screen": "Popup_MissionResult",
+  "prefab": "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab",
+  "referenceResolution": {
+    "width": 1672,
+    "height": 941
+  },
+  "source": {
+    "reference": "Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_Landscape_Target.png",
+    "reviewSheet": "Design/VisualLockLayered/POP-05_MissionResult/generated_one_go/layers_contact_sheet.png",
+    "layersRoot": "Design/VisualLockLayered/POP-05_MissionResult/layers"
+  },
+  "unity": {
+    "proposedAssetRoot": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo"
+  },
+  "rules": [
+    "transparentCornersRequired",
+    "doNotBakeWithTextOrIcons",
+    "TMP text remains live; no reusable layer may contain labels or values.",
+    "Modal frame, stat cards, reward cards, row frames, icons, and buttons are separate Image objects."
+  ],
+  "layers": [
+    {
+      "id": "background_tactical_art",
+      "file": "layers/background_tactical_art.png",
+      "role": "content image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Content/background_tactical_art.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "modal_frame",
+      "file": "layers/modal_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/modal_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          54,
+          54,
+          54,
+          54
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "modal_fill",
+      "file": "layers/modal_fill.png",
+      "role": "fill",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/modal_fill.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          30,
+          30,
+          30,
+          30
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "victory_emblem",
+      "file": "layers/victory_emblem.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/victory_emblem.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_star_filled",
+      "file": "layers/icon_star_filled.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_star_filled.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_star_empty",
+      "file": "layers/icon_star_empty.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_star_empty.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "stat_card_frame",
+      "file": "layers/stat_card_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/stat_card_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          18,
+          18,
+          18
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "reward_card_frame",
+      "file": "layers/reward_card_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/reward_card_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          18,
+          18,
+          18
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "consequence_row_frame",
+      "file": "layers/consequence_row_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Rows/consequence_row_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          12,
+          18,
+          12
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "objective_row_frame",
+      "file": "layers/objective_row_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Rows/objective_row_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          12,
+          18,
+          12
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "replay_button_background",
+      "file": "layers/replay_button_background.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Buttons/replay_button_background.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          30,
+          22,
+          30,
+          22
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "continue_button_background",
+      "file": "layers/continue_button_background.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Buttons/continue_button_background.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          30,
+          22,
+          30,
+          22
+        ]
+      },
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_enemies_defeated",
+      "file": "layers/icon_enemies_defeated.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_enemies_defeated.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_units_lost",
+      "file": "layers/icon_units_lost.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_units_lost.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_buildings_captured",
+      "file": "layers/icon_buildings_captured.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_buildings_captured.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_civilians_safe",
+      "file": "layers/icon_civilians_safe.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_civilians_safe.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_commander_xp",
+      "file": "layers/icon_commander_xp.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_commander_xp.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_credits",
+      "file": "layers/icon_credits.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_credits.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_supply_crate",
+      "file": "layers/icon_supply_crate.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_supply_crate.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_unlock_fragments",
+      "file": "layers/icon_unlock_fragments.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_unlock_fragments.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_gear_module",
+      "file": "layers/icon_gear_module.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_gear_module.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_rush_ticket",
+      "file": "layers/icon_rush_ticket.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_rush_ticket.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_objective_complete",
+      "file": "layers/icon_objective_complete.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_objective_complete.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "name": "Section panel 9-slice frame",
+      "file": "section_panel_frame.png",
+      "type": "nineSliceFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/section_panel_frame.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true,
+      "notes": "Shared thin chrome frame for stats, rewards, and objectives panels extracted/rebuilt to match POP-05 target section containers."
+    }
+  ]
+}

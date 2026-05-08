@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cc116838d3bd2364794cac3ded37beb3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Controllers/AC_HUD_MilitaryCombat_ActionBar_CooldownItem_01.controller
+  uploadId: 782058

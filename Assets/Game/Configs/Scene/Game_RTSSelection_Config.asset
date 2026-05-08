@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1010000000000000000000000000002, type: 3}
+  m_Name: Game_RTSSelection_Config
+  m_EditorClassIdentifier: 
+  worldCamera: {fileID: 0}
+  moveOrderMarkerPrefab: {fileID: 4032666883729616791, guid: cb0c4fde409484cb7a9dc099b2a2dab3, type: 3}
+  orderMarkerVisibleSeconds: 1.5
+  attackOrderMarkerPrefab: {fileID: 1658869923990684923, guid: 6f2a86e945dcb4a69bdfe9e93977ea4c, type: 3}
+  selectionFill: {r: 0.2, g: 1, b: 0.2, a: 0.15}
+  selectionBorder: {r: 0.2, g: 1, b: 0.2, a: 0.95}
+  dragThresholdPixels: 8
+  selectionModeHoldSeconds: 1
+  panSensitivity: 0.05
+  zoomSpeed: 20
+  minZoomHeight: 15
+  maxZoomHeight: 200
+  normalModeZoomHeight: 44
+  buildModeZoomHeight: 90
+  normalModePitch: 40
+  buildModePitch: 64
+  normalModeYaw: 10
+  buildModeYaw: 10
+  normalModeFieldOfView: 36
+  buildModeFieldOfView: 52
+  fullscreenIsoZoomHeight: 40
+  fullscreenIsoPitch: 82
+  fullscreenIsoYaw: 10
+  fullscreenIsoOrthographicSize: 24
+  zoomTransitionSmoothTime: 0.25

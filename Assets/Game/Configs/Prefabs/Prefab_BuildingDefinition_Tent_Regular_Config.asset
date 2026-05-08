@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
+  m_Name: Prefab_BuildingDefinition_Tent_Regular_Config
+  m_EditorClassIdentifier: 
+  displayName: Soldier Tent
+  description: Basic military tent used to house and support infantry units.
+  maxHealth: 450
+  role: 0
+  isWall: 0
+  canRequest: 1
+  price: 12000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  productions:
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 8ec7389d67b7543d0ac6050c06d26187, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: c986d67de97b24da38851254bac65674, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 7ab678d235e72407b912caa746540808, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 43c5d1e8b2f644214bbc8f1857f9b936, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 31226b3e29d054b92a7d31049ed98485, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 8cd4b7ee776fb4d42ae161060b267577, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 6f55477c25a814a79ab68a8f7dfa48db, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 44832a7f379be4c30b818e55ed7a45ce, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 8e4e6c0c93bb34f3ea5fce6745b6c83e, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b6480d3979bfaaa46a04be7558f5181a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_Screen_MilitaryCombat_HUD_01_On.anim
+  uploadId: 782058

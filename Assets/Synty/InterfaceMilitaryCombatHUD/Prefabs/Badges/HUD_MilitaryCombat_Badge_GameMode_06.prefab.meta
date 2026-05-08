@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7ed9b84257e44294d9c274b074dbbc93
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Badges/HUD_MilitaryCombat_Badge_GameMode_06.prefab
+  uploadId: 782058

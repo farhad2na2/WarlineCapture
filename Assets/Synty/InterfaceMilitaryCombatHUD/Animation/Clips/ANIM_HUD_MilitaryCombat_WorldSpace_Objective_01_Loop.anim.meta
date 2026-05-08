@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7e60b1790aa743647b0df41f5bfd7d1e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_HUD_MilitaryCombat_WorldSpace_Objective_01_Loop.anim
+  uploadId: 782058

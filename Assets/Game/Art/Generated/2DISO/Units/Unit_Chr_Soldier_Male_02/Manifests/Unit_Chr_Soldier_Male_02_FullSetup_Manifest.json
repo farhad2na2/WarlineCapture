@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "0.1",
+  "generatedOn": "2026-05-05",
+  "assetKind": "runtime-unit-sprite-sheet",
+  "visualCatalogId": "visual.unit.chr.soldier.male.02",
+  "entityId": "Unit_Chr_Soldier_Male_02",
+  "displayName": "Blue faction rifle soldier",
+  "factionReadability": {
+    "primaryFactionColor": "cyan-blue",
+    "readabilityStatus": "review_required",
+    "notes": [
+      "Blue shoulder, headset, visor, and backpack accents are visible at full sheet scale.",
+      "Faction readability still needs validation over FG-L01 terrain at gameplay zoom."
+    ]
+  },
+  "sourceAssets": {
+    "generatedSource": "/Users/farhad/.codex/generated_images/019df907-fb84-74c1-a2cd-a9bed0c53d09/ig_0f3376d24d2b268e0169fa2f2e612481918ddb85e887712524.png",
+    "sourceChroma": "Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/SourceChroma/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_SourceChroma.png",
+    "transparentOriginal": "Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State.png",
+    "unityGridSheet": "Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png"
+  },
+  "unityImport": {
+    "recommendedTextureType": "Sprite",
+    "recommendedSpriteMode": "Multiple",
+    "recommendedPixelsPerUnit": 100,
+    "meshType": "FullRect",
+    "filterMode": "Point or Bilinear after gameplay zoom review",
+    "compression": "None for review import",
+    "sliceMode": "Grid by Cell Size",
+    "grid": {
+      "sheetWidth": 960,
+      "sheetHeight": 1680,
+      "columns": 4,
+      "rows": 8,
+      "cellWidth": 240,
+      "cellHeight": 210,
+      "pivot": "Bottom Center",
+      "frameOrder": "row-major"
+    }
+  },
+  "columns": [
+    { "index": 0, "facing": "NE" },
+    { "index": 1, "facing": "SE" },
+    { "index": 2, "facing": "SW" },
+    { "index": 3, "facing": "NW" }
+  ],
+  "rows": [
+    { "index": 0, "state": "idle", "animationUse": "standing idle key pose" },
+    { "index": 1, "state": "walk", "animationUse": "walk key pose" },
+    { "index": 2, "state": "run", "animationUse": "run key pose" },
+    { "index": 3, "state": "aim", "animationUse": "aim key pose" },
+    { "index": 4, "state": "fire", "animationUse": "muzzle-flash firing key pose" },
+    { "index": 5, "state": "reload", "animationUse": "reload key pose" },
+    { "index": 6, "state": "hit", "animationUse": "hit reaction key pose" },
+    { "index": 7, "state": "death", "animationUse": "dead/downed key pose" }
+  ],
+  "frameCount": 32,
+  "status": "ready_for_visual_review",
+  "limitations": [
+    "This is a full setup/key-pose sheet, not final multi-frame animation loops.",
+    "Walk, run, reload, hit, and death each need additional in-between frames before they are final runtime animations.",
+    "The sheet is AI-generated and needs silhouette, scale, pivot, and faction-color validation inside FG-L01 before production batching.",
+    "The normalized Unity grid sheet was resized from the transparent original to provide exact 240x210 grid cells."
+  ],
+  "approvalGate": {
+    "reviewQuestion": "Does this soldier style, scale, and blue faction readability match the WarlineCapture reference direction closely enough to continue?",
+    "ifApproved": [
+      "Slice UnityGrid sheet into 32 sprites.",
+      "Create provisional AnimationClips for idle, walk, run, aim, fire, reload, hit, and death across NE, SE, SW, NW.",
+      "Place soldier over FG-L01 terrain scene for gameplay zoom validation.",
+      "Generate true multi-frame loops for approved states."
+    ],
+    "ifRejected": [
+      "Regenerate with stronger reference constraints before creating Unity clips.",
+      "Adjust faction blue size and placement if recognition is weak at gameplay zoom."
+    ]
+  }
+}

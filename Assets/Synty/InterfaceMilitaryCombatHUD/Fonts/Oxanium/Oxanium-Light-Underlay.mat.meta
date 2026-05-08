@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: aef2601183f708e4c83898640582c039
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/Oxanium-Light-Underlay.mat
+  uploadId: 782058

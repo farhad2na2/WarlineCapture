@@ -1,0 +1,28 @@
+{
+  "capture_type": "route-driven WarlineCaptureAppCanvas via WarlineCaptureRouter.Match",
+  "profile_id": "safe.cutout_left_20x9",
+  "resolution": "2400x1080",
+  "width": 2400,
+  "height": 1080,
+  "safe_area_mode": "named QA simulated safe-area profile",
+  "insets_px": { "left": 184, "right": 72, "top": 34, "bottom": 28 },
+  "cutout_rects_px": [{ "id": "left_camera_cutout", "x": 0, "y": 390, "width": 160, "height": 300, "origin": "top-left", "edge": "left" }],
+  "device_notes": "20:9 landscape profile with a left-edge camera cutout. The left inset fully excludes the cutout rectangle plus touch clearance.",
+  "surface_clearance": [
+    { "surface": "hud_resource_bar", "status": "pass", "states": "all match HUD states", "notes": "Top resource/header chrome stays inside SafeAreaRoot and does not overlap top/side exclusion bands." },
+    { "surface": "objective_panel", "status": "pass", "states": "MatchStart, SquadSelected, MoveFeedback, AttackFeedback, InvalidCommandRecovery, AssistantOpen, AssistantTakeoverStop", "notes": "Left objective/mission panel stays inside SafeAreaRoot and clears left cutout/inset profile." },
+    { "surface": "threat_feed", "status": "pass", "states": "all match HUD states", "notes": "Right-side tactical feed remains inside SafeAreaRoot and clears right rounded/inset profile." },
+    { "surface": "squad_tray", "status": "pass", "states": "all match HUD states", "notes": "Bottom squad controls remain above bottom inset and inside side insets." },
+    { "surface": "command_controls", "status": "pass", "states": "SquadSelected, MoveFeedback, AttackFeedback, InvalidCommandRecovery, AssistantOpen, AssistantTakeoverStop", "notes": "Command buttons and selected/disabled states remain inside bottom/side safe area." },
+    { "surface": "minimap", "status": "pass", "states": "all match HUD states", "notes": "Minimap frame stays inside right/top safe area and clears rounded/cutout exclusions." },
+    { "surface": "assistant_panel", "status": "pass", "states": "AssistantOpen, AssistantTakeoverStop", "notes": "Assistant button and expanded panel stay inside SafeAreaRoot with no edge clipping." },
+    { "surface": "result_popup", "status": "pass", "states": "ResultPopup", "notes": "Victory/result popup and action buttons remain centered within SafeAreaRoot." }
+  ],
+  "invalid_command_reason_code_status": "UI capture displays invalid-command recovery copy only; runtime canonical reason-code mapping remains a Gameplay/Support-FTUE Gate 4 blocker until runtime proof is supplied.",
+  "feedback_asset_status": {
+    "marker.selection.ring": "temporary UI visualization present in capture; final approved marker asset still tracked outside this UI safe-area fix",
+    "marker.move.destination": "temporary UI visualization present in capture; final approved marker asset still tracked outside this UI safe-area fix",
+    "marker.attack.target": "temporary UI visualization present in capture; final approved marker asset still tracked outside this UI safe-area fix",
+    "vfx.unit.destroyed.small": "absent from UI safe-area capture; final destroyed VFX remains an art/gameplay readiness blocker"
+  }
+}

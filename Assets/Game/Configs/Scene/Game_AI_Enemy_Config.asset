@@ -1,0 +1,43 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b8ba399ab5cb42a99a90d7884bbde7a, type: 3}
+  m_Name: Game_AI_Enemy_Config
+  m_EditorClassIdentifier: 
+  enabled: 1
+  role: 0
+  difficulty: 1
+  factionId: 1
+  autoControlsPlayerFaction: 0
+  startingMoney: 75000
+  incomeMultiplier: 1.15
+  oilSellPrice: 150
+  fuelSellPrice: 220
+  buildIntervalSeconds: 8
+  unitProductionIntervalSeconds: 6
+  attackIntervalSeconds: 45
+  maxActiveAttackGroups: 2
+  defenseRadiusCells: 45
+  aggression: 0.65
+  preferredBuildingIds:
+  - Tent_Regular
+  - Building_Barrack
+  - Building_OilPump
+  - Building_Fuel_Bladder
+  - Building_Ammunition_Depot
+  - Building_Airport
+  preferredUnitIds:
+  - Unit_Chr_Soldier_Male_02_Alt_04
+  - Unit_Chr_Ghillie_Male_01
+  preferredVehicleIds:
+  - Unit_Veh_APC_Fast
+  - Unit_Veh_APC_Heavy
+  - Unit_Veh_Tank_USA

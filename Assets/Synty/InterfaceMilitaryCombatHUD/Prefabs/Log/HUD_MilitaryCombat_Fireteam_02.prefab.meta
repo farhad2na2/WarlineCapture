@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 54d4dd241d12ca642995a65b317d1a0c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Log/HUD_MilitaryCombat_Fireteam_02.prefab
+  uploadId: 782058

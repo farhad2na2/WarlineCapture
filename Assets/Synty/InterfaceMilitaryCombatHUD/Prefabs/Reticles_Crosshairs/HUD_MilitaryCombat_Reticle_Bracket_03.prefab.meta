@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c0426aa26dff34e4a9174f6e94c56e8f
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Reticles_Crosshairs/HUD_MilitaryCombat_Reticle_Bracket_03.prefab
+  uploadId: 782058

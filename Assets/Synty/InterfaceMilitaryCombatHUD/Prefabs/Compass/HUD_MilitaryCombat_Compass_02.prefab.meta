@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cf925a63a73c87d4cbc3edadbb558ffe
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Compass/HUD_MilitaryCombat_Compass_02.prefab
+  uploadId: 782058

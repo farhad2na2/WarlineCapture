@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0e230356ae7d37f48852b17a451fb304
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_FX_MilitaryCombat_Damage_Vignette_01_Hit.anim
+  uploadId: 782058

@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WarlineCaptureButtonStates
+  m_Controller: {fileID: 9100000, guid: adbb1cd8c6c45a04cb65b43d1471f729, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 1aafefc164d1597439b83516416a3317, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a68ad578dc9db46608c588591e986477, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 0b1a79b0bc218304097c9306fb063959, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 63fe87355926b4dcabd4e717554f404c, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 4babb67be6823934586307521771d99a, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 26a036f314de04250805591aec62d75a, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 3a99e618a7e9a4842abb62365958c089, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: bea90b9cbe57c4598aa376b747ec70f5, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 7683fde15f910ab4c91ed21872935ee5, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: dc30818b3cce34b4494a57b5320e598c, type: 2}

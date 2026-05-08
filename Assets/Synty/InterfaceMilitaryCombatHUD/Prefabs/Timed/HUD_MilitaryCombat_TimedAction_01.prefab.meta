@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8909f4811add77a4d9a340678b0dc5b9
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Timed/HUD_MilitaryCombat_TimedAction_01.prefab
+  uploadId: 782058

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0e0bc7cb3eac9bf47baed961db02b10d
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scenes/32_Demo_MilitaryCombat_Icons_WeaponMods_03.unity
+  uploadId: 782058

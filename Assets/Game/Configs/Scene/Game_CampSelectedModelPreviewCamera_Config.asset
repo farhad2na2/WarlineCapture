@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bce3b9dad371c676a1f41a52b6119c49, type: 3}
+  m_Name: Game_CampSelectedModelPreviewCamera_Config
+  m_EditorClassIdentifier: 
+  characterModelPosition: {x: 0, y: 0, z: 0}
+  characterModelRotationEuler: {x: 0, y: 0, z: 0}
+  characterCameraPosition: {x: -0.25, y: 0.1, z: 4.5}
+  characterCameraRotationEuler: {x: 0, y: 180, z: 0}
+  characterCarouselRadius: 1.2
+  characterTargetHeight: 1.8
+  vehicleModelPosition: {x: 0, y: 0, z: 0}
+  vehicleModelRotationEuler: {x: 0, y: 0, z: 0}
+  vehicleCameraPosition: {x: -6.874033, y: 1.5, z: 14}
+  vehicleCameraRotationEuler: {x: 8, y: 141.322, z: 0}
+  vehicleCarouselRadius: 6
+  vehicleTargetHeight: 4
+  buildingModelPosition: {x: 0, y: 0, z: 0}
+  buildingModelRotationEuler: {x: 0, y: 0, z: 0}
+  buildingCameraPosition: {x: -6.874033, y: 1.5, z: 18}
+  buildingCameraRotationEuler: {x: 8, y: 141.322, z: 0}
+  buildingCarouselRadius: 8
+  buildingTargetHeight: 4

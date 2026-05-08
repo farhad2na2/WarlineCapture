@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
+  m_Name: Prefab_UnitGrid_Veh_APC_Fast_Config
+  m_EditorClassIdentifier: 
+  weaponSprite: {fileID: 0}
+  weaponDisplayName: 
+  allowIdleWander: 1
+  autoCalculateFootprint: 1
+  footprintCells: {x: 3, y: 3}
+  usesVehicleMotion: 1
+  isAirUnit: 0
+  canRequest: 1
+  price: 34000
+  productionDurationSeconds: 5
+  productionTransportPrefab: {fileID: 0}
+  isProductionTransportUnit: 0
+  productionTransportArrivalSeconds: 5
+  productionTransportHoldForNextReadySeconds: 4
+  productionTransportMaxConcurrent: 1
+  productionTransportRequiresAirportRunway: 0
+  productionTransportUsesRunwayLanding: 0
+  soldierTransportCapacity: 10
+  runwayTaxiSpeed: 5
+  speed: 11
+  walkSpeed: 11
+  roadSpeedMultiplier: 1.35
+  arriveDistance: 0.05
+  displayName: Fast APC
+  description: Fast armored personnel carrier for quickly transporting infantry across
+    the battlefield.
+  midLodPrefab: {fileID: 3355747261956749526, guid: 14f83202d2a7f43c59bd5779fcd8de24, type: 3}
+  lowLodPrefab: {fileID: 4171889844087497839, guid: 74945f1afd62845be8b3a132e46d313e, type: 3}
+  resourceHaulerBarrelCapacity: 0
+  resourceHaulerFillDurationSeconds: 2
+  resourceHaulerUnloadDurationSeconds: 1.5
+  canAttack: 0
+  allowAutoEngage: 1
+  usesTurretAim: 0
+  aggroRangeCells: 6
+  attackRange: 2
+  chaseBreakDistance: 8
+  attackCooldownSeconds: 1
+  attackDamage: 10
+  maxHealth: 550
+  attackImpactPrefab: {fileID: 0}
+  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  attackTraceWidth: 0.18
+  attackTraceScrollSpeed: 10
+  attackTraceDashDensity: 10
+  attackTraceVisibleSeconds: 0.08
+  idleDelayMinSeconds: 5
+  idleDelayMaxSeconds: 7
+  idleWanderDistanceMin: 3
+  idleWanderDistanceMax: 5
+  attackAnimationSeconds: 0.25
+  deathAnimationSeconds: 1.25
+  animationOrder: 

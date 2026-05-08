@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 28e0f4c8250b89a4280afa2376ef0f82
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_Button_MilitaryCombat_ChatLog_Header_01_Highlighted.anim
+  uploadId: 782058

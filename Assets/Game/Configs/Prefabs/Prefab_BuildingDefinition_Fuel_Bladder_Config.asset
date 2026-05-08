@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
+  m_Name: Prefab_BuildingDefinition_Fuel_Bladder_Config
+  m_EditorClassIdentifier: 
+  displayName: Fuel Bladder
+  description: Temporary fuel storage used to support vehicles, aircraft, and field logistics.
+  maxHealth: 500
+  price: 18000
+  productions:
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: 807d71c09b501438ba26e9ef9f5ec132, type: 3}
+  - spawnUnitPrefab: {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
+  - spawnUnitPrefab: {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+  - spawnUnitPrefab: {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
+  - spawnUnitPrefab: {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: 5e4e89101c0c44839a5c31ca449ce871, type: 3}
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: 331c6f0f95b4c4353bc9337bdd4b9c1b, type: 3}
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: 3d3206505e16446ab8691d740853c31d, type: 3}
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+  - spawnUnitPrefab: {fileID: 8579631638336695248, guid: b7087e56a58614db08d7c66c8845747b, type: 3}

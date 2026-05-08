@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: eb0c946b2f6cb6c41a5a831c37e96f42
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/NPC_HealthBars_EnemyData/HUD_MilitaryCombat_WorldSpace_NameAlly_01.prefab
+  uploadId: 782058

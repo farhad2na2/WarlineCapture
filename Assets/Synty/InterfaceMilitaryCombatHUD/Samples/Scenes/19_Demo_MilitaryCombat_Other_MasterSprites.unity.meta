@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8ab2efff08b2a754097a2950e698ad9a
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scenes/19_Demo_MilitaryCombat_Other_MasterSprites.unity
+  uploadId: 782058

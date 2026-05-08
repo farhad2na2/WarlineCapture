@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: cf2f6071232f6ff4484102f6c6b477db
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/_PreMadeHUDs/Screen_MilitaryCombat_HUD_3rdPerson_01.prefab
+  uploadId: 782058

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 749593ca1dcfa6d499f90227b19f175a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_HUD_MilitaryCombat_Event_RankUp_01_Out.anim
+  uploadId: 782058

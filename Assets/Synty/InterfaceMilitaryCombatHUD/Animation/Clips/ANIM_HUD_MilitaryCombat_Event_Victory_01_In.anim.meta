@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 455812c45a1682f4eb5a8d9e2a42deff
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_HUD_MilitaryCombat_Event_Victory_01_In.anim
+  uploadId: 782058

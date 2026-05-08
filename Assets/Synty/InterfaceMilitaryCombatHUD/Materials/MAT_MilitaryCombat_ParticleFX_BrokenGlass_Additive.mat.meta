@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a9a3865eec10bbd43a73404222e60731
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Materials/MAT_MilitaryCombat_ParticleFX_BrokenGlass_Additive.mat
+  uploadId: 782058

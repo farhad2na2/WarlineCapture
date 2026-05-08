@@ -1,0 +1,16 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); opacity: 1;">
+        <ui:VisualElement style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row; height: auto; flex-shrink: 0; align-items: stretch;">
+            <ui:TextField picking-mode="Ignore" label="Batch Models Name" name="BatchName" style="margin-top: 3px; margin-bottom: 3px; height: 20px; flex-grow: 1;" />
+            <ui:VisualElement name="BatchActions" style="flex-grow: 0; background-color: rgba(0, 0, 0, 0); flex-direction: row;">
+                <ui:Button text="Add Prefab" display-tooltip-when-elided="true" enable-rich-text="false" name="AddPrefab" tooltip="Add prefab to bake" style="display: flex; visibility: visible; margin-top: 3px; margin-bottom: 3px;" />
+                <ui:Button text="Process" display-tooltip-when-elided="true" enable-rich-text="false" name="Generate" tooltip="Start Generate Animation Texture" style="margin-top: 3px; margin-bottom: 3px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="PrefabsContent" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); flex-direction: column; align-items: stretch; justify-content: flex-start; display: flex; align-self: stretch; min-height: 0;">
+            <ui:ScrollView name="PrefabScrollView" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Auto" style="flex-grow: 1; min-height: 0; padding-left: 5px;">
+                <ui:VisualElement name="PrefabList" style="flex-grow: 1; background-color: rgba(0, 0, 0, 0); height: auto; align-items: stretch; width: 100%;" />
+            </ui:ScrollView>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1010000000000000000000000000009, type: 3}
+  m_Name: Game_DayNight_Config
+  m_EditorClassIdentifier: 
+  fullDayDurationMinutes: 10
+  startHour: 8
+  directionalLight: {fileID: 0}
+  globalVolume: {fileID: 0}
+  sunYaw: 170
+  nightStartsAtHour: 21.5
+  morningStartsAtHour: 5
+  nightVisionStartHour: 21
+  nightVisionEndHour: 5.5
+  nightVisionPostExposure: 2.2
+  nightVisionColorFilter: {r: 0.55, g: 1, b: 0.58, a: 1}
+  nightVisionTemperature: -80
+  nightVisionTint: -55
+  nightVisionBloomIntensity: 0.02
+  nightVisionBloomThreshold: 2
+  affectFog: 1
+  affectVolume: 1
+  updateDynamicGI: 0
+  dynamicGIRefreshIntervalSeconds: 30

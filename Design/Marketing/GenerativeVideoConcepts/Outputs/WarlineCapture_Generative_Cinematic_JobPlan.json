@@ -1,0 +1,86 @@
+{
+  "project": "WarlineCapture",
+  "createdAt": "2026-05-05T09:19:18+00:00",
+  "provider": "dry-run",
+  "model": "sora-2",
+  "shotPackage": "Design/Marketing/GenerativeVideoConcepts/WarlineCapture_Generative_Cinematic_Shots.json",
+  "target": {
+    "format": "mp4",
+    "aspectRatio": "16:9",
+    "size": "1280x720",
+    "secondsPerClip": 8,
+    "fps": 24,
+    "assembledTrailerSeconds": 40
+  },
+  "promptScan": {
+    "blockedTermCount": 5,
+    "blockedTermsFoundInPrompts": {}
+  },
+  "jobs": [
+    {
+      "shotId": "GV-01",
+      "name": "City Crisis Establishing Shot",
+      "provider": "dry-run",
+      "model": "sora-2",
+      "status": "planned",
+      "seconds": 8,
+      "size": "1280x720",
+      "prompt": "A premium stylized 3D cinematic trailer shot for a mobile tactical RTS called WarlineCapture. Wide aerial camera glides over a damaged near-future city district at dusk, smoke columns in the far background, emergency lights reflecting off wet roads, small rescue convoys and squad vehicles moving between barricades. Subtle cyan holographic command markers hover above rooftops without readable text. Dramatic but hopeful lighting, high-end animated game trailer, smooth camera movement, 16:9.\n\nGlobal style: premium stylized 3D animated game trailer, near-future tactical RTS, damaged city district under command pressure, clear silhouettes and readable military-rescue action, warm directional light with cyan tactical hologram accents, cinematic camera motion, no gameplay UI screenshots.\nCamera direction: Wide aerial push-in, slow descending glide toward the city center..\nHard constraints: No readable game UI, no screenshots, no real-world logos, no copyrighted characters, no real people, no public figures, no casino imagery, no random loot, no fake currency labels, no deprecated resource terms, no gore, no horror tone, no sold victory, no mission stars for sale.",
+      "sourceMode": "text-to-video",
+      "usesWarlineCaptureScreenshotSource": false,
+      "outputPath": "Design/Marketing/GenerativeVideoConcepts/Outputs/GV-01_city_crisis_establishing_shot.mp4"
+    },
+    {
+      "shotId": "GV-02",
+      "name": "Commander War Room",
+      "provider": "dry-run",
+      "model": "sora-2",
+      "status": "planned",
+      "seconds": 8,
+      "size": "1280x720",
+      "prompt": "Inside a compact mobile command vehicle at night, a tactical commander studies a holographic 3D city map projected above a rugged table. Glowing district zones pulse softly, squad routes appear as clean cyan lines, warning areas glow amber and red without readable text. The commander's hands move markers across the map, calm focused decision-making, premium stylized 3D animated trailer, cinematic depth of field, no user interface overlays, 16:9.\n\nGlobal style: premium stylized 3D animated game trailer, near-future tactical RTS, damaged city district under command pressure, clear silhouettes and readable military-rescue action, warm directional light with cyan tactical hologram accents, cinematic camera motion, no gameplay UI screenshots.\nCamera direction: Medium close shot orbiting from the commander's shoulder to the holographic city map..\nHard constraints: No readable game UI, no screenshots, no real-world logos, no copyrighted characters, no real people, no public figures, no casino imagery, no random loot, no fake currency labels, no deprecated resource terms, no gore, no horror tone, no sold victory, no mission stars for sale.",
+      "sourceMode": "text-to-video",
+      "usesWarlineCaptureScreenshotSource": false,
+      "outputPath": "Design/Marketing/GenerativeVideoConcepts/Outputs/GV-02_commander_war_room.mp4"
+    },
+    {
+      "shotId": "GV-03",
+      "name": "Squad Advance",
+      "provider": "dry-run",
+      "model": "sora-2",
+      "status": "planned",
+      "seconds": 8,
+      "size": "1280x720",
+      "prompt": "Stylized 3D animated tactical RTS trailer shot. Three readable squad groups advance through an urban street beside an APC, moving from cover to cover while a small drone scans above. The scene is organized like a premium isometric strategy game brought into cinematic 3D, with clear silhouettes, clean tactical motion, sparks from distant impacts, no gore, no chaos. Camera tracks low then rises to reveal the squad formation and objective area, 16:9.\n\nGlobal style: premium stylized 3D animated game trailer, near-future tactical RTS, damaged city district under command pressure, clear silhouettes and readable military-rescue action, warm directional light with cyan tactical hologram accents, cinematic camera motion, no gameplay UI screenshots.\nCamera direction: Low tracking shot beside the APC, then crane up into an isometric-inspired tactical angle..\nHard constraints: No readable game UI, no screenshots, no real-world logos, no copyrighted characters, no real people, no public figures, no casino imagery, no random loot, no fake currency labels, no deprecated resource terms, no gore, no horror tone, no sold victory, no mission stars for sale.",
+      "sourceMode": "text-to-video",
+      "usesWarlineCaptureScreenshotSource": false,
+      "outputPath": "Design/Marketing/GenerativeVideoConcepts/Outputs/GV-03_squad_advance.mp4"
+    },
+    {
+      "shotId": "GV-04",
+      "name": "Operation Recovery",
+      "provider": "dry-run",
+      "model": "sora-2",
+      "status": "planned",
+      "seconds": 8,
+      "size": "1280x720",
+      "prompt": "Premium stylized 3D cinematic of a district recovery operation in WarlineCapture. Aid convoy trucks arrive at a damaged civic plaza while engineers repair barricades, drones scan rooftops, and civilians are guided safely in the background without close-up distress. Warm sunlight breaks through smoke, cyan tactical beacons mark safe routes without readable text. The mood shifts from danger to stabilization, high-end animated mobile strategy trailer, 16:9.\n\nGlobal style: premium stylized 3D animated game trailer, near-future tactical RTS, damaged city district under command pressure, clear silhouettes and readable military-rescue action, warm directional light with cyan tactical hologram accents, cinematic camera motion, no gameplay UI screenshots.\nCamera direction: Smooth lateral dolly following the aid convoy, ending on repair crews and stabilized route markers..\nHard constraints: No readable game UI, no screenshots, no real-world logos, no copyrighted characters, no real people, no public figures, no casino imagery, no random loot, no fake currency labels, no deprecated resource terms, no gore, no horror tone, no sold victory, no mission stars for sale.",
+      "sourceMode": "text-to-video",
+      "usesWarlineCaptureScreenshotSource": false,
+      "outputPath": "Design/Marketing/GenerativeVideoConcepts/Outputs/GV-04_operation_recovery.mp4"
+    },
+    {
+      "shotId": "GV-05",
+      "name": "Victory Recovery",
+      "provider": "dry-run",
+      "model": "sora-2",
+      "status": "planned",
+      "seconds": 8,
+      "size": "1280x720",
+      "prompt": "Final premium stylized 3D animated trailer shot for WarlineCapture. Sunrise over the same city district after a successful tactical operation: squads stand down near an objective zone, repair lights turn on across buildings, a convoy exits safely, and the city feels recoverable. Subtle non-readable command holograms fade out. Cinematic hopeful tone, tactical RTS identity, no UI screenshots, no readable text, no store or currency imagery, 16:9.\n\nGlobal style: premium stylized 3D animated game trailer, near-future tactical RTS, damaged city district under command pressure, clear silhouettes and readable military-rescue action, warm directional light with cyan tactical hologram accents, cinematic camera motion, no gameplay UI screenshots.\nCamera direction: Slow heroic pullback from squads and convoy to a broad city recovery view..\nHard constraints: No readable game UI, no screenshots, no real-world logos, no copyrighted characters, no real people, no public figures, no casino imagery, no random loot, no fake currency labels, no deprecated resource terms, no gore, no horror tone, no sold victory, no mission stars for sale.",
+      "sourceMode": "text-to-video",
+      "usesWarlineCaptureScreenshotSource": false,
+      "outputPath": "Design/Marketing/GenerativeVideoConcepts/Outputs/GV-05_victory_recovery.mp4"
+    }
+  ]
+}

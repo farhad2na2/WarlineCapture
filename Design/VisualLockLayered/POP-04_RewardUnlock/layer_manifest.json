@@ -1,0 +1,139 @@
+{
+  "surfaceId": "POP-04_RewardUnlock",
+  "status": "ReadyForCanvasImplementation",
+  "reference": "reference/POP-04_RewardUnlock_Landscape_Target.png",
+  "rules": {
+    "transparentCornersRequired": true,
+    "doNotBakeTextIntoReusableChrome": true,
+    "doNotUseFullTargetAsPrefabBackground": true,
+    "liveTextRequired": true
+  },
+  "layers": [
+    {
+      "file": "background_command_center.png",
+      "type": "background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Content/background_command_center.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "modal_frame.png",
+      "type": "nineSliceFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Frames/modal_frame.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "modal_fill.png",
+      "type": "nineSliceFill",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Frames/modal_fill.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "header_emblem.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/header_emblem.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "close_button_background.png",
+      "type": "nineSliceButton",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Buttons/close_button_background.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "close_icon.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/close_icon.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "unlock_display_art.png",
+      "type": "contentImage",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Content/unlock_display_art.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "reward_card_frame.png",
+      "type": "nineSliceCard",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Cards/reward_card_frame.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "continue_button_background.png",
+      "type": "nineSliceButton",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Buttons/continue_button_background.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "icon_commander_xp.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_commander_xp.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "icon_credits.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_credits.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "icon_supply_crate.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_supply_crate.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "icon_gear_parts.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_gear_parts.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "top_resource_bar.png",
+      "type": "nineSliceFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Frames/top_resource_bar.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "commander_plate.png",
+      "type": "nineSliceFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Frames/commander_plate.png",
+      "transparentCornersRequired": true,
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "file": "icon_settings.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_settings.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "icon_mail.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_mail.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "file": "icon_menu.png",
+      "type": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/RewardUnlock/LayeredOneGo/Icons/icon_menu.png",
+      "transparentCornersRequired": false,
+      "doNotBakeWithTextOrIcons": false
+    }
+  ]
+}

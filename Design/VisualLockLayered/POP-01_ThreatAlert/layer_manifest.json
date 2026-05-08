@@ -1,0 +1,344 @@
+{
+  "surfaceId": "POP-01_ThreatAlert",
+  "title": "Threat Alert Popup",
+  "workflow": "VisualLockLayered popup gate",
+  "referenceResolution": {
+    "width": 1672,
+    "height": 941
+  },
+  "referenceTarget": "reference/POP-01_ThreatAlert_Landscape_Target.png",
+  "contactSheet": "generated_one_go/layers_contact_sheet.png",
+  "rules": [
+    "Do not implement or rebuild the popup prefab unless this manifest and contact sheet exist.",
+    "Use layer PNGs as the source of truth for Unity sprites; do not crop icons or controls from a baked target during prefab construction.",
+    "Frame and button assets must be separate transparent 9-sliced sprites with transparent corners where the target implies cut or rounded corners.",
+    "Icons must stay separate transparent sprites and must never be baked into button or card backgrounds.",
+    "After prefab rebuild, capture 16:9 and 20:9 screenshots and compare against the reference target before marking visual work complete."
+  ],
+  "layers": [
+    {
+      "id": "modal_shell_frame",
+      "file": "layers/modal_shell_frame.png",
+      "role": "modal_chrome_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_ModalFrame_9Slice.png",
+      "sourceAsset": "target-derived frame/background layer; text/icons/content removed with solid interior fill",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          42,
+          34,
+          42,
+          34
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 360,
+          "height": 282
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "header_backplate",
+      "file": "layers/header_backplate.png",
+      "role": "title_header_backplate",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_HeaderBackplate_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/QuickCustom/Frames/QuickCustom_Card_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          20,
+          16,
+          20,
+          16
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 370,
+          "height": 74
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "threat_info_row_background",
+      "file": "layers/threat_info_row_background.png",
+      "role": "metric_row_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_InfoRow_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/Threat_InfoRow_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          28,
+          18,
+          28,
+          18
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 350,
+          "height": 62
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "threat_image_frame",
+      "file": "layers/threat_image_frame.png",
+      "role": "convoy_image_frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_ImageFrame_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/Threat_ImageFrame_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          46,
+          36,
+          46,
+          36
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 410,
+          "height": 294
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "threat_convoy_image",
+      "file": "layers/threat_convoy_image.png",
+      "role": "convoy_preview_image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/ThreatAlert_ConvoyImage.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/ThreatAlert_ConvoyImage.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 398,
+          "height": 274
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "threat_warning_icon",
+      "file": "layers/threat_warning_icon.png",
+      "role": "warning_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Warning.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Warning.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "threat_eta_icon",
+      "file": "layers/threat_eta_icon.png",
+      "role": "eta_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Eta.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Eta.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "threat_route_icon",
+      "file": "layers/threat_route_icon.png",
+      "role": "route_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Route.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Route.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "threat_strength_icon",
+      "file": "layers/threat_strength_icon.png",
+      "role": "strength_icon_transparent",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Strength.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/Popups/Threat_Icon_Strength.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 128,
+          "height": 128
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": false,
+        "keepIconsAsSeparateTransparentSprites": true
+      }
+    },
+    {
+      "id": "jump_to_threat_button_background",
+      "file": "layers/jump_to_threat_button_background.png",
+      "role": "primary_action_button_background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_JumpButton_9Slice.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/QuickCustom/Buttons/QuickCustom_LaunchButton_9Slice.png",
+      "sprite": {
+        "imageType": "sliced",
+        "border": [
+          30,
+          20,
+          30,
+          20
+        ],
+        "transparentCornersRequired": true,
+        "alphaRequired": true,
+        "size": {
+          "width": 580,
+          "height": 104
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "launch_arrow_left",
+      "file": "layers/launch_arrow_left.png",
+      "role": "left_action_arrow",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_LaunchArrow_Left.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/QuickCustom/Buttons/QuickCustom_LaunchArrow_Left.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 96,
+          "height": 52
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    },
+    {
+      "id": "launch_arrow_right",
+      "file": "layers/launch_arrow_right.png",
+      "role": "right_action_arrow",
+      "unityDestination": "Assets/Game/Art/UI/Generated/Popups/Threat_LaunchArrow_Right.png",
+      "sourceAsset": "Assets/Game/Art/UI/Generated/QuickCustom/Buttons/QuickCustom_LaunchArrow_Right.png",
+      "sprite": {
+        "imageType": "simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "transparentCornersRequired": false,
+        "alphaRequired": true,
+        "size": {
+          "width": 96,
+          "height": 52
+        },
+        "mode": "RGBA"
+      },
+      "validation": {
+        "doNotBakeWithTextOrIcons": true,
+        "keepIconsAsSeparateTransparentSprites": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1010000000000000000000000000003, type: 3}
+  m_Name: Game_RoadBuild_Config
+  m_EditorClassIdentifier: 
+  worldCamera: {fileID: 0}
+  straightPrefab: {fileID: 6752715572181065886, guid: 02bcd840ebd8b4b3c84dd02b87e88691, type: 3}
+  tIntersectionPrefab: {fileID: 2219165648693706337, guid: 7688b8f8d8e484b088b5bb5183a569d0, type: 3}
+  intersectionPrefab: {fileID: 125360972841645786, guid: 3a64ece19559a4681a3ea318960ad580, type: 3}
+  endPrefab: {fileID: 2977948095156090640, guid: a69f7d1ee3c6c454895567c742e5d3c1, type: 3}
+  cornerPrefab: {fileID: 4627792861614435960, guid: 86153a2cd1ee640b2958b97482c4a043, type: 3}
+  autobahnPrefab: {fileID: 8822383729681929227, guid: db50563de5ef0473f911bd27045c8102, type: 3}
+  autobahnConnectPrefab: {fileID: 5218772707357180415, guid: 850424cc4780e450f8bac96a09a0a6fc, type: 3}
+  gridOrigin: {x: 0, y: 0, z: 0}
+  buildPlaneY: 0
+  roadGridSize: 10
+  chunkSizeInCells: 8
+  previewAlpha: 0.65
+  soldierBasePrefab: {fileID: 4032819964272335448, guid: 7c324924e39bb46d893bbaf3e63deb4e, type: 3}
+  soldierBaseFootprintCells: {x: 20, y: 20}
+  placementOutlineHeight: 0.15
+  placementOutlineWidth: 0.35
+  placementValidColor: {r: 0.15, g: 0.85, b: 0.2, a: 1}
+  placementInvalidColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}

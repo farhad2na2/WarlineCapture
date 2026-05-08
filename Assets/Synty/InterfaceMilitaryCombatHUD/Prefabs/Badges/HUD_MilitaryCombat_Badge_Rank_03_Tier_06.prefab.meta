@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 55d8e87a9cfc5a94aa08cc6bfcd213f1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Badges/HUD_MilitaryCombat_Badge_Rank_03_Tier_06.prefab
+  uploadId: 782058

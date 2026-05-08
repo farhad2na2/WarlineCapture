@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: ce570e28778747548a686b621a8cc8e6
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Player_Health_Equipment/_Parts/HUD_MilitaryCombat_Stat_Dial_01.prefab
+  uploadId: 782058

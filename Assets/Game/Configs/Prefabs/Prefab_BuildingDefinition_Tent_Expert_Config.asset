@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
+  m_Name: Prefab_BuildingDefinition_Tent_Expert_Config
+  m_EditorClassIdentifier: 
+  displayName: Expert Tent
+  description: Specialist field tent for expert personnel and advanced support teams.
+  maxHealth: 400
+  role: 0
+  isWall: 0
+  canRequest: 1
+  price: 10000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  productions:
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 416e51ffcd246420794617d340bcbe6b, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: eacf82a9f686b47628592b95037d9770, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: d586b1b5678bb4c8396e9cb51b12ea21, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 8be6a24b3cb444eceb6e9dd320de8fca, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e544ed3e663c4714caf2eac6e47b210d
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Objectives_Story_Location/HUD_MilitaryCombat_WorldSpace_Objective_02.prefab
+  uploadId: 782058

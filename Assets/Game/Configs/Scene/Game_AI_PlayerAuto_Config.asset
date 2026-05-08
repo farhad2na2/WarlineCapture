@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b8ba399ab5cb42a99a90d7884bbde7a, type: 3}
+  m_Name: Game_AI_PlayerAuto_Config
+  m_EditorClassIdentifier: 
+  enabled: 1
+  role: 1
+  difficulty: 1
+  factionId: 0
+  autoControlsPlayerFaction: 1
+  startingMoney: 300000
+  incomeMultiplier: 1
+  oilSellPrice: 150
+  fuelSellPrice: 220
+  buildIntervalSeconds: 10
+  unitProductionIntervalSeconds: 8
+  attackIntervalSeconds: 60
+  maxActiveAttackGroups: 1
+  defenseRadiusCells: 55
+  aggression: 0.35
+  preferredBuildingIds:
+  - Tent_Regular
+  - Building_Barrack
+  - Building_OilPump
+  - Building_Fuel_Bladder
+  - Building_Ammunition_Depot
+  preferredUnitIds:
+  - Unit_Chr_Soldier_Male_02_Alt_04
+  - Unit_Chr_Soldier_Female_02
+  preferredVehicleIds:
+  - Unit_Veh_APC_Heavy
+  - Unit_Veh_Light_Armored_Car

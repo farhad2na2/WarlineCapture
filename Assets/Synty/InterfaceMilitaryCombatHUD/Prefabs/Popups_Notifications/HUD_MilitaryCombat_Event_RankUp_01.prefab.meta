@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7cfc003198b24884f89e72976b3a9c49
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/Popups_Notifications/HUD_MilitaryCombat_Event_RankUp_01.prefab
+  uploadId: 782058

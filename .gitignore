@@ -1,0 +1,45 @@
+# macOS
+.DS_Store
+
+# Unity generated folders
+[Ll]ibrary/
+[Tt]emp/
+[Ll]ogs/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# Unity generated files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Auto-generated Visual Studio / Rider
+.vs/
+.idea/
+ExportedObj/
+.consulo/
+
+# Crash reports
+sysinfo.txt
+
+# Local secrets
+.env.local
+.local/
+
+# Addressables / generated caches
+Assets/AddressableAssetsData/*/*.bin*

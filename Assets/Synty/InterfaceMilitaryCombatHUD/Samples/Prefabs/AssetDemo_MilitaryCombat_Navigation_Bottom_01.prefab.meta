@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e9bf6881abe0ff04ca459ae3e0731b25
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Prefabs/AssetDemo_MilitaryCombat_Navigation_Bottom_01.prefab
+  uploadId: 782058

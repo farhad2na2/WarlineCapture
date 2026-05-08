@@ -1,0 +1,30 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public sealed class UnitImpostorAtlasEntry
+{
+    [SerializeField] private GameObject prefab;
+    [SerializeField] private Texture2D atlas;
+    [SerializeField, Min(1)] private int directionCount = 8;
+    [SerializeField, Min(1)] private int columns = 4;
+    [SerializeField, Min(1)] private int rows = 2;
+    [SerializeField] private Vector2 size = new(1f, 1.8f);
+
+    public GameObject Prefab => prefab;
+    public Texture2D Atlas => atlas;
+    public int DirectionCount => Mathf.Max(1, directionCount);
+    public int Columns => Mathf.Max(1, columns);
+    public int Rows => Mathf.Max(1, rows);
+    public Vector2 Size => size;
+}
+
+[CreateAssetMenu(menuName = "WarlineCapture/Config/Unit Prefab Registry")]
+public class UnitPrefabRegistryAuthoringConfig : ScriptableObject
+{
+    [SerializeField] private List<GameObject> unitSpawnPrefabs = new();
+    [SerializeField] private List<UnitImpostorAtlasEntry> impostorAtlases = new();
+
+    public List<GameObject> UnitSpawnPrefabs => unitSpawnPrefabs;
+    public List<UnitImpostorAtlasEntry> ImpostorAtlases => impostorAtlases;
+}

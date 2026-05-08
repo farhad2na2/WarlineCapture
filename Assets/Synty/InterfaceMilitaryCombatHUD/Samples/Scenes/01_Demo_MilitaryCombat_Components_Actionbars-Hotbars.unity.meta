@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 6896356a02f1f52418f32f84f0cafabe
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Scenes/01_Demo_MilitaryCombat_Components_Actionbars-Hotbars.unity
+  uploadId: 782058

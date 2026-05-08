@@ -1,0 +1,159 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2cfbfaa5475d49fbbfd424e47e30c75d, type: 3}
+  m_Name: Game_SoldierBadgeCatalog_Config
+  m_EditorClassIdentifier: 
+  badges:
+  - badgePrefab: {fileID: 4411860702638105249, guid: fa86a0066d3254bb6b2a47012f143ff1, type: 3}
+    displayName: Sergeant
+    rank: 1
+    tier: 1
+  - badgePrefab: {fileID: 8509940100884730028, guid: 12eb5b7863f9844558d7fff0e41cbd7c, type: 3}
+    displayName: Staff Sergeant
+    rank: 1
+    tier: 2
+  - badgePrefab: {fileID: 4552474039644148785, guid: de866590329ce4fb4bfdc51f424ee02f, type: 3}
+    displayName: Sergeant First Class
+    rank: 1
+    tier: 3
+  - badgePrefab: {fileID: 1535871753107198636, guid: b2b1bff56858443e6ae7e28390dd0384, type: 3}
+    displayName: Master Sergeant
+    rank: 1
+    tier: 4
+  - badgePrefab: {fileID: 6307103782324409383, guid: 17297d30f3d844442a3ed7cbd0d12857, type: 3}
+    displayName: First Sergeant
+    rank: 1
+    tier: 5
+  - badgePrefab: {fileID: 6519245288043407006, guid: d9d96fcb666cd4c3081d740963e27ebd, type: 3}
+    displayName: Sergeant Major
+    rank: 1
+    tier: 6
+  - badgePrefab: {fileID: 3962737346218935690, guid: 2c945402ee63341abbc978c79efc883a, type: 3}
+    displayName: Command Sergeant Major
+    rank: 1
+    tier: 7
+  - badgePrefab: {fileID: 4407063034301813063, guid: 2f82b1d9b0d284d8fb6a9515ad5f5bc3, type: 3}
+    displayName: Senior Command Sergeant Major
+    rank: 1
+    tier: 8
+  - badgePrefab: {fileID: 3395932300923870780, guid: 86896215a9b524149a871d4e6ed554a3, type: 3}
+    displayName: Sergeant Major of the Army
+    rank: 1
+    tier: 9
+  - badgePrefab: {fileID: 8252220388319120211, guid: 596546164ce58451889e289dbd88320a, type: 3}
+    displayName: Second Lieutenant
+    rank: 2
+    tier: 1
+  - badgePrefab: {fileID: 8360651742586517196, guid: 94938db59c0d84edaa54efbaf22bc9ba, type: 3}
+    displayName: First Lieutenant
+    rank: 2
+    tier: 2
+  - badgePrefab: {fileID: 4834344114493699114, guid: 89b73beb7fa6c42df89b8975ffe2b180, type: 3}
+    displayName: Captain
+    rank: 2
+    tier: 3
+  - badgePrefab: {fileID: 3098407588875735497, guid: 2b51e35a4f86641098233fe07fe92d4c, type: 3}
+    displayName: Major
+    rank: 2
+    tier: 4
+  - badgePrefab: {fileID: 1181337849308207513, guid: 36225dd79b4164854878bc26bfb85a32, type: 3}
+    displayName: Lieutenant Colonel
+    rank: 2
+    tier: 5
+  - badgePrefab: {fileID: 1540904756296942284, guid: 4b112baa51a634743b62413d55a2dccd, type: 3}
+    displayName: Colonel
+    rank: 2
+    tier: 6
+  - badgePrefab: {fileID: 7705365832220612037, guid: 602fcbbb4855f4557957f419b975e4e5, type: 3}
+    displayName: Senior Colonel
+    rank: 2
+    tier: 7
+  - badgePrefab: {fileID: 2669276286462877065, guid: 290d30003227a44548c5d6e669d46195, type: 3}
+    displayName: Brigadier
+    rank: 2
+    tier: 8
+  - badgePrefab: {fileID: 3280362784504596637, guid: 0521a1f42805541b796e35d75dc8a3de, type: 3}
+    displayName: Brigadier General
+    rank: 2
+    tier: 9
+  - badgePrefab: {fileID: 31166229767925831, guid: 5590a1695e6e64c5eb4f2cc3f7cac7cc, type: 3}
+    displayName: Major General
+    rank: 3
+    tier: 1
+  - badgePrefab: {fileID: 8386041126612660125, guid: fd84e08f6d72b4e74932492494d0d6f5, type: 3}
+    displayName: Lieutenant General
+    rank: 3
+    tier: 2
+  - badgePrefab: {fileID: 5823904191573399455, guid: 8d8e9a9125edc46c1a65f2a327d991cf, type: 3}
+    displayName: General
+    rank: 3
+    tier: 3
+  - badgePrefab: {fileID: 5038420123131249153, guid: a1bc1a524b3ac493da1447f76e8bd7ca, type: 3}
+    displayName: Field General
+    rank: 3
+    tier: 4
+  - badgePrefab: {fileID: 4808353778149669020, guid: 0886a43cc436546d5a8fb78331fc4e78, type: 3}
+    displayName: Army General
+    rank: 3
+    tier: 5
+  - badgePrefab: {fileID: 4115197638745100756, guid: 713ea0bdf10b14930aedde940e6d0c88, type: 3}
+    displayName: Theater General
+    rank: 3
+    tier: 6
+  - badgePrefab: {fileID: 2353196858245259630, guid: 8184019b4c446468db67bbd808c18f1b, type: 3}
+    displayName: Commanding General
+    rank: 3
+    tier: 7
+  - badgePrefab: {fileID: 8026175679501420366, guid: 96d844a227d54460da2aa2fe21cce98b, type: 3}
+    displayName: Supreme General
+    rank: 3
+    tier: 8
+  - badgePrefab: {fileID: 5503582498951476754, guid: 2e734afd6b1cf4807aefabb8b887a531, type: 3}
+    displayName: General of the Army
+    rank: 3
+    tier: 9
+  - badgePrefab: {fileID: 1532581788485610567, guid: 1574a1853d48948048da6528def379a4, type: 3}
+    displayName: Warrant Officer
+    rank: 4
+    tier: 1
+  - badgePrefab: {fileID: 8098129875932077278, guid: 46fe923401da74096b89899b0e963ff9, type: 3}
+    displayName: Chief Warrant Officer 2
+    rank: 4
+    tier: 2
+  - badgePrefab: {fileID: 546677076048715148, guid: 9f97f00c580494934bdb317ce0eafb95, type: 3}
+    displayName: Chief Warrant Officer 3
+    rank: 4
+    tier: 3
+  - badgePrefab: {fileID: 5899293036844646219, guid: fdd366429531846fc9bbac515ea5993d, type: 3}
+    displayName: Chief Warrant Officer 4
+    rank: 4
+    tier: 4
+  - badgePrefab: {fileID: 905607176033648400, guid: a141a088c7bc64656a238a88065aa2da, type: 3}
+    displayName: Chief Warrant Officer 5
+    rank: 4
+    tier: 5
+  - badgePrefab: {fileID: 5539291849567982686, guid: d45b755000cf248e48a23d63ce2466a1, type: 3}
+    displayName: Senior Warrant Officer
+    rank: 4
+    tier: 6
+  - badgePrefab: {fileID: 6369326060280267994, guid: 83d3794de68d949b5bd9befdb8b8bff8, type: 3}
+    displayName: Master Warrant Officer
+    rank: 4
+    tier: 7
+  - badgePrefab: {fileID: 5589442185322605629, guid: d6519262c07a64415a57e3a93554df5f, type: 3}
+    displayName: Command Warrant Officer
+    rank: 4
+    tier: 8
+  - badgePrefab: {fileID: 8986762743084349834, guid: 1321da969b09d40eba135a1a9c1162a9, type: 3}
+    displayName: Chief Warrant Officer of the Army
+    rank: 4
+    tier: 9

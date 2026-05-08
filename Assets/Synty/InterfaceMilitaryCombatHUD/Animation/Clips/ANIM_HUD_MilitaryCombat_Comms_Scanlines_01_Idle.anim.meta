@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fca336f5c8e0ddb4c97b7f0caec927c5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Animation/Clips/ANIM_HUD_MilitaryCombat_Comms_Scanlines_01_Idle.anim
+  uploadId: 782058

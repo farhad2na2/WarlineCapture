@@ -1,0 +1,265 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a79b0ab544445ebedc61b182157be7, type: 3}
+  m_Name: Game_UnitPrefabRegistry_Config
+  m_EditorClassIdentifier: 
+  unitSpawnPrefabs:
+  - {fileID: 3282182154612916099, guid: f90ebb5728e6e4546a708248d5acfb9b, type: 3}
+  - {fileID: 3282182154612916099, guid: a3873f0cb8f24494eb79c31a4c12ec31, type: 3}
+  - {fileID: 3282182154612916099, guid: e9380ca06e23346a48a8d1d09416e955, type: 3}
+  - {fileID: 3282182154612916099, guid: 7c722f33fbe75427289f93b6f35e7e04, type: 3}
+  - {fileID: 3282182154612916099, guid: de10bdd428c9d4ff2b2f2507809dea42, type: 3}
+  - {fileID: 3282182154612916099, guid: f7fab5771a1744644b5f6b8efff8b6ec, type: 3}
+  - {fileID: 3282182154612916099, guid: 058513b35b4a14b9cb012570502d1259, type: 3}
+  - {fileID: 3282182154612916099, guid: 45e248593e3114d24a968047f55ca26e, type: 3}
+  - {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}
+  - {fileID: 3282182154612916099, guid: 71e48079674fc47b79eb9b4c5fc12b89, type: 3}
+  - {fileID: 3282182154612916099, guid: 655c350601d8a48e0b0efcbc75872502, type: 3}
+  - {fileID: 3282182154612916099, guid: 86c7a61b3f3d34e1f983ab4927938efb, type: 3}
+  - {fileID: 3282182154612916099, guid: 0ddde1c8a3f58401abcf663bfd8f97a1, type: 3}
+  - {fileID: 3282182154612916099, guid: 9d3494e0921d647798634354c12f2bf2, type: 3}
+  - {fileID: 3282182154612916099, guid: 4f6166a2a14e34cba9816b8e9354cb4e, type: 3}
+  - {fileID: 3282182154612916099, guid: 10ab3971438924b85bc0cd3e0a3f578b, type: 3}
+  - {fileID: 3282182154612916099, guid: b581a85bda0904a3a9dda159bddae163, type: 3}
+  - {fileID: 3282182154612916099, guid: 8be6a24b3cb444eceb6e9dd320de8fca, type: 3}
+  - {fileID: 3282182154612916099, guid: d586b1b5678bb4c8396e9cb51b12ea21, type: 3}
+  - {fileID: 3282182154612916099, guid: eacf82a9f686b47628592b95037d9770, type: 3}
+  - {fileID: 3282182154612916099, guid: 8ec7389d67b7543d0ac6050c06d26187, type: 3}
+  - {fileID: 3282182154612916099, guid: c986d67de97b24da38851254bac65674, type: 3}
+  - {fileID: 3282182154612916099, guid: 416e51ffcd246420794617d340bcbe6b, type: 3}
+  - {fileID: 3282182154612916099, guid: 7ab678d235e72407b912caa746540808, type: 3}
+  - {fileID: 3282182154612916099, guid: 43c5d1e8b2f644214bbc8f1857f9b936, type: 3}
+  - {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
+  - {fileID: 3282182154612916099, guid: 31226b3e29d054b92a7d31049ed98485, type: 3}
+  - {fileID: 3282182154612916099, guid: 8cd4b7ee776fb4d42ae161060b267577, type: 3}
+  - {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
+  - {fileID: 3282182154612916099, guid: 6f55477c25a814a79ab68a8f7dfa48db, type: 3}
+  - {fileID: 3282182154612916099, guid: 44832a7f379be4c30b818e55ed7a45ce, type: 3}
+  - {fileID: 3282182154612916099, guid: 8e4e6c0c93bb34f3ea5fce6745b6c83e, type: 3}
+  - {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+  - {fileID: 796293600797947088, guid: 2cf8e4b8426144120a8e7033e5bee021, type: 3}
+  - {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+  - {fileID: 8579631638336695248, guid: 807d71c09b501438ba26e9ef9f5ec132, type: 3}
+  - {fileID: 5616646512338707422, guid: 7ed73828b6ecd4cf8a690c35e7311a1d, type: 3}
+  - {fileID: 5616646512338707422, guid: ba129d3b5a0324b82a9046e6a52c1149, type: 3}
+  - {fileID: 5616646512338707422, guid: fcc8f80798992470f8b8769d3bc4c41a, type: 3}
+  - {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
+  - {fileID: 8969431421773950753, guid: 4d17399a465c144abb394cfee95e63d8, type: 3}
+  - {fileID: 8579631638336695248, guid: 5e4e89101c0c44839a5c31ca449ce871, type: 3}
+  - {fileID: 8579631638336695248, guid: 331c6f0f95b4c4353bc9337bdd4b9c1b, type: 3}
+  - {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
+  - {fileID: 8579631638336695248, guid: b7087e56a58614db08d7c66c8845747b, type: 3}
+  - {fileID: 8969431421773950753, guid: d08c88d57a5f34f80a264cbfd1e2da4b, type: 3}
+  - {fileID: 8579631638336695248, guid: 3d3206505e16446ab8691d740853c31d, type: 3}
+  - {fileID: 8579631638336695248, guid: e9015a8d3f0294ca6ac7bf8614ac2e7e, type: 3}
+  - {fileID: 8579631638336695248, guid: 57f2dccc00faf49bca391aa1cc44d70a, type: 3}
+  - {fileID: 5616646512338707422, guid: bff0a8791ec564632b7bddbe3e544ac4, type: 3}
+  - {fileID: 5616646512338707422, guid: ec5587e89ce1a46889f0b8522b20e199, type: 3}
+  impostorAtlases:
+  - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
+    atlas: {fileID: 2800000, guid: be740488cf4a6442bb8ba8328708ab95, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.949376, y: 2.8428397}
+  - prefab: {fileID: 3282182154612916099, guid: f90ebb5728e6e4546a708248d5acfb9b, type: 3}
+    atlas: {fileID: 2800000, guid: c5e6be4d80147400a9fef49e084a512a, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.4742106, y: 2.1498904}
+  - prefab: {fileID: 3282182154612916099, guid: a3873f0cb8f24494eb79c31a4c12ec31, type: 3}
+    atlas: {fileID: 2800000, guid: 3cf82468c5c6e4aa2b34ee69ab2876f4, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.4697577, y: 2.1433966}
+  - prefab: {fileID: 3282182154612916099, guid: e9380ca06e23346a48a8d1d09416e955, type: 3}
+    atlas: {fileID: 2800000, guid: 543cca88238af4138acebd4a267cfdf3, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.4697577, y: 2.1433966}
+  - prefab: {fileID: 3282182154612916099, guid: 7c722f33fbe75427289f93b6f35e7e04, type: 3}
+    atlas: {fileID: 2800000, guid: 673863d181b804f36a97288b14c77452, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.4742106, y: 2.1498904}
+  - prefab: {fileID: 3282182154612916099, guid: de10bdd428c9d4ff2b2f2507809dea42, type: 3}
+    atlas: {fileID: 2800000, guid: e8f9f2d3cb4d14b6d978a55eb615a62c, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.4742106, y: 2.1498904}
+  - prefab: {fileID: 3282182154612916099, guid: f7fab5771a1744644b5f6b8efff8b6ec, type: 3}
+    atlas: {fileID: 2800000, guid: 7f9ec3516a1db43e7bfb719b6e59d2eb, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.7445527, y: 2.5441391}
+  - prefab: {fileID: 3282182154612916099, guid: 058513b35b4a14b9cb012570502d1259, type: 3}
+    atlas: {fileID: 2800000, guid: 2a805039481d34974863fcf3f2b5a4f0, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.5840621, y: 2.3100903}
+  - prefab: {fileID: 3282182154612916099, guid: 45e248593e3114d24a968047f55ca26e, type: 3}
+    atlas: {fileID: 2800000, guid: 10c17a15357314e0587e41c557ca4573, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.7140665, y: 2.4996803}
+  - prefab: {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}
+    atlas: {fileID: 2800000, guid: 46c7f5f5aa26e42c08c8aaaefd3476df, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.6999984, y: 2.4791641}
+  - prefab: {fileID: 3282182154612916099, guid: 71e48079674fc47b79eb9b4c5fc12b89, type: 3}
+    atlas: {fileID: 2800000, guid: fc4571445bdbb4bbc8259fe188c19c50, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.903712, y: 2.7762465}
+  - prefab: {fileID: 3282182154612916099, guid: 655c350601d8a48e0b0efcbc75872502, type: 3}
+    atlas: {fileID: 2800000, guid: 84ab69a4fde5d44af8a2e92cf2cefabc, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.5727938, y: 2.2936575}
+  - prefab: {fileID: 3282182154612916099, guid: 86c7a61b3f3d34e1f983ab4927938efb, type: 3}
+    atlas: {fileID: 2800000, guid: 780b2120d216c4c20ab96b5ab8799a72, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.1285872, y: 3.1041894}
+  - prefab: {fileID: 3282182154612916099, guid: 0ddde1c8a3f58401abcf663bfd8f97a1, type: 3}
+    atlas: {fileID: 2800000, guid: da462e9f438ee494eb01b0ddeccd5cef, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.0177684, y: 2.9425786}
+  - prefab: {fileID: 3282182154612916099, guid: 9d3494e0921d647798634354c12f2bf2, type: 3}
+    atlas: {fileID: 2800000, guid: 29163dfac3a1b4500a919c1f77308034, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.736643, y: 2.532604}
+  - prefab: {fileID: 3282182154612916099, guid: 4f6166a2a14e34cba9816b8e9354cb4e, type: 3}
+    atlas: {fileID: 2800000, guid: 7b71b79d4cc27403b953586f80bf410c, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.2348344, y: 3.2591333}
+  - prefab: {fileID: 3282182154612916099, guid: 10ab3971438924b85bc0cd3e0a3f578b, type: 3}
+    atlas: {fileID: 2800000, guid: 3b1db3c2c57534d7db2a311f7ce33b96, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.0678732, y: 3.0156481}
+  - prefab: {fileID: 3282182154612916099, guid: b581a85bda0904a3a9dda159bddae163, type: 3}
+    atlas: {fileID: 2800000, guid: c0dc3268e8b65464da501457140dce1d, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.5853887, y: 2.3120248}
+  - prefab: {fileID: 3282182154612916099, guid: 8be6a24b3cb444eceb6e9dd320de8fca, type: 3}
+    atlas: {fileID: 2800000, guid: 3b83809c90b3b4e1eb84681591ca9f62, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.5356178, y: 2.2394426}
+  - prefab: {fileID: 3282182154612916099, guid: d586b1b5678bb4c8396e9cb51b12ea21, type: 3}
+    atlas: {fileID: 2800000, guid: 44596be2557d440fab7d7874132a6b8e, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.5403959, y: 2.2464104}
+  - prefab: {fileID: 3282182154612916099, guid: eacf82a9f686b47628592b95037d9770, type: 3}
+    atlas: {fileID: 2800000, guid: c682294136a8445b78baba697db62d42, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.234692, y: 3.2589257}
+  - prefab: {fileID: 3282182154612916099, guid: 8ec7389d67b7543d0ac6050c06d26187, type: 3}
+    atlas: {fileID: 2800000, guid: 3266214b796804cfa9b7299fe0db33fc, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.0610054, y: 3.0056326}
+  - prefab: {fileID: 3282182154612916099, guid: c986d67de97b24da38851254bac65674, type: 3}
+    atlas: {fileID: 2800000, guid: 0a5015130aae3498f995c839384f683e, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.2052057, y: 3.2159247}
+  - prefab: {fileID: 3282182154612916099, guid: 416e51ffcd246420794617d340bcbe6b, type: 3}
+    atlas: {fileID: 2800000, guid: 52faf6df0ff664a43aa5f4c74be70e17, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.947197, y: 2.839662}
+  - prefab: {fileID: 3282182154612916099, guid: 7ab678d235e72407b912caa746540808, type: 3}
+    atlas: {fileID: 2800000, guid: d84e74af02d774a349639153cd64ed34, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.1072624, y: 3.0730906}
+  - prefab: {fileID: 3282182154612916099, guid: 43c5d1e8b2f644214bbc8f1857f9b936, type: 3}
+    atlas: {fileID: 2800000, guid: 18becdf601d32415984c1083cbbbf11c, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.7963928, y: 2.6197393}
+  - prefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
+    atlas: {fileID: 2800000, guid: 5b986cea1d7414efda56b9984cdce217, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.992486, y: 2.9057086}
+  - prefab: {fileID: 3282182154612916099, guid: 31226b3e29d054b92a7d31049ed98485, type: 3}
+    atlas: {fileID: 2800000, guid: d0e6a26688cd64167910c5bb3cd30fe4, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.2253513, y: 3.2453039}
+  - prefab: {fileID: 3282182154612916099, guid: 8cd4b7ee776fb4d42ae161060b267577, type: 3}
+    atlas: {fileID: 2800000, guid: 6df629ef0712d4a93b2fd545ecd95313, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.0756783, y: 3.0270307}
+  - prefab: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
+    atlas: {fileID: 2800000, guid: c3f8661464c974332b021d71ef616cfc, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.0365446, y: 2.9699607}
+  - prefab: {fileID: 3282182154612916099, guid: 6f55477c25a814a79ab68a8f7dfa48db, type: 3}
+    atlas: {fileID: 2800000, guid: bbd305abeff394eb1985f65983dc5ab4, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.5873003, y: 2.3148127}
+  - prefab: {fileID: 3282182154612916099, guid: 44832a7f379be4c30b818e55ed7a45ce, type: 3}
+    atlas: {fileID: 2800000, guid: 7676e85853cae45a9859c2437434df6b, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 2.1029613, y: 3.0668182}
+  - prefab: {fileID: 3282182154612916099, guid: 8e4e6c0c93bb34f3ea5fce6745b6c83e, type: 3}
+    atlas: {fileID: 2800000, guid: b2edd227092024cfcb09ae9eb4ec8f3f, type: 3}
+    directionCount: 8
+    columns: 4
+    rows: 2
+    size: {x: 1.6262331, y: 2.3715897}

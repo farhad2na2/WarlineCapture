@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1010000000000000000000000000004, type: 3}
+  m_Name: Game_BuildingPlacement_Config
+  m_EditorClassIdentifier: 
+  worldCamera: {fileID: 0}
+  roadPreviewPrefab: {fileID: 6752715572181065886, guid: 02bcd840ebd8b4b3c84dd02b87e88691, type: 3}
+  buildButtonPreviewDistanceMultiplier: 1.4
+  unitCommandButtonPreviewDistanceMultiplier: 1
+  spawnables:
+  - {fileID: 3297871969661906962, guid: 772ca690e3298408b98dffdf84c31019, type: 3}
+  - {fileID: 3710053084082713453, guid: 13e6b9b365a824e8789b89885d9e67e9, type: 3}
+  - {fileID: 7909703279963890070, guid: e09079772b6a5445e9527a5751f3cc35, type: 3}
+  - {fileID: 6603657636351658259, guid: 683195b1e21c94df7add42ab26cd2a33, type: 3}
+  - {fileID: 3689421368615084249, guid: 077763b7910da4a67be0c118c091c302, type: 3}
+  - {fileID: 285046366580341150, guid: 2855f5d3fe13f49c89f79a6914af636b, type: 3}
+  - {fileID: 6603657636351658259, guid: 60d6c2b9b0e504ae898d745fa2ace790, type: 3}
+  - {fileID: 3689421368615084249, guid: 37ac92ce4e0e7473891bdb9b135724f2, type: 3}
+  - {fileID: 6603657636351658259, guid: 77550b2e24f244cdfac66cc7bacec90a, type: 3}
+  - {fileID: 3689421368615084249, guid: 93fba5e426a2347d4821b7b7112064f9, type: 3}
+  - {fileID: 3689421368615084249, guid: fd1419b2db8a44e4caae68cd82a177e2, type: 3}
+  - {fileID: 3297871969661906962, guid: 838332c818d3f492d90cc082ec20e5fb, type: 3}
+  - {fileID: 3297871969661906962, guid: be8c3e7774ae74fe6967758eb5e858bf, type: 3}
+  - {fileID: 3689421368615084249, guid: f37001b3891c2408b882eed3ce395d9c, type: 3}
+  - {fileID: 3689421368615084249, guid: 7651ed50660cd4c2f9f8287f80070252, type: 3}
+  - {fileID: 7546298519455943663, guid: 0012eb42b25984abdbd97abd513b16de, type: 3}
+  - {fileID: 3689421368615084249, guid: d6dc5012decae44719d0ce1166fc8f7d, type: 3}
+  - {fileID: 7546298519455943663, guid: 93f73d4f2fb8e428c887ae423fbfe4f3, type: 3}
+  - {fileID: 7546298519455943663, guid: 3745b7c959c8348a68e93131b571bba7, type: 3}
+  - {fileID: 3689421368615084249, guid: 984ce3a5f001c4cefbe34d63c3f5a738, type: 3}
+  - {fileID: 657476235084452795, guid: 949e5dc03169d46779d1ef0f097fff5c, type: 3}
+  - {fileID: 2198447343974841528, guid: f36edf329571a4ff7836cde8a5622ede, type: 3}
+  - {fileID: 765231535457721506, guid: cbe0f6e27e4f34dff98b76b6cb858739, type: 3}
+  - {fileID: 6665034834335096940, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
+  - {fileID: 5733906895582332945, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+  unitPrefabRegistryConfig: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
+  initialUnitsConfig: {fileID: 11400000, guid: b201000000000000000000000000000c, type: 2}
+  buildPlaneY: 0
+  placementOutlineHeight: 0.15
+  placementValidColor: {r: 0.15, g: 0.85, b: 0.2, a: 1}
+  placementInvalidColor: {r: 0.9, g: 0.2, b: 0.2, a: 1}

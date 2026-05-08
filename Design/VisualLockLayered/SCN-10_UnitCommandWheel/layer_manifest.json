@@ -1,0 +1,88 @@
+{
+  "schema": "warlinecapture.ui.oneGoLayerPack.v1",
+  "screen": "Screen_MatchOverlay",
+  "surface": "SCN-10_UnitCommandWheel",
+  "source": "Design/VisualLock/SCN-10_UnitCommandWheel/SCN-10_UnitCommandWheel_Landscape_Target.png",
+  "reviewSheet": "Design/VisualLockLayered/SCN-10_UnitCommandWheel/generated_one_go/layers_contact_sheet.png",
+  "unityDestinationRoot": "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo",
+  "requirements": [
+    "Command wheel is a hidden overlay child of Screen_MatchOverlay, not a separate route.",
+    "Every frame/fill/icon/content layer is separate; no text or icon is baked into backgrounds.",
+    "Command segments use animated tab/button transition; Move is selected in preview.",
+    "Transparent corners/outside silhouettes are required for all frame and icon sprites."
+  ],
+  "layers": [
+    {
+      "file": "Buttons/wheel_segment_selected.png",
+      "role": "layer"
+    },
+    {
+      "file": "Buttons/wheel_close_button.png",
+      "role": "layer"
+    },
+    {
+      "file": "Buttons/wheel_segment_normal.png",
+      "role": "layer"
+    },
+    {
+      "file": "Content/blackhawk_unit_art.png",
+      "role": "layer"
+    },
+    {
+      "file": "Content/targeting_ring.png",
+      "role": "layer"
+    },
+    {
+      "file": "Frames/context_hint_frame.png",
+      "role": "layer"
+    },
+    {
+      "file": "Frames/selected_entity_fill.png",
+      "role": "layer"
+    },
+    {
+      "file": "Frames/wheel_center_fill.png",
+      "role": "layer"
+    },
+    {
+      "file": "Frames/context_hint_fill.png",
+      "role": "layer"
+    },
+    {
+      "file": "Frames/selected_entity_frame.png",
+      "role": "layer"
+    },
+    {
+      "file": "Frames/wheel_center_frame.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_blackhawk_icon.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_hint_info_icon.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_extract_icon.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_wheel_close_icon.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_patrol_icon.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_target_brackets.png",
+      "role": "layer"
+    },
+    {
+      "file": "Icons/command_rope_drop_icon.png",
+      "role": "layer"
+    }
+  ]
+}

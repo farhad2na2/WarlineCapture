@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
+  m_Name: Prefab_UnitGrid_Veh_Plane_Transport_Config
+  m_EditorClassIdentifier: 
+  weaponSprite: {fileID: 0}
+  weaponDisplayName: 
+  allowIdleWander: 1
+  autoCalculateFootprint: 0
+  footprintCells: {x: 1, y: 1}
+  usesVehicleMotion: 1
+  isAirUnit: 1
+  canRequest: 1
+  price: 95000
+  productionDurationSeconds: 5
+  productionTransportPrefab: {fileID: 0}
+  isProductionTransportUnit: 1
+  productionTransportArrivalSeconds: 5
+  productionTransportHoldForNextReadySeconds: 4
+  productionTransportMaxConcurrent: 1
+  productionTransportRequiresAirportRunway: 1
+  productionTransportUsesRunwayLanding: 1
+  soldierTransportCapacity: 0
+  runwayTaxiSpeed: 12
+  speed: 30
+  walkSpeed: 30
+  roadSpeedMultiplier: 1
+  arriveDistance: 0.05
+  displayName: Transport Plane
+  description: Heavy aircraft used to deliver requested units and equipment to the
+    airfield.
+  midLodPrefab: {fileID: 8023284474783625476, guid: d55ce8286c4da4408b32ac8ab58709c4, type: 3}
+  lowLodPrefab: {fileID: 3654145369901539689, guid: 3687956505d6e4ab1aeb9d8f88296207, type: 3}
+  resourceHaulerBarrelCapacity: 0
+  resourceHaulerFillDurationSeconds: 2
+  resourceHaulerUnloadDurationSeconds: 1.5
+  canAttack: 1
+  allowAutoEngage: 0
+  usesTurretAim: 0
+  aggroRangeCells: 6
+  attackRange: 6
+  chaseBreakDistance: 8
+  attackCooldownSeconds: 1.2
+  attackDamage: 8
+  maxHealth: 900
+  attackImpactPrefab: {fileID: 0}
+  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
+  attackTraceWidth: 0.18
+  attackTraceScrollSpeed: 10
+  attackTraceDashDensity: 10
+  attackTraceVisibleSeconds: 0.08
+  idleDelayMinSeconds: 5
+  idleDelayMaxSeconds: 7
+  idleWanderDistanceMin: 3
+  idleWanderDistanceMax: 5
+  attackAnimationSeconds: 0.25
+  deathAnimationSeconds: 1.25
+  animationOrder: 

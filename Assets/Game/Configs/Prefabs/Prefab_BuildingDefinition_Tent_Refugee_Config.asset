@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
+  m_Name: Prefab_BuildingDefinition_Tent_Refugee_Config
+  m_EditorClassIdentifier: 
+  displayName: Refugee Tent
+  description: Emergency shelter for displaced civilians after their homes are destroyed.
+  maxHealth: 300
+  role: 4
+  isWall: 0
+  canRequest: 1
+  price: 6000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 10
+  refugeeUpkeepPerCitizenPerDay: 2
+  productions:
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: a3873f0cb8f24494eb79c31a4c12ec31, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: e9380ca06e23346a48a8d1d09416e955, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 7c722f33fbe75427289f93b6f35e7e04, type: 3}
+  - spawnUnitPrefab: {fileID: 3282182154612916099, guid: de10bdd428c9d4ff2b2f2507809dea42, type: 3}

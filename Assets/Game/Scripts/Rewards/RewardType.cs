@@ -1,0 +1,22 @@
+public enum RewardType
+{
+    CommanderXp,
+    Credits,
+    Materials,
+    Fuel,
+    Intel,
+    CommandAuthority,
+    RushTicket,
+    UnitUnlock,
+    BuildingUnlock,
+    SupportAbilityUnlock,
+    BlueprintParts,
+    GearModule,
+    Cosmetic,
+    OperationSupply,
+    SagaStars,
+    OperationTrust,
+    OperationSecurity,
+    OperationIntel,
+    OperationInfrastructure
+}

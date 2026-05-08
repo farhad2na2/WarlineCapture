@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1010000000000000000000000000007, type: 3}
+  m_Name: Game_RuntimeDecorationSpawner_Config
+  m_EditorClassIdentifier: 
+  spawnOnStart: 1
+  decorationCount: 1
+  randomSeed: 12345
+  treeSpawnRatio: 0.49
+  treeClusterCount: 5
+  treeClusterSpacingMinCells: 2
+  treeClusterSpacingMaxCells: 5
+  treeClusterDistanceMinCells: 0
+  treeClusterDistanceMaxCells: 12
+  yPosition: 0
+  prefabs:
+  - {fileID: 1867476484022420, guid: baad5ea83152a324f9622559a1f79207, type: 3}
+  - {fileID: 1412390541589840, guid: 4a464718d611e2a46bc4a681a284a1b6, type: 3}
+  - {fileID: 1985915169824446, guid: cd49ab1d2ef97ef48aaac69a01c02137, type: 3}
+  - {fileID: 1785169086176582, guid: 2782dec6256301047bb26888e2c27841, type: 3}
+  - {fileID: 1881792821192750, guid: 0441d20355704754a86f70532737fd48, type: 3}
+  - {fileID: 1905334571862998, guid: fdb9364759532af46830dc9d42ad3a00, type: 3}
+  - {fileID: 1921160686080338, guid: f2aca044b25c4a44fb7e1e321447c261, type: 3}
+  - {fileID: 1258429159176928, guid: 18aeec7ff9aa17e4d968d22617ca2fbc, type: 3}
+  - {fileID: 1712885822017418, guid: ddcc8030742463e49959f0e6fbadeff2, type: 3}

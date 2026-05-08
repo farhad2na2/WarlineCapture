@@ -1,0 +1,79 @@
+{
+  "schemaVersion": "0.1",
+  "styleId": "style.fictional_gulf.premium_2_5d",
+  "sourceReference": "../WarlineCapture_FictionalGulf_PremiumBattle_Target.png",
+  "macroTileSizeCells": 64,
+  "sourcePixels": 2048,
+  "tiles": [
+    {
+      "tileId": "fg.mt.urban_straight_road",
+      "displayName": "Urban Straight Road",
+      "connectors": ["north", "south"],
+      "intendedUse": "Long city road corridors with sidewalks and palms.",
+      "artNotes": "Asphalt center, limestone curbs, solar awnings, service walls, no gameplay buildings."
+    },
+    {
+      "tileId": "fg.mt.urban_intersection",
+      "displayName": "Urban Intersection",
+      "connectors": ["north", "east", "south", "west"],
+      "intendedUse": "Main battle decision points and convoy turns.",
+      "artNotes": "Large paved junction, median palms, crosswalk markings without readable text."
+    },
+    {
+      "tileId": "fg.mt.command_plaza",
+      "displayName": "Civil Defense Command Plaza",
+      "connectors": ["north", "east", "south"],
+      "intendedUse": "Friendly base and command sockets.",
+      "artNotes": "Blue-neutral trim, empty command and radar pads, no baked gameplay building."
+    },
+    {
+      "tileId": "fg.mt.enemy_assault_node",
+      "displayName": "Enemy Assault Node Foundation",
+      "connectors": ["west", "south"],
+      "intendedUse": "Enemy base approach and objective socket.",
+      "artNotes": "Red-neutral trim on foundations only; enemy HQ remains runtime."
+    },
+    {
+      "tileId": "fg.mt.port_edge",
+      "displayName": "Port Edge And Seawall",
+      "connectors": ["west", "east"],
+      "intendedUse": "Coastal edge roads, naval threat lanes, docks.",
+      "artNotes": "Seawall, loading pads, water boundary metadata required."
+    },
+    {
+      "tileId": "fg.mt.damaged_civic_block",
+      "displayName": "Damaged Civic Block",
+      "connectors": ["north", "south"],
+      "intendedUse": "Cover-heavy civilian districts and blocked lanes.",
+      "artNotes": "Fictional civic architecture, rubble, no identifiable landmarks."
+    },
+    {
+      "tileId": "fg.mt.rooftop_lz",
+      "displayName": "Rooftop Landing Zone",
+      "connectors": ["east", "south"],
+      "intendedUse": "Helicopter pads and airlift objectives.",
+      "artNotes": "Empty landing pad markings, no readable letters or baked aircraft."
+    },
+    {
+      "tileId": "fg.mt.service_yard",
+      "displayName": "Service Yard",
+      "connectors": ["north", "east", "west"],
+      "intendedUse": "Vehicle staging, convoy parking, supply sockets.",
+      "artNotes": "Containers, shaded service lanes, decorative only unless represented as blockers."
+    },
+    {
+      "tileId": "fg.mt.seawall_battery_pad",
+      "displayName": "Seawall Battery Pad",
+      "connectors": ["west", "south"],
+      "intendedUse": "Runtime coastal defense sockets.",
+      "artNotes": "Empty circular pads, blast walls, water edge, no baked turrets."
+    },
+    {
+      "tileId": "fg.mt.arcade_market_block",
+      "displayName": "Arcade Market Block",
+      "connectors": ["north", "east"],
+      "intendedUse": "Infantry flank routes and civilian district identity.",
+      "artNotes": "Shaded arcades, mashrabiya-inspired screens, no readable signage."
+    }
+  ]
+}

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "0.1",
+  "date": "2026-05-05",
+  "purpose": "First UI render asset request/import manifest for the WarlineCapture fictional Gulf 2D isometric visual direction.",
+  "sourceGuides": [
+    "Design/WarlineCapture_Unit_Portrait_Art_Generation_Guide.md",
+    "Design/WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md",
+    "Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md",
+    "Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md",
+    "Design/WarlineCapture_2D_Isometric_Art_Bible.md"
+  ],
+  "visualConfig": "Design/VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json",
+  "status": "plannedAfterFg01VisualTargetApproval",
+  "rules": {
+    "separateFromCanvasChrome": true,
+    "noBakedTextStatsCostsHpCooldownsOrRewardAmounts": true,
+    "noBakedFramesBadgesHealthBarsSelectionRingsOrLockIcons": true,
+    "mustMapToVisualConfigOrScreenContentId": true,
+    "validateInsideRenderedCanvasCapture": true
+  },
+  "importRoots": {
+    "legacyPortraits": "Assets/Game/Textures/Generated/Portraits",
+    "portraits": "Assets/Game/Art/UI/Generated/2DISO/Portraits",
+    "thumbnails": "Assets/Game/Art/UI/Generated/2DISO/Thumbnails",
+    "modeCards": "Assets/Game/Art/UI/Generated/2DISO/ModeCards",
+    "missionArt": "Assets/Game/Art/UI/Generated/2DISO/MissionArt",
+    "unlocks": "Assets/Game/Art/UI/Generated/2DISO/Unlocks",
+    "icons": "Assets/Game/Art/UI/Generated/2DISO/Icons"
+  },
+  "assetRequests": [
+    {
+      "requestId": "fg01.ui.portrait.rifle_soldier",
+      "category": "portrait",
+      "targetEntity": "rifle soldier",
+      "targetSurfaces": ["PREFAB-02 Squad Tray", "SCN-07 Loadout Squad Prep", "POP-04 Reward Unlock"],
+      "outputShape": "square 1:1 portrait plus transparent cutout variant",
+      "notes": "Follow approved Soldier Male 02 portrait style; no border, text, badge, or health overlay."
+    },
+    {
+      "requestId": "fg01.ui.thumbnail.apc",
+      "category": "thumbnail",
+      "targetEntity": "APC",
+      "targetSurfaces": ["SCN-07 Loadout Squad Prep", "SCN-09 Build Drawer Production"],
+      "outputShape": "framed-content-ready object thumbnail with transparent variant when needed",
+      "notes": "Object art only; card frame, lock icon, cost, and labels remain Canvas layers."
+    },
+    {
+      "requestId": "fg01.ui.thumbnail.transport_helicopter",
+      "category": "thumbnail",
+      "targetEntity": "transport helicopter",
+      "targetSurfaces": ["SCN-07 Loadout Squad Prep", "POP-01 Threat Alert", "SCN-09 Build Drawer Production"],
+      "outputShape": "object thumbnail with strong rotor silhouette",
+      "notes": "No baked landing pad, UI border, text, or faction badge."
+    },
+    {
+      "requestId": "fg01.ui.unlock.command_post",
+      "category": "unlockRender",
+      "targetEntity": "command post",
+      "targetSurfaces": ["POP-04 Reward Unlock", "SCN-09 Build Drawer Production"],
+      "outputShape": "premium building unlock render plus transparent cutout variant",
+      "notes": "Separate from terrain foundation; no baked level/tier/cost text."
+    },
+    {
+      "requestId": "fg01.ui.mission_key_art.coastal_command",
+      "category": "missionArt",
+      "targetEntity": "FG-L01 Coastal Command mission",
+      "targetSurfaces": ["SCN-06 Mission Briefing", "SCN-05 Saga Map"],
+      "outputShape": "landscape key art crop",
+      "notes": "Use fictional Gulf premium isometric battlefield direction; no objective labels, real flags, or UI overlay."
+    },
+    {
+      "requestId": "fg01.ui.mode_cards.core_three",
+      "category": "modeCardArt",
+      "targetEntity": "Saga, Persistent Operation, Quick Custom",
+      "targetSurfaces": ["SCN-02 Main Menu Mode Select"],
+      "outputShape": "three landscape mode-card content images",
+      "notes": "Card art only; title/subtitle/progress/chrome remain Canvas layers."
+    },
+    {
+      "requestId": "fg01.ui.icons.first_slice",
+      "category": "icons",
+      "targetEntity": "first-slice ability, upgrade, reward, and status icons",
+      "targetSurfaces": ["SCN-06 Mission Briefing", "SCN-07 Loadout Squad Prep", "POP-04 Reward Unlock", "PREFAB-02 Squad Tray"],
+      "outputShape": "transparent standalone icons",
+      "notes": "No baked button backgrounds, labels, counts, rarity frames, or cooldown overlays."
+    }
+  ]
+}

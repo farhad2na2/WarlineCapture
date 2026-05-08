@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 21a5431a1f3166849939c37aa7667934
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 302903
+  packageName: Military Combat HUD - Synty INTERFACE - GUI
+  packageVersion: 1.0.3
+  assetPath: Assets/Synty/InterfaceMilitaryCombatHUD/Prefabs/_CommonComponents/Label_MilitaryCombat_ShrinkToSize.prefab
+  uploadId: 782058

@@ -41,14 +41,15 @@ On each heartbeat:
    - QA/HCI: `Design/AgentTasks/qa-hci_current.md`
 4. Check whether your current task is still active and advances the M01 critical path.
 5. If your task is active and not completed, continue it.
-6. If you have changed files, generated captures, or completed/attempted validation and no matching report exists under `Design/AgentReports/`, stop and write the report before doing anything else.
-7. If validation just finished, immediately update the required report with the command/checks, output paths, pass/fail result, known gaps, cross-lane impacts, and next recommended task.
-8. If validation failed, was interrupted, or could not run because Codex/tool sandbox approval is required, immediately write the report with the exact command/log path and blocker owner.
-9. If your task is completed, verify that you wrote the required report under `Design/AgentReports/`.
-10. Before reporting `waiting`, `blocked`, or `idle`, identify who owns the next concrete deliverable.
-11. If your lane owns the next deliverable, do not wait. Continue the task or write the exact technical blocker in your required report file.
-12. If another lane owns the next deliverable, report the blocker clearly and wait.
-13. If no active lane task exists, the task is blocked by another lane, or the next task would drift outside the critical path, report the blocker clearly and wait.
+6. If your task is active and you cannot make visible progress before the next heartbeat, immediately write the required blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
+7. If you have changed files, generated captures, or completed/attempted validation and no matching report exists under `Design/AgentReports/`, stop and write the report before doing anything else.
+8. If validation just finished, immediately update the required report with the command/checks, output paths, pass/fail result, known gaps, cross-lane impacts, and next recommended task.
+9. If validation failed, was interrupted, or could not run because Codex/tool sandbox approval is required, immediately write the report with the exact command/log path and blocker owner.
+10. If your task is completed, verify that you wrote the required report under `Design/AgentReports/`.
+11. Before reporting `waiting`, `blocked`, or `idle`, identify who owns the next concrete deliverable.
+12. If your lane owns the next deliverable, do not wait. Continue the task or write the exact technical blocker in your required report file.
+13. If another lane owns the next deliverable, report the blocker clearly and wait.
+14. If no active lane task exists, the task is blocked by another lane, or the next task would drift outside the critical path, report the blocker clearly and wait.
 
 Do not start a task from another lane. Do not invent new tasks. Do not modify `Design/AgentTasks/` unless explicitly assigned by the PM assistant or user.
 
@@ -105,6 +106,18 @@ Can my lane still continue fallback work? yes/no
 ```
 
 If `Owner of next action` is your own lane, continue instead of reporting waiting. Only report a technical blocker when you cannot perform the lane-owned task, and write that blocker to the required report file.
+
+## Active-Lane Anti-Idle Rule
+
+`Status: active` means the lane is expected to move. An active lane must not stay silent across heartbeats.
+
+On every heartbeat, an active lane must do one of these:
+
+- continue the task and produce visible progress,
+- write the expected completion/handoff report,
+- write a blocker report with exact command/workspace/log/dependency details and the unblock owner.
+
+If an active lane cannot do one of these before the next heartbeat, the lane must report blocked. PM will treat active-lane silence as a coordination blocker and notify the user.
 
 Example:
 

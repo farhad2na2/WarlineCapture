@@ -10,6 +10,7 @@ Treat `Design/AgentTasks/support-ftue_current.md` as the only source of current 
 - Check `Design/AgentReports/` for new Support/FTUE-relevant handoffs or blocker reports.
 - Assess whether any concrete assistant, Stop, Show Me, result explanation, invalid-command, or FTUE issue is assigned.
 - Continue the current Support/FTUE task if actionable.
+- Anti-idle rule: if Support/FTUE is `Status: active`, every heartbeat must either advance the task, write the expected handoff, or write a blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
 - Write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the standard WarlineCapture handoff format.
 - Notify in-thread only if PM/user attention is needed, a blocker appears, or the Support/FTUE handoff is ready.
 

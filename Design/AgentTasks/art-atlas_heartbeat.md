@@ -10,6 +10,7 @@ Treat `Design/AgentTasks/art-atlas_current.md` as the only source of current Art
 - Check `Design/AgentReports/` for new Art/Atlas-relevant handoffs or blocker reports.
 - Assess new relevant handoffs as accepted, needs fixes, or blocked.
 - Continue the current Art/Atlas task if actionable.
+- Anti-idle rule: if Art/Atlas is `Status: active`, every heartbeat must either advance the task, write the expected handoff, or write a blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
 - Write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the standard WarlineCapture handoff format.
 - Notify in-thread only if PM/user attention or art approval is needed, a blocker appears, or the Art/Atlas handoff is ready.
 

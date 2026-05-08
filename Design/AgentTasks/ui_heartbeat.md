@@ -10,6 +10,7 @@ Treat `Design/AgentTasks/ui_current.md` as the only source of current UI priorit
 - Check `Design/AgentReports/` for new UI-relevant handoffs or blocker reports.
 - Assess new relevant handoffs as accepted, needs fixes, or blocked.
 - Continue the current UI task if actionable.
+- Anti-idle rule: if UI is `Status: active`, every heartbeat must either advance the task, write the expected handoff, or write a blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
 - Write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the standard WarlineCapture handoff format.
 - Notify in-thread only if PM/user attention is needed, a blocker appears, or the UI handoff is ready for PM/QA.
 

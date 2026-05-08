@@ -10,6 +10,7 @@ Treat `Design/AgentTasks/qa-hci_current.md` as the only source of current QA/HCI
 - Check `Design/AgentReports/` for new QA/HCI-relevant handoffs or blocker reports.
 - Assess whether QA/HCI is still waiting, ready to rerun, needs fixes, or blocked.
 - Continue the current QA/HCI task only when required input reports exist.
+- Anti-idle rule: if QA/HCI is `Status: active`, every heartbeat must either advance the task, write the expected handoff, or write a blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
 - Write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the standard WarlineCapture handoff format.
 - Notify in-thread only if Gate 4 is ready for user review, blocked, or PM/user attention is needed.
 

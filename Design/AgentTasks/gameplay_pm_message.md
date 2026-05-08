@@ -28,4 +28,8 @@ Expected report:
 
 `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
 
+PM heartbeat follow-up at 2026-05-08T20:07Z:
+
+This report is still missing after PM routed the handoffs. Next Gameplay heartbeat must either write the completion report above or write a blocker report with the exact technical blocker and unblock owner.
+
 Do not commit or push.

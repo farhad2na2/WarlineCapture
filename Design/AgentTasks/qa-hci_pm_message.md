@@ -30,3 +30,7 @@ Prepare and then run a rejection matrix covering:
 Expected report:
 
 `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
+
+PM heartbeat follow-up at 2026-05-08T20:07Z:
+
+This report is still missing after PM routed the handoffs. Next QA/HCI heartbeat must write the regression gate/checklist report above. Do not wait for Gameplay implementation to document the checklist.

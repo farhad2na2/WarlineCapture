@@ -1,14 +1,14 @@
 # QA/HCI Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: blocked on Gameplay manual M01 opening-control proof before Gate 4 rerun
+Status: active
+Priority: rerun focused Gate 4 after accepted Gameplay manual M01 opening-control proof
 
 ## Assignment
 
-Wait for Gameplay to fix/prove the manual M01 opening-control route before producing final Gate 4 acceptance.
+Rerun focused Gate 4 after PM accepted Gameplay's manual M01 opening-control proof.
 
-The previous Gameplay opening-control and ECS atlas architecture handoff is no longer sufficient for PM/user review because manual Unity review found the enemy can kill the player before a relaxed first-control/art check.
+Do not ask PM/user for temporary art approval until this rerun confirms the route is stable enough for a relaxed art/readability review.
 
 ## Waiting On
 
@@ -20,14 +20,16 @@ UI report:
 Gameplay report:
 
 - `Design/AgentReports/2026-05-08_gameplay_m01-unit-readability-selection-art.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-m01-manual-opening-control-review.md`
 
 Art/Atlas report:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
 
-Gameplay report:
+PM/user decision later:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+- no current PM/user art decision request until this QA/HCI rerun confirms the route is reviewable
 
 ## Required Fix Evidence Before Rerun
 
@@ -55,7 +57,7 @@ Art/Atlas has proved for the current temporary-art pass:
 
 ## Next QA/HCI Work After Fixes
 
-After Gameplay proves the manual opening-control route, rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
+Rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
 
 - public route: Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup
 - first-control readability
@@ -69,6 +71,7 @@ After Gameplay proves the manual opening-control route, rerun focused Gate 4 HCI
 - visual readability of ECS animated atlas units and command markers
 - projectile/impact VFX scale
 - absence of visible legacy `Model`, temporary SpriteRenderer adapter, old per-Model animation output, and separate `Destroyed` child/prefab runtime dependency for M01 infantry
+- whether the route is now suitable for a short PM/user temporary-art review
 
 ## Completion Report
 

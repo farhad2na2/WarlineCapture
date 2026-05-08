@@ -1,14 +1,20 @@
 # Gameplay Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: fix/prove manual M01 opening-control window before any PM/user temporary-art approval request
+Status: waiting
+Priority: accepted manual M01 opening-control proof; waiting for QA/HCI focused rerun findings
 
 ## Assignment
 
-Fix or prove the manual public M01 opening route so the hostile patrol cannot kill `unit.player.rifle_squad_01` before the player has a relaxed first-control window.
+Wait for QA/HCI focused rerun findings.
 
-PM/user manual review found the enemy can kill the player before they can inspect art, select the squad, or issue the first move. That invalidates the temporary-art approval request until this route is fixed and proven.
+Gameplay has delivered the focused manual opening-control fix/proof:
+
+- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+
+PM accepted it for QA/HCI rerun in:
+
+- `Design/AgentReports/2026-05-08_pm_gameplay-m01-manual-opening-control-review.md`
 
 Gameplay has delivered the current M01 public first-control readability and selected-marker handoff:
 
@@ -18,23 +24,21 @@ PM previously accepted it as temporary-art/runtime readability integration evide
 
 - `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-readability-review.md`
 
-That acceptance is not enough for user art review because the manual Unity path is not currently reviewable.
-
 Do not start M02-M05, broaden combat rebalance, add vehicle work, add base/build mechanics, or do unrelated visual polish.
 
 ## Waiting On
 
 Waiting on lane:
-Gameplay
+QA/HCI
 
 Waiting on exact file/report/decision:
 
-- New focused Gameplay report: `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
 
 Owner of next action:
-Gameplay owns the fix/proof.
+QA/HCI owns the rerun.
 
-Can my lane still continue fallback work? yes, only on this blocker.
+Can my lane still continue fallback work? no
 
 ## Required Behavior
 
@@ -86,7 +90,7 @@ The current task is about player-facing readability and art readiness in the pub
 
 ## Validation Required
 
-Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` and rerun focused validation for the public M01 route, golden path, ECS atlas presentation, selected state, infantry-only scope, scene-search guardrail, and public captures.
+No new Gameplay validation is required while waiting. If QA/HCI reports a concrete Gameplay regression, use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` and rerun focused validation for the affected public M01 route, golden path, ECS atlas presentation, selected state, infantry-only scope, scene-search guardrail, and public captures.
 
 Required proof:
 
@@ -101,7 +105,7 @@ Required proof:
 ## Cross-Lane Notes
 
 - UI HUD scope handoff is accepted by PM, but QA/HCI may still report concrete UI findings after the next rerun.
-- QA/HCI owns final Gate 4 rerun after this Gameplay blocker is fixed/proven and PM decides whether temporary art is reviewable.
+- QA/HCI owns final Gate 4 rerun after this Gameplay proof.
 - Support/FTUE owns no action unless the next QA/HCI pass finds assistant, Stop, Show Me, result explanation, or invalid-command recovery issues.
 
 ## Completion Report

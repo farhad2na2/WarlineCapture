@@ -6,7 +6,7 @@ Priority: blocked until QA/HCI reports a concrete assistant/FTUE issue
 
 ## Assignment
 
-Stand by while Gameplay fixes/proves the manual M01 opening-control route and QA/HCI waits for final Gate 4 rerun evidence.
+Stand by while QA/HCI reruns focused Gate 4 after PM accepted Gameplay's manual M01 opening-control proof.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -18,7 +18,7 @@ UI owns:
 
 - M01 HUD showing APC, Tank, air support, Build, vehicle production, transport, or base/build affordances in an infantry-only tutorial.
 
-Gameplay owns:
+Gameplay has delivered:
 
 - manual M01 opening-control proof so the player can wait, select, and move before hostile fire kills or critically damages the squad
 - public camera-scale readability of four distinct soldiers under one squad identity
@@ -44,6 +44,7 @@ QA/HCI owns:
 
 - `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
 - `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-m01-manual-opening-control-review.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
 - `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
 

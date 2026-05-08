@@ -19,12 +19,13 @@ Art/Atlas owns the active task:
 
 Expected report:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
 The earlier packages were rejected and must not be used as approval sources:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
 ## Reference Only
 
@@ -32,5 +33,7 @@ The gameplay visual target folder remains:
 
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
 - `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
+- `Design/VisualLock/Gameplay/M01_AIProductionAssets/`
+- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`
 
 Use these as package locations, not as a separate lane.

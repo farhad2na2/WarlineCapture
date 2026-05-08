@@ -1,40 +1,39 @@
 # QA/HCI Current Task
 
-Date: 2026-05-08
+Date: 2026-05-09
 Status: waiting
-Priority: waiting on PM/user Gameplay VisualLock approval, then Gameplay runtime capture
+Priority: waiting on Art/Atlas AI production asset pack, then Gameplay runtime capture
 
 ## Assignment
 
-QA/HCI remains blocked until PM/user approves the Gameplay VisualLock package and Gameplay implements/reports a runtime visual match against it.
+QA/HCI remains blocked until Art/Atlas delivers the AI-generated ready-to-implement production asset pack and Gameplay implements/reports a runtime visual match against it.
 
 Approved reference:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
-Waiting first for PM/user approval of:
+Waiting first for Art/Atlas report:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
-- `Design/AgentReports/2026-05-08_pm_gameplay-visual-lock-approval-request.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
 Then wait for Gameplay report:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-approved-isometric-visual-match.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Do not start another QA pass unless PM routes a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user, then Gameplay
+Art/Atlas, then Gameplay
 
 Waiting on exact report and decision:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
-- `Design/AgentReports/2026-05-08_gameplay_m01-approved-isometric-visual-match.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Owner of next action:
-PM/user
+Art/Atlas
 
 Can QA/HCI continue fallback work? no
 

@@ -1,8 +1,8 @@
 # Gameplay Current Task
 
-Date: 2026-05-08
+Date: 2026-05-09
 Status: waiting
-Priority: Gameplay VisualLock package delivered; waiting on PM/user approval before runtime visual implementation
+Priority: wait for Art/Atlas AI production asset pack before runtime visual implementation
 
 ## Assignment
 
@@ -21,30 +21,33 @@ Approved target files:
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_Enemy_Readability_Target.png`
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_Scale_Board.png`
 
-Before Gameplay resumes, PM/user must approve the Gameplay VisualLock package:
+The Gameplay VisualLock board package is rejected as insufficient for implementation. Before Gameplay resumes, Art/Atlas must deliver the AI-generated ready-to-implement production asset pack:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
-- `Design/AgentReports/2026-05-08_pm_gameplay-visual-lock-approval-request.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
-Do not implement runtime visuals from only the single approved target package. Wait for the locked strategic map, tactical map, marker, and atlas references.
+Do not implement runtime visuals from review boards. Wait for runtime PNGs under:
+
+- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`
+
+These must include the strategic map, tactical map plates, marker PNGs, player/enemy soldier atlases, building atlases, and manifests.
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Art/Atlas
 
 Owner of next action:
-PM/user
+Art/Atlas
 
-Can Gameplay continue fallback work? no. Wait for VisualLock approval or rejection notes.
+Can Gameplay continue fallback work? no. Wait for the AI production asset pack.
 
 ## Required Validation
 
 - Capture the M01 selected-readability runtime view from the public path or documented validation scene.
 - Compare it against `M01_SelectedReadability_Gameplay_Target.png` and `M01_SelectedReadability_Isometric_Grid_Proof.png`.
-- Compare it against the forthcoming `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/` package.
+- Compare it against the approved AI production asset pack.
 - Include capture paths in the completion report.
 - Explicitly state whether image/background/map/soldiers/markers match the approved reference style.
 
@@ -52,6 +55,6 @@ Can Gameplay continue fallback work? no. Wait for VisualLock approval or rejecti
 
 After PM assigns runtime implementation, write:
 
-`Design/AgentReports/2026-05-08_gameplay_m01-approved-isometric-visual-match.md`
+`Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Use the standard WarlineCapture handoff format.

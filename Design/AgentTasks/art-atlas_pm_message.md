@@ -1,59 +1,38 @@
 # PM Message For Art/Atlas
 
-Date: 2026-05-08
+Date: 2026-05-09
 
-The user rejected the gameplay visual target package. Treat this as a hard art-direction failure, not a small revision.
+The Gameplay VisualLock board package is rejected as insufficient. The user needs ready-to-use implementation assets.
 
-Rejected issues:
-
-- visual quality is far below the UI Visual Lock mockups,
-- inconsistent soldier sizes,
-- some soldiers appear half underground,
-- placeholder/low-quality assets,
-- inconsistent style and grounding,
-- not an AAA AI-generated mockup target.
-
-Create a new gameplay-only AAA visual target package under:
-
-`Design/VisualTargets/Gameplay/M01_SelectedReadability/`
-
-Use UI Visual Lock targets only as quality/style references:
-
-- `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
-- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_one_go/layers_contact_sheet.png`
-
-The new package must look like a high-quality production mockup target, not a placeholder board.
+Do not create more deterministic review boards, simple vector markers, placeholder crops, or low-detail diagrams.
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+`Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
-Latest user review of the AAA replacement:
+Use the existing production workflows:
 
-- The visuals look great.
-- They are rejected because they are not isometric.
+- `Design/WarlineCapture_Tactical_Map_AI_Workflow.md`
+- `Design/WarlineCapture_Art_Asset_Requirements_Register.md`
+- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
+- `Design/VisualReferences/2DIsometricProduction/GoldenAssets/README.md`
 
-Keep the quality bar, but regenerate the package as true isometric gameplay reference:
+Required output folders:
 
-- orthographic/isometric camera feel,
-- consistent parallel ground-plane axes,
-- no cinematic perspective convergence,
-- no wide-angle camera look,
-- add an isometric grid/axis proof or annotation.
+- Runtime assets: `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`
+- Review mirror: `Design/VisualLock/Gameplay/M01_AIProductionAssets/`
 
-The true-isometric package is now approved. Before Gameplay resumes, create a gameplay VisualLock package under:
+Hard requirement: all visual assets must be AI-generated or AI-assisted at high quality. No deterministic placeholder/vector/board filler.
 
-`Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
+Create real production PNG assets:
 
-It must lock all item families:
-
-- strategic map,
-- tactical map/background,
-- road, sidewalk, building, and map tile treatment,
-- player rifle squad atlas,
-- enemy patrol atlas,
-- idle/run/aim/fire/death/destroyed atlas states,
-- selection, move, attack, enemy, objective, and hover markers,
-- scale and grounding rules.
+- big zoomed-out Tehran strategic map,
+- all M01 zoomed-in tactical map plates,
+- high-quality transparent marker PNGs,
+- player rifle squad sprite atlas frames,
+- enemy patrol sprite atlas frames,
+- all required building PNG atlas states,
+- manifests with asset ids, paths, import usage, scale anchors, contact-shadow rules, and prompt/source notes.
 
 Include short user review steps. Do not commit or push.

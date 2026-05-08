@@ -1,24 +1,24 @@
 # Support/FTUE Current Task
 
-Date: 2026-05-08
+Date: 2026-05-09
 Status: waiting
-Priority: no current Support/FTUE action; waiting on PM/user Gameplay VisualLock approval
+Priority: no current Support/FTUE action; waiting on Art/Atlas AI production asset pack
 
 ## Assignment
 
-Stand by while PM/user reviews the Gameplay VisualLock package from the approved true-isometric visual target.
+Stand by while Art/Atlas creates the AI-generated ready-to-implement production asset pack.
 
 Read:
 
 - `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-visual-target-rejected.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
 Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 
 ## Waiting On
 
-- PM/user approval of the Gameplay VisualLock package
+- Art/Atlas AI production asset pack
 
 ## Guardrails While Waiting
 

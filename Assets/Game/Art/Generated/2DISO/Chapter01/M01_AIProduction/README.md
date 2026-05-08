@@ -8,7 +8,7 @@ Art/Atlas owns this folder until the production asset pack is delivered and appr
 
 ## Required Runtime Asset Families
 
-- `Strategic/` - big zoomed-out strategic/background map matching the approved `M01_SelectedReadability_*` isometric reference style; do not generate Tehran.
+- `Strategic/` - big zoomed-out strategic/base-layout background matching `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png`; do not generate Tehran, do not bake finished buildings, and cover more area than the tactical target with clear placement zones for separate tents, vehicles, refinery/fuel module, command/support structures, roads, pads, and staging.
 - `TacticalMaps/` - zoomed-in tactical map plates, including native AI source and POT-padded Unity-ready PNGs.
 - `Markers/` - individual transparent marker PNG sprites plus atlas sheet/manifest.
 - `Units/PlayerRifleSquad/` - transparent player rifle squad atlas frames.
@@ -20,6 +20,8 @@ Art/Atlas owns this folder until the production asset pack is delivered and appr
 
 Assets must be AI-generated or AI-assisted at production quality. Do not use deterministic vector placeholders, review-board crops, or low-detail filler.
 
-Zoom level, camera angle, composition, background density, soldier/building scale, marker footprint, and visual style must follow the approved `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_*` reference package. Do not generate Tehran or invent a different city/camera direction.
+Zoom level, camera angle, composition, background density, soldier/building scale, marker footprint, and visual style must follow `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png` and the approved VisualLock package. Do not generate Tehran or invent a different city/camera direction.
 
 Do not create smaller soldiers, smaller buildings, different building designs, or different soldier styles. Assets in this folder must preserve the approved visual family and scale relationships.
+
+Do not combine player and enemy factions in one unit atlas. Each unit atlas must include complete idle, run, aim, shoot/fire, hit/damaged, and die/death animation frames for every required facing direction.

@@ -27,16 +27,20 @@ Hard requirement: all visual assets must be AI-generated or AI-assisted at high 
 
 Reference lock: zoom level, camera angle, composition, background density, soldier/building scale, marker footprint, and visual style must follow the approved `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_*` reference package. Do not invent a new zoom level, camera, Tehran map, or replacement city direction.
 
+Production source of truth: `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png`. The generated assets must match that image's style, camera, lighting, rotations, building language, soldier style, and scale. Use the rest of `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/` as locked references. Do not produce assets that merely look generally isometric or generally high quality.
+
 Do not make smaller soldiers, smaller buildings, different building designs, or different soldier styles. The production assets must be the approved visual family turned into usable assets, not a new interpretation.
 
 Create real production PNG assets:
 
-- big zoomed-out strategic/background map matching the approved `M01_SelectedReadability_*` isometric reference style; do not generate Tehran,
+- big zoomed-out strategic/base-layout background matching `VL_M01_TacticalMap_Target.png`; no Tehran, no finished buildings baked in, more area than the tactical target, with clear placement zones for later separate soldier tents, vehicles, refinery/fuel module, command/support structures, roads, pads, and staging,
 - all M01 zoomed-in tactical map plates,
 - high-quality transparent marker PNGs,
-- player rifle squad sprite atlas frames,
-- enemy patrol sprite atlas frames,
+- player rifle squad sprite atlas frames matching `VL_M01_PlayerRifleSquad_Atlas_Target.png`,
+- enemy patrol sprite atlas frames matching `VL_M01_EnemyPatrol_Atlas_Target.png`,
 - all required building PNG atlas states,
 - manifests with asset ids, paths, import usage, scale anchors, contact-shadow rules, and prompt/source notes.
+
+Atlas rules: do not combine player and enemy factions in one atlas. Every unit atlas must include complete idle, run, aim, shoot/fire, hit/damaged, and die/death animation frames for every required facing direction. Reject partial direction sets or frames angled differently from the approved target.
 
 Include short user review steps. Do not commit or push.

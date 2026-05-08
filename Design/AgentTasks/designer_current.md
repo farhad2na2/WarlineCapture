@@ -1,29 +1,28 @@
 # Designer Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: revise README dedupe to avoid canonicalizing unapproved offensive-command premise
+Status: waiting
+Priority: accepted README/design-index dedupe; waiting for next PM documentation priority
 
 ## Assignment
 
-Revise the README/design-index dedupe handoff after PM review.
+Wait for the next PM documentation priority.
 
-The dedupe structure is directionally correct, but the current root README diff also promotes the offensive-command premise as canonical. PM has not accepted that premise yet because it requires PM/user decision first.
+Designer delivered the neutral-premise README/design-index dedupe:
 
-Keep the root README as a concise project entry point and `Design/README.md` as the complete design index, but do not make the offensive-command premise canonical unless PM/user explicitly accepts it.
+- `Design/AgentReports/2026-05-08_designer_readme-dedupe-neutral-premise.md`
+
+PM accepted it in:
+
+- `Design/AgentReports/2026-05-08_pm_designer-readme-dedupe-neutral-premise-review.md`
 
 Focus on documentation structure and clarity, not implementation. Do not edit gameplay/UI source, Unity prefabs, captures, or runtime assets.
 
 ## Required Work
 
-- Review the root `README.md` and `Design/README.md`.
-- Keep the root README as a concise project entry point: setup, active direction, key source-of-truth links, and contributor/agent entry points.
-- Keep `Design/README.md` as the complete design index.
-- Remove or shorten duplicated long inventories from the root README when `Design/README.md` already owns the complete list.
-- Preserve useful top-level context already added to the root README: Saga/Operation/Quick Custom structure, 2D isometric tactical/strategic split, and Designer workflow link.
-- Remove, neutralize, or clearly mark as pending any root README wording that makes `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md` the accepted product premise before PM/user approval.
+- Do not start another broad documentation rewrite without PM/user assignment.
+- Do not canonicalize the offensive-command premise unless PM/user explicitly accepts it.
 - Preserve active contracts and current lane ownership. Do not change product scope, M01 Gate 4 criteria, agent ownership, validation requirements, or current lane priorities unless PM explicitly asks.
-- The root `README.md` contains uncommitted documentation-only changes. Work with those changes; do not revert them.
 
 ## Current Accepted Inputs
 
@@ -44,10 +43,7 @@ Read first:
 
 ## Validation Required
 
-- Run a focused markdown/link sanity check where practical.
-- Confirm edited docs still mention the correct lane files and heartbeat pattern.
-- Confirm no source/runtime files were modified.
-- Confirm no agent commit/push instruction contradicts PM-only commit gate.
+No new Designer validation is required while waiting.
 
 ## Cross-Lane Notes
 
@@ -57,9 +53,9 @@ Read first:
 
 ## Completion Report
 
-Write the report to:
+If PM/user assigns new Designer work, write the report to:
 
-`Design/AgentReports/2026-05-08_designer_readme-dedupe-neutral-premise.md`
+`Design/AgentReports/2026-05-08_designer_<specific-task>.md`
 
 Use the standard WarlineCapture handoff format and include:
 

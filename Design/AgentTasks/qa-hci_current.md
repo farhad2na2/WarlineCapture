@@ -6,6 +6,10 @@ Priority: rerun focused Gate 4 after accepted Gameplay manual M01 opening-contro
 
 ## Assignment
 
+Read the direct PM message first:
+
+- `Design/AgentTasks/qa-hci_pm_message.md`
+
 Rerun focused Gate 4 after PM accepted Gameplay's manual M01 opening-control proof.
 
 Do not ask PM/user for temporary art approval until this rerun confirms the route is stable enough for a relaxed art/readability review.

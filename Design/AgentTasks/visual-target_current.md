@@ -19,6 +19,10 @@ Art/Atlas owns the active task:
 
 Expected report:
 
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+
+The earlier package was rejected and must not be used as an approval source:
+
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 
 ## Reference Only

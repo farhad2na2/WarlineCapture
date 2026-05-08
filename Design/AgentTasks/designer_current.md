@@ -2,26 +2,23 @@
 
 Date: 2026-05-08
 Status: active
-Priority: P0 design-doc and README clarity pass
+Priority: P0 root README and Design index dedupe pass
 
 ## Assignment
 
-Optimize the project-facing design documentation so agents and humans can quickly understand the current product goal, source-of-truth order, and active M01/Gate 4 state.
+Continue the project-facing documentation optimization pass. The Designer lane setup is accepted; the next task is to reduce duplication between the root `README.md` and `Design/README.md`.
 
 Focus on documentation structure and clarity, not implementation. Do not edit gameplay/UI source, Unity prefabs, captures, or runtime assets.
 
 ## Required Work
 
-- Review the root `README.md`, `Design/README.md`, `Design/AgentTasks/README.md`, and `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
-- Identify duplicated, stale, confusing, or overly long sections that make agents misread the current project direction.
-- Propose and, where safe, make concise documentation improvements:
-  - clearer reading order
-  - shorter project summary
-  - current source-of-truth map
-  - designer-facing guidance for what should be optimized versus left alone
-  - less duplication between root README and `Design/README.md`
+- Review the root `README.md` and `Design/README.md`.
+- Keep the root README as a concise project entry point: setup, active direction, key source-of-truth links, and contributor/agent entry points.
+- Keep `Design/README.md` as the complete design index.
+- Remove or shorten duplicated long inventories from the root README when `Design/README.md` already owns the complete list.
+- Preserve useful top-level context already added to the root README: Saga/Operation/Quick Custom structure, 2D isometric tactical/strategic split, and Designer workflow link.
 - Preserve active contracts and current lane ownership. Do not change product scope, M01 Gate 4 criteria, agent ownership, validation requirements, or current lane priorities unless PM explicitly asks.
-- If the root `README.md` contains uncommitted changes, review them first and avoid overwriting unrelated work. Report whether the changes are safe to keep, need cleanup, or should be split into a PM commit later.
+- The root `README.md` contains uncommitted documentation-only changes. Work with those changes; do not revert them.
 
 ## Current Accepted Inputs
 
@@ -34,7 +31,8 @@ Read first:
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
 - `Design/WarlineCapture_Agent_Coordination_Workflow.md`
-- latest PM reports under `Design/AgentReports/`
+- `Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`
+- `Design/AgentReports/2026-05-08_pm_designer-docs-readme-optimization-review.md`
 
 ## Validation Required
 
@@ -53,7 +51,7 @@ Read first:
 
 Write the report to:
 
-`Design/AgentReports/2026-05-08_designer_docs-readme-optimization.md`
+`Design/AgentReports/2026-05-08_designer_readme-design-index-dedupe.md`
 
 Use the standard WarlineCapture handoff format and include:
 

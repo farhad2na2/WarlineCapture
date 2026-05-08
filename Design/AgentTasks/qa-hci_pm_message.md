@@ -12,6 +12,13 @@ Art/Atlas, Designer, and UI have now delivered the inputs QA/HCI needs:
 
 Write the regression gate/checklist report now. Do not wait for Gameplay to finish implementation before documenting the rejection matrix.
 
+Gameplay has now delivered the implementation handoff:
+
+- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-m01-ecs-visual-marker-animation-reset-review.md`
+
+Write the regression gate/checklist report and validate the Gameplay handoff now.
+
 Do not pass another M01 selected-readability or Gate 4 review by checking only a proxy such as "no SpriteRenderer." The user-visible requirement is stronger: public M01 visible units/buildings must not be scene/runtime GameObject renderer wrappers. They must be ECS entity visuals.
 
 Prepare and then run a rejection matrix covering:
@@ -34,3 +41,7 @@ Expected report:
 PM heartbeat follow-up at 2026-05-08T20:07Z:
 
 This report is still missing after PM routed the handoffs. Next QA/HCI heartbeat must write the regression gate/checklist report above. Do not wait for Gameplay implementation to document the checklist.
+
+PM heartbeat follow-up at 2026-05-08T20:19Z:
+
+Gameplay report is now present. QA/HCI is the only missing active report for this gate.

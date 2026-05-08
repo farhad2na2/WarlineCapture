@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting on M01 rejection gate fixes from Gameplay and QA/HCI
+Priority: no current Support/FTUE action; waiting on QA/HCI validation of M01 rejection gate
 
 ## Assignment
 
@@ -17,16 +17,7 @@ Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant
 
 ## Current Blockers Owned By Other Lanes
 
-Gameplay owns:
-
-- true ECS entity visual presentation for public M01 units/buildings, not `MeshRenderer`, `MeshFilter`, or `SpriteRenderer` GameObject wrappers,
-- target marker sizing,
-- animation integration,
-- selection hit targeting,
-- red artifact/enemy fix,
-- scale/aspect application.
-
-Art/Atlas, UI, and Designer have delivered their current inputs and are waiting on Gameplay/QA.
+Gameplay, Art/Atlas, UI, and Designer have delivered their current inputs and are waiting on QA/HCI.
 
 QA/HCI owns:
 
@@ -34,7 +25,6 @@ QA/HCI owns:
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
 - `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
 
 ## Guardrails While Waiting

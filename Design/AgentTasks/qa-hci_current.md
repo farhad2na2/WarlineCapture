@@ -15,6 +15,8 @@ Read first:
 - `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
 - `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 - `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-m01-ecs-visual-marker-animation-reset-review.md`
 - `Design/AgentTasks/qa-hci_pm_message.md`
 - `Design/AgentTasks/user_feedback_review_gate.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
@@ -45,10 +47,10 @@ The next QA validation must explicitly prove:
 ## Waiting On
 
 Waiting on lane:
-Gameplay for final implementation validation. Do not wait to write the regression gate/checklist report.
+none. Gameplay, Art/Atlas, Designer, and UI inputs are present.
 
 Owner of next action:
-QA/HCI, to prepare the gate now and validate when fixes land.
+QA/HCI, to write the regression gate/checklist and validate the Gameplay handoff.
 
 Can QA/HCI continue fallback work? yes, only the gate/checklist and later focused validation.
 

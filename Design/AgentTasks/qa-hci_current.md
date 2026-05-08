@@ -12,6 +12,8 @@ QA/HCI stayed active without a selected-readability report, so PM ran the focuse
 
 - `Design/AgentReports/2026-05-08_pm_selected-readability-rerun-user-review.md`
 
+Gameplay now has a separate user-requested `Game_Legecy` scene isolation task. Do not QA-gate that task; the user explicitly said they will validate it directly.
+
 ## Waiting On
 
 Waiting on lane:

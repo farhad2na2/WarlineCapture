@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: wait for approved Gameplay VisualLock package before runtime visual implementation
+Priority: Gameplay VisualLock package delivered; waiting on PM/user approval before runtime visual implementation
 
 ## Assignment
 
@@ -21,9 +21,10 @@ Approved target files:
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_Enemy_Readability_Target.png`
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_Scale_Board.png`
 
-Before Gameplay resumes, Art/Atlas must create the Gameplay VisualLock package for all visual item families:
+Before Gameplay resumes, PM/user must approve the Gameplay VisualLock package:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-visual-lock-approval-request.md`
 
 Do not implement runtime visuals from only the single approved target package. Wait for the locked strategic map, tactical map, marker, and atlas references.
 
@@ -32,12 +33,12 @@ Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM 
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas
+PM/user
 
 Owner of next action:
-Art/Atlas
+PM/user
 
-Can Gameplay continue fallback work? no. Wait for the Gameplay VisualLock package.
+Can Gameplay continue fallback work? no. Wait for VisualLock approval or rejection notes.
 
 ## Required Validation
 

@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: UI marker/selection overlay audit delivered; waiting on Art/Atlas Gameplay VisualLock package
+Priority: UI marker/selection overlay audit delivered; waiting on PM/user Gameplay VisualLock approval
 
 ## Assignment
 
@@ -21,7 +21,7 @@ Gameplay visual targets are owned by Art/Atlas and stored under:
 
 UI should re-engage only if Gameplay or QA/HCI reports a concrete HUD/screen-space mismatch.
 
-Art/Atlas is creating gameplay VisualLock files under:
+Art/Atlas delivered gameplay VisualLock files under:
 
 - `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
 
@@ -30,14 +30,15 @@ UI VisualLock folders remain separate and should not receive gameplay map/atlas 
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas
+PM/user
 
 Waiting on exact report and decision:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+- PM/user approval of the Gameplay VisualLock package
 
 Owner of next action:
-Art/Atlas
+PM/user
 
 Can UI continue fallback work? no
 

@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: M01 visual target approved; waiting on Art/Atlas Gameplay VisualLock package
+Priority: M01 visual target approved; waiting on PM/user Gameplay VisualLock approval
 
 ## Assignment
 
@@ -14,7 +14,7 @@ The true-isometric AAA gameplay visual target package is approved:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
-Art/Atlas is now creating a Gameplay VisualLock package before runtime implementation:
+Art/Atlas delivered a Gameplay VisualLock package before runtime implementation:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
@@ -23,14 +23,15 @@ Do not start another broad documentation rewrite, M02 work, or unrelated design 
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas
+PM/user
 
 Waiting on exact report and decision:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+- PM/user approval of the Gameplay VisualLock package
 
 Owner of next action:
-Art/Atlas
+PM/user
 
 Can my lane still continue fallback work? no
 

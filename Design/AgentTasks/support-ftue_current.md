@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting on Art/Atlas Gameplay VisualLock package
+Priority: no current Support/FTUE action; waiting on PM/user Gameplay VisualLock approval
 
 ## Assignment
 
-Stand by while Art/Atlas creates the Gameplay VisualLock package from the approved true-isometric visual target.
+Stand by while PM/user reviews the Gameplay VisualLock package from the approved true-isometric visual target.
 
 Read:
 
@@ -18,7 +18,7 @@ Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant
 
 ## Waiting On
 
-- Art/Atlas Gameplay VisualLock package
+- PM/user approval of the Gameplay VisualLock package
 
 ## Guardrails While Waiting
 

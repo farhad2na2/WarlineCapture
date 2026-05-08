@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; waiting on rejected Art/Atlas visual target replacement
+Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; waiting on Art/Atlas true-isometric visual target replacement
 
 ## Assignment
 
@@ -14,7 +14,7 @@ Rejected package:
 
 Waiting for replacement:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
@@ -25,7 +25,7 @@ Art/Atlas, then PM/user approval
 
 Waiting on exact report and decision:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 - PM/user approval of that replacement visual target package
 
 Owner of next action:

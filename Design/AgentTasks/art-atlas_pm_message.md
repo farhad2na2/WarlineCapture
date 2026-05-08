@@ -26,6 +26,19 @@ The new package must look like a high-quality production mockup target, not a pl
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+
+Latest user review of the AAA replacement:
+
+- The visuals look great.
+- They are rejected because they are not isometric.
+
+Keep the quality bar, but regenerate the package as true isometric gameplay reference:
+
+- orthographic/isometric camera feel,
+- consistent parallel ground-plane axes,
+- no cinematic perspective convergence,
+- no wide-angle camera look,
+- add an isometric grid/axis proof or annotation.
 
 Include short user review steps. Do not commit or push.

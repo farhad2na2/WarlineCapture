@@ -71,3 +71,17 @@ Replacement report:
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
 
 The replacement must be a polished AAA gameplay mockup target, not a placeholder collage or board with inconsistent pasted assets.
+
+## Non-Isometric Rejection
+
+The AAA replacement quality direction was accepted by the user, but the package was rejected because it was not isometric.
+
+Rejected report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+
+Next replacement report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+
+The next replacement must keep the AAA quality bar while using true isometric gameplay perspective: orthographic/isometric camera feel, consistent parallel ground-plane axes, no cinematic perspective convergence, no wide-angle camera look, and an isometric grid/axis proof or annotation.

@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting on rejected Art/Atlas visual target replacement
+Priority: no current Support/FTUE action; waiting on Art/Atlas true-isometric visual target replacement
 
 ## Assignment
 
@@ -11,7 +11,7 @@ Stand by while Art/Atlas replaces the rejected gameplay visual target package.
 Read:
 
 - `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-visual-target-rejected.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
 Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 

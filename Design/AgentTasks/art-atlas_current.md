@@ -1,8 +1,8 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: AAA gameplay visual target package delivered; waiting on PM/user approval
+Status: active
+Priority: P0 regenerate AAA gameplay visual target package with true isometric perspective
 
 ## Assignment
 
@@ -16,7 +16,16 @@ Replacement package delivered:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
 
-PM/user approval is now required before downstream lanes move forward.
+User review result:
+
+- Quality direction: accepted as strong.
+- Perspective: rejected because the targets are not isometric.
+
+Regenerate the package with the same high-quality bar, but with a true isometric gameplay perspective.
+
+New expected replacement report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
 Read first:
 
@@ -33,6 +42,7 @@ Read first:
 
 - Produce high-quality AI-generated or AI-assisted gameplay target mockups, not placeholder collages.
 - The target must look like an AAA production visual target, comparable in polish to the UI Visual Lock targets.
+- The target must be true isometric gameplay reference: orthographic/isometric camera feel, consistent parallel ground-plane axes, no cinematic perspective convergence, no wide-angle camera look.
 - All soldiers must be consistent in style, proportions, lighting, scale, grounding, and perspective.
 - No soldier may be half buried, floating, squashed, cut off, or different-size without a clear perspective reason.
 - The target must show an in-world M01 selected-readability gameplay scene, not a UI board pretending to be gameplay.
@@ -45,6 +55,7 @@ Read first:
   - polished move/attack marker target,
   - polished enemy readability target,
   - scale/grounding target using believable road/building/soldier relationships,
+  - isometric grid/axis proof or annotation showing the ground-plane perspective is isometric,
   - pose/animation target or high-quality contact guidance,
   - rejected bad-example sheet if useful, but do not let bad examples dominate the package.
 - Include short user review steps.
@@ -53,17 +64,17 @@ Read first:
 ## Waiting On
 
 Waiting on lane:
-PM/user
+none
 
 Owner of next action:
-PM/user
+Art/Atlas
 
-Can my lane still continue fallback work? no. Wait for approval or rejection notes.
+Can my lane still continue fallback work? no. Replace the non-isometric package first.
 
 ## Completion Report
 
-Delivered:
+Write:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
 Use the standard WarlineCapture handoff format and include all target file paths, plus a short `User Review Steps` section.

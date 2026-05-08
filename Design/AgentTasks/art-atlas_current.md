@@ -23,11 +23,15 @@ Approved quality reference remains:
 
 Latest user correction:
 
-- Need a big zoomed-out Tehran strategic map in this style.
+- Do not generate a Tehran map. The user stopped that direction.
+- The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
+- Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
+- Zoom level, camera angle, map density, visual scale, marker footprint, soldier/building proportions, background treatment, and composition must follow the previously approved reference package. Do not invent a new zoom level or camera.
 - Need all zoomed-in tactical maps.
 - Need high-quality marker PNGs.
 - Need these soldiers as actual sprites / sprite atlas frames.
 - Need all buildings as high-quality PNG atlases.
+- No smaller soldiers, no smaller buildings, no different building designs, and no different soldier styles than the approved reference package.
 - Need ready-to-use implementation assets, not reference boards.
 - Assets must be AI-generated high quality, not deterministic placeholder/vector/diagram output.
 
@@ -60,26 +64,45 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 - All visuals must be AI-generated or AI-assisted at high production quality.
 - Do not use deterministic vector drawings, simple geometric marker boards, placeholder crops, stretched/upscaled source images, low-detail diagrams, or board-only mockups.
 - Keep the approved true-isometric AAA quality/style.
+- Do not reinterpret the approved visual family:
+  - no smaller soldiers than the approved reference,
+  - no smaller buildings than the approved reference,
+  - no different building designs/style family,
+  - no different soldier art style, outfit family, pose language, or proportions,
+  - no mixed soldier styles inside the same squad,
+  - no alternate map/building/soldier family just because it is also high quality.
+- Match the approved reference package for zoom/camera/readability, not just the theme:
+  - `M01_SelectedReadability_Gameplay_Target.png` for overall gameplay zoom, background density, and composition,
+  - `M01_SelectedReadability_Isometric_Grid_Proof.png` for isometric camera/parallel axes,
+  - `M01_SelectedReadability_Scale_Board.png` for soldier, road, door, and building proportions,
+  - `M01_SelectedReadability_Selected_Marker_Target.png` for selected marker size and ground contact,
+  - `M01_SelectedReadability_Move_Attack_Marker_Target.png` for move/attack marker footprint and restraint,
+  - `M01_SelectedReadability_Enemy_Readability_Target.png` for hostile readability and red feedback restraint,
+  - `M01_SelectedReadability_Idle_Run_Pose_Guide.png` for unit pose/contact direction.
 - Keep maps, soldiers, buildings, markers, and atlases consistent with one lighting/material/perspective language.
 - Use ready-to-import transparent PNGs for sprites/markers/atlases.
 - Use POT-padded Unity-ready PNGs for tactical map plates when required by `WarlineCapture_Tactical_Map_AI_Workflow.md`.
-- Do not bake gameplay units/buildings into clean tactical ground plates.
+- Do not bake gameplay units, markers, labels, UI, or approval annotations into clean tactical ground plates. Buildings/props needed by the scene must be supplied as separate atlas assets with anchors unless a specific map plate explicitly requires static background structures.
 
 ## Required Outputs
 
 ### Strategic Map
 
-- Big zoomed-out Tehran strategic map in the approved isometric style.
-- Runtime path: `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Strategic/tehran_zoomed_out_map.png`
+- Big zoomed-out strategic/background map in the approved isometric gameplay style.
+- Do not use Tehran as the subject, layout, or replacement target.
+- Use the approved visual target/background language as the reference for composition, lighting, roads, terrain, buildings, scale, camera, and zoom level.
+- Runtime path: `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Strategic/m01_isometric_strategic_background.png`
 - Include review mirror/contact sheet.
 
 ### Tactical Maps
 
 - All required M01 zoomed-in tactical map plates.
 - Minimum set until contract says otherwise: three close-up tactical plates.
+- Tactical map zoom/crop must follow the approved gameplay target and scale board. Do not create a more zoomed-out strategic view or a more zoomed-in character-art view unless the approved reference already supports it.
+- Tactical maps must preserve the approved building size/design language. Do not replace the buildings with a different architecture family or shrink them to fit more content.
 - Each plate needs native AI source and Unity-ready POT-padded PNG.
 - Follow `Design/WarlineCapture_Tactical_Map_AI_Workflow.md`.
-- Clean tactical ground only: no soldiers, no vehicles, no buildings, no UI, no labels.
+- Clean tactical plate outputs must exclude soldiers, vehicles, markers, UI, labels, and approval notes.
 
 ### Markers
 
@@ -98,6 +121,7 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 
 - Player rifle squad transparent sprite atlas frames.
 - Enemy patrol transparent sprite atlas frames.
+- Soldier frames must match the approved soldier style, proportions, scale intent, lighting, and pose language. Do not create smaller soldiers, different outfits, different proportions, or a different art family.
 - Required states:
   - idle
   - run
@@ -111,6 +135,7 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 ### Building Atlases
 
 - High-quality transparent PNG atlases for all required M01 buildings/props.
+- Building frames must match the approved building size, door/road scale relationship, lighting, and architecture style. Do not create smaller buildings or a different building family.
 - Required states:
   - intact
   - damaged

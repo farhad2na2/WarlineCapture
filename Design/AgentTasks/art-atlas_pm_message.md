@@ -25,9 +25,13 @@ Required output folders:
 
 Hard requirement: all visual assets must be AI-generated or AI-assisted at high quality. No deterministic placeholder/vector/board filler.
 
+Reference lock: zoom level, camera angle, composition, background density, soldier/building scale, marker footprint, and visual style must follow the approved `Design/VisualTargets/Gameplay/M01_SelectedReadability/M01_SelectedReadability_*` reference package. Do not invent a new zoom level, camera, Tehran map, or replacement city direction.
+
+Do not make smaller soldiers, smaller buildings, different building designs, or different soldier styles. The production assets must be the approved visual family turned into usable assets, not a new interpretation.
+
 Create real production PNG assets:
 
-- big zoomed-out Tehran strategic map,
+- big zoomed-out strategic/background map matching the approved `M01_SelectedReadability_*` isometric reference style; do not generate Tehran,
 - all M01 zoomed-in tactical map plates,
 - high-quality transparent marker PNGs,
 - player rifle squad sprite atlas frames,

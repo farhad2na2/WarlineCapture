@@ -14,7 +14,7 @@ This review mirror should contain contact sheets, direct PNG previews, prompt/so
 
 Art/Atlas must provide high-quality AI-generated or AI-assisted assets for:
 
-- big zoomed-out Tehran strategic map,
+- big zoomed-out strategic/background map matching the approved `M01_SelectedReadability_*` isometric reference style; do not generate Tehran,
 - M01 zoomed-in tactical map plates,
 - marker PNG sprites,
 - player rifle squad sprite atlas frames,
@@ -30,4 +30,6 @@ Do not use:
 - placeholder crops from a concept image,
 - low-detail diagrams,
 - stretched or upscaled source images,
-- board-only VisualLock references with no runtime PNG assets.
+- board-only VisualLock references with no runtime PNG assets,
+- Tehran-map outputs or any new city/camera/zoom direction that does not follow the approved `M01_SelectedReadability_*` reference package,
+- smaller soldiers, smaller buildings, different building designs, or different soldier styles than the approved reference package.

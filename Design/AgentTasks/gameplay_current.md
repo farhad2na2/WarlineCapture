@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: accepted manual M01 opening-control proof; waiting for QA/HCI focused rerun findings
+Priority: accepted QA/HCI focused rerun; waiting for PM/user temporary-art decision
 
 ## Assignment
 
-Wait for QA/HCI focused rerun findings.
+Wait for PM/user temporary-art decision.
 
 Gameplay has delivered the focused manual opening-control fix/proof:
 
@@ -15,6 +15,11 @@ Gameplay has delivered the focused manual opening-control fix/proof:
 PM accepted it for QA/HCI rerun in:
 
 - `Design/AgentReports/2026-05-08_pm_gameplay-m01-manual-opening-control-review.md`
+
+QA/HCI delivered and PM accepted the focused rerun:
+
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+- `Design/AgentReports/2026-05-08_pm_qa-hci-gate4-final-rerun-review.md`
 
 Gameplay has delivered the current M01 public first-control readability and selected-marker handoff:
 
@@ -29,14 +34,14 @@ Do not start M02-M05, broaden combat rebalance, add vehicle work, add base/build
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+PM/user
 
 Waiting on exact file/report/decision:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+- approve or reject temporary Gate 4 infantry art
 
 Owner of next action:
-QA/HCI owns the rerun.
+PM/user owns the temporary-art decision.
 
 Can my lane still continue fallback work? no
 

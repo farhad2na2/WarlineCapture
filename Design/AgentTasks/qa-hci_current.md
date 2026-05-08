@@ -1,20 +1,20 @@
 # QA/HCI Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: rerun focused Gate 4 after accepted Gameplay manual M01 opening-control proof
+Status: waiting
+Priority: accepted focused Gate 4 rerun; waiting for PM/user temporary-art decision
 
 ## Assignment
 
-Read the direct PM message first:
+Wait for PM/user temporary-art decision.
 
-- `Design/AgentTasks/qa-hci_pm_message.md`
+QA/HCI delivered the focused Gate 4 rerun:
 
-Rerun focused Gate 4 after PM accepted Gameplay's manual M01 opening-control proof.
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
 
-Do not ask PM/user for temporary art approval until this rerun confirms the route is stable enough for a relaxed art/readability review.
+PM accepted it for route stability and temporary-art review in:
 
-Do not stay silent while marked active. If the rerun cannot start or cannot complete, write a blocker report immediately with the exact failed command, workspace, log path, missing dependency, or manual validation blocker.
+- `Design/AgentReports/2026-05-08_pm_qa-hci-gate4-final-rerun-review.md`
 
 ## Waiting On
 
@@ -33,9 +33,9 @@ Art/Atlas report:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
 
-PM/user decision later:
+PM/user decision:
 
-- no current PM/user art decision request until this QA/HCI rerun confirms the route is reviewable
+- approve or reject temporary Gate 4 infantry art
 
 ## Required Fix Evidence Before Rerun
 
@@ -63,46 +63,14 @@ Art/Atlas has proved for the current temporary-art pass:
 
 ## Next QA/HCI Work After Fixes
 
-Rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
+No new QA/HCI rerun is required while waiting. If PM/user approves temporary art, PM may route final Gate 4 packaging or a milestone acceptance decision. If PM/user rejects temporary art, wait for Art/Atlas and Gameplay follow-up before rerunning.
 
-- public route: Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup
-- first-control readability
-- four-soldier squad readability
-- selected-state clarity in world and HUD
-- infantry-only HUD scope
-- touch/camera ergonomics or documented substitute
-- invalid command recovery
-- assistant ownership/Stop behavior
-- performance/freeze/log readiness
-- visual readability of ECS animated atlas units and command markers
-- projectile/impact VFX scale
-- absence of visible legacy `Model`, temporary SpriteRenderer adapter, old per-Model animation output, and separate `Destroyed` child/prefab runtime dependency for M01 infantry
-- whether the route is now suitable for a short PM/user temporary-art review
+The completed rerun covered the public route, first-control readability, four-soldier squad readability, selected state, infantry-only HUD scope, invalid command recovery, atlas-backed visible units, projectile scale, and whether the route is suitable for short PM/user temporary-art review.
 
 ## Completion Report
 
-Do not write final Gate 4 acceptance until both fixes land and the rerun passes.
+If PM/user or PM assigns a new QA/HCI follow-up, write:
 
-If a rerun finds blockers, write:
-
-`Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+`Design/AgentReports/2026-05-08_qa-hci_<specific-followup>.md`
 
 Use the exact format from `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
-
-If the rerun cannot be executed, write:
-
-`Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun-blocked.md`
-
-Include:
-
-- Lane
-- Task
-- Files changed
-- Contracts touched
-- User-visible behavior
-- Validation run or attempted
-- Validation result
-- Known gaps
-- Cross-lane impacts
-- Next recommended task
-- Exact owner of the unblock action

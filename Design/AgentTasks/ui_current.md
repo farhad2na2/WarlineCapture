@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: accepted M01 infantry-only HUD scope handoff; waiting for QA/HCI final rerun findings
+Priority: accepted QA/HCI focused rerun; waiting for PM/user temporary-art decision
 
 ## Assignment
 
-Wait for QA/HCI final Gate 4 rerun findings.
+Wait for PM/user temporary-art decision.
 
 UI has delivered and PM accepted the infantry-only HUD scope fix:
 
@@ -18,14 +18,14 @@ Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD re
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+PM/user
 
 Waiting on exact file/report/decision:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+- approve or reject temporary Gate 4 infantry art
 
 Owner of next action:
-QA/HCI owns the final rerun after PM accepted the Gameplay opening-control proof.
+PM/user owns the temporary-art decision.
 
 Can my lane still continue fallback work? no
 

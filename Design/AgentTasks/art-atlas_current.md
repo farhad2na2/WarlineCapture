@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: waiting for QA/HCI focused rerun after accepted Gameplay manual M01 opening-control proof
+Priority: waiting for PM/user temporary-art decision after accepted QA/HCI final rerun
 
 ## Assignment
 
-Wait for QA/HCI to rerun the focused M01 route after PM accepted Gameplay's manual opening-control proof. Do not ask PM/user to approve or reject the temporary M01 infantry art package until QA/HCI confirms the route is stable enough for review.
+Wait for PM/user to approve or reject the temporary M01 infantry art package. QA/HCI has confirmed the route is stable enough for review.
 
 Art/Atlas has completed the current assessment. Do not regenerate or broaden art work unless PM/user rejects the temporary package after a valid review, or PM requests a specific follow-up such as an enemy variant or final VFX package.
 
@@ -20,17 +20,17 @@ Do not infer broader art work, M02 content, vehicle art, base/build art, or unre
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+PM/user
 
-Waiting on exact report:
-`Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+Waiting on exact decision:
+approve or reject temporary Gate 4 infantry art
 
 Owner of next action:
-QA/HCI
+PM/user
 
 Can my lane still continue fallback work? no
 
-## After QA/HCI Proof
+## After PM/User Decision
 
 PM may ask the user to approve or reject `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png` as the temporary Gate 4 M01 infantry atlas source.
 

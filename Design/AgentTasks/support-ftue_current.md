@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: blocked until QA/HCI reports a concrete assistant/FTUE issue
+Priority: no concrete assistant/FTUE issue from accepted QA/HCI rerun; waiting for PM/user temporary-art decision
 
 ## Assignment
 
-Stand by while QA/HCI reruns focused Gate 4 after PM accepted Gameplay's manual M01 opening-control proof.
+Stand by while PM/user decides temporary Gate 4 infantry art.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -38,7 +38,7 @@ PM/user later owns:
 
 QA/HCI owns:
 
-- final Gate 4 rerun after UI and Gameplay/Art fixes land.
+- no current Support/FTUE issue; QA/HCI rerun found no concrete assistant regression.
 
 ## Waiting On
 

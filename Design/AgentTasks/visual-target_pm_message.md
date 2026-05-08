@@ -26,6 +26,12 @@ Own the in-world gameplay target:
 - idle/run pose expectations,
 - bad examples that must not pass.
 
+User approval is required before anyone moves forward from your package. Your report must include short review steps:
+
+1. Open these target files.
+2. Compare these specific items.
+3. Answer approve or reject with notes.
+
 Expected report:
 
 `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`

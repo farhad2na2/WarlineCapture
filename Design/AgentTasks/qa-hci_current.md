@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability regression gate passed; final visual approval paused for Gameplay Visual Target package
+Priority: selected-readability regression gate passed; final visual approval paused for user-approved Gameplay Visual Target package
 
 ## Assignment
 
@@ -20,14 +20,15 @@ Do not start another QA pass unless PM routes a concrete follow-up.
 ## Waiting On
 
 Waiting on lane:
-Visual Target
+Visual Target, then PM/user approval
 
-Waiting on exact report:
+Waiting on exact report and decision:
 
 - `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- PM/user approval of that visual target package
 
 Owner of next action:
-Visual Target
+Visual Target, then PM/user
 
 Can QA/HCI continue fallback work? no
 

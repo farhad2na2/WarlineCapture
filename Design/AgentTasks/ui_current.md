@@ -24,14 +24,15 @@ UI should re-engage only if Visual Target or QA/HCI reports a concrete HUD/scree
 ## Waiting On
 
 Waiting on lane:
-Visual Target
+Visual Target, then PM/user approval
 
-Waiting on exact report:
+Waiting on exact report and decision:
 
 - `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- PM/user approval of that visual target package
 
 Owner of next action:
-Visual Target
+Visual Target, then PM/user
 
 Can UI continue fallback work? no
 

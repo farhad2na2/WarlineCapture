@@ -38,6 +38,11 @@ Read first:
   - idle/run pose contact sheet guidance,
   - bad-example sheet naming rejected cases: huge green marker, yellow square, squashed soldier, crouch-run, red sitting artifact, foot-only selection.
 - Include short QA acceptance checks for comparing runtime captures to the target.
+- Include short user review instructions in the completion report:
+  - what files to open,
+  - what to compare,
+  - what answer PM needs.
+- User approval is required. Do not mark the visual target package accepted for downstream Gameplay/Art/QA work until PM/user explicitly approves it.
 
 ## Waiting On
 
@@ -55,4 +60,4 @@ Write:
 
 `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
 
-Use the standard WarlineCapture handoff format and include all target file paths.
+Use the standard WarlineCapture handoff format and include all target file paths, plus a short "User Review Steps" section.

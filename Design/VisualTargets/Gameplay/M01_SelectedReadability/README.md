@@ -53,3 +53,7 @@ The first Visual Target handoff should produce or reference:
 ## Acceptance Rule
 
 Gameplay, Art/Atlas, and QA/HCI cannot claim final selected-readability visual acceptance until their captures are compared against this gameplay target package.
+
+The package itself also requires explicit PM/user approval. Until the user approves the gameplay visual target package, downstream lanes must not treat it as the accepted visual bar.
+
+Every target package report must include a short `User Review Steps` section naming the exact files to open and the exact approve/reject decision needed.

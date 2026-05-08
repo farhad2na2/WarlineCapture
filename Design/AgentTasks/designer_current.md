@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: rejection-informed M01 contract delivered; final visual approval paused for Gameplay Visual Target package
+Priority: rejection-informed M01 contract delivered; final visual approval paused for user-approved Gameplay Visual Target package
 
 ## Assignment
 
@@ -19,14 +19,15 @@ Do not start another broad documentation rewrite, M02 work, or unrelated design 
 ## Waiting On
 
 Waiting on lane:
-Visual Target
+Visual Target, then PM/user approval
 
-Waiting on exact report:
+Waiting on exact report and decision:
 
 - `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- PM/user approval of that visual target package
 
 Owner of next action:
-Visual Target
+Visual Target, then PM/user
 
 Can my lane still continue fallback work? no
 

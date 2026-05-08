@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; final visual approval paused for Gameplay Visual Target package
+Priority: no current Support/FTUE action; final visual approval paused for user-approved Gameplay Visual Target package
 
 ## Assignment
 
@@ -18,6 +18,7 @@ Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant
 ## Waiting On
 
 - `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- PM/user approval of that visual target package
 
 ## Guardrails While Waiting
 

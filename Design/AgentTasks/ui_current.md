@@ -1,14 +1,34 @@
 # UI Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: P0 M01 infantry-only HUD scope and first-control selected-squad readability
+Status: waiting
+Priority: accepted M01 infantry-only HUD scope handoff; waiting for QA/HCI final rerun findings
 
 ## Assignment
 
-Fix the UI-owned Gate 4 blocker from `Design/AgentReports/2026-05-08_qa-hci_gate4-focused-rerun.md`: public M01 is an infantry-only teaching slice, but the player-facing HUD still shows APC, Tank, air support, and Build affordances/cards.
+Wait for QA/HCI final Gate 4 rerun findings.
 
-Do not start new mockups, M02 work, broad HUD redesign, or unrelated polish. Keep this scoped to the public M01 First Contact route and the Gate 4 HCI findings.
+UI has delivered and PM accepted the infantry-only HUD scope fix:
+
+- `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
+- `Design/AgentReports/2026-05-08_pm_ui-m01-infantry-only-hud-scope-review.md`
+
+Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD redesign, or unrelated polish.
+
+## Waiting On
+
+Waiting on lane:
+PM/user, then QA/HCI
+
+Waiting on exact file/report/decision:
+
+- PM/user approval or rejection of the temporary M01 infantry art package from `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
+
+Owner of next action:
+PM/user owns the art decision. QA/HCI owns the final rerun after that decision.
+
+Can my lane still continue fallback work? no
 
 ## Required Behavior
 
@@ -37,17 +57,7 @@ Previously accepted UI evidence remains useful but is no longer sufficient:
 
 ## Validation Required
 
-Use `/Users/farhad/Projects/WarlineCapture-CodexUnity2`.
-
-Run focused validation proving:
-
-- Public M01 route still reaches the production slice.
-- M01 HUD no longer presents APC, Tank, air support, Build, vehicle production, transport, or base/build affordances as usable first-mission options.
-- Selected rifle squad HUD state remains readable.
-- Objective/result popup route still works.
-- No new runtime scene-search usage is introduced in touched files.
-
-If the existing focused PlayMode suite is available in this workspace, run the relevant `Chapter01M01PlayModeValidationTests` filter after the UI change. If Unity cannot run because the workspace is locked or stale, report that as a blocker with the exact command and first failure.
+No new UI validation is required while waiting. If QA/HCI reports a concrete UI regression, use `/Users/farhad/Projects/WarlineCapture-CodexUnity2` and rerun focused validation for the affected public M01 route, HUD scope, selected-squad state, result flow, and scene-search guardrail.
 
 ## Cross-Lane Notes
 
@@ -57,9 +67,9 @@ If the existing focused PlayMode suite is available in this workspace, run the r
 
 ## Completion Report
 
-Write the report to:
+If new UI follow-up work is assigned, write the report to:
 
-`Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
+`Design/AgentReports/2026-05-08_ui_<specific-followup>.md`
 
 Use the exact format from `Design/WarlineCapture_Agent_Coordination_Workflow.md`, and include:
 

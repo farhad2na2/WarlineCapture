@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: blocked on UI HUD fix and PM/user art decision before Gate 4 rerun
+Priority: blocked on PM/user art decision before Gate 4 rerun
 
 ## Assignment
 
@@ -15,6 +15,7 @@ The previous Gameplay opening-control and ECS atlas architecture handoff is acce
 UI report:
 
 - `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
+- `Design/AgentReports/2026-05-08_pm_ui-m01-infantry-only-hud-scope-review.md`
 
 Gameplay report:
 
@@ -52,7 +53,7 @@ Art/Atlas has proved for the current temporary-art pass:
 
 ## Next QA/HCI Work After Fixes
 
-After the UI report lands and PM/user makes the art decision, rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
+After PM/user makes the art decision, rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
 
 - public route: Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup
 - first-control readability

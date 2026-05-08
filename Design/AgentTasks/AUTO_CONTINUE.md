@@ -119,6 +119,22 @@ On every heartbeat, an active lane must do one of these:
 
 If an active lane cannot do one of these before the next heartbeat, the lane must report blocked. PM will treat active-lane silence as a coordination blocker and notify the user.
 
+## Early Idle Risk Warnings
+
+PM monitors should warn before work stalls. When a lane is not blocked yet but is likely to become blocked, PM should notify the user early with a short review pointer.
+
+Early warning risks include:
+
+- active lane has no clear expected report filename,
+- active lane has no clear validation command or assigned workspace,
+- the next step depends on PM/user approval but the review path is not ready,
+- lane priorities are stale or contradictory,
+- Unity workspace, licensing, capture tooling, or uncommitted accepted work may block the next lane,
+- ownership of the unblock action is unclear,
+- a handoff is advisory now but could become a hidden blocker if not reviewed.
+
+The warning should name the lane, risk, file/report to inspect, and likely decision point.
+
 Example:
 
 - QA/HCI can wait for UI's integrated capture matrix.

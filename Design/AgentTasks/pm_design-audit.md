@@ -33,6 +33,9 @@ Prioritize docs that active agents depend on:
 - Strategic map and tactical gameplay map responsibilities are mixed.
 - Asset rows can be marked complete without approval plus runtime wiring.
 - Agents would need to invent names, ids, paths, reason codes, states, or acceptance criteria.
+- A lane is active but its expected handoff filename, validation command, workspace, or unblock owner is missing or ambiguous.
+- A lane is likely to become idle because it depends on a user approval, art signoff, QA rerun, workspace refresh, licensing state, capture matrix, or committed accepted work that is not yet available.
+- A pending report or lane task looks advisory but could become a hidden blocker if PM/user does not review it early.
 
 ## Output Format
 
@@ -52,6 +55,7 @@ Recommended fix:
 Affected lanes:
 Needs user decision:
 Next task update needed:
+Early warning for user:
 ```
 
 ## Operating Rule

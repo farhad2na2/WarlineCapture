@@ -20,8 +20,9 @@ User rejection feedback is a release blocker until every point is owned, fixed, 
 Active rejection gates:
 
 - `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
-- `Design/AgentReports/2026-05-08_pm_game-legecy-scene-rejection-routing.md`
 
 Do not request another selected-readability review until its report's feedback matrix is closed by Gameplay, Art/Atlas, UI if applicable, and QA/HCI.
 
-Do not request another legacy scene review until `Game.unity` is proven clean and `Game_Legecy.unity` is proven to play the legacy prototype instead of the new 2D/isometric loading game.
+Closed rejection gates:
+
+- `Design/AgentReports/2026-05-08_pm_game-legecy-scene-rejection-routing.md` closed by user approval after `Design/AgentReports/2026-05-08_gameplay_game-legecy-scene-isolation-fix.md`.

@@ -2,21 +2,24 @@
 
 Date: 2026-05-08
 
-The user rejected the `Game_Legecy` scene split and said Gameplay should complete it before continuing the selected-readability/ECS visual fixes.
+The user approved the `Game_Legecy` scene-isolation fix. Resume the selected-readability/ECS visual rejection gate now.
 
-Fix this first:
+This is a P0 process failure, not polish. The important correction is that public M01 visible units/buildings must be ECS entity visuals. The user saw `MeshRenderer` objects and rejected that. Existing validation that only blocks `SpriteRenderer` is not enough.
 
-- `Game.unity` must be clean for the 2D/isometric production scene.
-- Remove old prototype `UI_Canvas`, old legacy canvas/menu setup, duplicate old prototype directional lights, and old prototype `Global Volume` from `Game.unity`.
-- The user still saw old `UI_Canvas`, two directional lights, and `Global Volume` in `Game.unity`; that is rejected.
-- `Game_Legecy.unity` must be playable as the legacy prototype.
-- Pressing Play in `Game_Legecy.unity` must not load the new 2D/isometric game.
-- `Game_Legecy.unity` should run only the legacy playable setup with legacy `UI_Canvas`.
+Fix and prove these items:
 
-The previous handoff said `Game_Legecy` may include production bootstrap objects and required `Game.unity` to keep `Global Volume`/`Directional Light`. Treat that as superseded by this message.
+- no visible unit/building presentation through scene/runtime `MeshRenderer`, `MeshFilter`, or `SpriteRenderer` GameObjects,
+- no `M01RuntimeEcsAtlasQuads` style GameObject renderer wrapper as the accepted visible path,
+- small target marker, about two soldier footsteps wide,
+- idle and moving soldiers animate correctly,
+- no crouched/sitting run frames, no stray foot artifact,
+- no vertical squash and current visual scale near the user's readable `0.15` target unless Art/Atlas gives a verified replacement,
+- red flashing sitting object/enemy identified and fixed,
+- selection works on the soldier/body/formation, not only foot pixels,
+- placeholder yellow marker is replaced or explicitly blocked on Art/Atlas.
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_gameplay_game-legecy-scene-isolation-fix.md`
+`Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
 
 Do not commit or push.

@@ -2,57 +2,62 @@
 
 Date: 2026-05-08
 Status: active
-Priority: P0 complete Game_Legecy scene isolation before returning to selected-readability fixes
+Priority: P0 selected-readability rejection gate; replace MeshRenderer presentation with ECS entity visuals and fix markers, animation, scale, selection
 
 ## Assignment
 
-The user rejected the current `Game_Legecy` scene split. Finish the legacy scene isolation first.
+The user approved the `Game_Legecy` scene-isolation fix. Resume the public M01 selected-readability/ECS visual rejection gate.
 
 Read first:
 
-- `Design/AgentReports/2026-05-08_pm_game-legecy-scene-rejection-routing.md`
+- `Design/AgentReports/2026-05-08_pm_game-legecy-scene-accepted.md`
+- `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
 - `Design/AgentTasks/gameplay_pm_message.md`
-- `Design/AgentReports/2026-05-08_gameplay_game-legecy-scene-isolation.md`
+- `Design/AgentTasks/user_feedback_review_gate.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_M01_Legacy_Runtime_Guardrails.md`
+- `Design/AgentTasks/M01_CRITICAL_PATH.md`
 
 ## Required Behavior
 
-- `Assets/Game/Scenes/Game.unity` must be clean for the 2D/isometric production version.
-- Remove old prototype/legacy roots from `Game.unity`, including `UI_Canvas`, old legacy menu/canvas setup, duplicate old prototype directional lights, and old prototype `Global Volume`.
-- `Game.unity` should not show two directional lights from the legacy prototype setup.
-- `Game.unity` should not include the old prototype `Global Volume`.
-- `Assets/Game/Scenes/Game_Legecy.unity` must be playable as the legacy prototype.
-- Opening and pressing Play in `Game_Legecy.unity` must not load the new 2D/isometric game.
-- `Game_Legecy.unity` should use only the legacy playable setup and legacy `UI_Canvas` needed for the old prototype.
-- Do not delete shared assets/prefabs outright. Isolate scene roots and launch behavior.
-- After this is accepted, Gameplay can return to the selected-readability rejection gate.
+- Public M01 units and buildings must be presented as ECS entity visuals, not scene/runtime `GameObject` presentation wrappers with `MeshRenderer`, `MeshFilter`, or `SpriteRenderer` components.
+- If true ECS entity rendering is blocked by package/tooling limits, write a blocker report with the exact technical reason and unblock owner. Do not ship another "ECS" pass that is really a GameObject renderer wrapper.
+- Remove or replace the accepted visible path that creates `M01RuntimeEcsAtlasQuads` / runtime quad GameObjects for units or buildings.
+- The huge green target marker must be replaced with a small world marker about two soldier footsteps wide, positioned under/near the intended point without covering units or the screen.
+- Soldier movement animation must use a running/moving loop when moving, idle animation when idle, and must not show crouched/sitting frames or stray feet at the top of the sprite.
+- Soldier visual scale/aspect must not be vertically squashed. With the current art, use the user's observed readable target around `0.15` visual scale unless Art/Atlas provides a better contract and QA verifies it.
+- Identify and fix the red flashing sitting object/enemy seen on the right side of the review.
+- Selection must be easy on the full soldier/body or formation footprint, not only on the foot pixels.
+- Placeholder yellow selection squares must not be the final visible selected state. Coordinate with Art/Atlas/UI for the high-end marker asset and do not request user review while placeholder markers remain.
+- Keep M01 infantry-only: one player rifle squad type, one enemy patrol type, no player vehicles.
 
 ## Validation Required
 
-Gameplay must provide direct user-validation steps and evidence:
-
-- Open `Assets/Game/Scenes/Game.unity`.
-- Prove the legacy `UI_Canvas`, old prototype duplicate directional lights, and old prototype `Global Volume` are absent.
-- Open `Assets/Game/Scenes/Game_Legecy.unity`.
-- Press Play.
-- Prove the legacy scene runs the old playable prototype through legacy `UI_Canvas`, not the new 2D/isometric loading game.
-- Include exact Unity command(s), project path, result, and log/result paths if automated validation is run.
+- Add or update validation so it fails if public M01 runtime visible unit/building presentation uses scene/runtime `MeshRenderer`, `MeshFilter`, or `SpriteRenderer` GameObjects.
+- Validate the public route: Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy.
+- Capture evidence that shows:
+  - idle animation,
+  - run/move animation,
+  - selection marker size and placement,
+  - target marker size and placement,
+  - enemy patrol/artifact state,
+  - scale/aspect against road/building context.
+- Use video, frame sequence, or automated measurement for animation/movement. A single screenshot is not enough.
+- Include exact Unity command(s), project path, result, and log/result paths.
 
 ## Waiting On
 
 Waiting on lane:
-none
+Art/Atlas for marker/animation/scale art package if required.
 
 Owner of next action:
 Gameplay
 
-Can my lane still continue fallback work? no. Complete this legacy scene split first.
+Can my lane still continue fallback work? no. This rejection is the active P0.
 
 ## Completion Report
 
 Write:
 
-`Design/AgentReports/2026-05-08_gameplay_game-legecy-scene-isolation-fix.md`
+`Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
 
-Use the standard WarlineCapture handoff format and include short user validation steps.
+Use the standard WarlineCapture handoff format and include a user-feedback matrix for each rejected bullet.

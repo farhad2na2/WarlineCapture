@@ -19,7 +19,7 @@ Art/Atlas owns the active task:
 
 Expected report:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
 The earlier packages were rejected and must not be used as approval sources:
 
@@ -31,5 +31,6 @@ The earlier packages were rejected and must not be used as approval sources:
 The gameplay visual target folder remains:
 
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
+- `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
 
-Use it as the package location, not as a separate lane.
+Use these as package locations, not as a separate lane.

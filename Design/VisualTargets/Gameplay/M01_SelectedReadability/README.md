@@ -85,3 +85,47 @@ Next replacement report:
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
 
 The next replacement must keep the AAA quality bar while using true isometric gameplay perspective: orthographic/isometric camera feel, consistent parallel ground-plane axes, no cinematic perspective convergence, no wide-angle camera look, and an isometric grid/axis proof or annotation.
+
+## Approved Visual Quality Reference
+
+The user approved the true-isometric package as the M01 gameplay reference quality bar.
+
+Approved report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+
+Approved reference files:
+
+- `M01_SelectedReadability_Gameplay_Target.png`
+- `M01_SelectedReadability_Isometric_Grid_Proof.png`
+- `M01_SelectedReadability_Scale_Board.png`
+- `M01_SelectedReadability_Selected_Marker_Target.png`
+- `M01_SelectedReadability_Move_Attack_Marker_Target.png`
+- `M01_SelectedReadability_Enemy_Readability_Target.png`
+- `M01_SelectedReadability_Idle_Run_Pose_Guide.png`
+
+Approval note:
+
+- The user likes this direction and wants it as reference quality. Image/background/map/soldiers/markers must all be in this style and quality.
+
+Runtime captures must be compared against this package before visual approval.
+
+## Gameplay VisualLock Follow-Up
+
+Before runtime implementation proceeds, the approved visual direction must be expanded into a gameplay VisualLock package under:
+
+- `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
+
+This gameplay VisualLock must cover:
+
+- strategic map visual style,
+- tactical isometric map/background style,
+- road, sidewalk, building, and map tile treatment,
+- player and enemy atlas style,
+- idle/run/aim/fire/death/destroyed atlas states,
+- selection, move, attack, enemy, objective, and hover markers,
+- scale/grounding rules for soldiers, doors, roads, buildings, and markers.
+
+Expected Art/Atlas report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`

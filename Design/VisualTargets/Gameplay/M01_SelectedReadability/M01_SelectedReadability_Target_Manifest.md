@@ -2,6 +2,7 @@
 
 Date: 2026-05-08
 Owner: Art/Atlas
+Approval: Approved by user as M01 gameplay reference quality bar.
 
 ## Target Files
 
@@ -25,6 +26,7 @@ Owner: Art/Atlas
 
 ## Acceptance Checks
 
+- This package is the approved visual quality reference for image/background/map/soldiers/markers.
 - Runtime capture should align to the target boards before another selected-readability approval request.
 - Unit visuals must be ECS/atlas-backed and not accepted through visible renderer-wrapper GameObjects.
 - Target/capture perspective should read as orthographic isometric: consistent parallel ground-plane axes, no vanishing point, no horizon, and no wide-angle cinematic convergence.

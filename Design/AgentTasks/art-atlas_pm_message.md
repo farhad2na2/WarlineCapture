@@ -26,7 +26,7 @@ The new package must look like a high-quality production mockup target, not a pl
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
 Latest user review of the AAA replacement:
 
@@ -40,5 +40,20 @@ Keep the quality bar, but regenerate the package as true isometric gameplay refe
 - no cinematic perspective convergence,
 - no wide-angle camera look,
 - add an isometric grid/axis proof or annotation.
+
+The true-isometric package is now approved. Before Gameplay resumes, create a gameplay VisualLock package under:
+
+`Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
+
+It must lock all item families:
+
+- strategic map,
+- tactical map/background,
+- road, sidewalk, building, and map tile treatment,
+- player rifle squad atlas,
+- enemy patrol atlas,
+- idle/run/aim/fire/death/destroyed atlas states,
+- selection, move, attack, enemy, objective, and hover markers,
+- scale and grounding rules.
 
 Include short user review steps. Do not commit or push.

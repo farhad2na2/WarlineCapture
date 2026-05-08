@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: rejection-informed M01 contract delivered; waiting on Art/Atlas true-isometric visual target replacement
+Priority: M01 visual target approved; waiting on Art/Atlas Gameplay VisualLock package
 
 ## Assignment
 
@@ -10,24 +10,27 @@ Designer delivered the rejection-informed visual scale/readability contract:
 
 - `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 
-The new active visual target work is owned by Art/Atlas:
+The true-isometric AAA gameplay visual target package is approved:
 
-- `Design/AgentTasks/art-atlas_current.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+
+Art/Atlas is now creating a Gameplay VisualLock package before runtime implementation:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
 Do not start another broad documentation rewrite, M02 work, or unrelated design pass unless PM assigns a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas, then PM/user approval
+Art/Atlas
 
 Waiting on exact report and decision:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
-- PM/user approval of that replacement visual target package
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
 Owner of next action:
-Art/Atlas, then PM/user
+Art/Atlas
 
 Can my lane still continue fallback work? no
 

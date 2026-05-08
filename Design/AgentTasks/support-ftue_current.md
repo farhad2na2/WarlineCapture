@@ -2,22 +2,23 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting on Art/Atlas true-isometric visual target replacement
+Priority: no current Support/FTUE action; waiting on Art/Atlas Gameplay VisualLock package
 
 ## Assignment
 
-Stand by while Art/Atlas replaces the rejected gameplay visual target package.
+Stand by while Art/Atlas creates the Gameplay VisualLock package from the approved true-isometric visual target.
 
 Read:
 
 - `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-visual-target-rejected.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
 
 Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 
 ## Waiting On
 
-- PM/user approval of replacement gameplay visual target package
+- Art/Atlas Gameplay VisualLock package
 
 ## Guardrails While Waiting
 

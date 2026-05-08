@@ -2,34 +2,38 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability regression gate passed; waiting on Art/Atlas true-isometric visual target replacement
+Priority: waiting on Art/Atlas Gameplay VisualLock package, then Gameplay runtime capture
 
 ## Assignment
 
-QA/HCI remains blocked from final selected-readability visual approval until Art/Atlas replaces the rejected gameplay visual target package.
+QA/HCI remains blocked until Art/Atlas creates the Gameplay VisualLock package and Gameplay implements/reports a runtime visual match against it.
 
-Rejected package:
-
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
-
-Waiting for replacement:
+Approved reference:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+
+Waiting first for Art/Atlas report:
+
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+
+Then wait for Gameplay report:
+
+- `Design/AgentReports/2026-05-08_gameplay_m01-approved-isometric-visual-match.md`
 
 Do not start another QA pass unless PM routes a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas, then PM/user approval
+Art/Atlas, then Gameplay
 
 Waiting on exact report and decision:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
-- PM/user approval of that replacement visual target package
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-approved-isometric-visual-match.md`
 
 Owner of next action:
-Art/Atlas, then PM/user
+Art/Atlas
 
 Can QA/HCI continue fallback work? no
 

@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting for QA/HCI selected-readability rerun
+Priority: no current Support/FTUE action; waiting for PM/user selected-readability decision
 
 ## Assignment
 
-Stand by while QA/HCI reruns selected-readability validation after Gameplay fixed the individual-soldier source/layout issue.
+Stand by while PM/user reviews the selected-readability pass.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -42,7 +42,8 @@ QA/HCI owns:
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
+- `Design/AgentReports/2026-05-08_pm_selected-readability-rerun-user-review.md`
+- PM/user decision: approve or reject selected-readability pass
 
 ## Guardrails While Waiting
 

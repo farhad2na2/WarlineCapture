@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current UI action; waiting for QA/HCI selected-readability rerun
+Priority: no current UI action; waiting for PM/user selected-readability decision
 
 ## Assignment
 
-Stand by while QA/HCI reruns selected-readability validation after Gameplay fixed the individual-soldier source/layout issue.
+Stand by while PM/user reviews the selected-readability pass.
 
 UI has delivered and PM accepted the infantry-only HUD scope fix:
 
@@ -18,14 +18,15 @@ Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD re
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+PM/user
 
 Waiting on exact file/report/decision:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
+- `Design/AgentReports/2026-05-08_pm_selected-readability-rerun-user-review.md`
+- PM/user decision: approve or reject selected-readability pass
 
 Owner of next action:
-QA/HCI.
+PM/user.
 
 Can my lane still continue fallback work? no
 
@@ -60,8 +61,7 @@ No new UI validation is required while waiting. If QA/HCI reports a concrete UI 
 
 ## Cross-Lane Notes
 
-- QA/HCI owns final Gate 4 selected-readability rerun.
-- UI should re-engage only if QA/HCI flags the unit-card/icon as a blocking UI polish issue.
+- UI should re-engage only if PM/user rejects the unit-card/icon or QA/HCI later flags a concrete UI issue.
 - Support/FTUE owns no action unless QA/HCI finds assistant, Stop, Show Me, result explanation, or invalid-command recovery issues.
 
 ## Completion Report

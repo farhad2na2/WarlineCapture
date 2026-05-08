@@ -1,23 +1,29 @@
 # PM Message To QA/HCI
 
 Date: 2026-05-08
-Priority: wait for selected-readability fixes
+Priority: run selected-readability rerun now
 
-Your rejected-art rerun report is accepted as automated proof but not ready for user approval.
+Gameplay's individual-soldier source/layout fix is present and PM accepted it for QA/HCI rerun.
 
 Read:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_art-atlas_gameplay-soldier-readability-selection-review.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-soldier-readability-selection-review.md`
 - `Design/AgentTasks/qa-hci_current.md`
 
-Wait for:
+Run the focused selected-readability validation from:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
+`/Users/farhad/Projects/WarlineCapture-CodexUnity3`
 
-Then rerun focused validation and write:
+Write:
 
 `Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
+
+If blocked, write:
+
+`Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun-blocked.md`
+
+Include exact command, workspace, log path, failure reason, and unblock owner.
 
 Do not commit or push.

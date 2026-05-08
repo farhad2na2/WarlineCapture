@@ -38,10 +38,11 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
 
         Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite));
         Assert.NotNull(sprite);
-        StringAssert.Contains("infantry_squad", sprite.name);
-        Assert.AreEqual(299, sprite.texture.width);
-        Assert.AreEqual(255, sprite.texture.height);
-        Assert.AreEqual(0f, sprite.texture.GetPixel(0, 0).a, 0.01f);
+        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Run_SE", sprite.name);
+        Assert.AreEqual(960, sprite.texture.width);
+        Assert.AreEqual(1680, sprite.texture.height);
+        Assert.That(sprite.textureRect.width, Is.InRange(100f, 240f));
+        Assert.That(sprite.textureRect.height, Is.InRange(100f, 210f));
     }
 
     [Test]
@@ -80,6 +81,12 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
         Assert.IsTrue(Chapter01M01SpritePresenterCatalog.TryCreatePresenter(runtimeEntityId, out MissionRuntimeSpritePresenter presenter), $"{runtimeEntityId} presenter must resolve.");
         Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite), $"{runtimeEntityId} sprite must resolve from manifest path.");
         Assert.NotNull(sprite);
+        if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
+            runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
+        {
+            StringAssert.Contains("Unit_Chr_Soldier_Male_02", sprite.name);
+            Assert.IsFalse(sprite.name.Contains("infantry_squad"), $"{runtimeEntityId} must not resolve to the rejected mini-squad source.");
+        }
         Assert.AreEqual(1, presenter.RequiresFixedDirectionBakedContactShadow);
         Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild);
     }

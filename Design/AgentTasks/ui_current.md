@@ -2,11 +2,11 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current UI action; waiting for Gameplay individual-soldier source/layout fix
+Priority: no current UI action; waiting for QA/HCI selected-readability rerun
 
 ## Assignment
 
-Stand by while Gameplay fixes selected first-control readability after PM rejected the QA captures. Art/Atlas has confirmed the source issue.
+Stand by while QA/HCI reruns selected-readability validation after Gameplay fixed the individual-soldier source/layout issue.
 
 UI has delivered and PM accepted the infantry-only HUD scope fix:
 
@@ -18,14 +18,14 @@ Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD re
 ## Waiting On
 
 Waiting on lane:
-Gameplay, then QA/HCI
+QA/HCI
 
 Waiting on exact file/report/decision:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
 
 Owner of next action:
-Gameplay.
+QA/HCI.
 
 Can my lane still continue fallback work? no
 
@@ -60,9 +60,8 @@ No new UI validation is required while waiting. If QA/HCI reports a concrete UI 
 
 ## Cross-Lane Notes
 
-- Gameplay owns the current individual-soldier source/layout and selected-marker readability fix.
-- Art/Atlas owns final art readiness, but its current individual-soldier source review is accepted and waiting on Gameplay.
-- QA/HCI owns final Gate 4 rerun after Gameplay lands the source/layout fix.
+- QA/HCI owns final Gate 4 selected-readability rerun.
+- UI should re-engage only if QA/HCI flags the unit-card/icon as a blocking UI polish issue.
 - Support/FTUE owns no action unless QA/HCI finds assistant, Stop, Show Me, result explanation, or invalid-command recovery issues.
 
 ## Completion Report

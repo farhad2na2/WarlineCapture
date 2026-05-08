@@ -2,33 +2,34 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: accepted individual-soldier frame review; waiting for Gameplay source/layout fix
+Priority: accepted Gameplay individual-soldier source/layout fix; waiting for QA/HCI selected-readability rerun
 
 ## Assignment
 
-Wait for Gameplay to implement the individual-soldier source/layout/selection fix.
+Wait for QA/HCI to rerun selected-readability validation.
 
-Art/Atlas delivered:
+Art/Atlas delivered and accepted the source/frame finding:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
+- `Design/AgentReports/2026-05-08_art-atlas_gameplay-soldier-readability-selection-review.md`
 
-PM accepted it in:
+PM accepted Gameplay's fix for QA/HCI rerun:
 
-- `Design/AgentReports/2026-05-08_pm_art-atlas-individual-soldier-frame-review.md`
+- `Design/AgentReports/2026-05-08_pm_gameplay-soldier-readability-selection-review.md`
 
 Do not broaden to final Chapter 1 art, M02, vehicles, or unrelated VFX unless PM routes a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-Gameplay
+QA/HCI
 
 Waiting on exact report:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
 
 Owner of next action:
-Gameplay
+QA/HCI
 
 Can my lane still continue fallback work? no
 
@@ -41,7 +42,7 @@ Can my lane still continue fallback work? no
 
 ## Completion Report
 
-If Gameplay or PM finds a concrete new Art/Atlas blocker, write:
+If QA/HCI or PM finds a concrete new Art/Atlas blocker, write:
 
 `Design/AgentReports/2026-05-08_art-atlas_<specific-followup>.md`
 

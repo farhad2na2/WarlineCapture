@@ -658,6 +658,12 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.IsTrue(em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity), $"{label} should use the ECS-owned atlas quad presentation path.");
         MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
         Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out Sprite resolvedSprite), $"{label} current atlas state id should resolve through the Chapter 1 sprite resolver.");
+        if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
+            runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
+        {
+            StringAssert.Contains("Unit_Chr_Soldier_Male_02", resolvedSprite.name, $"{label} should resolve to the individual soldier sheet, not the rejected temporary mini-squad source.");
+            Assert.IsFalse(resolvedSprite.name.Contains("infantry_squad"), $"{label} must not resolve unit states to the rejected grouped infantry sprite.");
+        }
         Assert.NotNull(runtime.Material.mainTexture, $"{label} atlas quad material should be assigned by the ECS presenter resolver.");
         Assert.IsNull(runtime.Instance.GetComponentInChildren<SpriteRenderer>(true), $"{label} public M01 unit visuals must not expose active or inactive Unity SpriteRenderer components.");
         Assert.False(runtime.Instance.name.Contains("SpriteRenderer"), $"{label} ECS atlas root must not expose SpriteRenderer-era naming.");
@@ -703,9 +709,9 @@ public sealed class Chapter01M01PlayModeValidationTests
         {
             for (int j = i + 1; j < runtime.SoldierRenderers.Length; j++)
             {
-                Vector3 a = runtime.SoldierRenderers[i].transform.localPosition;
-                Vector3 b = runtime.SoldierRenderers[j].transform.localPosition;
-                Assert.Greater(Vector3.Distance(a, b), 0.05f, $"{label} soldiers {i + 1} and {j + 1} should have distinct formation positions.");
+                Vector3 a = runtime.SoldierRenderers[i].transform.position;
+                Vector3 b = runtime.SoldierRenderers[j].transform.position;
+                Assert.Greater(Vector3.Distance(a, b), 0.10f, $"{label} soldiers {i + 1} and {j + 1} should have readable world-space formation spacing at public gameplay scale.");
             }
         }
     }
@@ -722,8 +728,13 @@ public sealed class Chapter01M01PlayModeValidationTests
             MeshRenderer marker = runtime.SelectionRenderers[i];
             Assert.NotNull(marker, $"{label} selection marker {i + 1} should exist.");
             Assert.IsTrue(marker.enabled, $"{label} selection marker {i + 1} should be visible.");
-            Assert.LessOrEqual(marker.transform.localScale.x, 0.30f, $"{label} selection marker {i + 1} should stay small and grounded under a soldier.");
-            Assert.LessOrEqual(marker.transform.localScale.y, 0.10f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
+            Assert.LessOrEqual(marker.transform.localScale.x, 0.52f, $"{label} selection marker {i + 1} should stay small and grounded under a soldier.");
+            Assert.LessOrEqual(marker.transform.localScale.y, 0.16f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
+            Assert.Less(marker.transform.localPosition.y, -0.35f, $"{label} selection marker {i + 1} should sit at the soldier foot/ground area, not over the torso.");
+            Color markerColor = marker.sharedMaterial.color;
+            Assert.Greater(markerColor.r, 0.90f, $"{label} selection marker {i + 1} should use warm grounded selection color.");
+            Assert.Greater(markerColor.g, 0.60f, $"{label} selection marker {i + 1} should stay warm/amber instead of blue.");
+            Assert.Less(markerColor.b, 0.35f, $"{label} selection marker {i + 1} should not read as the rejected blue/green UI effect.");
         }
     }
 

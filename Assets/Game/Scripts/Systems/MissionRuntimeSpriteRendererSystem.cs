@@ -17,13 +17,14 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
     private const float M01MoveAnimationCyclesPerSecond = 3.2f;
     private const float M01MoveBobHeight = 0.035f;
     private const float M01MoveStrideScale = 0.035f;
+    private const float M01SelectionMarkerFootYOffset = -0.42f;
     private const string AtlasQuadShaderName = "Universal Render Pipeline/Unlit";
     private static readonly Vector3[] RifleSquadSoldierOffsets =
     {
-        new(0f, 0f, 0f),
-        new(0.30f, 0f, 0.15f),
-        new(-0.28f, 0f, -0.11f),
-        new(0.18f, 0f, -0.28f)
+        new(0.20f, 0f, 0.24f),
+        new(0.95f, 0f, -0.10f),
+        new(1.70f, 0f, 0.22f),
+        new(2.45f, 0f, -0.12f)
     };
 
     private Transform _root;
@@ -96,21 +97,14 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         EnsureQuadMesh();
         GameObject instance = new($"M01AtlasQuad_{presenter.RuntimeEntityId.ToString()}");
         instance.transform.SetParent(_root, false);
-        MeshFilter meshFilter = instance.AddComponent<MeshFilter>();
-        meshFilter.sharedMesh = _quadMesh;
-        MeshRenderer renderer = instance.AddComponent<MeshRenderer>();
-        renderer.shadowCastingMode = ShadowCastingMode.Off;
-        renderer.receiveShadows = false;
-        renderer.sortingOrder = ResolveSortingOrder(presenter);
-        Material material = CreateAtlasQuadMaterial(presenter);
-        renderer.sharedMaterial = material;
         int soldierCount = ResolveSoldierCount(presenter);
         MeshRenderer[] soldierRenderers = new MeshRenderer[soldierCount];
         Material[] soldierMaterials = new Material[soldierCount];
-        soldierRenderers[0] = renderer;
-        soldierMaterials[0] = material;
-        for (int i = 1; i < soldierCount; i++)
+        for (int i = 0; i < soldierCount; i++)
             CreateSoldierChild(instance.transform, presenter, i, out soldierRenderers[i], out soldierMaterials[i]);
+        MeshRenderer renderer = soldierRenderers[0];
+        Material material = soldierMaterials[0];
+        MeshFilter meshFilter = renderer != null ? renderer.GetComponent<MeshFilter>() : null;
 
         CreateSelectionMarkers(instance.transform, presenter, soldierCount, out MeshRenderer[] selectionRenderers, out Material[] selectionMaterials);
 
@@ -173,7 +167,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 
     private void CreateSoldierChild(Transform parent, in MissionRuntimeSpritePresenter presenter, int index, out MeshRenderer renderer, out Material material)
     {
-        GameObject soldier = new($"Soldier_{index + 1:00}");
+        GameObject soldier = new($"M01AtlasQuad_{presenter.RuntimeEntityId.ToString()}_Soldier_{index + 1:00}");
         soldier.transform.SetParent(parent, false);
         MeshFilter meshFilter = soldier.AddComponent<MeshFilter>();
         meshFilter.sharedMesh = _quadMesh;
@@ -265,7 +259,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
     {
         Material material = CreateAtlasQuadMaterial(presenter);
         material.name = $"M01GroundedSelection_{presenter.RuntimeEntityId.ToString()}_{index + 1:00}";
-        ApplyColor(material, new Color(1f, 0.92f, 0.45f, 0.46f));
+        ApplyColor(material, new Color(1f, 0.84f, 0.22f, 0.72f));
         ApplyTexture(material, Texture2D.whiteTexture);
         return material;
     }
@@ -403,10 +397,10 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 
             renderer.enabled = selected;
             Transform t = renderer.transform;
-            t.localPosition = ResolveSoldierOffset(presenter, i) + new Vector3(0f, -SelectionGroundLift, 0f);
+            t.localPosition = ResolveSoldierOffset(presenter, i) + new Vector3(0f, M01SelectionMarkerFootYOffset - SelectionGroundLift, 0f);
             t.localRotation = Quaternion.identity;
             t.localScale = ResolveSoldierCount(presenter) > 1
-                ? new Vector3(0.28f, 0.08f, 1f)
+                ? new Vector3(0.50f, 0.14f, 1f)
                 : new Vector3(0.24f, 0.07f, 1f);
         }
     }

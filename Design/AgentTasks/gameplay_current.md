@@ -1,76 +1,51 @@
 # Gameplay Current Task
 
 Date: 2026-05-08
-Status: active
-Priority: fix M01 selected first-control soldier readability before user review
+Status: waiting
+Priority: accepted individual-soldier source/layout fix; waiting for QA/HCI selected-readability rerun
 
 ## Assignment
 
-QA/HCI passed automated rejected-art validation, but PM visual review found the fresh selected first-control captures are not ready for user approval.
+Wait for QA/HCI to rerun selected-readability validation.
 
-Read first:
+Gameplay delivered:
 
-- `Design/AgentReports/2026-05-08_qa-hci_gate4-rejected-art-rerun.md`
-- `Design/AgentReports/2026-05-08_pm_qa-hci-rejected-art-rerun-review.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-individual-soldier-frame-review.md`
-- `Design/AgentReports/2026-05-08_pm_art-atlas-individual-soldier-frame-review.md`
-- `Design/AgentReports/2026-05-08_pm_temporary-art-rejected-ecs-scale-motion.md`
-- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+
+Art/Atlas accepted the fix for source/frame scope:
+
+- `Design/AgentReports/2026-05-08_art-atlas_gameplay-soldier-readability-selection-review.md`
+
+PM accepted the fix for QA/HCI rerun:
+
+- `Design/AgentReports/2026-05-08_pm_gameplay-soldier-readability-selection-review.md`
 
 Do not start M02-M05, vehicles, base/build mechanics, broad combat rebalance, or unrelated polish.
-
-## Required Fix
-
-Fix the selected first-control public composition:
-
-- The player squad must read as four distinct individual soldiers, not a crowded duplicated blob/cluster.
-- Replace the current group-sprite source. Art/Atlas found `unit.player.rifle_squad_01` and `unit.enemy.patrol_01` still resolve to `Assets/Game/Art/Generated/IsometricMaps/TacticalProductionBatch_A/Sprites/infantry_squad.png`, so duplicating it creates mini-squads.
-- Use individual `Unit_Chr_Soldier_Male_02` cells from `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png`.
-- Minimum temporary state mapping:
-  - `unit.player.rifle_squad_01.idle` -> `Unit_Chr_Soldier_Male_02_Idle_SE`
-  - `unit.player.rifle_squad_01.move` -> `Unit_Chr_Soldier_Male_02_Run_SE` or `Unit_Chr_Soldier_Male_02_Walk_SE`
-  - `unit.player.rifle_squad_01.attack` -> `Unit_Chr_Soldier_Male_02_Aim_SE` or `Unit_Chr_Soldier_Male_02_Fire_SE`
-  - `unit.player.rifle_squad_01.damaged` -> `Unit_Chr_Soldier_Male_02_Hit_SE`
-  - destroyed/death remains atlas-state based; do not reintroduce separate `Destroyed` child visuals.
-- Soldier spacing/layout must be readable at public 16:9 and 20:9 gameplay scale.
-- Selected-state treatment must be visible as small grounded markers under/near each soldier.
-- The selected markers must not become huge overlays or unclear blue/green UI-like effects.
-- Keep ECS atlas quad presentation.
-- Keep no public player/enemy unit `SpriteRenderer` components.
-- Keep no public `MissionRuntimeSpriteRendererRuntime` component.
-- Keep realistic movement speed and move/run animation proof.
-- Keep the public M01 golden path intact.
-- Keep M01 infantry-only.
 
 ## Waiting On
 
 Waiting on lane:
-none. Art/Atlas has identified the exact source issue.
+QA/HCI
+
+Waiting on exact report:
+
+- `Design/AgentReports/2026-05-08_qa-hci_gate4-selected-readability-rerun.md`
 
 Owner of next action:
-Gameplay
+QA/HCI
 
-Can my lane still continue fallback work? yes, only the required fix above.
+Can my lane still continue fallback work? no
 
-## Validation Required
+## Cross-Lane Notes
 
-Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` unless PM routes otherwise.
-
-Rerun focused PlayMode validation and generate fresh selected first-control captures.
-
-Required proof:
-
-- selected first-control 16:9 capture
-- selected first-control 20:9 capture
-- four distinct individual soldiers visible in world
-- selected marker visible under/near each soldier
-- no public SpriteRenderer unit presentation
-- golden path still reaches result popup
+- Art/Atlas final art gaps remain, but do not block the QA/HCI selected-readability rerun.
+- UI card/icon polish is not assigned unless QA/HCI flags it as a blocking issue.
+- PM/user owns final review after QA/HCI provides evidence.
 
 ## Completion Report
 
-Write:
+If QA/HCI or PM assigns a concrete Gameplay follow-up, write:
 
-`Design/AgentReports/2026-05-08_gameplay_m01-soldier-readability-selection-fix.md`
+`Design/AgentReports/2026-05-08_gameplay_<specific-followup>.md`
 
-Use the standard WarlineCapture handoff format and include capture paths.
+Use the standard WarlineCapture handoff format.

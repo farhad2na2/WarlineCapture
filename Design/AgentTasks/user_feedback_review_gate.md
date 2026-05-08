@@ -15,10 +15,13 @@ User rejection feedback is a release blocker until every point is owned, fixed, 
 - If the user needs to approve art, PM notification must include short validation steps: what to open/run, what to look for, and what answer PM needs.
 - If any lane is blocked because it lacks approval, source files, validation setup, or ownership clarity, PM must write a lane message file and notify the user on the next heartbeat.
 
-## Current Rejection Gate
+## Current Rejection Gates
 
-The active rejection gate is:
+Active rejection gates:
 
 - `Design/AgentReports/2026-05-08_pm_selected-readability-rejected-process-failure.md`
+- `Design/AgentReports/2026-05-08_pm_game-legecy-scene-rejection-routing.md`
 
-Do not request another selected-readability review until that report's feedback matrix is closed by Gameplay, Art/Atlas, UI if applicable, and QA/HCI.
+Do not request another selected-readability review until its report's feedback matrix is closed by Gameplay, Art/Atlas, UI if applicable, and QA/HCI.
+
+Do not request another legacy scene review until `Game.unity` is proven clean and `Game_Legecy.unity` is proven to play the legacy prototype instead of the new 2D/isometric loading game.

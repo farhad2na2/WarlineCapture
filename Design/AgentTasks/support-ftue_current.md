@@ -2,23 +2,22 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; final visual approval paused for user-approved Gameplay Visual Target package
+Priority: no current Support/FTUE action; waiting on PM/user approval of Art/Atlas gameplay visual target package
 
 ## Assignment
 
-Stand by while Art/Atlas creates the gameplay visual target package.
+Stand by while PM/user reviews the gameplay visual target package.
 
 Read:
 
-- `Design/AgentReports/2026-05-08_pm_art-atlas-owns-gameplay-visual-target.md`
-- `Design/AgentTasks/art-atlas_current.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
+- `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-visual-target-review.md`
 
 Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
-- PM/user approval of that visual target package
+- PM/user decision: approve or reject gameplay visual target package
 
 ## Guardrails While Waiting
 

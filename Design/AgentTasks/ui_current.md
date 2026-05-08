@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: UI marker/selection overlay audit delivered; waiting while Gameplay Visual Target package is created separately from UI targets
+Priority: UI marker/selection overlay audit delivered; waiting on PM/user approval of Art/Atlas gameplay visual target package
 
 ## Assignment
 
@@ -24,15 +24,15 @@ UI should re-engage only if Visual Target or QA/HCI reports a concrete HUD/scree
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas, then PM/user approval
+PM/user
 
-Waiting on exact report and decision:
+Waiting on exact decision:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
-- PM/user approval of that visual target package
+- approve gameplay visual target package
+- reject gameplay visual target package with notes
 
 Owner of next action:
-Art/Atlas, then PM/user
+PM/user
 
 Can UI continue fallback work? no
 

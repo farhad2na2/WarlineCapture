@@ -27,6 +27,7 @@ On each heartbeat:
    - Gameplay: `Design/AgentTasks/gameplay_heartbeat.md`
    - UI: `Design/AgentTasks/ui_heartbeat.md`
    - Art/Atlas: `Design/AgentTasks/art-atlas_heartbeat.md`
+   - Designer: `Design/AgentTasks/designer_heartbeat.md`
    - QA/HCI: `Design/AgentTasks/qa-hci_heartbeat.md`
    - Support/FTUE: `Design/AgentTasks/support-ftue_heartbeat.md`
 2. Read the critical path gate:
@@ -35,6 +36,7 @@ On each heartbeat:
    - Gameplay: `Design/AgentTasks/gameplay_current.md`
    - UI: `Design/AgentTasks/ui_current.md`
    - Art/Atlas: `Design/AgentTasks/art-atlas_current.md`
+   - Designer: `Design/AgentTasks/designer_current.md`
    - Support/FTUE: `Design/AgentTasks/support-ftue_current.md`
    - QA/HCI: `Design/AgentTasks/qa-hci_current.md`
 4. Check whether your current task is still active and advances the M01 critical path.
@@ -123,6 +125,7 @@ Use the dedicated Unity workspace assigned to your lane before asking the user t
 | UI | `/Users/farhad/Projects/WarlineCapture-CodexUnity2` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/QA workspaces unless PM explicitly reassigns. |
 | QA/HCI | `/Users/farhad/Projects/WarlineCapture-CodexUnity3` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/UI workspaces unless PM explicitly reassigns. |
 | Art/Atlas | No default Unity workspace. | Produce/review assets and approval packages from project files. If Unity validation becomes necessary, ask PM to assign a temporary workspace before running it. |
+| Designer | No default Unity workspace. | Optimize design docs, README structure, source-of-truth maps, and product-design clarity. Do not touch runtime/source files unless PM explicitly assigns it. |
 | Support/FTUE | No default Unity workspace. | Run docs/tests that do not need Unity. If Unity validation becomes necessary, ask PM to assign a temporary workspace before running it. |
 
 Agents are authorized to use their assigned workspace for focused validation without asking for product permission. Do not run validation in another active lane's primary workspace just because it is available; workspace switching is a PM coordination decision, not a lane-local optimization.

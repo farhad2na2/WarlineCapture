@@ -22,6 +22,8 @@ Active agent task board:
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/ui_current.md`
+- `Design/AgentTasks/art-atlas_current.md`
+- `Design/AgentTasks/designer_current.md`
 - `Design/AgentTasks/support-ftue_current.md`
 - `Design/AgentTasks/qa-hci_current.md`
 - `Design/AgentTasks/pm_design-audit.md`
@@ -33,6 +35,7 @@ Primary cross-lane implementation contracts:
 - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 - `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 - `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
 
 Primary asset tracking:
 
@@ -47,7 +50,9 @@ Rule: update the source document first, then regenerate generated outputs. Do no
 |---|---|---|
 | Gameplay agent | ECS/gameplay systems, mission runtime, tactical metadata, command validation, objectives, rewards, persistence, camera bounds, tactical world/map rendering, terrain visibility, unit/target world scale, and gameplay camera framing. | UI for visible controls, reason codes, screen flows, capture requirements. Support/docs for FTUE steps, mission contracts, state tracking. |
 | UI agent | Unity Canvas screens, prefabs, route wiring, tactical HUD, command controls, visual-lock implementation, UI tests, full-screen HUD/canvas composition, safe-area layout, and player-facing capture composition. | Gameplay for data sources, command APIs, tactical world/map visibility, unit scale, and gameplay camera framing. Support/docs for target updates, layer-pack state, asset register rows. |
+| Art/Atlas agent | Sprite atlas source art, unit/building/VFX visual-state coverage, art-readiness packages, approval packages, visual scale/readability references, and atlas-source gaps. | Gameplay for runtime atlas integration, QA/HCI for public readability validation, PM/user for art approval decisions, Designer for design-language consistency. |
 | Support/docs/FTUE agent | FTUE design, ARIA tutorial flow, contracts, asset checklist, project-state tracking, handoff docs, priority lists. | Gameplay for typed tutorial actions and mission ids. UI for surfaces, assistant button/panel/card visuals, validation captures. |
+| Designer | Product/design coherence, README and design-index optimization, terminology alignment, source-of-truth hierarchy, player-facing flow clarity, UI/readability design review, and documentation pruning recommendations. | PM for priorities and accepted source-of-truth changes. Gameplay/UI/support/QA/art for cross-lane impacts, implementation feasibility, captures, and validation evidence. |
 | PM assistant | Intake, sync review, validation gate, priority ordering, cross-lane impact calls, progress tracking. | All lanes. |
 
 ## Completion Report Required From Every Agent
@@ -102,6 +107,8 @@ If a heartbeat fires and the agent has changed files or generated captures but h
 When the user tells an agent `continue`, that agent should read its lane file under `Design/AgentTasks/` and continue that task unless the user gives a newer direct instruction.
 
 The PM assistant owns task dispatch updates in `Design/AgentTasks/` after reviewing reports and cross-lane dependencies.
+
+The Designer may recommend README/design-index restructuring and source-of-truth cleanup, but PM owns accepting cross-lane documentation changes before they become coordination rules.
 
 ## Heartbeat Ownership
 

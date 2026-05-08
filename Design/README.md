@@ -11,7 +11,8 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Level and mission planning: `WarlineCapture_Level_And_Mission_Content_Plan.md` owns the shared mission spec template, high-level Saga chapter set, Operation hooks, Quick Custom probe mapping, and acceptance gate. Dedicated chapter docs under `SagaChapters` own chapter-specific mission matrices and specs.
 - Map contract: `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` separates strategic/zoomed-out map views from tactical/zoomed-in playable map packages across gameplay, UI, FTUE, audio, VFX, and art approval.
 - FTUE and assistant: `WarlineCapture_FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
-- Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines the PM handoff, validation, cross-lane sync, and tracking workflow for gameplay, UI, and support/docs agents.
+- Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
+- Designer workflow: `WarlineCapture_Designer_Role_And_Documentation_Workflow.md` defines the Designer lane for README/design-index clarity, source-of-truth ordering, terminology alignment, product/design coherence, and documentation pruning recommendations.
 - Gameplay layer: `GameLaunchPayload`, scenario setup, objectives, results, rewards, progression, persistence, Saga, Operation, AI profiles, and encounter templates are planned in the gameplay feature specs.
 - Combat catalog: `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md` plus `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json` and `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json` define all unit, building, skill, ability, and upgrade-track ids, including availability, unlock moments, implementation owners, and balance data separated from art data.
 - UI layer: mobile landscape app shell and tactical HUD should be built as real Unity Canvas hierarchy from separate panels, sprites, icons, TMP text, and controls.
@@ -34,24 +35,25 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 10. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 11. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
 12. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-13. `WarlineCapture_Agent_Coordination_Workflow.md`
-14. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
-15. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-16. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-17. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
-18. `WarlineCapture_Economy_Reward_Design.md`
-19. `WarlineCapture_Balancing_Automated_Test_Plan.md`
-20. `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
-21. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-22. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
-23. `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
-24. `WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md`
-25. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-26. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
-27. `WarlineCapture_2D_Isometric_Production_Direction.md`
-28. `WarlineCapture_2D_Isometric_Art_Bible.md`
-29. `WarlineCapture_MacroTile_Terrain_Production_Plan.md`
-30. `WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
+13. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+14. `WarlineCapture_Agent_Coordination_Workflow.md`
+15. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
+16. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+17. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
+18. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+19. `WarlineCapture_Economy_Reward_Design.md`
+20. `WarlineCapture_Balancing_Automated_Test_Plan.md`
+21. `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
+22. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+23. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
+24. `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
+25. `WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md`
+26. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+27. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
+28. `WarlineCapture_2D_Isometric_Production_Direction.md`
+29. `WarlineCapture_2D_Isometric_Art_Bible.md`
+30. `WarlineCapture_MacroTile_Terrain_Production_Plan.md`
+31. `WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
 
 ## Core Product And Gameplay
 
@@ -71,6 +73,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` - implementation contract for `PREFAB-05_AssistantPanel`, M01 ARIA recommendation states, runtime data fields, Show Me / Do It / Stop behavior, player-control cancellation, `BattleHudGameplayBridge` integration, asset-register implications, and acceptance checks.
 - `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md` - runtime wiring contract for M01 ARIA assistant services, context data flow, recommendation transitions, typed intents, save/session fields, button rules, invalid-command recovery, and validation tests.
 - `WarlineCapture_Agent_Coordination_Workflow.md` - PM assistant operating workflow for agent handoffs, cross-lane contract changes, validation gates, and tracking updates.
+- `WarlineCapture_Designer_Role_And_Documentation_Workflow.md` - Designer lane workflow for README/design-index optimization, source-of-truth hierarchy, terminology alignment, documentation pruning, and product/design coherence reviews.
 - `SagaChapters/README.md` - Saga chapter design folder index and update rules.
 - `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md` - Chapter 1 / First Response mission matrix and detailed specs for all five Chapter 1 missions.
 - `SagaChapters/WarlineCapture_Saga_Chapter02_Broken_Grid.md` - Chapter 2 / Broken Grid high-level chapter arc.

@@ -37,5 +37,6 @@ Rules:
 - When finished, write a completion report under `Design/AgentReports/` using `Design/WarlineCapture_Agent_Coordination_Workflow.md`.
 - After any validation, capture, build, log scan, or failed validation attempt, immediately write or update the matching report before starting new work, reporting idle/waiting, or handing off to another lane.
 - Active lanes must not stay silent across heartbeats. If a lane is `Status: active`, each heartbeat must produce visible progress, the expected handoff, or a blocker report with the exact failed command/workspace/log/dependency and unblock owner. PM treats active-lane silence as a coordination blocker and notifies the user.
+- If a lane is silent, PM communicates through the repo first: write `Design/AgentTasks/<lane>_pm_message.md`, link it from `<lane>_current.md`, and only ask the user to intervene if the lane heartbeat still ignores that direct message.
 - PM should also warn early about likely future idle risks: missing report names, unclear validation/workspace, hidden approval dependencies, stale lane priorities, tooling/licensing risk, uncommitted accepted work needed by another lane, or unclear unblock ownership.
 - The PM assistant updates these task files after reviewing reports and cross-lane dependencies.

@@ -119,6 +119,16 @@ On every heartbeat, an active lane must do one of these:
 
 If an active lane cannot do one of these before the next heartbeat, the lane must report blocked. PM will treat active-lane silence as a coordination blocker and notify the user.
 
+## PM-To-Lane Message Files
+
+When a lane is silent, confused, or blocked on missing instructions, PM should write a direct lane-readable message before asking the user to intervene:
+
+```text
+Design/AgentTasks/<lane>_pm_message.md
+```
+
+PM should also link that file from the lane's `<lane>_current.md` assignment. Lane heartbeat agents must read the PM message file before continuing. If a lane heartbeat still ignores the PM message, PM should notify the user that the lane heartbeat itself appears broken.
+
 ## Early Idle Risk Warnings
 
 PM monitors should warn before work stalls. When a lane is not blocked yet but is likely to become blocked, PM should notify the user early with a short review pointer.

@@ -6,7 +6,7 @@ Priority: blocked until QA/HCI reports a concrete assistant/FTUE issue
 
 ## Assignment
 
-Stand by while UI completes the HUD scope fix, PM/user decides temporary art readiness, and QA/HCI prepares for the final Gate 4 rerun.
+Stand by while Gameplay fixes/proves the manual M01 opening-control route and QA/HCI waits for final Gate 4 rerun evidence.
 
 Do not repeat accepted recommendation service, `CommandIntentExecutor`, live `AssistantContextProvider`, UI runtime-binding, public-launch routing, or opening-control work.
 
@@ -18,8 +18,9 @@ UI owns:
 
 - M01 HUD showing APC, Tank, air support, Build, vehicle production, transport, or base/build affordances in an infantry-only tutorial.
 
-Gameplay has delivered:
+Gameplay owns:
 
+- manual M01 opening-control proof so the player can wait, select, and move before hostile fire kills or critically damages the squad
 - public camera-scale readability of four distinct soldiers under one squad identity
 - selected-state clarity in the world
 - projectile/impact visual scale assertions
@@ -31,9 +32,9 @@ Art/Atlas has delivered:
 - selected-state visual treatment source art
 - destroyed/death atlas-state art
 
-PM/user owns:
+PM/user later owns:
 
-- approve or reject the temporary M01 infantry art package
+- approve or reject the temporary M01 infantry art package only after Gameplay proves the review route is stable
 
 QA/HCI owns:
 
@@ -42,7 +43,7 @@ QA/HCI owns:
 ## Waiting On
 
 - `Design/AgentReports/2026-05-08_ui_m01-infantry-only-hud-scope.md`
-- `Design/AgentReports/2026-05-08_gameplay_m01-unit-readability-selection-art.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
 - `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
 - `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
 

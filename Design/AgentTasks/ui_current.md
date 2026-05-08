@@ -18,15 +18,15 @@ Do not repeat the same HUD scope work, start new mockups, M02 work, broad HUD re
 ## Waiting On
 
 Waiting on lane:
-PM/user, then QA/HCI
+Gameplay, then QA/HCI
 
 Waiting on exact file/report/decision:
 
-- PM/user approval or rejection of the temporary M01 infantry art package from `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
+- Gameplay manual opening-control proof: `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
 - `Design/AgentReports/2026-05-08_qa-hci_gate4-final-rerun.md`
 
 Owner of next action:
-PM/user owns the art decision. QA/HCI owns the final rerun after that decision.
+Gameplay owns the opening-control fix/proof. QA/HCI owns the final rerun after that proof and any PM art decision.
 
 Can my lane still continue fallback work? no
 

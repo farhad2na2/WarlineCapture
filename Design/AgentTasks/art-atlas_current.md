@@ -2,13 +2,13 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: blocked on PM/user temporary-art decision
+Priority: waiting for Gameplay manual M01 opening-control proof before PM/user temporary-art decision
 
 ## Assignment
 
-Wait for PM/user to approve or reject the temporary M01 infantry art package reported in `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`.
+Wait for Gameplay to prove the manual M01 opening-control route is reviewable before asking PM/user to approve or reject the temporary M01 infantry art package reported in `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`.
 
-Art/Atlas has completed the current assessment. Do not regenerate or broaden art work unless PM/user rejects the temporary package or requests a specific follow-up such as an enemy variant or final VFX package.
+Art/Atlas has completed the current assessment. Do not regenerate or broaden art work unless PM/user rejects the temporary package after a valid review, or PM requests a specific follow-up such as an enemy variant or final VFX package.
 
 Do not infer broader art work, M02 content, vehicle art, base/build art, or unrelated polish.
 
@@ -20,15 +20,19 @@ Do not infer broader art work, M02 content, vehicle art, base/build art, or unre
 ## Waiting On
 
 Waiting on lane:
-PM/user
+Gameplay
 
-Waiting on exact decision:
-Approve or reject `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png` as the temporary Gate 4 M01 infantry atlas source.
+Waiting on exact report:
+`Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
 
 Owner of next action:
-PM/user
+Gameplay
 
 Can my lane still continue fallback work? no
+
+## After Gameplay Proof
+
+PM may ask the user to approve or reject `Assets/Game/Art/Generated/2DISO/Units/Unit_Chr_Soldier_Male_02/SpriteSheets/Transparent/Unit_Chr_Soldier_Male_02_FullSetup_4Facing_8State_UnityGrid_960x1680.png` as the temporary Gate 4 M01 infantry atlas source.
 
 ## If Approved
 
@@ -72,8 +76,8 @@ No new validation is required while waiting. If PM/user requests new Art/Atlas w
 
 - Gameplay owns runtime integration, state switching, squad composition, and selected marker implementation.
 - UI owns the separate infantry-only HUD affordance mismatch.
-- QA/HCI owns final Gate 4 validation after Art/Atlas, Gameplay, and UI fixes land.
-- PM/user owns final art approval if the package is not clearly milestone-ready.
+- QA/HCI owns final Gate 4 validation after Gameplay proof and any PM/user art decision.
+- PM/user owns final art approval only after the manual M01 review route is stable enough to inspect.
 
 ## Completion Report
 

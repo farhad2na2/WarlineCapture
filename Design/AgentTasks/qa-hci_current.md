@@ -2,13 +2,13 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: blocked on PM/user art decision before Gate 4 rerun
+Priority: blocked on Gameplay manual M01 opening-control proof before Gate 4 rerun
 
 ## Assignment
 
-Wait for the concrete fixes identified by the focused Gate 4 rerun before producing final Gate 4 acceptance.
+Wait for Gameplay to fix/prove the manual M01 opening-control route before producing final Gate 4 acceptance.
 
-The previous Gameplay opening-control and ECS atlas architecture handoff is accepted for automated proof. The current blockers are public HCI/readability blockers, not the old route/protection blocker.
+The previous Gameplay opening-control and ECS atlas architecture handoff is no longer sufficient for PM/user review because manual Unity review found the enemy can kill the player before a relaxed first-control/art check.
 
 ## Waiting On
 
@@ -25,9 +25,9 @@ Art/Atlas report:
 
 - `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
 
-PM/user decision:
+Gameplay report:
 
-- approve or reject the temporary M01 infantry art package identified in `Design/AgentReports/2026-05-08_art-atlas_m01-infantry-atlas-readiness.md`
+- `Design/AgentReports/2026-05-08_gameplay_m01-manual-opening-control-fix.md`
 
 ## Required Fix Evidence Before Rerun
 
@@ -37,8 +37,10 @@ UI must prove:
 - Selected rifle squad HUD state remains readable.
 - Public route shell still reaches M01 and result flow remains intact.
 
-Gameplay has proved for the current temporary-art pass:
+Gameplay must prove before QA/HCI rerun:
 
+- The public M01 route gives the player a safe first-control window after Deploy.
+- The player can wait briefly, select the rifle squad, and issue the first move before hostile fire kills or critically damages the squad.
 - Player rifle squad reads as four distinct soldiers under one command identity at public gameplay camera scale.
 - Selected state is visually clear in public first-control captures.
 - Projectile/impact scale remains tactical.
@@ -47,13 +49,13 @@ Gameplay has proved for the current temporary-art pass:
 
 Art/Atlas has proved for the current temporary-art pass:
 
-- `FinalAtlasArtReady = 0` is not resolved; PM/user must approve temporary Gate 4 art or reject it and route Art/Atlas follow-up.
+- `FinalAtlasArtReady = 0` is not resolved, but PM/user art approval is not the next request until Gameplay proves the manual opening-control route is reviewable.
 - Player rifle squad, enemy patrol, selected-state treatment, destroyed/death state, and projectile/impact VFX are covered at public camera-scale review quality.
 - The asset package does not require visible legacy `Model`, SpriteRenderer review proxy, old per-Model animation output, or separate `Destroyed` child runtime dependency.
 
 ## Next QA/HCI Work After Fixes
 
-After PM/user makes the art decision, rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
+After Gameplay proves the manual opening-control route, rerun focused Gate 4 HCI from `/Users/farhad/Projects/WarlineCapture-CodexUnity3`:
 
 - public route: Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup
 - first-control readability

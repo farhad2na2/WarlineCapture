@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: no current Support/FTUE action; waiting on QA/HCI validation of M01 rejection gate
+Priority: no current Support/FTUE action; selected-readability gate waiting on PM/user review decision
 
 ## Assignment
 
@@ -17,15 +17,15 @@ Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant
 
 ## Current Blockers Owned By Other Lanes
 
-Gameplay, Art/Atlas, UI, and Designer have delivered their current inputs and are waiting on QA/HCI.
+Gameplay, Art/Atlas, UI, Designer, and QA/HCI have delivered their current inputs and are waiting on PM/user review.
 
-QA/HCI owns:
+QA/HCI delivered:
 
-- user-feedback regression gate and later focused validation.
+- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
+- PM/user review decision on selected-readability pass
 
 ## Guardrails While Waiting
 

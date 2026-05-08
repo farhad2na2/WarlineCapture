@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability ECS visual/marker/animation reset delivered; waiting on QA/HCI regression gate
+Priority: selected-readability ECS visual/marker/animation reset passed QA/HCI; waiting on PM/user review decision
 
 ## Assignment
 
@@ -10,23 +10,28 @@ Gameplay delivered:
 
 - `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
 
-PM accepted it for QA/HCI validation in:
+QA/HCI accepted it in:
 
-- `Design/AgentReports/2026-05-08_pm_gameplay-m01-ecs-visual-marker-animation-reset-review.md`
+- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
+
+PM routed it for user review in:
+
+- `Design/AgentReports/2026-05-08_pm_qa-hci-user-feedback-regression-review.md`
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
 ## Waiting On
 
 Waiting on lane:
-QA/HCI
+PM/user
 
-Waiting on exact report:
+Waiting on exact decision:
 
-- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
+- approve selected-readability pass
+- reject selected-readability pass with specific notes
 
 Owner of next action:
-QA/HCI
+PM/user
 
 Can Gameplay continue fallback work? no
 

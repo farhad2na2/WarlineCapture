@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Status: waiting
-Priority: selected-readability art package delivered; waiting on Gameplay implementation and QA/HCI feedback matrix
+Priority: selected-readability art package delivered and QA/HCI passed; waiting on PM/user review decision
 
 ## Assignment
 
@@ -19,15 +19,15 @@ Do not broaden to final Chapter 1 art, M02, vehicles, or unrelated VFX unless PM
 ## Waiting On
 
 Waiting on lane:
-Gameplay and QA/HCI
+PM/user
 
-Waiting on exact reports:
+Waiting on exact decision:
 
-- `Design/AgentReports/2026-05-08_gameplay_m01-ecs-visual-marker-animation-reset.md`
-- `Design/AgentReports/2026-05-08_qa-hci_user-feedback-regression-gate.md`
+- approve selected-readability pass
+- reject selected-readability pass with specific notes
 
 Owner of next action:
-Gameplay, then QA/HCI
+PM/user
 
 Can my lane still continue fallback work? no
 

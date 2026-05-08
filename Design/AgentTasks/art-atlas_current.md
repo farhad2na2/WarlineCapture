@@ -1,41 +1,57 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-08
-Status: waiting
-Priority: selected-readability art package delivered and QA/HCI passed; final visual approval paused for user-approved Gameplay Visual Target package
+Status: active
+Priority: P0 create M01 gameplay visual target package before final selected-readability approval
 
 ## Assignment
 
-Art/Atlas delivered the M01 marker, animation-frame, scale/aspect, and enemy/patrol visual package:
+The user clarified that the gameplay visual target mockups should be owned by Art/Atlas, not a separate Visual Target agent.
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
+Create the user-reviewable M01 gameplay visual target package.
 
-PM/user paused final visual approval to create a gameplay visual target package first:
+Read first:
 
-- `Design/AgentReports/2026-05-08_pm_gameplay-visual-target-lane-routing.md`
-- `Design/AgentTasks/visual-target_current.md`
+- `Design/AgentReports/2026-05-08_pm_art-atlas-owns-gameplay-visual-target.md`
+- `Design/AgentTasks/art-atlas_pm_message.md`
+- `Design/AgentTasks/user_feedback_review_gate.md`
+- `Design/WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
+- `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `Design/VisualTargets/Gameplay/M01_SelectedReadability/README.md`
 
-Do not broaden to final Chapter 1 art, M02, vehicles, or unrelated VFX unless PM routes a concrete follow-up.
+## Required Behavior
+
+- Put all gameplay visual targets under `Design/VisualTargets/Gameplay/M01_SelectedReadability/`.
+- Do not put gameplay target mockups under `Design/VisualLock/` or `Design/VisualLockLayered/`; those remain UI/HUD target systems.
+- Use existing UI targets only as alignment references:
+  - `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
+  - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
+- Produce a target package with:
+  - full M01 gameplay target or paintover,
+  - soldier/building/road scale board,
+  - selected-state marker target,
+  - move/attack target marker target,
+  - enemy readability target,
+  - idle/run pose contact sheet guidance,
+  - bad-example sheet naming rejected cases: huge green marker, yellow square, squashed soldier, crouch-run, red sitting artifact, foot-only selection.
+- Include short QA acceptance checks for comparing runtime captures to the target.
+- Include short user review instructions in the completion report.
+- User approval is required. Do not mark the target package accepted for downstream Gameplay/Art/QA work until PM/user explicitly approves it.
 
 ## Waiting On
 
 Waiting on lane:
-Visual Target, then PM/user approval
-
-Waiting on exact report and decision:
-
-- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
-- PM/user approval of that visual target package
+none
 
 Owner of next action:
-Visual Target, then PM/user
+Art/Atlas
 
-Can my lane still continue fallback work? no
+Can my lane still continue fallback work? yes, only this target package.
 
 ## Completion Report
 
-If PM assigns a concrete Art/Atlas follow-up, write:
+Write:
 
-`Design/AgentReports/2026-05-08_art-atlas_<specific-followup>.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 
-Use the standard WarlineCapture handoff format.
+Use the standard WarlineCapture handoff format and include all target file paths, plus a short `User Review Steps` section.

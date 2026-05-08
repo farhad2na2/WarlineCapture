@@ -2,24 +2,41 @@
 
 Date: 2026-05-08
 
-The user rejected the selected-readability pass. Art/Atlas now owns the marker, animation-frame, scale/aspect, and visual-artifact parts of the fix.
+The user clarified that Art/Atlas should create the M01 gameplay visual target mockups. There is no separate Visual Target agent ownership.
 
-Focus only on M01 infantry:
+Create the gameplay-only target package under:
 
-- one player rifle squad,
-- one enemy patrol,
-- no vehicles for this gate.
+`Design/VisualTargets/Gameplay/M01_SelectedReadability/`
 
-Provide the atlas/frame/asset package that lets Gameplay replace placeholders and fix:
+Keep it separate from UI targets:
 
-- wrong crouched/sitting movement frames,
-- missing idle animation,
-- stray foot/top artifact,
-- oversized or squashed soldiers,
-- huge green target marker,
-- yellow placeholder selected-state square,
-- unclear red flashing enemy/object.
+- Do not put gameplay target files under `Design/VisualLock/`.
+- Do not put gameplay target files under `Design/VisualLockLayered/`.
+- Use UI mockups only for style alignment, not ownership.
+
+Reference for UI/HUD alignment:
+
+- `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
+- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
+
+Required target package:
+
+- full M01 gameplay target or paintover,
+- soldier/building/road scale board,
+- selected-state marker target,
+- move/attack target marker target,
+- enemy readability target,
+- idle/run pose contact sheet guidance,
+- rejected bad-example sheet.
+
+User approval is required before anyone moves forward from your package. Your report must include short review steps:
+
+1. Open these target files.
+2. Compare these specific items.
+3. Answer approve or reject with notes.
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-marker-animation-scale-package.md`
+`Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
+
+Do not commit or push.

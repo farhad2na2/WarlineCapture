@@ -15,7 +15,7 @@ The new gameplay visual target package must not be mixed into UI target folders.
 - `Design/VisualLock/`
 - `Design/VisualLockLayered/`
 
-Gameplay visual targets are under:
+Gameplay visual targets are owned by Art/Atlas and stored under:
 
 - `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
 
@@ -24,15 +24,15 @@ UI should re-engage only if Visual Target or QA/HCI reports a concrete HUD/scree
 ## Waiting On
 
 Waiting on lane:
-Visual Target, then PM/user approval
+Art/Atlas, then PM/user approval
 
 Waiting on exact report and decision:
 
-- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 - PM/user approval of that visual target package
 
 Owner of next action:
-Visual Target, then PM/user
+Art/Atlas, then PM/user
 
 Can UI continue fallback work? no
 

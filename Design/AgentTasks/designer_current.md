@@ -10,24 +10,24 @@ Designer delivered the rejection-informed visual scale/readability contract:
 
 - `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
 
-The new active visual target work is owned by the separate Visual Target lane:
+The new active visual target work is owned by Art/Atlas:
 
-- `Design/AgentTasks/visual-target_current.md`
+- `Design/AgentTasks/art-atlas_current.md`
 
 Do not start another broad documentation rewrite, M02 work, or unrelated design pass unless PM assigns a concrete follow-up.
 
 ## Waiting On
 
 Waiting on lane:
-Visual Target, then PM/user approval
+Art/Atlas, then PM/user approval
 
 Waiting on exact report and decision:
 
-- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 - PM/user approval of that visual target package
 
 Owner of next action:
-Visual Target, then PM/user
+Art/Atlas, then PM/user
 
 Can my lane still continue fallback work? no
 

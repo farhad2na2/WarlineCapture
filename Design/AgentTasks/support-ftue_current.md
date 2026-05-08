@@ -6,18 +6,18 @@ Priority: no current Support/FTUE action; final visual approval paused for user-
 
 ## Assignment
 
-Stand by while the gameplay visual target package is created.
+Stand by while Art/Atlas creates the gameplay visual target package.
 
 Read:
 
-- `Design/AgentReports/2026-05-08_pm_gameplay-visual-target-lane-routing.md`
-- `Design/AgentTasks/visual-target_current.md`
+- `Design/AgentReports/2026-05-08_pm_art-atlas-owns-gameplay-visual-target.md`
+- `Design/AgentTasks/art-atlas_current.md`
 
 Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
 
 ## Waiting On
 
-- `Design/AgentReports/2026-05-08_visual-target_m01-selected-readability-package.md`
+- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
 - PM/user approval of that visual target package
 
 ## Guardrails While Waiting

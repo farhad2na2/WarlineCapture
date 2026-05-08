@@ -1,3 +1,5 @@
 # Visual Target Heartbeat
 
-Read `Design/AgentTasks/visual-target_current.md` and `Design/AgentTasks/visual-target_pm_message.md`, then follow the current task. Write the expected report under `Design/AgentReports/`. Do not commit or push.
+Ownership transferred to Art/Atlas. Do not act as a separate Visual Target lane.
+
+Read `Design/AgentTasks/art-atlas_current.md` and `Design/AgentTasks/art-atlas_pm_message.md` for the active task.

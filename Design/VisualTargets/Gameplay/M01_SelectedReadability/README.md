@@ -2,7 +2,7 @@
 
 ## Ownership Boundary
 
-This folder is for in-world gameplay visual targets only.
+This folder is for in-world gameplay visual targets only. Art/Atlas owns the target package in this folder.
 
 Use this folder for:
 
@@ -39,7 +39,7 @@ Gameplay targets must visually align with the existing UI target language withou
 
 ## Required Package
 
-The first Visual Target handoff should produce or reference:
+The first Art/Atlas visual target handoff should produce or reference:
 
 - `M01_SelectedReadability_Gameplay_Target.png`
 - `M01_SelectedReadability_Scale_Board.png`

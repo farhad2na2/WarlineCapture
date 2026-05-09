@@ -33,7 +33,7 @@ Do not make smaller soldiers, smaller buildings, different building designs, or 
 
 Create real production PNG assets:
 
-- big zoomed-out strategic/base-layout background matching `VL_M01_TacticalMap_Target.png`; no Tehran, no finished buildings baked in, more area than the tactical target, with clear placement zones for later separate soldier tents, vehicles, refinery/fuel module, command/support structures, roads, pads, and staging,
+- big zoomed-out strategic/base-layout background matching `VL_M01_TacticalMap_Target.png`; no Tehran, no finished/destroyed buildings or shells baked in, not a dense grid of small lots, and large enough for separate refinery/fuel module, soldier tents/camp, soldier vehicle motor pool, command/support pad, staging/training area, roads/service lanes, and defensive/perimeter space,
 - all M01 zoomed-in tactical map plates,
 - high-quality transparent marker PNGs,
 - player rifle squad sprite atlas frames matching `VL_M01_PlayerRifleSquad_Atlas_Target.png`,
@@ -42,5 +42,7 @@ Create real production PNG assets:
 - manifests with asset ids, paths, import usage, scale anchors, contact-shadow rules, and prompt/source notes.
 
 Atlas rules: do not combine player and enemy factions in one atlas. Every unit atlas must include complete idle, run, aim, shoot/fire, hit/damaged, and die/death animation frames for every required facing direction. Reject partial direction sets or frames angled differently from the approved target.
+
+Strategic/base-layout review rule: include an annotated overlay/contact sheet that labels refinery/fuel zone, tents/camp zone, vehicle motor-pool zone, command/support zone, staging/training zone, perimeter/defense lanes, and roads. If these zones are not obvious and large enough before separate assets are placed, the strategic map is rejected.
 
 Include short user review steps. Do not commit or push.

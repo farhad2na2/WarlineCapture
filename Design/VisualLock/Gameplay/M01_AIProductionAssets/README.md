@@ -14,7 +14,7 @@ This review mirror should contain contact sheets, direct PNG previews, prompt/so
 
 Art/Atlas must provide high-quality AI-generated or AI-assisted assets for:
 
-- big zoomed-out strategic/base-layout background matching `VL_M01_TacticalMap_Target.png`; no Tehran, no finished buildings baked in, more area than the tactical target, with clear placement zones for later separate tents, vehicles, refinery/fuel module, command/support structures, roads, pads, and staging,
+- big zoomed-out strategic/base-layout background matching `VL_M01_TacticalMap_Target.png`; no Tehran, no finished/destroyed buildings or shells baked in, not a dense grid of small lots, and large enough for separate refinery/fuel module, soldier tents/camp, soldier vehicle motor pool, command/support pad, staging/training area, roads/service lanes, and defensive/perimeter space,
 - M01 zoomed-in tactical map plates,
 - marker PNG sprites,
 - player rifle squad sprite atlas frames,
@@ -35,4 +35,5 @@ Do not use:
 - smaller soldiers, smaller buildings, different building designs, or different soldier styles than the approved reference package,
 - player and enemy/faction variants combined in one unit atlas,
 - partial unit animation sets missing idle, run, aim, shoot/fire, hit/damaged, or die/death for any required facing direction,
-- soldier frames rotated or angled differently from `VL_M01_TacticalMap_Target.png`.
+- soldier frames rotated or angled differently from `VL_M01_TacticalMap_Target.png`,
+- strategic/base-layout maps without an annotated overlay/contact sheet labeling refinery/fuel zone, tents/camp zone, vehicle motor-pool zone, command/support zone, staging/training zone, perimeter/defense lanes, and roads.

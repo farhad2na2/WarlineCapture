@@ -40,6 +40,8 @@ Latest user correction:
 - Zoom level, camera angle, map density, visual scale, marker footprint, soldier/building proportions, background treatment, and composition must follow the previously approved reference package. Do not invent a new zoom level or camera.
 - The close tactical zoom must match `VL_M01_TacticalMap_Target.png`.
 - The zoomed-out strategic/base-layout map must cover more area than the tactical target, contain no finished buildings baked into the map, and provide readable empty placement zones for later separate tents, vehicles, refinery/fuel module, command/support structures, roads, pads, and unit staging.
+- The produced `m01_isometric_strategic_background.png` direction is rejected if it is a dense small-block map. The user needs a much larger base-layout area, not many small lots.
+- The zoomed-out base-layout must include enough contiguous open area for a refinery/fuel module, soldier tents/camp, soldier vehicle motor-pool area, command/support pad, staging/training area, road/service lanes, and defensive/perimeter space.
 - Need all zoomed-in tactical maps.
 - Need high-quality marker PNGs.
 - Need these soldiers as actual sprites / sprite atlas frames.
@@ -116,11 +118,20 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 - Big zoomed-out strategic/base-layout background map in the approved isometric gameplay style.
 - Do not use Tehran as the subject, layout, or replacement target.
 - Cover more area than `VL_M01_TacticalMap_Target.png`.
-- Do not bake finished buildings into this zoomed-out map.
-- Include clear empty placement zones/pads/roads for separate future assets such as soldier tents, vehicles, refinery/fuel module, command/support structures, and staging areas.
+- Do not bake finished buildings, destroyed buildings, building shells, refinery art, tents, vehicles, or command buildings into this zoomed-out map.
+- Do not make a dense grid of small lots. The map must be a large operational base-layout foundation with broad, contiguous placement zones.
+- Minimum layout requirement:
+  - one large refinery/fuel-module zone that can visibly fit a separate refinery/fuel module asset plus service clearance,
+  - one soldier tents/camp zone that can fit multiple separate tents,
+  - one soldier vehicle motor-pool zone that can fit multiple separate vehicles and parking/service lanes,
+  - one command/support zone,
+  - one staging/training/open maneuver zone,
+  - perimeter/defensive lanes and roads connecting the zones.
+- At least three zones must be visibly larger than the largest M01 building footprint, not tiny pads.
+- The user should be able to point at the image and say where refinery, tents, vehicles, command/support, and staging will go before any separate assets are placed.
 - Use `VL_M01_TacticalMap_Target.png` for style, material quality, camera language, and lighting; use `VL_M01_StrategicMap_Target.png` only as overview mood/supporting reference.
 - Runtime path: `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Strategic/m01_isometric_strategic_background.png`
-- Include review mirror/contact sheet.
+- Include a review mirror and an annotated placement-zone overlay/contact sheet naming the refinery, tents/camp, vehicle motor pool, command/support, staging, perimeter/defense, and roads.
 
 ### Tactical Maps
 

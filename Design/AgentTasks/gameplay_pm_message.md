@@ -28,6 +28,18 @@ PM review, 2026-05-09 14:04 Europe/Berlin:
 - Still expected: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`.
 - If the full pack cannot be integrated, write `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-blocker.md` with the exact blocker.
 
+PM review, 2026-05-09 15:07 Europe/Berlin:
+
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md` is accepted only as implementation progress, not as PM/user-review-ready visual proof.
+- Art/Atlas reviewed it in `Design/AgentReports/2026-05-09_art-atlas_full-ai-production-runtime-proof-review.md` and marked it needs fixes.
+- Fix runtime framing/scale/placement before asking for PM/user review:
+  - show the intended road/intersection/wall/building composition, not a zoomed asphalt crop,
+  - make production building/prop sprites visible and scale-checkable,
+  - make selected/move/attack marker footprint readable at approved scale,
+  - keep v2 soldiers grounded and proportionate against the tactical plate,
+  - keep ECS atlas-backed units; do not add SpriteRenderer/MeshRenderer unit presentation.
+- Next expected handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-runtime-framing-fix.md`.
+
 PM accepts the v2 soldier import-readiness cleanup for runtime integration. This is not final visual approval; final approval requires runtime capture/video.
 
 User clarification: integrate all new M01 AI production art assets, not only the v2 soldiers.

@@ -25,9 +25,9 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
     private const float M01SelectionMarkerFootYOffset = -0.42f;
     private const float TargetMarkerGroundLift = 0.018f;
     private const string AtlasQuadShaderName = "Universal Render Pipeline/Unlit";
-    private const string SelectionRingPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/selection_ring.png";
-    private const string MoveDestinationRingPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/move_destination_ring.png";
-    private const string AttackTargetRingPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/attack_target_ring.png";
+    private const string SelectionMarkerAssetId = Chapter01M01SpriteAssetResolver.M01ProductionSelectionMarkerAssetId;
+    private const string MoveDestinationMarkerAssetId = Chapter01M01SpriteAssetResolver.M01ProductionMoveDestinationMarkerAssetId;
+    private const string AttackTargetMarkerAssetId = Chapter01M01SpriteAssetResolver.M01ProductionAttackTargetMarkerAssetId;
 
     private static readonly Vector3[] RifleSquadSoldierOffsets =
     {
@@ -356,8 +356,8 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
     {
         Material material = CreateAtlasQuadMaterial(presenter);
         material.name = $"M01GroundedSelection_{presenter.RuntimeEntityId.ToString()}_{index + 1:00}";
-        ApplyColor(material, new Color(1f, 0.70f, 0.18f, 0.58f));
-        ApplyTexture(material, LoadMarkerTexture(SelectionRingPath) ?? Texture2D.whiteTexture);
+        ApplyColor(material, Color.white);
+        ApplyTexture(material, LoadMarkerTexture(SelectionMarkerAssetId) ?? Texture2D.whiteTexture);
         return material;
     }
 
@@ -365,15 +365,17 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
     {
         Material material = CreateAtlasQuadMaterial(presenter);
         material.name = $"M01CommandTargetMarker_{presenter.RuntimeEntityId.ToString()}";
-        ApplyColor(material, new Color(0.42f, 0.96f, 0.54f, 0.64f));
-        ApplyTexture(material, LoadMarkerTexture(MoveDestinationRingPath) ?? Texture2D.whiteTexture);
+        ApplyColor(material, Color.white);
+        ApplyTexture(material, LoadMarkerTexture(MoveDestinationMarkerAssetId) ?? Texture2D.whiteTexture);
         return material;
     }
 
-    private static Texture LoadMarkerTexture(string path)
+    private static Texture LoadMarkerTexture(string markerAssetId)
     {
 #if UNITY_EDITOR
-        return AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        return Chapter01M01SpriteAssetResolver.TryGetM01ProductionMarkerTexture(markerAssetId, out Texture2D texture)
+            ? texture
+            : null;
 #else
         return null;
 #endif
@@ -505,9 +507,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
                 continue;
 
             Vector3 localPosition = ResolveSoldierOffset(presenter, i) + new Vector3(0f, M01SelectionMarkerFootYOffset - SelectionGroundLift, 0f);
-            Vector3 localScale = ResolveSoldierCount(presenter) > 1
-                ? new Vector3(0.30f, 0.085f, 1f)
-                : new Vector3(0.18f, 0.055f, 1f);
+            Vector3 localScale = ResolveSelectionMarkerScale(presenter);
 
             runtime.SelectionLocalPositions[i] = localPosition;
             runtime.SelectionLocalScales[i] = localScale;
@@ -524,11 +524,11 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 
         bool selected = em.HasComponent<SelectedUnitTag>(entity);
         Vector3 worldPosition = Vector3.zero;
-        string texturePath = MoveDestinationRingPath;
+        string markerAssetId = MoveDestinationMarkerAssetId;
         Color color = Color.white;
         string kind = string.Empty;
         Vector3 worldScale = Vector3.zero;
-        bool hasTarget = selected && TryResolveTargetMarker(em, entity, out worldPosition, out texturePath, out color, out kind, out worldScale);
+        bool hasTarget = selected && TryResolveTargetMarker(em, entity, out worldPosition, out markerAssetId, out color, out kind, out worldScale);
         runtime.TargetMarkerVisible = hasTarget;
         if (!hasTarget)
         {
@@ -539,7 +539,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         if (runtime.TargetMarkerKind != kind)
         {
             runtime.TargetMarkerKind = kind;
-            ApplyTexture(runtime.TargetMarkerMaterial, LoadMarkerTexture(texturePath) ?? Texture2D.whiteTexture);
+            ApplyTexture(runtime.TargetMarkerMaterial, LoadMarkerTexture(markerAssetId) ?? Texture2D.whiteTexture);
             ApplyColor(runtime.TargetMarkerMaterial, color);
         }
 
@@ -549,7 +549,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         SetEntityWorldToGroundQuad(em, runtime.TargetMarkerEntity, runtime.TargetMarkerWorldPosition, runtime.TargetMarkerWorldScale);
     }
 
-    private static bool TryResolveTargetMarker(EntityManager em, Entity entity, out Vector3 worldPosition, out string texturePath, out Color color, out string kind, out Vector3 worldScale)
+    private static bool TryResolveTargetMarker(EntityManager em, Entity entity, out Vector3 worldPosition, out string markerAssetId, out Color color, out string kind, out Vector3 worldScale)
     {
         if (em.HasComponent<EngageTarget>(entity))
         {
@@ -557,8 +557,8 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
             worldPosition = math.lengthsq(target.Position) > 0.0001f
                 ? (Vector3)target.Position
                 : ResolveCellWorldPosition(em, target.Cell);
-            texturePath = AttackTargetRingPath;
-            color = new Color(1f, 0.32f, 0.18f, 0.68f);
+            markerAssetId = AttackTargetMarkerAssetId;
+            color = Color.white;
             kind = "attack";
             worldScale = new Vector3(0.30f, 0.105f, 1f);
             return true;
@@ -568,15 +568,15 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         {
             UnitTarget target = em.GetComponentData<UnitTarget>(entity);
             worldPosition = ResolveCellWorldPosition(em, target.Cell);
-            texturePath = MoveDestinationRingPath;
-            color = new Color(0.42f, 0.96f, 0.54f, 0.64f);
+            markerAssetId = MoveDestinationMarkerAssetId;
+            color = Color.white;
             kind = "move";
             worldScale = new Vector3(0.26f, 0.095f, 1f);
             return true;
         }
 
         worldPosition = Vector3.zero;
-        texturePath = MoveDestinationRingPath;
+        markerAssetId = MoveDestinationMarkerAssetId;
         color = Color.white;
         kind = string.Empty;
         worldScale = Vector3.zero;
@@ -633,6 +633,18 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         if (ResolveSoldierCount(presenter) <= 1)
             return Vector3.zero;
         return RifleSquadSoldierOffsets[Mathf.Clamp(index, 0, RifleSquadSoldierOffsets.Length - 1)];
+    }
+
+    private static Vector3 ResolveSelectionMarkerScale(in MissionRuntimeSpritePresenter presenter)
+    {
+        if (presenter.FinalAtlasArtReady != 0)
+            return ResolveSoldierCount(presenter) > 1
+                ? new Vector3(0.95f, 0.26f, 1f)
+                : new Vector3(0.62f, 0.18f, 1f);
+
+        return ResolveSoldierCount(presenter) > 1
+            ? new Vector3(0.30f, 0.085f, 1f)
+            : new Vector3(0.18f, 0.055f, 1f);
     }
 
     private static float ResolveContractScale(in MissionRuntimeSpritePresenter presenter)

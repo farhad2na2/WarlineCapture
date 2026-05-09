@@ -30,6 +30,7 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
     public TacticalMapRuntimePlane RuntimePlane => runtimePlane;
     public SpriteRenderer GroundRenderer => groundRenderer;
     public GridAuthoring GridAuthoring => gridAuthoring;
+    public Sprite RuntimeGroundSprite => ResolveRuntimeGroundSprite();
 
     private void Awake()
     {
@@ -150,9 +151,8 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
         ground.transform.localRotation = runtimePlane == TacticalMapRuntimePlane.GameplayXZ
             ? Quaternion.Euler(90f, 0f, 0f)
             : Quaternion.identity;
-        ground.transform.localScale = Vector3.one;
-
-        groundRenderer.sprite = definition.GroundSprite;
+        groundRenderer.sprite = ResolveRuntimeGroundSprite();
+        ground.transform.localScale = ResolveRuntimeGroundScale(groundRenderer.sprite);
         groundRenderer.sortingOrder = 0;
     }
 
@@ -185,7 +185,8 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
             MissionRuntimeTerrainSurfaceRendererRuntime runtime = em.GetComponentObject<MissionRuntimeTerrainSurfaceRendererRuntime>(terrainSurfaceEntity);
             runtime.Instance = groundRenderer.gameObject;
             runtime.Renderer = groundRenderer;
-            runtime.GroundSprite = definition.GroundSprite;
+            runtime.GroundSprite = ResolveRuntimeGroundSprite();
+            runtime.ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites();
         }
         else
         {
@@ -193,9 +194,39 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
             {
                 Instance = groundRenderer.gameObject,
                 Renderer = groundRenderer,
-                GroundSprite = definition.GroundSprite
+                GroundSprite = ResolveRuntimeGroundSprite(),
+                ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites()
             });
         }
+    }
+
+    private Sprite ResolveRuntimeGroundSprite()
+    {
+        return Chapter01M01SpriteAssetResolver.TryGetM01ProductionTacticalGroundSprite(out Sprite productionSprite)
+            ? productionSprite
+            : definition != null ? definition.GroundSprite : null;
+    }
+
+    private Vector3 ResolveRuntimeGroundScale(Sprite groundSprite)
+    {
+        if (definition == null || groundSprite == null)
+            return Vector3.one;
+
+        Vector2 spriteWorldSize = groundSprite.bounds.size;
+        if (spriteWorldSize.x <= 0.0001f || spriteWorldSize.y <= 0.0001f)
+            return Vector3.one;
+
+        return new Vector3(
+            definition.VisibleWorldSize.x / spriteWorldSize.x,
+            definition.VisibleWorldSize.y / spriteWorldSize.y,
+            1f);
+    }
+
+    private static Sprite[] ResolveProductionTacticalPlateSprites()
+    {
+        return Chapter01M01SpriteAssetResolver.TryGetM01ProductionTacticalGroundSprites(out Sprite[] productionSprites)
+            ? productionSprites
+            : System.Array.Empty<Sprite>();
     }
 
     private void EnsureGrid()

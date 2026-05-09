@@ -2,7 +2,7 @@
 
 Date: 2026-05-09
 Status: waiting
-Priority: waiting on Gameplay full M01 AI production art runtime integration proof
+Priority: waiting on Gameplay corrected full M01 AI production runtime framing proof
 
 ## Assignment
 
@@ -47,6 +47,9 @@ Latest user correction:
 - Gameplay completed import-readiness cleanup in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`.
 - PM accepted the import-readiness cleanup for runtime integration. Art/Atlas should wait unless Gameplay runtime proof routes a specific art repack, alpha cleanup, or visual frame issue.
 - User clarified Gameplay must implement all new M01 AI production art assets: background/map, tactical maps, buildings, markers, and v2 soldiers.
+- Gameplay delivered `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`.
+- Art/Atlas reviewed it in `Design/AgentReports/2026-05-09_art-atlas_full-ai-production-runtime-proof-review.md` and found runtime framing/scale/placement issues before PM/user approval.
+- Art/Atlas should wait unless the corrected Gameplay proof identifies a concrete source-art defect.
 - Do not generate a Tehran map. The user stopped that direction.
 - The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
 - Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
@@ -248,7 +251,7 @@ Gameplay
 
 Expected report:
 
-- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-runtime-framing-fix.md`
 
 Owner of next action:
 Gameplay

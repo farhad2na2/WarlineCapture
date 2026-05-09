@@ -10,6 +10,12 @@ public static class Chapter01M01SpriteAssetResolver
 {
     public const string ManifestPath = "Assets/Game/Data/TacticalMaps/Chapter01/chapter01_tactical_asset_manifest.asset";
     public const string ScaleContractPath = "Assets/Game/Data/TacticalMaps/Chapter01/chapter01_tactical_scale_contract.asset";
+    public const string M01AiProductionManifestPath = "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_ai_production_asset_manifest.json";
+    public const string M01ProductionStrategicBackgroundAssetId = "strategic.ch01.m01.background";
+    public const string M01ProductionTacticalPlateAAssetId = "iso.ch01.m01.plate_a.ground";
+    public const string M01ProductionSelectionMarkerAssetId = "marker.selection.ring";
+    public const string M01ProductionMoveDestinationMarkerAssetId = "marker.move.destination";
+    public const string M01ProductionAttackTargetMarkerAssetId = "marker.attack.target";
 
     private static readonly Dictionary<string, Sprite> SpriteCache = new();
 #if UNITY_EDITOR
@@ -21,6 +27,8 @@ public static class Chapter01M01SpriteAssetResolver
     private const string SoldierDamagedSeSpriteName = "Unit_Chr_Soldier_Male_02_Hit_SE";
     private static SoldierAnimationManifestV2 CachedSoldierManifestV2;
     private static string CachedSoldierManifestV2Json;
+    private static AiProductionAssetManifest CachedAiProductionManifest;
+    private static string CachedAiProductionManifestJson;
 #endif
 
     public readonly struct M01SoldierAnimationFrame
@@ -87,6 +95,13 @@ public static class Chapter01M01SpriteAssetResolver
         if (IsM01SoldierSpriteId(spriteId))
             return false;
 
+        if (TryResolveM01ProductionSpritePath(spriteId, out string productionAssetPath) &&
+            TryCreateSpriteFromPng(productionAssetPath, out sprite))
+        {
+            SpriteCache[spriteId] = sprite;
+            return true;
+        }
+
         Chapter01TacticalAssetManifest manifest = AssetDatabase.LoadAssetAtPath<Chapter01TacticalAssetManifest>(ManifestPath);
         if (manifest == null)
             return false;
@@ -110,6 +125,104 @@ public static class Chapter01M01SpriteAssetResolver
 #else
         return false;
 #endif
+    }
+
+    public static bool TryGetM01ProductionTacticalGroundSprite(out Sprite sprite)
+    {
+        sprite = null;
+#if UNITY_EDITOR
+        if (!TryGetM01ProductionAssetPath(M01ProductionTacticalPlateAAssetId, out string path))
+            return false;
+
+        if (!TryCreateSpriteFromPng(path, out sprite))
+            sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        return sprite != null;
+#else
+        return false;
+#endif
+    }
+
+    public static bool TryGetM01ProductionTacticalGroundSprites(out Sprite[] sprites)
+    {
+        sprites = System.Array.Empty<Sprite>();
+#if UNITY_EDITOR
+        if (!TryLoadAiProductionManifest(out AiProductionAssetManifest manifest) ||
+            manifest.tactical_maps == null ||
+            manifest.tactical_maps.Length == 0)
+        {
+            return false;
+        }
+
+        List<Sprite> resolved = new();
+        for (int i = 0; i < manifest.tactical_maps.Length; i++)
+        {
+            string path = manifest.tactical_maps[i] != null ? manifest.tactical_maps[i].runtime_pot : null;
+            if (string.IsNullOrEmpty(path))
+                continue;
+
+            if (!TryCreateSpriteFromPng(path, out Sprite sprite))
+                sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (sprite != null)
+                resolved.Add(sprite);
+        }
+
+        sprites = resolved.ToArray();
+        return sprites.Length == manifest.tactical_maps.Length;
+#else
+        return false;
+#endif
+    }
+
+    public static bool TryGetM01ProductionStrategicBackgroundSprite(out Sprite sprite)
+    {
+        sprite = null;
+#if UNITY_EDITOR
+        if (!TryGetM01ProductionAssetPath(M01ProductionStrategicBackgroundAssetId, out string path))
+            return false;
+
+        if (!TryCreateSpriteFromPng(path, out sprite))
+            sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        return sprite != null;
+#else
+        return false;
+#endif
+    }
+
+    public static bool TryGetM01ProductionMarkerTexture(string markerAssetId, out Texture2D texture)
+    {
+        texture = null;
+#if UNITY_EDITOR
+        if (!TryGetM01ProductionAssetPath(markerAssetId, out string path))
+            return false;
+
+        texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
+        return texture != null;
+#else
+        return false;
+#endif
+    }
+
+    public static bool TryGetM01ProductionAssetPath(string assetId, out string assetPath)
+    {
+        assetPath = null;
+#if UNITY_EDITOR
+        if (string.IsNullOrEmpty(assetId) || !TryLoadAiProductionManifest(out AiProductionAssetManifest manifest))
+            return false;
+
+        if (manifest.strategic != null && manifest.strategic.asset_id == assetId)
+        {
+            assetPath = manifest.strategic.runtime_file;
+            return !string.IsNullOrEmpty(assetPath);
+        }
+
+        if (TryFindTacticalMapPath(manifest, assetId, out assetPath) ||
+            TryFindManifestEntryPath(manifest.markers, assetId, out assetPath) ||
+            TryFindManifestEntryPath(manifest.buildings, assetId, out assetPath))
+        {
+            return true;
+        }
+#endif
+        return false;
     }
 
     public static bool TryGetM01SoldierAnimationFrame(
@@ -190,6 +303,8 @@ public static class Chapter01M01SpriteAssetResolver
 #if UNITY_EDITOR
         CachedSoldierManifestV2 = null;
         CachedSoldierManifestV2Json = null;
+        CachedAiProductionManifest = null;
+        CachedAiProductionManifestJson = null;
 #endif
     }
 
@@ -220,6 +335,45 @@ public static class Chapter01M01SpriteAssetResolver
             SpriteMeshType.FullRect);
         sprite.name = $"{Path.GetFileNameWithoutExtension(frame.Texture.name)}_{frame.State}_{frame.Facing}_{frame.FrameIndex:00}";
         return true;
+    }
+
+    private static bool TryResolveM01ProductionSpritePath(string spriteId, out string assetPath)
+    {
+        assetPath = null;
+        if (!TryResolveM01ProductionAssetId(spriteId, out string assetId))
+            return false;
+
+        return TryGetM01ProductionAssetPath(assetId, out assetPath);
+    }
+
+    private static bool TryResolveM01ProductionAssetId(string spriteId, out string assetId)
+    {
+        assetId = null;
+        if (string.IsNullOrEmpty(spriteId))
+            return false;
+
+        if (spriteId == Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId ||
+            spriteId == Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.IdleStateSuffix ||
+            spriteId == Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.MoveStateSuffix ||
+            spriteId == Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.AttackStateSuffix)
+        {
+            assetId = "building.command_support.intact";
+            return true;
+        }
+
+        if (spriteId == Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.DamagedStateSuffix)
+        {
+            assetId = "building.command_support.damaged";
+            return true;
+        }
+
+        if (spriteId == Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.DeathStateSuffix)
+        {
+            assetId = "building.command_support.destroyed";
+            return true;
+        }
+
+        return false;
     }
 
     private static bool TryResolveM01SoldierVisualState(string spriteId, out string runtimeEntityId, out MissionRuntimeSpriteVisualState visualState)
@@ -314,6 +468,64 @@ public static class Chapter01M01SpriteAssetResolver
         CachedSoldierManifestV2Json = json;
         manifest = CachedSoldierManifestV2;
         return manifest != null && manifest.factions != null;
+    }
+
+    private static bool TryLoadAiProductionManifest(out AiProductionAssetManifest manifest)
+    {
+        manifest = null;
+        TextAsset asset = AssetDatabase.LoadAssetAtPath<TextAsset>(M01AiProductionManifestPath);
+        string json = asset != null ? asset.text : File.Exists(M01AiProductionManifestPath) ? File.ReadAllText(M01AiProductionManifestPath) : null;
+        if (string.IsNullOrEmpty(json))
+            return false;
+
+        if (CachedAiProductionManifest != null && CachedAiProductionManifestJson == json)
+        {
+            manifest = CachedAiProductionManifest;
+            return true;
+        }
+
+        CachedAiProductionManifest = JsonUtility.FromJson<AiProductionAssetManifest>(json);
+        CachedAiProductionManifestJson = json;
+        manifest = CachedAiProductionManifest;
+        return manifest != null;
+    }
+
+    private static bool TryFindTacticalMapPath(AiProductionAssetManifest manifest, string assetId, out string assetPath)
+    {
+        assetPath = null;
+        if (manifest.tactical_maps == null)
+            return false;
+
+        for (int i = 0; i < manifest.tactical_maps.Length; i++)
+        {
+            AiProductionTacticalMapEntry entry = manifest.tactical_maps[i];
+            if (entry == null || entry.asset_id != assetId)
+                continue;
+
+            assetPath = entry.runtime_pot;
+            return !string.IsNullOrEmpty(assetPath);
+        }
+
+        return false;
+    }
+
+    private static bool TryFindManifestEntryPath(AiProductionRuntimeAssetEntry[] entries, string assetId, out string assetPath)
+    {
+        assetPath = null;
+        if (entries == null)
+            return false;
+
+        for (int i = 0; i < entries.Length; i++)
+        {
+            AiProductionRuntimeAssetEntry entry = entries[i];
+            if (entry == null || entry.asset_id != assetId)
+                continue;
+
+            assetPath = entry.runtime_file;
+            return !string.IsNullOrEmpty(assetPath);
+        }
+
+        return false;
     }
 
     private static SoldierAnimationClipV2 FindClip(SoldierAnimationFactionV2 faction, string stateId, string facingId)
@@ -503,6 +715,29 @@ public static class Chapter01M01SpriteAssetResolver
     private sealed class SoldierAnimationManifestV2
     {
         public SoldierAnimationFactionsV2 factions;
+    }
+
+    [System.Serializable]
+    private sealed class AiProductionAssetManifest
+    {
+        public AiProductionRuntimeAssetEntry strategic;
+        public AiProductionTacticalMapEntry[] tactical_maps;
+        public AiProductionRuntimeAssetEntry[] markers;
+        public AiProductionRuntimeAssetEntry[] buildings;
+    }
+
+    [System.Serializable]
+    private sealed class AiProductionRuntimeAssetEntry
+    {
+        public string asset_id;
+        public string runtime_file;
+    }
+
+    [System.Serializable]
+    private sealed class AiProductionTacticalMapEntry
+    {
+        public string asset_id;
+        public string runtime_pot;
     }
 
     [System.Serializable]

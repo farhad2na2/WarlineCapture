@@ -2,6 +2,7 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Rendering;
 using Unity.Transforms;
+using UnityEngine;
 
 public sealed class Chapter01M01AtlasQuadPresentationTests
 {
@@ -27,6 +28,36 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
         AssertRendererResolves(Chapter01M01PlayableRuntime.PlayerSquadEntityId);
         AssertRendererResolves(Chapter01M01PlayableRuntime.EnemyPatrolEntityId);
         AssertRendererResolves(Chapter01M01PlayableRuntime.DecorCommandPointEntityId);
+    }
+
+    [Test]
+    public void Renderer_ResolvesAiProductionMapMarkerAndBuildingPack()
+    {
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetM01ProductionStrategicBackgroundSprite(out Sprite strategicBackground));
+        StringAssert.Contains("m01_isometric_strategic_background", strategicBackground.name);
+
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetM01ProductionTacticalGroundSprite(out Sprite activeGround));
+        StringAssert.Contains("m01_tactical_plate_a_pot_2048x1024", activeGround.name);
+
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetM01ProductionTacticalGroundSprites(out Sprite[] tacticalPlates));
+        Assert.AreEqual(3, tacticalPlates.Length, "M01 runtime should resolve all three AI production tactical plates from the manifest.");
+        StringAssert.Contains("m01_tactical_plate_a_pot_2048x1024", tacticalPlates[0].name);
+        StringAssert.Contains("m01_tactical_plate_b_pot_2048x1024", tacticalPlates[1].name);
+        StringAssert.Contains("m01_tactical_plate_c_pot_2048x1024", tacticalPlates[2].name);
+
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetM01ProductionMarkerTexture(Chapter01M01SpriteAssetResolver.M01ProductionSelectionMarkerAssetId, out Texture2D selectionMarker));
+        Assert.AreEqual("selection_ring", selectionMarker.name);
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetM01ProductionMarkerTexture(Chapter01M01SpriteAssetResolver.M01ProductionMoveDestinationMarkerAssetId, out Texture2D moveMarker));
+        Assert.AreEqual("move_destination", moveMarker.name);
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetM01ProductionMarkerTexture(Chapter01M01SpriteAssetResolver.M01ProductionAttackTargetMarkerAssetId, out Texture2D attackMarker));
+        Assert.AreEqual("attack_target", attackMarker.name);
+
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetSprite(Chapter01M01PlayableRuntime.DecorCommandPointEntityId, out Sprite commandPoint));
+        StringAssert.Contains("command_support_intact", commandPoint.name);
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetSprite(Chapter01M01PlayableRuntime.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.DamagedStateSuffix, out Sprite damagedCommandPoint));
+        StringAssert.Contains("command_support_damaged", damagedCommandPoint.name);
+        Assert.IsTrue(Chapter01M01SpriteAssetResolver.TryGetSprite(Chapter01M01PlayableRuntime.DecorCommandPointEntityId + Chapter01M01SpritePresenterCatalog.DeathStateSuffix, out Sprite destroyedCommandPoint));
+        StringAssert.Contains("command_support_destroyed", destroyedCommandPoint.name);
     }
 
     [Test]
@@ -91,6 +122,10 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
             Assert.IsFalse(sprite.name.Contains("Unit_Chr_Soldier_Male_02"), $"{runtimeEntityId} must not resolve to the old individual soldier sheet.");
             Assert.IsFalse(sprite.name.Contains("infantry_squad"), $"{runtimeEntityId} must not resolve to the rejected mini-squad source.");
             Assert.AreEqual(1, presenter.FinalAtlasArtReady);
+        }
+        else if (runtimeEntityId == Chapter01M01PlayableRuntime.DecorCommandPointEntityId)
+        {
+            StringAssert.Contains("command_support_intact", sprite.name);
         }
         Assert.AreEqual(1, presenter.RequiresFixedDirectionBakedContactShadow);
         Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild);

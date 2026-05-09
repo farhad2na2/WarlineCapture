@@ -2,7 +2,7 @@
 
 Date: 2026-05-09
 Status: active
-Priority: P0 integrate the full M01 AI production art pack into ECS runtime and capture proof
+Priority: P0 fix full M01 AI production runtime framing/scale proof
 
 ## Assignment
 
@@ -37,6 +37,9 @@ PM/user review status:
 - Gameplay completed import-readiness cleanup in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`.
 - PM accepted the import-readiness cleanup for runtime integration. This is not final visual approval; final approval still requires runtime capture/video review.
 - User clarified that Gameplay must implement all new M01 AI production art assets, not only the v2 soldier atlases.
+- Gameplay delivered `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`.
+- Art/Atlas reviewed the proof in `Design/AgentReports/2026-05-09_art-atlas_full-ai-production-runtime-proof-review.md` and marked it needs fixes before PM/user art approval.
+- The current issue appears to be runtime framing, scale, placement, and marker/building readability, not a source-art generation failure.
 
 Do not implement runtime visuals from review boards. Wait for runtime PNGs under:
 
@@ -53,6 +56,13 @@ Required integration:
 
 - Read the direct PM message before continuing:
   - `Design/AgentTasks/gameplay_pm_message.md`
+- Keep the current full-art runtime integration, but revise the proof until it is visually reviewable:
+  - show the full intended tactical plate composition with road/intersection/wall/building context,
+  - avoid a zoomed asphalt/crack crop,
+  - make production building/prop sprites visible in the proof frame,
+  - make selection/move/attack markers readable at the approved footprint,
+  - keep soldiers grounded and proportionate against the production plate,
+  - keep ECS atlas-backed units and do not add SpriteRenderer/MeshRenderer unit presentation.
 - Integrate the full M01 AI production runtime asset pack:
   - strategic/background map,
   - all tactical map plates,
@@ -94,6 +104,6 @@ Can Gameplay continue fallback work? no. Integrate the full M01 AI production ar
 
 Write:
 
-`Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
+`Design/AgentReports/2026-05-09_gameplay_m01-ai-production-runtime-framing-fix.md`
 
 Use the standard WarlineCapture handoff format. Include code/config files changed, asset manifests used, validation commands, capture/video paths, and a clear recommendation for PM/user review.

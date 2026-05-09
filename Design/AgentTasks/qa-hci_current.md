@@ -28,10 +28,12 @@ PM/user review status:
 - Gameplay completed import-readiness cleanup in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`.
 - PM accepted the cleanup for runtime integration. QA/HCI should wait for Gameplay runtime integration/capture before validation.
 - User clarified Gameplay must implement all new M01 AI production art assets: background/map, tactical maps, buildings, markers, and v2 soldiers.
+- Gameplay delivered `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`, but Art/Atlas marked it needs fixes in `Design/AgentReports/2026-05-09_art-atlas_full-ai-production-runtime-proof-review.md`.
+- QA/HCI remains blocked until Gameplay provides corrected runtime framing/scale proof.
 
 First wait for Gameplay report:
 
-- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-runtime-framing-fix.md`
 
 PM will route a QA/HCI runtime-match validation task only after the Gameplay integration report and capture proof are visible.
 
@@ -50,6 +52,7 @@ Waiting on exact report and decision:
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-runtime-framing-fix.md`
 
 Owner of next action:
 Gameplay

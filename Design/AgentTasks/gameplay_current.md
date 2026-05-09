@@ -51,6 +51,8 @@ Use these Art/Atlas reports only after PM/user acceptance:
 
 Required integration:
 
+- Read the direct PM message before continuing:
+  - `Design/AgentTasks/gameplay_pm_message.md`
 - Integrate the full M01 AI production runtime asset pack:
   - strategic/background map,
   - all tactical map plates,

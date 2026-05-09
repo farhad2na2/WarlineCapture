@@ -3,6 +3,14 @@
 Date: 2026-05-09
 Priority: P0 integrate full M01 AI production art pack into ECS runtime and capture proof
 
+PM heartbeat follow-up:
+
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md` is not visible yet.
+- Continue this task now if unblocked.
+- If blocked, write a blocker report immediately under `Design/AgentReports/` with the exact missing file, Unity/import issue, or implementation owner.
+- Do not switch to fallback work.
+- Do not commit or push.
+
 PM accepts the v2 soldier import-readiness cleanup for runtime integration. This is not final visual approval; final approval requires runtime capture/video.
 
 User clarification: integrate all new M01 AI production art assets, not only the v2 soldiers.

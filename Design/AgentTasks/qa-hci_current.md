@@ -29,9 +29,11 @@ PM/user review status:
 - PM accepted the cleanup for runtime integration. QA/HCI should wait for Gameplay runtime integration/capture before validation.
 - User clarified Gameplay must implement all new M01 AI production art assets: background/map, tactical maps, buildings, markers, and v2 soldiers.
 
-Then wait for Gameplay report:
+First wait for Gameplay report:
 
-- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
+
+PM will route a QA/HCI runtime-match validation task only after the Gameplay integration report and capture proof are visible.
 
 Do not start another QA pass unless PM routes a concrete follow-up.
 
@@ -47,9 +49,7 @@ Waiting on exact report and decision:
 - `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
-- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-runtime-integration.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
-- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Owner of next action:
 Gameplay

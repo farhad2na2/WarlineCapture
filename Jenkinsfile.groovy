@@ -252,5 +252,19 @@ pipeline {
         always {
             archiveArtifacts artifacts: 'build.log,TestResults/*.xml,TestResults/*.log', allowEmptyArchive: true
         }
+        failure {
+            powershell '''
+            try {
+                $taskDir = $env:CODEX_TASK_DIR
+                if ([string]::IsNullOrWhiteSpace($taskDir)) {
+                    $taskDir = Join-Path $env:PROJECT_PATH "CodexTasks"
+                }
+                powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\QueueCodexJenkinsFailure.ps1" -TaskDir "$taskDir" -ProjectPath "$env:PROJECT_PATH" -BuildLog "$env:BUILD_LOG"
+            } catch {
+                Write-Host "[CodexQueue] Could not queue Codex failure task: $($_.Exception.Message)"
+            }
+            '''
+            archiveArtifacts artifacts: 'CodexTasks/**', allowEmptyArchive: true
+        }
     }
 }

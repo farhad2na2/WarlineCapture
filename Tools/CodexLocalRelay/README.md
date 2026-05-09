@@ -63,6 +63,27 @@ The relay posts an online message and then watches for messages that start with:
 codex local
 ```
 
+## Jenkins Failure Queue
+
+The relay can also watch a local task directory for Jenkins failure tasks. Set
+`CODEX_TASK_DIR` in `.env.local` to a folder that Jenkins can write to and this
+Mac can read:
+
+```text
+CODEX_TASK_DIR=/Users/farhad/Projects/Jenkins_Builds/WarlineCapture/CodexTasks
+```
+
+`Jenkinsfile.groovy` runs `Tools/CI/QueueCodexJenkinsFailure.ps1` in the
+pipeline `post { failure { ... } }` block. The script copies `build.log`,
+`TestResults/*.xml`, and `TestResults/*.log` into a failure bundle, then writes a
+JSON task into `CODEX_TASK_DIR`. On the next relay poll, Codex starts a local
+investigation task and posts the result back to Slack.
+
+For the handoff to work, Jenkins' `CODEX_TASK_DIR` path and the relay's
+`CODEX_TASK_DIR` must refer to the same shared folder. If Jenkins writes from
+Windows over SMB, configure the Jenkins environment variable with the Windows
+share path and configure the relay with the matching local Mac path.
+
 ## Slack Commands
 
 Check status:

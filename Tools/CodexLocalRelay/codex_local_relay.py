@@ -7,6 +7,7 @@ import argparse
 import json
 import os
 import signal
+import shutil
 import subprocess
 import sys
 import time
@@ -54,10 +55,12 @@ class Config:
     codex_trigger: str
     poll_seconds: float
     state_dir: Path
+    task_dir: Path | None
     codex_model: str
 
     @classmethod
     def from_env(cls) -> "Config":
+        task_dir = os.environ.get("CODEX_TASK_DIR", "").strip()
         return cls(
             slack_bot_token=require_env("SLACK_BOT_TOKEN"),
             slack_channel_id=require_env("SLACK_CHANNEL_ID"),
@@ -66,6 +69,7 @@ class Config:
             codex_trigger=os.environ.get("CODEX_TRIGGER", "codex local").strip().lower(),
             poll_seconds=float(os.environ.get("POLL_SECONDS", "8")),
             state_dir=Path(os.environ.get("STATE_DIR", "/private/tmp/codex-local-relay")),
+            task_dir=Path(task_dir).expanduser() if task_dir else None,
             codex_model=os.environ.get("CODEX_MODEL", "").strip(),
         )
 
@@ -144,6 +148,7 @@ class Relay:
         while True:
             try:
                 self.check_active_task()
+                self.poll_task_queue()
                 last_ts = self.poll_once(last_ts)
                 self.save_last_ts(last_ts)
             except KeyboardInterrupt:
@@ -161,6 +166,10 @@ class Relay:
             raise SystemExit(f"Codex worktree not found: {self.config.codex_worktree}")
         if not (self.config.codex_worktree / ".git").exists():
             raise SystemExit(f"Codex worktree is not a Git checkout: {self.config.codex_worktree}")
+        if self.config.task_dir:
+            self.config.task_dir.mkdir(parents=True, exist_ok=True)
+            (self.config.task_dir / "processed").mkdir(parents=True, exist_ok=True)
+            (self.config.task_dir / "failed").mkdir(parents=True, exist_ok=True)
 
     def load_last_ts(self) -> str | None:
         if self.last_ts_file.exists():
@@ -182,6 +191,41 @@ class Relay:
             last_ts = message["ts"]
             self.handle_message(message)
         return last_ts
+
+    def poll_task_queue(self) -> None:
+        task_dir = self.config.task_dir
+        if not task_dir or (self.active and self.active.process.poll() is None):
+            return
+
+        queued_files = sorted(task_dir.glob("*.json"), key=lambda item: item.stat().st_mtime)
+        if not queued_files:
+            return
+
+        queued_file = queued_files[0]
+        try:
+            payload = json.loads(queued_file.read_text(encoding="utf-8"))
+            task = str(payload.get("task", "")).strip()
+            if not task:
+                raise ValueError("queued task JSON is missing non-empty 'task'")
+            bundle_dir_name = str(payload.get("bundle_dir_name", "")).strip()
+            if bundle_dir_name:
+                task += (
+                    f"\n\nQueued task file: {queued_file}\n"
+                    f"Failure bundle directory: {task_dir / bundle_dir_name}\n"
+                    "Read the copied Jenkins logs from that bundle before editing code."
+                )
+
+            thread_ts = str(payload.get("thread_ts", "")).strip() or None
+            self.start_task(task, thread_ts)
+            destination = task_dir / "processed" / queued_file.name
+        except Exception as exc:
+            self.slack.post(
+                self.config.slack_channel_id,
+                f"Could not start queued Codex task from `{queued_file}`: {exc}",
+            )
+            destination = task_dir / "failed" / queued_file.name
+
+        shutil.move(str(queued_file), str(destination))
 
     def handle_message(self, message: dict[str, Any]) -> None:
         if message.get("bot_id") or message.get("subtype"):
@@ -228,6 +272,7 @@ class Relay:
         dirty = self.git(["status", "--short"])
         dirty_count = len([line for line in dirty.splitlines() if line.strip()])
         active = "yes" if self.active and self.active.process.poll() is None else "no"
+        task_dir = str(self.config.task_dir) if self.config.task_dir else "disabled"
         self.slack.post(
             self.config.slack_channel_id,
             f"Local Codex status:\n"
@@ -235,7 +280,8 @@ class Relay:
             f"- branch: `{branch}`\n"
             f"- commit: `{commit}`\n"
             f"- dirty files: `{dirty_count}`\n"
-            f"- active task: `{active}`",
+            f"- active task: `{active}`\n"
+            f"- queued task dir: `{task_dir}`",
             thread_ts,
         )
 
@@ -250,9 +296,10 @@ class Relay:
         )
         return result.stdout.strip() or result.stderr.strip()
 
-    def start_task(self, task: str, thread_ts: str) -> None:
+    def start_task(self, task: str, thread_ts: str | None = None) -> None:
         if not task:
-            self.reply_help(thread_ts)
+            if thread_ts:
+                self.reply_help(thread_ts)
             return
 
         if self.active and self.active.process.poll() is None:
@@ -294,7 +341,7 @@ class Relay:
 
         self.active = ActiveTask(
             process=process,
-            thread_ts=thread_ts,
+            thread_ts=thread_ts or "",
             output_file=output_file,
             log_file=log_file,
             started_at=time.time(),

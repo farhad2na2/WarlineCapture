@@ -260,9 +260,16 @@ pipeline {
                 if ([string]::IsNullOrWhiteSpace($taskDir)) {
                     $taskDir = Join-Path $env:PROJECT_PATH "CodexTasks"
                 }
+                if ($taskDir.StartsWith("\\\\")) {
+                    net use \\\\192.168.2.175 /user:farhad $env:MAC_PASSWORD
+                }
                 powershell -NoProfile -ExecutionPolicy Bypass -File "$env:PROJECT_PATH\\Tools\\CI\\QueueCodexJenkinsFailure.ps1" -TaskDir "$taskDir" -ProjectPath "$env:PROJECT_PATH" -BuildLog "$env:BUILD_LOG"
             } catch {
                 Write-Host "[CodexQueue] Could not queue Codex failure task: $($_.Exception.Message)"
+            } finally {
+                if ($taskDir -and $taskDir.StartsWith("\\\\")) {
+                    net use \\\\192.168.2.175 /delete
+                }
             }
             '''
             archiveArtifacts artifacts: 'CodexTasks/**', allowEmptyArchive: true

@@ -2,11 +2,11 @@
 
 Date: 2026-05-09
 Status: waiting
-Priority: waiting on Gameplay v2 soldier runtime integration proof
+Priority: waiting on Gameplay full M01 AI production art runtime integration proof
 
 ## Assignment
 
-QA/HCI remains blocked until Gameplay integrates v2 soldier animation into the runtime and reports capture/video proof for PM/user review.
+QA/HCI remains blocked until Gameplay integrates the full M01 AI production art pack into the runtime and reports capture/video proof for PM/user review.
 
 Approved reference:
 
@@ -27,6 +27,7 @@ PM/user review status:
 - Gameplay audit blocked direct import pending `.meta`, import settings, manifest anchor/contact metadata, and atlas layout policy cleanup.
 - Gameplay completed import-readiness cleanup in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`.
 - PM accepted the cleanup for runtime integration. QA/HCI should wait for Gameplay runtime integration/capture before validation.
+- User clarified Gameplay must implement all new M01 AI production art assets: background/map, tactical maps, buildings, markers, and v2 soldiers.
 
 Then wait for Gameplay report:
 
@@ -47,6 +48,7 @@ Waiting on exact report and decision:
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-runtime-integration.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Owner of next action:

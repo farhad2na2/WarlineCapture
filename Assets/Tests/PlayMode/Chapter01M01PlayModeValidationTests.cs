@@ -127,6 +127,17 @@ public sealed class Chapter01M01PlayModeValidationTests
         AssertM01ProductionPlayerVisibleState(context, "Campaign public launch");
         AssertM01InfantryOnlyHudScope(router, "Campaign public launch");
         CapturePlayerView(context, uiBootstrap.AppCanvasInstance, "campaign-public-m01");
+
+        Assert.IsTrue(context.Bootstrap.Selection.TrySelectRuntimeEntity(context.PlayerSquad).Accepted, "V2 runtime proof should select the command squad.");
+        await NextFrame();
+        AssertSelectedPresentationVisible(context.World.EntityManager, context.PlayerSquad, "v2 runtime proof command squad idle");
+        CaptureM01V2RuntimeProofView(context, uiBootstrap.AppCanvasInstance, "campaign-public-m01-v2-selected-player-idle", Entity.Null);
+
+        IssueMoveToCover(context);
+        for (int frame = 0; frame < 30; frame++)
+            await NextFrame();
+        CaptureM01V2RuntimeProofView(context, uiBootstrap.AppCanvasInstance, "campaign-public-m01-v2-selected-player-run", Entity.Null);
+        CaptureM01V2RuntimeProofView(context, uiBootstrap.AppCanvasInstance, "campaign-public-m01-v2-enemy-patrol", context.EnemyPatrol);
     }
 
     [Test]
@@ -294,16 +305,18 @@ public sealed class Chapter01M01PlayModeValidationTests
             presenter.CurrentSpriteId.ToString(),
             "M01 command squad should start on the atlas idle state id.");
 
+        Assert.IsTrue(context.Bootstrap.Selection.TrySelectRuntimeEntity(context.PlayerSquad).Accepted, "M01 sprite presenter validation should select the command squad before issuing command markers.");
         IssueMoveToCover(context);
         await NextFrame();
         MissionRuntimeAtlasQuadRuntime movingRuntime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(context.PlayerSquad);
-        int animatedSoldierIndex = movingRuntime.SoldierRenderers.Length > 1 ? 1 : 0;
-        Vector3 soldierPoseBefore = movingRuntime.SoldierRenderers[animatedSoldierIndex].transform.localPosition;
-        float animationPhaseBefore = movingRuntime.AnimationPhase;
+        float animationElapsedBefore = movingRuntime.AnimationElapsed;
+        string animationFrameBefore = movingRuntime.CurrentAnimationFrameKey;
         await NextFrame();
         movingRuntime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(context.PlayerSquad);
-        Assert.Greater(movingRuntime.AnimationPhase, animationPhaseBefore, "M01 moving infantry should advance its ECS atlas animation phase while moving.");
-        Assert.Greater(Vector3.Distance(soldierPoseBefore, movingRuntime.SoldierRenderers[animatedSoldierIndex].transform.localPosition), 0.001f, "M01 moving infantry should visibly animate instead of holding a static pose.");
+        Assert.Greater(movingRuntime.AnimationElapsed, animationElapsedBefore, "M01 v2 moving infantry should advance manifest-driven atlas animation time while moving.");
+        Assert.IsNotEmpty(movingRuntime.CurrentAnimationFrameKey, "M01 v2 moving infantry should expose the active manifest frame key.");
+        Assert.AreNotEqual(animationFrameBefore, movingRuntime.CurrentAnimationFrameKey, "M01 v2 moving infantry should advance atlas frame keys instead of relying on procedural bob.");
+        AssertSelectedTargetMarkerVisible(em, context.PlayerSquad, "command squad move target marker", "move_destination_ring", "move");
 
         presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
         Assert.AreEqual(MissionRuntimeSpriteVisualState.Move, MissionRuntimeSpritePresenterSystem.ResolveVisualState(em, context.PlayerSquad), "ECS pathing intent should drive M01 move presentation.");
@@ -328,7 +341,10 @@ public sealed class Chapter01M01PlayModeValidationTests
             em.AddComponentData(context.PlayerSquad, new UnitDeathAnimationState { TimeRemaining = 0.5f });
         presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
         Assert.AreEqual(MissionRuntimeSpriteVisualState.Destroyed, MissionRuntimeSpritePresenterSystem.ResolveVisualState(em, context.PlayerSquad), "ECS death state should drive M01 destroyed presentation.");
-        Assert.AreEqual(Chapter01M01SpritePresenterCatalog.DestroyedSmallVfxSpriteId, Chapter01M01SpritePresenterCatalog.ResolveSpriteId(presenter, MissionRuntimeSpriteVisualState.Destroyed).ToString(), "M01 destroyed state should resolve to the atlas destroyed VFX id.");
+        Assert.AreEqual(
+            Chapter01M01PlayableRuntime.PlayerSquadEntityId + Chapter01M01SpritePresenterCatalog.DeathStateSuffix,
+            Chapter01M01SpritePresenterCatalog.ResolveSpriteId(presenter, MissionRuntimeSpriteVisualState.Destroyed).ToString(),
+            "M01 destroyed state should resolve to the v2 soldier death atlas state id.");
     }
 
     [Test]
@@ -438,11 +454,16 @@ public sealed class Chapter01M01PlayModeValidationTests
             return false;
 
         MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
-        return runtime.Renderer != null &&
-            runtime.Renderer.enabled &&
+        return runtime.SoldierEntities != null &&
+            runtime.SoldierEntities.Length > 0 &&
+            em.Exists(runtime.SoldierEntities[0]) &&
+            em.HasComponent<MaterialMeshInfo>(runtime.SoldierEntities[0]) &&
+            em.IsComponentEnabled<MaterialMeshInfo>(runtime.SoldierEntities[0]) &&
             runtime.Material != null &&
             runtime.Material.mainTexture != null &&
-            runtime.Renderer.gameObject.activeInHierarchy;
+            runtime.SoldierVisible != null &&
+            runtime.SoldierVisible.Length > 0 &&
+            runtime.SoldierVisible[0];
     }
 
     private static bool IsTerrainSurfaceRendererReady(EntityManager em, TacticalMapRuntimeLoader loader)
@@ -457,7 +478,7 @@ public sealed class Chapter01M01PlayModeValidationTests
         using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
         {
             All = new[] { ComponentType.ReadOnly<MaterialMeshInfo>() },
-            None = new[] { ComponentType.ReadOnly<DisableRendering>() }
+            None = new[] { ComponentType.ReadOnly<DisableRendering>(), ComponentType.ReadOnly<MissionRuntimeEcsVisualTag>() }
         });
         return query.CalculateEntityCount() == 0;
     }
@@ -621,7 +642,7 @@ public sealed class Chapter01M01PlayModeValidationTests
         using EntityQuery query = em.CreateEntityQuery(new EntityQueryDesc
         {
             All = new[] { ComponentType.ReadOnly<MaterialMeshInfo>() },
-            None = new[] { ComponentType.ReadOnly<DisableRendering>() }
+            None = new[] { ComponentType.ReadOnly<DisableRendering>(), ComponentType.ReadOnly<MissionRuntimeEcsVisualTag>() }
         });
         Assert.AreEqual(0, query.CalculateEntityCount(), $"{entryPath}: legacy ECS mesh renderers must be suppressed so the first visible state is the 2D/isometric production slice.");
     }
@@ -631,13 +652,19 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.IsFalse(em.HasComponent<MissionRuntimeSpriteRendererRuntime>(entity), $"{label} should not use the temporary SpriteRenderer adapter.");
         Assert.IsTrue(em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity), $"{label} should have an ECS-owned atlas quad runtime component.");
         MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
-        Assert.NotNull(runtime.Renderer, $"{label} should expose a mesh renderer reference.");
-        Assert.NotNull(runtime.MeshFilter, $"{label} should expose a mesh filter reference.");
+        Assert.IsNull(runtime.Renderer, $"{label} must not expose a MeshRenderer wrapper reference.");
+        Assert.IsNull(runtime.MeshFilter, $"{label} must not expose a MeshFilter wrapper reference.");
+        Assert.IsNull(runtime.Instance, $"{label} must not expose a runtime GameObject atlas wrapper.");
         Assert.NotNull(runtime.Material, $"{label} should expose an atlas material.");
-        Assert.IsTrue(runtime.Renderer.enabled, $"{label} atlas quad renderer should be enabled.");
         Assert.NotNull(runtime.Material.mainTexture, $"{label} atlas quad material should have a texture.");
-        Assert.IsTrue(runtime.Renderer.gameObject.activeInHierarchy, $"{label} atlas quad GameObject should be active in hierarchy.");
-        StringAssert.StartsWith("M01AtlasQuad_", runtime.Renderer.gameObject.name, $"{label} should use the M01 atlas quad object.");
+        Assert.NotNull(runtime.SoldierEntities, $"{label} should expose ECS render entities.");
+        Assert.Greater(runtime.SoldierEntities.Length, 0, $"{label} should create at least one ECS render entity.");
+        Assert.IsTrue(em.Exists(runtime.SoldierEntities[0]), $"{label} ECS render entity should exist.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeEcsVisualTag>(runtime.SoldierEntities[0]), $"{label} visible presentation must be tagged as an ECS visual entity.");
+        Assert.IsTrue(em.HasComponent<MaterialMeshInfo>(runtime.SoldierEntities[0]), $"{label} ECS visual entity should use Entities Graphics MaterialMeshInfo.");
+        Assert.IsTrue(em.IsComponentEnabled<MaterialMeshInfo>(runtime.SoldierEntities[0]), $"{label} ECS visual entity should be render-enabled.");
+        Assert.IsFalse(em.HasComponent<DisableRendering>(runtime.SoldierEntities[0]), $"{label} ECS visual entity should not be suppressed by the legacy ECS mesh gate.");
+        Assert.IsNull(GameObject.Find("M01RuntimeEcsAtlasQuads"), $"{label} must not create the rejected runtime GameObject wrapper root.");
     }
 
     private static void AssertAtlasPresenterAdapter(EntityManager em, Entity entity, string runtimeEntityId, string label)
@@ -648,7 +675,7 @@ public sealed class Chapter01M01PlayModeValidationTests
         MissionRuntimeSpritePresenter presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(entity);
         Assert.AreEqual(runtimeEntityId, presenter.RuntimeEntityId.ToString(), $"{label} presenter should identify the ECS runtime entity.");
         Assert.AreEqual(runtimeEntityId, presenter.ManifestAssetId.ToString(), $"{label} presenter should use the Chapter 1 manifest asset id.");
-        Assert.AreEqual(0, presenter.FinalAtlasArtReady, $"{label} should explicitly mark current M01 unit art as temporary until final multi-frame atlas art lands.");
+        Assert.AreEqual(1, presenter.FinalAtlasArtReady, $"{label} should use the accepted v2 multi-frame soldier atlas art.");
         Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild, $"{label} destroyed/death feedback should resolve through the atlas presenter, not a separate Destroyed child.");
         Assert.AreNotEqual(presenter.IdleSpriteId, presenter.MoveSpriteId, $"{label} idle and move atlas state ids should be distinct even while they share temporary source art.");
         Assert.AreNotEqual(presenter.IdleSpriteId, presenter.AttackSpriteId, $"{label} idle and attack atlas state ids should be distinct even while they share temporary source art.");
@@ -661,21 +688,26 @@ public sealed class Chapter01M01PlayModeValidationTests
         if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
             runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
         {
-            StringAssert.Contains("Unit_Chr_Soldier_Male_02", resolvedSprite.name, $"{label} should resolve to the individual soldier sheet, not the rejected temporary mini-squad source.");
+            StringAssert.Contains("_animation_atlas_v2_", resolvedSprite.name, $"{label} should resolve to the v2 soldier atlas, not the old individual soldier sheet.");
+            Assert.IsFalse(resolvedSprite.name.Contains("Unit_Chr_Soldier_Male_02"), $"{label} must not resolve to the old individual soldier sheet.");
             Assert.IsFalse(resolvedSprite.name.Contains("infantry_squad"), $"{label} must not resolve unit states to the rejected grouped infantry sprite.");
         }
         Assert.NotNull(runtime.Material.mainTexture, $"{label} atlas quad material should be assigned by the ECS presenter resolver.");
-        Assert.IsNull(runtime.Instance.GetComponentInChildren<SpriteRenderer>(true), $"{label} public M01 unit visuals must not expose active or inactive Unity SpriteRenderer components.");
-        Assert.False(runtime.Instance.name.Contains("SpriteRenderer"), $"{label} ECS atlas root must not expose SpriteRenderer-era naming.");
+        Assert.IsNull(runtime.Instance, $"{label} public M01 unit visuals must not expose a Unity GameObject presentation wrapper.");
+        Assert.IsNull(GameObject.Find("M01RuntimeEcsAtlasQuads"), $"{label} public M01 unit visuals must not create the rejected runtime quad GameObject root.");
         AssertContractScale(runtime, runtimeEntityId, label);
         int expectedSoldierCount = runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ? 4 : 1;
         Assert.AreEqual(expectedSoldierCount, runtime.SoldierCount, $"{label} should expose the expected readable soldier count under one gameplay entity.");
-        Assert.NotNull(runtime.SoldierRenderers, $"{label} should expose soldier renderers.");
-        Assert.AreEqual(expectedSoldierCount, runtime.SoldierRenderers.Length, $"{label} should render the squad as distinct soldier quad instances.");
-        for (int i = 0; i < runtime.SoldierRenderers.Length; i++)
+        Assert.NotNull(runtime.SoldierEntities, $"{label} should expose soldier ECS render entities.");
+        Assert.AreEqual(expectedSoldierCount, runtime.SoldierEntities.Length, $"{label} should render the squad as distinct soldier ECS visual entities.");
+        Assert.NotNull(runtime.SoldierRenderers, $"{label} should keep the compatibility renderer array allocated.");
+        Assert.AreEqual(0, runtime.SoldierRenderers.Length, $"{label} must not use MeshRenderer wrapper soldiers.");
+        for (int i = 0; i < runtime.SoldierEntities.Length; i++)
         {
-            Assert.NotNull(runtime.SoldierRenderers[i], $"{label} soldier {i + 1} renderer should exist.");
-            Assert.IsTrue(runtime.SoldierRenderers[i].enabled, $"{label} soldier {i + 1} renderer should be visible.");
+            Assert.IsTrue(em.Exists(runtime.SoldierEntities[i]), $"{label} soldier {i + 1} ECS render entity should exist.");
+            Assert.IsTrue(em.HasComponent<MaterialMeshInfo>(runtime.SoldierEntities[i]), $"{label} soldier {i + 1} should use Entities Graphics rendering.");
+            Assert.IsTrue(em.IsComponentEnabled<MaterialMeshInfo>(runtime.SoldierEntities[i]), $"{label} soldier {i + 1} should be visible through Entities Graphics.");
+            Assert.IsFalse(em.HasComponent<DisableRendering>(runtime.SoldierEntities[i]), $"{label} soldier {i + 1} should not be suppressed as a legacy ECS mesh.");
         }
         if (expectedSoldierCount == 4)
             AssertDistinctSoldierPositions(runtime, label);
@@ -686,11 +718,10 @@ public sealed class Chapter01M01PlayModeValidationTests
 
     private static void AssertContractScale(MissionRuntimeAtlasQuadRuntime runtime, string runtimeEntityId, string label)
     {
-        Assert.NotNull(runtime.Instance, $"{label} should have an ECS atlas root object.");
         if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
             runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
         {
-            Assert.That(runtime.Instance.transform.localScale.x, Is.InRange(0.195f, 0.205f), $"{label} should consume the rejected-art metric infantry scale target near 0.2.");
+            Assert.That(runtime.InstanceScale, Is.InRange(0.145f, 0.155f), $"{label} should consume the user-observed readable infantry scale target near 0.15.");
         }
     }
 
@@ -705,12 +736,12 @@ public sealed class Chapter01M01PlayModeValidationTests
 
     private static void AssertDistinctSoldierPositions(MissionRuntimeAtlasQuadRuntime runtime, string label)
     {
-        for (int i = 0; i < runtime.SoldierRenderers.Length; i++)
+        for (int i = 0; i < runtime.SoldierEntities.Length; i++)
         {
-            for (int j = i + 1; j < runtime.SoldierRenderers.Length; j++)
+            for (int j = i + 1; j < runtime.SoldierEntities.Length; j++)
             {
-                Vector3 a = runtime.SoldierRenderers[i].transform.position;
-                Vector3 b = runtime.SoldierRenderers[j].transform.position;
+                Vector3 a = GetEntityWorldPosition(runtime, i);
+                Vector3 b = GetEntityWorldPosition(runtime, j);
                 Assert.Greater(Vector3.Distance(a, b), 0.10f, $"{label} soldiers {i + 1} and {j + 1} should have readable world-space formation spacing at public gameplay scale.");
             }
         }
@@ -721,21 +752,55 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.IsTrue(em.HasComponent<SelectedUnitTag>(entity), $"{label} should be selected.");
         Assert.IsTrue(em.HasComponent<MissionRuntimeAtlasQuadRuntime>(entity), $"{label} should have atlas quad runtime presentation.");
         MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
-        Assert.NotNull(runtime.SelectionRenderers, $"{label} should have grounded per-soldier selection marker renderers.");
-        Assert.AreEqual(runtime.SoldierCount, runtime.SelectionRenderers.Length, $"{label} selection marker count should match soldier count.");
-        for (int i = 0; i < runtime.SelectionRenderers.Length; i++)
+        Assert.NotNull(runtime.SelectionEntities, $"{label} should have grounded per-soldier selection marker ECS render entities.");
+        Assert.AreEqual(runtime.SoldierCount, runtime.SelectionEntities.Length, $"{label} selection marker count should match soldier count.");
+        Assert.NotNull(runtime.SelectionRenderers, $"{label} should keep the compatibility marker renderer array allocated.");
+        Assert.AreEqual(0, runtime.SelectionRenderers.Length, $"{label} must not use MeshRenderer wrapper selection markers.");
+        for (int i = 0; i < runtime.SelectionEntities.Length; i++)
         {
-            MeshRenderer marker = runtime.SelectionRenderers[i];
-            Assert.NotNull(marker, $"{label} selection marker {i + 1} should exist.");
-            Assert.IsTrue(marker.enabled, $"{label} selection marker {i + 1} should be visible.");
-            Assert.LessOrEqual(marker.transform.localScale.x, 0.52f, $"{label} selection marker {i + 1} should stay small and grounded under a soldier.");
-            Assert.LessOrEqual(marker.transform.localScale.y, 0.16f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
-            Assert.Less(marker.transform.localPosition.y, -0.35f, $"{label} selection marker {i + 1} should sit at the soldier foot/ground area, not over the torso.");
-            Color markerColor = marker.sharedMaterial.color;
+            Entity marker = runtime.SelectionEntities[i];
+            Assert.IsTrue(em.Exists(marker), $"{label} selection marker {i + 1} should exist.");
+            Assert.IsTrue(em.HasComponent<MissionRuntimeSelectionMarkerVisualTag>(marker), $"{label} selection marker {i + 1} should be tagged as an ECS selection marker visual.");
+            Assert.IsTrue(em.HasComponent<MissionRuntimeEcsVisualTag>(marker), $"{label} selection marker {i + 1} should be tagged as a production ECS visual.");
+            Assert.IsTrue(em.IsComponentEnabled<MaterialMeshInfo>(marker), $"{label} selection marker {i + 1} should be visible.");
+            Assert.IsFalse(em.HasComponent<DisableRendering>(marker), $"{label} selection marker {i + 1} should not be suppressed as a legacy ECS mesh.");
+            Assert.LessOrEqual(runtime.SelectionLocalScales[i].x, 0.32f, $"{label} selection marker {i + 1} should stay small and grounded under a soldier.");
+            Assert.LessOrEqual(runtime.SelectionLocalScales[i].y, 0.10f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
+            Assert.Less(runtime.SelectionLocalPositions[i].y, -0.35f, $"{label} selection marker {i + 1} should sit at the soldier foot/ground area, not over the torso.");
+            Assert.NotNull(runtime.SelectionMaterials[i].mainTexture, $"{label} selection marker {i + 1} should use the Art/Atlas marker texture, not a material-only square.");
+            StringAssert.Contains("selection_ring", runtime.SelectionMaterials[i].mainTexture.name, $"{label} selection marker {i + 1} should use the small selection_ring marker asset.");
+            Color markerColor = runtime.SelectionMaterials[i].color;
             Assert.Greater(markerColor.r, 0.90f, $"{label} selection marker {i + 1} should use warm grounded selection color.");
             Assert.Greater(markerColor.g, 0.60f, $"{label} selection marker {i + 1} should stay warm/amber instead of blue.");
             Assert.Less(markerColor.b, 0.35f, $"{label} selection marker {i + 1} should not read as the rejected blue/green UI effect.");
         }
+    }
+
+    private static void AssertSelectedTargetMarkerVisible(EntityManager em, Entity entity, string label, string expectedTextureName, string expectedKind)
+    {
+        Assert.IsTrue(em.HasComponent<SelectedUnitTag>(entity), $"{label} should only be visible for the selected command unit.");
+        MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
+        Assert.IsTrue(runtime.TargetMarkerVisible, $"{label} should be visible after a selected move/attack command.");
+        Assert.IsTrue(em.Exists(runtime.TargetMarkerEntity), $"{label} ECS visual entity should exist.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeTargetMarkerVisualTag>(runtime.TargetMarkerEntity), $"{label} should be tagged as an ECS command target marker.");
+        Assert.IsTrue(em.HasComponent<MissionRuntimeEcsVisualTag>(runtime.TargetMarkerEntity), $"{label} should be tagged as a production ECS visual.");
+        Assert.IsTrue(em.HasComponent<MaterialMeshInfo>(runtime.TargetMarkerEntity), $"{label} should use Entities Graphics rendering.");
+        Assert.IsTrue(em.IsComponentEnabled<MaterialMeshInfo>(runtime.TargetMarkerEntity), $"{label} should be render-enabled.");
+        Assert.IsFalse(em.HasComponent<DisableRendering>(runtime.TargetMarkerEntity), $"{label} should not be suppressed as a legacy ECS mesh.");
+        Assert.AreEqual(expectedKind, runtime.TargetMarkerKind, $"{label} should expose the command marker type for validation.");
+        Assert.NotNull(runtime.TargetMarkerMaterial, $"{label} should keep marker material evidence.");
+        Assert.NotNull(runtime.TargetMarkerMaterial.mainTexture, $"{label} should use the Art/Atlas marker texture.");
+        StringAssert.Contains(expectedTextureName, runtime.TargetMarkerMaterial.mainTexture.name, $"{label} should use the small contracted marker art.");
+        Assert.LessOrEqual(runtime.TargetMarkerWorldScale.x, 0.32f, $"{label} should stay about two soldier footsteps wide.");
+        Assert.LessOrEqual(runtime.TargetMarkerWorldScale.y, 0.12f, $"{label} should not cover the selected unit or screen.");
+        Assert.Greater(runtime.TargetMarkerWorldPosition.y, 0f, $"{label} should sit slightly above the ground plane to avoid z-fighting.");
+    }
+
+    private static Vector3 GetEntityWorldPosition(MissionRuntimeAtlasQuadRuntime runtime, int soldierIndex)
+    {
+        Matrix4x4 root = Matrix4x4.TRS(runtime.InstancePosition, runtime.InstanceRotation, Vector3.one * runtime.InstanceScale);
+        Matrix4x4 local = Matrix4x4.TRS(runtime.SoldierLocalPositions[soldierIndex], Quaternion.identity, Vector3.one);
+        return (root * local).GetColumn(3);
     }
 
     private static void AssertTacticalAttackTraceScale(EntityManager em, Entity entity, string label)
@@ -808,7 +873,31 @@ public sealed class Chapter01M01PlayModeValidationTests
         return capturePath;
     }
 
+    private static string CaptureM01V2RuntimeProofView(M01SceneContext context, GameObject appCanvas, string captureName, Entity focusEntity)
+    {
+        if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
+        {
+            TestContext.WriteLine($"[M01V2RuntimeCapture] skipped={captureName} reason=graphics-device-null");
+            return string.Empty;
+        }
+
+        string captureDirectory = Path.Combine(GetMainProjectRoot(), "Design/AgentReports/Captures/2026-05-09_m01-v2-runtime");
+        Directory.CreateDirectory(captureDirectory);
+        string capturePath = Path.Combine(captureDirectory, $"{captureName}.png");
+        string wideCapturePath = Path.Combine(captureDirectory, $"{captureName}-20x9.png");
+        CaptureM01ViewAtResolution(context, appCanvas, capturePath, 1280, 720, focusEntity);
+        CaptureM01ViewAtResolution(context, appCanvas, wideCapturePath, 1600, 720, focusEntity);
+        TestContext.WriteLine($"[M01V2RuntimeCapture] path={capturePath}");
+        TestContext.WriteLine($"[M01V2RuntimeCapture] path={wideCapturePath}");
+        return capturePath;
+    }
+
     private static void CapturePlayerViewAtResolution(M01SceneContext context, GameObject appCanvas, string capturePath, int width, int height)
+    {
+        CaptureM01ViewAtResolution(context, appCanvas, capturePath, width, height, Entity.Null);
+    }
+
+    private static void CaptureM01ViewAtResolution(M01SceneContext context, GameObject appCanvas, string capturePath, int width, int height, Entity focusEntity)
     {
         if (File.Exists(capturePath))
             File.Delete(capturePath);
@@ -830,6 +919,15 @@ public sealed class Chapter01M01PlayModeValidationTests
             camera.targetTexture = renderTexture;
             camera.aspect = width / (float)height;
             context.Bootstrap.ApplyM01ProductionCameraPoseForCurrentAspect();
+            if (focusEntity != Entity.Null &&
+                context.World.EntityManager.Exists(focusEntity) &&
+                context.World.EntityManager.HasComponent<LocalTransform>(focusEntity))
+            {
+                LocalTransform focus = context.World.EntityManager.GetComponentData<LocalTransform>(focusEntity);
+                Vector3 cameraPosition = camera.transform.position;
+                Vector3 clampedFocus = ClampCameraCenterToMap(context.Loader.Definition, new Vector3(focus.Position.x, 0f, focus.Position.z), camera, width / (float)height);
+                camera.transform.position = new Vector3(clampedFocus.x, cameraPosition.y, clampedFocus.z);
+            }
             appRootCanvas.renderMode = RenderMode.ScreenSpaceCamera;
             appRootCanvas.worldCamera = camera;
             appRootCanvas.planeDistance = 1f;
@@ -857,6 +955,25 @@ public sealed class Chapter01M01PlayModeValidationTests
 
         Assert.IsTrue(File.Exists(capturePath), $"Expected public launch capture at {capturePath}.");
         Assert.Greater(new FileInfo(capturePath).Length, 1024, $"Expected non-empty public launch capture at {capturePath}.");
+    }
+
+    private static Vector3 ClampCameraCenterToMap(TacticalMapDefinition definition, Vector3 cameraCenter, Camera camera, float aspect)
+    {
+        if (definition == null || camera == null || !camera.orthographic)
+            return cameraCenter;
+
+        float halfHeight = camera.orthographicSize;
+        float halfWidth = halfHeight * aspect;
+        float xMin = definition.WorldOrigin.x + halfWidth;
+        float xMax = definition.WorldOrigin.x + definition.VisibleWorldSize.x - halfWidth;
+        float zMin = definition.WorldOrigin.y + halfHeight;
+        float zMax = definition.WorldOrigin.y + definition.VisibleWorldSize.y - halfHeight;
+        float mapCenterX = definition.WorldOrigin.x + definition.VisibleWorldSize.x * 0.5f;
+        float mapCenterZ = definition.WorldOrigin.y + definition.VisibleWorldSize.y * 0.5f;
+
+        cameraCenter.x = xMin <= xMax ? Mathf.Clamp(cameraCenter.x, xMin, xMax) : mapCenterX;
+        cameraCenter.z = zMin <= zMax ? Mathf.Clamp(cameraCenter.z, zMin, zMax) : mapCenterZ;
+        return cameraCenter;
     }
 
     private static string GetMainProjectRoot()

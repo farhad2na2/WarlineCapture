@@ -19,6 +19,15 @@ PM escalation, 2026-05-09 12:25 Europe/Berlin:
   - blocker handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-blocker.md`.
 - If Unity or asset import is still running, write a blocker/progress report with the running command/log path and current state.
 
+PM review, 2026-05-09 14:04 Europe/Berlin:
+
+- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-runtime-integration.md` is accepted only as partial soldier runtime proof.
+- It does not satisfy the current task because it explicitly says production tactical maps, building atlases, and marker assets are not integrated.
+- Do not ask PM/user to review the soldier-only proof as the full milestone.
+- Continue the same P0 task until the full M01 AI production art pack is integrated.
+- Still expected: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`.
+- If the full pack cannot be integrated, write `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-blocker.md` with the exact blocker.
+
 PM accepts the v2 soldier import-readiness cleanup for runtime integration. This is not final visual approval; final approval requires runtime capture/video.
 
 User clarification: integrate all new M01 AI production art assets, not only the v2 soldiers.

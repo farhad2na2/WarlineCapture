@@ -76,15 +76,46 @@ public sealed class MissionRuntimeAtlasQuadRuntime : IComponentData
     public MeshRenderer Renderer;
     public MeshFilter MeshFilter;
     public Material Material;
+    public Entity[] SoldierEntities;
     public MeshRenderer[] SoldierRenderers;
     public Material[] SoldierMaterials;
     public MeshRenderer SelectionRenderer;
     public Material SelectionMaterial;
+    public Entity[] SelectionEntities;
     public MeshRenderer[] SelectionRenderers;
     public Material[] SelectionMaterials;
+    public Entity TargetMarkerEntity;
+    public Material TargetMarkerMaterial;
+    public Vector3[] SoldierLocalPositions;
+    public Vector3[] SelectionLocalPositions;
+    public Vector3[] SelectionLocalScales;
+    public Vector3 TargetMarkerWorldPosition;
+    public Vector3 TargetMarkerWorldScale;
+    public bool[] SoldierVisible;
+    public bool[] SelectionVisible;
+    public bool TargetMarkerVisible;
+    public string TargetMarkerKind;
     public string CurrentSpriteId;
+    public string CurrentFacingId;
+    public string CurrentAnimationFrameKey;
     public int SoldierCount;
     public float AnimationPhase;
+    public float AnimationElapsed;
+    public Vector3 InstancePosition;
+    public Quaternion InstanceRotation;
+    public float InstanceScale;
+}
+
+public struct MissionRuntimeEcsVisualTag : IComponentData
+{
+}
+
+public struct MissionRuntimeSelectionMarkerVisualTag : IComponentData
+{
+}
+
+public struct MissionRuntimeTargetMarkerVisualTag : IComponentData
+{
 }
 
 public sealed class MissionRuntimeTerrainSurfaceRendererRuntime : IComponentData

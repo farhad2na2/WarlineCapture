@@ -38,11 +38,11 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
 
         Assert.IsTrue(MissionRuntimeAtlasQuadPresentationSystem.TryResolveSprite(presenter, out UnityEngine.Sprite sprite));
         Assert.NotNull(sprite);
-        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Run_SE", sprite.name);
-        Assert.AreEqual(960, sprite.texture.width);
-        Assert.AreEqual(1680, sprite.texture.height);
-        Assert.That(sprite.textureRect.width, Is.InRange(100f, 240f));
-        Assert.That(sprite.textureRect.height, Is.InRange(100f, 210f));
+        StringAssert.Contains("player_rifle_squad_animation_atlas_v2_run_SE", sprite.name);
+        Assert.AreEqual(4096, sprite.texture.width);
+        Assert.AreEqual(1792, sprite.texture.height);
+        Assert.AreEqual(256, sprite.textureRect.width);
+        Assert.AreEqual(256, sprite.textureRect.height);
     }
 
     [Test]
@@ -66,14 +66,17 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
     }
 
     [Test]
-    public void Renderer_DocumentsDestroyedVfxAssetBlockerWithoutDestroyedChild()
+    public void Renderer_UsesV2DeathAtlasSpriteWithoutDestroyedChild()
     {
         Assert.IsTrue(Chapter01M01SpritePresenterCatalog.TryCreatePresenter(Chapter01M01PlayableRuntime.PlayerSquadEntityId, out MissionRuntimeSpritePresenter presenter));
         Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild);
-        Assert.AreEqual(Chapter01M01SpritePresenterCatalog.DestroyedSmallVfxSpriteId, presenter.DestroyedSpriteId.ToString());
-        Assert.IsFalse(
-            Chapter01M01SpriteAssetResolver.TryGetSprite(Chapter01M01SpritePresenterCatalog.DestroyedSmallVfxSpriteId, out _),
-            "The final destroyed VFX sprite is still planned; this test records the visual blocker without falling back to a Destroyed child.");
+        Assert.AreEqual(
+            Chapter01M01PlayableRuntime.PlayerSquadEntityId + Chapter01M01SpritePresenterCatalog.DeathStateSuffix,
+            presenter.DestroyedSpriteId.ToString());
+        Assert.IsTrue(
+            Chapter01M01SpriteAssetResolver.TryGetSprite(presenter.DestroyedSpriteId.ToString(), out UnityEngine.Sprite sprite),
+            "The v2 soldier atlas must provide the death sequence frame instead of falling back to the planned VFX blocker.");
+        StringAssert.Contains("player_rifle_squad_animation_atlas_v2_death_SE", sprite.name);
     }
 
     private static void AssertRendererResolves(string runtimeEntityId)
@@ -84,8 +87,10 @@ public sealed class Chapter01M01AtlasQuadPresentationTests
         if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
             runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
         {
-            StringAssert.Contains("Unit_Chr_Soldier_Male_02", sprite.name);
+            StringAssert.Contains("_animation_atlas_v2_", sprite.name);
+            Assert.IsFalse(sprite.name.Contains("Unit_Chr_Soldier_Male_02"), $"{runtimeEntityId} must not resolve to the old individual soldier sheet.");
             Assert.IsFalse(sprite.name.Contains("infantry_squad"), $"{runtimeEntityId} must not resolve to the rejected mini-squad source.");
+            Assert.AreEqual(1, presenter.FinalAtlasArtReady);
         }
         Assert.AreEqual(1, presenter.RequiresFixedDirectionBakedContactShadow);
         Assert.AreEqual(0, presenter.UsesSeparateDestroyedChild);

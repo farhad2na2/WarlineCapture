@@ -2,7 +2,7 @@
 
 Date: 2026-05-09
 Status: waiting
-Priority: wait for Art/Atlas AI production asset pack before runtime visual implementation
+Priority: waiting on Art/Atlas corrected soldier animation atlas
 
 ## Assignment
 
@@ -27,15 +27,22 @@ The Gameplay VisualLock board package is rejected as insufficient for implementa
 
 PM/user review status:
 
-- The current Art/Atlas handoff is partially accepted. The regenerated strategic map is approved.
-- Gameplay is still blocked because the soldier sprites are static state poses, not frame-by-frame animations.
-- Wait for `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` before implementing runtime soldier animation from the new art.
+- Art/Atlas handoff is not accepted for Gameplay yet.
+- The regenerated strategic map is approved.
+- The animated soldier sprites from `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` are rejected.
+- Blocking issue: the run sequence appears to repeat the same pose, and the user says this may be true for all sequences.
+- Gameplay must not integrate the rejected soldier animation atlas.
 
 Do not implement runtime visuals from review boards. Wait for runtime PNGs under:
 
 - `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`
 
 These must include the strategic map, tactical map plates, marker PNGs, player/enemy soldier atlases, building atlases, and manifests.
+
+Use these Art/Atlas reports only after PM/user acceptance:
+
+- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
@@ -47,7 +54,7 @@ Art/Atlas
 Owner of next action:
 Art/Atlas
 
-Can Gameplay continue fallback work? no. Wait for the AI production asset pack.
+Can Gameplay continue fallback work? no. Wait for PM/user acceptance of the corrected soldier animation atlas before runtime integration.
 
 ## Required Validation
 

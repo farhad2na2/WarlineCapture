@@ -8,7 +8,7 @@ Do not create more deterministic review boards, simple vector markers, placehold
 
 Expected report:
 
-`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md`
+`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
 
 Use the existing production workflows:
 
@@ -34,13 +34,18 @@ Do not make smaller soldiers, smaller buildings, different building designs, or 
 Current PM/user decision:
 
 - Strategic map: approved. Do not keep changing the strategic map.
-- Soldier animation: rejected. Current soldier files are static state poses, not real frame-by-frame animation.
+- Soldier animation: rejected. The user stopped the prior approval after closer review.
+- The current `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` handoff is not accepted.
+- Blocking issue: the run sequence poses appear to be the same repeated pose, and this may be true for all sequences.
+- Next owner: Art/Atlas must produce a corrected v2 soldier animation atlas and report.
 
-Fix the soldier animation atlases:
+The corrected animation atlas requirements:
 
 - keep player rifle squad and enemy patrol as separate sheets/manifests,
 - keep the approved soldier style, scale, rotation, and lighting,
 - provide real multi-frame animation for every required facing,
+- each sequence must show visible pose progression frame by frame; repeated or near-identical poses are rejected,
+- include review evidence/contact sheets or per-sequence previews that make the frame-to-frame motion readable,
 - reject any one-image-per-state/facing output.
 
 Minimum frames per facing:
@@ -68,4 +73,4 @@ Atlas rules: do not combine player and enemy factions in one atlas. Every unit a
 
 Strategic/base-layout review rule: include an annotated overlay/contact sheet that labels refinery/fuel zone, tents/camp zone, vehicle motor-pool zone, command/support zone, staging/training zone, perimeter/defense lanes, roads, and city-block continuity. If these zones are not obvious and large enough before separate assets are placed, or if the image reads as a closed compound instead of the same city-like map direction, the strategic map is rejected.
 
-Include short user review steps. Do not commit or push.
+Do not commit or push.

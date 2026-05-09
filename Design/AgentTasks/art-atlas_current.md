@@ -2,7 +2,7 @@
 
 Date: 2026-05-09
 Status: active
-Priority: P0 create AI-generated ready-to-implement M01 production asset pack
+Priority: P0 fix rejected soldier animation atlas; repeated-pose sequences are not accepted
 
 ## Assignment
 
@@ -34,9 +34,13 @@ Primary production target:
 
 Latest user correction:
 
-- User approved the regenerated strategic map. Do not keep reworking the strategic map unless PM/user gives new notes.
-- Current blocker is soldier animation: the produced soldier sprites are static state poses, not animated frame-by-frame sprites.
-- A valid soldier atlas must have smooth multi-frame animation for each required state and facing, not one still image per state/facing.
+- User stopped the prior approval. The animated soldier sprites from `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` are not approved.
+- User inspected closer and saw the run sequence poses are all the same; this may also be true for other sequences.
+- Art/Atlas must prove the output is real frame-by-frame animation, not one pose duplicated across a labeled sequence.
+- Art/Atlas handoff is accepted only for the regenerated strategic map. Do not keep reworking the strategic map unless PM/user gives new notes.
+- Gameplay is blocked from runtime integration of the current soldier animation atlas.
+- A valid soldier atlas must have smooth multi-frame animation for each required state and facing, not one still image or near-identical still pose repeated per state/facing.
+- For each state/facing sequence, adjacent frames must show visible pose progression appropriate to the state: idle breathing/weight shift, run footfall/body travel cycle, aim raise/settle, fire recoil/muzzle/settle, damaged reaction, and death fall/settle.
 - Do not generate a Tehran map. The user stopped that direction.
 - The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
 - Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
@@ -234,17 +238,21 @@ Include manifests with:
 ## Waiting On
 
 Waiting on lane:
-none
+Art/Atlas
+
+Expected report:
+
+`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
 
 Owner of next action:
 Art/Atlas
 
-Can my lane still continue fallback work? no. Fix the animated soldier atlases first.
+Can my lane still continue fallback work? no. Fix the rejected soldier animation atlas first.
 
 ## Completion Report
 
 Write:
 
-`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md`
+`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
 
-Use the standard WarlineCapture handoff format. Include every changed runtime soldier frame/sheet path, review mirror path, manifest path, frame counts per state/facing, generation/source notes, and short user review steps. State clearly that the strategic map is approved and unchanged.
+Use the standard WarlineCapture handoff format. Include every changed runtime soldier frame/sheet path, review mirror path, manifest path, frame counts per state/facing, generation/source notes, and short user review steps. State clearly that the strategic map is approved and unchanged, and that the prior animation handoff was rejected because frames repeated the same pose.

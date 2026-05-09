@@ -2,11 +2,11 @@
 
 Date: 2026-05-09
 Status: waiting
-Priority: waiting on Art/Atlas AI production asset pack, then Gameplay runtime capture
+Priority: waiting on Art/Atlas corrected soldier animation atlas, then Gameplay runtime capture
 
 ## Assignment
 
-QA/HCI remains blocked until Art/Atlas delivers the AI-generated ready-to-implement production asset pack and Gameplay implements/reports a runtime visual match against it.
+QA/HCI remains blocked until Art/Atlas delivers a PM/user-accepted corrected soldier animation atlas and Gameplay implements/reports a runtime visual match against it.
 
 Approved reference:
 
@@ -18,9 +18,11 @@ Waiting first for Art/Atlas report:
 
 PM/user review status:
 
-- The current Art/Atlas handoff is partially accepted. The regenerated strategic map is approved.
-- The soldier animation atlas is rejected because it uses static one-frame state poses instead of smooth frame-by-frame animation.
-- QA/HCI must not treat soldier runtime animation as ready until Art/Atlas writes `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` and Gameplay then wires/captures it.
+- Art/Atlas handoff is not accepted for QA/HCI yet.
+- The regenerated strategic map is approved.
+- The animated soldier sprites from `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` are rejected.
+- Blocking issue: the run sequence appears to repeat the same pose, and the user says this may be true for all sequences.
+- QA/HCI should wait for Art/Atlas v2 acceptance, then Gameplay runtime integration/capture before validation.
 
 Then wait for Gameplay report:
 
@@ -31,11 +33,12 @@ Do not start another QA pass unless PM routes a concrete follow-up.
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas, then Gameplay
+Art/Atlas
 
 Waiting on exact report and decision:
 
 - `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Owner of next action:

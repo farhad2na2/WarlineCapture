@@ -11,6 +11,14 @@ PM heartbeat follow-up:
 - Do not switch to fallback work.
 - Do not commit or push.
 
+PM escalation, 2026-05-09 12:25 Europe/Berlin:
+
+- This lane is still silent after the previous PM nudge.
+- Next heartbeat must produce one of these:
+  - completion handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`, or
+  - blocker handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-blocker.md`.
+- If Unity or asset import is still running, write a blocker/progress report with the running command/log path and current state.
+
 PM accepts the v2 soldier import-readiness cleanup for runtime integration. This is not final visual approval; final approval requires runtime capture/video.
 
 User clarification: integrate all new M01 AI production art assets, not only the v2 soldiers.

@@ -34,6 +34,9 @@ Primary production target:
 
 Latest user correction:
 
+- User approved the regenerated strategic map. Do not keep reworking the strategic map unless PM/user gives new notes.
+- Current blocker is soldier animation: the produced soldier sprites are static state poses, not animated frame-by-frame sprites.
+- A valid soldier atlas must have smooth multi-frame animation for each required state and facing, not one still image per state/facing.
 - Do not generate a Tehran map. The user stopped that direction.
 - The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
 - Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
@@ -54,6 +57,14 @@ Latest user correction:
 - No soldier rotation/facing drift from the approved target. Output frames must use consistent isometric facings that line up with the target camera and grid axes.
 - Do not combine player and enemy/faction variants into one mixed atlas. Player rifle squad and enemy patrol must be separate sheets/manifests.
 - Each unit atlas must contain complete animation frames for every required facing/direction for idle, run, aim, shoot/fire, hit/damaged, and die/death.
+- Each animation state must contain a frame sequence:
+  - idle: minimum 4 frames per facing, loopable,
+  - run: minimum 8 frames per facing, loopable with readable footfall cycle,
+  - aim: minimum 3 frames per facing,
+  - shoot/fire: minimum 4 frames per facing with recoil/muzzle/settle timing,
+  - hit/damaged: minimum 3 frames per facing,
+  - die/death: minimum 6 frames per facing, non-looping.
+- The manifest must include frame order, frame count, facing id, state id, suggested fps, loop/non-loop flag, and atlas rects or individual frame paths.
 - Need ready-to-use implementation assets, not reference boards.
 - Assets must be AI-generated high quality, not deterministic placeholder/vector/diagram output.
 
@@ -119,6 +130,7 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 
 ### Strategic Map
 
+- Status: PM/user approved after latest review. No further strategic-map work unless PM/user reopens it.
 - Big zoomed-out strategic/base-layout background map in the approved isometric gameplay style.
 - Do not use Tehran as the subject, layout, or replacement target.
 - Preserve the previous strategic/city-like map direction while covering a larger area.
@@ -179,6 +191,19 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
   - damaged
   - death / destroyed
 - Required facing coverage: every state above must exist for every required gameplay-facing direction. If runtime currently uses four facings, all four facings are required; if the implementation contract requires eight facings, all eight are required. Do not hand off a partial single-angle or mismatched-rotation atlas.
+- Required animation coverage: every state/facing pair must contain a sequence of multiple frames. A single image for `run_ne`, `idle_ne`, `fire_ne`, etc. is rejected even if the pose label is correct.
+- Required minimum frames per facing:
+  - idle: 4,
+  - run: 8,
+  - aim: 3,
+  - fire/shoot: 4,
+  - damaged/hit: 3,
+  - death/die: 6.
+- Required deliverables:
+  - individual transparent PNG frames or a sprite sheet with clear grid/rect metadata,
+  - separate player and enemy sheets,
+  - separate source notes proving AI-generated or AI-assisted high quality,
+  - animation manifest with state, facing, frame order, fps, loop flag, and runtime asset paths.
 - Must be actual sprite frames, not a screenshot board.
 - Must support ECS atlas-backed runtime; no SpriteRenderer/MeshRenderer placeholder acceptance.
 
@@ -214,12 +239,12 @@ none
 Owner of next action:
 Art/Atlas
 
-Can my lane still continue fallback work? no. Produce the AI production asset pack first.
+Can my lane still continue fallback work? no. Fix the animated soldier atlases first.
 
 ## Completion Report
 
 Write:
 
-`Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md`
 
-Use the standard WarlineCapture handoff format. Include every runtime asset path, every review mirror path, manifest paths, generation/source notes, and short user review steps.
+Use the standard WarlineCapture handoff format. Include every changed runtime soldier frame/sheet path, review mirror path, manifest path, frame counts per state/facing, generation/source notes, and short user review steps. State clearly that the strategic map is approved and unchanged.

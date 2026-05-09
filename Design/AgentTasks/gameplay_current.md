@@ -27,7 +27,9 @@ The Gameplay VisualLock board package is rejected as insufficient for implementa
 
 PM/user review status:
 
-- The current Art/Atlas handoff is not accepted for Gameplay. The strategic/base-layout map was rejected because it switched from the previous city-like map direction to a closed walled compound. Wait for an updated Art/Atlas report or PM acceptance after the strategic map is regenerated.
+- The current Art/Atlas handoff is partially accepted. The regenerated strategic map is approved.
+- Gameplay is still blocked because the soldier sprites are static state poses, not frame-by-frame animations.
+- Wait for `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` before implementing runtime soldier animation from the new art.
 
 Do not implement runtime visuals from review boards. Wait for runtime PNGs under:
 

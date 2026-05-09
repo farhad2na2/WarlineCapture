@@ -35,6 +35,7 @@ Do not use:
 - smaller soldiers, smaller buildings, different building designs, or different soldier styles than the approved reference package,
 - player and enemy/faction variants combined in one unit atlas,
 - partial unit animation sets missing idle, run, aim, shoot/fire, hit/damaged, or die/death for any required facing direction,
+- static one-frame-per-state soldier sheets posing as animation,
 - soldier frames rotated or angled differently from `VL_M01_TacticalMap_Target.png`,
 - strategic/base-layout maps without an annotated overlay/contact sheet labeling refinery/fuel zone, tents/camp zone, vehicle motor-pool zone, command/support zone, staging/training zone, perimeter/defense lanes, roads, and city-block continuity,
 - strategic/base-layout maps that read as a closed walled compound, fortress, island base, or isolated military installation instead of the previous city-like map direction.

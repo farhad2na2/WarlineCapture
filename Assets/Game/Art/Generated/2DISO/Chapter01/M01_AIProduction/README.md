@@ -27,3 +27,5 @@ Do not create smaller soldiers, smaller buildings, different building designs, o
 Do not combine player and enemy factions in one unit atlas. Each unit atlas must include complete idle, run, aim, shoot/fire, hit/damaged, and die/death animation frames for every required facing direction.
 
 The strategic/base-layout map is rejected if it reads as a dense grid of small lots or as a closed walled compound. It must preserve the previous city-like strategic map direction and include a review overlay/contact sheet that labels the large placement zones before separate assets are placed.
+
+Latest PM/user status: the regenerated strategic map is approved. Soldier atlases remain rejected until they provide real frame-by-frame animation, not one static image per state/facing. Minimum per-facing frame counts are idle 4, run 8, aim 3, shoot/fire 4, hit/damaged 3, and die/death 6 with manifest frame order/fps/loop metadata.

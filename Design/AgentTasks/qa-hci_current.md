@@ -18,7 +18,9 @@ Waiting first for Art/Atlas report:
 
 PM/user review status:
 
-- The current Art/Atlas handoff is not accepted. The strategic/base-layout map was rejected because it changed the previous city-like strategic map into a closed walled compound. QA/HCI must not treat this asset pack as ready for runtime validation until PM accepts a regenerated strategic map.
+- The current Art/Atlas handoff is partially accepted. The regenerated strategic map is approved.
+- The soldier animation atlas is rejected because it uses static one-frame state poses instead of smooth frame-by-frame animation.
+- QA/HCI must not treat soldier runtime animation as ready until Art/Atlas writes `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` and Gameplay then wires/captures it.
 
 Then wait for Gameplay report:
 

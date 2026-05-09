@@ -8,7 +8,7 @@ Do not create more deterministic review boards, simple vector markers, placehold
 
 Expected report:
 
-`Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md`
 
 Use the existing production workflows:
 
@@ -31,7 +31,30 @@ Production source of truth: `Design/VisualLock/Gameplay/M01_ApprovedIsometricGam
 
 Do not make smaller soldiers, smaller buildings, different building designs, or different soldier styles. The production assets must be the approved visual family turned into usable assets, not a new interpretation.
 
-Create real production PNG assets:
+Current PM/user decision:
+
+- Strategic map: approved. Do not keep changing the strategic map.
+- Soldier animation: rejected. Current soldier files are static state poses, not real frame-by-frame animation.
+
+Fix the soldier animation atlases:
+
+- keep player rifle squad and enemy patrol as separate sheets/manifests,
+- keep the approved soldier style, scale, rotation, and lighting,
+- provide real multi-frame animation for every required facing,
+- reject any one-image-per-state/facing output.
+
+Minimum frames per facing:
+
+- idle: 4 loopable frames,
+- run: 8 loopable frames with readable footfall cycle,
+- aim: 3 frames,
+- shoot/fire: 4 frames with recoil/muzzle/settle timing,
+- hit/damaged: 3 frames,
+- die/death: 6 non-looping frames.
+
+Manifest must include state id, facing id, frame order, frame count, suggested fps, loop/non-loop flag, atlas rects or individual frame paths, and runtime/review paths.
+
+Previously required production PNG assets:
 
 - big zoomed-out strategic/base-layout background matching `VL_M01_TacticalMap_Target.png`; no Tehran, no closed walled compound/fortress/island base, no concept switch away from the previous city-like strategic map, no finished/destroyed buildings or shells baked into reserved zones, not a dense grid of small lots, and large enough for separate refinery/fuel module, soldier tents/camp, soldier vehicle motor pool, command/support pad, staging/training area, roads/service lanes, and defensive/perimeter space inside an open city/urban-road-grid context,
 - all M01 zoomed-in tactical map plates,
@@ -41,7 +64,7 @@ Create real production PNG assets:
 - all required building PNG atlas states,
 - manifests with asset ids, paths, import usage, scale anchors, contact-shadow rules, and prompt/source notes.
 
-Atlas rules: do not combine player and enemy factions in one atlas. Every unit atlas must include complete idle, run, aim, shoot/fire, hit/damaged, and die/death animation frames for every required facing direction. Reject partial direction sets or frames angled differently from the approved target.
+Atlas rules: do not combine player and enemy factions in one atlas. Every unit atlas must include complete multi-frame idle, run, aim, shoot/fire, hit/damaged, and die/death animations for every required facing direction. Reject partial direction sets, static one-frame state poses, or frames angled differently from the approved target.
 
 Strategic/base-layout review rule: include an annotated overlay/contact sheet that labels refinery/fuel zone, tents/camp zone, vehicle motor-pool zone, command/support zone, staging/training zone, perimeter/defense lanes, roads, and city-block continuity. If these zones are not obvious and large enough before separate assets are placed, or if the image reads as a closed compound instead of the same city-like map direction, the strategic map is rejected.
 

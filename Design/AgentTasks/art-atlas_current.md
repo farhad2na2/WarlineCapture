@@ -2,7 +2,7 @@
 
 Date: 2026-05-09
 Status: waiting
-Priority: waiting on Designer and Gameplay audits of v2 soldier animation package
+Priority: waiting on Gameplay v2 import-readiness cleanup
 
 ## Assignment
 
@@ -42,7 +42,9 @@ Latest user correction:
 - A valid soldier atlas must have smooth multi-frame animation for each required state and facing, not one still image or near-identical still pose repeated per state/facing.
 - For each state/facing sequence, adjacent frames must show visible pose progression appropriate to the state: idle breathing/weight shift, run footfall/body travel cycle, aim raise/settle, fire recoil/muzzle/settle, damaged reaction, and death fall/settle.
 - Art/Atlas has delivered `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`.
-- PM/user has not accepted v2 yet. Wait for Designer and Gameplay audit recommendations before making further changes.
+- Designer audit accepted v2 visually with minor notes in `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`.
+- Gameplay audit found runtime import blockers in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`.
+- PM/user has not accepted v2 for runtime yet. Gameplay owns import metadata/layout cleanup first. Art/Atlas should wait unless Gameplay routes a specific art repack or visual cleanup issue.
 - Do not generate a Tehran map. The user stopped that direction.
 - The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
 - Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
@@ -240,15 +242,14 @@ Include manifests with:
 ## Waiting On
 
 Waiting on lane:
-Designer, Gameplay
+Gameplay
 
 Expected report:
 
-- `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
-- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
 
 Owner of next action:
-Designer, Gameplay
+Gameplay
 
 Can my lane still continue fallback work? no. Wait for PM/user or audit feedback.
 

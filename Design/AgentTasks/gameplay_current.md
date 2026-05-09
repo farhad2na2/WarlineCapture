@@ -2,7 +2,7 @@
 
 Date: 2026-05-09
 Status: active
-Priority: P0 audit Art/Atlas v2 soldier atlas runtime suitability before acceptance
+Priority: P0 make v2 soldier atlas import-ready before runtime integration
 
 ## Assignment
 
@@ -32,7 +32,9 @@ PM/user review status:
 - The animated soldier sprites from `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix.md` are rejected.
 - Blocking issue: the run sequence appears to repeat the same pose, and the user says this may be true for all sequences.
 - Art/Atlas has delivered v2 in `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`.
-- Gameplay must not integrate v2 yet. First audit whether it is technically ready for runtime import.
+- Designer audit accepted v2 visually with minor notes in `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`.
+- Gameplay audit found v2 is not yet ready for direct runtime import in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`.
+- PM decision: v2 art is not accepted for runtime integration yet. Gameplay owns import-readiness cleanup before any ECS runtime integration.
 
 Do not implement runtime visuals from review boards. Wait for runtime PNGs under:
 
@@ -45,16 +47,16 @@ Use these Art/Atlas reports only after PM/user acceptance:
 - `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 - `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
 
-Do a focused Gameplay/runtime audit before acceptance. Check:
+Required cleanup before integration:
 
-- whether all sprite paths and manifest entries exist and are usable,
-- whether player and enemy atlases should remain separate or be split further by faction/state/facing for mobile memory, streaming, sprite rect stability, and ECS animator lookup,
-- whether the `4096x1792` atlases are acceptable for mobile or need POT/padding/layout changes,
-- whether all sprites appear at consistent scale across faction, facing, and state,
-- whether pivots, foot anchors, transparent padding, contact bounds, and frame rects are appropriate for ECS atlas animation,
-- whether atlas metadata is sufficient for runtime frame order, fps, loop flags, and state/facing lookup,
-- whether the package avoids SpriteRenderer/MeshRenderer assumptions and fits the ECS atlas-backed runtime direction,
-- exact recommendation before integration: accept, accept with import notes, needs Art fixes, needs manifest/layout fixes, or blocked.
+- Generate/source-control Unity `.meta` files for every v2 soldier runtime PNG and the v2 manifest files.
+- Define explicit Unity importer settings for mobile: sprite/texture usage, alpha handling, compression, max size, mipmaps, filter mode, wrap mode clamp, and Android/iOS overrides.
+- Add explicit per-frame or per-sequence pivot, foot anchor, contact bounds, and normalized sprite bounds metadata to `m01_soldier_animation_manifest_v2.json`.
+- Preserve existing state/facing/frame order/fps/loop data.
+- Keep player and enemy atlases separate for current M01 unless the cleanup proves a better split is required.
+- Decide and document atlas layout policy: keep `4096x1792` with safe importer settings, repack to a padded/POT layout, or split by state/faction if required for mobile.
+- Add gutter/extrusion or explicitly disable mipmap/bleeding risks; do not leave this implicit.
+- Do not integrate v2 into live ECS gameplay until PM/user accepts the cleanup result.
 
 Do not start M02, vehicles, broad combat changes, or unrelated polish unless PM assigns the next concrete Gameplay task.
 
@@ -80,6 +82,6 @@ Can Gameplay continue fallback work? no. Complete this audit only; do not integr
 
 Write:
 
-`Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
+`Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
 
-Use the standard WarlineCapture handoff format.
+Use the standard WarlineCapture handoff format. Include the changed `.meta`, manifest, and atlas-layout files; the final importer policy; and whether any issue must go back to Art/Atlas.

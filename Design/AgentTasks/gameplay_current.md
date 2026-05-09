@@ -25,6 +25,10 @@ The Gameplay VisualLock board package is rejected as insufficient for implementa
 
 - `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
+PM/user review status:
+
+- The current Art/Atlas handoff is not accepted for Gameplay. The strategic/base-layout map was rejected because it switched from the previous city-like map direction to a closed walled compound. Wait for an updated Art/Atlas report or PM acceptance after the strategic map is regenerated.
+
 Do not implement runtime visuals from review boards. Wait for runtime PNGs under:
 
 - `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`

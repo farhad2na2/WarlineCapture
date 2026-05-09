@@ -37,10 +37,14 @@ Latest user correction:
 - Do not generate a Tehran map. The user stopped that direction.
 - The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
 - Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
+- The strategic/background map must preserve the previous city-like strategic map language. The user asked to cover a bigger city-like area, not to switch to a closed walled compound/base.
+- Do not generate a fortress, enclosed compound, perimeter-walled base, island base, or isolated military installation as the strategic map.
+- Keep the open city/urban-road-grid feel from the prior strategic/city-like direction: public roads, city blocks, damaged urban fabric, open industrial lots, and reserved build/staging spaces integrated into the city map.
 - Zoom level, camera angle, map density, visual scale, marker footprint, soldier/building proportions, background treatment, and composition must follow the previously approved reference package. Do not invent a new zoom level or camera.
 - The close tactical zoom must match `VL_M01_TacticalMap_Target.png`.
 - The zoomed-out strategic/base-layout map must cover more area than the tactical target, contain no finished buildings baked into the map, and provide readable empty placement zones for later separate tents, vehicles, refinery/fuel module, command/support structures, roads, pads, and unit staging.
 - The produced `m01_isometric_strategic_background.png` direction is rejected if it is a dense small-block map. The user needs a much larger base-layout area, not many small lots.
+- The later produced `m01_isometric_strategic_background.png` direction is also rejected if it becomes a closed walled compound. Bigger area must be achieved by expanding the city-like map, not by switching concept.
 - The zoomed-out base-layout must include enough contiguous open area for a refinery/fuel module, soldier tents/camp, soldier vehicle motor-pool area, command/support pad, staging/training area, road/service lanes, and defensive/perimeter space.
 - Need all zoomed-in tactical maps.
 - Need high-quality marker PNGs.
@@ -117,9 +121,12 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 
 - Big zoomed-out strategic/base-layout background map in the approved isometric gameplay style.
 - Do not use Tehran as the subject, layout, or replacement target.
+- Preserve the previous strategic/city-like map direction while covering a larger area.
+- Do not switch to a closed walled compound, fortress, island base, or isolated military-base map.
+- Keep the map open and city-like: roads should continue through/around the scene, city blocks should remain part of the composition, and reserved spaces should feel like urban lots/industrial yards/staging areas inside the city fabric.
 - Cover more area than `VL_M01_TacticalMap_Target.png`.
-- Do not bake finished buildings, destroyed buildings, building shells, refinery art, tents, vehicles, or command buildings into this zoomed-out map.
-- Do not make a dense grid of small lots. The map must be a large operational base-layout foundation with broad, contiguous placement zones.
+- Do not bake finished buildings, destroyed buildings, building shells, refinery art, tents, vehicles, or command buildings into the reserved placement zones.
+- Do not make a dense grid of small lots, and do not replace the city-like map with one huge enclosed pad complex. The map must be a larger city-like operational area with broad, contiguous reserved zones.
 - Minimum layout requirement:
   - one large refinery/fuel-module zone that can visibly fit a separate refinery/fuel module asset plus service clearance,
   - one soldier tents/camp zone that can fit multiple separate tents,
@@ -131,7 +138,7 @@ The review mirror is only for user/PM review. Runtime-consumable PNGs and manife
 - The user should be able to point at the image and say where refinery, tents, vehicles, command/support, and staging will go before any separate assets are placed.
 - Use `VL_M01_TacticalMap_Target.png` for style, material quality, camera language, and lighting; use `VL_M01_StrategicMap_Target.png` only as overview mood/supporting reference.
 - Runtime path: `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Strategic/m01_isometric_strategic_background.png`
-- Include a review mirror and an annotated placement-zone overlay/contact sheet naming the refinery, tents/camp, vehicle motor pool, command/support, staging, perimeter/defense, and roads.
+- Include a review mirror and an annotated placement-zone overlay/contact sheet naming the refinery, tents/camp, vehicle motor pool, command/support, staging, perimeter/defense, roads, and the city-block continuity.
 
 ### Tactical Maps
 

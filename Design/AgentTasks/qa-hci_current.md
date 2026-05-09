@@ -16,6 +16,10 @@ Waiting first for Art/Atlas report:
 
 - `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
 
+PM/user review status:
+
+- The current Art/Atlas handoff is not accepted. The strategic/base-layout map was rejected because it changed the previous city-like strategic map into a closed walled compound. QA/HCI must not treat this asset pack as ready for runtime validation until PM accepts a regenerated strategic map.
+
 Then wait for Gameplay report:
 
 - `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`

@@ -3283,10 +3283,10 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         squadTrayFill.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoSquadTrayFillPath);
         squadTrayFill.type = Image.Type.Sliced;
         squadTrayFill.raycastTarget = false;
-        CreateSquadCard("Squad_Rifle", squadTray.transform, MatchHudIsoRifleSquadPath, "RIFLE SQUAD", "24", 10f, 6f, 176f, 218f, true);
-        CreateSquadCard("Squad_APC", squadTray.transform, MatchHudIsoApcPath, "APC", "4", 188f, 10f, 158f, 214f, false);
-        CreateSquadCard("Squad_Tank", squadTray.transform, MatchHudIsoTankPath, "TANK", "3", 348f, 10f, 156f, 214f, false);
-        CreateSquadCard("Squad_Helicopter", squadTray.transform, MatchHudDesignedUnavailableContentPath, "AIR SUPPORT", "-", 506f, 10f, 158f, 214f, false, "ISO ASSET PENDING", false);
+        GameObject rifleSquadCard = CreateSquadCard("Squad_Rifle", squadTray.transform, MatchHudIsoRifleSquadPath, "RIFLE SQUAD", "24", 10f, 6f, 176f, 218f, true);
+        GameObject apcCard = CreateSquadCard("Squad_APC", squadTray.transform, MatchHudIsoApcPath, "APC", "4", 188f, 10f, 158f, 214f, false);
+        GameObject tankCard = CreateSquadCard("Squad_Tank", squadTray.transform, MatchHudIsoTankPath, "TANK", "3", 348f, 10f, 156f, 214f, false);
+        GameObject airSupportCard = CreateSquadCard("Squad_Helicopter", squadTray.transform, MatchHudDesignedUnavailableContentPath, "AIR SUPPORT", "-", 506f, 10f, 158f, 214f, false, "ISO ASSET PENDING", false);
         Image squadTrayFrame = CreateImage("FrameChrome", squadTray.transform, Color.white);
         Stretch((RectTransform)squadTrayFrame.transform);
         squadTrayFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoSquadTrayPath);
@@ -3340,6 +3340,19 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedObject(commandWheelController, "openButton", specialButton);
         SetSerializedObject(commandWheelController, "closeButton", commandWheelCloseButton);
         SetSerializedObject(commandWheelController, "scrimButton", commandWheelScrimButton);
+
+        M01InfantryOnlyHudScopeController infantryOnlyHudScope = screen.AddComponent<M01InfantryOnlyHudScopeController>();
+        SetSerializedArray(
+            infantryOnlyHudScope,
+            "hiddenDuringM01",
+            apcCard,
+            tankCard,
+            airSupportCard,
+            specialButton.gameObject,
+            buildButton.gameObject,
+            buildDrawer,
+            commandWheel);
+        SetSerializedArray(infantryOnlyHudScope, "shownDuringM01", rifleSquadCard, commandBar);
 
         Button commandWheelStopButton = commandWheel.transform.Find("RadialCommandRoot/StopSegment").GetComponent<Button>();
         MatchOverlayCommandControlsController commandControlsController = screen.AddComponent<MatchOverlayCommandControlsController>();
@@ -7270,7 +7283,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         line.raycastTarget = false;
     }
 
-    private static void CreateSquadCard(
+    private static GameObject CreateSquadCard(
         string name,
         Transform parent,
         string portraitPath,
@@ -7359,6 +7372,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         healthFill.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudSquadHealthBarPath);
         healthFill.type = Image.Type.Simple;
         healthFill.raycastTarget = false;
+        return buttonObject;
     }
 
     private static Button CreateCommandButton(string name, Transform parent, string iconPath, string label, float x, float y, bool selected)

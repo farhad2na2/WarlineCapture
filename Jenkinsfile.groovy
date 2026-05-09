@@ -15,6 +15,7 @@ pipeline {
         PROJECT_PATH = "${CUSTOM_WORKSPACE}"
         UNITY_EXE = "${UNITY_EDITOR}"
         BUILD_LOG = "${CUSTOM_WORKSPACE}\\build.log"
+        CODEX_TASK_DIR = "\\\\192.168.2.175\\farhad\\Projects\\Jenkins_Builds\\WarlineCapture\\CodexTasks"
         MAC_PASSWORD = credentials('MAC_PASSWORD')
     }
 

@@ -323,6 +323,8 @@ class Relay:
             "-o",
             str(output_file),
         ]
+        if self.config.task_dir:
+            command.extend(["--add-dir", str(self.config.task_dir)])
         if self.config.codex_model:
             command.extend(["-m", self.config.codex_model])
         command.append(prompt)

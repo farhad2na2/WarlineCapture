@@ -1,8 +1,8 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-09
-Status: active
-Priority: P0 fix rejected soldier animation atlas; repeated-pose sequences are not accepted
+Status: waiting
+Priority: waiting on Designer and Gameplay audits of v2 soldier animation package
 
 ## Assignment
 
@@ -41,6 +41,8 @@ Latest user correction:
 - Gameplay is blocked from runtime integration of the current soldier animation atlas.
 - A valid soldier atlas must have smooth multi-frame animation for each required state and facing, not one still image or near-identical still pose repeated per state/facing.
 - For each state/facing sequence, adjacent frames must show visible pose progression appropriate to the state: idle breathing/weight shift, run footfall/body travel cycle, aim raise/settle, fire recoil/muzzle/settle, damaged reaction, and death fall/settle.
+- Art/Atlas has delivered `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`.
+- PM/user has not accepted v2 yet. Wait for Designer and Gameplay audit recommendations before making further changes.
 - Do not generate a Tehran map. The user stopped that direction.
 - The approved `M01_SelectedReadability_*` visual target is now the source style for the world/background/map direction.
 - Need a big zoomed-out strategic/background map in this approved isometric style, not a real Tehran replacement.
@@ -238,16 +240,17 @@ Include manifests with:
 ## Waiting On
 
 Waiting on lane:
-Art/Atlas
+Designer, Gameplay
 
 Expected report:
 
-`Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
+- `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
 
 Owner of next action:
-Art/Atlas
+Designer, Gameplay
 
-Can my lane still continue fallback work? no. Fix the rejected soldier animation atlas first.
+Can my lane still continue fallback work? no. Wait for PM/user or audit feedback.
 
 ## Completion Report
 

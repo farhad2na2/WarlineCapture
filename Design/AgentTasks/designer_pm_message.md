@@ -1,22 +1,20 @@
 # PM Message To Designer
 
-Date: 2026-05-08
-Priority: P0 rejection-informed M01 visual/scale/readability contract refresh
+Date: 2026-05-09
+Priority: P0 audit Art/Atlas v2 soldier animation package before acceptance
 
-The user rejected the selected-readability pass. Refresh the design contract so agents stop guessing and QA has concrete checks.
+The user sees the v2 soldiers as more premium, but has not accepted them for the game yet.
 
-Use the user's concrete anchors:
+Audit:
 
-- soldier about `1.8m`,
-- building door about `2.3m`,
-- roads and building footprints calibrate scale,
-- current soldier visual looked better near `0.15` than `0.2` because it became too large/squashed,
-- selected marker must be small and under each soldier/footprint,
-- target marker should be about two soldier footsteps wide,
-- idle and run animation must be visibly correct.
+- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
+- `Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_contact_v2.png`
+- `Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_animation_manifest_v2.md`
+
+Check whether the package has the right angles, states, animation quality, pose variation, scale, faction consistency, and VisualLock alignment for our AAA mobile isometric M01 target. Explicitly say whether four facings are acceptable now or whether eight facings are required before acceptance.
 
 Expected report:
 
-`Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
+`Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
 
-Do not commit or push.
+Return a recommendation: accept, accept with minor notes, needs Art fixes, or blocked. Do not commit or push.

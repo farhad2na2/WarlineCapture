@@ -2,11 +2,11 @@
 
 Date: 2026-05-09
 Status: waiting
-Priority: waiting on Gameplay v2 import-readiness cleanup, then PM/user acceptance and runtime capture
+Priority: waiting on Gameplay v2 soldier runtime integration proof
 
 ## Assignment
 
-QA/HCI remains blocked until Gameplay resolves the v2 import-readiness blockers, PM/user accepts the package, and Gameplay implements/reports a runtime visual match against it.
+QA/HCI remains blocked until Gameplay integrates v2 soldier animation into the runtime and reports capture/video proof for PM/user review.
 
 Approved reference:
 
@@ -25,7 +25,8 @@ PM/user review status:
 - Art/Atlas delivered v2 in `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`.
 - Designer audit accepted v2 visually with minor notes in `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`.
 - Gameplay audit blocked direct import pending `.meta`, import settings, manifest anchor/contact metadata, and atlas layout policy cleanup.
-- QA/HCI should wait for Gameplay import-readiness cleanup, then PM/user acceptance, then Gameplay runtime integration/capture before validation.
+- Gameplay completed import-readiness cleanup in `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`.
+- PM accepted the cleanup for runtime integration. QA/HCI should wait for Gameplay runtime integration/capture before validation.
 
 Then wait for Gameplay report:
 
@@ -45,6 +46,7 @@ Waiting on exact report and decision:
 - `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
+- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-runtime-integration.md`
 - `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-match.md`
 
 Owner of next action:

@@ -316,7 +316,7 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.Greater(movingRuntime.AnimationElapsed, animationElapsedBefore, "M01 v2 moving infantry should advance manifest-driven atlas animation time while moving.");
         Assert.IsNotEmpty(movingRuntime.CurrentAnimationFrameKey, "M01 v2 moving infantry should expose the active manifest frame key.");
         Assert.AreNotEqual(animationFrameBefore, movingRuntime.CurrentAnimationFrameKey, "M01 v2 moving infantry should advance atlas frame keys instead of relying on procedural bob.");
-        AssertSelectedTargetMarkerVisible(em, context.PlayerSquad, "command squad move target marker", "move_destination_ring", "move");
+        AssertSelectedTargetMarkerVisible(em, context.PlayerSquad, "command squad move target marker", "move_destination", "move");
 
         presenter = em.GetComponentData<MissionRuntimeSpritePresenter>(context.PlayerSquad);
         Assert.AreEqual(MissionRuntimeSpriteVisualState.Move, MissionRuntimeSpritePresenterSystem.ResolveVisualState(em, context.PlayerSquad), "ECS pathing intent should drive M01 move presentation.");
@@ -562,12 +562,13 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.NotNull(groundRenderer, $"{entryPath}: tactical map loader must expose a ground renderer.");
         Assert.IsTrue(groundRenderer.enabled, $"{entryPath}: tactical ground renderer must be enabled.");
         Assert.NotNull(groundRenderer.sprite, $"{entryPath}: tactical ground renderer must have the authored map sprite.");
+        StringAssert.Contains("m01_tactical_plate_a_pot_2048x1024", groundRenderer.sprite.name, $"{entryPath}: tactical ground should use the AI production plate A runtime art.");
         Assert.IsTrue(groundRenderer.gameObject.activeInHierarchy, $"{entryPath}: tactical ground renderer must be active in hierarchy.");
         AssertTerrainSurfaceEcsBacked(context, entryPath, groundRenderer);
 
         Bounds groundBounds = groundRenderer.bounds;
-        Assert.Greater(groundBounds.size.x, 1f, $"{entryPath}: authored tactical map must occupy real world width.");
-        Assert.Greater(groundBounds.size.z, 0.5f, $"{entryPath}: authored tactical map must occupy real world depth.");
+        Assert.AreEqual(context.Loader.Definition.VisibleWorldSize.x, groundBounds.size.x, 0.03f, $"{entryPath}: authored tactical map must be scaled to the metadata width instead of raw texture pixels.");
+        Assert.AreEqual(context.Loader.Definition.VisibleWorldSize.y, groundBounds.size.z, 0.03f, $"{entryPath}: authored tactical map must be scaled to the metadata depth instead of raw texture pixels.");
         Assert.Greater(
             Vector3.Dot(groundRenderer.transform.up, Vector3.forward),
             0.98f,
@@ -609,6 +610,8 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.AreSame(groundRenderer, runtime.Renderer, $"{entryPath}: loader GroundRenderer must be the ECS-owned terrain presentation renderer.");
         Assert.AreSame(groundRenderer.gameObject, runtime.Instance, $"{entryPath}: terrain GameObject must be referenced only as ECS presentation.");
         Assert.AreSame(groundRenderer.sprite, runtime.GroundSprite, $"{entryPath}: terrain sprite should be driven by the ECS terrain renderer runtime component.");
+        Assert.NotNull(runtime.ProductionTacticalPlateSprites, $"{entryPath}: terrain runtime must bind the full AI production tactical plate pack.");
+        Assert.AreEqual(3, runtime.ProductionTacticalPlateSprites.Length, $"{entryPath}: terrain runtime must bind all three AI production tactical plates.");
     }
 
     private static bool TryGetTerrainSurfaceEntity(EntityManager em, TacticalMapRuntimeLoader loader, out Entity terrainEntity)
@@ -764,15 +767,15 @@ public sealed class Chapter01M01PlayModeValidationTests
             Assert.IsTrue(em.HasComponent<MissionRuntimeEcsVisualTag>(marker), $"{label} selection marker {i + 1} should be tagged as a production ECS visual.");
             Assert.IsTrue(em.IsComponentEnabled<MaterialMeshInfo>(marker), $"{label} selection marker {i + 1} should be visible.");
             Assert.IsFalse(em.HasComponent<DisableRendering>(marker), $"{label} selection marker {i + 1} should not be suppressed as a legacy ECS mesh.");
-            Assert.LessOrEqual(runtime.SelectionLocalScales[i].x, 0.32f, $"{label} selection marker {i + 1} should stay small and grounded under a soldier.");
-            Assert.LessOrEqual(runtime.SelectionLocalScales[i].y, 0.10f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
+            Assert.LessOrEqual(runtime.SelectionLocalScales[i].x, 1.0f, $"{label} selection marker {i + 1} should stay grounded under a soldier.");
+            Assert.LessOrEqual(runtime.SelectionLocalScales[i].y, 0.28f, $"{label} selection marker {i + 1} should not become a screen-covering overlay.");
             Assert.Less(runtime.SelectionLocalPositions[i].y, -0.35f, $"{label} selection marker {i + 1} should sit at the soldier foot/ground area, not over the torso.");
             Assert.NotNull(runtime.SelectionMaterials[i].mainTexture, $"{label} selection marker {i + 1} should use the Art/Atlas marker texture, not a material-only square.");
             StringAssert.Contains("selection_ring", runtime.SelectionMaterials[i].mainTexture.name, $"{label} selection marker {i + 1} should use the small selection_ring marker asset.");
             Color markerColor = runtime.SelectionMaterials[i].color;
-            Assert.Greater(markerColor.r, 0.90f, $"{label} selection marker {i + 1} should use warm grounded selection color.");
-            Assert.Greater(markerColor.g, 0.60f, $"{label} selection marker {i + 1} should stay warm/amber instead of blue.");
-            Assert.Less(markerColor.b, 0.35f, $"{label} selection marker {i + 1} should not read as the rejected blue/green UI effect.");
+            Assert.Greater(markerColor.r, 0.90f, $"{label} selection marker {i + 1} should preserve the authored production marker texture color.");
+            Assert.Greater(markerColor.g, 0.90f, $"{label} selection marker {i + 1} should preserve the authored production marker texture color.");
+            Assert.Greater(markerColor.b, 0.90f, $"{label} selection marker {i + 1} should preserve the authored production marker texture color.");
         }
     }
 

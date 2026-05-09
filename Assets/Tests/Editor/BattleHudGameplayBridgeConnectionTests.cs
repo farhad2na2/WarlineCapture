@@ -94,6 +94,21 @@ public sealed class BattleHudGameplayBridgeConnectionTests
     }
 
     [Test]
+    public void GameplayBridge_DoesNotExposeStaticWorldMarkerPreviewDuringLiveOrders()
+    {
+        Transform markerLayer = _overlay.transform.Find("WorldCommandMarkerLayer");
+        Assert.NotNull(markerLayer);
+
+        BattleHudGameplayBridge bridge = _overlay.GetComponent<BattleHudGameplayBridge>();
+        Assert.NotNull(bridge);
+
+        bridge.SetWorldMarkersVisible(true);
+        Assert.IsFalse(
+            markerLayer.gameObject.activeSelf,
+            "Live gameplay must not surface fixed screen-space marker preview art over M01 units.");
+    }
+
+    [Test]
     public void SelectionSystem_HoldAndStopPublishCommandModesAndClearOrders()
     {
         EntityManager em = _world.EntityManager;

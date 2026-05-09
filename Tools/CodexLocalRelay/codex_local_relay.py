@@ -203,7 +203,7 @@ class Relay:
 
         queued_file = queued_files[0]
         try:
-            payload = json.loads(queued_file.read_text(encoding="utf-8"))
+            payload = json.loads(queued_file.read_text(encoding="utf-8-sig"))
             task = str(payload.get("task", "")).strip()
             if not task:
                 raise ValueError("queued task JSON is missing non-empty 'task'")

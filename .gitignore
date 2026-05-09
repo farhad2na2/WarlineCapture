@@ -39,6 +39,7 @@ sysinfo.txt
 
 # Local secrets
 .env.local
+.jenkins.local
 .local/
 
 # Addressables / generated caches

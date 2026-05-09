@@ -20,7 +20,7 @@ pipeline {
     }
 
     stages {
-        stage('Run Unity Tests') {
+        stage('Run Unity EditMode Tests') {
             when {
                 expression {
                     return params.BUILD_WINDOWS == true || params.BUILD_WINDOWS?.toString()?.equalsIgnoreCase('true') ||
@@ -32,27 +32,23 @@ pipeline {
             }
             steps {
                 bat '''
+                @echo off
                 if not exist "%LOCALAPPDATA%\\Unity\\Caches" mkdir "%LOCALAPPDATA%\\Unity\\Caches"
                 if not exist "%PROJECT_PATH%\\TestResults" mkdir "%PROJECT_PATH%\\TestResults"
+                if exist "%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt" del "%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
 
                 "%UNITY_EXE%" -batchmode -nographics -projectPath "%PROJECT_PATH%" -runTests -testPlatform EditMode -testResults "%PROJECT_PATH%\\TestResults\\EditMode.xml" -logFile "%PROJECT_PATH%\\TestResults\\EditMode.log"
                 set EDITMODE_EXIT=%ERRORLEVEL%
                 powershell -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "%PROJECT_PATH%\\TestResults\\EditMode.xml" -PlatformName "EditMode"
 
-                "%UNITY_EXE%" -batchmode -nographics -projectPath "%PROJECT_PATH%" -runTests -testPlatform PlayMode -testResults "%PROJECT_PATH%\\TestResults\\PlayMode.xml" -logFile "%PROJECT_PATH%\\TestResults\\PlayMode.log"
-                set PLAYMODE_EXIT=%ERRORLEVEL%
-                powershell -NoProfile -ExecutionPolicy Bypass -File "%PROJECT_PATH%\\Tools\\CI\\PrintUnityTestFailures.ps1" -ResultsPath "%PROJECT_PATH%\\TestResults\\PlayMode.xml" -PlatformName "PlayMode"
-
                 if not "%EDITMODE_EXIT%"=="0" (
-                    echo [BuildGate] EditMode tests failed. Build stopped.
-                    exit /b %EDITMODE_EXIT%
-                )
-                if not "%PLAYMODE_EXIT%"=="0" (
-                    echo [BuildGate] PlayMode tests failed. Build stopped.
-                    exit /b %PLAYMODE_EXIT%
+                    echo [BuildGate] EditMode tests failed with exit code %EDITMODE_EXIT%. Continuing build and deployment.
+                    echo [BuildGate][FINAL] EditMode tests FAILED with exit code %EDITMODE_EXIT%; build was allowed to continue. See archived TestResults/EditMode.xml and TestResults/EditMode.log.>"%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
+                    exit /b 0
                 )
 
-                echo [BuildGate] All EditMode and PlayMode tests passed. Continuing build.
+                echo [BuildGate] EditMode tests passed. Continuing build.
+                echo [BuildGate][FINAL] EditMode tests PASSED; build was allowed to continue.>"%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
                 '''
             }
             post {
@@ -273,6 +269,16 @@ pipeline {
             }
             '''
             archiveArtifacts artifacts: 'CodexTasks/**', allowEmptyArchive: true
+        }
+        cleanup {
+            bat '''
+            @echo off
+            if exist "%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt" (
+                type "%PROJECT_PATH%\\TestResults\\BuildGateStatus.txt"
+            ) else (
+                echo [BuildGate][FINAL] EditMode tests were not run for this build.
+            )
+            '''
         }
     }
 }

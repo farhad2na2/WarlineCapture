@@ -69,6 +69,8 @@ Do not duplicate the full `Design` inventory here. Visual-lock target notes, lay
 Current generated tracker: `Design/WarlineCapture_Project_State_Dashboard.md`.
 Source file: `Design/WarlineCapture_Project_State_Source.json`.
 
+![Progress Tracker](Design/Progress_Tracker.png)
+
 As of the latest PM review, the project remains estimated at **33% complete**. The generated dashboard was last built on `2026-05-07`; a newer PM forecast review on `2026-05-08` kept the same 33% estimate and the same low-confidence 100% planning forecast of `2027-03-31`, with a range of `2027-02-28` to `2027-05-31`.
 
 Current roadmap state:
@@ -110,6 +112,8 @@ Current production lock:
 - PM owns final acceptance and commit/push routing.
 
 ## UI/UX Roadmap Summary
+
+![Main Menu Visual Target](Design/VisualLock/MainMenu/MainMenu_Landscape_Visual_Target.png)
 
 The target UI is a mobile landscape app shell:
 

@@ -3,6 +3,7 @@ using System.Linq;
 using Game.Scripts.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
+using Unity.Scenes;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
@@ -11,6 +12,9 @@ public static class WarlineCaptureGameLegecySceneIsolationBuilder
 {
     private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
     private const string LegacyScenePath = "Assets/Game/Scenes/Game_Legecy.unity";
+    private const string ProductionSubScenePath = "Assets/Game/Scenes/Game/GameSubScene.unity";
+    private const string LegacySubSceneFolder = "Assets/Game/Scenes/Game_Legecy";
+    private const string LegacySubScenePath = "Assets/Game/Scenes/Game_Legecy/GameSubScene.unity";
     private const string ProductionDecorationRootName = "RuntimeDecorations_Production";
 
     private static readonly string[] LegacyRootNames =
@@ -58,6 +62,8 @@ public static class WarlineCaptureGameLegecySceneIsolationBuilder
         }
 
         Scene legacyScene = EditorSceneManager.OpenScene(LegacyScenePath, OpenSceneMode.Single);
+        EnsureLegacySubSceneAsset();
+        AssignSubSceneAsset(legacyScene, LegacySubScenePath);
         int removedLegacyProductionRoots = RemoveRoots(legacyScene, ProductionRootsRemovedFromLegacy);
         ConfigureLegacyBootstrap(legacyScene);
 
@@ -86,6 +92,7 @@ public static class WarlineCaptureGameLegecySceneIsolationBuilder
             RequireRoot(legacyScene, rootName);
         foreach (string rootName in ProductionRootsRemovedFromLegacy)
             RequireNoRoot(legacyScene, rootName);
+        ValidateSubSceneAssetReference(legacyScene, LegacySubScenePath);
 
         GameBootstrap legacyBootstrap = FindSceneComponent<GameBootstrap>(legacyScene);
         if (legacyBootstrap == null)
@@ -109,6 +116,7 @@ public static class WarlineCaptureGameLegecySceneIsolationBuilder
 
         RequireRoot(productionScene, "Bootstrap");
         RequireRoot(productionScene, "GameSubScene");
+        ValidateSubSceneAssetReference(productionScene, ProductionSubScenePath);
         RequireRoot(productionScene, "Main Camera");
         RequireRoot(productionScene, "WarlineCaptureUIBootstrap");
         RequireRoot(productionScene, "Chapter01_TacticalMissionRuntime");
@@ -129,6 +137,65 @@ public static class WarlineCaptureGameLegecySceneIsolationBuilder
             throw new InvalidOperationException("Cleaned Game.unity must keep the production Chapter 1 tactical binder.");
 
         Debug.Log($"WARLINECAPTURE_GAME_LEGECY_SCENE_ISOLATION_VALIDATED legacyScene={LegacyScenePath} productionScene={GameScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/Scenes/Validate Game SubScene Isolation")]
+    public static void ValidateSubSceneIsolation()
+    {
+        Scene productionScene = EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+        ValidateSubSceneAssetReference(productionScene, ProductionSubScenePath);
+
+        Scene legacyScene = EditorSceneManager.OpenScene(LegacyScenePath, OpenSceneMode.Single);
+        ValidateSubSceneAssetReference(legacyScene, LegacySubScenePath);
+
+        Debug.Log($"WARLINECAPTURE_GAME_SUBSCENE_ISOLATION_VALIDATED productionSubScene={ProductionSubScenePath} legacySubScene={LegacySubScenePath}");
+    }
+
+    private static void EnsureLegacySubSceneAsset()
+    {
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(LegacySubScenePath) != null)
+            return;
+
+        if (AssetDatabase.LoadAssetAtPath<SceneAsset>(ProductionSubScenePath) == null)
+            throw new InvalidOperationException($"Production SubScene asset is missing at {ProductionSubScenePath}.");
+
+        if (!AssetDatabase.IsValidFolder(LegacySubSceneFolder))
+        {
+            string guid = AssetDatabase.CreateFolder("Assets/Game/Scenes", "Game_Legecy");
+            if (string.IsNullOrEmpty(guid))
+                throw new InvalidOperationException($"Failed to create legacy SubScene folder at {LegacySubSceneFolder}.");
+        }
+
+        if (!AssetDatabase.CopyAsset(ProductionSubScenePath, LegacySubScenePath))
+            throw new InvalidOperationException($"Failed to create legacy SubScene asset at {LegacySubScenePath}.");
+
+        AssetDatabase.ImportAsset(LegacySubScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+    }
+
+    private static void AssignSubSceneAsset(Scene scene, string expectedSubScenePath)
+    {
+        SubScene subScene = RequireComponent<SubScene>(scene, "GameSubScene");
+        SceneAsset expectedAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(expectedSubScenePath);
+        if (expectedAsset == null)
+            throw new InvalidOperationException($"Expected SubScene asset is missing at {expectedSubScenePath}.");
+
+        if (subScene.SceneAsset == expectedAsset)
+            return;
+
+        subScene.SceneAsset = expectedAsset;
+        EditorUtility.SetDirty(subScene);
+    }
+
+    private static void ValidateSubSceneAssetReference(Scene scene, string expectedSubScenePath)
+    {
+        SubScene subScene = RequireComponent<SubScene>(scene, "GameSubScene");
+        string actualPath = subScene.SceneAsset != null ? AssetDatabase.GetAssetPath(subScene.SceneAsset) : string.Empty;
+        if (!string.Equals(actualPath, expectedSubScenePath, StringComparison.Ordinal))
+        {
+            throw new InvalidOperationException(
+                $"{scene.path} GameSubScene must reference '{expectedSubScenePath}' instead of '{actualPath}'. " +
+                "Unity.Entities does not support multiple active SubScene components referencing the same scene asset.");
+        }
     }
 
     private static int RemoveRoots(Scene scene, string[] rootNames)

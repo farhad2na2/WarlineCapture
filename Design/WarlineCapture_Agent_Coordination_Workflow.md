@@ -306,6 +306,18 @@ WarlineCapture tactical gameplay is ECS-first. Only Canvas UI is allowed to be n
 - Treat visual target drift, missing validation, missing reports, and cross-lane contract ambiguity as schedule risks, not minor cleanup.
 - Keep legacy systems isolated unless they directly advance current M01: random city/road generation, day/night, legacy 3D `Model` children, and separate `Destroyed` child objects must not re-enter production gameplay by accident.
 - Update progress estimates only from accepted reports, validated captures/tests, or explicit user approval.
+- Bounded agent context packs: anchor on the active lane task file under `Design/AgentTasks/` plus only the smallest file set needed for the change (target **≤ five** implementation paths unless the PM task explicitly widens scope). Prefer deep links (`path` + heading/section ids) into one contract/design doc instead of pasting large excerpts.
+- Local validation first before agent loops: run the lane’s compile/test/build checks locally when possible and paste **only failing excerpts/logs** plus the command used.
+- Canonical handoffs live in repo files: use `Design/AgentReports/` as durable context for the next session; avoid long repeated narrative summaries in chat when the report already captures `done` state.
+- Separate design edits from implementation: if the design source-of-truth needs to change, do that as an explicit task slice first, then code, to avoid expensive mixed-scope iterations.
+
+## Workflow Change Discipline (Avoid Rule Stacking)
+
+- Prefer **editing this coordination document** over adding new agent instruction files. If a new file is required, the PM assistant must name what problem it solves and which section here would be overloaded without it.
+- **Replace, do not stack**: when a new rule overlaps an old one, merge into the existing bullet or delete the obsolete bullet in the **same** change-set. Deprecated rules must be removed or marked `DEPRECATED:` with removal date—not left parallel “just in case.”
+- Keep net-new procedural bullets **small**: if an addition would exceed roughly **seven** bullets per new topic, split the topic only when two different owners/lanes genuinely need distinct rules; otherwise compress.
+- Periodic hygiene: whenever the PM assistant closes a major milestone slice (example: moving off M01 critical path), skim this document for rules that never triggered during the slice and propose deletes or merges.
+- Token/credit instrumentation is optional and lightweight: per-provider dashboards already give ground-truth spend. Do **not** require per-message token counting unless tooling exposes it reliably. Prefer **cheap proxy metrics** you can jot in weekly notes: lane, task id, approximate round trips to acceptance, oversize-context incidents (whole-tree scans), rework count ( reopened reports). Review proxies against weekly spend totals and adjust habits, not individual chat micro-optimizations.
 
 ## Commit And Push Policy
 

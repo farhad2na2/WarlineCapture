@@ -24,6 +24,7 @@ Read these documents before implementation:
 
 - `Design/WarlineCapture_Gameplay_Features_High_Level_Spec.md`
 - `Design/WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
 - `Design/WarlineCapture_Level_And_Mission_Content_Plan.md`
 - `Design/SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`
 - `Design/WarlineCapture_Tactical_Map_AI_Workflow.md`
@@ -58,6 +59,7 @@ Rules preserved:
 - ScenarioSetup references map/runtime art by IDs such as `LevelId`, `IsoMapId`, `MapPreviewArtId`, and `MinimapArtId`
 - tactical gameplay remains simulation-first and data-driven
 - spawn positions, objectives, enemy routes, command ranges, and camera defaults must be validated for 2D isometric readability
+- large-scale grid movement is a staged promise: M01 proves readable select/move/attack, Chapter 1 proves distinct movement pressures, and Production Scale proves multi-squad/multi-route readability and performance
 - Mission 1 is the first playable vertical slice before expanding to Missions 2-5
 
 ### Art And Asset Register Alignment

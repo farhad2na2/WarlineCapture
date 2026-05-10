@@ -1,0 +1,3239 @@
+{
+  "package_id": "m01_soldier_animation_atlas_fix",
+  "date": "2026-05-09",
+  "strategic_map_status": "approved_unchanged",
+  "source_lock": "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_Atlas_StateGuide_IdleRunAimFireDeathDestroyed.png",
+  "cell_size": [
+    256,
+    256
+  ],
+  "directions": [
+    "NE",
+    "SE",
+    "SW",
+    "NW"
+  ],
+  "state_requirements": {
+    "idle": {
+      "minimum_frames": 4,
+      "suggested_fps": 6,
+      "loop": true
+    },
+    "run": {
+      "minimum_frames": 8,
+      "suggested_fps": 12,
+      "loop": true
+    },
+    "aim": {
+      "minimum_frames": 3,
+      "suggested_fps": 10,
+      "loop": false
+    },
+    "fire": {
+      "minimum_frames": 4,
+      "suggested_fps": 12,
+      "loop": false
+    },
+    "damaged": {
+      "minimum_frames": 3,
+      "suggested_fps": 10,
+      "loop": false
+    },
+    "death": {
+      "minimum_frames": 6,
+      "suggested_fps": 8,
+      "loop": false
+    }
+  },
+  "factions": {
+    "player_rifle_squad": {
+      "label": "Player Rifle Squad",
+      "runtime_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas.png",
+      "review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas.png",
+      "atlas_size": [
+        4096,
+        1792
+      ],
+      "atlas_cell_size": [
+        256,
+        256
+      ],
+      "atlas_columns": 16,
+      "sequence_count": 24,
+      "frame_count": 112,
+      "states": {
+        "idle": {
+          "frames": 4,
+          "fps": 6,
+          "loop": true
+        },
+        "run": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true
+        },
+        "aim": {
+          "frames": 3,
+          "fps": 10,
+          "loop": false
+        },
+        "fire": {
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "damaged": {
+          "frames": 3,
+          "fps": 10,
+          "loop": false
+        },
+        "death": {
+          "frames": 6,
+          "fps": 8,
+          "loop": false
+        }
+      },
+      "animations": [
+        {
+          "asset_id": "unit.player_rifle_squad.ne.idle.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_00.png",
+              "atlas_rect": [
+                0,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_01.png",
+              "atlas_rect": [
+                256,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_02.png",
+              "atlas_rect": [
+                512,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/idle/player_rifle_squad_ne_idle_03.png",
+              "atlas_rect": [
+                768,
+                0,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.ne.run.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_00.png",
+              "atlas_rect": [
+                1024,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_01.png",
+              "atlas_rect": [
+                1280,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_02.png",
+              "atlas_rect": [
+                1536,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_03.png",
+              "atlas_rect": [
+                1792,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_04.png",
+              "atlas_rect": [
+                2048,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_05.png",
+              "atlas_rect": [
+                2304,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_06.png",
+              "atlas_rect": [
+                2560,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/run/player_rifle_squad_ne_run_07.png",
+              "atlas_rect": [
+                2816,
+                0,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.ne.aim.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/aim/player_rifle_squad_ne_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/aim/player_rifle_squad_ne_aim_00.png",
+              "atlas_rect": [
+                3072,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/aim/player_rifle_squad_ne_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/aim/player_rifle_squad_ne_aim_01.png",
+              "atlas_rect": [
+                3328,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/aim/player_rifle_squad_ne_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/aim/player_rifle_squad_ne_aim_02.png",
+              "atlas_rect": [
+                3584,
+                0,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.ne.fire.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_00.png",
+              "atlas_rect": [
+                3840,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_01.png",
+              "atlas_rect": [
+                0,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_02.png",
+              "atlas_rect": [
+                256,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/fire/player_rifle_squad_ne_fire_03.png",
+              "atlas_rect": [
+                512,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.ne.damaged.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/damaged/player_rifle_squad_ne_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/damaged/player_rifle_squad_ne_damaged_00.png",
+              "atlas_rect": [
+                768,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/damaged/player_rifle_squad_ne_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/damaged/player_rifle_squad_ne_damaged_01.png",
+              "atlas_rect": [
+                1024,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/damaged/player_rifle_squad_ne_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/damaged/player_rifle_squad_ne_damaged_02.png",
+              "atlas_rect": [
+                1280,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.ne.death.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_00.png",
+              "atlas_rect": [
+                1536,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_01.png",
+              "atlas_rect": [
+                1792,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_02.png",
+              "atlas_rect": [
+                2048,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_03.png",
+              "atlas_rect": [
+                2304,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_04.png",
+              "atlas_rect": [
+                2560,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/ne/death/player_rifle_squad_ne_death_05.png",
+              "atlas_rect": [
+                2816,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.se.idle.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_00.png",
+              "atlas_rect": [
+                3072,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_01.png",
+              "atlas_rect": [
+                3328,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_02.png",
+              "atlas_rect": [
+                3584,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/idle/player_rifle_squad_se_idle_03.png",
+              "atlas_rect": [
+                3840,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.se.run.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_00.png",
+              "atlas_rect": [
+                0,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_01.png",
+              "atlas_rect": [
+                256,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_02.png",
+              "atlas_rect": [
+                512,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_03.png",
+              "atlas_rect": [
+                768,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_04.png",
+              "atlas_rect": [
+                1024,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_05.png",
+              "atlas_rect": [
+                1280,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_06.png",
+              "atlas_rect": [
+                1536,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/run/player_rifle_squad_se_run_07.png",
+              "atlas_rect": [
+                1792,
+                512,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.se.aim.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/aim/player_rifle_squad_se_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/aim/player_rifle_squad_se_aim_00.png",
+              "atlas_rect": [
+                2048,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/aim/player_rifle_squad_se_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/aim/player_rifle_squad_se_aim_01.png",
+              "atlas_rect": [
+                2304,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/aim/player_rifle_squad_se_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/aim/player_rifle_squad_se_aim_02.png",
+              "atlas_rect": [
+                2560,
+                512,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.se.fire.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_00.png",
+              "atlas_rect": [
+                2816,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_01.png",
+              "atlas_rect": [
+                3072,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_02.png",
+              "atlas_rect": [
+                3328,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/fire/player_rifle_squad_se_fire_03.png",
+              "atlas_rect": [
+                3584,
+                512,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.se.damaged.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/damaged/player_rifle_squad_se_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/damaged/player_rifle_squad_se_damaged_00.png",
+              "atlas_rect": [
+                3840,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/damaged/player_rifle_squad_se_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/damaged/player_rifle_squad_se_damaged_01.png",
+              "atlas_rect": [
+                0,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/damaged/player_rifle_squad_se_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/damaged/player_rifle_squad_se_damaged_02.png",
+              "atlas_rect": [
+                256,
+                768,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.se.death.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_00.png",
+              "atlas_rect": [
+                512,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_01.png",
+              "atlas_rect": [
+                768,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_02.png",
+              "atlas_rect": [
+                1024,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_03.png",
+              "atlas_rect": [
+                1280,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_04.png",
+              "atlas_rect": [
+                1536,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/se/death/player_rifle_squad_se_death_05.png",
+              "atlas_rect": [
+                1792,
+                768,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.sw.idle.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_00.png",
+              "atlas_rect": [
+                2048,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_01.png",
+              "atlas_rect": [
+                2304,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_02.png",
+              "atlas_rect": [
+                2560,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/idle/player_rifle_squad_sw_idle_03.png",
+              "atlas_rect": [
+                2816,
+                768,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.sw.run.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_00.png",
+              "atlas_rect": [
+                3072,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_01.png",
+              "atlas_rect": [
+                3328,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_02.png",
+              "atlas_rect": [
+                3584,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_03.png",
+              "atlas_rect": [
+                3840,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_04.png",
+              "atlas_rect": [
+                0,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_05.png",
+              "atlas_rect": [
+                256,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_06.png",
+              "atlas_rect": [
+                512,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/run/player_rifle_squad_sw_run_07.png",
+              "atlas_rect": [
+                768,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.sw.aim.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/aim/player_rifle_squad_sw_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/aim/player_rifle_squad_sw_aim_00.png",
+              "atlas_rect": [
+                1024,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/aim/player_rifle_squad_sw_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/aim/player_rifle_squad_sw_aim_01.png",
+              "atlas_rect": [
+                1280,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/aim/player_rifle_squad_sw_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/aim/player_rifle_squad_sw_aim_02.png",
+              "atlas_rect": [
+                1536,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.sw.fire.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_00.png",
+              "atlas_rect": [
+                1792,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_01.png",
+              "atlas_rect": [
+                2048,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_02.png",
+              "atlas_rect": [
+                2304,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/fire/player_rifle_squad_sw_fire_03.png",
+              "atlas_rect": [
+                2560,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.sw.damaged.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/damaged/player_rifle_squad_sw_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/damaged/player_rifle_squad_sw_damaged_00.png",
+              "atlas_rect": [
+                2816,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/damaged/player_rifle_squad_sw_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/damaged/player_rifle_squad_sw_damaged_01.png",
+              "atlas_rect": [
+                3072,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/damaged/player_rifle_squad_sw_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/damaged/player_rifle_squad_sw_damaged_02.png",
+              "atlas_rect": [
+                3328,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.sw.death.animation",
+          "faction": "player_rifle_squad",
+          "facing": "SW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_00.png",
+              "atlas_rect": [
+                3584,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_01.png",
+              "atlas_rect": [
+                3840,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_02.png",
+              "atlas_rect": [
+                0,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_03.png",
+              "atlas_rect": [
+                256,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_04.png",
+              "atlas_rect": [
+                512,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/sw/death/player_rifle_squad_sw_death_05.png",
+              "atlas_rect": [
+                768,
+                1280,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.nw.idle.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_00.png",
+              "atlas_rect": [
+                1024,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_01.png",
+              "atlas_rect": [
+                1280,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_02.png",
+              "atlas_rect": [
+                1536,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/idle/player_rifle_squad_nw_idle_03.png",
+              "atlas_rect": [
+                1792,
+                1280,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.nw.run.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_00.png",
+              "atlas_rect": [
+                2048,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_01.png",
+              "atlas_rect": [
+                2304,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_02.png",
+              "atlas_rect": [
+                2560,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_03.png",
+              "atlas_rect": [
+                2816,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_04.png",
+              "atlas_rect": [
+                3072,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_05.png",
+              "atlas_rect": [
+                3328,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_06.png",
+              "atlas_rect": [
+                3584,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/run/player_rifle_squad_nw_run_07.png",
+              "atlas_rect": [
+                3840,
+                1280,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.nw.aim.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/aim/player_rifle_squad_nw_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/aim/player_rifle_squad_nw_aim_00.png",
+              "atlas_rect": [
+                0,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/aim/player_rifle_squad_nw_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/aim/player_rifle_squad_nw_aim_01.png",
+              "atlas_rect": [
+                256,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/aim/player_rifle_squad_nw_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/aim/player_rifle_squad_nw_aim_02.png",
+              "atlas_rect": [
+                512,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.nw.fire.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_00.png",
+              "atlas_rect": [
+                768,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_01.png",
+              "atlas_rect": [
+                1024,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_02.png",
+              "atlas_rect": [
+                1280,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/fire/player_rifle_squad_nw_fire_03.png",
+              "atlas_rect": [
+                1536,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.nw.damaged.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/damaged/player_rifle_squad_nw_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/damaged/player_rifle_squad_nw_damaged_00.png",
+              "atlas_rect": [
+                1792,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/damaged/player_rifle_squad_nw_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/damaged/player_rifle_squad_nw_damaged_01.png",
+              "atlas_rect": [
+                2048,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/damaged/player_rifle_squad_nw_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/damaged/player_rifle_squad_nw_damaged_02.png",
+              "atlas_rect": [
+                2304,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.player_rifle_squad.nw.death.animation",
+          "faction": "player_rifle_squad",
+          "facing": "NW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_00.png",
+              "atlas_rect": [
+                2560,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_01.png",
+              "atlas_rect": [
+                2816,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_02.png",
+              "atlas_rect": [
+                3072,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_03.png",
+              "atlas_rect": [
+                3328,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_04.png",
+              "atlas_rect": [
+                3584,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/Animations/nw/death/player_rifle_squad_nw_death_05.png",
+              "atlas_rect": [
+                3840,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated player rifle squad source poses locally expanded into multi-frame transparent animation sequences; tactical blue accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        }
+      ]
+    },
+    "enemy_patrol": {
+      "label": "Enemy Patrol",
+      "runtime_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_animation_atlas.png",
+      "review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/enemy_patrol_animation_atlas.png",
+      "atlas_size": [
+        4096,
+        1792
+      ],
+      "atlas_cell_size": [
+        256,
+        256
+      ],
+      "atlas_columns": 16,
+      "sequence_count": 24,
+      "frame_count": 112,
+      "states": {
+        "idle": {
+          "frames": 4,
+          "fps": 6,
+          "loop": true
+        },
+        "run": {
+          "frames": 8,
+          "fps": 12,
+          "loop": true
+        },
+        "aim": {
+          "frames": 3,
+          "fps": 10,
+          "loop": false
+        },
+        "fire": {
+          "frames": 4,
+          "fps": 12,
+          "loop": false
+        },
+        "damaged": {
+          "frames": 3,
+          "fps": 10,
+          "loop": false
+        },
+        "death": {
+          "frames": 6,
+          "fps": 8,
+          "loop": false
+        }
+      },
+      "animations": [
+        {
+          "asset_id": "unit.enemy_patrol.ne.idle.animation",
+          "faction": "enemy_patrol",
+          "facing": "NE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_00.png",
+              "atlas_rect": [
+                0,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_01.png",
+              "atlas_rect": [
+                256,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_02.png",
+              "atlas_rect": [
+                512,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/idle/enemy_patrol_ne_idle_03.png",
+              "atlas_rect": [
+                768,
+                0,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.ne.run.animation",
+          "faction": "enemy_patrol",
+          "facing": "NE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_00.png",
+              "atlas_rect": [
+                1024,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_01.png",
+              "atlas_rect": [
+                1280,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_02.png",
+              "atlas_rect": [
+                1536,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_03.png",
+              "atlas_rect": [
+                1792,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_04.png",
+              "atlas_rect": [
+                2048,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_05.png",
+              "atlas_rect": [
+                2304,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_06.png",
+              "atlas_rect": [
+                2560,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/run/enemy_patrol_ne_run_07.png",
+              "atlas_rect": [
+                2816,
+                0,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.ne.aim.animation",
+          "faction": "enemy_patrol",
+          "facing": "NE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/aim/enemy_patrol_ne_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/aim/enemy_patrol_ne_aim_00.png",
+              "atlas_rect": [
+                3072,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/aim/enemy_patrol_ne_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/aim/enemy_patrol_ne_aim_01.png",
+              "atlas_rect": [
+                3328,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/aim/enemy_patrol_ne_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/aim/enemy_patrol_ne_aim_02.png",
+              "atlas_rect": [
+                3584,
+                0,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.ne.fire.animation",
+          "faction": "enemy_patrol",
+          "facing": "NE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_00.png",
+              "atlas_rect": [
+                3840,
+                0,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_01.png",
+              "atlas_rect": [
+                0,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_02.png",
+              "atlas_rect": [
+                256,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/fire/enemy_patrol_ne_fire_03.png",
+              "atlas_rect": [
+                512,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.ne.damaged.animation",
+          "faction": "enemy_patrol",
+          "facing": "NE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/damaged/enemy_patrol_ne_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/damaged/enemy_patrol_ne_damaged_00.png",
+              "atlas_rect": [
+                768,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/damaged/enemy_patrol_ne_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/damaged/enemy_patrol_ne_damaged_01.png",
+              "atlas_rect": [
+                1024,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/damaged/enemy_patrol_ne_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/damaged/enemy_patrol_ne_damaged_02.png",
+              "atlas_rect": [
+                1280,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.ne.death.animation",
+          "faction": "enemy_patrol",
+          "facing": "NE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_00.png",
+              "atlas_rect": [
+                1536,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_01.png",
+              "atlas_rect": [
+                1792,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_02.png",
+              "atlas_rect": [
+                2048,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_03.png",
+              "atlas_rect": [
+                2304,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_04.png",
+              "atlas_rect": [
+                2560,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/ne/death/enemy_patrol_ne_death_05.png",
+              "atlas_rect": [
+                2816,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.se.idle.animation",
+          "faction": "enemy_patrol",
+          "facing": "SE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_00.png",
+              "atlas_rect": [
+                3072,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_01.png",
+              "atlas_rect": [
+                3328,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_02.png",
+              "atlas_rect": [
+                3584,
+                256,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/idle/enemy_patrol_se_idle_03.png",
+              "atlas_rect": [
+                3840,
+                256,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.se.run.animation",
+          "faction": "enemy_patrol",
+          "facing": "SE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_00.png",
+              "atlas_rect": [
+                0,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_01.png",
+              "atlas_rect": [
+                256,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_02.png",
+              "atlas_rect": [
+                512,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_03.png",
+              "atlas_rect": [
+                768,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_04.png",
+              "atlas_rect": [
+                1024,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_05.png",
+              "atlas_rect": [
+                1280,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_06.png",
+              "atlas_rect": [
+                1536,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/run/enemy_patrol_se_run_07.png",
+              "atlas_rect": [
+                1792,
+                512,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.se.aim.animation",
+          "faction": "enemy_patrol",
+          "facing": "SE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/aim/enemy_patrol_se_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/aim/enemy_patrol_se_aim_00.png",
+              "atlas_rect": [
+                2048,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/aim/enemy_patrol_se_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/aim/enemy_patrol_se_aim_01.png",
+              "atlas_rect": [
+                2304,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/aim/enemy_patrol_se_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/aim/enemy_patrol_se_aim_02.png",
+              "atlas_rect": [
+                2560,
+                512,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.se.fire.animation",
+          "faction": "enemy_patrol",
+          "facing": "SE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_00.png",
+              "atlas_rect": [
+                2816,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_01.png",
+              "atlas_rect": [
+                3072,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_02.png",
+              "atlas_rect": [
+                3328,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/fire/enemy_patrol_se_fire_03.png",
+              "atlas_rect": [
+                3584,
+                512,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.se.damaged.animation",
+          "faction": "enemy_patrol",
+          "facing": "SE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/damaged/enemy_patrol_se_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/damaged/enemy_patrol_se_damaged_00.png",
+              "atlas_rect": [
+                3840,
+                512,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/damaged/enemy_patrol_se_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/damaged/enemy_patrol_se_damaged_01.png",
+              "atlas_rect": [
+                0,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/damaged/enemy_patrol_se_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/damaged/enemy_patrol_se_damaged_02.png",
+              "atlas_rect": [
+                256,
+                768,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.se.death.animation",
+          "faction": "enemy_patrol",
+          "facing": "SE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_00.png",
+              "atlas_rect": [
+                512,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_01.png",
+              "atlas_rect": [
+                768,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_02.png",
+              "atlas_rect": [
+                1024,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_03.png",
+              "atlas_rect": [
+                1280,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_04.png",
+              "atlas_rect": [
+                1536,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/se/death/enemy_patrol_se_death_05.png",
+              "atlas_rect": [
+                1792,
+                768,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.sw.idle.animation",
+          "faction": "enemy_patrol",
+          "facing": "SW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_00.png",
+              "atlas_rect": [
+                2048,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_01.png",
+              "atlas_rect": [
+                2304,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_02.png",
+              "atlas_rect": [
+                2560,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/idle/enemy_patrol_sw_idle_03.png",
+              "atlas_rect": [
+                2816,
+                768,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.sw.run.animation",
+          "faction": "enemy_patrol",
+          "facing": "SW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_00.png",
+              "atlas_rect": [
+                3072,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_01.png",
+              "atlas_rect": [
+                3328,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_02.png",
+              "atlas_rect": [
+                3584,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_03.png",
+              "atlas_rect": [
+                3840,
+                768,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_04.png",
+              "atlas_rect": [
+                0,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_05.png",
+              "atlas_rect": [
+                256,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_06.png",
+              "atlas_rect": [
+                512,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/run/enemy_patrol_sw_run_07.png",
+              "atlas_rect": [
+                768,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.sw.aim.animation",
+          "faction": "enemy_patrol",
+          "facing": "SW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/aim/enemy_patrol_sw_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/aim/enemy_patrol_sw_aim_00.png",
+              "atlas_rect": [
+                1024,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/aim/enemy_patrol_sw_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/aim/enemy_patrol_sw_aim_01.png",
+              "atlas_rect": [
+                1280,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/aim/enemy_patrol_sw_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/aim/enemy_patrol_sw_aim_02.png",
+              "atlas_rect": [
+                1536,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.sw.fire.animation",
+          "faction": "enemy_patrol",
+          "facing": "SW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_00.png",
+              "atlas_rect": [
+                1792,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_01.png",
+              "atlas_rect": [
+                2048,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_02.png",
+              "atlas_rect": [
+                2304,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/fire/enemy_patrol_sw_fire_03.png",
+              "atlas_rect": [
+                2560,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.sw.damaged.animation",
+          "faction": "enemy_patrol",
+          "facing": "SW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/damaged/enemy_patrol_sw_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/damaged/enemy_patrol_sw_damaged_00.png",
+              "atlas_rect": [
+                2816,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/damaged/enemy_patrol_sw_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/damaged/enemy_patrol_sw_damaged_01.png",
+              "atlas_rect": [
+                3072,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/damaged/enemy_patrol_sw_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/damaged/enemy_patrol_sw_damaged_02.png",
+              "atlas_rect": [
+                3328,
+                1024,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.sw.death.animation",
+          "faction": "enemy_patrol",
+          "facing": "SW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_00.png",
+              "atlas_rect": [
+                3584,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_01.png",
+              "atlas_rect": [
+                3840,
+                1024,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_02.png",
+              "atlas_rect": [
+                0,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_03.png",
+              "atlas_rect": [
+                256,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_04.png",
+              "atlas_rect": [
+                512,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/sw/death/enemy_patrol_sw_death_05.png",
+              "atlas_rect": [
+                768,
+                1280,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.nw.idle.animation",
+          "faction": "enemy_patrol",
+          "facing": "NW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_00.png",
+              "atlas_rect": [
+                1024,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_01.png",
+              "atlas_rect": [
+                1280,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_02.png",
+              "atlas_rect": [
+                1536,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/idle/enemy_patrol_nw_idle_03.png",
+              "atlas_rect": [
+                1792,
+                1280,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.nw.run.animation",
+          "faction": "enemy_patrol",
+          "facing": "NW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 12,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_00.png",
+              "atlas_rect": [
+                2048,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_01.png",
+              "atlas_rect": [
+                2304,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_02.png",
+              "atlas_rect": [
+                2560,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_03.png",
+              "atlas_rect": [
+                2816,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_04.png",
+              "atlas_rect": [
+                3072,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_05.png",
+              "atlas_rect": [
+                3328,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 6,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_06.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_06.png",
+              "atlas_rect": [
+                3584,
+                1280,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 7,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_07.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/run/enemy_patrol_nw_run_07.png",
+              "atlas_rect": [
+                3840,
+                1280,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.nw.aim.animation",
+          "faction": "enemy_patrol",
+          "facing": "NW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/aim/enemy_patrol_nw_aim_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/aim/enemy_patrol_nw_aim_00.png",
+              "atlas_rect": [
+                0,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/aim/enemy_patrol_nw_aim_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/aim/enemy_patrol_nw_aim_01.png",
+              "atlas_rect": [
+                256,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/aim/enemy_patrol_nw_aim_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/aim/enemy_patrol_nw_aim_02.png",
+              "atlas_rect": [
+                512,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.nw.fire.animation",
+          "faction": "enemy_patrol",
+          "facing": "NW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 12,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_00.png",
+              "atlas_rect": [
+                768,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_01.png",
+              "atlas_rect": [
+                1024,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_02.png",
+              "atlas_rect": [
+                1280,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/fire/enemy_patrol_nw_fire_03.png",
+              "atlas_rect": [
+                1536,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.nw.damaged.animation",
+          "faction": "enemy_patrol",
+          "facing": "NW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/damaged/enemy_patrol_nw_damaged_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/damaged/enemy_patrol_nw_damaged_00.png",
+              "atlas_rect": [
+                1792,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/damaged/enemy_patrol_nw_damaged_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/damaged/enemy_patrol_nw_damaged_01.png",
+              "atlas_rect": [
+                2048,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/damaged/enemy_patrol_nw_damaged_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/damaged/enemy_patrol_nw_damaged_02.png",
+              "atlas_rect": [
+                2304,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        },
+        {
+          "asset_id": "unit.enemy_patrol.nw.death.animation",
+          "faction": "enemy_patrol",
+          "facing": "NW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_00.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_00.png",
+              "atlas_rect": [
+                2560,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 1,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_01.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_01.png",
+              "atlas_rect": [
+                2816,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 2,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_02.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_02.png",
+              "atlas_rect": [
+                3072,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 3,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_03.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_03.png",
+              "atlas_rect": [
+                3328,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 4,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_04.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_04.png",
+              "atlas_rect": [
+                3584,
+                1536,
+                256,
+                256
+              ]
+            },
+            {
+              "frame_index": 5,
+              "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_05.png",
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/Animations/nw/death/enemy_patrol_nw_death_05.png",
+              "atlas_rect": [
+                3840,
+                1536,
+                256,
+                256
+              ]
+            }
+          ],
+          "prompt_source_notes": "AI-generated enemy patrol source poses locally expanded into multi-frame transparent animation sequences; hostile red accent family preserved.",
+          "approval_status": "needs_pm_user_review"
+        }
+      ]
+    }
+  },
+  "review_contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_contact.png"
+}

@@ -98,6 +98,7 @@ public partial struct UnitEngagementSystem : ISystem
         var manualMoveLookup = SystemAPI.GetComponentLookup<ManualMoveOrderTag>(true);
         var pathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true);
         var pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
+        var openingProtectionLookup = SystemAPI.GetComponentLookup<MissionRuntimeOpeningControlProtection>(true);
         var ecbSystem = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
         var ecb = ecbSystem.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
@@ -114,6 +115,7 @@ public partial struct UnitEngagementSystem : ISystem
             ManualMoveLookup = manualMoveLookup,
             PathFollowLookup = pathFollowLookup,
             PathRequestLookup = pathRequestLookup,
+            OpeningProtectionLookup = openingProtectionLookup,
             Ecb = ecb
         }.ScheduleParallel(buildHandle);
 
@@ -156,6 +158,7 @@ public partial struct UnitEngagementSystem : ISystem
         [ReadOnly] public ComponentLookup<ManualMoveOrderTag> ManualMoveLookup;
         [ReadOnly] public ComponentLookup<UnitPathFollow> PathFollowLookup;
         [ReadOnly] public ComponentLookup<UnitPathRequest> PathRequestLookup;
+        [ReadOnly] public ComponentLookup<MissionRuntimeOpeningControlProtection> OpeningProtectionLookup;
 
         public EntityCommandBuffer.ParallelWriter Ecb;
 
@@ -164,6 +167,8 @@ public partial struct UnitEngagementSystem : ISystem
             if (combat.CanAttack == 0)
                 return;
             if (combat.AutoEngage == 0)
+                return;
+            if (OpeningProtectionLookup.HasComponent(entity))
                 return;
 
             bool hasActiveManualMove =

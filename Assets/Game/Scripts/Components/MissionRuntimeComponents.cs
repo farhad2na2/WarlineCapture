@@ -123,6 +123,7 @@ public sealed class MissionRuntimeTerrainSurfaceRendererRuntime : IComponentData
     public GameObject Instance;
     public SpriteRenderer Renderer;
     public Sprite GroundSprite;
+    public Vector3 GroundScale;
     public Sprite[] ProductionTacticalPlateSprites;
 }
 

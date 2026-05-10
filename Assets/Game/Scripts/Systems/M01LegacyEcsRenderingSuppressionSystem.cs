@@ -18,7 +18,7 @@ public partial struct M01LegacyEcsRenderingSuppressionSystem : ISystem
         EntityManager em = state.EntityManager;
         EntityQuery query = SystemAPI.QueryBuilder()
             .WithAll<MaterialMeshInfo>()
-            .WithNone<DisableRendering>()
+            .WithNone<DisableRendering, MissionRuntimeEcsVisualTag>()
             .Build();
         using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)

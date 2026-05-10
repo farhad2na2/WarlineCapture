@@ -16,6 +16,7 @@ Terminology rule: a player-facing Saga node launches a `Mission`; the mission us
 
 - `GAME_DESIGN_REFERENCE.md`
 - `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
+- `WarlineCapture_Command_Offensive_Premise_Alignment.md`
 - `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
 - `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
 - `WarlineCapture_Level_And_Mission_Content_Plan.md`
@@ -34,27 +35,28 @@ Terminology rule: a player-facing Saga node launches a `Mission`; the mission us
 
 ## North Star
 
-WarlineCapture is a mobile tactical RTS about winning battles while keeping the city alive.
+WarlineCapture is a mobile tactical RTS about preparing and executing command operations against hostile factions embedded in civilian districts.
 
 The player fantasy is not only "destroy the enemy." The core fantasy is:
 
 ```text
 Read the city.
-Make a command decision.
-Win the tactical fight.
+Identify the hostile faction's position.
+Prepare the right force.
+Strike with tactical control.
 Protect civilians and infrastructure.
 Live with the district consequences.
 ```
 
-WarlineCapture should be differentiated by command pressure, civilian safety, district recovery, readable mobile tactics, and persistent consequences.
+WarlineCapture should be differentiated by proactive command pressure, hostile factions hidden in civilian space, civilian safety, readable mobile tactics, and persistent district consequences.
 
 ## Design Pillars
 
 | Pillar | Meaning | Design Test |
 |---|---|---|
-| Tactical Command | The player issues readable squad, build, move, attack, transport, and support decisions. | Does the mission reward active command instead of passive waiting? |
-| City Under Pressure | Every mission exists because a district has a threat, recovery need, or strategic opportunity. | Can the mission briefing explain why this fight matters to the city? |
-| Civilian Safety | Civilian survival, collateral damage, trust, and stability are part of success. | Can the player win tactically but still lose value through reckless choices? |
+| Tactical Command | The player prepares and executes readable squad, build, move, attack, transport, breach, and support decisions. | Does the mission reward active command instead of passive waiting? |
+| Hostile Factions In Civilian Space | Every mission targets a faction, cell, route, node, or threat that is using the city as cover. | Can the mission briefing explain who or what the commander is preparing to hit? |
+| Precision Under Constraint | Civilian survival, collateral damage, trust, and stability are part of success. | Can the player win tactically but still lose value through reckless choices? |
 | District Consequence | Tactical results feed Saga rewards or Operation district state. | Does the result screen explain what changed after the mission? |
 | Readable Mobile RTS | Objectives, waves, units, threats, and UI remain legible on mobile landscape. | Can the player understand threat direction, objective state, and next action without pausing? |
 | Fair Progression | Rewards and store grants support preparation and identity, not victory overrides. | Does the reward/store path respect the economy and monetization guardrails? |

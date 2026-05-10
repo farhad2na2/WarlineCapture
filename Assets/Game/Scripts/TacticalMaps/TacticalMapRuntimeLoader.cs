@@ -186,15 +186,18 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
             runtime.Instance = groundRenderer.gameObject;
             runtime.Renderer = groundRenderer;
             runtime.GroundSprite = ResolveRuntimeGroundSprite();
+            runtime.GroundScale = ResolveRuntimeGroundScale(runtime.GroundSprite);
             runtime.ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites();
         }
         else
         {
+            Sprite groundSprite = ResolveRuntimeGroundSprite();
             em.AddComponentObject(terrainSurfaceEntity, new MissionRuntimeTerrainSurfaceRendererRuntime
             {
                 Instance = groundRenderer.gameObject,
                 Renderer = groundRenderer,
-                GroundSprite = ResolveRuntimeGroundSprite(),
+                GroundSprite = groundSprite,
+                GroundScale = ResolveRuntimeGroundScale(groundSprite),
                 ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites()
             });
         }

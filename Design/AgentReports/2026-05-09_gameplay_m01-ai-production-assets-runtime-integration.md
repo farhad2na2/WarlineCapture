@@ -6,7 +6,9 @@ P0 integrate the M01 AI production art pack into ECS runtime and capture proof.
 
 # Files changed
 - `Assets/Game/Scripts/Campaign/Chapter01M01SpriteAssetResolver.cs`
+- `Assets/Game/Scripts/Bootstrap/GameBootstrap.cs`
 - `Assets/Game/Scripts/Components/MissionRuntimeComponents.cs`
+- `Assets/Game/Scripts/Systems/MissionRuntimeTerrainSurfaceRendererSystem.cs`
 - `Assets/Game/Scripts/Systems/MissionRuntimeSpriteRendererSystem.cs`
 - `Assets/Game/Scripts/TacticalMaps/TacticalMapRuntimeLoader.cs`
 - `Assets/Tests/Editor/Chapter01M01SpriteRendererTests.cs`
@@ -22,10 +24,13 @@ P0 integrate the M01 AI production art pack into ECS runtime and capture proof.
 - `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_ai_production_asset_manifest.json`
 - `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_soldier_animation_manifest_v2.json`
 - `MissionRuntimeTerrainSurfaceRendererRuntime` now stores the resolved AI production tactical plate pack.
+- `MissionRuntimeTerrainSurfaceRendererRuntime` now stores metadata-derived ground scale so the ECS terrain system preserves authored plate framing instead of expanding runtime PNGs to raw texture world size.
 - `MissionRuntimeAtlasQuadRuntime` marker materials now use AI production marker asset ids resolved through the manifest-backed resolver.
 
 # User-visible behavior
 - Public M01 tactical runtime now uses `m01_tactical_plate_a_pot_2048x1024.png` as the active tactical ground.
+- Production plate A is scaled to the existing M01 tactical metadata (`3.4 x 1.92`) so the runtime camera sees road/intersection/wall context instead of an oversized asphalt crop.
+- The public M01 camera now uses a wider production proof frame and aspect-aware width fit; infantry atlas quads were raised to the corrected readable runtime scale.
 - Runtime terrain also binds all three production tactical plates from the manifest for validation and future selection.
 - Existing command-point decor now resolves to production `command_support` intact/damaged/destroyed sprites instead of the old tactical manifest art.
 - Selection, move, and attack marker materials now resolve through the production marker manifest entries.
@@ -37,13 +42,16 @@ P0 integrate the M01 AI production art pack into ECS runtime and capture proof.
 - Passed: `Unity -batchmode -nographics -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform EditMode -testFilter Chapter01M01AtlasQuadPresentationTests -testResults /private/tmp/warlinecapture-m01-ai-production-editmode-results.xml -logFile /private/tmp/warlinecapture-m01-ai-production-editmode.log`
 - Passed: `Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform PlayMode -testFilter Chapter01M01PlayModeValidationTests.PublicCampaignLaunch_ReachesM01ProductionVisibleSlice -testResults /private/tmp/warlinecapture-m01-ai-production-playmode-results.xml -logFile /private/tmp/warlinecapture-m01-ai-production-playmode.log`
 - Passed: `Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform PlayMode -testFilter Chapter01M01PlayModeValidationTests.GameScene_M01SpritePresenterUsesEcsDrivenAtlasStateIds -testResults /private/tmp/warlinecapture-m01-ai-production-marker-playmode-results.xml -logFile /private/tmp/warlinecapture-m01-ai-production-marker-playmode.log`
+- Art/Atlas reviewed the first proof in `Design/AgentReports/2026-05-09_art-atlas_full-ai-production-runtime-proof-review.md` and requested Gameplay fixes for plate framing, building readability, soldier scale, and marker readability.
+- Passed after Art/Atlas fix pass: `Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform PlayMode -testFilter Chapter01M01PlayModeValidationTests.PublicCampaignLaunch_ReachesM01ProductionVisibleSlice -testResults /private/tmp/warlinecapture-m01-ai-production-playmode-results.xml -logFile /private/tmp/warlinecapture-m01-ai-production-playmode.log`
+- Passed after Art/Atlas fix pass: `Unity -batchmode -projectPath /Users/farhad/Projects/WarlineCapture -runTests -testPlatform PlayMode -testFilter Chapter01M01PlayModeValidationTests.GameScene_M01SpritePresenterUsesEcsDrivenAtlasStateIds -testResults /private/tmp/warlinecapture-m01-ai-production-marker-playmode-results.xml -logFile /private/tmp/warlinecapture-m01-ai-production-marker-playmode.log`
 
 # Validation result
-Ready for PM/user runtime review.
+Ready for renewed Art/Atlas and PM/user runtime review after the framing/scale fix pass.
 
 EditMode result: 5/5 passed. PlayMode public campaign proof result: 1/1 passed. PlayMode state/marker proof result: 1/1 passed.
 
-The tactical image/background, command building, soldier v2 atlases, and production markers now match the approved AI production asset style better than the previous soldier-only proof. No alpha speckle, obvious edge bleed, wrong facing, or state-transition break was observed in the captured proof. The selected marker is now visible in capture after preserving the authored cyan marker texture instead of applying the old amber tint.
+The tactical image/background, command building, soldier v2 atlases, and production markers now match the approved AI production asset style better than the previous soldier-only proof. No alpha speckle, obvious edge bleed, wrong facing, or state-transition break was observed in the captured proof. The corrected captures now show the production plate's road/intersection/wall context instead of only a zoomed asphalt crop, and selected markers remain visible after preserving the authored cyan marker texture instead of applying the old amber tint.
 
 # Known gaps
 - The public gameplay route has one active terrain surface, so plate A is the active M01 ground while plates B/C are bound and validated in the ECS terrain runtime component. Switching between tactical plates would need a separate map/encounter selection task.

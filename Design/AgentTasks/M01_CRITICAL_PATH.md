@@ -10,12 +10,60 @@ No agent should start M02-M05 implementation, broad polish, or optional legacy s
 
 Agents may continue only work that closes one of the gates below or removes a named blocker.
 
+## M01 Product Scope Lock
+
+M01 First Contact is an infantry-only first playable mission.
+
+Allowed runtime combat entities:
+
+- Player: one controllable infantry/rifle squad type, `unit.player.rifle_squad_01`.
+- Enemy: one hostile infantry/patrol type, `unit.enemy.patrol_01`.
+- Objective: destroy or neutralize the hostile patrol and reach the result flow.
+
+Not allowed before M02:
+
+- player-controlled vehicles
+- vehicle production
+- transport mechanics
+- base/build mechanics
+- additional player unit types
+- broad combat variety or optional legacy systems
+
+Decorative vehicles are allowed only if they are non-controllable, non-combat, do not confuse the first task, and do not block pathing/readability.
+
+## Golden Playthrough Gate
+
+Before Gate 4 can pass, one public M01 golden playthrough must be accepted by PM:
+
+`Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup`.
+
+This must be proven from the public player path, not an editor-only scene, route harness, static screenshot, or isolated test fixture.
+
+Required pass criteria:
+
+- player immediately understands which soldiers are theirs
+- player rifle squad reads as four distinct soldiers under one controllable squad entity, not a single flat group sprite
+- player can select the rifle squad or selection state is clearly presented
+- selected state is visible in world and HUD after selection
+- player can issue the first move order before lethal enemy fire
+- movement uses tactical walkable/pathing metadata and rejects blocked/unreachable cells
+- movement drives move animation and returns to idle after arrival
+- attack command is readable and drives attack/combat animation or a clearly documented temporary visual state
+- enemy projectile/impact VFX is tactical-scale and AAA-readable, not oversized arcade bullets
+- enemy death/destroyed/neutralized state is visible and completes the objective
+- no player-controlled vehicles or extra player unit types appear
+- no legacy 3D combat units or design-target SpriteRenderer proxies appear in the public path
+- UI/assistant supports the flow and does not block player control
+- no blocker exceptions, freezes, severe input stalls, or unclassified log spam appear
+
+Any report that only proves captures, safe-area profiles, route wiring, or isolated tests without this playable path is not sufficient for Gate 4.
+
 ## Current Gates
 
 ### Gate 1: Gameplay Stability And Direction
 
 Owner: Gameplay
-Status: accepted
+Status: needs fixes after user playtest
 
 Accepted evidence:
 
@@ -39,9 +87,14 @@ Accepted follow-up:
 - `Design/AgentReports/2026-05-07_gameplay_m01-sprite-atlas-renderer-capture-fix.md`
 - `Design/AgentReports/2026-05-07_pm_gameplay-m01-sprite-capture-fix-review.md`
 
-Remaining follow-up:
+Current blockers:
 
-- Gameplay renderer/capture follow-up is accepted for current review-art evidence. Final atlas packaging, final hostile readability treatment, and `vfx.unit.destroyed.small` remain art/integration follow-ups and must not be marked complete from the current capture alone.
+- User playtest found that the playable M01 opens with hostile fire killing player units before the player can understand they have soldiers or issue the first move order.
+- User also rejected visible SpriteRenderer-style unit presentation as not matching the goal. M01 units must be ECS runtime entities with animated sprite-atlas presentation, pathing-aware movement, and correct idle/move/attack/death visual states.
+- User clarified the intended migration: existing unit/building prefabs and configs should remain the data/authoring source, and the useful ECS animation-state logic should be retained, but old visible child `Model` presentation and its per-model ECS animation output must be replaced with a new Gameplay-owned ECS sprite-atlas animator. Old child `Destroyed` dependencies must be deleted or removed from M01 runtime use because destroyed/death belongs in the same atlas visual-state machine.
+- Earlier SpriteRenderer capture/renderer reports are retained as implementation evidence only. They are not final runtime presentation acceptance and must not be used to justify M02 expansion.
+- Gameplay owns the active fix/proof in `Design/AgentTasks/gameplay_current.md`.
+- Gameplay must prove the golden playthrough before PM can restore Gate 1 to accepted.
 
 ### Gate 2: UI Visual Lock And Assistant Surface
 
@@ -87,10 +140,11 @@ Accepted evidence:
 ### Gate 4: QA/HCI M01 Smoke And Readability
 
 Owner: QA/HCI
-Status: needs fixes after automated QA/HCI smoke
+Status: blocked on Gameplay playable-loop fix
 
 Required before pass:
 
+- Golden playthrough gate above is accepted by PM.
 - At least one public player launch path reaches the intended M01 production slice, not the legacy 3D prototype or an editor-only route harness. Required paths to check before manual HCI/balance feedback:
   - `Main Menu -> Saga Map -> Mission Briefing/Loadout -> Launch`.
   - Any direct/quick/test launch path the team asks the user to use.
@@ -99,13 +153,27 @@ Required before pass:
 - Performance notes include frame drops, visible hitches, freezes, input stalls, log spam, and memory/leak warnings.
 - Visual readability notes include unit grounding, sprite shadows, target markers, HUD occlusion, and WarlineCapture style alignment.
 - Balance conclusions remain blocked until gameplay and UI are stable enough for meaningful runs.
-- Use `Assets/Game/Art/Generated/2DISO/Chapter01/Validation/M01_SpriteRenderer_CloseCapture.png` as current review-art evidence for grounding, scale, and readability checks. Do not treat it as final art approval.
+- `Assets/Game/Art/Generated/2DISO/Chapter01/Validation/M01_SpriteRenderer_CloseCapture.png` may be used only as historical review-art reference for grounding/scale. It is not Gate 4 runtime readiness evidence.
 - Automated QA/HCI smoke is green but not sufficient for Gate 4. Accepted review pending/follow-up: `Design/AgentReports/2026-05-07_qa-hci_m01-watcher-smoke-regression.md`, `Design/AgentReports/2026-05-07_pm_qa-hci-m01-watcher-smoke-regression-review.md`.
 - Gameplay log-health classification is accepted for focused editor/non-headless evidence. Accepted evidence: `Design/AgentReports/2026-05-07_gameplay_m01-log-health-classification.md`, `Design/AgentReports/2026-05-07_pm_gameplay-m01-log-health-validation-review.md`.
 - UI integrated capture matrix is accepted for QA/HCI evidence. Accepted evidence: `Design/AgentReports/2026-05-07_ui_m01-integrated-capture-matrix.md`, `Design/AgentReports/2026-05-07_pm_ui-m01-integrated-capture-matrix-review.md`, and `Design/AgentReports/Captures/2026-05-07_m01-ui-matrix/`.
-- QA/HCI integrated readiness review is complete but needs fixes because player-route and safe-area/device evidence are still missing. Evidence: `Design/AgentReports/2026-05-07_qa-hci_m01-gate4-integrated-readiness.md`, `Design/AgentReports/2026-05-07_pm_qa-hci-m01-gate4-integrated-readiness-review.md`.
-- QA/HCI player-route automation passed, but Gate 4 remains blocked because route-driven screenshots and safe-area/device evidence are missing. Evidence: `Design/AgentReports/2026-05-08_qa-hci_m01-player-route-safe-area-pass.md`, `Design/AgentReports/2026-05-08_pm_qa-hci-m01-player-route-safe-area-pass-review.md`.
-- Remaining Gate 4 blockers are public M01 production launch-path wiring, UI route-driven safe-area profile closure, reason-code Unity validation, marker/VFX readiness, and QA/HCI rerun evidence proving select, move, attack, invalid recovery, assistant ownership/Stop, result flow, performance/freeze stability, and final log-health status.
+- QA/HCI integrated readiness and earlier player-route automation reports are complete but not sufficient for Gate 4 after the public-launch fixes. Evidence: `Design/AgentReports/2026-05-07_qa-hci_m01-gate4-integrated-readiness.md`, `Design/AgentReports/2026-05-07_pm_qa-hci-m01-gate4-integrated-readiness-review.md`, `Design/AgentReports/2026-05-08_qa-hci_m01-player-route-safe-area-pass.md`, and `Design/AgentReports/2026-05-08_pm_qa-hci-m01-player-route-safe-area-pass-review.md`.
+- Public M01 production launch-path wiring is accepted from assigned lane workspaces. Accepted evidence: `Design/AgentReports/2026-05-08_gameplay_m01-public-launch-path.md`, `Design/AgentReports/2026-05-08_ui_m01-public-launch-path.md`, and `Design/AgentReports/2026-05-08_pm_public-launch-handoff-workspace-review.md`.
+- Current primary blocker is not more screenshot/capture proof. Current primary blocker is the playable M01 loop:
+  - player survives long enough to see/select the squad
+  - player squad reads as four distinct soldiers under one squad entity
+  - selection state is clearly visible in world and HUD
+  - player can order movement to `tutorial.move_target.cover_01`
+  - movement follows tactical metadata/pathing
+  - visible units are ECS runtime entities with animated atlas-backed state
+  - visible M01 infantry presentation replaces the old prefab `Model` path with ECS-owned animated atlas rendering
+  - M01 infantry animation is driven by a new ECS sprite-atlas animator, not by the old `MaterialAnimationIndex`/model visual-root animation output
+  - M01 infantry does not use separate child `Destroyed` visuals; death/destroyed resolves through the atlas visual state
+  - enemy patrol does not wipe the squad before the teaching window
+  - attack/objective/result flow remains reachable
+  - projectile/impact VFX scale and style are acceptable for AAA tactical readability
+- infantry-only M01 scope is preserved: one player rifle squad type, one enemy patrol type, no player vehicles, no vehicle/build/transport mechanics
+- QA/HCI should not produce final Gate 4 acceptance until Gameplay reports `Design/AgentReports/2026-05-08_gameplay_m01-opening-control-window.md` and PM accepts it.
 
 ## Ready To Expand Criteria
 
@@ -114,6 +182,10 @@ M01 can expand to M02 only when:
 - Gate 1 is accepted by PM.
 - Gate 2 is accepted by PM.
 - Gate 3 is accepted or explicitly deferred by PM.
+- Public M01 playable loop is accepted by PM: ECS animated units replacing visible old `Model` presentation and old per-model animation output, no separate `Destroyed` child dependency, first-control survival window, pathing-aware movement, attack/objective/result reachable.
+- M01 visual feedback is accepted by PM/user or QA/HCI: four-soldier squad readability, selected state, move/attack markers, projectile/impact scale, and destroyed/death feedback.
+- Infantry-only scope is preserved: one player rifle squad, one enemy patrol, no player vehicles or additional player unit types.
+- Golden playthrough is accepted from public launch through result popup.
 - Gate 4 has at least one QA/HCI smoke pass with no blocker findings.
 - Project state dashboard is updated if the accepted gates materially change completion.
 

@@ -18,6 +18,8 @@ This document designs WarlineCapture's first-time user experience, contextual tu
 - `Assets/Game/Scripts/Bootstrap/GameBootstrap.cs`
 - `Design/WarlineCapture_Audio_Design_Guidelines.md`
 - `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+- `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
+- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
 - `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 
@@ -50,8 +52,8 @@ Player-facing premise:
 
 ```text
 You are the newly appointed Field Commander of WarlineCapture Response Command.
-The city is fragmenting into unstable districts after coordinated attacks on infrastructure, logistics, and civilian routes.
-Your job is not only to defeat hostile forces. Your job is to keep the city functioning while you fight.
+Hostile factions are embedded across civilian districts, using infrastructure, logistics, and public routes as cover.
+Your job is to prepare and execute targeted operations that neutralize those factions without losing civilian trust, infrastructure, or long-term district control.
 ```
 
 ARIA's story role:
@@ -66,11 +68,13 @@ Chapter 1 story arc:
 
 | Mission | Player Role Beat | ARIA Teaching Role |
 |---|---|---|
-| M01 First Contact | First emergency command decision near civilians. | Teach selection, move, attack, objectives, result. |
-| M02 Establish The Base | Convert a fragile response point into a forward base. | Teach build, placement, production, resources. |
+| M01 First Contact | First confirmed hostile patrol near a civilian corridor. | Teach selection, move, attack, objectives, result. |
+| M02 Establish The Base | Prepare a forward operating point for district operations. | Teach build, placement, production, resources. |
 | M03 Radar Warning | Prepare for a detected convoy before it hits the district. | Teach threat alerts, defense timing, radar ping. |
-| M04 Airlift | Protect or extract endangered people under pressure. | Teach transport, landing zone, extraction, fuel. |
+| M04 Airlift | Insert, reinforce, or extract under district pressure. | Teach transport, landing zone, extraction, fuel. |
 | M05 Breach Assault | Remove the first fortified hostile node. | Teach breach route, combined arms, high-risk objective. |
+
+Movement teaching note: `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md` does not add extra early FTUE steps. It clarifies the acceptance bar for the existing Chapter 1 lessons: movement only counts as taught when selection state, destination/attack markers, invalid target feedback, current order state, tactical anchors, and objective/result flow are readable at mobile landscape scale.
 
 ## Commander Identity
 

@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
 public sealed class M01InfantryOnlyHudScopeController : MonoBehaviour
 {
-    [SerializeField] private GameObject[] hiddenDuringM01 = System.Array.Empty<GameObject>();
-    [SerializeField] private GameObject[] shownDuringM01 = System.Array.Empty<GameObject>();
+    [SerializeField] private GameObject[] hiddenDuringM01 = Array.Empty<GameObject>();
+    [SerializeField] private GameObject[] shownDuringM01 = Array.Empty<GameObject>();
 
     public bool IsM01ScopeActive { get; private set; }
     public int HiddenRootCount => hiddenDuringM01 != null ? hiddenDuringM01.Length : 0;

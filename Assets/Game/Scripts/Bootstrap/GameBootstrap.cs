@@ -21,7 +21,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private const double SlowFrameDiagThresholdSeconds = 0.025d;
     private const double SlowFrameDiagCooldownSeconds = 0.5d;
     private const int MaxAutoProfilerMarkerRecorders = 32;
-    private const float M01PlayableStartOrthographicSize = 0.72f;
+    private const float M01PlayableStartOrthographicSize = 0.96f;
     private const float M01PlayableCameraHeight = 10f;
 
     [Header("Scene Refs")]
@@ -627,13 +627,24 @@ public sealed class GameBootstrap : MonoBehaviour
             return;
 
         worldCamera.orthographic = true;
-        worldCamera.orthographicSize = M01PlayableStartOrthographicSize;
+        worldCamera.orthographicSize = ResolveM01ProductionOrthographicSize();
         worldCamera.nearClipPlane = Mathf.Min(worldCamera.nearClipPlane, 0.05f);
         worldCamera.farClipPlane = Mathf.Max(worldCamera.farClipPlane, M01PlayableCameraHeight + 10f);
         cameraStartWorld = ClampM01CameraCenterToTacticalMap(cameraStartWorld);
         worldCamera.transform.SetPositionAndRotation(
             new Vector3(cameraStartWorld.x, M01PlayableCameraHeight, cameraStartWorld.z),
             Quaternion.Euler(90f, 0f, 0f));
+    }
+
+    private float ResolveM01ProductionOrthographicSize()
+    {
+        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
+        TacticalMapDefinition definition = loader != null ? loader.Definition : null;
+        if (definition == null || worldCamera == null || worldCamera.aspect <= 0.0001f)
+            return M01PlayableStartOrthographicSize;
+
+        float widthFitOrthographicSize = definition.VisibleWorldSize.x / (2f * worldCamera.aspect);
+        return Mathf.Clamp(widthFitOrthographicSize, 0.72f, M01PlayableStartOrthographicSize);
     }
 
     public bool ApplyM01ProductionCameraPoseForCurrentAspect()
@@ -658,6 +669,14 @@ public sealed class GameBootstrap : MonoBehaviour
         TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
         if (loader == null)
             return false;
+
+        if (loader.TryGetAnchorWorldPosition(Chapter01M01PlayableRuntime.PlayerSpawnAnchorId, out Vector3 playerSpawn) &&
+            loader.TryGetAnchorWorldPosition("tutorial.move_target.cover_01", out Vector3 moveTarget))
+        {
+            cameraCenter = Vector3.Lerp(playerSpawn, moveTarget, 0.38f);
+            cameraCenter.y = 0f;
+            return true;
+        }
 
         bool hasAny = false;
         Vector3 min = Vector3.zero;

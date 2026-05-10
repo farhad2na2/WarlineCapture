@@ -16,6 +16,9 @@ public partial struct MissionRuntimeSpritePresenterSystem : ISystem
         state.Dependency.Complete();
         ComponentLookup<UnitHealth> healthLookup = SystemAPI.GetComponentLookup<UnitHealth>(true);
         ComponentLookup<UnitMoveVisualState> moveLookup = SystemAPI.GetComponentLookup<UnitMoveVisualState>(true);
+        ComponentLookup<UnitTarget> targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
+        ComponentLookup<UnitPathRequest> pathRequestLookup = SystemAPI.GetComponentLookup<UnitPathRequest>(true);
+        ComponentLookup<UnitPathFollow> pathFollowLookup = SystemAPI.GetComponentLookup<UnitPathFollow>(true);
         ComponentLookup<UnitAttackAnimationState> attackAnimationLookup = SystemAPI.GetComponentLookup<UnitAttackAnimationState>(true);
         ComponentLookup<EngageTarget> engageLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
         ComponentLookup<UnitDeathAnimationState> deathLookup = SystemAPI.GetComponentLookup<UnitDeathAnimationState>(true);
@@ -26,6 +29,9 @@ public partial struct MissionRuntimeSpritePresenterSystem : ISystem
                 entity,
                 ref healthLookup,
                 ref moveLookup,
+                ref targetLookup,
+                ref pathRequestLookup,
+                ref pathFollowLookup,
                 ref attackAnimationLookup,
                 ref engageLookup,
                 ref deathLookup);
@@ -58,6 +64,12 @@ public partial struct MissionRuntimeSpritePresenterSystem : ISystem
         }
         if (em.HasComponent<UnitMoveVisualState>(entity) && em.GetComponentData<UnitMoveVisualState>(entity).IsMoving != 0)
             return MissionRuntimeSpriteVisualState.Move;
+        if (em.HasComponent<UnitTarget>(entity) ||
+            em.HasComponent<UnitPathRequest>(entity) ||
+            em.HasComponent<UnitPathFollow>(entity))
+        {
+            return MissionRuntimeSpriteVisualState.Move;
+        }
 
         return MissionRuntimeSpriteVisualState.Idle;
     }
@@ -66,6 +78,9 @@ public partial struct MissionRuntimeSpritePresenterSystem : ISystem
         Entity entity,
         ref ComponentLookup<UnitHealth> healthLookup,
         ref ComponentLookup<UnitMoveVisualState> moveLookup,
+        ref ComponentLookup<UnitTarget> targetLookup,
+        ref ComponentLookup<UnitPathRequest> pathRequestLookup,
+        ref ComponentLookup<UnitPathFollow> pathFollowLookup,
         ref ComponentLookup<UnitAttackAnimationState> attackAnimationLookup,
         ref ComponentLookup<EngageTarget> engageLookup,
         ref ComponentLookup<UnitDeathAnimationState> deathLookup)
@@ -87,6 +102,12 @@ public partial struct MissionRuntimeSpritePresenterSystem : ISystem
 
         if (moveLookup.HasComponent(entity) && moveLookup[entity].IsMoving != 0)
             return MissionRuntimeSpriteVisualState.Move;
+        if (targetLookup.HasComponent(entity) ||
+            pathRequestLookup.HasComponent(entity) ||
+            pathFollowLookup.HasComponent(entity))
+        {
+            return MissionRuntimeSpriteVisualState.Move;
+        }
 
         return MissionRuntimeSpriteVisualState.Idle;
     }

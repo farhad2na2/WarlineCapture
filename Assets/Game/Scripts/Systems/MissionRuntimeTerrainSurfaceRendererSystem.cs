@@ -34,7 +34,7 @@ public partial class MissionRuntimeTerrainSurfaceRendererSystem : SystemBase
             surface.RuntimePlane == (byte)TacticalMapRuntimePlane.GameplayXZ
                 ? Quaternion.Euler(90f, 0f, 0f)
                 : Quaternion.identity);
-        runtime.Instance.transform.localScale = Vector3.one;
+        runtime.Instance.transform.localScale = runtime.GroundScale == Vector3.zero ? Vector3.one : runtime.GroundScale;
         runtime.Renderer.sprite = runtime.GroundSprite;
         runtime.Renderer.sortingOrder = 0;
         runtime.Renderer.enabled = runtime.GroundSprite != null;

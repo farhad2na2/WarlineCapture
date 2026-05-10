@@ -16,7 +16,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 {
     private const float SpriteGroundLift = 0.03f;
     private const float SelectionGroundLift = 0.012f;
-    private const float M01InfantryMetricScale = 0.15f;
+    private const float M01InfantryMetricScale = 0.22f;
     private const float M01CommandBuildingMetricScale = 0.80f;
     private const float M01PlayerSoldierScale = 1f;
     private const float M01MoveAnimationCyclesPerSecond = 3.2f;

@@ -168,6 +168,8 @@ public sealed class BattleHudGameplayBridge : MonoBehaviour
 
     public void SetWorldMarkersVisible(bool visible)
     {
-        tacticalFeedback?.SetWorldMarkersVisible(visible);
+        // The HUD marker layer is a static art-preview surface. Live targeting feedback
+        // must come from grounded runtime markers so fixed screen-space art cannot cover M01 units.
+        tacticalFeedback?.SetWorldMarkersVisible(false);
     }
 }

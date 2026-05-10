@@ -610,6 +610,8 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.AreSame(groundRenderer, runtime.Renderer, $"{entryPath}: loader GroundRenderer must be the ECS-owned terrain presentation renderer.");
         Assert.AreSame(groundRenderer.gameObject, runtime.Instance, $"{entryPath}: terrain GameObject must be referenced only as ECS presentation.");
         Assert.AreSame(groundRenderer.sprite, runtime.GroundSprite, $"{entryPath}: terrain sprite should be driven by the ECS terrain renderer runtime component.");
+        Assert.AreEqual(groundRenderer.transform.localScale.x, runtime.GroundScale.x, 0.001f, $"{entryPath}: terrain ECS renderer runtime should preserve metadata ground scale x.");
+        Assert.AreEqual(groundRenderer.transform.localScale.y, runtime.GroundScale.y, 0.001f, $"{entryPath}: terrain ECS renderer runtime should preserve metadata ground scale y.");
         Assert.NotNull(runtime.ProductionTacticalPlateSprites, $"{entryPath}: terrain runtime must bind the full AI production tactical plate pack.");
         Assert.AreEqual(3, runtime.ProductionTacticalPlateSprites.Length, $"{entryPath}: terrain runtime must bind all three AI production tactical plates.");
     }
@@ -724,7 +726,7 @@ public sealed class Chapter01M01PlayModeValidationTests
         if (runtimeEntityId == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
             runtimeEntityId == Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
         {
-            Assert.That(runtime.InstanceScale, Is.InRange(0.145f, 0.155f), $"{label} should consume the user-observed readable infantry scale target near 0.15.");
+            Assert.That(runtime.InstanceScale, Is.InRange(0.215f, 0.225f), $"{label} should consume the corrected production infantry scale target near 0.22.");
         }
     }
 
@@ -880,18 +882,18 @@ public sealed class Chapter01M01PlayModeValidationTests
     {
         if (SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null)
         {
-            TestContext.WriteLine($"[M01V2RuntimeCapture] skipped={captureName} reason=graphics-device-null");
+            TestContext.WriteLine($"[M01AiProductionRuntimeCapture] skipped={captureName} reason=graphics-device-null");
             return string.Empty;
         }
 
-        string captureDirectory = Path.Combine(GetMainProjectRoot(), "Design/AgentReports/Captures/2026-05-09_m01-v2-runtime");
+        string captureDirectory = Path.Combine(GetMainProjectRoot(), "Design/AgentReports/Captures/2026-05-09_m01-ai-production-runtime");
         Directory.CreateDirectory(captureDirectory);
         string capturePath = Path.Combine(captureDirectory, $"{captureName}.png");
         string wideCapturePath = Path.Combine(captureDirectory, $"{captureName}-20x9.png");
         CaptureM01ViewAtResolution(context, appCanvas, capturePath, 1280, 720, focusEntity);
         CaptureM01ViewAtResolution(context, appCanvas, wideCapturePath, 1600, 720, focusEntity);
-        TestContext.WriteLine($"[M01V2RuntimeCapture] path={capturePath}");
-        TestContext.WriteLine($"[M01V2RuntimeCapture] path={wideCapturePath}");
+        TestContext.WriteLine($"[M01AiProductionRuntimeCapture] path={capturePath}");
+        TestContext.WriteLine($"[M01AiProductionRuntimeCapture] path={wideCapturePath}");
         return capturePath;
     }
 

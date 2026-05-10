@@ -20,6 +20,7 @@ Active agent task board:
 
 - `Design/AgentTasks/README.md`
 - `Design/AgentTasks/M01_CRITICAL_PATH.md`
+- `Design/AgentTasks/build_current.md`
 - `Design/AgentTasks/gameplay_current.md`
 - `Design/AgentTasks/ui_current.md`
 - `Design/AgentTasks/art-atlas_current.md`
@@ -51,6 +52,7 @@ Rule: update the source document first, then regenerate generated outputs. Do no
 | Gameplay agent | ECS/gameplay systems, mission runtime, tactical metadata, command validation, objectives, rewards, persistence, camera bounds, tactical world/map rendering, terrain visibility, unit/target world scale, and gameplay camera framing. | UI for visible controls, reason codes, screen flows, capture requirements. Support/docs for FTUE steps, mission contracts, state tracking. |
 | UI agent | Unity Canvas screens, prefabs, route wiring, tactical HUD, command controls, visual-lock implementation, UI tests, full-screen HUD/canvas composition, safe-area layout, and player-facing capture composition. | Gameplay for data sources, command APIs, tactical world/map visibility, unit scale, and gameplay camera framing. Support/docs for target updates, layer-pack state, asset register rows. |
 | Art/Atlas agent | Sprite atlas source art, unit/building/VFX visual-state coverage, art-readiness packages, approval packages, visual scale/readability references, and atlas-source gaps. | Gameplay for runtime atlas integration, QA/HCI for public readability validation, PM/user for art approval decisions, Designer for design-language consistency. |
+| Build agent | Jenkins-triggered builds, build queue/watch automation, build-log inspection, failure-summary reports, and CI handoff reporting for PM. It may trigger approved builds and investigate resulting logs, but it does not own gameplay/UI/art fixes unless PM explicitly reassigns them. | PM for priority and escalation, Gameplay/UI/QA when failures map to lane-owned code or validation gaps, Support/docs when CI workflow docs or task wiring must change. |
 | Support/docs/FTUE agent | FTUE design, ARIA tutorial flow, contracts, asset checklist, project-state tracking, handoff docs, priority lists. | Gameplay for typed tutorial actions and mission ids. UI for surfaces, assistant button/panel/card visuals, validation captures. |
 | Designer | Product/design coherence, README and design-index optimization, terminology alignment, source-of-truth hierarchy, player-facing flow clarity, UI/readability design review, and documentation pruning recommendations. | PM for priorities and accepted source-of-truth changes. Gameplay/UI/support/QA/art for cross-lane impacts, implementation feasibility, captures, and validation evidence. |
 | PM assistant | Intake, sync review, validation gate, priority ordering, cross-lane impact calls, progress tracking. | All lanes. |
@@ -125,6 +127,7 @@ My current lane task is complete/stale and I am waiting for PM to refresh the la
 Incorrect behavior:
 
 - Deleting `Auto Continue Gameplay`, `Auto Continue UI`, `Auto Continue QA/HCI`, or `Auto Continue Support/FTUE` because a P1 task completed.
+- Deleting the Build lane heartbeat because the latest Jenkins run passed or because no fresh failure is visible yet.
 - Treating a completed handoff as a reason to retire the lane monitor.
 - Stopping a heartbeat before PM has refreshed the lane task list.
 
@@ -150,6 +153,7 @@ Examples:
 - UI may not wait for QA/HCI to validate a capture matrix that UI has not delivered yet. UI owns the matrix and must either produce it or report the exact UI route/capture tooling blocker in the required UI report file.
 - Gameplay may wait for UI only when a named UI surface/control/report is missing and Gameplay cannot produce it. Gameplay may not wait if the missing item is a gameplay API, command result, reason code, runtime id, or validation report owned by Gameplay.
 - Support/FTUE may wait for Gameplay/UI only when a named typed command, runtime id, UI surface, or validation capture is missing and cannot be authored in Support/FTUE docs alone.
+- Build may wait for another lane only after it names the failing build id/log path, the exact owning file/system or missing deliverable, and the next report expected from that lane. Build may not stay idle just because Jenkins is red; it must convert the failure into a named PM-facing report.
 
 ## Sync Rules
 
@@ -202,11 +206,19 @@ Use the dedicated Unity workspace assigned to the lane before asking the user to
 | Gameplay | `/Users/farhad/Projects/WarlineCapture-CodexUnity1` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take UI/QA workspaces unless PM explicitly reassigns. |
 | UI | `/Users/farhad/Projects/WarlineCapture-CodexUnity2` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/QA workspaces unless PM explicitly reassigns. |
 | QA/HCI | `/Users/farhad/Projects/WarlineCapture-CodexUnity3` | If locked by a stale process, stop only that stale process when safe or report blocked. Do not take Gameplay/UI workspaces unless PM explicitly reassigns. |
+| Build | No default Unity workspace. | Trigger Jenkins builds, inspect Jenkins artifacts/logs, and write failure summaries/reports. If local reproduction is required, PM assigns a temporary workspace or routes the failure to the owning lane. |
 | Support/FTUE | No default Unity workspace. | Run docs/tests that do not need Unity. If Unity validation becomes necessary, PM assigns a temporary workspace before the command runs. |
 
 Agents are authorized to use their assigned workspace for focused validation without asking for product permission. Do not run validation in another active lane's primary workspace just because it is available; workspace switching is a PM coordination decision.
 
 Agents may still need to pause when Codex/tool sandbox approval is required. Examples include writing outside the allowed workspace, network access, or destructive operations. In that case, the agent should make clear that the request is for sandbox/tool permission, not for product approval.
+
+Build-specific loop:
+
+- The Build lane may run on intervals/heartbeats to trigger the current approved Jenkins build job, inspect the resulting Jenkins console/artifacts/logs, and report status under `Design/AgentReports/`.
+- On success, Build writes a concise pass report with job/build id, target, artifact path if available, and any warnings worth PM awareness.
+- On failure, Build writes a concise failure report with job/build id, failing stage, exact failing command/test when visible, log/artifact paths, and the most likely owning lane. Report facts and probable cause; do not silently start fixing product code unless PM explicitly assigns that follow-up.
+- Build should notify PM/user only when a fresh failure appears, the failure reason changes materially, or a build blocker is preventing a required gate.
 
 QA/HCI confirmed on 2026-05-08 that Unity licensing is healthy for the project, but Codex sandboxed batchmode cannot always reach the user's Unity Licensing Client/keychain/session services. Required Unity batchmode validation should therefore run with Codex escalation/out-of-sandbox execution when licensing access is needed. This is the standard fix for `LicenseClient-farhad` reconnect/time-out loops and is not a reason to retry other lane workspaces or ask a product approval question.
 

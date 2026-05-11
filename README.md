@@ -64,6 +64,13 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 
 Do not duplicate the full `Design` inventory here. Visual-lock target notes, layered packages, production references, audio, monetization, marketing, art-generation, balance, and implementation-plan inventories are owned by `Design/README.md`.
 
+## Slides
+
+AI-native development case-study materials for this project live under `Slides/`:
+
+- `Slides/AI_Native_Game_Development_2026_WarlineCapture.pdf`
+- `Slides/AI_Native_Game_Development_2026_WarlineCapture.pptx`
+
 ## Project Status Snapshot
 
 Current generated tracker: `Design/WarlineCapture_Project_State_Dashboard.md`.

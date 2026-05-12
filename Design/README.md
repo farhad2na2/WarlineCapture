@@ -14,6 +14,8 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Map contract: `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` separates strategic/zoomed-out map views from tactical/zoomed-in playable map packages across gameplay, UI, FTUE, audio, VFX, and art approval.
 - FTUE and assistant: `WarlineCapture_FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
 - Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
+- Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
+- Performance regression: `Architecture/performance_regression_contract.md` defines the structured-metrics, budget, FreezeDetect, and hot-path rules for preventing new performance regressions.
 - Designer workflow: `WarlineCapture_Designer_Role_And_Documentation_Workflow.md` defines the Designer lane for README/design-index clarity, source-of-truth ordering, terminology alignment, product/design coherence, and documentation pruning recommendations.
 - Gameplay layer: `GameLaunchPayload`, scenario setup, objectives, results, rewards, progression, persistence, Saga, Operation, AI profiles, and encounter templates are planned in the gameplay feature specs.
 - Combat catalog: `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md` plus `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json` and `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json` define all unit, building, skill, ability, and upgrade-track ids, including availability, unlock moments, implementation owners, and balance data separated from art data.
@@ -41,23 +43,25 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 14. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
 15. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
 16. `WarlineCapture_Agent_Coordination_Workflow.md`
-17. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
-18. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-19. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-20. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
-21. `WarlineCapture_Economy_Reward_Design.md`
-22. `WarlineCapture_Balancing_Automated_Test_Plan.md`
-23. `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
-24. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-25. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
-26. `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
-27. `WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md`
-28. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-29. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
-30. `WarlineCapture_2D_Isometric_Production_Direction.md`
-31. `WarlineCapture_2D_Isometric_Art_Bible.md`
-32. `WarlineCapture_MacroTile_Terrain_Production_Plan.md`
-33. `WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
+17. `Architecture/gameplay_solid_ecs_contract.md`
+18. `Architecture/performance_regression_contract.md`
+19. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
+20. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+21. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
+22. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+23. `WarlineCapture_Economy_Reward_Design.md`
+24. `WarlineCapture_Balancing_Automated_Test_Plan.md`
+25. `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
+26. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+27. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
+28. `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
+29. `WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md`
+30. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+31. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
+32. `WarlineCapture_2D_Isometric_Production_Direction.md`
+33. `WarlineCapture_2D_Isometric_Art_Bible.md`
+34. `WarlineCapture_MacroTile_Terrain_Production_Plan.md`
+35. `WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
 
 ## Core Product And Gameplay
 
@@ -81,6 +85,8 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md` - runtime wiring contract for M01 ARIA assistant services, context data flow, recommendation transitions, typed intents, save/session fields, button rules, invalid-command recovery, and validation tests.
 - `WarlineCapture_Agent_Coordination_Workflow.md` - PM assistant operating workflow for agent handoffs, cross-lane contract changes, validation gates, and tracking updates.
 - `WarlineCapture_Designer_Role_And_Documentation_Workflow.md` - Designer lane workflow for README/design-index optimization, source-of-truth hierarchy, terminology alignment, documentation pruning, and product/design coherence reviews.
+- `Architecture/gameplay_solid_ecs_contract.md` - gameplay SOLID/ECS architecture contract, including bootstrap composition boundaries, ECS-first runtime rules, service/logging guidance, and no-new-drift migration rules.
+- `Architecture/performance_regression_contract.md` - performance regression contract for structured frame/system/GC metrics, scenario budgets, FreezeDetect usage, hot-path rules, and ratcheted performance gates.
 - `SagaChapters/README.md` - Saga chapter design folder index and update rules.
 - `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md` - Chapter 1 / First Response mission matrix and detailed specs for all five Chapter 1 missions.
 - `SagaChapters/WarlineCapture_Saga_Chapter02_Broken_Grid.md` - Chapter 2 / Broken Grid high-level chapter arc.

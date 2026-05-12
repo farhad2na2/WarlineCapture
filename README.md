@@ -300,7 +300,28 @@ When adding a new configurable system:
 
 ## Performance Direction
 
-Recent project patterns favor:
+The performance regression contract is `Design/Architecture/performance_regression_contract.md`. `FreezeDetect`, frame-gap logs, and per-system timing logs are diagnostic tools; they are not the performance gate by themselves.
+
+Performance-sensitive gameplay, UI, and shell changes should be validated with focused scenarios, warmup windows, structured metrics, and explicit budgets.
+
+Required metric families:
+
+- frame time: average, p95, p99, and max after warmup
+- GC allocation: total and recurring per-frame allocation after warmup
+- system timing: p95, p99, and max for named hot systems
+- runtime counts: entities, visible presentation objects, markers, projectiles, and relevant UI objects
+- scenario phase markers: boot, warmup, interaction, combat, completion, and steady state
+
+Priority performance flows:
+
+- boot to main menu
+- public M01 launch
+- M01 select/move
+- M01 attack/result
+- tactical steady-state soak
+- domain-specific stress cases for pathfinding, rendering budget, spawning, AI production, or UI route transitions
+
+Recent project patterns also favor:
 
 - bootstrap-owned runtime services instead of scene-wide object searches
 - explicit dependency injection instead of singleton/bootstrap lookups
@@ -311,6 +332,12 @@ Avoid introducing:
 
 - `FindObjectOfType`, `FindAnyObjectByType`, `FindObjectsByType`, `GameObject.Find`, `Camera.main`, or similar global lookup patterns in gameplay code
 - new runtime controller MonoBehaviours placed directly in the scene
+- per-frame LINQ in gameplay/runtime hot paths
+- per-frame string interpolation or log construction in gameplay/runtime hot paths
+- runtime asset loading during gameplay frames
+- instantiate/destroy churn during steady-state gameplay outside approved pooling or presentation paths
+
+Editor PlayMode budgets catch large regressions only. Android device development builds are the primary mobile-performance gate, and Android release builds are the milestone acceptance gate. Headless or `-nographics` Unity runs can validate logic and rough timing, but they are not rendering-performance acceptance.
 
 ## Implementation Rules
 

@@ -218,38 +218,61 @@ Initial reward types should include:
 
 ## Architecture
 
+The gameplay architecture contract is `Design/Architecture/gameplay_solid_ecs_contract.md`. It is enforced by `Assets/Tests/Editor/GameplayArchitectureContractTests.cs` as a no-new-drift ratchet. Existing mixed-responsibility code is treated as migration debt; new gameplay work should follow the contract.
+
 - `Assets/Game/Scripts/Components`
   ECS component data for grid state, movement, combat, visuals, spawning, roads, buildings, and occupancy.
 - `Assets/Game/Scripts/Systems`
-  ECS simulation systems for movement, pathfinding, engagement, combat, occupancy, health, visuals, and respawn.
+  ECS simulation systems for movement, pathfinding, engagement, combat, occupancy, health, visuals, respawn, mission runtime, and AI.
 - `Assets/Game/Scripts/Authorings`
   Thin ECS authoring/baker adapters used by the scene or subscene at bake time.
 - `Assets/Game/Scripts/Bootstrap`
-  Runtime bootstrap and bootstrap-owned services that replace scene controller MonoBehaviours.
+  Composition-only startup code, feature installers, service registries, and shell services. Bootstrap must not own gameplay policy.
 - `Assets/Game/Scripts/UI`
-  Runtime UI and controller logic owned by the bootstrap.
+  Canvas views and UI adapters. UI views display data and emit commands; they do not own gameplay rules.
 - `Assets/Game/Scripts/Environment`
-  Runtime world-generation, blockers, decoration, and environment services.
+  Legacy/runtime environment services. New gameplay-facing environment behavior should move toward ECS data and systems.
 - `Assets/Game/Scripts/Configs`
   ScriptableObject configs for scene systems, authorings, and runtime services.
 
 ## Runtime Pattern
 
-The project no longer uses scene-placed controller MonoBehaviours for gameplay systems like selection, building placement, roads, day/night, city spawning, blockers, decorations, or UI orchestration.
+The target runtime pattern is ECS-first:
 
-Instead:
+- Gameplay runtime behavior belongs in ECS components, buffers, tags, and systems.
+- MonoBehaviours are allowed for UI views, authoring/baking, bootstrap composition, editor tooling, and Unity shell adapters.
+- ScriptableObjects describe config only.
+- Services bridge external concerns such as logging, persistence, asset lookup, telemetry, and platform APIs.
+- Gameplay systems should prefer ECS data/event streams over direct service/static calls.
 
-- `Assets/Game/Scripts/Bootstrap/GameBootstrap.cs` is the scene entry point.
-- Bootstrap creates the runtime systems with `new`.
-- Bootstrap passes required dependencies explicitly through `Init(...)` and `BindDependencies(...)`.
-- Bootstrap drives per-frame behavior through its own `Update`, `LateUpdate`, and `OnGUI`.
+Bootstrap responsibility:
+
+- read serialized scene/config references
+- register services
+- install feature modules
+- connect the ECS world
+- start the app lifecycle
+
+Bootstrap must not contain:
+
+- mission-specific behavior
+- unit spawning policy
+- AI or combat policy
+- camera/framing policy
+- UI route rules
+- gameplay asset-resolution policy
+- static gameplay logging
 
 When adding a new runtime system:
 
-- do not add it as a new scene `MonoBehaviour` controller
-- create it as a plain runtime class unless it must be an ECS authoring/baker
-- initialize it from `GameBootstrap`
-- pass dependencies explicitly instead of using global lookups
+- prefer ECS data plus an ECS system
+- use an authoring/baker only to convert Unity references into ECS data
+- use a UI `*View` only for Canvas/reference binding
+- use `*Config` ScriptableObjects for configurable data
+- use feature installers/services only at the shell edge
+- do not add new static runtime service facades such as `AILog`
+
+Existing classes such as `GameBootstrap`, `AILog`, and mixed runtime managers are migration debt. Do not expand those patterns; retire them by domain slice when touching related behavior.
 
 ## Config Pattern
 

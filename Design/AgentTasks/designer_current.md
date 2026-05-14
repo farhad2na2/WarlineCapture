@@ -1,55 +1,51 @@
 # Designer Current Task
 
-Date: 2026-05-09
-Status: waiting
-Priority: v2 soldier animation design audit complete; waiting on Gameplay import-readiness cleanup
+Date: 2026-05-14
+Status: active
+Priority: P0 Design-owned M01 step-by-step gameplay spec before Art mockups
 
 ## Assignment
 
-Designer delivered the rejection-informed visual scale/readability contract:
+PM correction: the existing PM-authored package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` is draft reference only. It is not design-approved, not implementation-ready, and must not be used to route Gameplay.
 
-- `Design/AgentReports/2026-05-08_designer_m01-rejection-scale-marker-contract.md`
+Designer owns the exact M01 step-by-step gameplay spec that Art/Atlas will use to produce review mockup images.
 
-The true-isometric AAA gameplay visual target package is approved:
+Read first:
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
+- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/README.md`
+- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/M01_StepByStepGameplayMockup_Manifest.json`
+- `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/`
+- `Design/AgentTasks/M01_CRITICAL_PATH.md`
 
-The Gameplay VisualLock board package was rejected as insufficient. Art/Atlas must now deliver AI-generated ready-to-implement assets:
+Required Designer output:
 
-- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+- `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
-Art/Atlas has now delivered the v2 soldier animation package:
+The report must include:
 
-- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
-- `Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_contact_v2.png`
-- `Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_animation_manifest_v2.md`
+- exact ordered M01 gameplay steps from start state through result state
+- player input/action per step
+- camera/framing per step
+- units visible and their poses, facing, selection state, and survival state
+- move, attack, objective, invalid-command, ARIA, minimap, and result states
+- HUD, command panel, objective panel, minimap, assistant, and log states
+- transitions, timing, and recovery/error states Art must show
+- what must stay aligned with approved VisualLock targets
+- Art acceptance checklist for mockup images
+- explicit decision on whether the PM draft is accepted as-is, corrected, or replaced
 
-Designer completed the focused audit:
-
-- `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
-
-PM accepted this as a design audit result, not final runtime approval. Designer recommendation is "accept with minor notes" for current M01 four-facing scope. Gameplay still found import-readiness blockers.
-
-Do not start another broad documentation rewrite, M02 work, or unrelated design pass unless PM assigns it.
+Do not create final mockup images. Do not route Gameplay. Do not commit or push.
 
 ## Waiting On
 
 Waiting on lane:
-Gameplay
+Designer
 
-Waiting on exact report and decision:
+Next lane after Designer delivery:
+Art/Atlas
 
-- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
-- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
-- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
+Blocked lanes:
+Gameplay and QA/HCI remain blocked until Art produces mockup images and the user approves them.
 
-Owner of next action:
-Gameplay
-
-Can my lane still continue fallback work? no.
-
-## Completion Report
-
-No new Designer report is required unless PM/user routes new visual feedback.
-
-Use the standard WarlineCapture handoff format if a new task is assigned.
+Completion report expected:
+`Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`

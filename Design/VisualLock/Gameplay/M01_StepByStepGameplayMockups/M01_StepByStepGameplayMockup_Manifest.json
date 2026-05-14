@@ -1,8 +1,19 @@
 {
   "packageId": "M01_StepByStepGameplayMockups",
   "date": "2026-05-14",
-  "owner": "PM",
-  "status": "canonical_sequence_lock",
+  "owner": "PM draft, pending Designer authority",
+  "status": "draft_reference_not_design_approved",
+  "approvalGate": {
+    "designerSourceOfTruth": "Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md",
+    "artMockupOutput": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/",
+    "artReport": "Design/AgentReports/2026-05-14_art-atlas_m01-step-by-step-gameplay-mockups.md",
+    "requiresUserApprovalBeforeGameplay": true,
+    "requiresUserApprovalBeforeProjectImport": true,
+    "blockedLanesUntilApproval": [
+      "Gameplay",
+      "QA/HCI"
+    ]
+  },
   "mission": {
     "missionId": "saga.ch01.m01.first_contact",
     "scenarioSetupId": "scenario.ch01.m01.first_contact",

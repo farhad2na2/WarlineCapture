@@ -1,12 +1,19 @@
-# M01 Step-By-Step Gameplay Mockup Lock
+# M01 Step-By-Step Gameplay Mockup Draft
 
 Date: 2026-05-14
-Owner: PM
-Status: canonical sequence lock for gameplay implementation
+Owner: PM draft, pending Designer authority
+Status: draft reference only; not design-approved; not implementation-ready
 
 ## Purpose
 
-This folder defines the exact end-to-end M01 gameplay mockup sequence that Gameplay must build and Art/QA must capture. The approved visual targets under `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/` lock the look. This package locks the moment-by-moment gameplay result so no runtime behavior, UI state, marker state, tutorial step, or capture frame is guessed.
+This folder captures a PM draft of the desired end-to-end M01 gameplay mockup sequence. It is an input for Designer review, not the source of truth for Art/Atlas, Gameplay, or QA/HCI. Designer must review it against the approved visual targets under `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/` and publish `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md` before Art creates mockup images.
+
+## Approval Gate
+
+1. Designer accepts, corrects, or replaces this draft in `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
+2. Art/Atlas produces mockup images and contact sheets from the Designer report.
+3. User approves the mockup images before they are added as accepted project visual lock.
+4. Gameplay implementation and QA/HCI validation remain blocked until PM routes them after user approval.
 
 Mission source:
 
@@ -18,7 +25,7 @@ Mission source:
 - Archetype: `Patrol Intercept`
 - Teaching goal: select, move, attack, read objective, finish result.
 
-## Non-Negotiable Runtime Locks
+## Draft Runtime Locks For Designer Review
 
 - Camera is true orthographic isometric with no horizon, vanishing point, wide-angle distortion, or cinematic perspective convergence.
 - Tactical combat uses the tactical ground, not a baked strategic overview image.
@@ -30,7 +37,7 @@ Mission source:
 - ARIA Show Me and Do It must use typed command intents, never raw screen coordinates.
 - Canonical command reason codes are `NoSelection`, `TargetOutOfBounds`, `TargetBlocked`, `TargetUnreachable`, `TargetNotEnemy`, `TargetNotAttackable`, `CommandUnavailable`, `MissionDoesNotAllowBuild`, and `CameraJumpUnavailable`.
 
-## Canonical Anchors
+## Draft Anchors For Designer Review
 
 | Anchor | Normalized Position | Usage |
 | --- | --- | --- |
@@ -45,7 +52,7 @@ Mission source:
 | `threat.patrol_warning_01` | `(0.70, 0.53)` | Threat warning pulse. |
 | `minimap.viewport_start` | `(0.28, 0.52)` | Initial minimap viewport center. |
 
-## Required Step Frames
+## Draft Required Step Frames
 
 ### M01-00 Strategic Briefing And Deploy
 
@@ -244,9 +251,11 @@ The contact sheets must show frames in numeric order from M01-00 through M01-11 
 
 ## Acceptance Checklist
 
-- Every required capture listed above exists in this folder before Gameplay is marked visual-complete.
-- Captures match both this step-by-step lock and `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/`.
-- The implementation uses the contract ids and anchors above without substituting new ids.
-- Command feedback uses `BattleHudGameplayBridge`.
-- Invalid command states use only canonical reason codes.
-- ARIA uses typed command intents for Show Me and Do It.
+- Designer report exists and explicitly accepts, corrects, or replaces this draft.
+- Art/Atlas mockup images exist only after Designer approval.
+- User approves the mockup images before Gameplay implementation or project import begins.
+- Approved captures match the Designer report and `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/`.
+- When implemented later, contract ids, mission ids, scenario ids, level ids, ARIA intent ids, and command reason codes match `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`.
+- When implemented later, UI feedback routes through `BattleHudGameplayBridge`; no direct screen-coordinate scripting or raw overlay calls.
+- When implemented later, every rejected command uses a canonical reason code and clears cleanly.
+- When implemented later, tactical maps do not bake units, markers, HUD, minimap, or tutorial UI.

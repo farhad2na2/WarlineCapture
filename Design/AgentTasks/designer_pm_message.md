@@ -1,20 +1,35 @@
 # PM Message To Designer
 
-Date: 2026-05-09
-Priority: P0 audit Art/Atlas v2 soldier animation package before acceptance
+Date: 2026-05-14
+Priority: P0
+Status: assigned
 
-The user sees the v2 soldiers as more premium, but has not accepted them for the game yet.
+Designer is now the active owner for M01 step-by-step gameplay specification.
 
-Audit:
+The PM-authored package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` is draft reference only. It is not the source of truth until you review it against approved visual lock targets and either accept, correct, or replace it.
 
-- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
-- `Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_contact_v2.png`
-- `Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_animation_manifest_v2.md`
+Read first:
 
-Check whether the package has the right angles, states, animation quality, pose variation, scale, faction consistency, and VisualLock alignment for our AAA mobile isometric M01 target. Explicitly say whether four facings are acceptable now or whether eight facings are required before acceptance.
+- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/README.md`
+- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/M01_StepByStepGameplayMockup_Manifest.json`
+- `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/`
+- `Design/AgentTasks/M01_CRITICAL_PATH.md`
 
-Expected report:
+Deliver:
 
-`Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
+- `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
-Return a recommendation: accept, accept with minor notes, needs Art fixes, or blocked. Do not commit or push.
+Your report must include:
+
+- exact ordered M01 gameplay steps from start state through result state
+- player input/action per step
+- camera/framing per step
+- units visible and their poses, facing, selection state, and survival state
+- move, attack, objective, invalid-command, ARIA, minimap, and result states
+- HUD, command panel, objective panel, minimap, assistant, and log states
+- transitions, timing, and recovery/error states Art must show
+- what must stay aligned with approved VisualLock targets
+- Art acceptance checklist for mockup images
+- explicit decision on whether the PM draft is accepted as-is, corrected, or replaced
+
+Do not generate final mockup images. Do not hand work to Gameplay. Your report unblocks Art/Atlas only.

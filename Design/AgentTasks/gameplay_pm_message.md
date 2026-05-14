@@ -1,78 +1,18 @@
-# PM Message For Gameplay
+# PM Message To Gameplay
 
-Date: 2026-05-09
-Priority: P0 integrate full M01 AI production art pack into ECS runtime and capture proof
+Date: 2026-05-14
+Priority: P0
+Status: blocked
 
-PM heartbeat follow-up:
+Gameplay is not the next owner for the M01 step-by-step mockup path.
 
-- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md` is not visible yet.
-- Continue this task now if unblocked.
-- If blocked, write a blocker report immediately under `Design/AgentReports/` with the exact missing file, Unity/import issue, or implementation owner.
-- Do not switch to fallback work.
-- Do not commit or push.
+Do not implement from the PM-authored package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/`, and do not implement from the Designer report alone.
 
-PM escalation, 2026-05-09 12:25 Europe/Berlin:
+Correct route:
 
-- This lane is still silent after the previous PM nudge.
-- Next heartbeat must produce one of these:
-  - completion handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`, or
-  - blocker handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-blocker.md`.
-- If Unity or asset import is still running, write a blocker/progress report with the running command/log path and current state.
+1. Designer delivers `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
+2. Art/Atlas creates step-by-step mockup images/contact sheets from that Designer spec.
+3. User approves the mockup images.
+4. PM routes Gameplay from the approved mockups.
 
-PM review, 2026-05-09 14:04 Europe/Berlin:
-
-- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-runtime-integration.md` is accepted only as partial soldier runtime proof.
-- It does not satisfy the current task because it explicitly says production tactical maps, building atlases, and marker assets are not integrated.
-- Do not ask PM/user to review the soldier-only proof as the full milestone.
-- Continue the same P0 task until the full M01 AI production art pack is integrated.
-- Still expected: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`.
-- If the full pack cannot be integrated, write `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-blocker.md` with the exact blocker.
-
-PM review, 2026-05-09 15:07 Europe/Berlin:
-
-- `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md` is accepted only as implementation progress, not as PM/user-review-ready visual proof.
-- Art/Atlas reviewed it in `Design/AgentReports/2026-05-09_art-atlas_full-ai-production-runtime-proof-review.md` and marked it needs fixes.
-- Fix runtime framing/scale/placement before asking for PM/user review:
-  - show the intended road/intersection/wall/building composition, not a zoomed asphalt crop,
-  - make production building/prop sprites visible and scale-checkable,
-  - make selected/move/attack marker footprint readable at approved scale,
-  - keep v2 soldiers grounded and proportionate against the tactical plate,
-  - keep ECS atlas-backed units; do not add SpriteRenderer/MeshRenderer unit presentation.
-- Next expected handoff: `Design/AgentReports/2026-05-09_gameplay_m01-ai-production-runtime-framing-fix.md`.
-
-PM accepts the v2 soldier import-readiness cleanup for runtime integration. This is not final visual approval; final approval requires runtime capture/video.
-
-User clarification: integrate all new M01 AI production art assets, not only the v2 soldiers.
-
-Use:
-
-- `Design/AgentReports/2026-05-09_designer_m01-soldier-v2-animation-aaa-audit.md`
-- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-atlas-runtime-audit.md`
-- `Design/AgentReports/2026-05-09_gameplay_m01-soldier-v2-import-metadata-cleanup.md`
-- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
-- `Design/AgentReports/2026-05-09_art-atlas_m01-soldier-animation-atlas-fix-v2.md`
-- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_ai_production_asset_manifest.json`
-- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_soldier_animation_manifest_v2.json`
-- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas_v2.png`
-- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_animation_atlas_v2.png`
-
-Use the full production asset manifest for maps/buildings/markers. Use the v2 soldier animation manifest for soldiers.
-
-Integrate:
-
-- strategic/background map,
-- all tactical map plates,
-- building/prop atlases and states,
-- marker atlas and individual marker sprites,
-- use v2 manifest as the ECS soldier animation source,
-- keep player/enemy atlases separate,
-- use manifest fps, loop flags, facing ids, state ids, anchors, bounds, and frame order,
-- no SpriteRenderer/MeshRenderer runtime soldier presentation,
-- replace old/pre-production M01 visuals where equivalent AI production assets exist,
-- capture runtime proof at actual M01 camera scale showing the production map/background, buildings, markers, selected player rifle squad idle/run, and enemy patrol if reachable.
-
-Expected report:
-
-`Design/AgentReports/2026-05-09_gameplay_m01-ai-production-assets-runtime-integration.md`
-
-Return whether the full AI production visual integration is ready for PM/user runtime review or needs Gameplay/Art fixes. Do not commit or push.
+Until then, no implementation, visual-complete capture claim, or QA handoff is assigned for this work.

@@ -16,13 +16,13 @@ For PM:
 Read Design/AgentTasks/pm_heartbeat.md and follow it. Treat Design/AgentTasks/*_current.md as the only source of current lane priorities.
 ```
 
-### Designer M01 Active Override
+### Designer M01 Routing Override
 
-For Designer, `Design/AgentTasks/designer_current.md` is a PM dispatch when it says `Status: active`. The current status answer is: Designer is active, Designer owns the next action, and the required output is `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. Continue directly from that file and `Design/AgentTasks/designer_pm_message.md` when present.
+For Designer, `Design/AgentTasks/designer_current.md` is the source of truth. If it says `Status: complete`, Designer reports the delivered output and next owner from that file. If it says `Status: active`, Designer continues directly from that file and `Design/AgentTasks/designer_pm_message.md` when present.
 
 For the current M01 step-by-step mockup flow, Designer writes the design spec first. Art/Atlas creates mockup images from the approved design spec. Gameplay and QA/HCI start only after user-approved mockups exist.
 
-For the current M01 Designer task, the heartbeat must create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`, or write a blocker at that same path with the exact missing file or contradiction, attempted command if any, workspace, log path if any, missing dependency, and unblock owner.
+For an active M01 Designer task, the heartbeat must create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`, or write a blocker at that same path with the exact missing file or contradiction, attempted command if any, workspace, log path if any, missing dependency, and unblock owner.
 
 ## Agent Instruction
 

@@ -1,10 +1,10 @@
 # Designer Current Task
 
 Date: 2026-05-14
-Status: active
+Status: complete
 Priority: P0 Design-owned M01 step-by-step gameplay spec before Art mockups
-Current Designer status: active
-Owner of next action: Designer
+Current Designer status: complete
+Owner of next action: Art/Atlas
 Current task source: `Design/AgentTasks/designer_current.md`
 Supersedes: previous lane-status summaries for this M01 step-by-step mockup flow.
 
@@ -25,13 +25,19 @@ Required Designer output:
 
 - `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
+Completion:
+
+- Designer delivered `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
+- PM accepted it for Art/Atlas routing in `Design/AgentReports/2026-05-14_pm_designer-spec-review-art-routing.md`.
+- Designer has no next action in this flow unless PM/user rejects the spec or Art/Atlas reports a concrete Design blocker.
+
 ## Continue Command Handling
 
-When PM/user tells Designer to `continue`, this file is the active dispatched task. Start from this assignment and produce or update the expected report. Older or newer Gameplay, QA/HCI, or runtime-framing reports are source context only when they identify a concrete source conflict that blocks the spec.
+When PM/user tells Designer to `continue`, this completed task should not restart automatically. Designer should report complete and point PM/user to the delivered report unless PM/user asks for a revision or Art/Atlas reports a concrete Design blocker.
 
 Start by acknowledging this active assignment and creating or updating the expected report. Use `Design/AgentReports/` history only as source context after that.
 
-The first status answer while this file is active is: Designer is active, Designer owns the next action, and the required output is `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
+The first status answer while this file is complete is: Designer completed the M01 step-by-step gameplay spec, Art/Atlas owns the next action, and the delivered report is `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
 
 First visible progress must be to create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. If the spec cannot be completed, write the blocker in that same report path with the missing source or contradiction, command attempted if any, workspace, log path if any, missing dependency, and unblock owner.
 
@@ -77,7 +83,7 @@ Do not create final mockup images. Do not route implementation. Do not commit or
 ## Current Routing
 
 Current owner:
-Designer
+Art/Atlas
 
 Next lane after Designer delivery:
 Art/Atlas

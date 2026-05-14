@@ -1,12 +1,14 @@
 # Art/Atlas Current Task
 
 Date: 2026-05-14
-Status: waiting
+Status: active
 Priority: P0 create M01 step-by-step gameplay mockup images after Designer spec
 
 ## Assignment
 
-Art/Atlas is the next production lane after Designer delivers the Design-owned M01 step-by-step gameplay spec.
+Art/Atlas is the active next production lane. Designer delivered the Design-owned M01 step-by-step gameplay spec:
+
+`Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
 Do not start from the PM draft alone. Use the Designer report as source of truth, then use the approved VisualLock references for look/style.
 
@@ -29,12 +31,12 @@ The mockup package must include:
 
 These mockups are review artifacts for user approval first.
 
-## Waiting On
+## Current Source
 
-Waiting on lane:
-Designer
+Source lane:
+Designer complete
 
-Waiting on report:
+Source report:
 `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
 Next approval:

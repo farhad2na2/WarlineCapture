@@ -2,15 +2,13 @@
 
 Date: 2026-05-14
 Priority: P0
-Status: queued behind Designer
+Status: active
 
-Art/Atlas is the next production lane after Designer delivers the Design-owned M01 step-by-step gameplay spec.
-
-Do not begin from the PM draft alone. The package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` is reference material only until Designer accepts, corrects, or replaces it.
-
-When Designer delivers:
+Art/Atlas is now the active next production lane. Designer delivered the Design-owned M01 step-by-step gameplay spec:
 
 - `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
+
+Do not begin from the PM draft alone. Use the Designer report as source of truth, then use the approved VisualLock references for look/style. The package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` remains reference material unless corrected by the Designer report.
 
 Create review mockup images/contact sheets under:
 

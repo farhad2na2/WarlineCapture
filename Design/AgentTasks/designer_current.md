@@ -21,6 +21,12 @@ Required Designer output:
 
 - `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
+## Continue Command Handling
+
+When PM/user tells Designer to `continue`, this file is the active dispatched task. Do not wait for another Designer handoff and do not use older or newer Gameplay, QA/HCI, or runtime-framing reports to mark Designer waiting. Those reports are superseded for this step-by-step mockup flow unless they identify a concrete source conflict that blocks the spec.
+
+First visible progress must be to create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. If the spec cannot be completed, write the blocker in that same report path with the missing source or contradiction, command attempted if any, workspace, log path if any, missing dependency, and unblock owner.
+
 The report must include:
 
 - exact ordered M01 gameplay steps from start state through result state

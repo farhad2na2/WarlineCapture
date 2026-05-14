@@ -4,11 +4,18 @@
 
 Treat `Design/AgentTasks/designer_current.md` as the only source of current Designer priorities.
 
+## Current Continue Rule
+
+If `Design/AgentTasks/designer_current.md` says `Status: active`, the Designer task is already dispatched by PM/user. Do not report waiting because no separate handoff exists, because older or newer reports mention Gameplay/runtime work, or because no Designer report exists yet. `Design/AgentReports/` files are context only; they do not override `designer_current.md`.
+
+For the current M01 assignment, `continue` means read `Design/AgentTasks/designer_pm_message.md` when present, then create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md` using the exact section order in `designer_current.md`. If blocked, write the blocker at that same expected report path and include the missing file or contradiction, command attempted if any, workspace, log path if any, missing dependency, and unblock owner.
+
 ## On Every Heartbeat
 
-- Read `Design/AgentTasks/designer_current.md`.
+- Read `Design/AgentTasks/designer_current.md` and, when present, `Design/AgentTasks/designer_pm_message.md`.
 - Check `Design/AgentReports/` for new Designer-relevant handoffs or blocker reports.
 - Assess new relevant handoffs as accepted, needs fixes, or blocked.
+- If `designer_current.md` is active, continue that task before treating old PM reports as current routing.
 - Continue the current Designer task if actionable.
 - Anti-idle rule: if Designer is `Status: active`, every heartbeat must either advance the task, write the expected handoff, or write a blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
 - Write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the standard WarlineCapture handoff format.

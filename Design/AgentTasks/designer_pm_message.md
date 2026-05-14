@@ -4,6 +4,8 @@ Date: 2026-05-14
 Priority: P0
 Status: assigned
 
+This file is a direct PM-to-Designer command supplement. On `continue`, read this file with `Design/AgentTasks/designer_current.md` and treat the assignment as already dispatched. Do not report waiting for a separate handoff; the Designer current task and this message are the handoff. Older or newer Gameplay/runtime reports are context only and do not cancel this task.
+
 Designer is now the active owner for M01 step-by-step gameplay specification.
 
 The PM-authored package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` is draft reference only. It is not the source of truth until you review it against approved visual lock targets and either accept, correct, or replace it.

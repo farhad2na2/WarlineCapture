@@ -51,3 +51,12 @@ Gameplay must not treat the single approved scene target as enough for implement
 
 - the approved scene target package under `Design/VisualTargets/Gameplay/M01_SelectedReadability/`,
 - this gameplay VisualLock package.
+
+## Step-By-Step Gameplay Lock
+
+The canonical PM sequence lock for the exact M01 end-result gameplay flow lives in:
+
+- `Design/VisualLock/GamePlay/M01_StepByStepGameplayMockups/README.md`
+- `Design/VisualLock/GamePlay/M01_StepByStepGameplayMockups/M01_StepByStepGameplayMockup_Manifest.json`
+
+Gameplay implementation should use that package for required frame order, inputs, expected states, bridge calls, rejection criteria, and capture filenames.

@@ -77,3 +77,12 @@ Do not accept runtime visuals with:
 - giant green marker,
 - red sitting/death artifact used as an alive enemy,
 - marker FX that covers units or detaches from the ground plane.
+
+## Related Sequence Lock
+
+The exact M01 step-by-step gameplay mockup lock is defined in:
+
+- `Design/VisualLock/GamePlay/M01_StepByStepGameplayMockups/README.md`
+- `Design/VisualLock/GamePlay/M01_StepByStepGameplayMockups/M01_StepByStepGameplayMockup_Manifest.json`
+
+Use it with this art VisualLock to validate runtime frame order, user actions, bridge calls, command feedback, ARIA behavior, objective completion, and result flow.

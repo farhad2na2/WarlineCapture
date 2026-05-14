@@ -4,9 +4,19 @@
 
 Treat `Design/AgentTasks/designer_current.md` as the only source of current Designer priorities.
 
+If `Design/AgentTasks/designer_current.md` says `Status: active`, the current Designer status answer is:
+
+```text
+Designer is active. Designer owns the next action. The required output is Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md.
+```
+
+Never answer that Designer is waiting, Gameplay owns the next action, no Designer-routed handoff exists, no approval need exists, or no blocker was found while `designer_current.md` remains active.
+
 ## Current Continue Rule
 
 If `Design/AgentTasks/designer_current.md` says `Status: active`, the Designer task is already dispatched by PM/user. Do not report waiting because no separate handoff exists, because older or newer reports mention Gameplay/runtime work, or because no Designer report exists yet. `Design/AgentReports/` files are context only; they do not override `designer_current.md`.
+
+Do not check `Design/AgentReports/` before deciding current Designer status. Check reports only for source conflicts after starting the active task and creating or updating the required report.
 
 For the current M01 assignment, `continue` means read `Design/AgentTasks/designer_pm_message.md` when present, then create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md` using the exact section order in `designer_current.md`. If blocked, write the blocker at that same expected report path and include the missing file or contradiction, command attempted if any, workspace, log path if any, missing dependency, and unblock owner.
 

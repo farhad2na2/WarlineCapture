@@ -3,6 +3,10 @@
 Date: 2026-05-14
 Status: active
 Priority: P0 Design-owned M01 step-by-step gameplay spec before Art mockups
+Current Designer status: active
+Owner of next action: Designer
+Current task source: `Design/AgentTasks/designer_current.md`
+Supersedes: every previous Designer waiting state and every report that says Gameplay owns the next Designer action.
 
 ## Assignment
 
@@ -24,6 +28,10 @@ Required Designer output:
 ## Continue Command Handling
 
 When PM/user tells Designer to `continue`, this file is the active dispatched task. Do not wait for another Designer handoff and do not use older or newer Gameplay, QA/HCI, or runtime-framing reports to mark Designer waiting. Those reports are superseded for this step-by-step mockup flow unless they identify a concrete source conflict that blocks the spec.
+
+Do not start by scanning `Design/AgentReports/` to determine Designer status. If report context is needed, use it only after acknowledging this active assignment and creating or updating the expected report.
+
+If you would otherwise answer "Designer remains waiting", "Gameplay owns the next action", "no new Designer-routed handoff", "no approval need", or "no blocker found", that answer is stale and incorrect while this file says `Status: active`.
 
 First visible progress must be to create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. If the spec cannot be completed, write the blocker in that same report path with the missing source or contradiction, command attempted if any, workspace, log path if any, missing dependency, and unblock owner.
 
@@ -65,9 +73,9 @@ Use this exact section order in `Design/AgentReports/2026-05-14_designer_m01-ste
 
 Do not create final mockup images. Do not route Gameplay. Do not commit or push.
 
-## Waiting On
+## Current Routing
 
-Waiting on lane:
+Current owner:
 Designer
 
 Next lane after Designer delivery:

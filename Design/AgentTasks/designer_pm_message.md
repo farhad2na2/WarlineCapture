@@ -3,8 +3,13 @@
 Date: 2026-05-14
 Priority: P0
 Status: assigned
+Current Designer status: active
+Owner of next action: Designer
+Expected output: `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
 This file is a direct PM-to-Designer command supplement. On `continue`, read this file with `Design/AgentTasks/designer_current.md` and treat the assignment as already dispatched. Do not report waiting for a separate handoff; the Designer current task and this message are the handoff. Older or newer Gameplay/runtime reports are context only and do not cancel this task.
+
+If a report scan or old summary says Designer is waiting on Gameplay, ignore that stale status for this assignment. While `designer_current.md` says `Status: active`, the only correct routing is Designer active, Designer owns next action.
 
 Designer is now the active owner for M01 step-by-step gameplay specification.
 

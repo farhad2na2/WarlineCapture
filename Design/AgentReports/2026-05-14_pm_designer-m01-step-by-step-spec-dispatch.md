@@ -8,8 +8,9 @@ From lane: PM
 To lane: Designer
 Priority: P0
 Owner of next action: Designer
-Waiting on lane: Designer
-Waiting on exact file/report/asset/command: Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md
+Expected Designer output: Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md
+Next lane after Designer delivery: Art/Atlas
+Implementation lanes held until approved mockups exist: Gameplay, QA/HCI
 Can PM still continue fallback work? no
 
 ## Purpose
@@ -37,19 +38,22 @@ Use the exact section order required in `Design/AgentTasks/designer_current.md`.
 
 ## Routing Decision
 
-Current owner:
+Owner of next action:
 Designer
 
-Next lane after Designer:
+Required Designer output:
+`Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
+
+Next lane after Designer delivery:
 Art/Atlas
 
-Still blocked:
+Implementation lanes held until approved mockups exist:
 Gameplay and QA/HCI
 
 User approval required before project import or Gameplay implementation:
 yes
 
-Designer must not report waiting on Gameplay, missing Designer-routed handoff, missing approval need, or missing blocker while this active task is open. If the spec cannot be completed, write the blocker in the expected Designer report path and name the missing source, contradiction, attempted command if any, workspace, log path if any, missing dependency, and unblock owner.
+If the spec cannot be completed, Designer writes the blocker in the expected Designer report path and names the missing source, contradiction, attempted command if any, workspace, log path if any, missing dependency, and unblock owner.
 
 ## Files Changed
 
@@ -66,7 +70,7 @@ Designer must not report waiting on Gameplay, missing Designer-routed handoff, m
 
 ## User-Visible Behavior
 
-Designer `continue` should no longer summarize itself as waiting on Gameplay or missing a new Designer-routed handoff while `Design/AgentTasks/designer_current.md` is active. The next visible Designer artifact must be `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
+Designer `continue` should start from `Design/AgentTasks/designer_current.md` and create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. The next visible Designer artifact must be that report.
 
 ## Validation Run
 
@@ -78,14 +82,14 @@ Ready for Designer continuation. The next visible artifact must be `Design/Agent
 
 ## Known Gaps
 
-Designer has not delivered the spec yet. Art/Atlas mockup images do not exist yet. Gameplay and QA/HCI remain blocked.
+Designer has not delivered the spec yet. Art/Atlas mockup images do not exist yet. Gameplay and QA/HCI start after user-approved Art mockups exist.
 
 ## Cross-Lane Impacts
 
 - Designer: active owner now.
 - Art/Atlas: next after Designer report.
-- Gameplay: blocked until user-approved Art mockups exist.
-- QA/HCI: blocked until PM routes mockup review or runtime validation.
+- Gameplay: starts after user-approved Art mockups exist.
+- QA/HCI: starts after implementation exists.
 
 ## Next Recommended Task
 

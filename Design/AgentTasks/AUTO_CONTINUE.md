@@ -18,9 +18,9 @@ Read Design/AgentTasks/pm_heartbeat.md and follow it. Treat Design/AgentTasks/*_
 
 ### Designer M01 Active Override
 
-For Designer, `Design/AgentTasks/designer_current.md` is a PM dispatch when it says `Status: active`. Do not require a separate new `Design/AgentReports/` handoff before continuing. Do not report "Designer remains waiting on Gameplay", "no new Designer-routed handoff", "no approval need", or "no blocker found" while the Designer current task is active.
+For Designer, `Design/AgentTasks/designer_current.md` is a PM dispatch when it says `Status: active`. The current status answer is: Designer is active, Designer owns the next action, and the required output is `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. Continue directly from that file and `Design/AgentTasks/designer_pm_message.md` when present.
 
-If asked for current Designer status while that file is active, answer that Designer is active, Designer owns the next action, and the required output is `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`. Do not scan report history first to decide whether Designer is waiting.
+For the current M01 step-by-step mockup flow, Designer writes the design spec first. Art/Atlas creates mockup images from the approved design spec. Gameplay and QA/HCI start only after user-approved mockups exist.
 
 For the current M01 Designer task, the heartbeat must create or update `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`, or write a blocker at that same path with the exact missing file or contradiction, attempted command if any, workspace, log path if any, missing dependency, and unblock owner.
 
@@ -45,7 +45,7 @@ On each heartbeat:
    - UI: `Design/AgentTasks/ui_current.md`
    - Art/Atlas: `Design/AgentTasks/art-atlas_current.md`
    - Designer: `Design/AgentTasks/designer_current.md`
-   - Designer M01 exception: if `Design/AgentTasks/designer_current.md` says `Status: active`, skip any report-history waiting gate and continue the assigned Designer report. Existing Gameplay, runtime, and QA reports are context only and cannot make Designer wait on Gameplay for this flow.
+   - Designer M01 exception: if `Design/AgentTasks/designer_current.md` says `Status: active`, continue the assigned Designer report before report-history triage. Existing Gameplay, runtime, and QA reports are source context only for concrete conflicts in this flow.
    - Support/FTUE: `Design/AgentTasks/support-ftue_current.md`
    - QA/HCI: `Design/AgentTasks/qa-hci_current.md`
 4. Check whether your current task is still active and advances the M01 critical path.

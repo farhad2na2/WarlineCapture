@@ -10,7 +10,7 @@ Current Designer status: active
 Owner of next action: Designer
 Required Designer output: `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
-This PM correction supersedes every previous Designer waiting state and every report summary that says Gameplay owns the next Designer action.
+This PM correction supersedes previous lane-status summaries for the M01 step-by-step mockup flow.
 
 ## Reason
 
@@ -24,7 +24,7 @@ On `continue`, Designer must read:
 - `Design/AgentTasks/designer_current.md`
 - `Design/AgentTasks/designer_pm_message.md`
 
-If `Design/AgentTasks/designer_current.md` says `Status: active`, Designer must not report waiting on Gameplay, missing Designer-routed handoff, missing approval need, or missing blocker. Designer must create/update the required report or write the blocker at that same path with the exact missing source or contradiction and unblock owner.
+When `Design/AgentTasks/designer_current.md` says `Status: active`, Designer creates or updates the required report from the active task. If the spec cannot be completed, Designer writes the blocker at that same path with the exact missing source or contradiction and unblock owner.
 
 ## Cross-Lane Impacts
 
@@ -35,4 +35,4 @@ If `Design/AgentTasks/designer_current.md` says `Status: active`, Designer must 
 
 ## PM Follow-Up
 
-If Designer still reports waiting, treat it as a Designer heartbeat compliance failure, not a Gameplay dependency.
+If Designer still reports a lane wait instead of starting the expected report, treat it as a Designer heartbeat compliance failure.

@@ -7,9 +7,7 @@ Current Designer status: active
 Owner of next action: Designer
 Expected output: `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
 
-This file is a direct PM-to-Designer command supplement. On `continue`, read this file with `Design/AgentTasks/designer_current.md` and treat the assignment as already dispatched. Do not report waiting for a separate handoff; the Designer current task and this message are the handoff. Older or newer Gameplay/runtime reports are context only and do not cancel this task.
-
-If a report scan or old summary says Designer is waiting on Gameplay, ignore that stale status for this assignment. While `designer_current.md` says `Status: active`, the only correct routing is Designer active, Designer owns next action.
+This file is a direct PM-to-Designer command supplement. On `continue`, read this file with `Design/AgentTasks/designer_current.md` and treat the assignment as already dispatched. Continue by creating or updating the expected output. Gameplay/runtime reports are source context only when they identify a concrete source conflict.
 
 Designer is now the active owner for M01 step-by-step gameplay specification.
 
@@ -55,9 +53,10 @@ Use this exact delivery format:
    - one sentence per frame describing the expected image
 6. `## VisualLock Constraints`
 7. `## Art/Atlas Acceptance Checklist`
-8. `## Blocked Lanes And Handoff`
-   - `Next lane: Art/Atlas`
-   - `Still blocked: Gameplay, QA/HCI`
+8. `## Routing And Approval`
+   - `Designer deliverable: complete`
+   - `Next lane after Designer delivery: Art/Atlas`
+   - `Implementation lanes held until approved mockups exist: Gameplay, QA/HCI`
    - `User approval required before project import or Gameplay implementation: yes`
 
-Do not generate final mockup images. Do not hand work to Gameplay. Your report unblocks Art/Atlas only.
+Do not generate final mockup images. Your report unblocks Art/Atlas for mockup production only. Gameplay starts after user-approved Art mockups exist.

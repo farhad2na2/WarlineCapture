@@ -9,6 +9,7 @@ Treat `Design/AgentTasks/user_feedback_review_gate.md` as the required PM proces
 
 - PM's first responsibility is to prevent project idle: make sure agents have the right task, the required source information, the expected output file, and a clear unblock owner.
 - Use a bounded heartbeat triage. First check only active `*_current.md` files and their explicitly named expected reports. Do not re-read every report or broad-search the repo unless an expected report is present, missing for an active lane after a prior PM nudge, malformed, contradictory, or points to a blocker.
+- Designer M01 routing override: when `Design/AgentTasks/designer_current.md` says `Status: active`, treat Designer as dispatched even if no newer Designer-routed report exists. Do not classify Designer as waiting on Gameplay or blocked by missing approval/blocker history. The expected next artifact is `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`; if missing, point Designer to that file instead of routing Gameplay or QA/HCI.
 - Normal heartbeat target is under two minutes. If no expected report has landed and no new blocker/user decision is visible, stop after the narrow check and return `DONT_NOTIFY`.
 - Do not perform a broad design audit during an active implementation/rejection gate unless all active lanes are waiting and no expected implementation/QA report is pending.
 - Check `Design/AgentReports/` for new lane handoffs or blocker reports.

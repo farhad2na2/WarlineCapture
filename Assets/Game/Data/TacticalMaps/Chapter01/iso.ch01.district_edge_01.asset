@@ -16,7 +16,7 @@ MonoBehaviour:
   levelId: level.ch01.district_edge_01
   missionId: saga.ch01.m01.first_contact
   scenarioSetupId: scenario.ch01.m01.first_contact
-  groundSprite: {fileID: 21300000, guid: 44d56268106842c9905dd67959638cc1, type: 3}
+  groundSprite: {fileID: 21300000, guid: 8a1cc5a6f4041434d8e8e091224609cb, type: 3}
   mapPreviewArtId: preview.ch01.first_contact
   minimapArtId: minimap.ch01.first_contact
   gridWidth: 64

@@ -670,14 +670,6 @@ public sealed class GameBootstrap : MonoBehaviour
         if (loader == null)
             return false;
 
-        if (loader.TryGetAnchorWorldPosition(Chapter01M01PlayableRuntime.PlayerSpawnAnchorId, out Vector3 playerSpawn) &&
-            loader.TryGetAnchorWorldPosition("tutorial.move_target.cover_01", out Vector3 moveTarget))
-        {
-            cameraCenter = Vector3.Lerp(playerSpawn, moveTarget, 0.38f);
-            cameraCenter.y = 0f;
-            return true;
-        }
-
         bool hasAny = false;
         Vector3 min = Vector3.zero;
         Vector3 max = Vector3.zero;

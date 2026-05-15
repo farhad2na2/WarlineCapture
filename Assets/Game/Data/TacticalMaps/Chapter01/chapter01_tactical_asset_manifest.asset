@@ -17,12 +17,12 @@ MonoBehaviour:
   - assetId: iso.ch01.district_edge_01.ground
     category: 0
     status: 1
-    plannedPath: Assets/Game/Art/Generated/IsometricMaps/TacticalGroundQualityTest_A/tactical_ground_quality_test_close_pot_a.png
+    plannedPath: Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_a_source.png
     usedByMissionIds:
     - saga.ch01.m01.first_contact
     usesScaleRole: 0
     scaleRole: 0
-    notes: Accepted close tactical proxy until final M01 ground plate is approved.
+    notes: M01 approved tactical plate candidate from the step-by-step visual lock layer pack; replaces stale TacticalGroundQualityTest_A proxy while preserving the contracted map id.
   - assetId: iso.ch01.district_edge_01.metadata
     category: 1
     status: 1

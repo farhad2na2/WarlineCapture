@@ -1,0 +1,136 @@
+{
+  "schema": "warlinecapture.visualLock.layerPack.v1",
+  "package": "M01_StepByStepGameplayMockups",
+  "date": "2026-05-14",
+  "status": "approval-sample-imagegen-reference-pass",
+  "ownerLane": "Art/Atlas",
+  "approvalGate": "Designer/PM/user approval required before remaining frames, Gameplay implementation, QA/HCI routing, or project import.",
+  "referenceResolution": {
+    "width": 1920,
+    "height": 1080
+  },
+  "sourceOfTruth": {
+    "designerSpec": "Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md",
+    "designerReview": "Design/AgentReports/2026-05-14_designer_m01-art-sample-alignment-review.md",
+    "gameplayAudit": "Design/AgentReports/2026-05-14_gameplay_m01-mockup-asset-implementation-audit.md",
+    "pmCombinedFeedback": "Design/AgentReports/2026-05-14_pm_art-atlas-combined-design-gameplay-feedback.md",
+    "currentTask": "Design/AgentTasks/art-atlas_current.md",
+    "pmOriginalReferenceRejection": "Design/AgentReports/2026-05-14_pm_art-atlas-original-reference-marker-healthbar-rejection.md"
+  },
+  "visualAuthorities": [
+    "Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png",
+    "Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png",
+    "Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_PlayerRifleSquad_Atlas_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_EnemyPatrol_Atlas_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_Markers_SelectionMoveAttackEnemyObjectiveHover.png"
+  ],
+  "cameraLock": {
+    "id": "m01.default_start.shared_sample_camera",
+    "metadata": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/CameraLock_M01_DefaultStart.json",
+    "resolution": [
+      1920,
+      1080
+    ],
+    "worldPlateRect": [
+      0,
+      0,
+      1920,
+      1080
+    ],
+    "orthographicZoomLock": "visual sample lock; M01-01 and M01-02 use the exact same flattened world/camera pixels",
+    "cameraCenter": "camera.default_start",
+    "minimapViewportRule": "unchanged between M01-01 and M01-02"
+  },
+  "enemyAffiliationRule": {
+    "decision": "permanent unit affiliation layer",
+    "visibleInM0101": true,
+    "visibleInM0102": true,
+    "notAWorldMarker": true,
+    "notes": "Enemy red foot rings and red segmented above-head health bars are explicit permanent affiliation/readability layers in both sample frames, not attack-target command markers."
+  },
+  "selectedMarkerRule": {
+    "sourceAssetCandidate": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/selection_ring.png",
+    "m0101": "hidden",
+    "m0102": "four imagegen-native integrated cyan segmented rings under individual selected riflemen, matching the original reference language more closely than prior deterministic overlays",
+    "childLayers": [
+      "Screen_MatchOverlay/WorldMarkers/SelectionRing/Rifleman_01",
+      "Screen_MatchOverlay/WorldMarkers/SelectionRing/Rifleman_02",
+      "Screen_MatchOverlay/WorldMarkers/SelectionRing/Rifleman_03",
+      "Screen_MatchOverlay/WorldMarkers/SelectionRing/Rifleman_04"
+    ],
+    "notes": "Current flattened selected markers are part of a fresh cohesive imagegen frame, not scripted or manual marker compositing."
+  },
+  "workflow": {
+    "flattenedTargetUsage": "Visual QA reference only. Do not slice or import the flattened mockup as implementation source.",
+    "layerPackUsage": "Use frame layer manifests for Unity ownership, rects, z-order, dynamic/static status, alpha/transparent-corner rules, and missing source asset notes.",
+    "implementationStatus": "Not implemented. No runtime files or Assets/ imports were changed.",
+    "sampleScope": "Only M01-01 and M01-02 are included for approval. Remaining gameplay frames are intentionally held."
+  },
+  "frames": [
+    {
+      "frameId": "M01-01_TacticalStart",
+      "stepId": "M01-01",
+      "flattenedPng": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01-01_TacticalStart_1920x1080.png",
+      "layerManifest": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/Frames/M01-01_TacticalStart_layers.json",
+      "stateSummary": "Tactical start, no selection, no command mode, no move/attack/objective/invalid world markers, Build disabled."
+    },
+    {
+      "frameId": "M01-02_SquadSelected",
+      "stepId": "M01-02",
+      "flattenedPng": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01-02_SquadSelected_1920x1080.png",
+      "layerManifest": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/Frames/M01-02_SquadSelected_layers.json",
+      "stateSummary": "Same camera as M01-01; friendly squad selected with cyan ground rings, enabled controls, no active command mode."
+    }
+  ],
+  "reviewArtifacts": [
+    "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01_StepByStepGameplay_SampleContactSheet_1920x1080.png",
+    "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/SourceNotes.md",
+    "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/AssetPrep_M01_Sample.json"
+  ],
+  "heldUntilApproval": [
+    "M01-03 through M01-11 flattened targets",
+    "M01-05 optional attack-preview proof",
+    "Runtime import under Assets/",
+    "Gameplay implementation",
+    "QA/HCI validation"
+  ],
+  "selectedStatusRule": {
+    "m0101": "hidden",
+    "m0102": "imagegen-native blue/cyan shield icon plus segmented blue horizontal status/health bar above selected squad; no visible squad-name label",
+    "childLayers": [
+      "Screen_MatchOverlay/WorldStatus/PlayerRifleSquad01/SelectedShieldIcon",
+      "Screen_MatchOverlay/WorldStatus/PlayerRifleSquad01/BlueSegmentedStatusHealthBar"
+    ],
+    "notes": "World-space selected-unit readability is separate from bottom squad card selection state."
+  },
+  "hudQualityRule": {
+    "sourceReference": "Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png",
+    "generatedSourceFrames": {
+      "M01-01_TacticalStart": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_03458752e3125a38016a060e66b2408191bbd3e0692ea215f4.png",
+      "M01-02_SquadSelected": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_03458752e3125a38016a060dfbbf608191b5621d93b4ab0122.png"
+    },
+    "changedGroups": [
+      "ObjectivePanel",
+      "ThreatFeedPanel",
+      "SquadTray",
+      "CommandBar",
+      "BuildButton",
+      "MiniMapPanel",
+      "TopResourceBar",
+      "TopControls"
+    ],
+    "commandOrder": "SELECT, MOVE, ATTACK, STOP, HOLD",
+    "notes": "Fresh imagegen frame restores Star Goals density, restrained beveled cyan trim, command family/order, secondary Build treatment, and polished minimap/squad/log frame direction."
+  },
+  "imagegenProcessRule": {
+    "requiredBy": "Design/AgentReports/2026-05-14_pm_art-atlas-imagegen-only-marker-rejection.md",
+    "visualFrameGeneration": "flattened gameplay review PNGs regenerated with the imagegen skill as cohesive bitmap targets; no scripted marker/UI patching was used for the flattened visual pass",
+    "generatedSources": {
+      "M01-01_TacticalStart": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_03458752e3125a38016a060e66b2408191bbd3e0692ea215f4.png",
+      "M01-02_SquadSelected": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_03458752e3125a38016a060dfbbf608191b5621d93b4ab0122.png"
+    },
+    "postProcess": "generated frames resized to required 1920x1080 output size and placed in required project paths; LayerPack metadata updated after visual target selection"
+  }
+}

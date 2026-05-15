@@ -4,12 +4,12 @@ Date: 2026-05-14
 Priority: P0
 Status: blocked
 
-QA/HCI is not the next owner for the M01 step-by-step mockup path.
+QA/HCI is not the next owner yet.
 
-Do not validate from the PM-authored draft package. QA/HCI can be routed only after PM has either:
+Gameplay implemented the first M01-01 runtime slice:
 
-- user-approved Art mockup images for a pre-implementation readability review, or
-- a Gameplay implementation based on those approved mockups for runtime validation.
+- `Design/AgentReports/2026-05-14_gameplay_m01-imagegen-sample-implementation.md`
 
-Current sequence:
-Designer -> Art/Atlas -> user approval -> Gameplay -> QA/HCI
+PM/user explicitly wants to approve it before passing it onward.
+
+Do not start validation until PM/user approves the Gameplay handoff and PM routes QA/HCI.

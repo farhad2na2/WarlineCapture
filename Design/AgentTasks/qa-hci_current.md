@@ -2,20 +2,22 @@
 
 Date: 2026-05-14
 Status: blocked
-Priority: wait for user-approved M01 mockups and later Gameplay implementation
+Priority: wait for PM/user approval of Gameplay M01-01 implementation slice
 
 ## Assignment
 
-QA/HCI is not the next lane for the M01 step-by-step mockup path.
+QA/HCI is not the next lane yet.
 
-Do not start QA validation from the PM draft. QA can review only after one of these exists:
+Gameplay has implemented the first M01-01 runtime slice, but PM/user explicitly wants to approve it before it is passed on.
 
-- user-approved Art mockup package, for pre-implementation readability review if PM routes it
-- implemented Gameplay build based on approved mockups, for runtime validation
+Do not validate, inspect, or claim QA/HCI approval until PM/user explicitly approves the Gameplay implementation handoff and routes QA/HCI.
 
-Current sequence:
-Designer -> Art/Atlas -> user approval -> Gameplay -> QA/HCI
+Current hold:
+
+- `Design/AgentReports/2026-05-14_gameplay_m01-imagegen-sample-implementation.md`
+- `Assets/Game/Scripts/UI/Screens/M01InfantryOnlyHudScopeController.cs`
+- `Assets/Tests/Editor/WarlineCaptureUiMatchOverlayTests.cs`
 
 ## Waiting On
 
-Designer spec, Art mockups, user approval, and PM routing.
+PM/user approval and PM routing.

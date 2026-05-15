@@ -2,61 +2,24 @@
 
 Date: 2026-05-14
 Priority: P0
-Status: assigned
-Current Designer status: active
-Owner of next action: Designer
-Expected output: `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
+Status: complete
+Current Designer status: complete
+Owner of next action: Gameplay
 
-This file is a direct PM-to-Designer command supplement. On `continue`, read this file with `Design/AgentTasks/designer_current.md` and treat the assignment as already dispatched. Continue by creating or updating the expected output. Gameplay/runtime reports are source context only when they identify a concrete source conflict.
+Designer reviewed the new imagegen-only M01 two-frame approval sample after PM/user rejected deterministic marker/HUD patching.
 
-Designer is now the active owner for M01 step-by-step gameplay specification.
+Designer delivered:
 
-The PM-authored package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` is draft reference only. It is not the source of truth until you review it against approved visual lock targets and either accept, correct, or replace it.
+- `Design/AgentReports/2026-05-14_designer_m01-imagegen-sample-alignment-review.md`
 
-Read first:
+Decision: approved for PM/user visual approval.
 
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/README.md`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/M01_StepByStepGameplayMockup_Manifest.json`
-- `Design/VisualLock/GamePlay/M01_ApprovedIsometricGameplay/`
-- `Design/AgentTasks/M01_CRITICAL_PATH.md`
+Summary:
 
-Deliver:
+- M01-01 and M01-02 read as same intended tactical camera, zoom, framing, and unit scale.
+- M01-01 reads as tactical start/no selection.
+- M01-02 reads as selected squad/no active command mode.
+- HUD, markers, selected-squad world status, enemy readability, minimap, squad cards, objective panel, threat feed, top bar, and command bar are close enough to the approved AAA VisualLock direction for user approval.
+- Runtime must rebuild text with native TMP and exact data.
 
-- `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
-
-Your report must include:
-
-- exact ordered M01 gameplay steps from start state through result state
-- player input/action per step
-- camera/framing per step
-- units visible and their poses, facing, selection state, and survival state
-- move, attack, objective, invalid-command, ARIA, minimap, and result states
-- HUD, command panel, objective panel, minimap, assistant, and log states
-- transitions, timing, and recovery/error states Art must show
-- what must stay aligned with approved VisualLock targets
-- Art acceptance checklist for mockup images
-- explicit decision on whether the PM draft is accepted as-is, corrected, or replaced
-
-Use this exact delivery format:
-
-1. `# M01 Step-By-Step Gameplay Spec`
-2. `## Sources Reviewed`
-3. `## Design Authority Decision`
-   - `Decision:` one of `accept PM draft`, `correct PM draft`, or `replace PM draft`
-   - `Reason:`
-   - `VisualLock alignment notes:`
-4. `## Step Table For Art`
-   - one row per gameplay frame/step
-   - columns: `Step ID`, `Gameplay beat`, `Player input/action`, `Camera/framing`, `Units/poses/facing/selection/survival`, `HUD/panels/minimap/assistant/log`, `Visual feedback/FX/ARIA`, `Transition/timing/recovery`, `Art mockup notes`
-5. `## Required Mockup Frames`
-   - exact filenames Art should create under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/`
-   - one sentence per frame describing the expected image
-6. `## VisualLock Constraints`
-7. `## Art/Atlas Acceptance Checklist`
-8. `## Routing And Approval`
-   - `Designer deliverable: complete`
-   - `Next lane after Designer delivery: Art/Atlas`
-   - `Implementation lanes held until approved mockups exist: Gameplay, QA/HCI`
-   - `User approval required before project import or Gameplay implementation: yes`
-
-Do not generate final mockup images. Your report unblocks Art/Atlas for mockup production only. Gameplay starts after user-approved Art mockups exist.
+Next owner: Gameplay.

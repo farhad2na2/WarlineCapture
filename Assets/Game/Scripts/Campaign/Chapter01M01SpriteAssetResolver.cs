@@ -156,7 +156,7 @@ public static class Chapter01M01SpriteAssetResolver
         List<Sprite> resolved = new();
         for (int i = 0; i < manifest.tactical_maps.Length; i++)
         {
-            string path = manifest.tactical_maps[i] != null ? manifest.tactical_maps[i].runtime_pot : null;
+            string path = manifest.tactical_maps[i] != null ? ResolveTacticalMapRuntimePath(manifest.tactical_maps[i]) : null;
             if (string.IsNullOrEmpty(path))
                 continue;
 
@@ -502,11 +502,21 @@ public static class Chapter01M01SpriteAssetResolver
             if (entry == null || entry.asset_id != assetId)
                 continue;
 
-            assetPath = entry.runtime_pot;
+            assetPath = ResolveTacticalMapRuntimePath(entry);
             return !string.IsNullOrEmpty(assetPath);
         }
 
         return false;
+    }
+
+    private static string ResolveTacticalMapRuntimePath(AiProductionTacticalMapEntry entry)
+    {
+        if (entry == null)
+            return null;
+
+        return !string.IsNullOrEmpty(entry.runtime_source)
+            ? entry.runtime_source
+            : entry.runtime_pot;
     }
 
     private static bool TryFindManifestEntryPath(AiProductionRuntimeAssetEntry[] entries, string assetId, out string assetPath)
@@ -737,6 +747,7 @@ public static class Chapter01M01SpriteAssetResolver
     private sealed class AiProductionTacticalMapEntry
     {
         public string asset_id;
+        public string runtime_source;
         public string runtime_pot;
     }
 

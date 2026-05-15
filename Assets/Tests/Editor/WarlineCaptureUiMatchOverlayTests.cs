@@ -313,6 +313,53 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     }
 
     [Test]
+    public void MatchOverlay_M01ScopeHidesBuildFromNoSelectionCommandSet()
+    {
+        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        GameObject instance = Object.Instantiate(LoadPrefab());
+        try
+        {
+            M01InfantryOnlyHudScopeController scope = instance.GetComponent<M01InfantryOnlyHudScopeController>();
+            Assert.NotNull(scope);
+            scope.Refresh();
+
+            GameObject buildButtonRoot = instance.transform.Find("BuildButton").gameObject;
+            Button buildButton = buildButtonRoot.GetComponent<Button>();
+            Assert.IsFalse(buildButtonRoot.activeSelf, "M01-01 no-selection command set excludes Build.");
+            Assert.IsFalse(buildButton.interactable, "M01-01 Build must be disabled instead of available.");
+            Assert.IsFalse(scope.IsM01BuildButtonDisabled(), "M01 scope hides Build rather than exposing it in the no-selection command row.");
+            Assert.IsTrue(scope.AreM01SuppressedRootsHidden(), "M01 scope should suppress non-infantry affordances.");
+            Assert.AreEqual("Building unlocks in the next mission.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.MissionDoesNotAllowBuild));
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void MatchOverlay_NonM01ScopeRestoresBuildAsAvailable()
+    {
+        GameObject instance = Object.Instantiate(LoadPrefab());
+        try
+        {
+            M01InfantryOnlyHudScopeController scope = instance.GetComponent<M01InfantryOnlyHudScopeController>();
+            Assert.NotNull(scope);
+            scope.Refresh();
+
+            GameObject buildButtonRoot = instance.transform.Find("BuildButton").gameObject;
+            Button buildButton = buildButtonRoot.GetComponent<Button>();
+            Assert.IsTrue(buildButtonRoot.activeSelf);
+            Assert.IsTrue(buildButton.interactable, "Non-M01 match HUD should keep Build available.");
+            Assert.IsFalse(scope.IsM01BuildButtonDisabled());
+        }
+        finally
+        {
+            Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
     public void MatchOverlay_HasCommandWheelOverlayHierarchy()
     {
         GameObject prefab = LoadPrefab();

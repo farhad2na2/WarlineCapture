@@ -11,16 +11,24 @@ public sealed class GameplayArchitectureContractTests
     private const string ContractPath = "Design/Architecture/gameplay_solid_ecs_contract.md";
     private const string ScriptsRoot = "Assets/Game/Scripts";
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
+    private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
 
     private static readonly string[] LegacyAILogCallFiles =
     {
         "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs",
+        "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
         "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
         "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
         "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
         "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
         "Assets/Game/Scripts/Systems/AISquadSystem.cs",
         "Assets/Game/Scripts/Systems/AITargetingSystem.cs"
+    };
+
+    private static readonly string[] LegacyStaticLogFacadeFiles =
+    {
+        "Assets/Game/Scripts/Systems/AILog.cs",
+        "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs"
     };
 
     private static readonly string[] LegacyBootstrapRootFiles =
@@ -124,13 +132,36 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void SceneStartupInstallersMustNotHardcodeMissionOrRoutePolicy()
+    {
+        if (!Directory.Exists(ScenesRoot))
+            Assert.Pass("No scene startup installer folder exists.");
+
+        string[] installerFiles = Directory.GetFiles(ScenesRoot, "*Installer.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .ToArray();
+
+        List<string> violations = new();
+        foreach (string file in installerFiles)
+        {
+            string text = File.ReadAllText(file);
+            if (text.Contains("ChapterOneMissionCatalog.", StringComparison.Ordinal))
+                violations.Add($"{file} hardcodes a mission catalog id. Scene startup installers must read mission identity from config.");
+            if (Regex.IsMatch(text, @"WarlineCaptureRoute\.[A-Za-z0-9_]+"))
+                violations.Add($"{file} hardcodes a route value. Scene startup installers must read route policy from config.");
+        }
+
+        Assert.IsEmpty(violations, string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
     public void RuntimeStaticLogFacadeDebtCannotSpread()
     {
         string[] staticLogFacades = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
             .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
             .Where(path => Regex.IsMatch(File.ReadAllText(path), @"\bstatic\s+class\s+\w*Log\w*\b"))
-            .Where(path => path != "Assets/Game/Scripts/Systems/AILog.cs")
+            .Where(path => !LegacyStaticLogFacadeFiles.Contains(path, StringComparer.Ordinal))
             .ToArray();
 
         Assert.IsEmpty(

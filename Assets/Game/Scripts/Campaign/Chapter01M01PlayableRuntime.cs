@@ -116,7 +116,7 @@ public static class Chapter01M01PlayableRuntime
             playerSpawnWorld,
             0,
             "Rifle Squad",
-            createFallback: !Application.isPlaying && !HasPendingInitialUnitSpawn(em));
+            createFallback: true);
         Entity enemy = ResolveOrCreateMissionUnit(
             em,
             loader,
@@ -125,7 +125,7 @@ public static class Chapter01M01PlayableRuntime
             enemySpawnWorld,
             1,
             "Hostile Patrol",
-            createFallback: !Application.isPlaying && !HasPendingInitialUnitSpawn(em));
+            createFallback: true);
 
         if (player == Entity.Null || enemy == Entity.Null)
             return false;

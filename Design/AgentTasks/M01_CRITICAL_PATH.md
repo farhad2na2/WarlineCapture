@@ -24,13 +24,22 @@ User approval required before:
 - routing Gameplay implementation
 - routing QA/HCI runtime validation
 
+Runtime visual-match proof required before PM/user can approve any implemented visual-target slice:
+
+- fresh runtime screenshot/capture from the implemented build
+- explicit target mockup path
+- side-by-side/contact-sheet or overlay comparison against the target mockup
+- written match/mismatch notes and recommended next steps
+- validation command/log path
+
 ## Correct Sequence
 
 1. Designer writes `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
 2. Art/Atlas creates step-by-step mockup images/contact sheets from the Designer spec and reports `Design/AgentReports/2026-05-14_art-atlas_m01-step-by-step-gameplay-mockups.md`.
 3. User approves or rejects the mockup images.
 4. PM routes Gameplay to implement only the approved mockups.
-5. QA/HCI validates readability and runtime behavior after implementation, or reviews mockups only if PM explicitly routes a pre-implementation review.
+5. Gameplay delivery includes visual-match proof against the approved mockup before PM/user approval.
+6. QA/HCI validates readability and runtime behavior after implementation, or reviews mockups only if PM explicitly routes a pre-implementation review.
 
 ## Source Authority
 

@@ -12,6 +12,7 @@ User rejection feedback is a release blocker until every point is owned, fixed, 
 - QA/HCI must include a user feedback regression matrix in its next validation report for any rejected review.
 - PM must not ask the user to review again until all feedback items are `fixed` with evidence or `waived-by-user`.
 - Screenshots alone are not enough for animation, movement speed, attack timing, or selection feel. Use a video, frame sequence, automated measurement, or clear step-by-step playthrough evidence.
+- Runtime implementation of an approved visual target must prove visual alignment before review: include a fresh runtime capture, the target mockup, side-by-side/contact-sheet or overlay comparison, explicit mismatch list, validation evidence, and recommended next steps.
 - If the user needs to approve art, PM notification must include short validation steps: what to open/run, what to look for, and what answer PM needs.
 - If any lane is blocked because it lacks approval, source files, validation setup, or ownership clarity, PM must write a lane message file and notify the user on the next heartbeat.
 

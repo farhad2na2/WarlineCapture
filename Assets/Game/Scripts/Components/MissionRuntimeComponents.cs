@@ -73,6 +73,7 @@ public sealed class MissionRuntimeSpriteRendererRuntime : IComponentData
 public sealed class MissionRuntimeAtlasQuadRuntime : IComponentData
 {
     public GameObject Instance;
+    public Mesh Mesh;
     public MeshRenderer Renderer;
     public MeshFilter MeshFilter;
     public Material Material;

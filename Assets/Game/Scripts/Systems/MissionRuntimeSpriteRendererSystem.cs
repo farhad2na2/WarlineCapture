@@ -16,7 +16,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 {
     private const float SpriteGroundLift = 0.03f;
     private const float SelectionGroundLift = 0.012f;
-    private const float M01InfantryMetricScale = 0.22f;
+    private const float M01InfantryMetricScale = 0.17f;
     private const float M01CommandBuildingMetricScale = 0.80f;
     private const float M01PlayerSoldierScale = 1f;
     private const float M01MoveAnimationCyclesPerSecond = 3.2f;
@@ -24,6 +24,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
     private const float M01MoveStrideScale = 0.035f;
     private const float M01SelectionMarkerFootYOffset = -0.42f;
     private const float TargetMarkerGroundLift = 0.018f;
+    private const int AtlasQuadRenderQueueOffset = 100;
     private const string AtlasQuadShaderName = "Universal Render Pipeline/Unlit";
     private const string SelectionMarkerAssetId = Chapter01M01SpriteAssetResolver.M01ProductionSelectionMarkerAssetId;
     private const string MoveDestinationMarkerAssetId = Chapter01M01SpriteAssetResolver.M01ProductionMoveDestinationMarkerAssetId;
@@ -31,10 +32,10 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 
     private static readonly Vector3[] RifleSquadSoldierOffsets =
     {
-        new(-3.00f, 0f, 0.24f),
-        new(-1.00f, 0f, -0.10f),
-        new(1.00f, 0f, 0.22f),
-        new(3.00f, 0f, -0.12f)
+        new(-2.20f, 0f, 0.92f),
+        new(-0.70f, 0f, -0.58f),
+        new(0.90f, 0f, 0.68f),
+        new(2.35f, 0f, -0.84f)
     };
 
     private Mesh _quadMesh;
@@ -61,6 +62,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 
             MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entity);
             UpdateRenderer(em, entity, runtime, presenter, transform);
+            DrawRuntimeQuads(runtime);
 
             if (em.HasComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(entity))
                 SuppressLegacyModelRendering(em, entity);
@@ -130,6 +132,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         em.AddComponentObject(entity, new MissionRuntimeAtlasQuadRuntime
         {
             Instance = null,
+            Mesh = _quadMesh,
             MeshFilter = null,
             Renderer = null,
             Material = material0,
@@ -335,7 +338,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         {
             name = $"M01AtlasQuad_{presenter.RuntimeEntityId.ToString()}",
             hideFlags = HideFlags.HideAndDontSave,
-            renderQueue = (int)RenderQueue.Transparent
+            renderQueue = (int)RenderQueue.Transparent + AtlasQuadRenderQueueOffset
         };
         if (material.HasProperty("_Surface"))
             material.SetFloat("_Surface", 1f);
@@ -549,6 +552,84 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         SetEntityWorldToGroundQuad(em, runtime.TargetMarkerEntity, runtime.TargetMarkerWorldPosition, runtime.TargetMarkerWorldScale);
     }
 
+    private void DrawRuntimeQuads(MissionRuntimeAtlasQuadRuntime runtime)
+    {
+        if (_quadMesh == null || runtime == null || runtime.SoldierEntities == null)
+            return;
+
+        Matrix4x4 root = Matrix4x4.TRS(runtime.InstancePosition, runtime.InstanceRotation, Vector3.one * runtime.InstanceScale);
+        DrawRuntimeQuads(EntityManager, runtime, _quadMesh, Camera.main, root);
+    }
+
+    public static void DrawAllRuntimeQuadsForCamera(EntityManager em, Camera camera)
+    {
+        if (camera == null)
+            return;
+
+        EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MissionRuntimeAtlasQuadRuntime>());
+        using Unity.Collections.NativeArray<Entity> entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            if (!em.Exists(entities[i]))
+                continue;
+
+            MissionRuntimeAtlasQuadRuntime runtime = em.GetComponentObject<MissionRuntimeAtlasQuadRuntime>(entities[i]);
+            if (runtime == null || runtime.Mesh == null)
+                continue;
+
+            Matrix4x4 root = Matrix4x4.TRS(runtime.InstancePosition, runtime.InstanceRotation, Vector3.one * runtime.InstanceScale);
+            DrawRuntimeQuads(em, runtime, runtime.Mesh, camera, root);
+        }
+    }
+
+    private static void DrawRuntimeQuads(EntityManager em, MissionRuntimeAtlasQuadRuntime runtime, Mesh mesh, Camera camera, Matrix4x4 root)
+    {
+        if (runtime == null || mesh == null || runtime.SoldierEntities == null)
+            return;
+
+        for (int i = 0; i < runtime.SoldierEntities.Length; i++)
+        {
+            if (runtime.SoldierVisible == null ||
+                runtime.SoldierMaterials == null ||
+                i >= runtime.SoldierVisible.Length ||
+                i >= runtime.SoldierMaterials.Length ||
+                !runtime.SoldierVisible[i] ||
+                runtime.SoldierMaterials[i] == null)
+            {
+                continue;
+            }
+
+            Entity visualEntity = runtime.SoldierEntities[i];
+            Vector3 localPosition = runtime.SoldierLocalPositions != null && i < runtime.SoldierLocalPositions.Length
+                ? runtime.SoldierLocalPositions[i]
+                : Vector3.zero;
+            Matrix4x4 local = Matrix4x4.TRS(localPosition, Quaternion.identity, Vector3.one);
+            Matrix4x4 drawMatrix = root * local;
+            if (em.Exists(visualEntity) && em.HasComponent<LocalToWorld>(visualEntity))
+                drawMatrix = ToMatrix4x4(em.GetComponentData<LocalToWorld>(visualEntity).Value);
+
+            Graphics.DrawMesh(
+                mesh,
+                drawMatrix,
+                runtime.SoldierMaterials[i],
+                0,
+                camera,
+                0,
+                null,
+                ShadowCastingMode.Off,
+                false);
+        }
+    }
+
+    private static Matrix4x4 ToMatrix4x4(float4x4 matrix)
+    {
+        return new Matrix4x4(
+            new Vector4(matrix.c0.x, matrix.c0.y, matrix.c0.z, matrix.c0.w),
+            new Vector4(matrix.c1.x, matrix.c1.y, matrix.c1.z, matrix.c1.w),
+            new Vector4(matrix.c2.x, matrix.c2.y, matrix.c2.z, matrix.c2.w),
+            new Vector4(matrix.c3.x, matrix.c3.y, matrix.c3.z, matrix.c3.w));
+    }
+
     private static bool TryResolveTargetMarker(EntityManager em, Entity entity, out Vector3 worldPosition, out string markerAssetId, out Color color, out string kind, out Vector3 worldScale)
     {
         if (em.HasComponent<EngageTarget>(entity))
@@ -625,7 +706,11 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
 
     private static int ResolveSoldierCount(in MissionRuntimeSpritePresenter presenter)
     {
-        return presenter.ManifestAssetId.ToString() == Chapter01M01PlayableRuntime.PlayerSquadEntityId ? 4 : 1;
+        string id = presenter.ManifestAssetId.ToString();
+        return id == Chapter01M01PlayableRuntime.PlayerSquadEntityId ||
+            id == Chapter01M01PlayableRuntime.EnemyPatrolEntityId
+                ? 4
+                : 1;
     }
 
     private static Vector3 ResolveSoldierOffset(in MissionRuntimeSpritePresenter presenter, int index)
@@ -748,6 +833,7 @@ public partial class MissionRuntimeAtlasQuadPresentationSystem : SystemBase
         if (runtime.TargetMarkerMaterial != null)
             Object.Destroy(runtime.TargetMarkerMaterial);
     }
+
 
     private static void DestroyEntities(EntityManager em, Entity[] entities)
     {

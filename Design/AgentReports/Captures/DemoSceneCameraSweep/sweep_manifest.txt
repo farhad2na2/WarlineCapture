@@ -1,0 +1,5 @@
+scene=Assets/Game/Scenes/Demo.unity
+boundsCenter=(55, 25, 180)
+boundsSize=(760, 120, 980)
+zones=town_close,military_base_close,base_gate_highway_close,industrial_vehicle_close,road_spine_close
+Camera captures close top-down views of authored town/base clusters, not the full desert terrain.

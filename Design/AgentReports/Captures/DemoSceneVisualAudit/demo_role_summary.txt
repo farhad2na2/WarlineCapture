@@ -1,0 +1,177 @@
+Role counts
+prop: 2191
+environment: 1467
+vehicle: 909
+building_detail: 626
+road: 526
+building: 458
+industrial: 327
+cover: 294
+utility: 143
+debris: 72
+vehicle_destroyed: 45
+building_destroyed: 5
+uncategorized: 2
+
+[building]
+54x Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_Pillar_01.prefab
+29x Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_02.prefab
+20x Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Archway_Pillar_01.prefab
+18x Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Archway_Single_01.prefab
+18x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab
+16x Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+15x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_01.prefab
+14x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Plinth_01.prefab
+11x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Hangar_01.prefab
+10x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GuardTower_01.prefab
+10x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_02.prefab
+9x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Clock_Tower_Clock_01.prefab
+
+[building_destroyed]
+2x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Destroyed_01.prefab
+2x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_01_Destroyed.prefab
+1x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Destroyed_02.prefab
+
+[building_detail]
+320x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Window_01.prefab
+117x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Window_02.prefab
+78x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Door_01.prefab
+26x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Door_02.prefab
+11x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Door_Basic_01.prefab
+9x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Small_03.prefab
+8x Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+6x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_01.prefab
+6x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Small_02.prefab
+6x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Table_Outdoor_01.prefab
+4x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Large_02.prefab
+4x Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_ClothCover_Slope_02.prefab
+
+[cover]
+81x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_03.prefab
+27x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_06.prefab
+18x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Fence_04.prefab
+13x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_04.prefab
+13x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab
+12x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Single_01.prefab
+11x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Fence_03.prefab
+9x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab
+9x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab
+9x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Single_02.prefab
+7x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Group_03.prefab
+7x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_Tall_Group_01.prefab
+
+[debris]
+9x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Rubble_Pile_04.prefab
+9x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Rubble_Pile_05.prefab
+6x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Vehicle_Debris_02.prefab
+6x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Rubbish_Pile_01.prefab
+5x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Rubbish_Bag_02.prefab
+5x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Rubbish_Papers_01.prefab
+5x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Rubbish_Papers_03.prefab
+5x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Rubbish_Pile_02.prefab
+4x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Rubble_Pile_03.prefab
+4x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Vehicle_Debris_01.prefab
+3x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Rubble_Pile_01.prefab
+3x Assets/PolygonMilitary/Prefabs/Props/Debris/SM_Prop_Vehicle_Debris_03.prefab
+
+[environment]
+90x Assets/Game/Prefabs/Environment/Decorations/SM_Env_Grass_01.prefab
+63x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+63x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_05.prefab
+59x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_04.prefab
+58x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_Flat_02.prefab
+57x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandEdge_06.prefab
+54x Assets/Game/Prefabs/Environment/Decorations/SM_Env_Grass_04.prefab
+52x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_02.prefab
+49x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_01.prefab
+46x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Round_01.prefab
+44x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_02.prefab
+41x Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_03.prefab
+
+[industrial]
+75x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Small_Straight_01.prefab
+42x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Small_Support_01.prefab
+41x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Small_Curve_01.prefab
+32x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Small_Connector_01.prefab
+30x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipline_OilPump_01.prefab
+22x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_SmokeStack_Platform_02.prefab
+20x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Large_Support_01.prefab
+12x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_SmokeStack_Platform_01.prefab
+11x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Large_Section_01.prefab
+8x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Large_01.prefab
+7x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Tank_01.prefab
+5x Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_SmokeStack_01.prefab
+
+[prop]
+53x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_DownPipe_Connector_02.prefab
+49x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_DownPipe_Straight_01.prefab
+43x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_RazorWire_01.prefab
+41x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_DownPipe_End_01.prefab
+40x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Lockers_01.prefab
+38x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrel_02.prefab
+29x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Chair_03.prefab
+28x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Missle_Launcher_02.prefab
+26x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_PowerBox_06.prefab
+24x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Bed_Military_01.prefab
+24x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Tray_01.prefab
+24x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Laundry_Washer_01.prefab
+
+[road]
+105x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_DirtRoad_Corner_01.prefab
+80x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Sidewalk_Straight_02.prefab
+76x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_DirtRoad_Straight_01.prefab
+72x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Road_Edge_01.prefab
+70x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Road_01.prefab
+43x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Road_Lights_01.prefab
+24x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Runway_Light_01.prefab
+14x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Sidewalk_Corner_01.prefab
+11x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_DirtRoad_Slope_Down_01.prefab
+7x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_DirtRoad_Slope_Up_01.prefab
+6x Assets/PolygonMilitary/Prefabs/Environment/SM_Env_DirtRoad_Exit_02.prefab
+6x Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Road_Barrier_01.prefab
+
+[uncategorized]
+1x Assets/PolygonMilitary/Models/SM_Skydome_01.fbx
+1x Assets/PolygonMilitary/Prefabs/Generic/SM_Generic_CloudRing_01.prefab
+
+[utility]
+78x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_02.prefab
+22x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerpole_01.prefab
+14x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_05.prefab
+8x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_06.prefab
+5x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerpole_03.prefab
+4x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_Bundle_01.prefab
+2x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_03.prefab
+2x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_08.prefab
+2x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_Bundle_02.prefab
+2x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerpole_02.prefab
+1x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_01.prefab
+1x Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Powerline_07.prefab
+
+[vehicle]
+66x Assets/PolygonMilitary/Models/SM_Veh_Attach_Tank_Armour_04.fbx
+65x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Light_Armored_Car_01.prefab
+54x Assets/PolygonMilitary/Models/SM_Veh_Tank_USA_01.fbx
+52x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Van_02.prefab
+42x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Jet_01.prefab
+39x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Rocket_Truck_01.prefab
+35x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Truck_01.prefab
+30x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Pickup_Small_01.prefab
+28x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Car_Medium_01.prefab
+28x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Car_Small_01.prefab
+28x Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Helicopter_Attack_02.prefab
+26x Assets/PolygonMilitary/Models/SM_Veh_APC_Heavy_01.fbx
+
+[vehicle_destroyed]
+8x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Car_Medium_Destroyed_01.prefab
+8x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Car_Small_Destroyed_01.prefab
+5x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Pickup_Technical_Destroyed_01.prefab
+5x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Van_Destroyed_01.prefab
+4x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Pickup_Small_Destroyed_01.prefab
+4x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_SUV_Destroyed_01.prefab
+4x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Van_Destroyed_02.prefab
+2x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Motorbike_Destroyed_01.prefab
+1x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Helicopter_Transport_01_Destroyed_Back.prefab
+1x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Helicopter_Transport_01_Destroyed_Front.prefab
+1x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Light_Armored_Car_01_Destroyed.prefab
+1x Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Tank_Russian_01_Destroyed.prefab

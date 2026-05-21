@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6b3ed4e0000878946b0df982b29e8cb9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43606033514524924
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_SubMGun_Lite_01_Convex.asset
+  uploadId: 884554

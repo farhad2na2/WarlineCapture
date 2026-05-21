@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f8453188028596d46a097138cbd6ca3d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43479926116681526
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Veh_Plane_01_Convex.asset
+  uploadId: 884554

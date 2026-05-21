@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d7c5b8b4c3e4ec94fb7528b807bd9c64
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43426952615606018
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Veh_Tank_USA_Destroyed_01_Convex.asset
+  uploadId: 884554

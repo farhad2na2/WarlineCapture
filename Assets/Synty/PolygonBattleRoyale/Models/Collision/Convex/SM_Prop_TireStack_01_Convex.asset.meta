@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1fcea84b4f0873e4fadcf1b568c3fecb
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43806750686210392
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_TireStack_01_Convex.asset
+  uploadId: 884554

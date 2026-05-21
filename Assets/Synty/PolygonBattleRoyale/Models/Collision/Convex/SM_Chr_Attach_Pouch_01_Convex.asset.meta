@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4abb965eef12aa74a8a2d9b95697ad42
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43135554758441684
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Pouch_01_Convex.asset
+  uploadId: 884554

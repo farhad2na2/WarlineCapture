@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f5a0658314c71e540bbda1502fa4b035
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43177031021337308
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Env_Road_Corner_02_Convex.asset
+  uploadId: 884554

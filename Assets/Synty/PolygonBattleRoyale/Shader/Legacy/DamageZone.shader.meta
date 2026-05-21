@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 939670c722a2b8e43b8d51c8a2a1363f
+timeCreated: 1536717390
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Shader/Legacy/DamageZone.shader
+  uploadId: 884554

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ca9e9e90fd8ac904f8c6371833583a6d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43854750202591272
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_MachineGun_01_Convex.asset
+  uploadId: 884554

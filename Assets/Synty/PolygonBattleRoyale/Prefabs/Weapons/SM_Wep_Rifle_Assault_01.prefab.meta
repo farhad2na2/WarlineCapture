@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: be20da268d490c44c8460e91a7cd3a44
+timeCreated: 1536626876
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/Weapons/SM_Wep_Rifle_Assault_01.prefab
+  uploadId: 884554

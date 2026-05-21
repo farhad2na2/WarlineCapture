@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 6b1eb994dd63dc743b2b4fd7ebcdff09
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43876447952192830
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Env_Concrete_Base_01_Convex.asset
+  uploadId: 884554

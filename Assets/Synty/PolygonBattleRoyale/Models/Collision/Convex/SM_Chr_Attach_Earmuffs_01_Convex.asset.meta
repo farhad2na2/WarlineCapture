@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f65a9f6702361c74bab92bdc04211239
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43908525933009122
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Earmuffs_01_Convex.asset
+  uploadId: 884554

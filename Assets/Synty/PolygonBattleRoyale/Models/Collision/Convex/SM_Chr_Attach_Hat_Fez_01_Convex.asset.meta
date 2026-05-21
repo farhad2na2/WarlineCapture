@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d46bf97e45f4910478a1f2dabf8e8eda
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43320955236417106
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Hat_Fez_01_Convex.asset
+  uploadId: 884554

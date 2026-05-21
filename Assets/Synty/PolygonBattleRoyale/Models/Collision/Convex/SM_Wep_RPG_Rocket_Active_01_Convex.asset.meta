@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dee6458f2abd20645b7e5362a5469c72
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43848606751216006
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_RPG_Rocket_Active_01_Convex.asset
+  uploadId: 884554

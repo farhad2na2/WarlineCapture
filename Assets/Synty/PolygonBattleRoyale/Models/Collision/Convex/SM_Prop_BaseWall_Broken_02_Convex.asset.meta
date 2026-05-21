@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a14a70d02615b0945beb42210a8dd72e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43867493923255120
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_BaseWall_Broken_02_Convex.asset
+  uploadId: 884554

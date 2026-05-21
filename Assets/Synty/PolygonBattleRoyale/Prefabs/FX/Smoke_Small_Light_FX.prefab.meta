@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6a74bf35c9e0ab34f8c9db5f09f1a397
+timeCreated: 1517362107
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/FX/Smoke_Small_Light_FX.prefab
+  uploadId: 884554

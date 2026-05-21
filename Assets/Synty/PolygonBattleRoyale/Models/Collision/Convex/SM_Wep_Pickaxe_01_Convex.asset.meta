@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d234b40efbe957b46b3fccc0f955d3d3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43166484107195346
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Pickaxe_01_Convex.asset
+  uploadId: 884554

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1a416a040402dde448bb58d511ed9a4d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43068923311964368
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Revolver_Snub_01_Convex.asset
+  uploadId: 884554

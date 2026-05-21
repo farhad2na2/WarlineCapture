@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 1cb758c90b3074d43b04643bc648b389
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43196826041325614
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Generic_Tree_02_Convex.asset
+  uploadId: 884554

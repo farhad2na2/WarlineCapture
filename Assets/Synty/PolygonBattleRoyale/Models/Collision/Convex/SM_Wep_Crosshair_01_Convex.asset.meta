@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 833f805b263f32a4a83713aa336ae4f0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43806062056763126
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Crosshair_01_Convex.asset
+  uploadId: 884554

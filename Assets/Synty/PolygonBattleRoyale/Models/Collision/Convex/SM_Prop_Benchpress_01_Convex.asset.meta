@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 34fdc14fd19c1c442b6c993af62c24ea
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43396026810826582
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_Benchpress_01_Convex.asset
+  uploadId: 884554

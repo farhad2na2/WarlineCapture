@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 2b94bb8916b9ff0419426d1e77a2f902
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43593751131190702
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_EmergencyDrop_01_Convex.asset
+  uploadId: 884554

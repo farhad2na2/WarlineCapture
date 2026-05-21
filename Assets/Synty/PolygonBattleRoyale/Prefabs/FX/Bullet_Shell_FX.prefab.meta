@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0720624341910604a9db0cb96a9ac3b2
+timeCreated: 1502257525
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/FX/Bullet_Shell_FX.prefab
+  uploadId: 884554

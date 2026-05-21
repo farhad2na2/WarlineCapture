@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a21abf58b2cc5194eb551fb570da6777
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43459343281742258
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Ammo_01_Convex.asset
+  uploadId: 884554

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7f3821cec3fc86c4387172bc7c8ecac9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43340195518455012
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Sniper_01_Convex.asset
+  uploadId: 884554

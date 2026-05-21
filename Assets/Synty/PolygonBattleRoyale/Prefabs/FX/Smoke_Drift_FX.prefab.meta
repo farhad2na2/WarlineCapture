@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 428327857709d25469b70035112dfe6e
+timeCreated: 1517371838
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/FX/Smoke_Drift_FX.prefab
+  uploadId: 884554

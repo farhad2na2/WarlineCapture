@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e9ea10ff9acdd6a4f965cc9127fa007e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43982542781586880
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Env_Grass_Circle_02_Convex.asset
+  uploadId: 884554

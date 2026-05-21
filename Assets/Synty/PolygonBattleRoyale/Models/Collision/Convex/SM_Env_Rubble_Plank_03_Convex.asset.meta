@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 76b19878a13be3f49943c99e77eec11e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43526171661613102
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Env_Rubble_Plank_03_Convex.asset
+  uploadId: 884554

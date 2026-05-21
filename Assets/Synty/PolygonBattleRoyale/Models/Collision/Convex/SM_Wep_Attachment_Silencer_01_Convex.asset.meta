@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0d9096a83e6364646ae0abb8d540dff5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43834128391517144
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Attachment_Silencer_01_Convex.asset
+  uploadId: 884554

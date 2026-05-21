@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 32a651441e088c546b5433543e6334cc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43703073918194628
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_Parachute_01_Convex.asset
+  uploadId: 884554

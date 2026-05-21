@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c848faff790b67743b0a251f06fa8149
+timeCreated: 1536626897
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/Props/SM_Prop_BaseWall_Broken_02.prefab
+  uploadId: 884554

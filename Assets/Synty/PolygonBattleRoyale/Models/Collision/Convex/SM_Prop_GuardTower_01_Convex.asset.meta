@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a058b63cc7c7dbe469d1e3cb37c07726
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43381014793795700
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_GuardTower_01_Convex.asset
+  uploadId: 884554

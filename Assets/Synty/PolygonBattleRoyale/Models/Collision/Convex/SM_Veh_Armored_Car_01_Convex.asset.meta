@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f867571ce0acfbb47848e9a0051eb348
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43396243083992398
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Veh_Armored_Car_01_Convex.asset
+  uploadId: 884554

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d6d426c4548853643a12a40e57624c40
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43931905699945928
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Veh_Boat_01_Convex.asset
+  uploadId: 884554

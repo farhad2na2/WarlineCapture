@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 03f0e9ccf67dd0e4b92891caf43bc9b1
+timeCreated: 1536806733
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/Characters/Attachments/SM_Chr_Attach_Bag_Lvl2.prefab
+  uploadId: 884554

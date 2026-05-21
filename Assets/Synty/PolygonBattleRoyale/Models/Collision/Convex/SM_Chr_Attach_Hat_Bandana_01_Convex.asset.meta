@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 50b4711882a59d1498282336bc3b6fd9
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43163746225402080
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Hat_Bandana_01_Convex.asset
+  uploadId: 884554

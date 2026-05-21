@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e4156148cbb8e414784559dc445eea9b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43638769882326608
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Char_Attach_Helmet_02_Convex.asset
+  uploadId: 884554

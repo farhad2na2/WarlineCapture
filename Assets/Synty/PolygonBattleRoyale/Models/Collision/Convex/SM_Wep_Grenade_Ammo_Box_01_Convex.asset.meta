@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ed7433cbdccc3bc4896b93704793bb58
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43945814059875996
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Grenade_Ammo_Box_01_Convex.asset
+  uploadId: 884554

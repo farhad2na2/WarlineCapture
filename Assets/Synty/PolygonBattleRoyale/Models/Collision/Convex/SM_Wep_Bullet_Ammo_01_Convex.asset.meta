@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5a763297e2dd13d4e8fd7b31cb637eaa
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43443953052719932
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Bullet_Ammo_01_Convex.asset
+  uploadId: 884554

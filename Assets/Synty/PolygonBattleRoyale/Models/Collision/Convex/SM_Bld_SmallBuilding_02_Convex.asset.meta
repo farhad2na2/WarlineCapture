@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0201c31904d2a1343a3e28e2a163387f
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43722275585654950
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Bld_SmallBuilding_02_Convex.asset
+  uploadId: 884554

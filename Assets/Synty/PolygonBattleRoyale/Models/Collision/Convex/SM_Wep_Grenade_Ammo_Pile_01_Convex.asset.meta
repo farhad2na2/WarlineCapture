@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e363a024020ceae4bbf913505314125d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43817896185273782
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Grenade_Ammo_Pile_01_Convex.asset
+  uploadId: 884554

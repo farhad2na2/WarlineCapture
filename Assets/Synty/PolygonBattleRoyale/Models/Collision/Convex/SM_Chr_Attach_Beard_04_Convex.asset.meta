@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a2bb514c33c8e4646bec0313906177b1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43515669446570892
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Beard_04_Convex.asset
+  uploadId: 884554

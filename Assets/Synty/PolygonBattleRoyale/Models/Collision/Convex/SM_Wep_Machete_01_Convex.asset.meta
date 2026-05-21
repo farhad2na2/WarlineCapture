@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d4b15c9b2f844fa4a8a5796fdc02d44d
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43799263115863116
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Machete_01_Convex.asset
+  uploadId: 884554

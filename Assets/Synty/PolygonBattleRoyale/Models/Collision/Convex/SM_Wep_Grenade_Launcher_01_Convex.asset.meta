@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 16d640794e72dac42914ad9ccc6ec81a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43750694340086620
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Grenade_Launcher_01_Convex.asset
+  uploadId: 884554

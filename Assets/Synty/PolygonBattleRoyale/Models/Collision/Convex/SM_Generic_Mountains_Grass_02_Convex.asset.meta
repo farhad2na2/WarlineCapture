@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8f5f833f804c3134f936289c8b63b0f5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43911064162189124
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Generic_Mountains_Grass_02_Convex.asset
+  uploadId: 884554

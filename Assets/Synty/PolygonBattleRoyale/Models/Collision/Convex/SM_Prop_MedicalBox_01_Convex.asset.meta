@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bb71d321b04e5904ca2c1f981360d1ee
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43739672981066174
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_MedicalBox_01_Convex.asset
+  uploadId: 884554

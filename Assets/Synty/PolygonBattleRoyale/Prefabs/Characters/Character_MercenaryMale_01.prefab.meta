@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 325c2a72f558d4e419ec4f9ea74e54f5
+timeCreated: 1536788721
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/Characters/Character_MercenaryMale_01.prefab
+  uploadId: 884554

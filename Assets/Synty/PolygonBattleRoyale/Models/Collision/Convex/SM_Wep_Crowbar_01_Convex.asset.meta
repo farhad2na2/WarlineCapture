@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c50e085e0bd29e2489ee3ce4a4832a70
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43405637380362722
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Crowbar_01_Convex.asset
+  uploadId: 884554

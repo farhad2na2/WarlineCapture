@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5b330aad73e955f47b6caca2d821bba4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43330739949178368
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Scarf_02_Convex.asset
+  uploadId: 884554

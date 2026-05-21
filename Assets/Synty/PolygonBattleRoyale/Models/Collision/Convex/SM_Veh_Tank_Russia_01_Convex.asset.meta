@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 597225d0aaceb7042979576af95795c3
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43597996998652480
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Veh_Tank_Russia_01_Convex.asset
+  uploadId: 884554

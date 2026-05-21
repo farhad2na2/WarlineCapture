@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: af6d53f8dea0e7a46890300677b5b779
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43423653744143246
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Patch_Flag_01_Convex.asset
+  uploadId: 884554

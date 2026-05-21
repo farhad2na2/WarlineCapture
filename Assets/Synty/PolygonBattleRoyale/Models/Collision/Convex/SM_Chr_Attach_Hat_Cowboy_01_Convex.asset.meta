@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 85287c4e4172fa04a805fed84215e1fc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43707790856782604
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Hat_Cowboy_01_Convex.asset
+  uploadId: 884554

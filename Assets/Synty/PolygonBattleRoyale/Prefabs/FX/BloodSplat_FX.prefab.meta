@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 07981d74c1df0de418cf86845f279cf0
+timeCreated: 1502247319
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/FX/BloodSplat_FX.prefab
+  uploadId: 884554

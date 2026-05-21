@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: fad0d10d9633c7a48ab990d3a4a6f1c4
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43487198469890872
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_Wirespool_02_Convex.asset
+  uploadId: 884554

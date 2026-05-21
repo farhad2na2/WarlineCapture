@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c662080231736f54f8b6a6019f8f37ef
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43195382014184508
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Bld_Tent_02_Convex.asset
+  uploadId: 884554

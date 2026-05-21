@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cb01b416afd35f14ba647ff20f7967f7
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43077363091740012
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Char_Attach_Bag_Lvl2_Convex.asset
+  uploadId: 884554

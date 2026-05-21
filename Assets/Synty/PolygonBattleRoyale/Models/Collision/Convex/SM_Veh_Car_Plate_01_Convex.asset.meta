@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 470da9585a9bb1548a4e79edecfd9c86
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43913296758228850
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Veh_Car_Plate_01_Convex.asset
+  uploadId: 884554

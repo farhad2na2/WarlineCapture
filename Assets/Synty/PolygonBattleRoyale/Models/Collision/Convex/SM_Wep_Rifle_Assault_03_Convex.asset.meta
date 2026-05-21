@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5c31457a4e4b94f42add436cfb76b0a0
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43213239301437392
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Wep_Rifle_Assault_03_Convex.asset
+  uploadId: 884554

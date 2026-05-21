@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0b7fb3edc6536b049a6614c8beb7e834
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43572576222405286
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_PickUp_Armor_02_Convex.asset
+  uploadId: 884554

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bb7f726727fa5c54884793fe0460b4f1
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43342234251198606
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_Iron_Sheet_03_Convex.asset
+  uploadId: 884554

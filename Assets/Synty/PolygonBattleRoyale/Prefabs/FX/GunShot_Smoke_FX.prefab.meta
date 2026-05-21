@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c8e3843634341ba448f0f14f9cc971fb
+timeCreated: 1502253995
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Prefabs/FX/GunShot_Smoke_FX.prefab
+  uploadId: 884554

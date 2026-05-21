@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4eacd841b20858443b60f694b795da84
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43994946512446418
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_BunkBed_01_Convex.asset
+  uploadId: 884554

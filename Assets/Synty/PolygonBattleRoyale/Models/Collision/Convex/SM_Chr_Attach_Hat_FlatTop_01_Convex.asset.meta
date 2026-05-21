@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e1d866abba0e3704d9f8cb75e03c80e5
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43883738544415302
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Chr_Attach_Hat_FlatTop_01_Convex.asset
+  uploadId: 884554

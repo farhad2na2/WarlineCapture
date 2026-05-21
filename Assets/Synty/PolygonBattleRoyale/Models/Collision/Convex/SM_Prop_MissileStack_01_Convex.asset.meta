@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 77840c525f6169d4890a7d053ea53428
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43598571691718904
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_MissileStack_01_Convex.asset
+  uploadId: 884554

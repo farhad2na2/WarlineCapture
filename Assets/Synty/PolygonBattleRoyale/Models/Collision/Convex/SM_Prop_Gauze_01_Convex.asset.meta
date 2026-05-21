@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: d7b8a8be18e416d4ab50ea40f0a41daa
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43640045052398372
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Prop_Gauze_01_Convex.asset
+  uploadId: 884554

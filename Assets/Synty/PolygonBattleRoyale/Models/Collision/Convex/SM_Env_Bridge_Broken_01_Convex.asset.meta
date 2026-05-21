@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4d9f06b9d57ba5b47ae1d79616a2f6c8
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 43703821416861502
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 128513
+  packageName: POLYGON - Battle Royale Pack - Art by Synty
+  packageVersion: 1.9.0
+  assetPath: Assets/Synty/PolygonBattleRoyale/Models/Collision/Convex/SM_Env_Bridge_Broken_01_Convex.asset
+  uploadId: 884554

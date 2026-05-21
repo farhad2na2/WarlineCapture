@@ -1,60 +1,86 @@
-# WarlineCapture Layered Visual Lock Index
+# WarlineCapture VisualLockLayered
 
-Date: 2026-05-05
+Date: 2026-05-22
 
-This folder contains high-end UI visual-lock layer packs for Unity Canvas implementation. A layered pack is different from a flat target PNG: it must include a flattened design reference plus separated implementation sprites, layer manifest, contact sheet, and dry-run import helper.
+This folder is the active destination for new implementation-ready UI visual targets. The previous layered packs were archived to `Design/Archive/LegacyVisualLock_2026-05-22/VisualLockLayered`.
 
-## Layered Pack Status
+## Direction
 
-| Surface | Status | Notes |
+All new packs must align with:
+
+- Full 3D single-map mobile RTS gameplay.
+- Command-base menu presentation.
+- Campaign / Operations / Skirmish player-facing modes.
+- 3D operation-map planning, briefing, minimap, deployment, threat, and battle camera states.
+- Prefab-catalog unit/building display names and descriptions from `Assets/Game/Configs/Prefabs`.
+- Armory roster inspection through `SCN-19 Armory` and `POP-09 Ability / Upgrade Detail`.
+
+## Required Pack Shape
+
+Each active surface should use this folder shape:
+
+```text
+Design/VisualLockLayered/<SurfaceId>/
+  README.md
+  reference/
+    <SurfaceId>_Landscape_Target.png
+  layers/
+  layer_manifest.json
+  generated_one_go/
+    layers_contact_sheet.png
+  validation/
+```
+
+Do not start Unity Canvas implementation for a surface until the pack has the reference image, separated layers, manifest, contact sheet, and README.
+
+## Active Screen Inventory
+
+| Surface | Player-Facing Purpose | New 3D Direction Requirement |
 |---|---|---|
-| `SCN-08_RTSBattleHUD` | `LayerPackExists` | Existing one-go layer export and manifest. Resource icon naming must still map to canonical resource labels during implementation. |
-| `SCN-10_UnitCommandWheel` | `OverlayImplemented` | Command Wheel layer pack created with separate hint, selected entity, radial segment, center hub, icon, and targeting layers. Implemented as hidden `CommandWheelCanvas` inside `Screen_MatchOverlay`, opened from `SpecialButton`, with focused tests and 16:9 / 20:9 captures. |
-| `SCN-03_CommanderProfile` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-11_OperationDashboard` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-12_DistrictDetailActions` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-14_StoreCommandExchange` | `HighEndTargetAndLayerAtlasGenerated` | Regenerated high-end flat target plus alpha atlas and 28 extracted candidate layers. Needs Unity import/crop QA before implementation. |
-| `SCN-15_Inbox` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-16_Events` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-17_Ranking` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-18_CommandFeed` | `RouteShellImplemented` | Designed-unavailable route shell pack created with reference target, shared one-go chrome layers, manifest, contact sheet, generated Unity art, prefab, route wiring, tests, and 16:9 / 20:9 captures. |
-| `SCN-19_Armory` | `FinalHighEndTargetAndLayerPackGenerated` | Final Armory target, alpha atlas, contact sheet, manifest, copy helper, and separated layer PNGs generated for ability/upgrade inspection. |
-| `SCN-05_SagaMap` | `RouteScreenImplemented` | Chapter 1 / First Response layer pack generated with five mission nodes, generated Unity art, Saga Map prefab, Main Menu routing, shell coverage, focused tests, and 16:9 / 20:9 captures. |
-| `SCN-06_MissionBriefing` | `RouteScreenImplemented` | Chapter 1 Breach Assault layer pack generated with Mission / Scenario / Level / Map content, generated Unity art, Mission Briefing prefab, Start Mission route, shell coverage, focused tests, and 16:9 / 20:9 captures. |
-| `SCN-07_LoadoutSquadPrep` | `RouteScreenImplemented` | Loadout / Squad Prep layer pack generated with selected unit cards, support slots, recommended gear, mission summary, generated Unity art, Mission Briefing route, deploy-to-Match route, shell coverage, focused tests, and 16:9 / 20:9 captures. |
-| `PREFAB-04_AssistantButton` | `FlatPanelPopupTarget` | High-quality assistant button state board over blurred Match Overlay context. Flat visual target only; no new sliced layer pack required for this pass. |
-| `PREFAB-05_AssistantPanel` | `FlatPanelPopupTarget` | High-quality ARIA recommendation panel over blurred Match Overlay context. Flat visual target only; no new sliced layer pack required for this pass. |
-| `PREFAB-06_TutorialCard` | `FlatPanelPopupTarget` | High-quality FTUE tutorial card over blurred Match Overlay context with readable copy and expected controls. Flat visual target only; no new sliced layer pack required for this pass. |
-| `PREFAB-07_TutorialHighlight` | `FlatPanelPopupTarget` | High-quality tutorial highlight component showcase over blurred Match Overlay context. Flat visual target only; no new sliced layer pack required for this pass. |
-| `POP-01_ThreatAlert` | `ReadyForCanvasImplementation` | Layer pack exists with separate modal frame, header plate, warning icon, info rows, convoy art, and jump button layers. |
-| `POP-03_BuildPlacement` | `ReadyForCanvasImplementation` | Layer pack exists and `BuildPlacementPanel_ConsumesVisualLockLayerPackSprites` enforces the prefab consumes the mapped resource bar and build chrome sprites. |
-| `POP-04_RewardUnlock` | `ReadyForCanvasImplementation` | Layer pack created for RewardUnlockPopup with separated modal chrome, unlock display art, reward cards, reward icons, and continue button. |
-| `POP-05_MissionResult` | `ReadyForCanvasImplementation` | Layer pack created with canonical rewards and civilian/district consequence row. |
-| `POP-07_PauseOptions` | `ReadyForCanvasImplementation` | Layer pack exists with separate modal frame, selected/normal/destructive button states, and pause action icons. |
-| `POP-09_AbilityUpgradeDetail` | `FinalHighEndTargetAndLayerPackGenerated` | Final reusable ability/upgrade detail popup target, alpha atlas, contact sheet, manifest, copy helper, and separated layer PNGs generated. |
-| `POP-10_AssistantTakeover` | `FlatPanelPopupTarget` | High-quality ARIA takeover popup over blurred Match Overlay context with current intent and stop/resume controls. Flat visual target only; no new sliced layer pack required for this pass. |
-| `POP-11_CommanderIdentity` | `FlatPanelPopupTarget` | High-quality commander identity popup over blurred Commander Profile context for commander icon, callsign, frame choice, and confirmation controls. Flat visual target only; no new sliced layer pack required for this pass. |
+| `SCN-01_SplashLoading` | App entry and loading. | Brand-first military command tone; no old map art. |
+| `SCN-02_MainMenu` | Command-base hub. | Campaign, Operations, Skirmish, Store, Commander, Settings; Credits, Supplies, Command. |
+| `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with Armory/upgrades links. |
+| `SCN-04_SettingsAccessibility` | Settings and accessibility. | Command-base shell; reachable from Main Menu and Pause. |
+| `SCN-05_CampaignMap` | Campaign mission selection. | Campaign nodes selected from command table/world overlay; launches 3D operation maps. |
+| `SCN-06_MissionBriefing` | Objectives, intel, rewards, deployment preview. | Uses `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`. |
+| `SCN-07_LoadoutSquadPrep` | Squad/support/gear setup. | Uses prefab-catalog roster, lock reasons, role descriptions, Armory detail links. |
+| `SCN-08_RTSBattleHUD` | 3D operation battle HUD. | Objective tracker, squad tray, command bar, minimap, threat feed over one 3D map. |
+| `SCN-09_BuildDrawerProduction` | Build/produce drawer. | Building config names/descriptions, 3D metadata placement rules. |
+| `SCN-10_UnitCommandWheel` | Unit context command wheel. | Move, attack, hold, board, disembark, support, breach, scan, defend, cancel as available. |
+| `SCN-11_OperationsDashboard` | District operations command. | District state, warnings, raids, resources, consequences. |
+| `SCN-12_DistrictDetailActions` | District action detail. | Patrol, scan, aid, raid, repair, evacuate, build outpost with civilian/infrastructure consequences. |
+| `SCN-13_SkirmishSetup` | Configurable replay setup. | Player-facing Skirmish naming; selectable operation-map presets and AI/rule controls. |
+| `SCN-14_CommandExchange` | Store / command exchange. | Deterministic products, disabled purchase states, no direct Campaign stars or Operation metric purchase. |
+| `SCN-15_Inbox` | Inbox and reports. | Empty/designed-unavailable state until services exist. |
+| `SCN-16_Events` | Events and challenges. | Empty/designed-unavailable state until event service exists. |
+| `SCN-17_Ranking` | Local/account ranking categories. | No network dependency in first target. |
+| `SCN-18_CommandFeed` | Command/system feed. | Local system feed and Operation report entries. |
+| `SCN-19_Armory` | Unit/building/support roster inspection. | Shows name, description, role, unlock state, level/tier, stats, abilities, upgrades, parts, source. |
+| `POP-01_ThreatAlert` | Threat alert and jump. | Jumps inside same 3D operation map. |
+| `POP-02_ConfirmRaid` | Raid confirmation. | Intel confidence, civilian risk, district consequence. |
+| `POP-03_BuildPlacement` | Build placement confirmation. | 3D socket/footprint validity and blocked/civilian-zone reasons. |
+| `POP-04_RewardUnlock` | Major reward/unlock celebration. | Concrete deterministic reward; no hidden odds. |
+| `POP-05_MissionResult` | Result, stats, stars, rewards. | Tactical success plus district consequence. |
+| `POP-06_EndOfDayReport` | Operations day resolution. | District deltas and saved Operation state. |
+| `POP-07_PauseOptions` | Pause/options. | Resume, Settings, restart, exit to Main Menu with confirmation. |
+| `POP-08_IntelReveal` | Intel/evidence reveal. | Evidence, confidence delta, archive route. |
+| `POP-09_AbilityUpgradeDetail` | Ability/upgrade detail. | Rules, costs, cooldowns, unlock source, disabled CTA reason. |
+| `POP-10_AssistantTakeover` | ARIA control takeover. | Uses typed operation-map targets and cancel/resume state. |
+| `POP-11_CommanderIdentity` | Commander identity setup. | Portrait/frame/title selection and ownership state. |
+| `PREFAB-01_ObjectiveTracker` | Objective rows. | Objective and star-goal runtime binding. |
+| `PREFAB-02_SquadTray` | Squad cards. | Selected/locked/readiness states and 3D unit roles. |
+| `PREFAB-03_BuildDrawer` | Reusable build drawer. | Config-backed building/production rows. |
+| `PREFAB-04_AssistantButton` | ARIA entry. | Idle, recommendation, critical, takeover, muted states. |
+| `PREFAB-05_AssistantPanel` | ARIA recommendations. | Show Me / Do It / Stop over operation-map anchors. |
+| `PREFAB-06_TutorialCard` | Tutorial prompt. | Localized text, ARIA/commander voice, target highlight. |
+| `PREFAB-07_TutorialHighlight` | Highlight/path preview. | UI/world highlight target resolves through typed gameplay references. |
 
-## Required Pack Contents
+## Acceptance Gate
 
-Each layered pack should contain:
+A new pack is not accepted until:
 
-- `reference/<SurfaceId>_Landscape_Target.png`
-- `generated_one_go/source/generated_layer_atlas_chromakey.png`
-- `generated_one_go/source/generated_layer_atlas_alpha.png`
-- `generated_one_go/layers_contact_sheet.png`
-- `layers/*.png`
-- `layer_manifest.json`
-- `README.md`
-- `copy_layers_to_unity.py`
-- `prompts/high_end_target_and_layers.md`
-
-Flat panel/popup target references may instead contain `prompts/flat_panel_popup_target.md` and do not require generated alpha atlas, copy helper, or separated sprite contents until the design is selected for Unity prefab implementation.
-
-## Implementation Rules
-
-- Do not implement a UI screen from a flattened target image.
-- TMP text must remain live text in Unity.
-- Frames, fills, buttons, icons, content art, and state backgrounds must be separate PNGs.
-- 9-slice hints and alpha rules must be recorded in `layer_manifest.json`.
-- Use `copy_layers_to_unity.py` in dry-run mode before staging any generated sprites into `Assets/Game/Art/UI/Generated/...`.
+- It is 16:9 and 20:9 safe.
+- Text is live-layered or explicitly marked decorative.
+- Icons, panels, backgrounds, and important art are separate layers.
+- It uses the 3D direction and current player-facing terminology.
+- It documents data sources, route links, disabled states, and locked-state reasons.

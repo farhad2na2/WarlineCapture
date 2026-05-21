@@ -1,5 +1,7 @@
 # M01 Selected Readability Gameplay Visual Target
 
+Status: legacy 2D/isometric gameplay reference. Do not use this folder as the active visual target for the current 3D single-map direction.
+
 ## Ownership Boundary
 
 This folder is for in-world gameplay visual targets only. Art/Atlas owns the target package in this folder.
@@ -26,15 +28,13 @@ Do not use this folder for:
 
 UI/HUD visual targets remain in:
 
-- `Design/VisualLock/`
 - `Design/VisualLockLayered/`
 
 ## UI Alignment References
 
 Gameplay targets must visually align with the existing UI target language without becoming UI targets:
 
-- `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
-- `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Target_State_Manifest.json`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
 
 ## Required Package

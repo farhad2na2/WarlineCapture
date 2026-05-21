@@ -2,7 +2,7 @@
 
 Date: 2026-05-08
 Owner: Art/Atlas
-Approval: Approved by user as M01 gameplay reference quality bar.
+Approval: Legacy 2D/isometric gameplay reference only. Superseded by the active 3D single-map direction.
 
 ## Target Files
 
@@ -19,14 +19,14 @@ Approval: Approved by user as M01 gameplay reference quality bar.
 
 ## Source References Used
 
-- `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
-- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_one_go/layers_contact_sheet.png`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/VisualLockLayered/SCN-08_RTSBattleHUD/README.md`
 - Built-in image generation output copied into this package as `M01_SelectedReadability_AAA_Isometric_AI_Source.png`.
 - Prompt intent: AAA true-isometric RTS M01 selected-readability gameplay mockup with orthographic/isometric camera feel, parallel 2:1 ground-plane axes, consistent soldiers, grounded selection rings, amber move marker, red hostile markers, no HUD, no text, no yellow square, no giant green marker, no buried/floating/squashed soldiers, and no cinematic perspective convergence.
 
 ## Acceptance Checks
 
-- This package is the approved visual quality reference for image/background/map/soldiers/markers.
+- This package is no longer the active visual quality reference for image/background/map/soldiers/markers.
 - Runtime capture should align to the target boards before another selected-readability approval request.
 - Unit visuals must be ECS/atlas-backed and not accepted through visible renderer-wrapper GameObjects.
 - Target/capture perspective should read as orthographic isometric: consistent parallel ground-plane axes, no vanishing point, no horizon, and no wide-angle cinematic convergence.

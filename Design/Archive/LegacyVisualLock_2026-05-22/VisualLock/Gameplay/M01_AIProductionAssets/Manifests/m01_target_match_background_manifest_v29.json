@@ -1,0 +1,94 @@
+{
+  "schema": "warlinecapture.visualLock.m01OverscanBackgroundPackage.v29",
+  "package_id": "m01_v29_overscan_no_buildings_background",
+  "status": "implementation_ready_art_package",
+  "source": {
+    "built_in_imagegen_original": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_0254c1f907ed28fc016a0c301916b88199b2ac98256f734ac1.png",
+    "workspace_imagegen_source": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV29/m01_tactical_start_clean_plate_v29_overscan_imagegen_source.png",
+    "constraint": "No buildings/tall structures/UI/units; ground-level roads, rubble, low barricades, debris only.",
+    "method": "Imagegen source scaled/cropped into POT 4096x2048. No edge stretching, blur extension, solid fill, or pasted target pixels."
+  },
+  "runtime_files": {
+    "overscan_source": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v29_overscan_source.png",
+    "overscan_pot_4096x2048": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v29_overscan_pot_4096x2048.png"
+  },
+  "dimensions": {
+    "source_imagegen": [
+      1672,
+      941
+    ],
+    "pot": [
+      4096,
+      2048
+    ]
+  },
+  "aspect_crops": {
+    "16x9": {
+      "path": "Design/AgentReports/Captures/M01_TargetMatchV29OverscanNoBuildings_16x9.png",
+      "source_crop_xywh": [
+        227,
+        0,
+        3641,
+        2048
+      ],
+      "output_size": [
+        1920,
+        1080
+      ]
+    },
+    "20x9": {
+      "path": "Design/AgentReports/Captures/M01_TargetMatchV29OverscanNoBuildings_20x9.png",
+      "source_crop_xywh": [
+        0,
+        102,
+        4096,
+        1843
+      ],
+      "output_size": [
+        2400,
+        1080
+      ]
+    },
+    "21x9": {
+      "path": "Design/AgentReports/Captures/M01_TargetMatchV29OverscanNoBuildings_21x9.png",
+      "source_crop_xywh": [
+        0,
+        146,
+        4096,
+        1755
+      ],
+      "output_size": [
+        2520,
+        1080
+      ]
+    },
+    "2560x1080": {
+      "path": "Design/AgentReports/Captures/M01_TargetMatchV29OverscanNoBuildings_2560x1080.png",
+      "source_crop_xywh": [
+        0,
+        160,
+        4096,
+        1728
+      ],
+      "output_size": [
+        2560,
+        1080
+      ]
+    }
+  },
+  "contact_sheets": {
+    "aspect_crop_proof": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_v29_overscan_no_buildings_aspect_crop_proof.png"
+  },
+  "anchor_notes": {
+    "default_anchor": "center",
+    "16x9": "center crop from 4096x2048 to 3641x2048, then scale/crop to runtime viewport as needed",
+    "20x9": "center crop from 4096x2048 to 4096x1843",
+    "21x9": "center crop from 4096x2048 to 4096x1755",
+    "2560x1080": "center crop from 4096x2048 to 4096x1728"
+  },
+  "validation": {
+    "manifest_parse": "ok",
+    "no_solid_fill": "visual proof generated",
+    "no_stretched_edge_extension": "source is full-frame imagegen painted content"
+  }
+}

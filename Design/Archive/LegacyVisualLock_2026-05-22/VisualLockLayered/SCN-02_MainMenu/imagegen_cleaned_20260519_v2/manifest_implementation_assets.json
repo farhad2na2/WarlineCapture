@@ -1,0 +1,396 @@
+{
+  "created_at": "2026-05-19 09:49:44",
+  "note": "Cleaned and split candidate assets for implementation review. No Unity scene/prefab implementation performed in this pass.",
+  "items": [
+    {
+      "name": "brand_logo_lockup.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/brand_logo_lockup.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/brand_logo_lockup.png",
+      "size": [
+        1753,
+        441
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "brand_logo_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/brand_logo_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/brand_logo_panel_frame.png",
+      "size": [
+        1781,
+        524
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "command_feed_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/command_feed_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/command_feed_panel_frame.png",
+      "size": [
+        1164,
+        340
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "commander_profile_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/commander_profile_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/commander_profile_panel_frame.png",
+      "size": [
+        955,
+        1251
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "commander_profile_portrait.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/commander_profile_portrait.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/commander_profile_portrait.png",
+      "size": [
+        1369,
+        1149
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "deploy_command_button_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/deploy_command_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/deploy_command_button_frame.png",
+      "size": [
+        1797,
+        352
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "deploy_command_chevrons.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/deploy_command_chevrons.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/deploy_command_chevrons.png",
+      "size": [
+        828,
+        525
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "designed_unavailable_badge.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/designed_unavailable_badge.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/designed_unavailable_badge.png",
+      "size": [
+        1199,
+        461
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "full_visual_lock_preview.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/full_visual_lock_preview.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/full_visual_lock_preview.png",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "left_nav_row_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_row_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/left_nav_row_frame.png",
+      "size": [
+        1820,
+        302
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "main_menu_background_tactical_map.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/main_menu_background_tactical_map.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/main_menu_background_tactical_map.png",
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "mode_card_art_operation.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_art_operation.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_art_operation.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "mode_card_art_quick_custom.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_art_quick_custom.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_art_quick_custom.png",
+      "size": [
+        916,
+        1717
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "mode_card_art_saga.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_art_saga.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_art_saga.png",
+      "size": [
+        948,
+        1659
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "mode_card_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_frame.png",
+      "size": [
+        855,
+        1434
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "profile_block_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/profile_block_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/profile_block_frame.png",
+      "size": [
+        1280,
+        943
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "screen_shell_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/screen_shell_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/screen_shell_frame.png",
+      "size": [
+        1670,
+        939
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "settings_button_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/settings_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/settings_button_frame.png",
+      "size": [
+        798,
+        864
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "settings_gear_icon.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/settings_gear_icon.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/settings_gear_icon.png",
+      "size": [
+        732,
+        808
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "side_route_button_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/side_route_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/side_route_button_frame.png",
+      "size": [
+        1252,
+        425
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "top_resource_bar_frame_full.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/top_resource_bar_frame_full.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/top_resource_bar_frame_full.png",
+      "size": [
+        1988,
+        188
+      ],
+      "mode": "copied_cleaned"
+    },
+    {
+      "name": "icon_credits.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/resource_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/icon_credits.png",
+      "size": [
+        422,
+        410
+      ],
+      "mode": "split_x_from_resource_icon_set.png"
+    },
+    {
+      "name": "icon_materials.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/resource_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/icon_materials.png",
+      "size": [
+        482,
+        423
+      ],
+      "mode": "split_x_from_resource_icon_set.png"
+    },
+    {
+      "name": "icon_command_authority.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/resource_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/icon_command_authority.png",
+      "size": [
+        386,
+        477
+      ],
+      "mode": "split_x_from_resource_icon_set.png"
+    },
+    {
+      "name": "left_nav_icon_inbox.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/left_nav_icon_inbox.png",
+      "size": [
+        271,
+        216
+      ],
+      "mode": "split_x_from_left_nav_icon_set.png"
+    },
+    {
+      "name": "left_nav_icon_store.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/left_nav_icon_store.png",
+      "size": [
+        291,
+        293
+      ],
+      "mode": "split_x_from_left_nav_icon_set.png"
+    },
+    {
+      "name": "left_nav_icon_events.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/left_nav_icon_events.png",
+      "size": [
+        248,
+        290
+      ],
+      "mode": "split_x_from_left_nav_icon_set.png"
+    },
+    {
+      "name": "left_nav_icon_ranking.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/left_nav_icon_ranking.png",
+      "size": [
+        255,
+        302
+      ],
+      "mode": "split_x_from_left_nav_icon_set.png"
+    },
+    {
+      "name": "left_nav_icon_command_feed.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/left_nav_icon_command_feed.png",
+      "size": [
+        254,
+        296
+      ],
+      "mode": "split_x_from_left_nav_icon_set.png"
+    },
+    {
+      "name": "mode_card_header_emblem_saga.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_header_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_header_emblem_saga.png",
+      "size": [
+        325,
+        393
+      ],
+      "mode": "split_x_from_mode_card_header_icon_set.png"
+    },
+    {
+      "name": "mode_card_header_emblem_operation.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_header_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_header_emblem_operation.png",
+      "size": [
+        359,
+        374
+      ],
+      "mode": "split_x_from_mode_card_header_icon_set.png"
+    },
+    {
+      "name": "mode_card_header_emblem_quick_custom.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_header_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/mode_card_header_emblem_quick_custom.png",
+      "size": [
+        339,
+        354
+      ],
+      "mode": "split_x_from_mode_card_header_icon_set.png"
+    },
+    {
+      "name": "card_footer_icon_saga.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/card_footer_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/card_footer_icon_saga.png",
+      "size": [
+        454,
+        472
+      ],
+      "mode": "split_x_from_card_footer_icon_set.png"
+    },
+    {
+      "name": "card_footer_icon_operation.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/card_footer_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/card_footer_icon_operation.png",
+      "size": [
+        454,
+        472
+      ],
+      "mode": "split_x_from_card_footer_icon_set.png"
+    },
+    {
+      "name": "card_footer_icon_quick_custom.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/card_footer_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/card_footer_icon_quick_custom.png",
+      "size": [
+        454,
+        472
+      ],
+      "mode": "split_x_from_card_footer_icon_set.png"
+    },
+    {
+      "name": "operation_warning_row_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/operation_warning_icon_meter_combo.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/operation_warning_row_frame.png",
+      "size": [
+        2089,
+        346
+      ],
+      "mode": "split_y_from_operation_warning_icon_meter_combo"
+    },
+    {
+      "name": "operation_warning_icon.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/operation_warning_icon_meter_combo.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/operation_warning_icon.png",
+      "size": [
+        167,
+        164
+      ],
+      "mode": "split_lower_from_operation_warning_icon_meter_combo"
+    },
+    {
+      "name": "operation_pressure_meter_segments.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/operation_warning_icon_meter_combo.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/operation_pressure_meter_segments.png",
+      "size": [
+        1324,
+        75
+      ],
+      "mode": "split_lower_from_operation_warning_icon_meter_combo"
+    },
+    {
+      "name": "operation_risk_meter_segments.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/operation_pressure_meter_segments.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/implementation_assets/operation_risk_meter_segments.png",
+      "size": [
+        1324,
+        75
+      ],
+      "mode": "duplicate_pressure_meter"
+    }
+  ]
+}

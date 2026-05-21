@@ -1,0 +1,92 @@
+{
+  "schema": "warlinecapture.visualLock.m01DirectionLockedSoldierPackage.v20",
+  "package_id": "m01_v20_scaled_fresh_imagegen_direction_locked_idle",
+  "date": "2026-05-18",
+  "status": "internal_visual_check_required",
+  "source_generation": {
+    "method": "built_in_imagegen fresh chromakey soldier sheet from V19 source, scaled down to target crop size, alpha extraction, tonal adjustment, baked horizontal-right shadows",
+    "generated_source_original": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_0192f4db49eec6d5016a0aef123534819bb2a6f2b9ff0efd4b.png",
+    "workspace_source_alpha": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/DirectionLockedV19/m01_v19_direction_locked_source_alpha.png",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true
+  },
+  "assets": {
+    "player_clean": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/PlayerRifleSquad/player_rifle_squad_idle_screen_up_clean_body_atlas_v20.png",
+    "player_baked": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/PlayerRifleSquad/player_rifle_squad_idle_screen_up_body_shadow_atlas_v20.png",
+    "enemy_clean": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/EnemyPatrol/enemy_patrol_idle_screen_down_clean_body_atlas_v20.png",
+    "enemy_baked": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/EnemyPatrol/enemy_patrol_idle_screen_down_body_shadow_atlas_v20.png"
+  },
+  "combined_idle_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/m01_direction_locked_idle_body_shadow_atlas_v20.png",
+  "proofs": {
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_v20_direction_locked_idle_contact.png",
+    "placement_proof": "Design/AgentReports/Captures/M01_TargetMatchV20ScaledFreshDirectionCandidate_AssetPlacementReview_1920x1080.png",
+    "target_comparison": "Design/AgentReports/Captures/M01_TargetMatchV20ScaledFreshDirectionCandidate_vs_Target_Comparison.png",
+    "target_aligned_crop_review": "Design/AgentReports/Captures/M01_TargetMatchV20ScaledFreshDirectionCandidate_TargetAlignedCropReview.png"
+  },
+  "direction_keys": {
+    "player_bottom_faces_up_screen": {
+      "atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/PlayerRifleSquad/player_rifle_squad_idle_screen_up_body_shadow_atlas_v20.png",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "pivot": [
+        128,
+        210
+      ],
+      "foot_anchor_px": [
+        130,
+        206
+      ]
+    },
+    "enemy_top_faces_down_screen": {
+      "atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV20/EnemyPatrol/enemy_patrol_idle_screen_down_body_shadow_atlas_v20.png",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "pivot": [
+        128,
+        210
+      ],
+      "foot_anchor_px": [
+        137,
+        206
+      ]
+    }
+  },
+  "validation": {
+    "player_bottom_faces_up_screen": {
+      "passed": true,
+      "reasons": [],
+      "metrics": {
+        "components": 1,
+        "large_components": 1,
+        "bbox": [
+          106,
+          125,
+          150,
+          211
+        ]
+      }
+    },
+    "enemy_top_faces_down_screen": {
+      "passed": true,
+      "reasons": [],
+      "metrics": {
+        "components": 1,
+        "large_components": 1,
+        "bbox": [
+          110,
+          125,
+          145,
+          211
+        ]
+      }
+    }
+  }
+}

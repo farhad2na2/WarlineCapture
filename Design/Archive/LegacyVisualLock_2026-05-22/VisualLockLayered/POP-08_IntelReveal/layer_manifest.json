@@ -1,0 +1,101 @@
+{
+  "surface_id": "POP-08_IntelReveal",
+  "target": "reference/POP-08_IntelReveal_Landscape_Target.png",
+  "workflow": "visual-lock-layered-one-go",
+  "rules": [
+    "Frames, fills, icons, thumbnails, chips, and buttons are separate PNG layers.",
+    "No baked UI labels or button text in reusable controls; TMP renders all UI copy.",
+    "Frame sprites keep transparent outside corners and are intended for 9-slice import.",
+    "Evidence thumbnails are content art only and can be swapped without changing card chrome."
+  ],
+  "layers": [
+    {
+      "file": "layers/background_intel_archive.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/close_button_background.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/close_icon.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/confidence_chip_frame.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/evidence_card_frame.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/evidence_content_frame.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/header_document_magnifier_icon.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/inspect_button_background.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/inspect_icon.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/modal_fill.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/modal_frame.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/notice_bar_frame.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/notice_intel_icon.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/primary_button_background.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/radio_play_icon.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/secondary_button_background.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/thumbnail_cargo_manifest.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/thumbnail_radio_intercept.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    },
+    {
+      "file": "layers/thumbnail_supply_ledger.png",
+      "role": "separate Unity Canvas layer; no baked reusable UI labels"
+    }
+  ],
+  "unity_destinations": {
+    "Content": "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Content",
+    "Frames": "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Frames",
+    "Buttons": "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Buttons",
+    "Icons": "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Icons",
+    "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Frames/modal_frame.png": "layers/modal_frame.png",
+    "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Frames/evidence_card_frame.png": "layers/evidence_card_frame.png",
+    "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Buttons/primary_button_background.png": "layers/primary_button_background.png",
+    "Assets/Game/Art/UI/Generated/IntelReveal/LayeredOneGo/Icons/header_document_magnifier_icon.png": "layers/header_document_magnifier_icon.png"
+  },
+  "transparentCornersRequired": true,
+  "doNotBakeWithTextOrIcons": true
+}

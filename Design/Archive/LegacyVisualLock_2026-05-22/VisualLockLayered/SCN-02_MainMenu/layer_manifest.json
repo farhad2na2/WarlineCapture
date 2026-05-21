@@ -1,0 +1,1010 @@
+{
+  "schema": "warlinecapture.ui.oneGoLayerPack.v1",
+  "status": "ReadyForReview_TargetLockAssetRevisionsV2_SCN02",
+  "screen": "Screen_MainMenu",
+  "prefab": "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab",
+  "referenceResolution": {
+    "width": 1672,
+    "height": 941
+  },
+  "alternateReferences": [
+    {
+      "id": "20x9",
+      "path": "Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_20x9_Target.png",
+      "width": 1870,
+      "height": 841
+    }
+  ],
+  "source": {
+    "reference": "Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png",
+    "imagegenSelectedReference16x9": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_selected_reference_16x9.png",
+    "imagegenSelectedReference20x9": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_selected_reference_20x9.png",
+    "imagegenContactSheetSource": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_layers_contact_sheet_source.png",
+    "atlas": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/generated_layer_atlas_alpha.png",
+    "reviewSheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/layers_contact_sheet.png",
+    "layersRoot": "Design/VisualLockLayered/SCN-02_MainMenu/layers",
+    "imagegenCommanderProfilePortraitChromaKey": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_commander_profile_portrait_chromakey.png",
+    "imagegenCommanderProfilePortraitAlpha": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_commander_profile_portrait_alpha.png",
+    "implementationReadyReviewSheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/layers_contact_sheet.png",
+    "imagegenCompleteProductionSpriteAtlasChromaKey": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_complete_production_sprite_atlas_chromakey.png",
+    "imagegenCompleteProductionSpriteAtlasAlpha": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_complete_production_sprite_atlas_alpha.png",
+    "imagegenTacticalMapBackground": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_tactical_map_background.png",
+    "completeProductionSpriteContactSheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/scn02_complete_production_sprites_contact_sheet.png",
+    "imagegenTargetLockCardArtTriptychChromaKey": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_target_lock_card_art_triptych_chromakey.png",
+    "imagegenTargetLockIconBadgeAtlasChromaKey": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_target_lock_icon_badge_atlas_chromakey.png",
+    "imagegenTargetLockIconBadgeAtlasAlpha": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_target_lock_icon_badge_atlas_alpha.png",
+    "targetLockRevisionContactSheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/scn02_target_lock_asset_revisions_contact_sheet.png",
+    "imagegenTargetLockV2CardArtStripChromaKey": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_target_lock_v2_card_art_strip_chromakey.png",
+    "imagegenTargetLockV2IconBadgeAtlasChromaKey": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_target_lock_v2_icon_badge_atlas_chromakey.png",
+    "imagegenTargetLockV2IconBadgeAtlasAlpha": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/imagegen_scn02_target_lock_v2_icon_badge_atlas_alpha.png",
+    "targetLockRevisionV2ContactSheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/scn02_target_lock_asset_revisions_v2_contact_sheet.png"
+  },
+  "sourceGeneration": {
+    "method": "imagegen",
+    "replacesRejectedReport": "Design/AgentReports/2026-05-16_art-atlas_aaa-readiness-visual-lock-revisions.md",
+    "generatedImagesRoot": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618",
+    "selectedReferenceImage16x9": "ig_066f017118725f96016a080da5502481919e275ae414bfee31.png",
+    "selectedReferenceImage20x9": "ig_0fcf02061a747390016a08101b2cf481919b52c67917b753a4.png",
+    "selectedContactSheetImage": "ig_0fcf02061a747390016a0810df5f448191a5d5b443d18913f2.png",
+    "deterministicFinalVisualsAllowed": false,
+    "selectedCommanderProfilePortrait": "ig_0a0570fa78907a4b016a08d3a87170819a8aafdf31404712f9.png",
+    "commanderProfilePortrait": "imagegen-sourced finished production commander portrait; deterministic postprocess only removed chroma key and resized/cropped to package icon dimensions",
+    "targetReferenceSliceExtraction": "Deprecated by 2026-05-17 complete sprite pass for mode-card art. Current mode-card art comes from selected imagegen contact-sheet source; reusable chrome/icons come from imagegen production sprite atlas.",
+    "selectedCompleteProductionSpriteAtlas": "ig_0ae68e52b07447a2016a096790a71481988bf5676c3ddcd7d8.png",
+    "selectedTacticalMapBackground": "ig_0ae68e52b07447a2016a096826613081988d41978bf27c19d9.png",
+    "completeProductionSpritePack": "imagegen-sourced SCN-02 chrome/icon sprite atlas plus imagegen tactical map background; deterministic postprocess only removed chroma key, cropped sprites, resized where package dimensions required, built contact evidence, and updated metadata.",
+    "modeCardArtSource": "selected imagegen contact-sheet source cropped for mode_card_art_saga, mode_card_art_operation, and mode_card_art_quick_custom; not target-reference panel slices.",
+    "selectedTargetLockCardArtTriptych": "ig_0ae68e52b07447a2016a0998b7ab688198a82e4cdf627abf6e.png",
+    "selectedTargetLockIconBadgeAtlas": "ig_0ae68e52b07447a2016a0998fb7c18819899bc41eb3a4a27fc.png",
+    "targetLockAssetRevision": "imagegen-sourced target-lock revision for routed SCN-02 card art, commander portrait, brand/resource/nav icons, designed-unavailable badge, and deploy chevron/glow polish; deterministic postprocess only copied generated sources, removed chroma key, cropped/resized selected assets, updated metadata, and packaged review evidence.",
+    "selectedTargetLockV2CardArtStrip": "ig_0ae68e52b07447a2016a09ab860bcc81988eb545f8bc902259.png",
+    "selectedTargetLockV2IconBadgeAtlas": "ig_0ae68e52b07447a2016a09abc8126881988111930cc429cecf.png",
+    "targetLockAssetRevisionV2": "imagegen-sourced second target-lock revision responding to 2026-05-17 PM/UI reroute; replaces the routed card art, commander portrait, brand/resource/nav icons, designed-unavailable badge, deploy chevrons, and deploy glow with closer target-scale imagegen selections. Deterministic postprocess only copied sources, removed chroma key, cropped/resized selected assets, neutralized residual chroma pixels, updated metadata, and packaged review evidence."
+  },
+  "unity": {
+    "proposedAssetRoot": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo"
+  },
+  "canonicalContent": {
+    "walletResources": [
+      "Credits",
+      "Materials",
+      "Command Authority"
+    ],
+    "modeCards": [
+      "Saga Campaign",
+      "Persistent Operation",
+      "Quick Custom Game"
+    ],
+    "designedUnavailableRoutes": [
+      "Inbox",
+      "Store",
+      "Events",
+      "Ranking",
+      "Command Feed"
+    ],
+    "commanderProfilePortrait": "Finished production commander profile portrait for use when PlayerProfileState portrait data is not live."
+  },
+  "rules": [
+    "TMP text remains live.",
+    "Top strip uses Credits, Materials, Command Authority; no gem-style third-resource semantics.",
+    "Every non-live route shows DesignedUnavailable badge/copy.",
+    "Persistent Operation copy frames district/city operation pressure.",
+    "All production layers are final named implementation slices.",
+    "SCN-02 runtime must be built from reusable layer sprites, live TMP, and real button hierarchy; do not use flattened target-reference panels as runtime surfaces.",
+    "Button states use these base frames with cyan/amber glow overlays, opacity/color tint, and pressed/hover scale rules documented per layer.",
+    "Complete production sprite package includes 16:9 primary usage and 20:9 command feed panel assets.",
+    "Target-lock revised assets replace the routed card art, portrait, brand/resource/nav icons, unavailable badge, and optional deploy CTA overlays using imagegen sources only.",
+    "Target-lock v2 revised assets replace the rerouted card art, portrait, brand/resource/nav icons, unavailable badge, and optional deploy CTA overlays using imagegen sources only.",
+    "No target crops, screenshots, contact sheets, vector substitutes, scripted composites, or deterministic final art are used as runtime sprites."
+  ],
+  "layers": [
+    {
+      "id": "commander_profile_portrait",
+      "file": "layers/commander_profile_portrait.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/commander_profile_portrait.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "target-lock v2 dark commander silhouette/profile scan treatment; live profile text remains TMP",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        40,
+        172,
+        280,
+        205
+      ]
+    },
+    {
+      "id": "designed_unavailable_badge",
+      "file": "layers/designed_unavailable_badge.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/designed_unavailable_badge.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          28,
+          18,
+          54,
+          18
+        ]
+      },
+      "dynamicDataBinding": "target-lock v2 designed-unavailable badge with baked badge label and lock plate; route row label remains live TMP",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        198,
+        456,
+        128,
+        36
+      ]
+    },
+    {
+      "id": "footer_status_frame",
+      "file": "layers/footer_status_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/footer_status_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "icon_command_authority",
+      "file": "layers/icon_command_authority.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_command_authority.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "target-lock v2 resource icon art; live labels/counters remain separate",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas"
+    },
+    {
+      "id": "icon_credits",
+      "file": "layers/icon_credits.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_credits.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "target-lock v2 resource icon art; live labels/counters remain separate",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas"
+    },
+    {
+      "id": "icon_materials",
+      "file": "layers/icon_materials.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_materials.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "target-lock v2 resource icon art; live labels/counters remain separate",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas"
+    },
+    {
+      "id": "mode_card_art_operation",
+      "file": "layers/mode_card_art_operation.png",
+      "role": "content image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_operation.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "imagegen-sourced target-lock v2 card art; TMP labels/copy remain live; not a target-reference panel slice",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_card_art_strip"
+    },
+    {
+      "id": "mode_card_art_quick_custom",
+      "file": "layers/mode_card_art_quick_custom.png",
+      "role": "content image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_quick_custom.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "imagegen-sourced target-lock v2 card art; TMP labels/copy remain live; not a target-reference panel slice",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_card_art_strip"
+    },
+    {
+      "id": "mode_card_art_saga",
+      "file": "layers/mode_card_art_saga.png",
+      "role": "content image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_saga.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "imagegen-sourced target-lock v2 card art; TMP labels/copy remain live; not a target-reference panel slice",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_card_art_strip"
+    },
+    {
+      "id": "mode_card_frame",
+      "file": "layers/mode_card_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/mode_card_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "profile_block_frame",
+      "file": "layers/profile_block_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/profile_block_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "resource_counter_frame",
+      "file": "layers/resource_counter_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/resource_counter_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "screen_shell_frame",
+      "file": "layers/screen_shell_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/screen_shell_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "settings_gear_icon",
+      "file": "layers/settings_gear_icon.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/settings_gear_icon.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "dynamicDataBinding": "settings icon semantic from approved target reference",
+      "sourceGeneration": "approved_scn02_target_reference_crop_alpha_cleanup"
+    },
+    {
+      "id": "side_route_button_frame",
+      "file": "layers/side_route_button_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/side_route_button_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "top_resource_strip_frame",
+      "file": "layers/top_resource_strip_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/top_resource_strip_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "TMP/live data; do not bake labels/counters into reusable sprite"
+    },
+    {
+      "id": "main_menu_background_tactical_map",
+      "file": "layers/main_menu_background_tactical_map.png",
+      "role": "background",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds/main_menu_background_tactical_map.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "full-screen tactical map background only; no UI text or panels baked in",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        0,
+        0,
+        1672,
+        941
+      ],
+      "notes": "Imagegen-sourced background matching target tactical map depth without flattened UI mockup."
+    },
+    {
+      "id": "brand_logo_panel_frame",
+      "file": "layers/brand_logo_panel_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/brand_logo_panel_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          42,
+          34,
+          42,
+          34
+        ]
+      },
+      "dynamicDataBinding": "live logo text/emblem may be layered separately; frame contains no text",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        6,
+        6,
+        390,
+        108
+      ]
+    },
+    {
+      "id": "brand_emblem",
+      "file": "layers/brand_emblem.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/brand_emblem.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 angular Warline masthead mark; live screen text remains separate where applicable",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        45,
+        25,
+        76,
+        76
+      ]
+    },
+    {
+      "id": "top_resource_bar_frame_full",
+      "file": "layers/top_resource_bar_frame_full.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/top_resource_bar_frame_full.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          48,
+          26,
+          48,
+          26
+        ]
+      },
+      "dynamicDataBinding": "live resource labels/counters and icons remain separate",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        396,
+        8,
+        1100,
+        102
+      ]
+    },
+    {
+      "id": "resource_counter_slot_frame",
+      "file": "layers/resource_counter_slot_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/resource_counter_slot_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          28,
+          18,
+          28,
+          18
+        ]
+      },
+      "dynamicDataBinding": "slot variant for resource counters when full bar is not used",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "settings_button_frame",
+      "file": "layers/settings_button_frame.png",
+      "role": "buttonFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/settings_button_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          22,
+          22,
+          22,
+          22
+        ]
+      },
+      "dynamicDataBinding": "settings button base frame; gear icon separate",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        1578,
+        18,
+        76,
+        76
+      ]
+    },
+    {
+      "id": "commander_profile_panel_frame",
+      "file": "layers/commander_profile_panel_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/commander_profile_panel_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          36,
+          40,
+          36,
+          40
+        ]
+      },
+      "dynamicDataBinding": "live Commander Profile title/status and portrait remain separate",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        8,
+        126,
+        350,
+        294
+      ]
+    },
+    {
+      "id": "left_nav_row_frame",
+      "file": "layers/left_nav_row_frame.png",
+      "role": "buttonFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/left_nav_row_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          28,
+          16,
+          28,
+          16
+        ]
+      },
+      "dynamicDataBinding": "live nav labels and designed-unavailable badges/icons remain separate",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        8,
+        442,
+        348,
+        62
+      ]
+    },
+    {
+      "id": "left_nav_icon_inbox",
+      "file": "layers/left_nav_icon_inbox.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/left_nav_icon_inbox.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 left-nav route icon art; route labels and state text remain live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        38,
+        458,
+        40,
+        40
+      ]
+    },
+    {
+      "id": "left_nav_icon_store",
+      "file": "layers/left_nav_icon_store.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/left_nav_icon_store.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 left-nav route icon art; route labels and state text remain live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        38,
+        532,
+        40,
+        40
+      ]
+    },
+    {
+      "id": "left_nav_icon_events",
+      "file": "layers/left_nav_icon_events.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/left_nav_icon_events.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 left-nav route icon art; route labels and state text remain live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        38,
+        606,
+        40,
+        40
+      ]
+    },
+    {
+      "id": "left_nav_icon_ranking",
+      "file": "layers/left_nav_icon_ranking.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/left_nav_icon_ranking.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 left-nav route icon art; route labels and state text remain live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        38,
+        680,
+        40,
+        40
+      ]
+    },
+    {
+      "id": "left_nav_icon_command_feed",
+      "file": "layers/left_nav_icon_command_feed.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/left_nav_icon_command_feed.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 left-nav route icon art; route labels and state text remain live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        38,
+        754,
+        40,
+        40
+      ]
+    },
+    {
+      "id": "mode_card_frame_large",
+      "file": "layers/mode_card_frame_large.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/mode_card_frame_large.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          36,
+          42,
+          36,
+          42
+        ]
+      },
+      "dynamicDataBinding": "live card title/body/buttons and card art/emblems remain separate",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        396,
+        150,
+        374,
+        590
+      ]
+    },
+    {
+      "id": "mode_card_header_emblem_saga",
+      "file": "layers/mode_card_header_emblem_saga.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/mode_card_header_emblem_saga.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Saga Campaign header emblem",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        430,
+        178,
+        52,
+        52
+      ]
+    },
+    {
+      "id": "mode_card_header_emblem_operation",
+      "file": "layers/mode_card_header_emblem_operation.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/mode_card_header_emblem_operation.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Persistent Operation header emblem",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        832,
+        178,
+        52,
+        52
+      ]
+    },
+    {
+      "id": "mode_card_header_emblem_quick_custom",
+      "file": "layers/mode_card_header_emblem_quick_custom.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/mode_card_header_emblem_quick_custom.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Quick Custom Game header emblem",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        1238,
+        178,
+        52,
+        52
+      ]
+    },
+    {
+      "id": "operation_warning_icon",
+      "file": "layers/operation_warning_icon.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/operation_warning_icon.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Persistent Operation warning icon",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        816,
+        520,
+        42,
+        42
+      ]
+    },
+    {
+      "id": "operation_pressure_meter_segments",
+      "file": "layers/operation_pressure_meter_segments.png",
+      "role": "meter",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/operation_pressure_meter_segments.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "risk meter visual segments; UI may mask/tint by state",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        870,
+        548,
+        255,
+        22
+      ]
+    },
+    {
+      "id": "operation_risk_meter_segments",
+      "file": "layers/operation_risk_meter_segments.png",
+      "role": "meter",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/operation_risk_meter_segments.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "risk meter visual segments; UI may mask/tint by state",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        870,
+        622,
+        255,
+        22
+      ]
+    },
+    {
+      "id": "operation_row_divider_chrome",
+      "file": "layers/operation_row_divider_chrome.png",
+      "role": "divider",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/operation_row_divider_chrome.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          4,
+          24,
+          4
+        ]
+      },
+      "dynamicDataBinding": "Persistent Operation risk row divider chrome",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "card_footer_icon_saga",
+      "file": "layers/card_footer_icon_saga.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/card_footer_icon_saga.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Saga footer circular badge",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        430,
+        648,
+        58,
+        58
+      ]
+    },
+    {
+      "id": "card_footer_icon_operation",
+      "file": "layers/card_footer_icon_operation.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/card_footer_icon_operation.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Operation footer circular badge",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        832,
+        648,
+        58,
+        58
+      ]
+    },
+    {
+      "id": "card_footer_icon_quick_custom",
+      "file": "layers/card_footer_icon_quick_custom.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/card_footer_icon_quick_custom.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Quick Custom footer circular badge",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        1238,
+        648,
+        58,
+        58
+      ]
+    },
+    {
+      "id": "deploy_command_button_frame",
+      "file": "layers/deploy_command_button_frame.png",
+      "role": "buttonFrame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/deploy_command_button_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          44,
+          32,
+          44,
+          32
+        ]
+      },
+      "dynamicDataBinding": "live Deploy Command label/subtitle remain TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack",
+      "targetRectGuidance": [
+        1132,
+        790,
+        506,
+        108
+      ]
+    },
+    {
+      "id": "deploy_command_chevrons",
+      "file": "layers/deploy_command_chevrons.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/deploy_command_chevrons.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "target-lock v2 deploy chevrons overlay; button label remains live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas",
+      "targetRectGuidance": [
+        1510,
+        810,
+        72,
+        58
+      ]
+    },
+    {
+      "id": "deploy_command_glow_overlay",
+      "file": "layers/deploy_command_glow_overlay.png",
+      "role": "glowOverlay",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/deploy_command_glow_overlay.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "dynamicDataBinding": "target-lock v2 amber deploy glow overlay; button label remains live TMP",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_target_lock_v2_icon_badge_atlas"
+    },
+    {
+      "id": "command_feed_panel_frame",
+      "file": "layers/command_feed_panel_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/command_feed_panel_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          36,
+          20,
+          36,
+          20
+        ]
+      },
+      "dynamicDataBinding": "live Command Feed title/body remain TMP",
+      "usage": "20:9 command feed variant",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "command_feed_icon",
+      "file": "layers/command_feed_icon.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/command_feed_icon.png",
+      "sprite": {
+        "imageType": "Simple"
+      },
+      "dynamicDataBinding": "Command Feed panel icon",
+      "usage": "20:9 command feed variant",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "trim_overlay_cyan_long",
+      "file": "layers/trim_overlay_cyan_long.png",
+      "role": "trimOverlay",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/trim_overlay_cyan_long.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          4,
+          24,
+          4
+        ]
+      },
+      "dynamicDataBinding": "cyan trim overlay for depth and hover/selected states",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "trim_overlay_cyan_short",
+      "file": "layers/trim_overlay_cyan_short.png",
+      "role": "trimOverlay",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/trim_overlay_cyan_short.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          4,
+          18,
+          4
+        ]
+      },
+      "dynamicDataBinding": "short cyan trim overlay for card/nav states",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "trim_overlay_amber_short",
+      "file": "layers/trim_overlay_amber_short.png",
+      "role": "trimOverlay",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/trim_overlay_amber_short.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          5,
+          18,
+          5
+        ]
+      },
+      "dynamicDataBinding": "amber trim overlay for deploy/warning states",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    },
+    {
+      "id": "shadow_trim_overlay_dark",
+      "file": "layers/shadow_trim_overlay_dark.png",
+      "role": "shadowOverlay",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/shadow_trim_overlay_dark.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          28,
+          6,
+          28,
+          6
+        ]
+      },
+      "dynamicDataBinding": "dark shadow trim overlay for panel depth",
+      "usage": "16:9 primary",
+      "sourceGeneration": "imagegen_scn02_complete_production_sprite_pack"
+    }
+  ]
+}

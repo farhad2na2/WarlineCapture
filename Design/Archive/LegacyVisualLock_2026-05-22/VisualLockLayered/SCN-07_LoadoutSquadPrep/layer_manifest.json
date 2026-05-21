@@ -1,0 +1,707 @@
+{
+  "surfaceId": "SCN-07_LoadoutSquadPrep",
+  "status": "RouteReadyLayerPackGenerated",
+  "reference": "reference/SCN-07_LoadoutSquadPrep_Landscape_Target.png",
+  "canvasReferenceResolution": [
+    1672,
+    941
+  ],
+  "unityGeneratedRoot": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo",
+  "prefab": "Assets/Game/Prefabs/UI/Screens/Screen_LoadoutSquadPrep.prefab",
+  "rules": [
+    "Frames, buttons, icons, cards, thumbnails, and TMP labels remain separate Unity layers.",
+    "Do not use the flattened target as a Canvas background.",
+    "Deploy CTA routes to Match; screen route is LoadoutSquadPrep."
+  ],
+  "layers": [
+    {
+      "name": "art_ammo_crate.png",
+      "source": "layers/art_ammo_crate.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_ammo_crate.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_apc.png",
+      "source": "layers/art_apc.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_apc.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_armor_plate.png",
+      "source": "layers/art_armor_plate.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_armor_plate.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_helicopter.png",
+      "source": "layers/art_helicopter.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_helicopter.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_repair_kit.png",
+      "source": "layers/art_repair_kit.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_repair_kit.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_rifle_squad.png",
+      "source": "layers/art_rifle_squad.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_rifle_squad.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_tank.png",
+      "source": "layers/art_tank.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_tank.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "art_targeting_module.png",
+      "source": "layers/art_targeting_module.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/art_targeting_module.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "back_chevron_icon.png",
+      "source": "layers/back_chevron_icon.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/back_chevron_icon.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "center_panel_frame.png",
+      "source": "layers/center_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/center_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "deploy_button_background.png",
+      "source": "layers/deploy_button_background.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/deploy_button_background.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "edit_loadout_button_background.png",
+      "source": "layers/edit_loadout_button_background.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/edit_loadout_button_background.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "enemy_rating_panel_frame.png",
+      "source": "layers/enemy_rating_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/enemy_rating_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "gear_card_blue_frame.png",
+      "source": "layers/gear_card_blue_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/gear_card_blue_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "gear_card_green_frame.png",
+      "source": "layers/gear_card_green_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/gear_card_green_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "gear_card_purple_frame.png",
+      "source": "layers/gear_card_purple_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/gear_card_purple_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "gear_panel_frame.png",
+      "source": "layers/gear_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/gear_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "header_bar_frame.png",
+      "source": "layers/header_bar_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/header_bar_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "home_button_background.png",
+      "source": "layers/home_button_background.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/home_button_background.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "home_icon.png",
+      "source": "layers/home_icon.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/home_icon.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_airstrike.png",
+      "source": "layers/icon_airstrike.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_airstrike.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_bolt.png",
+      "source": "layers/icon_bolt.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_bolt.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_crate.png",
+      "source": "layers/icon_crate.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_crate.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_emp_blast.png",
+      "source": "layers/icon_emp_blast.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_emp_blast.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_gear.png",
+      "source": "layers/icon_gear.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_gear.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_lock.png",
+      "source": "layers/icon_lock.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_lock.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_medical_drone.png",
+      "source": "layers/icon_medical_drone.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_medical_drone.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_power_badge.png",
+      "source": "layers/icon_power_badge.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_power_badge.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_shield_blue.png",
+      "source": "layers/icon_shield_blue.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_shield_blue.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_shield_gold.png",
+      "source": "layers/icon_shield_gold.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_shield_gold.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_shield_green.png",
+      "source": "layers/icon_shield_green.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_shield_green.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_shield_purple.png",
+      "source": "layers/icon_shield_purple.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_shield_purple.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_skull.png",
+      "source": "layers/icon_skull.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_skull.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_squad_power.png",
+      "source": "layers/icon_squad_power.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_squad_power.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_star.png",
+      "source": "layers/icon_star.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_star.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "icon_unit_count.png",
+      "source": "layers/icon_unit_count.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/icon_unit_count.png",
+      "type": "simple-sprite",
+      "nineSliceBorder": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "mission_summary_panel_frame.png",
+      "source": "layers/mission_summary_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/mission_summary_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "nav_button_normal_background.png",
+      "source": "layers/nav_button_normal_background.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/nav_button_normal_background.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "nav_button_selected_background.png",
+      "source": "layers/nav_button_selected_background.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/nav_button_selected_background.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "objective_panel_frame.png",
+      "source": "layers/objective_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/objective_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "power_counter_frame.png",
+      "source": "layers/power_counter_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/power_counter_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "screen_shell_fill.png",
+      "source": "layers/screen_shell_fill.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/screen_shell_fill.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "screen_shell_frame.png",
+      "source": "layers/screen_shell_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/screen_shell_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "small_stat_frame.png",
+      "source": "layers/small_stat_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/small_stat_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "star_goal_panel_frame.png",
+      "source": "layers/star_goal_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/star_goal_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "support_slot_frame.png",
+      "source": "layers/support_slot_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/support_slot_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "support_slot_locked_frame.png",
+      "source": "layers/support_slot_locked_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/support_slot_locked_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "totals_bar_frame.png",
+      "source": "layers/totals_bar_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/totals_bar_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "unit_card_blue_frame.png",
+      "source": "layers/unit_card_blue_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/unit_card_blue_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "unit_card_gold_frame.png",
+      "source": "layers/unit_card_gold_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/unit_card_gold_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "unit_card_green_frame.png",
+      "source": "layers/unit_card_green_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/unit_card_green_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "unit_card_purple_frame.png",
+      "source": "layers/unit_card_purple_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/unit_card_purple_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    },
+    {
+      "name": "unit_panel_frame.png",
+      "source": "layers/unit_panel_frame.png",
+      "unityAsset": "Assets/Game/Art/UI/Generated/Loadout/LayeredOneGo/unit_panel_frame.png",
+      "type": "sliced-frame-or-background",
+      "nineSliceBorder": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alphaRule": "Transparent outside chamfered frame; content art/icons have transparent background where applicable."
+    }
+  ]
+}

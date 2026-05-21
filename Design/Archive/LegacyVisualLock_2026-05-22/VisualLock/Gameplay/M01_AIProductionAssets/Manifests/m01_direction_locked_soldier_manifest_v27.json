@@ -1,0 +1,6628 @@
+{
+  "schema": "warlinecapture.visualLock.m01DirectionLockedSoldierPackage.v27",
+  "package_id": "m01_v27_target_style_hard_shadow_direction_locked_full_atlases",
+  "status": "review_candidate_not_bound",
+  "source": {
+    "built_in_imagegen_original": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618/ig_0254c1f907ed28fc016a0b2c9ea5a88199b404ce515507ccd0.png",
+    "workspace_chromakey": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/DirectionLockedV27/m01_v27_direction_locked_animation_source_chromakey.png",
+    "workspace_alpha": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/DirectionLockedV27/m01_v27_direction_locked_animation_source_alpha.png",
+    "method": "Fresh built-in imagegen 24-pose source, chroma-key alpha cleanup, deterministic atlas packing, target-style darker tone grade, harder horizontal-right baked boot shadows."
+  },
+  "frame_layout": {
+    "cell_size": [
+      256,
+      256
+    ],
+    "columns": 16,
+    "rows": 7,
+    "frames_per_unit": 112,
+    "directions": [
+      "screen_locked_A",
+      "screen_locked_B",
+      "screen_locked_C",
+      "screen_locked_D"
+    ],
+    "state_specs": [
+      [
+        "idle",
+        [
+          0,
+          1,
+          0,
+          1
+        ]
+      ],
+      [
+        "run",
+        [
+          2,
+          3,
+          4,
+          5,
+          2,
+          3,
+          4,
+          5
+        ]
+      ],
+      [
+        "aim",
+        [
+          6,
+          6,
+          6
+        ]
+      ],
+      [
+        "fire",
+        [
+          6,
+          7,
+          7,
+          6
+        ]
+      ],
+      [
+        "damaged",
+        [
+          8,
+          9,
+          8
+        ]
+      ],
+      [
+        "death",
+        [
+          10,
+          11,
+          11,
+          11,
+          11,
+          11
+        ]
+      ]
+    ]
+  },
+  "player": {
+    "screen_space_read": "player_bottom_faces_up_screen",
+    "review_clean_body_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV27/PlayerRifleSquad/player_rifle_squad_animation_clean_body_atlas_v27.png",
+    "review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV27/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v27.png",
+    "idle_direction_locked_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV27/PlayerRifleSquad/player_rifle_squad_idle_direction_locked_facings_body_shadow_atlas_v27.png",
+    "frames": [
+      {
+        "index": 0,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 1,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 2,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 3,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 4,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          1024,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 5,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          1280,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 6,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          1536,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 7,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          1792,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 8,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          2048,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 9,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          2304,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 10,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          2560,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 11,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          2816,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 12,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          3072,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 13,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          3328,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 14,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          3584,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 15,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          3840,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 16,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          0,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 17,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          256,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 18,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          512,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 19,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          768,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 20,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          1024,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          45,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 21,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          1280,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 22,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          1536,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          95,
+          157,
+          157,
+          211
+        ],
+        "fit_size": [
+          62,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 23,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          1792,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 24,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          2048,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 25,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          2304,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 26,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          2560,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 27,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          2816,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 28,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          3072,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 29,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          3328,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 30,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          3584,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 31,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          3840,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 32,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          0,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 33,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          256,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 34,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          512,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 35,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          768,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 36,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          1024,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 37,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          1280,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 38,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          1536,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 39,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          1792,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 40,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          2048,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 41,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          2304,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 42,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          2560,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 43,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          2816,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 44,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          3072,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 45,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          3328,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 46,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          3584,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 47,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          3840,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 48,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          0,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          45,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 49,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          256,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 50,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          512,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          95,
+          157,
+          157,
+          211
+        ],
+        "fit_size": [
+          62,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 51,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          768,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 52,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          1024,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 53,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          1280,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 54,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          1536,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 55,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          1792,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 56,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          2048,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 57,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          2304,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 58,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          2560,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 59,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          2816,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 60,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          3072,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 61,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          3328,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 62,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          3584,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 63,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          3840,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 64,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          0,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 65,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          256,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 66,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          512,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 67,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          768,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 68,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          1024,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 69,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          1280,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 70,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          1536,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 71,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          1792,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 72,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          2048,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 73,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          2304,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 74,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          2560,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 75,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          2816,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 76,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          3072,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          45,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 77,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          3328,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 78,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          3584,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          95,
+          157,
+          157,
+          211
+        ],
+        "fit_size": [
+          62,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 79,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          3840,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 80,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          0,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 81,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          256,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 82,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          512,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 83,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          768,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 84,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          1024,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 85,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          1280,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 86,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          1536,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 87,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          1792,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          143,
+          214
+        ],
+        "fit_size": [
+          30,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 88,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          2048,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 89,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          2304,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 90,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          2560,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 91,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          2816,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 92,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          3072,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          113,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          31,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 93,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          3328,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 94,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          3584,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          40,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 95,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          3840,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          107,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          43,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 96,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          0,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 97,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          256,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 98,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          512,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 99,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          768,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 100,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          1024,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 101,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          1280,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          101,
+          132,
+          155,
+          214
+        ],
+        "fit_size": [
+          54,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 102,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          1536,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          104,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          48,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 103,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          1792,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 104,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          2048,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          45,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 105,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          2304,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          109,
+          132,
+          148,
+          214
+        ],
+        "fit_size": [
+          39,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 106,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          2560,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          95,
+          157,
+          157,
+          211
+        ],
+        "fit_size": [
+          62,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 107,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          2816,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 108,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          3072,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 109,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          3328,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 110,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          3584,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 111,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "player_bottom_faces_up_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          3840,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          89,
+          157,
+          163,
+          211
+        ],
+        "fit_size": [
+          74,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      }
+    ]
+  },
+  "enemy": {
+    "screen_space_read": "enemy_top_faces_down_screen",
+    "review_clean_body_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV27/EnemyPatrol/enemy_patrol_animation_clean_body_atlas_v27.png",
+    "review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV27/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v27.png",
+    "idle_direction_locked_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV27/EnemyPatrol/enemy_patrol_idle_direction_locked_facings_body_shadow_atlas_v27.png",
+    "frames": [
+      {
+        "index": 0,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 1,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 2,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 3,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 4,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          1024,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 5,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          1280,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 6,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          1536,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 7,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          1792,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 8,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          2048,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 9,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          2304,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 10,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          2560,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 11,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          2816,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 12,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          3072,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 13,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          3328,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 14,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          3584,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 15,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          3840,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 16,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          0,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 17,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          256,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 18,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          512,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 19,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          768,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 20,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          1024,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          46,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 21,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          1280,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 22,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          1536,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          156,
+          211
+        ],
+        "fit_size": [
+          59,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 23,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          1792,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 24,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          2048,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 25,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          2304,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 26,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          2560,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 27,
+        "direction_key": "screen_locked_A",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          2816,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 28,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          3072,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 29,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          3328,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 30,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          3584,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 31,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          3840,
+          256,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 32,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          0,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 33,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          256,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 34,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          512,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 35,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          768,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 36,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          1024,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 37,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          1280,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 38,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          1536,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 39,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          1792,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 40,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          2048,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 41,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          2304,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 42,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          2560,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 43,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          2816,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 44,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          3072,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 45,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          3328,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 46,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          3584,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 47,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          3840,
+          512,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 48,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          0,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          46,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 49,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          256,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 50,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          512,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          156,
+          211
+        ],
+        "fit_size": [
+          59,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 51,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          768,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 52,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          1024,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 53,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          1280,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 54,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          1536,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 55,
+        "direction_key": "screen_locked_B",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          1792,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 56,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          2048,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 57,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          2304,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 58,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          2560,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 59,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          2816,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 60,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          3072,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 61,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          3328,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 62,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          3584,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 63,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          3840,
+          768,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 64,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          0,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 65,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          256,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 66,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          512,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 67,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          768,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 68,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          1024,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 69,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          1280,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 70,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          1536,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 71,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          1792,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 72,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          2048,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 73,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          2304,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 74,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          2560,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 75,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          2816,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 76,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          3072,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          46,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 77,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          3328,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 78,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          3584,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          156,
+          211
+        ],
+        "fit_size": [
+          59,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 79,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          3840,
+          1024,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 80,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          0,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 81,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          256,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 82,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          512,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 83,
+        "direction_key": "screen_locked_C",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          768,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 84,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 0,
+        "source_pose_index": 0,
+        "rect": [
+          1024,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 85,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 1,
+        "source_pose_index": 1,
+        "rect": [
+          1280,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 86,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 2,
+        "source_pose_index": 0,
+        "rect": [
+          1536,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 87,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "idle",
+        "state_frame": 3,
+        "source_pose_index": 1,
+        "rect": [
+          1792,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          145,
+          214
+        ],
+        "fit_size": [
+          33,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 88,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 0,
+        "source_pose_index": 2,
+        "rect": [
+          2048,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 89,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 1,
+        "source_pose_index": 3,
+        "rect": [
+          2304,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 90,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 2,
+        "source_pose_index": 4,
+        "rect": [
+          2560,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 91,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 3,
+        "source_pose_index": 5,
+        "rect": [
+          2816,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 92,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 4,
+        "source_pose_index": 2,
+        "rect": [
+          3072,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          112,
+          132,
+          144,
+          214
+        ],
+        "fit_size": [
+          32,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 93,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 5,
+        "source_pose_index": 3,
+        "rect": [
+          3328,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 94,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 6,
+        "source_pose_index": 4,
+        "rect": [
+          3584,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 95,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "run",
+        "state_frame": 7,
+        "source_pose_index": 5,
+        "rect": [
+          3840,
+          1280,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          106,
+          132,
+          150,
+          214
+        ],
+        "fit_size": [
+          44,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 96,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          0,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 97,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 1,
+        "source_pose_index": 6,
+        "rect": [
+          256,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 98,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "aim",
+        "state_frame": 2,
+        "source_pose_index": 6,
+        "rect": [
+          512,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 99,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 0,
+        "source_pose_index": 6,
+        "rect": [
+          768,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 100,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 1,
+        "source_pose_index": 7,
+        "rect": [
+          1024,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 101,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 2,
+        "source_pose_index": 7,
+        "rect": [
+          1280,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          152,
+          214
+        ],
+        "fit_size": [
+          47,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 102,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "fire",
+        "state_frame": 3,
+        "source_pose_index": 6,
+        "rect": [
+          1536,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          108,
+          132,
+          149,
+          214
+        ],
+        "fit_size": [
+          41,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 103,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 0,
+        "source_pose_index": 8,
+        "rect": [
+          1792,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 104,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 1,
+        "source_pose_index": 9,
+        "rect": [
+          2048,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          105,
+          132,
+          151,
+          214
+        ],
+        "fit_size": [
+          46,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 105,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "damaged",
+        "state_frame": 2,
+        "source_pose_index": 8,
+        "rect": [
+          2304,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          110,
+          132,
+          146,
+          214
+        ],
+        "fit_size": [
+          36,
+          82
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 106,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 0,
+        "source_pose_index": 10,
+        "rect": [
+          2560,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          156,
+          211
+        ],
+        "fit_size": [
+          59,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 107,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 1,
+        "source_pose_index": 11,
+        "rect": [
+          2816,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 108,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 2,
+        "source_pose_index": 11,
+        "rect": [
+          3072,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 109,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 3,
+        "source_pose_index": 11,
+        "rect": [
+          3328,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 110,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 4,
+        "source_pose_index": 11,
+        "rect": [
+          3584,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      },
+      {
+        "index": 111,
+        "direction_key": "screen_locked_D",
+        "screen_space_read": "enemy_top_faces_down_screen",
+        "state": "death",
+        "state_frame": 5,
+        "source_pose_index": 11,
+        "rect": [
+          3840,
+          1536,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          214
+        ],
+        "body_bbox": [
+          97,
+          157,
+          155,
+          211
+        ],
+        "fit_size": [
+          58,
+          54
+        ],
+        "shadow": "baked in body_shadow atlas; harder horizontal-right boot contact, no separate runtime shadow needed"
+      }
+    ]
+  },
+  "contact_sheets": {
+    "player_grid": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_v27_player_animation_atlas_numbered_grid.png",
+    "enemy_grid": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_v27_enemy_animation_atlas_numbered_grid.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_v27_target_style_hard_shadow_contact.png"
+  },
+  "proofs": {
+    "placement_proof": "Design/AgentReports/Captures/M01_TargetMatchV27TargetStyleHardShadowIdlePlacement_1920x1080.png",
+    "target_comparison": "Design/AgentReports/Captures/M01_TargetMatchV27TargetStyleHardShadowIdlePlacement_vs_Target_Comparison.png",
+    "target_aligned_crop_review": "Design/AgentReports/Captures/M01_TargetMatchV27TargetStyleHardShadowIdlePlacement_TargetAlignedCropReview.png"
+  },
+  "validation": {
+    "source_rows": [
+      [
+        149,
+        336
+      ],
+      [
+        481,
+        671
+      ]
+    ],
+    "source_pose_count_per_row": [
+      12,
+      12
+    ],
+    "player_clean_body_failures": [],
+    "enemy_clean_body_failures": [],
+    "manifest_parse": "ok",
+    "file_exists": "verified by generator before report"
+  }
+}

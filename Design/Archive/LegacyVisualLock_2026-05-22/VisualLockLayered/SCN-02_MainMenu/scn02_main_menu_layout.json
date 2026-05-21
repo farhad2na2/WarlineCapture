@@ -1,0 +1,1349 @@
+{
+  "schema": "warlinecapture.ui.layoutManifest.v1",
+  "screen": "SCN-02_MainMenu",
+  "canvas": [
+    3840,
+    2160
+  ],
+  "assetPolicy": {
+    "approvedRoots": [
+      "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets"
+    ],
+    "runtimeDestination": "Assets/Game/Art/UI/Generated/MainMenu/ManifestCanvas/Cleaned",
+    "forbiddenRuntimeSources": [
+      "contact_sheet",
+      "comparison",
+      "screenshot",
+      "target_slice",
+      "full_visual_lock_preview"
+    ]
+  },
+  "images": [
+    {
+      "name": "BackgroundTacticalMap",
+      "file": "main_menu_background_tactical_map.png",
+      "rect": [
+        0,
+        0,
+        3840,
+        2160
+      ],
+      "fit": "stretch",
+      "z": 0
+    },
+    {
+      "name": "ScreenShellFrame",
+      "file": "screen_shell_frame.png",
+      "rect": [
+        0,
+        0,
+        3840,
+        2160
+      ],
+      "fit": "stretch",
+      "tint": [
+        0.66,
+        0.82,
+        0.86,
+        0.72
+      ],
+      "z": 900
+    },
+    {
+      "name": "BrandLogoPanelFrame",
+      "file": "brand_logo_panel_frame.png",
+      "rect": [
+        14,
+        14,
+        896,
+        248
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "BrandLogoLockup",
+      "file": "brand_logo_lockup.png",
+      "rect": [
+        92,
+        48,
+        610,
+        154
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "TopResourceBarFrame",
+      "file": "top_resource_bar_frame_full.png",
+      "rect": [
+        909,
+        18,
+        2890,
+        234
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "CreditsIcon",
+      "file": "icon_credits.png",
+      "rect": [
+        1114,
+        82,
+        82,
+        82
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "MaterialsIcon",
+      "file": "icon_materials.png",
+      "rect": [
+        1906,
+        82,
+        82,
+        82
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "AuthorityIcon",
+      "file": "icon_command_authority.png",
+      "rect": [
+        2729,
+        76,
+        88,
+        88
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "SettingsGearIcon",
+      "file": "settings_gear_icon.png",
+      "rect": [
+        3664,
+        100,
+        72,
+        72
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "CommanderProfilePanelFrame",
+      "file": "commander_profile_panel_frame.png",
+      "rect": [
+        18,
+        289,
+        804,
+        675
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "CommanderProfilePortrait",
+      "file": "commander_profile_portrait.png",
+      "rect": [
+        92,
+        395,
+        643,
+        438
+      ],
+      "fit": "cover",
+      "z": 200
+    },
+    {
+      "name": "ProfileDataStatusStrip",
+      "file": "profile_data_status_strip.png",
+      "rect": [
+        86,
+        840,
+        662,
+        94
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LeftNavRow_Inbox",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        18,
+        1015,
+        799,
+        142
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LeftNavRow_Store",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        18,
+        1185,
+        799,
+        142
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LeftNavRow_Events",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        18,
+        1355,
+        799,
+        142
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LeftNavRow_Ranking",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        18,
+        1525,
+        799,
+        142
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LeftNavRow_CommandFeed",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        18,
+        1695,
+        799,
+        142
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LeftNavIcon_Inbox",
+      "file": "left_nav_icon_inbox.png",
+      "rect": [
+        87,
+        1051,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LeftNavIcon_Store",
+      "file": "left_nav_icon_store.png",
+      "rect": [
+        87,
+        1221,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LeftNavIcon_Events",
+      "file": "left_nav_icon_events.png",
+      "rect": [
+        87,
+        1391,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LeftNavIcon_Ranking",
+      "file": "left_nav_icon_ranking.png",
+      "rect": [
+        87,
+        1561,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LeftNavIcon_CommandFeed",
+      "file": "left_nav_icon_command_feed.png",
+      "rect": [
+        87,
+        1731,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "DesignedUnavailableBadge_Inbox",
+      "file": "designed_unavailable_badge.png",
+      "rect": [
+        455,
+        1047,
+        294,
+        83
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "DesignedUnavailableBadge_Store",
+      "file": "designed_unavailable_badge.png",
+      "rect": [
+        455,
+        1217,
+        294,
+        83
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "DesignedUnavailableBadge_Events",
+      "file": "designed_unavailable_badge.png",
+      "rect": [
+        455,
+        1387,
+        294,
+        83
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "DesignedUnavailableBadge_Ranking",
+      "file": "designed_unavailable_badge.png",
+      "rect": [
+        455,
+        1557,
+        294,
+        83
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "DesignedUnavailableBadge_CommandFeed",
+      "file": "designed_unavailable_badge.png",
+      "rect": [
+        455,
+        1727,
+        294,
+        83
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "LockBadge_Inbox",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1044,
+        80,
+        84
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "LockBadge_Store",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1214,
+        80,
+        84
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "LockBadge_Events",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1384,
+        80,
+        84
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "LockBadge_Ranking",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1554,
+        80,
+        84
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "LockBadge_CommandFeed",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1724,
+        80,
+        84
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "LockIcon_Inbox",
+      "file": "lock_icon.png",
+      "rect": [
+        703,
+        1063,
+        36,
+        42
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LockIcon_Store",
+      "file": "lock_icon.png",
+      "rect": [
+        703,
+        1233,
+        36,
+        42
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LockIcon_Events",
+      "file": "lock_icon.png",
+      "rect": [
+        703,
+        1403,
+        36,
+        42
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LockIcon_Ranking",
+      "file": "lock_icon.png",
+      "rect": [
+        703,
+        1573,
+        36,
+        42
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "LockIcon_CommandFeed",
+      "file": "lock_icon.png",
+      "rect": [
+        703,
+        1743,
+        36,
+        42
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "ModeCardFrame_Saga",
+      "file": "mode_card_frame.png",
+      "rect": [
+        909,
+        344,
+        859,
+        1354
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "ModeCardFrame_Operation",
+      "file": "mode_card_frame.png",
+      "rect": [
+        1809,
+        344,
+        859,
+        1354
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "ModeCardFrame_QuickCustom",
+      "file": "mode_card_frame.png",
+      "rect": [
+        2755,
+        344,
+        859,
+        1354
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "ModeCardArt_Saga",
+      "file": "mode_card_art_saga.png",
+      "rect": [
+        980,
+        550,
+        710,
+        790
+      ],
+      "fit": "cover",
+      "tint": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 200
+    },
+    {
+      "name": "ModeCardArt_Operation",
+      "file": "mode_card_art_operation.png",
+      "rect": [
+        1880,
+        550,
+        710,
+        610
+      ],
+      "fit": "cover",
+      "tint": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 200
+    },
+    {
+      "name": "ModeCardArt_QuickCustom",
+      "file": "mode_card_art_quick_custom.png",
+      "rect": [
+        2826,
+        550,
+        710,
+        790
+      ],
+      "fit": "cover",
+      "tint": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 200
+    },
+    {
+      "name": "ModeCardHeaderIcon_Saga",
+      "file": "mode_card_header_emblem_saga.png",
+      "rect": [
+        988,
+        409,
+        119,
+        119
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "ModeCardHeaderIcon_Operation",
+      "file": "mode_card_header_emblem_operation.png",
+      "rect": [
+        1888,
+        409,
+        119,
+        119
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "ModeCardHeaderIcon_QuickCustom",
+      "file": "mode_card_header_emblem_quick_custom.png",
+      "rect": [
+        2834,
+        409,
+        119,
+        119
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "ModeCardFooterBadge_Saga",
+      "file": "circular_badge_frame.png",
+      "rect": [
+        963,
+        1476,
+        142,
+        142
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "ModeCardFooterBadge_Operation",
+      "file": "circular_badge_frame.png",
+      "rect": [
+        1863,
+        1476,
+        142,
+        142
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "ModeCardFooterBadge_QuickCustom",
+      "file": "circular_badge_frame.png",
+      "rect": [
+        2809,
+        1476,
+        142,
+        142
+      ],
+      "fit": "contain",
+      "z": 300
+    },
+    {
+      "name": "ModeCardFooterIcon_Saga",
+      "file": "card_footer_icon_saga.png",
+      "rect": [
+        974,
+        1487,
+        120,
+        120
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "ModeCardFooterIcon_Operation",
+      "file": "card_footer_icon_operation.png",
+      "rect": [
+        1874,
+        1487,
+        120,
+        120
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "ModeCardFooterIcon_QuickCustom",
+      "file": "card_footer_icon_quick_custom.png",
+      "rect": [
+        2820,
+        1487,
+        120,
+        120
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "OperationWarningRowPressure",
+      "file": "operation_warning_row_frame.png",
+      "rect": [
+        1840,
+        1180,
+        806,
+        126
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "OperationWarningRowRisk",
+      "file": "operation_warning_row_frame.png",
+      "rect": [
+        1840,
+        1348,
+        806,
+        126
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "OperationWarningIconPressure",
+      "file": "operation_warning_icon.png",
+      "rect": [
+        1868,
+        1196,
+        82,
+        82
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "OperationWarningIconRisk",
+      "file": "operation_warning_icon.png",
+      "rect": [
+        1868,
+        1364,
+        82,
+        82
+      ],
+      "fit": "contain",
+      "z": 500
+    },
+    {
+      "name": "OperationPressureMeter",
+      "file": "operation_pressure_meter_segments.png",
+      "rect": [
+        1998,
+        1258,
+        520,
+        42
+      ],
+      "fit": "stretch",
+      "z": 500
+    },
+    {
+      "name": "OperationRiskMeter",
+      "file": "operation_risk_meter_segments.png",
+      "rect": [
+        1998,
+        1426,
+        520,
+        42
+      ],
+      "fit": "stretch",
+      "z": 500
+    },
+    {
+      "name": "DeployCommandFrame",
+      "file": "deploy_command_button_frame.png",
+      "rect": [
+        2594,
+        1786,
+        1204,
+        260
+      ],
+      "fit": "stretch",
+      "z": 300
+    },
+    {
+      "name": "DeployCommandChevrons",
+      "file": "deploy_command_chevrons.png",
+      "rect": [
+        3460,
+        1855,
+        188,
+        78
+      ],
+      "fit": "contain",
+      "z": 500
+    }
+  ],
+  "texts": [
+    {
+      "name": "CreditsLabel",
+      "text": "Credits",
+      "rect": [
+        1270,
+        78,
+        220,
+        46
+      ],
+      "fontSize": 34,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "CreditsValue",
+      "text": "187,540",
+      "rect": [
+        1270,
+        124,
+        300,
+        70
+      ],
+      "fontSize": 56,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.96,
+        0.76,
+        0.48,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "MaterialsLabel",
+      "text": "Materials",
+      "rect": [
+        2056,
+        78,
+        250,
+        46
+      ],
+      "fontSize": 34,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "MaterialsValue",
+      "text": "92,860",
+      "rect": [
+        2056,
+        124,
+        300,
+        70
+      ],
+      "fontSize": 56,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.68,
+        0.84,
+        0.96,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "AuthorityLabel",
+      "text": "Command Authority",
+      "rect": [
+        2880,
+        78,
+        430,
+        46
+      ],
+      "fontSize": 34,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "AuthorityValue",
+      "text": "2,715",
+      "rect": [
+        2880,
+        124,
+        260,
+        70
+      ],
+      "fontSize": 56,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.96,
+        0.76,
+        0.48,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "CommanderProfileTitle",
+      "text": "Commander Profile",
+      "rect": [
+        86,
+        318,
+        400,
+        62
+      ],
+      "fontSize": 40,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.18,
+        0.78,
+        0.95,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "CommanderProfilePending",
+      "text": "Profile data pending",
+      "rect": [
+        150,
+        914,
+        520,
+        50
+      ],
+      "fontSize": 32,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavInbox",
+      "text": "Inbox",
+      "rect": [
+        205,
+        1056,
+        310,
+        60
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavStore",
+      "text": "Store",
+      "rect": [
+        205,
+        1226,
+        310,
+        60
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavEvents",
+      "text": "Events",
+      "rect": [
+        205,
+        1396,
+        310,
+        60
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavRanking",
+      "text": "Ranking",
+      "rect": [
+        205,
+        1566,
+        310,
+        60
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavCommandFeed",
+      "text": "Command Feed",
+      "rect": [
+        205,
+        1736,
+        310,
+        60
+      ],
+      "fontSize": 36,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavUnavailableInbox",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        455,
+        1051,
+        245,
+        72
+      ],
+      "fontSize": 23,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavUnavailableStore",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        455,
+        1221,
+        245,
+        72
+      ],
+      "fontSize": 23,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavUnavailableEvents",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        455,
+        1391,
+        245,
+        72
+      ],
+      "fontSize": 23,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavUnavailableRanking",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        455,
+        1561,
+        245,
+        72
+      ],
+      "fontSize": 23,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "NavUnavailableCommandFeed",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        455,
+        1731,
+        245,
+        72
+      ],
+      "fontSize": 23,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "SagaTitle",
+      "text": "Saga Campaign",
+      "rect": [
+        1132,
+        392,
+        530,
+        84
+      ],
+      "fontSize": 48,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.82,
+        0.8,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "OperationTitle",
+      "text": "Persistent Operation",
+      "rect": [
+        2008,
+        392,
+        700,
+        84
+      ],
+      "fontSize": 48,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.82,
+        0.8,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "QuickCustomTitle",
+      "text": "Quick Custom Game",
+      "rect": [
+        2968,
+        392,
+        610,
+        84
+      ],
+      "fontSize": 48,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.82,
+        0.8,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "SagaDescription",
+      "text": "Play through the story arc\nand reclaim key districts.",
+      "rect": [
+        1164,
+        1500,
+        485,
+        120
+      ],
+      "fontSize": 34,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.76,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "OperationDescription",
+      "text": "Maintain control and manage\ndistrict and city operations.",
+      "rect": [
+        2045,
+        1500,
+        560,
+        120
+      ],
+      "fontSize": 34,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.76,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "QuickCustomDescription",
+      "text": "Set up a custom scenario\nand jump into battle.",
+      "rect": [
+        2991,
+        1500,
+        560,
+        120
+      ],
+      "fontSize": 34,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.76,
+        0.78,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "OperationPressureText",
+      "text": "District pressure rising",
+      "rect": [
+        1970,
+        1194,
+        430,
+        42
+      ],
+      "fontSize": 30,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "OperationPressureHigh",
+      "text": "HIGH",
+      "rect": [
+        2470,
+        1260,
+        110,
+        42
+      ],
+      "fontSize": 26,
+      "alignment": "right",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "OperationRiskText",
+      "text": "City operation risk",
+      "rect": [
+        1970,
+        1362,
+        430,
+        42
+      ],
+      "fontSize": 30,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "OperationRiskElevated",
+      "text": "ELEVATED",
+      "rect": [
+        2432,
+        1428,
+        150,
+        42
+      ],
+      "fontSize": 26,
+      "alignment": "right",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700
+    },
+    {
+      "name": "DeployCommandLabel",
+      "text": "DEPLOY COMMAND",
+      "rect": [
+        2769,
+        1870,
+        690,
+        88
+      ],
+      "fontSize": 62,
+      "alignment": "center",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.67,
+        0.25,
+        1.0
+      ],
+      "z": 700
+    }
+  ]
+}

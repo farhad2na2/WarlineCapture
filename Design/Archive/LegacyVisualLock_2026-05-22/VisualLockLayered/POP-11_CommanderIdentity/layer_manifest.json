@@ -1,0 +1,15 @@
+{
+  "surface": "POP-11_CommanderIdentity",
+  "reference": "reference/POP-11_CommanderIdentity_Landscape_Target.png",
+  "sourceBackground": "Design/VisualLock/SCN-03_CommanderProfile/SCN-03_CommanderProfile_Landscape_Target.png",
+  "source": "Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md",
+  "status": "flat-panel-popup-target",
+  "requiresSeparatedLayerPack": false,
+  "requiredControls": [
+    "CommanderNameInput",
+    "CommanderIconGrid",
+    "FrameGrid",
+    "ConfirmButton",
+    "CancelButton"
+  ]
+}

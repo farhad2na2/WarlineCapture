@@ -1,0 +1,347 @@
+{
+  "schema": "warlinecapture.visualLock.m01TargetMatchAssetPackage.v3",
+  "package_id": "m01_gameplay_target_match_assets_v3",
+  "date": "2026-05-17",
+  "status": "ready_for_pm_user_review",
+  "iso_map_id": "iso.ch01.district_edge_01",
+  "source_lock": [
+    "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01-01_TacticalStart_1920x1080.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_PlayerRifleSquad_Atlas_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_EnemyPatrol_Atlas_Target.png",
+    "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_Markers_SelectionMoveAttackEnemyObjectiveHover.png"
+  ],
+  "source_generation": {
+    "method": "built_in_imagegen",
+    "generated_images_root": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618",
+    "selected_clean_plate": "ig_061caec3064fc95a016a09c2e27db88198ba5d404182569065.png",
+    "selected_player_idle_facings": "ig_061caec3064fc95a016a09c42d93808198b1e49c943c5c33df.png",
+    "selected_enemy_idle_facings": "ig_061caec3064fc95a016a09c468adf48198b6e2b817a57126cb.png",
+    "selected_marker_readability": "ig_061caec3064fc95a016a09c3c454888198b4c54098f2ff9288.png",
+    "deterministic_final_visuals_allowed": false,
+    "postprocess": "source copy, chroma-key alpha removal, crop extraction, resize into existing 256-cell contracts, POT padding, contact sheet packaging, metadata, and validation only"
+  },
+  "tactical_plate": {
+    "asset_id": "iso.ch01.district_edge_01.clean_tactical_start.v3",
+    "runtime_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_start_clean_plate_v3_source_1920x1080.png",
+    "runtime_pot": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_start_clean_plate_v3_pot_2048x2048.png",
+    "camera_lock": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/CameraLock_M01_DefaultStart.json",
+    "world_bounds_rule": "Bind through iso.ch01.district_edge_01 using camera.default_start; do not recenter/zoom to compensate for art.",
+    "crop_scale_rule": "1920x1080 source produced by cover-crop from imagegen source; 2048x2048 POT pads centered without stretching.",
+    "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_source_1920x1080.png",
+    "dimensions": [
+      1920,
+      1080
+    ],
+    "sha256": "0206d0112ce05a23665b1ddaf200da3dd56a087d103e15ee27047cb493f743ba",
+    "pot": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_pot_2048x2048.png",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "sha256": "348e2a99b7f1b056421f8702c9d979659a871e6c3186b21fd36392b78c746d6b"
+    }
+  },
+  "player_rifle_squad": {
+    "asset_id": "unit.player_rifle_squad.idle_facings.v3",
+    "runtime_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_idle_facings_atlas_v3.png",
+    "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_idle_facings_atlas_v3.png",
+    "dimensions": [
+      1024,
+      256
+    ],
+    "sha256": "157edfbf7179842324595ed454ff0f62088f7a6ac28dcf51d342c03c6945d6c2",
+    "atlas_cell_size": [
+      256,
+      256
+    ],
+    "atlas_columns": 4,
+    "states": [
+      "idle"
+    ],
+    "facings": [
+      "NE",
+      "SE",
+      "SW",
+      "NW"
+    ],
+    "contact_shadow_rule": "baked per-frame contact shadow included in transparent sprite; do not add runtime fake shadow quads for target-match proof.",
+    "scale_rule": "player and enemy infantry share the same 256-cell and pivot contract; Gameplay may use existing ECS transform scale only, not art-specific compensation.",
+    "frames": [
+      {
+        "frame_key": "idle.NE.0.v3",
+        "facing": "NE",
+        "atlas_rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_ne_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "606b4e4b5c60775ed71c94e3e81f54f508ed4920ef6aae75d3aea8c68f8289b9"
+      },
+      {
+        "frame_key": "idle.SE.0.v3",
+        "facing": "SE",
+        "atlas_rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_se_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "b8a8287cafc25bbc43a717f250a5338aa39a3cc98ca0e4a93e3f7db0c6afd179"
+      },
+      {
+        "frame_key": "idle.SW.0.v3",
+        "facing": "SW",
+        "atlas_rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_sw_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "e8b028f38528a45fa55fb4cc87073439b7377169aa94767b7db27d40ddb1465d"
+      },
+      {
+        "frame_key": "idle.NW.0.v3",
+        "facing": "NW",
+        "atlas_rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_nw_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "03e05e0df2a7d69b0b1f317eb8e0b7e64897d25f9f4fb4375d81896607302263"
+      }
+    ]
+  },
+  "enemy_patrol": {
+    "asset_id": "unit.enemy_patrol.idle_facings.v3",
+    "runtime_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_idle_facings_atlas_v3.png",
+    "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_idle_facings_atlas_v3.png",
+    "dimensions": [
+      1024,
+      256
+    ],
+    "sha256": "40d380406ecf2845755fcdd0a31b98ee2db50837c8cc4b7fb7f0be26e5b4fe71",
+    "atlas_cell_size": [
+      256,
+      256
+    ],
+    "atlas_columns": 4,
+    "states": [
+      "idle"
+    ],
+    "facings": [
+      "NE",
+      "SE",
+      "SW",
+      "NW"
+    ],
+    "contact_shadow_rule": "baked per-frame contact shadow included in transparent sprite; restrained red accents only.",
+    "scale_rule": "same projection scale as player rifle squad; no enemy shrink rule.",
+    "frames": [
+      {
+        "frame_key": "idle.NE.0.v3",
+        "facing": "NE",
+        "atlas_rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_ne_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "261ee657a1468066bb89c7d2ac3978275589b39f0ded7a29de15f88fe464524b"
+      },
+      {
+        "frame_key": "idle.SE.0.v3",
+        "facing": "SE",
+        "atlas_rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_se_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "d6986dae9b662afda76f5e12097b61c01253a631e08dcdb8436cbed54f692d01"
+      },
+      {
+        "frame_key": "idle.SW.0.v3",
+        "facing": "SW",
+        "atlas_rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_sw_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "73b8e10d18931e9268cdd36e0e3ace0af29eb2fb4a38528d3121c225d88a1eaf"
+      },
+      {
+        "frame_key": "idle.NW.0.v3",
+        "facing": "NW",
+        "atlas_rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          0.5,
+          0.16
+        ],
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_nw_idle_v3.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "c74f620a1c0ad9c1127815f9e9b0862ca1da533c366d85b3f32693641a55d252"
+      }
+    ]
+  },
+  "markers": {
+    "selection_ring": {
+      "asset_id": "marker.selection.ring.v3",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/TargetMatchV3/selection_ring_v3.png",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "anchor_rule": "M01-02 only; four selected soldiers; hidden in M01-01",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV3/selection_ring_v3.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "sha256": "d216e489126432a7568dced4d50c2b9c7bd4107f935258c56f7869d9edfa0825"
+    },
+    "selected_squad_status": {
+      "asset_id": "marker.selected_squad.status.v3",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/TargetMatchV3/selected_squad_status_v3.png",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "anchor_rule": "M01-02 above selected squad centroid; no squad-name label baked",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV3/selected_squad_status_v3.png",
+      "dimensions": [
+        256,
+        128
+      ],
+      "sha256": "eb800f2c5bf4f6a1c49132d5379b53735c25806ce4bb13c15cd0c83bee39a4c0"
+    },
+    "enemy_readability_ring": {
+      "asset_id": "marker.enemy.readability.ring.v3",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/TargetMatchV3/enemy_readability_ring_v3.png",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "anchor_rule": "M01-01 and M01-02 enemy feet; permanent restrained hostile readability",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV3/enemy_readability_ring_v3.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "sha256": "d0fa747093f3df9b999741062fa0479e31e772eb79894f7682df2adf1282741a"
+    },
+    "enemy_health_bar": {
+      "asset_id": "marker.enemy.health_bar.v3",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/TargetMatchV3/enemy_health_bar_v3.png",
+      "pivot": [
+        0.5,
+        0.5
+      ],
+      "anchor_rule": "M01-01 and M01-02 above each enemy; permanent segmented red health/readability bar",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV3/enemy_health_bar_v3.png",
+      "dimensions": [
+        256,
+        96
+      ],
+      "sha256": "258df43d2a66417d945f54e5e7efa9c68dbb88ab02039b648d4edf0e9c3a5cf0"
+    }
+  },
+  "contact_sheets": [
+    {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_assets_v3_contact.png",
+      "dimensions": [
+        720,
+        872
+      ],
+      "sha256": "c7d1f95ffe79ea5be2f9b2c6016908a6e12df41fa540e8d9d986b8fcadf9c027"
+    }
+  ],
+  "gameplay_binding_checklist": [
+    "Import clean plate source and POT candidate under TacticalMaps; bind to IsoMapId iso.ch01.district_edge_01 for camera.default_start.",
+    "Use player_rifle_squad_idle_facings_atlas_v3.png for M01-01/M01-02 idle proof frames NE/SE/SW/NW with pivot 0.5,0.16.",
+    "Use enemy_patrol_idle_facings_atlas_v3.png at the same scale and pivot as player; do not shrink enemies for distance.",
+    "M01-01: hide player selection rings; show enemy readability rings and enemy health bars only.",
+    "M01-02: show four cyan selection rings at existing selectedMarkerLayersM0102 anchors; show selected squad shield/status and enemy readability/health overlays.",
+    "Do not use transform hacks, fake shadow quads, camera distortion, target crops, or pasted mockup pixels to claim final match."
+  ],
+  "non_art_dependencies": [
+    "Gameplay must import/bind these review assets into Assets only after PM/user approval.",
+    "Gameplay must regenerate runtime proof through the existing ECS/runtime presentation path.",
+    "UI/HCI HUD chrome polish remains separate from this battlefield/source-asset package."
+  ]
+}

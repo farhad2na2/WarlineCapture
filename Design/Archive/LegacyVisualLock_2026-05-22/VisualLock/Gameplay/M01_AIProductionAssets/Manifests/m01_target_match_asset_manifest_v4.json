@@ -1,0 +1,102 @@
+{
+  "schema": "warlinecapture.visualLock.m01TargetMatchAssetPackage.v4",
+  "package_id": "m01_gameplay_target_match_assets_v4_candidate",
+  "date": "2026-05-17",
+  "status": "review_candidate_not_target_perfect",
+  "source_generation": {
+    "method": "built_in_imagegen",
+    "generated_images_root": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618",
+    "selected_clean_plate": "ig_061caec3064fc95a016a09cb61eb088198a675fd5124c687a2.png",
+    "selected_player_idle_facings_corrected_shadow": "ig_061caec3064fc95a016a09d0b0a6048198bff9bb6209863bac.png",
+    "selected_enemy_idle_facings_corrected_shadow": "ig_061caec3064fc95a016a09d109345081988f2529d848ddbc5b.png",
+    "marker_assets": "reused v3 marker/readability assets",
+    "postprocess": "source copy, chroma-key alpha removal, crop extraction, 256-cell packing, POT padding, contact sheet, placement composite, validation"
+  },
+  "assets": {
+    "m01_tactical_start_clean_plate_v4_source_1920x1080": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v4_source_1920x1080.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "sha256": "76dbaa7e8544fc7e20cb53f1a6e368c5ce50a05cebf78f30d2833f9fafe28760"
+    },
+    "m01_tactical_start_clean_plate_v4_pot_2048x2048": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v4_pot_2048x2048.png",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "sha256": "9e812d6ef34db49b89f59a11123c86c81c02978f90b8f1609247277a92cc8372"
+    },
+    "player_rifle_squad_idle_facings_atlas_v4": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV4/player_rifle_squad_idle_facings_atlas_v4.png",
+      "dimensions": [
+        1024,
+        256
+      ],
+      "sha256": "18414dffe8ff053069e59e1bb4d1f173bf0dd363f5a06cb743914beae46964eb"
+    },
+    "enemy_patrol_idle_facings_atlas_v4": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV4/enemy_patrol_idle_facings_atlas_v4.png",
+      "dimensions": [
+        1024,
+        256
+      ],
+      "sha256": "151d8cef601f8bf1028f32a39c0ae23200a27445de707ceb682f5738c826bf0f"
+    },
+    "selection_ring_v4": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV4/selection_ring_v4.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "sha256": "d216e489126432a7568dced4d50c2b9c7bd4107f935258c56f7869d9edfa0825"
+    },
+    "selected_squad_status_v4": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV4/selected_squad_status_v4.png",
+      "dimensions": [
+        256,
+        128
+      ],
+      "sha256": "eb800f2c5bf4f6a1c49132d5379b53735c25806ce4bb13c15cd0c83bee39a4c0"
+    },
+    "enemy_readability_ring_v4": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV4/enemy_readability_ring_v4.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "sha256": "d0fa747093f3df9b999741062fa0479e31e772eb79894f7682df2adf1282741a"
+    },
+    "enemy_health_bar_v4": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV4/enemy_health_bar_v4.png",
+      "dimensions": [
+        256,
+        96
+      ],
+      "sha256": "258df43d2a66417d945f54e5e7efa9c68dbb88ab02039b648d4edf0e9c3a5cf0"
+    },
+    "m01_target_match_assets_v4_contact": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_assets_v4_contact.png",
+      "dimensions": [
+        720,
+        872
+      ],
+      "sha256": "ae88883050b8133435d0318538b912bdbc7c8f2ead27a9e8f6d3952fd42caf1d"
+    }
+  },
+  "assessment": {
+    "improved": "Unit silhouettes are leaner and shadow direction now trails lower-right/southeast instead of the rejected lower-left direction.",
+    "remaining_mismatch": "Background composition shifted farther from target and full integrated comparison is still not target-perfect."
+  },
+  "placement_review": {
+    "composite": "Design/AgentReports/Captures/M01_TargetMatchV4_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV4_AssetPlacementReview_vs_Target_Comparison.png",
+    "diff_heat": "Design/AgentReports/Captures/M01_TargetMatchV4_AssetPlacementReview_vs_Target_DiffHeat.png",
+    "full_frame_mse": 1266.2,
+    "world_crop_mse": 1171.94,
+    "player_region_mse": 1449.64,
+    "enemy_region_mse": 983.78
+  }
+}

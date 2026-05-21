@@ -1,0 +1,5 @@
+{
+  "approval_policy": "No generated local header file is approved in this folder. The only approved header is the user-attached checkerboard header image in the conversation.",
+  "approved_items": [],
+  "blocked_reason": "Do not infer approval from raw generated filenames or contact-sheet indices. A local file must be explicitly matched to the user-attached approved image before it can be copied here."
+}

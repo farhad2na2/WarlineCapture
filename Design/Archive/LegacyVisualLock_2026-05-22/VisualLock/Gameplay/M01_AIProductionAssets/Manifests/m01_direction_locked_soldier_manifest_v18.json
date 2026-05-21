@@ -1,0 +1,120 @@
+{
+  "schema": "warlinecapture.visualLock.m01DirectionLockedSoldierPackage.v18",
+  "package_id": "m01_v18_direction_locked_idle_baked_soldiers",
+  "date": "2026-05-18",
+  "status": "review_candidate_idle_only_needs_pm_user_approval",
+  "scope": "Direction-locked idle cells for M01-01 runtime camera read: player bottom faces up-screen and enemy top faces down-screen.",
+  "source_generation": {
+    "method": "built_in_imagegen-derived V17 clean soldier components selected from V5 imagegen source sheets; direction-locked idle cells constructed from clean opposing source components, directional-dark postprocess, horizontal-right baked shadows, atlas packing and validation",
+    "player_source_components": [
+      "V17 player clean body atlas index 56 SW idle/back-read",
+      "V17 player clean body atlas index 84 NW idle/back-read"
+    ],
+    "enemy_source_components": [
+      "V17 enemy clean body atlas index 0 NE idle/front-read",
+      "V17 enemy clean body atlas index 28 SE idle/front-read"
+    ],
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true
+  },
+  "binding_mode": {
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "animation_complete": false,
+    "idle_only": true
+  },
+  "direction_keys": {
+    "player_bottom_faces_up_screen": {
+      "faction": "player_rifle_squad",
+      "atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/PlayerRifleSquad/player_rifle_squad_idle_direction_locked_body_shadow_atlas_v18.png",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "pivot": [
+        128,
+        210
+      ],
+      "foot_anchor_px": [
+        125,
+        208
+      ],
+      "screen_space_read": "bottom/player soldier faces up-screen toward tactical field"
+    },
+    "enemy_top_faces_down_screen": {
+      "faction": "enemy_patrol",
+      "atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/EnemyPatrol/enemy_patrol_idle_direction_locked_body_shadow_atlas_v18.png",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "pivot": [
+        128,
+        210
+      ],
+      "foot_anchor_px": [
+        127,
+        206
+      ],
+      "screen_space_read": "top/enemy soldier faces down-screen toward player squad"
+    }
+  },
+  "combined_idle_atlas": {
+    "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/m01_direction_locked_idle_body_shadow_atlas_v18.png",
+    "dimensions": [
+      512,
+      256
+    ],
+    "cell_0": "player_bottom_faces_up_screen",
+    "cell_1": "enemy_top_faces_down_screen",
+    "sha256": "db5a38f08d283c4c2866aa15d1bbdc1c46356d89d17a67c63d049368c84948c9"
+  },
+  "assets": {
+    "player_clean": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/PlayerRifleSquad/player_rifle_squad_idle_direction_locked_clean_body_atlas_v18.png",
+    "player_baked": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/PlayerRifleSquad/player_rifle_squad_idle_direction_locked_body_shadow_atlas_v18.png",
+    "enemy_clean": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/EnemyPatrol/enemy_patrol_idle_direction_locked_clean_body_atlas_v18.png",
+    "enemy_baked": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/DirectionLockedV18/EnemyPatrol/enemy_patrol_idle_direction_locked_body_shadow_atlas_v18.png"
+  },
+  "proofs": {
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_v18_direction_locked_idle_contact.png",
+    "placement_proof": "Design/AgentReports/Captures/M01_TargetMatchV18DirectionLockedIdle_AssetPlacementReview_1920x1080.png",
+    "target_comparison": "Design/AgentReports/Captures/M01_TargetMatchV18DirectionLockedIdle_vs_Target_Comparison.png"
+  },
+  "validation": {
+    "player_bottom_faces_up_screen": {
+      "passed": true,
+      "reasons": [],
+      "metrics": {
+        "components": 1,
+        "large_components": 1,
+        "bbox": [
+          99,
+          93,
+          157,
+          211
+        ]
+      }
+    },
+    "enemy_top_faces_down_screen": {
+      "passed": true,
+      "reasons": [],
+      "metrics": {
+        "components": 1,
+        "large_components": 1,
+        "bbox": [
+          101,
+          93,
+          155,
+          211
+        ]
+      }
+    }
+  },
+  "remaining_blockers": [
+    "Full animation cycles are not direction-locked in this pass. If idle direction proof is accepted, Art/Atlas must generate direction-locked animation cycles for the accepted screen-space directions or Gameplay must bind idle-only for the M01-01 no-selection proof."
+  ]
+}

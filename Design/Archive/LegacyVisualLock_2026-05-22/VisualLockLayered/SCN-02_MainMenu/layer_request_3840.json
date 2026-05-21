@@ -1,0 +1,302 @@
+{
+  "schema": "warlinecapture.ui.layerRequest.v1",
+  "screen": "SCN-02_MainMenu",
+  "goal": "Generate approved high-resolution source layers for a Unity Canvas builder. Use these as source art contracts, not as a baked screenshot.",
+  "reference": {
+    "path": "Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png",
+    "sourceSize": [1672, 941],
+    "targetCanvas": [3840, 2160],
+    "coordinateSpace": "top-left pixel rects on 3840x2160 canvas"
+  },
+  "deliveryRules": [
+    "Provide one full-screen visual lock preview at 3840x2160.",
+    "Provide each named layer as a separate PNG.",
+    "Transparent PNG is preferred. If true transparency is not available, use a perfectly flat #00ff00 chroma-key background with no shadows, gradients, or anti-aliased color spill in the background.",
+    "Do not bake live UI text into reusable frames, buttons, or card shells.",
+    "Do not redesign the target. Match the reference panel proportions, thin chrome, narrow corner cuts, restrained cyan/amber palette, and visible bottom world map.",
+    "Chrome frames must be usable as Unity sliced sprites. Keep corners and edge details clean and separated.",
+    "Content art may be full-bleed and larger than the visible frame so Unity can crop without stretching."
+  ],
+  "liveText": [
+    "WARLINE CAPTURE",
+    "Credits",
+    "187,540",
+    "Materials",
+    "92,860",
+    "Command Authority",
+    "2,715",
+    "Commander Profile",
+    "Profile data pending",
+    "Inbox",
+    "Store",
+    "Events",
+    "Ranking",
+    "Command Feed",
+    "Designed Unavailable",
+    "Saga Campaign",
+    "Persistent Operation",
+    "Quick Custom Game",
+    "District pressure rising",
+    "HIGH",
+    "City operation risk",
+    "ELEVATED",
+    "DEPLOY COMMAND"
+  ],
+  "assets": [
+    {
+      "id": "full_visual_lock_preview",
+      "type": "reference-preview",
+      "targetRect": [0, 0, 3840, 2160],
+      "background": "opaque",
+      "notes": "Complete target-match preview used only for approval and alignment comparison."
+    },
+    {
+      "id": "main_menu_background_tactical_map",
+      "type": "background",
+      "targetRect": [0, 0, 3840, 2160],
+      "background": "opaque",
+      "notes": "Black/charcoal tactical background with visible world map continents in the lower half. No UI panels baked in."
+    },
+    {
+      "id": "screen_shell_frame",
+      "type": "sliced-frame",
+      "targetRect": [0, 0, 3840, 2160],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [48, 48, 48, 48],
+      "notes": "Outer cyan/charcoal screen shell only."
+    },
+    {
+      "id": "brand_logo_panel_frame",
+      "type": "sliced-frame",
+      "targetRect": [14, 14, 896, 248],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [90, 60, 90, 60],
+      "notes": "Top-left logo panel chrome without text. Match target diagonal cut and thin cyan trim."
+    },
+    {
+      "id": "brand_emblem",
+      "type": "icon",
+      "targetRect": [103, 57, 175, 174],
+      "background": "transparent-or-chromakey",
+      "notes": "Sharp Warline wolf/shield emblem only."
+    },
+    {
+      "id": "top_resource_bar_frame_full",
+      "type": "sliced-frame",
+      "targetRect": [909, 18, 2890, 234],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [160, 70, 160, 70],
+      "notes": "Full top resource chrome strip, no labels or numbers."
+    },
+    {
+      "id": "resource_counter_slot_frame",
+      "type": "sliced-frame",
+      "targetRect": [909, 18, 839, 234],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [140, 70, 140, 70],
+      "notes": "Reusable resource slot frame without text."
+    },
+    {
+      "id": "settings_button_frame",
+      "type": "sliced-button-frame",
+      "targetRect": [3624, 41, 175, 174],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [44, 44, 44, 44],
+      "notes": "Target-matched square/octagonal settings button frame. Gear is separate."
+    },
+    {
+      "id": "settings_gear_icon",
+      "type": "icon",
+      "targetRect": [3664, 107, 72, 72],
+      "background": "transparent-or-chromakey",
+      "notes": "Centered gear icon only, light gray, target style."
+    },
+    {
+      "id": "commander_profile_panel_frame",
+      "type": "sliced-frame",
+      "targetRect": [18, 289, 804, 675],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [70, 70, 70, 70],
+      "notes": "Left commander profile outer frame only, no portrait/text."
+    },
+    {
+      "id": "commander_profile_portrait",
+      "type": "content-image",
+      "targetRect": [92, 395, 643, 471],
+      "background": "opaque",
+      "notes": "Silhouette commander scan portrait. Includes inner scan background, no outer profile panel chrome."
+    },
+    {
+      "id": "profile_block_frame",
+      "type": "sliced-frame",
+      "targetRect": [86, 390, 662, 477],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [50, 50, 50, 50],
+      "notes": "Inner portrait block frame and small bottom notch, no portrait."
+    },
+    {
+      "id": "left_nav_row_frame",
+      "type": "sliced-button-frame",
+      "targetRect": [18, 1015, 799, 142],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [70, 44, 70, 44],
+      "notes": "Reusable tightly stacked left nav row frame, no icon/text/lock."
+    },
+    {
+      "id": "designed_unavailable_badge",
+      "type": "sliced-frame",
+      "targetRect": [455, 1047, 294, 83],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [50, 28, 80, 28],
+      "notes": "Badge plate only; text stays live unless a separate text-baked variant is explicitly approved."
+    },
+    {
+      "id": "lock_badge_icon",
+      "type": "icon",
+      "targetRect": [680, 1044, 80, 84],
+      "background": "transparent-or-chromakey",
+      "notes": "Reusable lock badge icon/plate for nav rows."
+    },
+    {
+      "id": "left_nav_icon_inbox",
+      "type": "icon",
+      "targetRect": [87, 1051, 92, 92],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "left_nav_icon_store",
+      "type": "icon",
+      "targetRect": [87, 1221, 92, 92],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "left_nav_icon_events",
+      "type": "icon",
+      "targetRect": [87, 1391, 92, 92],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "left_nav_icon_ranking",
+      "type": "icon",
+      "targetRect": [87, 1561, 92, 92],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "left_nav_icon_command_feed",
+      "type": "icon",
+      "targetRect": [87, 1731, 92, 92],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "mode_card_frame",
+      "type": "sliced-frame",
+      "targetRect": [909, 344, 859, 1354],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [80, 80, 80, 80],
+      "notes": "Reusable mode-card frame, no title/icon/art/footer icon."
+    },
+    {
+      "id": "mode_card_art_saga",
+      "type": "content-image",
+      "targetRect": [940, 520, 790, 910],
+      "background": "opaque",
+      "notes": "War-torn city/tank/soldiers artwork. Generate wider/taller than crop, no frame, no text."
+    },
+    {
+      "id": "mode_card_art_operation",
+      "type": "content-image",
+      "targetRect": [1863, 520, 790, 760],
+      "background": "opaque",
+      "notes": "Dark blue tactical hologram city map artwork. Generate wider/taller than crop, no frame, no text."
+    },
+    {
+      "id": "mode_card_art_quick_custom",
+      "type": "content-image",
+      "targetRect": [2795, 520, 790, 910],
+      "background": "opaque",
+      "notes": "Mountain military base artwork. Generate wider/taller than crop, no frame, no text."
+    },
+    {
+      "id": "mode_card_header_emblem_saga",
+      "type": "icon",
+      "targetRect": [988, 409, 119, 119],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "mode_card_header_emblem_operation",
+      "type": "icon",
+      "targetRect": [1911, 409, 119, 119],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "mode_card_header_emblem_quick_custom",
+      "type": "icon",
+      "targetRect": [2843, 409, 119, 119],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "operation_warning_icon",
+      "type": "icon",
+      "targetRect": [1874, 1194, 96, 96],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "operation_warning_row_frame",
+      "type": "sliced-frame",
+      "targetRect": [1845, 1170, 850, 150],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [64, 40, 64, 40],
+      "notes": "Amber warning row backing/frame only."
+    },
+    {
+      "id": "operation_pressure_meter_segments",
+      "type": "meter",
+      "targetRect": [1998, 1258, 586, 50],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "operation_risk_meter_segments",
+      "type": "meter",
+      "targetRect": [1998, 1428, 586, 50],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "card_footer_icon_saga",
+      "type": "icon",
+      "targetRect": [988, 1487, 133, 133],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "card_footer_icon_operation",
+      "type": "icon",
+      "targetRect": [1911, 1487, 133, 133],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "card_footer_icon_quick_custom",
+      "type": "icon",
+      "targetRect": [2843, 1487, 133, 133],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "deploy_command_button_frame",
+      "type": "sliced-button-frame",
+      "targetRect": [2600, 1813, 1162, 248],
+      "background": "transparent-or-chromakey",
+      "sliceBorder": [120, 70, 120, 70],
+      "notes": "Long low amber/chrome deploy button frame, no text, no chevrons."
+    },
+    {
+      "id": "deploy_command_chevrons",
+      "type": "icon",
+      "targetRect": [3468, 1859, 165, 133],
+      "background": "transparent-or-chromakey"
+    },
+    {
+      "id": "deploy_command_glow_overlay",
+      "type": "glow-overlay",
+      "targetRect": [2600, 1813, 1162, 248],
+      "background": "transparent-or-chromakey"
+    }
+  ]
+}

@@ -1,0 +1,1599 @@
+{
+  "schema": "warlinecapture.ui.frameFirstLayout.v2",
+  "screen": "SCN-02_MainMenu",
+  "canvas": [
+    3840,
+    2160
+  ],
+  "layoutPolicy": {
+    "shellSafeInset": 72,
+    "minimumPanelGap": 0,
+    "minimumTextPadding": 0,
+    "minimumChildPadding": 0,
+    "minimumContentGap": 6,
+    "fontSizeFloor": 18,
+    "panelOverlapPolicy": "fail",
+    "contentOverlapPolicy": "fail-except-frames-and-art",
+    "safeAreaSource": "panel.safeRect"
+  },
+  "assetPolicy": {
+    "approvedRoots": [
+      "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets",
+      "Design/VisualLockLayered/SCN-02_MainMenu/component_plates_20260519/assets"
+    ],
+    "runtimeDestination": "Assets/Game/Art/UI/Generated/MainMenu/ComponentCanvas/Cleaned"
+  },
+  "images": [
+    {
+      "name": "BackgroundTacticalMap",
+      "file": "main_menu_background_tactical_map.png",
+      "rect": [
+        0,
+        0,
+        3840,
+        2160
+      ],
+      "fit": "stretch",
+      "z": 0,
+      "role": "background"
+    },
+    {
+      "name": "LogoPanel",
+      "file": "brand_logo_panel_frame.png",
+      "rect": [
+        72,
+        72,
+        820,
+        226
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        112,
+        98,
+        700,
+        148
+      ]
+    },
+    {
+      "name": "LogoLockup",
+      "file": "ui_brand_logo_lockup.png",
+      "rect": [
+        156,
+        108,
+        540,
+        112
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "LogoPanel",
+      "slotKind": "logo"
+    },
+    {
+      "name": "TopBar",
+      "file": "top_resource_bar_frame_full.png",
+      "rect": [
+        944,
+        72,
+        2770,
+        238
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        1000,
+        104,
+        2660,
+        170
+      ]
+    },
+    {
+      "name": "CreditsIcon",
+      "file": "ui_icon_credits.png",
+      "rect": [
+        1104,
+        114,
+        116,
+        116
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "TopBar",
+      "slotKind": "icon"
+    },
+    {
+      "name": "MaterialsIcon",
+      "file": "ui_icon_materials.png",
+      "rect": [
+        1876,
+        114,
+        116,
+        116
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "TopBar",
+      "slotKind": "icon"
+    },
+    {
+      "name": "AuthorityIcon",
+      "file": "ui_icon_command_authority.png",
+      "rect": [
+        2690,
+        108,
+        128,
+        128
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "TopBar",
+      "slotKind": "icon"
+    },
+    {
+      "name": "SettingsGear",
+      "file": "ui_settings_gear_icon.png",
+      "rect": [
+        3540,
+        118,
+        104,
+        104
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "TopBar",
+      "slotKind": "icon"
+    },
+    {
+      "name": "ProfilePanel",
+      "file": "commander_profile_panel_frame.png",
+      "rect": [
+        72,
+        326,
+        740,
+        640
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        120,
+        370,
+        644,
+        552
+      ]
+    },
+    {
+      "name": "ProfilePortrait",
+      "file": "commander_profile_portrait.png",
+      "rect": [
+        132,
+        442,
+        600,
+        350
+      ],
+      "fit": "cover",
+      "z": 520,
+      "role": "content",
+      "container": "ProfilePanel",
+      "slotKind": "art"
+    },
+    {
+      "name": "ProfileStatusStrip",
+      "file": "profile_data_status_strip.png",
+      "rect": [
+        162,
+        822,
+        520,
+        58
+      ],
+      "fit": "stretch",
+      "z": 620,
+      "role": "content",
+      "container": "ProfilePanel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav0Panel",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        72,
+        980,
+        740,
+        150
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        110,
+        1004,
+        662,
+        102
+      ]
+    },
+    {
+      "name": "Nav0Icon",
+      "file": "ui_left_nav_icon_inbox.png",
+      "rect": [
+        124,
+        1010,
+        98,
+        90
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav0Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav0DisabledFrame",
+      "file": "disabled_status_pill_frame.png",
+      "rect": [
+        500,
+        1020,
+        138,
+        70
+      ],
+      "fit": "stretch",
+      "z": 650,
+      "role": "content",
+      "container": "Nav0Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav0LockFrame",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1016,
+        72,
+        78
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "Nav0Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav0LockIcon",
+      "file": "ui_lock_icon.png",
+      "rect": [
+        700,
+        1035,
+        32,
+        40
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav0Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav1Panel",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        72,
+        1130,
+        740,
+        150
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        110,
+        1154,
+        662,
+        102
+      ]
+    },
+    {
+      "name": "Nav1Icon",
+      "file": "ui_left_nav_icon_store.png",
+      "rect": [
+        124,
+        1160,
+        98,
+        90
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav1Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav1DisabledFrame",
+      "file": "disabled_status_pill_frame.png",
+      "rect": [
+        500,
+        1170,
+        138,
+        70
+      ],
+      "fit": "stretch",
+      "z": 650,
+      "role": "content",
+      "container": "Nav1Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav1LockFrame",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1166,
+        72,
+        78
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "Nav1Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav1LockIcon",
+      "file": "ui_lock_icon.png",
+      "rect": [
+        700,
+        1185,
+        32,
+        40
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav1Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav2Panel",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        72,
+        1280,
+        740,
+        150
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        110,
+        1304,
+        662,
+        102
+      ]
+    },
+    {
+      "name": "Nav2Icon",
+      "file": "ui_left_nav_icon_events.png",
+      "rect": [
+        124,
+        1310,
+        98,
+        90
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav2Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav2DisabledFrame",
+      "file": "disabled_status_pill_frame.png",
+      "rect": [
+        500,
+        1320,
+        138,
+        70
+      ],
+      "fit": "stretch",
+      "z": 650,
+      "role": "content",
+      "container": "Nav2Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav2LockFrame",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1316,
+        72,
+        78
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "Nav2Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav2LockIcon",
+      "file": "ui_lock_icon.png",
+      "rect": [
+        700,
+        1335,
+        32,
+        40
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav2Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav3Panel",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        72,
+        1430,
+        740,
+        150
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        110,
+        1454,
+        662,
+        102
+      ]
+    },
+    {
+      "name": "Nav3Icon",
+      "file": "ui_left_nav_icon_ranking.png",
+      "rect": [
+        124,
+        1460,
+        98,
+        90
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav3Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav3DisabledFrame",
+      "file": "disabled_status_pill_frame.png",
+      "rect": [
+        500,
+        1470,
+        138,
+        70
+      ],
+      "fit": "stretch",
+      "z": 650,
+      "role": "content",
+      "container": "Nav3Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav3LockFrame",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1466,
+        72,
+        78
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "Nav3Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav3LockIcon",
+      "file": "ui_lock_icon.png",
+      "rect": [
+        700,
+        1485,
+        32,
+        40
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav3Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav4Panel",
+      "file": "left_nav_row_frame.png",
+      "rect": [
+        72,
+        1580,
+        740,
+        150
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        110,
+        1604,
+        662,
+        102
+      ]
+    },
+    {
+      "name": "Nav4Icon",
+      "file": "ui_left_nav_icon_command_feed.png",
+      "rect": [
+        124,
+        1610,
+        98,
+        90
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav4Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "Nav4DisabledFrame",
+      "file": "disabled_status_pill_frame.png",
+      "rect": [
+        500,
+        1620,
+        138,
+        70
+      ],
+      "fit": "stretch",
+      "z": 650,
+      "role": "content",
+      "container": "Nav4Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav4LockFrame",
+      "file": "lock_badge_frame.png",
+      "rect": [
+        680,
+        1616,
+        72,
+        78
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "Nav4Panel",
+      "slotKind": "frame"
+    },
+    {
+      "name": "Nav4LockIcon",
+      "file": "ui_lock_icon.png",
+      "rect": [
+        700,
+        1635,
+        32,
+        40
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "Nav4Panel",
+      "slotKind": "icon"
+    },
+    {
+      "name": "SagaCard",
+      "file": "mode_card_frame.png",
+      "rect": [
+        960,
+        374,
+        810,
+        1280
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        1010,
+        410,
+        710,
+        1188
+      ]
+    },
+    {
+      "name": "SagaArt",
+      "file": "mode_card_art_saga.png",
+      "rect": [
+        1026,
+        560,
+        678,
+        760
+      ],
+      "fit": "cover",
+      "z": 220,
+      "role": "content",
+      "container": "SagaCard",
+      "slotKind": "art"
+    },
+    {
+      "name": "SagaHeaderIcon",
+      "file": "ui_mode_card_header_emblem_saga.png",
+      "rect": [
+        1048,
+        436,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "SagaCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "SagaFooterBadgeFrame",
+      "file": "circular_badge_frame.png",
+      "rect": [
+        1036,
+        1450,
+        112,
+        112
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "SagaCard",
+      "slotKind": "frame"
+    },
+    {
+      "name": "SagaFooterIcon",
+      "file": "ui_card_footer_icon_saga.png",
+      "rect": [
+        1054,
+        1468,
+        76,
+        76
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "SagaCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "OperationCard",
+      "file": "mode_card_frame.png",
+      "rect": [
+        1850,
+        374,
+        810,
+        1280
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        1900,
+        410,
+        710,
+        1188
+      ]
+    },
+    {
+      "name": "OperationArt",
+      "file": "mode_card_art_operation.png",
+      "rect": [
+        1916,
+        560,
+        678,
+        500
+      ],
+      "fit": "cover",
+      "z": 220,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "art"
+    },
+    {
+      "name": "OperationHeaderIcon",
+      "file": "ui_mode_card_header_emblem_operation.png",
+      "rect": [
+        1938,
+        436,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "OperationFooterBadgeFrame",
+      "file": "circular_badge_frame.png",
+      "rect": [
+        1926,
+        1450,
+        112,
+        112
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "frame"
+    },
+    {
+      "name": "OperationFooterIcon",
+      "file": "ui_card_footer_icon_operation.png",
+      "rect": [
+        1944,
+        1468,
+        76,
+        76
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "QuickCustomCard",
+      "file": "mode_card_frame.png",
+      "rect": [
+        2742,
+        374,
+        810,
+        1280
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        2792,
+        410,
+        710,
+        1188
+      ]
+    },
+    {
+      "name": "QuickCustomArt",
+      "file": "mode_card_art_quick_custom.png",
+      "rect": [
+        2808,
+        560,
+        678,
+        760
+      ],
+      "fit": "cover",
+      "z": 220,
+      "role": "content",
+      "container": "QuickCustomCard",
+      "slotKind": "art"
+    },
+    {
+      "name": "QuickCustomHeaderIcon",
+      "file": "ui_mode_card_header_emblem_quick_custom.png",
+      "rect": [
+        2830,
+        436,
+        92,
+        92
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "QuickCustomCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "QuickCustomFooterBadgeFrame",
+      "file": "circular_badge_frame.png",
+      "rect": [
+        2818,
+        1450,
+        112,
+        112
+      ],
+      "fit": "contain",
+      "z": 650,
+      "role": "content",
+      "container": "QuickCustomCard",
+      "slotKind": "frame"
+    },
+    {
+      "name": "QuickCustomFooterIcon",
+      "file": "ui_card_footer_icon_quick_custom.png",
+      "rect": [
+        2836,
+        1468,
+        76,
+        76
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "QuickCustomCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "OperationWarningPressureFrame",
+      "file": "operation_warning_row_frame.png",
+      "rect": [
+        1908,
+        1110,
+        700,
+        128
+      ],
+      "fit": "stretch",
+      "z": 620,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "frame"
+    },
+    {
+      "name": "OperationWarningPressureIcon",
+      "file": "ui_operation_warning_icon.png",
+      "rect": [
+        1938,
+        1142,
+        62,
+        62
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "OperationPressureMeter",
+      "file": "operation_pressure_meter_segments.png",
+      "rect": [
+        2030,
+        1190,
+        350,
+        32
+      ],
+      "fit": "stretch",
+      "z": 700,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "meter"
+    },
+    {
+      "name": "OperationWarningRiskFrame",
+      "file": "operation_warning_row_frame.png",
+      "rect": [
+        1908,
+        1262,
+        700,
+        128
+      ],
+      "fit": "stretch",
+      "z": 620,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "frame"
+    },
+    {
+      "name": "OperationWarningRiskIcon",
+      "file": "ui_operation_warning_icon.png",
+      "rect": [
+        1938,
+        1294,
+        62,
+        62
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "icon"
+    },
+    {
+      "name": "OperationRiskMeter",
+      "file": "operation_risk_meter_segments.png",
+      "rect": [
+        2030,
+        1342,
+        350,
+        32
+      ],
+      "fit": "stretch",
+      "z": 700,
+      "role": "content",
+      "container": "OperationCard",
+      "slotKind": "meter"
+    },
+    {
+      "name": "DeployButton",
+      "file": "deploy_command_button_frame.png",
+      "rect": [
+        2630,
+        1788,
+        1086,
+        236
+      ],
+      "fit": "stretch",
+      "z": 300,
+      "role": "functional-panel",
+      "safeRect": [
+        2690,
+        1838,
+        940,
+        136
+      ]
+    },
+    {
+      "name": "DeployChevrons",
+      "file": "ui_deploy_command_chevrons.png",
+      "rect": [
+        3470,
+        1858,
+        150,
+        72
+      ],
+      "fit": "contain",
+      "z": 700,
+      "role": "content",
+      "container": "DeployButton",
+      "slotKind": "icon"
+    }
+  ],
+  "texts": [
+    {
+      "name": "CreditsLabel",
+      "text": "Credits",
+      "rect": [
+        1290,
+        112,
+        220,
+        42
+      ],
+      "fontSize": 36,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 700,
+      "container": "TopBar",
+      "slotKind": "text"
+    },
+    {
+      "name": "CreditsValue",
+      "text": "187,540",
+      "rect": [
+        1290,
+        164,
+        330,
+        72
+      ],
+      "fontSize": 60,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.96,
+        0.76,
+        0.48,
+        1.0
+      ],
+      "z": 700,
+      "container": "TopBar",
+      "slotKind": "text"
+    },
+    {
+      "name": "MaterialsLabel",
+      "text": "Materials",
+      "rect": [
+        2058,
+        112,
+        250,
+        42
+      ],
+      "fontSize": 36,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 700,
+      "container": "TopBar",
+      "slotKind": "text"
+    },
+    {
+      "name": "MaterialsValue",
+      "text": "92,860",
+      "rect": [
+        2058,
+        164,
+        330,
+        72
+      ],
+      "fontSize": 60,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.68,
+        0.84,
+        0.96,
+        1.0
+      ],
+      "z": 700,
+      "container": "TopBar",
+      "slotKind": "text"
+    },
+    {
+      "name": "AuthorityLabel",
+      "text": "Command Authority",
+      "rect": [
+        2876,
+        112,
+        420,
+        42
+      ],
+      "fontSize": 36,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.78,
+        0.8,
+        0.82,
+        1.0
+      ],
+      "z": 700,
+      "container": "TopBar",
+      "slotKind": "text"
+    },
+    {
+      "name": "AuthorityValue",
+      "text": "2,715",
+      "rect": [
+        2876,
+        164,
+        270,
+        72
+      ],
+      "fontSize": 60,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.96,
+        0.76,
+        0.48,
+        1.0
+      ],
+      "z": 700,
+      "container": "TopBar",
+      "slotKind": "text"
+    },
+    {
+      "name": "CommanderProfileTitle",
+      "text": "Commander Profile",
+      "rect": [
+        132,
+        396,
+        420,
+        48
+      ],
+      "fontSize": 38,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.18,
+        0.78,
+        0.95,
+        1.0
+      ],
+      "z": 700,
+      "container": "ProfilePanel",
+      "slotKind": "text"
+    },
+    {
+      "name": "CommanderProfilePending",
+      "text": "Profile data pending",
+      "rect": [
+        176,
+        880,
+        490,
+        42
+      ],
+      "fontSize": 31,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "ProfilePanel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav0Label",
+      "text": "Inbox",
+      "rect": [
+        252,
+        1022,
+        226,
+        64
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav0Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav0Unavailable",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        510,
+        1030,
+        116,
+        50
+      ],
+      "fontSize": 18,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav0Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav1Label",
+      "text": "Store",
+      "rect": [
+        252,
+        1172,
+        226,
+        64
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav1Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav1Unavailable",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        510,
+        1180,
+        116,
+        50
+      ],
+      "fontSize": 18,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav1Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav2Label",
+      "text": "Events",
+      "rect": [
+        252,
+        1322,
+        226,
+        64
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav2Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav2Unavailable",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        510,
+        1330,
+        116,
+        50
+      ],
+      "fontSize": 18,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav2Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav3Label",
+      "text": "Ranking",
+      "rect": [
+        252,
+        1472,
+        226,
+        64
+      ],
+      "fontSize": 42,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav3Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav3Unavailable",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        510,
+        1480,
+        116,
+        50
+      ],
+      "fontSize": 18,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav3Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav4Label",
+      "text": "Command Feed",
+      "rect": [
+        252,
+        1622,
+        246,
+        64
+      ],
+      "fontSize": 32,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.84,
+        0.86,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav4Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "Nav4Unavailable",
+      "text": "Designed\nUnavailable",
+      "rect": [
+        510,
+        1630,
+        116,
+        50
+      ],
+      "fontSize": 18,
+      "alignment": "center",
+      "weight": "light",
+      "color": [
+        0.7,
+        0.75,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "Nav4Panel",
+      "slotKind": "text"
+    },
+    {
+      "name": "SagaTitle",
+      "text": "Saga Campaign",
+      "rect": [
+        1180,
+        438,
+        540,
+        70
+      ],
+      "fontSize": 46,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.82,
+        0.8,
+        1.0
+      ],
+      "z": 700,
+      "container": "SagaCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "SagaDescription",
+      "text": "Play through the story arc\nand reclaim key districts.",
+      "rect": [
+        1184,
+        1464,
+        500,
+        110
+      ],
+      "fontSize": 31,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.76,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "SagaCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "OperationTitle",
+      "text": "Persistent Operation",
+      "rect": [
+        2070,
+        438,
+        540,
+        70
+      ],
+      "fontSize": 44,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.82,
+        0.8,
+        1.0
+      ],
+      "z": 700,
+      "container": "OperationCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "OperationDescription",
+      "text": "Maintain control and manage\ndistrict and city operations.",
+      "rect": [
+        2074,
+        1464,
+        500,
+        110
+      ],
+      "fontSize": 31,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.76,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "OperationCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "QuickCustomTitle",
+      "text": "Quick Custom Game",
+      "rect": [
+        2962,
+        438,
+        540,
+        70
+      ],
+      "fontSize": 46,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        0.82,
+        0.82,
+        0.8,
+        1.0
+      ],
+      "z": 700,
+      "container": "QuickCustomCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "QuickCustomDescription",
+      "text": "Set up a custom scenario\nand jump into battle.",
+      "rect": [
+        2966,
+        1464,
+        500,
+        110
+      ],
+      "fontSize": 31,
+      "alignment": "left",
+      "weight": "light",
+      "color": [
+        0.72,
+        0.76,
+        0.78,
+        1.0
+      ],
+      "z": 700,
+      "container": "QuickCustomCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "OperationPressureText",
+      "text": "District pressure rising",
+      "rect": [
+        2030,
+        1138,
+        360,
+        38
+      ],
+      "fontSize": 28,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700,
+      "container": "OperationCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "OperationPressureStatus",
+      "text": "HIGH",
+      "rect": [
+        2390,
+        1190,
+        112,
+        38
+      ],
+      "fontSize": 25,
+      "alignment": "right",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700,
+      "container": "OperationCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "OperationRiskText",
+      "text": "City operation risk",
+      "rect": [
+        2030,
+        1290,
+        360,
+        38
+      ],
+      "fontSize": 28,
+      "alignment": "left",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700,
+      "container": "OperationCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "OperationRiskStatus",
+      "text": "ELEVATED",
+      "rect": [
+        2390,
+        1342,
+        154,
+        38
+      ],
+      "fontSize": 25,
+      "alignment": "right",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.63,
+        0.1,
+        1.0
+      ],
+      "z": 700,
+      "container": "OperationCard",
+      "slotKind": "text"
+    },
+    {
+      "name": "DeployCommandLabel",
+      "text": "DEPLOY COMMAND",
+      "rect": [
+        2800,
+        1852,
+        650,
+        88
+      ],
+      "fontSize": 62,
+      "alignment": "center",
+      "weight": "bold",
+      "color": [
+        1.0,
+        0.67,
+        0.25,
+        1.0
+      ],
+      "z": 700,
+      "container": "DeployButton",
+      "slotKind": "text"
+    }
+  ]
+}

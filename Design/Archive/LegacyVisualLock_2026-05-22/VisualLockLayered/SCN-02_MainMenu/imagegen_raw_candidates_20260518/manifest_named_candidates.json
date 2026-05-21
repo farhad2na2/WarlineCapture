@@ -1,0 +1,384 @@
+{
+  "created_at": "2026-05-18 22:17:02",
+  "policy": "Named candidate set only. Unapproved header attempts excluded. No pixel editing or alpha extraction performed.",
+  "items": [
+    {
+      "name": "brand_logo_lockup.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/brand_logo_lockup.png",
+      "size": [
+        1981,
+        794
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "brand_logo_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/brand_logo_panel_frame.png",
+      "size": [
+        1914,
+        822
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "card_footer_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/card_footer_icon_set.png",
+      "size": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "command_feed_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/command_feed_panel_frame.png",
+      "size": [
+        1721,
+        914
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "commander_profile_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/commander_profile_panel_frame.png",
+      "size": [
+        1122,
+        1402
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "commander_profile_portrait.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/commander_profile_portrait.png",
+      "size": [
+        1369,
+        1149
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "deploy_command_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/deploy_command_button_frame.png",
+      "size": [
+        1935,
+        813
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "deploy_command_chevrons.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/deploy_command_chevrons.png",
+      "size": [
+        1670,
+        941
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "designed_unavailable_badge.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/designed_unavailable_badge.png",
+      "size": [
+        1804,
+        872
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "full_visual_lock_preview.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/full_visual_lock_preview.png",
+      "size": [
+        1672,
+        941
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/left_nav_icon_set.png",
+      "size": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "left_nav_row_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/left_nav_row_frame.png",
+      "size": [
+        1900,
+        828
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "main_menu_background_tactical_map.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/main_menu_background_tactical_map.png",
+      "size": [
+        1672,
+        941
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "mode_card_art_operation.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_art_operation.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "mode_card_art_quick_custom.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_art_quick_custom.png",
+      "size": [
+        916,
+        1717
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "mode_card_art_saga.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_art_saga.png",
+      "size": [
+        948,
+        1659
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "mode_card_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_frame.png",
+      "size": [
+        1024,
+        1536
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "mode_card_header_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_header_icon_set.png",
+      "size": [
+        1915,
+        821
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "operation_warning_icon_meter_combo.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/operation_warning_icon_meter_combo.png",
+      "size": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "operation_warning_row_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/operation_warning_row_frame.png",
+      "size": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "profile_block_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/profile_block_frame.png",
+      "size": [
+        1441,
+        1092
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "resource_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/resource_icon_set.png",
+      "size": [
+        2172,
+        724
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "screen_shell_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/screen_shell_frame.png",
+      "size": [
+        1672,
+        941
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "settings_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/settings_button_frame.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "settings_gear_icon.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/settings_gear_icon.png",
+      "size": [
+        1254,
+        1254
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "side_route_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/side_route_button_frame.png",
+      "size": [
+        1842,
+        854
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": ""
+    },
+    {
+      "name": "top_resource_bar_frame_full.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/top_resource_bar_frame_full.png",
+      "size": [
+        1788,
+        880
+      ],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque_preview",
+      "note": "Latest wider header candidate only; older header attempts are excluded."
+    }
+  ]
+}

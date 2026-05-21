@@ -1,0 +1,393 @@
+{
+  "packageId": "M01_StepByStepGameplayMockups",
+  "date": "2026-05-14",
+  "owner": "PM draft, pending Designer authority",
+  "status": "draft_reference_not_design_approved",
+  "approvalGate": {
+    "designerSourceOfTruth": "Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md",
+    "artMockupOutput": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/",
+    "artReport": "Design/AgentReports/2026-05-14_art-atlas_m01-step-by-step-gameplay-mockups.md",
+    "requiresUserApprovalBeforeGameplay": true,
+    "requiresUserApprovalBeforeProjectImport": true,
+    "blockedLanesUntilApproval": [
+      "Gameplay",
+      "QA/HCI"
+    ]
+  },
+  "mission": {
+    "missionId": "saga.ch01.m01.first_contact",
+    "scenarioSetupId": "scenario.ch01.m01.first_contact",
+    "levelId": "level.ch01.district_edge_01",
+    "isoMapId": "iso.ch01.district_edge_01",
+    "title": "First Contact",
+    "archetype": "Patrol Intercept",
+    "primaryObjective": "Destroy hostile patrol",
+    "failureGuard": "unit.player.rifle_squad_01 must survive",
+    "buildAvailability": "disabled",
+    "buildDisabledReason": "MissionDoesNotAllowBuild"
+  },
+  "runtimeLocks": {
+    "camera": "true_orthographic_isometric",
+    "productionPlane": "XZ",
+    "tacticalMapMustNotBake": [
+      "units",
+      "markers",
+      "objectivePulses",
+      "minimapViewport",
+      "HUD",
+      "tutorialUI"
+    ],
+    "feedbackBridge": "BattleHudGameplayBridge",
+    "allowedCommands": [
+      "Select",
+      "Move",
+      "Attack",
+      "Stop",
+      "Hold"
+    ],
+    "ariaCommandRule": "Show Me and Do It use typed command intents, never raw coordinates."
+  },
+  "anchors": {
+    "player_spawn.command_squad": [0.22, 0.52],
+    "camera.default_start": [0.28, 0.52],
+    "tutorial.move_target.cover_01": [0.42, 0.54],
+    "enemy_spawn.patrol_start": [0.78, 0.54],
+    "route.enemy_patrol_01.a": [0.78, 0.54],
+    "route.enemy_patrol_01.b": [0.68, 0.53],
+    "route.enemy_patrol_01.c": [0.58, 0.52],
+    "objective.destroy_patrol_group": [0.64, 0.53],
+    "threat.patrol_warning_01": [0.70, 0.53],
+    "minimap.viewport_start": [0.28, 0.52]
+  },
+  "entities": {
+    "playerSquad": "unit.player.rifle_squad_01",
+    "enemyPatrol": "unit.enemy.patrol_01"
+  },
+  "canonicalReasonCodes": [
+    "NoSelection",
+    "TargetOutOfBounds",
+    "TargetBlocked",
+    "TargetUnreachable",
+    "TargetNotEnemy",
+    "TargetNotAttackable",
+    "CommandUnavailable",
+    "MissionDoesNotAllowBuild",
+    "CameraJumpUnavailable"
+  ],
+  "rejectedReasonCodeAliases": [
+    "InvalidTarget",
+    "BlockedRoute",
+    "OutOfRange",
+    "BuildModeUnavailable"
+  ],
+  "frames": [
+    {
+      "id": "M01-00",
+      "name": "Strategic Briefing And Deploy",
+      "requiredCaptures": [
+        "M01-00_StrategicBriefing_1920x1080.png",
+        "M01-00_StrategicBriefing_2400x1080.png"
+      ],
+      "playerAction": "Open M01 from strategic flow and press Deploy.",
+      "expectedState": [
+        "Shows preview.ch01.first_contact.",
+        "Shows title First Contact.",
+        "Shows objective Destroy hostile patrol.",
+        "Deploy control is available."
+      ],
+      "tutorialIds": [
+        "ftue.m01.welcome",
+        "ftue.m01.deploy"
+      ],
+      "rejectIf": [
+        "Combat starts without mission context.",
+        "Strategic preview is replaced by tactical combat map.",
+        "Primary objective is missing."
+      ]
+    },
+    {
+      "id": "M01-01",
+      "name": "Tactical Match Start",
+      "requiredCaptures": [
+        "M01-01_TacticalStart_1920x1080.png",
+        "M01-01_TacticalStart_2400x1080.png"
+      ],
+      "playerAction": "None after deploy completes.",
+      "expectedState": [
+        "Camera starts near camera.default_start.",
+        "unit.player.rifle_squad_01 starts at player_spawn.command_squad.",
+        "unit.enemy.patrol_01 starts near enemy_spawn.patrol_start.",
+        "Objective panel lists Destroy hostile patrol.",
+        "No unit is selected."
+      ],
+      "bridgeCalls": [
+        "ClearSelection",
+        "ClearCommandMode",
+        "SetWorldMarkersVisible(false)"
+      ],
+      "tutorialIds": [
+        "ftue.m01.objectives"
+      ],
+      "rejectIf": [
+        "A unit starts selected.",
+        "Move or attack markers are visible.",
+        "Minimap viewport differs from camera start."
+      ]
+    },
+    {
+      "id": "M01-02",
+      "name": "Squad Selected",
+      "requiredCaptures": [
+        "M01-02_SquadSelected_1920x1080.png",
+        "M01-02_SquadSelected_2400x1080.png"
+      ],
+      "playerAction": "Tap or click unit.player.rifle_squad_01.",
+      "expectedState": [
+        "Selection ring uses marker.selection.ring.",
+        "Selected squad panel is visible.",
+        "Command controls are enabled.",
+        "No command mode banner is active."
+      ],
+      "bridgeCalls": [
+        "ApplySelection(unit.player.rifle_squad_01)"
+      ],
+      "tutorialIds": [
+        "ftue.m01.select_squad"
+      ],
+      "rejectIf": [
+        "Selection is a yellow square.",
+        "Selection detaches from the ground plane.",
+        "Selecting the squad also issues a move."
+      ]
+    },
+    {
+      "id": "M01-03",
+      "name": "Move Preview",
+      "requiredCaptures": [
+        "M01-03_MovePreview_1920x1080.png",
+        "M01-03_MovePreview_2400x1080.png"
+      ],
+      "playerAction": "Choose MOVE and aim at tutorial.move_target.cover_01.",
+      "expectedState": [
+        "Command banner says Move.",
+        "Destination marker uses marker.move.destination.",
+        "Projected path follows the isometric ground plane.",
+        "Current order is preview-only until commit."
+      ],
+      "bridgeCalls": [
+        "ApplyCommandMode(Move)"
+      ],
+      "tutorialIds": [
+        "ftue.m01.move"
+      ],
+      "rejectIf": [
+        "Move target is a giant green marker.",
+        "Path floats above the ground.",
+        "Squad deselects."
+      ]
+    },
+    {
+      "id": "M01-04",
+      "name": "Move Commit And Arrival",
+      "requiredCaptures": [
+        "M01-04A_MoveCommit_1920x1080.png",
+        "M01-04B_MoveInProgress_1920x1080.png",
+        "M01-04C_MoveArrived_1920x1080.png",
+        "M01-04A_MoveCommit_2400x1080.png",
+        "M01-04B_MoveInProgress_2400x1080.png",
+        "M01-04C_MoveArrived_2400x1080.png"
+      ],
+      "playerAction": "Confirm the move destination.",
+      "expectedState": [
+        "Accepted command pulse appears at the target.",
+        "Squad runs from spawn toward tutorial.move_target.cover_01.",
+        "Arrival returns squad to idle at the destination.",
+        "Selection persists.",
+        "Objective state is unchanged."
+      ],
+      "bridgeCalls": [
+        "ApplyCommandResult(Move, accepted)",
+        "ClearCommandMode"
+      ],
+      "rejectIf": [
+        "Movement teleports with no readable transition.",
+        "Unit scale changes while moving.",
+        "Path feedback remains stuck after arrival."
+      ]
+    },
+    {
+      "id": "M01-05",
+      "name": "Attack Preview",
+      "requiredCaptures": [
+        "M01-05_AttackPreview_1920x1080.png",
+        "M01-05_AttackPreview_2400x1080.png"
+      ],
+      "playerAction": "Choose ATTACK and target unit.enemy.patrol_01.",
+      "expectedState": [
+        "Command banner says Attack.",
+        "Enemy patrol receives restrained hostile target highlight.",
+        "Attack marker uses marker.attack.target.",
+        "Objective focus aligns with objective.destroy_patrol_group."
+      ],
+      "bridgeCalls": [
+        "ApplyCommandMode(Attack)"
+      ],
+      "tutorialIds": [
+        "ftue.m01.attack"
+      ],
+      "rejectIf": [
+        "Enemy becomes an unreadable red blob.",
+        "Target feedback covers the unit.",
+        "Attack mode targets non-enemy ground without rejection."
+      ]
+    },
+    {
+      "id": "M01-06",
+      "name": "Attack Commit And Combat",
+      "requiredCaptures": [
+        "M01-06A_AttackCommit_1920x1080.png",
+        "M01-06B_CombatExchange_1920x1080.png",
+        "M01-06C_PatrolDestroyed_1920x1080.png",
+        "M01-06A_AttackCommit_2400x1080.png",
+        "M01-06B_CombatExchange_2400x1080.png",
+        "M01-06C_PatrolDestroyed_2400x1080.png"
+      ],
+      "playerAction": "Confirm the attack target.",
+      "expectedState": [
+        "Accepted attack command starts combat.",
+        "Friendly squad uses aim and fire states.",
+        "Enemy patrol remains visible and alive during exchange.",
+        "Objective completes only after patrol defeat.",
+        "Player squad survives."
+      ],
+      "bridgeCalls": [
+        "ApplyCommandResult(Attack, accepted)",
+        "ClearCommandMode"
+      ],
+      "rejectIf": [
+        "Destroyed atlas state is used for an alive enemy.",
+        "Enemy disappears without combat readability.",
+        "Objective completes before defeat.",
+        "Victory is possible with command squad dead."
+      ]
+    },
+    {
+      "id": "M01-07",
+      "name": "Invalid Command Recovery",
+      "requiredCaptures": [
+        "M01-07_InvalidCommandRecovery_1920x1080.png",
+        "M01-07_InvalidCommandRecovery_2400x1080.png"
+      ],
+      "playerAction": "Attempt one invalid command after selection.",
+      "expectedState": [
+        "Selected squad remains selected.",
+        "Command is rejected with one canonical reason code.",
+        "Invalid feedback is brief.",
+        "No movement or attack is issued."
+      ],
+      "bridgeCalls": [
+        "ApplyCommandResult(<Command>, rejected, <CanonicalReasonCode>)"
+      ],
+      "rejectIf": [
+        "Rejected reason code alias appears.",
+        "Selection is lost.",
+        "Invalid feedback becomes persistent world marker."
+      ]
+    },
+    {
+      "id": "M01-08",
+      "name": "Objective And Minimap Focus",
+      "requiredCaptures": [
+        "M01-08A_ObjectiveFocus_1920x1080.png",
+        "M01-08B_MinimapFocus_1920x1080.png",
+        "M01-08A_ObjectiveFocus_2400x1080.png",
+        "M01-08B_MinimapFocus_2400x1080.png"
+      ],
+      "playerAction": "Tap the objective row, then tap the minimap inside bounds.",
+      "expectedState": [
+        "Objective tap focuses objective.destroy_patrol_group.",
+        "Objective row shows focus.",
+        "World objective marker pulses on the ground plane.",
+        "Minimap tap moves camera within bounds.",
+        "Viewport rectangle updates."
+      ],
+      "rejectIf": [
+        "Objective focus uses raw coordinates.",
+        "Camera jumps outside bounds.",
+        "Minimap viewport rectangle does not update."
+      ]
+    },
+    {
+      "id": "M01-09",
+      "name": "ARIA Open And Show Me",
+      "requiredCaptures": [
+        "M01-09A_AssistantOpen_1920x1080.png",
+        "M01-09B_AssistantShowMe_1920x1080.png",
+        "M01-09A_AssistantOpen_2400x1080.png",
+        "M01-09B_AssistantShowMe_2400x1080.png"
+      ],
+      "playerAction": "Open ARIA and press Show Me for the current FTUE step.",
+      "expectedState": [
+        "ARIA panel does not hide selected unit, objective panel, command controls, or critical markers.",
+        "Show Me highlights the typed target for the current FTUE step.",
+        "Show Me does not issue the final command."
+      ],
+      "rejectIf": [
+        "ARIA clicks raw coordinates.",
+        "ARIA blocks objective or selected panel.",
+        "Show Me performs Do It behavior."
+      ]
+    },
+    {
+      "id": "M01-10",
+      "name": "ARIA Do It And Stop Recovery",
+      "requiredCaptures": [
+        "M01-10A_AssistantDoIt_1920x1080.png",
+        "M01-10B_StopRecovery_1920x1080.png",
+        "M01-10A_AssistantDoIt_2400x1080.png",
+        "M01-10B_StopRecovery_2400x1080.png"
+      ],
+      "playerAction": "Press ARIA Do It for the active FTUE command, then issue Stop.",
+      "expectedState": [
+        "Do It issues the same typed command intent a player could issue.",
+        "Stop cancels the current order.",
+        "Command mode clears.",
+        "Path and target preview markers clear.",
+        "Selection remains stable."
+      ],
+      "rejectIf": [
+        "Do It bypasses command validation.",
+        "Stop deselects the squad.",
+        "Stale move or attack markers remain on screen."
+      ]
+    },
+    {
+      "id": "M01-11",
+      "name": "Objective Complete And Result",
+      "requiredCaptures": [
+        "M01-11A_ObjectiveComplete_1920x1080.png",
+        "M01-11B_ResultPopup_1920x1080.png",
+        "M01-11A_ObjectiveComplete_2400x1080.png",
+        "M01-11B_ResultPopup_2400x1080.png"
+      ],
+      "playerAction": "Finish destroying the enemy patrol.",
+      "expectedState": [
+        "Objective row receives a complete tick.",
+        "Player squad is alive.",
+        "Result popup POP-05_MissionResult appears with M01 success."
+      ],
+      "tutorialIds": [
+        "ftue.m01.complete"
+      ],
+      "rejectIf": [
+        "Result appears before objective completion.",
+        "Popup uses a non-M01 result surface.",
+        "Victory is possible with command squad dead."
+      ]
+    }
+  ],
+  "requiredContactSheets": [
+    "M01_StepByStepGameplay_ContactSheet_1920x1080.png",
+    "M01_StepByStepGameplay_ContactSheet_2400x1080.png"
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "warlinecapture.visualLock.m01TargetMatchBackgroundPlate.v6",
+  "package_id": "m01_target_match_v6_background_plate_correction",
+  "date": "2026-05-17",
+  "status": "review_candidate_needs_pm_user_approval",
+  "scope": "Corrected clean no-HUD/no-unit M01-01 tactical battlefield plate; v5 units/shadows/markers retained.",
+  "source_generation": {
+    "method": "built_in_imagegen",
+    "generated_images_root": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618",
+    "selected_plate_source": "ig_035d3737ed5552e2016a09f165d51081988939fa87832a8b17.png",
+    "postprocess": "workspace copy, resize to 1920x1080, POT padding to 2048x2048, contact sheet, diagnostic placement/comparison, metadata",
+    "imagegen_only_final_art": true,
+    "no_target_mockup_crops_or_composites": true
+  },
+  "camera_lock": {
+    "reference": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/CameraLock_M01_DefaultStart.json",
+    "iso_map_id": "iso.ch01.district_edge_01",
+    "reference_resolution": [
+      1920,
+      1080
+    ]
+  },
+  "assets": {
+    "imagegen_source": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV6/m01_tactical_start_clean_plate_v6_imagegen_source_1672x941.png",
+      "dimensions": [
+        1672,
+        941
+      ],
+      "sha256": "e9534b53fb2db14afe58199fc2d18d8c3acb12450f0f6f67478b82055f62997a"
+    },
+    "clean_plate_source_1920x1080": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_source_1920x1080.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "sha256": "6afeb16d94a282a6345532118cb4367ea281f85283e4b9e142fbd3081508a165",
+      "role": "preferred v6 clean background plate candidate"
+    },
+    "clean_plate_pot_2048x2048": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_pot_2048x2048.png",
+      "dimensions": [
+        2048,
+        2048
+      ],
+      "sha256": "500b5d85af03d22bcda55ba072e1771210449b0edaa88142a9436b9ee29c1719",
+      "padding_rule": "1920x1080 plate centered at x=64, y=0 without stretching"
+    },
+    "contact_sheet": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_background_v6_contact.png",
+      "dimensions": [
+        1920,
+        1080
+      ],
+      "sha256": "bc2ffb859b1c73108700807baa405fd4749b2603d8a9bf37fae46763a83af8c6"
+    }
+  },
+  "accepted_v5_assets_reused": {
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas_v5.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/enemy_patrol_animation_atlas_v5.png",
+    "shadow_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/AnimationV5/unit_shadow_animation_atlas_v5_strong.png",
+    "marker_family": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/"
+  },
+  "placement_review": {
+    "composite": "Design/AgentReports/Captures/M01_TargetMatchV6_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV6_AssetPlacementReview_vs_Target_Comparison.png",
+    "diff_heat": "Design/AgentReports/Captures/M01_TargetMatchV6_AssetPlacementReview_vs_Target_DiffHeat.png",
+    "full_frame_mse": 1066.25,
+    "world_crop_mse": 818.67,
+    "player_region_mse": 956.64,
+    "enemy_region_mse": 683.57,
+    "note": "Full-frame metric includes target HUD against a clean no-HUD plate; world/player/enemy crops are the meaningful background placement indicators."
+  },
+  "assessment": {
+    "player_region": "V6 aligns the lower-left road, sidewalk, low wall, ruin mass, rubble, and fire relationship closer to the target than v3; still not pixel-identical because the clean plate is newly generated rather than a target crop.",
+    "enemy_region": "V6 preserves the upper-right road, crosswalk, cover wall, right building edge, crates, and streetlight relationship close enough for placement review; enemy unit overlays sit on the intended ground plane.",
+    "remaining": "Needs PM/user art approval. If approved, Gameplay can bind this v6 plate with the already accepted v5 units/shadows/markers/animations."
+  },
+  "gameplay_binding_checklist": {
+    "bind_plate_source": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_source_1920x1080.png",
+    "bind_plate_pot_optional": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_pot_2048x2048.png",
+    "bind_units_and_shadows_from": "soldier_animation_v5 and target_match_v5 manifest entries",
+    "do_not_import": "target mockups, target crops, comparison panels, diff heatmaps, or diagnostic composites as runtime art"
+  }
+}

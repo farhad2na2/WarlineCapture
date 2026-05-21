@@ -1,0 +1,178 @@
+{
+  "schema": "warlinecapture.ui.oneGoLayerPack.v1",
+  "status": "RouteReadyLayerPackGenerated",
+  "screen": "Screen_SagaMap",
+  "prefab": "Assets/Game/Prefabs/UI/Screens/Screen_SagaMap.prefab",
+  "referenceResolution": {
+    "width": 1672,
+    "height": 941
+  },
+  "source": {
+    "reference": "Design/VisualLockLayered/SCN-05_SagaMap/reference/SCN-05_SagaMap_Landscape_Target.png",
+    "atlas": "Design/VisualLockLayered/SCN-05_SagaMap/generated_one_go/source/generated_layer_atlas_alpha.png",
+    "reviewSheet": "Design/VisualLockLayered/SCN-05_SagaMap/generated_one_go/layers_contact_sheet.png",
+    "layersRoot": "Design/VisualLockLayered/SCN-05_SagaMap/layers"
+  },
+  "unity": {
+    "proposedAssetRoot": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo",
+    "importDefaults": {
+      "textureType": "Sprite",
+      "spriteMode": "Single",
+      "meshType": "FullRect",
+      "alphaIsTransparency": true,
+      "mipMaps": false,
+      "sRGB": true,
+      "compression": "None",
+      "filterMode": "Bilinear"
+    }
+  },
+  "rules": [
+    "TMP text remains live text; chapter names, node labels, star counts, and locked labels are not baked into sprites.",
+    "Map content art must not include route lines, mission nodes, or UI text.",
+    "Mission node state frames are separate from lock/star/portrait icons.",
+    "Mission data binds from ChapterConfig, SagaMissionNodeConfig, MissionConfig, ScenarioSetup, and SagaProgress."
+  ],
+  "layers": [
+    {
+      "id": "screen_shell_frame",
+      "file": "layers/screen_shell_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Frames/screen_shell_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          32,
+          32,
+          32,
+          32
+        ]
+      }
+    },
+    {
+      "id": "map_viewport_art",
+      "file": "layers/map_viewport_art.png",
+      "role": "content image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Content/map_viewport_art.png",
+      "sprite": {
+        "imageType": "Simple"
+      }
+    },
+    {
+      "id": "dropdown_frame",
+      "file": "layers/dropdown_frame.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Controls/dropdown_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          20,
+          16,
+          20,
+          16
+        ]
+      }
+    },
+    {
+      "id": "star_counter_frame",
+      "file": "layers/star_counter_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Frames/star_counter_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          22,
+          16,
+          22,
+          16
+        ]
+      }
+    },
+    {
+      "id": "chapter_rewards_button",
+      "file": "layers/chapter_rewards_button.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Buttons/chapter_rewards_button.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          18,
+          24,
+          18
+        ]
+      }
+    },
+    {
+      "id": "route_line_segment",
+      "file": "layers/route_line_segment.png",
+      "role": "decorative rail",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Markers/route_line_segment.png",
+      "sprite": {
+        "imageType": "Simple"
+      }
+    },
+    {
+      "id": "mission_node_selected_frame",
+      "file": "layers/mission_node_selected_frame.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Nodes/mission_node_selected_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          18,
+          18,
+          18
+        ]
+      }
+    },
+    {
+      "id": "mission_node_locked_frame",
+      "file": "layers/mission_node_locked_frame.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Nodes/mission_node_locked_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          18,
+          18,
+          18
+        ]
+      }
+    },
+    {
+      "id": "mission_node_completed_frame",
+      "file": "layers/mission_node_completed_frame.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Nodes/mission_node_completed_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          18,
+          18,
+          18,
+          18
+        ]
+      }
+    },
+    {
+      "id": "icon_lock",
+      "file": "layers/icon_lock.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Icons/icon_lock.png",
+      "sprite": {
+        "imageType": "Simple"
+      }
+    },
+    {
+      "id": "icon_star",
+      "file": "layers/icon_star.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/SagaMap/LayeredOneGo/Icons/icon_star.png",
+      "sprite": {
+        "imageType": "Simple"
+      }
+    }
+  ]
+}

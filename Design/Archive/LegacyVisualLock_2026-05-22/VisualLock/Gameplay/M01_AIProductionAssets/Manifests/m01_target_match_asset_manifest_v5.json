@@ -1,0 +1,600 @@
+{
+  "schema": "warlinecapture.visualLock.m01TargetMatchAssetPackage.v5",
+  "package_id": "m01_gameplay_target_match_assets_v5_readability_shadow_candidate",
+  "date": "2026-05-17",
+  "status": "review_candidate_improved_readability_not_target_perfect",
+  "scope": "M01-01/M01-02 tactical gameplay asset binding candidate focused on unit readability and visible contact shadows",
+  "source_generation": {
+    "method": "built_in_imagegen",
+    "generated_images_root": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618",
+    "selected_player_readable_units": "ig_061caec3064fc95a016a09de5103388198a7d22ba3747b514f.png",
+    "selected_enemy_readable_units": "ig_061caec3064fc95a016a09debf179c819898dbe97f1f81e0be.png",
+    "selected_separate_shadows": "ig_061caec3064fc95a016a09df3434b4819883a37a0701ecea4e.png",
+    "plate": "retains v3 plate because v4 plate compared worse; no target mockup crop used as runtime plate",
+    "postprocess": "chroma-key alpha removal, split/resize into 256 cells, POT/atlas packing, shadow alpha strengthening from imagegen shadow source, contact sheet, diagnostic placement comparison",
+    "final_visual_rule": "All replacement visual art is imagegen-sourced. Deterministic tools were used only for cleanup, splitting, packing, metadata, diagnostics, and validation."
+  },
+  "camera_lock": {
+    "reference": "Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/CameraLock_M01_DefaultStart.json",
+    "iso_map_id": "iso.ch01.district_edge_01",
+    "clean_plate": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_source_1920x1080.png",
+    "clean_plate_pot": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_pot_2048x2048.png",
+    "crop_scale_rule": "Use the v3 1920x1080 source as the M01-01 no-HUD/no-unit review plate; use the 2048x2048 POT file only for texture-import convenience without stretching."
+  },
+  "assets": {
+    "sources": {
+      "player_rifle_squad_idle_facings_v5_chromakey": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV5/player_rifle_squad_idle_facings_v5_chromakey.png",
+        "dimensions": [
+          1983,
+          793
+        ],
+        "sha256": "33f9ae61ab21aed2ff27ea2e84495e95b05e0ef8fdf0033a2ad412ed8c136f49"
+      },
+      "player_rifle_squad_idle_facings_v5_alpha": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV5/player_rifle_squad_idle_facings_v5_alpha.png",
+        "dimensions": [
+          1983,
+          793
+        ],
+        "sha256": "6055309155cd7e9daf83f096a95422387559667f2bd34ab81fe8beb6ef40cae6"
+      },
+      "enemy_patrol_idle_facings_v5_chromakey": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV5/enemy_patrol_idle_facings_v5_chromakey.png",
+        "dimensions": [
+          1983,
+          793
+        ],
+        "sha256": "487cbe1c1248fcc0847cec5a8d5aca43e861b60551bc2bb749abc517cbc987ad"
+      },
+      "enemy_patrol_idle_facings_v5_alpha": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV5/enemy_patrol_idle_facings_v5_alpha.png",
+        "dimensions": [
+          1983,
+          793
+        ],
+        "sha256": "db3c14d6f06728538863974394670c4db1ca2f8fd11cbaf9caf00a9225aba1ef"
+      },
+      "unit_shadow_facings_v5_chromakey": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV5/unit_shadow_facings_v5_chromakey.png",
+        "dimensions": [
+          1983,
+          793
+        ],
+        "sha256": "c6d729a7dc90e84a428da7fae0b4e0f648b8d31266748e40f23f8f8571cd2f2c"
+      },
+      "unit_shadow_facings_v5_alpha": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Sources/TargetMatchV5/unit_shadow_facings_v5_alpha.png",
+        "dimensions": [
+          1983,
+          793
+        ],
+        "sha256": "b11b640b2a70dd02ac82b2508bc46055681ef296af1d64e7a85383728f3f9d56"
+      }
+    },
+    "atlases": {
+      "player_rifle_squad_idle_facings_atlas_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_idle_facings_atlas_v5.png",
+        "dimensions": [
+          1024,
+          256
+        ],
+        "sha256": "0161738ae637a8ad5263f8ea061c10e74b3c44d83fc95275d4df8f2d22ba7213"
+      },
+      "enemy_patrol_idle_facings_atlas_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_idle_facings_atlas_v5.png",
+        "dimensions": [
+          1024,
+          256
+        ],
+        "sha256": "2178ca36e3d1cc53efa1a7ed1794290f8ca7eb499f75169e238ba4c055a05ef0"
+      },
+      "unit_shadow_facings_atlas_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_shadow_facings_atlas_v5.png",
+        "dimensions": [
+          1024,
+          256
+        ],
+        "sha256": "4c6cd8eea418c9b653f8c471a0385a83d46719d8c59f6c5780e8ad46c3ed15d6"
+      },
+      "unit_shadow_facings_atlas_v5_strong": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_shadow_facings_atlas_v5_strong.png",
+        "dimensions": [
+          1024,
+          256
+        ],
+        "sha256": "7c21bcf787d221c9912fb3abf2360f1a14ac90b82cbbc2b63c9700af4db384af",
+        "role": "preferred readability candidate"
+      }
+    },
+    "markers": {
+      "selection_ring_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/selection_ring_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "d216e489126432a7568dced4d50c2b9c7bd4107f935258c56f7869d9edfa0825"
+      },
+      "selected_squad_status_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/selected_squad_status_v5.png",
+        "dimensions": [
+          256,
+          128
+        ],
+        "sha256": "eb800f2c5bf4f6a1c49132d5379b53735c25806ce4bb13c15cd0c83bee39a4c0"
+      },
+      "enemy_readability_ring_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/enemy_readability_ring_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "sha256": "d0fa747093f3df9b999741062fa0479e31e772eb79894f7682df2adf1282741a"
+      },
+      "enemy_health_bar_v5": {
+        "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/enemy_health_bar_v5.png",
+        "dimensions": [
+          256,
+          96
+        ],
+        "sha256": "258df43d2a66417d945f54e5e7efa9c68dbb88ab02039b648d4edf0e9c3a5cf0"
+      }
+    },
+    "contact_sheet": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_assets_v5_contact.png",
+      "dimensions": [
+        720,
+        872
+      ],
+      "sha256": "c31ba95b130a387da9243ecfcb86c5b1788dc693a03db1e38eafb06f7429f26a"
+    }
+  },
+  "frame_metadata": {
+    "player_rifle_squad_idle": [
+      {
+        "facing": "NE",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_ne_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      },
+      {
+        "facing": "SE",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_se_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      },
+      {
+        "facing": "SW",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_sw_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      },
+      {
+        "facing": "NW",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_nw_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      }
+    ],
+    "enemy_patrol_idle": [
+      {
+        "facing": "NE",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_ne_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      },
+      {
+        "facing": "SE",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_se_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      },
+      {
+        "facing": "SW",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_sw_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      },
+      {
+        "facing": "NW",
+        "state": "idle",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_nw_idle_v5.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "unity_pixels_per_unit_recommendation": 256,
+        "z_order": "unit_body_above_shadow_below_markers"
+      }
+    ],
+    "unit_contact_shadows_strong": [
+      {
+        "facing": "NE",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_ne_shadow_v5_strong.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          0,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "alpha_rule": "strong readability candidate; tune opacity downward in runtime if PM asks for closer target-pixel match",
+        "z_order": "below_unit_body_above_ground_plate"
+      },
+      {
+        "facing": "SE",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_se_shadow_v5_strong.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          256,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "alpha_rule": "strong readability candidate; tune opacity downward in runtime if PM asks for closer target-pixel match",
+        "z_order": "below_unit_body_above_ground_plate"
+      },
+      {
+        "facing": "SW",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_sw_shadow_v5_strong.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          512,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "alpha_rule": "strong readability candidate; tune opacity downward in runtime if PM asks for closer target-pixel match",
+        "z_order": "below_unit_body_above_ground_plate"
+      },
+      {
+        "facing": "NW",
+        "file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_nw_shadow_v5_strong.png",
+        "dimensions": [
+          256,
+          256
+        ],
+        "atlas_rect": [
+          768,
+          0,
+          256,
+          256
+        ],
+        "pivot": [
+          128,
+          210
+        ],
+        "foot_anchor_px": [
+          128,
+          210
+        ],
+        "alpha_rule": "strong readability candidate; tune opacity downward in runtime if PM asks for closer target-pixel match",
+        "z_order": "below_unit_body_above_ground_plate"
+      }
+    ],
+    "formation_anchors_px_m01_01": {
+      "player_squad": [
+        [
+          444,
+          662
+        ],
+        [
+          512,
+          626
+        ],
+        [
+          584,
+          657
+        ],
+        [
+          516,
+          720
+        ]
+      ],
+      "enemy_patrol": [
+        [
+          1396,
+          351
+        ],
+        [
+          1478,
+          326
+        ],
+        [
+          1544,
+          361
+        ],
+        [
+          1479,
+          401
+        ]
+      ]
+    },
+    "marker_anchors_px_m01_01": {
+      "enemy1": {
+        "foot_anchor": [
+          1396,
+          351
+        ],
+        "ring_rect": [
+          1365,
+          336,
+          62,
+          31
+        ],
+        "health_bar_rect": [
+          1360,
+          286,
+          72,
+          12
+        ]
+      },
+      "enemy2": {
+        "foot_anchor": [
+          1478,
+          326
+        ],
+        "ring_rect": [
+          1447,
+          310,
+          62,
+          31
+        ],
+        "health_bar_rect": [
+          1442,
+          263,
+          72,
+          12
+        ]
+      },
+      "enemy3": {
+        "foot_anchor": [
+          1544,
+          361
+        ],
+        "ring_rect": [
+          1513,
+          346,
+          62,
+          31
+        ],
+        "health_bar_rect": [
+          1508,
+          297,
+          72,
+          12
+        ]
+      },
+      "enemy4": {
+        "foot_anchor": [
+          1479,
+          401
+        ],
+        "ring_rect": [
+          1448,
+          386,
+          62,
+          31
+        ],
+        "health_bar_rect": [
+          1443,
+          337,
+          72,
+          12
+        ]
+      }
+    }
+  },
+  "placement_review": {
+    "composite": "Design/AgentReports/Captures/M01_TargetMatchV5StrongShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV5StrongShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "diff_heat": "Design/AgentReports/Captures/M01_TargetMatchV5StrongShadow_AssetPlacementReview_vs_Target_DiffHeat.png",
+    "full_frame_mse": 910.63,
+    "world_crop_mse": 671.18,
+    "player_region_mse": 923.64,
+    "enemy_region_mse": 856.81,
+    "note": "Strong-shadow candidate intentionally favors readability over pure MSE; optimized hybrid v5 scored lower MSE but shadows were less visible."
+  },
+  "gameplay_binding_checklist": {
+    "import_review_files": [
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_source_1920x1080.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_idle_facings_atlas_v5.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_idle_facings_atlas_v5.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_shadow_facings_atlas_v5_strong.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/enemy_readability_ring_v5.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/enemy_health_bar_v5.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/selection_ring_v5.png",
+      "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/selected_squad_status_v5.png"
+    ],
+    "do_not_import": "Diagnostic target crops, comparison panels, diff heatmaps, and any pasted/cropped target mockup pixels are not runtime art.",
+    "runtime_destination_recommendation": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/",
+    "requires_pm_art_approval_before_gameplay_binding": true
+  },
+  "assessment": {
+    "improved": "Unit readability and visible/tunable shadows improved versus v3/v4 packages.",
+    "tradeoff": "Numeric MSE is slightly worse because stronger visible shadows and brighter readable units differ from the target pixels; visually the readability issue is improved.",
+    "remaining": "Still not target-perfect because the retained v3 plate composition remains the dominant mismatch and unit style is still only a candidate, not approved target art.",
+    "handoff_status": "PM/user art approval needed before routing Gameplay to bind this candidate."
+  }
+}

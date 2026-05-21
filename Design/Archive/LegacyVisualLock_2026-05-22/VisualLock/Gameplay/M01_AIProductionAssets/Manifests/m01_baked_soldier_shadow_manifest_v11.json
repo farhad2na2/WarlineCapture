@@ -1,0 +1,4717 @@
+{
+  "schema": "warlinecapture.visualLock.m01BakedSoldierShadowPackage.v11",
+  "package_id": "m01_v11_readable_baked_body_shadow_straight_right",
+  "date": "2026-05-17",
+  "status": "review_candidate_needs_pm_user_approval",
+  "scope": "Moderated readability correction after user reported V9 soldiers were hard to see and V10 review overshot brightness/scale.",
+  "source_generation": {
+    "method": "accepted built-in-imagegen TargetMatchV5 and soldier_animation_v5 body sources plus built-in-imagegen V9 straight-right white-background shadow source",
+    "postprocess": "anchored 1.10 body scale inside 256px cells, moderate value/contrast lift, subtle edge separation, straight-right baked shadow compositing, atlas packing, placement proof and validation",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "note": "Target mockup used only for visual comparison/metrics, not as a source crop."
+  },
+  "correction_from_v9_v10": {
+    "v9_problem": "soldiers too small/dark against map",
+    "v10_problem": "readability improved but brightness/scale overshot target mockup",
+    "v11_fix": "88px proof body height with restrained value/edge lift"
+  },
+  "binding_mode": {
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false
+  },
+  "static_facing_assets": {
+    "player": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v11.png",
+      "dimensions": [
+        1024,
+        256
+      ],
+      "sha256": "29c7cf46e564cdeb62f8ad69eb9aca23c55418d0eb262f600e51cff437ef40c9",
+      "cell_size": [
+        256,
+        256
+      ],
+      "facings": [
+        "NE",
+        "SE",
+        "SW",
+        "NW"
+      ]
+    },
+    "enemy": {
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v11.png",
+      "dimensions": [
+        1024,
+        256
+      ],
+      "sha256": "965ae93ec3822c330b97e204446c1aaaaf4a0c9dc5646a5b5f371efdf2d11276",
+      "cell_size": [
+        256,
+        256
+      ],
+      "facings": [
+        "NE",
+        "SE",
+        "SW",
+        "NW"
+      ]
+    }
+  },
+  "animation_assets": {
+    "player_rifle_squad": {
+      "review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v11.png",
+      "dimensions": [
+        4096,
+        1792
+      ],
+      "sha256": "19c22a8cd6f153384e124c6e3559e77b8fc534b42152f15dfb21623e374d87fa",
+      "cell_size": [
+        256,
+        256
+      ],
+      "atlas_columns": 16,
+      "frame_count": 112,
+      "animations": [
+        {
+          "facing": "NE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/idle/player_rifle_squad_ne_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/idle/player_rifle_squad_ne_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/idle/player_rifle_squad_ne_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/idle/player_rifle_squad_ne_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/run/player_rifle_squad_ne_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/aim/player_rifle_squad_ne_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/aim/player_rifle_squad_ne_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/aim/player_rifle_squad_ne_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/fire/player_rifle_squad_ne_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/fire/player_rifle_squad_ne_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/fire/player_rifle_squad_ne_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/fire/player_rifle_squad_ne_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/damaged/player_rifle_squad_ne_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/damaged/player_rifle_squad_ne_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/damaged/player_rifle_squad_ne_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/death/player_rifle_squad_ne_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/death/player_rifle_squad_ne_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/death/player_rifle_squad_ne_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/death/player_rifle_squad_ne_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/death/player_rifle_squad_ne_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/ne/death/player_rifle_squad_ne_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/idle/player_rifle_squad_se_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/idle/player_rifle_squad_se_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/idle/player_rifle_squad_se_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/idle/player_rifle_squad_se_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/run/player_rifle_squad_se_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/aim/player_rifle_squad_se_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/aim/player_rifle_squad_se_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/aim/player_rifle_squad_se_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/fire/player_rifle_squad_se_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/fire/player_rifle_squad_se_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/fire/player_rifle_squad_se_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/fire/player_rifle_squad_se_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/damaged/player_rifle_squad_se_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/damaged/player_rifle_squad_se_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/damaged/player_rifle_squad_se_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/death/player_rifle_squad_se_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/death/player_rifle_squad_se_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/death/player_rifle_squad_se_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/death/player_rifle_squad_se_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/death/player_rifle_squad_se_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/se/death/player_rifle_squad_se_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/idle/player_rifle_squad_sw_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/idle/player_rifle_squad_sw_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/idle/player_rifle_squad_sw_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/idle/player_rifle_squad_sw_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/run/player_rifle_squad_sw_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/aim/player_rifle_squad_sw_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/aim/player_rifle_squad_sw_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/aim/player_rifle_squad_sw_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/fire/player_rifle_squad_sw_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/fire/player_rifle_squad_sw_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/fire/player_rifle_squad_sw_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/fire/player_rifle_squad_sw_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/damaged/player_rifle_squad_sw_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/damaged/player_rifle_squad_sw_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/damaged/player_rifle_squad_sw_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/death/player_rifle_squad_sw_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/death/player_rifle_squad_sw_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/death/player_rifle_squad_sw_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/death/player_rifle_squad_sw_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/death/player_rifle_squad_sw_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/sw/death/player_rifle_squad_sw_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/idle/player_rifle_squad_nw_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/idle/player_rifle_squad_nw_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/idle/player_rifle_squad_nw_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/idle/player_rifle_squad_nw_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/run/player_rifle_squad_nw_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/aim/player_rifle_squad_nw_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/aim/player_rifle_squad_nw_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/aim/player_rifle_squad_nw_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/fire/player_rifle_squad_nw_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/fire/player_rifle_squad_nw_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/fire/player_rifle_squad_nw_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/fire/player_rifle_squad_nw_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/damaged/player_rifle_squad_nw_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/damaged/player_rifle_squad_nw_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/damaged/player_rifle_squad_nw_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/death/player_rifle_squad_nw_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/death/player_rifle_squad_nw_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/death/player_rifle_squad_nw_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/death/player_rifle_squad_nw_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/death/player_rifle_squad_nw_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/AnimationsV11/nw/death/player_rifle_squad_nw_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        }
+      ]
+    },
+    "enemy_patrol": {
+      "review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v11.png",
+      "dimensions": [
+        4096,
+        1792
+      ],
+      "sha256": "00585b7dca4e0bfc96678a633c48a391e85ea3595b9943f1b13d8bc28a24f61d",
+      "cell_size": [
+        256,
+        256
+      ],
+      "atlas_columns": 16,
+      "frame_count": 112,
+      "animations": [
+        {
+          "facing": "NE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/idle/enemy_patrol_ne_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/idle/enemy_patrol_ne_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/idle/enemy_patrol_ne_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/idle/enemy_patrol_ne_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/run/enemy_patrol_ne_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/aim/enemy_patrol_ne_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/aim/enemy_patrol_ne_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/aim/enemy_patrol_ne_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/fire/enemy_patrol_ne_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                0,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/fire/enemy_patrol_ne_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/fire/enemy_patrol_ne_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/fire/enemy_patrol_ne_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/damaged/enemy_patrol_ne_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/damaged/enemy_patrol_ne_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/damaged/enemy_patrol_ne_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/death/enemy_patrol_ne_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/death/enemy_patrol_ne_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/death/enemy_patrol_ne_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/death/enemy_patrol_ne_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/death/enemy_patrol_ne_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/ne/death/enemy_patrol_ne_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/idle/enemy_patrol_se_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/idle/enemy_patrol_se_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/idle/enemy_patrol_se_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/idle/enemy_patrol_se_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                256,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/run/enemy_patrol_se_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/aim/enemy_patrol_se_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/aim/enemy_patrol_se_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/aim/enemy_patrol_se_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/fire/enemy_patrol_se_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/fire/enemy_patrol_se_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/fire/enemy_patrol_se_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/fire/enemy_patrol_se_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/damaged/enemy_patrol_se_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                512,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/damaged/enemy_patrol_se_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/damaged/enemy_patrol_se_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SE",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/death/enemy_patrol_se_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/death/enemy_patrol_se_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/death/enemy_patrol_se_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/death/enemy_patrol_se_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/death/enemy_patrol_se_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/se/death/enemy_patrol_se_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/idle/enemy_patrol_sw_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/idle/enemy_patrol_sw_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/idle/enemy_patrol_sw_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/idle/enemy_patrol_sw_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                768,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/run/enemy_patrol_sw_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/aim/enemy_patrol_sw_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/aim/enemy_patrol_sw_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/aim/enemy_patrol_sw_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/fire/enemy_patrol_sw_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/fire/enemy_patrol_sw_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/fire/enemy_patrol_sw_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/fire/enemy_patrol_sw_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/damaged/enemy_patrol_sw_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/damaged/enemy_patrol_sw_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/damaged/enemy_patrol_sw_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "SW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/death/enemy_patrol_sw_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/death/enemy_patrol_sw_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                1024,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/death/enemy_patrol_sw_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/death/enemy_patrol_sw_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/death/enemy_patrol_sw_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/sw/death/enemy_patrol_sw_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "idle",
+          "frame_count": 4,
+          "suggested_fps": 6,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/idle/enemy_patrol_nw_idle_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/idle/enemy_patrol_nw_idle_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/idle/enemy_patrol_nw_idle_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/idle/enemy_patrol_nw_idle_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "run",
+          "frame_count": 8,
+          "suggested_fps": 10,
+          "loop": true,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_03_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_04_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_05_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 6,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_06_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 7,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/run/enemy_patrol_nw_run_07_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                1280,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "aim",
+          "frame_count": 3,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/aim/enemy_patrol_nw_aim_00_body_shadow_v11.png",
+              "atlas_rect": [
+                0,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/aim/enemy_patrol_nw_aim_01_body_shadow_v11.png",
+              "atlas_rect": [
+                256,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/aim/enemy_patrol_nw_aim_02_body_shadow_v11.png",
+              "atlas_rect": [
+                512,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "fire",
+          "frame_count": 4,
+          "suggested_fps": 10,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/fire/enemy_patrol_nw_fire_00_body_shadow_v11.png",
+              "atlas_rect": [
+                768,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/fire/enemy_patrol_nw_fire_01_body_shadow_v11.png",
+              "atlas_rect": [
+                1024,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/fire/enemy_patrol_nw_fire_02_body_shadow_v11.png",
+              "atlas_rect": [
+                1280,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/fire/enemy_patrol_nw_fire_03_body_shadow_v11.png",
+              "atlas_rect": [
+                1536,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "damaged",
+          "frame_count": 3,
+          "suggested_fps": 6,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/damaged/enemy_patrol_nw_damaged_00_body_shadow_v11.png",
+              "atlas_rect": [
+                1792,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/damaged/enemy_patrol_nw_damaged_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2048,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/damaged/enemy_patrol_nw_damaged_02_body_shadow_v11.png",
+              "atlas_rect": [
+                2304,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        },
+        {
+          "facing": "NW",
+          "state": "death",
+          "frame_count": 6,
+          "suggested_fps": 8,
+          "loop": false,
+          "frames": [
+            {
+              "frame_index": 0,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/death/enemy_patrol_nw_death_00_body_shadow_v11.png",
+              "atlas_rect": [
+                2560,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 1,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/death/enemy_patrol_nw_death_01_body_shadow_v11.png",
+              "atlas_rect": [
+                2816,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 2,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/death/enemy_patrol_nw_death_02_body_shadow_v11.png",
+              "atlas_rect": [
+                3072,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 3,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/death/enemy_patrol_nw_death_03_body_shadow_v11.png",
+              "atlas_rect": [
+                3328,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 4,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/death/enemy_patrol_nw_death_04_body_shadow_v11.png",
+              "atlas_rect": [
+                3584,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            },
+            {
+              "frame_index": 5,
+              "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/AnimationsV11/nw/death/enemy_patrol_nw_death_05_body_shadow_v11.png",
+              "atlas_rect": [
+                3840,
+                1536,
+                256,
+                256
+              ],
+              "pivot": [
+                128,
+                210
+              ],
+              "foot_anchor_px": [
+                128,
+                210
+              ]
+            }
+          ],
+          "shadow": "baked_straight_right_v11",
+          "readability": "scaled_110pct_moderate_value_edge_lift"
+        }
+      ]
+    }
+  },
+  "contact_sheet": {
+    "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v11_readable_contact.png",
+    "dimensions": [
+      1800,
+      1500
+    ],
+    "sha256": "792d8d249a1d33ada2626efbafcb5cb601c50d68957b38a143b26db01e062a06"
+  },
+  "placement_review": {
+    "composite": "Design/AgentReports/Captures/M01_TargetMatchV11ReadableBakedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV11ReadableBakedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "placement_visible_body_height_px": 88,
+    "full_frame_mse": 1077.95,
+    "world_crop_mse": 869.64,
+    "player_region_mse": 848.49,
+    "enemy_region_mse": 733.1
+  },
+  "diagnostic_crops": {
+    "target_player": "Design/AgentReports/Captures/M01_Target_PlayerShadowDirection_Diagnostic.png",
+    "v11_player": "Design/AgentReports/Captures/M01_V11Readable_PlayerShadowDirection_Diagnostic.png",
+    "target_enemy": "Design/AgentReports/Captures/M01_Target_EnemyShadowDirection_Diagnostic.png",
+    "v11_enemy": "Design/AgentReports/Captures/M01_V11Readable_EnemyShadowDirection_Diagnostic.png"
+  },
+  "binding_checklist": {
+    "bind_player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v11.png",
+    "bind_enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v11.png",
+    "bind_player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v11.png",
+    "bind_enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v11.png",
+    "do_not_bind_separate_shadow_atlas": true,
+    "do_not_bind_v7_v8_v9_or_v10_for_final_if_v11_approved": true,
+    "cell_size": [
+      256,
+      256
+    ],
+    "pivot": [
+      128,
+      210
+    ],
+    "foot_anchor_px": [
+      128,
+      210
+    ],
+    "recommended_runtime_visible_body_height_px_for_proof": 88,
+    "keep_plate": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_source_1920x1080.png",
+    "keep_markers": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/"
+  },
+  "assessment": {
+    "player_readability": "V11 is more visible than V9 without the over-bright V10 look.",
+    "enemy_readability": "Enemy silhouettes retain target-style dark armor with clearer red accents; shadow remains straight-right and baked.",
+    "remaining": "Needs PM/user visual approval and Gameplay runtime proof using v11 baked atlases."
+  },
+  "validation": {
+    "alpha_missing_files": [],
+    "border_alpha_files": [],
+    "expected_animation_frames_per_faction": 112,
+    "actual_animation_frames_per_faction": {
+      "player_rifle_squad": 112,
+      "enemy_patrol": 112
+    },
+    "static_facing_frames_per_faction": 4,
+    "manifest_declared_missing_files": []
+  }
+}

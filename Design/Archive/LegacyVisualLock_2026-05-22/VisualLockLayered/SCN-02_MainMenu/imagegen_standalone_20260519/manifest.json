@@ -1,0 +1,450 @@
+{
+  "source": "standalone imagegen requests, one sprite per generated image; no labelled sheet extraction; no target mockup crops",
+  "generatedCache": "/Users/farhad/.codex/generated_images/019e0794-b98b-7071-8cdd-00aa26983635",
+  "assetCount": 44,
+  "assets": [
+    {
+      "name": "top_resource_bar_frame_full",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/01_top_resource_bar_frame_full.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/top_resource_bar_frame_full.png",
+      "transparent": true,
+      "size": [
+        2113,
+        259
+      ]
+    },
+    {
+      "name": "settings_button_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/02_settings_button_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/settings_button_frame.png",
+      "transparent": true,
+      "size": [
+        994,
+        1006
+      ]
+    },
+    {
+      "name": "brand_logo_panel_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/03_brand_logo_panel_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/brand_logo_panel_frame.png",
+      "transparent": true,
+      "size": [
+        1803,
+        542
+      ]
+    },
+    {
+      "name": "screen_shell_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/04_screen_shell_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/screen_shell_frame.png",
+      "transparent": true,
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "name": "deploy_command_button_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/05_deploy_command_button_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/deploy_command_button_frame.png",
+      "transparent": true,
+      "size": [
+        1923,
+        472
+      ]
+    },
+    {
+      "name": "left_nav_row_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/06_left_nav_row_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/left_nav_row_frame.png",
+      "transparent": true,
+      "size": [
+        2082,
+        348
+      ]
+    },
+    {
+      "name": "commander_profile_panel_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/07_commander_profile_panel_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/commander_profile_panel_frame.png",
+      "transparent": true,
+      "size": [
+        841,
+        1435
+      ]
+    },
+    {
+      "name": "commander_portrait_placeholder",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/08_commander_portrait_placeholder.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/commander_portrait_placeholder.png",
+      "transparent": false,
+      "size": [
+        1086,
+        1449
+      ]
+    },
+    {
+      "name": "commander_profile_portrait",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/08_commander_portrait_placeholder.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/commander_profile_portrait.png",
+      "transparent": false,
+      "size": [
+        1086,
+        1449
+      ],
+      "aliasOf": "commander_portrait_placeholder"
+    },
+    {
+      "name": "mode_card_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/09_mode_card_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_frame.png",
+      "transparent": true,
+      "size": [
+        788,
+        1435
+      ]
+    },
+    {
+      "name": "operation_warning_row_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/10_operation_warning_row_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/operation_warning_row_frame.png",
+      "transparent": true,
+      "size": [
+        1829,
+        387
+      ]
+    },
+    {
+      "name": "operation_footer_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/11_operation_footer_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/operation_footer_frame.png",
+      "transparent": true,
+      "size": [
+        1836,
+        356
+      ]
+    },
+    {
+      "name": "circular_badge_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/12_circular_badge_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/circular_badge_frame.png",
+      "transparent": true,
+      "size": [
+        1082,
+        1104
+      ]
+    },
+    {
+      "name": "main_menu_background_tactical_map",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/13_main_menu_background_tactical_map.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/main_menu_background_tactical_map.png",
+      "transparent": false,
+      "size": [
+        1672,
+        941
+      ]
+    },
+    {
+      "name": "mode_card_art_saga",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/14_mode_card_art_saga.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_art_saga.png",
+      "transparent": false,
+      "size": [
+        1003,
+        1568
+      ]
+    },
+    {
+      "name": "mode_card_art_operation",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/15_mode_card_art_operation.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_art_operation.png",
+      "transparent": false,
+      "size": [
+        1003,
+        1568
+      ]
+    },
+    {
+      "name": "mode_card_art_quick_custom",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/16_mode_card_art_quick_custom.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_art_quick_custom.png",
+      "transparent": false,
+      "size": [
+        973,
+        1617
+      ]
+    },
+    {
+      "name": "brand_logo_lockup",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/17_brand_logo_lockup.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/brand_logo_lockup.png",
+      "transparent": true,
+      "size": [
+        1884,
+        517
+      ]
+    },
+    {
+      "name": "settings_gear_icon",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/18_settings_gear_icon.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/settings_gear_icon.png",
+      "transparent": true,
+      "size": [
+        1089,
+        1078
+      ]
+    },
+    {
+      "name": "icon_credits",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/19_icon_credits.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/icon_credits.png",
+      "transparent": true,
+      "size": [
+        1159,
+        982
+      ]
+    },
+    {
+      "name": "icon_materials",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/20_icon_materials.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/icon_materials.png",
+      "transparent": true,
+      "size": [
+        987,
+        876
+      ]
+    },
+    {
+      "name": "icon_command_authority",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/21_icon_command_authority.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/icon_command_authority.png",
+      "transparent": true,
+      "size": [
+        889,
+        1139
+      ]
+    },
+    {
+      "name": "operation_warning_icon",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/22_operation_warning_icon.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/operation_warning_icon.png",
+      "transparent": true,
+      "size": [
+        1014,
+        969
+      ]
+    },
+    {
+      "name": "deploy_command_chevrons",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/23_deploy_command_chevrons.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/deploy_command_chevrons.png",
+      "transparent": true,
+      "size": [
+        1026,
+        706
+      ]
+    },
+    {
+      "name": "left_nav_icon_inbox",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/24_left_nav_icon_inbox.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/left_nav_icon_inbox.png",
+      "transparent": true,
+      "size": [
+        1129,
+        800
+      ]
+    },
+    {
+      "name": "left_nav_icon_store",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/25_left_nav_icon_store.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/left_nav_icon_store.png",
+      "transparent": true,
+      "size": [
+        1069,
+        923
+      ]
+    },
+    {
+      "name": "left_nav_icon_events",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/26_left_nav_icon_events.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/left_nav_icon_events.png",
+      "transparent": true,
+      "size": [
+        862,
+        1018
+      ]
+    },
+    {
+      "name": "left_nav_icon_ranking",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/27_left_nav_icon_ranking.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/left_nav_icon_ranking.png",
+      "transparent": true,
+      "size": [
+        887,
+        1027
+      ]
+    },
+    {
+      "name": "left_nav_icon_command_feed",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/28_left_nav_icon_command_feed.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/left_nav_icon_command_feed.png",
+      "transparent": true,
+      "size": [
+        914,
+        1027
+      ]
+    },
+    {
+      "name": "card_footer_icon_saga",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/29_card_footer_icon_saga.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/card_footer_icon_saga.png",
+      "transparent": true,
+      "size": [
+        1027,
+        850
+      ]
+    },
+    {
+      "name": "card_footer_icon_operation",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/30_card_footer_icon_operation.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/card_footer_icon_operation.png",
+      "transparent": true,
+      "size": [
+        909,
+        939
+      ]
+    },
+    {
+      "name": "mode_card_header_emblem_quick_custom",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/31_mode_card_header_emblem_quick_custom.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_header_emblem_quick_custom.png",
+      "transparent": true,
+      "size": [
+        1055,
+        1066
+      ]
+    },
+    {
+      "name": "card_footer_icon_quick_custom",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/31_mode_card_header_emblem_quick_custom.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/card_footer_icon_quick_custom.png",
+      "transparent": true,
+      "size": [
+        1055,
+        1066
+      ],
+      "aliasOf": "mode_card_header_emblem_quick_custom"
+    },
+    {
+      "name": "mode_card_header_emblem_saga",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/32_mode_card_header_emblem_saga.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_header_emblem_saga.png",
+      "transparent": true,
+      "size": [
+        740,
+        1208
+      ]
+    },
+    {
+      "name": "mode_card_header_emblem_operation",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/33_mode_card_header_emblem_operation.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_header_emblem_operation.png",
+      "transparent": true,
+      "size": [
+        1003,
+        1018
+      ]
+    },
+    {
+      "name": "mode_card_header_emblem_quick_swords",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/34_mode_card_header_emblem_quick_swords.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/mode_card_header_emblem_quick_swords.png",
+      "transparent": true,
+      "size": [
+        1089,
+        1073
+      ]
+    },
+    {
+      "name": "lock_badge_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/35_lock_badge_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/lock_badge_frame.png",
+      "transparent": true,
+      "size": [
+        894,
+        935
+      ]
+    },
+    {
+      "name": "lock_icon",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/36_lock_icon.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/lock_icon.png",
+      "transparent": true,
+      "size": [
+        689,
+        970
+      ]
+    },
+    {
+      "name": "disabled_status_pill_frame",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/37_disabled_status_pill_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/disabled_status_pill_frame.png",
+      "transparent": true,
+      "size": [
+        1357,
+        447
+      ]
+    },
+    {
+      "name": "designed_unavailable_badge",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/37_disabled_status_pill_frame.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/designed_unavailable_badge.png",
+      "transparent": true,
+      "size": [
+        1357,
+        447
+      ],
+      "aliasOf": "disabled_status_pill_frame"
+    },
+    {
+      "name": "operation_pressure_meter_segments",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/38_operation_pressure_meter_segments.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/operation_pressure_meter_segments.png",
+      "transparent": true,
+      "size": [
+        1912,
+        177
+      ]
+    },
+    {
+      "name": "operation_risk_meter_segments",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/39_operation_risk_meter_segments.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/operation_risk_meter_segments.png",
+      "transparent": true,
+      "size": [
+        1910,
+        162
+      ]
+    },
+    {
+      "name": "top_resource_separator_ticks",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/40_top_resource_separator_ticks.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/top_resource_separator_ticks.png",
+      "transparent": true,
+      "size": [
+        92,
+        1738
+      ]
+    },
+    {
+      "name": "profile_data_status_strip",
+      "raw": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/raw/41_profile_data_status_strip.png",
+      "asset": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_standalone_20260519/assets/profile_data_status_strip.png",
+      "transparent": true,
+      "size": [
+        1890,
+        283
+      ]
+    }
+  ]
+}

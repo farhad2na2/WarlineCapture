@@ -1,0 +1,422 @@
+{
+  "schema": "warlinecapture.ui.oneGoLayerPack.v1",
+  "status": "ReadyForReview_ImplementationReadyProduction_POP05",
+  "screen": "Popup_MissionResult",
+  "prefab": "Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab",
+  "referenceResolution": {
+    "width": 1672,
+    "height": 941
+  },
+  "source": {
+    "reference": "Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_Landscape_Target.png",
+    "imagegenSelectedReference": "Design/VisualLockLayered/POP-05_MissionResult/generated_one_go/source/imagegen_selected_reference.png",
+    "imagegenContactSheetSource": "Design/VisualLockLayered/POP-05_MissionResult/generated_one_go/source/imagegen_layers_contact_sheet_source.png",
+    "atlas": "Design/VisualLockLayered/POP-05_MissionResult/generated_one_go/source/generated_layer_atlas_alpha.png",
+    "reviewSheet": "Design/VisualLockLayered/POP-05_MissionResult/generated_one_go/layers_contact_sheet.png",
+    "layersRoot": "Design/VisualLockLayered/POP-05_MissionResult/layers"
+  },
+  "sourceGeneration": {
+    "method": "imagegen",
+    "replacesRejectedReport": "Design/AgentReports/2026-05-16_art-atlas_aaa-readiness-visual-lock-revisions.md",
+    "generatedImagesRoot": "/Users/farhad/.codex/generated_images/019e0857-c8b1-7813-a48e-bcd2dda90618",
+    "selectedReferenceImage": "ig_066f017118725f96016a07aa498e0081918250bef985e1ae5f.png",
+    "selectedContactSheetImage": "ig_0fcf02061a747390016a081097e92c819197b37e7ed2c4a7ee.png",
+    "deterministicFinalVisualsAllowed": false,
+    "implementationReadinessAudit": "2026-05-16 Art/Atlas audit found existing POP-05 layers are final named implementation slices and remain imagegen-sourced from the approved M01 canonical revision."
+  },
+  "unity": {
+    "proposedAssetRoot": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo"
+  },
+  "canonicalContent": {
+    "MissionId": "saga.ch01.m01.first_contact",
+    "ScenarioSetupId": "scenario.ch01.m01.first_contact",
+    "LevelId": "level.ch01.district_edge_01",
+    "IsoMapId": "iso.ch01.district_edge_01",
+    "Objective": "Destroy hostile patrol",
+    "Rewards": [
+      "CommanderXP",
+      "Credits",
+      "Materials",
+      "Intel"
+    ],
+    "CivilianDistrictConsequence": "neutral tutorial outcome; Civilian delta 0; Infrastructure delta 0"
+  },
+  "rules": [
+    "TMP text remains live; target text is review content only.",
+    "No stale mission or noncanonical reward content appears in target or manifest.",
+    "Consequence row is visible and first-class.",
+    "Replay and Continue button states are separated.",
+    "Existing POP-05 background, modal chrome, rewards, buttons, stars, consequence row, and icons are accepted as implementation-ready imagegen-derived slices.",
+    "All production layers are final named implementation slices."
+  ],
+  "layers": [
+    {
+      "id": "background_tactical_art",
+      "file": "layers/background_tactical_art.png",
+      "role": "content image",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Content/background_tactical_art.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "modal_frame",
+      "file": "layers/modal_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/modal_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "modal_fill",
+      "file": "layers/modal_fill.png",
+      "role": "fill",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/modal_fill.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "victory_emblem",
+      "file": "layers/victory_emblem.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/victory_emblem.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_star_filled",
+      "file": "layers/icon_star_filled.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_star_filled.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_star_empty",
+      "file": "layers/icon_star_empty.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_star_empty.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "stat_card_frame",
+      "file": "layers/stat_card_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/stat_card_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "reward_card_frame",
+      "file": "layers/reward_card_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/reward_card_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "consequence_row_frame",
+      "file": "layers/consequence_row_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Rows/consequence_row_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "objective_row_frame",
+      "file": "layers/objective_row_frame.png",
+      "role": "frame",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Rows/objective_row_frame.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "replay_button_background",
+      "file": "layers/replay_button_background.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Buttons/replay_button_background.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "continue_button_background",
+      "file": "layers/continue_button_background.png",
+      "role": "stateful button",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Buttons/continue_button_background.png",
+      "sprite": {
+        "imageType": "Sliced",
+        "border": [
+          24,
+          24,
+          24,
+          24
+        ]
+      },
+      "doNotBakeWithTextOrIcons": true
+    },
+    {
+      "id": "icon_enemies_defeated",
+      "file": "layers/icon_enemies_defeated.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_enemies_defeated.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_units_lost",
+      "file": "layers/icon_units_lost.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_units_lost.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_buildings_captured",
+      "file": "layers/icon_buildings_captured.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_buildings_captured.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_civilians_safe",
+      "file": "layers/icon_civilians_safe.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_civilians_safe.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_commander_xp",
+      "file": "layers/icon_commander_xp.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_commander_xp.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_credits",
+      "file": "layers/icon_credits.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_credits.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_materials",
+      "file": "layers/icon_materials.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_materials.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_intel",
+      "file": "layers/icon_intel.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_intel.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_gear_module",
+      "file": "layers/icon_gear_module.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_gear_module.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_rush_ticket",
+      "file": "layers/icon_rush_ticket.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_rush_ticket.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    },
+    {
+      "id": "icon_objective_complete",
+      "file": "layers/icon_objective_complete.png",
+      "role": "icon",
+      "unityDestination": "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_objective_complete.png",
+      "sprite": {
+        "imageType": "Simple",
+        "border": [
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      "doNotBakeWithTextOrIcons": false
+    }
+  ]
+}

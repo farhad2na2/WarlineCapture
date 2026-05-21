@@ -1,0 +1,1434 @@
+{
+  "created_at": "2026-05-19 09:46:44",
+  "note": "Second deterministic cleanup pass. Removes checkerboard/chroma colors sampled from borders across the asset, including enclosed frame holes. No Unity implementation.",
+  "items": [
+    {
+      "name": "brand_logo_lockup.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/brand_logo_lockup.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/brand_logo_lockup.png",
+      "source_size": [
+        1981,
+        794
+      ],
+      "size": [
+        1753,
+        441
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1346482,
+      "border_palette": [
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          248,
+          244,
+          244
+        ],
+        [
+          256,
+          252,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "brand_logo_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/brand_logo_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/brand_logo_panel_frame.png",
+      "source_size": [
+        1914,
+        822
+      ],
+      "size": [
+        1781,
+        524
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 836374,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          244,
+          244,
+          240
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "card_footer_icon_set.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/card_footer_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/card_footer_icon_set.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "size": [
+        1823,
+        472
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1087700,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          244,
+          248,
+          244
+        ],
+        [
+          248,
+          244,
+          244
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "command_feed_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/command_feed_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/command_feed_panel_frame.png",
+      "source_size": [
+        1721,
+        914
+      ],
+      "size": [
+        1164,
+        340
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1202716,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          248,
+          244,
+          244
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          244,
+          248,
+          244
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "commander_profile_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/commander_profile_panel_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/commander_profile_panel_frame.png",
+      "source_size": [
+        1122,
+        1402
+      ],
+      "size": [
+        955,
+        1251
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1260092,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          244,
+          240,
+          240
+        ],
+        [
+          240,
+          240,
+          240
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          252,
+          252,
+          256
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "commander_profile_portrait.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/commander_profile_portrait.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/commander_profile_portrait.png",
+      "source_size": [
+        1369,
+        1149
+      ],
+      "size": [
+        1369,
+        1149
+      ],
+      "mode": "opaque_copy",
+      "removed_pixels": 0,
+      "border_palette": [],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque"
+    },
+    {
+      "name": "deploy_command_button_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/deploy_command_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/deploy_command_button_frame.png",
+      "source_size": [
+        1935,
+        813
+      ],
+      "size": [
+        1797,
+        352
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 984520,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          248,
+          244,
+          244
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          256,
+          252,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "deploy_command_chevrons.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/deploy_command_chevrons.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/deploy_command_chevrons.png",
+      "source_size": [
+        1670,
+        941
+      ],
+      "size": [
+        828,
+        525
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1391356,
+      "border_palette": [
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          252,
+          252,
+          256
+        ],
+        [
+          252,
+          256,
+          252
+        ],
+        [
+          256,
+          256,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "designed_unavailable_badge.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/designed_unavailable_badge.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/designed_unavailable_badge.png",
+      "source_size": [
+        1804,
+        872
+      ],
+      "size": [
+        1199,
+        461
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1064910,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          244,
+          248,
+          244
+        ],
+        [
+          248,
+          244,
+          244
+        ],
+        [
+          256,
+          252,
+          256
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "full_visual_lock_preview.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/full_visual_lock_preview.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/full_visual_lock_preview.png",
+      "source_size": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "opaque_copy",
+      "removed_pixels": 0,
+      "border_palette": [],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque"
+    },
+    {
+      "name": "left_nav_icon_set.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/left_nav_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_icon_set.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "size": [
+        1974,
+        306
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1416511,
+      "border_palette": [
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          252,
+          252,
+          256
+        ],
+        [
+          252,
+          256,
+          256
+        ],
+        [
+          256,
+          256,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "left_nav_row_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/left_nav_row_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/left_nav_row_frame.png",
+      "source_size": [
+        1900,
+        828
+      ],
+      "size": [
+        1820,
+        302
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1074847,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          244,
+          244,
+          240
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          244,
+          240,
+          240
+        ],
+        [
+          248,
+          244,
+          244
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "main_menu_background_tactical_map.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/main_menu_background_tactical_map.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/main_menu_background_tactical_map.png",
+      "source_size": [
+        1672,
+        941
+      ],
+      "size": [
+        1672,
+        941
+      ],
+      "mode": "opaque_copy",
+      "removed_pixels": 0,
+      "border_palette": [],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque"
+    },
+    {
+      "name": "mode_card_art_operation.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_art_operation.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_art_operation.png",
+      "source_size": [
+        1024,
+        1536
+      ],
+      "size": [
+        1024,
+        1536
+      ],
+      "mode": "opaque_copy",
+      "removed_pixels": 0,
+      "border_palette": [],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque"
+    },
+    {
+      "name": "mode_card_art_quick_custom.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_art_quick_custom.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_art_quick_custom.png",
+      "source_size": [
+        916,
+        1717
+      ],
+      "size": [
+        916,
+        1717
+      ],
+      "mode": "opaque_copy",
+      "removed_pixels": 0,
+      "border_palette": [],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque"
+    },
+    {
+      "name": "mode_card_art_saga.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_art_saga.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_art_saga.png",
+      "source_size": [
+        948,
+        1659
+      ],
+      "size": [
+        948,
+        1659
+      ],
+      "mode": "opaque_copy",
+      "removed_pixels": 0,
+      "border_palette": [],
+      "alpha_extrema": [
+        255,
+        255
+      ],
+      "alpha_status": "opaque"
+    },
+    {
+      "name": "mode_card_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_frame.png",
+      "source_size": [
+        1024,
+        1536
+      ],
+      "size": [
+        855,
+        1434
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1285513,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          244,
+          248,
+          244
+        ],
+        [
+          248,
+          244,
+          244
+        ],
+        [
+          256,
+          252,
+          256
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "mode_card_header_icon_set.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/mode_card_header_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/mode_card_header_icon_set.png",
+      "source_size": [
+        1915,
+        821
+      ],
+      "size": [
+        1576,
+        394
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1484821,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          244,
+          248,
+          244
+        ],
+        [
+          256,
+          252,
+          256
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "operation_warning_icon_meter_combo.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/operation_warning_icon_meter_combo.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/operation_warning_icon_meter_combo.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "size": [
+        2089,
+        570
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 829165,
+      "border_palette": [
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          256,
+          256,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          252,
+          256,
+          252
+        ],
+        [
+          252,
+          256,
+          256
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "operation_warning_row_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/operation_warning_row_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/operation_warning_row_frame.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "size": [
+        2019,
+        395
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 824813,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          252,
+          256,
+          252
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          244,
+          244,
+          240
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "profile_block_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/profile_block_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/profile_block_frame.png",
+      "source_size": [
+        1441,
+        1092
+      ],
+      "size": [
+        1280,
+        943
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1488847,
+      "border_palette": [
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          252,
+          252,
+          256
+        ],
+        [
+          256,
+          256,
+          252
+        ],
+        [
+          252,
+          256,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "resource_icon_set.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/resource_icon_set.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/resource_icon_set.png",
+      "source_size": [
+        2172,
+        724
+      ],
+      "size": [
+        1770,
+        477
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1174554,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          248,
+          252,
+          248
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          252,
+          252,
+          248
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "screen_shell_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/screen_shell_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/screen_shell_frame.png",
+      "source_size": [
+        1672,
+        941
+      ],
+      "size": [
+        1670,
+        939
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1553540,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          252,
+          252,
+          256
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          252,
+          248,
+          252
+        ],
+        [
+          248,
+          248,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "settings_button_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/settings_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/settings_button_frame.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "size": [
+        798,
+        864
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 967525,
+      "border_palette": [
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          240,
+          240,
+          240
+        ],
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          244,
+          244,
+          240
+        ],
+        [
+          240,
+          244,
+          240
+        ],
+        [
+          244,
+          240,
+          240
+        ],
+        [
+          256,
+          252,
+          256
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "settings_gear_icon.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/settings_gear_icon.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/settings_gear_icon.png",
+      "source_size": [
+        1254,
+        1254
+      ],
+      "size": [
+        732,
+        808
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1265925,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          256
+        ],
+        [
+          252,
+          256,
+          252
+        ],
+        [
+          256,
+          256,
+          252
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "side_route_button_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/named_candidates/side_route_button_frame.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/side_route_button_frame.png",
+      "source_size": [
+        1842,
+        854
+      ],
+      "size": [
+        1252,
+        425
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1109886,
+      "border_palette": [
+        [
+          244,
+          244,
+          244
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          248,
+          248,
+          244
+        ],
+        [
+          248,
+          244,
+          244
+        ],
+        [
+          244,
+          248,
+          244
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    },
+    {
+      "name": "top_resource_bar_frame_full.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_raw_candidates_20260518/raw_numbered/31_opaque_ig_0478351adca99025016a0b5ed14e608198bd3729a10eaeacf1.png",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/imagegen_cleaned_20260519_v2/assets/top_resource_bar_frame_full.png",
+      "source_size": [
+        2078,
+        757
+      ],
+      "size": [
+        1988,
+        188
+      ],
+      "mode": "global_checkerboard_or_chroma_removed",
+      "removed_pixels": 1248287,
+      "border_palette": [
+        [
+          240,
+          240,
+          240
+        ],
+        [
+          256,
+          256,
+          256
+        ],
+        [
+          252,
+          252,
+          252
+        ],
+        [
+          256,
+          252,
+          256
+        ],
+        [
+          256,
+          252,
+          252
+        ],
+        [
+          248,
+          248,
+          248
+        ],
+        [
+          252,
+          252,
+          256
+        ],
+        [
+          244,
+          244,
+          244
+        ]
+      ],
+      "alpha_extrema": [
+        0,
+        255
+      ],
+      "alpha_status": "has_alpha"
+    }
+  ]
+}

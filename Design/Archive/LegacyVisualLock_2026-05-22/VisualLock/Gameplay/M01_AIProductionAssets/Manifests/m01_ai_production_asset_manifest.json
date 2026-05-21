@@ -1,0 +1,1667 @@
+{
+  "package_id": "m01_ai_production_asset_pack",
+  "date": "2026-05-09",
+  "source_lock": "Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png",
+  "strategic": {
+    "asset_id": "strategic.ch01.m01.background",
+    "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Strategic/m01_isometric_strategic_background.png",
+    "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Strategic/m01_isometric_strategic_background.png",
+    "unity_import_type": "Sprite/Texture2D strategic background",
+    "scale_anchor": "larger city-like strategic map with open urban road-grid continuity, broad reserved urban lots for refinery/fuel, tents/camp, vehicle motor pool, command/support, staging/training, and road/service lanes; no closed compound or finished gameplay buildings baked into reserved zones",
+    "prompt_source_notes": "AI-generated fictional M01 city-like strategic/base-layout background; explicitly not Tehran; regenerated after PM rejected prior closed-compound direction; open urban roads and city blocks continue through/around scene with broad reserved lots for separate runtime assets",
+    "approval_status": "approved_pm_user",
+    "review_overlay_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Strategic/m01_isometric_strategic_background_placement_overlay.png",
+    "v2_note": "Strategic map approved by PM/user and unchanged during soldier animation v2 fix."
+  },
+  "tactical_maps": [
+    {
+      "asset_id": "iso.ch01.m01.plate_a.ground",
+      "runtime_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_a_source.png",
+      "runtime_pot": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_a_pot_2048x1024.png",
+      "review_source": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_plate_a_source.png",
+      "unity_import_type": "Sprite (2D and UI), POT padded texture, source art centered without stretching",
+      "scale_anchor": "close tactical camera around 0.6 orthographic size; infantry visual anchor around 0.10 per accepted workflow",
+      "contact_shadow_rule": "ground plate only; no baked units, markers, UI, or gameplay entities",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "iso.ch01.m01.plate_b.ground",
+      "runtime_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_b_source.png",
+      "runtime_pot": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_b_pot_2048x1024.png",
+      "review_source": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_plate_b_source.png",
+      "unity_import_type": "Sprite (2D and UI), POT padded texture, source art centered without stretching",
+      "scale_anchor": "close tactical camera around 0.6 orthographic size; infantry visual anchor around 0.10 per accepted workflow",
+      "contact_shadow_rule": "ground plate only; no baked units, markers, UI, or gameplay entities",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "iso.ch01.m01.plate_c.ground",
+      "runtime_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_c_source.png",
+      "runtime_pot": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/TacticalMaps/m01_tactical_plate_c_pot_2048x1024.png",
+      "review_source": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_plate_c_source.png",
+      "unity_import_type": "Sprite (2D and UI), POT padded texture, source art centered without stretching",
+      "scale_anchor": "close tactical camera around 0.6 orthographic size; infantry visual anchor around 0.10 per accepted workflow",
+      "contact_shadow_rule": "ground plate only; no baked units, markers, UI, or gameplay entities",
+      "approval_status": "needs_pm_user_review"
+    }
+  ],
+  "markers": [
+    {
+      "asset_id": "marker.selection.ring",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/selection_ring.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/selection_ring.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "marker.move.destination",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/move_destination.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/move_destination.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "marker.attack.target",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/attack_target.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/attack_target.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "marker.enemy.readability",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/enemy_readability.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/enemy_readability.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "marker.objective.focus",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/objective_focus.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/objective_focus.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        1024,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "marker.hover.preview",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/hover_preview.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/hover_preview.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        1280,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "marker.invalid.blocked",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Markers/invalid_blocked.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/invalid_blocked.png",
+      "atlas_id": "m01_marker_atlas",
+      "atlas_rect": [
+        1536,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite, alpha transparent, point/ground overlay",
+      "scale_anchor": "marker footprint follows approved selected-readability marker targets; roughly two soldier footsteps for move/attack where applicable",
+      "contact_shadow_rule": "ground-plane FX only; no baked shadow",
+      "prompt_source_notes": "AI-generated chroma-key marker source sheet, locally keyed to transparent PNGs",
+      "approval_status": "needs_pm_user_review"
+    }
+  ],
+  "player_rifle_squad": [
+    {
+      "asset_id": "unit.player_rifle_squad.ne.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_ne_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_ne_idle.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "idle",
+      "facing": "NE",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.ne.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_ne_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_ne_run.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "run",
+      "facing": "NE",
+      "atlas_rect": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.ne.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_ne_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_ne_aim.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "aim",
+      "facing": "NE",
+      "atlas_rect": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.ne.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_ne_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_ne_fire.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "fire",
+      "facing": "NE",
+      "atlas_rect": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.ne.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_ne_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_ne_damaged.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "NE",
+      "atlas_rect": [
+        1024,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.ne.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_ne_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_ne_death.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "death",
+      "facing": "NE",
+      "atlas_rect": [
+        1280,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.se.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_se_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_se_idle.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "idle",
+      "facing": "SE",
+      "atlas_rect": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.se.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_se_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_se_run.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "run",
+      "facing": "SE",
+      "atlas_rect": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.se.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_se_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_se_aim.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "aim",
+      "facing": "SE",
+      "atlas_rect": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.se.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_se_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_se_fire.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "fire",
+      "facing": "SE",
+      "atlas_rect": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.se.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_se_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_se_damaged.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "SE",
+      "atlas_rect": [
+        1024,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.se.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_se_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_se_death.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "death",
+      "facing": "SE",
+      "atlas_rect": [
+        1280,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.sw.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_sw_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_sw_idle.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "idle",
+      "facing": "SW",
+      "atlas_rect": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.sw.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_sw_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_sw_run.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "run",
+      "facing": "SW",
+      "atlas_rect": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.sw.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_sw_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_sw_aim.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "aim",
+      "facing": "SW",
+      "atlas_rect": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.sw.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_sw_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_sw_fire.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "fire",
+      "facing": "SW",
+      "atlas_rect": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.sw.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_sw_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_sw_damaged.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "SW",
+      "atlas_rect": [
+        1024,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.sw.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_sw_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_sw_death.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "death",
+      "facing": "SW",
+      "atlas_rect": [
+        1280,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.nw.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_nw_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_nw_idle.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "idle",
+      "facing": "NW",
+      "atlas_rect": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.nw.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_nw_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_nw_run.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "run",
+      "facing": "NW",
+      "atlas_rect": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.nw.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_nw_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_nw_aim.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "aim",
+      "facing": "NW",
+      "atlas_rect": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.nw.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_nw_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_nw_fire.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "fire",
+      "facing": "NW",
+      "atlas_rect": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.nw.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_nw_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_nw_damaged.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "NW",
+      "atlas_rect": [
+        1024,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.player_rifle_squad.nw.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_nw_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/player_rifle_squad_nw_death.png",
+      "atlas_id": "player_rifle_squad_atlas",
+      "atlas_state_id": "death",
+      "facing": "NW",
+      "atlas_rect": [
+        1280,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    }
+  ],
+  "enemy_patrol": [
+    {
+      "asset_id": "unit.enemy_patrol.ne.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_ne_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_ne_idle.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "idle",
+      "facing": "NE",
+      "atlas_rect": [
+        0,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.ne.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_ne_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_ne_run.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "run",
+      "facing": "NE",
+      "atlas_rect": [
+        256,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.ne.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_ne_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_ne_aim.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "aim",
+      "facing": "NE",
+      "atlas_rect": [
+        512,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.ne.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_ne_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_ne_fire.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "fire",
+      "facing": "NE",
+      "atlas_rect": [
+        768,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.ne.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_ne_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_ne_damaged.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "NE",
+      "atlas_rect": [
+        1024,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.ne.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_ne_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_ne_death.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "death",
+      "facing": "NE",
+      "atlas_rect": [
+        1280,
+        0,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.se.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_se_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_se_idle.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "idle",
+      "facing": "SE",
+      "atlas_rect": [
+        0,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.se.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_se_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_se_run.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "run",
+      "facing": "SE",
+      "atlas_rect": [
+        256,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.se.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_se_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_se_aim.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "aim",
+      "facing": "SE",
+      "atlas_rect": [
+        512,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.se.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_se_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_se_fire.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "fire",
+      "facing": "SE",
+      "atlas_rect": [
+        768,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.se.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_se_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_se_damaged.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "SE",
+      "atlas_rect": [
+        1024,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.se.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_se_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_se_death.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "death",
+      "facing": "SE",
+      "atlas_rect": [
+        1280,
+        256,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.sw.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_sw_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_sw_idle.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "idle",
+      "facing": "SW",
+      "atlas_rect": [
+        0,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.sw.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_sw_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_sw_run.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "run",
+      "facing": "SW",
+      "atlas_rect": [
+        256,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.sw.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_sw_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_sw_aim.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "aim",
+      "facing": "SW",
+      "atlas_rect": [
+        512,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.sw.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_sw_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_sw_fire.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "fire",
+      "facing": "SW",
+      "atlas_rect": [
+        768,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.sw.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_sw_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_sw_damaged.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "SW",
+      "atlas_rect": [
+        1024,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.sw.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_sw_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_sw_death.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "death",
+      "facing": "SW",
+      "atlas_rect": [
+        1280,
+        512,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.nw.idle",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_nw_idle.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_nw_idle.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "idle",
+      "facing": "NW",
+      "atlas_rect": [
+        0,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.nw.run",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_nw_run.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_nw_run.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "run",
+      "facing": "NW",
+      "atlas_rect": [
+        256,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.nw.aim",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_nw_aim.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_nw_aim.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "aim",
+      "facing": "NW",
+      "atlas_rect": [
+        512,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.nw.fire",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_nw_fire.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_nw_fire.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "fire",
+      "facing": "NW",
+      "atlas_rect": [
+        768,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.nw.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_nw_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_nw_damaged.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "damaged",
+      "facing": "NW",
+      "atlas_rect": [
+        1024,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "unit.enemy_patrol.nw.death",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_nw_death.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/enemy_patrol_nw_death.png",
+      "atlas_id": "enemy_patrol_atlas",
+      "atlas_state_id": "death",
+      "facing": "NW",
+      "atlas_rect": [
+        1280,
+        768,
+        256,
+        256
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, ECS atlas-backed unit presentation",
+      "scale_anchor": "infantry squad visual anchor around 0.10; soldier body scale must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime ground contact/shadow handled separately; sprite has alpha only",
+      "prompt_source_notes": "AI-generated 4-facing chroma-key soldier atlas sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    }
+  ],
+  "buildings": [
+    {
+      "asset_id": "building.command_support.intact",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/command_support_intact.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/command_support_intact.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "intact",
+      "atlas_rect": [
+        0,
+        0,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "building.industrial_block.intact",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/industrial_block_intact.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/industrial_block_intact.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "intact",
+      "atlas_rect": [
+        512,
+        0,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "prop.barricade_wall.intact",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/barricade_wall_intact.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/barricade_wall_intact.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "intact",
+      "atlas_rect": [
+        1024,
+        0,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "prop.objective_relay_crate.intact",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/objective_relay_crate_intact.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/objective_relay_crate_intact.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "intact",
+      "atlas_rect": [
+        1536,
+        0,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "building.command_support.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/command_support_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/command_support_damaged.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "damaged",
+      "atlas_rect": [
+        0,
+        512,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "building.industrial_block.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/industrial_block_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/industrial_block_damaged.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "damaged",
+      "atlas_rect": [
+        512,
+        512,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "prop.barricade_wall.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/barricade_wall_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/barricade_wall_damaged.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "damaged",
+      "atlas_rect": [
+        1024,
+        512,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "prop.objective_relay_crate.damaged",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/objective_relay_crate_damaged.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/objective_relay_crate_damaged.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "damaged",
+      "atlas_rect": [
+        1536,
+        512,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "building.command_support.destroyed",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/command_support_destroyed.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/command_support_destroyed.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "destroyed",
+      "atlas_rect": [
+        0,
+        1024,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "building.industrial_block.destroyed",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/industrial_block_destroyed.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/industrial_block_destroyed.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "destroyed",
+      "atlas_rect": [
+        512,
+        1024,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "prop.barricade_wall.destroyed",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/barricade_wall_destroyed.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/barricade_wall_destroyed.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "destroyed",
+      "atlas_rect": [
+        1024,
+        1024,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    },
+    {
+      "asset_id": "prop.objective_relay_crate.destroyed",
+      "runtime_file": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Buildings/objective_relay_crate_destroyed.png",
+      "review_file": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Buildings/objective_relay_crate_destroyed.png",
+      "atlas_id": "m01_buildings_props_atlas",
+      "atlas_state_id": "destroyed",
+      "atlas_rect": [
+        1536,
+        1024,
+        512,
+        512
+      ],
+      "unity_import_type": "Sprite atlas frame, transparent alpha, building/prop entity state",
+      "scale_anchor": "door/road/building relationship must match approved VL_M01_TacticalMap_Target.png",
+      "contact_shadow_rule": "runtime contact shadow handled separately; sprite has transparent alpha only",
+      "prompt_source_notes": "AI-generated chroma-key building/prop state sheet, locally keyed/split into transparent frames",
+      "approval_status": "needs_pm_user_review"
+    }
+  ],
+  "sources": {
+    "strategic_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_strategic_background_ai_source.png",
+    "tactical_a_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_tactical_plate_a_ai_source.png",
+    "tactical_b_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_tactical_plate_b_ai_source.png",
+    "tactical_c_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_tactical_plate_c_ai_source.png",
+    "markers_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_marker_sheet_ai_chromakey_source.png",
+    "player_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_player_rifle_squad_4facing_ai_chromakey_source.png",
+    "enemy_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_enemy_patrol_4facing_ai_chromakey_source.png",
+    "buildings_source": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Sources/m01_buildings_props_states_ai_chromakey_source.png"
+  },
+  "review_contact_sheets": [
+    "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_buildings_contact.png",
+    "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_maps_contact.png",
+    "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_markers_contact.png",
+    "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_unit_atlases_contact.png",
+    "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_strategic_placement_overlay_contact.png"
+  ],
+  "soldier_animation_fix": {
+    "runtime_manifest": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_soldier_animation_manifest.json",
+    "review_manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_animation_manifest.json",
+    "review_contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_contact.png",
+    "player_runtime_animation_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas.png",
+    "enemy_runtime_animation_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_animation_atlas.png",
+    "status": "needs_pm_user_review",
+    "strategic_map_status": "approved_unchanged"
+  },
+  "soldier_animation_v2": {
+    "asset_id": "m01_soldier_animation_atlas_fix_v2",
+    "status": "needs_pm_user_review",
+    "supersedes_rejected_manifest": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_soldier_animation_manifest.json",
+    "rejection_reason_for_v1": "User/PM rejected v1 because run frames read as repeated or near-identical poses.",
+    "runtime_manifest": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Manifests/m01_soldier_animation_manifest_v2.json",
+    "review_manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_animation_manifest_v2.json",
+    "review_contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_contact_v2.png",
+    "source_contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_sources_v2_contact.png",
+    "player_runtime_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas_v2.png",
+    "enemy_runtime_atlas": "Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/Units/EnemyPatrol/enemy_patrol_animation_atlas_v2.png",
+    "frame_count_per_faction": 112,
+    "zero_adjacent_duplicate_pairs": 0
+  },
+  "target_match_v3": {
+    "status": "ready_for_pm_user_review",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_target_match_asset_manifest_v3.json",
+    "clean_plate": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_source_1920x1080.png",
+    "clean_plate_pot": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_pot_2048x2048.png",
+    "player_idle_facings_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV3/player_rifle_squad_idle_facings_atlas_v3.png",
+    "enemy_idle_facings_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV3/enemy_patrol_idle_facings_atlas_v3.png",
+    "marker_family": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV3/",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_assets_v3_contact.png",
+    "imagegen_only_final_art": true,
+    "no_target_mockup_crops_or_composites": true
+  },
+  "target_match_v5": {
+    "status": "review_candidate_improved_readability_needs_pm_user_approval",
+    "supersedes_for_review": "target_match_v3",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_target_match_asset_manifest_v5.json",
+    "clean_plate": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_source_1920x1080.png",
+    "clean_plate_pot": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v3_pot_2048x2048.png",
+    "player_idle_facings_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/TargetMatchV5/player_rifle_squad_idle_facings_atlas_v5.png",
+    "enemy_idle_facings_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/TargetMatchV5/enemy_patrol_idle_facings_atlas_v5.png",
+    "unit_shadow_facings_atlas_strong": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_shadow_facings_atlas_v5_strong.png",
+    "marker_family": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Markers/TargetMatchV5/",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_assets_v5_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV5StrongShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV5StrongShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "imagegen_only_final_art": true,
+    "no_target_mockup_crops_or_composites": true,
+    "readability_note": "V5 increases unit local contrast and uses a separate strong imagegen-sourced shadow atlas; MSE is slightly worse than v3/optimized hybrid but addresses user readability feedback."
+  },
+  "soldier_animation_v5": {
+    "asset_id": "m01_soldier_animation_atlas_v5_target_match_readability",
+    "status": "review_candidate_needs_pm_user_approval",
+    "based_on": "target_match_v5 readability/shadow candidate",
+    "review_manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_animation_manifest_v5.json",
+    "review_contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_soldier_animation_v5_contact.png",
+    "player_review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/PlayerRifleSquad/player_rifle_squad_animation_atlas_v5.png",
+    "enemy_review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/EnemyPatrol/enemy_patrol_animation_atlas_v5.png",
+    "shadow_review_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/AnimationV5/unit_shadow_animation_atlas_v5_strong.png",
+    "frame_count_per_faction": 112,
+    "directions": [
+      "NE",
+      "SE",
+      "SW",
+      "NW"
+    ],
+    "states": {
+      "idle": 4,
+      "run": 8,
+      "aim": 3,
+      "fire": 4,
+      "damaged": 3,
+      "death": 6
+    },
+    "shadows_are_separate": true,
+    "imagegen_only_final_art": true,
+    "no_target_mockup_crops_or_composites": true,
+    "validation_note": "Green residue files: 0; exact adjacent duplicate pairs: 0; two enemy idle sequences have low but non-zero adjacent delta and should be visually reviewed."
+  },
+  "target_match_v6_background": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_target_match_background_manifest_v6.json",
+    "clean_plate": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_source_1920x1080.png",
+    "clean_plate_pot": "Design/VisualLock/Gameplay/M01_AIProductionAssets/TacticalMaps/m01_tactical_start_clean_plate_v6_pot_2048x2048.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_background_v6_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV6_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV6_AssetPlacementReview_vs_Target_Comparison.png",
+    "uses_accepted_v5_units_shadows_markers_animations": true,
+    "imagegen_only_final_art": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1066.25,
+      "world_crop_mse": 818.67,
+      "player_region_mse": 956.64,
+      "enemy_region_mse": 683.57
+    }
+  },
+  "soldier_shadows_v7": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_soldier_shadow_manifest_v7.json",
+    "facing_shadow_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV7/unit_shadow_facings_atlas_v7_map_light.png",
+    "animation_shadow_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/AnimationV7/unit_shadow_animation_atlas_v7_map_light.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_shadows_v7_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV7Shadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV7Shadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "replaces_rejected_shadow_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Shadows/TargetMatchV5/unit_shadow_facings_atlas_v5_strong.png",
+    "shadows_are_separate": true,
+    "cast_direction": "lower-left / west-southwest from foot contact",
+    "imagegen_only_final_art": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1066.5,
+      "world_crop_mse": 819.15,
+      "player_region_mse": 966.54,
+      "enemy_region_mse": 682.52
+    }
+  },
+  "soldier_baked_shadows_v7": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v7.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV7/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v7.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV7/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v7.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV7/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v7.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV7/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v7.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v7_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV7BakedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV7BakedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1066.51,
+      "world_crop_mse": 819.19,
+      "player_region_mse": 967.06,
+      "enemy_region_mse": 682.53
+    }
+  },
+  "soldier_baked_shadows_v8": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v8.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV8/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v8.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV8/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v8.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV8/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v8.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV8/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v8.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v8_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV8BakedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV8BakedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v7",
+    "correction": "down-right connected target direction; no border alpha box",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1066.6,
+      "world_crop_mse": 819.27,
+      "player_region_mse": 963.08,
+      "enemy_region_mse": 690.07
+    }
+  },
+  "soldier_baked_shadows_v9": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v9.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV9/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v9.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV9/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v9.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV9/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v9.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV9/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v9.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v9_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV9BakedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV9BakedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v8",
+    "correction": "straight-right connected shadow; white-source alpha; no square matte; larger proof scale",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1066.29,
+      "world_crop_mse": 818.61,
+      "player_region_mse": 946.0,
+      "enemy_region_mse": 696.33
+    }
+  },
+  "soldier_baked_shadows_v10": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v10.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV10/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v10.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV10/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v10.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV10/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v10.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV10/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v10.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v10_readable_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV10ReadableBakedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV10ReadableBakedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v9",
+    "correction": "readability lift: larger anchored body, stronger silhouette/value separation, straight-right baked shadow, no square matte",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1090.6,
+      "world_crop_mse": 896.1,
+      "player_region_mse": 977.98,
+      "enemy_region_mse": 932.29
+    }
+  },
+  "soldier_baked_shadows_v11": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v11.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v11.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v11.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v11.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV11/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v11.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v11_readable_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV11ReadableBakedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV11ReadableBakedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v10",
+    "correction": "moderated readability lift: 88px proof body height, restrained silhouette/value separation, straight-right baked shadow, no square matte",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1077.95,
+      "world_crop_mse": 869.64,
+      "player_region_mse": 848.49,
+      "enemy_region_mse": 733.1
+    }
+  },
+  "soldier_baked_shadows_v12": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v12.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV12/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v12.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV12/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v12.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV12/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v12.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV12/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v12.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v12_darkblue_connected_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV12DarkBlueConnectedShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV12DarkBlueConnectedShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v11",
+    "correction": "darker soldiers, dark blue player accents, longer connected straight-right baked shadow, no square matte",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1070.99,
+      "world_crop_mse": 855.07,
+      "player_region_mse": 765.77,
+      "enemy_region_mse": 615.61
+    }
+  },
+  "soldier_baked_shadows_v13": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v13.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV13/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v13.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV13/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v13.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV13/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v13.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV13/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v13.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v13_directional_dark_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV13DirectionalDarkSoldier_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV13DirectionalDarkSoldier_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v12",
+    "correction": "directional dark soldier lighting: dark right-side armor, restrained left/top highlights, dark blue accents, connected straight-right shadow",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1069.67,
+      "world_crop_mse": 852.3,
+      "player_region_mse": 761.48,
+      "enemy_region_mse": 579.44
+    }
+  },
+  "soldier_baked_shadows_v14": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v14.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV14/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v14.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV14/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v14.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV14/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v14.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV14/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v14.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v14_wide_foot_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV14WideFootShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV14WideFootShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v13",
+    "correction": "V13 dark directional soldiers with wider bigger boot-contact shadows and straight-right cast",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1071.2,
+      "world_crop_mse": 855.51,
+      "player_region_mse": 777.65,
+      "enemy_region_mse": 613.09
+    }
+  },
+  "soldier_baked_shadows_v15": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v15.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV15/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v15.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV15/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v15.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV15/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v15.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV15/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v15.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v15_boot_anchored_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV15BootAnchoredShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV15BootAnchoredShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v14",
+    "correction": "per-facing/per-frame boot-anchored wider straight-right shadows; V13 dark directional bodies retained",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1073.03,
+      "world_crop_mse": 859.33,
+      "player_region_mse": 801.66,
+      "enemy_region_mse": 639.99
+    }
+  },
+  "soldier_baked_shadows_v16": {
+    "status": "review_candidate_needs_pm_user_approval",
+    "manifest": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Manifests/m01_baked_soldier_shadow_manifest_v16.json",
+    "player_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV16/PlayerRifleSquad/player_rifle_squad_idle_facings_body_shadow_atlas_v16.png",
+    "enemy_static_facing_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV16/EnemyPatrol/enemy_patrol_idle_facings_body_shadow_atlas_v16.png",
+    "player_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV16/PlayerRifleSquad/player_rifle_squad_animation_body_shadow_atlas_v16.png",
+    "enemy_animation_atlas": "Design/VisualLock/Gameplay/M01_AIProductionAssets/Units/IntegratedShadowV16/EnemyPatrol/enemy_patrol_animation_body_shadow_atlas_v16.png",
+    "contact_sheet": "Design/VisualLock/Gameplay/M01_AIProductionAssets/ContactSheets/m01_target_match_baked_shadows_v16_boot_anchored_contact.png",
+    "placement_review": "Design/AgentReports/Captures/M01_TargetMatchV16BootAnchoredShadow_AssetPlacementReview_1920x1080.png",
+    "comparison": "Design/AgentReports/Captures/M01_TargetMatchV16BootAnchoredShadow_AssetPlacementReview_vs_Target_Comparison.png",
+    "shadows_are_baked_into_unit_atlases": true,
+    "separate_runtime_shadow_layer_required": false,
+    "supersedes": "soldier_baked_shadows_v15",
+    "correction": "per-frame boot-anchored wider straight-right shadows clamped within cell; V13 dark directional bodies retained",
+    "imagegen_only_final_art_components": true,
+    "no_target_mockup_crops_or_composites": true,
+    "metrics": {
+      "full_frame_mse": 1072.62,
+      "world_crop_mse": 858.47,
+      "player_region_mse": 794.59,
+      "enemy_region_mse": 634.1
+    }
+  }
+}

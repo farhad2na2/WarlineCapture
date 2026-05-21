@@ -1,0 +1,656 @@
+{
+  "LogoPanel": {
+    "rect": [
+      72,
+      72,
+      820,
+      226
+    ],
+    "safeRect": [
+      112,
+      98,
+      700,
+      148
+    ],
+    "children": {
+      "LogoLockup": [
+        156,
+        108,
+        540,
+        112
+      ]
+    },
+    "failures": []
+  },
+  "TopBar": {
+    "rect": [
+      944,
+      72,
+      2770,
+      238
+    ],
+    "safeRect": [
+      1000,
+      104,
+      2660,
+      170
+    ],
+    "children": {
+      "CreditsIcon": [
+        1104,
+        114,
+        116,
+        116
+      ],
+      "MaterialsIcon": [
+        1876,
+        114,
+        116,
+        116
+      ],
+      "AuthorityIcon": [
+        2690,
+        108,
+        128,
+        128
+      ],
+      "SettingsGear": [
+        3540,
+        118,
+        104,
+        104
+      ],
+      "CreditsLabel": [
+        1290,
+        112,
+        220,
+        42
+      ],
+      "CreditsValue": [
+        1290,
+        164,
+        330,
+        72
+      ],
+      "MaterialsLabel": [
+        2058,
+        112,
+        250,
+        42
+      ],
+      "MaterialsValue": [
+        2058,
+        164,
+        330,
+        72
+      ],
+      "AuthorityLabel": [
+        2876,
+        112,
+        420,
+        42
+      ],
+      "AuthorityValue": [
+        2876,
+        164,
+        270,
+        72
+      ]
+    },
+    "failures": []
+  },
+  "ProfilePanel": {
+    "rect": [
+      72,
+      326,
+      740,
+      640
+    ],
+    "safeRect": [
+      120,
+      370,
+      644,
+      552
+    ],
+    "children": {
+      "ProfilePortrait": [
+        132,
+        442,
+        600,
+        350
+      ],
+      "ProfileStatusStrip": [
+        162,
+        822,
+        520,
+        58
+      ],
+      "CommanderProfileTitle": [
+        132,
+        396,
+        420,
+        48
+      ],
+      "CommanderProfilePending": [
+        176,
+        880,
+        490,
+        42
+      ]
+    },
+    "failures": []
+  },
+  "Nav0Panel": {
+    "rect": [
+      72,
+      980,
+      740,
+      150
+    ],
+    "safeRect": [
+      110,
+      1004,
+      662,
+      102
+    ],
+    "children": {
+      "Nav0Icon": [
+        124,
+        1010,
+        98,
+        90
+      ],
+      "Nav0DisabledFrame": [
+        500,
+        1020,
+        138,
+        70
+      ],
+      "Nav0LockFrame": [
+        680,
+        1016,
+        72,
+        78
+      ],
+      "Nav0LockIcon": [
+        700,
+        1035,
+        32,
+        40
+      ],
+      "Nav0Label": [
+        252,
+        1022,
+        226,
+        64
+      ],
+      "Nav0Unavailable": [
+        510,
+        1030,
+        116,
+        50
+      ]
+    },
+    "failures": []
+  },
+  "Nav1Panel": {
+    "rect": [
+      72,
+      1130,
+      740,
+      150
+    ],
+    "safeRect": [
+      110,
+      1154,
+      662,
+      102
+    ],
+    "children": {
+      "Nav1Icon": [
+        124,
+        1160,
+        98,
+        90
+      ],
+      "Nav1DisabledFrame": [
+        500,
+        1170,
+        138,
+        70
+      ],
+      "Nav1LockFrame": [
+        680,
+        1166,
+        72,
+        78
+      ],
+      "Nav1LockIcon": [
+        700,
+        1185,
+        32,
+        40
+      ],
+      "Nav1Label": [
+        252,
+        1172,
+        226,
+        64
+      ],
+      "Nav1Unavailable": [
+        510,
+        1180,
+        116,
+        50
+      ]
+    },
+    "failures": []
+  },
+  "Nav2Panel": {
+    "rect": [
+      72,
+      1280,
+      740,
+      150
+    ],
+    "safeRect": [
+      110,
+      1304,
+      662,
+      102
+    ],
+    "children": {
+      "Nav2Icon": [
+        124,
+        1310,
+        98,
+        90
+      ],
+      "Nav2DisabledFrame": [
+        500,
+        1320,
+        138,
+        70
+      ],
+      "Nav2LockFrame": [
+        680,
+        1316,
+        72,
+        78
+      ],
+      "Nav2LockIcon": [
+        700,
+        1335,
+        32,
+        40
+      ],
+      "Nav2Label": [
+        252,
+        1322,
+        226,
+        64
+      ],
+      "Nav2Unavailable": [
+        510,
+        1330,
+        116,
+        50
+      ]
+    },
+    "failures": []
+  },
+  "Nav3Panel": {
+    "rect": [
+      72,
+      1430,
+      740,
+      150
+    ],
+    "safeRect": [
+      110,
+      1454,
+      662,
+      102
+    ],
+    "children": {
+      "Nav3Icon": [
+        124,
+        1460,
+        98,
+        90
+      ],
+      "Nav3DisabledFrame": [
+        500,
+        1470,
+        138,
+        70
+      ],
+      "Nav3LockFrame": [
+        680,
+        1466,
+        72,
+        78
+      ],
+      "Nav3LockIcon": [
+        700,
+        1485,
+        32,
+        40
+      ],
+      "Nav3Label": [
+        252,
+        1472,
+        226,
+        64
+      ],
+      "Nav3Unavailable": [
+        510,
+        1480,
+        116,
+        50
+      ]
+    },
+    "failures": []
+  },
+  "Nav4Panel": {
+    "rect": [
+      72,
+      1580,
+      740,
+      150
+    ],
+    "safeRect": [
+      110,
+      1604,
+      662,
+      102
+    ],
+    "children": {
+      "Nav4Icon": [
+        124,
+        1610,
+        98,
+        90
+      ],
+      "Nav4DisabledFrame": [
+        500,
+        1620,
+        138,
+        70
+      ],
+      "Nav4LockFrame": [
+        680,
+        1616,
+        72,
+        78
+      ],
+      "Nav4LockIcon": [
+        700,
+        1635,
+        32,
+        40
+      ],
+      "Nav4Label": [
+        252,
+        1622,
+        246,
+        64
+      ],
+      "Nav4Unavailable": [
+        510,
+        1630,
+        116,
+        50
+      ]
+    },
+    "failures": []
+  },
+  "SagaCard": {
+    "rect": [
+      960,
+      374,
+      810,
+      1280
+    ],
+    "safeRect": [
+      1010,
+      410,
+      710,
+      1188
+    ],
+    "children": {
+      "SagaArt": [
+        1026,
+        560,
+        678,
+        760
+      ],
+      "SagaHeaderIcon": [
+        1048,
+        436,
+        92,
+        92
+      ],
+      "SagaFooterBadgeFrame": [
+        1036,
+        1450,
+        112,
+        112
+      ],
+      "SagaFooterIcon": [
+        1054,
+        1468,
+        76,
+        76
+      ],
+      "SagaTitle": [
+        1180,
+        438,
+        540,
+        70
+      ],
+      "SagaDescription": [
+        1184,
+        1464,
+        500,
+        110
+      ]
+    },
+    "failures": []
+  },
+  "OperationCard": {
+    "rect": [
+      1850,
+      374,
+      810,
+      1280
+    ],
+    "safeRect": [
+      1900,
+      410,
+      710,
+      1188
+    ],
+    "children": {
+      "OperationArt": [
+        1916,
+        560,
+        678,
+        500
+      ],
+      "OperationHeaderIcon": [
+        1938,
+        436,
+        92,
+        92
+      ],
+      "OperationFooterBadgeFrame": [
+        1926,
+        1450,
+        112,
+        112
+      ],
+      "OperationFooterIcon": [
+        1944,
+        1468,
+        76,
+        76
+      ],
+      "OperationWarningPressureFrame": [
+        1908,
+        1110,
+        700,
+        128
+      ],
+      "OperationWarningPressureIcon": [
+        1938,
+        1142,
+        62,
+        62
+      ],
+      "OperationPressureMeter": [
+        2030,
+        1190,
+        350,
+        32
+      ],
+      "OperationWarningRiskFrame": [
+        1908,
+        1262,
+        700,
+        128
+      ],
+      "OperationWarningRiskIcon": [
+        1938,
+        1294,
+        62,
+        62
+      ],
+      "OperationRiskMeter": [
+        2030,
+        1342,
+        350,
+        32
+      ],
+      "OperationTitle": [
+        2070,
+        438,
+        540,
+        70
+      ],
+      "OperationDescription": [
+        2074,
+        1464,
+        500,
+        110
+      ],
+      "OperationPressureText": [
+        2030,
+        1138,
+        360,
+        38
+      ],
+      "OperationPressureStatus": [
+        2390,
+        1190,
+        112,
+        38
+      ],
+      "OperationRiskText": [
+        2030,
+        1290,
+        360,
+        38
+      ],
+      "OperationRiskStatus": [
+        2390,
+        1342,
+        154,
+        38
+      ]
+    },
+    "failures": []
+  },
+  "QuickCustomCard": {
+    "rect": [
+      2742,
+      374,
+      810,
+      1280
+    ],
+    "safeRect": [
+      2792,
+      410,
+      710,
+      1188
+    ],
+    "children": {
+      "QuickCustomArt": [
+        2808,
+        560,
+        678,
+        760
+      ],
+      "QuickCustomHeaderIcon": [
+        2830,
+        436,
+        92,
+        92
+      ],
+      "QuickCustomFooterBadgeFrame": [
+        2818,
+        1450,
+        112,
+        112
+      ],
+      "QuickCustomFooterIcon": [
+        2836,
+        1468,
+        76,
+        76
+      ],
+      "QuickCustomTitle": [
+        2962,
+        438,
+        540,
+        70
+      ],
+      "QuickCustomDescription": [
+        2966,
+        1464,
+        500,
+        110
+      ]
+    },
+    "failures": []
+  },
+  "DeployButton": {
+    "rect": [
+      2630,
+      1788,
+      1086,
+      236
+    ],
+    "safeRect": [
+      2690,
+      1838,
+      940,
+      136
+    ],
+    "children": {
+      "DeployChevrons": [
+        3470,
+        1858,
+        150,
+        72
+      ],
+      "DeployCommandLabel": [
+        2800,
+        1852,
+        650,
+        88
+      ]
+    },
+    "failures": []
+  }
+}

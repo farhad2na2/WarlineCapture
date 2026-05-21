@@ -80,6 +80,10 @@ public sealed class MissionRuntimeAtlasQuadRuntime : IComponentData
     public Entity[] SoldierEntities;
     public MeshRenderer[] SoldierRenderers;
     public Material[] SoldierMaterials;
+    public Entity[] SoldierFactionMaskEntities;
+    public Material[] SoldierFactionMaskMaterials;
+    public Entity[] SoldierShadowEntities;
+    public Material[] SoldierShadowMaterials;
     public MeshRenderer SelectionRenderer;
     public Material SelectionMaterial;
     public Entity[] SelectionEntities;
@@ -87,19 +91,34 @@ public sealed class MissionRuntimeAtlasQuadRuntime : IComponentData
     public Material[] SelectionMaterials;
     public Entity TargetMarkerEntity;
     public Material TargetMarkerMaterial;
+    public Entity[] EnemyReadabilityEntities;
+    public Material[] EnemyReadabilityMaterials;
+    public Entity[] EnemyHealthBarEntities;
+    public Material[] EnemyHealthBarMaterials;
     public Vector3[] SoldierLocalPositions;
+    public Vector3[] SoldierFactionMaskLocalPositions;
+    public Vector3[] SoldierShadowLocalPositions;
     public Vector3[] SelectionLocalPositions;
     public Vector3[] SelectionLocalScales;
+    public Vector3[] EnemyReadabilityLocalPositions;
+    public Vector3[] EnemyReadabilityLocalScales;
+    public Vector3[] EnemyHealthBarLocalPositions;
+    public Vector3[] EnemyHealthBarLocalScales;
     public Vector3 TargetMarkerWorldPosition;
     public Vector3 TargetMarkerWorldScale;
     public bool[] SoldierVisible;
+    public bool[] SoldierFactionMaskVisible;
+    public bool[] SoldierShadowVisible;
     public bool[] SelectionVisible;
+    public bool[] EnemyReadabilityVisible;
+    public bool[] EnemyHealthBarVisible;
     public bool TargetMarkerVisible;
     public string TargetMarkerKind;
     public string CurrentSpriteId;
     public string CurrentFacingId;
     public string CurrentAnimationFrameKey;
     public int SoldierCount;
+    public Vector2 SoldierPivotNormalized;
     public float AnimationPhase;
     public float AnimationElapsed;
     public Vector3 InstancePosition;
@@ -124,7 +143,10 @@ public sealed class MissionRuntimeTerrainSurfaceRendererRuntime : IComponentData
     public GameObject Instance;
     public SpriteRenderer Renderer;
     public Sprite GroundSprite;
+    public Camera GroundCamera;
+    public Vector3 GroundPosition;
     public Vector3 GroundScale;
+    public bool GroundFollowsCamera;
     public Sprite[] ProductionTacticalPlateSprites;
 }
 

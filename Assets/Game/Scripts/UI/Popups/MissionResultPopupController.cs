@@ -11,8 +11,8 @@ public sealed class MissionResultPopupController : MonoBehaviour
     {
         "Frame/BodyRoot/RewardsPanel/CommanderXpReward",
         "Frame/BodyRoot/RewardsPanel/CreditsReward",
-        "Frame/BodyRoot/RewardsPanel/SupplyCrateReward",
-        "Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward"
+        "Frame/BodyRoot/RewardsPanel/MaterialsReward",
+        "Frame/BodyRoot/RewardsPanel/IntelReward"
     };
 
     private WarlineCapturePopupFrameView _frameView;
@@ -41,9 +41,9 @@ public sealed class MissionResultPopupController : MonoBehaviour
             }
         }
 
-        BindObjectiveRow("Frame/BodyRoot/ObjectivesPanel/Objective_CaptureDistrict", result.Objectives, 0);
-        BindObjectiveRow("Frame/BodyRoot/ObjectivesPanel/Objective_DestroyCommandCenter", result.Objectives, 1);
-        BindObjectiveRow("Frame/BodyRoot/ObjectivesPanel/Objective_RescueCivilians", result.Objectives, 2);
+        BindObjectiveRow("Frame/BodyRoot/ObjectivesPanel/Objective_DestroyHostilePatrol", result.Objectives, 0);
+        BindObjectiveRow("Frame/BodyRoot/ObjectivesPanel/Objective_KeepCommandSquadAlive", result.Objectives, 1);
+        BindObjectiveRow("Frame/BodyRoot/ObjectivesPanel/Objective_CityConsequenceNeutral", result.Objectives, 2);
         BindRewardRows(result.Rewards);
     }
 

@@ -18,7 +18,7 @@ MonoBehaviour:
     spawnCell: {x: 180, y: 180}
     units:
     - prefab: {fileID: 3282182154612916099, guid: ff73c8b7cbf844778916da330e9cd3e3, type: 3}
-      count: 4
+      count: 200
       spawnOffset: {x: -96, y: 6}
     - prefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
       count: 4

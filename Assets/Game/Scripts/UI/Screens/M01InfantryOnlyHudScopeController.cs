@@ -7,6 +7,11 @@ public sealed class M01InfantryOnlyHudScopeController : MonoBehaviour
 {
     private const string BuildButtonName = "BuildButton";
     private const string SpecialButtonName = "SpecialButton";
+    private const float CommandRailReferenceWidth = 704f;
+    private const float CommandRailReferenceHeight = 164f;
+    private const float CommandButtonWidth = 98f;
+    private const float CommandButtonHeight = 124f;
+    private const float CommandButtonTop = 24f;
 
     [SerializeField] private GameObject[] hiddenDuringM01 = Array.Empty<GameObject>();
     [SerializeField] private GameObject[] shownDuringM01 = Array.Empty<GameObject>();
@@ -35,6 +40,8 @@ public sealed class M01InfantryOnlyHudScopeController : MonoBehaviour
         SetActive(shownDuringM01, true);
         if (m01Active)
             ApplyM01NoSelectionHudState();
+        else
+            SetRowActive("CommandBar/SelectButton", false);
     }
 
     public bool AreM01SuppressedRootsHidden()
@@ -145,30 +152,86 @@ public sealed class M01InfantryOnlyHudScopeController : MonoBehaviour
             SetRowActive($"ThreatFeedPanel/Threat_{i}", false);
 
         SetRowActive("AssistantLayer/AssistantEntryButton", false);
-        ConfigureCommandButton("CommandBar/SpecialButton", "SELECT", 0f, 0);
-        ConfigureCommandButton("CommandBar/MoveButton", "MOVE", 103f, 1);
-        ConfigureCommandButton("CommandBar/AttackButton", "ATTACK", 206f, 2);
-        ConfigureCommandButton("CommandBar/StopButton", "STOP", 309f, 3);
-        ConfigureCommandButton("CommandBar/HoldButton", "HOLD", 412f, 4);
+        SetRowActive("AssistantLayer/AssistantPanelDock", false);
+        HideM01NoSelectionTransientSurfaces();
+
+        ConfigureM01SquadCard("SquadTray/Squad_Rifle", true);
+        ConfigureM01SquadCard("SquadTray/Squad_APC", false);
+        ConfigureM01SquadCard("SquadTray/Squad_Tank", false);
+        ConfigureM01SquadCard("SquadTray/Squad_Helicopter", false);
+
+        ConfigureCommandButton("CommandBar/SelectButton", "SELECT", 12f, 0, false);
+        ConfigureCommandButton("CommandBar/MoveButton", "MOVE", 115f, 1, false);
+        ConfigureCommandButton("CommandBar/AttackButton", "ATTACK", 218f, 2, false);
+        ConfigureCommandButton("CommandBar/StopButton", "STOP", 320f, 3, false);
+        ConfigureCommandButton("CommandBar/HoldButton", "HOLD", 422f, 4, false);
+        SetRowActive("CommandBar/SpecialButton", false);
         ConfigureBuildUnavailable();
     }
 
-    private void ConfigureCommandButton(string path, string label, float x, int siblingIndex)
+    private void HideM01NoSelectionTransientSurfaces()
+    {
+        SetRowActive("WorldCommandMarkerLayer", false);
+        SetRowActive("SelectedEntityPanel", false);
+        SetRowActive("CommandModeBanner", false);
+        SetRowActive("InvalidCommandToast", false);
+        SetRowActive("CommandWheelCanvas", false);
+        SetRowActive("BuildDrawerCanvas", false);
+    }
+
+    private void ConfigureCommandButton(string path, string label, float x, int siblingIndex, bool interactable)
     {
         Transform target = FindCommandButton(path);
         if (target == null)
             return;
 
         target.gameObject.SetActive(true);
-        target.SetSiblingIndex(siblingIndex);
+        Transform commandRail = transform.Find("CommandBar/CommandRailArt");
+        if (commandRail != null)
+            commandRail.SetSiblingIndex(0);
+        target.SetSiblingIndex(siblingIndex + 1);
         if (target.TryGetComponent(out Button button))
-            button.interactable = false;
+            button.interactable = interactable;
+        ApplyNeutralCommandChrome(target);
         SetText(target, "LabelText", label);
         RectTransform rect = target as RectTransform;
         if (rect != null)
-            rect.anchoredPosition = new Vector2(x, rect.anchoredPosition.y);
-        EnsureCommandLabelFallback(label, x, siblingIndex);
-        EnsureRootCommandLabelFallback(label, siblingIndex);
+            ConfigureCommandButtonRect(rect, x);
+    }
+
+    private static void ConfigureCommandButtonRect(RectTransform rect, float x)
+    {
+        rect.anchorMin = new Vector2(x / CommandRailReferenceWidth, 1f - (CommandButtonTop + CommandButtonHeight) / CommandRailReferenceHeight);
+        rect.anchorMax = new Vector2((x + CommandButtonWidth) / CommandRailReferenceWidth, 1f - CommandButtonTop / CommandRailReferenceHeight);
+        rect.offsetMin = Vector2.zero;
+        rect.offsetMax = Vector2.zero;
+        rect.localScale = Vector3.one;
+    }
+
+    private void ApplyNeutralCommandChrome(Transform target)
+    {
+        Image image = target != null ? target.GetComponent<Image>() : null;
+        Image neutralImage = FindCommandButton("CommandBar/StopButton")?.GetComponent<Image>();
+        if (image != null && neutralImage != null)
+            image.sprite = neutralImage.sprite;
+
+        Animator animator = target != null ? target.GetComponent<Animator>() : null;
+        if (animator != null && animator.runtimeAnimatorController != null)
+        {
+            animator.Play("Normal", 0, 1f);
+            animator.Update(0f);
+        }
+    }
+
+    private void ConfigureM01SquadCard(string path, bool interactable)
+    {
+        Transform target = transform.Find(path);
+        if (target == null)
+            return;
+
+        target.gameObject.SetActive(true);
+        if (target.TryGetComponent(out Button button))
+            button.interactable = interactable;
     }
 
     private void ConfigureBuildUnavailable()

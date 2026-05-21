@@ -106,7 +106,8 @@ public static class Chapter01M01PlayableRuntime
             return false;
         }
 
-        bool hasCommandPoint = loader.TryGetAnchorWorldPosition(DecorCommandPointEntityId, out Vector3 commandPointWorld);
+        bool hasCommandPoint = false;
+        Vector3 commandPointWorld = default;
         EntityManager em = world.EntityManager;
         Entity player = ResolveOrCreateMissionUnit(
             em,
@@ -186,27 +187,25 @@ public static class Chapter01M01PlayableRuntime
         string displayName,
         bool createFallback)
     {
+        int2 cell = ResolveAnchorCell(loader, anchorId, fallbackWorld);
         Entity existingById = FindMissionEntity(em, entityId);
         if (existingById != Entity.Null)
+        {
+            ApplyMissionUnitPlacement(em, existingById, fallbackWorld, cell, factionId);
             return existingById;
+        }
 
         Entity candidate = FindNearestFactionUnit(em, factionId, fallbackWorld);
         if (candidate != Entity.Null)
         {
-            Vector2Int cell = loader.TryGetAnchorCell(anchorId, out Vector2Int anchorCell)
-                ? anchorCell
-                : new Vector2Int(Mathf.RoundToInt(fallbackWorld.x), Mathf.RoundToInt(fallbackWorld.z));
-            ApplyMissionUnitPlacement(em, candidate, fallbackWorld, new int2(cell.x, cell.y), factionId);
+            ApplyMissionUnitPlacement(em, candidate, fallbackWorld, cell, factionId);
             return candidate;
         }
 
         if (!createFallback)
             return Entity.Null;
 
-        Vector2Int fallbackCell = loader.TryGetAnchorCell(anchorId, out Vector2Int fallbackAnchorCell)
-            ? fallbackAnchorCell
-            : new Vector2Int(Mathf.RoundToInt(fallbackWorld.x), Mathf.RoundToInt(fallbackWorld.z));
-        return CreateFallbackMissionUnit(em, fallbackWorld, new int2(fallbackCell.x, fallbackCell.y), factionId, displayName);
+        return CreateFallbackMissionUnit(em, fallbackWorld, cell, factionId, displayName);
     }
 
     private static void BindMissionIdentity(EntityManager em, Entity entity, string entityId, string objectiveId, bool isPlayer)
@@ -260,20 +259,24 @@ public static class Chapter01M01PlayableRuntime
         Entity existingById = FindMissionEntity(em, entityId);
         if (existingById != Entity.Null)
         {
+            int2 existingCell = ResolveAnchorCell(loader, entityId, worldPosition);
+            SetComponent(em, existingById, new UnitGrid { Cell = existingCell });
+            SetComponent(em, existingById, new UnitFootprint { Size = new int2(4, 3) });
+            SetComponent(em, existingById, LocalTransform.FromPosition(worldPosition));
+            if (em.HasComponent<LocalToWorld>(existingById))
+                em.SetComponentData(existingById, new LocalToWorld { Value = float4x4.Translate(worldPosition) });
             BindMissionSpritePresenter(em, existingById, entityId);
             return existingById;
         }
 
-        Vector2Int cell = loader.TryGetAnchorCell(entityId, out Vector2Int anchorCell)
-            ? anchorCell
-            : new Vector2Int(Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.z));
+        int2 cell = ResolveAnchorCell(loader, entityId, worldPosition);
         Entity entity = em.CreateEntity(
             typeof(MissionRuntimeEntityId),
             typeof(UnitGrid),
             typeof(UnitFootprint),
             typeof(LocalTransform));
         em.SetComponentData(entity, new MissionRuntimeEntityId { Value = new FixedString64Bytes(entityId) });
-        em.SetComponentData(entity, new UnitGrid { Cell = new int2(cell.x, cell.y) });
+        em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(4, 3) });
         em.SetComponentData(entity, LocalTransform.FromPosition(worldPosition));
         BindMissionSpritePresenter(em, entity, entityId);
@@ -312,8 +315,22 @@ public static class Chapter01M01PlayableRuntime
             HoldAtEnd = 1
         });
 
-        SetComponent(em, enemy, new UnitTarget { Cell = b });
-        SetComponent(em, enemy, new UnitPathRequest { Goal = b });
+        if (em.HasComponent<UnitTarget>(enemy))
+            em.RemoveComponent<UnitTarget>(enemy);
+        if (em.HasComponent<UnitPathRequest>(enemy))
+            em.RemoveComponent<UnitPathRequest>(enemy);
+        if (em.HasComponent<UnitPathFollow>(enemy))
+            em.RemoveComponent<UnitPathFollow>(enemy);
+        if (em.HasComponent<UnitPathRange>(enemy))
+            em.RemoveComponent<UnitPathRange>(enemy);
+    }
+
+    private static int2 ResolveAnchorCell(TacticalMapRuntimeLoader loader, string anchorId, Vector3 fallbackWorld)
+    {
+        if (loader != null && loader.TryGetAnchorCell(anchorId, out Vector2Int anchorCell))
+            return new int2(anchorCell.x, anchorCell.y);
+
+        return new int2(Mathf.RoundToInt(fallbackWorld.x), Mathf.RoundToInt(fallbackWorld.z));
     }
 
     private static int2 ResolveRouteCell(TacticalMapRuntimeLoader loader, string suffix, string fallbackAnchor)

@@ -35,7 +35,7 @@ MonoBehaviour:
   anchors:
   - id: player_spawn.command_squad
     type: 0
-    normalizedPosition: {x: 0.22, y: 0.52}
+    normalizedPosition: {x: 0.22, y: 0.46}
     notes: Initial player rifle squad.
   - id: decor.command_point
     type: 4
@@ -55,27 +55,27 @@ MonoBehaviour:
     notes: First move/cover destination.
   - id: enemy_spawn.patrol_start
     type: 0
-    normalizedPosition: {x: 0.78, y: 0.54}
+    normalizedPosition: {x: 0.7, y: 0.76}
     notes: Initial enemy patrol.
   - id: route.enemy_patrol_01.a
     type: 3
-    normalizedPosition: {x: 0.78, y: 0.54}
+    normalizedPosition: {x: 0.7, y: 0.76}
     notes: 
   - id: route.enemy_patrol_01.b
     type: 3
-    normalizedPosition: {x: 0.68, y: 0.53}
+    normalizedPosition: {x: 0.61, y: 0.74}
     notes: 
   - id: route.enemy_patrol_01.c
     type: 3
-    normalizedPosition: {x: 0.58, y: 0.52}
+    normalizedPosition: {x: 0.52, y: 0.72}
     notes: 
   - id: objective.destroy_patrol_group
     type: 4
-    normalizedPosition: {x: 0.64, y: 0.53}
+    normalizedPosition: {x: 0.57, y: 0.74}
     notes: 
   - id: threat.patrol_warning_01
     type: 5
-    normalizedPosition: {x: 0.7, y: 0.53}
+    normalizedPosition: {x: 0.63, y: 0.74}
     notes: 
   - id: minimap.viewport_start
     type: 6

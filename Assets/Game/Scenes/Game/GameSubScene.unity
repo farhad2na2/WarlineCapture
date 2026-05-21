@@ -146,7 +146,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0f9d49b4aee7c4db7b67c9702f2b7c62, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::GridAuthoring
   config: {fileID: 11400000, guid: b201000000000000000000000000000b, type: 2}
 --- !u!4 &146043442
@@ -191,7 +191,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9b7d8e9c2b3e3468d8a2b31f5f3c1f2e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::InitialUnitsSpawnerAuthoring
   config: {fileID: 11400000, guid: b201000000000000000000000000000c, type: 2}
 --- !u!4 &1654617675
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0aa4796d81454ad2a22bc19e69acd95e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::UnitPrefabRegistryAuthoring
   config: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
   unitSpawnPrefabs:

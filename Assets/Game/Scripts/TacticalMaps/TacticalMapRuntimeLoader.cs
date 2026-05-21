@@ -147,11 +147,12 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
         }
 
         ground.transform.SetParent(generatedRoot, false);
-        ground.transform.localPosition = Vector3.zero;
+        ground.transform.localPosition = ResolveRuntimeGroundPosition(groundRenderer.sprite);
         ground.transform.localRotation = runtimePlane == TacticalMapRuntimePlane.GameplayXZ
             ? Quaternion.Euler(90f, 0f, 0f)
             : Quaternion.identity;
         groundRenderer.sprite = ResolveRuntimeGroundSprite();
+        ground.transform.localPosition = ResolveRuntimeGroundPosition(groundRenderer.sprite);
         ground.transform.localScale = ResolveRuntimeGroundScale(groundRenderer.sprite);
         groundRenderer.sortingOrder = 0;
     }
@@ -186,7 +187,10 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
             runtime.Instance = groundRenderer.gameObject;
             runtime.Renderer = groundRenderer;
             runtime.GroundSprite = ResolveRuntimeGroundSprite();
+            runtime.GroundCamera = gameplayCamera != null ? gameplayCamera : Camera.main;
+            runtime.GroundPosition = ResolveRuntimeGroundPosition(runtime.GroundSprite);
             runtime.GroundScale = ResolveRuntimeGroundScale(runtime.GroundSprite);
+            runtime.GroundFollowsCamera = IsV29RuntimeGroundSprite(runtime.GroundSprite);
             runtime.ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites();
         }
         else
@@ -197,7 +201,10 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
                 Instance = groundRenderer.gameObject,
                 Renderer = groundRenderer,
                 GroundSprite = groundSprite,
+                GroundCamera = gameplayCamera != null ? gameplayCamera : Camera.main,
+                GroundPosition = ResolveRuntimeGroundPosition(groundSprite),
                 GroundScale = ResolveRuntimeGroundScale(groundSprite),
+                GroundFollowsCamera = IsV29RuntimeGroundSprite(groundSprite),
                 ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites()
             });
         }
@@ -219,10 +226,65 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
         if (spriteWorldSize.x <= 0.0001f || spriteWorldSize.y <= 0.0001f)
             return Vector3.one;
 
+        if (IsV29RuntimeGroundSprite(groundSprite) && TryResolveCameraWorldSize(out Vector2 cameraWorldSize))
+        {
+            return new Vector3(
+                cameraWorldSize.x / spriteWorldSize.x,
+                cameraWorldSize.y / spriteWorldSize.y,
+                1f);
+        }
+
+        if (IsOverscanRuntimeGroundSprite(groundSprite))
+        {
+            float coverScale = Mathf.Max(
+                definition.VisibleWorldSize.x / spriteWorldSize.x,
+                definition.VisibleWorldSize.y / spriteWorldSize.y);
+            return new Vector3(coverScale, coverScale, 1f);
+        }
+
         return new Vector3(
             definition.VisibleWorldSize.x / spriteWorldSize.x,
             definition.VisibleWorldSize.y / spriteWorldSize.y,
             1f);
+    }
+
+    private Vector3 ResolveRuntimeGroundPosition(Sprite groundSprite)
+    {
+        if (!IsV29RuntimeGroundSprite(groundSprite))
+            return Vector3.zero;
+
+        Camera camera = gameplayCamera != null ? gameplayCamera : Camera.main;
+        if (camera == null)
+            return Vector3.zero;
+
+        return runtimePlane == TacticalMapRuntimePlane.GameplayXZ
+            ? new Vector3(camera.transform.position.x, 0f, camera.transform.position.z)
+            : new Vector3(camera.transform.position.x, camera.transform.position.y, 0f);
+    }
+
+    private bool TryResolveCameraWorldSize(out Vector2 cameraWorldSize)
+    {
+        cameraWorldSize = default;
+        Camera camera = gameplayCamera != null ? gameplayCamera : Camera.main;
+        if (camera == null || !camera.orthographic || camera.aspect <= 0.0001f)
+            return false;
+
+        cameraWorldSize = new Vector2(camera.orthographicSize * 2f * camera.aspect, camera.orthographicSize * 2f);
+        return cameraWorldSize.x > 0.0001f && cameraWorldSize.y > 0.0001f;
+    }
+
+    private static bool IsV29RuntimeGroundSprite(Sprite groundSprite)
+    {
+        return groundSprite != null &&
+            groundSprite.texture != null &&
+            groundSprite.texture.name.Contains("v29_runtime");
+    }
+
+    private static bool IsOverscanRuntimeGroundSprite(Sprite groundSprite)
+    {
+        return groundSprite != null &&
+            groundSprite.texture != null &&
+            groundSprite.texture.name.Contains("v29_overscan");
     }
 
     private static Sprite[] ResolveProductionTacticalPlateSprites()

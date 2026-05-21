@@ -226,6 +226,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private const string MissionResultSectionPanelFramePath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/section_panel_frame.png";
     private const string MissionResultVictoryEmblemPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/victory_emblem.png";
     private const string MissionResultStarFilledPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_star_filled.png";
+    private const string MissionResultStarEmptyPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_star_empty.png";
     private const string MissionResultStatCardFramePath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/stat_card_frame.png";
     private const string MissionResultRewardCardFramePath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/reward_card_frame.png";
     private const string MissionResultConsequenceRowFramePath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Rows/consequence_row_frame.png";
@@ -238,8 +239,8 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private const string MissionResultCiviliansIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_civilians_safe.png";
     private const string MissionResultCommanderXpIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_commander_xp.png";
     private const string MissionResultCreditsIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_credits.png";
-    private const string MissionResultSupplyCrateIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_supply_crate.png";
-    private const string MissionResultUnlockFragmentsIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_unlock_fragments.png";
+    private const string MissionResultMaterialsIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_materials.png";
+    private const string MissionResultIntelIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_intel.png";
     private const string MissionResultGearModuleIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_gear_module.png";
     private const string MissionResultRushTicketIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_rush_ticket.png";
     private const string MissionResultObjectiveCompleteIconPath = "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_objective_complete.png";
@@ -403,6 +404,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private const string MatchHudOneGoSquadCardSelectedPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Cards/squad_card_selected_background.png";
     private const string MatchHudOneGoIconStopPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_stop_icon.png";
     private const string MatchHudOneGoIconHoldPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_hold_icon.png";
+    private const string MatchHudOneGoIconSelectPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_select_icon.png";
     private const string MatchHudOneGoIconMovePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_move_icon.png";
     private const string MatchHudOneGoIconAttackPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_attack_icon.png";
     private const string MatchHudOneGoIconSpecialPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_special_icon.png";
@@ -412,10 +414,24 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private const string MatchHudOneGoMoneyIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_money_icon.png";
     private const string MatchHudOneGoMaterialsIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_crate_icon.png";
     private const string MatchHudOneGoPopulationIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_population_icon.png";
+    private const string MatchHudOneGoTimeClockIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/time_clock_icon.png";
     private const string MatchHudOneGoThreatWarningIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/threat_warning_icon.png";
+    private const string MatchHudOneGoThreatEnemySpottedIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/threat_enemy_spotted_icon.png";
     private const string MatchHudOneGoObjectiveCheckboxPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/objective_empty_square.png";
+    private const string MatchHudOneGoObjectiveCheckedPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/objective_checked_square.png";
     private const string MatchHudOneGoObjectiveStarPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/objective_star_filled.png";
     private const string MatchHudOneGoRankChevronPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/squad_rank_triple_chevron.png";
+    private const string MatchHudOneGoShieldBadgePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/shield_badge_cyan.png";
+    private const string MatchHudOneGoSquadPortraitRiflePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_rifle.png";
+    private const string MatchHudOneGoSquadPortraitApcPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_apc.png";
+    private const string MatchHudOneGoSquadPortraitTankPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_tank.png";
+    private const string MatchHudOneGoSquadPortraitHelicopterPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_helicopter.png";
+    private const string MatchHudOneGoMiniMapContentPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/minimap_content.png";
+    private const string MatchHudOneGoMiniMapViewportRectPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/minimap_viewport_rect.png";
+    private const string MatchHudOneGoMiniMapZoomPlusPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Buttons/minimap_zoom_plus_button.png";
+    private const string MatchHudOneGoMiniMapZoomMinusPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Buttons/minimap_zoom_minus_button.png";
+    private const string MatchHudOneGoThreatRowActivePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Rows/threat_row_active_background.png";
+    private const string MatchHudOneGoThreatRowNormalPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Rows/threat_row_normal_background.png";
     private const string AssistantWaveformIconPath = "Assets/Game/Art/UI/Generated/Assistant/Icons/aria_waveform_icon.png";
     private const string AssistantButtonStateSetPath = "Assets/Game/Art/UI/Generated/Assistant/Buttons/aria_button_state_set.png";
     private const string AssistantButtonStateIdlePath = "Assets/Game/Art/UI/Generated/Assistant/Buttons/aria_button_state_idle.png";
@@ -457,6 +473,64 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private const string CommandWheelBlackhawkIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_blackhawk_icon.png";
     private const string CommandWheelBlackhawkArtPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Cards/command_wheel_blackhawk_unit_art.png";
     private const string MainMenuCommanderPortraitPath = "Assets/Game/Art/UI/Generated/MainMenu/Portraits/MainMenu_CommanderPortrait.png";
+    private const string MainMenuLayeredOneGoLayerPackRoot = "Design/VisualLockLayered/SCN-02_MainMenu";
+    private const string MainMenuLayeredCommanderProfilePortraitPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/commander_profile_portrait.png";
+    private const string MainMenuLayeredDesignedUnavailableBadgePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/designed_unavailable_badge.png";
+    private const string MainMenuLayeredFooterStatusFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/footer_status_frame.png";
+    private const string MainMenuLayeredCommandAuthorityIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_command_authority.png";
+    private const string MainMenuLayeredCreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_credits.png";
+    private const string MainMenuLayeredMaterialsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_materials.png";
+    private const string MainMenuLayeredModeCardArtOperationPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_operation.png";
+    private const string MainMenuLayeredModeCardArtQuickCustomPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_quick_custom.png";
+    private const string MainMenuLayeredModeCardArtSagaPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_saga.png";
+    private const string MainMenuLayeredModeCardFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/mode_card_frame.png";
+    private const string MainMenuLayeredProfileBlockFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/profile_block_frame.png";
+    private const string MainMenuLayeredResourceCounterFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/resource_counter_frame.png";
+    private const string MainMenuLayeredScreenShellFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/screen_shell_frame.png";
+    private const string MainMenuLayeredSettingsGearIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/settings_gear_icon.png";
+    private const string MainMenuLayeredSideRouteButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/side_route_button_frame.png";
+    private const string MainMenuLayeredTopResourceStripFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/top_resource_strip_frame.png";
+    private const string MainMenuLayeredBackgroundTacticalMapPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds/main_menu_background_tactical_map.png";
+    private const string MainMenuLayeredBrandLogoPanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/brand_logo_panel_frame.png";
+    private const string MainMenuLayeredBrandEmblemPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/brand_emblem.png";
+    private const string MainMenuLayeredTopResourceBarFrameFullPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/top_resource_bar_frame_full.png";
+    private const string MainMenuLayeredResourceCounterSlotFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/resource_counter_slot_frame.png";
+    private const string MainMenuLayeredSettingsButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/settings_button_frame.png";
+    private const string MainMenuLayeredCommanderProfilePanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/commander_profile_panel_frame.png";
+    private const string MainMenuLayeredLeftNavRowFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/left_nav_row_frame.png";
+    private const string MainMenuLayeredLeftNavIconInboxPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/left_nav_icon_inbox.png";
+    private const string MainMenuLayeredLeftNavIconStorePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/left_nav_icon_store.png";
+    private const string MainMenuLayeredLeftNavIconEventsPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/left_nav_icon_events.png";
+    private const string MainMenuLayeredLeftNavIconRankingPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/left_nav_icon_ranking.png";
+    private const string MainMenuLayeredLeftNavIconCommandFeedPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/left_nav_icon_command_feed.png";
+    private const string MainMenuLayeredModeCardFrameLargePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/mode_card_frame_large.png";
+    private const string MainMenuLayeredModeCardHeaderEmblemSagaPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/mode_card_header_emblem_saga.png";
+    private const string MainMenuLayeredModeCardHeaderEmblemOperationPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/mode_card_header_emblem_operation.png";
+    private const string MainMenuLayeredModeCardHeaderEmblemQuickCustomPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/mode_card_header_emblem_quick_custom.png";
+    private const string MainMenuLayeredOperationWarningIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/operation_warning_icon.png";
+    private const string MainMenuLayeredOperationPressureMeterSegmentsPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/operation_pressure_meter_segments.png";
+    private const string MainMenuLayeredOperationRiskMeterSegmentsPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/operation_risk_meter_segments.png";
+    private const string MainMenuLayeredOperationRowDividerChromePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/operation_row_divider_chrome.png";
+    private const string MainMenuLayeredCardFooterIconSagaPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/card_footer_icon_saga.png";
+    private const string MainMenuLayeredCardFooterIconOperationPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/card_footer_icon_operation.png";
+    private const string MainMenuLayeredCardFooterIconQuickCustomPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/card_footer_icon_quick_custom.png";
+    private const string MainMenuLayeredDeployCommandButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/deploy_command_button_frame.png";
+    private const string MainMenuLayeredDeployCommandChevronsPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/deploy_command_chevrons.png";
+    private const string MainMenuLayeredDeployCommandGlowOverlayPath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/deploy_command_glow_overlay.png";
+    private const string MainMenuLayeredCommandFeedPanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/command_feed_panel_frame.png";
+    private const string MainMenuLayeredCommandFeedIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/command_feed_icon.png";
+    private const string MainMenuLayeredTrimOverlayCyanLongPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/trim_overlay_cyan_long.png";
+    private const string MainMenuLayeredTrimOverlayCyanShortPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/trim_overlay_cyan_short.png";
+    private const string MainMenuLayeredTrimOverlayAmberShortPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/trim_overlay_amber_short.png";
+    private const string MainMenuLayeredShadowTrimOverlayDarkPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays/shadow_trim_overlay_dark.png";
+    private const string MainMenuImageGenCleanBrandLogoPanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/brand_logo_panel_frame.png";
+    private const string MainMenuImageGenCleanTopResourceBarFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/top_resource_bar_frame.png";
+    private const string MainMenuImageGenCleanSettingsButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/settings_button_frame.png";
+    private const string MainMenuImageGenCleanCommanderProfilePanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/commander_profile_panel_frame.png";
+    private const string MainMenuImageGenCleanLeftNavRowFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/left_nav_row_frame.png";
+    private const string MainMenuImageGenCleanModeCardFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/mode_card_frame.png";
+    private const string MainMenuImageGenCleanDeployCommandButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/deploy_command_button_frame.png";
+    private const string MainMenuImageGenCleanCommandFeedPanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed/command_feed_panel_frame.png";
     private const string MainMenuCommanderPlatePath = "Assets/Game/Art/UI/Generated/MainMenu/Buttons/MainMenu_Commander_Plate.png";
     private const string MainMenuSagaArtPath = "Assets/Game/Art/UI/Generated/MainMenu/Cards/MainMenu_CardArt_Saga.png";
     private const string MainMenuOperationArtPath = "Assets/Game/Art/UI/Generated/MainMenu/Cards/MainMenu_CardArt_Operation.png";
@@ -613,6 +687,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GenerateDesignedUnavailableRouteArtAssets();
         EnsureDesignedUnavailableRouteSprites();
         GenerateMainMenuArtCrops();
+        GenerateMainMenuLayeredOneGoAssets();
         EnsureMainMenuGeneratedSprites();
         EnsureMainMenuSpriteAtlases();
 
@@ -750,6 +825,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GenerateCommandExchangeArtAssets();
         EnsureCommandExchangeGeneratedSprites();
         GenerateMainMenuArtCrops();
+        GenerateMainMenuLayeredOneGoAssets();
         EnsureMainMenuGeneratedSprites();
         EnsureMainMenuSpriteAtlases();
         SaveScreenPrefab(CreateMainMenuScreen(), $"{ScreensFolder}/Screen_MainMenu.prefab");
@@ -760,6 +836,21 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Debug.Log("[WarlineCaptureUI] Command Exchange screen generated.");
     }
 
+    [MenuItem("WarlineCapture/UI/Build Main Menu Screen")]
+    public static void BuildMainMenuScreen()
+    {
+        EnsureFolders();
+        EnsureButtonAnimationAssets();
+        GenerateMainMenuLayeredOneGoAssets();
+        EnsureMainMenuGeneratedSprites();
+        EnsureMainMenuSpriteAtlases();
+        SaveScreenPrefab(CreateMainMenuScreen(), $"{ScreensFolder}/Screen_MainMenu.prefab");
+        SaveShellPrefab();
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("[WarlineCaptureUI] Main Menu screen generated.");
+    }
+
     [MenuItem("WarlineCapture/UI/Build Saga Campaign Screens")]
     public static void BuildSagaCampaignScreens()
     {
@@ -768,6 +859,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GenerateSagaCampaignArtAssets();
         EnsureSagaCampaignGeneratedSprites();
         GenerateMainMenuArtCrops();
+        GenerateMainMenuLayeredOneGoAssets();
         EnsureMainMenuGeneratedSprites();
         EnsureMainMenuSpriteAtlases();
         SaveScreenPrefab(CreateMainMenuScreen(), $"{ScreensFolder}/Screen_MainMenu.prefab");
@@ -788,6 +880,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GenerateDesignedUnavailableRouteArtAssets();
         EnsureDesignedUnavailableRouteSprites();
         GenerateMainMenuArtCrops();
+        GenerateMainMenuLayeredOneGoAssets();
         EnsureMainMenuGeneratedSprites();
         EnsureMainMenuSpriteAtlases();
         SaveScreenPrefab(CreateMainMenuScreen(), $"{ScreensFolder}/Screen_MainMenu.prefab");
@@ -878,7 +971,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     [MenuItem("WarlineCapture/UI/Install Phase 1 Bootstrap In Game Scene")]
     public static void InstallBootstrapInGameScene()
     {
-        const string scenePath = "Assets/Game/Scenes/Game.unity";
+        const string scenePath = "Assets/Game/Scenes/Game2D.unity";
         BuildAll();
 
         UnityEngine.SceneManagement.Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -902,7 +995,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     [MenuItem("WarlineCapture/UI/Enable Parallel UI In Game Scene")]
     public static void EnableParallelUiInGameScene()
     {
-        const string scenePath = "Assets/Game/Scenes/Game.unity";
+        const string scenePath = "Assets/Game/Scenes/Game2D.unity";
         BuildAll();
 
         UnityEngine.SceneManagement.Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -934,10 +1027,50 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CaptureScreenPrefab($"{ScreensFolder}/Screen_MainMenu.prefab", "/private/tmp/warlinecapture-screen-mainmenu-capture.png", (int)MainMenuReferenceResolution.x, (int)MainMenuReferenceResolution.y);
     }
 
+    [MenuItem("WarlineCapture/UI/Capture Main Menu Shell Visual")]
+    public static void CaptureMainMenuShellVisual()
+    {
+        CaptureScreenPrefab(
+            ShellPrefabPath,
+            "/private/tmp/warlinecapture-shell-mainmenu-capture.png",
+            (int)MainMenuReferenceResolution.x,
+            (int)MainMenuReferenceResolution.y,
+            new Color(0.018f, 0.026f, 0.03f, 1f),
+            instance =>
+            {
+                WarlineCaptureRouter router = instance.GetComponent<WarlineCaptureRouter>();
+                router?.GoTo(WarlineCaptureRoute.MainMenu, false);
+                RefreshAspectVariantSwitchers(instance);
+            });
+    }
+
+    [MenuItem("WarlineCapture/UI/Capture Main Menu Shell Visual 20x9")]
+    public static void CaptureMainMenuShellVisual20x9()
+    {
+        CaptureScreenPrefab(
+            ShellPrefabPath,
+            "/private/tmp/warlinecapture-shell-mainmenu-capture-20x9.png",
+            2400,
+            1080,
+            new Color(0.018f, 0.026f, 0.03f, 1f),
+            instance =>
+            {
+                WarlineCaptureRouter router = instance.GetComponent<WarlineCaptureRouter>();
+                router?.GoTo(WarlineCaptureRoute.MainMenu, false);
+                RefreshAspectVariantSwitchers(instance);
+            });
+    }
+
     [MenuItem("WarlineCapture/UI/Capture Main Menu Visual 20x9")]
     public static void CaptureMainMenuVisual20x9()
     {
-        CaptureScreenPrefab($"{ScreensFolder}/Screen_MainMenu.prefab", "/private/tmp/warlinecapture-screen-mainmenu-capture-20x9.png", 2400, 1080);
+        CaptureScreenPrefab(
+            $"{ScreensFolder}/Screen_MainMenu.prefab",
+            "/private/tmp/warlinecapture-screen-mainmenu-capture-20x9.png",
+            2400,
+            1080,
+            new Color(0.018f, 0.026f, 0.03f, 1f),
+            RefreshAspectVariantSwitchers);
     }
 
     [MenuItem("WarlineCapture/UI/Capture Splash Visual")]
@@ -1027,6 +1160,58 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Directory.CreateDirectory(M01IntegratedCaptureRoot);
         CaptureM01IntegratedCaptureMatrixForResolution(1920, 1080, "1920x1080");
         CaptureM01IntegratedCaptureMatrixForResolution(2400, 1080, "2400x1080");
+    }
+
+    [MenuItem("WarlineCapture/UI/Capture M01 No Selection Evidence")]
+    public static void CaptureM01NoSelectionEvidence()
+    {
+        Directory.CreateDirectory("Design/AgentReports/Captures");
+        CaptureScreenPrefab(
+            $"{ScreensFolder}/Screen_MatchOverlay.prefab",
+            "Design/AgentReports/Captures/M01-01_SCN08_NoSelection_1920x1080.png",
+            1920,
+            1080,
+            MatchOverlayQaBackgroundColor,
+            ConfigureM01NoSelectionCaptureState);
+    }
+
+    [MenuItem("WarlineCapture/UI/Capture M01 No Selection Evidence V4")]
+    public static void CaptureM01NoSelectionEvidenceV4()
+    {
+        Directory.CreateDirectory("Design/AgentReports/Captures");
+        CaptureScreenPrefab(
+            $"{ScreensFolder}/Screen_MatchOverlay.prefab",
+            "Design/AgentReports/Captures/M01-01_SCN08_NoSelection_v4_1920x1080.png",
+            1920,
+            1080,
+            MatchOverlayQaBackgroundColor,
+            ConfigureM01NoSelectionCaptureState);
+    }
+
+    [MenuItem("WarlineCapture/UI/Capture M01 No Selection Evidence V5")]
+    public static void CaptureM01NoSelectionEvidenceV5()
+    {
+        Directory.CreateDirectory("Design/AgentReports/Captures");
+        CaptureScreenPrefab(
+            $"{ScreensFolder}/Screen_MatchOverlay.prefab",
+            "Design/AgentReports/Captures/M01-01_SCN08_NoSelection_v5_1920x1080.png",
+            1920,
+            1080,
+            MatchOverlayQaBackgroundColor,
+            ConfigureM01NoSelectionCaptureState);
+    }
+
+    [MenuItem("WarlineCapture/UI/Capture M01 No Selection Evidence V6")]
+    public static void CaptureM01NoSelectionEvidenceV6()
+    {
+        Directory.CreateDirectory("Design/AgentReports/Captures");
+        CaptureScreenPrefab(
+            $"{ScreensFolder}/Screen_MatchOverlay.prefab",
+            "Design/AgentReports/Captures/M01-01_SCN08_NoSelection_v6_1920x1080.png",
+            1920,
+            1080,
+            MatchOverlayQaBackgroundColor,
+            ConfigureM01NoSelectionCaptureState);
     }
 
     [MenuItem("WarlineCapture/UI/Capture M01 Route Safe Area Matrix")]
@@ -1450,6 +1635,16 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         }
     }
 
+    private static void RefreshAspectVariantSwitchers(GameObject instance)
+    {
+        if (instance == null)
+            return;
+
+        WarlineCaptureAspectVariantSwitcher[] switchers = instance.GetComponentsInChildren<WarlineCaptureAspectVariantSwitcher>(true);
+        foreach (WarlineCaptureAspectVariantSwitcher switcher in switchers)
+            switcher.Refresh();
+    }
+
     private static void OpenBuildDrawerForCapture(GameObject instance)
     {
         BuildDrawerPanelController drawerController = instance.GetComponent<BuildDrawerPanelController>();
@@ -1472,6 +1667,9 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         AssistantRuntimeBinding assistantRuntimeBinding = instance.GetComponent<AssistantRuntimeBinding>();
         if (assistantRuntimeBinding != null)
             assistantRuntimeBinding.RefreshNow();
+
+        SetCaptureRootActive(instance, "AssistantLayer/AssistantEntryButton", true);
+        SetCaptureRootActive(instance, "AssistantLayer/AssistantPanelDock", true);
 
         AssistantPanelController assistantPanelController = instance.GetComponent<AssistantPanelController>();
         if (assistantPanelController != null)
@@ -1825,27 +2023,27 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
     private static void ConfigureM01IntegratedCaptureState(GameObject instance, M01IntegratedCaptureState state)
     {
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
-        InitialUnitsRuntimeState.PlayRequested = true;
-        EnableM01IntegratedPreview(instance);
-
+        ConfigureM01NoSelectionCaptureState(instance);
         BattleHudTacticalFeedbackController feedbackController = instance.GetComponent<BattleHudTacticalFeedbackController>();
-        feedbackController?.SetWorldMarkersVisible(true);
 
         switch (state)
         {
             case M01IntegratedCaptureState.SquadSelected:
+                feedbackController?.SetWorldMarkersVisible(true);
                 ShowM01SelectedSquad(feedbackController);
                 break;
             case M01IntegratedCaptureState.MoveFeedback:
+                feedbackController?.SetWorldMarkersVisible(true);
                 ShowM01SelectedSquad(feedbackController);
                 feedbackController?.ShowCommandMode("MOVE ORDER");
                 break;
             case M01IntegratedCaptureState.AttackFeedback:
+                feedbackController?.SetWorldMarkersVisible(true);
                 ShowM01SelectedSquad(feedbackController);
                 feedbackController?.ShowCommandMode("ATTACK TARGETING");
                 break;
             case M01IntegratedCaptureState.InvalidCommandRecovery:
+                feedbackController?.SetWorldMarkersVisible(true);
                 ShowM01SelectedSquad(feedbackController);
                 feedbackController?.ShowCommandMode("RECOVERY");
                 feedbackController?.ShowInvalidCommand("INVALID: Select a valid hostile target");
@@ -1865,6 +2063,44 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
                 AddM01MissionResultPopupForCapture(instance);
                 break;
         }
+    }
+
+    private static void ConfigureM01NoSelectionCaptureState(GameObject instance)
+    {
+        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        InitialUnitsRuntimeState.PlayRequested = true;
+        EnableM01IntegratedPreview(instance);
+
+        MatchObjectivePanelController objectivePanel = instance.GetComponent<MatchObjectivePanelController>();
+        objectivePanel?.RefreshForTests();
+
+        M01InfantryOnlyHudScopeController m01Scope = instance.GetComponent<M01InfantryOnlyHudScopeController>();
+        m01Scope?.Refresh();
+
+        BattleHudTacticalFeedbackController feedbackController = instance.GetComponent<BattleHudTacticalFeedbackController>();
+        feedbackController?.HideSelectedEntity();
+        feedbackController?.HideCommandMode();
+        feedbackController?.HideInvalidCommand();
+        feedbackController?.SetWorldMarkersVisible(false);
+
+        AssistantPanelController assistantPanelController = instance.GetComponent<AssistantPanelController>();
+        assistantPanelController?.Hide();
+
+        BuildDrawerPanelController buildDrawerController = instance.GetComponent<BuildDrawerPanelController>();
+        buildDrawerController?.Close();
+
+        CommandWheelPanelController commandWheelController = instance.GetComponent<CommandWheelPanelController>();
+        commandWheelController?.Close();
+
+        SetCaptureRootActive(instance, "AssistantLayer/AssistantEntryButton", false);
+        SetCaptureRootActive(instance, "AssistantLayer/AssistantPanelDock", false);
+    }
+
+    private static void SetCaptureRootActive(GameObject instance, string path, bool active)
+    {
+        Transform target = instance != null ? instance.transform.Find(path) : null;
+        if (target != null)
+            target.gameObject.SetActive(active);
     }
 
     private static void EnableM01IntegratedPreview(GameObject instance)
@@ -1894,6 +2130,9 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             binding.AssistantService.SessionState.SetActiveTakeover("do.move_to_cover");
             binding.RefreshNow();
         }
+
+        SetCaptureRootActive(instance, "AssistantLayer/AssistantEntryButton", true);
+        SetCaptureRootActive(instance, "AssistantLayer/AssistantPanelDock", true);
 
         AssistantPanelController controller = instance.GetComponent<AssistantPanelController>();
         if (controller != null)
@@ -1952,7 +2191,8 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             {
                 new RewardGrantResult("m01.complete", RewardType.CommanderXp, string.Empty, 220, true, string.Empty),
                 new RewardGrantResult("m01.complete", RewardType.Credits, string.Empty, 1200, true, string.Empty),
-                new RewardGrantResult("m01.complete", RewardType.Materials, string.Empty, 300, true, string.Empty)
+                new RewardGrantResult("m01.complete", RewardType.Materials, string.Empty, 300, true, string.Empty),
+                new RewardGrantResult("m01.complete", RewardType.Intel, string.Empty, 1, true, string.Empty)
             });
     }
 
@@ -2270,188 +2510,294 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateMainMenuScreen()
     {
         GameObject screen = CreateRectObject("Screen_MainMenu", null);
+        SetSize(screen, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
+        ((RectTransform)screen.transform).sizeDelta = Vector2.zero;
         WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
         controller.SetRouteForTests(WarlineCaptureRoute.MainMenu);
         Image background = screen.AddComponent<Image>();
-        background.color = new Color(0.018f, 0.026f, 0.03f, 1f);
+        background.color = new Color(0.006f, 0.020f, 0.024f, 1f);
+        background.raycastTarget = false;
+
+        Image tacticalMap = CreateImage("MainMenuBackgroundTacticalMap", screen.transform, Color.white);
+        tacticalMap.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredBackgroundTacticalMapPath);
+        tacticalMap.preserveAspect = false;
+        tacticalMap.color = new Color(0.86f, 0.90f, 0.92f, 0.96f);
+        tacticalMap.raycastTarget = false;
+        Stretch((RectTransform)tacticalMap.transform);
+
+        Image screenShellFrame = CreateImage("ScreenShellFrame", screen.transform, Color.white);
+        screenShellFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredScreenShellFramePath);
+        screenShellFrame.type = Image.Type.Sliced;
+        screenShellFrame.preserveAspect = false;
+        screenShellFrame.color = new Color(1f, 1f, 1f, 0.10f);
+        screenShellFrame.raycastTarget = false;
+        Stretch((RectTransform)screenShellFrame.transform);
+        screenShellFrame.gameObject.SetActive(false);
+
+        Image topTrim = CreateImage("TopTrimOverlay", screen.transform, Color.white);
+        topTrim.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredTrimOverlayCyanLongPath);
+        topTrim.preserveAspect = false;
+        topTrim.color = new Color(1f, 1f, 1f, 0.035f);
+        topTrim.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)topTrim.transform, 390f, 116f, 902f, 18f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
+
+        Image lowerShadow = CreateImage("LowerShadowTrimOverlay", screen.transform, Color.white);
+        lowerShadow.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredShadowTrimOverlayDarkPath);
+        lowerShadow.preserveAspect = false;
+        lowerShadow.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)lowerShadow.transform, 0f, 724f, 1672f, 217f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
+        lowerShadow.gameObject.SetActive(false);
 
         GameObject topProfileBar = CreateRectObject("TopProfileBar", screen.transform);
-        ConfigureVerticalBand((RectTransform)topProfileBar.transform, 0.8544f, 1f);
+        ConfigurePixelRect((RectTransform)topProfileBar.transform, 0f, 0f, 1672f, 120f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
         Image topProfileBackground = topProfileBar.AddComponent<Image>();
-        topProfileBackground.color = Color.white;
-        topProfileBackground.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuTopBarPanelPath);
-        topProfileBackground.type = Image.Type.Sliced;
+        topProfileBackground.color = new Color(1f, 1f, 1f, 0f);
+        topProfileBackground.raycastTarget = false;
 
-        GameObject logoObject = CreateRectObject("LogoImage", topProfileBar.transform);
+        GameObject logoObject = CreateRectObject("LogoPanelFrame", topProfileBar.transform);
         RectTransform logoRect = (RectTransform)logoObject.transform;
         Image logoImage = logoObject.AddComponent<Image>();
-        logoImage.preserveAspect = true;
-        logoImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuCommanderPlatePath);
+        logoImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredBrandLogoPanelFramePath);
+        logoImage.type = Image.Type.Sliced;
+        logoImage.color = new Color(1f, 1f, 1f, 0.16f);
         logoImage.raycastTarget = false;
-        ConfigureFixedLeftProportionalY(logoRect, 12f, 12f, 160f, 124f, 137f);
+        ConfigurePixelRect(logoRect, 5f, 6f, 352f, 100f, 1672f, 120f);
 
-        GameObject commanderAvatar = CreateRectObject("CommanderAvatar", topProfileBar.transform);
-        RectTransform avatarRect = (RectTransform)commanderAvatar.transform;
-        avatarRect.anchorMin = new Vector2(0.107f, 0.18f);
-        avatarRect.anchorMax = new Vector2(0.117f, 0.82f);
-        Image avatarImage = commanderAvatar.AddComponent<Image>();
-        avatarImage.color = new Color(0.10f, 0.86f, 1f, 0.72f);
-        avatarImage.raycastTarget = false;
-        commanderAvatar.SetActive(false);
+        Image brandEmblem = CreateImage("BrandEmblem", topProfileBar.transform, Color.white);
+        brandEmblem.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredBrandEmblemPath);
+        brandEmblem.preserveAspect = true;
+        brandEmblem.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)brandEmblem.transform, 42f, 22f, 58f, 58f, 1672f, 120f);
 
-        TMP_Text commanderText = CreateText("CommanderNameText", topProfileBar.transform, "Commander_7X", 32f, TextAlignmentOptions.Left);
-        RectTransform commanderRect = (RectTransform)commanderText.transform;
-        commanderText.color = new Color(0.91f, 0.96f, 1f, 1f);
-        ConfigureFixedLeftProportionalY(commanderRect, 193f, 25f, 420f, 42f, 137f);
+        TMP_Text masthead = CreateText("MastheadText", topProfileBar.transform, "WARLINE", 36f, TextAlignmentOptions.Left);
+        masthead.fontStyle = FontStyles.Bold;
+        masthead.color = new Color(0.91f, 0.98f, 1f, 1f);
+        masthead.enableAutoSizing = true;
+        masthead.fontSizeMin = 28f;
+        masthead.fontSizeMax = 39f;
+        masthead.characterSpacing = 3f;
+        ConfigurePixelRect((RectTransform)masthead.transform, 118f, 22f, 216f, 44f, 1672f, 120f);
+        ConfigureSingleLineText(masthead);
 
-        TMP_Text levelText = CreateText("LevelText", topProfileBar.transform, "LV. 32", 22f, TextAlignmentOptions.Left);
-        RectTransform levelRect = (RectTransform)levelText.transform;
-        levelText.color = new Color(0.94f, 0.84f, 0.42f, 1f);
-        ConfigureFixedLeftProportionalY(levelRect, 193f, 78f, 100f, 34f, 137f);
+        TMP_Text commandDeck = CreateText("CommandDeckText", topProfileBar.transform, "CAPTURE", 22f, TextAlignmentOptions.Left);
+        commandDeck.color = new Color(0.45f, 0.88f, 1f, 1f);
+        commandDeck.characterSpacing = 8f;
+        ConfigurePixelRect((RectTransform)commandDeck.transform, 120f, 70f, 190f, 24f, 1672f, 120f);
+        ConfigureSingleLineText(commandDeck);
 
-        GameObject xpTrack = CreateRectObject("XpProgressTrack", topProfileBar.transform);
-        RectTransform xpTrackRect = (RectTransform)xpTrack.transform;
-        ConfigureFixedLeftProportionalY(xpTrackRect, 300f, 86f, 252f, 22f, 137f);
-        Image xpTrackImage = xpTrack.AddComponent<Image>();
-        xpTrackImage.color = new Color(0.012f, 0.014f, 0.012f, 0.95f);
-        xpTrackImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuXpTrackMaskPath);
-        xpTrackImage.preserveAspect = true;
-
-        GameObject xpFill = CreateRectObject("XpProgressFill", xpTrack.transform);
-        RectTransform xpFillRect = (RectTransform)xpFill.transform;
-        ConfigureFixedLeftProportionalY(xpFillRect, 6f, 4f, 208f, 14f, 22f);
-        Image xpFillImage = xpFill.AddComponent<Image>();
-        xpFillImage.color = new Color(1f, 0.76f, 0.03f, 1f);
-        xpFillImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuXpFillMaskPath);
-        xpFillImage.preserveAspect = true;
-        xpFillImage.raycastTarget = false;
-
-        GameObject xpFrame = CreateRectObject("XpTrackFrame", xpTrack.transform);
-        RectTransform xpFrameRect = (RectTransform)xpFrame.transform;
-        Stretch(xpFrameRect);
-        Image xpFrameImage = xpFrame.AddComponent<Image>();
-        xpFrameImage.color = new Color(0.60f, 0.64f, 0.58f, 0.64f);
-        xpFrameImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuXpTrackFrameMaskPath);
-        xpFrameImage.preserveAspect = true;
-        xpFrameImage.raycastTarget = false;
-
-        TMP_Text xpText = CreateText("XpProgressText", topProfileBar.transform, "18,450 / 25,000", 18f, TextAlignmentOptions.Left);
-        RectTransform xpRect = (RectTransform)xpText.transform;
-        xpText.color = new Color(1f, 0.82f, 0.08f, 1f);
-        ConfigureFixedLeftProportionalY(xpRect, 570f, 83f, 170f, 30f, 137f);
+        Image resourceBar = CreateImage("TopResourceBarFrame", topProfileBar.transform, Color.white);
+        resourceBar.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredTopResourceBarFrameFullPath);
+        resourceBar.type = Image.Type.Sliced;
+        resourceBar.color = new Color(1f, 1f, 1f, 0.24f);
+        resourceBar.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)resourceBar.transform, 398f, 22f, 1160f, 74f, 1672f, 120f);
 
         GameObject resourceCounterList = CreateRectObject("ResourceCounterList", topProfileBar.transform);
         RectTransform resourceRect = (RectTransform)resourceCounterList.transform;
         Stretch(resourceRect);
 
-        GameObject moneyCounter = CreateResourceCounter("Resource_Money", resourceCounterList.transform, "24.8K", new Color(0.94f, 0.84f, 0.42f, 1f), MainMenuResourceMoneyIconPath, false);
-        ConfigureFixedRightProportionalY((RectTransform)moneyCounter.transform, 682f, 44f, 185f, 70f, 137f);
-        GameObject trustCounter = CreateResourceCounter("Resource_Trust", resourceCounterList.transform, "12.6K", new Color(0.68f, 0.78f, 0.84f, 1f), MainMenuResourceTrustIconPath, false);
-        ConfigureFixedRightProportionalY((RectTransform)trustCounter.transform, 444f, 44f, 190f, 70f, 137f);
-        GameObject intelCounter = CreateResourceCounter("Resource_Intel", resourceCounterList.transform, "1,250", new Color(0.16f, 0.78f, 0.95f, 1f), MainMenuResourceIntelIconPath, false);
-        ConfigureFixedRightProportionalY((RectTransform)intelCounter.transform, 214f, 44f, 190f, 70f, 137f);
-
-        AddHeaderSeparator(topProfileBar.transform, 922f);
-        AddHeaderSeparator(topProfileBar.transform, 658f);
-        AddHeaderSeparator(topProfileBar.transform, 418f);
-        AddHeaderSeparator(topProfileBar.transform, 132f);
-
-        Button economyPlusButton = CreatePlateSpriteButton("EconomyPlusButton", topProfileBar.transform, MainMenuPlusButtonPlatePath, 64f, 64f);
-        RectTransform economyPlusRect = (RectTransform)economyPlusButton.transform;
-        ConfigureFixedRightProportionalY(economyPlusRect, 164f, 53f, 60f, 60f, 137f);
-        ScreenRouteButton economyPlusRoute = economyPlusButton.gameObject.AddComponent<ScreenRouteButton>();
-        SetSerializedEnum(economyPlusRoute, "route", (int)WarlineCaptureRoute.CommandExchange);
+        GameObject moneyCounter = CreateResourceCounter("Resource_Money", resourceCounterList.transform, "Credits", "187,540", new Color(0.94f, 0.84f, 0.42f, 1f), MainMenuLayeredCreditsIconPath, false);
+        ConfigurePixelRect((RectTransform)moneyCounter.transform, 456f, 22f, 316f, 72f, 1672f, 120f);
+        GameObject trustCounter = CreateResourceCounter("Resource_Trust", resourceCounterList.transform, "Materials", "92,860", new Color(0.68f, 0.78f, 0.84f, 1f), MainMenuLayeredMaterialsIconPath, false);
+        ConfigurePixelRect((RectTransform)trustCounter.transform, 820f, 22f, 316f, 72f, 1672f, 120f);
+        GameObject intelCounter = CreateResourceCounter("Resource_Intel", resourceCounterList.transform, "Command Authority", "2,715", new Color(1f, 0.78f, 0.32f, 1f), MainMenuLayeredCommandAuthorityIconPath, false);
+        ConfigurePixelRect((RectTransform)intelCounter.transform, 1184f, 22f, 316f, 72f, 1672f, 120f);
 
         Button settingsButton = CreatePlateSpriteButton("SettingsButton", topProfileBar.transform, MainMenuSettingsButtonPlatePath, 94f, 94f);
+        Image settingsBackground = settingsButton.GetComponent<Image>();
+        if (settingsBackground != null)
+        {
+            settingsBackground.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredSettingsButtonFramePath);
+            settingsBackground.type = Image.Type.Sliced;
+            settingsBackground.color = new Color(1f, 1f, 1f, 0.94f);
+        }
+        Image settingsIcon = CreateImage("SettingsGearIcon", settingsButton.transform, Color.white);
+        settingsIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredSettingsGearIconPath);
+        settingsIcon.preserveAspect = true;
+        settingsIcon.raycastTarget = false;
+        settingsIcon.color = new Color(1f, 1f, 1f, 0.88f);
+        ConfigurePixelRect((RectTransform)settingsIcon.transform, 20f, 20f, 34f, 34f, 74f, 74f);
         RectTransform settingsRect = (RectTransform)settingsButton.transform;
-        ConfigureFixedRightProportionalY(settingsRect, 20f, 32f, 86f, 86f, 137f);
+        ConfigurePixelRect(settingsRect, 1572f, 18f, 74f, 74f, 1672f, 120f);
         ScreenRouteButton settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteButton>();
         SetSerializedEnum(settingsRoute, "route", (int)WarlineCaptureRoute.Settings);
 
         GameObject leftNav = CreateRectObject("LeftNav", screen.transform);
         RectTransform leftNavRect = (RectTransform)leftNav.transform;
-        ConfigureFixedWidthVerticalBand(leftNavRect, 0f, 222f, 0.1105f, 0.8544f);
+        ConfigurePixelRect(leftNavRect, 7f, 126f, 350f, 667f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
         Image leftNavBackground = leftNav.AddComponent<Image>();
-        leftNavBackground.color = Color.white;
-        leftNavBackground.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLeftRailPanelPath);
-        leftNavBackground.type = Image.Type.Sliced;
-        Button profileButton = CreateMainMenuNavButton("ProfileButton", leftNav.transform, MainMenuNavProfileButtonPath, "Profile", "Commander profile will be connected after profile persistence is implemented.", true);
-        ConfigurePixelRect((RectTransform)profileButton.transform, 31f, 28f, 170f, 124f, 222f, 700f);
+        leftNavBackground.color = new Color(1f, 1f, 1f, 0f);
+        leftNavBackground.raycastTarget = false;
+
+        GameObject profilePanel = CreateRectObject("CommanderProfilePanel", leftNav.transform);
+        ConfigurePixelRect((RectTransform)profilePanel.transform, 0f, 0f, 350f, 292f, 350f, 667f);
+        Image profilePanelImage = profilePanel.AddComponent<Image>();
+        profilePanelImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredCommanderProfilePanelFramePath);
+        profilePanelImage.type = Image.Type.Sliced;
+        profilePanelImage.color = new Color(1f, 1f, 1f, 0.22f);
+        profilePanelImage.raycastTarget = false;
+
+        TMP_Text profileTitle = CreateText("CommanderProfileTitleText", profilePanel.transform, "COMMANDER PROFILE", 18f, TextAlignmentOptions.Left);
+        profileTitle.fontStyle = FontStyles.Bold;
+        profileTitle.color = new Color(0.34f, 0.88f, 1f, 1f);
+        ConfigurePixelRect((RectTransform)profileTitle.transform, 31f, 11f, 286f, 34f, 350f, 292f);
+        ConfigureSingleLineText(profileTitle);
+
+        Image profileAvatar = CreateImage("ProfileAvatar", profilePanel.transform, Color.white);
+        profileAvatar.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredCommanderProfilePortraitPath);
+        profileAvatar.preserveAspect = false;
+        profileAvatar.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)profileAvatar.transform, 32f, 45f, 286f, 188f, 350f, 292f);
+
+        TMP_Text profileName = CreateText("ProfileNameText", profilePanel.transform, "Profile data pending", 20f, TextAlignmentOptions.Center);
+        profileName.fontStyle = FontStyles.Bold;
+        profileName.color = new Color(0.74f, 0.82f, 0.84f, 1f);
+        ConfigurePixelRect((RectTransform)profileName.transform, 54f, 239f, 242f, 30f, 350f, 292f);
+        ConfigureSingleLineText(profileName);
+
+        TMP_Text profileState = CreateText("ProfileStatusText", profilePanel.transform, "LV. 32  |  FIRST CONTACT READY", 16f, TextAlignmentOptions.Left);
+        profileState.color = new Color(0.74f, 0.82f, 0.84f, 1f);
+        ConfigurePixelRect((RectTransform)profileState.transform, 29f, 287f, 246f, 26f, 308f, 357f);
+        profileState.enableAutoSizing = true;
+        profileState.fontSizeMin = 11f;
+        profileState.fontSizeMax = 16f;
+        profileState.gameObject.SetActive(false);
+
+        Button profileButton = CreateMainMenuNavButton("ProfileButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, null, "Profile", "Commander profile route.", true);
+        ConfigurePixelRect((RectTransform)profileButton.transform, 0f, 306f, 350f, 66f, 350f, 667f);
         ApplyButtonAnimationPose(profileButton, true);
+        profileButton.gameObject.SetActive(false);
         UnityEngine.Object.DestroyImmediate(profileButton.GetComponent<WarlineCapturePlaceholderModalButton>());
         ScreenRouteButton profileRoute = profileButton.gameObject.AddComponent<ScreenRouteButton>();
         SetSerializedEnum(profileRoute, "route", (int)WarlineCaptureRoute.CommanderProfile);
-        Button inboxButton = CreateMainMenuNavButton("InboxButton", leftNav.transform, MainMenuNavInboxButtonPath, "Inbox", "Inbox and alerts are planned for the live operations layer.");
-        ConfigurePixelRect((RectTransform)inboxButton.transform, 33f, 162f, 168f, 122f, 222f, 700f);
+        Button inboxButton = CreateMainMenuNavButton("InboxButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconInboxPath, "Inbox", "Inbox and alerts are planned for the live operations layer.");
+        ConfigurePixelRect((RectTransform)inboxButton.transform, 0f, 312f, 350f, 56f, 350f, 667f);
+        AddDesignedUnavailableBadge(inboxButton.transform, "UNAVAILABLE");
         UnityEngine.Object.DestroyImmediate(inboxButton.GetComponent<WarlineCapturePlaceholderModalButton>());
         ScreenRouteButton inboxRoute = inboxButton.gameObject.AddComponent<ScreenRouteButton>();
         SetSerializedEnum(inboxRoute, "route", (int)WarlineCaptureRoute.Inbox);
-        Button storeButton = CreateMainMenuNavButton("StoreButton", leftNav.transform, MainMenuNavStoreButtonPath, "Store", "Store and resource purchase flows are not active in this build.");
-        ConfigurePixelRect((RectTransform)storeButton.transform, 33f, 291f, 168f, 121f, 222f, 700f);
+        Button storeButton = CreateMainMenuNavButton("StoreButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconStorePath, "Store", "Store and resource purchase flows are not active in this build.");
+        ConfigurePixelRect((RectTransform)storeButton.transform, 0f, 374f, 350f, 56f, 350f, 667f);
+        AddDesignedUnavailableBadge(storeButton.transform, "UNAVAILABLE");
         UnityEngine.Object.DestroyImmediate(storeButton.GetComponent<WarlineCapturePlaceholderModalButton>());
         ScreenRouteButton storeRoute = storeButton.gameObject.AddComponent<ScreenRouteButton>();
         SetSerializedEnum(storeRoute, "route", (int)WarlineCaptureRoute.CommandExchange);
-        Button eventsButton = CreateMainMenuNavButton("EventsButton", leftNav.transform, MainMenuNavEventsButtonPath, "Events", "Event mode cards will use the same ModeCardView component.");
-        ConfigurePixelRect((RectTransform)eventsButton.transform, 33f, 420f, 168f, 121f, 222f, 700f);
+        Button eventsButton = CreateMainMenuNavButton("EventsButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconEventsPath, "Events", "Event mode cards will use the same ModeCardView component.");
+        ConfigurePixelRect((RectTransform)eventsButton.transform, 0f, 436f, 350f, 56f, 350f, 667f);
+        AddDesignedUnavailableBadge(eventsButton.transform, "UNAVAILABLE");
         UnityEngine.Object.DestroyImmediate(eventsButton.GetComponent<WarlineCapturePlaceholderModalButton>());
         ScreenRouteButton eventsRoute = eventsButton.gameObject.AddComponent<ScreenRouteButton>();
         SetSerializedEnum(eventsRoute, "route", (int)WarlineCaptureRoute.Events);
-        Button rankingButton = CreateMainMenuNavButton("RankingButton", leftNav.transform, MainMenuNavRankingButtonPath, "Ranking", "Ranking is planned after profile and results are persisted.");
-        ConfigurePixelRect((RectTransform)rankingButton.transform, 33f, 549f, 168f, 123f, 222f, 700f);
+        Button rankingButton = CreateMainMenuNavButton("RankingButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconRankingPath, "Ranking", "Ranking is planned after profile and results are persisted.");
+        ConfigurePixelRect((RectTransform)rankingButton.transform, 0f, 498f, 350f, 56f, 350f, 667f);
+        AddDesignedUnavailableBadge(rankingButton.transform, "UNAVAILABLE");
         UnityEngine.Object.DestroyImmediate(rankingButton.GetComponent<WarlineCapturePlaceholderModalButton>());
         ScreenRouteButton rankingRoute = rankingButton.gameObject.AddComponent<ScreenRouteButton>();
         SetSerializedEnum(rankingRoute, "route", (int)WarlineCaptureRoute.Ranking);
+        Button commandFeedButton = CreateMainMenuNavButton("CommandFeedRouteButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconCommandFeedPath, "Command Feed", "Command Feed is designed unavailable until feed data is live.");
+        ConfigurePixelRect((RectTransform)commandFeedButton.transform, 0f, 560f, 350f, 56f, 350f, 667f);
+        AddDesignedUnavailableBadge(commandFeedButton.transform, "UNAVAILABLE");
+        UnityEngine.Object.DestroyImmediate(commandFeedButton.GetComponent<WarlineCapturePlaceholderModalButton>());
+        ScreenRouteButton commandFeedRoute = commandFeedButton.gameObject.AddComponent<ScreenRouteButton>();
+        SetSerializedEnum(commandFeedRoute, "route", (int)WarlineCaptureRoute.CommandFeed);
 
         GameObject modeCardList = CreateRectObject("ModeCardList", screen.transform);
         RectTransform listRect = (RectTransform)modeCardList.transform;
-        ConfigureStretchHorizontalVerticalBand(listRect, 241f, 20f, 110f / 941f, 1f - 155f / 941f);
+        ConfigurePixelRect(listRect, 398f, 148f, 1236f, 620f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
 
-        GameObject sagaCard = CreateMainMenuModeCard("ModeCard_Saga", "SAGA CAMPAIGN", "Experience the story of WarlineCapture", MainMenuSagaArtPath, MainMenuSagaEmblemPath, MainMenuSagaArrowPath, MainMenuCardFrameMaskPath, MainMenuSagaFrameTopLeftPath, MainMenuSagaFrameTopRightPath, MainMenuSagaFrameBottomLeftPath, MainMenuSagaFrameBottomRightPath, 220f, 390f, 0f, 1021f, 220f, new Color(0.1f, 0.78f, 0.95f, 1f), new Color(0.08f, 0.56f, 0.66f, 0.22f));
-        sagaCard.transform.SetParent(modeCardList.transform, false);
-        ConfigureStretchWidthProportionalY((RectTransform)sagaCard.transform, 0f, 0f, 0f, 220f, 676f);
+        GameObject sagaCard = CreateMainMenuTargetModeCard("ModeCard_Saga", modeCardList.transform, "Saga Campaign", "Chapter 1: First Contact", "Play through the story arc\nand reclaim key districts.", MainMenuLayeredModeCardArtSagaPath, new Color(0.12f, 0.82f, 0.95f, 1f), false, 0f, 0f, 374f, 588f);
         ScreenRouteButton sagaRoute = GetModeCardClickTarget(sagaCard).AddComponent<ScreenRouteButton>();
         SetSerializedEnum(sagaRoute, "route", (int)WarlineCaptureRoute.SagaMap);
 
-        GameObject operationCard = CreateMainMenuModeCard("ModeCard_Operation", "PERSISTENT OPERATION", "Live events. Territory control. Global war.", MainMenuOperationArtPath, MainMenuOperationEmblemPath, MainMenuOperationArrowPath, MainMenuCardFrameMaskPath, MainMenuOperationFrameTopLeftPath, MainMenuOperationFrameTopRightPath, MainMenuOperationFrameBottomLeftPath, MainMenuOperationFrameBottomRightPath, 218f, 390f, 0f, 1021f, 218f, new Color(0.94f, 0.66f, 0.08f, 1f), new Color(0.45f, 0.35f, 0.16f, 0.17f));
-        operationCard.transform.SetParent(modeCardList.transform, false);
-        ConfigureStretchWidthProportionalY((RectTransform)operationCard.transform, 0f, 0f, 230f, 218f, 676f);
+        GameObject operationCard = CreateMainMenuTargetModeCard("ModeCard_Operation", modeCardList.transform, "Persistent Operation", "District pressure rising", "Maintain control and manage\ndistrict and city operations.", MainMenuLayeredModeCardArtOperationPath, new Color(1f, 0.66f, 0.10f, 1f), true, 396f, 0f, 386f, 588f);
         ScreenRouteButton operationRoute = GetModeCardClickTarget(operationCard).AddComponent<ScreenRouteButton>();
         SetSerializedEnum(operationRoute, "route", (int)WarlineCaptureRoute.OperationDashboard);
 
-        GameObject quickCustomCard = CreateMainMenuModeCard("ModeCard_QuickCustom", "QUICK CUSTOM GAME", "Skirmish. Rules your way.", MainMenuQuickCustomArtPath, MainMenuQuickCustomEmblemPath, MainMenuQuickCustomArrowPath, MainMenuCardFrameMaskPath, MainMenuQuickCustomFrameTopLeftPath, MainMenuQuickCustomFrameTopRightPath, MainMenuQuickCustomFrameBottomLeftPath, MainMenuQuickCustomFrameBottomRightPath, 218f, 390f, 0f, 1021f, 218f, new Color(0.56f, 0.82f, 0.36f, 1f), new Color(0.28f, 0.42f, 0.22f, 0.18f));
-        quickCustomCard.transform.SetParent(modeCardList.transform, false);
-        ConfigureStretchWidthProportionalY((RectTransform)quickCustomCard.transform, 0f, 0f, 458f, 218f, 676f);
+        GameObject quickCustomCard = CreateMainMenuTargetModeCard("ModeCard_QuickCustom", modeCardList.transform, "Quick Custom Game", "Skirmish setup route available.", "Set up a custom scenario\nand jump into battle.", MainMenuLayeredModeCardArtQuickCustomPath, new Color(0.62f, 0.88f, 0.38f, 1f), false, 804f, 0f, 432f, 588f);
         ScreenRouteButton quickCustomRoute = GetModeCardClickTarget(quickCustomCard).AddComponent<ScreenRouteButton>();
         SetSerializedEnum(quickCustomRoute, "route", (int)WarlineCaptureRoute.QuickCustomSetup);
 
-        GameObject bottomUtilityBar = CreateRectObject("BottomUtilityBar", screen.transform);
-        ConfigureVerticalBand((RectTransform)bottomUtilityBar.transform, 0f, 0.1105f);
-        Image bottomBackground = bottomUtilityBar.AddComponent<Image>();
-        bottomBackground.color = Color.white;
-        bottomBackground.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuFooterFullPanelPath);
-        bottomBackground.type = Image.Type.Sliced;
+        Button deployButton = CreateMainMenuDeployButton("DeployCommandButton", screen.transform);
+        ConfigurePixelRect((RectTransform)deployButton.transform, 1132f, 780f, 506f, 102f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
+        ScreenRouteButton deployRoute = deployButton.gameObject.AddComponent<ScreenRouteButton>();
+        SetSerializedEnum(deployRoute, "route", (int)WarlineCaptureRoute.SagaMap);
 
-        Button chatButton = CreateFooterIconButton("ChatButton", bottomUtilityBar.transform, MainMenuFooterChatButtonPath, "Chat", "Chat is a placeholder until social systems are scoped.");
-        RectTransform chatRect = (RectTransform)chatButton.transform;
-        ConfigureFixedLeftProportionalY(chatRect, 13f, 6f, 112f, 76f, 104f);
-        UnityEngine.Object.DestroyImmediate(chatButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton chatRoute = chatButton.gameObject.AddComponent<ScreenRouteButton>();
-        SetSerializedEnum(chatRoute, "route", (int)WarlineCaptureRoute.CommandFeed);
+        GameObject standardAspectRoot = CreateRectObject("StandardAspectOnlyRoot", screen.transform);
+        Stretch((RectTransform)standardAspectRoot.transform);
 
-        Button socialButton = CreateFooterIconButton("SocialButton", bottomUtilityBar.transform, MainMenuFooterSocialButtonPath, "Social", "Social systems are not connected yet.");
-        RectTransform socialRect = (RectTransform)socialButton.transform;
-        ConfigureFixedLeftProportionalY(socialRect, 132f, 6f, 96f, 76f, 104f);
-        UnityEngine.Object.DestroyImmediate(socialButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton socialRoute = socialButton.gameObject.AddComponent<ScreenRouteButton>();
-        SetSerializedEnum(socialRoute, "route", (int)WarlineCaptureRoute.CommandFeed);
+        GameObject wideAspectRoot = CreateRectObject("WideAspectOnlyRoot", screen.transform);
+        Stretch((RectTransform)wideAspectRoot.transform);
 
-        Button commanderButton = CreatePlaceholderButton("CommanderButton", bottomUtilityBar.transform, "COMMANDER", "Commander", "Commander profile details will be connected after persistence.");
-        commanderButton.gameObject.SetActive(false);
+        GameObject wideLeftNav = CreateRectObject("WideLeftNav", wideAspectRoot.transform);
+        ConfigurePixelRect((RectTransform)wideLeftNav.transform, 10f, 150f, 505f, 630f, 2400f, 1080f);
+        Image wideLeftNavBackground = wideLeftNav.AddComponent<Image>();
+        wideLeftNavBackground.color = new Color(1f, 1f, 1f, 0f);
+        wideLeftNavBackground.raycastTarget = false;
 
-        TMP_Text chatMessage = CreateText("ChatMessageText", bottomUtilityBar.transform, "[Global] benvv4:  Hold the line!", 24f, TextAlignmentOptions.Left);
-        RectTransform chatMessageRect = (RectTransform)chatMessage.transform;
-        chatMessage.color = new Color(0.26f, 0.82f, 1f, 1f);
-        ConfigureStretchWidthProportionalY(chatMessageRect, 282f, 720f, 31f, 40f, 104f);
+        GameObject wideProfilePanel = CreateRectObject("CommanderProfilePanel", wideLeftNav.transform);
+        ConfigurePixelRect((RectTransform)wideProfilePanel.transform, 0f, 0f, 505f, 266f, 505f, 630f);
+        Image wideProfilePanelImage = wideProfilePanel.AddComponent<Image>();
+        wideProfilePanelImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredCommanderProfilePanelFramePath);
+        wideProfilePanelImage.type = Image.Type.Sliced;
+        wideProfilePanelImage.color = new Color(1f, 1f, 1f, 0.26f);
+        wideProfilePanelImage.raycastTarget = false;
+
+        TMP_Text wideProfileTitle = CreateText("CommanderProfileTitleText", wideProfilePanel.transform, "COMMANDER PROFILE", 18f, TextAlignmentOptions.Left);
+        wideProfileTitle.fontStyle = FontStyles.Bold;
+        wideProfileTitle.color = new Color(0.34f, 0.88f, 1f, 1f);
+        ConfigurePixelRect((RectTransform)wideProfileTitle.transform, 31f, 12f, 380f, 30f, 505f, 266f);
+        ConfigureSingleLineText(wideProfileTitle);
+
+        Image wideProfileAvatar = CreateImage("ProfileAvatar", wideProfilePanel.transform, Color.white);
+        wideProfileAvatar.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredCommanderProfilePortraitPath);
+        wideProfileAvatar.preserveAspect = false;
+        wideProfileAvatar.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)wideProfileAvatar.transform, 42f, 46f, 400f, 158f, 505f, 266f);
+
+        TMP_Text wideProfileName = CreateText("ProfileNameText", wideProfilePanel.transform, "Profile data pending", 18f, TextAlignmentOptions.Center);
+        wideProfileName.fontStyle = FontStyles.Bold;
+        wideProfileName.color = new Color(0.74f, 0.82f, 0.84f, 1f);
+        ConfigurePixelRect((RectTransform)wideProfileName.transform, 104f, 213f, 300f, 28f, 505f, 266f);
+        ConfigureSingleLineText(wideProfileName);
+
+        CreateMainMenuWideNavRoute(wideLeftNav.transform, "InboxButton", MainMenuLayeredLeftNavIconInboxPath, "Inbox", "Inbox and alerts are planned for the live operations layer.", WarlineCaptureRoute.Inbox, 278f);
+        CreateMainMenuWideNavRoute(wideLeftNav.transform, "StoreButton", MainMenuLayeredLeftNavIconStorePath, "Store", "Store and resource purchase flows are not active in this build.", WarlineCaptureRoute.CommandExchange, 350f);
+        CreateMainMenuWideNavRoute(wideLeftNav.transform, "EventsButton", MainMenuLayeredLeftNavIconEventsPath, "Events", "Event mode cards will use the same ModeCardView component.", WarlineCaptureRoute.Events, 422f);
+        CreateMainMenuWideNavRoute(wideLeftNav.transform, "RankingButton", MainMenuLayeredLeftNavIconRankingPath, "Ranking", "Ranking is planned after profile and results are persisted.", WarlineCaptureRoute.Ranking, 494f);
+        CreateMainMenuWideNavRoute(wideLeftNav.transform, "CommandFeedRouteButton", MainMenuLayeredLeftNavIconCommandFeedPath, "Command Feed", "Command Feed is designed unavailable until feed data is live.", WarlineCaptureRoute.CommandFeed, 566f);
+
+        Image feedPanel = CreateImage("CommandFeedPanelFrame", wideAspectRoot.transform, Color.white);
+        feedPanel.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredCommandFeedPanelFramePath);
+        feedPanel.type = Image.Type.Sliced;
+        feedPanel.color = new Color(1f, 1f, 1f, 0.26f);
+        feedPanel.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)feedPanel.transform, 32f, 806f, 624f, 206f, 2400f, 1080f);
+
+        Image feedIcon = CreateImage("CommandFeedIcon", wideAspectRoot.transform, Color.white);
+        feedIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredCommandFeedIconPath);
+        feedIcon.preserveAspect = true;
+        feedIcon.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)feedIcon.transform, 76f, 878f, 72f, 72f, 2400f, 1080f);
+
+        TMP_Text feedTitle = CreateText("CommandFeedTitleText", wideAspectRoot.transform, "Command Feed", 18f, TextAlignmentOptions.Left);
+        feedTitle.fontStyle = FontStyles.Bold;
+        feedTitle.color = new Color(0.34f, 0.88f, 1f, 1f);
+        ConfigurePixelRect((RectTransform)feedTitle.transform, 66f, 824f, 360f, 32f, 2400f, 1080f);
+        ConfigureSingleLineText(feedTitle);
+
+        TMP_Text feedStatus = CreateText("CommandFeedStatusText", wideAspectRoot.transform, "Designed Unavailable\nFeature coming in a future update.", 24f, TextAlignmentOptions.Center);
+        feedStatus.color = new Color(0.74f, 0.82f, 0.84f, 1f);
+        feedStatus.enableAutoSizing = true;
+        feedStatus.fontSizeMin = 15f;
+        feedStatus.fontSizeMax = 24f;
+        ConfigurePixelRect((RectTransform)feedStatus.transform, 188f, 888f, 330f, 72f, 2400f, 1080f);
+
+        wideAspectRoot.SetActive(false);
+        WarlineCaptureAspectVariantSwitcher aspectSwitcher = screen.AddComponent<WarlineCaptureAspectVariantSwitcher>();
+        SetSerializedObject(aspectSwitcher, "standardRoot", standardAspectRoot);
+        SetSerializedObject(aspectSwitcher, "wideRoot", wideAspectRoot);
+        SetSerializedArray(aspectSwitcher, "standardOnlyObjects", leftNav);
+        SetSerializedArray(aspectSwitcher, "wideOnlyObjects", wideLeftNav);
 
         return screen;
     }
@@ -3216,10 +3562,10 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GameObject threatPanel = CreateMatchPanel("ThreatFeedPanel", screen.transform, "THREAT FEED", 12f, 444f, 292f, 216f);
         ConfigureFixedLeftProportionalY((RectTransform)threatPanel.transform, 12f, 444f, 292f, 216f, MainMenuReferenceResolution.y);
         CreateThreatRow("Threat_1", threatPanel.transform, "Enemy Air Detected", MatchHudOneGoThreatWarningIconPath, 28f, 46f, 252f, 34f, true);
-        CreateThreatRow("Threat_2", threatPanel.transform, "12:30   Enemy Unit Spotted", MatchHudThreatDiamondIconPath, 28f, 86f, 236f, 27f, false);
-        CreateThreatRow("Threat_3", threatPanel.transform, "12:22   Enemy Air Detected", MatchHudThreatDiamondIconPath, 28f, 116f, 236f, 27f, false);
-        CreateThreatRow("Threat_4", threatPanel.transform, "12:18   Structure Under Attack", MatchHudThreatShieldIconPath, 28f, 146f, 236f, 27f, false);
-        CreateThreatRow("Threat_5", threatPanel.transform, "12:10   Ally Under Attack", MatchHudThreatFlagIconPath, 28f, 176f, 236f, 24f, false);
+        CreateThreatRow("Threat_2", threatPanel.transform, "12:30   Enemy Unit Spotted", MatchHudOneGoThreatEnemySpottedIconPath, 28f, 86f, 236f, 27f, false);
+        CreateThreatRow("Threat_3", threatPanel.transform, "12:22   Enemy Air Detected", MatchHudOneGoThreatWarningIconPath, 28f, 116f, 236f, 27f, false);
+        CreateThreatRow("Threat_4", threatPanel.transform, "12:18   Structure Under Attack", MatchHudOneGoThreatEnemySpottedIconPath, 28f, 146f, 236f, 27f, false);
+        CreateThreatRow("Threat_5", threatPanel.transform, "12:10   Ally Under Attack", MatchHudOneGoThreatWarningIconPath, 28f, 176f, 236f, 24f, false);
         AddMatchFrameChrome(threatPanel.transform, "ThreatFeedPanel");
 
         GameObject resourceBar = CreateRectObject("ResourceBar", screen.transform);
@@ -3235,7 +3581,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CreateMatchResourceCounter("MoneyCounter", resourceBar.transform, MatchHudOneGoMoneyIconPath, "2,450", 22f, 10f, 126f, 42f, 0f, 0f, 42f, 42f, 56f, 78f);
         CreateMatchResourceCounter("MaterialsCounter", resourceBar.transform, MatchHudOneGoMaterialsIconPath, "1,260", 178f, 10f, 130f, 42f, 0f, 0f, 42f, 42f, 58f, 78f);
         CreateMatchResourceCounter("PopulationCounter", resourceBar.transform, MatchHudOneGoPopulationIconPath, "68 / 80", 338f, 10f, 138f, 42f, 0f, 0f, 42f, 42f, 62f, 84f);
-        CreateMatchResourceCounter("TimeCounter", resourceBar.transform, MatchHudTimeIconPath, "12:35", 498f, 10f, 126f, 42f, 0f, 0f, 42f, 42f, 60f, 66f);
+        CreateMatchResourceCounter("TimeCounter", resourceBar.transform, MatchHudOneGoTimeClockIconPath, "12:35", 498f, 10f, 126f, 42f, 0f, 0f, 42f, 42f, 60f, 66f);
         Image resourceBarFrame = CreateImage("FrameChrome", resourceBar.transform, Color.white);
         Stretch((RectTransform)resourceBarFrame.transform);
         resourceBarFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoResourceBarPath);
@@ -3245,21 +3591,21 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GameObject worldCommandMarkerLayer = CreateWorldCommandMarkerLayer(screen.transform);
         worldCommandMarkerLayer.SetActive(false);
 
-        Button pauseButton = CreateMatchChromeButton("PauseButton", screen.transform, MatchHudOneGoTopButtonPath, 84f, 62f);
-        ConfigureFixedRightProportionalY((RectTransform)pauseButton.transform, 122f, 8f, 84f, 62f, MainMenuReferenceResolution.y);
+        Button pauseButton = CreateMatchChromeButton("PauseButton", screen.transform, MatchHudOneGoTopButtonPath, 88f, 66f);
+        ConfigureFixedRightProportionalY((RectTransform)pauseButton.transform, 110f, 12f, 88f, 66f, MainMenuReferenceResolution.y);
         Image pauseIcon = CreateImage("IconImage", pauseButton.transform, Color.white);
         pauseIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoIconPausePath);
         pauseIcon.preserveAspect = true;
         pauseIcon.raycastTarget = false;
-        ConfigurePixelRect((RectTransform)pauseIcon.transform, 27f, 16f, 30f, 30f, 84f, 62f);
+        ConfigurePixelRect((RectTransform)pauseIcon.transform, 22f, 12f, 44f, 42f, 88f, 66f);
 
-        Button settingsButton = CreateMatchChromeButton("SettingsButton", screen.transform, MatchHudOneGoTopButtonPath, 84f, 62f);
-        ConfigureFixedRightProportionalY((RectTransform)settingsButton.transform, 24f, 8f, 84f, 62f, MainMenuReferenceResolution.y);
+        Button settingsButton = CreateMatchChromeButton("SettingsButton", screen.transform, MatchHudOneGoTopButtonPath, 88f, 66f);
+        ConfigureFixedRightProportionalY((RectTransform)settingsButton.transform, 10f, 12f, 88f, 66f, MainMenuReferenceResolution.y);
         Image gear = CreateImage("GearIcon", settingsButton.transform, Color.white);
         gear.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoIconSettingsPath);
         gear.preserveAspect = true;
         gear.raycastTarget = false;
-        ConfigurePixelRect((RectTransform)gear.transform, 22f, 11f, 40f, 40f, 84f, 62f);
+        ConfigurePixelRect((RectTransform)gear.transform, 16f, 5f, 56f, 56f, 88f, 66f);
 
         GameObject assistantLayer = CreateRectObject("AssistantLayer", screen.transform);
         Stretch((RectTransform)assistantLayer.transform);
@@ -3277,16 +3623,16 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedObject(assistantRuntimeBinding, "buttonView", assistantEntryButton.GetComponent<AssistantButtonView>());
 
         GameObject squadTray = CreateRectObject("SquadTray", screen.transform);
-        ConfigureFixedLeftProportionalY((RectTransform)squadTray.transform, 14f, 688f, 654f, 212f, MainMenuReferenceResolution.y);
+        ConfigureFixedLeftProportionalY((RectTransform)squadTray.transform, 12f, 684f, 654f, 218f, MainMenuReferenceResolution.y);
         Image squadTrayFill = CreateImage("FillBackground", squadTray.transform, Color.white);
         Stretch((RectTransform)squadTrayFill.transform);
         squadTrayFill.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoSquadTrayFillPath);
         squadTrayFill.type = Image.Type.Sliced;
         squadTrayFill.raycastTarget = false;
-        GameObject rifleSquadCard = CreateSquadCard("Squad_Rifle", squadTray.transform, MatchHudIsoRifleSquadPath, "RIFLE SQUAD", "24", 10f, 6f, 176f, 218f, true);
-        GameObject apcCard = CreateSquadCard("Squad_APC", squadTray.transform, MatchHudIsoApcPath, "APC", "4", 188f, 10f, 158f, 214f, false);
-        GameObject tankCard = CreateSquadCard("Squad_Tank", squadTray.transform, MatchHudIsoTankPath, "TANK", "3", 348f, 10f, 156f, 214f, false);
-        GameObject airSupportCard = CreateSquadCard("Squad_Helicopter", squadTray.transform, MatchHudDesignedUnavailableContentPath, "AIR SUPPORT", "-", 506f, 10f, 158f, 214f, false, "ISO ASSET PENDING", false);
+        GameObject rifleSquadCard = CreateSquadCard("Squad_Rifle", squadTray.transform, MatchHudOneGoSquadPortraitRiflePath, "RIFLE SQUAD", "24", 10f, 6f, 176f, 218f, true);
+        GameObject apcCard = CreateSquadCard("Squad_APC", squadTray.transform, MatchHudOneGoSquadPortraitApcPath, "APC", "4", 188f, 10f, 158f, 214f, false);
+        GameObject tankCard = CreateSquadCard("Squad_Tank", squadTray.transform, MatchHudOneGoSquadPortraitTankPath, "TANK", "3", 348f, 10f, 156f, 214f, false);
+        GameObject airSupportCard = CreateSquadCard("Squad_Helicopter", squadTray.transform, MatchHudOneGoSquadPortraitHelicopterPath, "AIR SUPPORT", "1", 506f, 10f, 158f, 214f, false, null, false);
         Image squadTrayFrame = CreateImage("FrameChrome", squadTray.transform, Color.white);
         Stretch((RectTransform)squadTrayFrame.transform);
         squadTrayFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoSquadTrayPath);
@@ -3294,9 +3640,9 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         squadTrayFrame.raycastTarget = false;
 
         GameObject commandBar = CreateRectObject("CommandBar", screen.transform);
-        ConfigureFixedRightProportionalY((RectTransform)commandBar.transform, 462f, 764f, 522f, 124f, MainMenuReferenceResolution.y);
+        ConfigureFixedLeftProportionalY((RectTransform)commandBar.transform, 676f, 744f, 704f, 164f, MainMenuReferenceResolution.y);
         GameObject commandRail = CreateRectObject("CommandRailArt", commandBar.transform);
-        ConfigurePixelRect((RectTransform)commandRail.transform, -12f, -20f, 704f, 164f, 522f, 124f);
+        Stretch((RectTransform)commandRail.transform);
         Image commandRailFill = CreateImage("FillBackground", commandRail.transform, Color.white);
         Stretch((RectTransform)commandRailFill.transform);
         commandRailFill.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoCommandRailFillPath);
@@ -3307,11 +3653,13 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         commandRailFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoCommandRailPath);
         commandRailFrame.type = Image.Type.Sliced;
         commandRailFrame.raycastTarget = false;
-        Button stopButton = CreateCommandButton("StopButton", commandBar.transform, MatchHudOneGoIconStopPath, "STOP", 0f, 4f, false);
-        Button holdButton = CreateCommandButton("HoldButton", commandBar.transform, MatchHudOneGoIconHoldPath, "HOLD", 103f, 4f, false);
-        CreateCommandButton("MoveButton", commandBar.transform, MatchHudOneGoIconMovePath, "MOVE", 206f, 4f, true);
-        CreateCommandButton("AttackButton", commandBar.transform, MatchHudOneGoIconAttackPath, "ATTACK", 308f, 4f, false);
-        Button specialButton = CreateCommandButton("SpecialButton", commandBar.transform, MatchHudOneGoIconSpecialPath, "SPECIAL", 410f, 4f, false);
+        Button selectButton = CreateCommandButton("SelectButton", commandBar.transform, MatchHudOneGoIconSelectPath, "SELECT", 12f, 24f, false);
+        selectButton.gameObject.SetActive(false);
+        Button stopButton = CreateCommandButton("StopButton", commandBar.transform, MatchHudOneGoIconStopPath, "STOP", 12f, 24f, false);
+        Button holdButton = CreateCommandButton("HoldButton", commandBar.transform, MatchHudOneGoIconHoldPath, "HOLD", 115f, 24f, false);
+        CreateCommandButton("MoveButton", commandBar.transform, MatchHudOneGoIconMovePath, "MOVE", 218f, 24f, true);
+        CreateCommandButton("AttackButton", commandBar.transform, MatchHudOneGoIconAttackPath, "ATTACK", 320f, 24f, false);
+        Button specialButton = CreateCommandButton("SpecialButton", commandBar.transform, MatchHudOneGoIconSpecialPath, "SPECIAL", 422f, 24f, false);
 
         Button buildButton = CreateMatchChromeButton("BuildButton", screen.transform, MatchHudOneGoButtonBuildPath, 122f, 138f);
         ConfigureFixedRightProportionalY((RectTransform)buildButton.transform, 333f, 762f, 122f, 138f, MainMenuReferenceResolution.y);
@@ -3345,14 +3693,11 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedArray(
             infantryOnlyHudScope,
             "hiddenDuringM01",
-            apcCard,
-            tankCard,
-            airSupportCard,
-            specialButton.gameObject,
             buildButton.gameObject,
             buildDrawer,
-            commandWheel);
-        SetSerializedArray(infantryOnlyHudScope, "shownDuringM01", rifleSquadCard, commandBar);
+            commandWheel,
+            specialButton.gameObject);
+        SetSerializedArray(infantryOnlyHudScope, "shownDuringM01", rifleSquadCard, apcCard, tankCard, airSupportCard, commandBar);
 
         Button commandWheelStopButton = commandWheel.transform.Find("RadialCommandRoot/StopSegment").GetComponent<Button>();
         MatchOverlayCommandControlsController commandControlsController = screen.AddComponent<MatchOverlayCommandControlsController>();
@@ -3362,14 +3707,14 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedObject(commandControlsController, "commandWheelPanel", commandWheelController);
 
         GameObject minimap = CreateMatchPanel("MiniMapPanel", screen.transform, string.Empty, 1344f, 592f, 318f, 306f);
-        ConfigureFixedRightProportionalY((RectTransform)minimap.transform, 10f, 592f, 318f, 306f, MainMenuReferenceResolution.y);
+        ConfigureFixedRightProportionalY((RectTransform)minimap.transform, 10f, 592f, 310f, 304f, MainMenuReferenceResolution.y);
         Image minimapImage = CreateImage("MapImage", minimap.transform, Color.white);
-        minimapImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudIsoMiniMapContentPath);
+        minimapImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoMiniMapContentPath);
         minimapImage.type = Image.Type.Simple;
-        ConfigurePixelRect((RectTransform)minimapImage.transform, 20f, 28f, 280f, 262f, 318f, 306f);
+        ConfigurePixelRect((RectTransform)minimapImage.transform, 12f, 28f, 280f, 262f, 310f, 304f);
         minimapImage.raycastTarget = false;
-        CreateMiniMapZoomButton("ZoomInButton", minimap.transform, "+", 260f, 190f);
-        CreateMiniMapZoomButton("ZoomOutButton", minimap.transform, "-", 260f, 232f);
+        CreateMiniMapZoomButton("ZoomInButton", minimap.transform, MatchHudOneGoMiniMapZoomPlusPath, 260f, 190f);
+        CreateMiniMapZoomButton("ZoomOutButton", minimap.transform, MatchHudOneGoMiniMapZoomMinusPath, 260f, 232f);
         GameObject minimapCameraBridge = CreateMinimapCameraBridge(minimap.transform);
         AddMatchFrameChrome(minimap.transform, "MiniMapPanel");
         commandWheel.transform.SetAsLastSibling();
@@ -3589,10 +3934,10 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GameObject bridge = CreateRectObject("MinimapCameraBridge", minimap);
         Stretch((RectTransform)bridge.transform);
         Image viewport = CreateImage("ViewportRect", bridge.transform, Color.white);
-        viewport.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudM01MinimapViewportRectPath);
+        viewport.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoMiniMapViewportRectPath);
         viewport.preserveAspect = true;
         viewport.raycastTarget = false;
-        ConfigurePixelRect((RectTransform)viewport.transform, 64f, 126f, 154f, 92f, 318f, 306f);
+        ConfigurePixelRect((RectTransform)viewport.transform, 52f, 118f, 178f, 112f, 310f, 304f);
         return bridge;
     }
 
@@ -7222,14 +7567,11 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     {
         GameObject row = CreateRectObject(name, parent);
         ConfigurePixelRect((RectTransform)row.transform, x, y, width, height, 292f, 216f);
-        if (highlighted)
-        {
-            Image highlight = row.AddComponent<Image>();
-            highlight.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudThreatAlertPath);
-            highlight.type = Image.Type.Simple;
-            highlight.color = Color.white;
-            highlight.raycastTarget = false;
-        }
+        Image background = row.AddComponent<Image>();
+        background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(highlighted ? MatchHudOneGoThreatRowActivePath : MatchHudOneGoThreatRowNormalPath);
+        background.type = Image.Type.Simple;
+        background.color = Color.white;
+        background.raycastTarget = false;
 
         Image icon = CreateImage("IconImage", row.transform, Color.white);
         icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
@@ -7308,7 +7650,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigureButtonTint(button, Color.white, new Color(0.90f, 0.97f, 1f, 1f), new Color(0.66f, 0.84f, 0.92f, 1f));
         ConfigureAnimatedButton(button, selected);
         button.interactable = interactable;
-        ConfigurePixelRect((RectTransform)button.transform, x, y, width, height, 654f, height);
+        ConfigurePixelRect((RectTransform)button.transform, x, y, width, height, 654f, 218f);
 
         Image frame = CreateImage("FrameChrome", button.transform, Color.white);
         Stretch((RectTransform)frame.transform);
@@ -7356,13 +7698,13 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         }
 
         Image shieldIcon = CreateImage("ShieldIcon", button.transform, Color.white);
-        shieldIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudIconShieldPath);
+        shieldIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoShieldBadgePath);
         shieldIcon.preserveAspect = true;
         shieldIcon.raycastTarget = false;
         ConfigurePixelRect((RectTransform)shieldIcon.transform, 18f, 158f, 26f, 26f, width, height);
 
         Image chevronIcon = CreateImage("ChevronIcon", button.transform, Color.white);
-        chevronIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudIconChevronPath);
+        chevronIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MatchHudOneGoRankChevronPath);
         chevronIcon.preserveAspect = true;
         chevronIcon.raycastTarget = false;
         ConfigurePixelRect((RectTransform)chevronIcon.transform, 48f, 158f, 26f, 26f, width, height);
@@ -7379,7 +7721,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     {
         Button button = CreateMatchChromeButton(name, parent, selected ? MatchHudOneGoButtonSelectedPath : MatchHudOneGoButtonNormalPath, 98f, 124f);
         ConfigureAnimatedButton(button, selected);
-        ConfigurePixelRect((RectTransform)button.transform, x, y, 98f, 124f, 522f, 124f);
+        ConfigurePixelRect((RectTransform)button.transform, x, y, 98f, 124f, 704f, 164f);
         Image icon = CreateImage("IconText", button.transform, Color.white);
         icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
         icon.preserveAspect = true;
@@ -7406,36 +7748,53 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         line.raycastTarget = false;
     }
 
-    private static void CreateMiniMapZoomButton(string name, Transform parent, string label, float x, float y)
+    private static void CreateMiniMapZoomButton(string name, Transform parent, string spritePath, float x, float y)
     {
-        Button button = CreateQuickCustomChromeButton(name, parent, label, false, 38f, 34f);
+        Button button = CreateMatchChromeButton(name, parent, spritePath, 38f, 34f);
+        Image background = button.GetComponent<Image>();
+        if (background != null)
+            background.type = Image.Type.Simple;
         ConfigurePixelRect((RectTransform)button.transform, x, y, 38f, 34f, 318f, 306f);
-        TMP_Text text = button.GetComponentInChildren<TMP_Text>();
-        if (text != null)
-            text.fontSize = 24f;
     }
 
-    private static GameObject CreateResourceCounter(string name, Transform parent, string value, Color accentColor, string iconPath, bool showPlusButton)
+    private static GameObject CreateResourceCounter(string name, Transform parent, string label, string value, Color accentColor, string iconPath, bool showPlusButton)
     {
         GameObject root = CreateRectObject(name, parent);
         SetSize(root, 230f, 76f);
         WarlineCaptureResourceCounterView view = root.AddComponent<WarlineCaptureResourceCounterView>();
         Image background = root.AddComponent<Image>();
+        background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredResourceCounterSlotFramePath);
+        background.type = Image.Type.Sliced;
         background.color = new Color(1f, 1f, 1f, 0f);
+        background.raycastTarget = false;
 
         Image icon = CreateImage("Icon", root.transform, accentColor);
         RectTransform iconRect = (RectTransform)icon.transform;
-        iconRect.anchorMin = new Vector2(0.06f, 0.16f);
-        iconRect.anchorMax = new Vector2(0.28f, 0.84f);
+        iconRect.anchorMin = new Vector2(0.07f, 0.16f);
+        iconRect.anchorMax = new Vector2(0.25f, 0.84f);
         icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
         icon.preserveAspect = true;
         icon.raycastTarget = false;
 
-        TMP_Text valueText = CreateText("ValueText", root.transform, value, 24f, TextAlignmentOptions.Left);
+        TMP_Text labelText = CreateText("LabelText", root.transform, label, 17f, TextAlignmentOptions.Left);
+        RectTransform labelRect = (RectTransform)labelText.transform;
+        labelRect.anchorMin = new Vector2(0.34f, 0.59f);
+        labelRect.anchorMax = new Vector2(0.96f, 0.90f);
+        labelText.color = new Color(0.74f, 0.80f, 0.84f, 1f);
+        ConfigureSingleLineText(labelText);
+        labelText.enableAutoSizing = true;
+        labelText.fontSizeMin = 12f;
+        labelText.fontSizeMax = 17f;
+
+        TMP_Text valueText = CreateText("ValueText", root.transform, value, 31f, TextAlignmentOptions.Left);
         RectTransform valueRect = (RectTransform)valueText.transform;
-        valueRect.anchorMin = new Vector2(0.36f, 0.14f);
-        valueRect.anchorMax = new Vector2(0.72f, 0.86f);
+        valueRect.anchorMin = new Vector2(0.34f, 0.10f);
+        valueRect.anchorMax = showPlusButton ? new Vector2(0.72f, 0.58f) : new Vector2(0.96f, 0.58f);
         valueText.color = new Color(0.91f, 0.96f, 1f, 1f);
+        valueText.enableAutoSizing = true;
+        valueText.fontSizeMin = 22f;
+        valueText.fontSizeMax = 31f;
+        ConfigureSingleLineText(valueText);
 
         Button plusButton = CreateIconButton("PlusButton", root.transform, "+", 64f, 64f);
         RectTransform plusRect = (RectTransform)plusButton.transform;
@@ -7508,7 +7867,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Sprite artSprite = AssetDatabase.LoadAssetAtPath<Sprite>(artPath);
         artImage.sprite = artSprite;
         artImage.preserveAspect = false;
-        artImage.color = Color.white;
+        artImage.color = new Color(0.82f, 0.86f, 0.88f, 1f);
         artImage.raycastTarget = false;
 
         Image tintWash = CreateImage("TintWash", contentClip.transform, Color.white);
@@ -7605,6 +7964,206 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         return card;
     }
 
+    private static GameObject CreateMainMenuTargetModeCard(string name, Transform parent, string title, string subtitle, string body, string artPath, Color accentColor, bool showRiskRows, float x, float y, float width, float height)
+    {
+        GameObject card = CreateRectObject(name, parent);
+        ConfigurePixelRect((RectTransform)card.transform, x, y, width, height, 1248f, 620f);
+        Image background = card.AddComponent<Image>();
+        background.color = new Color(0.004f, 0.018f, 0.022f, 0.72f);
+        background.raycastTarget = false;
+        card.AddComponent<RectMask2D>();
+
+        WarlineCaptureModeCardView view = card.AddComponent<WarlineCaptureModeCardView>();
+
+        string emblemPath = name.Contains("Saga", System.StringComparison.OrdinalIgnoreCase)
+            ? MainMenuLayeredModeCardHeaderEmblemSagaPath
+            : name.Contains("Operation", System.StringComparison.OrdinalIgnoreCase)
+                ? MainMenuLayeredModeCardHeaderEmblemOperationPath
+                : MainMenuLayeredModeCardHeaderEmblemQuickCustomPath;
+        string footerIconPath = name.Contains("Saga", System.StringComparison.OrdinalIgnoreCase)
+            ? MainMenuLayeredCardFooterIconSagaPath
+            : name.Contains("Operation", System.StringComparison.OrdinalIgnoreCase)
+                ? MainMenuLayeredCardFooterIconOperationPath
+                : MainMenuLayeredCardFooterIconQuickCustomPath;
+
+        Color cleanIconColor = new Color(0.44f, 0.82f, 0.88f, 0.90f);
+        Image emblemImage = CreateImage("EmblemImage", card.transform, showRiskRows ? new Color(0.95f, 0.46f, 0.08f, 0.88f) : cleanIconColor);
+        emblemImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(emblemPath);
+        emblemImage.preserveAspect = true;
+        emblemImage.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)emblemImage.transform, 32f, 20f, 52f, 58f, width, height);
+
+        TMP_Text titleText = CreateText("TitleText", card.transform, title, 29f, TextAlignmentOptions.Left);
+        titleText.fontStyle = FontStyles.Bold;
+        titleText.color = new Color(0.90f, 0.94f, 0.94f, 1f);
+        titleText.enableAutoSizing = true;
+        titleText.fontSizeMin = 20f;
+        titleText.fontSizeMax = 29f;
+        ConfigurePixelRect((RectTransform)titleText.transform, 92f, 29f, width - 118f, 42f, width, height);
+        ConfigureSingleLineText(titleText);
+
+        TMP_Text subtitleText = CreateText("SubtitleText", card.transform, subtitle, 16f, TextAlignmentOptions.Left);
+        subtitleText.color = accentColor;
+        subtitleText.enableAutoSizing = true;
+        subtitleText.fontSizeMin = 10f;
+        subtitleText.fontSizeMax = 16f;
+        ConfigurePixelRect((RectTransform)subtitleText.transform, 92f, 68f, width - 118f, 24f, width, height);
+        ConfigureSingleLineText(subtitleText);
+        subtitleText.gameObject.SetActive(false);
+
+        GameObject artClip = CreateRectObject("ArtClip", card.transform);
+        ConfigurePixelRect((RectTransform)artClip.transform, 20f, showRiskRows ? 78f : 78f, width - 40f, showRiskRows ? 286f : 414f, width, height);
+        artClip.AddComponent<RectMask2D>();
+        artClip.transform.SetAsFirstSibling();
+
+        Image headerScrim = CreateImage("HeaderScrim", card.transform, new Color(0f, 0f, 0f, 0.42f));
+        headerScrim.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)headerScrim.transform, 20f, 18f, width - 40f, 72f, width, height);
+        headerScrim.transform.SetSiblingIndex(1);
+
+        Image artImage = CreateImage("ArtImage", artClip.transform, Color.white);
+        artImage.sprite = string.IsNullOrEmpty(artPath) ? null : AssetDatabase.LoadAssetAtPath<Sprite>(artPath);
+        artImage.preserveAspect = false;
+        artImage.color = Color.white;
+        artImage.raycastTarget = false;
+        ConfigureImageCoverBleed(artImage, 1.12f);
+        artClip.SetActive(!string.IsNullOrEmpty(artPath));
+
+        TMP_Text bodyText = CreateText("BodyText", card.transform, body, 17f, TextAlignmentOptions.TopLeft);
+        bodyText.color = new Color(0.68f, 0.80f, 0.84f, 1f);
+        bodyText.enableAutoSizing = true;
+        bodyText.fontSizeMin = 13f;
+        bodyText.fontSizeMax = 17f;
+        ConfigurePixelRect((RectTransform)bodyText.transform, showRiskRows ? 96f : 108f, showRiskRows ? 510f : 506f, showRiskRows ? width - 132f : width - 146f, showRiskRows ? 54f : 50f, width, height);
+
+        TMP_Text progressText = CreateText("ProgressText", card.transform, string.Empty, 18f, TextAlignmentOptions.Right);
+        progressText.fontStyle = FontStyles.Bold;
+        progressText.color = accentColor;
+        ConfigurePixelRect((RectTransform)progressText.transform, 72f, 522f, width - 104f, 28f, width, height);
+        ConfigureSingleLineText(progressText);
+
+        Image footerIcon = CreateImage("FooterIcon", card.transform, Color.white);
+        footerIcon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(footerIconPath);
+        footerIcon.color = showRiskRows ? new Color(0.93f, 0.62f, 0.12f, 0.64f) : new Color(cleanIconColor.r, cleanIconColor.g, cleanIconColor.b, 0.78f);
+        footerIcon.preserveAspect = true;
+        footerIcon.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)footerIcon.transform, 30f, 500f, 58f, 58f, width, height);
+
+        if (showRiskRows)
+        {
+            Image warning = CreateImage("OperationWarningIcon", card.transform, Color.white);
+            warning.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredOperationWarningIconPath);
+            warning.color = new Color(1f, 0.68f, 0.16f, 0.82f);
+            warning.preserveAspect = true;
+            warning.raycastTarget = false;
+            ConfigurePixelRect((RectTransform)warning.transform, 28f, 372f, 38f, 38f, width, height);
+
+            Image divider = CreateImage("OperationRowDividerChrome", card.transform, Color.white);
+            divider.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredOperationRowDividerChromePath);
+            divider.type = Image.Type.Sliced;
+            divider.color = new Color(1f, 1f, 1f, 0.12f);
+            divider.raycastTarget = false;
+            ConfigurePixelRect((RectTransform)divider.transform, 30f, 424f, width - 60f, 6f, width, height);
+
+            CreateMainMenuRiskRow("DistrictPressureRow", card.transform, "District pressure rising", "HIGH", MainMenuLayeredOperationPressureMeterSegmentsPath, accentColor, 82f, 372f, width - 112f, 46f, width, height);
+            CreateMainMenuRiskRow("CityRiskRow", card.transform, "City operation risk", "ELEVATED", MainMenuLayeredOperationRiskMeterSegmentsPath, new Color(1f, 0.34f, 0.22f, 1f), 82f, 432f, width - 112f, 46f, width, height);
+        }
+
+        GameObject lockRoot = CreateBadge("LockRoot", card.transform, "LOCKED");
+        lockRoot.SetActive(false);
+        GameObject notificationBadge = CreateBadge("NotificationBadge", card.transform, "!");
+        notificationBadge.SetActive(false);
+
+        Image frameOverlay = CreateImage("FrameOverlay", card.transform, Color.white);
+        Stretch((RectTransform)frameOverlay.transform);
+        frameOverlay.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredModeCardFrameLargePath);
+        frameOverlay.type = Image.Type.Sliced;
+        frameOverlay.color = new Color(1f, 1f, 1f, 0.18f);
+        frameOverlay.raycastTarget = false;
+
+        Button button = CreateTransparentButton("Button", card.transform);
+        Stretch((RectTransform)button.transform);
+        ConfigureButtonTint(button, Color.white, new Color(0.85f, 0.95f, 1f, 1f), new Color(0.62f, 0.8f, 0.9f, 1f));
+
+        SetSerializedObject(view, "artImage", artImage);
+        SetSerializedObject(view, "titleText", titleText);
+        SetSerializedObject(view, "subtitleText", subtitleText);
+        SetSerializedObject(view, "progressText", progressText);
+        SetSerializedObject(view, "lockRoot", lockRoot);
+        SetSerializedObject(view, "notificationBadge", notificationBadge);
+        SetSerializedObject(view, "button", button);
+        return card;
+    }
+
+    private static void CreateMainMenuRiskRow(string name, Transform parent, string label, string value, string meterPath, Color color, float x, float y, float width, float height, float referenceWidth, float referenceHeight)
+    {
+        GameObject row = CreateRectObject(name, parent);
+        ConfigurePixelRect((RectTransform)row.transform, x, y, width, height, referenceWidth, referenceHeight);
+
+        TMP_Text labelText = CreateText("LabelText", row.transform, label, 14f, TextAlignmentOptions.Left);
+        labelText.color = new Color(0.62f, 0.76f, 0.80f, 1f);
+        ConfigurePixelRect((RectTransform)labelText.transform, 0f, 0f, width - 110f, 20f, width, height);
+        ConfigureSingleLineText(labelText);
+
+        TMP_Text valueText = CreateText("ValueText", row.transform, value, 15f, TextAlignmentOptions.Right);
+        valueText.fontStyle = FontStyles.Bold;
+        valueText.color = color;
+        ConfigurePixelRect((RectTransform)valueText.transform, width - 104f, 0f, 104f, 20f, width, height);
+        ConfigureSingleLineText(valueText);
+
+        Image meter = CreateImage("MeterSegments", row.transform, Color.white);
+        meter.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(meterPath);
+        meter.preserveAspect = false;
+        meter.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)meter.transform, 0f, height - 18f, width, 16f, width, height);
+    }
+
+    private static Button CreateMainMenuDeployButton(string name, Transform parent)
+    {
+        GameObject buttonObject = CreateRectObject(name, parent);
+        Image glow = CreateImage("DeployCommandGlowOverlay", buttonObject.transform, Color.white);
+        glow.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredDeployCommandGlowOverlayPath);
+        glow.type = Image.Type.Sliced;
+        glow.color = new Color(1f, 1f, 1f, 0.02f);
+        glow.raycastTarget = false;
+        Stretch((RectTransform)glow.transform);
+
+        Image background = buttonObject.AddComponent<Image>();
+        background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredDeployCommandButtonFramePath);
+        background.type = Image.Type.Sliced;
+        background.color = new Color(1f, 1f, 1f, 0.17f);
+
+        Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = background;
+        ConfigureButtonTint(button, Color.white, new Color(1f, 0.94f, 0.72f, 1f), new Color(0.86f, 0.64f, 0.30f, 1f));
+        ConfigureAnimatedButton(button, true);
+
+        TMP_Text label = CreateText("LabelText", buttonObject.transform, "DEPLOY COMMAND", 34f, TextAlignmentOptions.Center);
+        label.fontStyle = FontStyles.Bold;
+        label.color = new Color(0.94f, 0.70f, 0.34f, 0.92f);
+        label.enableAutoSizing = true;
+        label.fontSizeMin = 24f;
+        label.fontSizeMax = 34f;
+        ConfigureSingleLineText(label);
+        ConfigurePixelRect((RectTransform)label.transform, 70f, 20f, 330f, 54f, 506f, 102f);
+
+        TMP_Text sublabel = CreateText("SublabelText", buttonObject.transform, "BEGIN M01 FIRST CONTACT", 16f, TextAlignmentOptions.Center);
+        sublabel.color = new Color(0.90f, 0.96f, 1f, 1f);
+        ConfigureSingleLineText(sublabel);
+        ConfigurePixelRect((RectTransform)sublabel.transform, 70f, 68f, 330f, 22f, 506f, 102f);
+        sublabel.gameObject.SetActive(false);
+
+        Image chevrons = CreateImage("DeployCommandChevrons", buttonObject.transform, Color.white);
+        chevrons.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredDeployCommandChevronsPath);
+        chevrons.preserveAspect = true;
+        chevrons.color = new Color(0.94f, 0.70f, 0.34f, 0.34f);
+        chevrons.raycastTarget = false;
+        RectTransform chevronRect = (RectTransform)chevrons.transform;
+        ConfigurePixelRect(chevronRect, 390f, 29f, 72f, 44f, 506f, 102f);
+        chevronRect.localRotation = Quaternion.Euler(0f, 0f, 90f);
+        return button;
+    }
+
     private static Button CreatePlaceholderButton(string name, Transform parent, string label, string title, string body)
     {
         Button button = CreateTextButton(name, parent, label, 220f, 86f);
@@ -7614,14 +8173,15 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         return button;
     }
 
-    private static Button CreateMainMenuNavButton(string name, Transform parent, string platePath, string title, string body, bool selectedOnEnable = false)
+    private static Button CreateMainMenuNavButton(string name, Transform parent, string platePath, string iconPath, string title, string body, bool selectedOnEnable = false)
     {
         GameObject buttonObject = CreateRectObject(name, parent);
 
         Image background = buttonObject.AddComponent<Image>();
-        background.color = Color.white;
+        background.color = new Color(1f, 1f, 1f, 0.12f);
         background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(platePath);
-        background.preserveAspect = true;
+        background.type = Image.Type.Sliced;
+        background.preserveAspect = false;
         Button button = buttonObject.AddComponent<Button>();
         button.targetGraphic = background;
         ConfigureAnimatedButton(button, selectedOnEnable);
@@ -7629,6 +8189,39 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         WarlineCapturePlaceholderModalButton placeholderButton = buttonObject.AddComponent<WarlineCapturePlaceholderModalButton>();
         SetSerializedString(placeholderButton, "title", title);
         SetSerializedString(placeholderButton, "body", body);
+
+        if (!string.IsNullOrEmpty(iconPath))
+        {
+            Image icon = CreateImage("Icon", buttonObject.transform, Color.white);
+            icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
+            icon.color = new Color(0.74f, 0.82f, 0.84f, 0.88f);
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            ConfigurePixelRect((RectTransform)icon.transform, 28f, 11f, 34f, 34f, 350f, 56f);
+        }
+
+        TMP_Text labelText = CreateText("LabelText", buttonObject.transform, title, 20f, TextAlignmentOptions.Left);
+        labelText.color = selectedOnEnable ? new Color(0.94f, 0.98f, 1f, 1f) : new Color(0.72f, 0.82f, 0.86f, 1f);
+        labelText.enableAutoSizing = true;
+        labelText.fontSizeMin = 10f;
+        labelText.fontSizeMax = 17f;
+        RectTransform labelRect = (RectTransform)labelText.transform;
+        labelRect.anchorMin = new Vector2(0f, 0f);
+        labelRect.anchorMax = new Vector2(1f, 1f);
+        labelRect.offsetMin = new Vector2(82f, 14f);
+        labelRect.offsetMax = new Vector2(-142f, -14f);
+        ConfigureSingleLineText(labelText);
+        return button;
+    }
+
+    private static Button CreateMainMenuWideNavRoute(Transform parent, string name, string iconPath, string title, string body, WarlineCaptureRoute route, float y)
+    {
+        Button button = CreateMainMenuNavButton(name, parent, MainMenuLayeredLeftNavRowFramePath, iconPath, title, body);
+        ConfigurePixelRect((RectTransform)button.transform, 0f, y, 505f, 63f, 505f, 630f);
+        AddDesignedUnavailableBadge(button.transform, "UNAVAILABLE");
+        UnityEngine.Object.DestroyImmediate(button.GetComponent<WarlineCapturePlaceholderModalButton>());
+        ScreenRouteButton routeButton = button.gameObject.AddComponent<ScreenRouteButton>();
+        SetSerializedEnum(routeButton, "route", (int)route);
         return button;
     }
 
@@ -7638,7 +8231,40 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         WarlineCapturePlaceholderModalButton placeholderButton = button.gameObject.AddComponent<WarlineCapturePlaceholderModalButton>();
         SetSerializedString(placeholderButton, "title", title);
         SetSerializedString(placeholderButton, "body", body);
+
+        TMP_Text labelText = CreateText("LabelText", button.transform, title.ToUpperInvariant(), 12f, TextAlignmentOptions.Center);
+        labelText.color = new Color(0.76f, 0.88f, 0.92f, 1f);
+        RectTransform labelRect = (RectTransform)labelText.transform;
+        labelRect.anchorMin = new Vector2(0f, 0f);
+        labelRect.anchorMax = new Vector2(1f, 1f);
+        labelRect.offsetMin = new Vector2(10f, 18f);
+        labelRect.offsetMax = new Vector2(-10f, -18f);
+        ConfigureSingleLineText(labelText);
+        labelText.enableAutoSizing = true;
+        labelText.fontSizeMin = 8f;
+        labelText.fontSizeMax = 12f;
         return button;
+    }
+
+    private static void AddDesignedUnavailableBadge(Transform parent, string label)
+    {
+        GameObject badge = CreateRectObject("DesignedUnavailableBadge", parent);
+        RectTransform rect = (RectTransform)badge.transform;
+        ConfigurePixelRect(rect, 198f, 10f, 116f, 32f, 350f, 56f);
+
+        Image background = badge.AddComponent<Image>();
+        background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MainMenuLayeredDesignedUnavailableBadgePath);
+        background.type = Image.Type.Sliced;
+        background.color = new Color(1f, 1f, 1f, 0.16f);
+        background.raycastTarget = false;
+
+        TMP_Text text = CreateText("LabelText", badge.transform, "Designed\nUnavailable", 10f, TextAlignmentOptions.Center);
+        text.color = new Color(1f, 0.78f, 0.32f, 1f);
+        text.enableWordWrapping = true;
+        text.enableAutoSizing = true;
+        text.fontSizeMin = 6f;
+        text.fontSizeMax = 10f;
+        text.gameObject.SetActive(false);
     }
 
     private static Image CreateSharedScreenOuterFrame(string name, Transform parent)
@@ -9298,14 +9924,15 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         Image background = CreateImage("BackgroundTacticalArt", root.transform, Color.white);
         background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultBackgroundPath);
+        background.preserveAspect = false;
         background.raycastTarget = false;
 
         GameObject scrim = CreateRectObject("Scrim", root.transform);
         Image scrimImage = scrim.AddComponent<Image>();
-        scrimImage.color = new Color(0f, 0f, 0f, 0.22f);
+        scrimImage.color = new Color(0f, 0f, 0f, 0.36f);
 
         GameObject frame = CreateRectObject("Frame", root.transform);
-        ConfigurePixelRect((RectTransform)frame.transform, 313f, 52f, 1046f, 820f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
+        ConfigurePixelRect((RectTransform)frame.transform, 248f, 28f, 1176f, 884f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
         Image frameImage = frame.AddComponent<Image>();
         frameImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultModalFramePath);
         frameImage.type = Image.Type.Sliced;
@@ -9313,26 +9940,31 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         frameImage.raycastTarget = false;
 
         GameObject frameFill = CreateRectObject("FrameFill", frame.transform);
-        ConfigurePixelRect((RectTransform)frameFill.transform, 54f, 54f, 938f, 712f, 1046f, 820f);
+        ConfigurePixelRect((RectTransform)frameFill.transform, 42f, 202f, 1092f, 606f, 1176f, 884f);
         Image frameFillImage = frameFill.AddComponent<Image>();
         frameFillImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultModalFillPath);
         frameFillImage.type = Image.Type.Sliced;
-        frameFillImage.color = new Color(1f, 1f, 1f, 0.98f);
+        frameFillImage.color = new Color(1f, 1f, 1f, 0.96f);
         frameFillImage.raycastTarget = false;
 
         GameObject header = CreateRectObject("Header", frame.transform);
-        ConfigurePixelRect((RectTransform)header.transform, 70f, 36f, 906f, 228f, 1046f, 820f);
+        ConfigurePixelRect((RectTransform)header.transform, 42f, 26f, 1092f, 196f, 1176f, 884f);
+        Image headerFill = header.AddComponent<Image>();
+        headerFill.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultModalFillPath);
+        headerFill.type = Image.Type.Sliced;
+        headerFill.color = new Color(1f, 1f, 1f, 0.92f);
+        headerFill.raycastTarget = false;
 
         Image emblem = CreateImage("VictoryEmblem", header.transform, Color.white);
         emblem.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultVictoryEmblemPath);
         emblem.preserveAspect = true;
         emblem.raycastTarget = false;
-        ConfigurePixelRect((RectTransform)emblem.transform, 135f, 0f, 176f, 150f, 906f, 228f);
+        ConfigurePixelRect((RectTransform)emblem.transform, 58f, 24f, 150f, 140f, 1092f, 196f);
 
         TMP_Text titleText = CreateText("TitleText", header.transform, "VICTORY", 76f, TextAlignmentOptions.Center);
         titleText.fontStyle = FontStyles.Bold;
         titleText.color = new Color(1f, 0.78f, 0.26f, 1f);
-        ConfigurePixelRect((RectTransform)titleText.transform, 330f, 6f, 420f, 90f, 906f, 228f);
+        ConfigurePixelRect((RectTransform)titleText.transform, 242f, 20f, 448f, 92f, 1092f, 196f);
 
         for (int i = 0; i < 3; i++)
         {
@@ -9340,72 +9972,118 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             star.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultStarFilledPath);
             star.preserveAspect = true;
             star.raycastTarget = false;
-            ConfigurePixelRect((RectTransform)star.transform, 390f + (i * 92f), 92f, 78f, 78f, 906f, 228f);
+            ConfigurePixelRect((RectTransform)star.transform, 752f + (i * 88f), 44f, 78f, 78f, 1092f, 196f);
         }
 
-        TMP_Text missionName = CreateText("MissionNameText", header.transform, "Downtown Breakthrough", 32f, TextAlignmentOptions.Center);
+        TMP_Text missionName = CreateText("MissionNameText", header.transform, "M01 First Contact", 32f, TextAlignmentOptions.Center);
         missionName.fontStyle = FontStyles.Bold;
         missionName.color = new Color(0.90f, 0.94f, 0.95f, 1f);
-        ConfigurePixelRect((RectTransform)missionName.transform, 242f, 164f, 600f, 42f, 906f, 228f);
+        ConfigurePixelRect((RectTransform)missionName.transform, 248f, 112f, 438f, 40f, 1092f, 196f);
 
-        TMP_Text missionMeta = CreateText("MissionMetaText", header.transform, "Duration   08:42    |    Difficulty   Hard", 23f, TextAlignmentOptions.Center);
+        TMP_Text missionMeta = CreateText("MissionMetaText", header.transform, "saga.ch01.m01.first_contact  |  scenario.ch01.m01.first_contact", 18f, TextAlignmentOptions.Center);
         missionMeta.color = new Color(0.68f, 0.78f, 0.82f, 1f);
-        ConfigurePixelRect((RectTransform)missionMeta.transform, 250f, 205f, 580f, 30f, 906f, 228f);
+        missionMeta.enableAutoSizing = true;
+        missionMeta.fontSizeMin = 13f;
+        missionMeta.fontSizeMax = 18f;
+        ConfigurePixelRect((RectTransform)missionMeta.transform, 196f, 148f, 560f, 24f, 1092f, 196f);
+        ConfigureSingleLineText(missionMeta);
+
+        TMP_Text mapIdentity = CreateText("MapIdentityText", header.transform, "level.ch01.district_edge_01  |  iso.ch01.district_edge_01", 16f, TextAlignmentOptions.Center);
+        mapIdentity.color = new Color(0.55f, 0.68f, 0.72f, 1f);
+        mapIdentity.enableAutoSizing = true;
+        mapIdentity.fontSizeMin = 10f;
+        mapIdentity.fontSizeMax = 16f;
+        ConfigurePixelRect((RectTransform)mapIdentity.transform, 704f, 132f, 356f, 24f, 1092f, 196f);
+        ConfigureSingleLineText(mapIdentity);
 
         GameObject bodyRoot = CreateRectObject("BodyRoot", frame.transform);
-        ConfigurePixelRect((RectTransform)bodyRoot.transform, 32f, 276f, 982f, 390f, 1046f, 820f);
+        ConfigurePixelRect((RectTransform)bodyRoot.transform, 62f, 244f, 1052f, 460f, 1176f, 884f);
 
         GameObject statsPanel = CreateRectObject("StatsPanel", bodyRoot.transform);
-        ConfigurePixelRect((RectTransform)statsPanel.transform, 0f, 0f, 382f, 294f, 982f, 390f);
+        ConfigurePixelRect((RectTransform)statsPanel.transform, 0f, 0f, 1f, 1f, 1052f, 460f);
         Image statsPanelFrame = statsPanel.AddComponent<Image>();
         statsPanelFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultSectionPanelFramePath);
         statsPanelFrame.type = Image.Type.Sliced;
         statsPanelFrame.color = Color.white;
         statsPanelFrame.raycastTarget = false;
         CreateMissionResultSectionTitle(statsPanel.transform, "MISSION STATS", 0f, 0f, 382f, 294f);
-        CreateMissionResultStatCard("EnemiesDefeatedCard", statsPanel.transform, MissionResultEnemiesIconPath, "ENEMIES\nDEFEATED", "42", 14f, 46f);
-        CreateMissionResultStatCard("UnitsLostCard", statsPanel.transform, MissionResultUnitsLostIconPath, "UNITS LOST", "3", 206f, 46f);
-        CreateMissionResultStatCard("BuildingsCapturedCard", statsPanel.transform, MissionResultBuildingsIconPath, "BUILDINGS\nCAPTURED", "2", 14f, 168f);
-        CreateMissionResultStatCard("CiviliansSafeCard", statsPanel.transform, MissionResultCiviliansIconPath, "CIVILIANS\nSAVED", "18", 206f, 168f);
+        CreateMissionResultStatCard("EnemiesDefeatedCard", statsPanel.transform, MissionResultEnemiesIconPath, "ENEMIES\nDEFEATED", "1", 14f, 46f);
+        CreateMissionResultStatCard("UnitsLostCard", statsPanel.transform, MissionResultUnitsLostIconPath, "UNITS LOST", "0", 206f, 46f);
+        CreateMissionResultStatCard("BuildingsCapturedCard", statsPanel.transform, MissionResultBuildingsIconPath, "BUILDINGS\nCAPTURED", "0", 14f, 168f);
+        CreateMissionResultStatCard("CiviliansSafeCard", statsPanel.transform, MissionResultCiviliansIconPath, "CIVILIAN\nDELTA", "0", 206f, 168f);
+        statsPanel.SetActive(false);
+
+        GameObject missionIdentityBlock = CreateRectObject("MissionIdentityBlock", bodyRoot.transform);
+        ConfigurePixelRect((RectTransform)missionIdentityBlock.transform, 0f, 0f, 1052f, 170f, 1052f, 460f);
+        Image missionIdentityFrame = missionIdentityBlock.AddComponent<Image>();
+        missionIdentityFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultSectionPanelFramePath);
+        missionIdentityFrame.type = Image.Type.Sliced;
+        missionIdentityFrame.color = Color.white;
+        missionIdentityFrame.raycastTarget = false;
+
+        Image missionImage = CreateImage("MissionImage", missionIdentityBlock.transform, Color.white);
+        missionImage.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultBackgroundPath);
+        missionImage.preserveAspect = false;
+        missionImage.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)missionImage.transform, 18f, 18f, 332f, 132f, 1052f, 170f);
+
+        Image missionImageScrim = CreateImage("MissionImageScrim", missionIdentityBlock.transform, new Color(0f, 0f, 0f, 0.18f));
+        missionImageScrim.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)missionImageScrim.transform, 18f, 18f, 332f, 132f, 1052f, 170f);
+
+        TMP_Text identityTitle = CreateText("MissionIdentityTitleText", missionIdentityBlock.transform, "M01 FIRST CONTACT", 38f, TextAlignmentOptions.Left);
+        identityTitle.fontStyle = FontStyles.Bold;
+        identityTitle.color = new Color(0.92f, 0.98f, 1f, 1f);
+        ConfigurePixelRect((RectTransform)identityTitle.transform, 382f, 28f, 440f, 50f, 1052f, 170f);
+        ConfigureSingleLineText(identityTitle);
+
+        TMP_Text identityMeta = CreateText("MissionIdentityMetaText", missionIdentityBlock.transform, "Chapter 1  |  District Edge 01", 22f, TextAlignmentOptions.Left);
+        identityMeta.color = new Color(0.42f, 0.86f, 1f, 1f);
+        ConfigurePixelRect((RectTransform)identityMeta.transform, 384f, 80f, 400f, 32f, 1052f, 170f);
+        ConfigureSingleLineText(identityMeta);
+
+        TMP_Text identityMap = CreateText("MissionIdentityMapText", missionIdentityBlock.transform, "scenario.ch01.m01.first_contact", 17f, TextAlignmentOptions.Left);
+        identityMap.color = new Color(0.62f, 0.74f, 0.78f, 1f);
+        ConfigurePixelRect((RectTransform)identityMap.transform, 384f, 114f, 430f, 28f, 1052f, 170f);
+        ConfigureSingleLineText(identityMap);
 
         GameObject rewardsPanel = CreateRectObject("RewardsPanel", bodyRoot.transform);
-        ConfigurePixelRect((RectTransform)rewardsPanel.transform, 408f, 0f, 562f, 214f, 982f, 390f);
+        ConfigurePixelRect((RectTransform)rewardsPanel.transform, 0f, 252f, 1052f, 132f, 1052f, 460f);
         Image rewardsPanelFrame = rewardsPanel.AddComponent<Image>();
         rewardsPanelFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultSectionPanelFramePath);
         rewardsPanelFrame.type = Image.Type.Sliced;
         rewardsPanelFrame.color = Color.white;
         rewardsPanelFrame.raycastTarget = false;
-        CreateMissionResultSectionTitle(rewardsPanel.transform, "REWARDS", 0f, 0f, 562f, 214f);
-        CreateMissionResultRewardCard("CommanderXpReward", rewardsPanel.transform, MissionResultCommanderXpIconPath, "COMMAND XP", "2,450", 0f);
-        CreateMissionResultRewardCard("CreditsReward", rewardsPanel.transform, MissionResultCreditsIconPath, "CREDITS", "12,800", 142f);
-        CreateMissionResultRewardCard("SupplyCrateReward", rewardsPanel.transform, MissionResultSupplyCrateIconPath, "SUPPLY CRATE", "1", 284f);
-        CreateMissionResultRewardCard("UnlockFragmentsReward", rewardsPanel.transform, MissionResultUnlockFragmentsIconPath, "UNLOCK FRAGMENTS", "25", 426f);
+        CreateMissionResultSectionTitle(rewardsPanel.transform, "REWARDS", 16f, 8f, 1052f, 132f);
+        CreateMissionResultTargetRewardCard("CommanderXpReward", rewardsPanel.transform, MissionResultCommanderXpIconPath, "COMMAND XP", "+250", 178f, 28f, 188f, 86f);
+        CreateMissionResultTargetRewardCard("CreditsReward", rewardsPanel.transform, MissionResultCreditsIconPath, "CREDITS", "+1,250", 384f, 28f, 188f, 86f);
+        CreateMissionResultTargetRewardCard("MaterialsReward", rewardsPanel.transform, MissionResultMaterialsIconPath, "MATERIALS", "+120", 590f, 28f, 188f, 86f);
+        CreateMissionResultTargetRewardCard("IntelReward", rewardsPanel.transform, MissionResultIntelIconPath, "INTEL", "+15", 796f, 28f, 188f, 86f);
 
         GameObject objectivesPanel = CreateRectObject("ObjectivesPanel", bodyRoot.transform);
-        ConfigurePixelRect((RectTransform)objectivesPanel.transform, 408f, 226f, 562f, 164f, 982f, 390f);
+        ConfigurePixelRect((RectTransform)objectivesPanel.transform, 0f, 188f, 1052f, 48f, 1052f, 460f);
         Image objectivesPanelFrame = objectivesPanel.AddComponent<Image>();
-        objectivesPanelFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultSectionPanelFramePath);
+        objectivesPanelFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultObjectiveRowFramePath);
         objectivesPanelFrame.type = Image.Type.Sliced;
         objectivesPanelFrame.color = Color.white;
         objectivesPanelFrame.raycastTarget = false;
-        CreateMissionResultSectionTitle(objectivesPanel.transform, "OBJECTIVES", 0f, 0f, 562f, 164f);
-        CreateMissionResultObjectiveRow("Objective_CaptureDistrict", objectivesPanel.transform, "Capture the Downtown District", "COMPLETED", 42f);
-        CreateMissionResultObjectiveRow("Objective_DestroyCommandCenter", objectivesPanel.transform, "Destroy Enemy Command Center", "COMPLETED", 88f);
-        CreateMissionResultObjectiveRow("Objective_RescueCivilians", objectivesPanel.transform, "Rescue All Civilians", "COMPLETED", 134f);
+        CreateMissionResultTargetObjectiveRow("Objective_DestroyHostilePatrol", objectivesPanel.transform, "Destroy hostile patrol", "COMPLETED", 0f, 0f, 1052f, 48f);
+        CreateMissionResultTargetObjectiveRow("Objective_KeepCommandSquadAlive", objectivesPanel.transform, "Keep command squad alive", "COMPLETED", 0f, 0f, 1f, 1f).SetActive(false);
+        CreateMissionResultTargetObjectiveRow("Objective_CityConsequenceNeutral", objectivesPanel.transform, "City consequence neutral", "0 DELTA", 0f, 0f, 1f, 1f).SetActive(false);
 
         GameObject consequenceRow = CreateRectObject("ConsequenceRow", frame.transform);
-        ConfigurePixelRect((RectTransform)consequenceRow.transform, 64f, 674f, 918f, 44f, 1046f, 820f);
+        ConfigurePixelRect((RectTransform)consequenceRow.transform, 62f, 716f, 1052f, 72f, 1176f, 884f);
         Image consequenceFrame = consequenceRow.AddComponent<Image>();
         consequenceFrame.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultConsequenceRowFramePath);
         consequenceFrame.type = Image.Type.Sliced;
         consequenceFrame.color = Color.white;
         consequenceFrame.raycastTarget = false;
-        TMP_Text consequenceText = CreateText("ConsequenceText", consequenceRow.transform, "Civilians Safe  +18     District Security  +6     Infrastructure  0", 20f, TextAlignmentOptions.Center);
+        TMP_Text consequenceText = CreateText("ConsequenceText", consequenceRow.transform, "City Consequence     Civilian delta  0     Infrastructure delta  0", 24f, TextAlignmentOptions.Center);
         consequenceText.color = new Color(0.76f, 0.90f, 0.86f, 1f);
         ConfigureSingleLineText(consequenceText);
 
         GameObject buttonRow = CreateRectObject("ButtonRow", frame.transform);
-        ConfigurePixelRect((RectTransform)buttonRow.transform, 70f, 724f, 906f, 92f, 1046f, 820f);
+        ConfigurePixelRect((RectTransform)buttonRow.transform, 134f, 786f, 906f, 92f, 1176f, 884f);
         Button replayButton = CreateMissionResultButton("ReplayButton", buttonRow.transform, "REPLAY", MissionResultReplayButtonPath, false, 0f, 0f, 392f, 92f);
         Button continueButton = CreateMissionResultButton("ContinueButton", buttonRow.transform, "CONTINUE", MissionResultContinueButtonPath, true, 442f, 0f, 464f, 92f);
         _ = replayButton;
@@ -9494,6 +10172,40 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigureSingleLineText(valueText);
     }
 
+    private static void CreateMissionResultTargetRewardCard(string name, Transform parent, string iconPath, string label, string value, float x, float y, float width, float height)
+    {
+        GameObject card = CreateRectObject(name, parent);
+        ConfigurePixelRect((RectTransform)card.transform, x, y, width, height, 1052f, 132f);
+        Image background = card.AddComponent<Image>();
+        background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultRewardCardFramePath);
+        background.type = Image.Type.Sliced;
+        background.color = Color.white;
+        background.raycastTarget = false;
+
+        Image icon = CreateImage("IconImage", card.transform, Color.white);
+        icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
+        icon.preserveAspect = true;
+        icon.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)icon.transform, 18f, 17f, 54f, 54f, width, height);
+
+        TMP_Text labelText = CreateText("LabelText", card.transform, label, 16f, TextAlignmentOptions.Left);
+        labelText.color = new Color(0.72f, 0.80f, 0.82f, 1f);
+        ConfigurePixelRect((RectTransform)labelText.transform, 84f, 15f, width - 98f, 24f, width, height);
+        ConfigureSingleLineText(labelText);
+        labelText.enableAutoSizing = true;
+        labelText.fontSizeMin = 10f;
+        labelText.fontSizeMax = 16f;
+
+        TMP_Text valueText = CreateText("ValueText", card.transform, value, 29f, TextAlignmentOptions.Left);
+        valueText.fontStyle = FontStyles.Bold;
+        valueText.color = new Color(1f, 0.76f, 0.23f, 1f);
+        valueText.enableAutoSizing = true;
+        valueText.fontSizeMin = 18f;
+        valueText.fontSizeMax = 29f;
+        ConfigurePixelRect((RectTransform)valueText.transform, 84f, 40f, width - 98f, 40f, width, height);
+        ConfigureSingleLineText(valueText);
+    }
+
     private static void CreateMissionResultObjectiveRow(string name, Transform parent, string label, string status, float y)
     {
         GameObject row = CreateRectObject(name, parent);
@@ -9519,6 +10231,30 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         statusText.color = new Color(0.65f, 0.90f, 0.34f, 1f);
         ConfigurePixelRect((RectTransform)statusText.transform, 398f, 4f, 146f, 30f, 562f, 38f);
         ConfigureSingleLineText(statusText);
+    }
+
+    private static GameObject CreateMissionResultTargetObjectiveRow(string name, Transform parent, string label, string status, float x, float y, float width, float height)
+    {
+        GameObject row = CreateRectObject(name, parent);
+        ConfigurePixelRect((RectTransform)row.transform, x, y, width, height, 1052f, 48f);
+
+        Image icon = CreateImage("CompleteIcon", row.transform, Color.white);
+        icon.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultObjectiveCompleteIconPath);
+        icon.preserveAspect = true;
+        icon.raycastTarget = false;
+        ConfigurePixelRect((RectTransform)icon.transform, 18f, 8f, 32f, 32f, width, height);
+
+        TMP_Text labelText = CreateText("LabelText", row.transform, label, 23f, TextAlignmentOptions.Left);
+        labelText.color = new Color(0.86f, 0.92f, 0.92f, 1f);
+        ConfigurePixelRect((RectTransform)labelText.transform, 68f, 5f, width - 270f, 38f, width, height);
+        ConfigureSingleLineText(labelText);
+
+        TMP_Text statusText = CreateText("StatusText", row.transform, status, 21f, TextAlignmentOptions.Right);
+        statusText.fontStyle = FontStyles.Bold;
+        statusText.color = new Color(0.65f, 0.90f, 0.34f, 1f);
+        ConfigurePixelRect((RectTransform)statusText.transform, width - 210f, 5f, 186f, 38f, width, height);
+        ConfigureSingleLineText(statusText);
+        return row;
     }
 
     private static Button CreateMissionResultButton(string name, Transform parent, string label, string backgroundPath, bool primary, float x, float y, float width, float height)
@@ -11439,6 +12175,24 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         return image;
     }
 
+    private static void ConfigureImageCoverBleed(Image image, float bleedScale)
+    {
+        if (image == null || image.sprite == null)
+            return;
+
+        RectTransform rectTransform = (RectTransform)image.transform;
+        rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.anchoredPosition = Vector2.zero;
+        rectTransform.sizeDelta = Vector2.zero;
+        rectTransform.localScale = new Vector3(bleedScale, bleedScale, 1f);
+
+        AspectRatioFitter fitter = image.gameObject.AddComponent<AspectRatioFitter>();
+        fitter.aspectMode = AspectRatioFitter.AspectMode.EnvelopeParent;
+        fitter.aspectRatio = image.sprite.rect.width / image.sprite.rect.height;
+    }
+
     private static GameObject CreateBadge(string name, Transform parent, string label)
     {
         GameObject badge = CreateRectObject(name, parent);
@@ -12143,6 +12897,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CopyPopupLayer(MissionResultLayerPackRoot, "section_panel_frame.png", MissionResultSectionPanelFramePath);
         CopyPopupLayer(MissionResultLayerPackRoot, "victory_emblem.png", MissionResultVictoryEmblemPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_star_filled.png", MissionResultStarFilledPath);
+        CopyPopupLayer(MissionResultLayerPackRoot, "icon_star_empty.png", MissionResultStarEmptyPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "stat_card_frame.png", MissionResultStatCardFramePath);
         CopyPopupLayer(MissionResultLayerPackRoot, "reward_card_frame.png", MissionResultRewardCardFramePath);
         CopyPopupLayer(MissionResultLayerPackRoot, "consequence_row_frame.png", MissionResultConsequenceRowFramePath);
@@ -12155,8 +12910,8 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_civilians_safe.png", MissionResultCiviliansIconPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_commander_xp.png", MissionResultCommanderXpIconPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_credits.png", MissionResultCreditsIconPath);
-        CopyPopupLayer(MissionResultLayerPackRoot, "icon_supply_crate.png", MissionResultSupplyCrateIconPath);
-        CopyPopupLayer(MissionResultLayerPackRoot, "icon_unlock_fragments.png", MissionResultUnlockFragmentsIconPath);
+        CopyPopupLayer(MissionResultLayerPackRoot, "icon_materials.png", MissionResultMaterialsIconPath);
+        CopyPopupLayer(MissionResultLayerPackRoot, "icon_intel.png", MissionResultIntelIconPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_gear_module.png", MissionResultGearModuleIconPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_rush_ticket.png", MissionResultRushTicketIconPath);
         CopyPopupLayer(MissionResultLayerPackRoot, "icon_objective_complete.png", MissionResultObjectiveCompleteIconPath);
@@ -12316,6 +13071,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             MissionResultModalFillPath,
             MissionResultVictoryEmblemPath,
             MissionResultStarFilledPath,
+            MissionResultStarEmptyPath,
             MissionResultStatCardFramePath,
             MissionResultRewardCardFramePath,
             MissionResultConsequenceRowFramePath,
@@ -12328,8 +13084,8 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             MissionResultCiviliansIconPath,
             MissionResultCommanderXpIconPath,
             MissionResultCreditsIconPath,
-            MissionResultSupplyCrateIconPath,
-            MissionResultUnlockFragmentsIconPath,
+            MissionResultMaterialsIconPath,
+            MissionResultIntelIconPath,
             MissionResultGearModuleIconPath,
             MissionResultRushTicketIconPath,
             MissionResultObjectiveCompleteIconPath,
@@ -13132,14 +13888,15 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         EnsureSpriteImport(MissionResultBackgroundPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultVictoryEmblemPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultStarFilledPath, PopupImagesAtlasLabel);
+        EnsureSpriteImport(MissionResultStarEmptyPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultEnemiesIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultUnitsLostIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultBuildingsIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultCiviliansIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultCommanderXpIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultCreditsIconPath, PopupImagesAtlasLabel);
-        EnsureSpriteImport(MissionResultSupplyCrateIconPath, PopupImagesAtlasLabel);
-        EnsureSpriteImport(MissionResultUnlockFragmentsIconPath, PopupImagesAtlasLabel);
+        EnsureSpriteImport(MissionResultMaterialsIconPath, PopupImagesAtlasLabel);
+        EnsureSpriteImport(MissionResultIntelIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultGearModuleIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultRushTicketIconPath, PopupImagesAtlasLabel);
         EnsureSpriteImport(MissionResultObjectiveCompleteIconPath, PopupImagesAtlasLabel);
@@ -13551,12 +14308,12 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         EnsureSlicedSpriteImport(MatchHudOneGoResourceBarFillPath, new Vector4(28f, 18f, 28f, 18f));
         EnsureSlicedSpriteImport(MatchHudOneGoCommandRailPath, new Vector4(28f, 20f, 28f, 20f));
         EnsureSlicedSpriteImport(MatchHudOneGoCommandRailFillPath, new Vector4(28f, 22f, 28f, 22f));
-        EnsureSlicedSpriteImport(MatchHudOneGoButtonNormalPath, new Vector4(22f, 22f, 22f, 22f));
-        EnsureSlicedSpriteImport(MatchHudOneGoButtonSelectedPath, new Vector4(22f, 28f, 22f, 28f));
-        EnsureSlicedSpriteImport(MatchHudOneGoButtonBuildPath, new Vector4(24f, 28f, 24f, 28f));
-        EnsureSlicedSpriteImport(MatchHudOneGoTopButtonPath, new Vector4(22f, 18f, 22f, 18f));
-        EnsureSlicedSpriteImport(MatchHudOneGoSquadCardNormalPath, new Vector4(24f, 28f, 24f, 28f));
-        EnsureSlicedSpriteImport(MatchHudOneGoSquadCardSelectedPath, new Vector4(24f, 28f, 24f, 28f));
+        EnsureSlicedSpriteImport(MatchHudOneGoButtonNormalPath, new Vector4(28f, 28f, 28f, 28f));
+        EnsureSlicedSpriteImport(MatchHudOneGoButtonSelectedPath, new Vector4(28f, 28f, 28f, 28f));
+        EnsureSlicedSpriteImport(MatchHudOneGoButtonBuildPath, new Vector4(30f, 34f, 30f, 34f));
+        EnsureSlicedSpriteImport(MatchHudOneGoTopButtonPath, new Vector4(26f, 26f, 26f, 26f));
+        EnsureSlicedSpriteImport(MatchHudOneGoSquadCardNormalPath, new Vector4(28f, 28f, 28f, 28f));
+        EnsureSlicedSpriteImport(MatchHudOneGoSquadCardSelectedPath, new Vector4(28f, 28f, 28f, 28f));
         EnsureSlicedSpriteImport(CommandWheelContextHintFramePath, new Vector4(30f, 18f, 30f, 18f));
         EnsureSlicedSpriteImport(CommandWheelContextHintFillPath, new Vector4(30f, 18f, 30f, 18f));
         EnsureSlicedSpriteImport(CommandWheelEntityFramePath, new Vector4(30f, 30f, 30f, 30f));
@@ -13615,6 +14372,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         EnsureSpriteImport(MatchHudIsoMiniMapContentPath, MatchHudFramesAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoIconStopPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoIconHoldPath, MatchHudIconsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoIconSelectPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoIconMovePath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoIconAttackPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoIconSpecialPath, MatchHudIconsAtlasLabel);
@@ -13624,10 +14382,24 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         EnsureSpriteImport(MatchHudOneGoMoneyIconPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoMaterialsIconPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoPopulationIconPath, MatchHudIconsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoTimeClockIconPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoThreatWarningIconPath, MatchHudIconsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoThreatEnemySpottedIconPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoObjectiveCheckboxPath, MatchHudIconsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoObjectiveCheckedPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoObjectiveStarPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(MatchHudOneGoRankChevronPath, MatchHudIconsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoShieldBadgePath, MatchHudIconsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoSquadPortraitRiflePath, MatchHudCardsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoSquadPortraitApcPath, MatchHudCardsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoSquadPortraitTankPath, MatchHudCardsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoSquadPortraitHelicopterPath, MatchHudCardsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoMiniMapContentPath, MatchHudFramesAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoMiniMapViewportRectPath, MatchHudFramesAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoMiniMapZoomPlusPath, MatchHudButtonsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoMiniMapZoomMinusPath, MatchHudButtonsAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoThreatRowActivePath, MatchHudFramesAtlasLabel);
+        EnsureSpriteImport(MatchHudOneGoThreatRowNormalPath, MatchHudFramesAtlasLabel);
         EnsureSpriteImport(CommandWheelExtractIconPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(CommandWheelRopeDropIconPath, MatchHudIconsAtlasLabel);
         EnsureSpriteImport(CommandWheelPatrolIconPath, MatchHudIconsAtlasLabel);
@@ -13906,6 +14678,60 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         AssetDatabase.ImportAsset(MainMenuFooterSocialIconPath);
     }
 
+    private static void GenerateMainMenuLayeredOneGoAssets()
+    {
+        RequireProjectRelativeFile($"{MainMenuLayeredOneGoLayerPackRoot}/layer_manifest.json");
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "commander_profile_portrait.png", MainMenuLayeredCommanderProfilePortraitPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "designed_unavailable_badge.png", MainMenuLayeredDesignedUnavailableBadgePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "footer_status_frame.png", MainMenuLayeredFooterStatusFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "icon_command_authority.png", MainMenuLayeredCommandAuthorityIconPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "icon_credits.png", MainMenuLayeredCreditsIconPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "icon_materials.png", MainMenuLayeredMaterialsIconPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_art_operation.png", MainMenuLayeredModeCardArtOperationPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_art_quick_custom.png", MainMenuLayeredModeCardArtQuickCustomPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_art_saga.png", MainMenuLayeredModeCardArtSagaPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_frame.png", MainMenuLayeredModeCardFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "profile_block_frame.png", MainMenuLayeredProfileBlockFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "resource_counter_frame.png", MainMenuLayeredResourceCounterFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "screen_shell_frame.png", MainMenuLayeredScreenShellFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "settings_gear_icon.png", MainMenuLayeredSettingsGearIconPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "side_route_button_frame.png", MainMenuLayeredSideRouteButtonFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "top_resource_strip_frame.png", MainMenuLayeredTopResourceStripFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "main_menu_background_tactical_map.png", MainMenuLayeredBackgroundTacticalMapPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "brand_logo_panel_frame.png", MainMenuLayeredBrandLogoPanelFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "brand_emblem.png", MainMenuLayeredBrandEmblemPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "top_resource_bar_frame_full.png", MainMenuLayeredTopResourceBarFrameFullPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "resource_counter_slot_frame.png", MainMenuLayeredResourceCounterSlotFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "settings_button_frame.png", MainMenuLayeredSettingsButtonFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "commander_profile_panel_frame.png", MainMenuLayeredCommanderProfilePanelFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "left_nav_row_frame.png", MainMenuLayeredLeftNavRowFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "left_nav_icon_inbox.png", MainMenuLayeredLeftNavIconInboxPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "left_nav_icon_store.png", MainMenuLayeredLeftNavIconStorePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "left_nav_icon_events.png", MainMenuLayeredLeftNavIconEventsPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "left_nav_icon_ranking.png", MainMenuLayeredLeftNavIconRankingPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "left_nav_icon_command_feed.png", MainMenuLayeredLeftNavIconCommandFeedPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_frame_large.png", MainMenuLayeredModeCardFrameLargePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_header_emblem_saga.png", MainMenuLayeredModeCardHeaderEmblemSagaPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_header_emblem_operation.png", MainMenuLayeredModeCardHeaderEmblemOperationPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "mode_card_header_emblem_quick_custom.png", MainMenuLayeredModeCardHeaderEmblemQuickCustomPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "operation_warning_icon.png", MainMenuLayeredOperationWarningIconPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "operation_pressure_meter_segments.png", MainMenuLayeredOperationPressureMeterSegmentsPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "operation_risk_meter_segments.png", MainMenuLayeredOperationRiskMeterSegmentsPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "operation_row_divider_chrome.png", MainMenuLayeredOperationRowDividerChromePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "card_footer_icon_saga.png", MainMenuLayeredCardFooterIconSagaPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "card_footer_icon_operation.png", MainMenuLayeredCardFooterIconOperationPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "card_footer_icon_quick_custom.png", MainMenuLayeredCardFooterIconQuickCustomPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "deploy_command_button_frame.png", MainMenuLayeredDeployCommandButtonFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "deploy_command_chevrons.png", MainMenuLayeredDeployCommandChevronsPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "deploy_command_glow_overlay.png", MainMenuLayeredDeployCommandGlowOverlayPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "command_feed_panel_frame.png", MainMenuLayeredCommandFeedPanelFramePath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "command_feed_icon.png", MainMenuLayeredCommandFeedIconPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "trim_overlay_cyan_long.png", MainMenuLayeredTrimOverlayCyanLongPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "trim_overlay_cyan_short.png", MainMenuLayeredTrimOverlayCyanShortPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "trim_overlay_amber_short.png", MainMenuLayeredTrimOverlayAmberShortPath);
+        CopyPopupLayer(MainMenuLayeredOneGoLayerPackRoot, "shadow_trim_overlay_dark.png", MainMenuLayeredShadowTrimOverlayDarkPath);
+    }
+
     private static void EnsureMainMenuGeneratedSprites()
     {
         EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/Buttons", MainMenuIconsButtonsAtlasLabel);
@@ -13913,6 +14739,13 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/Portraits", MainMenuIconsButtonsAtlasLabel);
         EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/Cards", MainMenuCardArtAtlasLabel);
         EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/Frames", MainMenuFramesChromeAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons", MainMenuIconsButtonsAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames", MainMenuFramesChromeAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content", MainMenuCardArtAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons", MainMenuIconsButtonsAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds", MainMenuCardArtAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays", MainMenuFramesChromeAtlasLabel);
+        EnsureGeneratedSpriteFolder("Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed", MainMenuFramesChromeAtlasLabel);
 
         EnsureSlicedSpriteImport(MainMenuCardBaseMaskPath, new Vector4(56f, 34f, 56f, 34f));
         EnsureSlicedSpriteImport(MainMenuCardContentMaskPath, new Vector4(56f, 34f, 56f, 34f));
@@ -13920,6 +14753,37 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         EnsureSlicedSpriteImport(MainMenuTopBarPanelPath, new Vector4(220f, 28f, 220f, 34f));
         EnsureSlicedSpriteImport(MainMenuLeftRailPanelPath, new Vector4(28f, 36f, 28f, 36f));
         EnsureSlicedSpriteImport(MainMenuFooterFullPanelPath, new Vector4(242f, 26f, 220f, 30f));
+        EnsureSlicedSpriteImport(MainMenuLayeredTopResourceStripFramePath, new Vector4(80f, 18f, 80f, 18f));
+        EnsureSlicedSpriteImport(MainMenuLayeredScreenShellFramePath, new Vector4(32f, 32f, 32f, 32f));
+        EnsureSlicedSpriteImport(MainMenuLayeredFooterStatusFramePath, new Vector4(42f, 16f, 42f, 16f));
+        EnsureSlicedSpriteImport(MainMenuLayeredModeCardFramePath, new Vector4(32f, 32f, 32f, 32f));
+        EnsureSlicedSpriteImport(MainMenuLayeredProfileBlockFramePath, new Vector4(28f, 22f, 28f, 22f));
+        EnsureSlicedSpriteImport(MainMenuLayeredResourceCounterFramePath, new Vector4(18f, 12f, 18f, 12f));
+        EnsureSlicedSpriteImport(MainMenuLayeredSideRouteButtonFramePath, new Vector4(18f, 18f, 18f, 18f));
+        EnsureSlicedSpriteImport(MainMenuLayeredDesignedUnavailableBadgePath, new Vector4(12f, 8f, 12f, 8f));
+        EnsureSlicedSpriteImport(MainMenuLayeredBrandLogoPanelFramePath, new Vector4(42f, 34f, 42f, 34f));
+        EnsureSlicedSpriteImport(MainMenuLayeredTopResourceBarFrameFullPath, new Vector4(48f, 26f, 48f, 26f));
+        EnsureSlicedSpriteImport(MainMenuLayeredResourceCounterSlotFramePath, new Vector4(28f, 18f, 28f, 18f));
+        EnsureSlicedSpriteImport(MainMenuLayeredSettingsButtonFramePath, new Vector4(20f, 20f, 20f, 20f));
+        EnsureSlicedSpriteImport(MainMenuLayeredCommanderProfilePanelFramePath, new Vector4(36f, 40f, 36f, 40f));
+        EnsureSlicedSpriteImport(MainMenuLayeredLeftNavRowFramePath, new Vector4(34f, 14f, 34f, 14f));
+        EnsureSlicedSpriteImport(MainMenuLayeredModeCardFrameLargePath, new Vector4(42f, 46f, 42f, 46f));
+        EnsureSlicedSpriteImport(MainMenuLayeredOperationRowDividerChromePath, new Vector4(24f, 4f, 24f, 4f));
+        EnsureSlicedSpriteImport(MainMenuLayeredDeployCommandButtonFramePath, new Vector4(44f, 32f, 44f, 32f));
+        EnsureSlicedSpriteImport(MainMenuLayeredDeployCommandGlowOverlayPath, new Vector4(24f, 24f, 24f, 24f));
+        EnsureSlicedSpriteImport(MainMenuLayeredCommandFeedPanelFramePath, new Vector4(36f, 20f, 36f, 20f));
+        EnsureSlicedSpriteImport(MainMenuLayeredTrimOverlayCyanLongPath, new Vector4(24f, 4f, 24f, 4f));
+        EnsureSlicedSpriteImport(MainMenuLayeredTrimOverlayCyanShortPath, new Vector4(18f, 4f, 18f, 4f));
+        EnsureSlicedSpriteImport(MainMenuLayeredTrimOverlayAmberShortPath, new Vector4(18f, 5f, 18f, 5f));
+        EnsureSlicedSpriteImport(MainMenuLayeredShadowTrimOverlayDarkPath, new Vector4(28f, 6f, 28f, 6f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanBrandLogoPanelFramePath, new Vector4(70f, 42f, 70f, 42f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanTopResourceBarFramePath, new Vector4(92f, 42f, 92f, 42f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanSettingsButtonFramePath, new Vector4(80f, 80f, 80f, 80f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanCommanderProfilePanelFramePath, new Vector4(72f, 76f, 72f, 76f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanLeftNavRowFramePath, new Vector4(84f, 38f, 84f, 38f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanModeCardFramePath, new Vector4(76f, 92f, 76f, 92f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanDeployCommandButtonFramePath, new Vector4(88f, 52f, 88f, 52f));
+        EnsureSlicedSpriteImport(MainMenuImageGenCleanCommandFeedPanelFramePath, new Vector4(84f, 50f, 84f, 50f));
     }
 
     private static void EnsureGeneratedSpriteFolder(string folderPath, string atlasLabel)
@@ -13948,16 +14812,29 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             {
                 "Assets/Game/Art/UI/Generated/MainMenu/Buttons",
                 "Assets/Game/Art/UI/Generated/MainMenu/Icons",
-                "Assets/Game/Art/UI/Generated/MainMenu/Portraits"
+                "Assets/Game/Art/UI/Generated/MainMenu/Portraits",
+                "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons",
+                "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons"
             });
         EnsureSpriteAtlas(
             MainMenuFramesChromeAtlasPath,
             4096,
-            new[] { "Assets/Game/Art/UI/Generated/MainMenu/Frames" });
+            new[]
+            {
+                "Assets/Game/Art/UI/Generated/MainMenu/Frames",
+                "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames",
+                "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays",
+                "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed"
+            });
         EnsureSpriteAtlas(
             MainMenuCardArtAtlasPath,
             4096,
-            new[] { "Assets/Game/Art/UI/Generated/MainMenu/Cards" });
+            new[]
+            {
+                "Assets/Game/Art/UI/Generated/MainMenu/Cards",
+                "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content",
+                "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds"
+            });
     }
 
     private static void EnsureSpriteAtlas(string atlasPath, int maxTextureSize, string[] packablePaths)

@@ -3,6 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.UI;
 
 public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
@@ -12,8 +13,24 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
     private const string GameSceneCapturePath = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_1920x1080.png";
     private const string GameSceneCaptureV2Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v2_1920x1080.png";
     private const string GameSceneCaptureV3Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v3_1920x1080.png";
-    private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string GameSceneCaptureV4Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v4_1920x1080.png";
+    private const string GameSceneCaptureV5Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v5_1920x1080.png";
+    private const string GameSceneCaptureV6Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v6_1920x1080.png";
+    private const string GameSceneCaptureV17Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v17_1920x1080.png";
+    private const string GameSceneCaptureV17PlayerNeEnemyNePath = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v17_playerNE_enemyNE_1920x1080.png";
+    private const string GameSceneCaptureV17PlayerSeEnemyNePath = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v17_playerSE_enemyNE_1920x1080.png";
+    private const string GameSceneCaptureV17PlayerSwEnemyNePath = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v17_playerSW_enemyNE_1920x1080.png";
+    private const string GameSceneCaptureV17PlayerNwEnemyNePath = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v17_playerNW_enemyNE_1920x1080.png";
+    private const string GameSceneCaptureV28Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v28_1920x1080.png";
+    private const string GameSceneCaptureV29Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v29_1920x1080.png";
+    private const string GameSceneCaptureV29_20x9Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v29_20x9_2400x1080.png";
+    private const string GameSceneCaptureV29_21x9Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v29_21x9_2520x1080.png";
+    private const string GameSceneCaptureV31Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v31_1920x1080.png";
+    private const string GameSceneCaptureV32Path = "Design/AgentReports/Captures/M01-01_GameSceneRuntimeCapture_v32_1920x1080.png";
+    private const string GameScenePath = "Assets/Game/Scenes/Game2D.unity";
     private const string DefinitionPath = "Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset";
+    private const string M01PlayerFacingOverrideKey = "WarlineCapture.M01.PlayerFacingOverride";
+    private const string M01EnemyFacingOverrideKey = "WarlineCapture.M01.EnemyFacingOverride";
     private const int CaptureWidth = 1920;
     private const int CaptureHeight = 1080;
     private static double gameSceneCaptureStartTime;
@@ -21,6 +38,9 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
     private static bool gameSceneCaptureRequested;
     private static bool gameFlowCaptureRequested;
     private static bool gameFlowLaunchTriggered;
+    private static string gameFlowCapturePath;
+    private static int gameFlowCaptureWidth = CaptureWidth;
+    private static int gameFlowCaptureHeight = CaptureHeight;
 
     public static void Capture()
     {
@@ -61,9 +81,103 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
 
     public static void CaptureGameSceneViaExistingFlow()
     {
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV3Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV4()
+    {
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV4Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV5()
+    {
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV5Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV6()
+    {
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV6Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV17()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV17Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV17PlayerSwEnemyNe()
+    {
+        SetFacingOverride("SW", "NE");
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV17PlayerSwEnemyNePath);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV17PlayerNeEnemyNe()
+    {
+        SetFacingOverride("NE", "NE");
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV17PlayerNeEnemyNePath);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV17PlayerSeEnemyNe()
+    {
+        SetFacingOverride("SE", "NE");
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV17PlayerSeEnemyNePath);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV17PlayerNwEnemyNe()
+    {
+        SetFacingOverride("NW", "NE");
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV17PlayerNwEnemyNePath);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV28()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV28Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV29()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV29Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV29_20x9()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV29_20x9Path, 2400, 1080);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV29_21x9()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV29_21x9Path, 2520, 1080);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV31()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV31Path);
+    }
+
+    public static void CaptureGameSceneViaExistingFlowV32()
+    {
+        ClearFacingOverride();
+        StartGameSceneViaExistingFlowCapture(GameSceneCaptureV32Path);
+    }
+
+    private static void StartGameSceneViaExistingFlowCapture(string capturePath)
+    {
+        StartGameSceneViaExistingFlowCapture(capturePath, CaptureWidth, CaptureHeight);
+    }
+
+    private static void StartGameSceneViaExistingFlowCapture(string capturePath, int captureWidth, int captureHeight)
+    {
         gameSceneCaptureRequested = true;
         gameFlowCaptureRequested = true;
         gameFlowLaunchTriggered = false;
+        gameFlowCapturePath = capturePath;
+        gameFlowCaptureWidth = captureWidth;
+        gameFlowCaptureHeight = captureHeight;
         gameSceneCaptureStartTime = EditorApplication.timeSinceStartup;
         gameSceneCaptureFrameCount = 0;
         WarlineCaptureMissionSession.Clear();
@@ -78,7 +192,8 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
         if (!gameSceneCaptureRequested || state != PlayModeStateChange.EnteredPlayMode)
             return;
 
-        Screen.SetResolution(CaptureWidth, CaptureHeight, false);
+        gameSceneCaptureStartTime = EditorApplication.timeSinceStartup;
+        Screen.SetResolution(gameFlowCaptureWidth, gameFlowCaptureHeight, false);
         EditorApplication.update += gameFlowCaptureRequested
             ? CaptureGameSceneViaFlowWhenReady
             : CaptureGameSceneWhenReady;
@@ -99,20 +214,30 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
                 return;
 
             gameFlowLaunchTriggered = true;
+            gameSceneCaptureStartTime = EditorApplication.timeSinceStartup;
             gameSceneCaptureFrameCount = 0;
             return;
         }
 
         bool runtimeReady = TryEnsureM01RuntimeInitialized(out Chapter01M01PlayableRuntime.RuntimeState runtimeState);
-        if (!runtimeReady || gameSceneCaptureFrameCount < 180)
+        if (runtimeReady && (gameSceneCaptureFrameCount == 45 || gameSceneCaptureFrameCount == 90 || gameSceneCaptureFrameCount == 150))
+        {
+            Camera sampleCamera = Camera.main != null ? Camera.main : Object.FindAnyObjectByType<Camera>();
+            Unity.Entities.World sampleWorld = Unity.Entities.World.DefaultGameObjectInjectionWorld;
+            if (sampleWorld != null && sampleWorld.IsCreated && sampleCamera != null)
+                MissionRuntimeAtlasQuadPresentationSystem.LogRuntimeQuadDiagnostics(sampleWorld.EntityManager, sampleCamera);
+        }
+        if (!runtimeReady || gameSceneCaptureFrameCount < 45)
             return;
 
         EditorApplication.update -= CaptureGameSceneViaFlowWhenReady;
-        bool captured = CaptureLoadedGameSceneCamera(GameSceneCaptureV3Path);
+        string capturePath = string.IsNullOrEmpty(gameFlowCapturePath) ? GameSceneCaptureV3Path : gameFlowCapturePath;
+        bool captured = CaptureLoadedGameSceneCamera(capturePath);
         Debug.Log(captured
-            ? $"WARLINECAPTURE_M01_GAME_FLOW_CAPTURED path={GameSceneCaptureV3Path} player={runtimeState.PlayerSquad} enemy={runtimeState.EnemyPatrol}"
-            : $"WARLINECAPTURE_M01_GAME_FLOW_CAPTURE_FAILED path={GameSceneCaptureV3Path}");
+            ? $"WARLINECAPTURE_M01_GAME_FLOW_CAPTURED path={capturePath} player={runtimeState.PlayerSquad} enemy={runtimeState.EnemyPatrol}"
+            : $"WARLINECAPTURE_M01_GAME_FLOW_CAPTURE_FAILED path={capturePath}");
         CleanupGameSceneCaptureRequest();
+        ClearFacingOverride();
         EditorApplication.ExitPlaymode();
         EditorApplication.Exit(captured ? 0 : 1);
     }
@@ -135,6 +260,7 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
         EditorApplication.playModeStateChanged -= OnPlayModeStateChangedForGameSceneCapture;
         gameSceneCaptureRequested = false;
         gameFlowCaptureRequested = false;
+        ClearFacingOverride();
         EditorApplication.ExitPlaymode();
         EditorApplication.Exit(captured ? 0 : 1);
     }
@@ -159,7 +285,7 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
 
     private static void PollGameSceneCaptureTimeout()
     {
-        if (!gameSceneCaptureRequested || EditorApplication.timeSinceStartup - gameSceneCaptureStartTime < 60d)
+        if (!gameSceneCaptureRequested || EditorApplication.timeSinceStartup - gameSceneCaptureStartTime < 120d)
             return;
 
         EditorApplication.update -= CaptureGameSceneWhenReady;
@@ -169,6 +295,7 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
         EditorApplication.playModeStateChanged -= OnPlayModeStateChangedForGameSceneCapture;
         gameSceneCaptureRequested = false;
         gameFlowCaptureRequested = false;
+        ClearFacingOverride();
         Debug.LogError($"WARLINECAPTURE_M01_GAME_SCENE_CAPTURE_TIMEOUT path={GameSceneCapturePath}");
         EditorApplication.Exit(1);
     }
@@ -183,6 +310,21 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
         gameSceneCaptureRequested = false;
         gameFlowCaptureRequested = false;
         gameFlowLaunchTriggered = false;
+        gameFlowCapturePath = null;
+        gameFlowCaptureWidth = CaptureWidth;
+        gameFlowCaptureHeight = CaptureHeight;
+    }
+
+    private static void SetFacingOverride(string playerFacing, string enemyFacing)
+    {
+        EditorPrefs.SetString(M01PlayerFacingOverrideKey, playerFacing);
+        EditorPrefs.SetString(M01EnemyFacingOverrideKey, enemyFacing);
+    }
+
+    private static void ClearFacingOverride()
+    {
+        EditorPrefs.DeleteKey(M01PlayerFacingOverrideKey);
+        EditorPrefs.DeleteKey(M01EnemyFacingOverrideKey);
     }
 
     private static bool TryLaunchM01ThroughExistingFlow()
@@ -295,26 +437,44 @@ public static class WarlineCaptureM01RuntimeVisualMatchProofCapture
             return;
 
         Directory.CreateDirectory(Path.Combine(Directory.GetCurrentDirectory(), Path.GetDirectoryName(assetPath)));
-        RenderTexture renderTexture = new(CaptureWidth, CaptureHeight, 24, RenderTextureFormat.ARGB32);
-        Texture2D png = new(CaptureWidth, CaptureHeight, TextureFormat.RGBA32, false);
+        RenderTexture renderTexture = new(gameFlowCaptureWidth, gameFlowCaptureHeight, 24, RenderTextureFormat.ARGB32);
+        Texture2D png = new(gameFlowCaptureWidth, gameFlowCaptureHeight, TextureFormat.RGBA32, false);
         RenderTexture previousActive = RenderTexture.active;
         RenderTexture previousTarget = camera.targetTexture;
+        float previousAspect = camera.aspect;
+        CommandBuffer runtimeQuadBuffer = null;
         try
         {
             camera.targetTexture = renderTexture;
+            camera.aspect = gameFlowCaptureWidth / Mathf.Max(1f, gameFlowCaptureHeight);
             RenderTexture.active = renderTexture;
             Unity.Entities.World world = Unity.Entities.World.DefaultGameObjectInjectionWorld;
             if (world != null && world.IsCreated)
+            {
+                MissionRuntimeTerrainSurfaceRendererSystem.RefreshTerrainSurfaceRenderers(world.EntityManager);
                 MissionRuntimeAtlasQuadPresentationSystem.DrawAllRuntimeQuadsForCamera(world.EntityManager, camera);
+                runtimeQuadBuffer = new CommandBuffer { name = "WarlineCapture M01 ECS Runtime Quad Proof" };
+                int drawCount = MissionRuntimeAtlasQuadPresentationSystem.BuildRuntimeQuadCommandBuffer(world.EntityManager, runtimeQuadBuffer, camera);
+                if (drawCount > 0)
+                    camera.AddCommandBuffer(CameraEvent.AfterForwardAlpha, runtimeQuadBuffer);
+                Debug.Log($"WARLINECAPTURE_M01_ECS_RUNTIME_QUAD_CAPTURE_DRAW_COUNT count={drawCount}");
+                MissionRuntimeAtlasQuadPresentationSystem.LogRuntimeQuadDiagnostics(world.EntityManager, camera);
+            }
             camera.Render();
             Canvas.ForceUpdateCanvases();
-            png.ReadPixels(new Rect(0, 0, CaptureWidth, CaptureHeight), 0, 0);
+            png.ReadPixels(new Rect(0, 0, gameFlowCaptureWidth, gameFlowCaptureHeight), 0, 0);
             png.Apply();
             File.WriteAllBytes(Path.Combine(Directory.GetCurrentDirectory(), assetPath), png.EncodeToPNG());
         }
         finally
         {
+            if (runtimeQuadBuffer != null)
+            {
+                camera.RemoveCommandBuffer(CameraEvent.AfterForwardAlpha, runtimeQuadBuffer);
+                runtimeQuadBuffer.Release();
+            }
             camera.targetTexture = previousTarget;
+            camera.aspect = previousAspect;
             RenderTexture.active = previousActive;
             Object.DestroyImmediate(renderTexture);
             Object.DestroyImmediate(png);

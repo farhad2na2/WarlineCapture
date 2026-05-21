@@ -696,7 +696,7 @@ public static class WarlineCaptureIso2DRuntimePrototypeBuilder
         builder.AppendLine();
         builder.AppendLine("## Notes");
         builder.AppendLine();
-        builder.AppendLine("- The scene is intentionally isolated from `Assets/Game/Scenes/Game.unity`.");
+        builder.AppendLine("- The scene is intentionally isolated from `Assets/Game/Scenes/Game2D.unity`.");
         builder.AppendLine("- Runtime components are lightweight MonoBehaviours under `Assets/Game/Scripts/Iso2D` and can be reused later by the real tactical gameplay implementation.");
         builder.AppendLine("- In Play Mode, use arrow keys/WASD to pan and mouse wheel to inspect zoom levels on the prototype camera.");
         builder.AppendLine("- The prototype captures validate movement states in editor automation; final visual approval should still be done by opening the scene and running Play Mode.");

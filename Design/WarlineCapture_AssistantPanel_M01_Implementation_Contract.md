@@ -9,7 +9,7 @@ This is the implementation contract for `PREFAB-05_AssistantPanel` and the Missi
 It converts the flat visual target:
 
 ```text
-Design/VisualLock/PREFAB-05_AssistantPanel/PREFAB-05_AssistantPanel_Landscape_Target.png
+Design/VisualLockLayered/PREFAB-05_AssistantPanel/reference/PREFAB-05_AssistantPanel_Landscape_Target.png
 ```
 
 into concrete ids, runtime data fields, command intents, and validation gates for UI, gameplay, and FTUE work.
@@ -33,8 +33,8 @@ This contract does not make the flat visual reference a completed implementation
 | Surface id | `PREFAB-05_AssistantPanel` |
 | Prefab path | `Assets/Game/Prefabs/UI/Components/PREFAB-05_AssistantPanel.prefab` |
 | View component | `AssistantPanelView` |
-| Visual target | `Design/VisualLock/PREFAB-05_AssistantPanel/PREFAB-05_AssistantPanel_Landscape_Target.png` |
-| Visual target type | Flat panel/popup reference over blurred WarlineCapture UI context. |
+| Visual target | `Design/VisualLockLayered/PREFAB-05_AssistantPanel/reference/PREFAB-05_AssistantPanel_Landscape_Target.png` |
+| Visual target type | Layered panel/popup reference over WarlineCapture 3D battle HUD context. |
 | Runtime owner | Future `AssistantPanelController` / `WarlineCaptureAssistantService` |
 | Gameplay dependency | `BattleHudGameplayBridge` on `Screen_MatchOverlay` |
 

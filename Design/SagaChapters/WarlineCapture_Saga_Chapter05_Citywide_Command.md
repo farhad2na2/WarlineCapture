@@ -1,12 +1,12 @@
 # WarlineCapture Saga Chapter 5: Citywide Command
 
-Date: 2026-05-05
+Date: 2026-05-21
 
 ## Purpose
 
-This document owns Saga Chapter 5 high-level design. Internally this is `Chapter 5`; player-facing title is `Citywide Command`.
+This document owns Campaign Chapter 5 high-level design. Internally this is `Chapter 5`; player-facing title is `Citywide Command`.
 
-Use `../WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` before turning these mission slots into detailed specs. Multi-objective strategic previews must connect to tactical map packages with metadata-backed routes, objective anchors, camera bounds, and minimap markers.
+Use `../WarlineCapture_3D_SingleMap_Gameplay_Direction.md` before turning these mission slots into detailed specs. Multi-objective planning views must connect to the same 3D operation map with metadata-backed routes, objective anchors, camera bounds, and minimap markers.
 
 ## Chapter Role
 
@@ -40,7 +40,7 @@ Citywide Command is the Saga mastery chapter. It combines prior mission grammar 
 | Early chapter | High-value CommanderXP, Credits, Materials, Fuel, and Intel. |
 | Mid chapter | `Building_CommandPost`, `ability.rally_order`, and `upgrade.building.command_post` completion path. |
 | Late chapter | `pc.cosmetic.base_banner.iron_guard` and `pc.cosmetic.hud_accent.amber_command` identity rewards. |
-| Chapter completion | Major Saga completion reward, `Unit_Sea_Missile_Craft` unlock for late Quick Custom/coastal Operation, and durable account recognition. |
+| Chapter completion | Major Campaign completion reward, `Unit_Sea_Missile_Craft` unlock for late Skirmish/coastal Operations, and durable account recognition. |
 
 ## Balance Direction
 
@@ -49,7 +49,7 @@ Use Mastery bands for finale missions and Standard bands for setup missions. Rep
 ## Validation Focus
 
 - Multi-objective HUD remains readable on mobile landscape.
-- Strategic citywide previews do not replace combat-scale validation; each objective lane must be playable and readable on the tactical map.
+- Planning previews do not replace combat-scale validation; each objective lane must be playable and readable on the 3D operation map.
 - The final mission does not rely on hidden objectives or hidden score.
 - Rewards use deterministic `RewardConfig` entries.
-- Saga completion does not grant store-only power or bypass Operation consequences.
+- Campaign completion does not grant store-only power or bypass Operations consequences.

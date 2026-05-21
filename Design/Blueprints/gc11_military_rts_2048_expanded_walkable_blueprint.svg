@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1920" viewBox="0 0 1920 1920">
+  <defs>
+    <style>
+      .bg { fill:#0e1620; }
+      .map { fill:#243442; stroke:#c7deef; stroke-width:5; }
+      .grid { stroke:#53687b; stroke-width:1.25; opacity:.42; }
+      .title { fill:#eef7ff; font:700 34px Arial, sans-serif; }
+      .subtitle { fill:#cbd8e6; font:500 20px Arial, sans-serif; }
+      .small { fill:#d8e7f2; font:600 16px Arial, sans-serif; }
+      .label { fill:#f4fbff; font:700 20px Arial, sans-serif; }
+      .tiny { fill:#eef6ff; font:700 12px Arial, sans-serif; }
+      .road { fill:#353a3d; stroke:#f3d889; stroke-width:5; }
+      .minorRoad { fill:#474b47; stroke:#dfc77e; stroke-width:3; }
+      .walk { fill:#6f9a60; stroke:#e3f4cf; stroke-width:3; opacity:.85; }
+      .plaza { fill:#b9aa86; stroke:#f2e7c6; stroke-width:3; opacity:.93; }
+      .nobuild { fill:#7d3936; stroke:#ffaaa0; stroke-width:3; opacity:.76; }
+      .buffer { fill:none; stroke:#ffdf5d; stroke-width:5; stroke-dasharray:15 11; opacity:.95; }
+      .cityPad { fill:#7ea5bd; stroke:#dff4ff; stroke-width:3; }
+      .civilPad { fill:#679cb0; stroke:#dff4ff; stroke-width:3; }
+      .enemyPad { fill:#bf7f3b; stroke:#ffe1a0; stroke-width:3; }
+      .enemyHQ { fill:#c95e4f; stroke:#ffd0c4; stroke-width:4; }
+      .vehiclePad { fill:#728d5d; stroke:#def1c9; stroke-width:3; }
+      .utilityPad { fill:#9470b7; stroke:#e4d1ff; stroke-width:3; }
+      .runway { fill:#74808d; stroke:#dce6ef; stroke-width:3; }
+      .wall { fill:none; stroke:#d9d2be; stroke-width:8; stroke-linecap:square; stroke-linejoin:round; }
+      .gate { fill:none; stroke:#68d6ff; stroke-width:10; stroke-linecap:round; }
+      .spawnBlue { fill:#3278ff; stroke:#c8dcff; stroke-width:4; }
+      .spawnRed { fill:#c83e3e; stroke:#ffd0d0; stroke-width:4; }
+      .legendBox { fill:#172332; stroke:#60758a; stroke-width:3; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1920" height="1920"/>
+  <text class="title" x="80" y="74">GC11 Expanded 2048 RTS Blueprint - City, Highway, Multiple Enemy Camps</text>
+  <text class="subtitle" x="80" y="112">Full-map placement contract. Larger playable footprint, more enemy camps, longer route decisions, roads/walkable lanes kept empty.</text>
+
+  <g transform="translate(130 155) scale(1.82022472)">
+    <rect class="map" x="0" y="0" width="890" height="890" rx="5"/>
+    <g>
+      <line class="grid" x1="111.25" y1="0" x2="111.25" y2="890"/>
+      <line class="grid" x1="222.5" y1="0" x2="222.5" y2="890"/>
+      <line class="grid" x1="333.75" y1="0" x2="333.75" y2="890"/>
+      <line class="grid" x1="445" y1="0" x2="445" y2="890"/>
+      <line class="grid" x1="556.25" y1="0" x2="556.25" y2="890"/>
+      <line class="grid" x1="667.5" y1="0" x2="667.5" y2="890"/>
+      <line class="grid" x1="778.75" y1="0" x2="778.75" y2="890"/>
+      <line class="grid" x1="0" y1="111.25" x2="890" y2="111.25"/>
+      <line class="grid" x1="0" y1="222.5" x2="890" y2="222.5"/>
+      <line class="grid" x1="0" y1="333.75" x2="890" y2="333.75"/>
+      <line class="grid" x1="0" y1="445" x2="890" y2="445"/>
+      <line class="grid" x1="0" y1="556.25" x2="890" y2="556.25"/>
+      <line class="grid" x1="0" y1="667.5" x2="890" y2="667.5"/>
+      <line class="grid" x1="0" y1="778.75" x2="890" y2="778.75"/>
+    </g>
+
+    <!-- Scenic/no-build border: only edges, never inside main walk routes. -->
+    <path class="nobuild" d="M0 0 L146 0 C116 42 72 66 0 88 Z"/>
+    <path class="nobuild" d="M0 780 C64 742 118 758 170 814 L170 890 L0 890 Z"/>
+    <path class="nobuild" d="M824 0 L890 0 L890 116 C866 84 842 60 824 42 Z"/>
+    <path class="nobuild" d="M844 790 C874 812 890 846 890 890 L768 890 Z"/>
+
+    <!-- Main road network spanning the full map. -->
+    <path class="road" d="M258 0 L318 0 L286 890 L226 890 Z"/>
+    <path class="road" d="M440 0 L498 0 L468 890 L410 890 Z"/>
+    <path class="road" d="M38 612 L252 578 L520 474 L820 442 L828 496 L538 528 L270 632 L44 668 Z"/>
+    <path class="road" d="M62 250 L824 224 L828 278 L66 304 Z"/>
+    <path class="road" d="M130 426 L360 414 L632 348 L816 350 L816 402 L646 400 L374 466 L134 480 Z"/>
+    <path class="minorRoad" d="M660 92 L716 92 L708 760 L652 760 Z"/>
+    <path class="minorRoad" d="M74 104 L126 802 L82 804 L30 106 Z"/>
+    <path class="minorRoad" d="M166 72 L210 822 L166 824 L122 74 Z"/>
+    <path class="minorRoad" d="M334 118 L388 812 L344 814 L290 120 Z"/>
+
+    <!-- Route buffers: no props, buildings, rocks, or walls inside. -->
+    <path class="buffer" d="M238 -4 L338 -4 L306 894 L206 894 Z"/>
+    <path class="buffer" d="M420 -4 L518 -4 L488 894 L390 894 Z"/>
+    <path class="buffer" d="M26 588 L248 552 L518 448 L840 412 L850 524 L544 558 L274 660 L28 698 Z"/>
+    <path class="buffer" d="M48 226 L844 198 L850 304 L50 332 Z"/>
+    <path class="buffer" d="M112 400 L358 388 L628 322 L838 322 L838 426 L652 426 L380 494 L116 508 Z"/>
+    <path class="buffer" d="M642 72 L738 72 L730 782 L632 782 Z"/>
+
+    <!-- Major walkable combat spaces. -->
+    <path class="walk" d="M34 520 C128 484 214 506 276 570 L258 674 L48 704 Z"/>
+    <path class="walk" d="M344 486 C416 438 500 446 558 510 C520 594 438 650 344 666 C300 594 292 534 344 486 Z"/>
+    <path class="walk" d="M552 266 C622 232 704 242 760 300 C722 344 668 358 612 350 L552 340 Z"/>
+    <path class="walk" d="M614 594 C692 550 760 566 816 632 L788 720 L634 704 Z"/>
+
+    <!-- City and town pads: large footprint, many placement cells, roads remain clear. -->
+    <rect class="cityPad" x="24" y="40" width="78" height="54" rx="4"/>
+    <rect class="cityPad" x="122" y="36" width="110" height="58" rx="4"/>
+    <rect class="cityPad" x="22" y="132" width="60" height="58" rx="4"/>
+    <rect class="cityPad" x="112" y="134" width="74" height="56" rx="4"/>
+    <rect class="cityPad" x="212" y="132" width="70" height="56" rx="4"/>
+    <rect class="civilPad" x="28" y="326" width="70" height="58" rx="4"/>
+    <rect class="civilPad" x="122" y="326" width="80" height="58" rx="4"/>
+    <rect class="civilPad" x="228" y="324" width="72" height="58" rx="4"/>
+    <rect class="cityPad" x="26" y="706" width="80" height="62" rx="4"/>
+    <rect class="cityPad" x="128" y="704" width="112" height="64" rx="4"/>
+    <rect class="cityPad" x="262" y="704" width="82" height="64" rx="4"/>
+    <rect class="plaza" x="42" y="336" width="284" height="54" rx="2"/>
+    <rect class="plaza" x="46" y="500" width="210" height="54" rx="2"/>
+    <text class="label" x="40" y="70">CITY CORE</text>
+    <text class="label" x="46" y="738">SOUTH TOWN</text>
+
+    <!-- Enemy camp 1: north-east airfield camp. -->
+    <path class="wall" d="M610 48 L836 70 L858 142 L842 320 L642 320 L602 226 Z"/>
+    <path class="gate" d="M652 350 L710 350"/>
+    <rect class="runway" x="744" y="92" width="74" height="204" rx="5"/>
+    <rect class="runway" x="770" y="30" width="46" height="240" transform="rotate(13 793 150)" opacity=".9"/>
+    <rect class="enemyPad" x="636" y="96" width="62" height="54" rx="4"/>
+    <rect class="enemyPad" x="638" y="168" width="62" height="54" rx="4"/>
+    <rect class="enemyHQ" x="708" y="328" width="88" height="60" rx="5"/>
+    <circle class="spawnRed" cx="792" cy="244" r="17"/>
+    <text class="label" x="620" y="84">ENEMY AIRFIELD CAMP</text>
+
+    <!-- Enemy camp 2: central command outpost. -->
+    <path class="wall" d="M512 356 L650 350 L664 512 L536 540 L492 438 Z"/>
+    <path class="gate" d="M500 426 L530 426"/>
+    <rect class="enemyHQ" x="540" y="396" width="86" height="62" rx="5"/>
+    <rect class="enemyPad" x="540" y="468" width="92" height="44" rx="4"/>
+    <circle class="spawnRed" cx="596" cy="430" r="14"/>
+    <text class="label" x="526" y="382">COMMAND OUTPOST</text>
+
+    <!-- Enemy camp 3: south-east vehicle and fuel camp. -->
+    <path class="wall" d="M566 574 L800 552 L836 650 L810 814 L640 842 L558 762 Z"/>
+    <path class="gate" d="M650 760 L708 760"/>
+    <rect class="vehiclePad" x="600" y="620" width="64" height="56" rx="4"/>
+    <rect class="vehiclePad" x="684" y="620" width="64" height="56" rx="4"/>
+    <rect class="vehiclePad" x="604" y="700" width="136" height="56" rx="4"/>
+    <rect class="utilityPad" x="760" y="604" width="58" height="144" rx="4"/>
+    <circle class="spawnRed" cx="704" cy="648" r="14"/>
+    <text class="label" x="590" y="604">VEHICLE / FUEL CAMP</text>
+
+    <!-- Player staging and neutral objective pads. -->
+    <circle class="spawnBlue" cx="70" cy="642" r="18"/>
+    <text class="label" x="42" y="630">PLAYER START</text>
+    <rect class="plaza" x="356" y="238" width="134" height="52" rx="3"/>
+    <text class="tiny" x="368" y="270">MARKET / MID OBJECTIVE</text>
+    <rect class="plaza" x="340" y="706" width="134" height="56" rx="3"/>
+    <text class="tiny" x="352" y="738">SOUTH OBJECTIVE</text>
+
+    <text class="tiny" x="282" y="872">FULL 2048 MAP BOUNDARY - PLAYABLE ROUTES USE THE WHOLE MAP</text>
+  </g>
+
+  <g transform="translate(80 1810)">
+    <rect class="legendBox" x="0" y="0" width="1760" height="78" rx="8"/>
+    <rect class="road" x="26" y="22" width="34" height="22"/><text class="small" x="72" y="40">roads: empty</text>
+    <rect class="walk" x="218" y="22" width="34" height="22"/><text class="small" x="264" y="40">walkable combat areas: empty</text>
+    <rect class="cityPad" x="548" y="22" width="34" height="22"/><text class="small" x="594" y="40">city/build pads</text>
+    <rect class="enemyPad" x="792" y="22" width="34" height="22"/><text class="small" x="838" y="40">enemy camp pads</text>
+    <rect class="nobuild" x="1088" y="22" width="34" height="22"/><text class="small" x="1134" y="40">blocked edge/no-build</text>
+    <path class="buffer" d="M1390 34 L1446 34"/><text class="small" x="1466" y="40">no-object buffer</text>
+  </g>
+</svg>

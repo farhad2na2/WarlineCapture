@@ -19,8 +19,9 @@ For FTUE, contextual help, assistant recommendations, tutorial cards, highlights
 - Production art direction: full 3D single-map mobile RTS.
 - Direction doc: `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - Main Menu visual contract: `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- Active visual-lock inventory: `Design/VisualLockLayered/README.md`
 - Canonical unit/building display data: `Assets/Game/Configs/Prefabs`
-- Menu art target: `Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_Source_1672x941.png`
+- Menu art target destination: `Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png`
 
 ### Parallel Work Boundary
 
@@ -417,7 +418,7 @@ The updated gameplay alignment adds route surfaces that must be represented in t
 
 Each shell still follows the normal target-to-canvas workflow: generate/verify a landscape target, create a VisualLockLayered pack, map target elements to Canvas objects, add route/source-mapping tests, capture 16:9 and 20:9, and compare against target before acceptance.
 
-`SCN-19 Armory` is no longer only a reserved route. Use `Design/VisualLock/SCN-19_Armory/SCN-19_Armory_Landscape_Target.png` and `Design/VisualLockLayered/SCN-19_Armory/layer_manifest.json` as the implementation gate before prefab work.
+`SCN-19 Armory` is no longer only a reserved route. Use `Design/VisualLockLayered/SCN-19_Armory/reference/SCN-19_Armory_Landscape_Target.png` and `Design/VisualLockLayered/SCN-19_Armory/layer_manifest.json` as the implementation gate before prefab work. The archived flat `VisualLock` target is comparison material only.
 
 Armory is the required unit/building/support inspection surface. A unit, building, ability, or upgrade selected from Loadout, Build Drawer, Store/Command Exchange, Commander Profile upgrades, Operations Armory, or reward detail should resolve to SCN-19 when the player wants a full roster view. The selected item inspection panel must show config-backed display name, description, role/category, unlock state, level/tier, owned parts, core stats, ability list, upgrade track, and source/unlock requirement. Ability and upgrade rows can open `POP-09 Ability / Upgrade Detail` for deeper rules, costs, cooldowns, source links, and disabled CTA reasons.
 

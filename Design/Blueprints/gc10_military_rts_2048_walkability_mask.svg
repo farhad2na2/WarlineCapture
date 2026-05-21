@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1920" viewBox="0 0 1920 1920">
+  <defs>
+    <style>
+      .bg { fill:#0f1720; }
+      .map { fill:#263441; stroke:#c7deef; stroke-width:5; }
+      .grid { stroke:#526477; stroke-width:1.25; opacity:.4; }
+      .title { fill:#eef7ff; font:700 34px Arial, sans-serif; }
+      .subtitle { fill:#cbd8e6; font:500 20px Arial, sans-serif; }
+      .small { fill:#d8e7f2; font:600 16px Arial, sans-serif; }
+      .road { fill:#33383b; stroke:#f3d889; stroke-width:5; }
+      .street { fill:#484b47; stroke:#e7cf8d; stroke-width:3; }
+      .walk { fill:#78a260; stroke:#e4f4d0; stroke-width:4; opacity:.86; }
+      .sidewalk { fill:#b9aa86; stroke:#f2e7c6; stroke-width:3; opacity:.94; }
+      .nobuild { fill:#823c37; stroke:#ffaaa0; stroke-width:3; opacity:.78; }
+      .padCity { fill:#7fa6bd; stroke:#dff4ff; stroke-width:3; }
+      .padBase { fill:#c18a42; stroke:#ffe1a0; stroke-width:3; }
+      .padVehicle { fill:#768f60; stroke:#def1c9; stroke-width:3; }
+      .padUtility { fill:#9571b9; stroke:#e4d1ff; stroke-width:3; }
+      .runway { fill:#74808d; stroke:#dce6ef; stroke-width:3; }
+      .wall { fill:none; stroke:#d9d2be; stroke-width:9; stroke-linecap:square; stroke-linejoin:round; }
+      .gate { fill:none; stroke:#68d6ff; stroke-width:10; stroke-linecap:round; }
+      .buffer { fill:none; stroke:#ffdf5d; stroke-width:5; stroke-dasharray:16 12; opacity:.95; }
+      .legendBox { fill:#182432; stroke:#60758a; stroke-width:3; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1920" height="1920"/>
+  <text class="title" x="80" y="74">GC10 Walkability / Placement Mask</text>
+  <text class="subtitle" x="80" y="112">Use this mask for placement: roads, walkable surfaces, gates, and yellow buffers stay empty. Props/buildings only inside colored pads.</text>
+
+  <g transform="translate(130 155) scale(1.82022472)">
+    <rect class="map" x="0" y="0" width="890" height="890" rx="5"/>
+    <g>
+      <line class="grid" x1="111.25" y1="0" x2="111.25" y2="890"/>
+      <line class="grid" x1="222.5" y1="0" x2="222.5" y2="890"/>
+      <line class="grid" x1="333.75" y1="0" x2="333.75" y2="890"/>
+      <line class="grid" x1="445" y1="0" x2="445" y2="890"/>
+      <line class="grid" x1="556.25" y1="0" x2="556.25" y2="890"/>
+      <line class="grid" x1="667.5" y1="0" x2="667.5" y2="890"/>
+      <line class="grid" x1="778.75" y1="0" x2="778.75" y2="890"/>
+      <line class="grid" x1="0" y1="111.25" x2="890" y2="111.25"/>
+      <line class="grid" x1="0" y1="222.5" x2="890" y2="222.5"/>
+      <line class="grid" x1="0" y1="333.75" x2="890" y2="333.75"/>
+      <line class="grid" x1="0" y1="445" x2="890" y2="445"/>
+      <line class="grid" x1="0" y1="556.25" x2="890" y2="556.25"/>
+      <line class="grid" x1="0" y1="667.5" x2="890" y2="667.5"/>
+      <line class="grid" x1="0" y1="778.75" x2="890" y2="778.75"/>
+    </g>
+
+    <path class="nobuild" d="M0 0 L205 0 C190 62 126 82 40 94 L0 112 Z"/>
+    <path class="nobuild" d="M0 736 C64 706 142 724 196 786 L196 890 L0 890 Z"/>
+    <path class="nobuild" d="M792 0 L890 0 L890 160 C860 120 820 90 792 78 Z"/>
+    <path class="nobuild" d="M828 738 C875 750 890 800 890 890 L728 890 Z"/>
+
+    <path class="road" d="M302 0 L372 0 L318 890 L248 890 Z"/>
+    <path class="road" d="M92 598 L318 570 L676 420 L700 470 L338 626 L98 652 Z"/>
+    <path class="road" d="M304 326 L642 318 L644 366 L304 374 Z"/>
+    <path class="road" d="M606 184 L660 184 L654 758 L600 758 Z"/>
+    <path class="street" d="M64 176 L292 176 L292 212 L64 212 Z"/>
+    <path class="street" d="M64 294 L292 294 L292 330 L64 330 Z"/>
+    <path class="street" d="M64 430 L292 430 L292 466 L64 466 Z"/>
+    <path class="street" d="M105 126 L140 566 L94 566 L58 126 Z"/>
+    <path class="street" d="M206 122 L232 562 L186 562 L158 122 Z"/>
+
+    <path class="sidewalk" d="M50 224 L288 224 L288 286 L50 286 Z"/>
+    <path class="sidewalk" d="M50 342 L288 342 L288 422 L50 422 Z"/>
+    <path class="sidewalk" d="M420 252 L594 252 L594 314 L420 314 Z"/>
+    <path class="sidewalk" d="M438 500 L598 500 L598 580 L438 580 Z"/>
+    <path class="sidewalk" d="M686 206 L794 206 L794 392 L686 392 Z"/>
+    <path class="walk" d="M332 396 C390 356 448 370 500 430 C464 498 404 542 328 556 C292 500 284 440 332 396 Z"/>
+    <path class="walk" d="M380 92 C434 72 492 98 516 150 L482 218 L358 218 Z"/>
+    <path class="walk" d="M126 500 C178 484 238 492 286 534 L278 612 L110 618 Z"/>
+
+    <path class="buffer" d="M282 -4 L392 -4 L338 894 L228 894 Z"/>
+    <path class="buffer" d="M78 580 L324 548 L690 396 L724 486 L344 650 L82 676 Z"/>
+    <path class="buffer" d="M292 300 L664 292 L666 392 L292 400 Z"/>
+    <path class="buffer" d="M586 164 L682 164 L676 778 L580 778 Z"/>
+    <path class="buffer" d="M40 154 L306 154 L306 486 L40 486 Z"/>
+
+    <rect class="padCity" x="48" y="60" width="84" height="62" rx="4"/>
+    <rect class="padCity" x="152" y="62" width="110" height="60" rx="4"/>
+    <rect class="padCity" x="44" y="236" width="54" height="48" rx="4"/>
+    <rect class="padCity" x="146" y="238" width="54" height="46" rx="4"/>
+    <rect class="padCity" x="232" y="238" width="54" height="46" rx="4"/>
+    <rect class="padCity" x="48" y="488" width="68" height="68" rx="4"/>
+    <rect class="padCity" x="152" y="490" width="90" height="68" rx="4"/>
+
+    <path class="wall" d="M454 92 L812 108 L846 198 L834 770 L692 836 L444 776 L418 220 Z"/>
+    <path class="gate" d="M422 320 L452 320"/>
+    <path class="gate" d="M600 758 L654 758"/>
+    <rect class="padBase" x="466" y="136" width="76" height="64" rx="4"/>
+    <rect class="padBase" x="554" y="136" width="76" height="64" rx="4"/>
+    <rect class="padBase" x="466" y="216" width="76" height="64" rx="4"/>
+    <rect class="padBase" x="554" y="216" width="76" height="64" rx="4"/>
+    <rect class="padBase" x="472" y="390" width="126" height="82" rx="5"/>
+    <rect class="padVehicle" x="456" y="610" width="74" height="62" rx="4"/>
+    <rect class="padVehicle" x="546" y="610" width="74" height="62" rx="4"/>
+    <rect class="padVehicle" x="456" y="690" width="164" height="58" rx="4"/>
+    <rect class="runway" x="704" y="146" width="96" height="250" rx="5"/>
+    <rect class="runway" x="726" y="52" width="54" height="276" transform="rotate(13 753 190)" opacity=".9"/>
+    <rect class="padUtility" x="704" y="486" width="108" height="178" rx="5"/>
+  </g>
+
+  <g transform="translate(80 1810)">
+    <rect class="legendBox" x="0" y="0" width="1760" height="78" rx="8"/>
+    <rect class="road" x="26" y="22" width="34" height="22"/><text class="small" x="72" y="40">roads: empty</text>
+    <rect class="sidewalk" x="220" y="22" width="34" height="22"/><text class="small" x="266" y="40">walkable: empty</text>
+    <rect class="padCity" x="468" y="22" width="34" height="22"/><text class="small" x="514" y="40">build pads only</text>
+    <rect class="nobuild" x="720" y="22" width="34" height="22"/><text class="small" x="766" y="40">blocked/no-build</text>
+    <path class="buffer" d="M982 34 L1038 34"/><text class="small" x="1058" y="40">no-object route buffer</text>
+    <path class="gate" d="M1340 34 L1390 34"/><text class="small" x="1410" y="40">gates stay open</text>
+  </g>
+</svg>

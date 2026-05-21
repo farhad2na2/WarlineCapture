@@ -23,9 +23,9 @@ Each screen must be decomposed into:
 
 This conversion method is now the default for every remaining UI screen. Work should proceed screen by screen: target, real Canvas, route/runtime behavior, capture comparison, optimization, and tests.
 
-For the operational step-by-step workflow, use `Design/WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`. That guide records the accepted layered target-to-canvas process from the Main Menu, Settings, Quick Custom, Splash, and corrected MatchOverlay passes.
+For the operational step-by-step workflow, use `Design/WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`. That guide records the accepted layered target-to-canvas process from the Main Menu, Settings, Skirmish, Splash, and corrected MatchOverlay passes.
 
-The active battlefield/menu direction is now full 3D single-map mobile RTS with command-base menu presentation. UI targets remain under `Design/VisualLock` or `Design/VisualLockLayered`; battlefield/art-production targets should reference the current 3D operation-map direction.
+The active battlefield/menu direction is now full 3D single-map mobile RTS with command-base menu presentation. Implementation-ready UI targets now live under `Design/VisualLockLayered`; `Design/VisualLock` is only a scratch/reference area. Battlefield/art-production targets should reference the current 3D operation-map direction.
 
 ## 3D Single-Map Compatibility Rule
 
@@ -35,81 +35,42 @@ UI chrome should follow the command-base material language: dark black/green mil
 
 ## Visual-Lock Target Creation Rule
 
-For WarlineCapture production UI work, a new `Design/VisualLock/.../*_Landscape_Target.png` must be a high-quality generated landscape target in the accepted WarlineCapture AAA mobile RTS HUD style unless the task explicitly says to make an exact source extraction.
+For WarlineCapture production UI work, a new `Design/VisualLockLayered/<SurfaceId>/reference/<SurfaceId>_Landscape_Target.png` must be a high-quality generated landscape target in the accepted WarlineCapture AAA mobile RTS HUD style unless the task explicitly says to make an exact source extraction.
 
-Do not create new VisualLock targets by simply cropping, stretching, padding, or upscaling archived source spec JPGs. The original source JPGs now live under `Design/Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/` and are content/layout references only. The correct target-creation workflow is:
+Do not create new visual-lock targets by simply cropping, stretching, padding, or upscaling archived source spec JPGs. The original source JPGs now live under `Design/Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/` and are content/layout references only. The correct target-creation workflow is:
 
 1. Read the source spec and identify required labels, panels, controls, icons, hierarchy, and gameplay meaning.
 2. Write a generation prompt that creates a new landscape `1672 x 941` target in the accepted WarlineCapture style: command-base military panels, olive/black/gold chrome, soft AAA compositing shadows, readable Oxanium-like typography, and 3D operation-map/key art where gameplay context is relevant.
 3. Use the source spec only as a reference for intent and composition, not as pixels to promote into the target.
-4. Save the generated target under `Design/VisualLock/<ID_Name>/<ID_Name>_Landscape_Target.png`.
-5. Write `<ID_Name>_CleanLandscape_Notes.md` with the source reference, canonical target path, implementation notes, and the exact generation prompt.
+4. Save the generated target under `Design/VisualLockLayered/<SurfaceId>/reference/<SurfaceId>_Landscape_Target.png`.
+5. Export separated layers under `Design/VisualLockLayered/<SurfaceId>/layers/` and write `layer_manifest.json`, `README.md`, and `generated_one_go/layers_contact_sheet.png`.
 6. Only use the source-promotion/upscale approach for an explicitly requested archival/exact-reference target, and label that notes file as an exact source promotion rather than a generated target.
 
 ## Canonical Visual-Lock Target Inventory
 
-Use these paths as the current canonical visual targets for production Canvas conversion:
+The current canonical inventory is `Design/VisualLockLayered/README.md`.
 
-| Surface | Canonical target |
-| --- | --- |
-| SCN-01 Splash / Loading | `Design/VisualLock/SCN-01_SplashLoading/SCN-01_SplashLoading_Landscape_Target.png` |
-| SCN-02 Main Menu / Mode Select | `Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_Source_1672x941.png` |
-| SCN-03 Commander Profile | `Design/VisualLock/SCN-03_CommanderProfile/SCN-03_CommanderProfile_Landscape_Target.png` |
-| SCN-04 Settings / Accessibility | `Design/VisualLock/SCN-04_SettingsAccessibility/SCN-04_SettingsAccessibility_Landscape_Target.png` |
-| SCN-05 Campaign Map | `Design/VisualLock/SCN-05_SagaMap/SCN-05_SagaMap_Landscape_Target.png` |
-| SCN-06 Mission Briefing | `Design/VisualLock/SCN-06_MissionBriefing/SCN-06_MissionBriefing_Landscape_Target.png` |
-| SCN-07 Loadout / Squad Prep | `Design/VisualLock/SCN-07_LoadoutSquadPrep/SCN-07_LoadoutSquadPrep_Landscape_Target.png` |
-| SCN-08 RTS Battle HUD | `Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png` |
-| SCN-09 Build Drawer / Production | `Design/VisualLock/SCN-09_BuildDrawerProduction/SCN-09_BuildDrawerProduction_Landscape_Target.png` |
-| SCN-10 Unit Command / Command Wheel | `Design/VisualLock/SCN-10_UnitCommandWheel/SCN-10_UnitCommandWheel_Landscape_Target.png` |
-| SCN-11 Operations Dashboard | `Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png` |
-| SCN-12 District Detail / Actions | `Design/VisualLock/SCN-12_DistrictDetailActions/SCN-12_DistrictDetailActions_Landscape_Target.png` |
-| SCN-13 Skirmish Setup | `Design/VisualLock/SCN-13_QuickCustomGameSetup/SCN-13_QuickCustomGameSetup_Landscape_Target.png` |
-| SCN-14 Store / Command Exchange | `Design/Monetization/Images/SCN-14_Store_CommandExchange_Target.png` |
-| SCN-15 Inbox | `Design/VisualLock/SCN-15_Inbox/SCN-15_Inbox_Landscape_Target.png` |
-| SCN-16 Events | `Design/VisualLock/SCN-16_Events/SCN-16_Events_Landscape_Target.png` |
-| SCN-17 Ranking | `Design/VisualLock/SCN-17_Ranking/SCN-17_Ranking_Landscape_Target.png` |
-| SCN-18 Command Feed | `Design/VisualLock/SCN-18_CommandFeed/SCN-18_CommandFeed_Landscape_Target.png` |
-| SCN-19 Armory | `Design/VisualLock/SCN-19_Armory/SCN-19_Armory_Landscape_Target.png` |
-| POP-01 Threat Alert | `Design/VisualLock/POP-01_ThreatAlert/POP-01_ThreatAlert_Landscape_Target.png` |
-| POP-02 Confirm Raid | `Design/VisualLock/POP-02_ConfirmRaid/POP-02_ConfirmRaid_Landscape_Target.png` |
-| POP-03 Build Placement | `Design/VisualLock/POP-03_BuildPlacement/POP-03_BuildPlacement_Landscape_Target.png` |
-| POP-04 Reward / Unlock | `Design/VisualLock/POP-04_RewardUnlock/POP-04_RewardUnlock_Landscape_Target.png` |
-| POP-05 Mission Result | `Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png` |
-| POP-06 End of Day Report | `Design/VisualLock/POP-06_EndOfDayReport/POP-06_EndOfDayReport_Landscape_Target.png` |
-| POP-07 Pause / Options | `Design/VisualLock/POP-07_PauseOptions/POP-07_PauseOptions_Landscape_Target.png` |
-| POP-08 Intel Reveal | `Design/VisualLock/POP-08_IntelReveal/POP-08_IntelReveal_Landscape_Target.png` |
-| POP-09 Ability / Upgrade Detail | `Design/VisualLock/POP-09_AbilityUpgradeDetail/POP-09_AbilityUpgradeDetail_Landscape_Target.png` |
-| PREFAB-01 Objective Tracker | `Design/VisualLock/PREFAB-01_ObjectiveTracker/PREFAB-01_ObjectiveTracker_Landscape_Target.png` |
-| PREFAB-02 Squad Tray | `Design/VisualLock/PREFAB-02_SquadTray/PREFAB-02_SquadTray_Landscape_Target.png` |
-| PREFAB-03 Build Drawer | `Design/VisualLock/PREFAB-03_BuildDrawer/PREFAB-03_BuildDrawer_Landscape_Target.png` |
+Use this destination pattern for every production Canvas conversion:
 
-SCN-14 is indexed here for conversion planning, but ownership remains with the monetization docs because its catalog, purchase states, and reward grants are governed by `Design/Monetization/WarlineCapture_Monetization_Strategy.md`, `Design/Monetization/WarlineCapture_Monetization_Store_Catalog.md`, and `Design/Monetization/WarlineCapture_Monetization_Visual_Targets.md`.
+```text
+Design/VisualLockLayered/<SurfaceId>/README.md
+Design/VisualLockLayered/<SurfaceId>/reference/<SurfaceId>_Landscape_Target.png
+Design/VisualLockLayered/<SurfaceId>/layers/
+Design/VisualLockLayered/<SurfaceId>/layer_manifest.json
+Design/VisualLockLayered/<SurfaceId>/generated_one_go/layers_contact_sheet.png
+```
 
-SCN-15 through SCN-18 are newly added route surfaces from `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`. Their target paths are reserved here, but their VisualLock and VisualLockLayered packs may not exist yet. Do not implement these screens from placeholders or toasts. Generate the landscape target, separated layer assets, manifest, and designed-unavailable empty state first. SCN-19 Armory and POP-09 Ability / Upgrade Detail already have final high-end layered packs and should use those packs as the gate before Unity prefab work.
+The previous `Design/VisualLock` and `Design/VisualLockLayered` screen packs were archived under `Design/Archive/LegacyVisualLock_2026-05-22/`. They are useful for comparison and asset recovery, but no archived flat target or archived layer pack is an active acceptance baseline.
+
+SCN-14 remains governed by the monetization docs for catalog, purchase state, and reward-grant behavior, but its implementation-ready UI pack still follows the same `Design/VisualLockLayered/SCN-14_CommandExchange/` gate.
+
+SCN-15 through SCN-19, POP-09, POP-10, POP-11, and reusable PREFAB surfaces are required route/detail surfaces. Do not implement these screens from placeholders or toasts. Generate the landscape target, separated layer assets, manifest, and designed-unavailable empty state first.
 
 ## 3D Operation-Map Target Refresh - 2026-05-21
 
 The updated gameplay design removes the former split between separate strategic and tactical maps. Use `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`, `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`, and `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md` before continuing Phase 6 or M01 UI work.
 
-New or refreshed state targets created for this change:
-
-| Surface | Target |
-| --- | --- |
-| SCN-08 M01 Tactical Feedback | `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png` |
-| SCN-09 M01 Disabled Build Drawer | `Design/VisualLock/SCN-09_BuildDrawer_M01DisabledState/SCN-09_BuildDrawer_M01DisabledState_Landscape_Target.png` |
-| SCN-10 Command Wheel Targeting | `Design/VisualLock/SCN-10_UnitCommandWheel_TargetingState/SCN-10_UnitCommandWheel_TargetingState_Landscape_Target.png` |
-| POP-01 Threat Route Preview | `Design/VisualLock/POP-01_ThreatAlert_RoutePreviewState/POP-01_ThreatAlert_RoutePreviewState_Landscape_Target.png` |
-| POP-03 Build Placement Metadata Validity | `Design/VisualLock/POP-03_BuildPlacement_MetadataValidityState/POP-03_BuildPlacement_MetadataValidityState_Landscape_Target.png` |
-| POP-05 Mission Result M01 Contract | `Design/VisualLock/POP-05_MissionResult_M01ContractState/POP-05_MissionResult_M01ContractState_Landscape_Target.png` |
-| PREFAB-04 Assistant Button | `Design/VisualLock/PREFAB-04_AssistantButton/PREFAB-04_AssistantButton_Landscape_Target.png` |
-| PREFAB-05 Assistant Panel | `Design/VisualLock/PREFAB-05_AssistantPanel/PREFAB-05_AssistantPanel_Landscape_Target.png` |
-| PREFAB-06 Tutorial Card | `Design/VisualLock/PREFAB-06_TutorialCard/PREFAB-06_TutorialCard_Landscape_Target.png` |
-| PREFAB-07 Tutorial Highlight | `Design/VisualLock/PREFAB-07_TutorialHighlight/PREFAB-07_TutorialHighlight_Landscape_Target.png` |
-| POP-10 Assistant Takeover | `Design/VisualLock/POP-10_AssistantTakeover/POP-10_AssistantTakeover_Landscape_Target.png` |
-| POP-11 Commander Identity | `Design/VisualLock/POP-11_CommanderIdentity/POP-11_CommanderIdentity_Landscape_Target.png` |
-
-These targets are not implementation layer packs yet. The layer-pack gate still applies. Before Canvas conversion, create matching `Design/VisualLockLayered/<SurfaceId>/` folders with separated layers, `layer_manifest.json`, contact sheet, and README.
+All refreshed 3D-direction state targets must now be generated directly as `Design/VisualLockLayered/<SurfaceId>/` packs. The archived 2026-05-21 flat targets are historical references only and should not be promoted into production without regeneration and layer separation.
 
 Strategic map rule:
 
@@ -249,13 +210,14 @@ Acceptance criteria:
 For `Screen_MatchOverlay.prefab`, use:
 
 - `[SCREEN_PREFAB_PATH]`: `Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab`
-- `[TARGET_MOCKUP_PATH]`: `Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png`
+- `[TARGET_MOCKUP_PATH]`: `Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
 
 ## Main Menu Target
 
 Reference style:
 
-- `Design/VisualLock/MainMenu/MainMenu_Landscape_Visual_Target.png`
+- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png`
 
 Production target:
 
@@ -272,7 +234,7 @@ Keep:
 - current routing behavior
 - transparent-safe old UI deactivation
 - `WarlineCaptureUiMainMenuTests`
-- generated mockup file as reference under `Design/VisualLock/MainMenu`
+- generated mockup file as reference under `Design/VisualLockLayered/SCN-02_MainMenu/reference`
 
 Do not keep:
 

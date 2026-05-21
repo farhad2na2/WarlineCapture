@@ -62,7 +62,7 @@ Tactical play should use a persistent match HUD:
 - `ContextOverlay(CommandWheelCanvas)`
 - `ModalOverlay`
 
-The battlefield presentation behind the HUD should follow the full 3D single-map direction in `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`. UI visual-lock work should continue under `Design/VisualLock` and `Design/VisualLockLayered`, while gameplay-facing content should use 3D operation-map captures and the prefab catalog under `Assets/Game/Configs/Prefabs`.
+The battlefield presentation behind the HUD should follow the full 3D single-map direction in `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`. Implementation-ready UI visual-lock work should continue under `Design/VisualLockLayered`; `Design/VisualLock` is scratch/reference only. Gameplay-facing content should use 3D operation-map captures and the prefab catalog under `Assets/Game/Configs/Prefabs`.
 
 ## Parallel Work Boundary
 
@@ -70,8 +70,8 @@ UI work and 3D operation-map gameplay/art work can proceed in separate chats as 
 
 UI work owns:
 
-- `Design/VisualLock`
-- `Design/VisualLockLayered`
+- `Design/VisualLockLayered` production packs
+- `Design/VisualLock` scratch/reference drafts
 - `Design/WarlineCapture_UIUX_*`
 - UI prefabs under `Assets/Game/Prefabs/UI`
 - UI runtime code under `Assets/Game/Scripts/UI`

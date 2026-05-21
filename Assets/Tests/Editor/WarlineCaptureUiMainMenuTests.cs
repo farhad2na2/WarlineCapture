@@ -12,25 +12,28 @@ using UnityEngine.UI;
 public sealed class WarlineCaptureUiMainMenuTests
 {
     private const string MainMenuPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab";
-    private const string CommanderPlatePath = "Assets/Game/Art/UI/Generated/MainMenu/Buttons/MainMenu_Commander_Plate.png";
-    private const string TopBarPanelPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_TopBar_Full.png";
-    private const string LeftRailPanelPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_LeftRail_Full.png";
-    private const string XpTrackMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_XpTrackMask.png";
-    private const string XpTrackFrameMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_XpTrackFrameMask.png";
-    private const string XpFillMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_XpFillMask.png";
-    private const string FooterPanelPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_Footer_Full.png";
-    private const string CardBaseMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_Card_BaseMask.png";
+    private const string BackgroundTacticalMapPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds/main_menu_background_tactical_map.png";
+    private const string BrandLogoPanelPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/brand_logo_panel_frame.png";
+    private const string BrandEmblemPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/brand_emblem.png";
+    private const string TopResourceBarFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/top_resource_bar_frame_full.png";
+    private const string ResourceCounterSlotPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/resource_counter_slot_frame.png";
+    private const string SettingsButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/settings_button_frame.png";
+    private const string CommanderProfilePanelPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/commander_profile_panel_frame.png";
+    private const string LeftNavRowPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/left_nav_row_frame.png";
+    private const string CardFrameMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/mode_card_frame_large.png";
     private const string CardContentMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_Card_ContentMask.png";
-    private const string CardTintMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_Card_TintMask.png";
-    private const string CardFrameMaskPath = "Assets/Game/Art/UI/Generated/MainMenu/Frames/MainMenu_Card_FrameMask.png";
-    private const string SagaArtPath = "Assets/Game/Art/UI/Generated/MainMenu/Cards/MainMenu_CardArt_Saga.png";
-    private const string OperationArtPath = "Assets/Game/Art/UI/Generated/MainMenu/Cards/MainMenu_CardArt_Operation.png";
-    private const string QuickCustomArtPath = "Assets/Game/Art/UI/Generated/MainMenu/Cards/MainMenu_CardArt_QuickCustom.png";
-    private const string SagaArrowPath = "Assets/Game/Art/UI/Generated/MainMenu/Icons/MainMenu_Arrow_Saga.png";
-    private const string OperationArrowPath = "Assets/Game/Art/UI/Generated/MainMenu/Icons/MainMenu_Arrow_Operation.png";
-    private const string QuickCustomArrowPath = "Assets/Game/Art/UI/Generated/MainMenu/Icons/MainMenu_Arrow_QuickCustom.png";
-    private const string NavProfileButtonPath = "Assets/Game/Art/UI/Generated/MainMenu/Buttons/MainMenu_Nav_Profile_Button.png";
-    private const string SettingsButtonPath = "Assets/Game/Art/UI/Generated/MainMenu/Buttons/MainMenu_Button_Settings.png";
+    private const string DesignedUnavailableBadgePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/designed_unavailable_badge.png";
+    private const string DeployCommandButtonFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons/deploy_command_button_frame.png";
+    private const string CommandFeedPanelFramePath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames/command_feed_panel_frame.png";
+    private const string CommanderProfilePortraitPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/commander_profile_portrait.png";
+    private const string CreditsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_credits.png";
+    private const string MaterialsIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_materials.png";
+    private const string CommandAuthorityIconPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons/icon_command_authority.png";
+    private const string SagaArtPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_saga.png";
+    private const string OperationArtPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_operation.png";
+    private const string QuickCustomArtPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/mode_card_art_quick_custom.png";
+    private const string OperationPressureMeterPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/operation_pressure_meter_segments.png";
+    private const string OperationRiskMeterPath = "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content/operation_risk_meter_segments.png";
     private const string UiButtonAnimatorControllerPath = "Assets/Game/Animations/UI/WarlineCaptureButtonStates.overrideController";
     private const string UiButtonAnimatorBaseControllerPath = "Assets/Synty/InterfaceMilitaryCombatHUD/Samples/Animation/AC_Button_MilitaryCombat_Basic_01.controller";
     private const string UiButtonNormalClipPath = "Assets/Game/Animations/UI/WarlineCapture_Button_Normal.anim";
@@ -54,35 +57,48 @@ public sealed class WarlineCaptureUiMainMenuTests
         AssertChildren(
             prefab,
             "TopProfileBar",
-            "TopProfileBar/LogoImage",
-            "TopProfileBar/CommanderAvatar",
-            "TopProfileBar/CommanderNameText",
-            "TopProfileBar/LevelText",
-            "TopProfileBar/XpProgressTrack",
-            "TopProfileBar/XpProgressTrack/XpProgressFill",
-            "TopProfileBar/XpProgressTrack/XpTrackFrame",
+            "TopProfileBar/LogoPanelFrame",
+            "TopProfileBar/BrandEmblem",
+            "TopProfileBar/MastheadText",
+            "TopProfileBar/CommandDeckText",
+            "TopProfileBar/TopResourceBarFrame",
             "TopProfileBar/ResourceCounterList",
             "TopProfileBar/ResourceCounterList/Resource_Money",
             "TopProfileBar/ResourceCounterList/Resource_Trust",
             "TopProfileBar/ResourceCounterList/Resource_Intel",
             "TopProfileBar/SettingsButton",
+            "TopProfileBar/SettingsButton/SettingsGearIcon",
             "LeftNav",
-            "LeftNav/ProfileButton",
+            "LeftNav/CommanderProfilePanel",
+            "LeftNav/CommanderProfilePanel/CommanderProfileTitleText",
+            "LeftNav/CommanderProfilePanel/ProfileAvatar",
+            "LeftNav/CommanderProfilePanel/ProfileNameText",
             "LeftNav/InboxButton",
+            "LeftNav/InboxButton/Icon",
             "LeftNav/StoreButton",
+            "LeftNav/StoreButton/Icon",
             "LeftNav/EventsButton",
+            "LeftNav/EventsButton/Icon",
             "LeftNav/RankingButton",
+            "LeftNav/RankingButton/Icon",
+            "LeftNav/CommandFeedRouteButton",
+            "LeftNav/CommandFeedRouteButton/Icon",
             "ModeCardList",
             "ModeCardList/ModeCard_Saga",
-            "ModeCardList/ModeCard_Saga/ArrowImage",
+            "ModeCardList/ModeCard_Saga/ArtClip",
+            "ModeCardList/ModeCard_Saga/BodyText",
             "ModeCardList/ModeCard_Operation",
-            "ModeCardList/ModeCard_Operation/ArrowImage",
+            "ModeCardList/ModeCard_Operation/OperationWarningIcon",
+            "ModeCardList/ModeCard_Operation/DistrictPressureRow",
+            "ModeCardList/ModeCard_Operation/CityRiskRow",
             "ModeCardList/ModeCard_QuickCustom",
-            "ModeCardList/ModeCard_QuickCustom/ArrowImage",
-            "BottomUtilityBar",
-            "BottomUtilityBar/ChatButton",
-            "BottomUtilityBar/SocialButton",
-            "BottomUtilityBar/CommanderButton");
+            "ModeCardList/ModeCard_QuickCustom/ArtClip",
+            "ModeCardList/ModeCard_QuickCustom/BodyText",
+            "DeployCommandButton",
+            "DeployCommandButton/LabelText",
+            "DeployCommandButton/DeployCommandChevrons",
+            "WideAspectOnlyRoot/CommandFeedPanelFrame",
+            "WideAspectOnlyRoot/CommandFeedIcon");
     }
 
     [Test]
@@ -94,19 +110,31 @@ public sealed class WarlineCaptureUiMainMenuTests
         Assert.NotNull(backgroundImage);
         Assert.IsNull(backgroundImage.sprite, "Main Menu must not use the visual target as a flat full-screen background.");
 
-        var logoImage = prefab.transform.Find("TopProfileBar/LogoImage").GetComponent<Image>();
+        AssertStretchedSprite(prefab, "MainMenuBackgroundTacticalMap", BackgroundTacticalMapPath);
+        var logoImage = prefab.transform.Find("TopProfileBar/LogoPanelFrame").GetComponent<Image>();
         Assert.NotNull(logoImage.sprite);
-        Assert.AreEqual(CommanderPlatePath, AssetDatabase.GetAssetPath(logoImage.sprite));
+        Assert.AreEqual(BrandLogoPanelPath, AssetDatabase.GetAssetPath(logoImage.sprite));
+        AssertSprite(prefab, "TopProfileBar/BrandEmblem", BrandEmblemPath);
 
         AssertModeCardArt(prefab, "ModeCardList/ModeCard_Saga", SagaArtPath);
         AssertModeCardArt(prefab, "ModeCardList/ModeCard_Operation", OperationArtPath);
         AssertModeCardArt(prefab, "ModeCardList/ModeCard_QuickCustom", QuickCustomArtPath);
 
-        AssertText(prefab, "TopProfileBar/CommanderNameText", "Commander_7X");
-        AssertText(prefab, "TopProfileBar/LevelText", "LV. 32");
-        AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Money", "24.8K");
-        AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Trust", "12.6K");
-        AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Intel", "1,250");
+        AssertStretchedSprite(prefab, "LeftNav/CommanderProfilePanel/ProfileAvatar", CommanderProfilePortraitPath);
+        AssertText(prefab, "LeftNav/CommanderProfilePanel/ProfileNameText", "Profile data pending");
+        AssertText(prefab, "TopProfileBar/MastheadText", "WARLINE");
+        AssertText(prefab, "TopProfileBar/CommandDeckText", "CAPTURE");
+        AssertText(prefab, "TopProfileBar/ResourceCounterList/Resource_Money/LabelText", "Credits");
+        AssertText(prefab, "TopProfileBar/ResourceCounterList/Resource_Trust/LabelText", "Materials");
+        AssertText(prefab, "TopProfileBar/ResourceCounterList/Resource_Intel/LabelText", "Command Authority");
+        AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Money", "187,540");
+        AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Trust", "92,860");
+        AssertResourceCounter(prefab, "TopProfileBar/ResourceCounterList/Resource_Intel", "2,715");
+        AssertText(prefab, "ModeCardList/ModeCard_Saga/SubtitleText", "Chapter 1: First Contact");
+        AssertText(prefab, "ModeCardList/ModeCard_Operation/SubtitleText", "District pressure rising");
+        AssertText(prefab, "ModeCardList/ModeCard_QuickCustom/SubtitleText", "Skirmish setup route available.");
+        AssertText(prefab, "DeployCommandButton/LabelText", "DEPLOY COMMAND");
+        AssertText(prefab, "WideAspectOnlyRoot/CommandFeedTitleText", "Command Feed");
     }
 
     [Test]
@@ -116,84 +144,48 @@ public sealed class WarlineCaptureUiMainMenuTests
 
         Assert.IsNull(prefab.GetComponent<AspectRatioFitter>(), "Main menu must fill wide devices instead of letterboxing to one aspect ratio.");
 
-        AssertScalableSprite(prefab, "TopProfileBar", TopBarPanelPath);
-        AssertTopBarBackgroundDoesNotBakeSeparators(TopBarPanelPath);
-        AssertScalableSprite(prefab, "LeftNav", LeftRailPanelPath);
-        AssertTintedSprite(prefab, "TopProfileBar/XpProgressTrack", XpTrackMaskPath, new Color(0.012f, 0.014f, 0.012f, 0.95f), false);
-        AssertTintedSprite(prefab, "TopProfileBar/XpProgressTrack/XpProgressFill", XpFillMaskPath, new Color(1f, 0.76f, 0.03f, 1f), false);
-        AssertTintedSprite(prefab, "TopProfileBar/XpProgressTrack/XpTrackFrame", XpTrackFrameMaskPath, new Color(0.60f, 0.64f, 0.58f, 0.64f), false);
-        AssertFixedLeftProportionalY(prefab, "TopProfileBar/CommanderNameText", 193f, 25f, 420f, 42f, 137f);
-        AssertFixedLeftProportionalY(prefab, "TopProfileBar/XpProgressTrack", 300f, 86f, 252f, 22f, 137f);
-        AssertFixedLeftProportionalY(prefab, "TopProfileBar/XpProgressTrack/XpProgressFill", 6f, 4f, 208f, 14f, 22f);
-        AssertFixedLeftProportionalY(prefab, "TopProfileBar/XpProgressText", 570f, 83f, 170f, 30f, 137f);
-        AssertSliderTextureDimensions(XpTrackMaskPath, 252, 22);
-        AssertSliderTextureDimensions(XpFillMaskPath, 208, 14);
-        AssertScalableSprite(prefab, "BottomUtilityBar", FooterPanelPath);
-        AssertScalableSprite(prefab, "ModeCardList/ModeCard_Saga", CardBaseMaskPath);
-        AssertScalableSprite(prefab, "ModeCardList/ModeCard_Operation", CardBaseMaskPath);
-        AssertScalableSprite(prefab, "ModeCardList/ModeCard_QuickCustom", CardBaseMaskPath);
+        AssertScalableSprite(prefab, "TopProfileBar/LogoPanelFrame", BrandLogoPanelPath);
+        AssertScalableSprite(prefab, "TopProfileBar/TopResourceBarFrame", TopResourceBarFramePath);
+        AssertScalableSprite(prefab, "TopProfileBar/ResourceCounterList/Resource_Money", ResourceCounterSlotPath);
+        AssertScalableSprite(prefab, "TopProfileBar/ResourceCounterList/Resource_Trust", ResourceCounterSlotPath);
+        AssertScalableSprite(prefab, "TopProfileBar/ResourceCounterList/Resource_Intel", ResourceCounterSlotPath);
+        AssertScalableSprite(prefab, "TopProfileBar/SettingsButton", SettingsButtonFramePath);
+        AssertScalableSprite(prefab, "LeftNav/CommanderProfilePanel", CommanderProfilePanelPath);
+        AssertScalableSprite(prefab, "ModeCardList/ModeCard_Saga/FrameOverlay", CardFrameMaskPath);
+        AssertScalableSprite(prefab, "ModeCardList/ModeCard_Operation/FrameOverlay", CardFrameMaskPath);
+        AssertScalableSprite(prefab, "ModeCardList/ModeCard_QuickCustom/FrameOverlay", CardFrameMaskPath);
         AssertModeCardMask(prefab, "ModeCardList/ModeCard_Saga");
         AssertModeCardMask(prefab, "ModeCardList/ModeCard_Operation");
         AssertModeCardMask(prefab, "ModeCardList/ModeCard_QuickCustom");
-        AssertModeCardContentMask(prefab, "ModeCardList/ModeCard_Saga/ContentClip");
-        AssertModeCardContentMask(prefab, "ModeCardList/ModeCard_Operation/ContentClip");
-        AssertModeCardContentMask(prefab, "ModeCardList/ModeCard_QuickCustom/ContentClip");
-        AssertCardContentMaskKeepsFillsInsideFrame(CardContentMaskPath);
-        AssertTintedSprite(prefab, "ModeCardList/ModeCard_Saga/ContentClip/TintWash", CardTintMaskPath, new Color(0.08f, 0.56f, 0.66f, 0.22f), false);
-        AssertTintedSprite(prefab, "ModeCardList/ModeCard_Operation/ContentClip/TintWash", CardTintMaskPath, new Color(0.45f, 0.35f, 0.16f, 0.17f), false);
-        AssertTintedSprite(prefab, "ModeCardList/ModeCard_QuickCustom/ContentClip/TintWash", CardTintMaskPath, new Color(0.28f, 0.42f, 0.22f, 0.18f), false);
-        AssertTintMaskClipsCardCorners(CardTintMaskPath);
-        AssertCardFrameMaskUsesSinglePerimeter(CardFrameMaskPath);
-        AssertTintedSprite(prefab, "ModeCardList/ModeCard_Saga/BorderOverlay", CardFrameMaskPath, new Color(0.1f, 0.78f, 0.95f, 1f), true);
-        AssertTintedSprite(prefab, "ModeCardList/ModeCard_Operation/BorderOverlay", CardFrameMaskPath, new Color(0.94f, 0.66f, 0.08f, 1f), true);
-        AssertTintedSprite(prefab, "ModeCardList/ModeCard_QuickCustom/BorderOverlay", CardFrameMaskPath, new Color(0.56f, 0.82f, 0.36f, 1f), true);
-        AssertSprite(prefab, "ModeCardList/ModeCard_Saga/ArrowImage", SagaArrowPath);
-        AssertSprite(prefab, "ModeCardList/ModeCard_Operation/ArrowImage", OperationArrowPath);
-        AssertSprite(prefab, "ModeCardList/ModeCard_QuickCustom/ArrowImage", QuickCustomArrowPath);
-
-        AssertFixedWidthVerticalBand(prefab, "LeftNav", 0f, 222f, 0.1105f, 0.8544f);
-        AssertStretchHorizontalVerticalBand(prefab, "ModeCardList", 241f, 20f, 110f / 941f, 1f - 155f / 941f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Saga", 0f, 0f, 0f, 220f, 676f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Operation", 0f, 0f, 230f, 218f, 676f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_QuickCustom", 0f, 0f, 458f, 218f, 676f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Saga/ContentClip", 0f, 0f, 0f, 220f, 220f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Operation/ContentClip", 0f, 0f, 0f, 218f, 218f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_QuickCustom/ContentClip", 0f, 0f, 0f, 218f, 218f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Saga/ContentClip/ArtClip", 390f, 0f, 0f, 220f, 220f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Operation/ContentClip/ArtClip", 390f, 0f, 0f, 218f, 218f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_QuickCustom/ContentClip/ArtClip", 390f, 0f, 0f, 218f, 218f);
-        AssertFadedArtTexture(SagaArtPath, 1021, 220, 249, 24, 172);
-        AssertFadedArtTexture(OperationArtPath, 1021, 218, 419, 24, 170);
-        AssertFadedArtTexture(QuickCustomArtPath, 1021, 218, 359, 24, 170);
-        AssertArtTextureDoesNotBakeRightCornerFrame(QuickCustomArtPath, new Color(0.56f, 0.82f, 0.36f, 1f));
-        AssertFixedLeftProportionalY(prefab, "ModeCardList/ModeCard_Saga/ContentClip/TintWash", 0f, 0f, 790f, 220f, 220f);
-        AssertFixedLeftProportionalY(prefab, "ModeCardList/ModeCard_Operation/ContentClip/TintWash", 0f, 0f, 790f, 218f, 218f);
-        AssertFixedLeftProportionalY(prefab, "ModeCardList/ModeCard_QuickCustom/ContentClip/TintWash", 0f, 0f, 790f, 218f, 218f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Saga/BorderOverlay", 0f, 0f, 0f, 220f, 220f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_Operation/BorderOverlay", 0f, 0f, 0f, 218f, 218f);
-        AssertStretchWidthProportionalY(prefab, "ModeCardList/ModeCard_QuickCustom/BorderOverlay", 0f, 0f, 0f, 218f, 218f);
-        AssertFixedRightProportionalY(prefab, "TopProfileBar/SettingsButton", 20f, 32f, 86f, 86f, 137f);
-        AssertFixedRightProportionalY(prefab, "TopProfileBar/EconomyPlusButton", 164f, 53f, 60f, 60f, 137f);
-
-        AssertReplaceableVisual(prefab, "TopProfileBar/LogoImage");
         AssertReplaceableVisual(prefab, "TopProfileBar/ResourceCounterList/Resource_Money/Icon");
         AssertReplaceableVisual(prefab, "TopProfileBar/ResourceCounterList/Resource_Trust/Icon");
         AssertReplaceableVisual(prefab, "TopProfileBar/ResourceCounterList/Resource_Intel/Icon");
-        AssertReplaceableVisual(prefab, "TopProfileBar/EconomyPlusButton");
-        AssertReplaceableVisual(prefab, "TopProfileBar/SettingsButton");
-        AssertReplaceableVisual(prefab, "LeftNav/ProfileButton");
-        AssertReplaceableVisual(prefab, "LeftNav/InboxButton");
-        AssertReplaceableVisual(prefab, "LeftNav/StoreButton");
-        AssertReplaceableVisual(prefab, "LeftNav/EventsButton");
-        AssertReplaceableVisual(prefab, "LeftNav/RankingButton");
-        AssertReplaceableVisual(prefab, "BottomUtilityBar/ChatButton");
-        AssertReplaceableVisual(prefab, "BottomUtilityBar/SocialButton");
+        AssertReplaceableVisual(prefab, "TopProfileBar/SettingsButton/SettingsGearIcon");
+        AssertScalableSprite(prefab, "DeployCommandButton", DeployCommandButtonFramePath);
+        AssertScalableSprite(prefab, "LeftNav/InboxButton", LeftNavRowPath);
+        AssertScalableSprite(prefab, "LeftNav/StoreButton", LeftNavRowPath);
+        AssertScalableSprite(prefab, "LeftNav/EventsButton", LeftNavRowPath);
+        AssertScalableSprite(prefab, "LeftNav/RankingButton", LeftNavRowPath);
+        AssertScalableSprite(prefab, "LeftNav/CommandFeedRouteButton", LeftNavRowPath);
+        AssertScalableSprite(prefab, "LeftNav/InboxButton/DesignedUnavailableBadge", DesignedUnavailableBadgePath);
+        AssertScalableSprite(prefab, "LeftNav/StoreButton/DesignedUnavailableBadge", DesignedUnavailableBadgePath);
+        AssertScalableSprite(prefab, "LeftNav/EventsButton/DesignedUnavailableBadge", DesignedUnavailableBadgePath);
+        AssertScalableSprite(prefab, "LeftNav/RankingButton/DesignedUnavailableBadge", DesignedUnavailableBadgePath);
+        AssertScalableSprite(prefab, "LeftNav/CommandFeedRouteButton/DesignedUnavailableBadge", DesignedUnavailableBadgePath);
+        AssertScalableSprite(prefab, "WideAspectOnlyRoot/CommandFeedPanelFrame", CommandFeedPanelFramePath);
         AssertButtonAnimatorControllerAsset();
-        AssertAnimatedTabButton(prefab, "LeftNav/ProfileButton", "Selected", true);
         AssertAnimatedTabButton(prefab, "LeftNav/InboxButton", "Normal", false);
         AssertAnimatedTabButton(prefab, "LeftNav/StoreButton", "Normal", false);
         AssertAnimatedTabButton(prefab, "LeftNav/EventsButton", "Normal", false);
         AssertAnimatedTabButton(prefab, "LeftNav/RankingButton", "Normal", false);
+
+        AssertPixelRect(prefab, "TopProfileBar", 0f, 0f, 1672f, 120f, 1672f, 941f);
+        AssertPixelRect(prefab, "LeftNav", 7f, 126f, 350f, 667f, 1672f, 941f);
+        AssertPixelRect(prefab, "ModeCardList", 398f, 148f, 1236f, 620f, 1672f, 941f);
+        AssertPixelRect(prefab, "DeployCommandButton", 1132f, 780f, 506f, 102f, 1672f, 941f);
+        AssertPixelRect(prefab, "ModeCardList/ModeCard_Saga", 0f, 0f, 374f, 588f, 1248f, 620f);
+        AssertPixelRect(prefab, "ModeCardList/ModeCard_Operation", 396f, 0f, 386f, 588f, 1248f, 620f);
+        AssertPixelRect(prefab, "ModeCardList/ModeCard_QuickCustom", 804f, 0f, 432f, 588f, 1248f, 620f);
 
         foreach (Transform transform in prefab.GetComponentsInChildren<Transform>(true))
         {
@@ -212,19 +204,16 @@ public sealed class WarlineCaptureUiMainMenuTests
         GameObject prefab = LoadMainMenuPrefab();
 
         AssertRoute(prefab, "TopProfileBar/SettingsButton", WarlineCaptureRoute.Settings);
-        AssertRoute(prefab, "TopProfileBar/EconomyPlusButton", WarlineCaptureRoute.CommandExchange);
-        AssertRoute(prefab, "LeftNav/ProfileButton", WarlineCaptureRoute.CommanderProfile);
         AssertRoute(prefab, "LeftNav/InboxButton", WarlineCaptureRoute.Inbox);
         AssertRoute(prefab, "LeftNav/StoreButton", WarlineCaptureRoute.CommandExchange);
         AssertRoute(prefab, "LeftNav/EventsButton", WarlineCaptureRoute.Events);
         AssertRoute(prefab, "LeftNav/RankingButton", WarlineCaptureRoute.Ranking);
-        AssertRoute(prefab, "BottomUtilityBar/ChatButton", WarlineCaptureRoute.CommandFeed);
-        AssertRoute(prefab, "BottomUtilityBar/SocialButton", WarlineCaptureRoute.CommandFeed);
+        AssertRoute(prefab, "LeftNav/CommandFeedRouteButton", WarlineCaptureRoute.CommandFeed);
         AssertRoute(prefab, "ModeCardList/ModeCard_Saga/Button", WarlineCaptureRoute.SagaMap);
         AssertRoute(prefab, "ModeCardList/ModeCard_QuickCustom/Button", WarlineCaptureRoute.QuickCustomSetup);
         AssertRoute(prefab, "ModeCardList/ModeCard_Operation/Button", WarlineCaptureRoute.OperationDashboard);
+        AssertRoute(prefab, "DeployCommandButton", WarlineCaptureRoute.SagaMap);
 
-        AssertPlaceholder(prefab, "BottomUtilityBar/CommanderButton");
         AssertNoActivePlaceholderModalButtons(prefab);
     }
 
@@ -243,22 +232,36 @@ public sealed class WarlineCaptureUiMainMenuTests
     {
         GameObject prefab = LoadMainMenuPrefab();
 
-        AssertSpriteAtlas(IconsButtonsAtlasPath, "Assets/Game/Art/UI/Generated/MainMenu/Buttons", "Assets/Game/Art/UI/Generated/MainMenu/Icons", "Assets/Game/Art/UI/Generated/MainMenu/Portraits");
-        AssertSpriteAtlas(FramesChromeAtlasPath, "Assets/Game/Art/UI/Generated/MainMenu/Frames");
-        AssertSpriteAtlas(CardArtAtlasPath, "Assets/Game/Art/UI/Generated/MainMenu/Cards");
+        AssertSpriteAtlas(IconsButtonsAtlasPath, "Assets/Game/Art/UI/Generated/MainMenu/Buttons", "Assets/Game/Art/UI/Generated/MainMenu/Icons", "Assets/Game/Art/UI/Generated/MainMenu/Portraits", "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Icons", "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Buttons");
+        AssertSpriteAtlas(FramesChromeAtlasPath, "Assets/Game/Art/UI/Generated/MainMenu/Frames", "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Frames", "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Overlays", "Assets/Game/Art/UI/Generated/MainMenu/ImageGenFlat/FramesTrimmed");
+        AssertSpriteAtlas(CardArtAtlasPath, "Assets/Game/Art/UI/Generated/MainMenu/Cards", "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Content", "Assets/Game/Art/UI/Generated/MainMenu/LayeredOneGo/Backgrounds");
 
-        AssertAtlasLabel(NavProfileButtonPath, IconsButtonsAtlasLabel);
-        AssertAtlasLabel(SettingsButtonPath, IconsButtonsAtlasLabel);
-        AssertAtlasLabel(TopBarPanelPath, FramesChromeAtlasLabel);
-        AssertAtlasLabel(CardFrameMaskPath, FramesChromeAtlasLabel);
+        AssertAtlasLabel(CreditsIconPath, IconsButtonsAtlasLabel);
+        AssertAtlasLabel(MaterialsIconPath, IconsButtonsAtlasLabel);
+        AssertAtlasLabel(CommandAuthorityIconPath, IconsButtonsAtlasLabel);
+        AssertAtlasLabel(CommanderProfilePortraitPath, IconsButtonsAtlasLabel);
         AssertAtlasLabel(SagaArtPath, CardArtAtlasLabel);
         AssertAtlasLabel(OperationArtPath, CardArtAtlasLabel);
         AssertAtlasLabel(QuickCustomArtPath, CardArtAtlasLabel);
+        AssertAtlasLabel(TopResourceBarFramePath, FramesChromeAtlasLabel);
+        AssertAtlasLabel(LeftNavRowPath, IconsButtonsAtlasLabel);
+        AssertAtlasLabel(CardFrameMaskPath, FramesChromeAtlasLabel);
+        AssertAtlasLabel(BackgroundTacticalMapPath, CardArtAtlasLabel);
+        AssertAtlasLabel(OperationPressureMeterPath, CardArtAtlasLabel);
+        AssertAtlasLabel(OperationRiskMeterPath, CardArtAtlasLabel);
         AssertNoAtlasLabel("Assets/Game/Art/UI/Generated/MainMenu/MainMenu_Landscape_Visual_Target.png");
 
-        AssertUiSpriteImporter(NavProfileButtonPath, true);
-        AssertUiSpriteImporter(TopBarPanelPath, true);
+        AssertUiSpriteImporter(LeftNavRowPath, true);
+        AssertUiSpriteImporter(TopResourceBarFramePath, true);
+        AssertUiSpriteImporter(CommanderProfilePortraitPath, true);
+        AssertUiSpriteImporter(BackgroundTacticalMapPath, true);
         AssertUiSpriteImporter(SagaArtPath, true);
+        AssertUiSpriteImporter(OperationArtPath, true);
+        AssertUiSpriteImporter(QuickCustomArtPath, true);
+        AssertTextureDimensions(CommanderProfilePortraitPath, 180, 150);
+        AssertTextureDimensions(SagaArtPath, 334, 414);
+        AssertTextureDimensions(OperationArtPath, 346, 286);
+        AssertTextureDimensions(QuickCustomArtPath, 392, 414);
 
         foreach (Graphic graphic in prefab.GetComponentsInChildren<Graphic>(true))
         {
@@ -522,26 +525,27 @@ public sealed class WarlineCaptureUiMainMenuTests
         return null;
     }
 
-    private static void AssertModeCardArt(GameObject prefab, string path, string expectedArtPath)
+    private static void AssertModeCardArt(GameObject prefab, string path, string expectedSpritePath)
     {
-        Transform artClip = prefab.transform.Find($"{path}/ContentClip/ArtClip");
+        Transform artClip = prefab.transform.Find($"{path}/ArtClip");
         Assert.NotNull(artClip, path);
+        Assert.IsTrue(artClip.gameObject.activeSelf, $"{path} must display the accepted Art/Atlas target slice.");
         Assert.NotNull(artClip.GetComponent<RectMask2D>(), $"{path} artwork must be clipped instead of stretched.");
 
         Image artImage = artClip.Find("ArtImage").GetComponent<Image>();
         Assert.NotNull(artImage, path);
-        Assert.NotNull(artImage.sprite, path);
-        Assert.IsFalse(artImage.preserveAspect, $"{path} art crop already matches the mockup pixel ratio and must not be envelope-zoomed.");
+        Assert.NotNull(artImage.sprite, $"{path} must serialize the accepted Art/Atlas mode-card art.");
+        Assert.AreEqual(expectedSpritePath, AssetDatabase.GetAssetPath(artImage.sprite), path);
+        Assert.IsFalse(artImage.preserveAspect, $"{path} art must be controlled by the parent crop fitter, not Image preserveAspect.");
         AspectRatioFitter artFitter = artImage.GetComponent<AspectRatioFitter>();
-        Assert.IsNull(artFitter, $"{path} art must use the authored mockup crop directly instead of aspect-fit zooming.");
-        Assert.AreEqual(expectedArtPath, AssetDatabase.GetAssetPath(artImage.sprite), path);
+        Assert.NotNull(artFitter, $"{path} art must cover the crop mask without stretching.");
+        Assert.AreEqual(AspectRatioFitter.AspectMode.EnvelopeParent, artFitter.aspectMode, $"{path} art must bleed past the mask like cover art.");
     }
 
     private static void AssertModeCardMask(GameObject prefab, string path)
     {
-        Mask mask = prefab.transform.Find(path).GetComponent<Mask>();
-        Assert.NotNull(mask, $"{path} must clip child tint and art layers to the card silhouette.");
-        Assert.IsTrue(mask.showMaskGraphic, $"{path} must keep its base mask visible while clipping children.");
+        RectMask2D mask = prefab.transform.Find(path).GetComponent<RectMask2D>();
+        Assert.NotNull(mask, $"{path} must clip child layers to the card silhouette.");
     }
 
     private static void AssertModeCardContentMask(GameObject prefab, string path)
@@ -614,6 +618,15 @@ public sealed class WarlineCaptureUiMainMenuTests
         Assert.AreEqual(expectedHeight, texture.height, $"{path} height");
         Assert.Greater(texture.GetPixel(texture.width / 2, texture.height / 2).a, 0.95f, $"{path} must have an opaque rounded interior.");
         Assert.Less(texture.GetPixel(0, 0).a, 0.1f, $"{path} must have transparent rounded corners.");
+        UnityEngine.Object.DestroyImmediate(texture);
+    }
+
+    private static void AssertTextureDimensions(string path, int expectedWidth, int expectedHeight)
+    {
+        var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+        Assert.IsTrue(texture.LoadImage(File.ReadAllBytes(path)), path);
+        Assert.AreEqual(expectedWidth, texture.width, $"{path} width");
+        Assert.AreEqual(expectedHeight, texture.height, $"{path} height");
         UnityEngine.Object.DestroyImmediate(texture);
     }
 
@@ -700,6 +713,22 @@ public sealed class WarlineCaptureUiMainMenuTests
         Assert.AreEqual(expectedSpritePath, AssetDatabase.GetAssetPath(image.sprite), path);
     }
 
+    private static void AssertStretchedSprite(GameObject prefab, string path, string expectedSpritePath)
+    {
+        Image image = prefab.transform.Find(path).GetComponent<Image>();
+        Assert.NotNull(image, path);
+        Assert.NotNull(image.sprite, path);
+        Assert.IsFalse(image.preserveAspect, $"{path} must fill the authored reference canvas.");
+        Assert.AreEqual(expectedSpritePath, AssetDatabase.GetAssetPath(image.sprite), path);
+    }
+
+    private static void AssertNullSprite(GameObject prefab, string path)
+    {
+        Image image = prefab.transform.Find(path).GetComponent<Image>();
+        Assert.NotNull(image, path);
+        Assert.IsNull(image.sprite, $"{path} must not serialize placeholder or fallback art while Art/Atlas owns the missing target slice.");
+    }
+
     private static void AssertTintedSprite(GameObject prefab, string path, string expectedSpritePath, Color expectedColor, bool sliced)
     {
         Image image = prefab.transform.Find(path).GetComponent<Image>();
@@ -752,6 +781,16 @@ public sealed class WarlineCaptureUiMainMenuTests
         Assert.AreEqual(new Vector2(-right, 0f), rect.offsetMax, $"{path} offsetMax");
     }
 
+    private static void AssertPixelRect(GameObject prefab, string path, float x, float yFromTop, float width, float height, float referenceWidth, float referenceHeight)
+    {
+        RectTransform rect = prefab.transform.Find(path).GetComponent<RectTransform>();
+        Assert.NotNull(rect, path);
+        Assert.AreEqual(new Vector2(x / referenceWidth, 1f - (yFromTop + height) / referenceHeight), rect.anchorMin, $"{path} anchorMin");
+        Assert.AreEqual(new Vector2((x + width) / referenceWidth, 1f - yFromTop / referenceHeight), rect.anchorMax, $"{path} anchorMax");
+        Assert.AreEqual(Vector2.zero, rect.offsetMin, $"{path} offsetMin");
+        Assert.AreEqual(Vector2.zero, rect.offsetMax, $"{path} offsetMax");
+    }
+
     private static void AssertColor(Color expected, Color actual, string message)
     {
         Assert.AreEqual(expected.r, actual.r, 0.001f, $"{message} color.r");
@@ -790,6 +829,19 @@ public sealed class WarlineCaptureUiMainMenuTests
         Assert.Greater(graphic.color.a, 0.5f, $"{path} must be a visible separate UI element, not baked into a parent background.");
         if (graphic is Image image && image.sprite != null)
             Assert.IsTrue(image.preserveAspect, $"{path} must preserve sprite aspect and must not stretch.");
+    }
+
+    private static void AssertTransparentButtonTarget(GameObject prefab, string path)
+    {
+        Transform transform = prefab.transform.Find(path);
+        Assert.NotNull(transform, path);
+        Button button = transform.GetComponent<Button>();
+        Image image = transform.GetComponent<Image>();
+        Assert.NotNull(button, path);
+        Assert.NotNull(image, path);
+        Assert.AreSame(image, button.targetGraphic, path);
+        Assert.IsNull(image.sprite, $"{path} must not serialize old-shell button art.");
+        Assert.That(image.color.a, Is.EqualTo(0f).Within(0.001f), $"{path} must use a transparent raycast target until Art/Atlas provides approved button chrome.");
     }
 
     private static void AssertRoute(GameObject prefab, string path, WarlineCaptureRoute expectedRoute)

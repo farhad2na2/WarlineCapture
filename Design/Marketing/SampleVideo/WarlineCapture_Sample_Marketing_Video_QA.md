@@ -19,11 +19,13 @@
 
 ## Scenes
 
-- City Command: `Design/VisualReferences/2DIsometricProduction/ISO-01_CityCommand_Target/ISO-01_CityCommand_ProductionTarget.png`
-- Battle HUD: `Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png`
-- Operation Dashboard: `Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png`
+- City Command: active replacement should use a 3D command-base or operation-map capture from `Design/VisualLockLayered/SCN-02_MainMenu/reference/` or a gameplay capture package.
+- Battle HUD: `Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
+- Operation Dashboard: `Design/VisualLockLayered/SCN-11_OperationsDashboard/reference/SCN-11_OperationsDashboard_Landscape_Target.png`
 - Commander Store: `generated:fair_store_panel`
-- Mission Result: `Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png`
+- Mission Result: `Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_Landscape_Target.png`
+
+The current MP4 was produced from legacy visual references and should be treated as an archived sample until these active 3D-direction sources are regenerated.
 
 ## Next AI Swap-In Points
 

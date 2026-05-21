@@ -16,7 +16,8 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     private const string MatchHudMoneyIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_money_icon.png";
     private const string MatchHudMaterialsIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_crate_icon.png";
     private const string MatchHudPopulationIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/resource_population_icon.png";
-    private const string MatchHudTimeIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Time.png";
+    private const string MatchHudTimeIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/time_clock_icon.png";
+    private const string MatchHudLegacyTimeIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/Icons/MatchHUD_Resource_Time.png";
     private const string MatchHudObjectivePanelPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/objective_panel_frame.png";
     private const string MatchHudObjectivePanelFillPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/objective_panel_fill.png";
     private const string MatchHudThreatPanelPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/threat_feed_panel_frame.png";
@@ -38,12 +39,17 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     private const string MatchHudIsoRifleSquadPath = "Assets/Game/Art/UI/Generated/MatchHUD/Cards/IsoThumb_GA-08_RifleSquad.png";
     private const string MatchHudIsoApcPath = "Assets/Game/Art/UI/Generated/MatchHUD/Cards/IsoThumb_GA-09_APC.png";
     private const string MatchHudIsoTankPath = "Assets/Game/Art/UI/Generated/MatchHUD/Cards/IsoThumb_GA-10_Tank.png";
+    private const string MatchHudSquadPortraitRiflePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_rifle.png";
+    private const string MatchHudSquadPortraitApcPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_apc.png";
+    private const string MatchHudSquadPortraitTankPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_tank.png";
+    private const string MatchHudHelicopterPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/squad_portrait_helicopter.png";
     private const string MatchHudDesignedUnavailableContentPath = "Assets/Game/Art/UI/Generated/MatchHUD/Cards/MatchHUD_DesignedUnavailableContent.png";
-    private const string MatchHudIsoMiniMapContentPath = "Assets/Game/Art/UI/Generated/MatchHUD/Frames/MatchHUD_MiniMap_IsoContent.png";
+    private const string MatchHudIsoMiniMapContentPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Content/minimap_content.png";
     private const string MatchHudIconPausePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/pause_icon.png";
     private const string MatchHudIconSettingsPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/settings_gear_icon.png";
     private const string MatchHudIconStopPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_stop_icon.png";
     private const string MatchHudIconHoldPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_hold_icon.png";
+    private const string MatchHudIconSelectPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_select_icon.png";
     private const string MatchHudIconMovePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_move_icon.png";
     private const string MatchHudIconAttackPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_attack_icon.png";
     private const string MatchHudIconSpecialPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/command_special_icon.png";
@@ -57,7 +63,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     private const string MatchHudM01SelectionRingPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/selection_ring.png";
     private const string MatchHudM01MoveDestinationRingPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/move_destination_ring.png";
     private const string MatchHudM01AttackTargetRingPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/attack_target_ring.png";
-    private const string MatchHudM01MinimapViewportRectPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Markers/minimap_viewport_rect.png";
+    private const string MatchHudM01MinimapViewportRectPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Icons/minimap_viewport_rect.png";
     private const string CommandWheelLayerPackManifestPath = "Design/VisualLockLayered/SCN-10_UnitCommandWheel/layer_manifest.json";
     private const string CommandWheelContextHintFramePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/command_wheel_context_hint_frame.png";
     private const string CommandWheelContextHintFillPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/command_wheel_context_hint_fill.png";
@@ -157,6 +163,8 @@ public sealed class WarlineCaptureUiMatchOverlayTests
             "CommandBar",
             "CommandBar/CommandRailArt/FillBackground",
             "CommandBar/CommandRailArt/FrameChrome",
+            "CommandBar/SelectButton",
+            "CommandBar/SelectButton/IconText",
             "CommandBar/StopButton",
             "CommandBar/StopButton/IconText",
             "CommandBar/HoldButton",
@@ -264,7 +272,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/BuildListPanel/BuildItem_Barracks/PreviewImage", MatchHudIsoForwardCommandHqPath);
         AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/BuildListPanel/BuildItem_Rifle/PopulationMetric/IconImage", MatchHudPopulationIconPath);
         AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/BuildListPanel/BuildItem_Rifle/MaterialMetric/IconImage", MatchHudMaterialsIconPath);
-        AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/BuildListPanel/BuildItem_Rifle/TimeMetric/IconImage", MatchHudTimeIconPath);
+        AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/BuildListPanel/BuildItem_Rifle/TimeMetric/IconImage", MatchHudLegacyTimeIconPath);
         AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/ProductionQueuePanel/Queue_Rifle/PreviewImage", MatchHudIsoRifleSquadPath);
         AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/ProductionQueuePanel/Queue_Barracks/PreviewImage", MatchHudIsoForwardCommandHqPath);
         AssertImageSpritePath(prefab.transform, "BuildDrawerCanvas/ProductionQueuePanel/Queue_Medic/PreviewImage", MatchHudDesignedUnavailableContentPath);
@@ -329,6 +337,52 @@ public sealed class WarlineCaptureUiMatchOverlayTests
             Assert.IsFalse(buildButton.interactable, "M01-01 Build must be disabled instead of available.");
             Assert.IsFalse(scope.IsM01BuildButtonDisabled(), "M01 scope hides Build rather than exposing it in the no-selection command row.");
             Assert.IsTrue(scope.AreM01SuppressedRootsHidden(), "M01 scope should suppress non-infantry affordances.");
+            AssertText(instance, "ObjectivePanel/Objective_1/LabelText", "Destroy hostile patrol");
+            Assert.IsFalse(instance.transform.Find("ObjectivePanel/Objective_2").gameObject.activeSelf, "M01 no-selection evidence must not show non-M01 objective rows.");
+            Assert.IsFalse(instance.transform.Find("ObjectivePanel/Objective_3").gameObject.activeSelf, "M01 no-selection evidence must not show non-M01 objective rows.");
+            Assert.IsFalse(instance.transform.Find("AssistantLayer/AssistantEntryButton").gameObject.activeSelf, "M01-01 must keep ARIA closed.");
+            Assert.IsFalse(instance.transform.Find("AssistantLayer/AssistantPanelDock").gameObject.activeSelf, "M01-01 must not show the ARIA panel in no-selection evidence.");
+            Assert.IsFalse(instance.transform.Find("WorldCommandMarkerLayer").gameObject.activeSelf, "M01-01 no-selection must not show selected rings or command target markers.");
+            Assert.IsFalse(instance.transform.Find("SelectedEntityPanel").gameObject.activeSelf, "M01-01 no-selection must not show selected squad status.");
+            Assert.IsFalse(instance.transform.Find("CommandModeBanner").gameObject.activeSelf, "M01-01 no-selection must not show an active command mode.");
+            Assert.IsFalse(instance.transform.Find("InvalidCommandToast").gameObject.activeSelf, "M01-01 no-selection must not show stale command feedback.");
+            Assert.IsFalse(instance.transform.Find("BuildDrawerCanvas").gameObject.activeSelf, "M01-01 no-selection must not show the Build drawer.");
+            Assert.IsFalse(instance.transform.Find("CommandWheelCanvas").gameObject.activeSelf, "M01-01 no-selection must not show the command wheel.");
+            Assert.IsTrue(instance.transform.Find("SquadTray/Squad_Rifle").gameObject.activeSelf, "M01 keeps the selected-readability squad strip visible.");
+            Assert.IsTrue(instance.transform.Find("SquadTray/Squad_APC").gameObject.activeSelf, "M01 keeps the SCN-08 squad card layout instead of leaving empty tray columns.");
+            Assert.IsFalse(instance.transform.Find("SquadTray/Squad_APC").GetComponent<Button>().interactable, "M01 non-rifle squad cards are visible but disabled.");
+            Assert.IsTrue(instance.transform.Find("CommandBar/SelectButton").gameObject.activeSelf, "M01 uses SELECT as the first command slot.");
+            Assert.IsTrue(instance.transform.Find("CommandBar/MoveButton").gameObject.activeSelf, "M01 keeps command button chrome visible.");
+            Assert.IsTrue(instance.transform.Find("CommandBar/AttackButton").gameObject.activeSelf, "M01 keeps command button chrome visible.");
+            Assert.IsTrue(instance.transform.Find("CommandBar/StopButton").gameObject.activeSelf, "M01 keeps command button chrome visible.");
+            Assert.IsTrue(instance.transform.Find("CommandBar/HoldButton").gameObject.activeSelf, "M01 keeps command button chrome visible.");
+            Assert.IsFalse(instance.transform.Find("CommandBar/SpecialButton").gameObject.activeSelf, "M01 must not use SPECIAL.");
+            AssertImageSpritePath(instance.transform, "CommandBar/SelectButton/IconText", MatchHudIconSelectPath);
+            AssertText(instance, "CommandBar/SelectButton/LabelText", "SELECT");
+            AssertPixelRect(instance, "CommandBar/SelectButton", 12f, 24f, 98f, 124f, 704f, 164f);
+            AssertPixelRect(instance, "CommandBar/MoveButton", 115f, 24f, 98f, 124f, 704f, 164f);
+            AssertPixelRect(instance, "CommandBar/AttackButton", 218f, 24f, 98f, 124f, 704f, 164f);
+            AssertPixelRect(instance, "CommandBar/StopButton", 320f, 24f, 98f, 124f, 704f, 164f);
+            AssertPixelRect(instance, "CommandBar/HoldButton", 422f, 24f, 98f, 124f, 704f, 164f);
+            AssertNoOverlap(instance, "CommandBar/AttackButton", "MiniMapPanel");
+            AssertNoOverlap(instance, "CommandBar/HoldButton", "MiniMapPanel");
+            Assert.IsFalse(instance.transform.Find("CommandBar/MoveButton").GetComponent<Button>().interactable, "M01 no-selection MOVE must be neutral/disabled.");
+            Assert.IsFalse(instance.transform.Find("CommandBar/AttackButton").GetComponent<Button>().interactable, "M01 no-selection ATTACK must be neutral/disabled.");
+            Assert.IsFalse(instance.transform.Find("CommandBar/SelectButton").GetComponent<Button>().interactable, "M01 no-selection SELECT must be neutral/disabled.");
+            Assert.AreEqual(
+                instance.transform.Find("CommandBar/StopButton").GetComponent<Image>().sprite,
+                instance.transform.Find("CommandBar/MoveButton").GetComponent<Image>().sprite,
+                "M01 no-selection MOVE must use neutral command chrome, not the selected/active command art.");
+            Assert.Less(
+                instance.transform.Find("CommandBar/CommandRailArt").GetSiblingIndex(),
+                instance.transform.Find("CommandBar/StopButton").GetSiblingIndex(),
+                "M01 disabled command buttons must render above the command rail chrome.");
+            Assert.Less(instance.transform.Find("CommandBar/SelectButton").GetSiblingIndex(), instance.transform.Find("CommandBar/MoveButton").GetSiblingIndex());
+            Assert.Less(instance.transform.Find("CommandBar/MoveButton").GetSiblingIndex(), instance.transform.Find("CommandBar/AttackButton").GetSiblingIndex());
+            Assert.Less(instance.transform.Find("CommandBar/AttackButton").GetSiblingIndex(), instance.transform.Find("CommandBar/StopButton").GetSiblingIndex());
+            Assert.Less(instance.transform.Find("CommandBar/StopButton").GetSiblingIndex(), instance.transform.Find("CommandBar/HoldButton").GetSiblingIndex());
+            Assert.IsNull(instance.transform.Find("CommandBar/M01CommandLabel_MOVE"), "M01 command labels must come from button LabelText, not separate fallback overlays.");
+            Assert.IsNull(instance.transform.Find("M01RootCommandLabel_MOVE"), "M01 must not create root-level command fallback labels over the battle scene.");
             Assert.AreEqual("Building unlocks in the next mission.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.MissionDoesNotAllowBuild));
         }
         finally
@@ -599,7 +653,11 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         StringAssert.Contains("\"reviewSheet\": \"Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_one_go/layers_contact_sheet.png\"", manifest);
         StringAssert.Contains("\"unityDestination\": \"Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/resource_bar_frame.png\"", manifest);
         StringAssert.Contains("\"objectPath\": \"Screen_MatchOverlay/ResourceBar/FrameChrome\"", manifest);
+        StringAssert.Contains("\"objectPath\": \"Screen_MatchOverlay/CommandBar/SelectButton/IconText\"", manifest);
         StringAssert.Contains("\"objectPath\": \"Screen_MatchOverlay/CommandBar/MoveButton\"", manifest);
+        StringAssert.Contains("\"m01CommandRule\"", manifest);
+        StringAssert.Contains("\"SELECT\"", manifest);
+        StringAssert.Contains("\"notUsedForM01\"", manifest);
         StringAssert.Contains("\"objectPath\": \"Screen_MatchOverlay/SquadTray/Squad_Rifle/FrameChrome\"", manifest);
         StringAssert.Contains("\"role\": \"buttonState\"", manifest);
         StringAssert.Contains("\"alphaRule\": \"transparent outside button silhouette; no icon/text\"", manifest);
@@ -677,6 +735,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         AssertImageType(prefab.transform, "CommandBar/CommandRailArt/FillBackground", Image.Type.Sliced);
         AssertImageSpritePath(prefab.transform, "CommandBar/CommandRailArt/FrameChrome", MatchHudCommandRailPath);
         AssertImageType(prefab.transform, "CommandBar/CommandRailArt/FrameChrome", Image.Type.Sliced);
+        AssertImageSpritePath(prefab.transform, "CommandBar/SelectButton/IconText", MatchHudIconSelectPath);
         AssertImageSpritePath(prefab.transform, "CommandBar/StopButton/IconText", MatchHudIconStopPath);
         AssertImageSpritePath(prefab.transform, "CommandBar/HoldButton/IconText", MatchHudIconHoldPath);
         AssertImageSpritePath(prefab.transform, "CommandBar/MoveButton", MatchHudButtonSelectedPath);
@@ -694,14 +753,14 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Tank/FrameChrome", MatchHudSquadCardNormalPath);
         AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Helicopter", MatchHudSquadCardFillPath);
         AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Helicopter/FrameChrome", MatchHudSquadCardNormalPath);
-        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Rifle/PortraitPlate", MatchHudIsoRifleSquadPath);
-        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_APC/PortraitPlate", MatchHudIsoApcPath);
-        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Tank/PortraitPlate", MatchHudIsoTankPath);
-        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Helicopter/PortraitPlate", MatchHudDesignedUnavailableContentPath);
-        AssertText(prefab, "SquadTray/Squad_Helicopter/StatusText", "ISO ASSET PENDING");
+        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Rifle/PortraitPlate", MatchHudSquadPortraitRiflePath);
+        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_APC/PortraitPlate", MatchHudSquadPortraitApcPath);
+        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Tank/PortraitPlate", MatchHudSquadPortraitTankPath);
+        AssertImageSpritePath(prefab.transform, "SquadTray/Squad_Helicopter/PortraitPlate", MatchHudHelicopterPath);
+        Assert.IsNull(prefab.transform.Find("SquadTray/Squad_Helicopter/StatusText"), "Accepted Air Support portrait removes the old pending-art fallback label.");
         Assert.IsFalse(
             prefab.transform.Find("SquadTray/Squad_Helicopter").GetComponent<Button>().interactable,
-            "Squad_Helicopter should be disabled until accepted 2D isometric air-support art exists.");
+            "Squad_Helicopter remains disabled for M01 rules even though accepted portrait art now exists.");
         AssertImageSpritePath(prefab.transform, "SquadTray/Squad_APC/RankIcon", MatchHudIconRankChevronPath);
         AssertImageSpritePath(prefab.transform, "BuildButton", MatchHudButtonBuildPath);
         AssertImageSpritePath(prefab.transform, "BuildButton/IconText", MatchHudIconBuildPath);
@@ -709,13 +768,26 @@ public sealed class WarlineCaptureUiMatchOverlayTests
 
         AssertFixedLeftProportionalY(prefab, "ObjectivePanel", 8f, 7f, 358f, 282f);
         AssertFixedLeftProportionalY(prefab, "ThreatFeedPanel", 12f, 444f, 292f, 216f);
-        AssertFixedLeftProportionalY(prefab, "SquadTray", 14f, 688f, 654f, 212f);
+        AssertFixedLeftProportionalY(prefab, "SquadTray", 12f, 684f, 654f, 218f);
+        AssertFixedLeftProportionalY(prefab, "CommandBar", 676f, 744f, 704f, 164f);
         AssertFixedRightProportionalY(prefab, "ResourceBar", 218f, 10f, 636f, 62f);
-        AssertFixedRightProportionalY(prefab, "PauseButton", 122f, 8f, 84f, 62f);
-        AssertFixedRightProportionalY(prefab, "SettingsButton", 24f, 8f, 84f, 62f);
-        AssertFixedRightProportionalY(prefab, "MiniMapPanel", 10f, 592f, 318f, 306f);
+        AssertFixedRightProportionalY(prefab, "PauseButton", 110f, 12f, 88f, 66f);
+        AssertFixedRightProportionalY(prefab, "SettingsButton", 10f, 12f, 88f, 66f);
+        AssertFixedRightProportionalY(prefab, "MiniMapPanel", 10f, 592f, 310f, 304f);
         AssertFixedRightProportionalY(prefab, "BuildButton", 333f, 762f, 122f, 138f);
-        AssertPixelRect(prefab, "MiniMapPanel/MapImage", 20f, 28f, 280f, 262f, 318f, 306f);
+        AssertPixelRect(prefab, "MiniMapPanel/MapImage", 12f, 28f, 280f, 262f, 310f, 304f);
+        AssertPixelRect(prefab, "SquadTray/Squad_Rifle", 10f, 6f, 176f, 218f, 654f, 218f);
+        AssertPixelRect(prefab, "SquadTray/Squad_APC", 188f, 10f, 158f, 214f, 654f, 218f);
+        AssertPixelRect(prefab, "SquadTray/Squad_Tank", 348f, 10f, 156f, 214f, 654f, 218f);
+        AssertPixelRect(prefab, "SquadTray/Squad_Helicopter", 506f, 10f, 158f, 214f, 654f, 218f);
+        AssertPixelRect(prefab, "CommandBar/SelectButton", 12f, 24f, 98f, 124f, 704f, 164f);
+        AssertPixelRect(prefab, "CommandBar/StopButton", 12f, 24f, 98f, 124f, 704f, 164f);
+        AssertPixelRect(prefab, "CommandBar/HoldButton", 115f, 24f, 98f, 124f, 704f, 164f);
+        AssertPixelRect(prefab, "CommandBar/MoveButton", 218f, 24f, 98f, 124f, 704f, 164f);
+        AssertPixelRect(prefab, "CommandBar/AttackButton", 320f, 24f, 98f, 124f, 704f, 164f);
+        AssertPixelRect(prefab, "CommandBar/SpecialButton", 422f, 24f, 98f, 124f, 704f, 164f);
+        AssertNoOverlap(prefab, "CommandBar/AttackButton", "MiniMapPanel");
+        AssertNoOverlap(prefab, "CommandBar/SpecialButton", "MiniMapPanel");
         Assert.Less(
             prefab.transform.Find("MiniMapPanel/FrameChrome").GetSiblingIndex(),
             prefab.transform.Find("MiniMapPanel/MapImage").GetSiblingIndex(),
@@ -732,8 +804,8 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         AssertPixelRect(prefab, "CommandBar/StopButton/LabelText", 4f, 85f, 90f, 28f, 98f, 124f);
         AssertPixelRect(prefab, "CommandBar/MoveButton/IconText", 22f, 18f, 54f, 54f, 98f, 124f);
         AssertPixelRect(prefab, "CommandBar/MoveButton/LabelText", 4f, 85f, 90f, 28f, 98f, 124f);
-        AssertPixelRect(prefab, "PauseButton/IconImage", 27f, 16f, 30f, 30f, 84f, 62f);
-        AssertPixelRect(prefab, "SettingsButton/GearIcon", 22f, 11f, 40f, 40f, 84f, 62f);
+        AssertPixelRect(prefab, "PauseButton/IconImage", 22f, 12f, 44f, 42f, 88f, 66f);
+        AssertPixelRect(prefab, "SettingsButton/GearIcon", 16f, 5f, 56f, 56f, 88f, 66f);
     }
 
     [Test]
@@ -794,8 +866,8 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         AssertTextureCenterAlpha(MatchHudCommandRailPath, 0f, "Command rail frame center must be transparent because FillBackground is separate.");
         AssertTextureCenterAlphaGreater(MatchHudCommandRailFillPath, 0.90f, "Command rail fill center must be the fill layer, not the frame layer.");
         AssertTextureCenterAlphaGreater(MatchHudSquadTrayFillPath, 0.90f, "SquadTray fill center must be visible and separate from cards.");
-        AssertTextureCenterAlpha(MatchHudSquadCardNormalPath, 0f, "Squad card chrome center must be transparent because the card fill, portrait, and icons are separate layers.");
-        AssertTextureCenterAlpha(MatchHudSquadCardSelectedPath, 0f, "Selected squad card chrome center must be transparent because the card fill, portrait, and icons are separate layers.");
+        AssertTextureCenterAlphaGreater(MatchHudSquadCardNormalPath, 0.10f, "Accepted squad card chrome carries target-quality body/well detail while keeping outside corners transparent.");
+        AssertTextureCenterAlphaGreater(MatchHudSquadCardSelectedPath, 0.10f, "Accepted selected squad card chrome carries target-quality body/well detail while keeping outside corners transparent.");
         AssertTextureCenterAlphaGreater(MatchHudSquadCardFillPath, 0.90f, "Squad card fallback fill center must be visible but icon-free.");
         AssertTextureCenterAlphaGreater(MatchHudButtonNormalPath, 0.90f, "Normal command button body must be visible with icon/text separate.");
         AssertTextureCenterAlphaGreater(MatchHudButtonSelectedPath, 0.90f, "Selected command button body must be visible with icon/text separate.");
@@ -804,6 +876,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         {
             MatchHudIconStopPath,
             MatchHudIconHoldPath,
+            MatchHudIconSelectPath,
             MatchHudIconMovePath,
             MatchHudIconAttackPath,
             MatchHudIconSpecialPath,

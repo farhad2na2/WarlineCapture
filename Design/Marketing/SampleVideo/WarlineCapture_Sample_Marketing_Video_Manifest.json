@@ -14,16 +14,16 @@
     "Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md"
   ],
   "sourceImages": [
-    "Design/VisualReferences/2DIsometricProduction/ISO-01_CityCommand_Target/ISO-01_CityCommand_ProductionTarget.png",
-    "Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png",
-    "Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png",
+    "Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png",
+    "Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png",
+    "Design/VisualLockLayered/SCN-11_OperationsDashboard/reference/SCN-11_OperationsDashboard_Landscape_Target.png",
     "generated:fair_store_panel",
-    "Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png"
+    "Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_Landscape_Target.png"
   ],
   "scenes": [
     {
       "name": "City Command",
-      "source": "Design/VisualReferences/2DIsometricProduction/ISO-01_CityCommand_Target/ISO-01_CityCommand_ProductionTarget.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png",
       "duration": 4.0,
       "eyebrow": "PROJECT CITY",
       "title": "Command the city under pressure",
@@ -32,7 +32,7 @@
     },
     {
       "name": "Battle HUD",
-      "source": "Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png",
+      "source": "Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png",
       "duration": 4.0,
       "eyebrow": "REAL-TIME COMMAND",
       "title": "Move squads. Hold lines. Control objectives.",
@@ -41,7 +41,7 @@
     },
     {
       "name": "Operation Dashboard",
-      "source": "Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png",
+      "source": "Design/VisualLockLayered/SCN-11_OperationsDashboard/reference/SCN-11_OperationsDashboard_Landscape_Target.png",
       "duration": 4.0,
       "eyebrow": "PERSISTENT OPERATION",
       "title": "Recover districts between missions",
@@ -59,7 +59,7 @@
     },
     {
       "name": "Mission Result",
-      "source": "Design/VisualLock/POP-05_MissionResult/POP-05_MissionResult_Landscape_Target.png",
+      "source": "Design/VisualLockLayered/POP-05_MissionResult/reference/POP-05_MissionResult_Landscape_Target.png",
       "duration": 4.0,
       "eyebrow": "PLAYER SKILL FIRST",
       "title": "Win through objectives, not purchases",

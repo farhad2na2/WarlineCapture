@@ -1,12 +1,12 @@
-# WarlineCapture Saga Chapter 4: Air And Armor
+# WarlineCapture Campaign Chapter 4: Air And Armor
 
-Date: 2026-05-05
+Date: 2026-05-21
 
 ## Purpose
 
-This document owns Saga Chapter 4 high-level design. Internally this is `Chapter 4`; player-facing title is `Air And Armor`.
+This document owns Campaign Chapter 4 high-level design. Internally this is `Chapter 4`; player-facing title is `Air And Armor`.
 
-Use `../WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` before turning these mission slots into detailed specs. Air/armor warning previews can be strategic, but landing zones, armor routes, breach lanes, and anti-air anchors must be tactical metadata.
+Use `../WarlineCapture_3D_SingleMap_Gameplay_Direction.md` and `../WarlineCapture_Level_And_Mission_Content_Plan.md` before turning these mission slots into detailed specs. Air/armor warning previews, landing zones, armor routes, breach lanes, and anti-air anchors must resolve to metadata on the same 3D operation map.
 
 ## Chapter Role
 

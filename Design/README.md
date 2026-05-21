@@ -146,8 +146,8 @@ The previous visual-lock folders were moved to `Archive/LegacyVisualLock_2026-05
 - Update this index and the root `README.md` whenever a new design document is added.
 - When older docs conflict with `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`, the 2026-05-21 3D single-map direction wins.
 - Do not create new active design work that assumes 2.5D isometric macro tiles or separate strategic/tactical maps unless PM explicitly reopens that decision.
-- Treat archived source mockup JPG references under `Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package` as layout/content reference only; active generated targets live under `VisualLock` or `VisualLockLayered`.
-- Keep canonical generated UI targets under `VisualLock` or `VisualLockLayered`.
+- Treat archived source mockup JPG references under `Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package` as layout/content reference only; active implementation-ready targets live under `VisualLockLayered`.
+- Keep canonical generated UI targets under `VisualLockLayered`; use `VisualLock` only for scratch/reference drafts.
 - Keep production gameplay art references under `VisualReferences`.
 - Keep combat gameplay numbers in `BalanceConfigs` and combat art/presentation references in `VisualConfigs`; do not duplicate balance values into visual files.
 - When two docs disagree, prefer `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` for gameplay/art direction, `WarlineCapture_UIUX_MainMenu_Visual_Contract.md` for Main Menu visuals, and the target-to-canvas workflow for Canvas implementation mechanics.

@@ -4,6 +4,8 @@ Date: 2026-05-04
 
 This catalog is the design-facing source of truth for starter packs, featured offers, and shop items. It maps directly to future ScriptableObject or JSON data under gameplay configs using `RewardService`, profile persistence, and wallet systems.
 
+2026-05-21 display-name rule: Main Menu and top-level store UI should present the compact command-base resources `Credits`, `Supplies`, and `Command`. Existing catalog ids and economy internals may keep `command_authority`, `Materials`, `Fuel`, and `Intel` until the economy migration is designed; surface copy should map them into the compact display language where appropriate.
+
 ## Product Id Convention
 
 Use stable ids before platform-specific product ids are assigned.
@@ -38,7 +40,7 @@ Store products that target an ability or upgrade track must expose `POP-09 Abili
 |---|---|---:|---|---|---|
 | `pc.starter.recon.entry` | Recon Starter Pack | `$4.99` | Account level 1-8 or first 72 hours | 2,500 Credits; 300 Materials; 120 Command Authority; 3 Intel; Ranger Squad unit unlock or 40 parts if owned; Blue Vanguard commander frame | Compact tactical supply case, cyan trim, infantry badge, first-purchase ribbon. |
 | `pc.starter.base_builder.core` | Base Builder Pack | `$9.99` | Account level 3-15; after first build mission | 8,000 Credits; 1,200 Materials; 4 Rush Tickets; Guard Tower blueprint parts x40; Construction Queue skin; 2 Aid Convoys | Heavy construction case, amber/gold trim, crane/fortification icon, material stacks. |
-| `pc.starter.operation_founder.premium` | Operation Founder Pack | `$19.99` | Unlocks when Persistent Operation opens | 12,000 Credits; 2,000 Materials; 350 Command Authority; 6 Intel; 3 Repair Convoys; Founder district map marker set; Operation Founder profile badge | Large command container, cyan/amber dual trim, district map hologram, premium badge. |
+| `pc.starter.operation_founder.premium` | Operation Founder Pack | `$19.99` | Unlocks when Operations opens | 12,000 Credits; 2,000 Materials; 350 Command Authority; 6 Intel; 3 Repair Convoys; Founder district map marker set; Operation Founder profile badge | Large command container, blue/gold command-base trim, district planning display, premium badge. |
 
 ## Featured Offers
 
@@ -119,7 +121,7 @@ Grid:
 
 ## Balance Notes
 
-- Every deterministic gameplay-affecting item should have an earn path through Saga, Operation, profile levels, or events.
+- Every deterministic gameplay-affecting item should have an earn path through Campaign, Operations, profile levels, or events.
 - Paid resource bundles should be useful but not so large that Chapter 1 economy tuning becomes irrelevant.
 - Duplicate starter pack unit unlocks convert to item-specific BlueprintParts.
 - Cosmetic ownership should be permanent and account-wide.

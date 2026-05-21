@@ -92,7 +92,7 @@ No lane may claim Gate 4 readiness, M01 readiness, or M02 unlock based only on s
 
 Before Gate 4 can pass, the public player path must support this golden playthrough:
 
-`Main Menu -> Saga Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup`.
+`Main Menu -> Campaign Map -> M01 First Contact -> Mission Briefing/Loadout -> Deploy -> select rifle squad -> move to tutorial cover -> attack hostile patrol -> enemy destroyed/neutralized -> objective/result popup`.
 
 Pass/fail requirements:
 

@@ -7,11 +7,13 @@ Date: 2026-05-21
 Primary visual target:
 
 ```text
-Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_Source_1672x941.png
-Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_3840x2160.png
+Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png
+Design/VisualLockLayered/SCN-02_MainMenu/layer_manifest.json
 ```
 
-The user-provided command-base reference and the `SCN-02B_MainMenuAlt` layered package are now the active visual direction. The older teal/cyan `Design/VisualLock/MainMenu/MainMenu_Landscape_Visual_Target.png` and `SCN-02_main_menu_mode_select.jpg` are historical comparison material only.
+The user-provided command-base reference remains the active visual direction. The previous `SCN-02B_MainMenuAlt` layered package and older teal/cyan main-menu targets are archived under `Design/Archive/LegacyVisualLock_2026-05-22/` and are historical comparison material only.
+
+The next main-menu visual-lock task is to create a fresh implementation-ready layered pack at `Design/VisualLockLayered/SCN-02_MainMenu/` following `Design/VisualLockLayered/README.md`.
 
 ## Reference Resolution
 
@@ -60,7 +62,7 @@ The user-provided command-base reference and the `SCN-02B_MainMenuAlt` layered p
 
 ## Phase 1 Visual-Lock Implementation
 
-Use the generated command-base target or the `SCN-02B_MainMenuAlt` layered package as the first comparison target, then rebuild as real Canvas pieces.
+Use the user-provided command-base direction as the comparison target, then create the new `SCN-02_MainMenu` layered pack and rebuild as real Canvas pieces.
 
 This is intentional for the first approval pass:
 

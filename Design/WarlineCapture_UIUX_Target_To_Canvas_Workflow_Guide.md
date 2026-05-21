@@ -10,7 +10,7 @@ The target mockup is only the visual contract. The shipped UI must be made from 
 
 For each screen, popup, or reusable panel, start with:
 
-- A canonical target image under `Design/VisualLock/...` or `Design/VisualLockLayered/.../reference`.
+- A canonical target image under `Design/VisualLockLayered/<SurfaceId>/reference/`.
 - A layer pack under `Design/VisualLockLayered/<ScreenId>/layers`.
 - A layer manifest next to the target, for example `Design/VisualLockLayered/<ScreenId>/layer_manifest.json`.
 - The target Unity prefab path, for example `Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab`.

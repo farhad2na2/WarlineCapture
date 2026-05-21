@@ -12,11 +12,11 @@ This plan is grounded in the current WarlineCapture design documents:
 - `Design/WarlineCapture_Gameplay_Features_Detailed_Spec.md`
 - `Design/WarlineCapture_Economy_Reward_Design.md`
 - `Design/WarlineCapture_Balancing_Automated_Test_Plan.md`
-- `Design/WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
+- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 - `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
 - `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
 - `Design/Monetization/WarlineCapture_Monetization_Store_Catalog.md`
-- `Design/VisualLock/*/*_CleanLandscape_Notes.md`
+- `Design/VisualLockLayered/README.md`
 
 ## Monetization Goal
 
@@ -24,11 +24,11 @@ WarlineCapture should monetize like a premium mobile strategy game without damag
 
 The shop should support the three-mode product:
 
-- Saga Campaign: starter support, cosmetics, unlock catch-up, chapter reward bundles.
-- Persistent Operation: OperationSupply drops, armory stock, Black Market rotations, and resource-backed district recovery support.
-- Quick Custom Game: cosmetic themes, map presets, no progression-pressure monetization.
+- Campaign: starter support, cosmetics, unlock catch-up, chapter reward bundles.
+- Operations: OperationSupply drops, armory stock, Black Market rotations, and resource-backed district recovery support.
+- Skirmish: cosmetic themes, map presets, no progression-pressure monetization.
 
-Saga monetization never sells `SagaStars`. Chapter reward bundles mean deterministic resource, BlueprintParts, GearModule, Cosmetic, or Command Authority bundles tied to chapter progress.
+Campaign monetization never sells campaign stars. Chapter reward bundles mean deterministic resource, BlueprintParts, GearModule, Cosmetic, Supplies, or Command bundles tied to chapter progress.
 
 ## Design Principles
 
@@ -42,7 +42,7 @@ Saga monetization never sells `SagaStars`. Chapter reward bundles mean determini
    Avoid casino-style loot presentation. Supply cases should be deterministic bundles or transparent selection boxes with listed contents.
 
 4. Match the visual lock.
-   Store UI uses dark graphite HUD panels, cyan bevels, blue selected states, amber/gold reward accents, Oxanium-like typography, and separate reusable cards/icons.
+   Store UI uses command-base dark black/olive HUD panels, worn metal bevels, olive selected states, amber/gold reward accents, muted blue command-resource accents, Oxanium-like typography, and separate reusable cards/icons.
 
 5. Support live operations.
    The catalog is data-driven so events, rotating offers, and Operation Black Market stock can be tuned without code changes.
@@ -81,7 +81,7 @@ All monetized products must map to canonical reward types in `Design/WarlineCapt
 
 - Store products are catalog entries that grant through `RewardConfig` and `RewardService`; store UI does not write wallet, inventory, progression, or Operation state directly.
 - Store purchases can grant Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, BlueprintParts, GearModule, Cosmetic, UnitUnlock, BuildingUnlock, SupportAbilityUnlock, and OperationSupply.
-- Store purchases cannot directly grant `SagaStars`, `OperationTrust`, `OperationSecurity`, `OperationIntel`, or `OperationInfrastructure`.
+- Store purchases cannot directly grant CampaignStars / legacy `SagaStars`, `OperationTrust`, `OperationSecurity`, `OperationIntel`, or `OperationInfrastructure`.
 - Operation supplies bought in the Store create district value only after the player spends them through authored Operation actions.
 - Duplicate unlocks, gear, and cosmetics use explicit fallback rewards from the economy design.
 
@@ -134,7 +134,7 @@ Starter packs should expire from the main featured area after the account mature
 |---|---|---|
 | Recon Starter Pack | First 24 hours / Chapter 1 | Cheap first-purchase value, focused on onboarding and identity. |
 | Base Builder Pack | Player who likes construction/economy | Helps build and repair without bypassing objective skill. |
-| Operation Founder Pack | Persistent Operation entry | Tactical support for district management and cosmetic prestige. |
+| Operation Founder Pack | Operations entry | Tactical support for district management and cosmetic prestige. |
 
 Detailed contents are in `WarlineCapture_Monetization_Store_Catalog.md`.
 
@@ -146,7 +146,7 @@ The Commander Profile visual lock already includes `REWARD TRACK / SEASON 7`. Th
 - Premium lane: extra cosmetics, deterministic armory bundles, operation supplies, commander frame.
 - No hidden random rewards.
 - No paid-only unit that has no gameplay earn path.
-- No direct SagaStars, OperationTrust, OperationSecurity, OperationIntel, or OperationInfrastructure grants.
+- No direct CampaignStars, OperationTrust, OperationSecurity, OperationIntel, or OperationInfrastructure grants.
 
 Recommended price anchor:
 

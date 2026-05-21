@@ -124,7 +124,7 @@ Update these UI targets and screen docs:
 | `SCN-10 Unit Command Wheel` | Support 3D selection context: move, attack, hold, board, disembark, support, breach, scan, defend, and cancel where available. |
 | `SCN-11 Operations Dashboard` | Reframe as command planning and district consequence management that sends the player into 3D operation maps. |
 | `SCN-12 District Detail` | Replace pure strategic-district language with town/sector readiness, hostile-cell intel, civilian density, infrastructure, and deployment options. |
-| `SCN-13 Quick Custom Game Setup` | Rename player-facing surface to Skirmish. Preserve configurable rules but align visuals to the new command-base style. |
+| `SCN-13 Skirmish Setup` | Preserve configurable rules but align visuals to the new command-base style. |
 | `SCN-14 Store` | Keep economy guardrails, but update visual chrome to the command-base material system and resource labels. |
 | `SCN-19 Armory` | Use the config-backed unit, vehicle, aircraft, support, and building roster as the inspection source. |
 | `POP-01 Threat Alert` | Treat alerts as jumps inside the same 3D map, not as separate strategic-route previews. |

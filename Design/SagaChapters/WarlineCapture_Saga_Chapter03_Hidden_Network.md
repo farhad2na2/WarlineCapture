@@ -1,12 +1,12 @@
 # WarlineCapture Saga Chapter 3: Hidden Network
 
-Date: 2026-05-05
+Date: 2026-05-21
 
 ## Purpose
 
-This document owns Saga Chapter 3 high-level design. Internally this is `Chapter 3`; player-facing title is `Hidden Network`.
+This document owns Campaign Chapter 3 high-level design. Internally this is `Chapter 3`; player-facing title is `Hidden Network`.
 
-Use `../WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` before turning these mission slots into detailed specs. Intel/raid previews are strategic context; close-up raid, ambush, extraction, and breach play must use tactical map metadata.
+Use `../WarlineCapture_3D_SingleMap_Gameplay_Direction.md` before turning these mission slots into detailed specs. Intel/raid previews, minimap, deployment, and battle view are camera/UI states on the same 3D operation map.
 
 ## Chapter Role
 
@@ -49,7 +49,7 @@ Use Standard bands for most missions. District Raid missions should include expl
 ## Validation Focus
 
 - Mission Briefing shows enemy intel and confidence clearly.
-- Strategic intel previews and tactical objective/ambush anchors resolve through map ids and metadata instead of baked preview art.
+- Intel previews and objective/ambush anchors resolve through 3D operation-map ids and metadata instead of baked preview art.
 - Raid confirmation surfaces explain collateral risk and cost.
 - Intel rewards and OperationIntel deltas are not confused with wallet Intel.
 - Hidden Cell ambushes do not spawn unfairly on top of the player.

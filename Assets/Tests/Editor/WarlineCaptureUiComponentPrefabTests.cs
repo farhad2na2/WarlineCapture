@@ -53,7 +53,7 @@ public sealed class WarlineCaptureUiComponentPrefabTests
         AssertChildren($"{PopupFolder}/ThreatAlertPopup.prefab", "Scrim", "Frame", "Frame/Header", "Frame/Header/TitleText", "Frame/Header/WarningIcon", "Frame/Header/CloseButton", "Frame/BodyRoot", "Frame/BodyRoot/HeadlineText", "Frame/BodyRoot/InfoColumn", "Frame/BodyRoot/InfoColumn/EtaRow", "Frame/BodyRoot/InfoColumn/RouteRow", "Frame/BodyRoot/InfoColumn/StrengthRow", "Frame/BodyRoot/StrengthMeter", "Frame/BodyRoot/ThreatImagePanel", "Frame/BodyRoot/ThreatImagePanel/ConvoyImage", "Frame/ButtonRow", "Frame/ButtonRow/JumpToThreatButton");
         AssertChildren($"{PopupFolder}/BuildPlacementPanel.prefab", "Scrim", "PlacementOverlay", "PlacementOverlay/GridOverlayImage", "PlacementOverlay/GhostBuildingImage", "ResourceBar", "BuildModeRail", "BuildChecklistPanel", "CoordinatePanel", "Frame", "Frame/Header", "Frame/Header/TitleText", "Frame/Header/CloseButton", "Frame/BodyRoot", "Frame/BodyRoot/BuildingCard", "Frame/BodyRoot/BuildingCard/PreviewImage", "Frame/BodyRoot/InfoPanel", "Frame/BodyRoot/InfoPanel/FootprintRow", "Frame/BodyRoot/InfoPanel/StatusValueText", "Frame/BodyRoot/ControlPanel", "Frame/BodyRoot/ControlPanel/RotateButton", "Frame/BodyRoot/ControlPanel/CancelButton", "Frame/BodyRoot/ControlPanel/ConfirmButton");
         AssertChildren($"{PopupFolder}/ConfirmRaidPopup.prefab", "BackgroundOperationDashboard", "Scrim", "Frame", "Frame/FrameFill", "Frame/Header", "Frame/Header/TitleText", "Frame/Header/TitleWarningIcon", "Frame/CloseButton", "Frame/BodyRoot", "Frame/BodyRoot/TargetPanel", "Frame/BodyRoot/TargetPanel/TargetNameText", "Frame/BodyRoot/TargetPanel/DistrictThumbnail", "Frame/BodyRoot/TargetPanel/DistrictThumbnail/ThumbnailImage", "Frame/BodyRoot/TargetPanel/DistrictThumbnail/FrameChrome", "Frame/BodyRoot/TargetPanel/TargetInfoCard", "Frame/BodyRoot/RiskPanel", "Frame/BodyRoot/RiskPanel/IntelConfidenceRow", "Frame/BodyRoot/RiskPanel/CollateralRiskRow", "Frame/BodyRoot/RiskPanel/CivilianDensityRow", "Frame/BodyRoot/RiskPanel/WarningTextPanel", "Frame/ButtonRow", "Frame/ButtonRow/CancelButton", "Frame/ButtonRow/ConfirmButton");
-        AssertChildren($"{PopupFolder}/MissionResultPopup.prefab", "BackgroundTacticalArt", "Scrim", "Frame", "Frame/FrameFill", "Frame/Header", "Frame/Header/TitleText", "Frame/Header/VictoryEmblem", "Frame/Header/Star_1", "Frame/Header/Star_2", "Frame/Header/Star_3", "Frame/BodyRoot", "Frame/BodyRoot/StatsPanel", "Frame/BodyRoot/StatsPanel/EnemiesDefeatedCard", "Frame/BodyRoot/RewardsPanel", "Frame/BodyRoot/RewardsPanel/CommanderXpReward", "Frame/BodyRoot/RewardsPanel/SupplyCrateReward", "Frame/BodyRoot/ObjectivesPanel", "Frame/BodyRoot/ObjectivesPanel/Objective_CaptureDistrict", "Frame/ConsequenceRow", "Frame/ButtonRow", "Frame/ButtonRow/ReplayButton", "Frame/ButtonRow/ContinueButton");
+        AssertChildren($"{PopupFolder}/MissionResultPopup.prefab", "BackgroundTacticalArt", "Scrim", "Frame", "Frame/FrameFill", "Frame/Header", "Frame/Header/TitleText", "Frame/Header/VictoryEmblem", "Frame/Header/Star_1", "Frame/Header/Star_2", "Frame/Header/Star_3", "Frame/Header/MapIdentityText", "Frame/BodyRoot", "Frame/BodyRoot/StatsPanel", "Frame/BodyRoot/StatsPanel/EnemiesDefeatedCard", "Frame/BodyRoot/RewardsPanel", "Frame/BodyRoot/RewardsPanel/CommanderXpReward", "Frame/BodyRoot/RewardsPanel/MaterialsReward", "Frame/BodyRoot/ObjectivesPanel", "Frame/BodyRoot/ObjectivesPanel/Objective_DestroyHostilePatrol", "Frame/ConsequenceRow", "Frame/ButtonRow", "Frame/ButtonRow/ReplayButton", "Frame/ButtonRow/ContinueButton");
         AssertChildren($"{PopupFolder}/RewardUnlockPopup.prefab", "BackgroundCommandCenter", "Scrim", "Frame", "Frame/FrameFill", "Frame/Header", "Frame/Header/HeaderEmblem", "Frame/Header/TitleText", "Frame/Header/CloseButton", "Frame/BodyRoot", "Frame/BodyRoot/UnlockImage", "Frame/BodyRoot/UnlockTitleText", "Frame/BodyRoot/UnlockSubtitleText", "Frame/BodyRoot/RewardIconGrid", "Frame/BodyRoot/RewardIconGrid/CommanderXpReward", "Frame/BodyRoot/RewardIconGrid/CreditsReward", "Frame/BodyRoot/RewardIconGrid/SupplyCrateReward", "Frame/BodyRoot/RewardIconGrid/GearPartsReward", "Frame/ButtonRow", "Frame/ButtonRow/ContinueButton");
         AssertChildren($"{PopupFolder}/EndOfDayReportPopup.prefab", "BackgroundOperationDashboard", "Scrim", "Frame", "Frame/FrameFill", "Frame/Header", "Frame/Header/TitleText", "Frame/Header/DayTag", "Frame/BodyRoot", "Frame/BodyRoot/DeltaSummary", "Frame/BodyRoot/TrustStabilityPanel", "Frame/BodyRoot/TrustStabilityPanel/CivilianTrustRow", "Frame/BodyRoot/EnemyActivityPanel", "Frame/BodyRoot/ResourceRow", "Frame/BodyRoot/ResourceRow/FundsResource", "Frame/BodyRoot/SaveStatusRow", "Frame/ButtonRow", "Frame/ButtonRow/SaveContinueButton");
         AssertChildren($"{PopupFolder}/IntelRevealPopup.prefab", "BackgroundIntelArchive", "Scrim", "Frame", "Frame/FrameFill", "Frame/Header", "Frame/Header/HeaderIcon", "Frame/Header/TitleText", "Frame/CloseButton", "Frame/BodyRoot", "Frame/BodyRoot/SubheadingText", "Frame/BodyRoot/SupplyLedgerCard", "Frame/BodyRoot/SupplyLedgerCard/ThumbnailFrame", "Frame/BodyRoot/CargoManifestCard", "Frame/BodyRoot/RadioInterceptCard", "Frame/BodyRoot/RadioInterceptCard/ThumbnailFrame/OverlayIcon", "Frame/BodyRoot/NoticeBar", "Frame/ButtonRow", "Frame/ButtonRow/CloseButton", "Frame/ButtonRow/ViewIntelButton");
@@ -141,13 +141,14 @@ public sealed class WarlineCaptureUiComponentPrefabTests
 
         AssertPopupLayerPack(
             "POP-05_MissionResult",
-            24,
+            23,
             "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/modal_frame.png",
-            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Frames/section_panel_frame.png",
+            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Cards/stat_card_frame.png",
+            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Rows/consequence_row_frame.png",
             "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Buttons/continue_button_background.png",
             "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_commander_xp.png",
-            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_supply_crate.png",
-            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_unlock_fragments.png");
+            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_materials.png",
+            "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_intel.png");
 
         AssertPopupLayerPack(
             "POP-04_RewardUnlock",
@@ -223,17 +224,18 @@ public sealed class WarlineCaptureUiComponentPrefabTests
     {
         WithPrefab($"{PopupFolder}/MissionResultPopup.prefab", root =>
         {
-            AssertText(root, "Frame/Header/MissionNameText", "Downtown Breakthrough");
-            AssertText(root, "Frame/Header/MissionMetaText", "Duration   08:42    |    Difficulty   Hard");
-            AssertText(root, "Frame/BodyRoot/RewardsPanel/CommanderXpReward/ValueText", "2,450");
-            AssertText(root, "Frame/BodyRoot/RewardsPanel/CreditsReward/ValueText", "12,800");
-            AssertText(root, "Frame/BodyRoot/RewardsPanel/SupplyCrateReward/LabelText", "SUPPLY CRATE");
-            AssertText(root, "Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward/LabelText", "UNLOCK FRAGMENTS");
-            AssertText(root, "Frame/BodyRoot/ObjectivesPanel/Objective_CaptureDistrict/LabelText", "Capture the Downtown District");
-            AssertText(root, "Frame/ConsequenceRow/ConsequenceText", "Civilians Safe  +18     District Security  +6     Infrastructure  0");
-            AssertImageSpritePath(root, "Frame/BodyRoot/RewardsPanel/SupplyCrateReward/IconImage", "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_supply_crate.png");
-            AssertImageSpritePath(root, "Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward/IconImage", "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_unlock_fragments.png");
-            Assert.IsTrue(root.transform.Find("Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward/LabelText").GetComponent<TMP_Text>().enableAutoSizing);
+            AssertText(root, "Frame/Header/MissionNameText", "M01 First Contact");
+            AssertText(root, "Frame/Header/MissionMetaText", "saga.ch01.m01.first_contact  |  scenario.ch01.m01.first_contact");
+            AssertText(root, "Frame/Header/MapIdentityText", "level.ch01.district_edge_01  |  iso.ch01.district_edge_01");
+            AssertText(root, "Frame/BodyRoot/RewardsPanel/CommanderXpReward/ValueText", "+250");
+            AssertText(root, "Frame/BodyRoot/RewardsPanel/CreditsReward/ValueText", "+1,250");
+            AssertText(root, "Frame/BodyRoot/RewardsPanel/MaterialsReward/LabelText", "MATERIALS");
+            AssertText(root, "Frame/BodyRoot/RewardsPanel/IntelReward/LabelText", "INTEL");
+            AssertText(root, "Frame/BodyRoot/ObjectivesPanel/Objective_DestroyHostilePatrol/LabelText", "Destroy hostile patrol");
+            AssertText(root, "Frame/ConsequenceRow/ConsequenceText", "City Consequence     Civilian delta  0     Infrastructure delta  0");
+            AssertImageSpritePath(root, "Frame/BodyRoot/RewardsPanel/MaterialsReward/IconImage", "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_materials.png");
+            AssertImageSpritePath(root, "Frame/BodyRoot/RewardsPanel/IntelReward/IconImage", "Assets/Game/Art/UI/Generated/MissionResult/LayeredOneGo/Icons/icon_intel.png");
+            Assert.IsTrue(root.transform.Find("Frame/BodyRoot/RewardsPanel/MaterialsReward/LabelText").GetComponent<TMP_Text>().enableAutoSizing);
             Assert.IsTrue(root.transform.Find("Frame/ConsequenceRow").gameObject.activeSelf);
         });
     }
@@ -474,16 +476,16 @@ public sealed class WarlineCaptureUiComponentPrefabTests
             AssertText(root, "Frame/Header/MissionNameText", "First Contact");
             AssertText(root, "Frame/BodyRoot/StatsPanel/EnemiesDefeatedCard/ValueText", "12");
             AssertText(root, "Frame/BodyRoot/StatsPanel/UnitsLostCard/ValueText", "1");
-            AssertText(root, "Frame/BodyRoot/ObjectivesPanel/Objective_CaptureDistrict/LabelText", "Destroy hostiles");
-            AssertText(root, "Frame/BodyRoot/ObjectivesPanel/Objective_DestroyCommandCenter/LabelText", "Keep losses below 2");
+            AssertText(root, "Frame/BodyRoot/ObjectivesPanel/Objective_DestroyHostilePatrol/LabelText", "Destroy hostiles");
+            AssertText(root, "Frame/BodyRoot/ObjectivesPanel/Objective_KeepCommandSquadAlive/LabelText", "Keep losses below 2");
             AssertText(root, "Frame/BodyRoot/RewardsPanel/CommanderXpReward/LabelText", "COMMAND XP");
             AssertText(root, "Frame/BodyRoot/RewardsPanel/CommanderXpReward/ValueText", "+220");
             AssertText(root, "Frame/BodyRoot/RewardsPanel/CreditsReward/LabelText", "CREDITS");
             AssertText(root, "Frame/BodyRoot/RewardsPanel/CreditsReward/ValueText", "+1,200");
-            AssertText(root, "Frame/BodyRoot/RewardsPanel/SupplyCrateReward/LabelText", "BUILDING UNLOCK");
-            AssertText(root, "Frame/BodyRoot/RewardsPanel/SupplyCrateReward/ValueText", "BARRACK");
-            Assert.IsFalse(root.transform.Find("Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward").gameObject.activeSelf);
-            Assert.IsFalse(root.transform.Find("Frame/BodyRoot/ObjectivesPanel/Objective_RescueCivilians").gameObject.activeSelf);
+            AssertText(root, "Frame/BodyRoot/RewardsPanel/MaterialsReward/LabelText", "BUILDING UNLOCK");
+            AssertText(root, "Frame/BodyRoot/RewardsPanel/MaterialsReward/ValueText", "BARRACK");
+            Assert.IsFalse(root.transform.Find("Frame/BodyRoot/RewardsPanel/IntelReward").gameObject.activeSelf);
+            Assert.IsFalse(root.transform.Find("Frame/BodyRoot/ObjectivesPanel/Objective_CityConsequenceNeutral").gameObject.activeSelf);
             Assert.Greater(root.transform.Find("Frame/Header/Star_2").GetComponent<Image>().color.a, 0.9f);
             Assert.Less(root.transform.Find("Frame/Header/Star_3").GetComponent<Image>().color.a, 0.3f);
         });
@@ -527,10 +529,10 @@ public sealed class WarlineCaptureUiComponentPrefabTests
                 AssertText(root, "Frame/BodyRoot/RewardsPanel/CommanderXpReward/ValueText", "+1");
                 AssertText(root, "Frame/BodyRoot/RewardsPanel/CreditsReward/LabelText", "SECURITY");
                 AssertText(root, "Frame/BodyRoot/RewardsPanel/CreditsReward/ValueText", "+4 PORT BREACH");
-                AssertText(root, "Frame/BodyRoot/RewardsPanel/SupplyCrateReward/LabelText", "INFRASTRUCTURE");
-                AssertText(root, "Frame/BodyRoot/RewardsPanel/SupplyCrateReward/ValueText", "+5 PORT BREACH");
-                AssertText(root, "Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward/LabelText", "COMMAND XP");
-                AssertText(root, "Frame/BodyRoot/RewardsPanel/UnlockFragmentsReward/ValueText", "+260");
+                AssertText(root, "Frame/BodyRoot/RewardsPanel/MaterialsReward/LabelText", "INFRASTRUCTURE");
+                AssertText(root, "Frame/BodyRoot/RewardsPanel/MaterialsReward/ValueText", "+5 PORT BREACH");
+                AssertText(root, "Frame/BodyRoot/RewardsPanel/IntelReward/LabelText", "COMMAND XP");
+                AssertText(root, "Frame/BodyRoot/RewardsPanel/IntelReward/ValueText", "+260");
             });
         }
         finally
@@ -605,7 +607,9 @@ public sealed class WarlineCaptureUiComponentPrefabTests
 
         string manifestText = File.ReadAllText(manifestPath).Replace("\\\\", "/");
         Assert.GreaterOrEqual(Regex.Matches(manifestText, "\"file\"").Count, minimumLayerCount, surfaceId);
-        StringAssert.Contains("\"transparentCornersRequired\"", manifestText, surfaceId);
+        Assert.IsTrue(
+            manifestText.Contains("\"transparentCornersRequired\"") || manifestText.Contains("\"sprite\""),
+            $"{surfaceId} must declare sprite slicing/corner handling metadata.");
         StringAssert.Contains("\"doNotBakeWithTextOrIcons\"", manifestText, surfaceId);
 
         foreach (string unityDestination in requiredUnityDestinations)

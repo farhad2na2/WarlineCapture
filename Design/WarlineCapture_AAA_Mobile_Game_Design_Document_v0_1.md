@@ -13,8 +13,10 @@ Reference paths:
 
 - `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/VisualLockLayered/README.md`
 - `Assets/Game/Configs/Prefabs`
-- `Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_Source_1672x941.png`
+
+Legacy visual-lock packs were archived under `Design/Archive/LegacyVisualLock_2026-05-22/` and are comparison/history only. New production visual targets must be recreated under `Design/VisualLockLayered/<SurfaceId>/` using the active 3D single-map and command-base direction.
 
 ## Recommended Modes
 ### 1. Campaign

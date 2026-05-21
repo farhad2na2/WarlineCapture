@@ -1,10 +1,12 @@
 # WarlineCapture Saga Chapter 1: First Response
 
-Date: 2026-05-05
+Date: 2026-05-21
+
+Status: Active chapter content, updated for the 3D single-map direction. File names and some internal ids may keep `Saga` / `QuickCustom` for runtime compatibility, but player-facing language should be Campaign / Skirmish.
 
 ## Purpose
 
-This document owns the detailed level-by-level and mission-by-mission design for Saga Chapter 1. Internally this is `Chapter 1`; player-facing title is `First Response`.
+This document owns the detailed level-by-level and mission-by-mission design for Campaign Chapter 1. Internally this is `Chapter 1`; player-facing title is `First Response`.
 
 Read after:
 
@@ -14,7 +16,7 @@ Read after:
 - `../WarlineCapture_Economy_Reward_Design.md`
 - `../WarlineCapture_Balancing_Automated_Test_Plan.md`
 - `../WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `../WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `../WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `../WarlineCapture_M01_FirstContact_Production_Contract.md`
 
 ## Terminology
@@ -24,18 +26,18 @@ WarlineCapture uses these terms for Chapter 1 content:
 | Term | Meaning | Chapter 1 Example |
 |---|---|---|
 | Mission | Player-facing authored content unit with objective, stars, rewards, consequence, and result. | `First Contact` |
-| ScenarioSetup | Tactical configuration used by a mission: map id, starts, resources, enemy setup, allowed catalog, objectives, rewards, and encounters. | `scenario.ch01.m01.first_contact` |
-| Level / Map | Reusable battlefield layout referenced by `ScenarioSetup`. It defines terrain, roads, zones, routes, spawn anchors, civilian areas, objective anchors, preview art, and minimap art. | `level.ch01.district_edge_01` |
+| ScenarioSetup | 3D operation configuration used by a mission: map id, starts, resources, enemy setup, allowed catalog, objectives, rewards, and encounters. | `scenario.ch01.m01.first_contact` |
+| OperationMap | Reusable 3D battlefield layout referenced by `ScenarioSetup`. It defines terrain, roads, zones, routes, spawn anchors, civilian areas, objective anchors, deployment zones, planning cameras, and minimap projection. | `opmap.ch01.district_edge_01` |
 
 Relationship:
 
 ```text
-Mission -> ScenarioSetup -> Level / Map
+Mission -> ScenarioSetup -> OperationMap
 ```
 
-Do not use `Level` as a synonym for `Mission` in config names or UI. A Saga node launches a Mission; the Mission references a ScenarioSetup; the ScenarioSetup references a Level / Map.
+Do not use `Level` as a synonym for `Mission` in config names or UI. A Campaign node launches a Mission; the Mission references a ScenarioSetup; the ScenarioSetup references an OperationMap.
 
-Chapter 1 follows the strategic/tactical map split in `../WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`: `MapPreviewArtId` and `MinimapArtId` are planning/navigation art; `IsoMapId` resolves the close-up playable tactical map package and metadata used for movement, attack, build placement, objective markers, threat jumps, and FTUE highlights.
+Chapter 1 follows the 3D single-map direction in `../WarlineCapture_3D_SingleMap_Gameplay_Direction.md`: planning, briefing, minimap, deployment, threat, and battle views are camera/UI layers on the same 3D operation map.
 
 ## Chapter Role
 
@@ -59,39 +61,39 @@ The first district is destabilizing. The player establishes command, restores a 
 
 ## Level Library
 
-These are the Chapter 1 tactical level/map layouts. The same level can support a Saga mission, a Quick Custom preset/probe, or an Operation event if the ScenarioSetup changes the objective package.
+These are the Chapter 1 3D operation-map layouts. The same operation map can support a Campaign mission, a Skirmish preset/probe, or an Operations event if the ScenarioSetup changes the objective package.
 
-| LevelId | Player-Facing Use | Layout Purpose | Reused By |
+| OperationMapId | Player-Facing Use | Layout Purpose | Reused By |
 |---|---|---|---|
-| `level.ch01.district_edge_01` | First unstable civilian block. | Small road, command point, civilian block, visible patrol route, simple cover. | M01 First Contact, QuickCustom_Tutorial_Intercept, Operation Patrol Intercept. |
-| `level.ch01.forward_post_01` | Forward operating point. | Buildable lot, repair site, short approach lanes, civilian edge zone. | M02 Establish The Base, Infrastructure Repair Operation hook. |
-| `level.ch01.convoy_approach_01` | Convoy approach to district core. | Defensive line, radar/guard-tower anchor, road convoy lane, base breach boundary. | M03 Radar Warning, QuickCustom_BaseDefense_Convoy. |
-| `level.ch01.landing_zone_01` | Threatened landing zone. | Landing pad/road junction, extraction zone, rooftop/side-street ambush lanes. | M04 Airlift, QuickCustom_Airlift_Extraction. |
-| `level.ch01.fortified_node_01` | Fortified hostile node. | Outer approach, wall/gate breach point, enemy core, flank route, civilian exclusion zone. | M05 Breach Assault, QuickCustom_Breach_Assault. |
+| `opmap.ch01.district_edge_01` | First unstable civilian block. | Small road, command point, civilian block, visible patrol route, simple cover. | M01 First Contact, Skirmish Tutorial Intercept, Operations Patrol Intercept. |
+| `opmap.ch01.forward_post_01` | Forward operating point. | Buildable lot, repair site, short approach lanes, civilian edge zone. | M02 Establish The Base, Infrastructure Repair Operation hook. |
+| `opmap.ch01.convoy_approach_01` | Convoy approach to district core. | Defensive line, radar/guard-tower anchor, road convoy lane, base breach boundary. | M03 Radar Warning, Skirmish Base Defense Convoy. |
+| `opmap.ch01.landing_zone_01` | Threatened landing zone. | Landing pad/road junction, extraction zone, rooftop/side-street ambush lanes. | M04 Airlift, Skirmish Airlift Extraction. |
+| `opmap.ch01.fortified_node_01` | Fortified hostile node. | Outer approach, wall/gate breach point, enemy core, flank route, civilian exclusion zone. | M05 Breach Assault, Skirmish Breach Assault. |
 
-## Chapter 1 Map View Contract
+## Chapter 1 Operation Map Contract
 
-Each Chapter 1 level needs a strategic preview, minimap, tactical map package, and metadata-backed validation scene.
+Each Chapter 1 operation map needs a planning camera, minimap projection, 3D playable map, and metadata-backed validation scene.
 
-| LevelId | IsoMapId | Strategic Preview | Minimap | Tactical Metadata Must Include |
-|---|---|---|---|---|
-| `level.ch01.district_edge_01` | `iso.ch01.district_edge_01` | `preview.ch01.first_contact` | `minimap.ch01.first_contact` | player squad spawn, hostile patrol spawn/route, walkable road/sidewalk, civilian edge zone, objective target group, camera bounds. |
-| `level.ch01.forward_post_01` | `iso.ch01.forward_post_01` | `preview.ch01.establish_base` | `minimap.ch01.establish_base` | buildable lot/pads, forward barracks socket, resource/cost tutorial anchors, civilian edge zone, first defense route, camera bounds. |
-| `level.ch01.convoy_approach_01` | `iso.ch01.convoy_approach_01` | `preview.ch01.radar_warning` | `minimap.ch01.radar_warning` | convoy route, radar/guard-tower anchors, base breach boundary, road/sidewalk surfaces, threat jump anchor, camera bounds. |
-| `level.ch01.landing_zone_01` | `iso.ch01.landing_zone_01` | `preview.ch01.airlift` | `minimap.ch01.airlift` | landing zone, extraction zone, transport route, ambush lanes, fuel/transport tutorial anchors, camera bounds. |
-| `level.ch01.fortified_node_01` | `iso.ch01.fortified_node_01` | `preview.ch01.breach_assault` | `minimap.ch01.breach_assault` | breach target, enemy core, flank route, approach cells, civilian exclusion zone, counterattack route, camera bounds. |
+| OperationMapId | Planning Camera | Minimap Projection | Operation Metadata Must Include |
+|---|---|---|---|
+| `opmap.ch01.district_edge_01` | `camera.ch01.first_contact.planning` | `minimap.ch01.first_contact` | player squad spawn, hostile patrol spawn/route, walkable road/sidewalk, civilian edge zone, objective target group, camera bounds. |
+| `opmap.ch01.forward_post_01` | `camera.ch01.establish_base.planning` | `minimap.ch01.establish_base` | buildable lot/pads, forward barracks socket, resource/cost tutorial anchors, civilian edge zone, first defense route, camera bounds. |
+| `opmap.ch01.convoy_approach_01` | `camera.ch01.radar_warning.planning` | `minimap.ch01.radar_warning` | convoy route, radar/guard-tower anchors, base breach boundary, road/sidewalk surfaces, threat jump anchor, camera bounds. |
+| `opmap.ch01.landing_zone_01` | `camera.ch01.airlift.planning` | `minimap.ch01.airlift` | landing zone, extraction zone, transport route, ambush lanes, fuel/transport tutorial anchors, camera bounds. |
+| `opmap.ch01.fortified_node_01` | `camera.ch01.breach_assault.planning` | `minimap.ch01.breach_assault` | breach target, enemy core, flank route, approach cells, civilian exclusion zone, counterattack route, camera bounds. |
 
-Tactical ground art must not include baked soldiers, vehicles, aircraft, player buildings, enemy targets, health bars, objective icons, selection rings, or command markers. Those are runtime entities/overlays.
+Static background art must not include baked soldiers, vehicles, aircraft, player buildings, enemy targets, health bars, objective icons, selection rings, or command markers. Those are runtime entities/overlays.
 
 ## Mission Matrix
 
-| Mission | Level / Map | Archetype | Threat Family | Teaching Goal | Required Objective | Star Goals | Rewards | Balance Band |
+| Mission | OperationMap | Archetype | Threat Family | Teaching Goal | Required Objective | Star Goals | Rewards | Balance Band |
 |---|---|---|---|---|---|---|---|---|
-| M01 First Contact | `level.ch01.district_edge_01` | Patrol Intercept | Tutorial Cell | Select, move, attack, read objective. | Destroy hostile patrol. | Complete mission; no own unit loss; finish under 4:00. | CommanderXP, Credits. | Tutorial |
-| M02 Establish The Base | `level.ch01.forward_post_01` | Infrastructure Repair / Base Defense Lite | Tutorial Cell | Build, spend, produce. | Build forward barracks and produce squad. | Build under 5:00; keep civilians safe; no base breach. | CommanderXP, Credits, Materials. | Tutorial |
-| M03 Radar Warning | `level.ch01.convoy_approach_01` | Base Defense | Armored Column | Read warning, prepare defense, stop convoy. | Survive convoy attack and prevent core breach. | Build radar/guard tower; no civilian deaths; destroy convoy before base damage. | Materials, `Building_GuardTower`, `ability.radar_ping`. | Standard |
-| M04 Airlift | `level.ch01.landing_zone_01` | Airlift Extraction | Hidden Cell / Air Assault | Use transport and landing-zone safety. | Extract endangered squad/civilians or reinforce landing zone. | No aircraft loss; complete under 6:00; low civilian loss. | Fuel, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor`. | Standard |
-| M05 Breach Assault | `level.ch01.fortified_node_01` | Breach Assault | Defensive Garrison | Combined arms, breach route, fortified target. | Destroy fortified enemy core. | Use breach route; vehicle survives; complete under 9:00. | CommanderXP, Credits, `Unit_Chr_Ghillie_Male_01`, `upgrade.vehicle.apc_armor` BlueprintParts. | Standard |
+| M01 First Contact | `opmap.ch01.district_edge_01` | Patrol Intercept | Tutorial Cell | Select, move, attack, read objective. | Destroy hostile patrol. | Complete mission; no own unit loss; finish under 4:00. | CommanderXP, Credits. | Tutorial |
+| M02 Establish The Base | `opmap.ch01.forward_post_01` | Infrastructure Repair / Base Defense Lite | Tutorial Cell | Build, spend, produce. | Build forward barracks and produce squad. | Build under 5:00; keep civilians safe; no base breach. | CommanderXP, Credits, Materials. | Tutorial |
+| M03 Radar Warning | `opmap.ch01.convoy_approach_01` | Base Defense | Armored Column | Read warning, prepare defense, stop convoy. | Survive convoy attack and prevent core breach. | Build radar/guard tower; no civilian deaths; destroy convoy before base damage. | Materials, `Building_GuardTower`, `ability.radar_ping`. | Standard |
+| M04 Airlift | `opmap.ch01.landing_zone_01` | Airlift Extraction | Hidden Cell / Air Assault | Use transport and landing-zone safety. | Extract endangered squad/civilians or reinforce landing zone. | No aircraft loss; complete under 6:00; low civilian loss. | Fuel, `upgrade.air.transport_aircraft` BlueprintParts, `ability.evacuation_corridor`. | Standard |
+| M05 Breach Assault | `opmap.ch01.fortified_node_01` | Breach Assault | Defensive Garrison | Combined arms, breach route, fortified target. | Destroy fortified enemy core. | Use breach route; vehicle survives; complete under 9:00. | CommanderXP, Credits, `Unit_Chr_Ghillie_Male_01`, `upgrade.vehicle.apc_armor` BlueprintParts. | Standard |
 
 ## M01 Detailed Spec: First Contact
 
@@ -103,7 +105,7 @@ Implementation handoff: use `../WarlineCapture_M01_FirstContact_Production_Contr
 |---|---|
 | MissionId | `saga.ch01.m01.first_contact` |
 | Title | First Contact |
-| Mode | Saga Campaign |
+| Mode | Campaign |
 | ChapterOrDay | Chapter 1, Mission 1 |
 | MissionArchetype | Patrol Intercept |
 | ThreatFamily | Tutorial Cell |
@@ -115,10 +117,9 @@ Implementation handoff: use `../WarlineCapture_M01_FirstContact_Production_Contr
 | Field | Value |
 |---|---|
 | ScenarioSetupId | `scenario.ch01.m01.first_contact` |
-| LevelId | `level.ch01.district_edge_01` |
-| IsoMapId | `iso.ch01.district_edge_01` |
-| MapPreviewArtId | `preview.ch01.first_contact` |
-| MinimapArtId | `minimap.ch01.first_contact` |
+| OperationMapId | `opmap.ch01.district_edge_01` |
+| PlanningCameraId | `camera.ch01.first_contact.planning` |
+| MinimapProjectionId | `minimap.ch01.first_contact` |
 | Player Start | One rifle squad near command point. |
 | Enemy Start | One small hostile patrol on a visible road route. |
 | Starting Credits | Low tutorial amount; no required spending. |
@@ -165,7 +166,7 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 
 | Surface | Purpose |
 |---|---|
-| SCN-05 Saga Map | Shows Mission 1 unlocked and selected. |
+| SCN-05 Campaign Map | Shows Mission 1 unlocked and selected. |
 | SCN-06 Mission Briefing | Shows objective, star goals, enemy intel, and reward preview. |
 | SCN-08 Battle HUD | Shows objective tracker, squad tray, command buttons, minimap if available. |
 | POP-05 Mission Result | Shows outcome, stars, stats, and rewards. |
@@ -193,11 +194,11 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 | Star test | Completion, no-loss, and under-time stars evaluate independently. |
 | Reward test | Briefing reward preview and Mission Result grant reference the same `RewardConfig`. |
 | UI contract test | Mission Briefing, HUD objective row, and Mission Result fields map to `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`. |
-| Balance probe | `Saga_Chapter1_Mission1` writes report with duration, first contact, losses, and reward data. |
+| Balance probe | `Campaign_Chapter1_Mission1` writes report with duration, first contact, losses, and reward data. |
 
 ### Failure And Retry Rules
 
-- Defeat does not consume Saga progress.
+- Defeat does not consume Campaign progress.
 - Retry rebuilds the same `GameLaunchPayload`.
 - Best star count is stored only on victory.
 - First-clear rewards grant once.
@@ -211,7 +212,7 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 |---|---|
 | MissionId | `saga.ch01.m02.establish_base` |
 | Title | Establish The Base |
-| Mode | Saga Campaign |
+| Mode | Campaign |
 | ChapterOrDay | Chapter 1, Mission 2 |
 | MissionArchetype | Infrastructure Repair / Base Defense Lite |
 | ThreatFamily | Tutorial Cell |
@@ -223,10 +224,9 @@ Do not grant Materials, Fuel, Intel, Command Authority, Rush Tickets, store item
 | Field | Value |
 |---|---|
 | ScenarioSetupId | `scenario.ch01.m02.establish_base` |
-| LevelId | `level.ch01.forward_post_01` |
-| IsoMapId | `iso.ch01.forward_post_01` |
-| MapPreviewArtId | `preview.ch01.establish_base` |
-| MinimapArtId | `minimap.ch01.establish_base` |
+| OperationMapId | `opmap.ch01.forward_post_01` |
+| PlanningCameraId | `camera.ch01.establish_base.planning` |
+| MinimapProjectionId | `minimap.ch01.establish_base` |
 | Player Start | One rifle squad, command point, one buildable forward lot. |
 | Enemy Start | Small delayed patrol wave entering from one approach lane. |
 | Starting Credits | Enough to place required barracks and queue one squad. |
@@ -275,7 +275,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 
 | Surface | Purpose |
 |---|---|
-| SCN-05 Saga Map | Shows Mission 2 locked until M01 victory. |
+| SCN-05 Campaign Map | Shows Mission 2 locked until M01 victory. |
 | SCN-06 Mission Briefing | Shows build/produce objectives, city hook, rewards. |
 | SCN-08 Battle HUD | Shows objective tracker, resources, squad tray, build toggle. |
 | SCN-09 Build Drawer | Shows required structure, cost, build availability, production queue. |
@@ -307,7 +307,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Star test | Civilian-safe and under-time goals evaluate independently. |
 | Reward test | Unlock reward has duplicate fallback if it can be owned already. |
 | UI contract test | Build Drawer and Build Placement popup expose costs, locks, and invalid placement feedback. |
-| Balance probe | `Saga_Chapter1_Mission2` writes build timing, production timing, resource float, and first threat data. |
+| Balance probe | `Campaign_Chapter1_Mission2` writes build timing, production timing, resource float, and first threat data. |
 
 ### Failure And Retry Rules
 
@@ -324,7 +324,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 |---|---|
 | MissionId | `saga.ch01.m03.radar_warning` |
 | Title | Radar Warning |
-| Mode | Saga Campaign |
+| Mode | Campaign |
 | ChapterOrDay | Chapter 1, Mission 3 |
 | MissionArchetype | Base Defense |
 | ThreatFamily | Armored Column |
@@ -336,10 +336,9 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Field | Value |
 |---|---|
 | ScenarioSetupId | `scenario.ch01.m03.radar_warning` |
-| LevelId | `level.ch01.convoy_approach_01` |
-| IsoMapId | `iso.ch01.convoy_approach_01` |
-| MapPreviewArtId | `preview.ch01.radar_warning` |
-| MinimapArtId | `minimap.ch01.radar_warning` |
+| OperationMapId | `opmap.ch01.convoy_approach_01` |
+| PlanningCameraId | `camera.ch01.radar_warning.planning` |
+| MinimapProjectionId | `minimap.ch01.radar_warning` |
 | Player Start | Forward post, one or two rifle squads, existing build/defense anchor. |
 | Enemy Start | Armored convoy wave on road approach, light escort units. |
 | Starting Credits | Enough for one defensive preparation choice. |
@@ -389,7 +388,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 
 | Surface | Purpose |
 |---|---|
-| SCN-05 Saga Map | Shows Mission 3 locked until M02 victory. |
+| SCN-05 Campaign Map | Shows Mission 3 locked until M02 victory. |
 | SCN-06 Mission Briefing | Shows convoy threat, warning route, defensive rewards. |
 | SCN-08 Battle HUD | Shows threat feed, objective tracker, resources, squad tray, minimap. |
 | POP-01 Threat Alert | Shows convoy ETA, route, strength, jump-to-threat action. |
@@ -421,7 +420,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Star test | No-civilian and no-base-damage stars evaluate independently. |
 | Reward test | Defense unlock maps to canonical reward type. |
 | UI contract test | Threat feed, warning popup, and objective tracker expose severity and route data. |
-| Balance probe | `Saga_Chapter1_Mission3` writes warning lead time, base damage, convoy timing, resource float, and losses. |
+| Balance probe | `Campaign_Chapter1_Mission3` writes warning lead time, base damage, convoy timing, resource float, and losses. |
 
 ### Failure And Retry Rules
 
@@ -438,7 +437,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 |---|---|
 | MissionId | `saga.ch01.m04.airlift` |
 | Title | Airlift |
-| Mode | Saga Campaign |
+| Mode | Campaign |
 | ChapterOrDay | Chapter 1, Mission 4 |
 | MissionArchetype | Airlift Extraction |
 | ThreatFamily | Hidden Cell / Air Assault |
@@ -450,10 +449,9 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Field | Value |
 |---|---|
 | ScenarioSetupId | `scenario.ch01.m04.airlift` |
-| LevelId | `level.ch01.landing_zone_01` |
-| IsoMapId | `iso.ch01.landing_zone_01` |
-| MapPreviewArtId | `preview.ch01.airlift` |
-| MinimapArtId | `minimap.ch01.airlift` |
+| OperationMapId | `opmap.ch01.landing_zone_01` |
+| PlanningCameraId | `camera.ch01.airlift.planning` |
+| MinimapProjectionId | `minimap.ch01.airlift` |
 | Player Start | One rifle squad near landing zone, one transport helicopter or APC support path. |
 | Enemy Start | Hidden Cell ambush group plus light air/anti-transport warning. |
 | Starting Credits | Minimal; no required building. |
@@ -503,7 +501,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 
 | Surface | Purpose |
 |---|---|
-| SCN-05 Saga Map | Shows Mission 4 locked until M03 victory. |
+| SCN-05 Campaign Map | Shows Mission 4 locked until M03 victory. |
 | SCN-06 Mission Briefing | Shows landing zone, transport objective, Fuel reward. |
 | SCN-07 Loadout | Shows required/locked transport support if loadout is active by this phase. |
 | SCN-08 Battle HUD | Shows landing-zone objective, squad tray, transport status, minimap. |
@@ -534,7 +532,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Star test | Transport-survival and under-time stars evaluate independently. |
 | Resource test | Required Fuel is available before launch and not injected mid-match through store flow. |
 | UI contract test | Transport command, landing-zone objective, and threat warning map to gameplay contracts. |
-| Balance probe | `Saga_Chapter1_Mission4` writes transport timing, exposure window, Fuel spend, losses, and extraction result. |
+| Balance probe | `Campaign_Chapter1_Mission4` writes transport timing, exposure window, Fuel spend, losses, and extraction result. |
 
 ### Failure And Retry Rules
 
@@ -551,7 +549,7 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 |---|---|
 | MissionId | `saga.ch01.m05.breach_assault` |
 | Title | Breach Assault |
-| Mode | Saga Campaign |
+| Mode | Campaign |
 | ChapterOrDay | Chapter 1, Mission 5 |
 | MissionArchetype | Breach Assault |
 | ThreatFamily | Defensive Garrison |
@@ -563,10 +561,9 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Field | Value |
 |---|---|
 | ScenarioSetupId | `scenario.ch01.m05.breach_assault` |
-| LevelId | `level.ch01.fortified_node_01` |
-| IsoMapId | `iso.ch01.fortified_node_01` |
-| MapPreviewArtId | `preview.ch01.breach_assault` |
-| MinimapArtId | `minimap.ch01.breach_assault` |
+| OperationMapId | `opmap.ch01.fortified_node_01` |
+| PlanningCameraId | `camera.ch01.breach_assault.planning` |
+| MinimapProjectionId | `minimap.ch01.breach_assault` |
 | Player Start | Rifle squads, `Unit_Veh_APC_Heavy` mission support, forward staging point. |
 | Enemy Start | Defensive garrison, wall/gate breach target, core building, light counterattack wave. |
 | Starting Credits | Enough to reinforce or produce limited support if production is active. |
@@ -608,15 +605,15 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | `reward.ch01.m05.credits.first_clear` | Credits | Chapter finale Credit grant. | First clear only. |
 | `reward.ch01.m05.unit_unlock.ghillie` | UnitUnlock | `Unit_Chr_Ghillie_Male_01`. | First clear only; duplicate fallback grants item-specific BlueprintParts. |
 | `reward.ch01.m05.apc_armor_parts` | BlueprintParts | `upgrade.vehicle.apc_armor` x35. | First clear only; item-specific parts. |
-| `reward.ch01.m05.saga_stars` | SagaStars | Best star result for mission/chapter thresholds. | Stored as best result, never spent. |
+| `reward.ch01.m05.campaign_stars` | CampaignStars / legacy `SagaStars` storage | Best star result for mission/chapter thresholds. | Stored as best result, never spent. |
 
-Do not grant Command Authority, Rush Tickets, store items, or direct Operation metric rewards from the store path. SagaStars come only from mission completion/star result.
+Do not grant Command Authority, Rush Tickets, store items, or direct Operation metric rewards from the store path. Campaign stars come only from mission completion/star result.
 
 ### UI Surfaces
 
 | Surface | Purpose |
 |---|---|
-| SCN-05 Saga Map | Shows Mission 5 locked until M04 victory and chapter-completion state after victory. |
+| SCN-05 Campaign Map | Shows Mission 5 locked until M04 victory and chapter-completion state after victory. |
 | SCN-06 Mission Briefing | Shows fortified target, breach route, star goals, chapter reward preview. |
 | SCN-07 Loadout | Shows recommended squads/support and deploy cost if loadout is active. |
 | SCN-08 Battle HUD | Shows breach/core objectives, resources, squad tray, minimap. |
@@ -647,9 +644,9 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 | Config sanity | Breach target, enemy core, capture area, reward ids, and chapter unlock route exist. |
 | Objective test | Breach and core destruction complete in order; core cannot complete before breach unless alternate route is authored. |
 | Star test | Vehicle/support survival and under-time stars evaluate independently. |
-| Reward test | Major unlock has duplicate fallback and SagaStars store best result only. |
+| Reward test | Major unlock has duplicate fallback and Campaign stars store best result only. |
 | UI contract test | Briefing, HUD, reward unlock popup, and Mission Result expose chapter completion state. |
-| Balance probe | `Saga_Chapter1_Mission5` writes breach timing, core destruction timing, losses, resource float, and star distribution. |
+| Balance probe | `Campaign_Chapter1_Mission5` writes breach timing, core destruction timing, losses, resource float, and star distribution. |
 
 ### Failure And Retry Rules
 
@@ -662,18 +659,18 @@ Do not grant Command Authority, Rush Tickets, store items, or direct Operation m
 
 | Probe Id | Mission | Metrics Focus |
 |---|---|---|
-| `Saga_Chapter1_Mission1` | M01 First Contact | Tutorial length, first contact timing, no-loss star, first-clear rewards. |
-| `Saga_Chapter1_Mission2` | M02 Establish The Base | Build timing, production timing, resource float, first threat. |
-| `Saga_Chapter1_Mission3` | M03 Radar Warning | Warning lead time, convoy timing, base damage, losses. |
-| `Saga_Chapter1_Mission4` | M04 Airlift | Transport timing, extraction result, Fuel spend, transport survival. |
-| `Saga_Chapter1_Mission5` | M05 Breach Assault | Breach timing, core destruction, vehicle/support survival, star distribution. |
+| `Campaign_Chapter1_Mission1` | M01 First Contact | Tutorial length, first contact timing, no-loss star, first-clear rewards. |
+| `Campaign_Chapter1_Mission2` | M02 Establish The Base | Build timing, production timing, resource float, first threat. |
+| `Campaign_Chapter1_Mission3` | M03 Radar Warning | Warning lead time, convoy timing, base damage, losses. |
+| `Campaign_Chapter1_Mission4` | M04 Airlift | Transport timing, extraction result, Fuel spend, transport survival. |
+| `Campaign_Chapter1_Mission5` | M05 Breach Assault | Breach timing, core destruction, vehicle/support survival, star distribution. |
 
 ## Chapter Acceptance
 
 First Response is chapter-ready when:
 
-- All five missions use the Mission -> ScenarioSetup -> Level / Map terminology.
-- All five levels satisfy the Chapter 1 Map View Contract: preview art, minimap art, `IsoMapId`, tactical metadata, and validation scene.
+- All five missions use the Mission -> ScenarioSetup -> OperationMap terminology.
+- All five operation maps satisfy the Chapter 1 Operation Map Contract: planning camera, minimap projection, `OperationMapId`, operation metadata, and validation scene.
 - All mission specs define objectives, star goals, rewards, UI surfaces, balance targets, validation, and retry rules.
 - Chapter rewards and mission rewards use canonical reward types from `../WarlineCapture_Economy_Reward_Design.md`.
 - Mission probes are listed in `../WarlineCapture_Balancing_Automated_Test_Plan.md`.

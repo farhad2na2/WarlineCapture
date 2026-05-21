@@ -7,30 +7,30 @@ Date: 2026-05-04
 The monetization visuals follow the accepted WarlineCapture visual-lock direction:
 
 - Dark graphite/black military HUD panels.
-- Cyan edge highlights and bevels.
-- Restrained blue selected states.
+- Olive selected states and weathered metal bevels.
 - Amber/gold accents for rewards, CTAs, and premium value.
+- Muted blue command-resource accents.
 - Soft shadows, readable Oxanium-like typography, mobile landscape composition.
 - Separate Unity-ready UI parts: category tabs, offer cards, item icons, resource counters, buttons, badges, and reward strips.
 
 Relevant references:
 
-- `Design/VisualLock/MainMenu/MainMenu_Landscape_Visual_Target.png`
-- `Design/VisualLock/SCN-03_CommanderProfile/SCN-03_CommanderProfile_Landscape_Target.png`
-- `Design/VisualLock/SCN-06_MissionBriefing/SCN-06_MissionBriefing_Landscape_Target.png`
-- `Design/VisualLock/SCN-07_LoadoutSquadPrep/SCN-07_LoadoutSquadPrep_Landscape_Target.png`
-- `Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png`
-- `Design/VisualLock/SCN-19_Armory/SCN-19_Armory_Landscape_Target.png`
-- `Design/VisualLock/POP-04_RewardUnlock/POP-04_RewardUnlock_Landscape_Target.png`
-- `Design/VisualLock/POP-09_AbilityUpgradeDetail/POP-09_AbilityUpgradeDetail_Landscape_Target.png`
+- `Design/VisualLockLayered/README.md`
+- `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- `Design/VisualLockLayered/SCN-14_CommandExchange/reference/SCN-14_CommandExchange_Landscape_Target.png`
+- `Design/VisualLockLayered/SCN-19_Armory/reference/SCN-19_Armory_Landscape_Target.png`
+- `Design/VisualLockLayered/POP-04_RewardUnlock/reference/POP-04_RewardUnlock_Landscape_Target.png`
+- `Design/VisualLockLayered/POP-09_AbilityUpgradeDetail/reference/POP-09_AbilityUpgradeDetail_Landscape_Target.png`
+
+Previous monetization-adjacent VisualLock references were archived under `Design/Archive/LegacyVisualLock_2026-05-22/` and are comparison material only.
 
 ## Generated Image Index
 
 | Image | Purpose |
 |---|---|
-| `Images/SCN-14_Store_CommandExchange_Target.png` | Store screen composition target. |
-| `../VisualLock/SCN-19_Armory/SCN-19_Armory_Landscape_Target.png` | Armory inspection target for store Armory links. |
-| `../VisualLock/POP-09_AbilityUpgradeDetail/POP-09_AbilityUpgradeDetail_Landscape_Target.png` | Ability/upgrade product detail popup target. |
+| `../VisualLockLayered/SCN-14_CommandExchange/reference/SCN-14_CommandExchange_Landscape_Target.png` | Store screen composition target. |
+| `../VisualLockLayered/SCN-19_Armory/reference/SCN-19_Armory_Landscape_Target.png` | Armory inspection target for store Armory links. |
+| `../VisualLockLayered/POP-09_AbilityUpgradeDetail/reference/POP-09_AbilityUpgradeDetail_Landscape_Target.png` | Ability/upgrade product detail popup target. |
 | `Images/StarterPack_Recon_CommandCard.png` | Starter pack visual for Recon Starter Pack. |
 | `Images/StarterPack_BaseBuilder_CommandCard.png` | Starter pack visual for Base Builder Pack. |
 | `Images/StarterPack_OperationFounder_CommandCard.png` | Starter pack visual for Operation Founder Pack. |
@@ -43,7 +43,7 @@ Relevant references:
 
 Use this as the first store screen visual target:
 
-`Design/Monetization/Images/SCN-14_Store_CommandExchange_Target.png`
+`Design/VisualLockLayered/SCN-14_CommandExchange/reference/SCN-14_CommandExchange_Landscape_Target.png`
 
 ### Layout
 
@@ -75,19 +75,19 @@ Asset type: landscape mobile game UI visual target mockup, 1672x941.
 
 Primary request: Create a AAA-quality landscape mobile game UI mockup for WarlineCapture Store / Command Exchange, matching the accepted premium military RTS HUD style.
 
-Scene/backdrop: Dark tactical command exchange interface inside a mobile military RTS shell. Graphite metal panels, cyan bevels, amber/gold reward accents, subtle city grid texture, no casino look.
+Scene/backdrop: Dark command-base exchange interface inside a mobile military RTS shell. Black/olive military panels, weathered metal frames, gold reward accents, muted blue command-resource accents, subtle command table or forward-base texture, no casino look.
 
 UI layout:
 - Full-screen futuristic military HUD frame.
-- Top header bar: back arrow, title "COMMAND EXCHANGE", resource counters for Credits, Materials, Command Authority, small restore icon button.
-- Left vertical category rail with "FEATURED" selected in filled blue, then "STARTER PACKS", "RESOURCES", "ARMORY", "COSMETICS", "OPERATION".
+- Top header bar: back arrow, title "COMMAND EXCHANGE", resource counters for Credits, Supplies, Command, small restore icon button.
+- Left vertical category rail with "FEATURED" selected in olive/gold, then "STARTER PACKS", "RESOURCES", "ARMORY", "COSMETICS", "OPERATIONS".
 - Large featured offer card with "RECON STARTER PACK", tactical supply case art, listed rewards, timer "72H", and primary gold purchase button "$4.99".
 - Starter pack row with three cards: Recon Starter Pack, Base Builder Pack, Operation Founder Pack.
 - Item grid with compact cards: Command Authority, Intel Dossier, Aid Convoy, Night Ops Cards.
 - Bottom legal/status line for restore purchases and transparent contents.
 
 Style requirements:
-- Match WarlineCapture visual targets: dark graphite panels, cyan edge highlights, blue selected states, gold CTA/reward accents, soft shadows, crisp readable Oxanium-like typography.
+- Match WarlineCapture command-base visual targets: dark black/olive panels, worn metal edges, olive selected states, gold CTA/reward accents, muted blue command-resource accents, soft shadows, crisp readable Oxanium-like typography.
 - Cards, icons, tabs, counters, timers, and purchase buttons must look like separate Unity UI parts.
 - No loot-box casino visuals, no generic neon sci-fi, no bright white borders, no hard block shadows, no watermark.
 ```
@@ -98,7 +98,7 @@ Style requirements:
 Use case: game UI card art
 Asset type: WarlineCapture starter pack card, 1024x640.
 
-Create a premium mobile military RTS store card in the WarlineCapture HUD style. Dark graphite beveled frame, cyan trim, amber/gold reward accents, soft shadow, readable title area, premium 2D isometric tactical supply case illustration, small reward icon strip, and clear value badge. The card must feel like a separable Unity UI component, not a full screen. No watermark, no casino visuals, no unreadable text.
+Create a premium mobile military RTS store card in the WarlineCapture command-base HUD style. Dark black/olive beveled frame, worn metal trim, amber/gold reward accents, soft shadow, readable title area, 3D tactical supply case or field crate render, small reward icon strip, and clear value badge. The card must feel like a separable Unity UI component, not a full screen. No watermark, no casino visuals, no unreadable text.
 ```
 
 ## Visual Prompt - Shop Item Icons
@@ -107,5 +107,5 @@ Create a premium mobile military RTS store card in the WarlineCapture HUD style.
 Use case: game UI item icon
 Asset type: square WarlineCapture store item icon, 512x512.
 
-Create a square premium military RTS shop item icon matching WarlineCapture visual lock: dark beveled graphite frame, cyan edge light, amber reward accent, centered premium 2D isometric object silhouette, soft shadow, clean readable symbol language. No text baked into the icon except tiny nonessential markings, no watermark, no casino styling.
+Create a square premium military RTS shop item icon matching WarlineCapture command-base visual lock: dark beveled black/olive frame, muted blue edge light where needed, amber reward accent, centered 3D object render/silhouette, soft shadow, clean readable symbol language. No text baked into the icon except tiny nonessential markings, no watermark, no casino styling.
 ```

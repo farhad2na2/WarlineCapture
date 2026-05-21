@@ -2,6 +2,8 @@
 
 This contract defines how WarlineCapture prevents new gameplay, UI, and shell code from introducing avoidable performance regressions.
 
+Use `Design/WarlineCapture_AAA_Mobile_Technical_Targets.md` for the product-level device-tier, frame, scale, marker, readability, and evidence targets that this contract validates.
+
 ## Core Rule
 
 Performance diagnostics are not the same as performance gates.

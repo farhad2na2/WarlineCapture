@@ -8,7 +8,7 @@ using UnityEngine;
 
 public sealed class Chapter01TacticalRuntimeBindingTests
 {
-    private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string GameScenePath = "Assets/Game/Scenes/Game2D.unity";
     private const string DefinitionPath = "Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset";
     private const string GridConfigPath = "Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.grid.asset";
     private const string MissionId = "saga.ch01.m01.first_contact";

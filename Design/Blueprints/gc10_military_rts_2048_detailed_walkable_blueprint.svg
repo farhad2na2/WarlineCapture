@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1920" viewBox="0 0 1920 1920">
+  <defs>
+    <style>
+      .bg { fill:#0f1720; }
+      .map { fill:#263441; stroke:#c7deef; stroke-width:5; }
+      .grid { stroke:#526477; stroke-width:1.25; opacity:.45; }
+      .title { fill:#eef7ff; font:700 34px Arial, sans-serif; }
+      .subtitle { fill:#cbd8e6; font:500 20px Arial, sans-serif; }
+      .label { fill:#f4fbff; font:700 20px Arial, sans-serif; }
+      .small { fill:#d8e7f2; font:600 16px Arial, sans-serif; }
+      .tiny { fill:#eef6ff; font:700 12px Arial, sans-serif; }
+      .road { fill:#363b3e; stroke:#f3d889; stroke-width:5; }
+      .street { fill:#4b4d48; stroke:#e7cf8d; stroke-width:3; }
+      .sidewalk { fill:#b9aa86; stroke:#f2e7c6; stroke-width:2; opacity:.92; }
+      .walk { fill:#739761; stroke:#dff0c7; stroke-width:3; opacity:.82; }
+      .nobuild { fill:#823c37; stroke:#ffaaa0; stroke-width:3; opacity:.74; }
+      .buffer { fill:none; stroke:#ffdf5d; stroke-width:5; stroke-dasharray:16 12; opacity:.95; }
+      .building { fill:#7fa6bd; stroke:#dff4ff; stroke-width:3; }
+      .base { fill:#c18a42; stroke:#ffe1a0; stroke-width:3; }
+      .vehicle { fill:#768f60; stroke:#def1c9; stroke-width:3; }
+      .runway { fill:#74808d; stroke:#dce6ef; stroke-width:3; }
+      .fuel { fill:#9571b9; stroke:#e4d1ff; stroke-width:3; }
+      .wall { fill:none; stroke:#d9d2be; stroke-width:9; stroke-linecap:square; stroke-linejoin:round; }
+      .gate { fill:none; stroke:#68d6ff; stroke-width:10; stroke-linecap:round; }
+      .objective { fill:none; stroke:#ffd957; stroke-width:6; stroke-dasharray:15 10; }
+      .arrow { stroke:#ffffff; stroke-width:5; fill:none; marker-end:url(#arrowHead); opacity:.9; }
+      .spawnBlue { fill:#3278ff; stroke:#c8dcff; stroke-width:4; }
+      .spawnRed { fill:#c83e3e; stroke:#ffd0d0; stroke-width:4; }
+      .legendBox { fill:#182432; stroke:#60758a; stroke-width:3; }
+    </style>
+    <marker id="arrowHead" markerWidth="16" markerHeight="12" refX="14" refY="6" orient="auto">
+      <path d="M0,0 L16,6 L0,12 z" fill="#ffffff"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1920" height="1920"/>
+  <text class="title" x="80" y="74">GC10 Detailed 2048 RTS Build Blueprint - Roads, Walkable Areas, No-Build Zones</text>
+  <text class="subtitle" x="80" y="112">Placement contract: objects can only enter labeled build pads. Roads, sidewalks, plazas, gates, and yellow lane buffers must stay empty.</text>
+
+  <g id="map" transform="translate(130 155) scale(1.82022472)">
+    <rect class="map" x="0" y="0" width="890" height="890" rx="5"/>
+    <g>
+      <line class="grid" x1="111.25" y1="0" x2="111.25" y2="890"/>
+      <line class="grid" x1="222.5" y1="0" x2="222.5" y2="890"/>
+      <line class="grid" x1="333.75" y1="0" x2="333.75" y2="890"/>
+      <line class="grid" x1="445" y1="0" x2="445" y2="890"/>
+      <line class="grid" x1="556.25" y1="0" x2="556.25" y2="890"/>
+      <line class="grid" x1="667.5" y1="0" x2="667.5" y2="890"/>
+      <line class="grid" x1="778.75" y1="0" x2="778.75" y2="890"/>
+      <line class="grid" x1="0" y1="111.25" x2="890" y2="111.25"/>
+      <line class="grid" x1="0" y1="222.5" x2="890" y2="222.5"/>
+      <line class="grid" x1="0" y1="333.75" x2="890" y2="333.75"/>
+      <line class="grid" x1="0" y1="445" x2="890" y2="445"/>
+      <line class="grid" x1="0" y1="556.25" x2="890" y2="556.25"/>
+      <line class="grid" x1="0" y1="667.5" x2="890" y2="667.5"/>
+      <line class="grid" x1="0" y1="778.75" x2="890" y2="778.75"/>
+    </g>
+
+    <!-- Global no-build scenic margins. These are decoration-only and cannot host roads or required paths. -->
+    <path class="nobuild" d="M0 0 L205 0 C190 62 126 82 40 94 L0 112 Z"/>
+    <path class="nobuild" d="M0 736 C64 706 142 724 196 786 L196 890 L0 890 Z"/>
+    <path class="nobuild" d="M792 0 L890 0 L890 160 C860 120 820 90 792 78 Z"/>
+    <path class="nobuild" d="M828 738 C875 750 890 800 890 890 L728 890 Z"/>
+
+    <!-- Primary roads. These shapes are reserved empty space. -->
+    <path class="road" d="M302 0 L372 0 L318 890 L248 890 Z"/>
+    <text class="tiny" x="307" y="54">N-S HIGHWAY - EMPTY</text>
+    <path class="road" d="M92 598 L318 570 L676 420 L700 470 L338 626 L98 652 Z"/>
+    <text class="tiny" x="386" y="552">MAIN BASE APPROACH ROAD - EMPTY</text>
+    <path class="road" d="M304 326 L642 318 L644 366 L304 374 Z"/>
+    <text class="tiny" x="392" y="316">E-W CONNECTOR - EMPTY</text>
+    <path class="road" d="M606 184 L660 184 L654 758 L600 758 Z"/>
+    <text class="tiny" x="664" y="276" transform="rotate(90 664 276)">BASE SERVICE ROAD - EMPTY</text>
+
+    <!-- City local streets. -->
+    <path class="street" d="M64 176 L292 176 L292 212 L64 212 Z"/>
+    <path class="street" d="M64 294 L292 294 L292 330 L64 330 Z"/>
+    <path class="street" d="M64 430 L292 430 L292 466 L64 466 Z"/>
+    <path class="street" d="M105 126 L140 566 L94 566 L58 126 Z"/>
+    <path class="street" d="M206 122 L232 562 L186 562 L158 122 Z"/>
+    <text class="tiny" x="76" y="160">CITY STREETS - EMPTY</text>
+
+    <!-- Sidewalk / broad walkable surfaces. -->
+    <path class="sidewalk" d="M50 224 L288 224 L288 286 L50 286 Z"/>
+    <path class="sidewalk" d="M50 342 L288 342 L288 422 L50 422 Z"/>
+    <path class="sidewalk" d="M420 252 L594 252 L594 314 L420 314 Z"/>
+    <path class="sidewalk" d="M438 500 L598 500 L598 580 L438 580 Z"/>
+    <path class="sidewalk" d="M686 206 L794 206 L794 392 L686 392 Z"/>
+    <text class="tiny" x="72" y="394">SIDEWALKS / INFANTRY WALKABLE - KEEP CLEAR</text>
+
+    <!-- Explicit walkable tactical open areas. -->
+    <path class="walk" d="M332 396 C390 356 448 370 500 430 C464 498 404 542 328 556 C292 500 284 440 332 396 Z"/>
+    <text class="tiny" x="344" y="470">OPEN INFANTRY LANE</text>
+    <path class="walk" d="M380 92 C434 72 492 98 516 150 L482 218 L358 218 Z"/>
+    <text class="tiny" x="386" y="142">NORTH FLANK WALKABLE</text>
+    <path class="walk" d="M126 500 C178 484 238 492 286 534 L278 612 L110 618 Z"/>
+    <text class="tiny" x="132" y="552">CITY EXIT WALKABLE</text>
+
+    <!-- Yellow no-object buffers around routes. -->
+    <path class="buffer" d="M282 -4 L392 -4 L338 894 L228 894 Z"/>
+    <path class="buffer" d="M78 580 L324 548 L690 396 L724 486 L344 650 L82 676 Z"/>
+    <path class="buffer" d="M292 300 L664 292 L666 392 L292 400 Z"/>
+    <path class="buffer" d="M586 164 L682 164 L676 778 L580 778 Z"/>
+    <path class="buffer" d="M40 154 L306 154 L306 486 L40 486 Z"/>
+    <text class="tiny" x="506" y="674">YELLOW DASH = NO OBJECT BUFFER</text>
+
+    <!-- City build pads: object placement allowed only inside these pads. -->
+    <rect class="building" x="48" y="60" width="84" height="62" rx="4"/>
+    <rect class="building" x="152" y="62" width="110" height="60" rx="4"/>
+    <rect class="building" x="44" y="236" width="54" height="48" rx="4"/>
+    <rect class="building" x="146" y="238" width="54" height="46" rx="4"/>
+    <rect class="building" x="232" y="238" width="54" height="46" rx="4"/>
+    <rect class="building" x="48" y="488" width="68" height="68" rx="4"/>
+    <rect class="building" x="152" y="490" width="90" height="68" rx="4"/>
+    <text class="label" x="54" y="88">CITY PADS</text>
+    <text class="tiny" x="70" y="520">build pads only</text>
+
+    <!-- Base compound: wall/gates plus pads. -->
+    <path class="wall" d="M454 92 L812 108 L846 198 L834 770 L692 836 L444 776 L418 220 Z"/>
+    <path class="gate" d="M422 320 L452 320"/>
+    <path class="gate" d="M600 758 L654 758"/>
+    <text class="tiny" x="424" y="306">MAIN GATE</text>
+    <text class="tiny" x="584" y="794">SERVICE GATE</text>
+
+    <rect class="base" x="466" y="136" width="76" height="64" rx="4"/>
+    <rect class="base" x="554" y="136" width="76" height="64" rx="4"/>
+    <rect class="base" x="466" y="216" width="76" height="64" rx="4"/>
+    <rect class="base" x="554" y="216" width="76" height="64" rx="4"/>
+    <text class="label" x="472" y="124">TENT CAMP PADS</text>
+
+    <rect class="base" x="472" y="390" width="126" height="82" rx="5"/>
+    <rect class="objective" x="488" y="408" width="92" height="48" rx="5"/>
+    <text class="label" x="482" y="436">HQ PAD</text>
+
+    <rect class="vehicle" x="456" y="610" width="74" height="62" rx="4"/>
+    <rect class="vehicle" x="546" y="610" width="74" height="62" rx="4"/>
+    <rect class="vehicle" x="456" y="690" width="164" height="58" rx="4"/>
+    <text class="label" x="464" y="594">VEHICLE PADS</text>
+
+    <rect class="runway" x="704" y="146" width="96" height="250" rx="5"/>
+    <rect class="runway" x="726" y="52" width="54" height="276" transform="rotate(13 753 190)" opacity=".9"/>
+    <text class="label" x="714" y="182">RUNWAY</text>
+    <text class="tiny" x="712" y="208">aircraft pads only</text>
+
+    <rect class="fuel" x="704" y="486" width="108" height="178" rx="5"/>
+    <text class="label" x="730" y="556">FUEL</text>
+    <text class="tiny" x="716" y="584">utility pad</text>
+
+    <!-- Spawn, objective flow, and unit path samples. -->
+    <circle class="spawnBlue" cx="98" cy="608" r="18"/>
+    <text class="tiny" x="56" y="644">PLAYER START</text>
+    <circle class="spawnRed" cx="758" cy="238" r="18"/>
+    <text class="tiny" x="776" y="242">ENEMY PATROL</text>
+    <path class="arrow" d="M98 608 C178 548 248 536 344 472 C424 420 484 414 534 432"/>
+    <path class="arrow" d="M534 432 C606 390 698 314 758 238"/>
+    <path class="arrow" d="M534 432 C532 512 548 610 580 720"/>
+    <path class="arrow" d="M166 382 C240 350 320 348 430 345 C498 344 558 344 630 342"/>
+
+    <text class="tiny" x="276" y="870">FULL 2048 MAP BOUNDARY</text>
+  </g>
+
+  <g transform="translate(80 1810)">
+    <rect class="legendBox" x="0" y="0" width="1760" height="78" rx="8"/>
+    <rect class="road" x="26" y="22" width="34" height="22"/><text class="small" x="72" y="40">roads: empty</text>
+    <rect class="sidewalk" x="214" y="22" width="34" height="22"/><text class="small" x="260" y="40">walkable: empty</text>
+    <rect class="building" x="450" y="22" width="34" height="22"/><text class="small" x="496" y="40">build pads only</text>
+    <rect class="nobuild" x="698" y="22" width="34" height="22"/><text class="small" x="744" y="40">blocked/no-build</text>
+    <path class="buffer" d="M956 34 L1012 34"/><text class="small" x="1032" y="40">no-object route buffer</text>
+    <path class="gate" d="M1300 34 L1350 34"/><text class="small" x="1370" y="40">gates must stay open</text>
+  </g>
+</svg>

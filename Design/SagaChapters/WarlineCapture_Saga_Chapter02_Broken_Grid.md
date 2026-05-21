@@ -1,12 +1,14 @@
-# WarlineCapture Saga Chapter 2: Broken Grid
+# WarlineCapture Campaign Chapter 2: Broken Grid
 
-Date: 2026-05-05
+Date: 2026-05-21
+
+Status: Active campaign chapter outline updated for the 3D single-map direction. File path and internal `Saga` terminology may remain for compatibility, but player-facing naming is Campaign.
 
 ## Purpose
 
-This document owns Saga Chapter 2 high-level design. Internally this is `Chapter 2`; player-facing title is `Broken Grid`.
+This document owns Campaign Chapter 2 high-level design. Internally this is `Chapter 2`; player-facing title is `Broken Grid`.
 
-Use `../WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` before turning these mission slots into detailed specs. Each mission needs strategic preview/minimap ids plus a tactical `IsoMapId` and metadata-backed level package.
+Use `../WarlineCapture_3D_SingleMap_Gameplay_Direction.md` and `../WarlineCapture_Level_And_Mission_Content_Plan.md` before turning these mission slots into detailed specs. Each mission needs one `OperationMapId`, planning-camera metadata, minimap projection metadata, deployment zones, objective anchors, civilian-risk anchors, threat routes, and validation captures on the same 3D operation map.
 
 ## Chapter Role
 
@@ -49,7 +51,7 @@ Use Standard bands from `../WarlineCapture_Gameplay_North_Star_And_Content_Gramm
 ## Validation Focus
 
 - Repair and convoy objectives are visible in briefing, HUD, and result.
-- Strategic route previews, minimap route pings, and tactical convoy/repair routes resolve to the same authored metadata anchors.
+- Planning-view route previews, minimap route pings, and in-world convoy/repair routes resolve to the same authored 3D operation-map metadata anchors.
 - Infrastructure consequences are shown in Mission Result and Operation-facing summaries.
 - Materials are spent through authored actions and rewards use canonical types.
 - Convoy and repair targets do not become unreadable under mobile HUD scale.

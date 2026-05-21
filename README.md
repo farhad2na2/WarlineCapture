@@ -207,7 +207,7 @@ Current UI execution rule:
 
 - Build each screen as a vertical slice, not as a separate visual-only pass or a separate functionality-only pass.
 - For each screen, popup, and reusable panel, first lock a high-quality generated landscape visual target from the original design references, then build a real Unity Canvas from separate panels, sprites, icons, text, and controls.
-- Do not create new VisualLock targets by merely cropping, padding, stretching, or upscaling the source spec JPGs. Source JPGs are references for content and layout; the accepted target method is a new generated `1672 x 941` landscape target in the WarlineCapture AAA mobile RTS HUD style, with notes and the generation prompt saved beside it.
+- Do not create new visual-lock targets by merely cropping, padding, stretching, or upscaling the source spec JPGs. Source JPGs are references for content and layout; the accepted target method is a new generated `1672 x 941` landscape target plus separated layers under `Design/VisualLockLayered/<SurfaceId>/`, with notes, manifest, contact sheet, and generation prompt saved beside it.
 - Never ship a full-screen mockup image as the UI. Mockups are targets and references only.
 - Validate each screen at common Android landscape aspects, including 16:9 and 20:9.
 - Optimize each accepted screen before moving on: shared sprites, 9-sliced frames, atlas labels, correct import settings, disabled raycasts on decorative graphics, and no transparent placeholder `Image` components.

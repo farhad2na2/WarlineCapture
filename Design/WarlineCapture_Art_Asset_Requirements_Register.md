@@ -152,13 +152,12 @@ M01 First Contact production assets and metadata are enumerated in `WarlineCaptu
 
 The register includes SCN-01 through SCN-19, POP-01 through POP-09, and reusable prefab surfaces. For each surface, track both the layer pack and the Unity prefab. A layer pack or prefab existing is not the same as final approval; final approval requires rendered capture review.
 
-Missing/weak UI layer-pack coverage found in this pass:
+UI layer-pack coverage reset:
 
-- SCN-01 Splash / Loading layer pack missing from `Design/VisualLockLayered`
-- SCN-02 Main Menu layer pack exists at `Design/VisualLockLayered/SCN-02B_MainMenuAlt` and should be treated as the active command-base target package
-- SCN-04 Settings / Accessibility layer pack missing from `Design/VisualLockLayered`
-- SCN-09 Build Drawer / Production layer pack missing from `Design/VisualLockLayered`
-- SCN-13 Skirmish Setup layer pack missing from `Design/VisualLockLayered`
+- Previous `Design/VisualLock` and `Design/VisualLockLayered` packs are archived under `Design/Archive/LegacyVisualLock_2026-05-22/` and are history/comparison only.
+- Active production UI layer-pack inventory now lives in `Design/VisualLockLayered/README.md`.
+- Every SCN, POP, and PREFAB surface is `missing` or `exists_needs_review` until a fresh 3D-direction layered pack exists at `Design/VisualLockLayered/<SurfaceId>/`, passes the layer-pack gate, and has a Unity capture reviewed at 16:9 and 20:9.
+- SCN-02 Main Menu must be recreated as `Design/VisualLockLayered/SCN-02_MainMenu/` using the command-base menu direction, not restored from the archived `SCN-02B_MainMenuAlt` folder.
 
 ## Immediate Approval Workflow
 

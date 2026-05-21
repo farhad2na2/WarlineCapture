@@ -205,7 +205,7 @@ xychart-beta
 
 **Done**
 - UI/UX specs and target-to-canvas workflow exist.
-- VisualLock and VisualLockLayered folders exist for multiple screens/popups.
+- Legacy VisualLock and VisualLockLayered folders were archived; the active `Design/VisualLockLayered` reset now defines the 3D-direction screen/popup/prefab inventory.
 - Several UI prefabs and generated assets are present.
 - UI audit readiness report now separates interaction audit from final visual-lock acceptance and records the current full EditMode gate.
 - PREFAB-04 assistant button target lock and production prefab are accepted for the M01 HUD entry surface.
@@ -285,7 +285,7 @@ xychart-beta
 **Done**
 - Balance config exists.
 - Balance report/test concepts exist.
-- First opt-in Skirmish/Quick Custom probe, report writer, menu runner, and documented RunAll entry point exist.
+- First opt-in Skirmish compatibility probe, report writer, menu runner, and documented RunAll entry point exist.
 - Shared BalanceProbeDefinition and BalanceMetricSample types now support both QuickCustom_Default_Medium and QuickCustom_Hard_Swarm.
 - Chapter 1 mission reward configs now have a normal data-sanity gate for unique ids, positive amounts, required targets, and first-clear duplicate fallbacks.
 

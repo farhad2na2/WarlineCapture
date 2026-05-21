@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <style>
+      .bg { fill:#111a24; }
+      .map { fill:#273442; stroke:#9fbfdd; stroke-width:4; }
+      .grid { stroke:#445567; stroke-width:1; opacity:.58; }
+      .label { fill:#e9f4ff; font:700 18px Arial, sans-serif; }
+      .title { fill:#e9f4ff; font:700 24px Arial, sans-serif; }
+      .small { fill:#cbd8e6; font:500 14px Arial, sans-serif; }
+      .tiny { fill:#d6e4ef; font:600 11px Arial, sans-serif; }
+      .road { fill:#d6bf72; stroke:#f2dfa0; stroke-width:2; }
+      .street { fill:#b79f65; stroke:#e5cd8e; stroke-width:1.5; }
+      .highway { fill:#4d4d46; stroke:#c7b16e; stroke-width:3; }
+      .wall { fill:none; stroke:#d9d2be; stroke-width:7; stroke-linecap:square; }
+      .city { fill:#77a7c7; stroke:#d9f0ff; stroke-width:3; }
+      .market { fill:#63b88e; stroke:#d9ffe9; stroke-width:3; }
+      .base { fill:#c28f48; stroke:#ffe2a3; stroke-width:3; }
+      .command { fill:#d56c55; stroke:#ffd0c4; stroke-width:3; }
+      .vehicle { fill:#7e9b68; stroke:#e1f3c9; stroke-width:3; }
+      .runway { fill:#737d8c; stroke:#dce4ef; stroke-width:3; }
+      .fuel { fill:#9d7bc2; stroke:#e6d4ff; stroke-width:3; }
+      .blocked { fill:#66543c; stroke:#c4a879; stroke-width:2; opacity:.9; }
+      .open { fill:#5d6f50; stroke:#bfd2a9; stroke-width:2; opacity:.65; }
+      .objective { fill:none; stroke:#ffdf5d; stroke-width:4; stroke-dasharray:10 7; }
+      .spawnBlue { fill:#347cff; stroke:#c8dcff; stroke-width:3; }
+      .spawnRed { fill:#d34646; stroke:#ffd0d0; stroke-width:3; }
+      .arrow { stroke:#ffffff; stroke-width:4; fill:none; marker-end:url(#arrowHead); opacity:.92; }
+    </style>
+    <marker id="arrowHead" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+      <path d="M0,0 L14,5 L0,10 z" fill="#ffffff"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" width="1920" height="1080"/>
+  <text class="title" x="70" y="56">GC09 Full 2048 RTS Blueprint - City + Military Base + Highway</text>
+  <text class="small" x="70" y="86">Complete map plan before asset placement. The full 2048 map is visible here; nothing is intentionally cropped.</text>
+
+  <g id="map" transform="translate(330 95)">
+    <rect class="map" x="0" y="0" width="890" height="890" rx="5"/>
+    <g>
+      <line class="grid" x1="111.25" y1="0" x2="111.25" y2="890"/>
+      <line class="grid" x1="222.5" y1="0" x2="222.5" y2="890"/>
+      <line class="grid" x1="333.75" y1="0" x2="333.75" y2="890"/>
+      <line class="grid" x1="445" y1="0" x2="445" y2="890"/>
+      <line class="grid" x1="556.25" y1="0" x2="556.25" y2="890"/>
+      <line class="grid" x1="667.5" y1="0" x2="667.5" y2="890"/>
+      <line class="grid" x1="778.75" y1="0" x2="778.75" y2="890"/>
+      <line class="grid" x1="0" y1="111.25" x2="890" y2="111.25"/>
+      <line class="grid" x1="0" y1="222.5" x2="890" y2="222.5"/>
+      <line class="grid" x1="0" y1="333.75" x2="890" y2="333.75"/>
+      <line class="grid" x1="0" y1="445" x2="890" y2="445"/>
+      <line class="grid" x1="0" y1="556.25" x2="890" y2="556.25"/>
+      <line class="grid" x1="0" y1="667.5" x2="890" y2="667.5"/>
+      <line class="grid" x1="0" y1="778.75" x2="890" y2="778.75"/>
+    </g>
+
+    <!-- Full-map highway and arterial roads -->
+    <path class="highway" d="M318 0 L390 0 L315 890 L243 890 Z"/>
+    <path class="road" d="M290 690 L610 455 L642 496 L320 735 Z"/>
+    <path class="road" d="M330 320 L610 320 L610 370 L330 370 Z"/>
+    <path class="road" d="M615 195 L668 195 L650 760 L600 760 Z"/>
+    <path class="street" d="M92 250 L315 250 L315 285 L92 285 Z"/>
+    <path class="street" d="M92 430 L300 430 L300 464 L92 464 Z"/>
+    <path class="street" d="M150 160 L185 650 L115 650 L80 160 Z"/>
+
+    <!-- West city district -->
+    <rect class="city" x="45" y="115" width="245" height="555" rx="8"/>
+    <text class="label" x="78" y="150">Dense City / Town</text>
+    <text class="tiny" x="78" y="172">houses, shops, courtyards, alleys</text>
+    <rect class="market" x="90" y="330" width="150" height="110" rx="8"/>
+    <text class="tiny" x="112" y="392">market objective</text>
+
+    <!-- Base compound right side, large and complete -->
+    <path class="wall" d="M455 105 L805 120 L845 210 L832 760 L690 830 L445 770 L420 220 Z"/>
+    <rect class="base" x="465" y="160" width="190" height="170" rx="8"/>
+    <text class="label" x="488" y="198">Tent Camp</text>
+    <text class="tiny" x="488" y="220">barracks rows, water tower</text>
+
+    <rect class="command" x="475" y="365" width="190" height="125" rx="8"/>
+    <text class="label" x="505" y="410">Command</text>
+    <text class="tiny" x="505" y="432">HQ objective</text>
+
+    <rect class="vehicle" x="470" y="585" width="215" height="140" rx="8"/>
+    <text class="label" x="492" y="630">Vehicle Depot</text>
+    <text class="tiny" x="492" y="652">tanks, APCs, trucks</text>
+
+    <rect class="runway" x="680" y="150" width="130" height="250" rx="8"/>
+    <rect class="runway" x="714" y="55" width="58" height="300" transform="rotate(13 743 205)" opacity=".88"/>
+    <text class="label" x="696" y="188">Runway</text>
+    <text class="tiny" x="696" y="210">jets, hangar</text>
+
+    <rect class="fuel" x="705" y="450" width="105" height="205" rx="8"/>
+    <text class="label" x="730" y="500">Fuel</text>
+    <text class="tiny" x="720" y="522">tanks/pipes</text>
+
+    <!-- Open combat lanes / city-base approach -->
+    <path class="open" d="M292 468 C375 430 405 470 455 515 C410 600 345 650 282 675 C245 602 235 532 292 468 Z"/>
+    <text class="tiny" x="305" y="555">open combat lane</text>
+    <path class="open" d="M340 110 C400 80 438 105 455 160 L420 220 L330 220 Z"/>
+    <text class="tiny" x="340" y="145">north approach</text>
+
+    <!-- Scenic blocked edges: visible but kept off walkable lanes -->
+    <path class="blocked" d="M0 0 L250 0 C210 70 130 82 40 92 L0 110 Z"/>
+    <path class="blocked" d="M0 700 C78 680 138 708 205 765 L205 890 L0 890 Z"/>
+    <path class="blocked" d="M760 0 L890 0 L890 175 C845 120 805 90 760 80 Z"/>
+    <path class="blocked" d="M820 735 C875 740 890 790 890 890 L705 890 Z"/>
+
+    <!-- Objectives and spawns -->
+    <circle class="spawnBlue" cx="105" cy="575" r="20"/>
+    <text class="tiny" x="62" y="620">Player spawn</text>
+    <circle class="spawnRed" cx="740" cy="230" r="20"/>
+    <text class="tiny" x="756" y="234">Enemy patrol</text>
+
+    <rect class="objective" x="126" y="350" width="80" height="58" rx="8"/>
+    <rect class="objective" x="530" y="392" width="78" height="58" rx="8"/>
+    <rect class="objective" x="548" y="620" width="82" height="58" rx="8"/>
+    <rect class="objective" x="712" y="185" width="70" height="58" rx="8"/>
+
+    <path class="arrow" d="M105 575 C170 515 225 485 300 448 C380 420 460 420 565 420"/>
+    <path class="arrow" d="M565 420 C630 380 685 310 740 230"/>
+    <path class="arrow" d="M565 420 C545 500 560 585 590 650"/>
+    <path class="arrow" d="M160 390 C230 360 275 345 350 345 C420 345 485 350 560 420"/>
+
+    <text class="tiny" x="15" y="20">NW scenic edge</text>
+    <text class="tiny" x="760" y="865">SE scenic edge</text>
+    <text class="tiny" x="270" y="865">2048 x 2048 complete map boundary</text>
+  </g>
+
+  <g transform="translate(70 145)">
+    <text class="title" x="0" y="0">Build Contract</text>
+    <text class="small" x="0" y="42">1. Full map includes both city and base.</text>
+    <text class="small" x="0" y="74">2. Highway connects city to base gate.</text>
+    <text class="small" x="0" y="106">3. Roads and lanes are reserved first.</text>
+    <text class="small" x="0" y="138">4. City blocks stay west of highway.</text>
+    <text class="small" x="0" y="170">5. Base compound stays east/right side.</text>
+    <text class="small" x="0" y="202">6. Scenic terrain only on edges.</text>
+    <text class="small" x="0" y="234">7. Units must fit visible RTS lanes.</text>
+    <text class="small" x="0" y="266">8. No duplicated Demo layout.</text>
+  </g>
+
+  <g transform="translate(1270 145)">
+    <text class="title" x="0" y="0">District List</text>
+    <rect class="city" x="0" y="35" width="28" height="20"/><text class="small" x="42" y="51">City / town district</text>
+    <rect class="market" x="0" y="70" width="28" height="20"/><text class="small" x="42" y="86">Market objective</text>
+    <rect class="base" x="0" y="105" width="28" height="20"/><text class="small" x="42" y="121">Tent camp / barracks</text>
+    <rect class="command" x="0" y="140" width="28" height="20"/><text class="small" x="42" y="156">Command objective</text>
+    <rect class="vehicle" x="0" y="175" width="28" height="20"/><text class="small" x="42" y="191">Vehicle depot</text>
+    <rect class="runway" x="0" y="210" width="28" height="20"/><text class="small" x="42" y="226">Runway / aircraft apron</text>
+    <rect class="fuel" x="0" y="245" width="28" height="20"/><text class="small" x="42" y="261">Fuel / utility boundary</text>
+    <rect class="blocked" x="0" y="280" width="28" height="20"/><text class="small" x="42" y="296">Blocked scenic edge</text>
+    <rect class="open" x="0" y="315" width="28" height="20"/><text class="small" x="42" y="331">Open combat lane</text>
+  </g>
+
+  <g transform="translate(1270 545)">
+    <text class="title" x="0" y="0">Gameplay Flow</text>
+    <text class="small" x="0" y="42">Player starts in city south-west.</text>
+    <text class="small" x="0" y="74">First fight: market / city alleys.</text>
+    <text class="small" x="0" y="106">Second fight: open highway approach.</text>
+    <text class="small" x="0" y="138">Third fight: base command objective.</text>
+    <text class="small" x="0" y="170">Optional flank: vehicle depot.</text>
+    <text class="small" x="0" y="202">Enemy patrols: runway/tent camp.</text>
+  </g>
+</svg>

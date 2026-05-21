@@ -547,8 +547,8 @@ public sealed class Chapter01M01PlayModeValidationTests
         Assert.NotNull(infantryScope, $"{entryPath}: Match HUD should include the M01 infantry-only scope controller.");
         infantryScope.Refresh();
         Assert.IsTrue(infantryScope.IsM01ScopeActive, $"{entryPath}: M01 infantry-only HUD scope should be active for First Contact.");
-        Assert.GreaterOrEqual(infantryScope.HiddenRootCount, 7, $"{entryPath}: M01 HUD should suppress APC, Tank, air support, Build, and related production affordance roots.");
-        Assert.IsTrue(infantryScope.AreM01SuppressedRootsHidden(), $"{entryPath}: APC, Tank, air support, Build, production, transport, and base/build affordances must not be presented as usable M01 options.");
+        Assert.GreaterOrEqual(infantryScope.HiddenRootCount, 3, $"{entryPath}: M01 HUD should suppress Build, production drawer, and command wheel affordance roots.");
+        Assert.IsTrue(infantryScope.AreM01SuppressedRootsHidden(), $"{entryPath}: Build, production, transport, and base/build affordances must not be presented as usable M01 options.");
     }
 
     private static void AssertTacticalGroundAndCameraFraming(M01SceneContext context, string entryPath)

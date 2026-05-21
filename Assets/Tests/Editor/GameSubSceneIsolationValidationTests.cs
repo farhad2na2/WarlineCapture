@@ -8,29 +8,29 @@ using UnityEngine.SceneManagement;
 
 public sealed class GameSubSceneIsolationValidationTests
 {
-    private const string ProductionScenePath = "Assets/Game/Scenes/Game.unity";
-    private const string LegacyScenePath = "Assets/Game/Scenes/Game_Legecy.unity";
-    private const string ProductionSubScenePath = "Assets/Game/Scenes/Game/GameSubScene.unity";
-    private const string LegacySubScenePath = "Assets/Game/Scenes/Game_Legecy/GameSubScene.unity";
+    private const string DefaultScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string Old2DScenePath = "Assets/Game/Scenes/Game2D.unity";
+    private const string DefaultSubScenePath = "Assets/Game/Scenes/Game/GameSubScene.unity";
+    private const string Old2DSubScenePath = "Assets/Game/Scenes/Game2D/GameSubScene.unity";
 
     [Test]
-    public void ProductionAndLegacyScenesUseDistinctSubSceneAssets()
+    public void DefaultGameAndOld2DScenesUseDistinctSubSceneAssets()
     {
-        Scene productionScene = EditorSceneManager.OpenScene(ProductionScenePath, OpenSceneMode.Single);
-        SubScene productionSubScene = FindRootSubScene(productionScene);
-        Assert.NotNull(productionSubScene, "Game.unity must keep its GameSubScene root.");
-        string productionSubScenePath = AssetDatabase.GetAssetPath(productionSubScene.SceneAsset);
-        Assert.AreEqual(ProductionSubScenePath, productionSubScenePath);
+        Scene defaultScene = EditorSceneManager.OpenScene(DefaultScenePath, OpenSceneMode.Single);
+        SubScene defaultSubScene = FindRootSubScene(defaultScene);
+        Assert.NotNull(defaultSubScene, "Game.unity must keep its promoted 3D GameSubScene root.");
+        string defaultSubScenePath = AssetDatabase.GetAssetPath(defaultSubScene.SceneAsset);
+        Assert.AreEqual(DefaultSubScenePath, defaultSubScenePath);
 
-        Scene legacyScene = EditorSceneManager.OpenScene(LegacyScenePath, OpenSceneMode.Single);
-        SubScene legacySubScene = FindRootSubScene(legacyScene);
-        Assert.NotNull(legacySubScene, "Game_Legecy.unity must keep its GameSubScene root.");
-        string legacySubScenePath = AssetDatabase.GetAssetPath(legacySubScene.SceneAsset);
-        Assert.AreEqual(LegacySubScenePath, legacySubScenePath);
+        Scene old2DScene = EditorSceneManager.OpenScene(Old2DScenePath, OpenSceneMode.Single);
+        SubScene old2DSubScene = FindRootSubScene(old2DScene);
+        Assert.NotNull(old2DSubScene, "Game2D.unity must keep the old 2D GameSubScene root.");
+        string old2DSubScenePath = AssetDatabase.GetAssetPath(old2DSubScene.SceneAsset);
+        Assert.AreEqual(Old2DSubScenePath, old2DSubScenePath);
 
         Assert.AreNotEqual(
-            productionSubScenePath,
-            legacySubScenePath,
+            defaultSubScenePath,
+            old2DSubScenePath,
             "Unity.Entities does not support multiple active SubScene components referencing the same SceneAsset.");
     }
 

@@ -1,0 +1,327 @@
+﻿{
+    "generatedBy": "WarlineCaptureGc05ModulePrefabPromoter",
+    "sourceScene": "Assets/Game/Scenes/Generated/GC04_DemoModulePlayableCity_2048.unity",
+    "previewScene": "Assets/Game/Scenes/Generated/GC05_ModulePrefabPreview_2048.unity",
+    "modules": [
+        {
+            "name": "TownBlock_SW_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_SW_DemoAuthored.prefab",
+            "footprintWidth": 145.60000610351563,
+            "footprintDepth": 145.60000610351563,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownBlock_SouthCenter_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_SouthCenter_DemoAuthored.prefab",
+            "footprintWidth": 136.8000030517578,
+            "footprintDepth": 136.8000030517578,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownBlock_SouthEast_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_SouthEast_DemoAuthored.prefab",
+            "footprintWidth": 136.8000030517578,
+            "footprintDepth": 136.8000030517578,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownBlock_WestMid_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMid_DemoAuthored.prefab",
+            "footprintWidth": 141.1999969482422,
+            "footprintDepth": 141.1999969482422,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownBlock_Center_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab",
+            "footprintWidth": 141.1999969482422,
+            "footprintDepth": 141.1999969482422,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownMarket_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownMarket_DemoAuthored.prefab",
+            "footprintWidth": 150.0,
+            "footprintDepth": 150.0,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownBlock_WestMarket_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab",
+            "footprintWidth": 136.8000030517578,
+            "footprintDepth": 136.8000030517578,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownBlock_NorthCenter_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_NorthCenter_DemoAuthored.prefab",
+            "footprintWidth": 136.8000030517578,
+            "footprintDepth": 136.8000030517578,
+            "directChildren": 2892,
+            "rendererCount": 4229,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "TownNorth_DemoAuthored",
+            "role": "town",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/TownNorth_DemoAuthored.prefab",
+            "footprintWidth": 82.80000305175781,
+            "footprintDepth": 154.8000030517578,
+            "directChildren": 808,
+            "rendererCount": 1084,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "BaseBarracks_DemoAuthored",
+            "role": "base",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/BaseBarracks_DemoAuthored.prefab",
+            "footprintWidth": 114.19999694824219,
+            "footprintDepth": 121.5999984741211,
+            "directChildren": 1061,
+            "rendererCount": 1548,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "BaseMotorPool_DemoAuthored",
+            "role": "base",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/BaseMotorPool_DemoAuthored.prefab",
+            "footprintWidth": 109.0,
+            "footprintDepth": 116.0,
+            "directChildren": 1061,
+            "rendererCount": 1548,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "BaseSouthDepot_DemoAuthored",
+            "role": "base",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/BaseSouthDepot_DemoAuthored.prefab",
+            "footprintWidth": 103.80000305175781,
+            "footprintDepth": 110.4000015258789,
+            "directChildren": 1061,
+            "rendererCount": 1548,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "BaseCommand_DemoAuthored",
+            "role": "base",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/BaseCommand_DemoAuthored.prefab",
+            "footprintWidth": 111.5999984741211,
+            "footprintDepth": 118.80000305175781,
+            "directChildren": 1061,
+            "rendererCount": 1548,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "BaseNorthDepot_DemoAuthored",
+            "role": "base",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/BaseNorthDepot_DemoAuthored.prefab",
+            "footprintWidth": 106.4000015258789,
+            "footprintDepth": 113.19999694824219,
+            "directChildren": 1061,
+            "rendererCount": 1548,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "RunwayApron_DemoAuthored",
+            "role": "base",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/RunwayApron_DemoAuthored.prefab",
+            "footprintWidth": 61.400001525878909,
+            "footprintDepth": 154.39999389648438,
+            "directChildren": 220,
+            "rendererCount": 346,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        },
+        {
+            "name": "IndustrialObjective_DemoAuthored",
+            "role": "industrial",
+            "prefabPath": "Assets/Game/Prefabs/Generated/GC04Modules/IndustrialObjective_DemoAuthored.prefab",
+            "footprintWidth": 130.0,
+            "footprintDepth": 114.0,
+            "directChildren": 186,
+            "rendererCount": 257,
+            "sockets": [
+                "Socket_North_Road",
+                "Socket_South_Road",
+                "Socket_East_Road",
+                "Socket_West_Road",
+                "ObjectiveSocket_Center"
+            ],
+            "masks": [
+                "BlockedFootprintMask",
+                "WalkableSocketMask"
+            ]
+        }
+    ]
+}

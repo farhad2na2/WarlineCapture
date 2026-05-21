@@ -1,0 +1,2565 @@
+﻿{
+    "generatedBy": "WarlineCaptureGc26SourceScaleCompoundLayoutBuilder",
+    "scene": "Assets/Game/Scenes/Generated/GC26_SourceScaleCompoundLayout_2048.unity",
+    "generatorSettings": {
+        "mapSizeMeters": 2048.0,
+        "roadPattern": "Two north-south arteries with three authored diagonal/east-west connectors",
+        "terrainProfile": "Flat RTS gameplay plane",
+        "artStyle": "PolygonMilitary desert military town",
+        "authoringRule": "Roads and local yards are walkable; all buildings, props, rocks, tents, and static vehicles must live inside blocker zones."
+    },
+    "districts": [
+        {
+            "name": "NorthWestDenseTown",
+            "role": "Civilian city blocks",
+            "style": "MiddleEasternTown",
+            "density": 0.7799999713897705,
+            "centerX": -478.6336669921875,
+            "centerZ": 699.5415649414063,
+            "width": 897.438232421875,
+            "depth": 437.2134704589844
+        },
+        {
+            "name": "WestMarketResidential",
+            "role": "Market streets and low houses",
+            "style": "MarketVillage",
+            "density": 0.7200000286102295,
+            "centerX": -612.098876953125,
+            "centerZ": 108.15280151367188,
+            "width": 529.2584228515625,
+            "depth": 533.8606567382813
+        },
+        {
+            "name": "SouthPlayerBase",
+            "role": "Player staging base",
+            "style": "MilitaryBase",
+            "density": 0.5799999833106995,
+            "centerX": -651.2179565429688,
+            "centerZ": -708.74609375,
+            "width": 543.065185546875,
+            "depth": 474.0314636230469
+        },
+        {
+            "name": "CentralBarracksSpine",
+            "role": "Source-scale barracks and service yards",
+            "style": "MilitaryCamp",
+            "density": 0.6600000262260437,
+            "centerX": -115.05616760253906,
+            "centerZ": -501.64495849609377,
+            "width": 437.2134704589844,
+            "depth": 823.80224609375
+        },
+        {
+            "name": "NorthEastAirfield",
+            "role": "Source-scale runway, hangars, apron",
+            "style": "Airfield",
+            "density": 0.6200000047683716,
+            "centerX": 706.4449462890625,
+            "centerZ": 566.076416015625,
+            "width": 671.9281005859375,
+            "depth": 759.3707885742188
+        },
+        {
+            "name": "CentralCommandLogistics",
+            "role": "Source-scale command and vehicle logistics",
+            "style": "CommandDepot",
+            "density": 0.699999988079071,
+            "centerX": 575.2808837890625,
+            "centerZ": 32.215728759765628,
+            "width": 750.1663208007813,
+            "depth": 483.2359619140625
+        },
+        {
+            "name": "SouthEastArmorFuel",
+            "role": "Armor parking and fuel utility",
+            "style": "ArmorFuelDepot",
+            "density": 0.7400000095367432,
+            "centerX": 600.59326171875,
+            "centerZ": -632.8089599609375,
+            "width": 671.9281005859375,
+            "depth": 671.9281005859375
+        }
+    ],
+    "modules": [
+        {
+            "name": "TownBlockModule_NorthWest",
+            "district": "NorthWestDenseTown",
+            "style": "Demo-authored village houses/shops",
+            "replacementIntent": "Replace with selected Demo town cluster while preserving the listed building blocker masks.",
+            "centerX": -482.5916442871094,
+            "centerZ": 714.1766967773438,
+            "width": 763.6047973632813,
+            "depth": 256.621337890625,
+            "blockerMasks": [
+                "CityCore_NorthWest_Building_NW",
+                "CityCore_NorthWest_Building_NE",
+                "CityCore_NorthWest_Building_SW",
+                "CityCore_NorthWest_Building_SE",
+                "CityCentral_WestInner_Building_NW",
+                "CityCentral_WestInner_Building_NE",
+                "CityCentral_WestInner_Building_SW",
+                "CityCentral_WestInner_Building_SE"
+            ]
+        },
+        {
+            "name": "MarketModule_West",
+            "district": "WestMarketResidential",
+            "style": "Market village with cloth covers, alleys, walls",
+            "replacementIntent": "Replace with Demo market/residential module; streets stay soldier-walkable.",
+            "centerX": -620.15283203125,
+            "centerZ": 134.29356384277345,
+            "width": 283.0382385253906,
+            "depth": 256.6213684082031,
+            "blockerMasks": [
+                "CityMarket_West_Building_NW",
+                "CityMarket_West_Building_NE",
+                "CityMarket_West_Building_SW",
+                "CityMarket_West_Building_SE"
+            ]
+        },
+        {
+            "name": "PlayerBaseModule_SouthGate",
+            "district": "SouthPlayerBase",
+            "style": "Military entry camp",
+            "replacementIntent": "Replace with Demo base gate/tent cluster; player staging lanes stay walkable.",
+            "centerX": -752.697509765625,
+            "centerZ": -687.621826171875,
+            "width": 207.56134033203126,
+            "depth": 211.79534912109376,
+            "blockerMasks": [
+                "SouthGate_PlayerCamp_Static_NW",
+                "SouthGate_PlayerCamp_Static_SE",
+                "SouthGate_PlayerCamp_VehicleStaticProp"
+            ]
+        },
+        {
+            "name": "BarracksModule_CentralSpine",
+            "district": "CentralBarracksSpine",
+            "style": "Barracks and tent service strip",
+            "replacementIntent": "Replace with Demo barracks/tent row cluster; central macro-road access stays clear.",
+            "centerX": -136.8248291015625,
+            "centerZ": -498.6074523925781,
+            "width": 275.49053955078127,
+            "depth": 628.1148071289063,
+            "blockerMasks": [
+                "CentralTentBarracks_Static_NW",
+                "CentralTentBarracks_Static_SE",
+                "CentralTentBarracks_VehicleStaticProp",
+                "WestTentBarracks_Static_NW",
+                "WestTentBarracks_Static_SE",
+                "WestTentBarracks_VehicleStaticProp"
+            ]
+        },
+        {
+            "name": "AirfieldModule_NorthEast",
+            "district": "NorthEastAirfield",
+            "style": "Runway apron, hangar, control tower",
+            "replacementIntent": "Replace with Demo airfield cluster; runway and apron vehicle lanes stay walkable.",
+            "centerX": 692.546142578125,
+            "centerZ": 576.4314575195313,
+            "width": 384.93206787109377,
+            "depth": 448.7191162109375,
+            "blockerMasks": [
+                "Airfield_Apron_Static_NW",
+                "Airfield_Apron_Static_SE",
+                "Airfield_Apron_VehicleStaticProp"
+            ]
+        },
+        {
+            "name": "CommandDepotModule_CentralEast",
+            "district": "CentralCommandLogistics",
+            "style": "Command depot and vehicle yard",
+            "replacementIntent": "Replace with Demo command/logistics module; command yard stays vehicle-walkable.",
+            "centerX": 625.5834350585938,
+            "centerZ": 31.433364868164064,
+            "width": 582.368408203125,
+            "depth": 297.94952392578127,
+            "blockerMasks": [
+                "CommandDepot_CentralEast_Static_NW",
+                "CommandDepot_CentralEast_Static_SE",
+                "CommandDepot_CentralEast_VehicleStaticProp",
+                "VehicleYard_NorthEast_Static_NW",
+                "VehicleYard_NorthEast_Static_SE",
+                "VehicleYard_NorthEast_VehicleStaticProp"
+            ]
+        },
+        {
+            "name": "ArmorFuelModule_SouthEast",
+            "district": "SouthEastArmorFuel",
+            "style": "Armor park and fuel utility",
+            "replacementIntent": "Replace with Demo armor/fuel service module; vehicle loop stays walkable.",
+            "centerX": 681.6848754882813,
+            "centerZ": -592.171142578125,
+            "width": 469.2449645996094,
+            "depth": 394.5967102050781,
+            "blockerMasks": [
+                "VehicleYard_SouthEast_Static_NW",
+                "VehicleYard_SouthEast_Static_SE",
+                "VehicleYard_SouthEast_VehicleStaticProp",
+                "FuelUtility_East_Static_NW",
+                "FuelUtility_East_Static_SE",
+                "FuelUtility_East_VehicleStaticProp"
+            ]
+        }
+    ],
+    "zones": [
+        {
+            "name": "MacroRoad_MainNorthSouth_West",
+            "kind": "MacroRoadWalkable",
+            "centerX": -361.27642822265627,
+            "centerZ": 0.0,
+            "width": 138.06741333007813,
+            "depth": 2048.0
+        },
+        {
+            "name": "MacroRoad_MainNorthSouth_East",
+            "kind": "MacroRoadWalkable",
+            "centerX": 158.77752685546876,
+            "centerZ": 0.0,
+            "width": 128.8629150390625,
+            "depth": 2048.0
+        },
+        {
+            "name": "MacroRoad_NorthCityToAirfield",
+            "kind": "MacroRoadWalkable",
+            "centerX": -264.62921142578127,
+            "centerZ": 446.41796875,
+            "width": 1233.4022216796875,
+            "depth": 124.26067352294922
+        },
+        {
+            "name": "MacroRoad_CentralCityToCommand",
+            "kind": "MacroRoadWalkable",
+            "centerX": -315.2539367675781,
+            "centerZ": -23.011234283447267,
+            "width": 819.2000122070313,
+            "depth": 124.26067352294922
+        },
+        {
+            "name": "MacroRoad_CommandToAirfield_East",
+            "kind": "MacroRoadWalkable",
+            "centerX": 632.8089599609375,
+            "centerZ": 317.5550537109375,
+            "width": 819.2000122070313,
+            "depth": 96.6471939086914
+        },
+        {
+            "name": "MacroRoad_SouthPlayerToFuel",
+            "kind": "MacroRoadWalkable",
+            "centerX": -27.61346435546875,
+            "centerZ": -1021.6989135742188,
+            "width": 1817.8876953125,
+            "depth": 124.26067352294922
+        },
+        {
+            "name": "CityCore_NorthWest_SoldierLocal",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -727.155029296875,
+            "centerZ": 711.0472412109375,
+            "width": 326.7595520019531,
+            "depth": 312.95281982421877
+        },
+        {
+            "name": "CityCentral_WestInner_SoldierLocal",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -200.19775390625,
+            "centerZ": 694.9393310546875,
+            "width": 248.52134704589845,
+            "depth": 271.5325927734375
+        },
+        {
+            "name": "CityMarket_West_SoldierLocal",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -616.7011108398438,
+            "centerZ": 131.16404724121095,
+            "width": 345.1685485839844,
+            "depth": 312.95281982421877
+        },
+        {
+            "name": "CitySouth_West_SoldierLocal",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -676.5303344726563,
+            "centerZ": -775.4786376953125,
+            "width": 345.1685485839844,
+            "depth": 312.95281982421877
+        },
+        {
+            "name": "SouthGate_PlayerCamp_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -750.1663818359375,
+            "centerZ": -690.3370971679688,
+            "width": 253.12359619140626,
+            "depth": 271.5325927734375
+        },
+        {
+            "name": "CentralTentBarracks_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -133.46517944335938,
+            "centerZ": -306.0494384765625,
+            "width": 335.96405029296877,
+            "depth": 303.7483215332031
+        },
+        {
+            "name": "WestTentBarracks_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": -133.46517944335938,
+            "centerZ": -697.240478515625,
+            "width": 335.96405029296877,
+            "depth": 303.7483215332031
+        },
+        {
+            "name": "Airfield_Apron_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": 697.240478515625,
+            "centerZ": 570.6786499023438,
+            "width": 469.42919921875,
+            "depth": 575.2808837890625
+        },
+        {
+            "name": "CommandDepot_CentralEast_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": 531.5595703125,
+            "centerZ": 27.613479614257814,
+            "width": 469.42919921875,
+            "depth": 381.98651123046877
+        },
+        {
+            "name": "VehicleYard_NorthEast_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": 856.0180053710938,
+            "centerZ": 98.94831085205078,
+            "width": 151.87416076660157,
+            "depth": 193.2943878173828
+        },
+        {
+            "name": "VehicleYard_SouthEast_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": 607.4966430664063,
+            "centerZ": -644.3145751953125,
+            "width": 381.98651123046877,
+            "depth": 381.98651123046877
+        },
+        {
+            "name": "FuelUtility_East_SoldierYard",
+            "kind": "SoldierLocalWalkable",
+            "centerX": 872.1258544921875,
+            "centerZ": -510.84942626953127,
+            "width": 110.45393371582031,
+            "depth": 289.9415588378906
+        },
+        {
+            "name": "CityCore_NorthWest_VehiclePocket",
+            "kind": "VehicleWalkable",
+            "centerX": -727.155029296875,
+            "centerZ": 711.0471801757813,
+            "width": 98.02787017822266,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CityMarket_West_VehiclePocket",
+            "kind": "VehicleWalkable",
+            "centerX": -616.7011108398438,
+            "centerZ": 131.16404724121095,
+            "width": 103.5505599975586,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CitySouth_West_VehiclePocket",
+            "kind": "VehicleWalkable",
+            "centerX": -676.5303344726563,
+            "centerZ": -775.4786376953125,
+            "width": 103.5505599975586,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "SouthGate_PlayerCamp_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": -750.1663208007813,
+            "centerZ": -687.6216430664063,
+            "width": 172.12405395507813,
+            "depth": 157.4888916015625
+        },
+        {
+            "name": "CentralTentBarracks_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": -133.46514892578126,
+            "centerZ": -303.0120849609375,
+            "width": 228.45555114746095,
+            "depth": 176.17401123046876
+        },
+        {
+            "name": "WestTentBarracks_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": -133.46514892578126,
+            "centerZ": -694.2030029296875,
+            "width": 228.45555114746095,
+            "depth": 176.17401123046876
+        },
+        {
+            "name": "Airfield_Apron_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": 697.240478515625,
+            "centerZ": 576.4314575195313,
+            "width": 319.21185302734377,
+            "depth": 333.6629333496094
+        },
+        {
+            "name": "CommandDepot_CentralEast_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": 531.5595703125,
+            "centerZ": 31.43328857421875,
+            "width": 319.21185302734377,
+            "depth": 221.5521697998047
+        },
+        {
+            "name": "VehicleYard_NorthEast_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": 856.0180053710938,
+            "centerZ": 100.88131713867188,
+            "width": 103.27442932128906,
+            "depth": 112.11073303222656
+        },
+        {
+            "name": "VehicleYard_SouthEast_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": 607.4966430664063,
+            "centerZ": -640.4948120117188,
+            "width": 259.7508544921875,
+            "depth": 221.5521697998047
+        },
+        {
+            "name": "FuelUtility_East_VehicleYard",
+            "kind": "VehicleWalkable",
+            "centerX": 872.1258544921875,
+            "centerZ": -507.9500427246094,
+            "width": 75.10867309570313,
+            "depth": 168.1660919189453
+        },
+        {
+            "name": "CityCore_NorthWest_Building_NW",
+            "kind": "Blocker",
+            "centerX": -818.647705078125,
+            "centerZ": 795.54443359375,
+            "width": 91.49266815185547,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "CityCore_NorthWest_Building_NE",
+            "kind": "Blocker",
+            "centerX": -642.1975708007813,
+            "centerZ": 795.54443359375,
+            "width": 91.49266815185547,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "CityCore_NorthWest_Building_SW",
+            "kind": "Blocker",
+            "centerX": -818.647705078125,
+            "centerZ": 629.679443359375,
+            "width": 91.49266815185547,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CityCore_NorthWest_Building_SE",
+            "kind": "Blocker",
+            "centerX": -642.1975708007813,
+            "centerZ": 629.679443359375,
+            "width": 91.49266815185547,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CityCentral_WestInner_Building_NW",
+            "kind": "Blocker",
+            "centerX": -269.7837219238281,
+            "centerZ": 768.2530517578125,
+            "width": 69.58597564697266,
+            "depth": 81.45977783203125
+        },
+        {
+            "name": "CityCentral_WestInner_Building_NE",
+            "kind": "Blocker",
+            "centerX": -135.5822296142578,
+            "centerZ": 768.2530517578125,
+            "width": 69.58597564697266,
+            "depth": 81.45977783203125
+        },
+        {
+            "name": "CityCentral_WestInner_Building_SW",
+            "kind": "Blocker",
+            "centerX": -269.7837219238281,
+            "centerZ": 624.3408203125,
+            "width": 69.58597564697266,
+            "depth": 76.02912902832031
+        },
+        {
+            "name": "CityCentral_WestInner_Building_SE",
+            "kind": "Blocker",
+            "centerX": -135.5822296142578,
+            "centerZ": 624.3408203125,
+            "width": 69.58597564697266,
+            "depth": 76.02912902832031
+        },
+        {
+            "name": "CityMarket_West_Building_NW",
+            "kind": "Blocker",
+            "centerX": -713.3483276367188,
+            "centerZ": 215.66131591796876,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "CityMarket_West_Building_NE",
+            "kind": "Blocker",
+            "centerX": -526.957275390625,
+            "centerZ": 215.66131591796876,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "CityMarket_West_Building_SW",
+            "kind": "Blocker",
+            "centerX": -713.3483276367188,
+            "centerZ": 49.79627990722656,
+            "width": 96.6471939086914,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CityMarket_West_Building_SE",
+            "kind": "Blocker",
+            "centerX": -526.957275390625,
+            "centerZ": 49.79627990722656,
+            "width": 96.6471939086914,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CitySouth_West_Building_NW",
+            "kind": "Blocker",
+            "centerX": -773.1775512695313,
+            "centerZ": -690.9814453125,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "CitySouth_West_Building_NE",
+            "kind": "Blocker",
+            "centerX": -586.7864990234375,
+            "centerZ": -690.9814453125,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "CitySouth_West_Building_SW",
+            "kind": "Blocker",
+            "centerX": -773.1775512695313,
+            "centerZ": -856.8463745117188,
+            "width": 96.6471939086914,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "CitySouth_West_Building_SE",
+            "kind": "Blocker",
+            "centerX": -586.7864990234375,
+            "centerZ": -856.8463745117188,
+            "width": 96.6471939086914,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "SouthGate_PlayerCamp_Static_NW",
+            "kind": "Blocker",
+            "centerX": -818.5096435546875,
+            "centerZ": -617.0233154296875,
+            "width": 75.93708038330078,
+            "depth": 70.59846496582031
+        },
+        {
+            "name": "SouthGate_PlayerCamp_Static_SE",
+            "kind": "Blocker",
+            "centerX": -686.8853759765625,
+            "centerZ": -758.22021484375,
+            "width": 75.93708038330078,
+            "depth": 70.59846496582031
+        },
+        {
+            "name": "SouthGate_PlayerCamp_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": -750.1663208007813,
+            "centerZ": -676.7603759765625,
+            "width": 60.74966049194336,
+            "depth": 59.73716735839844
+        },
+        {
+            "name": "CentralTentBarracks_Static_NW",
+            "kind": "Blocker",
+            "centerX": -224.1754913330078,
+            "centerZ": -224.037353515625,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "CentralTentBarracks_Static_SE",
+            "kind": "Blocker",
+            "centerX": -49.47415542602539,
+            "centerZ": -381.98651123046877,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "CentralTentBarracks_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": -133.4651641845703,
+            "centerZ": -290.8620910644531,
+            "width": 80.6313705444336,
+            "depth": 66.82463073730469
+        },
+        {
+            "name": "WestTentBarracks_Static_NW",
+            "kind": "Blocker",
+            "centerX": -224.1754913330078,
+            "centerZ": -615.2283935546875,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "WestTentBarracks_Static_SE",
+            "kind": "Blocker",
+            "centerX": -49.47415542602539,
+            "centerZ": -773.1775512695313,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "WestTentBarracks_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": -133.4651641845703,
+            "centerZ": -682.0531005859375,
+            "width": 80.6313705444336,
+            "depth": 66.82463073730469
+        },
+        {
+            "name": "Airfield_Apron_Static_NW",
+            "kind": "Blocker",
+            "centerX": 570.4945068359375,
+            "centerZ": 726.0045166015625,
+            "width": 140.82876586914063,
+            "depth": 149.57302856445313
+        },
+        {
+            "name": "Airfield_Apron_Static_SE",
+            "kind": "Blocker",
+            "centerX": 814.5977783203125,
+            "centerZ": 426.8583984375,
+            "width": 140.82876586914063,
+            "depth": 149.57302856445313
+        },
+        {
+            "name": "Airfield_Apron_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": 697.240478515625,
+            "centerZ": 599.4426879882813,
+            "width": 112.66300964355469,
+            "depth": 126.56179809570313
+        },
+        {
+            "name": "CommandDepot_CentralEast_Static_NW",
+            "kind": "Blocker",
+            "centerX": 404.8135986328125,
+            "centerZ": 130.74986267089845,
+            "width": 140.82876586914063,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "CommandDepot_CentralEast_Static_SE",
+            "kind": "Blocker",
+            "centerX": 648.9168701171875,
+            "centerZ": -67.88314819335938,
+            "width": 140.82876586914063,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "CommandDepot_CentralEast_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": 531.5595703125,
+            "centerZ": 46.7127799987793,
+            "width": 112.66300964355469,
+            "depth": 84.03703308105469
+        },
+        {
+            "name": "VehicleYard_NorthEast_Static_NW",
+            "kind": "Blocker",
+            "centerX": 815.0120849609375,
+            "centerZ": 151.13778686523438,
+            "width": 45.56224822998047,
+            "depth": 50.25653839111328
+        },
+        {
+            "name": "VehicleYard_NorthEast_Static_SE",
+            "kind": "Blocker",
+            "centerX": 893.9865112304688,
+            "centerZ": 50.624717712402347,
+            "width": 45.56224822998047,
+            "depth": 50.25653839111328
+        },
+        {
+            "name": "VehicleYard_NorthEast_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": 856.0180053710938,
+            "centerZ": 108.6130599975586,
+            "width": 36.44979476928711,
+            "depth": 42.52476119995117
+        },
+        {
+            "name": "VehicleYard_SouthEast_Static_NW",
+            "kind": "Blocker",
+            "centerX": 504.3603820800781,
+            "centerZ": -541.17822265625,
+            "width": 114.59596252441406,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "VehicleYard_SouthEast_Static_SE",
+            "kind": "Blocker",
+            "centerX": 702.9932861328125,
+            "centerZ": -739.8112182617188,
+            "width": 114.59596252441406,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "VehicleYard_SouthEast_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": 607.4966430664063,
+            "centerZ": -625.21533203125,
+            "width": 91.67676544189453,
+            "depth": 84.03703308105469
+        },
+        {
+            "name": "FuelUtility_East_Static_NW",
+            "kind": "Blocker",
+            "centerX": 842.3033447265625,
+            "centerZ": -432.5651550292969,
+            "width": 33.13618087768555,
+            "depth": 75.38480377197266
+        },
+        {
+            "name": "FuelUtility_East_Static_SE",
+            "kind": "Blocker",
+            "centerX": 899.7393188476563,
+            "centerZ": -583.3348388671875,
+            "width": 33.13618087768555,
+            "depth": 75.38480377197266
+        },
+        {
+            "name": "FuelUtility_East_VehicleStaticProp",
+            "kind": "Blocker",
+            "centerX": 872.1258544921875,
+            "centerZ": -496.3523864746094,
+            "width": 26.508943557739259,
+            "depth": 63.78714370727539
+        }
+    ],
+    "placements": [
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NW",
+            "x": -818.647705078125,
+            "z": 795.54443359375,
+            "width": 91.49266815185547,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NW_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NW",
+            "x": -844.265625,
+            "z": 773.0118408203125,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NW_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NW",
+            "x": -795.7745361328125,
+            "z": 778.6449584960938,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NW_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NW",
+            "x": -835.1163940429688,
+            "z": 819.9547729492188,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NW_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NW",
+            "x": -795.7745361328125,
+            "z": 818.0770263671875,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab",
+            "zone": "CityCore_NorthWest_Building_NE",
+            "x": -642.1975708007813,
+            "z": 795.54443359375,
+            "width": 91.49266815185547,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_03.prefab",
+            "zone": "CityCore_NorthWest_Building_NE",
+            "x": -667.8154907226563,
+            "z": 773.0118408203125,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NE",
+            "x": -619.3244018554688,
+            "z": 778.6449584960938,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NE",
+            "x": -658.666259765625,
+            "z": 819.9547729492188,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_NE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityCore_NorthWest_Building_NE",
+            "x": -619.3244018554688,
+            "z": 818.0770263671875,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_09.prefab",
+            "zone": "CityCore_NorthWest_Building_SW",
+            "x": -818.647705078125,
+            "z": 629.679443359375,
+            "width": 91.49266815185547,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SW_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SW",
+            "x": -844.265625,
+            "z": 608.6489868164063,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SW_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SW",
+            "x": -795.7745361328125,
+            "z": 613.9066162109375,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SW_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SW",
+            "x": -835.1163940429688,
+            "z": 652.46240234375,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SW_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SW",
+            "x": -795.7745361328125,
+            "z": 650.7098999023438,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_11.prefab",
+            "zone": "CityCore_NorthWest_Building_SE",
+            "x": -642.1975708007813,
+            "z": 629.679443359375,
+            "width": 91.49266815185547,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_03.prefab",
+            "zone": "CityCore_NorthWest_Building_SE",
+            "x": -667.8154907226563,
+            "z": 608.6489868164063,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SE",
+            "x": -619.3244018554688,
+            "z": 613.9066162109375,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SE",
+            "x": -658.666259765625,
+            "z": 652.46240234375,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCore_NorthWest_Building_SE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityCore_NorthWest_Building_SE",
+            "x": -619.3244018554688,
+            "z": 650.7098999023438,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_NE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab",
+            "zone": "CityCentral_WestInner_Building_NE",
+            "x": -135.5822296142578,
+            "z": 768.2530517578125,
+            "width": 69.58597564697266,
+            "depth": 81.45977783203125
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_NE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_01.prefab",
+            "zone": "CityCentral_WestInner_Building_NE",
+            "x": -155.06629943847657,
+            "z": 748.7026977539063,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_NE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityCentral_WestInner_Building_NE",
+            "x": -118.18573760986328,
+            "z": 753.5902709960938,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_NE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityCentral_WestInner_Building_NE",
+            "x": -148.1077117919922,
+            "z": 789.4326171875,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_NE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityCentral_WestInner_Building_NE",
+            "x": -118.18573760986328,
+            "z": 787.8034057617188,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab",
+            "zone": "CityCentral_WestInner_Building_SE",
+            "x": -135.5822296142578,
+            "z": 624.3408203125,
+            "width": 69.58597564697266,
+            "depth": 76.02912902832031
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_SE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_03.prefab",
+            "zone": "CityCentral_WestInner_Building_SE",
+            "x": -155.06629943847657,
+            "z": 606.0938110351563,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_SE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityCentral_WestInner_Building_SE",
+            "x": -118.18573760986328,
+            "z": 610.6555786132813,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_SE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityCentral_WestInner_Building_SE",
+            "x": -148.1077117919922,
+            "z": 644.1083984375,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityCentral_WestInner_Building_SE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityCentral_WestInner_Building_SE",
+            "x": -118.18573760986328,
+            "z": 642.5878295898438,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_09.prefab",
+            "zone": "CityMarket_West_Building_NW",
+            "x": -713.3483276367188,
+            "z": 215.66131591796876,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NW_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_01.prefab",
+            "zone": "CityMarket_West_Building_NW",
+            "x": -740.4095458984375,
+            "z": 193.1287078857422,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NW_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityMarket_West_Building_NW",
+            "x": -689.1865234375,
+            "z": 198.76185607910157,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NW_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityMarket_West_Building_NW",
+            "x": -730.7448120117188,
+            "z": 240.07164001464845,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NW_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityMarket_West_Building_NW",
+            "x": -689.1865234375,
+            "z": 238.1939239501953,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_11.prefab",
+            "zone": "CityMarket_West_Building_NE",
+            "x": -526.957275390625,
+            "z": 215.66131591796876,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_03.prefab",
+            "zone": "CityMarket_West_Building_NE",
+            "x": -554.0184936523438,
+            "z": 193.1287078857422,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CityMarket_West_Building_NE",
+            "x": -502.79547119140627,
+            "z": 198.76185607910157,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CityMarket_West_Building_NE",
+            "x": -544.353759765625,
+            "z": 240.07164001464845,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CityMarket_West_Building_NE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CityMarket_West_Building_NE",
+            "x": -502.79547119140627,
+            "z": 238.1939239501953,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab",
+            "zone": "CitySouth_West_Building_NW",
+            "x": -773.1775512695313,
+            "z": -690.9814453125,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NW_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_01.prefab",
+            "zone": "CitySouth_West_Building_NW",
+            "x": -800.23876953125,
+            "z": -713.5140380859375,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NW_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CitySouth_West_Building_NW",
+            "x": -749.0157470703125,
+            "z": -707.8809204101563,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NW_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CitySouth_West_Building_NW",
+            "x": -790.5740356445313,
+            "z": -666.5711059570313,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NW_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CitySouth_West_Building_NW",
+            "x": -749.0157470703125,
+            "z": -668.4488525390625,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab",
+            "zone": "CitySouth_West_Building_NE",
+            "x": -586.7864990234375,
+            "z": -690.9814453125,
+            "width": 96.6471939086914,
+            "depth": 93.88584899902344
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_03.prefab",
+            "zone": "CitySouth_West_Building_NE",
+            "x": -613.8477172851563,
+            "z": -713.5140380859375,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CitySouth_West_Building_NE",
+            "x": -562.6246948242188,
+            "z": -707.8809204101563,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CitySouth_West_Building_NE",
+            "x": -604.1829833984375,
+            "z": -666.5711059570313,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_NE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CitySouth_West_Building_NE",
+            "x": -562.6246948242188,
+            "z": -668.4488525390625,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_09.prefab",
+            "zone": "CitySouth_West_Building_SW",
+            "x": -773.1775512695313,
+            "z": -856.8463745117188,
+            "width": 96.6471939086914,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SW_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_01.prefab",
+            "zone": "CitySouth_West_Building_SW",
+            "x": -800.23876953125,
+            "z": -877.8768310546875,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SW_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CitySouth_West_Building_SW",
+            "x": -749.0157470703125,
+            "z": -872.6192016601563,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SW_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CitySouth_West_Building_SW",
+            "x": -790.5740356445313,
+            "z": -834.0634155273438,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SW_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CitySouth_West_Building_SW",
+            "x": -749.0157470703125,
+            "z": -835.81591796875,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_11.prefab",
+            "zone": "CitySouth_West_Building_SE",
+            "x": -586.7864990234375,
+            "z": -856.8463745117188,
+            "width": 96.6471939086914,
+            "depth": 87.62679290771485
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SE_Fence_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Fence_03.prefab",
+            "zone": "CitySouth_West_Building_SE",
+            "x": -613.8477172851563,
+            "z": -877.8768310546875,
+            "width": 18.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SE_Cover_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Cover_01.prefab",
+            "zone": "CitySouth_West_Building_SE",
+            "x": -562.6246948242188,
+            "z": -872.6192016601563,
+            "width": 16.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SE_Planter_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_Planter_01.prefab",
+            "zone": "CitySouth_West_Building_SE",
+            "x": -604.1829833984375,
+            "z": -834.0634155273438,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CitySouth_West_Building_SE_Cart_D",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cart_Wood_01.prefab",
+            "zone": "CitySouth_West_Building_SE",
+            "x": -562.6246948242188,
+            "z": -835.81591796875,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_NW",
+            "x": -818.5096435546875,
+            "z": -617.0233154296875,
+            "width": 75.93708038330078,
+            "depth": 70.59846496582031
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_NW_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_NW",
+            "x": -837.493896484375,
+            "z": -632.5549926757813,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_NW_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_NW",
+            "x": -799.525390625,
+            "z": -602.9036254882813,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_NW_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_NW",
+            "x": -818.5096435546875,
+            "z": -595.84375,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_SE",
+            "x": -686.8853759765625,
+            "z": -758.22021484375,
+            "width": 75.93708038330078,
+            "depth": 70.59846496582031
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_SE_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_SE",
+            "x": -705.86962890625,
+            "z": -773.7518920898438,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_SE_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_SE",
+            "x": -667.901123046875,
+            "z": -744.1005249023438,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_Static_SE_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "SouthGate_PlayerCamp_Static_SE",
+            "x": -686.8853759765625,
+            "z": -737.0406494140625,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "SouthGate_PlayerCamp_VehicleStaticProp",
+            "x": -750.1663208007813,
+            "z": -676.7603759765625,
+            "width": 60.74966049194336,
+            "depth": 59.73716735839844
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_VehicleStaticProp_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "SouthGate_PlayerCamp_VehicleStaticProp",
+            "x": -765.9612426757813,
+            "z": -662.4234619140625,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "SouthGate_PlayerCamp_VehicleStaticProp",
+            "x": -735.58642578125,
+            "z": -691.0972900390625,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_SouthGate_PlayerCamp_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "SouthGate_PlayerCamp_VehicleStaticProp",
+            "x": -750.1663208007813,
+            "z": -658.8392333984375,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab",
+            "zone": "CentralTentBarracks_Static_NW",
+            "x": -224.1754913330078,
+            "z": -224.037353515625,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_NW_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "CentralTentBarracks_Static_NW",
+            "x": -249.372802734375,
+            "z": -241.41175842285157,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_NW_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "CentralTentBarracks_Static_NW",
+            "x": -198.97817993164063,
+            "z": -208.24244689941407,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_NW_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "CentralTentBarracks_Static_NW",
+            "x": -224.1754913330078,
+            "z": -200.34498596191407,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab",
+            "zone": "CentralTentBarracks_Static_SE",
+            "x": -49.47415542602539,
+            "z": -381.98651123046877,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_SE_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "CentralTentBarracks_Static_SE",
+            "x": -74.67146301269531,
+            "z": -399.36090087890627,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_SE_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "CentralTentBarracks_Static_SE",
+            "x": -24.2768497467041,
+            "z": -366.19158935546877,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_Static_SE_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "CentralTentBarracks_Static_SE",
+            "x": -49.47415542602539,
+            "z": -358.29412841796877,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "CentralTentBarracks_VehicleStaticProp",
+            "x": -133.4651641845703,
+            "z": -290.8620910644531,
+            "width": 80.6313705444336,
+            "depth": 66.82463073730469
+        },
+        {
+            "name": "GC26_CentralTentBarracks_VehicleStaticProp_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "CentralTentBarracks_VehicleStaticProp",
+            "x": -154.4293212890625,
+            "z": -274.8241882324219,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "CentralTentBarracks_VehicleStaticProp",
+            "x": -114.11363220214844,
+            "z": -306.8999938964844,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CentralTentBarracks_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "CentralTentBarracks_VehicleStaticProp",
+            "x": -133.4651641845703,
+            "z": -270.814697265625,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab",
+            "zone": "WestTentBarracks_Static_NW",
+            "x": -224.1754913330078,
+            "z": -615.2283935546875,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_NW_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "WestTentBarracks_Static_NW",
+            "x": -249.372802734375,
+            "z": -632.602783203125,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_NW_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "WestTentBarracks_Static_NW",
+            "x": -198.97817993164063,
+            "z": -599.4334716796875,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_NW_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "WestTentBarracks_Static_NW",
+            "x": -224.1754913330078,
+            "z": -591.5360107421875,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab",
+            "zone": "WestTentBarracks_Static_SE",
+            "x": -49.47415542602539,
+            "z": -773.1775512695313,
+            "width": 100.78922271728516,
+            "depth": 78.97456359863281
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_SE_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "WestTentBarracks_Static_SE",
+            "x": -74.67146301269531,
+            "z": -790.5519409179688,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_SE_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "WestTentBarracks_Static_SE",
+            "x": -24.2768497467041,
+            "z": -757.3826293945313,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_Static_SE_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "WestTentBarracks_Static_SE",
+            "x": -49.47415542602539,
+            "z": -749.4851684570313,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "WestTentBarracks_VehicleStaticProp",
+            "x": -133.4651641845703,
+            "z": -682.0531005859375,
+            "width": 80.6313705444336,
+            "depth": 66.82463073730469
+        },
+        {
+            "name": "GC26_WestTentBarracks_VehicleStaticProp_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "WestTentBarracks_VehicleStaticProp",
+            "x": -154.4293212890625,
+            "z": -666.0151977539063,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "WestTentBarracks_VehicleStaticProp",
+            "x": -114.11363220214844,
+            "z": -698.0910034179688,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_WestTentBarracks_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "WestTentBarracks_VehicleStaticProp",
+            "x": -133.4651641845703,
+            "z": -662.0057373046875,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_Airfield_Apron_Static_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GuardTower_01.prefab",
+            "zone": "Airfield_Apron_Static_NW",
+            "x": 570.4945068359375,
+            "z": 726.0045166015625,
+            "width": 140.82876586914063,
+            "depth": 149.57302856445313
+        },
+        {
+            "name": "GC26_Airfield_Apron_Static_NW_RunwayLight_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Runway_Light_01.prefab",
+            "zone": "Airfield_Apron_Static_NW",
+            "x": 536.6956176757813,
+            "z": 696.0899047851563,
+            "width": 8.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_Airfield_Apron_Static_NW_RunwayBarrier_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Runway_Barrier_01.prefab",
+            "zone": "Airfield_Apron_Static_NW",
+            "x": 604.2933959960938,
+            "z": 755.9191284179688,
+            "width": 14.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_Airfield_Apron_Static_NW_PalletStack_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "Airfield_Apron_Static_NW",
+            "x": 570.4945068359375,
+            "z": 770.8764038085938,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_Airfield_Apron_VehicleStaticProp_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Hangar_01.prefab",
+            "zone": "Airfield_Apron_VehicleStaticProp",
+            "x": 697.240478515625,
+            "z": 599.4426879882813,
+            "width": 112.66300964355469,
+            "depth": 126.56179809570313
+        },
+        {
+            "name": "GC26_Airfield_Apron_VehicleStaticProp_RunwayLight_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Runway_Light_01.prefab",
+            "zone": "Airfield_Apron_VehicleStaticProp",
+            "x": 670.2013549804688,
+            "z": 574.1303100585938,
+            "width": 8.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_Airfield_Apron_VehicleStaticProp_RunwayBarrier_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Runway_Barrier_01.prefab",
+            "zone": "Airfield_Apron_VehicleStaticProp",
+            "x": 724.2796020507813,
+            "z": 624.7550659179688,
+            "width": 14.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_Airfield_Apron_VehicleStaticProp_PalletStack_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "Airfield_Apron_VehicleStaticProp",
+            "x": 697.240478515625,
+            "z": 637.4112548828125,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_NW_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_NW",
+            "x": 404.8135986328125,
+            "z": 130.74986267089845,
+            "width": 140.82876586914063,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_NW_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_NW",
+            "x": 369.6064147949219,
+            "z": 108.90023040771485,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_NW_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_NW",
+            "x": 440.0207824707031,
+            "z": 150.6131591796875,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_NW_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_NW",
+            "x": 404.8135986328125,
+            "z": 160.54481506347657,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_SE_Primary",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_SE",
+            "x": 648.9168701171875,
+            "z": -67.88314819335938,
+            "width": 140.82876586914063,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_SE_Sandbags_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Sandbags_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_SE",
+            "x": 613.7096557617188,
+            "z": -89.73278045654297,
+            "width": 18.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_SE_Generator_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Generator_Small_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_SE",
+            "x": 684.1240844726563,
+            "z": -48.01984786987305,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_Static_SE_CamoNet_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab",
+            "zone": "CommandDepot_CentralEast_Static_SE",
+            "x": 648.9168701171875,
+            "z": -38.08819580078125,
+            "width": 18.0,
+            "depth": 14.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "CommandDepot_CentralEast_VehicleStaticProp",
+            "x": 531.5595703125,
+            "z": 46.7127799987793,
+            "width": 112.66300964355469,
+            "depth": 84.03703308105469
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_VehicleStaticProp_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "CommandDepot_CentralEast_VehicleStaticProp",
+            "x": 502.2671813964844,
+            "z": 66.88166809082031,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "CommandDepot_CentralEast_VehicleStaticProp",
+            "x": 558.5986938476563,
+            "z": 26.54389190673828,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_CommandDepot_CentralEast_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "CommandDepot_CentralEast_VehicleStaticProp",
+            "x": 531.5595703125,
+            "z": 71.92388916015625,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_NW_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "VehicleYard_NorthEast_Static_NW",
+            "x": 815.0120849609375,
+            "z": 151.13778686523438,
+            "width": 45.56224822998047,
+            "depth": 50.25653839111328
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_NW_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "VehicleYard_NorthEast_Static_NW",
+            "x": 803.1658935546875,
+            "z": 163.19935607910157,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_NW_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "VehicleYard_NorthEast_Static_NW",
+            "x": 825.947021484375,
+            "z": 139.0762176513672,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_NW_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "VehicleYard_NorthEast_Static_NW",
+            "x": 815.0120849609375,
+            "z": 166.21475219726563,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_SE_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab",
+            "zone": "VehicleYard_NorthEast_Static_SE",
+            "x": 893.9865112304688,
+            "z": 50.624717712402347,
+            "width": 45.56224822998047,
+            "depth": 50.25653839111328
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_SE_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "VehicleYard_NorthEast_Static_SE",
+            "x": 882.1403198242188,
+            "z": 62.68628692626953,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_SE_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "VehicleYard_NorthEast_Static_SE",
+            "x": 904.9214477539063,
+            "z": 38.563148498535159,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_Static_SE_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "VehicleYard_NorthEast_Static_SE",
+            "x": 893.9865112304688,
+            "z": 65.7016830444336,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "VehicleYard_NorthEast_VehicleStaticProp",
+            "x": 856.0180053710938,
+            "z": 108.6130599975586,
+            "width": 36.44979476928711,
+            "depth": 42.52476119995117
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_VehicleStaticProp_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "VehicleYard_NorthEast_VehicleStaticProp",
+            "x": 846.5410766601563,
+            "z": 118.81900024414063,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "VehicleYard_NorthEast_VehicleStaticProp",
+            "x": 864.7659301757813,
+            "z": 98.40711975097656,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_VehicleYard_NorthEast_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "VehicleYard_NorthEast_VehicleStaticProp",
+            "x": 856.0180053710938,
+            "z": 121.37049102783203,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_NW_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "VehicleYard_SouthEast_Static_NW",
+            "x": 504.3603820800781,
+            "z": -541.17822265625,
+            "width": 114.59596252441406,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_NW_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "VehicleYard_SouthEast_Static_NW",
+            "x": 474.5654296875,
+            "z": -517.34228515625,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_NW_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "VehicleYard_SouthEast_Static_NW",
+            "x": 531.8634033203125,
+            "z": -565.01416015625,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_NW_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "VehicleYard_SouthEast_Static_NW",
+            "x": 504.3603820800781,
+            "z": -511.3832702636719,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_SE_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab",
+            "zone": "VehicleYard_SouthEast_Static_SE",
+            "x": 702.9932861328125,
+            "z": -739.8112182617188,
+            "width": 114.59596252441406,
+            "depth": 99.31649780273438
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_SE_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "VehicleYard_SouthEast_Static_SE",
+            "x": 673.1983642578125,
+            "z": -715.9752807617188,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_SE_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "VehicleYard_SouthEast_Static_SE",
+            "x": 730.496337890625,
+            "z": -763.6471557617188,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_Static_SE_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "VehicleYard_SouthEast_Static_SE",
+            "x": 702.9932861328125,
+            "z": -710.0162963867188,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "VehicleYard_SouthEast_VehicleStaticProp",
+            "x": 607.4966430664063,
+            "z": -625.21533203125,
+            "width": 91.67676544189453,
+            "depth": 84.03703308105469
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_VehicleStaticProp_Barrier_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab",
+            "zone": "VehicleYard_SouthEast_VehicleStaticProp",
+            "x": 583.6607055664063,
+            "z": -605.0464477539063,
+            "width": 14.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "VehicleYard_SouthEast_VehicleStaticProp",
+            "x": 629.4990844726563,
+            "z": -645.3842163085938,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_VehicleYard_SouthEast_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "VehicleYard_SouthEast_VehicleStaticProp",
+            "x": 607.4966430664063,
+            "z": -600.0042114257813,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_NW_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "FuelUtility_East_Static_NW",
+            "x": 842.3033447265625,
+            "z": -432.5651550292969,
+            "width": 33.13618087768555,
+            "depth": 75.38480377197266
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_NW_GasPump_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Gaspump_01.prefab",
+            "zone": "FuelUtility_East_Static_NW",
+            "x": 836.3388061523438,
+            "z": -446.1344299316406,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_NW_GasTank_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Gastank_01.prefab",
+            "zone": "FuelUtility_East_Static_NW",
+            "x": 849.5933227539063,
+            "z": -417.4881896972656,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_NW_Pipe_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Small_Straight_01.prefab",
+            "zone": "FuelUtility_East_Static_NW",
+            "x": 842.3033447265625,
+            "z": -408.4420166015625,
+            "width": 16.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_SE_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab",
+            "zone": "FuelUtility_East_Static_SE",
+            "x": 899.7393188476563,
+            "z": -583.3348388671875,
+            "width": 33.13618087768555,
+            "depth": 75.38480377197266
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_SE_GasPump_A",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Gaspump_01.prefab",
+            "zone": "FuelUtility_East_Static_SE",
+            "x": 893.7747802734375,
+            "z": -596.9041137695313,
+            "width": 10.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_SE_GasTank_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Gastank_01.prefab",
+            "zone": "FuelUtility_East_Static_SE",
+            "x": 907.029296875,
+            "z": -568.2578735351563,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_Static_SE_Pipe_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Small_Straight_01.prefab",
+            "zone": "FuelUtility_East_Static_SE",
+            "x": 899.7393188476563,
+            "z": -559.2117309570313,
+            "width": 16.0,
+            "depth": 8.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_VehicleStaticProp_Primary",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab",
+            "zone": "FuelUtility_East_VehicleStaticProp",
+            "x": 872.1258544921875,
+            "z": -496.3523864746094,
+            "width": 26.508943557739259,
+            "depth": 63.78714370727539
+        },
+        {
+            "name": "GC26_FuelUtility_East_VehicleStaticProp_Pallet_B",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Pallet_02.prefab",
+            "zone": "FuelUtility_East_VehicleStaticProp",
+            "x": 878.4879760742188,
+            "z": -511.6612854003906,
+            "width": 12.0,
+            "depth": 10.0
+        },
+        {
+            "name": "GC26_FuelUtility_East_VehicleStaticProp_Cone_C",
+            "prefab": "Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Cone_01.prefab",
+            "zone": "FuelUtility_East_VehicleStaticProp",
+            "x": 872.1258544921875,
+            "z": -477.21624755859377,
+            "width": 6.0,
+            "depth": 6.0
+        },
+        {
+            "name": "GC26_PlayerSoldier_MarketLane",
+            "prefab": "Assets/Game/Prefabs/Characters/Unit_Chr_Soldier_Male_01.prefab",
+            "zone": "ProofUnit",
+            "x": -619.0022583007813,
+            "z": 121.95954895019531,
+            "width": 12.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_PlayerAPC_MacroRoad",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Heavy.prefab",
+            "zone": "ProofUnit",
+            "x": -126.56179809570313,
+            "z": -246.22023010253907,
+            "width": 12.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_EnemySoldier_AirfieldYard",
+            "prefab": "Assets/Game/Prefabs/Characters/Unit_Chr_Insurgent_Male_04.prefab",
+            "zone": "ProofUnit",
+            "x": 839.9100952148438,
+            "z": 678.8314819335938,
+            "width": 12.0,
+            "depth": 12.0
+        },
+        {
+            "name": "GC26_EnemyTank_VehicleYard",
+            "prefab": "Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab",
+            "zone": "ProofUnit",
+            "x": 540.7640380859375,
+            "z": -632.8089599609375,
+            "width": 12.0,
+            "depth": 12.0
+        }
+    ],
+    "authoredClusters": [
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_0_TownBlock_Center_DemoAuthored_SM_Bld_GasTower_01",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_GasTower_01",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NW_ChildSlot_0",
+            "centerX": -835.1163940429688,
+            "centerZ": 778.6448974609375,
+            "width": 33.84108352661133,
+            "depth": 33.84112548828125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_1_TownBlock_Center_DemoAuthored_SM_Bld_Hall_01",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Hall_01",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NW_ChildSlot_1",
+            "centerX": -802.1790161132813,
+            "centerZ": 778.6449584960938,
+            "width": 22.4688720703125,
+            "depth": 35.0047607421875,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_2_TownBlock_Center_DemoAuthored_SM_Bld_Shop_06",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_06",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NW_ChildSlot_2",
+            "centerX": -835.1163940429688,
+            "centerZ": 812.4439086914063,
+            "width": 21.46724510192871,
+            "depth": 12.781453132629395,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_3_TownBlock_Center_DemoAuthored_SM_Bld_Shop_06 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_06 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NW_ChildSlot_3",
+            "centerX": -802.178955078125,
+            "centerZ": 812.4439086914063,
+            "width": 21.467247009277345,
+            "depth": 12.781455039978028,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_4_TownBlock_Center_DemoAuthored_SM_Bld_Shop_08",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_08",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NE_ChildSlot_0",
+            "centerX": -658.666259765625,
+            "centerZ": 778.6449584960938,
+            "width": 22.81951904296875,
+            "depth": 12.5830078125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_5_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_01 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_01 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NE_ChildSlot_1",
+            "centerX": -625.7288818359375,
+            "centerZ": 778.6448974609375,
+            "width": 18.770751953125,
+            "depth": 17.295654296875,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_6_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_01 (3)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_01 (3)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NE_ChildSlot_2",
+            "centerX": -658.666259765625,
+            "centerZ": 812.4439086914063,
+            "width": 8.964599609375,
+            "depth": 12.8394775390625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_7_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_01 (2)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_01 (2)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_NE_ChildSlot_3",
+            "centerX": -625.7288818359375,
+            "centerZ": 812.4439697265625,
+            "width": 28.1103515625,
+            "depth": 22.119873046875,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_8_TownBlock_Center_DemoAuthored_SM_Bld_GasTower_02",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_GasTower_02",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SW_ChildSlot_0",
+            "centerX": -835.1163940429688,
+            "centerZ": 613.9066162109375,
+            "width": 14.370302200317383,
+            "depth": 14.370321273803711,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_9_TownBlock_Center_DemoAuthored_SM_Veh_Helicopter_Transport_01_Destroyed_Front",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Veh_Helicopter_Transport_01_Destroyed_Front",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SW_ChildSlot_1",
+            "centerX": -802.1790161132813,
+            "centerZ": 613.9066162109375,
+            "width": 8.771574020385743,
+            "depth": 10.852570533752442,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_10_TownBlock_Center_DemoAuthored_SM_Bld_GasStation_01",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_GasStation_01",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SW_ChildSlot_2",
+            "centerX": -835.1163940429688,
+            "centerZ": 645.4522705078125,
+            "width": 15.865234375,
+            "depth": 13.196533203125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_11_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_03 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_03 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SW_ChildSlot_3",
+            "centerX": -802.1790161132813,
+            "centerZ": 645.4522705078125,
+            "width": 11.267822265625,
+            "depth": 13.039306640625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_12_TownBlock_Center_DemoAuthored_SM_Bld_Destroyed_01 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Destroyed_01 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SE_ChildSlot_0",
+            "centerX": -658.666259765625,
+            "centerZ": 613.9066162109375,
+            "width": 14.108230590820313,
+            "depth": 11.655065536499024,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_13_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SE_ChildSlot_1",
+            "centerX": -625.7288818359375,
+            "centerZ": 613.9066162109375,
+            "width": 11.638916015625,
+            "depth": 13.8798828125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_14_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (3)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (3)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SE_ChildSlot_2",
+            "centerX": -658.666259765625,
+            "centerZ": 645.4522705078125,
+            "width": 8.487060546875,
+            "depth": 8.5787353515625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_15_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (4)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (4)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCore_NorthWest_Building_SE_ChildSlot_3",
+            "centerX": -625.7288818359375,
+            "centerZ": 645.4522705078125,
+            "width": 8.487060546875,
+            "depth": 8.5787353515625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_16_TownBlock_Center_DemoAuthored_SM_Bld_Shop_07",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_07",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_NE_ChildSlot_0",
+            "centerX": -148.10772705078126,
+            "centerZ": 753.5902709960938,
+            "width": 15.199738502502442,
+            "depth": 9.191715240478516,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_17_TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (2)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Village_House_06 (2)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_NE_ChildSlot_1",
+            "centerX": -123.05675506591797,
+            "centerZ": 753.5902709960938,
+            "width": 8.487030029296875,
+            "depth": 8.5787353515625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_18_SM_Bld_Village_House_06 (3)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::SM_Bld_Village_House_06 (3)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_NE_ChildSlot_2",
+            "centerX": -148.10772705078126,
+            "centerZ": 782.9158325195313,
+            "width": 8.487030982971192,
+            "depth": 8.578688621520996,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_19_TownBlock_Center_DemoAuthored_SM_Veh_Tank_Russian_01_Destroyed",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Veh_Tank_Russian_01_Destroyed",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_NE_ChildSlot_3",
+            "centerX": -123.05675506591797,
+            "centerZ": 782.9158325195313,
+            "width": 7.318235397338867,
+            "depth": 9.21842098236084,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_20_TownBlock_Center_DemoAuthored_SM_Bld_Shop_11 (3)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_11 (3)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_SE_ChildSlot_0",
+            "centerX": -148.10772705078126,
+            "centerZ": 610.6555786132813,
+            "width": 9.454569816589356,
+            "depth": 12.19620132446289,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_21_TownBlock_Center_DemoAuthored_SM_Bld_Shop_11 (4)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_11 (4)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_SE_ChildSlot_1",
+            "centerX": -123.05675506591797,
+            "centerZ": 610.6555786132813,
+            "width": 9.454570770263672,
+            "depth": 12.196202278137207,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_22_TownBlock_Center_DemoAuthored_SM_Bld_Shop_11 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_11 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_SE_ChildSlot_2",
+            "centerX": -148.10772705078126,
+            "centerZ": 638.0260620117188,
+            "width": 9.454569816589356,
+            "depth": 12.19620132446289,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_TownBlockModule_NorthWest_ChildPiece_23_TownBlock_Center_DemoAuthored_SM_Bld_Shop_05 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_Center_DemoAuthored.prefab::TownBlock_Center_DemoAuthored_SM_Bld_Shop_05 (1)",
+            "module": "TownBlockModule_NorthWest",
+            "mask": "CityCentral_WestInner_Building_SE_ChildSlot_3",
+            "centerX": -123.05674743652344,
+            "centerZ": 638.0260620117188,
+            "width": 10.67665958404541,
+            "depth": 10.58034896850586,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_0_TownBlock_WestMarket_DemoAuthored_SM_Bld_GasTower_01",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_GasTower_01",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NW_ChildSlot_0",
+            "centerX": -730.7448120117188,
+            "centerZ": 198.76185607910157,
+            "width": 33.84108352661133,
+            "depth": 33.84112548828125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_1_TownBlock_WestMarket_DemoAuthored_SM_Bld_Hall_01",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Hall_01",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NW_ChildSlot_1",
+            "centerX": -695.9518432617188,
+            "centerZ": 198.76185607910157,
+            "width": 22.4688720703125,
+            "depth": 35.00482177734375,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_2_TownBlock_WestMarket_DemoAuthored_SM_Bld_Shop_06",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Shop_06",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NW_ChildSlot_2",
+            "centerX": -730.7448120117188,
+            "centerZ": 232.56077575683595,
+            "width": 21.46724510192871,
+            "depth": 12.781453132629395,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_3_TownBlock_WestMarket_DemoAuthored_SM_Bld_Shop_06 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Shop_06 (1)",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NW_ChildSlot_3",
+            "centerX": -695.9517822265625,
+            "centerZ": 232.56077575683595,
+            "width": 21.467247009277345,
+            "depth": 12.781455039978028,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_4_TownBlock_WestMarket_DemoAuthored_SM_Bld_Shop_08",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Shop_08",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NE_ChildSlot_0",
+            "centerX": -544.353759765625,
+            "centerZ": 198.76185607910157,
+            "width": 22.81951904296875,
+            "depth": 12.5830078125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_5_TownBlock_WestMarket_DemoAuthored_SM_Bld_Village_House_01 (1)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Village_House_01 (1)",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NE_ChildSlot_1",
+            "centerX": -509.560791015625,
+            "centerZ": 198.76185607910157,
+            "width": 18.770751953125,
+            "depth": 17.295806884765626,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_6_TownBlock_WestMarket_DemoAuthored_SM_Bld_Village_House_01 (3)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Village_House_01 (3)",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NE_ChildSlot_2",
+            "centerX": -544.353759765625,
+            "centerZ": 232.56077575683595,
+            "width": 8.964599609375,
+            "depth": 12.83953857421875,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_MarketModule_West_ChildPiece_7_TownBlock_WestMarket_DemoAuthored_SM_Bld_Village_House_01 (2)",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/TownBlock_WestMarket_DemoAuthored.prefab::TownBlock_WestMarket_DemoAuthored_SM_Bld_Village_House_01 (2)",
+            "module": "MarketModule_West",
+            "mask": "CityMarket_West_Building_NE_ChildSlot_3",
+            "centerX": -509.560791015625,
+            "centerZ": 232.56076049804688,
+            "width": 28.1103515625,
+            "depth": 22.1197509765625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_PlayerBaseModule_SouthGate_AuthoredCluster",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/BaseSouthDepot_DemoAuthored.prefab",
+            "module": "PlayerBaseModule_SouthGate",
+            "mask": "PlayerBaseModule_SouthGate_SourceScaleEnvelope",
+            "centerX": -752.697509765625,
+            "centerZ": -687.621826171875,
+            "width": 95.5732421875,
+            "depth": 167.758056640625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_BarracksModule_CentralSpine_AuthoredCluster",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/BaseBarracks_DemoAuthored.prefab",
+            "module": "BarracksModule_CentralSpine",
+            "mask": "BarracksModule_CentralSpine_SourceScaleEnvelope",
+            "centerX": -136.8248291015625,
+            "centerZ": -498.6074523925781,
+            "width": 185.78448486328126,
+            "depth": 122.73858642578125,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_AirfieldModule_NorthEast_AuthoredCluster",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/RunwayApron_DemoAuthored.prefab",
+            "module": "AirfieldModule_NorthEast",
+            "mask": "AirfieldModule_NorthEast_SourceScaleEnvelope",
+            "centerX": 626.8260498046875,
+            "centerZ": 668.4764404296875,
+            "width": 63.9638671875,
+            "depth": 185.457275390625,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_CommandDepotModule_CentralEast_AuthoredCluster",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/BaseCommand_DemoAuthored.prefab",
+            "module": "CommandDepotModule_CentralEast",
+            "mask": "CommandDepotModule_CentralEast_SourceScaleEnvelope",
+            "centerX": 625.5834350585938,
+            "centerZ": 31.433368682861329,
+            "width": 180.7633056640625,
+            "depth": 119.42134857177735,
+            "scale": 1.0
+        },
+        {
+            "name": "GC26_ArmorFuelModule_SouthEast_AuthoredCluster",
+            "prefab": "Assets/Game/Prefabs/Generated/GC04Modules/BaseMotorPool_DemoAuthored.prefab",
+            "module": "ArmorFuelModule_SouthEast",
+            "mask": "ArmorFuelModule_SouthEast_SourceScaleEnvelope",
+            "centerX": 681.684814453125,
+            "centerZ": -592.171142578125,
+            "width": 177.92529296875,
+            "depth": 101.365478515625,
+            "scale": 1.0
+        }
+    ]
+}

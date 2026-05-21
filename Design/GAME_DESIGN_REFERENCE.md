@@ -1,6 +1,6 @@
 # WarlineCapture Game Design Reference
 
-Last updated: 2026-05-01
+Last updated: 2026-05-21
 
 This document summarizes the implemented game design for WarlineCapture. It is intended as a compact reference that can be given to ChatGPT or another design tool for future work on game modes, balance, AI tuning, difficulty settings, and feature planning.
 
@@ -12,11 +12,11 @@ WarlineCapture is a grid-based real-time strategy game about building and defend
 
 Active presentation direction:
 
-- Premium 2D isometric mobile RTS.
-- Original design docs in `Design` are the source of truth.
-- Visual references and production spike outputs live under `Design/VisualReferences`.
-- The first validated golden asset spike is `Design/VisualReferences/2DIsometricProduction`.
-- Unity imported 2D iso sprites and Tile assets live under `Assets/Game/Art/Generated/2DISO`.
+- Full 3D single-map mobile RTS.
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md` is the current source of truth for gameplay/art direction.
+- Missions and operations should resolve to one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as camera/UI layers on the same world.
+- Unit and building display names/descriptions should come from `Assets/Game/Configs/Prefabs`.
+- Older 2D isometric references and imported 2DISO assets are historical or migration material unless PM explicitly reopens that direction.
 
 The game combines:
 

@@ -1,50 +1,37 @@
 # UI Current Task
 
-Date: 2026-05-09
-Status: waiting
-Priority: UI marker/selection overlay audit delivered; waiting on Art/Atlas AI production asset pack
+Date: 2026-05-22
+Status: held
+Priority: no current UI action; 3D fresh-start reset
 
-## Assignment
+## PM Reset - Read First
 
-UI delivered the marker/selection overlay ownership audit:
+Read:
 
-- `Design/AgentReports/2026-05-08_ui_m01-marker-selection-overlay-audit.md`
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
 
-The approved gameplay visual target package must not be mixed into UI target folders. UI targets remain under:
+## Current Assignment
 
-- `Design/VisualLock/`
-- `Design/VisualLockLayered/`
+No UI task is active.
 
-Gameplay visual targets are owned by Art/Atlas and stored under:
+The previous SCN-02, POP-05, SCN-08, target-lock, and 2D layered-canvas tasks are historical context only. Do not continue them automatically.
 
-- `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
+## Do Not Continue
 
-UI should re-engage only if Gameplay or QA/HCI reports a concrete HUD/screen-space mismatch.
+Do not continue:
 
-The Gameplay VisualLock board package was rejected as insufficient. Art/Atlas must now deliver runtime PNG production assets under:
+- stale SCN-02 main-menu target-lock matching;
+- stale POP-05 or SCN-08 2D target-lock UI matching;
+- old placeholder cleanup loops;
+- old capture/MSE/comparison tasks;
+- any UI implementation inferred only from `Design/AgentReports/` history.
 
-- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`
+## Continue Behavior
 
-UI VisualLock folders remain separate and should not receive gameplay map/atlas files.
+If asked to `continue`, report:
 
-## Waiting On
+```text
+UI current task is held for the 3D fresh-start reset. No action is assigned. Waiting for PM/user to dispatch a new UI task.
+```
 
-Waiting on lane:
-Art/Atlas
-
-Waiting on exact report and decision:
-
-- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
-
-Owner of next action:
-Art/Atlas
-
-Can UI continue fallback work? no
-
-## Completion Report
-
-If PM assigns a concrete UI follow-up, write:
-
-`Design/AgentReports/2026-05-08_ui_<specific-followup>.md`
-
-Use the standard WarlineCapture handoff format.
+Do not change files, run Unity, write reports, or route another lane unless PM/user provides a new explicit UI assignment.

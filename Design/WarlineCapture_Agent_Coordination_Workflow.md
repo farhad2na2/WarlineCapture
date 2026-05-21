@@ -32,10 +32,9 @@ Active agent task board:
 Primary cross-lane implementation contracts:
 
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
-- `Design/WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`
 - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 - `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
 
 Primary asset tracking:
@@ -220,11 +219,11 @@ Build-specific loop:
 - On failure, Build writes a concise failure report with job/build id, failing stage, exact failing command/test when visible, log/artifact paths, and the most likely owning lane. Report facts and probable cause; do not silently start fixing product code unless PM explicitly assigns that follow-up.
 - Build should notify PM/user only when a fresh failure appears, the failure reason changes materially, or a build blocker is preventing a required gate.
 
-QA/HCI confirmed on 2026-05-08 that Unity licensing is healthy for the project, but Codex sandboxed batchmode cannot always reach the user's Unity Licensing Client/keychain/session services. Required Unity batchmode validation should therefore run with Codex escalation/out-of-sandbox execution when licensing access is needed. This is the standard fix for `LicenseClient-farhad` reconnect/time-out loops and is not a reason to retry other lane workspaces or ask a product approval question.
+Unity licensing workaround is mandatory. QA/HCI confirmed on 2026-05-08 that Unity licensing is healthy for the project, but Codex sandboxed batchmode cannot always reach the user's Unity Licensing Client/keychain/session services. Required Unity batchmode validation should therefore run with Codex escalation/out-of-sandbox execution when licensing access is needed. This is the standard fix for `LicenseClient-farhad`, unsupported protocol, reconnect, or timeout loops and is not a reason to retry other lane workspaces, ask a product approval question, or come back to PM/user before the workaround is attempted.
 
-Graphics-enabled capture passes may trigger Codex/tool approval because Unity needs GPU/window access. If the capture is required by the active lane task, uses a dedicated WarlineCapture Unity workspace, and writes to `/private/tmp` or expected project capture output paths, it is product-approved. The agent should request only tool approval, not ask whether the capture should happen.
+Graphics-enabled capture passes may trigger Codex/tool approval because Unity needs GPU/window access. If the capture is required by the active lane task, uses a dedicated WarlineCapture Unity workspace, and writes to `/private/tmp` or expected project capture output paths, it is product-approved. The agent should request only tool approval, not ask whether the capture should happen. For runtime/visual capture proof, do not use `-nographics` if the capture path needs GPU/window access or if prior attempts show blank/headless output or missing headless package errors.
 
-If Unity validation enters a repeated licensing reconnect, unsupported protocol, or license-client loop before tests start from a sandboxed command, rerun the same required Unity batchmode command once with Codex escalation/out-of-sandbox execution in the assigned lane workspace. If the escalated rerun reaches licensing and tests, continue normally and report that escalated batchmode was used. If the escalated rerun still stalls before tests start, stop the stuck Unity process, write or update the required `Design/AgentReports/` report with `Validation result: blocked`, include the exact command/log path and licensing-loop symptom, and wait for PM/user to confirm Unity licensing is healthy. Stopping a stuck Unity validation process is product-approved cleanup; if Codex asks, request only tool permission to stop that process.
+If Unity validation enters a repeated licensing reconnect, unsupported protocol, or license-client loop before tests start from a sandboxed command, do not report the first sandboxed loop as the final blocker. Rerun the same required Unity batchmode command once with Codex escalation/out-of-sandbox execution in the assigned lane workspace. If the escalated rerun reaches licensing and tests, continue normally and report that escalated batchmode was used. If the escalated rerun still stalls before tests start, stop the stuck Unity process, write or update the required `Design/AgentReports/` report with `Validation result: blocked`, include the exact command, workspace, log path, licensing-loop symptom, and confirmation that the escalated assigned-workspace workaround was attempted. Stopping a stuck Unity validation process is product-approved cleanup; if Codex asks, request only tool permission to stop that process.
 
 Correct wording:
 
@@ -250,13 +249,13 @@ Art source note: current WarlineCapture art assets, mockups, target locks, tacti
 
 Required standard:
 
-- Match the existing WarlineCapture military RTS UI language: premium dark glass/metal chrome, cyan edge light, restrained amber alert/action accents, Oxanium-style typography, dense but readable tactical composition, and high-quality blurred WarlineCapture gameplay/UI context where the target calls for a popup or target-lock presentation.
+- Match the active WarlineCapture military RTS UI language: command-base black/olive metal, gold action accents, restrained blue information accents, Oxanium-style typography, dense but readable tactical composition, and high-quality 3D operation-map or command-room context where the target calls for a popup or target-lock presentation.
 - Preserve functional clarity: dynamic text, ids, state labels, icon slots, control names, and runtime-owned data surfaces must be readable and implementable.
 - Do not accept state boards, wireframes, flat deterministic placeholders, generic sci-fi UI sheets, unstyled layout diagrams, or low-detail mockups as final target locks.
 - Do not accept a target only because it looks high quality. If it looks like a beautiful standalone sci-fi mockup but does not belong to the existing WarlineCapture target family, mark it `needs fixes`.
 - For regenerated target locks, require a side-by-side/contact-sheet comparison against nearby accepted targets when style drift is a risk. The comparison must show that the new target can sit inside the same product family without looking foreign.
 - Do not treat a flat visual target as a sliced implementation asset or mark art rows complete until the asset register records review/approval plus runtime wiring when required.
-- When a target is meant to show gameplay, maps, units, commander identity, ARIA assistant, or tactical HUD context, it must align with the existing approved mockups and the 2D isometric art bible instead of inventing a new style.
+- When a target is meant to show gameplay, maps, units, commander identity, ARIA assistant, or tactical HUD context, it must align with `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`, `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`, and accepted command-base visual locks instead of inventing a new style.
 
 If a generated target does not meet this bar, mark the lane `needs fixes` and keep the asset register status unapproved.
 
@@ -266,8 +265,8 @@ For any gate that claims a mission, playable slice, route, onboarding flow, or Q
 
 Required report content:
 
-- Entry path used, for example `Main Menu -> Saga Map -> Mission Briefing -> Launch` or `Main Menu -> Quick Custom -> Launch`.
-- Expected slice, mission id, visual direction, and route, for example `saga.ch01.m01.first_contact`, current 2D/isometric M01 sprite-presenter direction, mounted HUD/assistant route.
+- Entry path used, for example `Main Menu -> Campaign -> Mission Briefing -> Deploy` or `Main Menu -> Skirmish -> Launch`.
+- Expected slice, mission id, visual direction, and route, for example `campaign.ch01.m01.first_contact`, current 3D operation-map M01 direction, mounted HUD/assistant route.
 - Actual first visible gameplay state after launch.
 - Whether legacy/sandbox UI, legacy 3D world, old prototype scene, or wrong mission content appeared.
 - Screenshot or capture path when practical.

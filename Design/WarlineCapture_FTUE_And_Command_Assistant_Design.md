@@ -20,19 +20,19 @@ This document designs WarlineCapture's first-time user experience, contextual tu
 - `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 - `Design/WarlineCapture_Command_Offensive_Premise_Alignment.md`
 - `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
-- `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 
 ## Short Answer
 
 WarlineCapture should not have a one-time tutorial bolted onto Mission 1. It should have a persistent assistant layer that can:
 
-- Teach the first five Saga missions step by step.
-- Recommend what to do now in Saga, Operation, Mission Briefing, Loadout, and live combat.
+- Teach the first five Campaign missions step by step.
+- Recommend what to do now in Campaign, Operations, Mission Briefing, Loadout, and live combat.
 - Explain why an action matters to the city, not only how to click it.
 - Demonstrate an action by taking temporary controller ownership.
 - Stop instantly when the player touches input, cancels, pauses, or disables assistance.
-- Continue to work later as a strategic advisor for Operation and mission mastery.
+- Continue to work later as a command advisor for Operations and mission mastery.
 
 Recommended assistant identity:
 
@@ -74,7 +74,7 @@ Chapter 1 story arc:
 | M04 Airlift | Insert, reinforce, or extract under district pressure. | Teach transport, landing zone, extraction, fuel. |
 | M05 Breach Assault | Remove the first fortified hostile node. | Teach breach route, combined arms, high-risk objective. |
 
-Movement teaching note: `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md` does not add extra early FTUE steps. It clarifies the acceptance bar for the existing Chapter 1 lessons: movement only counts as taught when selection state, destination/attack markers, invalid target feedback, current order state, tactical anchors, and objective/result flow are readable at mobile landscape scale.
+Movement teaching note: `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md` does not add extra early FTUE steps. It clarifies the acceptance bar for the existing Chapter 1 lessons: movement only counts as taught when selection state, destination/attack markers, invalid target feedback, current order state, operation-map anchors, and objective/result flow are readable at mobile landscape scale.
 
 ## Commander Identity
 
@@ -82,10 +82,10 @@ Because the player is the Field Commander and WarlineCapture already has a Comma
 
 ### Identity Creation Flow
 
-First launch should include a short identity step after ARIA's welcome and before the first Saga mission:
+First launch should include a short identity step after ARIA's welcome and before the first Campaign mission:
 
 ```text
-ARIA welcome -> Commander Identity -> Choose guidance level -> Saga Campaign highlighted
+ARIA welcome -> Commander Identity -> Choose guidance level -> Campaign highlighted
 ```
 
 Required fields:
@@ -152,7 +152,7 @@ Unlock guidance:
 | Identity Item | Unlock Rule |
 |---|---|
 | Default portraits | Available immediately. |
-| Chapter portraits | Complete Saga chapter milestones. |
+| Chapter portraits | Complete Campaign chapter milestones. |
 | Operation portraits | Stabilize districts or complete Operation week milestones. |
 | Frames and badges | Reward track, events, store cosmetics, or profile milestones. |
 | Premium cosmetics | Cosmetic only; no tactical stat effect. |
@@ -278,7 +278,7 @@ Use three highlight types:
 | World marker | Units, move target, enemy group, build socket, extraction zone. |
 | Path preview | Demonstration route, convoy route, breach lane, helicopter path. |
 
-World markers and path previews must resolve through `TacticalMapDefinition` metadata, runtime entity ids, or UI element ids. ARIA must not target baked terrain details, raw screen coordinates, or the strategic preview image. Strategic screens can be highlighted as planning context; tactical teaching steps must use the close-up playable map anchors.
+World markers and path previews must resolve through `OperationMapDefinition` metadata, runtime entity ids, or UI element ids. ARIA must not target baked terrain details or raw screen coordinates. Planning screens can be highlighted as context; battle teaching steps must use operation-map anchors.
 
 The audio guide already defines `Tutorial.Highlight.Pulse`, `Tutorial.Step.Open`, `Tutorial.Step.Complete`, and `VO.Tutorial.*`; reuse those event ids.
 
@@ -313,7 +313,7 @@ Define small, auditable action primitives:
 | Intent | Existing Anchor |
 |---|---|
 | Route to screen | `WarlineCaptureRouter.GoTo(WarlineCaptureRoute)` |
-| Select mission | `WarlineCaptureMissionSession.BeginMission(...)` and Saga controllers |
+| Select mission | `WarlineCaptureMissionSession.BeginMission(...)` and Campaign controllers |
 | Start mission briefing | `MissionBriefingScreenController` state |
 | Select unit/squad | `RTSSelectionSystem` |
 | Move selected units | `RTSSelectionSystem` move order path |
@@ -326,7 +326,7 @@ Define small, auditable action primitives:
 
 Implementation detail: do not let the assistant click arbitrary screen coordinates. It should call typed game actions through a `CommandIntentExecutor`.
 
-Map intent rule: any assistant command that focuses a location must identify whether it targets strategic context (`MapPreviewArtId` / `MinimapArtId`) or tactical gameplay (`IsoMapId` / `TacticalMapDefinition` anchor). Tactical `Do It` actions for move, attack, build, threat jump, objective jump, or minimap jump must clamp to tactical camera bounds.
+Map intent rule: any assistant command that focuses a location must identify whether it targets planning context (`PlanningCameraId`), minimap context (`MinimapProjectionId`), or battle gameplay (`OperationMapId` plus an operation-map anchor). `Do It` actions for move, attack, build, threat jump, objective jump, or minimap jump must clamp to operation-map camera bounds.
 
 ## Recommended Architecture
 
@@ -401,7 +401,7 @@ public sealed class TutorialSaveData
 }
 ```
 
-Migration rule: default existing saves to `HintsOnly` if they already have completed Saga progress, otherwise `FullGuidance`.
+Migration rule: default existing saves to `HintsOnly` if they already have completed Campaign progress, including legacy `SagaProgress` storage, otherwise `FullGuidance`.
 
 ## Recommendation Engine
 
@@ -416,7 +416,7 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 | `ObjectiveManager` and `GameRuntimeStats` | In-match objective progress and stuck detection. |
 | `ThreatWarningRuntimeState` | Threat alerts and jump-to-threat recommendations. |
 | `WarlineCaptureOperationRuntime.State` | District pressure, supplies, latest events, selected district. |
-| `SagaProgressStore` | Next mission, replay, star mastery. |
+| `CampaignProgressStore` or existing `SagaProgressStore` compatibility wrapper | Next mission, replay, star mastery. |
 | `PlayerProfileSaveData` | Unlocks, resources, profile progression. |
 | `AISettingsRuntimeState.PlayerAutoAIEnabled` | Dev/sandbox auto-control status. |
 
@@ -425,7 +425,7 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 | Factor | Example |
 |---|---|
 | Criticality | Base breach, objective failing, no selected unit under attack. |
-| Progression | Next unlocked Saga mission, unclaimed reward, Operation day action. |
+| Progression | Next unlocked Campaign mission, unclaimed reward, Operations day action. |
 | Teaching gap | Player has not completed select/move/build/transport tutorial. |
 | Economy | Not enough supplies for raid, build prerequisite missing. |
 | Risk | Intel low before raid, civilian risk high, threat rising. |
@@ -435,8 +435,8 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 
 | Context | Recommendation |
 |---|---|
-| Main Menu first launch | Start `Saga Campaign` because it teaches command fundamentals. |
-| Saga Map M01 unlocked | Select `First Contact`. |
+| Main Menu first launch | Start `Campaign` because it teaches command fundamentals. |
+| Campaign Map M01 unlocked | Select `First Contact`. |
 | Mission Briefing M01 | Review objectives, then deploy. |
 | M01 no unit selected | Select rifle squad. |
 | M01 squad selected, no order | Move to the marked road cover. |
@@ -455,10 +455,10 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 First launch should go:
 
 ```text
-Splash -> Main Menu -> ARIA welcome -> Saga Campaign highlighted -> Saga Map M01 -> Mission Briefing -> Match Tutorial
+Splash -> Main Menu -> ARIA welcome -> Campaign highlighted -> Campaign Map M01 -> Mission Briefing -> Match Tutorial
 ```
 
-Do not force the player into combat immediately from splash. Let them see that WarlineCapture has modes, but guide them to Saga as the training path.
+Do not force the player into combat immediately from splash. Let them see that WarlineCapture has modes, but guide them to Campaign as the training path.
 
 ### Prologue Prompt
 
@@ -476,7 +476,7 @@ Choice:
 
 ### Mission 1: First Contact
 
-Implementation handoff: `WarlineCapture_M01_FirstContact_Production_Contract.md` owns the concrete M01 tactical anchors, runtime entity ids, FTUE target ids, and validation checks. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` owns `PREFAB-05_AssistantPanel` element ids, M01 ARIA recommendation states, Show Me / Do It / Stop behavior, player-control cancellation boundaries, and the `BattleHudGameplayBridge` dependency for select, move, attack, invalid command, objective, and result flows.
+Implementation handoff: `WarlineCapture_M01_FirstContact_Production_Contract.md` owns the concrete M01 operation-map anchors, runtime entity ids, FTUE target ids, and validation checks. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` owns `PREFAB-05_AssistantPanel` element ids, M01 ARIA recommendation states, Show Me / Do It / Stop behavior, player-control cancellation boundaries, and the `BattleHudGameplayBridge` dependency for select, move, attack, invalid command, objective, and result flows.
 
 Teaching goals:
 
@@ -499,7 +499,7 @@ Step plan:
 | `ftue.m01.attack` | Enemy patrol visible | Attack highlighted patrol. | Do It issues attack. |
 | `ftue.m01.complete` | Victory | Continue to result. | Explain stars and rewards. |
 
-Map contract: briefing/deploy steps may use the strategic `preview.ch01.first_contact`; match steps must use `iso.ch01.district_edge_01` tactical anchors for squad spawn, move target, hostile patrol, objective marker, and camera bounds.
+Map contract: briefing/deploy steps may use `camera.ch01.m01.planning`; match steps must use `opmap.ch01.district_edge_01` operation-map anchors for squad spawn, move target, hostile patrol, objective marker, and camera bounds.
 
 Input policy: guided but not hard-locked after selection. If the player attacks early and succeeds, mark select/move/attack steps complete by inference.
 
@@ -517,7 +517,7 @@ Teaching goals:
 Key assistant lines:
 
 ```text
-This mission teaches infrastructure. A base is not a menu purchase; it is a tactical position you must defend.
+This mission teaches infrastructure. A base is not a menu purchase; it is a position inside the 3D operation map that you must defend.
 ```
 
 Recommended note: resolve the current `Building_Barrack` versus `Tent_Regular` design decision before final implementation. The assistant must teach exactly the canonical producer.
@@ -563,7 +563,7 @@ Teaching goals:
 - Focus fire on core.
 - Protect vehicle/specialist.
 
-ARIA should stop being a step-by-step teacher here and become a tactical advisor. The player should feel they are commanding, not following.
+ARIA should stop being a step-by-step teacher here and become a command advisor. The player should feel they are commanding, not following.
 
 ## Operation Tutorial Flow
 
@@ -756,7 +756,7 @@ Required EditMode tests:
 Required PlayMode tests:
 
 - M01 tutorial can complete select, move, attack, and result steps.
-- M01 tutorial highlights resolve to tactical metadata anchors or runtime entities after deploy, not to the strategic preview image.
+- M01 tutorial highlights resolve to operation-map metadata anchors or runtime entities after deploy, not to a separate preview image.
 - M02 tutorial can reach build and produce steps without blocking normal play.
 - Takeover banner appears during assistant control.
 - Player tap cancels takeover and returns ownership.
@@ -788,7 +788,7 @@ Build this first:
 ARIA button + panel
 Commander Identity first-launch step
 M01 First Contact guided tutorial
-Recommendations on Saga Map, Mission Briefing, and Match HUD
+Recommendations on Campaign Map, Mission Briefing, and Match HUD
 One safe takeover action: select highlighted squad
 Player input cancels takeover
 Tutorial save flags

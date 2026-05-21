@@ -2,6 +2,26 @@
 
 Use this when an agent should keep checking for work without the user manually typing `continue`.
 
+## 2026-05-22 Global Fresh-Start Hold Override
+
+The project direction has shifted from the earlier 2D target-lock/M01 implementation loop to a fresh 3D direction.
+
+Until PM/user writes a new explicit lane assignment, all agent lanes are held. On heartbeat or `continue`, agents must read their `<lane>_current.md` file and, if it says `Status: held`, stop without taking action.
+
+Do not infer tasks from recent or historical files under `Design/AgentReports/`. Reports are archival context only during this reset.
+
+Required response for held lanes:
+
+```text
+Current lane task is held for the 3D fresh-start reset. No action is assigned. Waiting for PM/user to dispatch a new task.
+```
+
+No lane should change files, generate assets, run Unity, write new reports, or route another lane while held.
+
+Reset source:
+
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
+
 ## Recommended Heartbeat Prompt Pattern
 
 Keep each automation prompt short and load behavior from the repo:
@@ -180,13 +200,13 @@ Agents are authorized to use their assigned workspace for focused validation wit
 
 Only pause when the Codex/tool sandbox itself requires an approval click, the command would need to write outside the allowed workspace, network access is required, or the action is destructive.
 
-Unity licensing note: QA/HCI confirmed on 2026-05-08 that the project license is healthy, but sandboxed Codex batchmode can fail to reach the user's Unity Licensing Client/session services. If Unity batchmode enters `LicenseClient-farhad` reconnect/time-out loops before tests start, rerun the same required Unity batchmode command with Codex escalation/out-of-sandbox execution in your assigned lane workspace. Treat this as the standard batchmode licensing fix, not a product decision and not a reason to switch workspaces.
+Unity licensing workaround is mandatory. QA/HCI confirmed on 2026-05-08 that the project license is healthy, but sandboxed Codex batchmode can fail to reach the user's Unity Licensing Client/session services. If Unity batchmode enters `LicenseClient-farhad`, unsupported protocol, reconnect, or timeout loops before tests/capture start, rerun the same required Unity batchmode command with Codex escalation/out-of-sandbox execution in your assigned lane workspace. Treat this as the standard batchmode licensing fix, not a product decision, not a reason to switch workspaces, and not a reason to come back to PM/user before the workaround is attempted.
 
-If Codex asks for approval because a graphics-enabled Unity capture pass opens Unity with GPU/window access, treat that as a tool permission prompt. The answer is product-approved when the capture is required by the active lane task and uses a dedicated WarlineCapture Unity workspace.
+If Codex asks for approval because a graphics-enabled Unity capture pass opens Unity with GPU/window access, treat that as a tool permission prompt. The answer is product-approved when the capture is required by the active lane task and uses a dedicated WarlineCapture Unity workspace. For runtime/visual capture proof, do not use `-nographics` if the capture path needs GPU/window access or if prior attempts show blank/headless output or missing headless package errors.
 
 When Codex/tool approval is required for a Unity validation command, request persistent approval for the Unity batchmode command prefix if the tool UI offers that option. Do not ask the user whether the validation should run; ask only for the sandbox to remember the Unity tool permission for this lane's required validation commands. Prefer the narrow Unity executable + `-batchmode` prefix, not a broad shell or arbitrary script rule.
 
-If Unity enters repeated licensing reconnect, unsupported protocol, or license-client loops before tests start from a sandboxed command, do not keep retrying indefinitely. Rerun the same required Unity batchmode command once with Codex escalation/out-of-sandbox execution in your assigned lane workspace. If the escalated rerun still stalls before tests start, stop the stuck Unity process, immediately write or update the required `Design/AgentReports/` report with `Validation result: blocked`, include the exact command/log path and licensing-loop symptom, and wait for PM/user to confirm Unity licensing is healthy.
+If Unity enters repeated licensing reconnect, unsupported protocol, or license-client loops before tests start from a sandboxed command, do not keep retrying indefinitely and do not report the first sandboxed loop as the final blocker. Rerun the same required Unity batchmode command once with Codex escalation/out-of-sandbox execution in your assigned lane workspace. If the escalated rerun still stalls before tests start, stop the stuck Unity process, immediately write or update the required `Design/AgentReports/` report with `Validation result: blocked`, include the exact command, workspace, log path, licensing-loop symptom, and confirmation that the escalated assigned-workspace workaround was attempted.
 
 Stopping a Unity validation process that is stuck in licensing reconnect loops is product-approved cleanup. If Codex asks for approval, ask only for tool permission to stop the stuck process.
 

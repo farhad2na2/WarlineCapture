@@ -11,11 +11,9 @@ Date: 2026-05-02
 - `Design/AI_CONTROLLER_DESIGN.md`
 - `Design/WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
 - `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-- `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
-- `Design/WarlineCapture_2D_Isometric_Art_Bible.md`
-- `Design/WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
-- `Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
-- `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `Design/WarlineCapture_Level_And_Mission_Content_Plan.md`
 - Current gameplay systems under `Assets/Game/Scripts`
 - Current validation tests under `Assets/Tests`
 
@@ -27,9 +25,9 @@ Before creating level-by-level or mission-by-mission content, read `Design/Warli
 
 Before adding a unit, building, support ability, upgrade, reward target, or store item, read `Design/WarlineCapture_Combat_Catalog_And_Upgrade_Design.md`. Gameplay configs should use ids from `Design/BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`, while art and UI references should use `Design/VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json`.
 
-Terminology: a Saga node launches a player-facing Mission; the Mission uses a `ScenarioSetup`; the ScenarioSetup references a reusable Level / Map through IDs such as `LevelId`, `IsoMapId`, `MapPreviewArtId`, and `MinimapArtId`.
+Terminology: a Campaign node launches a player-facing Mission; the Mission uses a `ScenarioSetup`; the ScenarioSetup references one reusable 3D `OperationMap` through IDs such as `OperationMapId`, `PlanningCameraId`, and `MinimapProjectionId`.
 
-Map-view contract: use `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` for all mission/map work. Strategic or zoomed-out map art is for Saga, Mission Briefing, Operation context, minimap, and camera-jump previews. Tactical or zoomed-in map art is the actual playable ground behind units, buildings, movement, attack, build placement, VFX, and Battle HUD overlays.
+Map-view contract: use `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md` for all mission/map work. Planning, briefing, minimap, deployment, threat, and battle views are UI/camera states over the same 3D operation map.
 
 ## Current Gameplay Foundation
 
@@ -61,8 +59,8 @@ What is missing is the product/gameplay layer around the tactical simulation:
 - Win/loss conditions.
 - Star scoring.
 - Rewards and unlocks.
-- Saga progression.
-- Persistent operation save state.
+- Campaign progression.
+- Operations save state.
 - District state and strategic actions.
 - Match result/debrief routing.
 - Player profile and long-term progression.
@@ -82,32 +80,32 @@ Gameplay north star:
 
 Presentation target:
 
-- Premium 2D isometric mobile RTS.
-- Keep gameplay readable under a mobile landscape tactical HUD.
-- Validate generated asset batches in Unity before expanding the full asset library.
-- Active art-direction details live in `Design/WarlineCapture_2D_Isometric_Production_Direction.md`.
+- Full 3D single-map mobile RTS.
+- Keep gameplay readable under a mobile landscape tactical HUD and command-base shell.
+- Validate prefab-catalog units/buildings, metadata overlays, camera states, and performance in Unity before expanding the full asset library.
+- Active art-direction details live in `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`.
 
-## 2D Isometric Gameplay Alignment
+## 3D Single-Map Gameplay Alignment
 
 Gameplay implementation should remain simulation-first and art-direction aware:
 
-- Do not build new gameplay features around the old desert/current-asset 3D presentation.
-- Mode, mission, objective, reward, and encounter systems should reference scenario/map identifiers, not hard-coded visual prefabs.
-- Scenario and mission configs should be ready to bind to 2D isometric map IDs, terrain set IDs, minimap art IDs, and map preview art IDs.
-- Strategic map ids and tactical map ids must not be treated as interchangeable. `MapPreviewArtId` and `MinimapArtId` support planning/navigation; `IsoMapId` and `TacticalMapDefinition` support playable combat.
-- Tactical readability is a gameplay requirement: objectives, wave timing, spawn locations, selection sizes, command ranges, and camera assumptions must remain readable at the 2D isometric camera scale validated by the ISO-01 Tilemap spike.
-- The UI track owns Canvas HUD/screens; the 2D isometric track owns battlefield art, Tilemap/runtime presentation, and gameplay capture behind HUD overlays.
+- Do not build new gameplay features around the archived 2D isometric or strategic/tactical-map presentation.
+- Mode, mission, objective, reward, and encounter systems should reference `ScenarioSetup` and `OperationMap` identifiers, not hard-coded visual prefabs.
+- Scenario and mission configs should bind to `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`, operation-map metadata, and runtime catalog ids from `Assets/Game/Configs/Prefabs`.
+- Planning, briefing, minimap, deployment, threat, and battle views are camera/UI states over the same 3D operation map. They are not separate map products.
+- Tactical readability is a gameplay requirement: objectives, wave timing, spawn locations, selection sizes, command ranges, camera assumptions, civilians, vehicles, and markers must remain readable at mobile landscape scale.
+- The UI track owns Canvas HUD/screens; the 3D gameplay/art track owns operation-map assets, entity presentation, camera states, metadata overlays, and gameplay capture behind HUD overlays.
 
-## Macro-Tile Terrain Alignment
+## 3D Operation-Map Alignment
 
-The active battlefield production path is large authored 2D isometric terrain macro tiles with separate gameplay metadata.
+The active battlefield production path is large authored 3D operation maps with separate gameplay metadata.
 
 Gameplay rules stay simulation-first:
 
 - Existing ECS/grid/pathfinding remains authoritative.
 - Terrain pixels are presentation, not gameplay truth.
-- Roads are baked visually into macro tile art but represented logically by road graph metadata.
-- Walkability, blockers, spawns, objectives, minimap data, and camera bounds come from macro tile metadata.
+- Roads, alleys, sidewalks, gates, walls, rooftops, courtyards, pads, and vehicle lanes must be represented logically by operation-map metadata.
+- Walkability, blockers, spawns, objectives, minimap projection, deployment zones, civilian-risk zones, and camera bounds come from operation-map metadata.
 - Buildings, units, resources, destructible cover, objectives, VFX, health bars, selection rings, and UI markers remain runtime objects.
 
 Building placement should move toward approved sockets/pads:
@@ -119,11 +117,11 @@ Building placement should move toward approved sockets/pads:
 
 Do not bake destructible gameplay buildings into map art. Baked buildings are decorative only.
 
-### 1. Saga Map Campaign
+### 1. Campaign
 
 Purpose:
 
-- Curated, level-based campaign.
+- Curated mission-based campaign.
 - Teaches the game gradually.
 - Provides clear objectives, stars, unlocks, and rewards.
 
@@ -136,22 +134,22 @@ Core gameplay:
 - Earn stars and rewards.
 - Unlock next missions, units, buildings, or support abilities.
 
-### 2. Persistent City Operation
+### 2. Operations
 
 Purpose:
 
-- Long-running strategic campaign.
+- Long-running district operation layer.
 - The player stabilizes districts, protects civilians, and uncovers hidden hostile activity.
 
 Core gameplay:
 
-- Inspect district map.
+- Inspect district state and operation-map options.
 - Manage security, trust, infrastructure, enemy influence, intel confidence, civilian density, and heat.
 - Take strategic actions: patrol, scan, aid, repair, evacuate, build outpost, raid.
-- Generate tactical missions from district events.
+- Generate 3D operation missions from district events.
 - End days, persist state, and react to evolving threats.
 
-### 3. Quick Custom Games
+### 3. Skirmish
 
 Purpose:
 
@@ -163,7 +161,7 @@ Core gameplay:
 
 - Choose enemy type/count/difficulty.
 - Choose resources, speed, aggression, and match rules.
-- Launch a tactical match.
+- Launch a 3D operation match.
 - Show result/debrief, but do not require campaign progression.
 
 ## Core Architecture
@@ -172,12 +170,12 @@ Introduce a mode and mission layer above existing systems.
 
 ```text
 GameModeDefinition
-  SagaCampaign
-  PersistentOperation
-  QuickCustomGame
+  Campaign
+  Operations
+  Skirmish
 
 ScenarioSetup
-  map/grid/city setup
+  operation map / grid / city setup
   faction setup
   resource setup
   AI setup
@@ -204,7 +202,7 @@ Existing `GameBootstrap.BeginGameplay()` should eventually accept a launch paylo
 
 ### Mission Structure
 
-Every tactical match should know:
+Every 3D operation-map match should know:
 
 - Which mode launched it.
 - Which scenario config it uses.
@@ -258,7 +256,7 @@ Reward types:
 - Gear/module item.
 - Cosmetic.
 - Operation supply.
-- Saga chapter stars.
+- Campaign chapter stars.
 - Operation trust/security/intel changes.
 
 Rewards must be data-driven so UI result screens can preview them before mission launch and grant them after mission completion. Resource and reward lifecycle rules are locked in `WarlineCapture_Economy_Reward_Design.md`.
@@ -268,14 +266,14 @@ Rewards must be data-driven so UI result screens can preview them before mission
 Progression layers:
 
 - Player profile level and XP.
-- Saga mission completion and star count.
+- Campaign mission completion and star count. Existing `SagaProgress` may remain as a runtime compatibility backing store until renamed.
 - Unit/building/support unlocks.
 - Operation district state and day count.
-- Quick game presets and last-used setup.
+- Skirmish presets and last-used setup.
 
 ### Difficulty and AI Profiles
 
-The existing `AISettingsRuntimeState` is a good start for Quick Custom Game. Campaign and Operation need named AI profiles:
+The existing `AISettingsRuntimeState` is a good start for Skirmish. Campaign and Operations need named AI profiles:
 
 - Tutorial Cell
 - Hidden Cell Network
@@ -322,11 +320,11 @@ Initial named probe scenarios:
 
 - `QuickCustom_Default_Medium`
 - `QuickCustom_Hard_Swarm`
-- `Saga_Chapter1_Mission1`
-- `Saga_Chapter1_Mission2`
-- `Saga_Chapter1_Mission3`
-- `Saga_Chapter1_Mission4`
-- `Saga_Chapter1_Mission5`
+- `Campaign_Chapter1_Mission1`
+- `Campaign_Chapter1_Mission2`
+- `Campaign_Chapter1_Mission3`
+- `Campaign_Chapter1_Mission4`
+- `Campaign_Chapter1_Mission5`
 - `Operation_Raid_MediumIntel`
 - `BaseDefense_HeavyAir`
 - `EconomyRush_FastBuild`
@@ -356,10 +354,10 @@ Use local JSON persistence first.
 Save:
 
 - Player profile.
-- Saga progress.
+- Campaign progress, using `SagaProgress` only as a compatibility wrapper where needed.
 - Operation state.
 - Settings.
-- Quick Custom last setup.
+- Skirmish last setup.
 
 Do not persist raw ECS world state initially. Persist abstract mode state and regenerate tactical missions from configs.
 
@@ -379,9 +377,9 @@ Build:
 
 Outcome:
 
-- Quick Custom, Saga, and Operation can all launch the existing tactical scene with different setup data later.
+- Skirmish, Campaign, and Operations can all launch the existing tactical scene with different setup data later.
 
-### Phase 2 - Quick Custom Game Rules
+### Phase 2 - Skirmish Rules
 
 Goal: connect the first new UI mode to real gameplay.
 
@@ -443,23 +441,23 @@ Outcome:
 
 - Rewards persist and can unlock units/buildings/modes.
 
-### Phase 6 - Saga Campaign
+### Phase 6 - Campaign
 
 Goal: build the first structured campaign loop.
 
 Build:
 
-- `SagaProgress`
+- `CampaignProgress` or existing `SagaProgress` runtime compatibility wrapper
 - `ChapterConfig`
-- `SagaMissionNodeConfig`
+- `CampaignMissionNodeConfig` or the existing `SagaMissionNodeConfig` as a compatibility wrapper
 - Chapter 1 mission configs.
 - Campaign unlock/star logic.
 
 Outcome:
 
-- Main Menu -> Saga Map -> Briefing -> Loadout -> Match -> Result -> Saga Map.
+- Main Menu -> Campaign Map -> Briefing -> Loadout -> Match -> Result -> Campaign Map.
 
-### Phase 7 - Persistent Operation
+### Phase 7 - Operations
 
 Goal: build the city operation strategic layer.
 
@@ -474,7 +472,7 @@ Build:
 
 Outcome:
 
-- Main Menu -> Operation Dashboard -> District -> Action/Raid -> Match/Report -> Operation Dashboard.
+- Main Menu -> Operations Dashboard -> District -> Action/Raid -> Match/Report -> Operations Dashboard.
 
 ### Phase 8 - Advanced AI and Encounter Variety
 
@@ -492,7 +490,7 @@ Build:
 
 Outcome:
 
-- Campaign and Operation missions feel authored, not just default skirmishes.
+- Campaign and Operations missions feel authored, not just default skirmishes.
 
 ### Phase 9 - Balance and Content Pass
 
@@ -512,12 +510,12 @@ Outcome:
 
 ## Recommended Build Order After UI/UX Foundation
 
-1. Quick Custom gameplay config, launch payload, and 2D isometric scenario/map ID contract.
+1. Skirmish gameplay config, launch payload, and 3D operation-map ID contract.
 2. Objective Manager with a small set of objective types.
 3. Mission result and reward data.
-4. Saga Chapter 1 with 3 playable missions.
+4. Campaign Chapter 1 with 3 playable missions.
 5. Player profile and unlock persistence.
-6. Persistent Operation state and district actions.
+6. Operations state and district actions.
 7. Advanced AI profiles and encounter templates.
 
-This order gives immediate value from the UI work and creates the technical foundation that Saga and Operation both need.
+This order gives immediate value from the UI work and creates the technical foundation that Campaign and Operations both need.

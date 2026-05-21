@@ -1,6 +1,6 @@
 # WarlineCapture UI/UX Implementation Detailed Spec
 
-Date: 2026-05-01
+Date: 2026-05-21
 
 ## Purpose
 
@@ -16,27 +16,26 @@ For FTUE, contextual help, assistant recommendations, tutorial cards, highlights
 
 ### Active Visual Direction
 
-- Production art direction: premium 2D isometric mobile RTS.
-- Direction doc: `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
-- Visual references: `Design/VisualReferences`
-- Unity imported golden assets: `Assets/Game/Art/Generated/2DISO`
-- Manual Unity spike scene: `Assets/Game/Scenes/DesignTargets/ISO01_CityCommand_TilemapSpike.unity`
+- Production art direction: full 3D single-map mobile RTS.
+- Direction doc: `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- Main Menu visual contract: `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+- Canonical unit/building display data: `Assets/Game/Configs/Prefabs`
+- Menu art target: `Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_Source_1672x941.png`
 
 ### Parallel Work Boundary
 
-UI implementation may continue independently from the 2D isometric gameplay/art pipeline.
+UI implementation may continue independently from 3D operation-map runtime expansion, but any visible gameplay/menu art must follow the 3D single-map and command-base direction.
 
 UI implementation should avoid editing:
 
-- `Design/WarlineCapture_2D_Isometric_*`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md` unless the task is explicitly a design-source update
 - `Design/VisualReferences`
-- `Assets/Game/Art/Generated/2DISO`
-- `Assets/Game/Scenes/DesignTargets/ISO01_CityCommand_TilemapSpike.unity`
-- `Assets/Game/Scripts/Editor/WarlineCaptureIso2DSpikeBuilder.cs`
+- `Assets/Game/Configs/Prefabs` unless the task is explicitly about roster/config naming
+- 3D operation-map scenes unless the task is explicitly a gameplay/world validation task
 
-2D isometric gameplay/art implementation should avoid editing UI prefabs, `Design/VisualLock`, `Design/VisualLockLayered`, and `WarlineCapture_UIUX_*` docs unless the change is specifically about HUD/battlefield integration.
+3D operation-map gameplay/art implementation should avoid editing UI prefabs, `Design/VisualLock`, `Design/VisualLockLayered`, and `WarlineCapture_UIUX_*` docs unless the change is specifically about HUD/battlefield integration.
 
-Shared integration should happen at the Match HUD layer: UI owns the Canvas HUD composition; 2D iso gameplay/art owns the battlefield render, sprite sorting, tactical overlays, and capture/report validation behind the HUD.
+Shared integration should happen at the app shell and Match HUD layer: UI owns Canvas composition, route controls, HUD panels, and command feedback surfaces; gameplay/art owns the 3D operation world, camera states, entity presentation, metadata overlays, and capture/report validation behind the HUD.
 
 ### Scenes and Build
 
@@ -128,7 +127,7 @@ Assistant-specific visible elements must also satisfy `WarlineCapture_FTUE_And_C
 
 For every screen:
 
-- Start from the original design references under `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets`.
+- Start from accepted `VisualLock` / `VisualLockLayered` targets. Archived source JPGs under `Design/Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets` may be used only as content/layout references.
 - Create or select a landscape target that preserves the original style and hierarchy.
 - Build a real Canvas prefab from separate replaceable parts. Do not use the target as one runtime background with invisible buttons.
 - Reuse shared UI kit pieces when the target uses the same style: outer screen frame, tabs, animated buttons, sliders, toggles, dropdowns, masked art crops, and Oxanium TMP text.
@@ -312,7 +311,7 @@ Each view should expose a `Bind(...)` method and avoid hard-coded mockup values 
 ### Visual Rules
 
 - Use `Assets/Game/Textures/Logo.png` for brand/logo.
-- Use accepted WarlineCapture UI kit buttons, frames, icons, controls, and rank badges from visual-locked screens. Imported Synty HUD assets may remain as legacy/reference assets where already used, but new gameplay, map, unit, and battlefield imagery must follow the 2D isometric art bible.
+- Use accepted WarlineCapture UI kit buttons, frames, icons, controls, and rank badges from visual-locked screens. Imported Synty HUD assets may remain as legacy/reference assets where already used, but new gameplay, map, unit, and battlefield imagery must follow the 3D single-map direction.
 - Use mockup JPGs only as references.
 - Canvas Scaler should use `Scale With Screen Size`, reference `1920x1080`, landscape.
 - Respect safe area padding.
@@ -368,7 +367,7 @@ Screen_MainMenu
 
 - Saga card routes to `SagaMap`.
 - Operation card routes to `OperationDashboard`.
-- Quick Custom card routes to `QuickCustomSetup`.
+- Skirmish card routes to `QuickCustomSetup` until runtime route names are renamed.
 - Settings button routes to `Settings`.
 - Profile routes to `CommanderProfile`.
 - Inbox routes to `SCN-15 Inbox` designed-unavailable shell.
@@ -391,12 +390,12 @@ Initial values can be constants until persistence is added.
 ### Migration
 
 - Keep `Button_Game` available as debug fallback during development.
-- Once Quick Custom is implemented, replace direct `Button_Game` start with `Quick Custom -> Launch Mission`.
+- Once Skirmish is implemented, replace direct `Button_Game` start with `Skirmish -> Launch Mission`.
 
 ### Tests
 
 - Scene has three mode cards.
-- Quick Custom card routes to setup.
+- Skirmish card routes to setup.
 - Settings button opens settings.
 - Inbox, Store, Events, Ranking, and Chat/Social buttons route to their designed shells instead of silent placeholder toasts.
 - Side-nav shell routes preserve stable route ids: `SCN-14`, `SCN-15`, `SCN-16`, `SCN-17`, and `SCN-18`.
@@ -419,6 +418,8 @@ The updated gameplay alignment adds route surfaces that must be represented in t
 Each shell still follows the normal target-to-canvas workflow: generate/verify a landscape target, create a VisualLockLayered pack, map target elements to Canvas objects, add route/source-mapping tests, capture 16:9 and 20:9, and compare against target before acceptance.
 
 `SCN-19 Armory` is no longer only a reserved route. Use `Design/VisualLock/SCN-19_Armory/SCN-19_Armory_Landscape_Target.png` and `Design/VisualLockLayered/SCN-19_Armory/layer_manifest.json` as the implementation gate before prefab work.
+
+Armory is the required unit/building/support inspection surface. A unit, building, ability, or upgrade selected from Loadout, Build Drawer, Store/Command Exchange, Commander Profile upgrades, Operations Armory, or reward detail should resolve to SCN-19 when the player wants a full roster view. The selected item inspection panel must show config-backed display name, description, role/category, unlock state, level/tier, owned parts, core stats, ability list, upgrade track, and source/unlock requirement. Ability and upgrade rows can open `POP-09 Ability / Upgrade Detail` for deeper rules, costs, cooldowns, source links, and disabled CTA reasons.
 
 ## Phase 4 Detailed Tasks - Settings and Accessibility
 
@@ -504,7 +505,7 @@ Move current gameplay speed and AI controls into:
 - Move gameplay speed and AI tuning controls out of legacy Settings and into `Screen_QuickCustomSetup`.
 - Add localization string table integration once localization data exists.
 
-## Phase 5 Detailed Tasks - Quick Custom Game Setup
+## Phase 5 Detailed Tasks - Skirmish Setup
 
 ### Current Gap
 
@@ -576,7 +577,7 @@ Initial `QuickGameConfig` maps directly to `AISettingsRuntimeState`.
 
 The current tactical HUD is functional but split across Canvas and UI Toolkit. It does not match the final information architecture.
 
-The current tactical-map production gap is tracked in `WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`. The first concrete implementation target is `WarlineCapture_M01_FirstContact_Production_Contract.md`. Phase 6 must add the missing selected-entity panel, command mode banner, world command marker layer, invalid command feedback, and minimap camera bridge before the Chapter 1 M01 playable slice depends on the new close-up AI tactical map.
+The current 3D operation-map HUD gap is tracked by the 3D single-map direction and M01 production contracts. The first concrete implementation target is `WarlineCapture_M01_FirstContact_Production_Contract.md`. Phase 6 must add the missing selected-entity panel, command mode banner, world command marker layer, invalid command feedback, and minimap camera bridge before the Chapter 1 M01 playable slice depends on expanded 3D operation-map play.
 
 ### Target Hierarchy
 
@@ -651,7 +652,7 @@ The close-up tactical-map control contract must support both direct and explicit
 - `MOVE` command -> explicit move target mode
 - `ATTACK` command -> explicit attack target mode
 - invalid target -> visible reason through HUD feedback
-- minimap, objective row, or threat alert jump -> camera focus inside tactical map bounds
+- minimap, objective row, or threat alert jump -> camera focus inside 3D operation-map bounds
 
 ### Build Drawer
 
@@ -781,7 +782,7 @@ On match end:
 - Mission result shows victory and defeat variants.
 - Star goals produce expected count.
 
-## Phase 9 Detailed Tasks - Saga Campaign
+## Phase 9 Detailed Tasks - Campaign
 
 ### New Data
 
@@ -794,7 +795,7 @@ Create:
 
 ### Screens
 
-`SCN-05 Saga Map`:
+`SCN-05 Campaign Map`:
 
 ```text
 Screen_SagaMap
@@ -855,12 +856,12 @@ Current implementation note:
 - `GameRuntimeStats.Snapshot` now exposes all initial Phase 8 objective inputs: enemy kills, elapsed mission seconds, protected civilians, buildings built, captured/destroyed buildings, own losses, and resources earned.
 - `MissionResultBuilder` creates `MissionResultData` for `POP-05 Mission Result`.
 - `WarlineCaptureMissionSession` tracks the active mission and return route. `StartMissionButton` and `DeployButton` seed this state, and Deploy launches the current legacy gameplay path.
-- `SagaMapScreenController` binds `Screen_SagaMap/NodeInfoPanel` from Chapter 1 mission node metadata, mission config objectives, and local completion/star progress. It also refreshes node locked/available/selected visuals from Saga progress, keeps locked nodes selectable for info only, and starts unlocked mission nodes into the briefing flow.
-- `SagaProgressStore` persists local mission completion and best stars.
-- `SaveService` provides split JSON files for profile, Saga, Operation, Settings, and Quick Custom data under the planned save scope.
-- `MissionResultPopupController` binds runtime result data and granted reward rows into the generated `MissionResultPopup` prefab, and `WarlineCaptureMatchResultFlow` completes active missions from gameplay victory snapshots, shows `POP-05`, saves Saga best stars, and returns to the mission's configured route.
+- `CampaignMapScreenController` binds the Campaign Map node info panel from Chapter 1 mission node metadata, mission config objectives, and local completion/star progress. Existing `SagaMapScreenController` / `Screen_SagaMap` names may remain as runtime compatibility until renamed. It also refreshes node locked/available/selected visuals from Campaign progress, keeps locked nodes selectable for info only, and starts unlocked mission nodes into the briefing flow.
+- `CampaignProgressStore` persists local mission completion and best stars. Existing `SagaProgressStore` may remain as the compatibility backing store until renamed.
+- `SaveService` provides split JSON files for profile, Campaign, Operations, Settings, and Skirmish data under the planned save scope. Existing `Saga` / `QuickCustom` filenames may remain as compatibility storage until migrated.
+- `MissionResultPopupController` binds runtime result data and granted reward rows into the generated `MissionResultPopup` prefab, and `WarlineCaptureMatchResultFlow` completes active missions from gameplay victory snapshots, shows `POP-05`, saves Campaign best stars, and returns to the mission's configured route.
 - `MatchObjectivePanelController` binds `Screen_MatchOverlay/ObjectivePanel` to the active mission session at runtime. It preserves the target-mockup fallback labels when no mission is active, then swaps in live primary objective progress and the first star-goal progress once a session exists.
-- `RewardService` applies the first reward-service slice for completed missions: Commander XP, Credits, Unit/Building/Support/Cosmetic unlocks, BlueprintParts duplicate fallback, profile result counters, Saga save progress, saved operation supplies, and targeted Operation district trust/security/intel/infrastructure rewards. Chapter 1 mission configs now include reward configs, `Screen_MissionBriefing` previews those configs, and `WarlineCaptureMatchResultFlow` grants them through `SaveService` when an active mission completes. Mission Briefing, generated fallback reward text, and Mission Result reward rows now format Operation Supply and district-targeted Operation trust/security/intel/infrastructure rewards. Every Chapter 1 mission now carries an authored Operation outcome reward tied to North Bridge, Old Market, or Port Breach, including operation supply plus district metric gains. Operation-launched sessions prioritize Operation reward rows in briefing/result surfaces; Saga-launched sessions keep default XP/credits/unlock ordering. `ProgressionService` now provides the first commander XP table, level calculation, and account-stat accumulation from mission results. `RewardTrackService` adds commander-level milestone nodes, persisted claimed-node ids, eligibility checks, and first claim grants. `MissionHistoryService` archives recent mission result summaries into saved profile data for profile history surfaces.
+- `RewardService` applies the first reward-service slice for completed missions: Commander XP, Credits, Unit/Building/Support/Cosmetic unlocks, BlueprintParts duplicate fallback, profile result counters, Campaign save progress, saved operation supplies, and targeted Operation district trust/security/intel/infrastructure rewards. Chapter 1 mission configs now include reward configs, `Screen_MissionBriefing` previews those configs, and `WarlineCaptureMatchResultFlow` grants them through `SaveService` when an active mission completes. Mission Briefing, generated fallback reward text, and Mission Result reward rows now format Operation Supply and district-targeted Operation trust/security/intel/infrastructure rewards. Every Chapter 1 mission now carries an authored Operation outcome reward tied to North Bridge, Old Market, or Port Breach, including operation supply plus district metric gains. Operation-launched sessions prioritize Operation reward rows in briefing/result surfaces; Campaign-launched sessions keep default XP/credits/unlock ordering. `ProgressionService` now provides the first commander XP table, level calculation, and account-stat accumulation from mission results. `RewardTrackService` adds commander-level milestone nodes, persisted claimed-node ids, eligibility checks, and first claim grants. `MissionHistoryService` archives recent mission result summaries into saved profile data for profile history surfaces.
 - `OperationService` provides default operation districts, Resources-backed configurable action simulation for Patrol/Scan/Aid/Raid/Repair/Evacuate/Build Outpost, district-specific action modifiers, raid mission-routing intent, operation supply deltas, secondary trust/security/infrastructure/enemy-influence/heat/civilian-risk district consequences, typed pending event rows, saved intel evidence rows, authored threshold alert rules, and end-of-day pressure. `WarlineCaptureOperationRuntime` now loads the authored `OperationActionConfigSet`, then loads and saves this operation state through `SaveService`. `OperationDashboardScreenController`, `DistrictDetailScreenController`, and `WarlineCaptureOperationModalFlow` bind `SCN-11` / `SCN-12` plus first-slice Operation popups to this live state: dashboard cards select districts, End Day applies pressure and opens `POP-06`, Scan mutates intel and opens `POP-08`, Raid opens `POP-02`, and confirmation seeds Breach Assault into the briefing path. `Screen_DistrictDetail` now exposes the six-action Operation ActionGrid for Patrol, Drone Scan, Raid, Repair, Evacuate, and Build Outpost. Dashboard/detail cards now use a shared secondary-metric text contract so trust, security, infrastructure, enemy influence, heat, civilian risk, stability, and intel appear consistently before final visual-lock art treatment. Raid confirmation displays heat/civilian-risk/security/trust values directly, and End Day reports trust/security/heat/civilian-risk averages. `OperationIntelArchive` centralizes latest/count/read queries for saved evidence rows; `POP-08` displays the latest selected-district evidence and marks it read when View Intel is pressed. `OperationInboxScreenController`, `OperationEventsScreenController`, and `OperationCommandFeedScreenController` bind `SCN-15` / `SCN-16` / `SCN-18` to the saved Operation event ledger and intel archive while preserving their visual-lock fallback text; those feeds now display event category/severity/source-metric metadata and evidence confidence/read metadata from the typed ledger/archive. Remaining Operation work is final visual-lock UI presentation for every secondary metric and production content expansion.
 - `CommanderProfileScreenController` now gives `SCN-03 Commander Profile` its first runtime profile binding pass: wallet counters, commander name, derived level/XP progress, unlock collection count, win/loss history, account combat totals, saved recent mission report rows, reward-track eligibility, claimable reward-track row buttons with modal detail/claim feedback, local Overview/Upgrades/History/Cosmetics/Stats/Settings tab content, and a first-claim CTA bind from saved `PlayerProfileSaveData` while preserving the layered visual-lock shell.
 
@@ -872,7 +873,7 @@ Current implementation note:
 - Deploy starts match with mission payload.
 - Result updates `SagaProgress`.
 
-## Phase 10 Detailed Tasks - Persistent Operation
+## Phase 10 Detailed Tasks - Operations
 
 ### New Data
 
@@ -1057,8 +1058,8 @@ Add tests as features land:
 - Add router and route enum.
 - Add Main Menu mode select screen.
 - Use logo image.
-- Add Quick Custom screen with current AI settings.
-- Launch current gameplay from Quick Custom.
+- Add Skirmish screen with current AI settings.
+- Launch current gameplay from Skirmish.
 
 ### Second Practical Milestone
 
@@ -1077,7 +1078,7 @@ Add tests as features land:
 
 ### Fourth Practical Milestone
 
-- Add Saga Map, Briefing, and Loadout.
+- Add Campaign Map, Briefing, and Loadout.
 - Add Chapter 1 mission configs.
 - Save stars/progress locally.
 
@@ -1102,7 +1103,7 @@ Start with the first practical milestone:
 1. Create router/app shell scripts.
 2. Add `AppShell` under the current `UI_Canvas`.
 3. Build `Screen_MainMenu` with logo and three mode cards.
-4. Build `Screen_QuickCustomSetup` by moving current AI/gameplay speed settings into a dedicated setup screen.
+4. Build the player-facing Skirmish setup screen, backed by `Screen_QuickCustomSetup` only where route compatibility still requires it, by moving current AI/gameplay speed settings into a dedicated setup screen.
 5. Route Launch Mission into the existing `GameBootstrap.BeginGameplay()` path.
 
-This gives an immediate visible upgrade, uses systems already present, and avoids blocking on Saga or Operation persistence.
+This gives an immediate visible upgrade, uses systems already present, and avoids blocking on Campaign or Operations persistence.

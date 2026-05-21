@@ -1,20 +1,21 @@
 # WarlineCapture Gameplay North Star And Content Grammar
 
-Date: 2026-05-05
+Date: 2026-05-21
 
 ## Purpose
 
 This document locks the high-level gameplay direction that must be read before authoring level-by-level, mission-by-mission, reward, validation, or balancing content.
 
-The existing gameplay specs define systems. This document defines the content grammar those systems should serve: what WarlineCapture is about, what a good mission asks from the player, how Saga and Operation connect, and which balancing targets every authored mission must expose.
+The existing gameplay specs define systems. This document defines the content grammar those systems should serve: what WarlineCapture is about, what a good mission asks from the player, how Campaign, Operations, and Skirmish connect, and which balancing targets every authored mission must expose.
 
-Use `WarlineCapture_Level_And_Mission_Content_Plan.md` for the shared mission template, high-level Saga chapter set, Operation mission hooks, Quick Custom probe mapping, and mission acceptance workflow. Use `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` for the strategic/zoomed-out versus tactical/zoomed-in map contract. Use the dedicated docs under `SagaChapters` for chapter-specific mission matrices and specs.
+Use `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` for the active 3D single-map gameplay direction, prefab-catalog roster source, and menu update list. Use `WarlineCapture_Level_And_Mission_Content_Plan.md` for the shared mission template, high-level Campaign chapter set, Operations mission hooks, Skirmish probe mapping, and mission acceptance workflow. Use the dedicated docs under `SagaChapters` for chapter-specific mission matrices and specs.
 
-Terminology rule: a player-facing Saga node launches a `Mission`; the mission uses a `ScenarioSetup`; the ScenarioSetup references a reusable `Level / Map`. Do not use Level as a synonym for Mission in config names, UI labels, or validation docs.
+Terminology rule: a player-facing Campaign node launches a `Mission`; the mission uses a `ScenarioSetup`; the ScenarioSetup references a reusable 3D `OperationMap`. Do not use Level as a synonym for Mission in config names, UI labels, or validation docs. Legacy docs may still say Saga, Quick Custom, Level, tactical map, or strategic map; new player-facing language should prefer Campaign, Skirmish, and 3D operation map.
 
 ## Source Design Inputs
 
 - `GAME_DESIGN_REFERENCE.md`
+- `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
 - `WarlineCapture_Command_Offensive_Premise_Alignment.md`
 - `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
@@ -28,14 +29,11 @@ Terminology rule: a player-facing Saga node launches a `Mission`; the mission us
 - `WarlineCapture_Economy_Reward_Design.md`
 - `WarlineCapture_Balancing_Automated_Test_Plan.md`
 - `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-- `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
 - `Monetization/WarlineCapture_Monetization_Strategy.md`
-- `WarlineCapture_2D_Isometric_Production_Direction.md`
-- `WarlineCapture_2D_Isometric_Art_Bible.md`
 
 ## North Star
 
-WarlineCapture is a mobile tactical RTS about preparing and executing command operations against hostile factions embedded in civilian districts.
+WarlineCapture is a mobile 3D command RTS about preparing and executing operations against fictional hostile terrorist and insurgent cells embedded in civilian towns and districts.
 
 The player fantasy is not only "destroy the enemy." The core fantasy is:
 
@@ -43,51 +41,52 @@ The player fantasy is not only "destroy the enemy." The core fantasy is:
 Read the city.
 Identify the hostile faction's position.
 Prepare the right force.
+Deploy into the same 3D operation map.
 Strike with tactical control.
 Protect civilians and infrastructure.
 Live with the district consequences.
 ```
 
-WarlineCapture should be differentiated by proactive command pressure, hostile factions hidden in civilian space, civilian safety, readable mobile tactics, and persistent district consequences.
+WarlineCapture should be differentiated by proactive command pressure, hostile cells hidden in civilian space, civilian safety, readable 3D mobile command, and persistent district consequences.
 
 ## Design Pillars
 
 | Pillar | Meaning | Design Test |
 |---|---|---|
-| Tactical Command | The player prepares and executes readable squad, build, move, attack, transport, breach, and support decisions. | Does the mission reward active command instead of passive waiting? |
+| Tactical Command | The player prepares and executes readable squad, build, move, attack, transport, breach, scan, and support decisions on one 3D operation map. | Does the mission reward active command instead of passive waiting? |
 | Hostile Factions In Civilian Space | Every mission targets a faction, cell, route, node, or threat that is using the city as cover. | Can the mission briefing explain who or what the commander is preparing to hit? |
 | Precision Under Constraint | Civilian survival, collateral damage, trust, and stability are part of success. | Can the player win tactically but still lose value through reckless choices? |
-| District Consequence | Tactical results feed Saga rewards or Operation district state. | Does the result screen explain what changed after the mission? |
-| Readable Mobile RTS | Objectives, waves, units, threats, and UI remain legible on mobile landscape. | Can the player understand threat direction, objective state, and next action without pausing? |
+| District Consequence | 3D operation results feed Campaign rewards or Operation district state. | Does the result screen explain what changed after the mission? |
+| Readable 3D Mobile RTS | Objectives, waves, units, civilians, threats, camera states, and UI remain legible on mobile landscape. | Can the player understand threat direction, objective state, civilian risk, and next action without pausing? |
 | Fair Progression | Rewards and store grants support preparation and identity, not victory overrides. | Does the reward/store path respect the economy and monetization guardrails? |
 
-Map readability rule: strategic maps help the player understand where and why a mission happens; tactical maps are where command decisions are executed. A mission is not readable if the strategic preview looks good but the tactical close-up map cannot support unit scale, movement, attack, build placement, objectives, threat jumps, and feedback overlays.
+Map readability rule: every mission resolves to one 3D operation map. Planning view, briefing view, minimap, threat jumps, deployment setup, and battle view are camera/UI states over that same world. A mission is not readable if the 3D map cannot support unit scale, civilian identification, movement, attack, build placement, objectives, threat jumps, and feedback overlays.
 
 ## Primary Core Loop
 
-Every authored tactical mission should fit this loop:
+Every authored 3D operation mission should fit this loop:
 
 ```text
-Briefing -> Intel/Scout -> Loadout -> Tactical Mission -> Result/Stars -> Rewards -> District Consequence -> Next Decision
+Briefing -> Intel/Scout -> Loadout -> 3D Operation -> Result/Stars -> Rewards -> District Consequence -> Next Decision
 ```
 
 Mode-specific versions:
 
 | Mode | Loop Variant |
 |---|---|
-| Saga Campaign | Select node -> read briefing -> prepare loadout -> complete authored mission -> earn stars/rewards -> unlock next node/chapter threshold. |
-| Persistent Operation | Inspect district -> choose action -> resolve abstract/tactical consequence -> update trust/security/intel/infrastructure/heat -> end day -> react to new events. |
-| Quick Custom Game | Choose preset/rules -> launch tactical sandbox -> review result/report -> adjust setup or replay. |
+| Campaign | Select node -> read briefing -> prepare loadout -> complete authored 3D operation -> earn stars/rewards -> unlock next node/chapter threshold. |
+| Operations | Inspect district -> choose action -> resolve 3D operation or abstract consequence -> update trust/security/intel/infrastructure/heat -> end day -> react to new events. |
+| Skirmish | Choose preset/rules -> launch 3D operation sandbox -> review result/report -> adjust setup or replay. Runtime internals may keep QuickCustom naming until migration. |
 
 ## Mode Hierarchy
 
-Saga Campaign teaches the game. Persistent Operation proves the strategy layer. Quick Custom Game supports replay, experimentation, and balance testing.
+Campaign teaches the game. Operations prove the persistent command layer. Skirmish supports replay, experimentation, and balance testing.
 
 | Mode | Content Role | What It Should Not Do |
 |---|---|---|
-| Saga Campaign | Controlled teaching, curated mission variety, star mastery, unlock pacing. | Do not expose every system at once or require Operation knowledge to progress. |
-| Persistent Operation | Long-term pressure, district consequence, action economy, evolving threats. | Do not become a detached menu economy with no tactical consequence. |
-| Quick Custom Game | Fast replayable configuration, AI tuning, mode/system testing. | Do not become the main progression farm or bypass campaign/operation structure. |
+| Campaign | Controlled teaching, curated mission variety, star mastery, unlock pacing. | Do not expose every system at once or require Operation knowledge to progress. |
+| Operations | Long-term pressure, district consequence, action economy, evolving threats. | Do not become a detached menu economy with no 3D operation consequence. |
+| Skirmish | Fast replayable configuration, AI tuning, mode/system testing. | Do not become the main progression farm or bypass campaign/operation structure. |
 
 ## Content Grammar
 
@@ -99,6 +98,7 @@ Every authored mission must define:
 - `DistrictContext` or `ChapterContext`
 - `PrimaryThreatFamily`
 - `ScenarioSetup`
+- `OperationMapId`
 - `ObjectiveSet`
 - `StarGoalSet`
 - `RewardConfigSet`
@@ -188,8 +188,8 @@ The player-facing FTUE, contextual recommendation, and safe assistant takeover d
 
 | Mission | Teaching Goal | Recommended Archetype | New Mechanic | Strategic Hook |
 |---|---|---|---|---|
-| Mission 1: First Contact | Selection, move, attack, objective completion. | Patrol Intercept | Squad command. | First hostile contact in a civilian district. |
-| Mission 2: Establish The Base | Building placement, production, resource spend. | Infrastructure Repair or Base Defense Lite | Build/produce. | Restore a forward operating point. |
+| Mission 1: First Contact | Selection, move, attack, objective completion. | Patrol Intercept | Squad command in a 3D town corridor. | First hostile contact in a civilian district. |
+| Mission 2: Establish The Base | Building placement, production, resource spend. | Infrastructure Repair or Base Defense Lite | Build/produce in the 3D operation map model. | Restore a forward operating point. |
 | Mission 3: Radar Warning | Threat alert, defense timing, warning response. | Base Defense | Radar/threat feed. | Stop a convoy before district damage. |
 | Mission 4: Airlift | Transport, extraction/reinforcement, landing-zone safety. | Airlift Extraction | Helicopter/APC transport. | Evacuate or reinforce a threatened block. |
 | Mission 5: Breach Assault | Combined arms and fortified objective. | Breach Assault | Breach/walls/core target. | Remove the chapter enemy node. |
@@ -249,11 +249,11 @@ Before a mission is design-ready:
 
 Before authoring the full chapter and operation campaign, build one end-to-end vertical slice:
 
-1. Quick Custom launch payload.
-2. Saga Mission 1: First Contact.
+1. Skirmish launch payload. Runtime internals may keep QuickCustom naming until migration.
+2. Campaign Mission 1: First Contact.
 3. Objective runtime and Mission Result.
 4. Reward preview and grant.
 5. One Operation district action that consumes or updates the same consequence model.
-6. One balance report for the mission or matching Quick Custom scenario.
+6. One balance report for the mission or matching Skirmish scenario.
 
 After this slice passes design, implementation, UI, and balance validation, author Chapter 1 mission-by-mission.

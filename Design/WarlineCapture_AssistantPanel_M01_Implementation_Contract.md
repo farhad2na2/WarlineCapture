@@ -73,10 +73,9 @@ These ids are locked by `WarlineCapture_M01_FirstContact_Production_Contract.md`
 |---|---|
 | Mission | `saga.ch01.m01.first_contact` |
 | Scenario setup | `scenario.ch01.m01.first_contact` |
-| Level | `level.ch01.district_edge_01` |
-| Iso map | `iso.ch01.district_edge_01` |
-| Preview art | `preview.ch01.first_contact` |
-| Minimap art | `minimap.ch01.first_contact` |
+| Operation map | `opmap.ch01.district_edge_01` |
+| Planning camera | `camera.ch01.first_contact.planning` |
+| Minimap projection | `minimap.ch01.first_contact` |
 | Player squad | `unit.player.rifle_squad_01` |
 | Enemy patrol | `unit.enemy.patrol_01` |
 | Move target | `tutorial.move_target.cover_01` |
@@ -243,12 +242,12 @@ Earlier bridge aliases (`InvalidTarget`, `BlockedRoute`, `OutOfRange`, `BuildMod
 
 | Data | Source |
 |---|---|
-| Active mission ids | `WarlineCaptureMissionSession.ActiveMissionId`, `ActiveScenarioSetupId`, `ActiveLevelId`, `ActiveIsoMapId`, `ActiveMapPreviewArtId`, `ActiveMinimapArtId` |
+| Active mission ids | `WarlineCaptureMissionSession.ActiveMissionId`, `ActiveScenarioSetupId`, `ActiveLevelId`, `ActiveOperationMapId`, `ActivePlanningCameraId`, `ActiveMinimapProjectionId` |
 | Selected entity name/status | Gameplay selection state, bridged through `BattleHudGameplayBridge.ApplySelection` |
 | Current command mode | `BattleHudGameplayBridge.ApplyCommandMode` / `ClearCommandMode` |
 | Last command result | `BattleHudGameplayBridge.ApplyCommandResult(TacticalCommandResult)` |
 | World marker visibility | `BattleHudGameplayBridge.SetWorldMarkersVisible` |
-| Tactical anchor availability | `TacticalMapRuntimeLoader.TryGetAnchorWorldPosition` or equivalent tactical map definition lookup |
+| Operation-map anchor availability | `OperationMapRuntimeLoader.TryGetAnchorWorldPosition` or equivalent operation-map definition lookup |
 | Runtime entity availability | Selection/combat runtime ids for `unit.player.rifle_squad_01` and `unit.enemy.patrol_01` |
 | Objective progress | `objective.destroy_patrol_group` / M01 objective completion |
 

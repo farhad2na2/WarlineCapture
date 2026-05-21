@@ -1,0 +1,121 @@
+﻿# GC01 Base Gate Town Generation
+
+Lane: Gameplay
+Task: Generate first rule-authored 3D scene from Demo/Game_Legecy prefab vocabulary.
+
+Files changed:
+- `Design/Architecture/gameplay_3d_scene_generation_plan.md`
+- `Assets/Game/Scripts/Editor/WarlineCaptureGeneratedSceneBuilder.cs`
+- `Assets/Game/Scenes/Generated/GC01_BaseGateTown.unity`
+- `Design/AgentReports/Captures/GeneratedScenes/GC01_BaseGateTown/gc01_topdown_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC01_BaseGateTown/gc01_perspective_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC01_BaseGateTown/gc01_town_close_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC01_BaseGateTown/gc01_base_close_1920x1080.png`
+
+Contracts touched: none. This is a design-target scene generator and does not alter runtime ECS contracts.
+User-visible behavior: none in the shipped Game flow yet; generated scene is a design target.
+Validation run: Unity editor scene build and proof capture via `WarlineCaptureGeneratedSceneBuilder.BuildGc01BaseGateTown`.
+Validation result: scene saved and perspective/close captures exported; no missing prefabs were reported in the final build.
+Known gaps: rendered top-down proof still exposes texture-atlas artifacts from some PolygonMilitary prefabs; perspective close views are the current visual acceptance proof. Next pass should add top-down-safe prefab filtering, footprint/overlap validation, and denser decoration.
+Cross-lane impacts: Designer/PM can review proof captures and request grammar changes; no UI/runtime source files are changed.
+Next recommended task: add footprint/overlap validation and generate role-colored map/walkability proof for GC01.
+
+Placed prefabs:
+- SandDuneBackplate: Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_03.prefab at (-92, 0, 78) rotY=14 scale=(0.18, 0.12, 0.18)
+- SandDuneBackplate: Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_01.prefab at (94, 0, -84) rotY=-18 scale=(0.22, 0.1, 0.22)
+- SandDuneBackplate: Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab at (-118, 0, -76) rotY=37 scale=(0.16, 0.1, 0.16)
+- SandDuneBackplate: Assets/PolygonMilitary/Prefabs/Environment/SM_Env_SandDunes_02.prefab at (118, 0, 84) rotY=-28 scale=(0.16, 0.1, 0.16)
+- GroundCrater: Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Crater_02.prefab at (-28, 0, 20) rotY=9 scale=(1.4, 1, 1.4)
+- GroundCrater: Assets/PolygonMilitary/Prefabs/Environment/SM_Env_Ground_Crater_02.prefab at (42, 0, -42) rotY=-22 scale=(1.25, 1, 1.25)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab at (-92, 0.74, 50) rotY=8 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab at (-66, 0.74, 46) rotY=-12 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_06.prefab at (-104, 0, 18) rotY=92 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_08.prefab at (-72, 0.17, 18) rotY=3 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_06.prefab at (-105, 0.74, -15) rotY=-18 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_07.prefab at (-79, 0, -34) rotY=86 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab at (-50, 0.74, -28) rotY=-5 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_03.prefab at (-108, 0, -58) rotY=15 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_04.prefab at (-56, 0.74, 58) rotY=88 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_05.prefab at (-96, 0.2, -82) rotY=-8 scale=(1, 1, 1)
+- TownBuilding: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_05.prefab at (-65, 0.74, -78) rotY=0 scale=(1, 1, 1)
+- TownGasStation: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GasStation_01.prefab at (-44, 0.74, -6) rotY=90 scale=(1, 1, 1)
+- TownLandmark: Assets/Game/Prefabs/Environment/City/Clock_Tower_01.prefab at (-82, 0, -2) rotY=0 scale=(0.9, 0.9, 0.9)
+- TownCourtyard: Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab at (-75, 0.22, -12) rotY=0 scale=(0.85, 0.85, 0.85)
+- VillageWall: Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab at (-40, 0.74, 20) rotY=90 scale=(1, 1, 1)
+- VillageWall: Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_02.prefab at (-40, 0.74, -10) rotY=90 scale=(1, 1, 1)
+- VillageGate: Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_Gate_01.prefab at (-40, 0, -35) rotY=90 scale=(1, 1, 1)
+- TownAlleyCover: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (-92, 0, 2) rotY=0 scale=(0.8, 0.8, 0.8)
+- TownAlleyCover: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (-82, 0, 13) rotY=90 scale=(0.8, 0.8, 0.8)
+- TownAlleyCover: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (-72, 0, 2) rotY=0 scale=(0.8, 0.8, 0.8)
+- TownAlleyCover: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (-62, 0, 13) rotY=90 scale=(0.8, 0.8, 0.8)
+- TownAlleyCover: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (-52, 0, 2) rotY=0 scale=(0.8, 0.8, 0.8)
+- TownAlleyCover: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (-42, 0, 13) rotY=90 scale=(0.8, 0.8, 0.8)
+- Hangar: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Hangar_01.prefab at (62, 0.59, 70) rotY=90 scale=(0.95, 0.95, 0.95)
+- Barracks: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab at (50, 0.48, 35) rotY=0 scale=(1, 1, 1)
+- Barracks: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab at (76, 0.48, 35) rotY=0 scale=(1, 1, 1)
+- Tent: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_01.prefab at (45, 0, 6) rotY=0 scale=(1, 1, 1)
+- Tent: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab at (66, 0.17, 5) rotY=8 scale=(1, 1, 1)
+- GuardTower: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GuardTower_01.prefab at (28, 0, 58) rotY=0 scale=(1, 1, 1)
+- GuardTower: Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GuardTower_02.prefab at (28, 0.03, -6) rotY=0 scale=(1, 1, 1)
+- APC: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_APC_01.prefab at (55, 0, -18) rotY=-22 scale=(1, 1, 1)
+- Tank: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Tank_USA_01.prefab at (79, 0, -16) rotY=12 scale=(1, 1, 1)
+- RadarTank: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Radar_Tank_01.prefab at (42, 0, 62) rotY=18 scale=(1, 1, 1)
+- RocketTruck: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Rocket_Truck_01.prefab at (84, 0.03, 60) rotY=-18 scale=(1, 1, 1)
+- Jet: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Jet_01.prefab at (112, 2, 62) rotY=0 scale=(0.9, 0.9, 0.9)
+- HelicopterPad: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Helicopter_Attack_01.prefab at (96, 0, 2) rotY=-12 scale=(0.9, 0.9, 0.9)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (36, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (36, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (46, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (46, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (56, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (56, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (66, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (66, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (76, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (76, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (86, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (86, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceNorth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (96, 0, 88) rotY=0 scale=(1, 1, 1)
+- BaseFenceSouth: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Dirt_02.prefab at (96, 0, -32) rotY=0 scale=(1, 1, 1)
+- BaseFenceWest: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (26, 0, -20) rotY=90 scale=(1, 1, 1)
+- BaseFenceEast: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (94, 0, -20) rotY=90 scale=(1, 1, 1)
+- BaseFenceWest: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (26, 0, 0) rotY=90 scale=(1, 1, 1)
+- BaseFenceEast: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (94, 0, 0) rotY=90 scale=(1, 1, 1)
+- BaseFenceWest: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (26, 0, 20) rotY=90 scale=(1, 1, 1)
+- BaseFenceEast: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (94, 0, 20) rotY=90 scale=(1, 1, 1)
+- BaseFenceWest: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (26, 0, 40) rotY=90 scale=(1, 1, 1)
+- BaseFenceEast: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (94, 0, 40) rotY=90 scale=(1, 1, 1)
+- BaseFenceWest: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (26, 0, 60) rotY=90 scale=(1, 1, 1)
+- BaseFenceEast: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (94, 0, 60) rotY=90 scale=(1, 1, 1)
+- BaseFenceWest: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (26, 0, 80) rotY=90 scale=(1, 1, 1)
+- BaseFenceEast: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Barrier_Base_Row_02.prefab at (94, 0, 80) rotY=90 scale=(1, 1, 1)
+- FuelTank: Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Tank_01.prefab at (82, 0, -74) rotY=0 scale=(1, 1, 1)
+- FuelBladder: Assets/PolygonMilitary/Prefabs/Props/Military/SM_Prop_Fuel_Bladder_01.prefab at (101, 0.08, -74) rotY=0 scale=(1, 1, 1)
+- Pipeline: Assets/PolygonMilitary/Prefabs/Props/PipeLine/SM_Prop_Pipeline_Pipe_Large_Section_01.prefab at (92, 3.9, -56) rotY=90 scale=(1, 1, 1)
+- Truck: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Truck_01_Tanker.prefab at (68, -1.37, -58) rotY=90 scale=(1, 1, 1)
+- DestroyedTruck: Assets/PolygonMilitary/Prefabs/Vehicles/Destroyed/SM_Veh_Truck_01_Destroyed.prefab at (34, 0.21, -50) rotY=-25 scale=(1, 1, 1)
+- CheckpointBarrierWest: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (-12, 0, -12) rotY=16 scale=(1, 1, 1)
+- CheckpointBarrierEast: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (14, 0, -8) rotY=-12 scale=(1, 1, 1)
+- CheckpointBarrierWest: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (-12, 0, -4) rotY=16 scale=(1, 1, 1)
+- CheckpointBarrierEast: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (14, 0, 0) rotY=-12 scale=(1, 1, 1)
+- CheckpointBarrierWest: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (-12, 0, 4) rotY=16 scale=(1, 1, 1)
+- CheckpointBarrierEast: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (14, 0, 8) rotY=-12 scale=(1, 1, 1)
+- CheckpointBarrierWest: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (-12, 0, 12) rotY=16 scale=(1, 1, 1)
+- CheckpointBarrierEast: Assets/PolygonMilitary/Prefabs/Props/SM_Prop_Barrier_01.prefab at (14, 0, 16) rotY=-12 scale=(1, 1, 1)
+- CheckpointTower: Assets/Game/Prefabs/Buildings/Building_GuardTower.prefab at (22, 0.1, 18) rotY=180 scale=(1, 1, 1)
+- RoadBlockTruck: Assets/PolygonMilitary/Prefabs/Vehicles/SM_Veh_Truck_01_Canopy.prefab at (6, -2.07, 26) rotY=8 scale=(1, 1, 1)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_06.prefab at (-122, 0, 65) rotY=0 scale=(1, 1, 1)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_04.prefab at (-116, 0.97, -78) rotY=23 scale=(1, 1, 1)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_04.prefab at (122, 0, -95) rotY=46 scale=(0.7, 0.7, 0.7)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_06.prefab at (118, 0, 94) rotY=69 scale=(1, 1, 1)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_04.prefab at (-106, 0.97, 86) rotY=92 scale=(1, 1, 1)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_04.prefab at (-120, 0, -20) rotY=115 scale=(0.7, 0.7, 0.7)
+- BoundaryRock: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_06.prefab at (118, 0, -20) rotY=138 scale=(1, 1, 1)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab at (-112, 0.14, 28) rotY=0 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_01.prefab at (-89, 0.42, 58) rotY=31 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_01.prefab at (-54, 0, -58) rotY=62 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab at (-96, 0.14, -78) rotY=93 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_01.prefab at (36, 0.42, -78) rotY=124 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_01.prefab at (105, 0, -40) rotY=155 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab at (96, 0.14, 86) rotY=186 scale=(0.85, 0.85, 0.85)
+- DesertPlant: Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_01.prefab at (58, 0.42, 92) rotY=217 scale=(0.85, 0.85, 0.85)

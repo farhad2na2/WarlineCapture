@@ -1,37 +1,27 @@
 # Support/FTUE Current Task
 
-Date: 2026-05-09
-Status: waiting
-Priority: no current Support/FTUE action; waiting on Art/Atlas AI production asset pack
+Date: 2026-05-22
+Status: held
+Priority: no current Support/FTUE action; 3D fresh-start reset
 
-## Assignment
-
-Stand by while Art/Atlas creates the AI-generated ready-to-implement production asset pack.
+## PM Reset - Read First
 
 Read:
 
-- `Design/AgentReports/2026-05-08_pm_art-atlas-gameplay-visual-target-rejected.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-isometric-gameplay-visual-target-package.md`
-- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
 
-Support/FTUE re-engages only if a later QA/HCI pass reports a concrete assistant guidance, API, ownership, `Stop`, `Show Me`, result-explanation, invalid-command recovery, tutorial prompt, or FTUE behavior issue.
+## Current Assignment
 
-## Waiting On
+No Support/FTUE task is active.
 
-- Art/Atlas AI production asset pack
+Previous M01 tutorial, assistant, command-intent, invalid-command, and FTUE support tasks are historical context only. Do not continue them automatically.
 
-## Guardrails While Waiting
+## Continue Behavior
 
-- Keep `CommandIntentExecutor` as the command boundary.
-- Keep `Show Me` as focus/highlight intent only.
-- Keep `Stop` bounded to assistant/takeover state.
-- Do not use UI child paths, screen coordinates, HUD text scraping, or runtime scene searches.
-- Do not invent new Chapter 1 mechanics.
+If asked to `continue`, report:
 
-## Completion Report
+```text
+Support/FTUE current task is held for the 3D fresh-start reset. No action is assigned. Waiting for PM/user to dispatch a new Support/FTUE task.
+```
 
-If QA/HCI or PM assigns a concrete Support/FTUE issue, write the next report to:
-
-`Design/AgentReports/2026-05-08_support-ftue_<specific-qa-rerun-issue>.md`
-
-Use the standard WarlineCapture handoff format.
+Do not edit support/assistant behavior, write reports, run validation, or route another lane unless PM/user provides a new explicit Support/FTUE assignment.

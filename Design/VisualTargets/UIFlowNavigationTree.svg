@@ -1,0 +1,226 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1800" viewBox="0 0 1800 1800">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b977c"/>
+    </marker>
+    <style>
+      .bg { fill: #0e1110; }
+      .frame { fill: none; stroke: #2d332d; stroke-width: 2; }
+      .root { fill: #1d241b; stroke: #d8a536; stroke-width: 3; }
+      .mode { fill: #151a18; stroke: #6f7b64; stroke-width: 2; }
+      .screen { fill: #101513; stroke: #3f4b42; stroke-width: 1.7; }
+      .play { fill: #111b1f; stroke: #88b8c7; stroke-width: 2.5; }
+      .popup { fill: #171412; stroke: #a36f32; stroke-width: 1.7; }
+      .utility { fill: #141518; stroke: #6b7180; stroke-width: 1.7; }
+      .line { stroke: #7f8a75; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .hubline { stroke: #88b8c7; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .return { stroke: #d8a536; stroke-width: 2; stroke-dasharray: 8 8; fill: none; marker-end: url(#arrow); }
+      .modalLine { stroke: #a36f32; stroke-width: 1.8; stroke-dasharray: 6 7; fill: none; marker-end: url(#arrow); }
+      .title { fill: #f0d28a; font-family: Arial, Helvetica, sans-serif; font-size: 34px; font-weight: 800; }
+      .caption { fill: #9ba899; font-family: Arial, Helvetica, sans-serif; font-size: 18px; }
+      .text { fill: #e8e3d5; font-family: Arial, Helvetica, sans-serif; font-size: 23px; font-weight: 700; }
+      .small { fill: #c8c2b2; font-family: Arial, Helvetica, sans-serif; font-size: 17px; font-weight: 600; }
+      .tiny { fill: #989282; font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
+      .gold { fill: #d8a536; font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; }
+      .blue { fill: #88b8c7; font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1800" height="1800"/>
+  <rect x="30" y="30" width="1740" height="1740" class="frame"/>
+
+  <text x="900" y="82" text-anchor="middle" class="title">WarlineCapture UI Flow Navigation Tree</text>
+  <text x="900" y="116" text-anchor="middle" class="caption">Primary routes, game-mode paths, settings access, overlays, and safe returns</text>
+
+  <rect x="650" y="150" width="500" height="76" rx="8" class="root"/>
+  <text x="900" y="181" text-anchor="middle" class="text">SCN-01 Splash / Loading</text>
+  <text x="900" y="207" text-anchor="middle" class="small">load assets, profile, next route</text>
+
+  <path class="line" d="M900 226 L900 285"/>
+  <rect x="590" y="285" width="620" height="96" rx="8" class="root"/>
+  <text x="900" y="323" text-anchor="middle" class="text">SCN-02 Main Menu / Command Base</text>
+  <text x="900" y="352" text-anchor="middle" class="small">Campaign / Operations / Skirmish / Store / Commander / Settings</text>
+
+  <path class="line" d="M900 381 L900 430 M235 430 L1565 430"/>
+
+  <!-- Branch headers -->
+  <rect x="80" y="455" width="310" height="74" rx="8" class="mode"/>
+  <text x="235" y="486" text-anchor="middle" class="text">Campaign</text>
+  <text x="235" y="512" text-anchor="middle" class="tiny">authored mission chain</text>
+  <path class="line" d="M235 430 L235 455"/>
+
+  <rect x="500" y="455" width="310" height="74" rx="8" class="mode"/>
+  <text x="655" y="486" text-anchor="middle" class="text">Operations</text>
+  <text x="655" y="512" text-anchor="middle" class="tiny">district command and raids</text>
+  <path class="line" d="M655 430 L655 455"/>
+
+  <rect x="920" y="455" width="310" height="74" rx="8" class="mode"/>
+  <text x="1075" y="486" text-anchor="middle" class="text">Skirmish</text>
+  <text x="1075" y="512" text-anchor="middle" class="tiny">replayable setup</text>
+  <path class="line" d="M1075 430 L1075 455"/>
+
+  <rect x="1340" y="455" width="310" height="74" rx="8" class="mode"/>
+  <text x="1495" y="486" text-anchor="middle" class="text">Support</text>
+  <text x="1495" y="512" text-anchor="middle" class="tiny">profile, settings, store, feeds</text>
+  <path class="line" d="M1495 430 L1495 455"/>
+
+  <!-- Campaign path -->
+  <path class="line" d="M235 529 L235 590"/>
+  <rect x="65" y="590" width="340" height="62" rx="6" class="screen"/>
+  <text x="235" y="614" text-anchor="middle" class="small">SCN-05 Campaign Map</text>
+  <text x="235" y="638" text-anchor="middle" class="tiny">chapter nodes, stars, mission select</text>
+
+  <path class="line" d="M235 652 L235 705"/>
+  <rect x="65" y="705" width="340" height="62" rx="6" class="screen"/>
+  <text x="235" y="729" text-anchor="middle" class="small">SCN-06 Mission Briefing</text>
+  <text x="235" y="753" text-anchor="middle" class="tiny">objectives, intel, rewards, map preview</text>
+
+  <path class="line" d="M235 767 L235 820"/>
+  <rect x="65" y="820" width="340" height="62" rx="6" class="screen"/>
+  <text x="235" y="844" text-anchor="middle" class="small">SCN-07 Loadout</text>
+  <text x="235" y="868" text-anchor="middle" class="tiny">squad, support, deploy cost</text>
+
+  <!-- Operations path -->
+  <path class="line" d="M655 529 L655 590"/>
+  <rect x="485" y="590" width="340" height="62" rx="6" class="screen"/>
+  <text x="655" y="614" text-anchor="middle" class="small">SCN-11 Operations Dashboard</text>
+  <text x="655" y="638" text-anchor="middle" class="tiny">day, districts, warnings</text>
+
+  <path class="line" d="M655 652 L655 705"/>
+  <rect x="485" y="705" width="340" height="62" rx="6" class="screen"/>
+  <text x="655" y="729" text-anchor="middle" class="small">SCN-12 District Detail</text>
+  <text x="655" y="753" text-anchor="middle" class="tiny">actions, intel, risk, resources</text>
+
+  <path class="line" d="M655 767 L655 820"/>
+  <rect x="485" y="820" width="340" height="62" rx="6" class="popup"/>
+  <text x="655" y="844" text-anchor="middle" class="small">POP-02 Confirm Raid</text>
+  <text x="655" y="868" text-anchor="middle" class="tiny">cost, confidence, civilian risk</text>
+
+  <path class="line" d="M655 882 L655 935"/>
+  <rect x="485" y="935" width="340" height="62" rx="6" class="screen"/>
+  <text x="655" y="959" text-anchor="middle" class="small">SCN-06 Briefing / Deploy</text>
+  <text x="655" y="983" text-anchor="middle" class="tiny">operation consequence preview</text>
+
+  <path class="line" d="M655 997 L655 1050"/>
+  <rect x="485" y="1050" width="340" height="62" rx="6" class="screen"/>
+  <text x="655" y="1074" text-anchor="middle" class="small">SCN-07 Loadout</text>
+  <text x="655" y="1098" text-anchor="middle" class="tiny">raid squad and support setup</text>
+
+  <path class="modalLine" d="M825 736 L910 736"/>
+  <rect x="910" y="705" width="260" height="62" rx="6" class="popup"/>
+  <text x="1040" y="729" text-anchor="middle" class="small">POP-08 Intel Reveal</text>
+  <text x="1040" y="753" text-anchor="middle" class="tiny">scan/evidence result</text>
+
+  <path class="modalLine" d="M825 621 L910 621"/>
+  <rect x="910" y="590" width="260" height="62" rx="6" class="popup"/>
+  <text x="1040" y="614" text-anchor="middle" class="small">POP-06 End Of Day</text>
+  <text x="1040" y="638" text-anchor="middle" class="tiny">district deltas, save</text>
+  <path class="return" d="M1040 652 C1040 685 875 685 805 652"/>
+
+  <!-- Skirmish path -->
+  <path class="line" d="M1075 529 L1075 590"/>
+  <rect x="905" y="590" width="340" height="62" rx="6" class="screen"/>
+  <text x="1075" y="614" text-anchor="middle" class="small">SCN-13 Skirmish Setup</text>
+  <text x="1075" y="638" text-anchor="middle" class="tiny">rules, AI, operation-map preset</text>
+
+  <!-- Support screens -->
+  <path class="line" d="M1495 529 L1495 590"/>
+  <rect x="1325" y="590" width="340" height="62" rx="6" class="utility"/>
+  <text x="1495" y="614" text-anchor="middle" class="small">SCN-03 Commander Profile</text>
+  <text x="1495" y="638" text-anchor="middle" class="tiny">profile, rewards, history</text>
+
+  <path class="line" d="M1495 652 L1495 705"/>
+  <rect x="1325" y="705" width="340" height="62" rx="6" class="utility"/>
+  <text x="1495" y="729" text-anchor="middle" class="small">SCN-04 Settings</text>
+  <text x="1495" y="753" text-anchor="middle" class="tiny">audio, graphics, controls, access</text>
+  <text x="1300" y="732" text-anchor="end" class="blue">Main Menu Settings</text>
+
+  <path class="line" d="M1495 767 L1495 820"/>
+  <rect x="1325" y="820" width="340" height="62" rx="6" class="utility"/>
+  <text x="1495" y="844" text-anchor="middle" class="small">SCN-14 Command Exchange</text>
+  <text x="1495" y="868" text-anchor="middle" class="tiny">store, catalog, disabled purchase states</text>
+
+  <path class="line" d="M1495 882 L1495 935"/>
+  <rect x="1325" y="935" width="340" height="62" rx="6" class="utility"/>
+  <text x="1495" y="959" text-anchor="middle" class="small">SCN-15/16/17/18 Feeds</text>
+  <text x="1495" y="983" text-anchor="middle" class="tiny">inbox, events, ranking, command feed</text>
+
+  <path class="line" d="M1495 997 L1495 1050"/>
+  <rect x="1325" y="1050" width="340" height="62" rx="6" class="utility"/>
+  <text x="1495" y="1074" text-anchor="middle" class="small">SCN-19 Armory</text>
+  <text x="1495" y="1098" text-anchor="middle" class="tiny">unit/building inspector, abilities, upgrades</text>
+
+  <path class="line" d="M1495 1112 L1495 1165"/>
+  <rect x="1325" y="1165" width="340" height="62" rx="6" class="popup"/>
+  <text x="1495" y="1189" text-anchor="middle" class="small">POP-09 Ability / Upgrade Detail</text>
+  <text x="1495" y="1211" text-anchor="middle" class="tiny">rules, costs, cooldowns, source links</text>
+  <text x="1320" y="1138" text-anchor="end" class="blue">Loadout / Store / Profile details</text>
+
+  <path class="return" d="M1325 621 C1235 560 1225 410 1070 381"/>
+  <path class="return" d="M1325 736 C1210 650 1210 420 1070 381"/>
+  <path class="return" d="M1325 851 C1210 760 1215 445 1070 381"/>
+  <path class="return" d="M1325 966 C1200 900 1205 460 1070 381"/>
+  <path class="return" d="M1325 1081 C1200 1035 1205 475 1070 381"/>
+  <path class="return" d="M1325 1196 C1200 1120 1205 505 1070 381"/>
+  <text x="1235" y="560" class="gold">Back/Home returns to Main Menu</text>
+
+  <!-- Shared launch hub -->
+  <rect x="650" y="1168" width="500" height="82" rx="8" class="play"/>
+  <text x="900" y="1200" text-anchor="middle" class="text">Shared Deploy / Launch Operation</text>
+  <text x="900" y="1228" text-anchor="middle" class="small">Campaign, Operations, and Skirmish converge here</text>
+
+  <path class="hubline" d="M235 882 C235 1110 540 1209 650 1209"/>
+  <text x="365" y="1085" class="blue">Deploy Mission</text>
+  <path class="hubline" d="M655 1112 C680 1150 710 1168 760 1168"/>
+  <text x="640" y="1150" class="blue">Deploy Raid</text>
+  <path class="hubline" d="M1075 652 C1075 850 1040 1040 1015 1168"/>
+  <text x="1115" y="1025" class="blue">Launch Skirmish</text>
+
+  <!-- Shared gameplay -->
+  <path class="hubline" d="M900 1250 L900 1320"/>
+  <rect x="650" y="1320" width="500" height="90" rx="8" class="play"/>
+  <text x="900" y="1356" text-anchor="middle" class="text">SCN-08 3D Operation / Battle HUD</text>
+  <text x="900" y="1385" text-anchor="middle" class="small">single 3D map, squad command, minimap, objectives, threats</text>
+
+  <path class="modalLine" d="M840 1320 C785 1275 770 1230 800 1190"/>
+  <rect x="520" y="1212" width="280" height="60" rx="6" class="popup"/>
+  <text x="660" y="1236" text-anchor="middle" class="small">POP-03 Build Placement</text>
+  <text x="660" y="1258" text-anchor="middle" class="tiny">socket / footprint validity</text>
+
+  <path class="modalLine" d="M960 1320 C1020 1272 1085 1245 1165 1245"/>
+  <rect x="1165" y="1215" width="280" height="60" rx="6" class="popup"/>
+  <text x="1305" y="1239" text-anchor="middle" class="small">POP-01 Threat Alert</text>
+  <text x="1305" y="1261" text-anchor="middle" class="tiny">jump to operation-map anchor</text>
+
+  <path class="modalLine" d="M1110 1410 C1235 1440 1245 1480 1235 1515"/>
+  <rect x="1085" y="1515" width="300" height="60" rx="6" class="popup"/>
+  <text x="1235" y="1539" text-anchor="middle" class="small">POP-07 Pause</text>
+  <text x="1235" y="1561" text-anchor="middle" class="tiny">resume, settings, exit</text>
+  <path class="modalLine" d="M1320 1515 C1435 1390 1450 920 1495 767"/>
+  <text x="1430" y="1455" class="blue">Pause Settings</text>
+
+  <path class="hubline" d="M900 1410 L900 1480"/>
+  <rect x="650" y="1480" width="500" height="82" rx="8" class="play"/>
+  <text x="900" y="1513" text-anchor="middle" class="text">POP-05 Mission Result</text>
+  <text x="900" y="1541" text-anchor="middle" class="small">stars, rewards, stats, district consequence</text>
+
+  <path class="modalLine" d="M900 1562 L900 1622"/>
+  <rect x="750" y="1622" width="300" height="58" rx="6" class="popup"/>
+  <text x="900" y="1645" text-anchor="middle" class="small">POP-04 Reward Unlock</text>
+  <text x="900" y="1667" text-anchor="middle" class="tiny">major unlock / milestone</text>
+
+  <!-- Return paths -->
+  <path class="return" d="M650 1520 C420 1510 235 1265 235 652"/>
+  <text x="410" y="1492" class="gold">Continue Campaign</text>
+
+  <path class="return" d="M870 1562 C760 1635 655 1380 655 652"/>
+  <text x="650" y="1610" class="gold">Return Operations</text>
+
+  <path class="return" d="M1150 1520 C1290 1435 1245 720 1075 652"/>
+  <text x="1190" y="1450" class="gold">Replay Skirmish</text>
+
+  <path class="return" d="M900 1680 C900 1735 1505 1725 1495 529"/>
+  <text x="1215" y="1738" class="gold">Home / Main Menu</text>
+
+  <text x="900" y="1760" text-anchor="middle" class="caption">Solid arrows are primary routes. Blue arrows converge into gameplay. Dashed gold arrows are safe returns. Dashed amber arrows are modal overlays.</text>
+</svg>

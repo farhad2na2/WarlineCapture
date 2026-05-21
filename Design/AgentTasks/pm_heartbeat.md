@@ -5,6 +5,10 @@
 Treat `Design/AgentTasks/*_current.md` as the only source of current lane priorities.
 Treat `Design/AgentTasks/user_feedback_review_gate.md` as the required PM process for user rejection feedback.
 
+## 2026-05-22 Reset Guard
+
+If all lane `*_current.md` files say `Status: held`, PM must not scan `Design/AgentReports/` for new work or route a lane from report history. Return/notify only that all lanes are held for the 3D fresh-start reset and waiting for PM/user dispatch. Do not write new routing reports unless the user explicitly assigns a new task.
+
 ## On Every Heartbeat
 
 - PM's first responsibility is to prevent project idle: make sure agents have the right task, the required source information, the expected output file, and a clear unblock owner.
@@ -30,6 +34,7 @@ Treat `Design/AgentTasks/user_feedback_review_gate.md` as the required PM proces
 - For active-lane silence, write or update a PM blocker/routing report, notify in-thread, name the silent lane, name the expected report, and state the exact next owner/action.
 - When an active lane is silent or confused, write a direct lane-readable PM message under `Design/AgentTasks/<lane>_pm_message.md` and reference it from that lane's `*_current.md`; the lane heartbeat reads repo files, so this is the PM-to-agent communication channel.
 - Do not tell the user to message another agent until PM has first written the direct lane-readable message file and linked it from the lane current task.
+- Unity licensing workaround is mandatory: PM must not accept first-pass sandboxed `LicenseClient-farhad`, unsupported protocol, reconnect, timeout, blank/headless, or missing headless package capture failures as a final user blocker until the lane has attempted the documented assigned-workspace escalated/out-of-sandbox workaround from `Design/AgentTasks/AUTO_CONTINUE.md`.
 - Do not send `DONT_NOTIFY` while an active lane is silent and no progress/blocker report is visible.
 - Early-warning rule: look one step ahead for likely idle/blocking risks before they fully block work. Notify in-thread when the user may want to review the risk early.
 - Early-warning triggers include missing expected report filenames, active lanes with unclear validation command/workspace, user approval dependencies not yet reviewable, stale or contradictory lane priorities, workspace/tooling/licensing risk, uncommitted accepted work needed by another lane, unclear unblock owner, or a lane whose next task depends on evidence not yet visible.

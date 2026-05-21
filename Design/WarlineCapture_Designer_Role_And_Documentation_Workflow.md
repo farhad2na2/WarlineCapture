@@ -35,11 +35,11 @@ Read these first:
 2. `Design/README.md`
 3. `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
 4. `Design/WarlineCapture_Level_And_Mission_Content_Plan.md`
-5. `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+5. `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 6. `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 7. `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 8. `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-9. `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
+9. `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
 10. `Design/WarlineCapture_Project_State_Source.json`
 
 Use generated dashboards and agent reports as evidence, not as design sources to rewrite by hand.
@@ -50,10 +50,10 @@ When reviewing or optimizing docs, check:
 
 - The root README summarizes the current project accurately without becoming a full design dump.
 - `Design/README.md` remains the complete design index and source-of-truth map.
-- The opening project description matches the gameplay north star: winning battles while keeping the city alive.
-- The three-mode structure remains clear: Saga teaches, Operation proves strategy, Quick Custom supports replay/testing.
-- Strategic/zoomed-out maps are never described as playable tactical ground.
-- Tactical/zoomed-in maps resolve through metadata-backed tactical map packages.
+- The opening project description matches the gameplay north star: a field commander preparing and executing operations while protecting civilians and infrastructure.
+- The three-mode structure remains clear: Campaign teaches, Operations prove persistent command, Skirmish supports replay/testing.
+- Planning, briefing, minimap, deployment, threat, and battle views are described as UI/camera layers on one 3D operation map.
+- 3D operation maps resolve through metadata-backed operation-map packages.
 - Visual-lock docs are referenced through the canonical index instead of duplicated stale lists.
 - UI mockups are described as targets/references, not shippable full-screen screenshots.
 - Design docs separate balance data, visual data, implementation contracts, and player-facing intent.
@@ -96,7 +96,7 @@ Design/AgentReports/<YYYY-MM-DD>_designer_<short-task>.md
 ## First Optimization Targets
 
 1. Keep the root README aligned with `Design/README.md` without duplicating every visual-lock target.
-2. Add stale/legacy notes where old 3D/desert/current-asset assumptions conflict with the 2D isometric macro-tile direction.
-3. Audit docs for ambiguous use of `Mission`, `ScenarioSetup`, `Level`, `Map`, `MapPreviewArtId`, `MinimapArtId`, and `IsoMapId`.
+2. Add stale/legacy notes where old 2D isometric, macro-tile, strategic/tactical-map, desert/current-asset, or old-mode assumptions conflict with the 3D single-map direction.
+3. Audit docs for ambiguous use of `Mission`, `ScenarioSetup`, `Level`, `Map`, `OperationMapId`, planning camera ids, and minimap projection ids.
 4. Keep M01 First Contact documentation focused on the playable vertical slice and avoid presenting it as the whole game.
 5. Turn recurring design-audit findings into durable update rules in the relevant canonical docs.

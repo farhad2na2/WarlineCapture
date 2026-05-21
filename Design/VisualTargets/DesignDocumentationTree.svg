@@ -1,0 +1,163 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1800" viewBox="0 0 1600 1800">
+  <defs>
+    <style>
+      .bg { fill: #0e1110; }
+      .root { fill: #1d241b; stroke: #d8a536; stroke-width: 3; }
+      .branch { fill: #151a18; stroke: #6f7b64; stroke-width: 2; }
+      .leaf { fill: #101513; stroke: #3f4b42; stroke-width: 1.5; }
+      .line { stroke: #6f7b64; stroke-width: 2; fill: none; }
+      .gold { fill: #d8a536; }
+      .blue { fill: #88b8c7; }
+      .text { fill: #e8e3d5; font-family: Arial, Helvetica, sans-serif; font-size: 24px; font-weight: 700; }
+      .small { fill: #c8c2b2; font-family: Arial, Helvetica, sans-serif; font-size: 18px; font-weight: 600; }
+      .tiny { fill: #989282; font-family: Arial, Helvetica, sans-serif; font-size: 15px; }
+      .title { fill: #f0d28a; font-family: Arial, Helvetica, sans-serif; font-size: 34px; font-weight: 800; }
+      .caption { fill: #9ba899; font-family: Arial, Helvetica, sans-serif; font-size: 18px; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1600" height="1800"/>
+  <rect x="30" y="30" width="1540" height="1740" fill="none" stroke="#2d332d" stroke-width="2"/>
+  <text x="800" y="82" text-anchor="middle" class="title">WarlineCapture Design Documentation Tree</text>
+  <text x="800" y="116" text-anchor="middle" class="caption">Root source of truth to lower-level branch documents</text>
+
+  <rect x="470" y="155" width="660" height="86" rx="8" class="root"/>
+  <text x="800" y="191" text-anchor="middle" class="text">Design Index</text>
+  <text x="800" y="219" text-anchor="middle" class="small">Design/README.md</text>
+
+  <path class="line" d="M800 241 L800 285"/>
+  <rect x="445" y="285" width="710" height="88" rx="8" class="root"/>
+  <text x="800" y="321" text-anchor="middle" class="text">Game Design Reference</text>
+  <text x="800" y="349" text-anchor="middle" class="small">GAME_DESIGN_REFERENCE.md</text>
+
+  <path class="line" d="M800 373 L800 420 M190 420 L1410 420"/>
+
+  <rect x="75" y="455" width="300" height="78" rx="8" class="branch"/>
+  <text x="225" y="486" text-anchor="middle" class="text">Core Direction</text>
+  <text x="225" y="512" text-anchor="middle" class="tiny">highest-level product rules</text>
+  <path class="line" d="M225 420 L225 455"/>
+
+  <rect x="460" y="455" width="300" height="78" rx="8" class="branch"/>
+  <text x="610" y="486" text-anchor="middle" class="text">Product Gameplay</text>
+  <text x="610" y="512" text-anchor="middle" class="tiny">missions, movement, FTUE</text>
+  <path class="line" d="M610 420 L610 455"/>
+
+  <rect x="840" y="455" width="300" height="78" rx="8" class="branch"/>
+  <text x="990" y="486" text-anchor="middle" class="text">Systems &amp; Economy</text>
+  <text x="990" y="512" text-anchor="middle" class="tiny">catalog, rewards, balance</text>
+  <path class="line" d="M990 420 L990 455"/>
+
+  <rect x="1225" y="455" width="300" height="78" rx="8" class="branch"/>
+  <text x="1375" y="486" text-anchor="middle" class="text">UI/UX Targets</text>
+  <text x="1375" y="512" text-anchor="middle" class="tiny">screens, canvas, feedback</text>
+  <path class="line" d="M1375 420 L1375 455"/>
+
+  <path class="line" d="M225 533 L225 590"/>
+  <rect x="55" y="590" width="340" height="58" rx="6" class="leaf"/>
+  <text x="225" y="626" text-anchor="middle" class="small">AAA Mobile GDD</text>
+  <path class="line" d="M225 648 L225 685"/>
+  <rect x="55" y="685" width="340" height="58" rx="6" class="leaf"/>
+  <text x="225" y="721" text-anchor="middle" class="small">3D Single-Map Direction</text>
+  <path class="line" d="M225 743 L225 780"/>
+  <rect x="55" y="780" width="340" height="58" rx="6" class="leaf"/>
+  <text x="225" y="816" text-anchor="middle" class="small">Gameplay North Star</text>
+  <path class="line" d="M225 838 L225 875"/>
+  <rect x="55" y="875" width="340" height="58" rx="6" class="leaf"/>
+  <text x="225" y="911" text-anchor="middle" class="small">Command Premise Alignment</text>
+  <path class="line" d="M225 933 L225 970"/>
+  <rect x="55" y="970" width="340" height="58" rx="6" class="leaf"/>
+  <text x="225" y="1006" text-anchor="middle" class="small">AAA Mobile Tech Targets</text>
+
+  <path class="line" d="M610 533 L610 590"/>
+  <rect x="440" y="590" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="626" text-anchor="middle" class="small">Large-Scale Grid Movement</text>
+  <path class="line" d="M610 648 L610 685"/>
+  <rect x="440" y="685" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="721" text-anchor="middle" class="small">Level &amp; Mission Plan</text>
+  <path class="line" d="M610 743 L610 780"/>
+  <rect x="440" y="780" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="816" text-anchor="middle" class="small">M01 First Contact Contract</text>
+  <path class="line" d="M610 838 L610 875"/>
+  <rect x="440" y="875" width="340" height="58" rx="6" class="leaf"/>
+  <text x="610" y="911" text-anchor="middle" class="small">FTUE &amp; Command Assistant</text>
+  <path class="line" d="M610 933 L610 985"/>
+  <rect x="440" y="985" width="340" height="230" rx="6" class="leaf"/>
+  <text x="610" y="1022" text-anchor="middle" class="small">Campaign Chapters</text>
+  <text x="610" y="1060" text-anchor="middle" class="tiny">Ch01 First Response</text>
+  <text x="610" y="1090" text-anchor="middle" class="tiny">Ch02 Broken Grid</text>
+  <text x="610" y="1120" text-anchor="middle" class="tiny">Ch03 Hidden Network</text>
+  <text x="610" y="1150" text-anchor="middle" class="tiny">Ch04 Air And Armor</text>
+  <text x="610" y="1180" text-anchor="middle" class="tiny">Ch05 Citywide Command</text>
+
+  <path class="line" d="M990 533 L990 590"/>
+  <rect x="820" y="590" width="340" height="58" rx="6" class="leaf"/>
+  <text x="990" y="626" text-anchor="middle" class="small">Combat Catalog &amp; Upgrades</text>
+  <path class="line" d="M990 648 L990 685"/>
+  <rect x="820" y="685" width="340" height="58" rx="6" class="leaf"/>
+  <text x="990" y="721" text-anchor="middle" class="small">Balance Config</text>
+  <path class="line" d="M990 743 L990 780"/>
+  <rect x="820" y="780" width="340" height="58" rx="6" class="leaf"/>
+  <text x="990" y="816" text-anchor="middle" class="small">Visual Config</text>
+  <path class="line" d="M990 838 L990 875"/>
+  <rect x="820" y="875" width="340" height="58" rx="6" class="leaf"/>
+  <text x="990" y="911" text-anchor="middle" class="small">Economy &amp; Reward Design</text>
+  <path class="line" d="M990 933 L990 970"/>
+  <rect x="820" y="970" width="340" height="58" rx="6" class="leaf"/>
+  <text x="990" y="1006" text-anchor="middle" class="small">Balancing Test Plan</text>
+
+  <path class="line" d="M1375 533 L1375 590"/>
+  <rect x="1205" y="590" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="626" text-anchor="middle" class="small">Gameplay Element Alignment</text>
+  <path class="line" d="M1375 648 L1375 685"/>
+  <rect x="1205" y="685" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="721" text-anchor="middle" class="small">Implementation High-Level</text>
+  <path class="line" d="M1375 743 L1375 780"/>
+  <rect x="1205" y="780" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="816" text-anchor="middle" class="small">Implementation Detailed</text>
+  <path class="line" d="M1375 838 L1375 875"/>
+  <rect x="1205" y="875" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="911" text-anchor="middle" class="small">Mockup To Canvas Plan</text>
+  <path class="line" d="M1375 933 L1375 970"/>
+  <rect x="1205" y="970" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="1006" text-anchor="middle" class="small">Target To Canvas Guide</text>
+  <path class="line" d="M1375 1028 L1375 1065"/>
+  <rect x="1205" y="1065" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="1101" text-anchor="middle" class="small">Main Menu Visual Contract</text>
+  <path class="line" d="M1375 1123 L1375 1160"/>
+  <rect x="1205" y="1160" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="1196" text-anchor="middle" class="small">Runtime Optimization Plan</text>
+  <path class="line" d="M1375 1218 L1375 1255"/>
+  <rect x="1205" y="1255" width="340" height="58" rx="6" class="leaf"/>
+  <text x="1375" y="1291" text-anchor="middle" class="small">Visual Feedback &amp; VFX</text>
+
+  <path class="line" d="M190 1375 L1410 1375"/>
+  <path class="line" d="M800 373 L800 1375"/>
+
+  <rect x="120" y="1420" width="390" height="250" rx="8" class="branch"/>
+  <text x="315" y="1460" text-anchor="middle" class="text">Production Support</text>
+  <text x="315" y="1500" text-anchor="middle" class="tiny">Art Asset Requirements Register</text>
+  <text x="315" y="1532" text-anchor="middle" class="tiny">Audio Design Guidelines</text>
+  <text x="315" y="1564" text-anchor="middle" class="tiny">Monetization Strategy</text>
+  <text x="315" y="1596" text-anchor="middle" class="tiny">Store Catalog</text>
+  <text x="315" y="1628" text-anchor="middle" class="tiny">Marketing Workflow</text>
+  <path class="line" d="M315 1375 L315 1420"/>
+
+  <rect x="1090" y="1420" width="390" height="250" rx="8" class="branch"/>
+  <text x="1285" y="1460" text-anchor="middle" class="text">Project Operations</text>
+  <text x="1285" y="1500" text-anchor="middle" class="tiny">Project State Source</text>
+  <text x="1285" y="1532" text-anchor="middle" class="tiny">Project State Dashboard</text>
+  <text x="1285" y="1564" text-anchor="middle" class="tiny">Agent Coordination Workflow</text>
+  <text x="1285" y="1596" text-anchor="middle" class="tiny">Designer Workflow</text>
+  <text x="1285" y="1628" text-anchor="middle" class="tiny">Agent Task Board</text>
+  <path class="line" d="M1285 1375 L1285 1420"/>
+
+  <rect x="560" y="1420" width="480" height="250" rx="8" class="branch"/>
+  <text x="800" y="1460" text-anchor="middle" class="text">Active Direction Rule</text>
+  <text x="800" y="1506" text-anchor="middle" class="small">3D single-map direction wins conflicts</text>
+  <text x="800" y="1544" text-anchor="middle" class="tiny">Campaign / Operations / Skirmish</text>
+  <text x="800" y="1576" text-anchor="middle" class="tiny">One large operation map per mission</text>
+  <text x="800" y="1608" text-anchor="middle" class="tiny">Command-base UI visual target</text>
+  <path class="line" d="M800 1375 L800 1420"/>
+
+  <text x="800" y="1730" text-anchor="middle" class="caption">Archived 2D/isometric and strategic/tactical docs are excluded from the active tree.</text>
+</svg>

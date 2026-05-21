@@ -25,22 +25,22 @@ This conversion method is now the default for every remaining UI screen. Work sh
 
 For the operational step-by-step workflow, use `Design/WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`. That guide records the accepted layered target-to-canvas process from the Main Menu, Settings, Quick Custom, Splash, and corrected MatchOverlay passes.
 
-The tactical battlefield art direction is now premium 2D isometric mobile RTS. UI targets remain under `Design/VisualLock`; battlefield/art-production targets, golden assets, and Unity spike outputs live under `Design/VisualReferences`.
+The active battlefield/menu direction is now full 3D single-map mobile RTS with command-base menu presentation. UI targets remain under `Design/VisualLock` or `Design/VisualLockLayered`; battlefield/art-production targets should reference the current 3D operation-map direction.
 
-## 2D Isometric Compatibility Rule
+## 3D Single-Map Compatibility Rule
 
-Older UI source specs and some historical VisualLock notes mention Synty, low-poly, or current 3D battlefield assets. Treat those as historical source references only. For any new or regenerated UI target that shows gameplay, map previews, mission key art, unit portraits, squad thumbnails, minimap content, tactical overlays, or battlefield content, use the premium 2D isometric references under `Design/VisualReferences/2DIsometricProduction` and the rules in `Design/WarlineCapture_2D_Isometric_Art_Bible.md`.
+Older UI source specs and some historical VisualLock notes mention Synty, low-poly, 2D isometric, or macro-tile battlefield assets. Treat those as historical source references only. For any new or regenerated UI target that shows gameplay, map previews, mission key art, unit portraits, squad thumbnails, minimap content, tactical overlays, or battlefield content, use the 3D single-map direction in `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md` and config-backed roster data from `Assets/Game/Configs/Prefabs`.
 
-UI chrome remains the accepted WarlineCapture HUD language: dark graphite panels, cyan edge highlights, orange/gold accents, thin clean sliced frames, Oxanium typography, and separated reusable Canvas layers.
+UI chrome should follow the command-base material language: dark black/green military panels, weathered metal frames, olive selected states, gold CTA/action accents, muted blue command-resource accents, restrained off-white text, Oxanium typography, and separated reusable Canvas layers.
 
 ## Visual-Lock Target Creation Rule
 
 For WarlineCapture production UI work, a new `Design/VisualLock/.../*_Landscape_Target.png` must be a high-quality generated landscape target in the accepted WarlineCapture AAA mobile RTS HUD style unless the task explicitly says to make an exact source extraction.
 
-Do not create new VisualLock targets by simply cropping, stretching, padding, or upscaling the source spec JPG. The original `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/*.jpg` files are content/layout references only. The correct target-creation workflow is:
+Do not create new VisualLock targets by simply cropping, stretching, padding, or upscaling archived source spec JPGs. The original source JPGs now live under `Design/Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/` and are content/layout references only. The correct target-creation workflow is:
 
 1. Read the source spec and identify required labels, panels, controls, icons, hierarchy, and gameplay meaning.
-2. Write a generation prompt that creates a new landscape `1672 x 941` target in the accepted WarlineCapture style: dark graphite military HUD panels, cyan edge highlights, orange/gold CTA accents, soft AAA compositing shadows, readable Oxanium-like typography, and premium 2D isometric battlefield/key art where gameplay context is relevant.
+2. Write a generation prompt that creates a new landscape `1672 x 941` target in the accepted WarlineCapture style: command-base military panels, olive/black/gold chrome, soft AAA compositing shadows, readable Oxanium-like typography, and 3D operation-map/key art where gameplay context is relevant.
 3. Use the source spec only as a reference for intent and composition, not as pixels to promote into the target.
 4. Save the generated target under `Design/VisualLock/<ID_Name>/<ID_Name>_Landscape_Target.png`.
 5. Write `<ID_Name>_CleanLandscape_Notes.md` with the source reference, canonical target path, implementation notes, and the exact generation prompt.
@@ -53,18 +53,18 @@ Use these paths as the current canonical visual targets for production Canvas co
 | Surface | Canonical target |
 | --- | --- |
 | SCN-01 Splash / Loading | `Design/VisualLock/SCN-01_SplashLoading/SCN-01_SplashLoading_Landscape_Target.png` |
-| SCN-02 Main Menu / Mode Select | `Design/VisualLock/MainMenu/MainMenu_Landscape_Visual_Target.png` |
+| SCN-02 Main Menu / Mode Select | `Design/VisualLockLayered/SCN-02B_MainMenuAlt/reference/MainMenuAlt_CommandTarget_Source_1672x941.png` |
 | SCN-03 Commander Profile | `Design/VisualLock/SCN-03_CommanderProfile/SCN-03_CommanderProfile_Landscape_Target.png` |
 | SCN-04 Settings / Accessibility | `Design/VisualLock/SCN-04_SettingsAccessibility/SCN-04_SettingsAccessibility_Landscape_Target.png` |
-| SCN-05 Saga Map | `Design/VisualLock/SCN-05_SagaMap/SCN-05_SagaMap_Landscape_Target.png` |
+| SCN-05 Campaign Map | `Design/VisualLock/SCN-05_SagaMap/SCN-05_SagaMap_Landscape_Target.png` |
 | SCN-06 Mission Briefing | `Design/VisualLock/SCN-06_MissionBriefing/SCN-06_MissionBriefing_Landscape_Target.png` |
 | SCN-07 Loadout / Squad Prep | `Design/VisualLock/SCN-07_LoadoutSquadPrep/SCN-07_LoadoutSquadPrep_Landscape_Target.png` |
 | SCN-08 RTS Battle HUD | `Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png` |
 | SCN-09 Build Drawer / Production | `Design/VisualLock/SCN-09_BuildDrawerProduction/SCN-09_BuildDrawerProduction_Landscape_Target.png` |
 | SCN-10 Unit Command / Command Wheel | `Design/VisualLock/SCN-10_UnitCommandWheel/SCN-10_UnitCommandWheel_Landscape_Target.png` |
-| SCN-11 Persistent Operation Dashboard | `Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png` |
+| SCN-11 Operations Dashboard | `Design/VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_Landscape_Target.png` |
 | SCN-12 District Detail / Actions | `Design/VisualLock/SCN-12_DistrictDetailActions/SCN-12_DistrictDetailActions_Landscape_Target.png` |
-| SCN-13 Quick Custom Game Setup | `Design/VisualLock/SCN-13_QuickCustomGameSetup/SCN-13_QuickCustomGameSetup_Landscape_Target.png` |
+| SCN-13 Skirmish Setup | `Design/VisualLock/SCN-13_QuickCustomGameSetup/SCN-13_QuickCustomGameSetup_Landscape_Target.png` |
 | SCN-14 Store / Command Exchange | `Design/Monetization/Images/SCN-14_Store_CommandExchange_Target.png` |
 | SCN-15 Inbox | `Design/VisualLock/SCN-15_Inbox/SCN-15_Inbox_Landscape_Target.png` |
 | SCN-16 Events | `Design/VisualLock/SCN-16_Events/SCN-16_Events_Landscape_Target.png` |
@@ -88,9 +88,9 @@ SCN-14 is indexed here for conversion planning, but ownership remains with the m
 
 SCN-15 through SCN-18 are newly added route surfaces from `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`. Their target paths are reserved here, but their VisualLock and VisualLockLayered packs may not exist yet. Do not implement these screens from placeholders or toasts. Generate the landscape target, separated layer assets, manifest, and designed-unavailable empty state first. SCN-19 Armory and POP-09 Ability / Upgrade Detail already have final high-end layered packs and should use those packs as the gate before Unity prefab work.
 
-## Tactical / Strategic Target Refresh - 2026-05-07
+## 3D Operation-Map Target Refresh - 2026-05-21
 
-The updated gameplay design introduces a hard split between strategic / zoomed-out map surfaces and tactical / zoomed-in playable map surfaces. Use `Design/WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md` as the active target audit before continuing Phase 6 or M01 UI work.
+The updated gameplay design removes the former split between separate strategic and tactical maps. Use `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`, `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`, and `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md` before continuing Phase 6 or M01 UI work.
 
 New or refreshed state targets created for this change:
 
@@ -292,9 +292,9 @@ Create a component inventory from the mockup:
 
 ### Main Menu Cards
 
-- Saga Campaign card frame
-- Persistent Operation card frame
-- Quick Custom Game card frame
+- Campaign card frame
+- Operations card frame
+- Skirmish card frame
 - card background art crop
 - card accent trim color
 - card icon/emblem
@@ -307,9 +307,9 @@ Create a component inventory from the mockup:
 - commander portrait frame
 - commander portrait art
 - level/XP bar
-- money/resource counter frame
-- material/resource counter frame
-- premium/resource counter frame
+- credits resource counter frame
+- supplies resource counter frame
+- command resource counter frame
 - plus button
 - settings button
 
@@ -335,7 +335,7 @@ Use this order:
 
 1. Accepted WarlineCapture UI kit sprites and generated HUD chrome from already visual-locked screens.
 2. Existing project logo, generated character portraits, and approved UI art.
-3. Premium 2D isometric art references and golden assets for gameplay, map, minimap, unit, and battlefield content.
+3. 3D single-map art references, existing prefab configs, and command-base menu assets for gameplay, map, minimap, unit, and battlefield content.
 4. New generated raster assets only for card art, portraits, and scene illustrations.
 5. Coded Unity UI shapes only for simple fills, masks, and layout helpers.
 
@@ -491,14 +491,14 @@ Main Menu is visually accepted when:
 After Main Menu is accepted, repeat the same conversion method for:
 
 1. Settings and Accessibility
-2. Quick Custom Setup
+2. Skirmish Setup
 3. Splash / Loading
 4. Tactical HUD
 5. Build Drawer
 6. Command Wheel
 7. Popups
-8. Saga Map / Briefing / Loadout
-9. Persistent Operation / District Detail
+8. Campaign Map / Briefing / Loadout
+9. Operations / District Detail
 10. Commander Profile
 
 ## Per-Screen Acceptance Gate

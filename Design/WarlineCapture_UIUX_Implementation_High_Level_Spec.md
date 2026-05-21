@@ -5,8 +5,9 @@ Date: 2026-05-01
 ## Source Material
 
 - `Design/WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
-- `Design/WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
-- `Design/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/*`
+- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+- `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+- `Design/Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets/*` as archived layout/content reference only
 - Current Unity project state under `Assets/Game`
 
 ## Current Project State
@@ -30,19 +31,19 @@ The current screens are practical but not yet aligned with the target AAA mobile
 - Existing tactical HUD has many required systems, but not the final layout or reusable prefab structure from the design spec.
 - Existing settings mostly expose gameplay speed and AI tuning, not full audio, graphics, controls, language, and accessibility.
 - Existing warning/log/debug panels are functional but not yet formal popup prefabs.
-- Saga Campaign, Persistent Operation, Mission Briefing, Loadout, Mission Result, Reward, End of Day, Intel, and Quick Custom Game are not implemented as mode screens.
+- Campaign, Operations, Mission Briefing, Loadout, Mission Result, Reward, End of Day, Intel, and Skirmish are not fully implemented as production mode screens.
 
 ## Target Product Structure
 
 The design documents define three user-facing modes built on one shared simulation:
 
-1. Saga Map Campaign
+1. Campaign
    - Curated mission nodes, chapter progression, star goals, rewards, briefing, loadout, result flow.
 
-2. Persistent City Operation
+2. Operations
    - District dashboard, operation days, city state meters, intel confidence, trust/security/infrastructure, district actions, hidden hostile network abstraction.
 
-3. Quick Custom Game
+3. Skirmish
    - Fast skirmish setup using existing AI knobs, map seed/preset, resources, win condition, fog/intel toggles, and launch.
 
 All modes should route through a shared app shell:
@@ -61,11 +62,11 @@ Tactical play should use a persistent match HUD:
 - `ContextOverlay(CommandWheelCanvas)`
 - `ModalOverlay`
 
-The battlefield presentation behind the HUD should follow the premium 2D isometric production direction in `Design/WarlineCapture_2D_Isometric_Production_Direction.md`. UI visual-lock work should continue under `Design/VisualLock`, while battlefield/art-production references live under `Design/VisualReferences`.
+The battlefield presentation behind the HUD should follow the full 3D single-map direction in `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`. UI visual-lock work should continue under `Design/VisualLock` and `Design/VisualLockLayered`, while gameplay-facing content should use 3D operation-map captures and the prefab catalog under `Assets/Game/Configs/Prefabs`.
 
 ## Parallel Work Boundary
 
-UI work and 2D isometric gameplay/art work can proceed in separate chats as long as ownership stays clear.
+UI work and 3D operation-map gameplay/art work can proceed in separate chats as long as ownership stays clear.
 
 UI work owns:
 
@@ -76,15 +77,14 @@ UI work owns:
 - UI runtime code under `Assets/Game/Scripts/UI`
 - UI sprite atlases and generated UI art under `Assets/Game/Art/UI`
 
-2D isometric gameplay/art work owns:
+3D operation-map gameplay/art work owns:
 
-- `Design/WarlineCapture_2D_Isometric_*`
-- `Design/VisualReferences`
-- generated 2D iso assets under `Assets/Game/Art/Generated/2DISO`
-- 2D iso design target scenes under `Assets/Game/Scenes/DesignTargets`
-- 2D iso editor validation utilities such as `WarlineCaptureIso2DSpikeBuilder`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Assets/Game/Configs/Prefabs`
+- 3D operation-map scenes, metadata, camera states, and performance validation
+- generated or captured 3D gameplay-facing art used behind HUD targets
 
-The main coordination point is `SCN-08 RTS Battle HUD`: the UI chat can keep building Canvas HUD components, while the 2D iso chat supplies the battlefield/camera/overlay capture that sits behind that HUD.
+The main coordination point is `SCN-08 RTS Battle HUD`: the UI chat can keep building Canvas HUD components, while the 3D operation-map lane supplies the battlefield/camera/overlay capture that sits behind that HUD.
 
 ## Implementation Strategy
 
@@ -94,18 +94,18 @@ Do not complete all visual-lock work first and do not complete all functionality
 
 Mockups and generated visual targets are references, not runtime shortcuts. The production UI must be separate Canvas elements: 9-sliced panels, masked art crops, icons, TMP text, and real `Button`, `Toggle`, `Slider`, `Dropdown`, and `ScrollRect` controls. Replaceable elements such as portraits, resources, logos, icons, and text must not be baked into large background images.
 
-Shared chrome rule: buttons, tabs, segmented controls, dropdowns, and launch actions must use thin clean control chrome, not the heavier section/panel border art. Future screen builders should reuse the accepted Settings/Quick Custom control style, keep controls below section-title divider lines, keep dropdown rects separated from their labels, use `Oxanium-Bold SDF` for page titles and large CTA labels, and use `Oxanium-Light SDF` for normal screen/control text. Numeric steppers, difficulty groups, map stat cards, icon plates, and CTA buttons are separate control families and should not be collapsed into a generic segmented-control treatment.
+Shared chrome rule: buttons, tabs, segmented controls, dropdowns, and launch actions must use thin clean control chrome, not the heavier section/panel border art. Future screen builders should reuse the accepted Settings/Skirmish control style, keep controls below section-title divider lines, keep dropdown rects separated from their labels, use `Oxanium-Bold SDF` for page titles and large CTA labels, and use `Oxanium-Light SDF` for normal screen/control text. Numeric steppers, difficulty groups, map stat cards, icon plates, and CTA buttons are separate control families and should not be collapsed into a generic segmented-control treatment.
 
 The recommended path is:
 
 1. Stabilize architecture and naming.
 2. Build shared shell and reusable prefab/view components.
 3. Replace the main menu with mode selection.
-4. Add Quick Custom Game because it maps directly to existing AI/runtime settings.
+4. Add Skirmish because it maps directly to existing AI/runtime settings.
 5. Formalize tactical HUD overlays and popups around existing systems.
 6. Add objective/result/reward infrastructure.
-7. Add Saga Campaign screens and first mission data.
-8. Add Persistent Operation screens and save model.
+7. Add Campaign screens and first mission data.
+8. Add Operations screens and save model.
 9. Polish accessibility, localization keys, Android safe area, and visual consistency.
 
 ## Screen Vertical Slice Gate
@@ -164,7 +164,7 @@ Initial routes:
 - `Splash`
 - `MainMenu`
 - `Settings`
-- `QuickCustomSetup`
+- `SkirmishSetup` as the player-facing route, backed by `QuickCustomSetup` only where runtime compatibility still requires it
 - `Match`
 
 Keep routes in the existing `Game.unity` first. Separate scenes are reserved for proven load-time or memory requirements.
@@ -204,7 +204,7 @@ Create tactical prefabs:
 - `ThreatAlertPopup`
 - `PauseMenuPopup`
 
-Use the accepted WarlineCapture UI kit and generated visual-lock HUD art from the current target inventory. Use 2D isometric references for gameplay, map, unit, minimap, and battlefield imagery. Use mockup images only as implementation references, not in-game final art unless explicitly approved.
+Use the accepted WarlineCapture UI kit and generated visual-lock HUD art from the current target inventory. Use 3D operation-map captures and config-backed roster presentation for gameplay, map, unit, minimap, and battlefield imagery. Use mockup images only as implementation references, not in-game final art unless explicitly approved.
 
 Exit criteria:
 
@@ -219,14 +219,14 @@ Goal: implement `SCN-02 Main Menu / Mode Select`.
 Replace the current first screen with:
 
 - Top profile/resource bar.
-- Three primary mode cards: Saga Campaign, Persistent Operation, Quick Custom Game.
+- Three primary mode cards: Campaign, Operations, Skirmish.
 - Secondary navigation: profile, settings, inbox/events/ranking placeholders.
 - Footer utility bar placeholder.
 
 Initial behavior:
 
-- Saga and Persistent Operation may show "Coming Soon" until their screens are ready.
-- Quick Custom Game opens the real setup screen.
+- Campaign and Operations may show designed-unavailable states until their screens are ready.
+- Skirmish opens the real setup screen. Runtime routes may retain QuickCustom naming until migration.
 - Existing direct Play button can remain as a debug shortcut during development, hidden in release builds.
 
 Exit criteria:
@@ -235,9 +235,9 @@ Exit criteria:
 - `Assets/Game/Textures/Logo.png` is used as the game logo.
 - Mode cards route correctly.
 
-## Phase 4 - Quick Custom Game Setup
+## Phase 4 - Skirmish Setup
 
-Goal: implement `SCN-13 Quick Custom Game Setup` using existing AI settings.
+Goal: implement `SCN-13 Skirmish Setup` using existing AI settings.
 
 Map current runtime settings into player-facing controls:
 
@@ -329,13 +329,13 @@ Exit criteria:
 - `POP-05 Mission Result` can show victory/defeat, stats, stars, and rewards.
 - Reward popup can show placeholder grants without persistence first.
 
-## Phase 7 - Saga Campaign
+## Phase 7 - Campaign
 
 Goal: implement the first campaign route around existing tactical missions.
 
 Screens:
 
-- `SCN-05 Saga Map`
+- `SCN-05 Campaign Map`
 - `SCN-06 Mission Briefing`
 - `SCN-07 Loadout / Squad Prep`
 
@@ -348,10 +348,10 @@ Initial content:
 
 Exit criteria:
 
-- Main Menu -> Saga -> Briefing -> Loadout -> Match -> Result -> Saga loop works.
+- Main Menu -> Campaign -> Briefing -> Loadout -> Match -> Result -> Campaign loop works.
 - Stars and completion are stored locally.
 
-## Phase 8 - Persistent Operation
+## Phase 8 - Operations
 
 Goal: implement the strategic operation layer after the tactical/result loop is stable.
 
@@ -418,7 +418,7 @@ Tasks:
 
 - Safe area validation on phones/tablets.
 - Canvas Scaler standardization.
-- Visual consistency pass using accepted WarlineCapture UI kit assets and 2D isometric compatibility checks for gameplay-facing screens.
+- Visual consistency pass using accepted WarlineCapture UI kit assets and 3D single-map compatibility checks for gameplay-facing screens.
 - Loading screen polish.
 - Input blocking audit for modals/drawers.
 - Performance pass for UI allocations and runtime image generation.
@@ -435,12 +435,12 @@ Exit criteria:
 Recommended implementation order:
 
 1. Main Menu / Mode Select shell.
-2. Quick Custom Game setup.
+2. Skirmish setup.
 3. Tactical HUD layout pass.
 4. Objective tracker and mission result popup.
-5. Saga Map, Briefing, Loadout.
+5. Campaign Map, Briefing, Loadout.
 6. Settings/accessibility completion.
-7. Persistent Operation dashboard and district actions.
+7. Operations dashboard and district actions.
 8. Reward/intel/end-of-day polish.
 
 This order gives the player a coherent first screen and makes the existing tactical game configurable before adding large campaign systems.

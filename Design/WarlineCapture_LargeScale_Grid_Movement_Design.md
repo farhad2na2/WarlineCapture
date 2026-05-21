@@ -8,7 +8,7 @@ This document defines what `large-scale grid-based movement` means for WarlineCa
 
 Use this document when updating:
 
-- tactical map metadata
+- 3D operation-map metadata
 - ScenarioSetup and mission specs
 - unit selection, move, attack, transport, and build-placement commands
 - tactical HUD command feedback
@@ -67,9 +67,9 @@ Movement is not only locomotion. It is how the player expresses command under pr
 | Stage | What Movement Means | Acceptance |
 |---|---|---|
 | Foundation | Grid/pathfinding systems exist and units can move, attack, breach, and use roads/transports. | Current simulation reference can document it. |
-| M01 Playable Vertical Slice | Player can select a small squad, issue move/attack commands, read markers, and complete First Contact on a tactical map. | M01 passes select/move/attack/objective/result validation at mobile landscape scale. |
-| Chapter 1 Tactical Expansion | M01-M05 each teach one movement pressure: patrol intercept, base movement/building approach, threat response, transport extraction, breach assault. | Every Chapter 1 mission has metadata-backed routes, blockers, anchors, camera bounds, UI feedback, and validation scenes. |
-| Persistent Operation Integration | Tactical movement affects district consequence: patrol routes, raid confidence, civilian safety, infrastructure protection, and ignored threat drift. | Operation-launched missions preview route/consequence risk and results update district state. |
+| M01 Playable Vertical Slice | Player can select a small squad, issue move/attack commands, read markers, and complete First Contact on a 3D operation map. | M01 passes select/move/attack/objective/result validation at mobile landscape scale. |
+| Chapter 1 3D Operation-Map Expansion | M01-M05 each teach one movement pressure: patrol intercept, base movement/building approach, threat response, transport extraction, breach assault. | Every Chapter 1 mission has metadata-backed routes, blockers, anchors, camera bounds, UI feedback, and validation scenes on one 3D map. |
+| Operations Integration | Tactical movement affects district consequence: patrol routes, raid confidence, civilian safety, infrastructure protection, and ignored threat drift. | Operations-launched missions preview route/consequence risk and results update district state. |
 | Production Scale | Larger tactical spaces, more squads, more enemy paths, more simultaneous pressures, and broader AI movement remain readable and performant. | Device/performance gates, readability captures, and balance probes pass across representative mission archetypes. |
 
 ## AAA Mobile Design Principles
@@ -151,7 +151,7 @@ If a mission only asks the player to tap the enemy, it is not using large-scale 
 
 | Pattern | Movement Job | Best Modes |
 |---|---|---|
-| Patrol Intercept | Read route, move to cut-off point, attack before escape or civilian panic. | Saga M01, Operation Patrol, Quick Custom probe |
+| Patrol Intercept | Read route, move to cut-off point, attack before escape or civilian panic. | Campaign M01, Operations patrol, Skirmish probe |
 | Road Control | Use roads for faster reinforcement while defending chokepoints. | Base Defense, Convoy Defense |
 | Civilian Corridor | Clear and hold movement lanes for civilians or transports. | Civilian Evacuation, Airlift Extraction |
 | Breach Approach | Move to approach cells, destroy gate/wall/core, avoid blocked footprints. | Breach Assault, District Raid |
@@ -213,7 +213,7 @@ Pass only when:
 
 ### Chapter 1 Gate
 
-Pass only when each Chapter 1 tactical map has:
+Pass only when each Chapter 1 operation map has:
 
 - ground art
 - metadata overlay
@@ -256,9 +256,9 @@ Track these in probes or reports:
 
 ## Implementation Notes
 
-- Do not create a second pathfinding model for 2D isometric maps.
-- Tactical metadata should populate existing grid/pathfinding buffers.
-- `ScenarioSetup` should reference stable map IDs: `LevelId`, `IsoMapId`, `MapPreviewArtId`, and `MinimapArtId`.
+- Do not create a second pathfinding model for archived 2D map work.
+- Operation-map metadata should populate existing grid/pathfinding buffers.
+- `ScenarioSetup` should reference stable map IDs: `LevelId`, `OperationMapId`, `PlanningCameraId`, and `MinimapProjectionId`.
 - UI should consume typed command outcomes and reason codes, not infer movement validity from screen position alone.
 - ARIA should use typed command intents and metadata anchors for Show Me / Do It behavior.
 - Balance probes should run with fixed seeds first, then expand to seed sweeps after deterministic behavior is stable.
@@ -269,5 +269,5 @@ Keep `large-scale grid-based movement` in the README, but treat it as a staged p
 
 - already valid as a foundation capability
 - product-visible in M01 when select/move/attack is readable and validated
-- design-complete for Chapter 1 when five tactical missions prove different movement pressures
+- design-complete for Chapter 1 when five operation-map missions prove different movement pressures
 - production-scale only after multi-squad, multi-route, mobile readability, and performance gates pass

@@ -4,6 +4,10 @@
 
 Treat `Design/AgentTasks/designer_current.md` as the only source of current Designer priorities.
 
+## 2026-05-22 Reset Guard
+
+If `Design/AgentTasks/designer_current.md` says `Status: held`, stop. Do not scan `Design/AgentReports/` for new work, do not edit design docs, do not write a report, and do not route another lane. Respond only that Designer is held for the 3D fresh-start reset and waiting for PM/user dispatch.
+
 If `Design/AgentTasks/designer_current.md` says `Status: complete`, the current Designer status answer is:
 
 ```text
@@ -37,6 +41,7 @@ For the current M01 assignment, `continue` means read `Design/AgentTasks/designe
 - When `designer_current.md` is active, start that task before using old PM reports as source context.
 - Continue the current Designer task if actionable.
 - Anti-idle rule: if Designer is `Status: active`, every heartbeat must either advance the task, write the expected handoff, or write a blocker report with the exact failed command, workspace, log path, missing dependency, and unblock owner.
+- Unity licensing workaround is mandatory when PM explicitly assigns Designer Unity validation: follow `Design/AgentTasks/AUTO_CONTINUE.md` and use the PM-assigned workspace with Codex escalation/out-of-sandbox execution before reporting a licensing blocker.
 - Write completion, blocker, or approval-needed reports under `Design/AgentReports/` using the standard WarlineCapture handoff format.
 - Notify in-thread only if PM/user attention is needed, a blocker appears, or the Designer handoff is ready for PM review.
 

@@ -1,0 +1,277 @@
+﻿# GC03 Playable City 2048 Layout
+
+Lane: Gameplay
+Task: Expand GC03 from a small playable skeleton into a 2048-scale road-first city/base layout with explicit walkable masks, legal footprints, soldier route proofs, coverage metrics, and validation.
+
+Files changed:
+- `Design/Architecture/gameplay_playable_scene_generation_workflow.md`
+- `Assets/Game/Scripts/Editor/WarlineCaptureGc03PlayableCityBuilder.cs`
+- `Assets/Game/Scenes/Generated/GC03_PlayableCity_2048.unity`
+- `Design/AgentReports/Data/GeneratedScenes/GC03_PlayableCity_2048/gc03_prefab_footprint_catalog.json`
+- `Design/AgentReports/Captures/GeneratedScenes/GC03_PlayableCity_2048/gc03_topdown_walkability_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC03_PlayableCity_2048/gc03_rts_town_route_soldiers_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC03_PlayableCity_2048/gc03_rts_base_route_soldiers_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC03_PlayableCity_2048/gc03_rts_2048_coverage_overview_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC03_PlayableCity_2048/gc03_rts_dense_city_review_1920x1080.png`
+- `Design/AgentReports/Captures/GeneratedScenes/GC03_PlayableCity_2048/gc03_rts_dense_base_review_1920x1080.png`
+
+Contracts touched: Gameplay playable scene generation workflow contract.
+User-visible behavior: none in shipped flow; generated scene is available for PM/gameplay review.
+Validation run: Unity batchmode `WarlineCaptureGc03PlayableCityBuilder.BuildGc03PlayableCity2048`.
+Validation result: passed expanded 2048 road-first footprint validation.
+Known gaps: GC03 now has measured prefab bounds and denser legal lot filling, but composition still needs a final art-direction pass using authored Demo-scene clusters for more deliberate landmarks and street dressing.
+Cross-lane impacts: PM/Design can review the workflow and proof captures; runtime ECS flow and UI are untouched.
+Next recommended task: convert the best Demo-scene building clusters into reusable block modules, then let GC03 place modules instead of mostly individual prefabs.
+
+Coverage metrics:
+- walkable roads: 23.3%
+- buildings/base structures: 6.8%
+- blockers/decor/industrial: 1.1%
+- spawns/objectives: 0.5%
+- empty/unreserved desert: 68.3%
+- measured prefab catalog entries: 51
+
+Validation log:
+- PASS: GC03 expanded 2048 layout has no building/blocker overlap on walkable roads; spawns/objectives connect to road masks; proof soldiers are on walkable streets.
+
+Placement log:
+- catalog: measured 51 prefab footprints before layout placement.
+- building: TownMarketHall at (-600, 0, 180) footprint=center=(-600, 180) size=(86, 68) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Hall_01.prefab
+- building: TownClockTower at (-400, 0, 180) footprint=center=(-400, 180) size=(52, 52) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Clock_Tower_01.prefab
+- building: TownGasStation at (-600, 0, -420) footprint=center=(-600, -420) size=(86, 64) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GasStation_01.prefab
+- building: TownDestroyedLandmark at (-400, 0, -420) footprint=center=(-400, -420) size=(62, 60) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_04_Destroyed.prefab
+- building: TownLot_00 at (-800, 0, -620) footprint=center=(-800, -620) size=(62, 58) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab
+- building: TownLot_01 at (-600, 0, -620) footprint=center=(-600, -620) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab
+- building: TownLot_02 at (-400, 0, -620) footprint=center=(-400, -620) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab
+- building: TownLot_03 at (-210, 0, -620) footprint=center=(-210, -620) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_05.prefab
+- building: TownLot_04 at (-800, 0, -420) footprint=center=(-800, -420) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_06.prefab
+- building: TownLot_05 at (-210, 0, -420) footprint=center=(-210, -420) size=(62, 58) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_07.prefab
+- building: TownLot_06 at (-800, 0, -220) footprint=center=(-800, -220) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_03.prefab
+- building: TownLot_07 at (-600, 0, -220) footprint=center=(-600, -220) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_07.prefab
+- building: TownLot_08 at (-400, 0, -220) footprint=center=(-400, -220) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_09.prefab
+- building: TownLot_09 at (-210, 0, -220) footprint=center=(-210, -220) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_11.prefab
+- building: TownLot_10 at (-800, 0, -20) footprint=center=(-800, -20) size=(62, 58) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab
+- building: TownLot_11 at (-600, 0, -20) footprint=center=(-600, -20) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab
+- building: TownLot_12 at (-400, 0, -20) footprint=center=(-400, -20) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab
+- building: TownLot_13 at (-210, 0, -20) footprint=center=(-210, -20) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_05.prefab
+- building: TownLot_14 at (-800, 0, 180) footprint=center=(-800, 180) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_06.prefab
+- building: TownLot_15 at (-210, 0, 180) footprint=center=(-210, 180) size=(62, 58) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_07.prefab
+- building: TownLot_16 at (-800, 0, 380) footprint=center=(-800, 380) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_03.prefab
+- building: TownLot_17 at (-600, 0, 380) footprint=center=(-600, 380) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_07.prefab
+- building: TownLot_18 at (-400, 0, 380) footprint=center=(-400, 380) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_09.prefab
+- building: TownLot_19 at (-210, 0, 380) footprint=center=(-210, 380) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_11.prefab
+- building: TownLot_20 at (-800, 0, 580) footprint=center=(-800, 580) size=(62, 58) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_01.prefab
+- building: TownLot_21 at (-600, 0, 580) footprint=center=(-600, 580) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_02.prefab
+- building: TownLot_22 at (-400, 0, 580) footprint=center=(-400, 580) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_03.prefab
+- building: TownLot_23 at (-210, 0, 580) footprint=center=(-210, 580) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_05.prefab
+- building: TownLot_24 at (-800, 0, 780) footprint=center=(-800, 780) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_06.prefab
+- building: TownLot_25 at (-600, 0, 780) footprint=center=(-600, 780) size=(62, 58) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Village_House_07.prefab
+- building: TownLot_26 at (-400, 0, 780) footprint=center=(-400, 780) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_03.prefab
+- building: TownLot_27 at (-210, 0, 780) footprint=center=(-210, 780) size=(54, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Shop_07.prefab
+- town detail: TownDetail_00_A at (-864, 0, -556) footprint=center=(-864, -556) size=(28, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_00_B at (-736, 0, -684) footprint=center=(-736, -684) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- skipped optional town detail: TownDetail_00_C touched walkable road and was omitted. footprint=center=(-736, -556) size=(40.22, 24)
+- town detail: TownDetail_01_A at (-664, 0, -556) footprint=center=(-664, -556) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_01_B at (-536, 0, -684) footprint=center=(-536, -684) size=(26, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_02_A at (-464, 0, -556) footprint=center=(-464, -556) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- town detail: TownDetail_02_B at (-336, 0, -684) footprint=center=(-336, -684) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- skipped optional town detail: TownDetail_02_C touched walkable road and was omitted. footprint=center=(-336, -556) size=(40.22, 24)
+- skipped optional town detail: TownDetail_03_A touched walkable road and was omitted. footprint=center=(-274, -556) size=(28, 24.68)
+- town detail: TownDetail_03_B at (-146, 0, -684) footprint=center=(-146, -684) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_04_A at (-864, 0, -356) footprint=center=(-864, -356) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- town detail: TownDetail_04_B at (-736, 0, -484) footprint=center=(-736, -484) size=(26, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- skipped optional town detail: TownDetail_04_C touched walkable road and was omitted. footprint=center=(-736, -356) size=(40.22, 24)
+- town detail: TownDetail_05_A at (-664, 0, -356) footprint=center=(-664, -356) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_05_B at (-536, 0, -484) footprint=center=(-536, -484) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_06_A at (-464, 0, -356) footprint=center=(-464, -356) size=(28, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_06_B at (-336, 0, -484) footprint=center=(-336, -484) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- skipped optional town detail: TownDetail_06_C touched walkable road and was omitted. footprint=center=(-336, -356) size=(40.22, 24)
+- skipped optional town detail: TownDetail_07_A touched walkable road and was omitted. footprint=center=(-274, -356) size=(28, 24)
+- town detail: TownDetail_07_B at (-146, 0, -484) footprint=center=(-146, -484) size=(26, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_08_A at (-864, 0, -156) footprint=center=(-864, -156) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- town detail: TownDetail_08_B at (-736, 0, -284) footprint=center=(-736, -284) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- skipped optional town detail: TownDetail_08_C touched walkable road and was omitted. footprint=center=(-736, -156) size=(40.22, 24)
+- town detail: TownDetail_09_A at (-664, 0, -156) footprint=center=(-664, -156) size=(28, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_09_B at (-536, 0, -284) footprint=center=(-536, -284) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_10_A at (-464, 0, -156) footprint=center=(-464, -156) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- town detail: TownDetail_10_B at (-336, 0, -284) footprint=center=(-336, -284) size=(26, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- skipped optional town detail: TownDetail_10_C touched walkable road and was omitted. footprint=center=(-336, -156) size=(40.22, 24)
+- skipped optional town detail: TownDetail_11_A touched walkable road and was omitted. footprint=center=(-274, -156) size=(28, 24)
+- town detail: TownDetail_11_B at (-146, 0, -284) footprint=center=(-146, -284) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_12_A at (-864, 0, 44) footprint=center=(-864, 44) size=(28, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_12_B at (-736, 0, -84) footprint=center=(-736, -84) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- skipped optional town detail: TownDetail_12_C touched walkable road and was omitted. footprint=center=(-736, 44) size=(40.22, 24)
+- town detail: TownDetail_13_A at (-664, 0, 44) footprint=center=(-664, 44) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_13_B at (-536, 0, -84) footprint=center=(-536, -84) size=(26, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_14_A at (-464, 0, 44) footprint=center=(-464, 44) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- town detail: TownDetail_14_B at (-336, 0, -84) footprint=center=(-336, -84) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- skipped optional town detail: TownDetail_14_C touched walkable road and was omitted. footprint=center=(-336, 44) size=(40.22, 24)
+- skipped optional town detail: TownDetail_15_A touched walkable road and was omitted. footprint=center=(-274, 44) size=(28, 24.68)
+- town detail: TownDetail_15_B at (-146, 0, -84) footprint=center=(-146, -84) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_16_A at (-864, 0, 244) footprint=center=(-864, 244) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- town detail: TownDetail_16_B at (-736, 0, 116) footprint=center=(-736, 116) size=(26, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- skipped optional town detail: TownDetail_16_C touched walkable road and was omitted. footprint=center=(-736, 244) size=(40.22, 24)
+- town detail: TownDetail_17_A at (-664, 0, 244) footprint=center=(-664, 244) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_17_B at (-536, 0, 116) footprint=center=(-536, 116) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_18_A at (-464, 0, 244) footprint=center=(-464, 244) size=(28, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_18_B at (-336, 0, 116) footprint=center=(-336, 116) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- skipped optional town detail: TownDetail_18_C touched walkable road and was omitted. footprint=center=(-336, 244) size=(40.22, 24)
+- skipped optional town detail: TownDetail_19_A touched walkable road and was omitted. footprint=center=(-274, 244) size=(28, 24)
+- town detail: TownDetail_19_B at (-146, 0, 116) footprint=center=(-146, 116) size=(26, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_20_A at (-864, 0, 444) footprint=center=(-864, 444) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- town detail: TownDetail_20_B at (-736, 0, 316) footprint=center=(-736, 316) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- skipped optional town detail: TownDetail_20_C touched walkable road and was omitted. footprint=center=(-736, 444) size=(40.22, 24)
+- town detail: TownDetail_21_A at (-664, 0, 444) footprint=center=(-664, 444) size=(28, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_21_B at (-536, 0, 316) footprint=center=(-536, 316) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_22_A at (-464, 0, 444) footprint=center=(-464, 444) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- town detail: TownDetail_22_B at (-336, 0, 316) footprint=center=(-336, 316) size=(26, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- skipped optional town detail: TownDetail_22_C touched walkable road and was omitted. footprint=center=(-336, 444) size=(40.22, 24)
+- skipped optional town detail: TownDetail_23_A touched walkable road and was omitted. footprint=center=(-274, 444) size=(28, 24)
+- town detail: TownDetail_23_B at (-146, 0, 316) footprint=center=(-146, 316) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_24_A at (-864, 0, 644) footprint=center=(-864, 644) size=(28, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_24_B at (-736, 0, 516) footprint=center=(-736, 516) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- skipped optional town detail: TownDetail_24_C touched walkable road and was omitted. footprint=center=(-736, 644) size=(40.22, 24)
+- town detail: TownDetail_25_A at (-664, 0, 644) footprint=center=(-664, 644) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_25_B at (-536, 0, 516) footprint=center=(-536, 516) size=(26, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- town detail: TownDetail_26_A at (-464, 0, 644) footprint=center=(-464, 644) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- town detail: TownDetail_26_B at (-336, 0, 516) footprint=center=(-336, 516) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- skipped optional town detail: TownDetail_26_C touched walkable road and was omitted. footprint=center=(-336, 644) size=(40.22, 24)
+- skipped optional town detail: TownDetail_27_A touched walkable road and was omitted. footprint=center=(-274, 644) size=(28, 24.68)
+- town detail: TownDetail_27_B at (-146, 0, 516) footprint=center=(-146, 516) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_28_A at (-864, 0, 844) footprint=center=(-864, 844) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityWalls/SM_Bld_Village_Wall_01.prefab
+- town detail: TownDetail_28_B at (-736, 0, 716) footprint=center=(-736, 716) size=(26, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_28_C at (-736, 0, 844) footprint=center=(-736, 844) size=(40.22, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Archway_01.prefab
+- town detail: TownDetail_29_A at (-664, 0, 844) footprint=center=(-664, 844) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_01.prefab
+- town detail: TownDetail_29_B at (-536, 0, 716) footprint=center=(-536, 716) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_30_A at (-464, 0, 844) footprint=center=(-464, 844) size=(28, 24.4) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_01.prefab
+- town detail: TownDetail_30_B at (-336, 0, 716) footprint=center=(-336, 716) size=(26, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_Well_01.prefab
+- town detail: TownDetail_30_C at (-336, 0, 844) footprint=center=(-336, 844) size=(40.22, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Archway_01.prefab
+- town detail: TownDetail_31_A at (-274, 0, 844) footprint=center=(-274, 844) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Shack_02.prefab
+- town detail: TownDetail_31_B at (-146, 0, 716) footprint=center=(-146, 716) size=(26, 24.68) asset=Assets/Game/Prefabs/Environment/City/SM_Bld_Fountain_01.prefab
+- market dressing: TownStreetMarket_-720_West at (-465, 0, -655) footprint=center=(-465, -655) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_-720_East at (-535, 0, -785) footprint=center=(-535, -785) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_-520_West at (-465, 0, -455) footprint=center=(-465, -455) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_-520_East at (-535, 0, -585) footprint=center=(-535, -585) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_-320_West at (-465, 0, -255) footprint=center=(-465, -255) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_-320_East at (-535, 0, -385) footprint=center=(-535, -385) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_-120_West at (-465, 0, -55) footprint=center=(-465, -55) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_-120_East at (-535, 0, -185) footprint=center=(-535, -185) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_80_West at (-465, 0, 145) footprint=center=(-465, 145) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_80_East at (-535, 0, 15) footprint=center=(-535, 15) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_280_West at (-465, 0, 345) footprint=center=(-465, 345) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_280_East at (-535, 0, 215) footprint=center=(-535, 215) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_480_West at (-465, 0, 545) footprint=center=(-465, 545) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_480_East at (-535, 0, 415) footprint=center=(-535, 415) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- market dressing: TownStreetMarket_680_West at (-465, 0, 745) footprint=center=(-465, 745) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_02.prefab
+- market dressing: TownStreetMarket_680_East at (-535, 0, 615) footprint=center=(-535, 615) size=(28, 24) asset=Assets/Game/Prefabs/Environment/CityDecorations/SM_Bld_Village_ClothCover_03.prefab
+- base: BaseControlTower at (560, 0, 500) footprint=center=(560, 500) size=(64, 64) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_ControlTower_01.prefab
+- base: BaseHangar at (760, 0, 500) footprint=center=(760, 500) size=(100, 82) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Hangar_01.prefab
+- base: BaseHelipad at (760, 0, -20) footprint=center=(760, -20) size=(86, 86) asset=Assets/Game/Prefabs/Buildings/Building_Helipad.prefab
+- base: BaseFuelBladder at (780, 0, -260) footprint=center=(780, -260) size=(76, 58) asset=Assets/Game/Prefabs/Buildings/Building_Fuel_Bladder.prefab
+- base: IndustrialRefinery at (560, 0, -500) footprint=center=(560, -500) size=(100, 78) asset=Assets/Game/Prefabs/Buildings/Building_Refinery.prefab
+- base: IndustrialRefineryBig at (760, 0, -500) footprint=center=(760, -500) size=(100, 82) asset=Assets/Game/Prefabs/Buildings/Building_Refinery_Big.prefab
+- base: IndustrialOilPump at (340, 0, -740) footprint=center=(340, -740) size=(58, 48) asset=Assets/Game/Prefabs/Buildings/Building_OilPump.prefab
+- base: BaseLot_00 at (560, 0, -740) footprint=center=(560, -740) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab
+- base: BaseLot_01 at (780, 0, -740) footprint=center=(780, -740) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab
+- base: BaseLot_02 at (340, 0, -500) footprint=center=(340, -500) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab
+- base: BaseLot_03 at (340, 0, -260) footprint=center=(340, -260) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab
+- base: BaseLot_04 at (560, 0, -260) footprint=center=(560, -260) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GuardTower_01.prefab
+- base: BaseLot_05 at (340, 0, 0) footprint=center=(340, 0) size=(54, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Heavy.prefab
+- base: BaseLot_06 at (560, 0, 0) footprint=center=(560, 0) size=(54, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab
+- base: BaseLot_07 at (340, 0, 240) footprint=center=(340, 240) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Barracks_01.prefab
+- base: BaseLot_08 at (560, 0, 240) footprint=center=(560, 240) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Desert_01.prefab
+- base: BaseLot_09 at (780, 0, 240) footprint=center=(780, 240) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_Tent_Refugee_01.prefab
+- base: BaseLot_10 at (340, 0, 500) footprint=center=(340, 500) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_CamoNet_Tent_01.prefab
+- base: BaseLot_11 at (340, 0, 740) footprint=center=(340, 740) size=(66, 54) asset=Assets/PolygonMilitary/Prefabs/Buildings/SM_Bld_GuardTower_01.prefab
+- base: BaseLot_12 at (560, 0, 740) footprint=center=(560, 740) size=(54, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_APC_Heavy.prefab
+- base: BaseLot_13 at (780, 0, 740) footprint=center=(780, 740) size=(54, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_Tank_USA.prefab
+- base detail: BaseDetail_00_A at (274, 0, -678) footprint=center=(274, -678) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_00_B at (406, 0, -802) footprint=center=(406, -802) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_00_C at (406, 0, -678) footprint=center=(406, -678) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_01_A at (494, 0, -678) footprint=center=(494, -678) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- base detail: BaseDetail_01_B at (626, 0, -802) footprint=center=(626, -802) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_02_A at (714, 0, -678) footprint=center=(714, -678) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab
+- base detail: BaseDetail_02_B at (846, 0, -802) footprint=center=(846, -802) size=(42, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab
+- base detail: BaseDetail_03_A at (274, 0, -438) footprint=center=(274, -438) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_03_B at (406, 0, -562) footprint=center=(406, -562) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_03_C at (406, 0, -438) footprint=center=(406, -438) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_04_A at (494, 0, -438) footprint=center=(494, -438) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_04_B at (626, 0, -562) footprint=center=(626, -562) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- base detail: BaseDetail_05_A at (714, 0, -438) footprint=center=(714, -438) size=(42, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab
+- skipped optional base detail: BaseDetail_05_B touched walkable road and was omitted. footprint=center=(846, -562) size=(34, 34)
+- base detail: BaseDetail_06_A at (274, 0, -198) footprint=center=(274, -198) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_06_B at (406, 0, -322) footprint=center=(406, -322) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_06_C at (406, 0, -198) footprint=center=(406, -198) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_07_A at (494, 0, -198) footprint=center=(494, -198) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- base detail: BaseDetail_07_B at (626, 0, -322) footprint=center=(626, -322) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_08_A at (714, 0, -198) footprint=center=(714, -198) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab
+- skipped optional base detail: BaseDetail_08_B touched walkable road and was omitted. footprint=center=(846, -322) size=(42, 42)
+- base detail: BaseDetail_09_A at (274, 0, 62) footprint=center=(274, 62) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_09_B at (406, 0, -62) footprint=center=(406, -62) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_09_C at (406, 0, 62) footprint=center=(406, 62) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_10_A at (494, 0, 62) footprint=center=(494, 62) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_10_B at (626, 0, -62) footprint=center=(626, -62) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- base detail: BaseDetail_11_A at (714, 0, 62) footprint=center=(714, 62) size=(42, 42) asset=Assets/Game/Prefabs/Vehicles/Unit_Veh_Truck_Canopy.prefab
+- skipped optional base detail: BaseDetail_11_B touched walkable road and was omitted. footprint=center=(846, -62) size=(34, 34)
+- base detail: BaseDetail_12_A at (274, 0, 302) footprint=center=(274, 302) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_12_B at (406, 0, 178) footprint=center=(406, 178) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_12_C at (406, 0, 302) footprint=center=(406, 302) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_13_A at (494, 0, 302) footprint=center=(494, 302) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- base detail: BaseDetail_13_B at (626, 0, 178) footprint=center=(626, 178) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_14_A at (714, 0, 302) footprint=center=(714, 302) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab
+- skipped optional base detail: BaseDetail_14_B touched walkable road and was omitted. footprint=center=(846, 178) size=(42, 42)
+- base detail: BaseDetail_15_A at (274, 0, 562) footprint=center=(274, 562) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_15_B at (406, 0, 438) footprint=center=(406, 438) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_15_C at (406, 0, 562) footprint=center=(406, 562) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_16_A at (494, 0, 562) footprint=center=(494, 562) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_16_B at (626, 0, 438) footprint=center=(626, 438) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- skipped optional base detail: BaseDetail_17_A touched walkable road and was omitted. footprint=center=(714, 562) size=(42, 42)
+- skipped optional base detail: BaseDetail_17_B touched walkable road and was omitted. footprint=center=(846, 438) size=(34, 34)
+- base detail: BaseDetail_18_A at (274, 0, 802) footprint=center=(274, 802) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Fence_Straight.prefab
+- base detail: BaseDetail_18_B at (406, 0, 678) footprint=center=(406, 678) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Satelite_Dish.prefab
+- base detail: BaseDetail_18_C at (406, 0, 802) footprint=center=(406, 802) size=(24, 24) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab
+- base detail: BaseDetail_19_A at (494, 0, 802) footprint=center=(494, 802) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab
+- base detail: BaseDetail_19_B at (626, 0, 678) footprint=center=(626, 678) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_WaterTank.prefab
+- base detail: BaseDetail_20_A at (714, 0, 802) footprint=center=(714, 802) size=(34, 34) asset=Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab
+- skipped optional base detail: BaseDetail_20_B touched walkable road and was omitted. footprint=center=(846, 678) size=(42, 42)
+- dressing: TownRock_WestBoundary_01 at (-1000, 0, 520) footprint=center=(-1000, 520) size=(90, 82) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_05.prefab
+- dressing: TownRock_WestBoundary_02 at (-1000, 0, -40) footprint=center=(-1000, -40) size=(78, 70) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_03.prefab
+- dressing: TownRock_WestBoundary_03 at (-1000, 0, -650) footprint=center=(-1000, -650) size=(96, 86) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_04.prefab
+- dressing: BaseRock_EastBoundary_01 at (1000, 0, 500) footprint=center=(1000, 500) size=(96, 86) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_06.prefab
+- dressing: BaseRock_EastBoundary_02 at (1000, 0, -280) footprint=center=(1000, -280) size=(82, 76) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_02.prefab
+- dressing: PalmStreetEdge_00 at (-805, 0, -554) footprint=center=(-805, -554) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_01 at (-605, 0, -554) footprint=center=(-605, -554) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_02 at (-405, 0, -554) footprint=center=(-405, -554) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_03 at (-205, 0, -554) footprint=center=(-205, -554) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_04 at (335, 0, -554) footprint=center=(335, -554) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_05 at (555, 0, -554) footprint=center=(555, -554) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- skipped optional dressing: PalmStreetEdge_06 overlapped a placed footprint and was omitted. footprint=center=(775, -554) size=(28, 28)
+- dressing: PalmStreetEdge_07 at (-805, 0, -154) footprint=center=(-805, -154) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_08 at (-605, 0, -154) footprint=center=(-605, -154) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_09 at (-405, 0, -154) footprint=center=(-405, -154) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_10 at (-205, 0, -154) footprint=center=(-205, -154) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- skipped optional dressing: PalmStreetEdge_11 touched walkable road and was omitted. footprint=center=(335, -154) size=(28, 28)
+- skipped optional dressing: PalmStreetEdge_12 touched walkable road and was omitted. footprint=center=(555, -154) size=(28, 28)
+- skipped optional dressing: PalmStreetEdge_13 touched walkable road and was omitted. footprint=center=(775, -154) size=(28, 28)
+- dressing: PalmStreetEdge_14 at (-805, 0, 246) footprint=center=(-805, 246) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_15 at (-605, 0, 246) footprint=center=(-605, 246) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_16 at (-405, 0, 246) footprint=center=(-405, 246) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_17 at (-205, 0, 246) footprint=center=(-205, 246) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- skipped optional dressing: PalmStreetEdge_18 overlapped a placed footprint and was omitted. footprint=center=(335, 246) size=(28, 28)
+- skipped optional dressing: PalmStreetEdge_19 overlapped a placed footprint and was omitted. footprint=center=(555, 246) size=(28, 28)
+- skipped optional dressing: PalmStreetEdge_20 overlapped a placed footprint and was omitted. footprint=center=(775, 246) size=(28, 28)
+- dressing: PalmStreetEdge_21 at (-805, 0, 646) footprint=center=(-805, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_22 at (-605, 0, 646) footprint=center=(-605, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_23 at (-405, 0, 646) footprint=center=(-405, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_24 at (-205, 0, 646) footprint=center=(-205, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_25 at (335, 0, 646) footprint=center=(335, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- dressing: PalmStreetEdge_26 at (555, 0, 646) footprint=center=(555, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab
+- dressing: PalmStreetEdge_27 at (775, 0, 646) footprint=center=(775, 646) size=(28, 28) asset=Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab
+- player soldier 1: placed on walkable street at (-900, 0, -320)
+- player soldier 2: placed on walkable street at (-872, 0, -302)
+- player soldier 3: placed on walkable street at (-872, 0, -338)
+- player soldier 4: placed on walkable street at (-842, 0, -320)
+- enemy soldier 1: placed on walkable street at (450, 0, 120)
+- enemy soldier 2: placed on walkable street at (420, 0, 138)
+- enemy soldier 3: placed on walkable street at (420, 0, 102)
+- enemy soldier 4: placed on walkable street at (390, 0, 120)

@@ -1,25 +1,16 @@
 # PM Message To Designer
 
-Date: 2026-05-14
-Priority: P0
-Status: complete
-Current Designer status: complete
-Owner of next action: Gameplay
+Date: 2026-05-22
+Priority: hold
+Status: held
 
-Designer reviewed the new imagegen-only M01 two-frame approval sample after PM/user rejected deterministic marker/HUD patching.
+## Message
 
-Designer delivered:
+Designer/Game Design is held for the 3D fresh-start reset.
 
-- `Design/AgentReports/2026-05-14_designer_m01-imagegen-sample-alignment-review.md`
+Read:
 
-Decision: approved for PM/user visual approval.
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
+- `Design/AgentTasks/designer_current.md`
 
-Summary:
-
-- M01-01 and M01-02 read as same intended tactical camera, zoom, framing, and unit scale.
-- M01-01 reads as tactical start/no selection.
-- M01-02 reads as selected squad/no active command mode.
-- HUD, markers, selected-squad world status, enemy readability, minimap, squad cards, objective panel, threat feed, top bar, and command bar are close enough to the approved AAA VisualLock direction for user approval.
-- Runtime must rebuild text with native TMP and exact data.
-
-Next owner: Gameplay.
+Do not continue old 2D AAA readiness, M01 step-by-step, target-lock, or layered mockup review work from report history. Wait for a new PM/user task.

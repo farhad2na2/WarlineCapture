@@ -27,14 +27,14 @@ Required output:
 
 ## Fixed Now
 
-### Tactical Runtime Plane
+### 3D Operation-Map Runtime Plane
 
-The production tactical map runtime now uses the same ground plane as the existing ECS gameplay systems:
+The production operation-map runtime uses the same ground plane as the existing ECS gameplay systems:
 
 - Gameplay/world plane: XZ
 - Height axis: Y
 - `GridConfig.Origin`: `(definition.WorldOrigin.x, 0, definition.WorldOrigin.y)`
-- Tactical map loader grid transform: `(definition.WorldOrigin.x, 0, definition.WorldOrigin.y)`
+- Operation-map loader grid transform: `(definition.WorldOrigin.x, 0, definition.WorldOrigin.y)`
 - Camera map center for production XZ mode: `(center.x, existingCameraY, center.y)`
 
 Updated files:
@@ -44,23 +44,22 @@ Updated files:
 
 The loader now exposes:
 
-- `TacticalMapRuntimePlane.GameplayXZ`
-- `TacticalMapRuntimePlane.ScreenXY`
+- `OperationMapRuntimePlane.GameplayXZ`, or the existing `TacticalMapRuntimePlane.GameplayXZ` compatibility name until code migration
+- `OperationMapRuntimePlane.ScreenXY`, or the existing `TacticalMapRuntimePlane.ScreenXY` compatibility name for isolated legacy scenes
 - `MapWorldToRuntimeWorld(Vector2 mapWorldPosition)`
 - `TryGetAnchorWorldPosition(string anchorId, out Vector3 worldPosition)`
 
-Use `GameplayXZ` for production gameplay and ECS. Use `ScreenXY` only for isolated 2D design-target scenes.
+Use `GameplayXZ` for production gameplay and ECS. Use `ScreenXY` only for isolated legacy design-target scenes.
 
 ### Mission / Scenario / Map Identity
 
-Chapter 1 mission configs now carry the route identity required by the updated design docs:
+Chapter 1 mission configs should carry the 3D operation-map route identity required by the updated design docs:
 
 - `MissionId`
 - `ScenarioSetupId`
-- `LevelId`
-- `IsoMapId`
-- `MapPreviewArtId`
-- `MinimapArtId`
+- `OperationMapId`
+- `PlanningCameraId`
+- `MinimapProjectionId`
 
 Updated files:
 
@@ -73,14 +72,13 @@ The first mission uses:
 
 - Mission: `saga.ch01.m01.first_contact`
 - Scenario setup: `scenario.ch01.m01.first_contact`
-- Level: `level.ch01.district_edge_01`
-- Iso map: `iso.ch01.district_edge_01`
-- Preview art: `preview.ch01.first_contact`
-- Minimap art: `minimap.ch01.first_contact`
+- Operation map: `opmap.ch01.district_edge_01`
+- Planning camera: `camera.ch01.first_contact.planning`
+- Minimap projection: `minimap.ch01.first_contact`
 
-### Quick Custom Launch
+### Skirmish Launch
 
-Quick Custom now explicitly starts the Chapter 1 M01 session before handing control to the legacy gameplay canvas, instead of relying only on the tactical runtime binder fallback.
+Skirmish can explicitly start the Chapter 1 M01 session before handing control to the legacy gameplay canvas, instead of relying only on the operation-map runtime binder fallback. Existing route/controller names may retain QuickCustom until runtime migration.
 
 Updated file:
 
@@ -88,8 +86,8 @@ Updated file:
 
 Temporary behavior:
 
-- Quick Custom launches `ChapterOneMissionCatalog.FirstContactMissionId`.
-- Later, replace this with a selected/generated scenario setup when Quick Custom gets production map selection.
+- Skirmish launches `ChapterOneMissionCatalog.FirstContactMissionId` as a temporary fallback.
+- Later, replace this with a selected/generated scenario setup when Skirmish gets production map selection.
 
 ### Match HUD Gameplay Bridge
 
@@ -195,26 +193,25 @@ Use the active session to resolve map data:
 ```csharp
 WarlineCaptureMissionSession.ActiveMissionId
 WarlineCaptureMissionSession.ActiveScenarioSetupId
-WarlineCaptureMissionSession.ActiveLevelId
-WarlineCaptureMissionSession.ActiveIsoMapId
-WarlineCaptureMissionSession.ActiveMapPreviewArtId
-WarlineCaptureMissionSession.ActiveMinimapArtId
+WarlineCaptureMissionSession.ActiveOperationMapId
+WarlineCaptureMissionSession.ActivePlanningCameraId
+WarlineCaptureMissionSession.ActiveMinimapProjectionId
 ```
 
 The gameplay agent should not hard-code M01 except as a fallback while other maps are not authored.
 
-### 6. Strategic / Tactical Zoom Split
+### 6. Planning / Battle Camera States
 
-The updated design direction has two battle map modes:
+The updated design direction has operation-map camera/UI states:
 
-- Tactical zoom: unit command, selection, combat feedback, build/attack/hold.
-- Strategic zoom: large map awareness, threat areas, objectives, routes, operation-level overlays.
+- Battle camera: unit command, selection, combat feedback, build/attack/hold.
+- Planning/minimap camera: large-map awareness, threat areas, objectives, routes, operation-level overlays.
 
 Keep these surfaces separate in code:
 
-- Tactical HUD state should feed `Screen_MatchOverlay`.
-- Strategic overlay state should use a separate controller or bridge when its UI prefab exists.
-- Do not overload the tactical command bridge with strategic map-only events.
+- Battle HUD state should feed `Screen_MatchOverlay`.
+- Planning/minimap overlay state should use a separate controller or bridge when its UI prefab exists.
+- Do not overload the battle command bridge with planning-only events.
 
 ## Required Validation
 
@@ -244,11 +241,11 @@ Implement the gameplay-side wiring for:
 2. Move, Attack, Hold, Stop, Build, and Special command modes -> BattleHudGameplayBridge.ApplyCommandMode / ClearCommandMode.
 3. Rejected commands -> TacticalCommandResult with TacticalCommandReasonCode, then BattleHudGameplayBridge.ApplyCommandResult.
 4. Android touch input parity for production tactical selection, camera drag, command targeting, road/wall/build placement, and green rectangle selection.
-5. Active mission/session routing through WarlineCaptureMissionSession.ActiveMissionId, ActiveScenarioSetupId, ActiveLevelId, ActiveIsoMapId, ActiveMapPreviewArtId, and ActiveMinimapArtId.
+5. Active mission/session routing through WarlineCaptureMissionSession.ActiveMissionId, ActiveScenarioSetupId, ActiveOperationMapId, ActivePlanningCameraId, and ActiveMinimapProjectionId.
 
-Respect the production XZ plane. Do not reintroduce XY gameplay coordinates into ECS pathing, selection, movement, attack, build placement, or tactical map loading. Use TacticalMapRuntimeLoader.MapWorldToRuntimeWorld or the existing GridHelpers/CellToWorldCenter/WorldToCell APIs.
+Respect the production XZ plane. Do not reintroduce XY gameplay coordinates into ECS pathing, selection, movement, attack, build placement, or operation-map loading. Use the operation-map runtime loader or compatibility `TacticalMapRuntimeLoader.MapWorldToRuntimeWorld` plus existing GridHelpers/CellToWorldCenter/WorldToCell APIs.
 
-Keep Quick Custom's current M01 session fallback unless you implement full Quick Custom map/scenario selection in the same pass.
+Keep Skirmish's current M01 session fallback unless you implement full Skirmish map/scenario selection in the same pass.
 
 Before finishing, run:
 - Chapter01TacticalRuntimeBindingTests

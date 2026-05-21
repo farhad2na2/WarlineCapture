@@ -1,70 +1,38 @@
-# M01 Critical Path
+# Critical Path
 
-Date: 2026-05-14
-Status: corrected for step-by-step mockup flow
-Goal: Produce user-approved M01 step-by-step gameplay mockups before Gameplay implementation.
+Date: 2026-05-22
+Status: held for 3D fresh-start reset
+Goal: no active critical path until PM/user dispatches the new 3D direction.
 
-## Rule
+## PM Reset
 
-No Gameplay implementation starts from a PM-authored draft package.
+Read:
 
-The package under `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/` is draft reference only until Designer reviews it against approved visual lock targets and publishes the authoritative step-by-step spec.
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
 
 ## Current Gate
 
-Active owner:
-Designer
+No lane is the active owner.
 
-Next production owner after Designer:
-Art/Atlas
+The previous 2D M01 step-by-step mockup, target-lock, soldier-atlas, UI matching, and QA validation sequence is superseded for now.
 
-User approval required before:
+## Rule
 
-- adding mockup output to the project as accepted visual lock
-- routing Gameplay implementation
-- routing QA/HCI runtime validation
+Do not route work from this file while it is held.
 
-Runtime visual-match proof required before PM/user can approve any implemented visual-target slice:
+Do not continue old 2D M01 or target-lock tasks from `Design/AgentReports/` history.
 
-- fresh runtime screenshot/capture from the implemented build
-- explicit target mockup path
-- side-by-side/contact-sheet or overlay comparison against the target mockup
-- written match/mismatch notes and recommended next steps
-- validation command/log path
+Do not start Gameplay, UI, Art/Atlas, Designer, QA/HCI, Support/FTUE, or Visual Target work until PM/user creates a new lane assignment in the relevant `Design/AgentTasks/<lane>_current.md` file.
 
-## Correct Sequence
+## Next PM/User Action
 
-1. Designer writes `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`.
-2. Art/Atlas creates step-by-step mockup images/contact sheets from the Designer spec and reports `Design/AgentReports/2026-05-14_art-atlas_m01-step-by-step-gameplay-mockups.md`.
-3. User approves or rejects the mockup images.
-4. PM routes Gameplay to implement only the approved mockups.
-5. Gameplay delivery includes visual-match proof against the approved mockup before PM/user approval.
-6. QA/HCI validates readability and runtime behavior after implementation, or reviews mockups only if PM explicitly routes a pre-implementation review.
+Create a new critical path and lane task for the fresh 3D direction when ready.
 
-## Source Authority
+The new task should name:
 
-Draft reference:
-
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/README.md`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/M01_StepByStepGameplayMockup_Manifest.json`
-
-Design source of truth, once delivered:
-
-- `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
-
-Art approval artifact, once delivered:
-
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/`
-- `Design/AgentReports/2026-05-14_art-atlas_m01-step-by-step-gameplay-mockups.md`
-
-## Blocked Lanes
-
-Gameplay is blocked until user-approved Art mockup images exist.
-
-QA/HCI is blocked until PM routes either a mockup readability review or a runtime validation task.
-
-## Superseded Routing
-
-Any prior 2026-05-07 through 2026-05-09 M01 routing that makes Gameplay or QA/HCI the next owner for this step-by-step mockup flow is superseded by this correction.
-
-Older runtime proof, soldier atlas, and launch-path reports remain historical evidence, but they are not authority for the missing step-by-step mockup package.
+- lane owner;
+- 3D scene/screen/system;
+- source-of-truth design doc or reference;
+- expected deliverable path;
+- validation/proof requirement;
+- whether old 2D assets are allowed as references only or must be ignored.

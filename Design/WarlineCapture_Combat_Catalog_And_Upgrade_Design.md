@@ -233,9 +233,9 @@ Upgrade implementation fields required in JSON:
 - Chapter 4 expands air, armor, naval/coastal pressure, and heavier support.
 - Chapter 5 expands citywide command, mixed-arms mastery, and late-tier upgrade pressure.
 
-Quick Custom can expose wider catalogs through presets, but every preset must still reference valid catalog ids and balance tags.
+Skirmish can expose wider catalogs through presets, but every preset must still reference valid catalog ids and balance tags. Internal config ids may continue to use QuickCustom naming until runtime migration.
 
-Persistent Operation unlocks catalog access through district state, outpost tier, armory tier, airfield tier, coastal tier, and Command Post progression.
+Operations unlock catalog access through district state, outpost tier, armory tier, airfield tier, coastal tier, and Command Post progression.
 
 ## UI Surface Rules
 
@@ -250,11 +250,11 @@ Persistent Operation unlocks catalog access through district state, outpost tier
 - `UnitUnlock`, `BuildingUnlock`, `SupportAbilityUnlock`, `GearModule`, and `BlueprintParts` target ids must exist in the balance config.
 - Duplicate unlocks convert through explicit item-specific `BlueprintParts` rules from `WarlineCapture_Economy_Reward_Design.md`.
 - Store items may grant resources, parts, cosmetics, support supplies, or deterministic unlocks only when those items have a non-paid earn path.
-- Store purchases cannot grant direct Operation metrics, Saga Stars, hidden objective completion, active-match combat cooldown removal, or direct tier application.
+- Store purchases cannot grant direct Operation metrics, Campaign stars, hidden objective completion, active-match combat cooldown removal, or direct tier application.
 
 ## Visual Rules
 
-- Runtime unit/building art must align with `WarlineCapture_2D_Isometric_Art_Bible.md`.
+- Runtime unit/building art must align with `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` and the visual config/prefab-catalog roster.
 - Gameplay buildings are runtime entities on sockets. They are not baked into terrain.
 - Building visuals need intact, damaged, and destroyed states that do not change gameplay footprint.
 - Unit portraits, icons, world sprites, VFX, and audio cue ids live in the visual config, not in balance config.

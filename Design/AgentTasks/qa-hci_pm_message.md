@@ -1,15 +1,16 @@
 # PM Message To QA/HCI
 
-Date: 2026-05-14
-Priority: P0
-Status: blocked
+Date: 2026-05-22
+Priority: hold
+Status: held
 
-QA/HCI is not the next owner yet.
+## Message
 
-Gameplay implemented the first M01-01 runtime slice:
+QA/HCI is held for the 3D fresh-start reset.
 
-- `Design/AgentReports/2026-05-14_gameplay_m01-imagegen-sample-implementation.md`
+Read:
 
-PM/user explicitly wants to approve it before passing it onward.
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
+- `Design/AgentTasks/qa-hci_current.md`
 
-Do not start validation until PM/user approves the Gameplay handoff and PM routes QA/HCI.
+Do not continue old 2D M01, SCN-02, UI, Gameplay, target-lock, or capture-matrix validation from report history. Wait for a new PM/user task.

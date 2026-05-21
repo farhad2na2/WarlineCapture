@@ -1,23 +1,36 @@
 # QA/HCI Current Task
 
-Date: 2026-05-14
-Status: blocked
-Priority: wait for PM/user approval of Gameplay M01-01 implementation slice
+Date: 2026-05-22
+Status: held
+Priority: no current QA/HCI action; 3D fresh-start reset
 
-## Assignment
+## PM Reset - Read First
 
-QA/HCI is not the next lane yet.
+Read:
 
-Gameplay has implemented the first M01-01 runtime slice, but PM/user explicitly wants to approve it before it is passed on.
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
 
-Do not validate, inspect, or claim QA/HCI approval until PM/user explicitly approves the Gameplay implementation handoff and routes QA/HCI.
+## Current Assignment
 
-Current hold:
+No QA/HCI task is active.
 
-- `Design/AgentReports/2026-05-14_gameplay_m01-imagegen-sample-implementation.md`
-- `Assets/Game/Scripts/UI/Screens/M01InfantryOnlyHudScopeController.cs`
-- `Assets/Tests/Editor/WarlineCaptureUiMatchOverlayTests.cs`
+Previous 2D M01, SCN-02, UI, Gameplay, and target-lock proof captures are historical context only. Do not validate them automatically.
 
-## Waiting On
+## Do Not Continue
 
-PM/user approval and PM routing.
+Do not continue:
+
+- stale 2D M01 visual/runtime audits;
+- stale SCN-02/POP-05/SCN-08 UI audits;
+- old capture-matrix validation;
+- any QA/HCI work inferred only from `Design/AgentReports/` history.
+
+## Continue Behavior
+
+If asked to `continue`, report:
+
+```text
+QA/HCI current task is held for the 3D fresh-start reset. No action is assigned. Waiting for PM/user to dispatch a new QA/HCI task.
+```
+
+Do not run Unity, validate captures, write reports, or route another lane unless PM/user provides a new explicit QA/HCI assignment.

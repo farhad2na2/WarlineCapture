@@ -1,70 +1,39 @@
 # Designer Current Task
 
-Date: 2026-05-14
-Status: complete
-Priority: P0 imagegen sample approved for PM/user visual approval
-Current Designer status: complete
-Owner of next action: Gameplay
+Date: 2026-05-22
+Status: held
+Priority: no current Designer/Game Design action; 3D fresh-start reset
+Current Designer status: held
+Owner of next action: PM/user
 Current task source: `Design/AgentTasks/designer_current.md`
-Supersedes: previous completed-spec-only Designer state for this M01 step-by-step mockup flow.
 
-## Assignment
+## PM Reset - Read First
 
-Designer completed review of the latest imagegen-only two-frame approval sample after PM/user rejected deterministic marker/HUD patching.
+Read:
 
-Designer delivered:
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
 
-- `Design/AgentReports/2026-05-14_designer_m01-imagegen-sample-alignment-review.md`
+## Current Assignment
 
-Decision: approved for PM/user visual approval.
+No Designer/Game Design task is active.
 
-This is not runtime implementation approval, not full-sequence approval, and not QA/HCI approval. PM/user asked to continue by checking Gameplay approval and proceeding with implementation only if Gameplay approves.
+The previous 2D AAA readiness, M01 step-by-step, target-lock, and layered mockup review tasks are historical context only. Do not continue them automatically.
 
-Read first:
+## Do Not Continue
 
-- `Design/AgentReports/2026-05-14_designer_m01-step-by-step-gameplay-spec.md`
-- `Design/AgentReports/2026-05-14_art-atlas_m01-step-by-step-gameplay-mockups.md`
-- `Design/AgentReports/2026-05-14_pm_art-atlas-imagegen-only-marker-rejection.md`
-- `Design/AgentReports/2026-05-14_pm_art-atlas-latest-reference-comparison-rejection.md`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01_StepByStepGameplay_SampleContactSheet_1920x1080.png`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01-01_TacticalStart_1920x1080.png`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/Images/M01-02_SquadSelected_1920x1080.png`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/manifest.json`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/Frames/M01-01_TacticalStart_layers.json`
-- `Design/VisualLock/Gameplay/M01_StepByStepGameplayMockups/LayerPack/Frames/M01-02_SquadSelected_layers.json`
-- `Design/VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_Landscape_Target.png`
-- `Design/VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_Landscape_Target.png`
-- `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/VL_M01_TacticalMap_Target.png`
+Do not continue:
 
-Completed Designer output:
+- stale 2D AAA readiness recommendation validation;
+- stale M01 2D step-by-step mockup/spec work;
+- old 2D target-lock UI/gameplay alignment reviews;
+- any design task inferred only from `Design/AgentReports/` history.
 
-- `Design/AgentReports/2026-05-14_designer_m01-imagegen-sample-alignment-review.md`
+## Continue Behavior
 
-Designer decision summary:
+If asked to `continue`, report:
 
-- M01-01 and M01-02 read as the same intended tactical camera, zoom, framing, and unit scale.
-- M01-01 reads as tactical start/no selection.
-- M01-02 reads as selected squad/no active command mode.
-- HUD, markers, selected-squad world status, enemy readability, minimap, squad cards, objective panel, threat feed, top bar, and command bar are close enough to the approved AAA VisualLock direction for user approval.
-- Runtime caveat: all generated text must be rebuilt with native TMP and exact data.
-- Remaining full sequence remains ungenerated and unapproved.
+```text
+Designer current task is held for the 3D fresh-start reset. No action is assigned. Waiting for PM/user to dispatch a new Designer/Game Design task.
+```
 
-## Continue Command Handling
-
-When PM/user tells Designer to `continue`, report complete and point to `Design/AgentReports/2026-05-14_designer_m01-imagegen-sample-alignment-review.md` unless a new Art sample appears or PM/user asks for another review.
-
-Do not create mockup images. Do not route Gameplay. Do not commit or push.
-
-## Current Routing
-
-Current owner:
-Gameplay
-
-Next lane after Designer delivery:
-Gameplay implementation-readiness approval and gated first-slice implementation.
-
-Implementation lanes held until approved mockups exist:
-Gameplay may audit and implement only the first slice if it approves implementation readiness. QA/HCI remains held until a runtime implementation exists.
-
-Completion report expected:
-`Design/AgentReports/2026-05-14_designer_m01-imagegen-sample-alignment-review.md`
+Do not edit design docs, write reports, route Art/Atlas, or route Gameplay unless PM/user provides a new explicit Designer/Game Design assignment.

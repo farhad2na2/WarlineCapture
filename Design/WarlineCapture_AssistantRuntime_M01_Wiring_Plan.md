@@ -80,9 +80,9 @@ ActiveRoute
 MissionId
 ScenarioSetupId
 LevelId
-IsoMapId
-MapPreviewArtId
-MinimapArtId
+OperationMapId
+PlanningCameraId
+MinimapProjectionId
 IsM01Active
 IsMatchOverlayActive
 ObjectivePanelVisible
@@ -112,8 +112,9 @@ M01 ids are locked:
 |---|---|
 | Mission | `saga.ch01.m01.first_contact` |
 | Scenario setup | `scenario.ch01.m01.first_contact` |
-| Level | `level.ch01.district_edge_01` |
-| Iso map | `iso.ch01.district_edge_01` |
+| Operation map | `opmap.ch01.district_edge_01` |
+| Planning camera | `camera.ch01.first_contact.planning` |
+| Minimap projection | `minimap.ch01.first_contact` |
 | Player squad | `unit.player.rifle_squad_01` |
 | Enemy patrol | `unit.enemy.patrol_01` |
 | Move target | `tutorial.move_target.cover_01` |

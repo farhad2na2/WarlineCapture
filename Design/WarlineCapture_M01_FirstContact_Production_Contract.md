@@ -9,22 +9,23 @@ This is the implementation handoff for the first production tactical slice:
 ```text
 MissionId: saga.ch01.m01.first_contact
 ScenarioSetupId: scenario.ch01.m01.first_contact
-LevelId: level.ch01.district_edge_01
-IsoMapId: iso.ch01.district_edge_01
+OperationMapId: opmap.ch01.district_edge_01
+PlanningCameraId: camera.ch01.m01.planning
+MinimapProjectionId: minimap.ch01.m01.projection
 ```
 
 Use this after:
 
-- `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `WarlineCapture_LargeScale_Grid_Movement_Design.md`
 - `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`
-- `WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md`
-- `WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md`
+- `WarlineCapture_Level_And_Mission_Content_Plan.md`
+- `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 - `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`
 
 The goal is to make M01 implementable without guessing about map ids, UI feedback, metadata anchors, assets, tutorial targets, audio/VFX, or validation.
 
-Movement scope note: the large-scale movement design does not expand M01 beyond select, move, attack, objective, and result. For M01 it only raises the acceptance bar: the first movement lesson must be readable through squad selection, a destination marker, attack marker/target highlight, invalid target feedback, HUD current-order state, tactical camera bounds, and objective/result confirmation.
+Movement scope note: the large-scale movement design does not expand M01 beyond select, move, attack, objective, and result. For M01 it only raises the acceptance bar: the first movement lesson must be readable through squad selection, a destination marker, attack marker/target highlight, invalid target feedback, HUD current-order state, operation-map camera bounds, and objective/result confirmation.
 
 Metric scale/readability note: M01 public visual approval must follow `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`. Soldiers should calibrate around a `1.8m` human anchor, visible building doors around a `2.3m` anchor, and buildings should scale from doors/footprints/road context rather than tiny decorative values. Selection must be subtle, grounded, and usable from the soldier body/formation footprint; point-command markers should read around two soldier footsteps wide; movement must show plausible infantry motion with correct idle/run animation; and public unit/building presentation must be ECS entity / atlas-backed rather than accepted through `SpriteRenderer`, `MeshRenderer`, or `MeshFilter` gameplay presentation.
 
@@ -34,10 +35,9 @@ Metric scale/readability note: M01 public visual approval must follow `WarlineCa
 |---|---|
 | `MissionId` | `saga.ch01.m01.first_contact` |
 | `ScenarioSetupId` | `scenario.ch01.m01.first_contact` |
-| `LevelId` | `level.ch01.district_edge_01` |
-| `IsoMapId` | `iso.ch01.district_edge_01` |
-| `MapPreviewArtId` | `preview.ch01.first_contact` |
-| `MinimapArtId` | `minimap.ch01.first_contact` |
+| `OperationMapId` | `opmap.ch01.district_edge_01` |
+| `PlanningCameraId` | `camera.ch01.m01.planning` |
+| `MinimapProjectionId` | `minimap.ch01.m01.projection` |
 | Player-facing title | First Contact |
 | Archetype | Patrol Intercept |
 | Teaching goal | Select, move, attack, read objective, finish result. |
@@ -46,25 +46,27 @@ Metric scale/readability note: M01 public visual approval must follow `WarlineCa
 | Primary objective | Destroy hostile patrol. |
 | Failure guard | Player command squad must survive. |
 
-## Tactical Map Definition Draft
+## Operation Map Definition Draft
 
-The first implementation should create a `TacticalMapDefinition` asset:
+The first implementation should create an `OperationMapDefinition` asset:
 
 ```text
-Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset
+Assets/Game/Data/OperationMaps/Chapter01/opmap.ch01.district_edge_01.asset
 ```
 
 Initial authoring assumptions:
 
 | Field | Draft Value |
 |---|---|
-| Ground source art | Native AI close-up tactical ground, no upscaling. |
-| Runtime texture | POT padded, likely `2048 x 1024`, padding excluded from playable bounds. |
+| World source | 3D town corridor / civilian edge block operation-map scene. |
+| Runtime world | One 3D operation map with roads, civilian frontage, command spawn, hostile patrol lane, camera states, and metadata. |
 | Logical authoring grid | `64 x 36` cells over visible source art. |
-| World origin | Lower-left of visible source art bounds. |
+| World origin | Operation-map origin defined by the scene/root metadata object. |
 | Cell size | Define from scene scale contract; all metadata references grid cells or normalized coordinates. |
-| Default camera | Close gameplay camera, orthographic size near accepted `0.6` scale. |
-| Camera bounds | Clamped to visible source art, never POT padding or black empty area. |
+| Default camera | Battle camera focused on command squad and road corridor. |
+| Planning camera | `camera.ch01.m01.planning`, zoomed to show route, civilian edge, and hostile contact area. |
+| Minimap projection | `minimap.ch01.m01.projection`, same operation map with route/objective/viewport markers. |
+| Camera bounds | Clamped to authored operation-map bounds, never empty scene edges. |
 | Map theme | Small unstable civilian edge block, one road route, command point, light cover, no baked units/buildings. |
 
 Until the final ground plate exists, use normalized map coordinates for authoring anchors:
@@ -74,9 +76,9 @@ x: 0.0 left -> 1.0 right
 y: 0.0 bottom -> 1.0 top
 ```
 
-When the ground image is approved, convert these anchors to exact grid cells and inspect them in the metadata overlay.
+When the operation map is approved, convert these anchors to exact grid/world positions and inspect them in the metadata overlay.
 
-## Required Tactical Metadata
+## Required Operation-Map Metadata
 
 ### Walkable And Surface Areas
 
@@ -86,7 +88,7 @@ When the ground image is approved, convert these anchors to exact grid cells and
 | `walk.road_shoulders` | Walkable + sidewalk/shoulder | edges along `walk.main_road` | Infantry fallback movement and cover-adjacent placement. |
 | `walk.command_point_pad` | Walkable | near player spawn | Safe tutorial selection start. |
 | `walk.cover_pullout_01` | Walkable | between player and patrol route | Tutorial move destination. |
-| `block.map_edge` | Blocked | outside playable visual bounds | Prevents camera/path orders into padding or empty area. |
+| `block.map_edge` | Blocked | outside playable operation bounds | Prevents camera/path orders into empty or invalid areas. |
 | `block.civilian_structures` | Blocked | decorative civilian walls/ruins/curbs if visible | Prevents pathing through visual obstacles. |
 | `zone.civilian_edge` | Civilian zone | side/back edge near civilian block | Consequence/context marker; no M01 penalty unless later enabled. |
 
@@ -162,16 +164,16 @@ Gameplay should return typed command results so UI, VFX, and audio can react con
 
 ## FTUE / ARIA Contract
 
-M01 FTUE steps must resolve to the strategic/tactical map correctly.
+M01 FTUE steps must resolve to operation-map camera states, UI elements, runtime entities, or metadata anchors.
 
 | Step Id | Target Type | Target Id | Notes |
 |---|---|---|---|
-| `ftue.m01.welcome` | strategic briefing | `preview.ch01.first_contact` | Explain mission context. |
+| `ftue.m01.welcome` | planning camera | `camera.ch01.m01.planning` | Explain mission context. |
 | `ftue.m01.deploy` | UI element | `SCN-06.DeployButton` | Show deploy button. |
 | `ftue.m01.objectives` | UI element | `BattleHud.ObjectivePanel` | Highlight objective tracker after match starts. |
 | `ftue.m01.select_squad` | runtime entity | `unit.player.rifle_squad_01` | Highlight squad using runtime entity, not map pixels. |
-| `ftue.m01.move` | tactical anchor | `tutorial.move_target.cover_01` | Do It issues move command. |
-| `ftue.m01.attack` | runtime entity / objective anchor | `unit.enemy.patrol_01` / `objective.destroy_patrol_group` | Do It issues attack command. |
+| `ftue.m01.move` | operation-map anchor | `tutorial.move_target.cover_01` | Do It issues move command. |
+| `ftue.m01.attack` | runtime entity / operation-map objective anchor | `unit.enemy.patrol_01` / `objective.destroy_patrol_group` | Do It issues attack command. |
 | `ftue.m01.complete` | popup | `POP-05_MissionResult` | Explain stars and rewards. |
 
 ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions use typed command intents and these ids.
@@ -182,18 +184,18 @@ ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions us
 
 | Asset Id | Type | Planned Path / Owner | Status Rule |
 |---|---|---|---|
-| `iso.ch01.district_edge_01.ground` | tactical ground plate | `Assets/Game/Art/Generated/IsometricMaps/SagaChapter01/level_ch01_district_edge_01/` | `exists_needs_review` until approved with runtime sprites and metadata overlay. |
-| `iso.ch01.district_edge_01.metadata` | tactical metadata | `Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset` | Required for any playable validation. |
-| `preview.ch01.first_contact` | strategic map preview | `Assets/Game/Art/UI/Generated/MissionArt/saga_ch01_m01_first_contact_MapPreview.png` | Approved in Mission Briefing/Saga context. |
-| `minimap.ch01.first_contact` | minimap | `Assets/Game/Art/UI/Generated/MissionArt/saga_ch01_m01_first_contact_Minimap.png` | Approved in Battle HUD with markers visible. |
-| `unit.player.rifle_squad_01` | runtime sprite/entity | Chapter 1 units atlas | Must match `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`: about `1.8m` soldier scale, four readable soldiers under one squad entity, ECS/atlas-backed presentation. |
-| `unit.enemy.patrol_01` | runtime sprite/entity | Chapter 1 units atlas | Can reuse enemy-tinted infantry variant if approved. |
+| `opmap.ch01.district_edge_01.scene` | 3D operation map | `Assets/Game/Scenes/OperationMaps/Chapter01/opmap_ch01_district_edge_01.unity` or equivalent scene/subscene | Required for playable validation once 3D map work begins. |
+| `opmap.ch01.district_edge_01.metadata` | operation-map metadata | `Assets/Game/Data/OperationMaps/Chapter01/opmap.ch01.district_edge_01.asset` | Required for any playable validation. |
+| `camera.ch01.m01.planning` | planning camera | Operation-map camera definition | Approved in Mission Briefing/Campaign context. |
+| `minimap.ch01.m01.projection` | minimap projection | Operation-map minimap projection definition | Approved in Battle HUD with markers visible. |
+| `unit.player.rifle_squad_01` | runtime 3D entity | Prefab/config-backed infantry presentation | Must match `WarlineCapture_M01_Metric_Scale_Readability_Contract.md`: about `1.8m` soldier scale, readable squad presentation, ECS-backed public presentation. |
+| `unit.enemy.patrol_01` | runtime 3D entity | Prefab/config-backed hostile infantry presentation | Can reuse approved hostile infantry variant if readable. |
 | `marker.selection.ring` | world overlay | UI/VFX marker atlas | Separate from unit sprite. |
 | `marker.move.destination` | world overlay | UI/VFX marker atlas | Separate from ground art. |
 | `marker.attack.target` | world overlay | UI/VFX marker atlas | Separate from ground art. |
 | `marker.objective.focus` | world overlay | UI/VFX marker atlas | Used by objective row jump and ARIA. |
-| `vfx.impact.light` | VFX | 2DISO/VFX or temporary approved FX | Density-gated and readable at tactical scale. |
-| `vfx.unit.destroyed.small` | VFX | 2DISO/VFX or temporary approved FX | Completes objective feedback. |
+| `vfx.impact.light` | VFX | 3D VFX or temporary approved FX | Density-gated and readable at battle camera scale. |
+| `vfx.unit.destroyed.small` | VFX | 3D VFX or temporary approved FX | Completes objective feedback. |
 
 ### Audio Event Requirements
 
@@ -224,15 +226,15 @@ ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions us
 
 ### Design/Data Gate
 
-- `MissionId`, `ScenarioSetupId`, `LevelId`, `IsoMapId`, `MapPreviewArtId`, and `MinimapArtId` are present.
-- `TacticalMapDefinition` has all required M01 anchors.
+- `MissionId`, `ScenarioSetupId`, `OperationMapId`, `PlanningCameraId`, and `MinimapProjectionId` are present.
+- `OperationMapDefinition` has all required M01 anchors.
 - Build is disabled with `MissionDoesNotAllowBuild`.
-- FTUE step ids resolve to UI elements, runtime entities, or tactical anchors.
-- Asset register has rows for tactical ground, metadata, preview, minimap, runtime sprites, markers, VFX, and audio.
+- FTUE step ids resolve to UI elements, runtime entities, operation-map camera states, or operation-map anchors.
+- Asset register has rows for operation map, metadata, planning camera, minimap projection, runtime entities, markers, VFX, and audio.
 
 ### Visual Gate
 
-- Tactical ground is reviewed at close gameplay camera scale, not only as a full image.
+- Operation map is reviewed at battle camera scale, not only from a planning overview.
 - Infantry reads at about `1.8m` human scale against road/building/door context.
 - Visible building doors read around `2.3m`, and buildings scale from doors/footprints/readability instead of tiny decor values.
 - Enemy patrol reads as hostile without relying only on color.
@@ -252,8 +254,8 @@ ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions us
 - Blocked cells match visual obstacles and map edge.
 - Patrol route stays on walkable road.
 - Objective anchor is near the enemy patrol, not arbitrary screen center.
-- Camera bounds prevent empty edge/POT padding exposure.
-- Minimap mapping points to the same tactical bounds.
+- Camera bounds prevent empty edge exposure.
+- Minimap projection points to the same operation-map bounds.
 
 ### Playable Gate
 
@@ -268,9 +270,9 @@ ARIA must not click raw screen coordinates. All `Show Me` and `Do It` actions us
 
 ## Implementation Order
 
-1. Create or stage the approved M01 tactical ground and minimap/preview rows.
-2. Create `TacticalMapDefinition` for `iso.ch01.district_edge_01` with the draft anchors above.
-3. Build the metadata overlay scene and verify anchor placement.
+1. Create or stage the approved M01 3D operation-map scene, planning camera, and minimap projection rows.
+2. Create `OperationMapDefinition` for `opmap.ch01.district_edge_01` with the draft anchors above.
+3. Build the metadata overlay scene and verify anchor placement in the 3D operation map.
 4. Update `SCN-08` UI to expose the M01-selected entity panel, command banner, markers, invalid toast, minimap bridge, and objective jump.
 5. Wire gameplay command result reason codes to UI/VFX/audio.
 6. Spawn friendly and hostile groups from metadata anchors.

@@ -53,11 +53,11 @@ Before builder or prefab implementation, create a target-to-canvas mapping table
 
 Every visible target element must appear in this table before implementation starts. Missing rows are a blocker because they usually become missing icons, wrong labels, merged layers, incorrect button states, or spacing drift later.
 
-## 2D Isometric Content Rule
+## 3D Single-Map Content Rule
 
-The active gameplay art direction is premium 2D isometric mobile RTS. For screens that show gameplay, map previews, mission art, unit portraits, squad thumbnails, minimap content, tactical overlays, or battlefield content, use `Design/VisualReferences/2DIsometricProduction` and `Design/WarlineCapture_2D_Isometric_Art_Bible.md` as the content-art source. Do not regenerate old Synty/low-poly battlefield imagery for new visual-lock targets.
+The active gameplay art direction is full 3D single-map mobile RTS. For screens that show gameplay, map previews, mission art, unit portraits, squad thumbnails, minimap content, tactical overlays, or battlefield content, use `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`, `Design/WarlineCapture_UIUX_MainMenu_Visual_Contract.md`, accepted command-base visual locks, and the prefab catalog under `Assets/Game/Configs/Prefabs` as the content source. Do not regenerate old 2D isometric, macro-tile, or generic low-poly/desert battlefield imagery for new visual-lock targets.
 
-The UI track owns Canvas chrome, controls, states, layout, and screen routing. The 2D isometric track owns battlefield assets, Tilemap/runtime art validation, and production captures behind the HUD. `Screen_MatchOverlay` and later tactical overlays should be checked over a non-black 2D isometric capture when available.
+The UI track owns Canvas chrome, controls, states, layout, and screen routing. The 3D gameplay/art track owns operation-map assets, runtime unit/building presentation, camera validation, and production captures behind the HUD. `Screen_MatchOverlay` and later gameplay overlays should be checked over a non-black 3D operation-map capture when available.
 
 ## Layer Pack Contract
 

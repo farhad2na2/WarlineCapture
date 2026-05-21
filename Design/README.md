@@ -1,67 +1,63 @@
 # WarlineCapture Design Index
 
-Date: 2026-05-05
+Date: 2026-05-21
 
-This folder is the source of truth for WarlineCapture product design, gameplay planning, UI/UX implementation, visual targets, audio direction, monetization planning, marketing asset workflow, and 2D isometric production direction.
+This folder is the source of truth for WarlineCapture product design, gameplay planning, UI/UX implementation, visual targets, audio direction, monetization planning, marketing asset workflow, and the active 3D single-map production direction.
 
 ## Current Alignment
 
-- Product structure: one shared tactical RTS simulation wrapped by Saga Campaign, Persistent Operation, and Quick Custom Game.
+- Product structure: one shared 3D operation-map RTS simulation wrapped by Campaign, Operations, and Skirmish. Internal legacy names such as Saga Campaign, Persistent Operation, and Quick Custom Game may remain only as runtime compatibility terms until updated.
+- Active 3D direction: `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` is the current source of truth for returning to full 3D, single large operation maps, prefab-catalog roster usage, and the command-base menu style.
 - Gameplay north star: `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md` locks the core fantasy, mission archetypes, threat families, Chapter 1 teaching arc, Operation week rhythm, and balance target bands before level-by-level content authoring.
-- Pending command premise proposal: `WarlineCapture_Command_Offensive_Premise_Alignment.md` proposes a proactive field-commander framing. It is not canonical product premise until PM/user explicitly accepts it.
+- Command premise: `WarlineCapture_Command_Offensive_Premise_Alignment.md` aligns the accepted proactive field-commander framing with the 3D single-map direction.
 - Large-scale movement: `WarlineCapture_LargeScale_Grid_Movement_Design.md` defines how the original grid-movement promise becomes an AAA mobile RTS design through readable squad command, tactical metadata, staged validation, and production-scale gates.
-- Level and mission planning: `WarlineCapture_Level_And_Mission_Content_Plan.md` owns the shared mission spec template, high-level Saga chapter set, Operation hooks, Quick Custom probe mapping, and acceptance gate. Dedicated chapter docs under `SagaChapters` own chapter-specific mission matrices and specs.
-- Map contract: `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` separates strategic/zoomed-out map views from tactical/zoomed-in playable map packages across gameplay, UI, FTUE, audio, VFX, and art approval.
+- Level and mission planning: `WarlineCapture_Level_And_Mission_Content_Plan.md` owns the shared mission spec template, high-level Campaign chapter set, Operations hooks, Skirmish probe mapping, and acceptance gate. Dedicated chapter docs under `SagaChapters` own chapter-specific mission matrices and specs.
+- Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
 - FTUE and assistant: `WarlineCapture_FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
 - Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
 - Performance regression: `Architecture/performance_regression_contract.md` defines the structured-metrics, budget, FreezeDetect, and hot-path rules for preventing new performance regressions.
 - Designer workflow: `WarlineCapture_Designer_Role_And_Documentation_Workflow.md` defines the Designer lane for README/design-index clarity, source-of-truth ordering, terminology alignment, product/design coherence, and documentation pruning recommendations.
-- Gameplay layer: `GameLaunchPayload`, scenario setup, objectives, results, rewards, progression, persistence, Saga, Operation, AI profiles, and encounter templates are planned in the gameplay feature specs.
+- Gameplay layer: `GameLaunchPayload`, scenario setup, objectives, results, rewards, progression, persistence, Campaign, Operations, Skirmish, AI profiles, and encounter templates are planned in the gameplay feature specs.
 - Combat catalog: `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md` plus `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json` and `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json` define all unit, building, skill, ability, and upgrade-track ids, including availability, unlock moments, implementation owners, and balance data separated from art data.
-- UI layer: mobile landscape app shell and tactical HUD should be built as real Unity Canvas hierarchy from separate panels, sprites, icons, TMP text, and controls.
+- UI layer: mobile landscape app shell, command-base menus, and battle HUD should be built as real Unity Canvas hierarchy from separate panels, sprites, icons, TMP text, and controls over the 3D operation-map flow.
 - Feedback layer: `WarlineCapture_Visual_Feedback_VFX_Recommendations.md` defines shared UI motion, gameplay VFX, warning feedback, reward flyouts, popup transitions, and paired audio event ids for responsive play.
-- Visual direction: new gameplay-facing battlefield art should use premium 2D isometric terrain macro tiles with separate gameplay metadata, as defined in `WarlineCapture_MacroTile_Terrain_Production_Plan.md`.
-- Legacy/generated UI mockups remain useful for layout and chrome, but gameplay art inside new screens should align to the 2D isometric direction.
+- Visual direction: new gameplay-facing battlefield art should use 3D town/base operation scenes with runtime units, buildings, civilians, vehicles, aircraft, markers, VFX, and metadata-backed command overlays.
+- Main menu visual direction: `WarlineCapture_UIUX_MainMenu_Visual_Contract.md` now points at the command-base style with Campaign, Operations, Skirmish, Store, Commander, Settings, Credits, Supplies, Command, and Deploy Operation.
 - Economy and rewards are locked by `WarlineCapture_Economy_Reward_Design.md`. Monetization and marketing claims use the same canonical resources, reward types, and disabled purchase states as the UI/gameplay alignment docs.
 
 ## Primary Reading Order
 
 1. `GAME_DESIGN_REFERENCE.md`
-2. `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md`
-3. `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`
-4. `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json`
-5. `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
-6. `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
-7. `WarlineCapture_Command_Offensive_Premise_Alignment.md` - pending PM/user premise decision; read as proposal, not canonical direction.
-8. `WarlineCapture_LargeScale_Grid_Movement_Design.md`
-9. `WarlineCapture_Level_And_Mission_Content_Plan.md`
-10. `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
-11. `WarlineCapture_M01_FirstContact_Production_Contract.md`
-12. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-13. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-14. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-15. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-16. `WarlineCapture_Agent_Coordination_Workflow.md`
-17. `Architecture/gameplay_solid_ecs_contract.md`
-18. `Architecture/performance_regression_contract.md`
-19. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
-20. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-21. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-22. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
-23. `WarlineCapture_Economy_Reward_Design.md`
-24. `WarlineCapture_Balancing_Automated_Test_Plan.md`
-25. `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
+2. `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+3. `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
+4. `WarlineCapture_Command_Offensive_Premise_Alignment.md`
+5. `WarlineCapture_Combat_Catalog_And_Upgrade_Design.md`
+6. `BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json`
+7. `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json`
+8. `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
+9. `WarlineCapture_LargeScale_Grid_Movement_Design.md`
+10. `WarlineCapture_AAA_Mobile_Technical_Targets.md`
+11. `WarlineCapture_Level_And_Mission_Content_Plan.md`
+12. `WarlineCapture_M01_FirstContact_Production_Contract.md`
+13. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+14. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+15. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+16. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+17. `WarlineCapture_Agent_Coordination_Workflow.md`
+18. `Architecture/gameplay_solid_ecs_contract.md`
+19. `Architecture/performance_regression_contract.md`
+20. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
+21. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+22. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
+23. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+24. `WarlineCapture_Economy_Reward_Design.md`
+25. `WarlineCapture_Balancing_Automated_Test_Plan.md`
 26. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 27. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
-28. `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md`
-29. `WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md`
-30. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-31. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
-32. `WarlineCapture_2D_Isometric_Production_Direction.md`
-33. `WarlineCapture_2D_Isometric_Art_Bible.md`
-34. `WarlineCapture_MacroTile_Terrain_Production_Plan.md`
-35. `WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md`
+28. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+29. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+30. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -73,12 +69,13 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json` - visual-only companion entries for combat entities, abilities, and upgrade tracks.
 - `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md` - high-level AAA mobile game direction.
 - `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.docx` - authored document version of the AAA mobile GDD.
+- `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` - active 3D single-map direction, including mode alignment, prefab-catalog roster usage, world scale, and UI menus that need updating.
 - `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md` - gameplay north star, content grammar, mission archetypes, threat families, Chapter 1 teaching arc, Operation week rhythm, balance target bands, and mission acceptance checklist.
-- `WarlineCapture_Command_Offensive_Premise_Alignment.md` - pending product-premise proposal for proactive command operations. Keep as a proposal until PM/user explicitly accepts or defers it.
-- `WarlineCapture_LargeScale_Grid_Movement_Design.md` - AAA mobile movement design for staged large-scale grid movement, squad-scale command, metadata-backed tactical maps, UI feedback, mission patterns, and validation gates.
+- `WarlineCapture_Command_Offensive_Premise_Alignment.md` - proactive command-operation framing aligned to the 3D single-map direction.
+- `WarlineCapture_LargeScale_Grid_Movement_Design.md` - AAA mobile movement design for staged large-scale grid movement, squad-scale command, metadata-backed 3D operation maps, UI feedback, mission patterns, and validation gates.
+- `WarlineCapture_AAA_Mobile_Technical_Targets.md` - concrete device-tier, frame, scale, marker, readability, and validation targets for the AAA mobile promise.
 - `WarlineCapture_M01_Metric_Scale_Readability_Contract.md` - M01 tactical metric scale and readability contract for soldier/building anchors, selection treatment, movement animation, and ECS/atlas-backed public unit presentation.
-- `WarlineCapture_Level_And_Mission_Content_Plan.md` - required mission spec template, high-level Saga chapter set, Operation mission hooks, Quick Custom probe mapping, balance targets, and mission acceptance gate.
-- `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` - shared strategic/zoomed-out and tactical/zoomed-in map contract for missions, levels, FTUE, UI, audio, VFX, assets, metadata, and validation.
+- `WarlineCapture_Level_And_Mission_Content_Plan.md` - required mission spec template, high-level Campaign chapter set, Operations mission hooks, Skirmish probe mapping, balance targets, and mission acceptance gate.
 - `WarlineCapture_M01_FirstContact_Production_Contract.md` - concrete first playable slice contract for M01 First Contact, including map metadata anchors, UI command feedback, FTUE targets, asset manifest, audio/VFX requirements, and validation gates.
 - `WarlineCapture_FTUE_And_Command_Assistant_Design.md` - first-time user experience and reusable ARIA command assistant design, including Chapter 1 tutorial steps, contextual recommendations, safe control takeover, data model, UI surfaces, and validation plan.
 - `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` - implementation contract for `PREFAB-05_AssistantPanel`, M01 ARIA recommendation states, runtime data fields, Show Me / Do It / Stop behavior, player-control cancellation, `BattleHudGameplayBridge` integration, asset-register implications, and acceptance checks.
@@ -93,7 +90,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `SagaChapters/WarlineCapture_Saga_Chapter03_Hidden_Network.md` - Chapter 3 / Hidden Network high-level chapter arc.
 - `SagaChapters/WarlineCapture_Saga_Chapter04_Air_And_Armor.md` - Chapter 4 / Air And Armor high-level chapter arc.
 - `SagaChapters/WarlineCapture_Saga_Chapter05_Citywide_Command.md` - Chapter 5 / Citywide Command high-level chapter arc.
-- `WarlineCapture_Gameplay_Features_High_Level_Spec.md` - mode, objective, reward, progression, persistence, Saga, Operation, and Quick Custom roadmap.
+- `WarlineCapture_Gameplay_Features_High_Level_Spec.md` - mode, objective, reward, progression, persistence, Campaign, Operations, and Skirmish roadmap. Internal legacy naming may remain where runtime code has not yet been renamed.
 - `WarlineCapture_Gameplay_Features_Detailed_Spec.md` - code-oriented implementation plan for gameplay systems.
 - `WarlineCapture_Economy_Reward_Design.md` - canonical resources, reward types, resource strips, and popup/panel gameplay goals.
 - `WarlineCapture_Balancing_Automated_Test_Plan.md` - implementation plan for balance harness tests, opt-in probes, metrics, reports, and data sanity checks.
@@ -101,100 +98,32 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 
 ## UI/UX
 
-- `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md` - screen and popup specification with source mockup references.
-- `WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.docx` - authored document version of the UI/UX screen and popup spec.
-- `WarlineCapture_UIUX_Codex_Package/WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md` - packaged copy of the UI/UX spec beside its source JPG assets.
 - `WarlineCapture_UIUX_Gameplay_Element_Alignment.md` - gameplay contract matrix for every planned UI element, including route/effect, data source, enable rule, and locked/designed-unavailable/read-only state.
 - `WarlineCapture_Visual_Feedback_VFX_Recommendations.md` - prioritized shared UI feedback, popup motion, gameplay VFX, reward flyout, critical warning, and paired audio recommendations for responsive gameplay and UI.
-- `WarlineCapture_UIUX_Mockup_Target_Alignment_Audit.md` - current audit confirming visual target coverage and Chapter 1 UI surface coverage, with nonblocking follow-up targets.
-- `WarlineCapture_UIUX_Tactical_Strategic_Target_Update_Audit.md` - current UI target refresh audit for the strategic/zoomed-out versus tactical/zoomed-in gameplay split, including new state targets and implementation todo updates.
 - `WarlineCapture_UIUX_Implementation_High_Level_Spec.md` - app shell, routing, screen strategy, and implementation phases.
 - `WarlineCapture_UIUX_Implementation_Detailed_Spec.md` - detailed UI implementation and prefab/component plan.
 - `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md` - canonical visual-lock inventory and conversion rules.
 - `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md` - operational workflow for converting targets into layered Unity Canvas prefabs.
 - `WarlineCapture_UIUX_MainMenu_Visual_Contract.md` - active Main Menu visual contract.
-- `WarlineCapture_UIUX_MainMenu_Visual_Lock_Plan.md` - Main Menu visual-lock implementation plan.
 - `WarlineCapture_UIUX_Runtime_Optimization_Plan.md` - UI runtime optimization and validation direction.
-- `WarlineCapture_UIUX_Phase1_Immediate_Implementation_Plan.md` - Phase 1 UI implementation plan.
-- `WarlineCapture_UIUX_Phase2_Immediate_Implementation_Plan.md` - Phase 2 UI implementation plan.
-- `WarlineCapture_UIUX_Phase3_Immediate_Implementation_Plan.md` - Phase 3 UI implementation plan.
-- `WarlineCapture_UIUX_Phase4_Immediate_Implementation_Plan.md` - Phase 4 UI implementation plan.
-- `WarlineCapture_UIUX_Phase5_Immediate_Implementation_Plan.md` - Phase 5 UI implementation plan.
-- `WarlineCapture_UIUX_Phase6_Immediate_Implementation_Plan.md` - Tactical HUD continuation plan aligned with the 2D isometric gameplay direction.
-- `WarlineCapture_UIUX_Phase7_Immediate_Implementation_Plan.md` - popup implementation plan starting with Threat Alert after Pause Menu.
+- `VisualTargets/UIFlowNavigationTree.svg` - visual UI navigation tree showing Splash, Main Menu branches, game-mode paths, overlays, and safe returns.
+Historical immediate UI phase plans have been archived under `Archive/LegacyUI_2026-05-21/ImmediateImplementationPlans/`. They are implementation history only; use the active UI/UX specs and visual-lock workflow above for new 3D-aligned work.
 
 ## Visual Direction And Production Art
 
-- `WarlineCapture_2D_Isometric_Production_Direction.md` - active art-production decision and next production steps.
-- `WarlineCapture_2D_Isometric_Art_Bible.md` - macro-tile, runtime entity, metadata, sorting, color, readability, and import rules.
-- `WarlineCapture_MacroTile_Terrain_Production_Plan.md` - selected macro-tile terrain direction, metadata model, building socket rules, destruction handling, memory strategy, and step-by-step plan.
-- `WarlineCapture_2D_Isometric_Implementation_Validation_Plan.md` - implementation and Unity validation plan for macro-tile 2D isometric terrain.
-- `WarlineCapture_Tactical_Map_AI_Workflow.md` - accepted AI tactical-map workflow for close-up POT ground plates, camera scale, and separate unit/building sprite validation.
-- `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md` - shared contract separating strategic/zoomed-out map art from tactical/zoomed-in playable maps across missions, FTUE, UI, audio, VFX, metadata, and art approval.
+- `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` - active visual/gameplay production direction for 3D operation maps and command-base menu art.
 - `WarlineCapture_M01_FirstContact_Production_Contract.md` - first implementation handoff for M01 First Contact and the target contract for the UI/gameplay/art agents.
-- `WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md` - step-by-step Chapter 1 production plan for tactical maps, atlases, metadata, pathfinding, movement, selection, attack, and validation.
-- `WarlineCapture_Tactical_UI_Missing_Parts_Work_Order.md` - UI agent handoff for missing close-up tactical controls, selected entity feedback, command markers, minimap/camera jumps, build placement feedback, and Chapter 1 gameplay integration.
 - `WarlineCapture_Art_Asset_Requirements_Register.md` and `WarlineCapture_Art_Asset_Requirements_Register.csv` - consolidated approval checklist for production art, including combat, UI, Saga, store, Commander Identity, and ARIA assistant assets.
 - `VisualReferences/README.md` - visual reference folder index.
-- `VisualReferences/2DIsometricConcepts/README.md` - exploratory 2D isometric concepts.
-- `VisualReferences/2DIsometricProduction/README.md` - active ISO references and future macro-tile output folder.
-- `VisualReferences/2DIsometricProduction/MacroTilePrototype/Chapter01_2_5DReferences/README.md` - Chapter 1 2.5D macro-tile visual targets for the five First Response mission maps.
-- `VisualReferences/2DIsometricProduction/MacroTilePrototype/FictionalGulfStyle/UsableIsoMaps/README.md` - fictional Gulf large-map schema, macro-tile catalog, and first usable iso map definitions.
-- `VisualReferences/2DIsometricProduction/ISO-01_CityCommand_ProductionBreakdown.md` - ISO-01 production target breakdown.
-- `VisualReferences/2DIsometricProduction/GoldenAssets/README.md` - first golden asset batch.
-- `VisualReferences/2DIsometricProduction/UnitySpike/ISO01_TilemapSpike_Report.md` - Unity Tilemap spike result.
-- `VisualReferences/2DIsometricProduction/RuntimePrototype/README.md` - ISO-02 runtime prototype folder index.
-- `VisualReferences/2DIsometricProduction/RuntimePrototype/ISO02_RuntimePrototype_Report.md` - ISO-02 runtime prototype report for movement, sorting, overlays, captures, and performance smoke.
-- `VisualLockLayered/README.md` - layered visual-lock pack index and implementation rules for screens that need separated Unity Canvas sprites.
-- `VisualLockLayered/SCN-08_RTSBattleHUD/README.md` - layered export reference for the RTS Battle HUD.
-- `VisualLockLayered/SCN-14_StoreCommandExchange/README.md` - P0 layered regeneration package for Store / Command Exchange.
-- `VisualLockLayered/SCN-19_Armory/README.md` - final layered package for Armory ability/upgrade inspection.
-- `VisualLockLayered/POP-09_AbilityUpgradeDetail/README.md` - final layered package for reusable ability/upgrade detail popup.
-- `VisualLockLayered/SCN-05_SagaMap/README.md` - P0 layered regeneration package for Saga Map.
-- `VisualLockLayered/SCN-06_MissionBriefing/README.md` - P0 layered regeneration package for Mission Briefing.
-- `VisualLockLayered/POP-05_MissionResult/README.md` - P0 layered regeneration package for Mission Result.
+- `VisualLockLayered/README.md` - active 3D-direction layered visual-lock inventory, pack shape, and acceptance gate for new implementation-ready screen targets.
+- `VisualLock/README.md` - active scratch/reference area for temporary single-image drafts before they graduate to layered packs.
+- `Archive/LegacyVisualLock_2026-05-22/ARCHIVE_MANIFEST.md` - archive manifest for the previous VisualLock and VisualLockLayered folders.
 
 ## Screen, Popup, And Prefab Visual Locks
 
-The full visual-lock target inventory lives in `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`. Individual target notes live under `VisualLock`:
+The active target inventory now lives in `VisualLockLayered/README.md`. New screen, popup, and prefab targets should be created there with separated layers, `layer_manifest.json`, contact sheet, and README before any Unity Canvas implementation starts.
 
-- `VisualLock/SCN-01_SplashLoading/SCN-01_SplashLoading_CleanLandscape_Notes.md`
-- `VisualLock/SCN-03_CommanderProfile/SCN-03_CommanderProfile_CleanLandscape_Notes.md`
-- `VisualLock/SCN-04_SettingsAccessibility/SCN-04_SettingsAccessibility_CleanLandscape_Notes.md`
-- `VisualLock/SCN-05_SagaMap/SCN-05_SagaMap_CleanLandscape_Notes.md`
-- `VisualLock/SCN-06_MissionBriefing/SCN-06_MissionBriefing_CleanLandscape_Notes.md`
-- `VisualLock/SCN-07_LoadoutSquadPrep/SCN-07_LoadoutSquadPrep_CleanLandscape_Notes.md`
-- `VisualLock/SCN-08_RTSBattleHUD/SCN-08_RTSBattleHUD_CleanLandscape_Notes.md`
-- `VisualLock/SCN-08_RTSBattleHUD_M01_TacticalFeedback/SCN-08_RTSBattleHUD_M01_TacticalFeedback_CleanLandscape_Notes.md`
-- `VisualLock/SCN-09_BuildDrawerProduction/SCN-09_BuildDrawerProduction_CleanLandscape_Notes.md`
-- `VisualLock/SCN-09_BuildDrawer_M01DisabledState/SCN-09_BuildDrawer_M01DisabledState_CleanLandscape_Notes.md`
-- `VisualLock/SCN-10_UnitCommandWheel/SCN-10_UnitCommandWheel_CleanLandscape_Notes.md`
-- `VisualLock/SCN-10_UnitCommandWheel_TargetingState/SCN-10_UnitCommandWheel_TargetingState_CleanLandscape_Notes.md`
-- `VisualLock/SCN-11_OperationDashboard/SCN-11_OperationDashboard_CleanLandscape_Notes.md`
-- `VisualLock/SCN-12_DistrictDetailActions/SCN-12_DistrictDetailActions_CleanLandscape_Notes.md`
-- `VisualLock/SCN-13_QuickCustomGameSetup/SCN-13_QuickCustomGameSetup_CleanLandscape_Notes.md`
-- `VisualLock/SCN-19_Armory/SCN-19_Armory_CleanLandscape_Notes.md`
-- `VisualLock/POP-01_ThreatAlert/POP-01_ThreatAlert_CleanLandscape_Notes.md`
-- `VisualLock/POP-01_ThreatAlert_RoutePreviewState/POP-01_ThreatAlert_RoutePreviewState_CleanLandscape_Notes.md`
-- `VisualLock/POP-02_ConfirmRaid/POP-02_ConfirmRaid_CleanLandscape_Notes.md`
-- `VisualLock/POP-03_BuildPlacement/POP-03_BuildPlacement_CleanLandscape_Notes.md`
-- `VisualLock/POP-03_BuildPlacement_MetadataValidityState/POP-03_BuildPlacement_MetadataValidityState_CleanLandscape_Notes.md`
-- `VisualLock/POP-04_RewardUnlock/POP-04_RewardUnlock_CleanLandscape_Notes.md`
-- `VisualLock/POP-05_MissionResult/POP-05_MissionResult_CleanLandscape_Notes.md`
-- `VisualLock/POP-05_MissionResult_M01ContractState/POP-05_MissionResult_M01ContractState_CleanLandscape_Notes.md`
-- `VisualLock/POP-06_EndOfDayReport/POP-06_EndOfDayReport_CleanLandscape_Notes.md`
-- `VisualLock/POP-07_PauseOptions/POP-07_PauseOptions_CleanLandscape_Notes.md`
-- `VisualLock/POP-08_IntelReveal/POP-08_IntelReveal_CleanLandscape_Notes.md`
-- `VisualLock/POP-09_AbilityUpgradeDetail/POP-09_AbilityUpgradeDetail_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-01_ObjectiveTracker/PREFAB-01_ObjectiveTracker_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-02_SquadTray/PREFAB-02_SquadTray_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-03_BuildDrawer/PREFAB-03_BuildDrawer_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-04_AssistantButton/PREFAB-04_AssistantButton_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-05_AssistantPanel/PREFAB-05_AssistantPanel_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-06_TutorialCard/PREFAB-06_TutorialCard_CleanLandscape_Notes.md`
-- `VisualLock/PREFAB-07_TutorialHighlight/PREFAB-07_TutorialHighlight_CleanLandscape_Notes.md`
-- `VisualLock/POP-10_AssistantTakeover/POP-10_AssistantTakeover_CleanLandscape_Notes.md`
-- `VisualLock/POP-11_CommanderIdentity/POP-11_CommanderIdentity_CleanLandscape_Notes.md`
+The previous visual-lock folders were moved to `Archive/LegacyVisualLock_2026-05-22/`. They are retained for history and comparison only.
 
 ## Audio, Monetization, Marketing, And Art Generation
 
@@ -215,9 +144,11 @@ The full visual-lock target inventory lives in `WarlineCapture_UIUX_Mockup_To_Ca
 ## Alignment Rules For Future Changes
 
 - Update this index and the root `README.md` whenever a new design document is added.
-- Keep source mockup JPG references pointed at `WarlineCapture_UIUX_Codex_Package/warlinecapture_uiux_spec_assets`.
+- When older docs conflict with `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`, the 2026-05-21 3D single-map direction wins.
+- Do not create new active design work that assumes 2.5D isometric macro tiles or separate strategic/tactical maps unless PM explicitly reopens that decision.
+- Treat archived source mockup JPG references under `Archive/LegacyUI_2026-05-21/WarlineCapture_UIUX_Codex_Package` as layout/content reference only; active generated targets live under `VisualLock` or `VisualLockLayered`.
 - Keep canonical generated UI targets under `VisualLock` or `VisualLockLayered`.
 - Keep production gameplay art references under `VisualReferences`.
 - Keep combat gameplay numbers in `BalanceConfigs` and combat art/presentation references in `VisualConfigs`; do not duplicate balance values into visual files.
-- When two docs disagree, prefer the newer 2D isometric production direction for gameplay content art and the target-to-canvas workflow for UI implementation.
+- When two docs disagree, prefer `WarlineCapture_3D_SingleMap_Gameplay_Direction.md` for gameplay/art direction, `WarlineCapture_UIUX_MainMenu_Visual_Contract.md` for Main Menu visuals, and the target-to-canvas workflow for Canvas implementation mechanics.
 - Do not use generated visual references as direct implementation screenshots unless the relevant workflow document explicitly says that target is temporary runtime art.

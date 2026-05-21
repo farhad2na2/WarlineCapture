@@ -1,39 +1,27 @@
 # Visual Target Current Task
 
-Date: 2026-05-08
-Status: transferred
-Priority: ownership transferred to Art/Atlas
+Date: 2026-05-22
+Status: held
+Priority: no current Visual Target action; 3D fresh-start reset
 
-## Assignment
+## PM Reset - Read First
 
-The user clarified that Art/Atlas owns the M01 gameplay visual target mockups. This lane is no longer an active agent lane.
+Read:
 
-Do not create a separate Visual Target agent for this task.
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
 
-## Current Owner
+## Current Assignment
 
-Art/Atlas owns the active task:
+No Visual Target task is active.
 
-- `Design/AgentTasks/art-atlas_current.md`
-- `Design/AgentTasks/art-atlas_pm_message.md`
+This lane remains non-active unless PM/user explicitly reactivates it for a new 3D visual target workflow.
 
-Expected report:
+## Continue Behavior
 
-- `Design/AgentReports/2026-05-09_art-atlas_m01-ai-production-asset-pack.md`
+If asked to `continue`, report:
 
-The earlier packages were rejected and must not be used as approval sources:
+```text
+Visual Target current task is held for the 3D fresh-start reset. No action is assigned. Waiting for PM/user to dispatch a new Visual Target task.
+```
 
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-aaa-gameplay-visual-target-package.md`
-- `Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-lock-package.md`
-
-## Reference Only
-
-The gameplay visual target folder remains:
-
-- `Design/VisualTargets/Gameplay/M01_SelectedReadability/`
-- `Design/VisualLock/Gameplay/M01_ApprovedIsometricGameplay/`
-- `Design/VisualLock/Gameplay/M01_AIProductionAssets/`
-- `Assets/Game/Art/Generated/2DISO/Chapter01/M01_AIProduction/`
-
-Use these as package locations, not as a separate lane.
+Do not create visual targets, edit mockups, write reports, or route another lane unless PM/user provides a new explicit Visual Target assignment.

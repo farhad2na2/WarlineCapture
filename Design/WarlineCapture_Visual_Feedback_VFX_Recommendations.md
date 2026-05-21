@@ -6,7 +6,7 @@ Date: 2026-05-06
 
 This note recommends where WarlineCapture should add visual feedback, UI motion, and gameplay VFX to make the game feel responsive and professional. It is based on the current UI/UX specs, economy/reward design, combat catalog, audio design, visual-lock targets, and current project assets.
 
-Map-view feedback follows `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`: strategic/zoomed-out views use route, district, mission-node, minimap, and preview feedback; tactical/zoomed-in gameplay uses runtime world markers, command feedback, build footprints, combat VFX, and objective/threat anchors over the playable ground.
+Map-view feedback follows `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`: planning, briefing, minimap, deployment, threat, and battle views are UI/camera states over one 3D operation map. Feedback should bind to runtime world markers, command feedback, build footprints, combat VFX, objective anchors, and threat anchors over that same world.
 
 The goal is not to add decoration everywhere. Feedback should make a player understand:
 
@@ -24,9 +24,9 @@ The goal is not to add decoration everywhere. Feedback should make a player unde
 - Feedback contract: every visible UI element needs a feedback state in `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`.
 - Audio companion: use the event ids and assets in `WarlineCapture_Audio_Design_Guidelines.md`.
 - Existing usable audio assets include `Assets/Game/Audio/UI`, `Assets/Game/Audio/Alerts`, and `Assets/Game/Audio/Gameplay`.
-- Existing usable world FX include `Assets/PolygonMilitary/Prefabs/FX` smoke/fire/explosion prefabs.
-- 2D isometric production should add final stylized effects under `Assets/Game/Art/Generated/2DISO/VFX`.
-- Tactical map feedback anchors must resolve from runtime entities or `TacticalMapDefinition` metadata. Do not place move/attack/build/objective VFX by reading pixels from map art or by using the strategic preview image.
+- Existing usable world FX include `Assets/PolygonMilitary/Prefabs/FX` smoke/fire/explosion prefabs until final 3D operation-map FX are produced.
+- 3D operation-map production should add final stylized world and screen-space effects under the active game-art VFX folders, with ids referenced from visual config or operation-map metadata.
+- Operation-map feedback anchors must resolve from runtime entities or `OperationMapDefinition` metadata. Do not place move/attack/build/objective VFX by reading pixels from preview art or by using a separate strategic-map image.
 
 ## Priority System
 
@@ -99,7 +99,7 @@ Use audio as the confirmation layer for the visual feedback above. Visuals remai
 | P0 | Threat alert | Threat detected by warning system. | Threat feed row pulses, optional POP-01 slide-in, route line on minimap, Jump CTA pulse. | `POP-01`, `Alert.Threat.*`, red/orange warning frames. | Non-critical threats should not block simulation. Critical threats may use modal. |
 | P0 | Objective update/complete/fail | Objective progress meaningfully changes. | Objective row tick, progress fill sweep, checkmark stamp on complete, red cross/fail stamp on failure. | `Gameplay.Objective.Update`, `Gameplay.Objective.Complete`, `Gameplay.Objective.Failed`. | Avoid animating every numeric increment. |
 | P0 | Resource shortage | Build/produce/deploy fails from resource shortage. | Missing resource counter shakes and flashes red; cost row highlights missing amount. | `Gameplay.Resource.Shortage`; resource icons. | More useful than only flashing the button. |
-| P0 | Build placement | Placement mode starts, ghost moves, confirm succeeds/fails. | Valid socket cyan/green outline, invalid socket red overlay, footprint ghost opacity changes, confirm spawns construction puff. | `Gameplay.Build.PlacementStart`, `Gameplay.Build.PlaceConfirm`, `Gameplay.Build.InvalidPlacement`; `FX_Smoke_Small_01`. | Macro-tile sockets should be the visual anchor. |
+| P0 | Build placement | Placement mode starts, ghost moves, confirm succeeds/fails. | Valid operation-map socket/pad cyan-green outline, invalid socket red overlay, footprint ghost opacity changes, confirm spawns construction puff. | `Gameplay.Build.PlacementStart`, `Gameplay.Build.PlaceConfirm`, `Gameplay.Build.InvalidPlacement`; `FX_Smoke_Small_01`. | Operation-map metadata sockets should be the gameplay anchor. |
 | P1 | Reward grant | Mission result, reward claim, level-up, first-clear. | Reward tile reveal, amount count-up, then icons fly to header counters; counter bumps on arrival. | `POP-04`, `POP-05`, `Reward.Item.Reveal`, `UI.Reward.CountTick`; reward icons. | Use for Credits, Materials, Fuel, Intel, Command Authority, Rush Tickets, XP. |
 | P1 | Major unlock | New unit/building/support/gear/cosmetic unlock. | Large item pedestal reveal, gold/cyan burst, unlock card flips in, item silhouette resolves to portrait/icon. | `Reward.Unlock.Major`; unit/building/support art from visual config. | POP-04 should own this, not Mission Result directly. |
 | P1 | XP / level up | Commander XP changes or level threshold crossed. | XP bar fills with tick marks; level badge glows and bumps on threshold; optional POP-04 for milestone reward. | `UI.Progress.XP.Tick`, `Reward.Popup.Open`. | Keep count-up fast; mobile players should not wait too long. |
@@ -122,14 +122,14 @@ Use audio as the confirmation layer for the visual feedback above. Visuals remai
 
 ## Gameplay-Specific VFX Recommendations
 
-Strategic VFX are UI overlays and map pings. Tactical VFX are world overlays or entity effects. The same threat or objective can have both: a strategic route/minimap ping and a tactical world marker after the camera jumps.
+Planning VFX are UI overlays, minimap pings, and command-table markers over the same operation map. Battle VFX are world overlays or entity effects. The same threat or objective can have both: a planning/minimap ping and a world marker after the camera jumps.
 
 | Gameplay Event | Trigger Source | VFX | Asset Direction |
 |---|---|---|---|
-| Move command | `RTSSelectionSystem` accepts move target. | Cyan tap marker, dotted path pips, unit selection rings pulse once. | Lightweight 2D iso overlay sprites; avoid heavy particles. |
+| Move command | `RTSSelectionSystem` accepts move target. | Cyan tap marker, dotted path pips, unit selection rings pulse once. | Lightweight world-space decals, screen-space overlays, or line-renderer pips; avoid heavy particles. |
 | Attack command | `RTSSelectionSystem` accepts target. | Orange/red target bracket locks onto target, small line from selected group. | UI/world overlay reticle, not full-screen effect. |
 | Breach command | `BaseBreachOrderSystem` accepts valid breach. | Charge icon on wall/gate, short warning blink, small explosion/smoke at breach. | Reuse `FX_Explosion_Large_Dark_01` and `FX_Smoke_Medium_01` until 2D iso VFX exist. |
-| Drone/radar scan | `ThreatWarningRuntimeState` or support ability. | Expanding cyan radar ring, scan cone/sweep, detected marker resolves. | New 2D iso scan sprites under `Assets/Game/Art/Generated/2DISO/VFX`. |
+| Drone/radar scan | `ThreatWarningRuntimeState` or support ability. | Expanding cyan radar ring, scan cone/sweep, detected marker resolves. | 3D operation-map scan decals or screen-space command overlay, with final ids referenced by visual config. |
 | Precision/naval strike | Support ability accepted. | Targeting reticle countdown, impact flash, smoke column. | Use combat catalog `vfxCueId`; final art should be stylized top-down readable. |
 | Unit damage | Health changes meaningfully. | Floating small red damage tick or HP flash for selected units only; hit puff on important impacts. | Avoid text spam. HP bar flash is usually enough on mobile. |
 | Healing/repair | Field repair, casualty stabilize, repair convoy. | Cyan/green repair sparks, plus icon pulse, health/meter fill sweep. | Separate world VFX and UI meter feedback. |
@@ -171,7 +171,7 @@ Strategic VFX are UI overlays and map pings. Tactical VFX are world overlays or 
 3. Add reward flyouts and counter bumps for Mission Result, Reward Unlock, Commander Profile reward claims, and Operation End of Day.
 4. Add tactical world feedback markers for move, attack, invalid target, build placement, threat jump, and objective focus.
 5. Add critical combat feedback: unit under attack, base breached, building critical/destroyed, mission timer warning.
-6. Replace temporary PolygonMilitary effects with final 2D isometric VFX as the 2D iso production pipeline matures.
+6. Replace temporary PolygonMilitary effects with final 3D operation-map VFX as the production art pipeline matures.
 
 ## Accessibility And Performance Rules
 

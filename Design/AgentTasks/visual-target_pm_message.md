@@ -1,14 +1,16 @@
-# PM Message For Visual Target
+# PM Message To Visual Target
 
-Date: 2026-05-08
+Date: 2026-05-22
+Priority: hold
+Status: held
 
-Ownership transferred to Art/Atlas per user clarification.
+## Message
 
-Do not run this as a separate Visual Target lane. Art/Atlas owns:
+Visual Target is held for the 3D fresh-start reset.
 
-- `Design/AgentTasks/art-atlas_current.md`
-- `Design/AgentTasks/art-atlas_pm_message.md`
+Read:
 
-Expected report:
+- `Design/AgentReports/2026-05-22_pm_agent-task-reset-3d-fresh-start.md`
+- `Design/AgentTasks/visual-target_current.md`
 
-`Design/AgentReports/2026-05-08_art-atlas_m01-gameplay-visual-target-package.md`
+Do not continue old 2D visual target or target-lock work from report history. Wait for a new PM/user task.

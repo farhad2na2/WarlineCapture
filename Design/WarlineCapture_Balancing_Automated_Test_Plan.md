@@ -26,7 +26,7 @@ Read these in order before changing balance tests:
 7. `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`
 8. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
 9. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-10. `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+10. `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 11. `WarlineCapture_M01_FirstContact_Production_Contract.md`
 12. `Monetization/WarlineCapture_Monetization_Store_Catalog.md`
 13. `GAME_DESIGN_REFERENCE.md`
@@ -109,9 +109,9 @@ Normal build validation should exclude long-running balance probes. It may run s
 | `CombatUpgradeTrackConfig_AllAvailabilitySpecsComplete` | Combat balance config. | Every upgrade track has unlock moment, source reward types, store eligibility, apply window, runtime owner, target resolution, and validation test names. |
 | `CombatUpgradeTrackConfig_AllPlayerTracksResolveItems` | Combat balance config. | Every player-facing upgrade track has at least one resolved item id. Enemy escalation tracks resolve enemy units only. |
 | `CombatAbilityUpgradeUnlocks_AlignWithSagaOperationAndStoreRules` | Combat balance config and Saga/Operation/store docs. | Ability and upgrade unlock moments match chapter pacing and store grants remain parts-only after earn path. |
-| `ScenarioSetup_MapViewIdsResolve` | Mission configs, Chapter docs, and tactical map definitions. | Every tactical mission resolves `LevelId`, `IsoMapId`, `MapPreviewArtId`, `MinimapArtId`, camera bounds, and required metadata anchors. |
-| `TacticalMapDefinition_MetadataSupportsGameplay` | Tactical map metadata assets. | Walkable, road, blocker, spawn, route, objective, attack-target, build-zone, minimap, and camera-bound data exists for the mission's required gameplay. |
-| `M01_FirstContact_ProductionContract_ResolvesTargets` | M01 production contract, mission catalog, tactical metadata, UI element ids. | M01 ids, anchors, command reason codes, FTUE targets, preview/minimap ids, and result/reward ids resolve before the playable slice is marked ready. |
+| `ScenarioSetup_MapViewIdsResolve` | Mission configs, Chapter docs, and operation-map definitions. | Every mission resolves `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`, camera bounds, and required metadata anchors. |
+| `OperationMapDefinition_MetadataSupportsGameplay` | Operation-map metadata assets. | Walkable, road, blocker, spawn, route, objective, attack-target, build-zone, minimap projection, deployment-zone, civilian-risk, and camera-bound data exists for the mission's required gameplay. |
+| `M01_FirstContact_ProductionContract_ResolvesTargets` | M01 production contract, mission catalog, operation-map metadata, UI element ids. | M01 ids, anchors, command reason codes, FTUE targets, operation-map camera/minimap ids, and result/reward ids resolve before the playable slice is marked ready. |
 
 ### Opt-In Probe Scenarios To Implement
 
@@ -119,11 +119,11 @@ Normal build validation should exclude long-running balance probes. It may run s
 |---|---|---|
 | `QuickCustom_Default_Medium` | Existing implemented probe. | Baseline Quick Custom configuration, runtime stats, report writer. |
 | `QuickCustom_Hard_Swarm` | Implemented `QuickGameConfig` with Swarm, Hard, high pressure, frequent attacks. | Casualties, production pressure, aggressive swarm configuration sanity. |
-| `Saga_Chapter1_Mission1` | `saga.ch01.m01.first_contact` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Tutorial length, first contact timing, no-loss star, first-clear rewards. |
-| `Saga_Chapter1_Mission2` | `saga.ch01.m02.establish_base` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Build timing, production timing, resource float, first threat. |
-| `Saga_Chapter1_Mission3` | `saga.ch01.m03.radar_warning` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Warning lead time, convoy timing, base damage, losses. |
-| `Saga_Chapter1_Mission4` | `saga.ch01.m04.airlift` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Transport timing, extraction result, Fuel spend, transport survival. |
-| `Saga_Chapter1_Mission5` | `saga.ch01.m05.breach_assault` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Breach timing, core destruction, vehicle/support survival, star distribution. |
+| `Campaign_Chapter1_Mission1` | `saga.ch01.m01.first_contact` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Tutorial length, first contact timing, no-loss star, first-clear rewards. |
+| `Campaign_Chapter1_Mission2` | `saga.ch01.m02.establish_base` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Build timing, production timing, resource float, first threat. |
+| `Campaign_Chapter1_Mission3` | `saga.ch01.m03.radar_warning` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Warning lead time, convoy timing, base damage, losses. |
+| `Campaign_Chapter1_Mission4` | `saga.ch01.m04.airlift` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Transport timing, extraction result, Fuel spend, transport survival. |
+| `Campaign_Chapter1_Mission5` | `saga.ch01.m05.breach_assault` from `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md`. | Breach timing, core destruction, vehicle/support survival, star distribution. |
 | `Operation_Raid_MediumIntel` | Operation action simulation. | Intel spend, raid confidence, trust/security risk. |
 | `BaseDefense_HeavyAir` | Encounter template. | Warning lead time, anti-air readiness, base damage. |
 | `EconomyRush_FastBuild` | Quick Custom/economy tuning. | Resource income, spend, float, production queue pressure. |

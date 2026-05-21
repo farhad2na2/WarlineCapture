@@ -9,16 +9,16 @@ This document defines the audio plan for WarlineCapture as a AAA mobile RTS. It 
 Primary source documents:
 
 - `Design/WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
-- `Design/WarlineCapture_UIUX_Screen_Popup_Implementation_Spec.md`
+- `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 - `Design/WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-- `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`
+- `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/GAME_DESIGN_REFERENCE.md`
 
-WarlineCapture is a mobile-first, grid-based military/civilian RTS with Saga Campaign, Persistent City Operation, and Quick Custom Game modes. Audio must support tactical clarity, responsiveness, and premium polish without overwhelming phone speakers or masking important player feedback.
+WarlineCapture is a mobile-first, grid-based military/civilian RTS with Campaign, Operations, and Skirmish modes. Audio must support tactical clarity, responsiveness, and premium polish without overwhelming phone speakers or masking important player feedback.
 
 ## Audio Direction
 
-WarlineCapture should sound like a clean near-future command interface operating over a grounded low-poly military battlefield. The audio identity is tactical, controlled, modern, and readable.
+WarlineCapture should sound like a clean near-future command interface operating over a grounded 3D military/civilian operation map. The audio identity is tactical, controlled, modern, and readable.
 
 Core pillars:
 
@@ -28,21 +28,21 @@ Core pillars:
 - **Layered urgency:** Music, ambience, UI, and warnings should escalate by game state instead of always sounding intense.
 - **Accessibility first:** Every critical audio cue must have a visual equivalent. Audio can reinforce gameplay, but it must not be the only source of information.
 
-## Strategic And Tactical Map Audio Rules
+## 3D Operation-Map Audio Rules
 
-Audio must follow the strategic/tactical map split in `WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`.
+Audio must follow the 3D single-map direction in `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`. Planning, briefing, minimap, deployment, threat, and battle views are UI/camera states over one operation map.
 
 | Map Context | Audio Role | Examples |
 |---|---|---|
-| Strategic / zoomed-out | Planning, mission context, district pressure, route preview, menu readability. | Saga node select, mission briefing preview, Operation district warning, minimap route ping. |
-| Tactical / zoomed-in | Immediate command feedback, combat readability, build placement, objective changes, threat response. | Unit select, move confirm, attack confirm, invalid target, build valid/invalid, objective complete, unit under attack. |
+| Planning / briefing / minimap | Planning, mission context, district pressure, route preview, menu readability. | Campaign node select, mission briefing preview, Operations district warning, minimap route ping. |
+| Battle / deployment camera | Immediate command feedback, combat readability, build placement, objective changes, threat response. | Unit select, move confirm, attack confirm, invalid target, build valid/invalid, objective complete, unit under attack. |
 
 Rules:
 
-- Strategic map audio should stay restrained and UI-led; it should not sound like combat is already happening.
-- Tactical map audio may use world-positioned or camera-relative cues when the event has a runtime entity or metadata anchor.
-- Minimap, threat, and objective jumps should play a short focus cue only when the camera actually moves inside tactical map bounds.
-- ARIA tutorial voice or sound cues must pair with visible highlights and must not be the only way to find a tactical target.
+- Planning and briefing audio should stay restrained and UI-led; it should not sound like combat is already happening.
+- Battle camera audio may use world-positioned or camera-relative cues when the event has a runtime entity or metadata anchor.
+- Minimap, threat, and objective jumps should play a short focus cue only when the camera actually moves inside operation-map bounds.
+- ARIA tutorial voice or sound cues must pair with visible highlights and must not be the only way to find an operation-map target.
 
 ## Audio Buses
 
@@ -237,12 +237,12 @@ Asset production note: these assets may be generated after first implementation.
 | Back/apply | `UI.Screen.Back` | `ui_screen_back_01.wav` | UI | Medium | Save before route. |
 | Reset/defaults confirmation | `UI.Settings.Reset` | `ui_settings_reset_01.wav` | UI | High | Use only after confirm, not on opening confirm dialog. |
 
-### SCN-05 - Saga Map
+### SCN-05 - Campaign Map
 
 | Location / trigger | Event id | Asset | Bus | Priority | Playback rule |
 |---|---|---|---|---|---|
-| Scene enter | `Music.SagaMap.Loop` | `music_saga_map_loop_01.wav` | Music | Low | Strategic, map-like, less intense than battle. |
-| Map ambience | `Ambience.CityStrategic.Loop` | `amb_city_strategic_loop_01.wav` | Ambience | Low | Low wind, distant city, distant rotor optional. |
+| Scene enter | `Music.CampaignMap.Loop` | `music_campaign_map_loop_01.wav` | Music | Low | Planning-focused, map-like, less intense than battle. Legacy builds may alias `Music.SagaMap.Loop`. |
+| Map ambience | `Ambience.CityPlanning.Loop` | `amb_city_planning_loop_01.wav` | Ambience | Low | Low wind, distant city, distant rotor optional. Legacy builds may alias `Ambience.CityStrategic.Loop`. |
 | Chapter dropdown | `UI.Dropdown.Open` / `UI.Dropdown.Select` | Shared | UI | Medium | One-shot. |
 | Mission node selected | `UI.Card.MissionNode.Select` | `ui_card_mission_node_select_01.wav` | UI | Medium | Add small map ping. |
 | Locked mission node | `UI.Card.Locked` | `ui_card_locked_01.wav` | UI | Medium | One-shot. |
@@ -322,11 +322,11 @@ Asset production note: these assets may be generated after first implementation.
 | Extract/Rope Drop selected | `Gameplay.Transport.RopeDrop.Command` | `game_transport_ropedrop_command_01.wav` | SFX | High | Use only if command valid. |
 | Disabled segment tapped | `Gameplay.Command.Invalid` | `game_command_invalid_01.wav` | SFX | High | Same invalid command cue. |
 
-### SCN-11 - Persistent Operation Dashboard
+### SCN-11 - Operations Dashboard
 
 | Location / trigger | Event id | Asset | Bus | Priority | Playback rule |
 |---|---|---|---|---|---|
-| Scene enter | `Music.Operation.Loop` | `music_operation_loop_01.wav` | Music | Low | Strategic tension, slower than Saga Map. |
+| Scene enter | `Music.Operation.Loop` | `music_operation_loop_01.wav` | Music | Low | Operations tension, slower than Campaign Map. |
 | Strategic ambience | `Ambience.Operation.RoomLoop` | `amb_operation_room_loop_01.wav` | Ambience | Low | Subtle command room, radio, distant city. |
 | District selected | `UI.Card.District.Select` | `ui_card_district_select_01.wav` | UI | Medium | Map ping plus card select. |
 | Intel Report button | `UI.Intel.Panel.Focus` | `ui_intel_panel_focus_01.wav` | UI | Medium | One-shot. |
@@ -348,7 +348,7 @@ Asset production note: these assets may be generated after first implementation.
 | Evacuate accepted | `Operation.Action.Evacuate` | `game_operation_action_evacuate_01.wav` | SFX | High | Transport dispatch cue. |
 | Build Outpost accepted | `Operation.Action.BuildOutpost` | `game_operation_action_build_outpost_01.wav` | SFX | High | Construction confirm. |
 
-### SCN-13 - Quick Custom Game Setup
+### SCN-13 - Skirmish Setup
 
 | Location / trigger | Event id | Asset | Bus | Priority | Playback rule |
 |---|---|---|---|---|---|
@@ -524,7 +524,7 @@ Asset production note: these assets may be generated after first implementation.
 | `Mission.Victory` | Win condition achieved | `music_stinger_victory_01.wav` | Critical | Stop battle intensity after stinger tail or crossfade. |
 | `Mission.Defeat` | Loss condition achieved | `music_stinger_defeat_01.wav` | Critical | Stop/duck battle audio. |
 
-### Persistent Operation and Intel
+### Operations and Intel
 
 | Event id | Trigger | Asset | Priority | Rule |
 |---|---|---|---|---|
@@ -583,8 +583,8 @@ Music should be layered by mode and intensity. Do not create one loud battle loo
 |---|---|---|---|
 | `Music.Splash.Start` | `music_splash_intro_01.wav` | App launch | 2-4 s logo sting. |
 | `Music.Menu.Loop` | `music_menu_loop_01.wav` | Main Menu, Profile | 60-120 s loop, confident and clean. |
-| `Music.SagaMap.Loop` | `music_saga_map_loop_01.wav` | Saga Map | Strategic exploration. |
-| `Music.Operation.Loop` | `music_operation_loop_01.wav` | Persistent Operation | Slower, investigative, city command room tension. |
+| `Music.CampaignMap.Loop` | `music_campaign_map_loop_01.wav` | Campaign Map | Planning and chapter progression. Legacy builds may alias `Music.SagaMap.Loop`. |
+| `Music.Operation.Loop` | `music_operation_loop_01.wav` | Operations | Slower, investigative, city command room tension. |
 | `Music.Briefing.Loop` | `music_briefing_loop_01.wav` | Briefing/Loadout/Custom Setup | Planning tension, light percussion. |
 | `Music.Battle.Intensity01` | `music_battle_intensity_01_loop.wav` | Low combat | Sparse pulse, tactical bed. |
 | `Music.Battle.Intensity02` | `music_battle_intensity_02_loop.wav` | Active combat | More percussion and low rhythm. |
@@ -605,7 +605,7 @@ Music intensity triggers:
 | Event id | Asset | Use | Notes |
 |---|---|---|---|
 | `Ambience.Base.DistantLoop` | `amb_base_distant_loop_01.wav` | Splash/loading | Distant base, wind, distant rotors. |
-| `Ambience.CityStrategic.Loop` | `amb_city_strategic_loop_01.wav` | Saga Map | Soft city, distant traffic, wind. |
+| `Ambience.CityPlanning.Loop` | `amb_city_planning_loop_01.wav` | Campaign Map / planning camera | Soft city, distant traffic, wind. Legacy builds may alias `Ambience.CityStrategic.Loop`. |
 | `Ambience.Operation.RoomLoop` | `amb_operation_room_loop_01.wav` | Operation Dashboard | Command room, radio static, low electronics. |
 | `Ambience.Battlefield.Loop` | `amb_battlefield_loop_01.wav` | MatchScene | Wind, distant artillery, distant traffic/rotors. |
 | `Ambience.Intel.ScanLoop` | `amb_intel_scan_loop_01.wav` | Intel/scan overlays | Subtle data-room loop while popup is visible. |
@@ -909,7 +909,7 @@ Before shipping an audio pass:
 
 ### Milestone 3 - Strategic Modes and Progression
 
-- Wire Saga Map, Mission Briefing, Loadout, Operation Dashboard, District Detail, Quick Custom Setup.
+- Wire Campaign Map, Mission Briefing, Loadout, Operations Dashboard, District Detail, and Skirmish Setup.
 - Wire reward/unlock, mission result, end-of-day report, and intel reveal popups.
 - Add operation and intel ambience/music layers.
 

@@ -16,58 +16,60 @@ Before wiring player-facing command, reward, warning, damage, popup, or invalid-
 
 Before adding FTUE, contextual help, assistant recommendations, or any assistant-controlled player action, read `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`. Tutorial and assistant behavior must be data-driven, interruptible, and routed through typed command intents rather than arbitrary screen-coordinate automation.
 
-Before adding map selection, tactical map loading, minimap behavior, camera jumps, mission previews, or level metadata, read `Design/WarlineCapture_Strategic_Tactical_Map_Gameplay_Alignment.md`. Strategic/zoomed-out map art is not the playable ground; tactical/zoomed-in map packages are the source for combat-scale validation.
+Before adding map selection, operation-map loading, minimap behavior, camera jumps, mission previews, or level metadata, read `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`. Planning, briefing, minimap, deployment, threat, and battle views are UI/camera states over the same 3D operation map.
 
 Terminology for implementation:
 
 - `MissionConfig` is the player-facing authored content unit.
 - `ScenarioSetup` is the tactical configuration used by the mission.
-- `Level / Map` is the reusable battlefield layout referenced by `ScenarioSetup`.
+- `OperationMap` is the reusable 3D battlefield layout referenced by `ScenarioSetup`.
 - Do not use `Level` as a synonym for `Mission` in ids, UI, tests, or data paths.
 
-The active visual production direction is premium 2D isometric mobile RTS. Gameplay implementation should preserve tactical readability at the camera scale validated in `Design/VisualReferences/2DIsometricProduction/UnitySpike/ISO01_TilemapSpike_Report.md`.
+The active visual production direction is full 3D single-map mobile RTS. Gameplay implementation should preserve tactical readability across planning, minimap, deployment, and battle camera states validated against the selected 3D operation map.
 
-For Chapter 1 tactical-map production, use `Design/WarlineCapture_Chapter01_Tactical_Production_Implementation_Plan.md` as the bridge between ScenarioSetup IDs, `IsoMapId`, POT ground plates, sprite atlases, map metadata, current grid/pathfinding buffers, selection, movement, attack, and validation scenes.
+For Chapter 1 operation-map production, use `Design/WarlineCapture_Level_And_Mission_Content_Plan.md`, `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`, and the dedicated chapter docs as the bridge between ScenarioSetup IDs, OperationMap IDs, map metadata, current grid/pathfinding buffers, selection, movement, attack, and validation scenes.
 
 Every implemented visible UI element must also satisfy `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`. A gameplay surface without a live runtime system must expose a clear `Locked`, `DesignedUnavailable`, `DevOnly`, or `ReadOnly` state instead of behaving like a silent inert element.
 
-## 2D Isometric Implementation Rules
+## 3D Operation-Map Implementation Rules
 
-- Keep gameplay systems data-driven and visual-presentation agnostic. Do not add new mode/objective/encounter logic that depends on old 3D scene objects, desert/Synty prefabs, or camera-specific assumptions.
-- Scenario and mission configs should carry art/runtime references by ID, such as `IsoMapId`, `TerrainSetId`, `MapPreviewArtId`, `MinimapArtId`, and optional `DesignTargetSceneId`.
-- `MapPreviewArtId` and `MinimapArtId` are strategic/navigation assets. `IsoMapId` resolves the playable tactical map package and its `TacticalMapDefinition`.
-- Runtime gameplay should consume the existing simulation systems first, then let the active battlefield presentation resolve those IDs to 2D isometric Tilemap/sprite content.
-- Spawn positions, objective target areas, command ranges, camera defaults, minimap scale, and enemy wave paths must be validated for 2D isometric readability.
-- Manual art validation belongs to the 2D isometric pipeline under `Design/VisualReferences/2DIsometricProduction` and `Assets/Game/Art/Generated/2DISO`. Normal gameplay tests should validate data contracts and deterministic behavior, not pixel art quality.
+- Keep gameplay systems data-driven and visual-presentation agnostic. Do not add new mode/objective/encounter logic that depends on archived 2D map packages, desert/Synty prefabs, or camera-specific assumptions.
+- Scenario and mission configs should carry art/runtime references by ID, such as `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`, and optional `DesignTargetSceneId`.
+- Planning, briefing, minimap, deployment, threat, and battle views are camera/UI states over one `OperationMapDefinition`; they are not separate map products.
+- Runtime gameplay should consume the existing simulation systems first, then let the active battlefield presentation resolve those IDs to 3D operation-map scenes, metadata, entity presentation, markers, and camera states.
+- Spawn positions, objective target areas, command ranges, camera defaults, minimap scale, civilian-risk areas, and enemy wave paths must be validated for 3D mobile readability.
+- Manual art validation belongs to the 3D operation-map validation path and prefab-catalog presentation work. Normal gameplay tests should validate data contracts and deterministic behavior, not final art quality.
 
-## Macro-Tile Terrain Implementation Rules
+## 3D Operation-Map Metadata Rules
 
-The active terrain direction is large authored macro tiles with metadata. Gameplay code should not depend on terrain pixels or tiny modular road tiles.
+The active terrain direction is large authored 3D operation maps with metadata. Gameplay code should not depend on visual mesh/material details.
 
 Add or extend map data around these concepts:
 
-- `TacticalMapDefinition`
-- `MapPreviewArtId`
-- `MinimapArtId`
-- `MacroTileId`
-- `MacroTileDefinition`
-- `MacroTileConnector`
-- `MacroTileWalkablePolygon`
-- `MacroTileBlockerPolygon`
-- `MacroTileRoadGraphNode`
-- `MacroTileRoadGraphEdge`
-- `MacroTileBuildingSocket`
-- `MacroTileSpawnSocket`
-- `MacroTileObjectiveSocket`
+- `OperationMapDefinition`
+- `OperationMapId`
+- `PlanningCameraId`
+- `MinimapProjectionId`
+- `OperationMapRouteAnchor`
+- `OperationMapWalkableZone`
+- `OperationMapBlockerVolume`
+- `OperationMapRoadGraphNode`
+- `OperationMapRoadGraphEdge`
+- `OperationMapBuildingZone`
+- `OperationMapDeploymentZone`
+- `OperationMapSpawnAnchor`
+- `OperationMapObjectiveAnchor`
+- `OperationMapCivilianRiskZone`
+- `OperationMapCameraBounds`
 
 Runtime behavior:
 
 - Build the pathfinding/grid input from metadata.
 - Build minimap data from metadata.
-- Clamp minimap, threat, objective, and tutorial camera jumps to tactical map camera bounds.
+- Clamp minimap, threat, objective, and tutorial camera jumps to operation-map camera bounds.
 - Restrict production building placement to sockets/pads.
 - Keep gameplay buildings as runtime entities placed on sockets.
-- Swap runtime building sprites/states for damage/destruction.
+- Swap runtime building models/states for damage/destruction.
 - Use scorch/rubble decals and VFX above terrain after destruction.
 - Never require the background art to change for building destruction.
 
@@ -75,18 +77,12 @@ Runtime behavior:
 
 Use these current systems instead of duplicating behavior:
 
-- `WarlineCaptureIso2DSpikeBuilder`
-  - Manual editor-only validation path for generated 2D isometric golden assets.
-  - Builds `Assets/Game/Scenes/DesignTargets/ISO01_CityCommand_TilemapSpike.unity`.
-  - Imports sprites under `Assets/Game/Art/Generated/2DISO`.
-  - This is a design validation utility, not Jenkins/build validation.
-
 - `GameBootstrap`
   - Currently starts the tactical simulation through `BeginGameplay()`.
   - Seeds AI economies, control, build plans, production plans, squad plans, targeting, and runtime systems.
 
 - `AISettingsRuntimeState`
-  - Current global Quick Custom-style AI tuning state.
+  - Current global Skirmish/QuickCustom-style AI tuning state.
   - Supports difficulty, starting money, income, build speed, production speed, attack group size/frequency, aggression, expansion, target priority, player auto mode, and enemy count.
 
 - `GameRuntimeStats`
@@ -99,7 +95,7 @@ Use these current systems instead of duplicating behavior:
 
 - `BuildingPlacementSystem`
   - Owns building placement, production, faction resource snapshots, runtime building data, and camp request flows.
-  - Should be adapted to validate macro-tile sockets/pads instead of relying on arbitrary visual placement.
+  - Should be adapted to validate operation-map building zones/sockets/pads instead of relying on arbitrary visual placement.
 
 - `RTSSelectionSystem`
   - Owns tactical unit selection, focused unit data, attack/move/transport command paths.
@@ -231,7 +227,7 @@ Fields:
 - `string MissionId`
 - `string SourceRoute`
 - `QuickGameConfig QuickGame`
-- `SagaMissionLaunchData Saga`
+- `CampaignMissionLaunchData Campaign`
 - `OperationMissionLaunchData Operation`
 - `PlayerLoadoutSetup PlayerLoadout`
 - `ScenarioSetup Scenario`
@@ -239,15 +235,15 @@ Fields:
 Responsibility:
 
 - Be the one object passed from UI/mode screens into `GameBootstrap`.
-- Avoid global special cases for Saga vs Quick vs Operation.
+- Avoid global special cases for Campaign vs Skirmish vs Operations.
 
 ### ScenarioSetup
 
 Fields:
 
 - Scenario id/name.
-- Map/city seed.
-- Grid size or map preset.
+- Operation-map seed or authored operation-map id.
+- Grid metadata profile, route graph id, or authored map preset.
 - Start time/day.
 - Player faction setup.
 - Enemy faction setup list.
@@ -258,11 +254,11 @@ Fields:
 - Objective configs.
 - Reward configs.
 - Encounter configs.
-- 2D isometric map/runtime ids:
-  - `IsoMapId`
+- 3D operation-map/runtime ids:
+  - `OperationMapId`
   - `TerrainSetId`
-  - `MapPreviewArtId`
-  - `MinimapArtId`
+  - `PlanningCameraId`
+  - `MinimapProjectionId`
   - `DesignTargetSceneId`
 
 ### Integration With GameBootstrap
@@ -287,7 +283,7 @@ Add:
 - `ScenarioSetupLoader_LoadsDefaultScenario`
 - `GameBootstrap_BeginGameplayWithoutPayloadUsesDefaultQuickGame`
 
-## Phase 2 - Quick Custom Game Gameplay
+## Phase 2 - Skirmish Gameplay
 
 ### New Types
 
@@ -315,10 +311,9 @@ Create:
 - Target priority.
 - Player auto mode.
 - Map seed.
-- Map preset.
-- 2D isometric map preset or `IsoMapId`.
-- Map preview art id.
-- Minimap art id.
+- Operation-map preset or `OperationMapId`.
+- Planning camera id.
+- Minimap projection id.
 - Starting resources.
 - Win condition.
 - Match length minutes.
@@ -343,7 +338,7 @@ On launch:
 - Set `AISettingsRuntimeState.PlayerAutoAIEnabled`.
 - Set `AISettingsRuntimeState.EnemyAICount`.
 
-Then create `GameLaunchPayload` with mode `QuickCustom`.
+Then create `GameLaunchPayload` with player-facing mode `Skirmish`. Runtime internals may continue to map this through existing `QuickCustom` enum or route names until the code migration is complete.
 
 ### First Supported Win Conditions
 
@@ -585,7 +580,7 @@ public enum RewardType
     GearModule,
     Cosmetic,
     OperationSupply,
-    SagaStars,
+    CampaignStars, // May map to existing SagaStars runtime enum/storage until migration.
     OperationTrust,
     OperationSecurity,
     OperationIntel,
@@ -625,18 +620,18 @@ Start with:
 - Commander XP.
 - Credits.
 - Unit unlock.
-- Saga stars.
+- Campaign stars. Existing reward enum names such as `SagaStars` may remain as storage/runtime compatibility until renamed.
 
 Operation-specific rewards are `OperationSupply`, `OperationTrust`, `OperationSecurity`, `OperationIntel`, and `OperationInfrastructure` as defined in `WarlineCapture_Economy_Reward_Design.md`.
 
 Current implementation note:
 
 - `RewardType`, `RewardItemConfig`, `RewardConfig`, `RewardGrantResult`, and `RewardService` cover the first reward-service slice.
-- `RewardService.GrantMissionRewards` updates profile Commander XP, derived commander level, Credits, wallet resources covered by the initial profile schema, unique unlock arrays, BlueprintParts duplicate fallback entries, profile win/loss counters, account combat totals, Saga mission progress, saved operation supplies, and targeted Operation district trust/security/intel/infrastructure rewards.
+- `RewardService.GrantMissionRewards` updates profile Commander XP, derived commander level, Credits, wallet resources covered by the initial profile schema, unique unlock arrays, BlueprintParts duplicate fallback entries, profile win/loss counters, account combat totals, Campaign mission progress, saved operation supplies, and targeted Operation district trust/security/intel/infrastructure rewards.
 - Mission Briefing and Mission Result reward rows now format Operation rewards with readable labels and district targets so operation mission rewards can be previewed and reviewed without custom UI text per mission.
 - Every Chapter 1 mission now includes an authored Operation outcome reward: operation supply plus targeted North Bridge, Old Market, or Port Breach trust/security/intel/infrastructure gains. Breach Assault remains the Port Breach stabilization hook used by the Operation raid flow.
-- Operation-launched mission sessions prioritize Operation reward rows in briefing/result views so the player sees district consequences within the limited reward-card surfaces; Saga-launched sessions keep the default reward ordering.
-- Chapter 1 mission configs now include reward configs. Saga Map node info, node locked/available state, and Mission Briefing previews bind from this mission data plus local Saga progress, and the current mission completion flow grants rewards through `SaveService` before showing the mission result popup with the granted reward rows.
+- Operation-launched mission sessions prioritize Operation reward rows in briefing/result views so the player sees district consequences within the limited reward-card surfaces; Campaign-launched sessions keep the default reward ordering.
+- Chapter 1 mission configs now include reward configs. Campaign Map node info, node locked/available state, and Mission Briefing previews bind from this mission data plus local Campaign progress, and the current mission completion flow grants rewards through `SaveService` before showing the mission result popup with the granted reward rows.
 - Remaining reward-service work: authored data assets under `Assets/Game/Configs/Rewards`, richer item-specific inventory models, and POP-04 unlock reveal chaining.
 
 Current progression implementation note:
@@ -653,7 +648,7 @@ Add:
 - `RewardService_GrantsXpAndCredits`
 - `RewardService_DoesNotDuplicateFirstClearUnlock`
 - `RewardService_RequiresStarThreshold`
-- `RewardService_UpdatesSagaProgress`
+- `RewardService_UpdatesCampaignProgress`
 
 ## Phase 7 - Progression and Profile
 
@@ -726,10 +721,10 @@ Persist:
 
 - Save version.
 - Player profile.
-- Saga progress.
+- Campaign progress.
 - Operation state.
 - Settings.
-- Last quick game config.
+- Last Skirmish setup. Existing `quickgame.json` may remain as the compatibility filename until save migration.
 
 Do not persist:
 
@@ -762,34 +757,34 @@ Combined save files are a migration option after the initial separate files are 
 Add:
 
 - `SaveService_ProfileRoundTrip`
-- `SaveService_SagaRoundTrip`
+- `SaveService_CampaignProgressRoundTrip`
 - `SaveService_OperationRoundTrip`
 - `SaveService_MissingFileCreatesDefault`
 - `SaveService_VersionMigrationKeepsKnownFields`
 
-## Phase 9 - Saga Campaign
+## Phase 9 - Campaign
 
 ### New Types
 
 Create:
 
-- `SagaProgress`
+- `CampaignProgress` or existing `SagaProgress` compatibility storage
 - `ChapterConfig`
-- `SagaMissionNodeConfig`
-- `SagaMissionLaunchData`
-- `SagaProgressService`
-- `SagaUnlockService`
+- `CampaignMissionNodeConfig` or existing `SagaMissionNodeConfig` compatibility config
+- `CampaignMissionLaunchData` or existing `SagaMissionLaunchData` compatibility payload
+- `CampaignProgressService` or existing `SagaProgressService` compatibility wrapper
+- `CampaignUnlockService` or existing `SagaUnlockService` compatibility wrapper
 
 ### ChapterConfig Fields
 
 - Chapter id.
 - Chapter title key.
 - Map art reference.
-- 2D isometric map/region art reference.
+- Planning camera / operation-map preview reference.
 - Mission nodes.
 - Chapter reward thresholds.
 
-### SagaMissionNodeConfig Fields
+### CampaignMissionNodeConfig Fields
 
 - Mission id.
 - Mission archetype from `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`.
@@ -814,28 +809,28 @@ Create:
 Use `WarlineCapture_Level_And_Mission_Content_Plan.md` for shared content rules and `SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md` as the source of truth for Chapter 1 mission-by-mission authoring. Together they define:
 
 - The required mission spec template.
-- The high-level Saga chapter set.
+- The high-level Campaign chapter set.
 - The Chapter 1 mission matrix.
 - Detailed Chapter 1 specs for `saga.ch01.m01.first_contact` through `saga.ch01.m05.breach_assault`.
 - Operation mission hooks.
-- Quick Custom probe mapping.
+- Skirmish probe mapping.
 - Mission acceptance gate.
 
 ### Tests
 
 Add:
 
-- `SagaProgress_FirstMissionUnlockedByDefault`
-- `SagaProgress_CompletionUnlocksNextMission`
-- `SagaProgress_StoresBestStarCount`
-- `SagaMissionLaunch_BuildsPayloadFromNode`
+- `CampaignProgress_FirstMissionUnlockedByDefault`
+- `CampaignProgress_CompletionUnlocksNextMission`
+- `CampaignProgress_StoresBestStarCount`
+- `CampaignMissionLaunch_BuildsPayloadFromNode`
 
 Current implementation note:
 
-- `SagaMapScreenController` applies the initial Chapter 1 unlock rule in the UI layer: the first two missions are available, later missions unlock after the required previous mission is completed in `SagaProgressStore`.
+- `CampaignMapScreenController` applies the initial Chapter 1 unlock rule in the UI layer. Existing `SagaMapScreenController` / `SagaProgressStore` names may remain as runtime compatibility until renamed.
 - Locked mission nodes remain selectable for their info panel but do not start a mission. Unlocked mission nodes update selected state, seed `WarlineCaptureMissionSession`, and route toward Mission Briefing when a shell router is present.
 
-## Phase 10 - Persistent Operation
+## Phase 10 - Operations
 
 ### New Types
 
@@ -1185,11 +1180,11 @@ Create deterministic named probes:
 
 - `QuickCustom_Default_Medium`
 - `QuickCustom_Hard_Swarm`
-- `Saga_Chapter1_Mission1`
-- `Saga_Chapter1_Mission2`
-- `Saga_Chapter1_Mission3`
-- `Saga_Chapter1_Mission4`
-- `Saga_Chapter1_Mission5`
+- `Campaign_Chapter1_Mission1`
+- `Campaign_Chapter1_Mission2`
+- `Campaign_Chapter1_Mission3`
+- `Campaign_Chapter1_Mission4`
+- `Campaign_Chapter1_Mission5`
 - `Operation_Raid_MediumIntel`
 - `BaseDefense_HeavyAir`
 - `EconomyRush_FastBuild`
@@ -1280,7 +1275,7 @@ Build this first because it directly supports the planned UI/UX work:
 
 ### Deliverable
 
-Quick Custom gameplay launch with objective/result skeleton.
+Skirmish gameplay launch with objective/result skeleton.
 
 ### Scope
 
@@ -1288,7 +1283,7 @@ Quick Custom gameplay launch with objective/result skeleton.
 - `GameLaunchPayload`
 - `ScenarioSetup`
 - default quick scenario loader.
-- default 2D isometric scenario/map ids in the launch payload.
+- default 3D operation-map ids, planning camera id, and minimap projection id in the launch payload.
 - `BeginGameplay(GameLaunchPayload payload)` overload.
 - objective config with Sandbox and Destroy All Enemies support.
 - result builder for Victory/Defeat/Abandoned.
@@ -1296,9 +1291,9 @@ Quick Custom gameplay launch with objective/result skeleton.
 ### Acceptance Criteria
 
 - Existing direct play still works.
-- Quick Custom UI can create a config and launch current gameplay.
-- AI settings from Quick Custom apply to the match.
-- The payload includes stable 2D isometric map/terrain/minimap/preview ids even before the runtime art swap is complete.
+- Skirmish UI can create a config and launch current gameplay.
+- AI settings from Skirmish apply to the match.
+- The payload includes stable operation-map, terrain, planning-camera, and minimap-projection ids even before every final art pass is complete.
 - Objective manager can run in Sandbox mode without ending the match.
 - Destroy All Enemies objective can produce victory in a unit test.
 - Full EditMode tests pass.
@@ -1321,18 +1316,18 @@ Mission results, stars, and rewards.
 
 - Match result popup can show real data.
 - Rewards grant Commander XP, Credits, and unlocks.
-- Saga progress can store stars.
+- Campaign progress can store best mission stars. Existing `SagaProgress` storage can remain as the compatibility backing store until renamed.
 - Save/load roundtrip works.
 
 ## Third Coding Milestone
 
 ### Deliverable
 
-Saga Chapter 1 playable loop.
+Campaign Chapter 1 playable loop.
 
 ### Scope
 
-- Saga progress.
+- Campaign progress, using `SagaProgress` only as a compatibility wrapper where needed.
 - Chapter and mission node configs.
 - Mission briefing data.
 - Loadout payload.
@@ -1349,7 +1344,7 @@ Saga Chapter 1 playable loop.
 
 ### Deliverable
 
-Persistent Operation prototype.
+Operations prototype.
 
 ### Scope
 
@@ -1363,7 +1358,7 @@ Persistent Operation prototype.
 
 - Operation save/load persists day and district values.
 - District actions have visible and tested consequences.
-- Raid can route to tactical match.
+- Raid can route to a 3D operation-map match.
 - Result can update district state.
 
 ## Risks and Guardrails
@@ -1374,4 +1369,4 @@ Persistent Operation prototype.
 - Avoid hidden win/loss rules. Objectives should be visible in briefing and HUD.
 - Avoid reward duplication. First-clear and repeat rewards must be explicit.
 - Avoid unexpected test logs. Gameplay diagnostics should be opt-in or covered by `LogAssert`.
-- Keep Quick Custom as the first gameplay mode because it uses existing systems and is the lowest-risk bridge from UI to simulation.
+- Keep Skirmish as the first gameplay mode because it uses existing systems and is the lowest-risk bridge from UI to simulation. Existing QuickCustom runtime names can remain behind the player-facing Skirmish label until migration.

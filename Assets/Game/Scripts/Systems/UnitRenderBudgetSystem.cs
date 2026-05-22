@@ -40,6 +40,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
     private EntityQuery _spawnConfigQuery;
     private EntityQuery _spawnProgressQuery;
     private EntityQuery _spawnInitializedQuery;
+    private EntityQuery _cameraReferenceQuery;
     private int _nextUpdateFrame;
     private int _nextDiagnosticFrame;
     private int _lodResumeFrame;
@@ -95,16 +96,18 @@ public partial struct UnitRenderBudgetSystem : ISystem
         _spawnInitializedQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
             ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
+        _cameraReferenceQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
 
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        RuntimeGameplayStateComponent runtimeGameplayState = SystemAPI.GetSingleton<RuntimeGameplayStateComponent>();
+        if (runtimeGameplayState.PlayRequested == 0)
             return;
 
-        Camera camera = InitialUnitsRuntimeState.WorldCamera;
-        if (camera == null)
+        if (!RuntimeCameraReferenceSystem.TryGetWorldCamera(state.EntityManager, _cameraReferenceQuery, out Camera camera))
             return;
 
         bool cameraMotionActive = IsCameraMotionActive(camera);
@@ -175,7 +178,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
             if (EnableRenderBudgetDiagnostics && Time.frameCount >= _nextDiagnosticFrame)
             {
                 _nextDiagnosticFrame = Time.frameCount + DiagnosticIntervalFrames;
-                Debug.Log($"[UnitRenderBudgetEmptyDiag] frame={Time.frameCount} queryUnits={units.Length} allUnitGrid={_allUnitGridQuery.CalculateEntityCount()} spawnConfigs={_spawnConfigQuery.CalculateEntityCount()} spawnProgress={_spawnProgressQuery.CalculateEntityCount()} spawnInitialized={_spawnInitializedQuery.CalculateEntityCount()} playRequested={(InitialUnitsRuntimeState.PlayRequested ? 1 : 0)}");
+                Debug.Log($"[UnitRenderBudgetEmptyDiag] frame={Time.frameCount} queryUnits={units.Length} allUnitGrid={_allUnitGridQuery.CalculateEntityCount()} spawnConfigs={_spawnConfigQuery.CalculateEntityCount()} spawnProgress={_spawnProgressQuery.CalculateEntityCount()} spawnInitialized={_spawnInitializedQuery.CalculateEntityCount()} playRequested={(runtimeGameplayState.PlayRequested != 0 ? 1 : 0)}");
             }
             return;
         }

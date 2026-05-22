@@ -75,7 +75,8 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
             return false;
 
         SetLegacyCanvasActive(false, flow.gameObject.scene);
-        InitialUnitsRuntimeState.PlayRequested = false;
+        var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
+        runtimeGameplayStateSystem.PlayRequested = false;
         flow.gameObject.SetActive(true);
         flow.CompleteActiveMissionAndShowResult();
         return true;

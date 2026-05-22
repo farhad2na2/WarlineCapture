@@ -75,6 +75,7 @@ public sealed class AIEndToEndValidationTests
 
         CreateGrid(em, 80, 80);
         CreateBuildingPlacementHarness();
+        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
 
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 100000, LastLogTime = -999f });
@@ -95,7 +96,7 @@ public sealed class AIEndToEndValidationTests
         Entity unitC = CreateAttacker(em, 1, new int2(22, 20), new float3(22f, 0f, 20f));
         Entity unitD = CreateAttacker(em, 1, new int2(23, 20), new float3(23f, 0f, 20f));
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle buildSystem = _world.CreateSystem<AIBuildPlannerSystem>();
         SystemHandle productionSystem = _world.CreateSystem<AIProductionSystem>();
         SystemHandle squadSystem = _world.CreateSystem<AISquadSystem>();

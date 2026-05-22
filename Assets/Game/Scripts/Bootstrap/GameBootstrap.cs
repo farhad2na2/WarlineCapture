@@ -24,6 +24,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private const float M01PlayableStartOrthographicSize = 0.96f;
     private const float M01PlayableCameraHeight = 10f;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+    private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -167,7 +168,7 @@ public sealed class GameBootstrap : MonoBehaviour
         BuildingPlacement.BindDependencies(RoadBuild, null, DayNight, Selection, citizenPopulationSystem: CitizenPopulation);
         GameStrings.Init(gameStringsConfig);
         SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
-        InitialUnitsRuntimeState.WorldCamera = worldCamera;
+        _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
     }
 
     private void Start()
@@ -224,7 +225,7 @@ public sealed class GameBootstrap : MonoBehaviour
         EnsureGameplaySystemsInitialized();
         _gameplayStartPending = true;
         _runtimeGameplayStateSystem.PlayRequested = true;
-        InitialUnitsRuntimeState.WorldCamera = worldCamera;
+        _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.BuildModeActive = false;
         _runtimeGameplayStateSystem.ZoomInHeld = false;
@@ -476,7 +477,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
             if (isPlayer)
             {
-                InitialUnitsRuntimeState.PlayerAutoModeEnabled = isAIControlled;
+                _runtimeGameplayStateSystem.PlayerAutoModeEnabled = isAIControlled;
                 AISettingsRuntimeState.PlayerAutoAIEnabled = isAIControlled;
                 hasPlayerEntry = true;
             }
@@ -493,7 +494,7 @@ public sealed class GameBootstrap : MonoBehaviour
                 IsPlayerFaction = 1,
                 LastLogTime = -999f
             });
-            InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
+            _runtimeGameplayStateSystem.PlayerAutoModeEnabled = false;
         }
 
         if (!hasEnemyEntry)
@@ -1141,7 +1142,7 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeDecorations = null;
         RuntimeGridBlockers = null;
         RuntimeCitySpawner = null;
-        InitialUnitsRuntimeState.WorldCamera = null;
+        _runtimeCameraReferenceSystem.ClearWorldCamera();
         DisposeProfilerRecorders();
         SharedPrefabPreviewCache.ReleaseAll();
     }

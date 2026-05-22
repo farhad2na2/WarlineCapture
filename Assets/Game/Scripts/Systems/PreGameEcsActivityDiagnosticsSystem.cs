@@ -35,11 +35,12 @@ public partial struct PreGameEcsActivityDiagnosticsSystem : ISystem
         _initialSpawnInitializedQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
             ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested != 0)
             return;
 
         if (Time.frameCount < _nextLogFrame)

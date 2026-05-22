@@ -864,7 +864,7 @@ namespace Game.Scripts.UI
         private void ButtonAutoModeClicked()
         {
             SuppressNextWorldClick();
-            SetPlayerAutoMode(!InitialUnitsRuntimeState.PlayerAutoModeEnabled);
+            SetPlayerAutoMode(!_runtimeGameplayStateSystem.PlayerAutoModeEnabled);
             RefreshAutoModeButton();
         }
 
@@ -4805,7 +4805,7 @@ namespace Game.Scripts.UI
             if (_autoModeLabel == null)
                 _autoModeLabel = _buttonAutoMode.GetComponentInChildren<TMP_Text>(true);
             if (_autoModeLabel != null)
-                _autoModeLabel.text = InitialUnitsRuntimeState.PlayerAutoModeEnabled ? "Auto" : "Manual";
+                _autoModeLabel.text = _runtimeGameplayStateSystem.PlayerAutoModeEnabled ? "Auto" : "Manual";
         }
 
         private void BindGameplaySpeedDropdownVisuals()
@@ -4901,9 +4901,9 @@ namespace Game.Scripts.UI
                 panelSettings.SetActive(_settingsOpen);
         }
 
-        private static void SetPlayerAutoMode(bool enabled)
+        private void SetPlayerAutoMode(bool enabled)
         {
-            InitialUnitsRuntimeState.PlayerAutoModeEnabled = enabled;
+            _runtimeGameplayStateSystem.PlayerAutoModeEnabled = enabled;
             AISettingsRuntimeState.PlayerAutoAIEnabled = enabled;
 
             World world = World.DefaultGameObjectInjectionWorld;

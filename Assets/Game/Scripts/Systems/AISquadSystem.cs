@@ -13,11 +13,12 @@ public partial struct AISquadSystem : ISystem
         state.RequireForUpdate<AISquadPlan>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<UnitGrid>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -90,7 +91,8 @@ public partial struct AISquadSystem : ISystem
                 if (now - plan.LastLogTime >= LogIntervalSeconds)
                 {
                     plan.LastLogTime = now;
-                    AILog.Log($"[AISquad] faction={plan.FactionId} result=Waiting units={members.Length} minUnits={minUnits}");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AISquad] faction={plan.FactionId} result=Waiting units={members.Length} minUnits={minUnits}");
                 }
                 em.SetComponentData(planEntity, plan);
                 continue;
@@ -138,7 +140,8 @@ public partial struct AISquadSystem : ISystem
             plan.NextSquadId = squadId + 1;
             plan.LastLogTime = now;
             em.SetComponentData(planEntity, plan);
-            AILog.Log($"[AISquad] faction={plan.FactionId} squad={squadId} purpose=Attack units={members.Length} targetFaction={targetFactionId} targetCell={targetCell}");
+            if (AILog.IsEnabled)
+                AILog.Log($"[AISquad] faction={plan.FactionId} squad={squadId} purpose=Attack units={members.Length} targetFaction={targetFactionId} targetCell={targetCell}");
         }
 
         if (controls.IsCreated)
@@ -211,6 +214,7 @@ public partial struct AISquadSystem : ISystem
             return;
 
         plan.LastLogTime = now;
-        AILog.Log($"[AISquad] faction={plan.FactionId} result=Complete activeSquads={activeSquads}");
+        if (AILog.IsEnabled)
+            AILog.Log($"[AISquad] faction={plan.FactionId} result=Complete activeSquads={activeSquads}");
     }
 }

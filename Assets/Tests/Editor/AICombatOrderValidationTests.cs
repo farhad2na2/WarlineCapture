@@ -55,7 +55,7 @@ public sealed class AICombatOrderValidationTests
         members.Add(new AISquadUnit { Unit = memberA });
         members.Add(new AISquadUnit { Unit = memberB });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=1 squad=2 order=Attack target=Entity\(\d+:\d+\) units=2"));
@@ -107,7 +107,7 @@ public sealed class AICombatOrderValidationTests
         DynamicBuffer<AISquadUnit> members = em.AddBuffer<AISquadUnit>(squadEntity);
         members.Add(new AISquadUnit { Unit = playerMember });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AICombatOrderSystem>();
 
         system.Update(world.Unmanaged);

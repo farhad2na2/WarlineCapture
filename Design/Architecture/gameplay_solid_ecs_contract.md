@@ -122,6 +122,9 @@ If a class needs runtime collaborators, pass them through bootstrap composition 
 - `RuntimeCameraFocusRequestComponent`
 
 Once a flag is migrated behind `RuntimeGameplayStateSystem`, callers in that slice should use the boundary instead of touching `InitialUnitsRuntimeState` directly.
+Managed callers use `RuntimeGameplayStateSystem`; ECS `ISystem` callers should read the runtime ECS singleton components directly so hot gameplay loops do not allocate managed bridge objects or perform compatibility sync work per frame.
+
+Unity object references must not be added to unmanaged gameplay state components. Runtime camera references must flow through `RuntimeCameraReferenceComponent` and `RuntimeCameraReferenceSystem`, with gameplay systems reading the managed ECS reference instead of `InitialUnitsRuntimeState.WorldCamera`.
 
 ## Logging
 
@@ -131,6 +134,7 @@ Gameplay code must not add new calls to static logging facades such as `AILog.*`
 - A test-local logger implementation.
 
 Existing `AILog` usage is grandfathered as migration debt and should be retired by domain slice.
+AI log enablement must flow through `RuntimeDiagnosticsStateComponent` and `RuntimeDiagnosticsSystem`. `InitialUnitsRuntimeState.VerboseAILogs` and `InitialUnitsRuntimeState.ShouldLogAI` are legacy compatibility state and must not be read directly by production systems outside the diagnostics boundary.
 
 ## Refactor Direction
 

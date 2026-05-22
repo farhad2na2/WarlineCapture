@@ -47,7 +47,7 @@ public sealed class AITargetingValidationTests
         Entity highValueThreat = CreateTarget(em, 0, new int2(18, 10), 500, true, true);
         CreateTarget(em, 1, new int2(9, 10), 500, true, true);
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=7 target=Threat score=\d+ reason=Threat targetFaction=0 targetCell=int2\(18, 10\)"));
@@ -87,7 +87,7 @@ public sealed class AITargetingValidationTests
         Entity hauler = CreateTarget(em, 0, new int2(12, 10), 100, false, false);
         em.AddComponentData(hauler, new UnitResourceHauler { BarrelCapacity = 8 });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=8 target=Unit score=\d+ reason=Economy targetFaction=0 targetCell=int2\(12, 10\)"));

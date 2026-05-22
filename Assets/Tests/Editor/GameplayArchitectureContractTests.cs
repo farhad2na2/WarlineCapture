@@ -25,6 +25,17 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/Systems/AITargetingSystem.cs"
     };
 
+    private static readonly string[] HotAILogCallFiles =
+    {
+        "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+        "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
+        "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
+        "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
+        "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
+        "Assets/Game/Scripts/Systems/AISquadSystem.cs",
+        "Assets/Game/Scripts/Systems/AITargetingSystem.cs"
+    };
+
     private static readonly string[] LegacyStaticLogFacadeFiles =
     {
         "Assets/Game/Scripts/Systems/AILog.cs",
@@ -182,6 +193,64 @@ public sealed class GameplayArchitectureContractTests
             "Do not add new static AILog call sites. Use ECS log events or an injected logging service instead:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, newViolations));
+    }
+
+    [Test]
+    public void HotAiSystemsMustGuardAILogMessageConstruction()
+    {
+        List<string> violations = new();
+        foreach (string file in HotAILogCallFiles)
+        {
+            string[] lines = File.ReadAllLines(file);
+            for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+            {
+                string line = lines[lineIndex];
+                if (!line.Contains("AILog.Log", StringComparison.Ordinal))
+                    continue;
+
+                bool guarded = false;
+                int start = Math.Max(0, lineIndex - 8);
+                for (int guardIndex = start; guardIndex <= lineIndex; guardIndex++)
+                {
+                    if (!lines[guardIndex].Contains("AILog.IsEnabled", StringComparison.Ordinal))
+                        continue;
+
+                    guarded = true;
+                    break;
+                }
+
+                if (!guarded)
+                    violations.Add($"{file}:{lineIndex + 1} constructs an AILog message without a nearby AILog.IsEnabled guard.");
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "AI hot systems must guard AILog message construction so disabled diagnostics do not allocate or format strings:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void ProductionScriptsMustNotReadVerboseAILogsFromLegacyRuntimeState()
+    {
+        string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => path != "Assets/Game/Scripts/UI/InitialUnitsRuntimeState.cs")
+            .Where(path => path != "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs")
+            .ToArray();
+
+        foreach (string file in scriptFiles)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.VerboseAILogs", StringComparison.Ordinal),
+                $"{file} must read/write VerboseAILogs through RuntimeDiagnosticsSystem or RuntimeDiagnosticsStateComponent.");
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.ShouldLogAI", StringComparison.Ordinal),
+                $"{file} must read AI log policy through RuntimeDiagnosticsSystem or RuntimeDiagnosticsStateComponent.");
+        }
     }
 
     [Test]
@@ -748,7 +817,8 @@ public sealed class GameplayArchitectureContractTests
             "FullscreenMapIsoMode",
             "ZoomInHeld",
             "ZoomOutHeld",
-            "SuppressNextWorldClick"
+            "SuppressNextWorldClick",
+            "PlayerAutoModeEnabled"
         };
 
         foreach (string field in migratedFields)
@@ -771,6 +841,63 @@ public sealed class GameplayArchitectureContractTests
             Assert.IsFalse(
                 gameBootstrap.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
                 $"GameBootstrap must use RuntimeGameplayStateSystem for {field}.");
+        }
+    }
+
+    [Test]
+    public void ProductionScriptsMustNotReadPlayRequestedFromLegacyRuntimeState()
+    {
+        string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => path != "Assets/Game/Scripts/UI/InitialUnitsRuntimeState.cs")
+            .Where(path => path != "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs")
+            .ToArray();
+
+        foreach (string file in scriptFiles)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.PlayRequested", StringComparison.Ordinal),
+                $"{file} must read/write PlayRequested through RuntimeGameplayStateSystem or RuntimeGameplayStateComponent.");
+        }
+    }
+
+    [Test]
+    public void ProductionScriptsMustNotReadPlayerAutoModeFromLegacyRuntimeState()
+    {
+        string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => path != "Assets/Game/Scripts/UI/InitialUnitsRuntimeState.cs")
+            .Where(path => path != "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs")
+            .ToArray();
+
+        foreach (string file in scriptFiles)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.PlayerAutoModeEnabled", StringComparison.Ordinal),
+                $"{file} must read/write PlayerAutoModeEnabled through RuntimeGameplayStateSystem or RuntimeGameplayStateComponent.");
+        }
+    }
+
+    [Test]
+    public void ProductionScriptsMustNotReadWorldCameraFromLegacyRuntimeState()
+    {
+        string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => path != "Assets/Game/Scripts/UI/InitialUnitsRuntimeState.cs")
+            .Where(path => path != "Assets/Game/Scripts/Systems/RuntimeCameraReferenceSystem.cs")
+            .ToArray();
+
+        foreach (string file in scriptFiles)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.WorldCamera", StringComparison.Ordinal),
+                $"{file} must read/write WorldCamera through RuntimeCameraReferenceSystem or RuntimeCameraReferenceComponent.");
         }
     }
 

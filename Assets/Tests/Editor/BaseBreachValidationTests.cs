@@ -283,8 +283,9 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement);
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
@@ -347,8 +348,9 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement);
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             int2 friendlyGateCell = SpawnThreeSidedWallWithGate(
                 buildingPlacement,
                 wallPrefab,
@@ -516,8 +518,9 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement);
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Vector2Int gateOrigin = new(100 - gateFootprint.x / 2, 60);
@@ -600,7 +603,7 @@ public sealed class BaseBreachValidationTests
 
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 220, 220, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             CreateStaticBlocker(em, new int2(60, 60), new int2(1, 81));
             CreateStaticBlocker(em, new int2(140, 60), new int2(1, 81));
@@ -679,7 +682,7 @@ public sealed class BaseBreachValidationTests
 
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("InitialBaseFriendlyGatePath_Root");
             buildingPlacement = new BuildingPlacementSystem();
@@ -798,7 +801,7 @@ public sealed class BaseBreachValidationTests
 
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("InitialBaseAttackGateRoute_Root");
             buildingPlacement = new BuildingPlacementSystem();

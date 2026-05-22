@@ -15,11 +15,12 @@ public partial struct AIProductionSystem : ISystem
         state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<AIProductionPlan>();
         state.RequireForUpdate<FactionEconomy>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
@@ -83,7 +84,8 @@ public partial struct AIProductionSystem : ISystem
                 {
                     plan.NextUnitIndex = entryIndex + 1;
                     plan.LastProductionTime = now;
-                    AILog.Log($"[AIProduction] faction={plan.FactionId} unit={unitId} result=MissingConfig");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AIProduction] faction={plan.FactionId} unit={unitId} result=MissingConfig");
                     break;
                 }
 
@@ -91,7 +93,8 @@ public partial struct AIProductionSystem : ISystem
                 if (economy.Money < cost)
                 {
                     plan.LastProductionTime = now;
-                    AILog.Log($"[AIProduction] faction={plan.FactionId} unit={unit.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AIProduction] faction={plan.FactionId} unit={unit.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
                     break;
                 }
 
@@ -99,21 +102,24 @@ public partial struct AIProductionSystem : ISystem
                 plan.LastProductionTime = now;
                 if (!queued)
                 {
-                    AILog.Log($"[AIProduction] faction={plan.FactionId} producer={result.ProducerDisplayName} unit={result.UnitDisplayName} cost={result.Cost} queue={result.QueueCount} result={result.Code}");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AIProduction] faction={plan.FactionId} producer={result.ProducerDisplayName} unit={result.UnitDisplayName} cost={result.Cost} queue={result.QueueCount} result={result.Code}");
                     break;
                 }
 
                 economy.Money = Mathf.Max(0, economy.Money - cost);
                 em.SetComponentData(economyEntity, economy);
                 plan.NextUnitIndex = entryIndex + 1;
-                AILog.Log($"[AIProduction] faction={plan.FactionId} producer={result.ProducerDisplayName} unit={result.UnitDisplayName} cost={cost} queue={result.QueueCount} result=Queued");
+                if (AILog.IsEnabled)
+                    AILog.Log($"[AIProduction] faction={plan.FactionId} producer={result.ProducerDisplayName} unit={result.UnitDisplayName} cost={cost} queue={result.QueueCount} result=Queued");
                 break;
             }
 
             if (!handledDecision && now - plan.LastLogTime >= LogIntervalSeconds)
             {
                 plan.LastLogTime = now;
-                AILog.Log($"[AIProduction] faction={plan.FactionId} result=Complete");
+                if (AILog.IsEnabled)
+                    AILog.Log($"[AIProduction] faction={plan.FactionId} result=Complete");
             }
 
             em.SetComponentData(planEntity, plan);
@@ -184,6 +190,7 @@ public partial struct AIProductionSystem : ISystem
             return;
 
         plan.LastLogTime = now;
-        AILog.Log($"[AIProduction] faction={plan.FactionId} result=NoPlan");
+        if (AILog.IsEnabled)
+            AILog.Log($"[AIProduction] faction={plan.FactionId} result=NoPlan");
     }
 }

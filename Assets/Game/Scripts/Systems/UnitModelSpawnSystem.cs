@@ -25,6 +25,7 @@ public partial struct UnitModelSpawnSystem : ISystem
     private EntityQuery _midLodInstanceQuery;
     private EntityQuery _lowLodInstanceQuery;
     private EntityQuery _deferredVisibleCharacterLodQuery;
+    private EntityQuery _cameraReferenceQuery;
     private int _lastLoggedTotalVisualUnits;
     private int _lastLoggedDetailReady;
     private int _lastLoggedMidReady;
@@ -41,6 +42,7 @@ public partial struct UnitModelSpawnSystem : ISystem
         _midLodInstanceQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitMidLodInstanceReference>());
         _lowLodInstanceQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitLowLodInstanceReference>());
         _deferredVisibleCharacterLodQuery = state.GetEntityQuery(ComponentType.ReadOnly<UnitVisibleCharacterLodSpawnDeferredTag>());
+        _cameraReferenceQuery = state.GetEntityQuery(ComponentType.ReadOnly<RuntimeCameraReferenceComponent>());
         _lastLoggedTotalVisualUnits = -1;
         _lastLoggedDetailReady = -1;
         _lastLoggedMidReady = -1;
@@ -66,7 +68,7 @@ public partial struct UnitModelSpawnSystem : ISystem
         int releasedVisibleCharacterLodCount = 0;
         string midPrefabSamples = string.Empty;
         EntityManager em = state.EntityManager;
-        Camera camera = InitialUnitsRuntimeState.WorldCamera;
+        RuntimeCameraReferenceSystem.TryGetWorldCamera(em, _cameraReferenceQuery, out Camera camera);
         var ecb = new EntityCommandBuffer(Unity.Collections.Allocator.Temp);
         using NativeHashSet<Entity> deferredThisFrame = new(256, Allocator.Temp);
 

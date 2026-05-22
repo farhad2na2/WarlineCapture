@@ -13,6 +13,7 @@ public sealed class AssistantContextProvider
     private readonly WarlineCaptureRouter _router;
     private readonly WarlineCaptureMatchResultFlow _resultFlow;
     private readonly MatchObjectivePanelController _objectivePanel;
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
     public AssistantContextProvider()
     {
@@ -45,18 +46,19 @@ public sealed class AssistantContextProvider
         WarlineCaptureRouter router = _router ?? ResolveActiveRouter();
         WarlineCaptureMatchResultFlow resultFlow = _resultFlow ?? ResolveResultFlow();
         MatchObjectivePanelController objectivePanel = _objectivePanel ?? ResolveObjectivePanel();
+        bool playRequested = _runtimeGameplayStateSystem.PlayRequested;
 
         var context = new AssistantContext
         {
-            ActiveRoute = ResolveActiveRoute(router),
+            ActiveRoute = ResolveActiveRoute(router, playRequested),
             MissionId = WarlineCaptureMissionSession.ActiveMissionId,
             ScenarioSetupId = WarlineCaptureMissionSession.ActiveScenarioSetupId,
             LevelId = WarlineCaptureMissionSession.ActiveLevelId,
             IsoMapId = WarlineCaptureMissionSession.ActiveIsoMapId,
             MapPreviewArtId = WarlineCaptureMissionSession.ActiveMapPreviewArtId,
             MinimapArtId = WarlineCaptureMissionSession.ActiveMinimapArtId,
-            IsMatchOverlayActive = ResolveMatchOverlayActive(router),
-            ObjectivePanelVisible = ResolveObjectivePanelVisible(objectivePanel, router),
+            IsMatchOverlayActive = ResolveMatchOverlayActive(router, playRequested),
+            ObjectivePanelVisible = ResolveObjectivePanelVisible(objectivePanel, router, playRequested),
             ResultPopupVisible = resultFlow != null && resultFlow.HasActivePopup,
             AssistanceLevel = "FullGuidance",
             AssistantMuted = false,
@@ -214,26 +216,26 @@ public sealed class AssistantContextProvider
         return null;
     }
 
-    private static string ResolveActiveRoute(WarlineCaptureRouter router)
+    private static string ResolveActiveRoute(WarlineCaptureRouter router, bool playRequested)
     {
         if (router != null && router.HasActiveRoute)
             return router.ActiveRoute.ToString();
 
-        return InitialUnitsRuntimeState.PlayRequested ? WarlineCaptureRoute.Match.ToString() : string.Empty;
+        return playRequested ? WarlineCaptureRoute.Match.ToString() : string.Empty;
     }
 
-    private static bool ResolveMatchOverlayActive(WarlineCaptureRouter router)
+    private static bool ResolveMatchOverlayActive(WarlineCaptureRouter router, bool playRequested)
     {
-        return InitialUnitsRuntimeState.PlayRequested ||
+        return playRequested ||
             router != null && router.HasActiveRoute && router.ActiveRoute == WarlineCaptureRoute.Match;
     }
 
-    private static bool ResolveObjectivePanelVisible(MatchObjectivePanelController objectivePanel, WarlineCaptureRouter router)
+    private static bool ResolveObjectivePanelVisible(MatchObjectivePanelController objectivePanel, WarlineCaptureRouter router, bool playRequested)
     {
         if (objectivePanel != null)
             return objectivePanel.gameObject.activeInHierarchy;
 
-        return ResolveMatchOverlayActive(router) && WarlineCaptureMissionSession.HasActiveMission;
+        return ResolveMatchOverlayActive(router, playRequested) && WarlineCaptureMissionSession.HasActiveMission;
     }
 
     private static AssistantControlOwnerState ResolveControlOwnerState(TutorialSessionState sessionState)

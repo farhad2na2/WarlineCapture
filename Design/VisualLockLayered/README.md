@@ -45,7 +45,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `SCN-01_SplashLoading` | App entry and loading. | Brand-first military command tone; no old map art. |
 | `SCN-02_MainMenu` | Command-base hub. | Campaign, Operations, Skirmish, Store, Commander, Settings; Credits, Supplies, Command. |
 | `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with Armory/upgrades links. |
-| `SCN-04_SettingsAccessibility` | Settings and accessibility. | Command-base shell; reachable from Main Menu and Pause. |
+| `SCN-04_SettingsAccessibility` | Settings and accessibility. | Command-base shell; reachable from Main Menu and Pause. Target and V01 layer pack generated. |
 | `SCN-05_CampaignMap` | Campaign mission selection. | Campaign nodes selected from command table/world overlay; launches 3D operation maps. |
 | `SCN-06_MissionBriefing` | Objectives, intel, rewards, deployment preview. | Uses `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`. |
 | `SCN-07_LoadoutSquadPrep` | Squad/support/gear setup. | Uses prefab-catalog roster, lock reasons, role descriptions, Armory detail links. |

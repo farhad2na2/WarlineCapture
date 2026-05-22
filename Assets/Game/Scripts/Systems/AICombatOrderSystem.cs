@@ -14,14 +14,14 @@ public partial struct AICombatOrderSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
-        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -75,7 +75,8 @@ public partial struct AICombatOrderSystem : ISystem
             squad.LastOrderTime = now;
             squad.LastLogTime = now;
             em.SetComponentData(squadEntity, squad);
-            AILog.Log($"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
+            if (AILog.IsEnabled)
+                AILog.Log($"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
         }
 
         if (controls.IsCreated)

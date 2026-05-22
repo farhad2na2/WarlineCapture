@@ -66,7 +66,7 @@ public sealed class AIEconomyValidationTests
             SellIntervalSeconds = 8f
         });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AIEconomySystem>();
 
         LogAssert.Expect(

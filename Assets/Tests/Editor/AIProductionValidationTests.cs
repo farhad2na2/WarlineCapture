@@ -86,6 +86,7 @@ public sealed class AIProductionValidationTests
         _runtimeRoot = new GameObject("AIProduction_RuntimeRoot");
         _buildingPlacement = new BuildingPlacementSystem();
         _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
+        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
 
         Assert.IsTrue(_buildingPlacement.TrySpawnRuntimeBuilding(
             _buildingPrefab,
@@ -122,7 +123,7 @@ public sealed class AIProductionValidationTests
         DynamicBuffer<AIProductionPlanEntry> entries = em.AddBuffer<AIProductionPlanEntry>(planEntity);
         entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Rifleman") });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));

@@ -20,8 +20,12 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
     private static Color GoldText => new Color32(238, 172, 43, 255);
     private static Color BlueText => new Color32(96, 172, 207, 255);
     private static Color DisabledText => new Color32(128, 124, 105, 255);
-    private static Color DropdownText => new Color32(238, 229, 192, 255);
-    private static Color TextShadow => new Color32(8, 8, 6, 210);
+    private static Color DropdownText => new Color32(220, 209, 172, 255);
+    private static Color TextShadow => new Color32(8, 8, 6, 120);
+    private static Color DropdownBacking => new Color32(18, 18, 13, 255);
+    private static Color DropdownChrome => new Color(0.88f, 0.82f, 0.62f, 0.62f);
+    private static Color SubtleChrome => new Color(0.86f, 0.80f, 0.62f, 0.72f);
+    private static Color SelectedPresetTint => new Color(0.76f, 0.72f, 0.34f, 0.82f);
 
     [MenuItem("WarlineCapture/Design/SCN-13 Build Skirmish Setup Target Lock")]
     public static void BuildScene()
@@ -185,7 +189,7 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
         AddPresetRow(parent, 4, false, "scn13_icon_preset_hidden_cell.png", "Hidden Cell Raid", "Intel Sweep", true);
 
         RectInt manage = new(rect.x + 48, rect.y + rect.height - 130, 610, 82);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "PresetRail_ManageFrame", "scn13_secondary_action_button_frame.png", manage, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "PresetRail_ManageFrame", "scn13_secondary_action_button_frame.png", manage, new Vector4(58f, 58f, 25f, 25f), SubtleChrome);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "PresetRail_ManageIcon", "scn13_icon_manage_list.png", new RectInt(manage.x + 44, manage.y + 16, 70, 54), 56, 48, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "PresetRail_ManageText", "MANAGE PRESETS", new RectInt(manage.x + 142, manage.y + 14, 390, 54), 32f, TextAlignmentOptions.Left, TextMuted);
     }
@@ -193,7 +197,14 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
     private static void AddPresetRow(Transform parent, int index, bool selected, string icon, string title, string subtitle, bool locked)
     {
         RectInt row = PresetRowRect(index);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Preset_{index}_Frame", selected ? "scn13_preset_row_selected_frame.png" : "scn13_preset_row_locked_frame.png", row, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(
+            parent,
+            LayerRoot,
+            $"Preset_{index}_Frame",
+            selected ? "scn13_preset_row_selected_frame.png" : "scn13_preset_row_locked_frame.png",
+            row,
+            new Vector4(36f, 36f, 21f, 21f),
+            selected ? SelectedPresetTint : SubtleChrome);
         RectInt safe = WarlineCaptureLayeredUiBuilderUtility.Inset(row, 36, 18);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Preset_{index}_Icon", icon, new RectInt(safe.x, safe.y, 110, safe.height), 92, 92, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Preset_{index}_Title", title, new RectInt(safe.x + 140, safe.y + 4, 390, 46), 37f, TextAlignmentOptions.Left, selected ? TextMain : TextMuted);
@@ -264,24 +275,31 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Icon", icon, new RectInt(safe.x, safe.y, 68, safe.height), 50, 50, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Label", label, new RectInt(safe.x + 82, safe.y + 8, 350, safe.height - 16), 27f, TextAlignmentOptions.Left, TextMuted);
         RectInt valueFrame = new(row.x + row.width - 610, row.y + 8, 555, row.height - 16);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Rule_{index}_ValueFrame", "scn13_stepper_value_frame.png", valueFrame, false, Color.white);
+        AddRuleControlBacking(parent, $"Rule_{index}_ValueBacking", row, valueFrame);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, $"Rule_{index}_ValueFrame", "scn13_stepper_value_frame.png", valueFrame, new Vector4(31f, 31f, 19f, 19f), DropdownChrome);
         AddDropdownValue(parent, index, value, valueFrame);
     }
 
     private static void AddDropdownValue(Transform parent, int index, string value, RectInt valueFrame)
     {
-        float valueFontSize = value.Length > 15 ? 35f : 40f;
-        RectInt textRect = new(valueFrame.x + 58, valueFrame.y + 6, valueFrame.width - 132, valueFrame.height - 12);
-        RectInt shadowRect = new(textRect.x + 3, textRect.y + 3, textRect.width, textRect.height);
-        TMP_Text shadow = WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_ValueShadow", value, shadowRect, valueFontSize, TextAlignmentOptions.MidlineLeft, TextShadow);
-        shadow.fontStyle = FontStyles.Bold;
+        float valueFontSize = value.Length > 15 ? 30f : 34f;
+        RectInt textRect = new(valueFrame.x + 50, valueFrame.y + 6, valueFrame.width - 142, valueFrame.height - 12);
+        RectInt shadowRect = new(textRect.x + 2, textRect.y + 2, textRect.width, textRect.height);
+        TMP_Text shadow = WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_ValueShadow", value, shadowRect, valueFontSize, TextAlignmentOptions.Midline, TextShadow);
+        shadow.fontStyle = FontStyles.Normal;
 
-        TMP_Text text = WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Value", value, textRect, valueFontSize, TextAlignmentOptions.MidlineLeft, DropdownText);
-        text.fontStyle = FontStyles.Bold;
+        TMP_Text text = WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Value", value, textRect, valueFontSize, TextAlignmentOptions.Midline, DropdownText);
+        text.fontStyle = FontStyles.Normal;
         text.characterSpacing = 0f;
 
-        RectInt chevron = new(valueFrame.x + valueFrame.width - 86, valueFrame.y + 16, 64, valueFrame.height - 32);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Chevron", "scn13_dropdown_chevron.png", chevron, 46, 36, DropdownText);
+        RectInt chevron = new(valueFrame.x + valueFrame.width - 82, valueFrame.y + 17, 58, valueFrame.height - 34);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Chevron", "scn13_dropdown_chevron.png", chevron, 38, 30, DropdownText);
+    }
+
+    private static void AddRuleControlBacking(Transform parent, string name, RectInt row, RectInt control)
+    {
+        RectInt scrim = new(control.x - 12, row.y + 12, control.width + 24, row.height - 24);
+        WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, name, scrim, DropdownBacking);
     }
 
     private static void AddStepperRule(Transform parent, int index, string icon, string label, string value)
@@ -294,11 +312,14 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
         RectInt minus = new(row.x + row.width - 470, row.y + 12, 88, row.height - 24);
         RectInt count = new(minus.xMax + 18, row.y + 12, 220, row.height - 24);
         RectInt plus = new(count.xMax + 18, row.y + 12, 88, row.height - 24);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "EnemyCount_MinusFrame", "scn13_stepper_minus_frame.png", minus, false, Color.white);
+        AddRuleControlBacking(parent, "EnemyCount_MinusBacking", row, minus);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "EnemyCount_MinusFrame", "scn13_stepper_minus_frame.png", minus, new Vector4(24f, 24f, 19f, 19f), DropdownChrome);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "EnemyCount_MinusIcon", "scn13_stepper_minus_icon.png", minus, 42, 20, TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "EnemyCount_ValueFrame", "scn13_stepper_value_frame.png", count, false, Color.white);
+        AddRuleControlBacking(parent, "EnemyCount_ValueBacking", row, count);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "EnemyCount_ValueFrame", "scn13_stepper_value_frame.png", count, new Vector4(31f, 31f, 19f, 19f), DropdownChrome);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "EnemyCount_Value", value, count, 30f, TextAlignmentOptions.Center, TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "EnemyCount_PlusFrame", "scn13_stepper_plus_frame.png", plus, false, Color.white);
+        AddRuleControlBacking(parent, "EnemyCount_PlusBacking", row, plus);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "EnemyCount_PlusFrame", "scn13_stepper_plus_frame.png", plus, new Vector4(24f, 24f, 19f, 19f), DropdownChrome);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "EnemyCount_PlusIcon", "scn13_stepper_plus_icon.png", plus, 42, 42, TextMuted);
     }
 
@@ -318,7 +339,7 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
     private static void AddBottomActions(Transform parent)
     {
         RectInt info = InfoRect();
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Info_Frame", "scn13_info_panel_frame.png", info, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "Info_Frame", "scn13_info_panel_frame.png", info, new Vector4(48f, 48f, 34f, 34f), SubtleChrome);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Info_Icon", "scn13_icon_info_circle.png", new RectInt(info.x + 42, info.y + 22, 90, 90), 72, 72, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Info_Text", "Tune the enemy force, economy, and mission\nrules before deployment.", new RectInt(info.x + 160, info.y + 22, 690, 88), 31f, TextAlignmentOptions.Left, TextMuted, true);
 
@@ -330,7 +351,7 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
         AddSecondaryActionContent(parent, randomize, "scn13_icon_seed_dice.png", "RANDOMIZE SEED");
 
         RectInt launch = LaunchRect();
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Launch_Frame", "scn13_launch_cta_frame.png", launch, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "Launch_Frame", "scn13_launch_cta_frame.png", launch, new Vector4(54f, 54f, 31f, 31f), Color.white);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Launch_Text", "LAUNCH MISSION", new RectInt(launch.x + 120, launch.y + 42, launch.width - 320, launch.height - 84), 68f, TextAlignmentOptions.Center, Color.black);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Launch_Chevrons", "scn13_launch_chevrons.png", new RectInt(launch.x + launch.width - 245, launch.y + 45, 160, launch.height - 90), 140, 92, new Color32(93, 73, 22, 255));
     }

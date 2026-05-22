@@ -163,6 +163,7 @@ public partial struct UnitPathfindingSystem : ISystem
         state.RequireForUpdate<GridRoad>();
         state.RequireForUpdate<GridRoadSidewalk>();
         state.RequireForUpdate<GridRoadDirt>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
 
         _requestQuery = state.GetEntityQuery(new EntityQueryDesc
         {
@@ -334,7 +335,7 @@ public partial struct UnitPathfindingSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
         {
             if (_hasPendingPathJob)
                 DisposePendingPathJob(ref state);

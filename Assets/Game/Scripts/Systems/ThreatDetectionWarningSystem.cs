@@ -16,6 +16,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<ThreatDetector>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
         _previousGroundThreats = new NativeParallelHashSet<Entity>(64, Allocator.Persistent);
         _previousAirThreats = new NativeParallelHashSet<Entity>(64, Allocator.Persistent);
     }
@@ -30,7 +31,7 @@ public partial struct ThreatDetectionWarningSystem : ISystem
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
         {
             ClearPreviousThreats();
             return;

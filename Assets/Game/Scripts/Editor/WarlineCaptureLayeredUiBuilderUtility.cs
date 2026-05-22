@@ -117,6 +117,16 @@ public static class WarlineCaptureLayeredUiBuilderUtility
         return image;
     }
 
+    public static Image AddSolidImage(Transform parent, string name, RectInt rect, Color color)
+    {
+        GameObject gameObject = CreateRectObject(name, parent);
+        ApplyTopLeftRect(gameObject.GetComponent<RectTransform>(), ToArray(rect));
+        Image image = gameObject.AddComponent<Image>();
+        image.color = color;
+        image.raycastTarget = false;
+        return image;
+    }
+
     public static Image AddFittedImage(Transform parent, string layerRoot, string name, string spriteName, RectInt slot, int maxWidth, int maxHeight, Color color)
     {
         WarlineUiImagePlacement placement = VisibleFittedPlacement(layerRoot, spriteName, slot, maxWidth, maxHeight);

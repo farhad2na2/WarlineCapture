@@ -11,14 +11,14 @@ public partial struct AIFactionControlSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
-        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<FactionControlConfigTag>();
         state.RequireForUpdate<Faction>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -59,7 +59,7 @@ public partial struct AIFactionControlSystem : ISystem
                 }
             }
 
-            bool shouldLog = now - control.LastLogTime >= LogIntervalSeconds;
+            bool shouldLog = AILog.IsEnabled && now - control.LastLogTime >= LogIntervalSeconds;
             if (shouldLog)
             {
                 control.LastLogTime = now;

@@ -9,6 +9,7 @@ public struct RuntimeGameplayStateComponent : IComponentData
     public byte FullscreenMapOpen;
     public byte FullscreenMapIsoMode;
     public byte SuppressNextWorldClick;
+    public byte PlayerAutoModeEnabled;
 }
 
 public struct RuntimeCameraInputComponent : IComponentData

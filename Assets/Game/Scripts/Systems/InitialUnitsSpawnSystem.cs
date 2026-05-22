@@ -27,6 +27,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<InitialUnitsSpawnConfig>();
         state.RequireForUpdate<DynamicOccupancyData>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -35,7 +36,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         int spawnedUnitsForLog = 0;
         int spawnedBlockersForLog = 0;
         bool completedForLog = false;
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         bool useM01CompactRuntime = Chapter01M01PlayableRuntime.IsActiveMission();

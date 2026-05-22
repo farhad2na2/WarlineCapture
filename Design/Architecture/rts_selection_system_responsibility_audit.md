@@ -195,7 +195,7 @@ The first UI caller group now routes migrated runtime flags through `RuntimeGame
 - `MainMenuPlayUI`
 - `MenuView`
 
-These callers no longer touch the migrated `InitialUnitsRuntimeState` play/build/map, selection mode, suppress-click, zoom-held, or camera-focus flags directly. `PlayerAutoModeEnabled` remains on the legacy static state for now because it has not been moved into an ECS singleton component yet.
+These callers no longer touch the migrated `InitialUnitsRuntimeState` play/build/map, selection mode, suppress-click, zoom-held, or camera-focus flags directly.
 
 ## Twelfth Extraction Started
 
@@ -207,7 +207,54 @@ The build-mode caller group now routes migrated runtime flags through `RuntimeGa
 
 These callers no longer touch the migrated `InitialUnitsRuntimeState` play/build/map, selection mode, suppress-click, zoom-held, or camera-focus flags directly. `GameBootstrap` still assigns `InitialUnitsRuntimeState.WorldCamera` because camera object references are legacy compatibility state outside this migrated slice.
 
+## Thirteenth Extraction Started
+
+Remaining production `PlayRequested` callers now use the runtime-state boundary:
+
+- Managed callers use `RuntimeGameplayStateSystem`.
+- ECS `ISystem` callers read `RuntimeGameplayStateComponent` directly.
+- AI and threat validation tests seed `RuntimeGameplayStateComponent` through `RuntimeGameplayStateTestHelper`.
+
+`InitialUnitsRuntimeState.PlayRequested` remains only inside `RuntimeGameplayStateSystem` as the legacy compatibility mirror and inside editor/test code.
+
+## Fourteenth Extraction Started
+
+`PlayerAutoModeEnabled` now flows through `RuntimeGameplayStateComponent` and `RuntimeGameplayStateSystem`.
+
+The migrated production callers are:
+
+- `GameBootstrap`
+- `MenuView`
+
+Direct production access to `InitialUnitsRuntimeState.PlayerAutoModeEnabled` is now blocked by architecture contract coverage, with `RuntimeGameplayStateSystem` remaining the sole production compatibility bridge.
+
+## Fifteenth Extraction Started
+
+`WorldCamera` now flows through a managed ECS camera-reference boundary:
+
+- `RuntimeCameraReferenceComponent`
+- `RuntimeCameraReferenceSystem`
+
+The migrated production callers are:
+
+- `GameBootstrap`
+- `UnitModelSpawnSystem`
+- `UnitRenderBudgetSystem`
+
+Direct production access to `InitialUnitsRuntimeState.WorldCamera` is now blocked by architecture contract coverage, with `RuntimeCameraReferenceSystem` remaining the sole production compatibility bridge.
+
+## Sixteenth Extraction Started
+
+AI log enablement now flows through a runtime diagnostics boundary:
+
+- `RuntimeDiagnosticsStateComponent`
+- `RuntimeDiagnosticsSystem`
+
+`AILog` remains as a temporary compatibility facade for existing AI log call sites, but it now reads log enablement through `RuntimeDiagnosticsSystem` instead of `InitialUnitsRuntimeState.ShouldLogAI`.
+
+Direct production access to `InitialUnitsRuntimeState.VerboseAILogs` and `InitialUnitsRuntimeState.ShouldLogAI` is now blocked by architecture contract coverage, with `RuntimeDiagnosticsSystem` remaining the sole production compatibility bridge.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.
-2. Continue replacing direct static runtime state reads from `InitialUnitsRuntimeState` with `RuntimeGameplayStateSystem` and ECS singleton request/state components. Next likely caller group: diagnostics/camera object reference cleanup around `WorldCamera` and remaining non-migrated static state.
+2. Continue replacing direct static runtime state reads from `InitialUnitsRuntimeState` with runtime ECS data. Next likely caller group: transport boarding diagnostics.

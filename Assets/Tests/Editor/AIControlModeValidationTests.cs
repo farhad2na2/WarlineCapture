@@ -47,7 +47,7 @@ public sealed class AIControlModeValidationTests
         em.AddComponentData(manualUnit, new EngageTarget { IsCommanded = 1 });
         em.AddComponentData(manualUnit, new UnitPathRequest { Goal = new int2(8, 8) });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AIFactionControlSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=0 mode=Auto controlledUnits=1 controlledBuildings=0"));

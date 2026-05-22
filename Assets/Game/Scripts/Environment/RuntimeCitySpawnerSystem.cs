@@ -58,6 +58,7 @@ public sealed class RuntimeCitySpawnerSystem
     }
 
     private RuntimeCitySpawnerSystemConfig config;
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
     private bool spawnOnStart = true;
     private bool generateBuildings = true;
@@ -254,7 +255,7 @@ public sealed class RuntimeCitySpawnerSystem
             return;
         if (cityCount <= 0)
             return;
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (!_runtimeGameplayStateSystem.PlayRequested)
             return;
         if (Chapter01M01PlayableRuntime.IsActiveMission())
         {

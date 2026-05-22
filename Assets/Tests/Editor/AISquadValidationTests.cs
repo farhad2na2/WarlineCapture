@@ -49,7 +49,7 @@ public sealed class AISquadValidationTests
         Entity unitC = CreateUnit(em, 1, new int2(6, 4), true);
         Entity unitD = CreateUnit(em, 1, new int2(7, 4), true);
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AISquadSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=1 squad=1 purpose=Attack units=4 targetFaction=0 targetCell=int2\(20, 20\)"));

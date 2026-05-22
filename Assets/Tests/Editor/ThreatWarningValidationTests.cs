@@ -105,7 +105,7 @@ public sealed class ThreatWarningValidationTests
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             ThreatWarningRuntimeState.Reset();
 
             system.Update(world.Unmanaged);
@@ -140,7 +140,7 @@ public sealed class ThreatWarningValidationTests
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             ThreatWarningRuntimeState.Reset();
 
             system.Update(world.Unmanaged);
@@ -177,7 +177,7 @@ public sealed class ThreatWarningValidationTests
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             ThreatWarningRuntimeState.Reset();
 
             system.Update(world.Unmanaged);
@@ -207,7 +207,7 @@ public sealed class ThreatWarningValidationTests
         SystemHandle system = world.CreateSystem<ThreatDetectionWarningSystem>();
         try
         {
-            InitialUnitsRuntimeState.PlayRequested = true;
+            RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             ThreatWarningRuntimeState.Reset();
 
             system.Update(world.Unmanaged);

@@ -16,11 +16,12 @@ public partial struct AIBuildPlannerSystem : ISystem
         state.RequireForUpdate<AIBuildPlan>();
         state.RequireForUpdate<FactionEconomy>();
         state.RequireForUpdate<GridConfig>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
@@ -84,7 +85,8 @@ public partial struct AIBuildPlannerSystem : ISystem
                 {
                     plan.NextBuildIndex = entryIndex + 1;
                     plan.LastBuildTime = now;
-                    AILog.Log($"[AIBuild] faction={plan.FactionId} building={buildingId} result=MissingConfig");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AIBuild] faction={plan.FactionId} building={buildingId} result=MissingConfig");
                     break;
                 }
 
@@ -92,7 +94,8 @@ public partial struct AIBuildPlannerSystem : ISystem
                 if (economy.Money < cost)
                 {
                     plan.LastBuildTime = now;
-                    AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
                     break;
                 }
 
@@ -113,21 +116,24 @@ public partial struct AIBuildPlannerSystem : ISystem
                 plan.LastBuildTime = now;
                 if (!placed)
                 {
-                    AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(preferredOrigin.x, preferredOrigin.y)} cost={cost} result=Blocked");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(preferredOrigin.x, preferredOrigin.y)} cost={cost} result=Blocked");
                     break;
                 }
 
                 economy.Money = Mathf.Max(0, economy.Money - cost);
                 em.SetComponentData(economyEntity, economy);
                 plan.NextBuildIndex = entryIndex + 1;
-                AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(actualOrigin.x, actualOrigin.y)} cost={cost} result=Placed");
+                if (AILog.IsEnabled)
+                    AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(actualOrigin.x, actualOrigin.y)} cost={cost} result=Placed");
                 break;
             }
 
             if (!handledDecision && now - plan.LastLogTime >= LogIntervalSeconds)
             {
                 plan.LastLogTime = now;
-                AILog.Log($"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={buildingPlacement.CountRuntimeBuildingsForFaction(plan.FactionId)}");
+                if (AILog.IsEnabled)
+                    AILog.Log($"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={buildingPlacement.CountRuntimeBuildingsForFaction(plan.FactionId)}");
             }
 
             em.SetComponentData(planEntity, plan);
@@ -222,6 +228,7 @@ public partial struct AIBuildPlannerSystem : ISystem
             return;
 
         plan.LastLogTime = now;
-        AILog.Log($"[AIBuild] faction={plan.FactionId} result=NoPlan");
+        if (AILog.IsEnabled)
+            AILog.Log($"[AIBuild] faction={plan.FactionId} result=NoPlan");
     }
 }

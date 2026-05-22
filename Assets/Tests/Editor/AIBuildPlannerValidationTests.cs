@@ -73,6 +73,7 @@ public sealed class AIBuildPlannerValidationTests
         _runtimeRoot = new GameObject("AIBuildPlanner_RuntimeRoot");
         _buildingPlacement = new BuildingPlacementSystem();
         _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
+        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
 
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 30000, LastLogTime = -999f });
@@ -95,7 +96,7 @@ public sealed class AIBuildPlannerValidationTests
         DynamicBuffer<AIBuildPlanEntry> entries = em.AddBuffer<AIBuildPlanEntry>(planEntity);
         entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Tent_Regular") });
 
-        InitialUnitsRuntimeState.PlayRequested = true;
+        RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = _world.CreateSystem<AIBuildPlannerSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));

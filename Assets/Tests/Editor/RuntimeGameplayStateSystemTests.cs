@@ -33,12 +33,15 @@ public sealed class RuntimeGameplayStateSystemTests
 
         runtimeState.SelectionModeActive = true;
         runtimeState.SuppressNextWorldClick = true;
+        runtimeState.PlayerAutoModeEnabled = true;
 
         Assert.IsTrue(InitialUnitsRuntimeState.SelectionModeActive);
         Assert.IsTrue(InitialUnitsRuntimeState.SuppressNextWorldClick);
+        Assert.IsTrue(InitialUnitsRuntimeState.PlayerAutoModeEnabled);
         RuntimeGameplayStateComponent state = ReadSingleton<RuntimeGameplayStateComponent>();
         Assert.AreEqual(1, state.SelectionModeActive);
         Assert.AreEqual(1, state.SuppressNextWorldClick);
+        Assert.AreEqual(1, state.PlayerAutoModeEnabled);
     }
 
     [Test]
@@ -78,15 +81,18 @@ public sealed class RuntimeGameplayStateSystemTests
     {
         InitialUnitsRuntimeState.PlayRequested = true;
         InitialUnitsRuntimeState.BuildModeActive = true;
+        InitialUnitsRuntimeState.PlayerAutoModeEnabled = true;
         var runtimeState = new RuntimeGameplayStateSystem();
 
         RuntimeGameplayStateComponent state = runtimeState.ReadGameplayState();
 
         Assert.AreEqual(1, state.PlayRequested);
         Assert.AreEqual(1, state.BuildModeActive);
+        Assert.AreEqual(1, state.PlayerAutoModeEnabled);
         RuntimeGameplayStateComponent singleton = ReadSingleton<RuntimeGameplayStateComponent>();
         Assert.AreEqual(1, singleton.PlayRequested);
         Assert.AreEqual(1, singleton.BuildModeActive);
+        Assert.AreEqual(1, singleton.PlayerAutoModeEnabled);
     }
 
     [Test]
@@ -149,6 +155,7 @@ public sealed class RuntimeGameplayStateSystemTests
         InitialUnitsRuntimeState.ZoomInHeld = false;
         InitialUnitsRuntimeState.ZoomOutHeld = false;
         InitialUnitsRuntimeState.SuppressNextWorldClick = false;
+        InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
     }
 }
 #endif

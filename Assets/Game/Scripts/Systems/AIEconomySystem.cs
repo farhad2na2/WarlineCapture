@@ -10,13 +10,13 @@ public partial struct AIEconomySystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
-        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<FactionEconomy>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
@@ -69,7 +69,7 @@ public partial struct AIEconomySystem : ISystem
             economy.OilIncomeRate = oilIncomeRate;
             economy.FuelIncomeRate = fuelIncomeRate;
 
-            bool shouldLog = revenue > 0 || now - economy.LastLogTime >= LogIntervalSeconds;
+            bool shouldLog = AILog.IsEnabled && (revenue > 0 || now - economy.LastLogTime >= LogIntervalSeconds);
             if (shouldLog)
             {
                 economy.LastLogTime = now;

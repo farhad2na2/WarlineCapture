@@ -73,6 +73,16 @@ public sealed class RuntimeGameplayStateSystem
         });
     }
 
+    public bool PlayerAutoModeEnabled
+    {
+        get => ReadGameplayState().PlayerAutoModeEnabled != 0;
+        set => WriteGameplayState(state =>
+        {
+            state.PlayerAutoModeEnabled = ToByte(value);
+            return state;
+        });
+    }
+
     public bool ZoomInHeld
     {
         get => ReadCameraInput().ZoomInHeld != 0;
@@ -294,7 +304,8 @@ public sealed class RuntimeGameplayStateSystem
             BuildModeActive = ToByte(InitialUnitsRuntimeState.BuildModeActive),
             FullscreenMapOpen = ToByte(InitialUnitsRuntimeState.FullscreenMapOpen),
             FullscreenMapIsoMode = ToByte(InitialUnitsRuntimeState.FullscreenMapIsoMode),
-            SuppressNextWorldClick = ToByte(InitialUnitsRuntimeState.SuppressNextWorldClick)
+            SuppressNextWorldClick = ToByte(InitialUnitsRuntimeState.SuppressNextWorldClick),
+            PlayerAutoModeEnabled = ToByte(InitialUnitsRuntimeState.PlayerAutoModeEnabled)
         };
     }
 
@@ -325,6 +336,7 @@ public sealed class RuntimeGameplayStateSystem
         InitialUnitsRuntimeState.FullscreenMapOpen = state.FullscreenMapOpen != 0;
         InitialUnitsRuntimeState.FullscreenMapIsoMode = state.FullscreenMapIsoMode != 0;
         InitialUnitsRuntimeState.SuppressNextWorldClick = state.SuppressNextWorldClick != 0;
+        InitialUnitsRuntimeState.PlayerAutoModeEnabled = state.PlayerAutoModeEnabled != 0;
     }
 
     private static void ApplyLegacyCameraInput(RuntimeCameraInputComponent input)
@@ -351,7 +363,8 @@ public sealed class RuntimeGameplayStateSystem
             left.BuildModeActive == right.BuildModeActive &&
             left.FullscreenMapOpen == right.FullscreenMapOpen &&
             left.FullscreenMapIsoMode == right.FullscreenMapIsoMode &&
-            left.SuppressNextWorldClick == right.SuppressNextWorldClick;
+            left.SuppressNextWorldClick == right.SuppressNextWorldClick &&
+            left.PlayerAutoModeEnabled == right.PlayerAutoModeEnabled;
     }
 
     private static bool CameraInputEquals(RuntimeCameraInputComponent left, RuntimeCameraInputComponent right)

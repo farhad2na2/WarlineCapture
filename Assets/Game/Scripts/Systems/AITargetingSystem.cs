@@ -11,11 +11,12 @@ public partial struct AITargetingSystem : ISystem
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<AISquad>();
+        state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -46,7 +47,8 @@ public partial struct AITargetingSystem : ISystem
                 if (now - squad.LastLogTime >= LogIntervalSeconds)
                 {
                     squad.LastLogTime = now;
-                    AILog.Log($"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
+                    if (AILog.IsEnabled)
+                        AILog.Log($"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
                     em.SetComponentData(squadEntity, squad);
                 }
                 continue;
@@ -68,7 +70,8 @@ public partial struct AITargetingSystem : ISystem
             if (changed || now - squad.LastLogTime >= LogIntervalSeconds)
             {
                 squad.LastLogTime = now;
-                AILog.Log($"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
+                if (AILog.IsEnabled)
+                    AILog.Log($"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
             }
 
             em.SetComponentData(squadEntity, squad);

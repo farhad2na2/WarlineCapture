@@ -26,6 +26,7 @@ public sealed class UnitAttackTraceSystem
     private readonly Matrix4x4[] _matrices = new Matrix4x4[MaxBatchSize];
     private readonly Vector4[] _colors = new Vector4[MaxBatchSize];
     private readonly Vector4[] _traceParams = new Vector4[MaxBatchSize];
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
     public void Init(UnitAttackTraceSystemConfig configAsset, Camera sceneWorldCamera, int renderLayer, FactionVisualSettings factionVisualSettings)
     {
@@ -59,7 +60,7 @@ public sealed class UnitAttackTraceSystem
 
     public void LateUpdate()
     {
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (!_runtimeGameplayStateSystem.PlayRequested)
             return;
 
         if (worldCamera == null)

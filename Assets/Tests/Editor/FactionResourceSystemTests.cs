@@ -84,6 +84,46 @@ public sealed class FactionResourceSystemTests
         Assert.AreEqual(0.36f, progress01, 0.0001f);
     }
 
+    [Test]
+    public void UpdateResourceProduction_ExtractsOilUpToCapacity()
+    {
+        var oilPump = new TestResourceBuilding
+        {
+            OilStorageCapacity = 10,
+            OilBarrelsPerDay = 20f,
+            StoredOilBarrels = 9f
+        };
+        var buildings = new Dictionary<int, TestResourceBuilding> { { 1, oilPump } };
+
+        var system = new FactionResourceSystem();
+        FactionResourceSystem.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 1f, 2f);
+
+        Assert.AreEqual(10f, oilPump.StoredOilBarrels);
+        Assert.AreEqual(1f, result.OilExtractedBarrels);
+        Assert.AreEqual(0f, result.FuelProducedBarrels);
+    }
+
+    [Test]
+    public void UpdateResourceProduction_ConvertsOilIntoFuel()
+    {
+        var refinery = new TestResourceBuilding
+        {
+            FuelStorageCapacity = 10,
+            FuelBarrelsPerDay = 10f,
+            StoredOilBarrels = 8f,
+            StoredFuelBarrels = 9.5f
+        };
+        var buildings = new Dictionary<int, TestResourceBuilding> { { 1, refinery } };
+
+        var system = new FactionResourceSystem();
+        FactionResourceSystem.ResourceProductionTickResult result = system.UpdateResourceProduction(buildings, 10f, 1f, 2f);
+
+        Assert.AreEqual(7f, refinery.StoredOilBarrels);
+        Assert.AreEqual(10f, refinery.StoredFuelBarrels);
+        Assert.AreEqual(0f, result.OilExtractedBarrels);
+        Assert.AreEqual(0.5f, result.FuelProducedBarrels);
+    }
+
     private sealed class TestResourceBuilding : FactionResourceSystem.IResourceBuilding
     {
         public bool IsDestroyed { get; set; }

@@ -147,10 +147,10 @@ Allowed direction:
 - Runtime building registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`.
 - Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; full building visual ownership should continue moving there by slice.
 - Building destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`; full building combat ownership should continue moving there by slice.
-- Resource storage classification, capacity display math, resource totals, faction economy snapshots, and sell/drain behavior belong in `FactionResourceSystem`; resource production ticks should continue moving there by slice.
-- Hauler behavior belongs in a future `ResourceHaulerSystem`.
-- Unit production belongs in a future `BuildingProductionSystem`.
-- UI read models belong in a temporary `BuildingUiQuerySystem` until UI uses ECS query/request components.
+- Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`.
+- Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`; movement/path request bridging may remain in `BuildingPlacementSystem` until the hauler loop is fully ECS-owned.
+- Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, production slot reservation, pending queue removal, ready/soon transport-pending lookup, and transport launch delay math belong in `BuildingProductionSystem`; spawn placement, transport visuals, and ECS unit instantiation may remain in `BuildingPlacementSystem` until those slices are extracted.
+- Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI read models belong in `BuildingUiQuerySystem` until UI uses ECS query/request components.
 
 When touching building code, do not add a new responsibility to `BuildingPlacementSystem`; extract or extend the matching `*System` slice.
 

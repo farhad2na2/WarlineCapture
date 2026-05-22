@@ -10,36 +10,17 @@ using System.Globalization;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using SnivelerCode.GpuAnimation.Scripts.Components;
 using static UnityEngine.Object;
+using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
+using ResourceHaulKind = ResourceHaulerSystem.ResourceHaulKind;
+using ResourceHaulPhase = ResourceHaulerSystem.ResourceHaulPhase;
 
 public sealed class BuildingPlacementSystem
 {
-    private enum ResourceHaulPhase : byte
-    {
-        None = 0,
-        ToSource = 1,
-        Loading = 2,
-        ToDestination = 3,
-        Unloading = 4
-    }
-
-    private enum ResourceHaulKind : byte
-    {
-        Oil = 0,
-        Fuel = 1
-    }
-
     private enum DragFirstAxis
     {
         None,
         Horizontal,
         Vertical
-    }
-
-    private enum ProductionTransportMode : byte
-    {
-        Helicopter = 0,
-        Plane = 1,
-        AirSelf = 2
     }
 
     public readonly struct ProducedUnitUiEntry
@@ -267,19 +248,19 @@ public sealed class BuildingPlacementSystem
             public PendingDropVisual ActiveDrop;
         }
 
-        public sealed class PendingProduction
+        public sealed class PendingProduction : BuildingProductionSystem.IPendingProduction
         {
-            public int ProductionIndex;
-            public GameObject Prefab;
-            public float StartedAt;
-            public float ReadyAt;
-            public int ReservedProductionSlotIndex;
-            public GameObject TransportPrefab;
-            public float TransportArrivalSeconds;
-            public float TransportHoldForNextReadySeconds;
-            public int TransportMaxConcurrent;
-            public ProductionTransportMode TransportMode;
-            public bool TransportRequiresAirportRunway;
+            public int ProductionIndex { get; set; }
+            public GameObject Prefab { get; set; }
+            public float StartedAt { get; set; }
+            public float ReadyAt { get; set; }
+            public int ReservedProductionSlotIndex { get; set; }
+            public GameObject TransportPrefab { get; set; }
+            public float TransportArrivalSeconds { get; set; }
+            public float TransportHoldForNextReadySeconds { get; set; }
+            public int TransportMaxConcurrent { get; set; }
+            public ProductionTransportMode TransportMode { get; set; }
+            public bool TransportRequiresAirportRunway { get; set; }
         }
 
         public int Id { get; set; }
@@ -388,6 +369,9 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingVisualSystem _buildingVisualSystem = new();
     private readonly BuildingCombatSystem _buildingCombatSystem = new();
     private readonly FactionResourceSystem _factionResourceSystem = new();
+    private readonly ResourceHaulerSystem _resourceHaulerSystem = new();
+    private readonly BuildingProductionSystem _buildingProductionSystem = new();
+    private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
     private readonly Dictionary<GameObject, CachedRuntimeBuildingMetadata> _runtimeBuildingMetadataCache = new();
     private readonly Dictionary<string, GameObject> _spawnablesByKey = new();
@@ -586,30 +570,8 @@ public sealed class BuildingPlacementSystem
             !TryGetEntityManager(out EntityManager em))
             return;
 
-        if (building.ProducedUnits == null)
-            building.ProducedUnits = new List<Entity>();
-
-        for (int i = building.ProducedUnits.Count - 1; i >= 0; i--)
-        {
-            Entity unit = building.ProducedUnits[i];
-            if (unit == Entity.Null || !em.Exists(unit))
-            {
-                building.ProducedUnits.RemoveAt(i);
-                continue;
-            }
-
-            if (em.HasComponent<UnitHealth>(unit) && em.GetComponentData<UnitHealth>(unit).Current <= 0)
-            {
-                building.ProducedUnits.RemoveAt(i);
-                continue;
-            }
-        }
-
-        for (int i = 0; i < building.ProducedUnits.Count; i++)
-        {
-            Entity unit = building.ProducedUnits[i];
-            units.Add(unit);
-        }
+        building.ProducedUnits ??= new List<Entity>();
+        _buildingUiQuerySystem.GetProducedUnits(building.ProducedUnits, em, _buildingProductionSystem, units);
     }
 
     public void GetSelectedBuildingProducedUnitEntries(List<ProducedUnitUiEntry> entries)
@@ -625,48 +587,16 @@ public sealed class BuildingPlacementSystem
         if (!TryGetEntityManager(out EntityManager em))
             return;
 
-        if (building.ProducedUnits == null)
-            building.ProducedUnits = new List<Entity>();
-        if (building.ProducedUnitPrefabs == null)
-            building.ProducedUnitPrefabs = new Dictionary<Entity, GameObject>();
-
-        for (int i = building.ProducedUnits.Count - 1; i >= 0; i--)
-        {
-            Entity unit = building.ProducedUnits[i];
-            if (unit == Entity.Null || !em.Exists(unit))
-            {
-                building.ProducedUnitPrefabs.Remove(unit);
-                building.ProducedUnits.RemoveAt(i);
-                continue;
-            }
-
-            if (em.HasComponent<UnitHealth>(unit) && em.GetComponentData<UnitHealth>(unit).Current <= 0)
-            {
-                building.ProducedUnitPrefabs.Remove(unit);
-                building.ProducedUnits.RemoveAt(i);
-                continue;
-            }
-
-            building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab);
-            entries.Add(new ProducedUnitUiEntry(unit, prefab, true, 1f));
-        }
-
-        if (building.PendingProductions != null)
-        {
-            float now = Time.time;
-            for (int i = 0; i < building.PendingProductions.Count; i++)
-            {
-                RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-                if (pending == null || pending.Prefab == null)
-                    continue;
-
-                float duration = Mathf.Max(0.01f, pending.ReadyAt - pending.StartedAt);
-                float progress01 = Mathf.Clamp01((now - pending.StartedAt) / duration);
-                if (pending.TransportPrefab != null)
-                    progress01 = Mathf.Min(progress01, 0.97f);
-                entries.Add(new ProducedUnitUiEntry(Entity.Null, pending.Prefab, false, progress01));
-            }
-        }
+        building.ProducedUnits ??= new List<Entity>();
+        building.ProducedUnitPrefabs ??= new Dictionary<Entity, GameObject>();
+        _buildingUiQuerySystem.AddProducedUnitEntries(
+            building.ProducedUnits,
+            building.ProducedUnitPrefabs,
+            building.PendingProductions,
+            em,
+            _buildingProductionSystem,
+            Time.time,
+            entries);
     }
 
     public bool TryGetSelectedBuildingCapacityInfo(out int current, out int max, out float progress01)
@@ -703,17 +633,12 @@ public sealed class BuildingPlacementSystem
             if (building.HasOwnerFaction && building.OwnerFactionId != 0)
                 continue;
 
-            for (int i = 0; i < building.PendingProductions.Count; i++)
-            {
-                RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-                if (pending == null || pending.Prefab == null)
-                    continue;
-
-                float duration = Mathf.Max(0.01f, pending.ReadyAt - pending.StartedAt);
-                float remaining = Mathf.Max(0f, pending.ReadyAt - now);
-                float progress = Mathf.Clamp01((now - pending.StartedAt) / duration);
-                entries.Add(new PendingProductionUiEntry(pair.Key, pending.Prefab, remaining, duration, progress, pending.StartedAt, pending.ReadyAt));
-            }
+            _buildingUiQuerySystem.AddPendingProductionUiEntries(
+                pair.Key,
+                building.PendingProductions,
+                _buildingProductionSystem,
+                now,
+                entries);
         }
     }
 
@@ -821,18 +746,10 @@ public sealed class BuildingPlacementSystem
             if (building.ProducedUnits == null)
                 continue;
 
-            for (int i = building.ProducedUnits.Count - 1; i >= 0; i--)
+            _buildingProductionSystem.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
+            for (int i = 0; i < building.ProducedUnits.Count; i++)
             {
                 Entity unit = building.ProducedUnits[i];
-                bool alive = unit != Entity.Null && em.Exists(unit);
-                if (alive && em.HasComponent<UnitHealth>(unit))
-                    alive = em.GetComponentData<UnitHealth>(unit).Current > 0;
-                if (!alive)
-                {
-                    building.ProducedUnits.RemoveAt(i);
-                    continue;
-                }
-
                 if (em.HasComponent<Faction>(unit) && em.GetComponentData<Faction>(unit).Id != factionId)
                     continue;
                 if (!RuntimeProducedUnitMatchesId(building, unit, normalized))
@@ -1869,51 +1786,15 @@ public sealed class BuildingPlacementSystem
             : 300f;
         float deltaTime = Time.deltaTime;
 
-        foreach (var pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || building.Definition == null)
-                continue;
-
-            int capacity = Mathf.Max(0, building.Definition.OilStorageCapacity);
-            float barrelsPerDay = Mathf.Max(0f, building.Definition.OilBarrelsPerDay);
-            if (capacity > 0 && barrelsPerDay > 0f)
-            {
-                if (building.StoredOilBarrels >= capacity)
-                {
-                    building.StoredOilBarrels = capacity;
-                }
-                else
-                {
-                    float barrelsPerSecond = barrelsPerDay / secondsPerDay;
-                    float previousOil = building.StoredOilBarrels;
-                    building.StoredOilBarrels = Mathf.Min(capacity, building.StoredOilBarrels + barrelsPerSecond * deltaTime);
-                    GameRuntimeStats.RecordOilExtracted(building.StoredOilBarrels - previousOil);
-                }
-            }
-
-            float fuelBarrelsPerDay = Mathf.Max(0f, building.Definition.FuelBarrelsPerDay);
-            int fuelCapacity = Mathf.Max(0, building.Definition.FuelStorageCapacity);
-            if (fuelBarrelsPerDay > 0f)
-            {
-                float maxFuelFromOil = building.StoredOilBarrels / OilBarrelsPerFuelBarrel;
-                if (maxFuelFromOil > 0f)
-                {
-                    float desiredFuel = (fuelBarrelsPerDay / secondsPerDay) * deltaTime;
-                    float producedFuel = Mathf.Min(desiredFuel, maxFuelFromOil);
-                    if (fuelCapacity > 0)
-                        producedFuel = Mathf.Min(producedFuel, Mathf.Max(0f, fuelCapacity - building.StoredFuelBarrels));
-
-                    if (producedFuel > 0f)
-                    {
-                        building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - (producedFuel * OilBarrelsPerFuelBarrel));
-                        if (fuelCapacity > 0)
-                            building.StoredFuelBarrels = Mathf.Min(fuelCapacity, building.StoredFuelBarrels + producedFuel);
-                        GameRuntimeStats.RecordFuelProduced(producedFuel);
-                    }
-                }
-            }
-        }
+        FactionResourceSystem.ResourceProductionTickResult result = _factionResourceSystem.UpdateResourceProduction(
+            _runtimeBuildings,
+            secondsPerDay,
+            deltaTime,
+            OilBarrelsPerFuelBarrel);
+        if (result.OilExtractedBarrels > 0f)
+            GameRuntimeStats.RecordOilExtracted(result.OilExtractedBarrels);
+        if (result.FuelProducedBarrels > 0f)
+            GameRuntimeStats.RecordFuelProduced(result.FuelProducedBarrels);
     }
 
     private void UpdateResourceHaulers()
@@ -1961,9 +1842,7 @@ public sealed class BuildingPlacementSystem
                     if (!TryIssueHaulerMoveToBuilding(em, entity, source, out int2 goal))
                         continue;
 
-                    order.TargetCell = goal;
-                    order.Phase = (byte)ResourceHaulPhase.ToSource;
-                    order.ActionEndsAt = 0f;
+                    _resourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulPhase.ToSource, goal);
                     em.SetComponentData(entity, order);
                     break;
                 }
@@ -1985,15 +1864,14 @@ public sealed class BuildingPlacementSystem
 
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} arrived-source source={source.Id} current={currentCell}");
-                    order.Phase = (byte)ResourceHaulPhase.Loading;
-                    order.ActionEndsAt = 0f;
+                    _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.Loading);
                     em.SetComponentData(entity, order);
                     break;
                 }
 
                 case ResourceHaulPhase.Loading:
                 {
-                    float loadAmount = Mathf.Max(0f, hauler.BarrelCapacity);
+                    float loadAmount = _resourceHaulerSystem.GetLoadAmount(hauler);
                     if (loadAmount <= 0f)
                     {
                         Debug.LogWarning($"[ResourceHauler] entity={entity} invalid-capacity capacity={hauler.BarrelCapacity}");
@@ -2005,23 +1883,22 @@ public sealed class BuildingPlacementSystem
                     float currentCargo = resourceKind == ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} phase=Loading resource={resourceKind} current={currentCell} source={source.Id} stored={sourceStored:0.##} cargo={currentCargo:0.##}/{loadAmount:0.##} actionEndsAt={order.ActionEndsAt:0.##} now={now:0.##}");
-                    if (sourceStored + 0.001f < loadAmount)
+                    if (!_resourceHaulerSystem.HasEnoughSourceResource(source, resourceKind, loadAmount))
                     {
                         if (VerboseResourceHaulerLogs)
                             Debug.Log($"[ResourceHauler] entity={entity} waiting-for-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
                         break;
                     }
 
-                    if (order.ActionEndsAt <= 0f)
+                    ResourceHaulerSystem.TimedActionState loadTimer = _resourceHaulerSystem.AdvanceTimedAction(ref order, now, hauler.FillDurationSeconds);
+                    if (loadTimer == ResourceHaulerSystem.TimedActionState.Started)
                     {
-                        order.ActionEndsAt = now + Mathf.Max(0f, hauler.FillDurationSeconds);
                         em.SetComponentData(entity, order);
                         if (VerboseResourceHaulerLogs)
                             Debug.Log($"[ResourceHauler] entity={entity} loading-started source={source.Id} fillDuration={hauler.FillDurationSeconds:0.##} completeAt={order.ActionEndsAt:0.##}");
                         break;
                     }
-
-                    if (now < order.ActionEndsAt)
+                    if (loadTimer == ResourceHaulerSystem.TimedActionState.Waiting)
                     {
                         if (VerboseResourceHaulerLogs)
                             Debug.Log($"[ResourceHauler] entity={entity} loading-in-progress source={source.Id} remaining={order.ActionEndsAt - now:0.##}");
@@ -2029,52 +1906,31 @@ public sealed class BuildingPlacementSystem
                     }
 
                     sourceStored = resourceKind == ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-                    if (sourceStored + 0.001f < loadAmount)
+                    if (!_resourceHaulerSystem.HasEnoughSourceResource(source, resourceKind, loadAmount))
                     {
-                        order.ActionEndsAt = 0f;
+                        _resourceHaulerSystem.ResetActionTimer(ref order);
                         em.SetComponentData(entity, order);
                         if (VerboseResourceHaulerLogs)
                             Debug.Log($"[ResourceHauler] entity={entity} loading-reset-insufficient-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
                         break;
                     }
 
-                    if (resourceKind == ResourceHaulKind.Fuel)
-                    {
-                        source.StoredFuelBarrels = Mathf.Max(0f, source.StoredFuelBarrels - loadAmount);
-                        hauler.CargoFuelBarrels = loadAmount;
-                        hauler.CargoOilBarrels = 0f;
-                    }
-                    else
-                    {
-                        source.StoredOilBarrels = Mathf.Max(0f, source.StoredOilBarrels - loadAmount);
-                        hauler.CargoOilBarrels = loadAmount;
-                        hauler.CargoFuelBarrels = 0f;
-                    }
+                    if (!_resourceHaulerSystem.TryCompleteLoad(source, resourceKind, loadAmount, ref hauler))
+                        break;
                     em.SetComponentData(entity, hauler);
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} loading-complete resource={resourceKind} source={source.Id} loaded={loadAmount:0.##}");
 
                     if (!TryIssueHaulerMoveToBuilding(em, entity, destination, out int2 destinationGoal))
                     {
-                        if (resourceKind == ResourceHaulKind.Fuel)
-                        {
-                            source.StoredFuelBarrels += loadAmount;
-                            hauler.CargoFuelBarrels = 0f;
-                        }
-                        else
-                        {
-                            source.StoredOilBarrels += loadAmount;
-                            hauler.CargoOilBarrels = 0f;
-                        }
+                        _resourceHaulerSystem.RevertLoad(source, resourceKind, loadAmount, ref hauler);
                         em.SetComponentData(entity, hauler);
                         if (VerboseResourceHaulerLogs)
                             Debug.LogWarning($"[ResourceHauler] entity={entity} failed-destination-move destination={destination.Id} revertedLoad={loadAmount:0.##}");
                         break;
                     }
 
-                    order.TargetCell = destinationGoal;
-                    order.Phase = (byte)ResourceHaulPhase.ToDestination;
-                    order.ActionEndsAt = 0f;
+                    _resourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulPhase.ToDestination, destinationGoal);
                     em.SetComponentData(entity, order);
                     if (VerboseResourceHaulerLogs)
                         Debug.Log($"[ResourceHauler] entity={entity} to-destination destination={destination.Id} target={destinationGoal}");
@@ -2090,78 +1946,51 @@ public sealed class BuildingPlacementSystem
                         break;
                     }
 
-                    order.Phase = (byte)ResourceHaulPhase.Unloading;
-                    order.ActionEndsAt = 0f;
+                    _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.Unloading);
                     em.SetComponentData(entity, order);
                     break;
                 }
 
                 case ResourceHaulPhase.Unloading:
                 {
-                    float cargo = resourceKind == ResourceHaulKind.Fuel
-                        ? Mathf.Max(0f, hauler.CargoFuelBarrels)
-                        : Mathf.Max(0f, hauler.CargoOilBarrels);
+                    float cargo = _resourceHaulerSystem.GetCargo(hauler, resourceKind);
                     if (cargo <= 0f)
                     {
-                        order.Phase = (byte)ResourceHaulPhase.None;
-                        order.ActionEndsAt = 0f;
+                        _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.None);
                         em.SetComponentData(entity, order);
                         break;
                     }
 
-                    float freeSpace = resourceKind == ResourceHaulKind.Fuel
-                        ? GetFuelReceivingFreeCapacity(destination)
-                        : GetOilReceivingFreeCapacity(destination);
-                    if (freeSpace + 0.001f < cargo)
+                    if (!_resourceHaulerSystem.HasReceivingCapacity(destination, resourceKind, cargo))
                         break;
 
-                    if (order.ActionEndsAt <= 0f)
+                    ResourceHaulerSystem.TimedActionState unloadTimer = _resourceHaulerSystem.AdvanceTimedAction(ref order, now, hauler.UnloadDurationSeconds);
+                    if (unloadTimer == ResourceHaulerSystem.TimedActionState.Started ||
+                        unloadTimer == ResourceHaulerSystem.TimedActionState.Waiting)
                     {
-                        order.ActionEndsAt = now + Mathf.Max(0f, hauler.UnloadDurationSeconds);
                         em.SetComponentData(entity, order);
                         break;
                     }
 
-                    if (now < order.ActionEndsAt)
-                        break;
-
-                    freeSpace = resourceKind == ResourceHaulKind.Fuel
-                        ? GetFuelReceivingFreeCapacity(destination)
-                        : GetOilReceivingFreeCapacity(destination);
-                    if (freeSpace + 0.001f < cargo)
+                    if (!_resourceHaulerSystem.HasReceivingCapacity(destination, resourceKind, cargo))
                     {
-                        order.ActionEndsAt = 0f;
+                        _resourceHaulerSystem.ResetActionTimer(ref order);
                         em.SetComponentData(entity, order);
                         break;
                     }
 
-                    if (resourceKind == ResourceHaulKind.Fuel)
-                    {
-                        destination.StoredFuelBarrels += cargo;
-                        if (destination.Definition.FuelStorageCapacity > 0)
-                            destination.StoredFuelBarrels = Mathf.Min(destination.Definition.FuelStorageCapacity, destination.StoredFuelBarrels);
-                        hauler.CargoFuelBarrels = 0f;
-                    }
-                    else
-                    {
-                        destination.StoredOilBarrels += cargo;
-                        if (destination.Definition.OilStorageCapacity > 0)
-                            destination.StoredOilBarrels = Mathf.Min(destination.Definition.OilStorageCapacity, destination.StoredOilBarrels);
-                        hauler.CargoOilBarrels = 0f;
-                    }
+                    if (!_resourceHaulerSystem.TryCompleteUnload(destination, resourceKind, ref hauler))
+                        break;
                     em.SetComponentData(entity, hauler);
 
                     if (!TryIssueHaulerMoveToBuilding(em, entity, source, out int2 sourceGoal))
                     {
-                        order.Phase = (byte)ResourceHaulPhase.None;
-                        order.ActionEndsAt = 0f;
+                        _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.None);
                         em.SetComponentData(entity, order);
                         break;
                     }
 
-                    order.TargetCell = sourceGoal;
-                    order.Phase = (byte)ResourceHaulPhase.ToSource;
-                    order.ActionEndsAt = 0f;
+                    _resourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulPhase.ToSource, sourceGoal);
                     em.SetComponentData(entity, order);
                     break;
                 }
@@ -4536,8 +4365,8 @@ public sealed class BuildingPlacementSystem
         if (selected.Length == 0)
             return false;
 
-        bool clickedIsOilSource = IsOilSourceBuilding(clickedBuilding);
-        bool clickedIsFuelBuilding = IsFuelBuilding(clickedBuilding);
+        bool clickedIsOilSource = _resourceHaulerSystem.IsOilSourceBuilding(clickedBuilding);
+        bool clickedIsFuelBuilding = _resourceHaulerSystem.IsFuelBuilding(clickedBuilding);
         bool clickedIsStorage = _factionResourceSystem.IsResourceStorageBuilding(clickedBuilding);
         if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
             return false;
@@ -4547,13 +4376,13 @@ public sealed class BuildingPlacementSystem
         ResourceHaulKind resourceKind = ResourceHaulKind.Oil;
         if (clickedIsOilSource)
         {
-            if (!TryFindNearestBuilding(clickedBuilding, IsFuelBuilding, out destination))
+            if (!TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.IsFuelBuilding(candidate), out destination))
                 return false;
             resourceKind = ResourceHaulKind.Oil;
         }
         else if (clickedIsFuelBuilding)
         {
-            if (!TryFindNearestBuilding(clickedBuilding, IsOilSourceBuilding, out source))
+            if (!TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.IsOilSourceBuilding(candidate), out source))
                 return false;
             destination = clickedBuilding;
             resourceKind = ResourceHaulKind.Oil;
@@ -4561,9 +4390,9 @@ public sealed class BuildingPlacementSystem
         else
         {
             destination = clickedBuilding;
-            if (TryFindNearestBuilding(clickedBuilding, HasAvailableFuelForHauler, out source))
+            if (TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.HasAvailableFuelForHauler(candidate), out source))
                 resourceKind = ResourceHaulKind.Fuel;
-            else if (TryFindNearestBuilding(clickedBuilding, IsOilSourceBuilding, out source))
+            else if (TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.IsOilSourceBuilding(candidate), out source))
                 resourceKind = ResourceHaulKind.Oil;
             else
                 return false;
@@ -4579,15 +4408,7 @@ public sealed class BuildingPlacementSystem
             if (!TryIssueHaulerMoveToBuilding(em, unit, source, out int2 sourceGoal))
                 continue;
 
-            UnitResourceHaulOrder order = new()
-            {
-                SourceBuildingId = source.Id,
-                DestinationBuildingId = destination.Id,
-                TargetCell = sourceGoal,
-                ActionEndsAt = 0f,
-                Phase = (byte)ResourceHaulPhase.ToSource,
-                ResourceKind = (byte)resourceKind
-            };
+            UnitResourceHaulOrder order = _resourceHaulerSystem.CreateOrder(source.Id, destination.Id, sourceGoal, resourceKind);
 
             if (em.HasComponent<UnitResourceHaulOrder>(unit))
                 em.SetComponentData(unit, order);
@@ -4681,60 +4502,6 @@ public sealed class BuildingPlacementSystem
         bool sameTarget = em.HasComponent<UnitTarget>(entity) && em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal);
         bool sameRequest = em.HasComponent<UnitPathRequest>(entity) && em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal);
         return sameTarget || sameRequest;
-    }
-
-    private static bool IsOilSourceBuilding(RuntimeBuildingData building)
-    {
-        return building != null &&
-               building.Definition != null &&
-               building.Definition.OilBarrelsPerDay > 0f &&
-               building.Definition.OilStorageCapacity > 0;
-    }
-
-    private static bool IsFuelBuilding(RuntimeBuildingData building)
-    {
-        return building != null &&
-               building.Definition != null &&
-               building.Definition.FuelBarrelsPerDay > 0f;
-    }
-
-    private static bool IsFuelStorageSourceBuilding(RuntimeBuildingData building)
-    {
-        return building != null &&
-               building.Definition != null &&
-               building.Definition.FuelBarrelsPerDay > 0f &&
-               building.Definition.FuelStorageCapacity > 0;
-    }
-
-    private static bool HasAvailableFuelForHauler(RuntimeBuildingData building)
-    {
-        return IsFuelStorageSourceBuilding(building) &&
-               building.StoredFuelBarrels >= 1f;
-    }
-
-    private static float GetOilReceivingFreeCapacity(RuntimeBuildingData building)
-    {
-        if (building == null || building.Definition == null)
-            return 0f;
-
-        if (building.Definition.OilStorageCapacity > 0)
-            return Mathf.Max(0f, building.Definition.OilStorageCapacity - building.StoredOilBarrels);
-
-        if (building.Definition.FuelBarrelsPerDay > 0f)
-            return float.MaxValue;
-
-        return 0f;
-    }
-
-    private static float GetFuelReceivingFreeCapacity(RuntimeBuildingData building)
-    {
-        if (building == null || building.Definition == null)
-            return 0f;
-
-        if (building.Definition.FuelStorageCapacity > 0)
-            return Mathf.Max(0f, building.Definition.FuelStorageCapacity - building.StoredFuelBarrels);
-
-        return 0f;
     }
 
     private static bool TryFindBuildingApproachCell(
@@ -6690,54 +6457,22 @@ public sealed class BuildingPlacementSystem
 
         building.PendingProductions ??= new List<RuntimeBuildingData.PendingProduction>();
         building.ProducedUnits ??= new List<Entity>();
-        if (TryGetEntityManager(out EntityManager em))
-        {
-            for (int i = building.ProducedUnits.Count - 1; i >= 0; i--)
-            {
-                Entity unit = building.ProducedUnits[i];
-                bool alive = unit != Entity.Null && em.Exists(unit);
-                if (alive && em.HasComponent<UnitHealth>(unit))
-                    alive = em.GetComponentData<UnitHealth>(unit).Current > 0;
-                if (!alive)
-                    building.ProducedUnits.RemoveAt(i);
-            }
-        }
+        if (!TryGetEntityManager(out EntityManager em))
+            return false;
+
+        _buildingProductionSystem.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
 
         int reservedProductionSlotIndex = -1;
         if (building.ProductionSpawnLocalPositions != null &&
             building.ProducedUnitSlots != null &&
             building.ProductionSpawnLocalPositions.Length > 0)
         {
-            int count = math.min(building.ProductionSpawnLocalPositions.Length, building.ProducedUnitSlots.Length);
-            for (int i = 0; i < count; i++)
-            {
-                bool reservedByPending = false;
-                for (int pendingIndex = 0; pendingIndex < building.PendingProductions.Count; pendingIndex++)
-                {
-                    RuntimeBuildingData.PendingProduction pending = building.PendingProductions[pendingIndex];
-                    if (pending != null && pending.ReservedProductionSlotIndex == i)
-                    {
-                        reservedByPending = true;
-                        break;
-                    }
-                }
-
-                if (reservedByPending)
-                    continue;
-
-                Entity occupant = building.ProducedUnitSlots[i];
-                bool occupied = occupant != Entity.Null && em.Exists(occupant);
-                if (occupied && em.HasComponent<UnitHealth>(occupant))
-                    occupied = em.GetComponentData<UnitHealth>(occupant).Current > 0;
-                if (occupied)
-                    continue;
-
-                if (occupant != Entity.Null && !occupied)
-                    building.ProducedUnitSlots[i] = Entity.Null;
-
-                reservedProductionSlotIndex = i;
-                break;
-            }
+            _buildingProductionSystem.TryReserveProductionSlot(
+                building.PendingProductions,
+                building.ProducedUnitSlots,
+                building.ProductionSpawnLocalPositions.Length,
+                em,
+                out reservedProductionSlotIndex);
 
             bool allowUnreservedHelicopterHelipadSpawn =
                 IsHelicopterUnitPrefab(spawnUnitPrefab) &&
@@ -6756,20 +6491,21 @@ public sealed class BuildingPlacementSystem
             out int transportMaxConcurrent,
             out ProductionTransportMode transportMode,
             out bool transportRequiresAirportRunway);
-        building.PendingProductions.Add(new RuntimeBuildingData.PendingProduction
-        {
-            ProductionIndex = productionIndex,
-            Prefab = spawnUnitPrefab,
-            StartedAt = now,
-            ReadyAt = now + ResolveProductionDurationSeconds(spawnUnitPrefab),
-            ReservedProductionSlotIndex = reservedProductionSlotIndex,
-            TransportPrefab = transportPrefab,
-            TransportArrivalSeconds = transportArrivalSeconds,
-            TransportHoldForNextReadySeconds = transportHoldForNextReadySeconds,
-            TransportMaxConcurrent = transportMaxConcurrent,
-            TransportMode = transportMode,
-            TransportRequiresAirportRunway = transportRequiresAirportRunway
-        });
+        RuntimeBuildingData.PendingProduction queuedProduction = new();
+        _buildingProductionSystem.InitializePendingProduction(
+            queuedProduction,
+            productionIndex,
+            spawnUnitPrefab,
+            now,
+            ResolveProductionDurationSeconds(spawnUnitPrefab),
+            reservedProductionSlotIndex,
+            transportPrefab,
+            transportArrivalSeconds,
+            transportHoldForNextReadySeconds,
+            transportMaxConcurrent,
+            transportMode,
+            transportRequiresAirportRunway);
+        building.PendingProductions.Add(queuedProduction);
         return true;
     }
 
@@ -6795,32 +6531,30 @@ public sealed class BuildingPlacementSystem
                 RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
                 if (pending == null)
                 {
-                    building.PendingProductions.RemoveAt(i);
+                    _buildingProductionSystem.RemovePendingAt(building.PendingProductions, i);
                     continue;
                 }
 
                 if (pending.TransportPrefab != null)
                 {
-                    float launchAt = pending.ReadyAt - Mathf.Max(0.5f, pending.TransportArrivalSeconds);
-                    if (now >= launchAt)
+                    if (_buildingProductionSystem.ShouldLaunchTransport(pending, now))
                     {
                         if (TryEnsureActiveProductionTransport(building, pending))
                         {
                         }
                         else
                         {
-                            pending.StartedAt += Time.deltaTime;
-                            pending.ReadyAt += Time.deltaTime;
+                            _buildingProductionSystem.DelayPendingProduction(pending, Time.deltaTime);
                         }
                     }
                     continue;
                 }
 
-                if (now < pending.ReadyAt)
+                if (!_buildingProductionSystem.IsReady(pending, now))
                     continue;
 
                 if (TrySpawnPlayerUnitNearBuilding(building, pending.ProductionIndex, pending.ReservedProductionSlotIndex))
-                    building.PendingProductions.RemoveAt(i);
+                    _buildingProductionSystem.RemovePendingAt(building.PendingProductions, i);
             }
         }
     }
@@ -7013,15 +6747,13 @@ public sealed class BuildingPlacementSystem
 
                 if (transport.Mode == ProductionTransportMode.AirSelf)
                 {
-                    RuntimeBuildingData.PendingProduction readyAirPending = FindNextReadyTransportPending(building, transport.Prefab, now);
+                    RuntimeBuildingData.PendingProduction readyAirPending = _buildingProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
                     if (readyAirPending != null)
                     {
                         int2 airCell = ResolveProductionGroundGoalCell(building, readyAirPending, transport.TouchdownPosition);
                         if (TrySpawnPlayerUnitNearBuilding(building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell))
                         {
-                            int pendingIndex = building.PendingProductions.IndexOf(readyAirPending);
-                            if (pendingIndex >= 0)
-                                building.PendingProductions.RemoveAt(pendingIndex);
+                            _buildingProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending);
                             AlignNewestProducedUnitRotation(building, transport.Transform.forward);
                         }
 
@@ -7034,7 +6766,7 @@ public sealed class BuildingPlacementSystem
 
                 if (transport.Mode == ProductionTransportMode.Plane)
                 {
-                    RuntimeBuildingData.PendingProduction readySelfArrivalPending = FindNextReadyTransportPending(building, transport.Prefab, now);
+                    RuntimeBuildingData.PendingProduction readySelfArrivalPending = _buildingProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
                     if (readySelfArrivalPending != null && readySelfArrivalPending.Prefab == transport.Prefab)
                     {
                         Vector3 runwaySpawnPosition = transport.HoverPosition;
@@ -7051,9 +6783,7 @@ public sealed class BuildingPlacementSystem
                             runwaySpawnPosition,
                             runwayCell))
                         {
-                            int pendingIndex = building.PendingProductions.IndexOf(readySelfArrivalPending);
-                            if (pendingIndex >= 0)
-                                building.PendingProductions.RemoveAt(pendingIndex);
+                            _buildingProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending);
 
                             AlignNewestProducedUnitRotation(building, transport.Transform.forward);
                             if (TryGetEntityManager(out EntityManager em) &&
@@ -7096,14 +6826,14 @@ public sealed class BuildingPlacementSystem
                 }
                 else
                 {
-                    RuntimeBuildingData.PendingProduction readyPending = FindNextReadyTransportPending(building, transport.Prefab, now);
+                    RuntimeBuildingData.PendingProduction readyPending = _buildingProductionSystem.FindNextReadyTransportPending(building.PendingProductions, transport.Prefab, now);
                     if (readyPending != null && now >= transport.NextDropReadyAt)
                     {
                         StartActiveTransportDrop(building, transport, readyPending, now);
                     }
                     else
                     {
-                        RuntimeBuildingData.PendingProduction soonPending = FindNextSoonTransportPending(building, transport.Prefab, now, transport.HoldForNextReadySeconds);
+                        RuntimeBuildingData.PendingProduction soonPending = _buildingProductionSystem.FindNextSoonTransportPending(building.PendingProductions, transport.Prefab, now, transport.HoldForNextReadySeconds);
                         bool shouldDepart = soonPending == null && now >= transport.HoverEnteredAt + transport.HoldForNextReadySeconds;
                         if (shouldDepart)
                         {
@@ -7318,9 +7048,7 @@ public sealed class BuildingPlacementSystem
             Destroy(drop.Rope.gameObject);
 
         RuntimeBuildingData.PendingProduction production = drop.Production;
-        int pendingIndex = building.PendingProductions.IndexOf(production);
-        if (pendingIndex >= 0)
-            building.PendingProductions.RemoveAt(pendingIndex);
+        _buildingProductionSystem.RemovePendingProduction(building.PendingProductions, production);
 
         if (transport.Mode == ProductionTransportMode.Plane)
         {
@@ -7462,41 +7190,6 @@ public sealed class BuildingPlacementSystem
         Vector3 rollout = doorPosition + (backDirection * 6f);
         rollout.y = 0.5f;
         return rollout;
-    }
-
-    private RuntimeBuildingData.PendingProduction FindNextReadyTransportPending(RuntimeBuildingData building, GameObject transportPrefab, float now)
-    {
-        if (building?.PendingProductions == null)
-            return null;
-
-        for (int i = 0; i < building.PendingProductions.Count; i++)
-        {
-            RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-            if (pending == null || pending.TransportPrefab != transportPrefab)
-                continue;
-            if (now >= pending.ReadyAt)
-                return pending;
-        }
-
-        return null;
-    }
-
-    private RuntimeBuildingData.PendingProduction FindNextSoonTransportPending(RuntimeBuildingData building, GameObject transportPrefab, float now, float maxSeconds)
-    {
-        if (building?.PendingProductions == null)
-            return null;
-
-        for (int i = 0; i < building.PendingProductions.Count; i++)
-        {
-            RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-            if (pending == null || pending.TransportPrefab != transportPrefab)
-                continue;
-            float remaining = pending.ReadyAt - now;
-            if (remaining > 0f && remaining <= maxSeconds)
-                return pending;
-        }
-
-        return null;
     }
 
     private Vector3 ResolveProductionTransportHoverPosition(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending)

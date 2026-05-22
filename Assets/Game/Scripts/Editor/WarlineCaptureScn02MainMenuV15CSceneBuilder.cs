@@ -16,13 +16,13 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
     private const int CanvasHeight = 2160;
     private const int CanvasWidth20x9 = 4800;
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo";
-    private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu_V16OneGo.prefab";
-    private const string PrefabPath20x9 = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu_V16OneGo_20x9.prefab";
-    private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN02_MainMenu_V16OneGo.unity";
-    private const string ScenePath20x9 = "Assets/Game/Scenes/DesignTargets/SCN02_MainMenu_V16OneGo_20x9.unity";
-    private const string CapturePath = "Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V16OneGo_3840x2160.png";
-    private const string CapturePath20x9 = "Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V16OneGo_2400x1080.png";
-    private const string DiagnosticPath = "Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V16OneGo_diagnostics_3840x2160.png";
+    private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu_V18OneGo.prefab";
+    private const string PrefabPath20x9 = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu_V18OneGo_20x9.prefab";
+    private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN02_MainMenu_V18OneGo.unity";
+    private const string ScenePath20x9 = "Assets/Game/Scenes/DesignTargets/SCN02_MainMenu_V18OneGo_20x9.unity";
+    private const string CapturePath = "Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V18OneGo_3840x2160.png";
+    private const string CapturePath20x9 = "Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V18OneGo_2400x1080.png";
+    private const string DiagnosticPath = "Design/AgentReports/Captures/MainMenuV15C/SCN02_MainMenu_V18OneGo_diagnostics_3840x2160.png";
     private const int DefaultSelectedNavIndex = 0;
     private const float VisibleCenterTolerance = 2f;
     private static int s_LayoutWidth = CanvasWidth;
@@ -43,7 +43,7 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
     [MenuItem("WarlineCapture/Design/SCN-02/V15C Build One-Go Main Menu Scene")]
     public static void BuildScene()
     {
-        BuildSceneForLayout(CanvasWidth, PrefabPath, ScenePath, "Screen_MainMenu_V16OneGo");
+        BuildSceneForLayout(CanvasWidth, PrefabPath, ScenePath, "Screen_MainMenu_V18OneGo");
     }
 
     private static void BuildSceneForLayout(int layoutWidth, string prefabPath, string scenePath, string sceneRootName)
@@ -96,7 +96,7 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
     [MenuItem("WarlineCapture/Design/SCN-02/V15C Capture One-Go 20x9")]
     public static void CaptureScene20x9()
     {
-        BuildSceneForLayout(CanvasWidth20x9, PrefabPath20x9, ScenePath20x9, "Screen_MainMenu_V16OneGo_20x9");
+        BuildSceneForLayout(CanvasWidth20x9, PrefabPath20x9, ScenePath20x9, "Screen_MainMenu_V18OneGo_20x9");
         CapturePrefab(PrefabPath20x9, CapturePath20x9, 2400, 1080, Color.black, CanvasWidth20x9);
         Debug.Log($"[SCN-02 V15C] Captured {CapturePath20x9}");
     }
@@ -135,9 +135,33 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         AddHeader(parent);
         AddNavRail(parent);
         AddCommsPanel(parent);
-        AddModeCard(parent, "Campaign", "scn02_icon_campaign_crosshair.png", "scn02_icon_operations_pin.png", "scn02_campaign_thumbnail_art.png", CardRect(0), new Color32(176, 137, 37, 255));
-        AddModeCard(parent, "Operations", "scn02_icon_campaign_crosshair.png", "scn02_icon_operations_pin.png", "scn02_operations_thumbnail_art.png", CardRect(1), new Color32(89, 162, 164, 255));
-        AddModeCard(parent, "Skirmish", "scn02_icon_skirmish_blades.png", "scn02_icon_lightning_small.png", "scn02_skirmish_thumbnail_art.png", CardRect(2), new Color32(146, 154, 68, 255));
+        AddModeCard(
+            parent,
+            "Campaign",
+            "scn02_icon_campaign_crosshair.png",
+            "scn02_icon_operations_pin.png",
+            "scn02_campaign_thumbnail_art.png",
+            "Advance the campaign and secure key objectives.",
+            CardRect(0),
+            new Color32(176, 137, 37, 255));
+        AddModeCard(
+            parent,
+            "Operations",
+            "scn02_icon_campaign_crosshair.png",
+            "scn02_icon_operations_pin.png",
+            "scn02_operations_thumbnail_art.png",
+            "Manage live operations and district pressure.",
+            CardRect(1),
+            new Color32(89, 162, 164, 255));
+        AddModeCard(
+            parent,
+            "Skirmish",
+            "scn02_icon_skirmish_blades.png",
+            "scn02_icon_lightning_small.png",
+            "scn02_skirmish_thumbnail_art.png",
+            "Set up a custom combat scenario.",
+            CardRect(2),
+            new Color32(146, 154, 68, 255));
         AddCommanderPanel(parent);
         AddDeployButton(parent);
         ValidateMajorPanels();
@@ -152,19 +176,19 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         AddImage(parent, "Header_RightActionsPanel", "scn02_header_right_actions_bg.png", ToArray(HeaderActionPanelRect()), false, Color.white);
 
         AddFittedImage(parent, "Header_Logo", "scn02_brand_logo_lockup.png", Inset(HeaderLogoPanelRect(), 54, 34), 650, 142, Color.white);
-        AddHeaderResource(parent, "Credits", "scn02_resource_coin_badge.png", "Credits", "187,540", HeaderResourceContentRect(0), new Color32(235, 179, 65, 255), 86, 86);
-        AddHeaderResource(parent, "Supplies", "scn02_resource_supplies_crate.png", "Supplies", "92,860", HeaderResourceContentRect(1), new Color32(161, 166, 105, 255), 104, 88);
-        AddHeaderResource(parent, "Command", "scn02_resource_command_shield.png", "Command", "2,715", HeaderResourceContentRect(2), new Color32(119, 180, 215, 255), 82, 102);
-        AddHeaderAction(parent, "Inbox", "scn02_icon_inbox_envelope.png", HeaderActionSlot(0), 70, 58);
-        AddHeaderAction(parent, "Settings", "scn02_icon_settings_gear.png", HeaderActionSlot(1), 78, 78);
+        AddHeaderResource(parent, "Credits", "scn02_resource_coin_badge.png", "Credits", "187,540", HeaderResourceContentRect(0), new Color32(235, 179, 65, 255), 110, 110);
+        AddHeaderResource(parent, "Supplies", "scn02_resource_supplies_crate.png", "Supplies", "92,860", HeaderResourceContentRect(1), new Color32(161, 166, 105, 255), 132, 112);
+        AddHeaderResource(parent, "Command", "scn02_resource_command_shield.png", "Command", "2,715", HeaderResourceContentRect(2), new Color32(119, 180, 215, 255), 108, 132);
+        AddHeaderAction(parent, "Inbox", "scn02_icon_inbox_envelope.png", HeaderActionSlot(0), 96, 76);
+        AddHeaderAction(parent, "Settings", "scn02_icon_settings_gear.png", HeaderActionSlot(1), 104, 104);
     }
 
     private static void AddHeaderResource(Transform parent, string name, string icon, string label, string value, RectInt slot, Color valueColor, int iconW, int iconH)
     {
-        RectInt safe = Inset(slot, 44, 26);
-        RectInt iconSlot = new(safe.x + 24, safe.y + 38, 118, 112);
-        RectInt labelSlot = new(safe.x + 176, safe.y + 42, safe.width - 204, 38);
-        RectInt valueSlot = new(safe.x + 176, safe.y + 86, safe.width - 204, 58);
+        RectInt safe = Inset(slot, 48, 28);
+        RectInt iconSlot = new(safe.x + 28, safe.y + 38, 120, 112);
+        RectInt labelSlot = new(safe.x + 184, safe.y + 40, safe.width - 218, 38);
+        RectInt valueSlot = new(safe.x + 184, safe.y + 84, safe.width - 218, 60);
         ImagePlacement iconPlacement = VisibleFittedPlacement(icon, iconSlot, iconW, iconH);
 
         ValidateSectionContent(
@@ -181,7 +205,7 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
 
     private static void AddHeaderAction(Transform parent, string name, string icon, RectInt slot, int iconW, int iconH)
     {
-        RectInt safe = Inset(slot, 22, 22);
+        RectInt safe = Inset(slot, 10, 8);
         ImagePlacement placement = VisibleFittedPlacement(icon, safe, iconW, iconH);
         ValidateSectionContent($"HeaderAction_{name}", safe, new LayoutRect($"{name}_Icon", placement.VisibleRect));
         AddFittedImage(parent, $"HeaderAction_{name}", icon, safe, iconW, iconH, new Color32(221, 216, 194, 255));
@@ -199,10 +223,10 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         bool selected = index == DefaultSelectedNavIndex;
         AddImage(parent, $"Nav_{item.Label}_Frame", selected ? "scn02_nav_button_selected_frame.png" : "scn02_nav_button_inactive_frame.png", ToArray(rect), false, Color.white);
 
-        RectInt safe = Inset(rect, 42, 24);
-        RectInt iconSlot = new(safe.x + 6, safe.y, 112, safe.height);
-        RectInt textSlot = new(safe.x + 154, safe.y + 16, safe.width - 176, safe.height - 32);
-        ImagePlacement iconPlacement = VisibleFittedPlacement(item.Icon, iconSlot, 78, 78);
+        RectInt safe = Inset(rect, 44, 22);
+        RectInt iconSlot = new(safe.x + 4, safe.y, 114, safe.height);
+        RectInt textSlot = new(safe.x + 154, safe.y + 16, safe.width - 178, safe.height - 32);
+        ImagePlacement iconPlacement = VisibleFittedPlacement(item.Icon, iconSlot, 92, 92);
         ValidateSectionContent(
             $"Nav_{item.Label}",
             safe,
@@ -210,8 +234,8 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
             new LayoutRect($"{item.Label}_Text", textSlot));
 
         Color contentColor = selected ? new Color32(246, 239, 204, 255) : new Color32(221, 216, 196, 255);
-        AddFittedImage(parent, $"Nav_{item.Label}_Icon", item.Icon, iconSlot, 78, 78, contentColor);
-        AddText(parent, $"Nav_{item.Label}_Text", item.Label, ToArray(textSlot), 43f, TextAlignmentOptions.Left, contentColor);
+        AddFittedImage(parent, $"Nav_{item.Label}_Icon", item.Icon, iconSlot, 92, 92, contentColor);
+        AddText(parent, $"Nav_{item.Label}_Text", item.Label, ToArray(textSlot), 42f, TextAlignmentOptions.Left, contentColor);
     }
 
     private static void AddCommsPanel(Transform parent)
@@ -231,34 +255,37 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         AddText(parent, "CommsOnline_Text", "COMMS ONLINE", ToArray(textSlot), 27f, TextAlignmentOptions.Left, new Color32(143, 180, 43, 255));
     }
 
-    private static void AddModeCard(Transform parent, string title, string titleIcon, string footerIcon, string art, RectInt rect, Color progressColor)
+    private static void AddModeCard(Transform parent, string title, string titleIcon, string footerIcon, string art, string description, RectInt rect, Color progressColor)
     {
         AddImage(parent, $"Card_{title}_Frame", "scn02_mode_card_frame.png", ToArray(rect), false, Color.white);
 
         RectInt safe = Inset(rect, 42, 42);
-        RectInt titleBand = new(safe.x + 34, safe.y + 18, safe.width - 68, 72);
-        RectInt titleIconSlot = new(titleBand.x, titleBand.y + 2, 72, 68);
-        RectInt titleSlot = new(titleBand.x + 104, titleBand.y, titleBand.width - 112, 72);
-        RectInt artSlot = new(safe.x + 36, safe.y + 164, safe.width - 72, 388);
-        RectInt footerBand = new(safe.x + 42, safe.y + safe.height - 116, safe.width - 84, 80);
+        RectInt titleBand = new(safe.x + 36, safe.y + 18, safe.width - 72, 78);
+        RectInt titleIconSlot = new(titleBand.x, titleBand.y + 4, 74, 70);
+        RectInt titleSlot = new(titleBand.x + 106, titleBand.y, titleBand.width - 116, 78);
+        RectInt artSlot = new(safe.x + 34, safe.y + 154, safe.width - 68, 350);
+        RectInt bodySlot = new(safe.x + 50, artSlot.yMax + 28, safe.width - 100, 92);
+        RectInt footerBand = new(safe.x + 42, safe.y + safe.height - 112, safe.width - 84, 80);
         RectInt footerIconSlot = new(footerBand.x, footerBand.y + 4, 82, 72);
-        RectInt progressSlot = new(footerBand.x + 118, footerBand.y + 22, footerBand.width - 130, 40);
+        RectInt progressSlot = new(footerBand.x + 120, footerBand.y + 22, footerBand.width - 132, 40);
 
-        ImagePlacement titleIconPlacement = VisibleFittedPlacement(titleIcon, titleIconSlot, 52, 52);
-        ImagePlacement footerIconPlacement = VisibleFittedPlacement(footerIcon, footerIconSlot, 54, 54);
+        ImagePlacement titleIconPlacement = VisibleFittedPlacement(titleIcon, titleIconSlot, 60, 60);
+        ImagePlacement footerIconPlacement = VisibleFittedPlacement(footerIcon, footerIconSlot, 62, 62);
         ValidateSectionContent(
             $"Card_{title}",
             safe,
             new LayoutRect($"{title}_TitleIcon", titleIconPlacement.VisibleRect),
             new LayoutRect($"{title}_Title", titleSlot),
             new LayoutRect($"{title}_Art", artSlot),
+            new LayoutRect($"{title}_Body", bodySlot),
             new LayoutRect($"{title}_FooterIcon", footerIconPlacement.VisibleRect),
             new LayoutRect($"{title}_Progress", progressSlot));
 
-        AddFittedImage(parent, $"Card_{title}_TitleIcon", titleIcon, titleIconSlot, 52, 52, TextMuted);
-        AddText(parent, $"Card_{title}_Title", title.ToUpperInvariant(), ToArray(titleSlot), 40f, TextAlignmentOptions.Left, TextMain);
+        AddFittedImage(parent, $"Card_{title}_TitleIcon", titleIcon, titleIconSlot, 60, 60, TextMuted);
+        AddText(parent, $"Card_{title}_Title", title.ToUpperInvariant(), ToArray(titleSlot), 42f, TextAlignmentOptions.Left, TextMain);
         AddCoverImage(parent, $"Card_{title}_Art", art, artSlot, Color.white);
-        AddFittedImage(parent, $"Card_{title}_FooterIcon", footerIcon, footerIconSlot, 54, 54, TextMuted);
+        AddText(parent, $"Card_{title}_Description", description, ToArray(bodySlot), 29f, TextAlignmentOptions.TopLeft, TextMuted, true);
+        AddFittedImage(parent, $"Card_{title}_FooterIcon", footerIcon, footerIconSlot, 62, 62, TextMuted);
         AddProgress(parent, $"Card_{title}_Progress", progressSlot, progressColor);
     }
 
@@ -267,26 +294,27 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         RectInt rect = CommanderRect();
         AddImage(parent, "CommanderPanel_Frame", "scn02_commander_panel_frame.png", ToArray(rect), false, Color.white);
 
-        RectInt safe = Inset(rect, 50, 48);
-        RectInt titleSlot = new(safe.x + 24, safe.y + 22, safe.width - 48, 64);
-        RectInt portraitFrameSlot = new(safe.x + 92, safe.y + 132, safe.width - 184, 388);
-        RectInt portraitArtSlot = Inset(portraitFrameSlot, 36, 38);
-        RectInt identitySlot = new(safe.x + 32, safe.y + 585, safe.width - 64, 132);
-        RectInt readinessSlot = new(safe.x + 32, safe.y + 762, safe.width - 64, 134);
-        RectInt rowOne = new(safe.x + 34, safe.y + 956, safe.width - 68, 118);
-        RectInt rowTwo = new(safe.x + 34, safe.y + 1102, safe.width - 68, 118);
+        RectInt safe = Inset(rect, 38, 34);
+        RectInt titleSlot = SourceToCanvasRect(rect, 365, 674, new RectInt(48, 24, 268, 38));
+        RectInt portraitWell = SourceToCanvasRect(rect, 365, 674, new RectInt(42, 80, 281, 269));
+        RectInt portraitFrameSlot = Inset(portraitWell, 46, 42);
+        RectInt portraitArtSlot = Inset(portraitFrameSlot, 26, 28);
+        RectInt identitySlot = SourceToCanvasRect(rect, 365, 674, new RectInt(42, 360, 281, 43));
+        RectInt readinessSlot = SourceToCanvasRect(rect, 365, 674, new RectInt(42, 418, 281, 43));
+        RectInt rowOne = SourceToCanvasRect(rect, 365, 674, new RectInt(42, 476, 281, 74));
+        RectInt rowTwo = SourceToCanvasRect(rect, 365, 674, new RectInt(42, 568, 281, 74));
 
         ValidateSectionContent(
             "CommanderPanel",
             safe,
             new LayoutRect("CommanderTitle", titleSlot),
-            new LayoutRect("CommanderPortrait", portraitFrameSlot),
+            new LayoutRect("CommanderPortrait", portraitWell),
             new LayoutRect("CommanderIdentity", identitySlot),
             new LayoutRect("CommanderReadiness", readinessSlot),
             new LayoutRect("SquadManagement", rowOne),
             new LayoutRect("IntelReport", rowTwo));
 
-        AddText(parent, "CommanderPanel_Title", "COMMANDER", ToArray(titleSlot), 36f, TextAlignmentOptions.Center, TextMain);
+        AddText(parent, "CommanderPanel_Title", "COMMANDER", ToArray(titleSlot), 34f, TextAlignmentOptions.Center, TextMain);
         AddImage(parent, "CommanderPanel_PortraitFrame", "scn02_commander_portrait_frame.png", ToArray(portraitFrameSlot), false, Color.white);
         AddCoverImage(parent, "CommanderPanel_PortraitArt", "scn02_commander_portrait_art.png", portraitArtSlot, Color.white);
         AddCommanderIdentity(parent, identitySlot);
@@ -297,46 +325,48 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
 
     private static void AddCommanderIdentity(Transform parent, RectInt slot)
     {
-        RectInt badgeSlot = new(slot.x + 10, slot.y + 12, 112, slot.height - 24);
-        RectInt nameSlot = new(slot.x + 148, slot.y + 25, slot.width - 168, 38);
-        RectInt levelSlot = new(slot.x + 148, slot.y + 70, slot.width - 168, 44);
+        RectInt safe = Inset(slot, 22, 12);
+        RectInt badgeSlot = new(safe.x, safe.y, 92, safe.height);
+        RectInt nameSlot = new(safe.x + 124, safe.y + 4, safe.width - 134, 24);
+        RectInt levelSlot = new(safe.x + 124, safe.y + 34, safe.width - 134, 28);
         ValidateSectionContent(
             "CommanderIdentity",
-            slot,
-            new LayoutRect("CommanderBadge", VisibleFittedPlacement("scn02_resource_command_shield.png", badgeSlot, 84, 104).VisibleRect),
+            safe,
+            new LayoutRect("CommanderBadge", VisibleFittedPlacement("scn02_resource_command_shield.png", badgeSlot, 66, 82).VisibleRect),
             new LayoutRect("CommanderName", nameSlot),
             new LayoutRect("CommanderLevel", levelSlot));
-        AddFittedImage(parent, "CommanderPanel_Badge", "scn02_resource_command_shield.png", badgeSlot, 84, 104, Color.white);
-        AddText(parent, "CommanderPanel_Name", "FIELD COMMANDER", ToArray(nameSlot), 25f, TextAlignmentOptions.Left, TextMuted);
-        AddText(parent, "CommanderPanel_Level", "LEVEL 38", ToArray(levelSlot), 29f, TextAlignmentOptions.Left, GoldText);
+        AddFittedImage(parent, "CommanderPanel_Badge", "scn02_resource_command_shield.png", badgeSlot, 66, 82, Color.white);
+        AddText(parent, "CommanderPanel_Name", "FIELD COMMANDER", ToArray(nameSlot), 18f, TextAlignmentOptions.Left, TextMuted);
+        AddText(parent, "CommanderPanel_Level", "LEVEL 38", ToArray(levelSlot), 22f, TextAlignmentOptions.Left, GoldText);
     }
 
     private static void AddCommanderReadiness(Transform parent, RectInt slot)
     {
-        RectInt labelSlot = new(slot.x + 4, slot.y + 8, slot.width - 8, 44);
-        RectInt pipsSlot = new(slot.x + 46, slot.y + 72, slot.width - 92, 46);
+        RectInt safe = Inset(slot, 22, 14);
+        RectInt labelSlot = new(safe.x, safe.y + 6, Mathf.RoundToInt(safe.width * 0.34f), safe.height - 12);
+        RectInt pipsSlot = new(labelSlot.xMax + 24, safe.y + 8, safe.width - labelSlot.width - 34, safe.height - 16);
         ValidateSectionContent(
             "CommanderReadiness",
-            slot,
+            safe,
             new LayoutRect("ReadinessLabel", labelSlot),
             new LayoutRect("ReadinessPips", pipsSlot));
-        AddText(parent, "CommanderPanel_ReadinessLabel", "READINESS", ToArray(labelSlot), 27f, TextAlignmentOptions.Left, TextMuted);
-        AddFittedImage(parent, "CommanderPanel_ReadinessSegments", "scn02_readiness_segments.png", pipsSlot, pipsSlot.width, 42, Color.white);
+        AddText(parent, "CommanderPanel_ReadinessLabel", "READINESS", ToArray(labelSlot), 22f, TextAlignmentOptions.Left, TextMuted);
+        AddFittedImage(parent, "CommanderPanel_ReadinessSegments", "scn02_readiness_segments.png", pipsSlot, pipsSlot.width, 40, Color.white);
     }
 
     private static void AddLockedRow(Transform parent, string name, string text, RectInt slot)
     {
         AddImage(parent, $"{name}_Frame", "scn02_locked_row_frame.png", ToArray(slot), false, Color.white);
-        RectInt safe = Inset(slot, 34, 22);
-        RectInt iconSlot = new(safe.x + 4, safe.y, 74, safe.height);
-        RectInt textSlot = new(safe.x + 104, safe.y + 4, safe.width - 118, safe.height - 8);
+        RectInt safe = Inset(slot, 42, 28);
+        RectInt iconSlot = new(safe.x + 4, safe.y, 76, safe.height);
+        RectInt textSlot = new(safe.x + 112, safe.y + 8, safe.width - 124, safe.height - 16);
         ValidateSectionContent(
             name,
             safe,
             new LayoutRect($"{name}_Icon", VisibleFittedPlacement("scn02_icon_lock.png", iconSlot, 44, 52).VisibleRect),
             new LayoutRect($"{name}_Text", textSlot));
-        AddFittedImage(parent, $"{name}_LockIcon", "scn02_icon_lock.png", iconSlot, 44, 52, DisabledText);
-        AddText(parent, $"{name}_Text", text, ToArray(textSlot), 22f, TextAlignmentOptions.Left, DisabledText);
+        AddFittedImage(parent, $"{name}_LockIcon", "scn02_icon_lock.png", iconSlot, 42, 50, DisabledText);
+        AddText(parent, $"{name}_Text", text, ToArray(textSlot), 23f, TextAlignmentOptions.Left, DisabledText);
     }
 
     private static void AddDeployButton(Transform parent)
@@ -420,11 +450,10 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
     private static RectInt HeaderActionSlot(int index)
     {
         RectInt panel = HeaderActionPanelRect();
-        const int width = 160;
-        const int height = 142;
-        const int gap = 50;
-        int x = panel.x + panel.width - 2 * width - gap - 92 + index * (width + gap);
-        return new RectInt(x, panel.y + 56, width, height);
+        RectInt sourceSlot = index == 0
+            ? new RectInt(42, 50, 155, 78)
+            : new RectInt(220, 50, 150, 78);
+        return SourceToCanvasRect(panel, 405, 162, sourceSlot);
     }
 
     private static RectInt NavRect(int index)
@@ -439,18 +468,18 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
 
     private static RectInt CardRect(int index)
     {
-        const int x = 744;
-        const int y = 802;
-        const int width = 640;
-        const int height = 850;
-        const int gap = 60;
+        const int x = 698;
+        const int y = 768;
+        const int width = 690;
+        const int height = 905;
+        const int gap = 50;
         int layoutOffset = Mathf.Max(0, s_LayoutWidth - CanvasWidth) / 2;
         return new RectInt(x + layoutOffset + index * (width + gap), y, width, height);
     }
 
-    private static RectInt CommanderRect() => new(s_LayoutWidth - 750, 345, 700, 1378);
+    private static RectInt CommanderRect() => new(s_LayoutWidth - 720, 335, 675, 1396);
     private static RectInt CommsRect() => new(65, 1930, 540, 134);
-    private static RectInt DeployRect() => new(s_LayoutWidth - 1240, 1815, 1195, 265);
+    private static RectInt DeployRect() => new(s_LayoutWidth - 1235, 1818, 1188, 260);
 
     private static Color TextMain => new Color32(235, 229, 207, 255);
     private static Color TextMuted => new Color32(210, 204, 184, 255);
@@ -512,7 +541,7 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         image.raycastTarget = false;
     }
 
-    private static TMP_Text AddText(Transform parent, string name, string value, int[] rect, float size, TextAlignmentOptions alignment, Color color)
+    private static TMP_Text AddText(Transform parent, string name, string value, int[] rect, float size, TextAlignmentOptions alignment, Color color, bool wordWrap = false)
     {
         GameObject gameObject = CreateRectObject(name, parent);
         ApplyTopLeftRect(gameObject.GetComponent<RectTransform>(), rect);
@@ -523,7 +552,7 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         text.alignment = alignment;
         text.color = color;
         text.raycastTarget = false;
-        text.enableWordWrapping = false;
+        text.enableWordWrapping = wordWrap;
         text.overflowMode = TextOverflowModes.Ellipsis;
         RegisterDiagnostic($"{name}_TextRect", new RectInt(rect[0], rect[1], rect[2], rect[3]), DiagnosticKind.Text);
         return text;
@@ -709,6 +738,17 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
 
     private static RectInt Inset(RectInt rect, int x, int y) => new(rect.x + x, rect.y + y, rect.width - x * 2, rect.height - y * 2);
     private static int[] ToArray(RectInt rect) => new[] { rect.x, rect.y, rect.width, rect.height };
+
+    private static RectInt SourceToCanvasRect(RectInt canvasRect, int sourceWidth, int sourceHeight, RectInt sourceRect)
+    {
+        float scaleX = canvasRect.width / (float)sourceWidth;
+        float scaleY = canvasRect.height / (float)sourceHeight;
+        return new RectInt(
+            canvasRect.x + Mathf.RoundToInt(sourceRect.x * scaleX),
+            canvasRect.y + Mathf.RoundToInt(sourceRect.y * scaleY),
+            Mathf.RoundToInt(sourceRect.width * scaleX),
+            Mathf.RoundToInt(sourceRect.height * scaleY));
+    }
 
     private static bool Contains(RectInt outer, RectInt inner)
     {

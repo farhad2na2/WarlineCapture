@@ -32,6 +32,18 @@ public sealed class FactionResourceSystem
         }
     }
 
+    public readonly struct ResourceProductionTickResult
+    {
+        public readonly float OilExtractedBarrels;
+        public readonly float FuelProducedBarrels;
+
+        public ResourceProductionTickResult(float oilExtractedBarrels, float fuelProducedBarrels)
+        {
+            OilExtractedBarrels = oilExtractedBarrels;
+            FuelProducedBarrels = fuelProducedBarrels;
+        }
+    }
+
     public interface IResourceBuilding
     {
         bool IsDestroyed { get; }
@@ -182,6 +194,72 @@ public sealed class FactionResourceSystem
         }
 
         return requestedBarrels - remaining;
+    }
+
+    public ResourceProductionTickResult UpdateResourceProduction<TBuilding>(
+        IReadOnlyDictionary<int, TBuilding> buildings,
+        float secondsPerDay,
+        float deltaTime,
+        float oilBarrelsPerFuelBarrel)
+        where TBuilding : class, IResourceBuilding
+    {
+        if (buildings == null || buildings.Count == 0)
+            return new ResourceProductionTickResult(0f, 0f);
+
+        secondsPerDay = Mathf.Max(1f, secondsPerDay);
+        deltaTime = Mathf.Max(0f, deltaTime);
+        oilBarrelsPerFuelBarrel = Mathf.Max(0.001f, oilBarrelsPerFuelBarrel);
+
+        float oilExtracted = 0f;
+        float fuelProduced = 0f;
+
+        foreach (var pair in buildings)
+        {
+            TBuilding building = pair.Value;
+            if (building == null || building.IsDestroyed)
+                continue;
+
+            int oilCapacity = Mathf.Max(0, building.OilStorageCapacity);
+            float oilBarrelsPerDay = Mathf.Max(0f, building.OilBarrelsPerDay);
+            if (oilCapacity > 0 && oilBarrelsPerDay > 0f)
+            {
+                if (building.StoredOilBarrels >= oilCapacity)
+                {
+                    building.StoredOilBarrels = oilCapacity;
+                }
+                else
+                {
+                    float barrelsPerSecond = oilBarrelsPerDay / secondsPerDay;
+                    float previousOil = building.StoredOilBarrels;
+                    building.StoredOilBarrels = Mathf.Min(oilCapacity, building.StoredOilBarrels + barrelsPerSecond * deltaTime);
+                    oilExtracted += building.StoredOilBarrels - previousOil;
+                }
+            }
+
+            float fuelBarrelsPerDay = Mathf.Max(0f, building.FuelBarrelsPerDay);
+            int fuelCapacity = Mathf.Max(0, building.FuelStorageCapacity);
+            if (fuelBarrelsPerDay <= 0f)
+                continue;
+
+            float maxFuelFromOil = building.StoredOilBarrels / oilBarrelsPerFuelBarrel;
+            if (maxFuelFromOil <= 0f)
+                continue;
+
+            float desiredFuel = (fuelBarrelsPerDay / secondsPerDay) * deltaTime;
+            float producedFuel = Mathf.Min(desiredFuel, maxFuelFromOil);
+            if (fuelCapacity > 0)
+                producedFuel = Mathf.Min(producedFuel, Mathf.Max(0f, fuelCapacity - building.StoredFuelBarrels));
+
+            if (producedFuel <= 0f)
+                continue;
+
+            building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - (producedFuel * oilBarrelsPerFuelBarrel));
+            if (fuelCapacity > 0)
+                building.StoredFuelBarrels = Mathf.Min(fuelCapacity, building.StoredFuelBarrels + producedFuel);
+            fuelProduced += producedFuel;
+        }
+
+        return new ResourceProductionTickResult(oilExtracted, fuelProduced);
     }
 
     public bool IsResourceStorageBuilding(IResourceBuilding building)

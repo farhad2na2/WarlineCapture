@@ -78,7 +78,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
         StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
-        StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, and sell/drain behavior belong in `FactionResourceSystem`", contract);
+        StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
+        StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
+        StringAssert.Contains("Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, production slot reservation, pending queue removal, ready/soon transport-pending lookup, and transport launch delay math belong in `BuildingProductionSystem`", contract);
+        StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI read models belong in `BuildingUiQuerySystem`", contract);
     }
 
     [Test]
@@ -545,6 +548,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_factionResourceSystem.GetResourceTotals", placement);
         StringAssert.Contains("_factionResourceSystem.TryGetFactionResourceEconomy", placement);
         StringAssert.Contains("_factionResourceSystem.DrainFactionResource", placement);
+        StringAssert.Contains("_factionResourceSystem.UpdateResourceProduction", placement);
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsResourceStorageBuilding\b"),
             "Resource storage classification belongs in FactionResourceSystem, not BuildingPlacementSystem.");
@@ -557,6 +561,140 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?int\s+GetDisplayedOilCapacity\b"),
             "Resource capacity display math belongs in FactionResourceSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bbuilding\.StoredOilBarrels\s*=\s*Mathf\.Min\(capacity"),
+            "Oil production mutation belongs in FactionResourceSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bbuilding\.StoredFuelBarrels\s*=\s*Mathf\.Min\(fuelCapacity"),
+            "Fuel production mutation belongs in FactionResourceSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedHaulerSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string haulerFile = "Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs";
+        Assert.IsTrue(File.Exists(haulerFile), "The resource hauler slice must live in ResourceHaulerSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("ResourceHaulerSystem _resourceHaulerSystem", placement);
+        StringAssert.Contains("_resourceHaulerSystem.IsOilSourceBuilding", placement);
+        StringAssert.Contains("_resourceHaulerSystem.IsFuelBuilding", placement);
+        StringAssert.Contains("_resourceHaulerSystem.HasAvailableFuelForHauler", placement);
+        StringAssert.Contains("_resourceHaulerSystem.CreateOrder", placement);
+        StringAssert.Contains("_resourceHaulerSystem.SetTravelPhase", placement);
+        StringAssert.Contains("_resourceHaulerSystem.SetPhase", placement);
+        StringAssert.Contains("_resourceHaulerSystem.AdvanceTimedAction", placement);
+        StringAssert.Contains("_resourceHaulerSystem.ResetActionTimer", placement);
+        StringAssert.Contains("_resourceHaulerSystem.GetLoadAmount", placement);
+        StringAssert.Contains("_resourceHaulerSystem.GetCargo", placement);
+        StringAssert.Contains("_resourceHaulerSystem.TryCompleteLoad", placement);
+        StringAssert.Contains("_resourceHaulerSystem.RevertLoad", placement);
+        StringAssert.Contains("_resourceHaulerSystem.HasReceivingCapacity", placement);
+        StringAssert.Contains("_resourceHaulerSystem.TryCompleteUnload", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsOilSourceBuilding\b"),
+            "Hauler oil source classification belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsFuelBuilding\b"),
+            "Hauler fuel destination classification belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+HasAvailableFuelForHauler\b"),
+            "Hauler fuel source classification belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?float\s+GetOilReceivingFreeCapacity\b"),
+            "Hauler oil receiving capacity belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?float\s+GetFuelReceivingFreeCapacity\b"),
+            "Hauler fuel receiving capacity belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+UnitResourceHaulOrder\b"),
+            "Hauler order construction belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\border\.Phase\s*="),
+            "Hauler phase mutation belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\border\.ActionEndsAt\s*="),
+            "Hauler action timer mutation belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedProductionSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string productionFile = "Assets/Game/Scripts/Systems/BuildingProductionSystem.cs";
+        Assert.IsTrue(File.Exists(productionFile), "The building production slice must live in BuildingProductionSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("BuildingProductionSystem _buildingProductionSystem", placement);
+        StringAssert.Contains("_buildingProductionSystem.InitializePendingProduction", placement);
+        StringAssert.Contains("_buildingProductionSystem.GetProgress", placement);
+        StringAssert.Contains("_buildingProductionSystem.ShouldLaunchTransport", placement);
+        StringAssert.Contains("_buildingProductionSystem.DelayPendingProduction", placement);
+        StringAssert.Contains("_buildingProductionSystem.IsReady", placement);
+        StringAssert.Contains("_buildingProductionSystem.IsReadyWithin", placement);
+        StringAssert.Contains("_buildingProductionSystem.PruneProducedUnits", placement);
+        StringAssert.Contains("_buildingProductionSystem.TryReserveProductionSlot", placement);
+        StringAssert.Contains("_buildingProductionSystem.FindNextReadyTransportPending", placement);
+        StringAssert.Contains("_buildingProductionSystem.FindNextSoonTransportPending", placement);
+        StringAssert.Contains("_buildingProductionSystem.RemovePendingProduction", placement);
+        StringAssert.Contains("_buildingProductionSystem.RemovePendingAt", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+RuntimeBuildingData\.PendingProduction\s*\{"),
+            "Pending production initialization belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"pending\.StartedAt\s*\+="),
+            "Pending production delay mutation belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"pending\.ReadyAt\s*\+="),
+            "Pending production delay mutation belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"Mathf\.Clamp01\(\(now\s*-\s*pending\.StartedAt\)\s*/"),
+            "Pending production progress math belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"bool\s+reservedByPending\s*="),
+            "Production slot pending-reservation checks belong in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"bool\s+alive\s*=\s*unit\s*!="),
+            "Produced-unit liveness pruning belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+RuntimeBuildingData\.PendingProduction\s+FindNextReadyTransportPending\b"),
+            "Ready transport-pending lookup belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+RuntimeBuildingData\.PendingProduction\s+FindNextSoonTransportPending\b"),
+            "Soon transport-pending lookup belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"PendingProductions\.IndexOf"),
+            "Pending production lookup/removal belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"PendingProductions\.RemoveAt"),
+            "Pending production removal belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedUiQuerySlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string uiQueryFile = "Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs";
+        Assert.IsTrue(File.Exists(uiQueryFile), "The temporary building UI read model slice must live in BuildingUiQuerySystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", placement);
+        StringAssert.Contains("_buildingUiQuerySystem.GetProducedUnits", placement);
+        StringAssert.Contains("_buildingUiQuerySystem.AddProducedUnitEntries", placement);
+        StringAssert.Contains("_buildingUiQuerySystem.AddPendingProductionUiEntries", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"entries\.Add\(new\s+ProducedUnitUiEntry\(Entity\.Null"),
+            "Pending produced-unit UI entry shaping belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"entries\.Add\(new\s+PendingProductionUiEntry"),
+            "Pending production UI entry shaping belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+void\s+GetSelectedBuildingProducedUnits\([\s\S]*?building\.ProducedUnits\.RemoveAt\(i\)[\s\S]*?public\s+void\s+GetSelectedBuildingProducedUnitEntries"),
+            "Selected-building produced-unit UI pruning belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+void\s+GetSelectedBuildingProducedUnitEntries\([\s\S]*?ProducedUnitPrefabs\.Remove\(unit\)[\s\S]*?public\s+bool\s+TryGetSelectedBuildingCapacityInfo"),
+            "Selected-building produced-unit prefab UI pruning belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

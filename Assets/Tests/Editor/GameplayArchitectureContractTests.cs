@@ -79,6 +79,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Bootstrap composes the application", contract);
         StringAssert.Contains("Gameplay runtime is ECS data plus ECS systems", contract);
         StringAssert.Contains("Runtime gameplay code must not introduce singleton access patterns", contract);
+        StringAssert.Contains("New domain gameplay types should end in `Entity`, `Component`, or `System`", contract);
+        StringAssert.Contains("`*View` are serialized-reference binders only", contract);
         StringAssert.Contains("Existing `AILog` usage is grandfathered as migration debt", contract);
     }
 

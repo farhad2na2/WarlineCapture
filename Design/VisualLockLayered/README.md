@@ -33,6 +33,8 @@ Design/VisualLockLayered/<SurfaceId>/
 
 Do not start Unity Canvas implementation for a surface until the pack has the reference image, separated layers, manifest, contact sheet, and README.
 
+Use `WORKFLOW_V15_3D_GREENSCREEN.md` and `prompts/visual_lock_layered_v15_3d_green_background.md` for the active UI-agent workflow: generate target and layers, use transparent PNGs or clean `#00ff00` chroma-key backgrounds, extract to alpha, write the manifest, validate the layer pack, then convert to Unity Canvas.
+
 ## Active Screen Inventory
 
 | Surface | Player-Facing Purpose | New 3D Direction Requirement |

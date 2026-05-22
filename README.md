@@ -300,6 +300,7 @@ The target runtime pattern is ECS-first:
 - Services bridge external concerns such as logging, persistence, asset lookup, telemetry, and platform APIs.
 - Gameplay systems should prefer ECS data/event streams over direct service/static calls.
 - Runtime gameplay code must not add singleton access patterns such as `static Instance`, global service locators, or singleton fallback lookups. Static code is acceptable only for pure, stateless math/data conversion helpers.
+- New domain gameplay runtime types should end in `Entity`, `Component`, or `System`. Canvas/reference UI types may end in `View`. ScriptableObject data may end in `Config`. Unity conversion-edge types may end in `Authoring` or `Baker`.
 
 Bootstrap responsibility:
 
@@ -323,11 +324,12 @@ When adding a new runtime system:
 
 - prefer ECS data plus an ECS system
 - use an authoring/baker only to convert Unity references into ECS data
-- use a UI `*View` only for Canvas/reference binding
+- use a UI `*View` only for Canvas/reference binding; views may expose visual setters and wire UI events to ECS requests, but must not own gameplay policy, UI flow policy, validation, resource rules, production rules, selection rules, mission rules, AI rules, or state transitions
 - use `*Config` ScriptableObjects for configurable data
 - use feature installers/services only at the shell edge
 - do not add new static runtime service facades such as `AILog`
 - do not add new `static Instance` singletons or `ResolveDependency<T>()` fallback locators
+- do not add new gameplay-domain `*Port`, `*Presenter`, `*Controller`, `*Manager`, `*State`, `*Rules`, `*Builder`, `*Session`, or `*Element` types
 
 Existing classes such as `GameBootstrap`, `AILog`, `BuildingPlacementSystem.Instance`, and mixed runtime managers are migration debt. Do not expand those patterns; retire them by domain slice when touching related behavior.
 

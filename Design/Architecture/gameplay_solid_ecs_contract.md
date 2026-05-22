@@ -8,6 +8,8 @@ Gameplay runtime is ECS data plus ECS systems. Unity object code exists only at 
 
 Runtime gameplay code must not introduce singleton access patterns. `static Instance`, global registries, and static service locators are migration debt unless the type is a pure, stateless data/math helper.
 
+Domain gameplay runtime types must be named for ECS, not application-layer patterns. New domain gameplay types should end in `Entity`, `Component`, or `System`. Canvas/reference UI types may end in `View`. ScriptableObject data may end in `Config`. Unity conversion-edge types may end in `Authoring` or `Baker`.
+
 ## Responsibilities
 
 ### Bootstrap
@@ -39,8 +41,13 @@ Components hold data only. They should not own behavior beyond trivial value con
 
 Expected names:
 - `*Component` for `IComponentData`.
-- `*Tag` for tag components.
-- `*BufferElement` for `IBufferElementData`.
+- `*Component` for `IBufferElementData`.
+- `*Component` for zero-size marker/tag data.
+
+Avoid:
+- `*Element`.
+- `*State`.
+- `*Data` for gameplay runtime components.
 
 ### ECS Systems
 
@@ -59,11 +66,19 @@ Expected names:
 
 ### UI
 
-UI MonoBehaviours display data and emit commands. They do not own gameplay policy.
+UI MonoBehaviours named `*View` are serialized-reference binders only. They connect Canvas objects, child widgets, visual references, and serialized fields to code. They may expose simple getters/setters for visual state and wire UnityEvents to ECS request components, but they must not own gameplay policy, UI flow policy, validation, resource rules, production rules, selection rules, mission rules, AI rules, or state transitions.
 
 Expected names:
 - `*View` for UI reference holders and widgets.
-- Bridge/controller names are legacy-tolerated only where they already exist; new UI should prefer `View` plus command/event adapters.
+
+Avoid:
+- `*Presenter`.
+- `*Controller`.
+- `*Manager`.
+- `*Port`.
+- `*Adapter` for gameplay-facing UI code.
+
+Existing bridge/controller names are legacy debt. Do not expand them when touching related behavior.
 
 ### Config
 
@@ -75,13 +90,15 @@ Expected names:
 
 ### Services
 
-Services bridge external concerns such as logging, persistence, asset lookup, telemetry, and platform APIs. Gameplay systems should prefer ECS event/data streams; shell systems may depend on service interfaces.
+Services bridge external concerns such as logging, persistence, asset lookup, telemetry, and platform APIs. They are shell-edge code, not gameplay domain code. Gameplay systems should prefer ECS event/data streams.
 
 Expected names:
 - `I*Service` for abstractions.
 - `*Service` for implementations.
 
 Static service facades are legacy debt unless they are pure constants/math.
+
+Services must not own gameplay policy such as building placement, unit production, AI, combat, mission flow, or resource simulation. If behavior is gameplay, make it ECS data plus a `*System`.
 
 ### Static State And Singletons
 
@@ -97,7 +114,7 @@ Allowed static code is limited to pure, stateless operations:
 - Constant lookup tables that do not own runtime state.
 - Test-local helpers.
 
-If a class needs runtime collaborators, pass them through bootstrap/installer composition, an explicit service interface at the shell edge, or ECS data/events. If a class needs shared gameplay state, represent it as ECS singleton components, normal components, or buffers owned by systems.
+If a class needs runtime collaborators, pass them through bootstrap composition or ECS data/events. If a class needs shared gameplay state, represent it as ECS singleton components, normal components, or buffers owned by systems.
 
 ## Logging
 
@@ -115,7 +132,7 @@ Use narrow migrations. Do not rewrite the entire project at once.
 1. Introduce service interfaces and feature installers at the shell edge.
 2. Move bootstrap domain behavior into feature installers and ECS startup systems.
 3. Convert `static Instance` access and static runtime state into explicit injection or ECS singleton components.
-4. Replace singleton fallback lookups with configured dependencies, ECS queries, or command/query ports.
+4. Replace singleton fallback lookups with configured dependencies, ECS queries, or ECS request/response components.
 5. Replace static logging with ECS log events plus a log flush service.
 6. Convert mission-specific hardcoding into mission configs and systems.
 7. Retire legacy class names only when touching that domain for real behavior work.

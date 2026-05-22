@@ -7,10 +7,14 @@ public partial struct AIFactionControlSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
     private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         state.RequireForUpdate<FactionControlConfigTag>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -23,6 +27,8 @@ public partial struct AIFactionControlSystem : ISystem
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
+        bool shouldLogDiagnostics = ShouldQueueDiagnostics(ref state);
+        Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
         DynamicBuffer<FactionControlEntry> controls = SystemAPI.GetSingletonBuffer<FactionControlEntry>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
@@ -59,7 +65,7 @@ public partial struct AIFactionControlSystem : ISystem
                 }
             }
 
-            bool shouldLog = AILog.IsEnabled && now - control.LastLogTime >= LogIntervalSeconds;
+            bool shouldLog = shouldLogDiagnostics && now - control.LastLogTime >= LogIntervalSeconds;
             if (shouldLog)
             {
                 control.LastLogTime = now;
@@ -67,7 +73,10 @@ public partial struct AIFactionControlSystem : ISystem
                 int controlledBuildings = buildingPlacement != null
                     ? buildingPlacement.CountRuntimeBuildingsForFaction(control.FactionId)
                     : 0;
-                AILog.Log($"[AIControlMode] faction={control.FactionId} mode={(aiControlled ? "Auto" : "Manual")} controlledUnits={controlledUnits} controlledBuildings={controlledBuildings}");
+                EnqueueDiagnostic(
+                    ref state,
+                    diagnosticQueueEntity,
+                    $"[AIControlMode] faction={control.FactionId} mode={(aiControlled ? "Auto" : "Manual")} controlledUnits={controlledUnits} controlledBuildings={controlledBuildings}");
             }
         }
 
@@ -96,6 +105,36 @@ public partial struct AIFactionControlSystem : ISystem
     {
         if (state.EntityManager.HasComponent<T>(entity))
             ecb.RemoveComponent<T>(entity);
+    }
+
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private Entity EnsureDiagnosticQueue(ref SystemState state)
+    {
+        EntityManager em = state.EntityManager;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            Entity queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+            return queueEntity;
+        }
+
+        return _diagnosticLogQueueQuery.GetSingletonEntity();
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, Entity queueEntity, FixedString512Bytes message)
+    {
+        EntityManager em = state.EntityManager;
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
     }
 
     private static void RemoveCommandedEngageTargetIfPresent(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)

@@ -59,6 +59,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
 - `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
 - `Design/WarlineCapture_Match_Selection_Implementation_Spec.md`
+- `Design/WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 - `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
@@ -92,6 +93,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
     - [Combat Catalog And Upgrade Design](Design/WarlineCapture_Combat_Catalog_And_Upgrade_Design.md)
       - [Combat Balance Config](Design/BalanceConfigs/WarlineCapture_Combat_Balance_Config_v0_1.json)
       - [Combat Visual Config](Design/VisualConfigs/WarlineCapture_Combat_Visual_Config_v0_1.json)
+    - [Field Logistics Oil And Fuel Design](Design/WarlineCapture_Field_Logistics_Oil_Fuel_Design.md)
     - [Economy And Reward Design](Design/WarlineCapture_Economy_Reward_Design.md)
     - [Balancing Automated Test Plan](Design/WarlineCapture_Balancing_Automated_Test_Plan.md)
   - UI/UX And Visual Targets
@@ -333,11 +335,11 @@ When adding a new runtime system:
 - use a UI `*View` only for Canvas/reference binding; views may expose visual setters and wire UI events to ECS requests, but must not own gameplay policy, UI flow policy, validation, resource rules, production rules, selection rules, mission rules, AI rules, or state transitions
 - use `*Config` ScriptableObjects for configurable data
 - use feature installers/services only at the shell edge
-- do not add new static runtime service facades such as `AILog`
+- do not add static runtime service facades; use ECS event buffers or shell-injected services for diagnostics/logging
 - do not add new `static Instance` singletons or `ResolveDependency<T>()` fallback locators
 - do not add new gameplay-domain `*Port`, `*Presenter`, `*Controller`, `*Manager`, `*State`, `*Rules`, `*Builder`, `*Session`, or `*Element` types
 
-Existing classes such as `GameBootstrap`, `AILog`, `BuildingPlacementSystem.Instance`, and mixed runtime managers are migration debt. Do not expand those patterns; retire them by domain slice when touching related behavior.
+Existing classes such as `GameBootstrap`, `BuildingPlacementSystem.Instance`, and mixed runtime managers are migration debt. Do not expand those patterns; retire them by domain slice when touching related behavior. The old `AILog` static facade has been retired and must not be reintroduced.
 
 ## Config Pattern
 

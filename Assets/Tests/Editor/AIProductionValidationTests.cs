@@ -125,9 +125,11 @@ public sealed class AIProductionValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
+        SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         system.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);

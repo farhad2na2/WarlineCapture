@@ -108,10 +108,13 @@
   <text x="990" y="816" text-anchor="middle" class="small">Visual Config</text>
   <path class="line" d="M990 838 L990 875"/>
   <rect x="820" y="875" width="340" height="58" rx="6" class="leaf"/>
-  <text x="990" y="911" text-anchor="middle" class="small">Economy &amp; Reward Design</text>
+  <text x="990" y="911" text-anchor="middle" class="small">Field Logistics Oil/Fuel</text>
   <path class="line" d="M990 933 L990 970"/>
   <rect x="820" y="970" width="340" height="58" rx="6" class="leaf"/>
-  <text x="990" y="1006" text-anchor="middle" class="small">Balancing Test Plan</text>
+  <text x="990" y="1006" text-anchor="middle" class="small">Economy &amp; Reward Design</text>
+  <path class="line" d="M990 1028 L990 1065"/>
+  <rect x="820" y="1065" width="340" height="58" rx="6" class="leaf"/>
+  <text x="990" y="1101" text-anchor="middle" class="small">Balancing Test Plan</text>
 
   <path class="line" d="M1375 533 L1375 590"/>
   <rect x="1205" y="590" width="340" height="58" rx="6" class="leaf"/>

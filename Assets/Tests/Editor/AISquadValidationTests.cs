@@ -51,9 +51,11 @@ public sealed class AISquadValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AISquadSystem>();
+        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=1 squad=1 purpose=Attack units=4 targetFaction=0 targetCell=int2\(20, 20\)"));
         system.Update(world.Unmanaged);
+        logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadOnly<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());

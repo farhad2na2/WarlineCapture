@@ -13,30 +13,12 @@ public sealed class GameplayArchitectureContractTests
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
 
-    private static readonly string[] LegacyAILogCallFiles =
-    {
-        "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs",
-        "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
-        "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
-        "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
-        "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
-        "Assets/Game/Scripts/Systems/AISquadSystem.cs",
-        "Assets/Game/Scripts/Systems/AITargetingSystem.cs"
-    };
+    private static readonly string[] LegacyAILogCallFiles = Array.Empty<string>();
 
-    private static readonly string[] HotAILogCallFiles =
-    {
-        "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
-        "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
-        "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
-        "Assets/Game/Scripts/Systems/AIProductionSystem.cs",
-        "Assets/Game/Scripts/Systems/AISquadSystem.cs",
-        "Assets/Game/Scripts/Systems/AITargetingSystem.cs"
-    };
+    private static readonly string[] HotAILogCallFiles = Array.Empty<string>();
 
     private static readonly string[] LegacyStaticLogFacadeFiles =
     {
-        "Assets/Game/Scripts/Systems/AILog.cs",
         "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs"
     };
 
@@ -112,7 +94,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("use `RuntimeGameplayStateSystem` as the compatibility boundary", contract);
         StringAssert.Contains("New domain gameplay types should end in `Entity`, `Component`, or `System`", contract);
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
-        StringAssert.Contains("Existing `AILog` usage is grandfathered as migration debt", contract);
+        StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
@@ -194,6 +176,14 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RetiredAILogFacadeMustNotExist()
+    {
+        Assert.IsFalse(
+            File.Exists("Assets/Game/Scripts/Systems/AILog.cs"),
+            "AILog was retired after AI diagnostics migrated to ECS diagnostic events. Do not reintroduce the static facade.");
+    }
+
+    [Test]
     public void HotAiSystemsMustGuardAILogMessageConstruction()
     {
         List<string> violations = new();
@@ -240,6 +230,98 @@ public sealed class GameplayArchitectureContractTests
             "AIBuildPlannerSystem must use ECS diagnostic events instead of the static AILog facade.");
         StringAssert.Contains("AIDiagnosticLogComponent", code);
         StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void AIProductionSystemMustUseEcsDiagnosticEvents()
+    {
+        const string productionFile = "Assets/Game/Scripts/Systems/AIProductionSystem.cs";
+        string code = File.ReadAllText(productionFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AIProductionSystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void AISquadSystemMustUseEcsDiagnosticEvents()
+    {
+        const string squadFile = "Assets/Game/Scripts/Systems/AISquadSystem.cs";
+        string code = File.ReadAllText(squadFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AISquadSystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void AITargetingSystemMustUseEcsDiagnosticEvents()
+    {
+        const string targetingFile = "Assets/Game/Scripts/Systems/AITargetingSystem.cs";
+        string code = File.ReadAllText(targetingFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AITargetingSystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void AICombatOrderSystemMustUseEcsDiagnosticEvents()
+    {
+        const string combatOrderFile = "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs";
+        string code = File.ReadAllText(combatOrderFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AICombatOrderSystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void AIEconomySystemMustUseEcsDiagnosticEvents()
+    {
+        const string economyFile = "Assets/Game/Scripts/Systems/AIEconomySystem.cs";
+        string code = File.ReadAllText(economyFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AIEconomySystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void AIFactionControlSystemMustUseEcsDiagnosticEvents()
+    {
+        const string factionControlFile = "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs";
+        string code = File.ReadAllText(factionControlFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AIFactionControlSystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
+    public void GameBootstrapAIConfigDiagnosticsMustUseEcsDiagnosticEvents()
+    {
+        const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        string code = File.ReadAllText(bootstrapFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "GameBootstrap AI config diagnostics must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("TryEnqueueAIDiagnostic", code);
+        StringAssert.Contains("FlushQueuedAIDiagnostics", code);
     }
 
     [Test]

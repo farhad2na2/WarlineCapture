@@ -49,12 +49,14 @@ public sealed class AIControlModeValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AIFactionControlSystem>();
+        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=0 mode=Auto controlledUnits=1 controlledBuildings=0"));
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=1 mode=Auto controlledUnits=1 controlledBuildings=0"));
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIControlMode\] faction=2 mode=Manual controlledUnits=1 controlledBuildings=0"));
 
         system.Update(world.Unmanaged);
+        logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         Assert.IsTrue(em.HasComponent<AIControlledTag>(playerAutoUnit));

@@ -128,14 +128,14 @@ Unity object references must not be added to unmanaged gameplay state components
 
 ## Logging
 
-Gameplay code must not add new calls to static logging facades such as `AILog.*` or direct `Debug.Log*`. New gameplay logging should use one of:
+Gameplay code must not add new calls to static logging facades or direct `Debug.Log*`. New gameplay logging should use one of:
 - ECS log event buffer processed by a shell logging system.
 - An injected `ILogService` at the shell/service edge.
 - A test-local logger implementation.
 
-Existing `AILog` usage is grandfathered as migration debt and should be retired by domain slice.
+The retired `AILog` facade must not be reintroduced.
 AI log enablement and transport boarding diagnostics must flow through `RuntimeDiagnosticsStateComponent` and `RuntimeDiagnosticsSystem`. `InitialUnitsRuntimeState.VerboseAILogs`, `InitialUnitsRuntimeState.ShouldLogAI`, and `InitialUnitsRuntimeState.TransportBoardingDiagnostics` are legacy compatibility state and must not be read directly by production systems outside the diagnostics boundary.
-AI domain logs that are migrated off `AILog` must use ECS diagnostic event buffers such as `AIDiagnosticLogComponent`, flushed by a shell-edge logging system such as `AIDiagnosticLogFlushSystem`. Hot systems must gate diagnostic message construction before formatting strings.
+AI domain logs must use ECS diagnostic event buffers such as `AIDiagnosticLogComponent`, flushed by a shell-edge logging system such as `AIDiagnosticLogFlushSystem`. Hot systems must gate diagnostic message construction before formatting strings.
 
 ## Refactor Direction
 

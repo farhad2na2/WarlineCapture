@@ -25,7 +25,13 @@ public partial struct AIDiagnosticLogFlushSystem : ISystem
             if (shouldLog)
             {
                 for (int logIndex = 0; logIndex < logs.Length; logIndex++)
-                    Debug.Log(logs[logIndex].Message.ToString());
+                {
+                    AIDiagnosticLogComponent log = logs[logIndex];
+                    if (log.Severity == AIDiagnosticLogComponent.WarningSeverity)
+                        Debug.LogWarning(log.Message.ToString());
+                    else
+                        Debug.Log(log.Message.ToString());
+                }
             }
 
             logs.Clear();

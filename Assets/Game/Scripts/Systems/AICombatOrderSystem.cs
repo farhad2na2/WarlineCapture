@@ -10,10 +10,14 @@ public partial struct AICombatOrderSystem : ISystem
 {
     private const float OrderRefreshSeconds = 2f;
     private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -33,6 +37,7 @@ public partial struct AICombatOrderSystem : ISystem
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
             : default;
         BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
+        bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
         using NativeArray<Entity> squadEntities = squadQuery.ToEntityArray(Allocator.Temp);
@@ -75,8 +80,8 @@ public partial struct AICombatOrderSystem : ISystem
             squad.LastOrderTime = now;
             squad.LastLogTime = now;
             em.SetComponentData(squadEntity, squad);
-            if (AILog.IsEnabled)
-                AILog.Log($"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
+            if (shouldLog)
+                EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
         }
 
         if (controls.IsCreated)
@@ -288,5 +293,33 @@ public partial struct AICombatOrderSystem : ISystem
 
         Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
         return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
+    }
+
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)
+    {
+        EntityManager em = state.EntityManager;
+        Entity queueEntity;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+        }
+        else
+        {
+            queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
+        }
+
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
     }
 }

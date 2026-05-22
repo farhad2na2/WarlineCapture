@@ -7,9 +7,13 @@ using UnityEngine;
 public partial struct AISquadSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         state.RequireForUpdate<AISquadPlan>();
         state.RequireForUpdate<Faction>();
         state.RequireForUpdate<UnitGrid>();
@@ -27,6 +31,7 @@ public partial struct AISquadSystem : ISystem
         NativeArray<FactionControlEntry> controls = hasControls
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
             : default;
+        bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityManager em = state.EntityManager;
         EntityQuery planQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
@@ -52,7 +57,7 @@ public partial struct AISquadSystem : ISystem
             int maxActiveSquads = math.max(1, plan.MaxActiveSquads);
             if (activeSquads >= maxActiveSquads)
             {
-                LogCompleteIfNeeded(ref plan, now, activeSquads);
+                LogCompleteIfNeeded(ref state, ref plan, now, activeSquads, shouldLog);
                 em.SetComponentData(planEntity, plan);
                 continue;
             }
@@ -91,8 +96,8 @@ public partial struct AISquadSystem : ISystem
                 if (now - plan.LastLogTime >= LogIntervalSeconds)
                 {
                     plan.LastLogTime = now;
-                    if (AILog.IsEnabled)
-                        AILog.Log($"[AISquad] faction={plan.FactionId} result=Waiting units={members.Length} minUnits={minUnits}");
+                    if (shouldLog)
+                        EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} result=Waiting units={members.Length} minUnits={minUnits}");
                 }
                 em.SetComponentData(planEntity, plan);
                 continue;
@@ -140,8 +145,8 @@ public partial struct AISquadSystem : ISystem
             plan.NextSquadId = squadId + 1;
             plan.LastLogTime = now;
             em.SetComponentData(planEntity, plan);
-            if (AILog.IsEnabled)
-                AILog.Log($"[AISquad] faction={plan.FactionId} squad={squadId} purpose=Attack units={members.Length} targetFaction={targetFactionId} targetCell={targetCell}");
+            if (shouldLog)
+                EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} squad={squadId} purpose=Attack units={members.Length} targetFaction={targetFactionId} targetCell={targetCell}");
         }
 
         if (controls.IsCreated)
@@ -208,13 +213,41 @@ public partial struct AISquadSystem : ISystem
         return factionId != 0;
     }
 
-    private static void LogCompleteIfNeeded(ref AISquadPlan plan, float now, int activeSquads)
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)
+    {
+        EntityManager em = state.EntityManager;
+        Entity queueEntity;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+        }
+        else
+        {
+            queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
+        }
+
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
+    }
+
+    private void LogCompleteIfNeeded(ref SystemState state, ref AISquadPlan plan, float now, int activeSquads, bool shouldLog)
     {
         if (now - plan.LastLogTime < LogIntervalSeconds)
             return;
 
         plan.LastLogTime = now;
-        if (AILog.IsEnabled)
-            AILog.Log($"[AISquad] faction={plan.FactionId} result=Complete activeSquads={activeSquads}");
+        if (shouldLog)
+            EnqueueDiagnostic(ref state, $"[AISquad] faction={plan.FactionId} result=Complete activeSquads={activeSquads}");
     }
 }

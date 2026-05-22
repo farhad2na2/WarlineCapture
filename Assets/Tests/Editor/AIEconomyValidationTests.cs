@@ -68,12 +68,14 @@ public sealed class AIEconomyValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AIEconomySystem>();
+        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(
             LogType.Log,
             new Regex(@"\[AIEconomy\] faction=1 money=75000 oil=0 fuel=0 oilIncome=0\.0 fuelIncome=0\.0 soldOil=0 soldFuel=0 revenue=0"));
 
         system.Update(world.Unmanaged);
+        logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);

@@ -1,3 +1,4 @@
+using Unity.Collections;
 using UnityEngine;
 using Unity.Profiling;
 using Unity.Profiling.LowLevel.Unsafe;
@@ -25,6 +26,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private const float M01PlayableCameraHeight = 10f;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
+    private readonly RuntimeDiagnosticsSystem _runtimeDiagnosticsSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -321,9 +323,16 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void LogAIConfigValidation()
     {
+        if (!ShouldQueueAIConfigDiagnostics())
+            return;
+
+        bool queuedDiagnostics = false;
         if (aiControllerConfigs == null || aiControllerConfigs.Count == 0)
         {
-            AILog.LogWarning("[AIConfigSummary] configs=0 enabled=0 playerAuto=0 enemy=0 result=MissingConfigs");
+            queuedDiagnostics |= TryEnqueueAIDiagnostic(
+                "[AIConfigSummary] configs=0 enabled=0 playerAuto=0 enemy=0 result=MissingConfigs",
+                AIDiagnosticLogComponent.WarningSeverity);
+            FlushQueuedAIDiagnostics(queuedDiagnostics);
             return;
         }
 
@@ -335,7 +344,9 @@ public sealed class GameBootstrap : MonoBehaviour
             AIControllerConfig config = aiControllerConfigs[i];
             if (config == null)
             {
-                AILog.LogWarning($"[AIConfig] index={i} result=MissingConfig");
+                queuedDiagnostics |= TryEnqueueAIDiagnostic(
+                    $"[AIConfig] index={i} result=MissingConfig",
+                    AIDiagnosticLogComponent.WarningSeverity);
                 continue;
             }
 
@@ -346,7 +357,7 @@ public sealed class GameBootstrap : MonoBehaviour
             if (config.Role == AIControllerRole.Enemy)
                 enemyCount++;
 
-            AILog.Log(
+            queuedDiagnostics |= TryEnqueueAIDiagnostic(
                 $"[AIConfig] name={config.name} faction={config.FactionId} role={config.Role} difficulty={config.Difficulty} " +
                 $"enabled={(config.Enabled ? 1 : 0)} autoControlsPlayer={(config.AutoControlsPlayerFaction ? 1 : 0)} " +
                 $"money={config.StartingMoney} income={config.IncomeMultiplier:F2} oilSell={config.OilSellPrice} fuelSell={config.FuelSellPrice} " +
@@ -357,14 +368,67 @@ public sealed class GameBootstrap : MonoBehaviour
                 $"preferredVehicles={config.PreferredVehicleIds?.Count ?? 0}");
         }
 
-        AILog.Log($"[AIConfigSummary] configs={aiControllerConfigs.Count} enabled={enabledCount} playerAuto={playerAutoCount} enemy={enemyCount} result=Ready");
-        AILog.Log(
+        queuedDiagnostics |= TryEnqueueAIDiagnostic($"[AIConfigSummary] configs={aiControllerConfigs.Count} enabled={enabledCount} playerAuto={playerAutoCount} enemy={enemyCount} result=Ready");
+        queuedDiagnostics |= TryEnqueueAIDiagnostic(
             $"[AISettings] difficulty={AISettingsRuntimeState.Difficulty} startingMoney={AISettingsRuntimeState.StartingMoney} " +
             $"income={AISettingsRuntimeState.IncomeMultiplier:F2} buildSpeed={AISettingsRuntimeState.BuildSpeed} " +
             $"productionSpeed={AISettingsRuntimeState.UnitProductionSpeed} groupSize={AISettingsRuntimeState.AttackGroupSize} " +
             $"attackFrequency={AISettingsRuntimeState.AttackFrequency} aggression={AISettingsRuntimeState.Aggression} " +
             $"expansion={AISettingsRuntimeState.Expansion} targetPriority={AISettingsRuntimeState.TargetPriority} " +
             $"playerAuto={(AISettingsRuntimeState.PlayerAutoAIEnabled ? 1 : 0)} enemyCount={AISettingsRuntimeState.EnemyAICount}");
+        FlushQueuedAIDiagnostics(queuedDiagnostics);
+    }
+
+    private bool ShouldQueueAIConfigDiagnostics()
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return _runtimeDiagnosticsSystem.ReadDiagnosticsState().VerboseAILogs != 0;
+    }
+
+    private static bool TryEnqueueAIDiagnostic(FixedString512Bytes message, byte severity = AIDiagnosticLogComponent.LogSeverity)
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
+        Entity queueEntity;
+        if (query.IsEmptyIgnoreFilter)
+        {
+            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+        }
+        else
+        {
+            queueEntity = query.GetSingletonEntity();
+        }
+
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent
+        {
+            Message = message,
+            Severity = severity
+        });
+        return true;
+    }
+
+    private static void FlushQueuedAIDiagnostics(bool queuedDiagnostics)
+    {
+        if (!queuedDiagnostics)
+            return;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        SystemHandle flushSystem = world.GetOrCreateSystem<AIDiagnosticLogFlushSystem>();
+        flushSystem.Update(world.Unmanaged);
     }
 
     private void EnsureFactionEconomiesInitialized()

@@ -7,9 +7,13 @@ using UnityEngine;
 public partial struct AITargetingSystem : ISystem
 {
     private const float LogIntervalSeconds = 6f;
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
@@ -22,6 +26,7 @@ public partial struct AITargetingSystem : ISystem
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         EntityManager em = state.EntityManager;
+        bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquad>());
         using NativeArray<Entity> squads = squadQuery.ToEntityArray(Allocator.Temp);
@@ -47,8 +52,8 @@ public partial struct AITargetingSystem : ISystem
                 if (now - squad.LastLogTime >= LogIntervalSeconds)
                 {
                     squad.LastLogTime = now;
-                    if (AILog.IsEnabled)
-                        AILog.Log($"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
+                    if (shouldLog)
+                        EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} result=NoTarget");
                     em.SetComponentData(squadEntity, squad);
                 }
                 continue;
@@ -70,12 +75,40 @@ public partial struct AITargetingSystem : ISystem
             if (changed || now - squad.LastLogTime >= LogIntervalSeconds)
             {
                 squad.LastLogTime = now;
-                if (AILog.IsEnabled)
-                    AILog.Log($"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
+                if (shouldLog)
+                    EnqueueDiagnostic(ref state, $"[AITarget] faction={squad.FactionId} squad={squad.SquadId} target={kind} score={score} reason={reason} targetFaction={targetFaction} targetCell={targetCell}");
             }
 
             em.SetComponentData(squadEntity, squad);
         }
+    }
+
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)
+    {
+        EntityManager em = state.EntityManager;
+        Entity queueEntity;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+        }
+        else
+        {
+            queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
+        }
+
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
     }
 
     private static bool TrySelectTarget(

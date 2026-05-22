@@ -49,9 +49,11 @@ public sealed class AITargetingValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=7 target=Threat score=\d+ reason=Threat targetFaction=0 targetCell=int2\(18, 10\)"));
         system.Update(world.Unmanaged);
+        logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         AISquad squad = em.GetComponentData<AISquad>(squadEntity);
@@ -89,9 +91,11 @@ public sealed class AITargetingValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
+        SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=8 target=Unit score=\d+ reason=Economy targetFaction=0 targetCell=int2\(12, 10\)"));
         system.Update(world.Unmanaged);
+        logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         AISquad squad = em.GetComponentData<AISquad>(squadEntity);

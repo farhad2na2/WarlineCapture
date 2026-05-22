@@ -112,11 +112,13 @@ public sealed class AIEndToEndValidationTests
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         productionSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
         Assert.AreEqual(1, _buildingPlacement.CountPendingProductionsForFaction(1, "Rifleman"));
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=1 squad=1 purpose=Attack units=4 targetFaction=0 targetCell=int2\(50, 50\)"));
         squadSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         Entity squadEntity = GetSingleSquad(em);
@@ -126,6 +128,7 @@ public sealed class AIEndToEndValidationTests
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=1 target=Threat score=\d+ reason=Threat targetFaction=0 targetCell=int2\(50, 50\)"));
         targetingSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         squad = em.GetComponentData<AISquad>(squadEntity);
@@ -134,6 +137,7 @@ public sealed class AIEndToEndValidationTests
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AICombat\] faction=1 squad=1 order=Attack target=Entity\(\d+:\d+\) units=4"));
         combatSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         AssertEngageOrder(em, unitA, target);

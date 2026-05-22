@@ -223,6 +223,7 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
 
         RectInt art = new(rect.x + 34, rect.y + 92, rect.width - 68, rect.height - 210);
         WarlineCaptureLayeredUiBuilderUtility.AddCoverImage(parent, LayerRoot, "Preview_Art", "scn13_operation_preview_art_wide.png", art, Color.white);
+        AddPreviewTacticalOverlays(parent, art);
         AddMapMarkers(parent, art);
 
         RectInt footer = new(rect.x + 38, rect.y + rect.height - 116, rect.width - 76, 86);
@@ -234,11 +235,37 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
 
     private static void AddMapMarkers(Transform parent, RectInt art)
     {
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Warning_A", "scn13_marker_hostile_intel_diamond.png", new RectInt(art.x + 235, art.y + 230, 78, 78), 58, 58, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Warning_B", "scn13_marker_warning_triangle.png", new RectInt(art.x + 620, art.y + 335, 82, 82), 62, 62, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Target", "scn13_marker_objective_target.png", new RectInt(art.x + 1145, art.y + 355, 108, 108), 92, 92, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Deployment", "scn13_marker_deployment_flag.png", new RectInt(art.x + 1380, art.y + 510, 150, 140), 116, 116, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Zone", "scn13_marker_deployment_zone_circle.png", new RectInt(art.x + 1250, art.y + 600, 245, 140), 220, 120, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Warning_A", "scn13_marker_hostile_intel_diamond.png", new RectInt(art.x + 240, art.y + 245, 70, 70), 52, 52, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Warning_B", "scn13_marker_warning_triangle.png", new RectInt(art.x + 624, art.y + 348, 72, 72), 56, 56, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Target", "scn13_marker_objective_target.png", new RectInt(art.x + 1158, art.y + 368, 94, 94), 82, 82, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Deployment", "scn13_marker_deployment_flag.png", new RectInt(art.x + 1388, art.y + 522, 132, 126), 102, 102, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Zone", "scn13_marker_deployment_zone_circle.png", new RectInt(art.x + 1258, art.y + 598, 222, 130), 198, 108, new Color(1f, 1f, 1f, 0.88f));
+    }
+
+    private static void AddPreviewTacticalOverlays(Transform parent, RectInt art)
+    {
+        Color route = new Color(0.95f, 0.74f, 0.20f, 0.26f);
+        Color routeDim = new Color(0.78f, 0.70f, 0.28f, 0.20f);
+        Color scan = new Color(0.86f, 0.78f, 0.34f, 0.26f);
+        Color deploy = new Color(0.60f, 0.88f, 0.46f, 0.28f);
+
+        AddPreviewOverlay(parent, "Preview_Path_A", "scn13_marker_path_segment.png", new RectInt(art.x + 260, art.y + 292, 270, 240), 232, 205, routeDim, -12f);
+        AddPreviewOverlay(parent, "Preview_Path_B", "scn13_marker_path_segment.png", new RectInt(art.x + 742, art.y + 282, 300, 250), 248, 218, route, 13f);
+        AddPreviewOverlay(parent, "Preview_Path_C", "scn13_marker_path_segment.png", new RectInt(art.x + 1120, art.y + 458, 270, 236), 232, 205, routeDim, 10f);
+
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Preview_Scan_A", "scn13_marker_scan_ping.png", new RectInt(art.x + 430, art.y + 220, 190, 98), 168, 82, scan);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Preview_Scan_B", "scn13_marker_scan_ping.png", new RectInt(art.x + 940, art.y + 240, 190, 98), 168, 82, scan);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Preview_Scan_C", "scn13_marker_scan_ping.png", new RectInt(art.x + 1365, art.y + 490, 196, 104), 172, 88, deploy);
+
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Preview_Patrol_A", "scn13_marker_patrol_route_ring.png", new RectInt(art.x + 340, art.y + 430, 218, 160), 184, 140, scan);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Preview_Patrol_B", "scn13_marker_patrol_route_ring.png", new RectInt(art.x + 1245, art.y + 545, 238, 178), 204, 160, deploy);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Preview_Camera_Brackets", "scn13_marker_camera_brackets.png", new RectInt(art.x + 1132, art.y + 326, 138, 126), 112, 100, new Color(0.95f, 0.78f, 0.30f, 0.34f));
+    }
+
+    private static void AddPreviewOverlay(Transform parent, string name, string spriteName, RectInt slot, int maxWidth, int maxHeight, Color color, float rotation)
+    {
+        Image image = WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, name, spriteName, slot, maxWidth, maxHeight, color);
+        image.rectTransform.localEulerAngles = new Vector3(0f, 0f, rotation);
     }
 
     private static void AddPreviewStat(Transform parent, string name, string icon, string label, string value, RectInt slot)

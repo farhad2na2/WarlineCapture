@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -6,10 +7,14 @@ public partial struct AIEconomySystem : ISystem
     private const float MinSellBarrels = 1f;
     private const float LogIntervalSeconds = 10f;
     private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         state.RequireForUpdate<FactionEconomy>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
     }
@@ -22,6 +27,8 @@ public partial struct AIEconomySystem : ISystem
         BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
+        bool shouldLogDiagnostics = ShouldQueueDiagnostics(ref state);
+        Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
 
         foreach (var (economyRef, policyRef) in SystemAPI.Query<RefRW<FactionEconomy>, RefRO<FactionEconomyPolicy>>())
         {
@@ -69,11 +76,13 @@ public partial struct AIEconomySystem : ISystem
             economy.OilIncomeRate = oilIncomeRate;
             economy.FuelIncomeRate = fuelIncomeRate;
 
-            bool shouldLog = AILog.IsEnabled && (revenue > 0 || now - economy.LastLogTime >= LogIntervalSeconds);
+            bool shouldLog = shouldLogDiagnostics && (revenue > 0 || now - economy.LastLogTime >= LogIntervalSeconds);
             if (shouldLog)
             {
                 economy.LastLogTime = now;
-                AILog.Log(
+                EnqueueDiagnostic(
+                    ref state,
+                    diagnosticQueueEntity,
                     $"[AIEconomy] faction={economy.FactionId} money={economy.Money} " +
                     $"oil={Mathf.FloorToInt(economy.Oil)} fuel={Mathf.FloorToInt(economy.Fuel)} " +
                     $"oilIncome={economy.OilIncomeRate:F1} fuelIncome={economy.FuelIncomeRate:F1} " +
@@ -91,5 +100,35 @@ public partial struct AIEconomySystem : ISystem
 
         Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
         return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
+    }
+
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private Entity EnsureDiagnosticQueue(ref SystemState state)
+    {
+        EntityManager em = state.EntityManager;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            Entity queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+            return queueEntity;
+        }
+
+        return _diagnosticLogQueueQuery.GetSingletonEntity();
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, Entity queueEntity, FixedString512Bytes message)
+    {
+        EntityManager em = state.EntityManager;
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
     }
 }

@@ -1,0 +1,786 @@
+{
+  "scene": "SCN-09_BuildDrawer",
+  "reference": "reference/SCN-09_BuildDrawer_OnExistingMatchHUD_TargetLock_V01.png",
+  "workflow": "VisualLockLayered V15 3D green screen",
+  "notes": [
+    "Generated for the approved build drawer overlay on the existing SCN-08 match HUD.",
+    "No live text, numeric values, lock/star/progress markers, or gameplay state should be baked into reusable panel backgrounds.",
+    "Building thumbnails are separate image layers; tabs, cards, buttons, icons, and panel chrome are separate sprites."
+  ],
+  "layers": [
+    {
+      "id": "chrome_01_drawer_outer_frame",
+      "file": "layers/chrome_01_drawer_outer_frame.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 26,
+        "y": 15,
+        "width": 799,
+        "height": 488
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_02_detail_panel_frame",
+      "file": "layers/chrome_02_detail_panel_frame.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 823,
+        "y": 36,
+        "width": 415,
+        "height": 464
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_03_right_support_panel",
+      "file": "layers/chrome_03_right_support_panel.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 1237,
+        "y": 56,
+        "width": 249,
+        "height": 480
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_04_tab_selected_bg",
+      "file": "layers/chrome_04_tab_selected_bg.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 40,
+        "y": 497,
+        "width": 397,
+        "height": 94
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_05_tab_idle_bg",
+      "file": "layers/chrome_05_tab_idle_bg.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 428,
+        "y": 497,
+        "width": 395,
+        "height": 94
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_06_gold_action_button_bg",
+      "file": "layers/chrome_06_gold_action_button_bg.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 852,
+        "y": 625,
+        "width": 328,
+        "height": 115
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_07_selected_card_highlight_frame",
+      "file": "layers/chrome_07_selected_card_highlight_frame.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 1278,
+        "y": 617,
+        "width": 147,
+        "height": 135
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_08_card_frame_standard",
+      "file": "layers/chrome_08_card_frame_standard.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 35,
+        "y": 588,
+        "width": 249,
+        "height": 293
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_09_card_frame_tall",
+      "file": "layers/chrome_09_card_frame_tall.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 305,
+        "y": 588,
+        "width": 253,
+        "height": 292
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_10_selected_card_body_overlay",
+      "file": "layers/chrome_10_selected_card_body_overlay.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 576,
+        "y": 588,
+        "width": 248,
+        "height": 291
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_11_thin_divider",
+      "file": "layers/chrome_11_thin_divider.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 1208,
+        "y": 751,
+        "width": 287,
+        "height": 35
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_12_secondary_button_bg",
+      "file": "layers/chrome_12_secondary_button_bg.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 852,
+        "y": 740,
+        "width": 328,
+        "height": 119
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_13_small_status_chip_bg",
+      "file": "layers/chrome_13_small_status_chip_bg.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 1231,
+        "y": 792,
+        "width": 241,
+        "height": 99
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_14_bottom_instruction_strip",
+      "file": "layers/chrome_14_bottom_instruction_strip.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 24,
+        "y": 883,
+        "width": 979,
+        "height": 106
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "chrome_15_warning_chip_bg",
+      "file": "layers/chrome_15_warning_chip_bg.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_ChromeSource_Green.png",
+      "sourceRect": {
+        "x": 1228,
+        "y": 884,
+        "width": 247,
+        "height": 101
+      },
+      "category": "chrome",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_01_building_barracks_thumb",
+      "file": "layers/thumb_01_building_barracks_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 16,
+        "y": 101,
+        "width": 434,
+        "height": 339
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_02_building_vehicle_depot_thumb",
+      "file": "layers/thumb_02_building_vehicle_depot_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 452,
+        "y": 101,
+        "width": 434,
+        "height": 339
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_03_building_watchtower_thumb",
+      "file": "layers/thumb_03_building_watchtower_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 888,
+        "y": 101,
+        "width": 433,
+        "height": 339
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_04_building_supply_depot_thumb",
+      "file": "layers/thumb_04_building_supply_depot_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 1322,
+        "y": 101,
+        "width": 434,
+        "height": 339
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_05_building_oil_pump_thumb",
+      "file": "layers/thumb_05_building_oil_pump_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 15,
+        "y": 449,
+        "width": 435,
+        "height": 340
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_06_building_oil_refinery_thumb",
+      "file": "layers/thumb_06_building_oil_refinery_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 452,
+        "y": 449,
+        "width": 434,
+        "height": 340
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_07_building_fuel_bladder_thumb",
+      "file": "layers/thumb_07_building_fuel_bladder_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 888,
+        "y": 449,
+        "width": 434,
+        "height": 340
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "thumb_08_building_advanced_radar_thumb",
+      "file": "layers/thumb_08_building_advanced_radar_thumb.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_BuildingThumbsSource_Green.png",
+      "sourceRect": {
+        "x": 1322,
+        "y": 449,
+        "width": 434,
+        "height": 340
+      },
+      "category": "thumb",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_01_icon_credits",
+      "file": "layers/icon_01_icon_credits.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 150,
+        "y": 48,
+        "width": 191,
+        "height": 193
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_02_icon_supplies",
+      "file": "layers/icon_02_icon_supplies.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 424,
+        "y": 56,
+        "width": 229,
+        "height": 194
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_03_icon_fuel",
+      "file": "layers/icon_03_icon_fuel.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 778,
+        "y": 56,
+        "width": 147,
+        "height": 185
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_04_icon_oil",
+      "file": "layers/icon_04_icon_oil.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 1068,
+        "y": 52,
+        "width": 153,
+        "height": 198
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_05_icon_time",
+      "file": "layers/icon_05_icon_time.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 1355,
+        "y": 56,
+        "width": 183,
+        "height": 185
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_06_icon_build_tools",
+      "file": "layers/icon_06_icon_build_tools.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 140,
+        "y": 276,
+        "width": 195,
+        "height": 175
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_07_icon_placement_tiles",
+      "file": "layers/icon_07_icon_placement_tiles.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 406,
+        "y": 290,
+        "width": 229,
+        "height": 135
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_08_icon_confirm",
+      "file": "layers/icon_08_icon_confirm.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 704,
+        "y": 294,
+        "width": 184,
+        "height": 149
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_09_icon_lock",
+      "file": "layers/icon_09_icon_lock.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 973,
+        "y": 278,
+        "width": 140,
+        "height": 172
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_10_icon_warning",
+      "file": "layers/icon_10_icon_warning.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 1201,
+        "y": 281,
+        "width": 188,
+        "height": 170
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_11_icon_squad_group",
+      "file": "layers/icon_11_icon_squad_group.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 1464,
+        "y": 299,
+        "width": 193,
+        "height": 144
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_12_icon_vehicle_depot",
+      "file": "layers/icon_12_icon_vehicle_depot.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 135,
+        "y": 483,
+        "width": 206,
+        "height": 163
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_13_icon_barracks",
+      "file": "layers/icon_13_icon_barracks.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 419,
+        "y": 463,
+        "width": 195,
+        "height": 180
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_14_icon_refinery",
+      "file": "layers/icon_14_icon_refinery.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 710,
+        "y": 466,
+        "width": 190,
+        "height": 180
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_15_icon_plus",
+      "file": "layers/icon_15_icon_plus.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 992,
+        "y": 494,
+        "width": 151,
+        "height": 151
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_16_icon_queue_list",
+      "file": "layers/icon_16_icon_queue_list.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 1228,
+        "y": 505,
+        "width": 166,
+        "height": 139
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_17_icon_placement_corners",
+      "file": "layers/icon_17_icon_placement_corners.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 1485,
+        "y": 499,
+        "width": 174,
+        "height": 162
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_18_icon_placement_cursor",
+      "file": "layers/icon_18_icon_placement_cursor.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 161,
+        "y": 679,
+        "width": 121,
+        "height": 165
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_19_icon_rally_flag",
+      "file": "layers/icon_19_icon_rally_flag.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 430,
+        "y": 672,
+        "width": 170,
+        "height": 171
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    },
+    {
+      "id": "icon_20_icon_close",
+      "file": "layers/icon_20_icon_close.png",
+      "source": "generated_one_go/source/SCN-09_BuildDrawer_IconSource_Green.png",
+      "sourceRect": {
+        "x": 733,
+        "y": 687,
+        "width": 149,
+        "height": 150
+      },
+      "category": "icon",
+      "unityImport": {
+        "textureType": "Sprite",
+        "alphaIsTransparency": true,
+        "meshType": "FullRect"
+      },
+      "compositionRule": "Place in Unity Canvas according to SCN-09 target lock; keep text, costs, timers, progress values, state badges, and interactable bindings live in UI."
+    }
+  ]
+}

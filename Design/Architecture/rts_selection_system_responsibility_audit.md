@@ -250,7 +250,7 @@ AI log enablement now flows through a runtime diagnostics boundary:
 - `RuntimeDiagnosticsStateComponent`
 - `RuntimeDiagnosticsSystem`
 
-`AILog` remains as a temporary compatibility facade for existing AI log call sites, but it now reads log enablement through `RuntimeDiagnosticsSystem` instead of `InitialUnitsRuntimeState.ShouldLogAI`.
+The temporary `AILog` compatibility facade has now been retired after AI diagnostic call sites moved to ECS diagnostic events.
 
 Direct production access to `InitialUnitsRuntimeState.VerboseAILogs` and `InitialUnitsRuntimeState.ShouldLogAI` is now blocked by architecture contract coverage, with `RuntimeDiagnosticsSystem` remaining the sole production compatibility bridge.
 
@@ -280,7 +280,91 @@ AI build diagnostics now flow through ECS diagnostic events:
 
 The build planner gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
 
+## Nineteenth Extraction Started
+
+`AIProductionSystem` no longer calls the static `AILog` facade.
+
+AI production diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The production system gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
+## Twentieth Extraction Started
+
+`AISquadSystem` no longer calls the static `AILog` facade.
+
+AI squad diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The squad system gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
+## Twenty-First Extraction Started
+
+`AITargetingSystem` no longer calls the static `AILog` facade.
+
+AI targeting diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The targeting system gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
+## Twenty-Second Extraction Started
+
+`AICombatOrderSystem` no longer calls the static `AILog` facade.
+
+AI combat-order diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The combat-order system gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
+## Twenty-Third Extraction Started
+
+`AIEconomySystem` no longer calls the static `AILog` facade.
+
+AI economy diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The economy system gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
+## Twenty-Fourth Extraction Started
+
+`AIFactionControlSystem` no longer calls the static `AILog` facade.
+
+AI faction-control diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The faction-control system gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
+## Twenty-Fifth Extraction Started
+
+`GameBootstrap` AI config diagnostics no longer call the static `AILog` facade.
+
+Bootstrap AI config diagnostics now flow through the same ECS diagnostic event path:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+`GameBootstrap` now gates AI config diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries at gameplay start, and explicitly flushes that queue through `AIDiagnosticLogFlushSystem` so startup validation remains visible at the shell/logging boundary. The diagnostic component now carries a severity byte so missing-config diagnostics can remain warnings without reintroducing static `AILog` calls.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.
-2. Continue retiring static diagnostics/logging debt by migrating `AIProductionSystem` to the ECS AI diagnostic log event path.
+2. Continue migrating remaining direct `Debug.Log*` gameplay diagnostics into ECS diagnostic event buffers or shell-injected logging services by domain slice.

@@ -37,6 +37,8 @@ UI mapping:
 - `Oil` remains a production/economy stat when the screen specifically explains extraction/refining.
 - `Fuel` keeps the same name across tactical and account surfaces.
 
+Field logistics source: `WarlineCapture_Field_Logistics_Oil_Fuel_Design.md` owns the tactical Oil Pump -> Oil Truck -> Refinery -> Fuel -> Fuel Bladder/Tanker loop, including build menu usage, match HUD rules, and config-aligned roles.
+
 ## Canonical Reward Types
 
 | Reward Type | Meaning | UI Presentation |

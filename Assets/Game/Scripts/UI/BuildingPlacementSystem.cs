@@ -6535,9 +6535,16 @@ public sealed class BuildingPlacementSystem
                     continue;
                 }
 
+                BuildingProductionSystem.PendingProductionProgress progress = _buildingProductionSystem.GetProgress(
+                    pending,
+                    now,
+                    pending.TransportPrefab != null);
+
                 if (pending.TransportPrefab != null)
                 {
-                    if (_buildingProductionSystem.ShouldLaunchTransport(pending, now))
+                    float transportLaunchWindow = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
+                    if (_buildingProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
+                        _buildingProductionSystem.ShouldLaunchTransport(pending, now))
                     {
                         if (TryEnsureActiveProductionTransport(building, pending))
                         {
@@ -6550,7 +6557,7 @@ public sealed class BuildingPlacementSystem
                     continue;
                 }
 
-                if (!_buildingProductionSystem.IsReady(pending, now))
+                if (progress.RemainingSeconds > 0f || !_buildingProductionSystem.IsReady(pending, now))
                     continue;
 
                 if (TrySpawnPlayerUnitNearBuilding(building, pending.ProductionIndex, pending.ReservedProductionSlotIndex))

@@ -49,12 +49,12 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `SCN-05_CampaignMap` | Campaign mission selection. | Campaign nodes selected from command table/world overlay; launches 3D operation maps. |
 | `SCN-06_MissionBriefing` | Objectives, intel, rewards, deployment preview. | Uses `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`. |
 | `SCN-07_LoadoutSquadPrep` | Squad/support/gear setup. | Uses prefab-catalog roster, lock reasons, role descriptions, Armory detail links. |
-| `SCN-08_RTSBattleHUD` | 3D operation battle HUD. | Objective tracker, squad tray, command bar, minimap, threat feed over one 3D map. |
+| `SCN-08_RTSBattleHUD` | 3D operation battle HUD. | Objective tracker, squad tray, command bar, minimap, threat feed over one 3D map. Target and V01 layer pack generated. |
 | `SCN-09_BuildDrawerProduction` | Build/produce drawer. | Building config names/descriptions, 3D metadata placement rules. |
 | `SCN-10_UnitCommandWheel` | Unit context command wheel. | Move, attack, hold, board, disembark, support, breach, scan, defend, cancel as available. |
 | `SCN-11_OperationsDashboard` | District operations command. | District state, warnings, raids, resources, consequences. |
 | `SCN-12_DistrictDetailActions` | District action detail. | Patrol, scan, aid, raid, repair, evacuate, build outpost with civilian/infrastructure consequences. |
-| `SCN-13_SkirmishSetup` | Configurable replay setup. | Player-facing Skirmish naming; selectable operation-map presets and AI/rule controls. |
+| `SCN-13_SkirmishSetup` | Configurable replay setup. | Player-facing Skirmish naming; selectable operation-map presets and AI/rule controls. Target and V01 layer pack generated. |
 | `SCN-14_CommandExchange` | Store / command exchange. | Deterministic products, disabled purchase states, no direct Campaign stars or Operation metric purchase. |
 | `SCN-15_Inbox` | Inbox and reports. | Empty/designed-unavailable state until services exist. |
 | `SCN-16_Events` | Events and challenges. | Empty/designed-unavailable state until event service exists. |

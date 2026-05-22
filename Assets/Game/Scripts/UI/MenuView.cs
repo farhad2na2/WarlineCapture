@@ -222,6 +222,7 @@ namespace Game.Scripts.UI
         private BuildingPlacementSystem _buildingPlacementSystem;
         private Camera _worldCamera;
         private DayNightSystem _dayNightSystem;
+        private CitizenPopulationSystem _citizenPopulationSystem;
         private readonly List<Entity> _selectedUnits = new();
         private bool _initialized;
         private bool _gameStartPending;
@@ -495,7 +496,12 @@ namespace Game.Scripts.UI
             public float Height => Mathf.Max(0.001f, MaxZ - MinZ);
         }
 
-        public void Init(RTSSelectionSystem selectionSystem, BuildingPlacementSystem buildingPlacementSystem, Camera worldCamera, DayNightSystem dayNightSystem = null)
+        public void Init(
+            RTSSelectionSystem selectionSystem,
+            BuildingPlacementSystem buildingPlacementSystem,
+            Camera worldCamera,
+            DayNightSystem dayNightSystem = null,
+            CitizenPopulationSystem citizenPopulationSystem = null)
         {
             if (_initialized)
                 return;
@@ -505,6 +511,7 @@ namespace Game.Scripts.UI
             _buildingPlacementSystem = buildingPlacementSystem;
             _worldCamera = worldCamera;
             _dayNightSystem = dayNightSystem;
+            _citizenPopulationSystem = citizenPopulationSystem;
             if (_selectionSystem != null)
             {
                 _selectionSystem.MoveOrderScreenMarkerRequested += ShowMoveOrderScreenReticle;
@@ -4746,8 +4753,7 @@ namespace Game.Scripts.UI
 
             GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
             int civilianDead = 0;
-            if (CitizenPopulationSystem.Instance != null)
-                CitizenPopulationSystem.Instance.GetTotals(out _, out _, out _, out _, out civilianDead);
+            _citizenPopulationSystem?.GetTotals(out _, out _, out _, out _, out civilianDead);
 
             foreach (KeyValuePair<string, TMP_Text> pair in _statsAmountTexts)
             {

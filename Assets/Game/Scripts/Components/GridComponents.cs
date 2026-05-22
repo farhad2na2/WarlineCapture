@@ -212,6 +212,18 @@ public struct StaticBlockerPrevBounds : ICleanupComponentData
     public byte FriendlyPassFactionId;
 }
 
+public struct RuntimeGridBlockerDependencyState : IComponentData
+{
+    public byte ReadyForDependents;
+    public byte SpawnOnStart;
+    public byte Spawned;
+    public byte SpawnFinalizing;
+    public int FinalizeAfterFrames;
+    public byte PendingCity;
+    public byte CityHasSpawned;
+    public byte CityGenerating;
+}
+
 public static class GridUtils
 {
     public static bool InBounds(int2 cell, int width, int height) =>

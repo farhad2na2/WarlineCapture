@@ -1,0 +1,1061 @@
+{
+  "surface_id": "SCN-13_SkirmishSetup",
+  "workflow": "VisualLockLayered V01 Skirmish Setup Green-Source Extraction",
+  "target_reference": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/reference/SCN-13_SkirmishSetup_Landscape_Target.png",
+  "rule": "Generated implementation sources only. The target-lock mockup was not sliced for layers.",
+  "sources": [
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Background_21x9_NoUI.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_OperationPreview_Wide.png"
+  ],
+  "layers": [
+    {
+      "id": "scn13_background_21x9_no_ui",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_background_21x9_no_ui.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Background_21x9_NoUI.png",
+      "source_box": null,
+      "size": {
+        "width": 1915,
+        "height": 821
+      },
+      "key_green": false
+    },
+    {
+      "id": "scn13_operation_preview_art_wide",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_operation_preview_art_wide.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_OperationPreview_Wide.png",
+      "source_box": null,
+      "size": {
+        "width": 1870,
+        "height": 841
+      },
+      "key_green": false
+    },
+    {
+      "id": "scn13_header_logo_panel_bg",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_header_logo_panel_bg.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        19,
+        23,
+        454,
+        133
+      ],
+      "size": {
+        "width": 435,
+        "height": 110
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_header_resource_panel_bg",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_header_resource_panel_bg.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        527,
+        30,
+        1316,
+        120
+      ],
+      "size": {
+        "width": 789,
+        "height": 90
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_header_right_actions_bg",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_header_right_actions_bg.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1367,
+        29,
+        1644,
+        125
+      ],
+      "size": {
+        "width": 277,
+        "height": 96
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_title_back_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_title_back_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        19,
+        169,
+        382,
+        255
+      ],
+      "size": {
+        "width": 363,
+        "height": 86
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_preset_rail_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_preset_rail_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        19,
+        274,
+        304,
+        752
+      ],
+      "size": {
+        "width": 285,
+        "height": 478
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_preset_row_selected_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_preset_row_selected_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        321,
+        290,
+        570,
+        364
+      ],
+      "size": {
+        "width": 249,
+        "height": 74
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_preset_row_locked_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_preset_row_locked_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        321,
+        380,
+        570,
+        456
+      ],
+      "size": {
+        "width": 249,
+        "height": 76
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_operation_preview_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_operation_preview_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        591,
+        190,
+        1233,
+        713
+      ],
+      "size": {
+        "width": 642,
+        "height": 523
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_rules_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_rules_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1274,
+        153,
+        1631,
+        578
+      ],
+      "size": {
+        "width": 357,
+        "height": 425
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_rule_row_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_rule_row_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1274,
+        588,
+        1631,
+        649
+      ],
+      "size": {
+        "width": 357,
+        "height": 61
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_stepper_minus_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_stepper_minus_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1273,
+        658,
+        1349,
+        723
+      ],
+      "size": {
+        "width": 76,
+        "height": 65
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_stepper_value_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_stepper_value_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1359,
+        658,
+        1546,
+        723
+      ],
+      "size": {
+        "width": 187,
+        "height": 65
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_stepper_plus_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_stepper_plus_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1555,
+        658,
+        1632,
+        723
+      ],
+      "size": {
+        "width": 77,
+        "height": 65
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_locked_reason_chip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_locked_reason_chip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1258,
+        739,
+        1649,
+        802
+      ],
+      "size": {
+        "width": 391,
+        "height": 63
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_info_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_info_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        19,
+        789,
+        501,
+        920
+      ],
+      "size": {
+        "width": 482,
+        "height": 131
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_secondary_action_button_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_secondary_action_button_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        547,
+        815,
+        1106,
+        908
+      ],
+      "size": {
+        "width": 559,
+        "height": 93
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_launch_cta_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_launch_cta_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Frames_Green.png",
+      "source_box": [
+        1148,
+        809,
+        1654,
+        923
+      ],
+      "size": {
+        "width": 506,
+        "height": 114
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_brand_logo_lockup",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_brand_logo_lockup.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        45,
+        55,
+        670,
+        240
+      ],
+      "size": {
+        "width": 607,
+        "height": 172
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_back_arrow",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_back_arrow.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        735,
+        70,
+        875,
+        210
+      ],
+      "size": {
+        "width": 114,
+        "height": 120
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_skirmish_blades",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_skirmish_blades.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        920,
+        60,
+        1090,
+        220
+      ],
+      "size": {
+        "width": 138,
+        "height": 137
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_preset_target",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_preset_target.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1110,
+        60,
+        1280,
+        220
+      ],
+      "size": {
+        "width": 142,
+        "height": 144
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_preset_convoy",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_preset_convoy.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1290,
+        75,
+        1465,
+        220
+      ],
+      "size": {
+        "width": 134,
+        "height": 104
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_preset_airlift",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_preset_airlift.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1500,
+        80,
+        1670,
+        210
+      ],
+      "size": {
+        "width": 157,
+        "height": 92
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_preset_breach",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_preset_breach.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        40,
+        250,
+        200,
+        420
+      ],
+      "size": {
+        "width": 123,
+        "height": 127
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_preset_hidden_cell",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_preset_hidden_cell.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        245,
+        250,
+        370,
+        405
+      ],
+      "size": {
+        "width": 82,
+        "height": 121
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_lock",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_lock.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        420,
+        250,
+        550,
+        410
+      ],
+      "size": {
+        "width": 94,
+        "height": 124
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_selected_status_dot",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_selected_status_dot.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        585,
+        260,
+        700,
+        395
+      ],
+      "size": {
+        "width": 82,
+        "height": 97
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_resource_credits_coin",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_resource_credits_coin.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        760,
+        250,
+        930,
+        415
+      ],
+      "size": {
+        "width": 123,
+        "height": 126
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_resource_supplies_crate",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_resource_supplies_crate.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        950,
+        250,
+        1120,
+        415
+      ],
+      "size": {
+        "width": 143,
+        "height": 124
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_resource_command_shield",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_resource_command_shield.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1130,
+        245,
+        1285,
+        420
+      ],
+      "size": {
+        "width": 109,
+        "height": 148
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_inbox_envelope",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_inbox_envelope.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1300,
+        270,
+        1480,
+        390
+      ],
+      "size": {
+        "width": 112,
+        "height": 87
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_settings_gear",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_settings_gear.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1510,
+        260,
+        1670,
+        405
+      ],
+      "size": {
+        "width": 112,
+        "height": 113
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_enemy_type",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_enemy_type.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        55,
+        430,
+        180,
+        570
+      ],
+      "size": {
+        "width": 80,
+        "height": 114
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_enemy_count",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_enemy_count.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        220,
+        430,
+        380,
+        570
+      ],
+      "size": {
+        "width": 125,
+        "height": 100
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_difficulty_bars",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_difficulty_bars.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        440,
+        430,
+        570,
+        570
+      ],
+      "size": {
+        "width": 104,
+        "height": 101
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_starting_credits",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_starting_credits.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        630,
+        430,
+        740,
+        570
+      ],
+      "size": {
+        "width": 67,
+        "height": 114
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_income_chart",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_income_chart.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        805,
+        430,
+        955,
+        570
+      ],
+      "size": {
+        "width": 98,
+        "height": 115
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_build_speed_gear",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_build_speed_gear.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        990,
+        430,
+        1140,
+        570
+      ],
+      "size": {
+        "width": 109,
+        "height": 112
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_production_factory",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_production_factory.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1180,
+        430,
+        1325,
+        570
+      ],
+      "size": {
+        "width": 105,
+        "height": 106
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_aggression_skull",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_aggression_skull.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1355,
+        430,
+        1485,
+        570
+      ],
+      "size": {
+        "width": 77,
+        "height": 110
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_expansion_arrows",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_expansion_arrows.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1535,
+        430,
+        1665,
+        570
+      ],
+      "size": {
+        "width": 96,
+        "height": 98
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_win_condition_target",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_win_condition_target.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        75,
+        590,
+        220,
+        735
+      ],
+      "size": {
+        "width": 115,
+        "height": 118
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_fog_hidden_eye",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_fog_hidden_eye.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        320,
+        590,
+        470,
+        735
+      ],
+      "size": {
+        "width": 121,
+        "height": 103
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_map_pin",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_map_pin.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        570,
+        590,
+        700,
+        745
+      ],
+      "size": {
+        "width": 98,
+        "height": 127
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_seed_dice",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_seed_dice.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        760,
+        590,
+        900,
+        745
+      ],
+      "size": {
+        "width": 103,
+        "height": 116
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_intel_eye",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_intel_eye.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        960,
+        590,
+        1130,
+        735
+      ],
+      "size": {
+        "width": 130,
+        "height": 82
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_civilian_group",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_civilian_group.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1170,
+        590,
+        1330,
+        740
+      ],
+      "size": {
+        "width": 129,
+        "height": 118
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_info_circle",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_info_circle.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1380,
+        590,
+        1525,
+        735
+      ],
+      "size": {
+        "width": 110,
+        "height": 112
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_reset_arrow",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_reset_arrow.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        80,
+        735,
+        220,
+        875
+      ],
+      "size": {
+        "width": 113,
+        "height": 109
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_icon_manage_list",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_icon_manage_list.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        300,
+        740,
+        440,
+        870
+      ],
+      "size": {
+        "width": 97,
+        "height": 84
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_launch_chevrons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_launch_chevrons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        540,
+        750,
+        700,
+        870
+      ],
+      "size": {
+        "width": 145,
+        "height": 94
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_dropdown_chevron",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_dropdown_chevron.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        780,
+        780,
+        900,
+        860
+      ],
+      "size": {
+        "width": 73,
+        "height": 49
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_stepper_minus_icon",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_stepper_minus_icon.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        990,
+        790,
+        1080,
+        850
+      ],
+      "size": {
+        "width": 68,
+        "height": 27
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_stepper_plus_icon",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_stepper_plus_icon.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_Icons_Green.png",
+      "source_box": [
+        1165,
+        760,
+        1270,
+        870
+      ],
+      "size": {
+        "width": 74,
+        "height": 79
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_hostile_intel_diamond",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_hostile_intel_diamond.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        130,
+        80,
+        400,
+        350
+      ],
+      "size": {
+        "width": 233,
+        "height": 232
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_patrol_route_ring",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_patrol_route_ring.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        500,
+        70,
+        780,
+        360
+      ],
+      "size": {
+        "width": 252,
+        "height": 249
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_path_segment",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_path_segment.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        900,
+        60,
+        1140,
+        360
+      ],
+      "size": {
+        "width": 214,
+        "height": 274
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_deployment_zone_circle",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_deployment_zone_circle.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        1240,
+        80,
+        1520,
+        340
+      ],
+      "size": {
+        "width": 275,
+        "height": 250
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_deployment_flag",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_deployment_flag.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        180,
+        390,
+        390,
+        640
+      ],
+      "size": {
+        "width": 170,
+        "height": 206
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_civilian_risk",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_civilian_risk.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        570,
+        410,
+        730,
+        610
+      ],
+      "size": {
+        "width": 160,
+        "height": 176
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_objective_target",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_objective_target.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        900,
+        390,
+        1150,
+        640
+      ],
+      "size": {
+        "width": 209,
+        "height": 208
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_scan_ping",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_scan_ping.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        1260,
+        430,
+        1520,
+        620
+      ],
+      "size": {
+        "width": 248,
+        "height": 136
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_warning_triangle",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_warning_triangle.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        420,
+        630,
+        660,
+        850
+      ],
+      "size": {
+        "width": 215,
+        "height": 183
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn13_marker_camera_brackets",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/layers/scn13_marker_camera_brackets.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-13_SkirmishSetup/generated_v01/source/SCN-13_MapMarkers_Green.png",
+      "source_box": [
+        750,
+        650,
+        980,
+        850
+      ],
+      "size": {
+        "width": 195,
+        "height": 175
+      },
+      "key_green": true
+    }
+  ]
+}

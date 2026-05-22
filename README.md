@@ -56,6 +56,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
 - `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 - `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
@@ -74,6 +75,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
     - [AAA Mobile Technical Targets](Design/WarlineCapture_AAA_Mobile_Technical_Targets.md)
   - Product Gameplay
     - [Large-Scale Grid Movement Design](Design/WarlineCapture_LargeScale_Grid_Movement_Design.md)
+    - [Skirmish Mode Implementation Spec](Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md)
     - [Level And Mission Content Plan](Design/WarlineCapture_Level_And_Mission_Content_Plan.md)
       - [Chapter 1: First Response](Design/SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md)
       - [Chapter 2: Broken Grid](Design/SagaChapters/WarlineCapture_Saga_Chapter02_Broken_Grid.md)
@@ -244,7 +246,7 @@ Highest-priority gameplay systems:
 
 Recommended gameplay implementation order:
 
-1. Skirmish gameplay config and launch payload. Runtime internals may keep QuickCustom naming until migration.
+1. Skirmish gameplay config and launch payload, using `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md` as the active implementation contract. Runtime internals may keep QuickCustom naming until migration.
 2. `GameBootstrap.BeginGameplay(GameLaunchPayload payload)` while preserving the current no-argument path.
 3. Objective Manager with the first objective types.
 4. Mission result, star scoring, and rewards.

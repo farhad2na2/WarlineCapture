@@ -10,14 +10,6 @@ public sealed class RTSSelectionSystem
 {
     private const bool EnableMoveOrderDiagnostics = false;
     private static readonly bool EnableGroupMoveValidationLog = false;
-    private const int TransportBoardingClearanceCells = 4;
-    private const int TransportDisembarkClearanceCells = 4;
-    private const int AirTransportDirectBoardingCells = 1;
-    private const float AirTransportBoardingGroundedHeightTolerance = 3f;
-    private const int ManualMoveGoalSearchRadiusInfantry = 12;
-    private const int ManualMoveGoalSearchRadiusVehicle = 20;
-    private const int ManualMoveGoalPaddingInfantry = 1;
-    private const int ManualMoveGoalPaddingVehicle = 0;
     private const int GroupMoveStaggerMinGroundUnits = 12;
     private const int GroupMoveImmediatePathRequests = 8;
     private const int GroupMovePathRequestsPerFrame = 8;
@@ -132,34 +124,129 @@ public sealed class RTSSelectionSystem
     [SerializeField, HideInInspector] private float fullscreenIsoOrthographicSize = 24f;
     [SerializeField, HideInInspector] private float zoomTransitionSmoothTime = 0.25f;
 
-    private Vector2 _dragStart;
-    private Vector2 _dragCurrent;
-    private Vector2 _lastPointerPosition;
-    private bool _pointerPressedOverUi;
-    private bool _dragging;
-    private bool _cameraDragging;
-    private bool _ignoreNextLeftMouseRelease;
-    private bool _skipNextWorldReleaseAfterSelection;
-    private int _ignoreWorldCommandsUntilFrame;
-    private bool _ignoreUiClickUntilRelease;
-    private bool _selectionModeHoldArmed;
-    private float _selectionModeHoldStartTime;
-    private bool _wasPlayRequested;
-    private bool _wasBuildModeActive;
-    private bool _isZoomTransitionActive;
-    private float _zoomTransitionVelocity;
-    private float _pitchTransitionVelocity;
-    private float _yawTransitionVelocity;
-    private float _fieldOfViewTransitionVelocity;
-    private float _fullscreenIsoTargetHeight;
-    private float _fullscreenIsoTargetOrthographicSize;
-    private float _orthographicSizeTransitionVelocity;
-    private bool _normalIsoModeActive;
-    private bool _hasSmoothCameraFocusTarget;
-    private Vector3 _smoothCameraFocusTarget;
-    private Vector3 _smoothCameraFocusVelocity;
     private Texture2D _pixel;
-    private Entity _focusedUnit;
+    private readonly RtsSelectionInputSystem _rtsSelectionInputSystem = new();
+    private readonly RtsCameraSystem _rtsCameraSystem = new();
+    private readonly SelectionStateSystem _selectionStateSystem = new();
+    private readonly SelectionUiQuerySystem _selectionUiQuerySystem = new();
+    private readonly UnitMoveOrderSystem _unitMoveOrderSystem = new();
+    private readonly UnitTargetOrderSystem _unitTargetOrderSystem = new();
+    private UnitTransportBoardingSystem _unitTransportBoardingSystem;
+    private Entity _focusedUnit
+    {
+        get => _selectionStateSystem.FocusedUnit;
+        set => _selectionStateSystem.SetFocusedUnit(value);
+    }
+
+    private List<Entity> _cachedSelectedMoveEntities => _selectionStateSystem.CachedSelectedMoveEntities;
+    private bool _cameraDragging
+    {
+        get => _rtsCameraSystem.IsDragging;
+        set => _rtsCameraSystem.SetDragging(value);
+    }
+
+    private bool _wasPlayRequested
+    {
+        get => _rtsCameraSystem.WasPlayRequested;
+        set => _rtsCameraSystem.WasPlayRequested = value;
+    }
+
+    private bool _wasBuildModeActive
+    {
+        get => _rtsCameraSystem.WasBuildModeActive;
+        set => _rtsCameraSystem.WasBuildModeActive = value;
+    }
+
+    private bool _isZoomTransitionActive
+    {
+        get => _rtsCameraSystem.IsZoomTransitionActive;
+        set => _rtsCameraSystem.IsZoomTransitionActive = value;
+    }
+
+    private float _fullscreenIsoTargetHeight
+    {
+        get => _rtsCameraSystem.FullscreenIsoTargetHeight;
+        set => _rtsCameraSystem.FullscreenIsoTargetHeight = value;
+    }
+
+    private float _fullscreenIsoTargetOrthographicSize
+    {
+        get => _rtsCameraSystem.FullscreenIsoTargetOrthographicSize;
+        set => _rtsCameraSystem.FullscreenIsoTargetOrthographicSize = value;
+    }
+
+    private bool _normalIsoModeActive
+    {
+        get => _rtsCameraSystem.NormalIsoModeActive;
+        set => _rtsCameraSystem.NormalIsoModeActive = value;
+    }
+
+    private Vector2 _dragStart
+    {
+        get => _rtsSelectionInputSystem.DragStart;
+        set => _rtsSelectionInputSystem.DragStart = value;
+    }
+
+    private Vector2 _dragCurrent
+    {
+        get => _rtsSelectionInputSystem.DragCurrent;
+        set => _rtsSelectionInputSystem.DragCurrent = value;
+    }
+
+    private Vector2 _lastPointerPosition
+    {
+        get => _rtsSelectionInputSystem.LastPointerPosition;
+        set => _rtsSelectionInputSystem.LastPointerPosition = value;
+    }
+
+    private bool _pointerPressedOverUi
+    {
+        get => _rtsSelectionInputSystem.PointerPressedOverUi;
+        set => _rtsSelectionInputSystem.PointerPressedOverUi = value;
+    }
+
+    private bool _dragging
+    {
+        get => _rtsSelectionInputSystem.IsDraggingSelection;
+        set => _rtsSelectionInputSystem.IsDraggingSelection = value;
+    }
+
+    private bool _ignoreNextLeftMouseRelease
+    {
+        get => _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease;
+        set => _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = value;
+    }
+
+    private bool _skipNextWorldReleaseAfterSelection
+    {
+        get => _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection;
+        set => _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = value;
+    }
+
+    private int _ignoreWorldCommandsUntilFrame
+    {
+        get => _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame;
+        set => _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame = value;
+    }
+
+    private bool _ignoreUiClickUntilRelease
+    {
+        get => _rtsSelectionInputSystem.IgnoreUiClickUntilRelease;
+        set => _rtsSelectionInputSystem.IgnoreUiClickUntilRelease = value;
+    }
+
+    private bool _selectionModeHoldArmed
+    {
+        get => _rtsSelectionInputSystem.SelectionModeHoldArmed;
+        set => _rtsSelectionInputSystem.SelectionModeHoldArmed = value;
+    }
+
+    private float _selectionModeHoldStartTime
+    {
+        get => _rtsSelectionInputSystem.SelectionModeHoldStartTime;
+        set => _rtsSelectionInputSystem.SelectionModeHoldStartTime = value;
+    }
+
     private MainMenuPlayUI _mainMenuPlayUi;
     private RoadBuildSystem _roadBuildController;
     private BuildingPlacementSystem _buildingPlacementController;
@@ -183,9 +270,8 @@ public sealed class RTSSelectionSystem
     private readonly List<PreservedOrderState> _preservedUiOrders = new();
     private readonly Dictionary<int, List<Entity>> _focusableUnitsByCell = new();
     private readonly Dictionary<Entity, FocusableUnitCoverage> _focusableUnitCoverage = new();
-    private readonly List<Entity> _cachedSelectedMoveEntities = new();
+    private readonly List<SelectionUiQuerySystem.TransportPassengerUiInfo> _selectionUiPassengerScratch = new();
     private readonly List<Entity> _selectedBoardingSourceEntities = new();
-    private uint _queuedMoveOrderToken;
     private GameObject _moveOrderMarker;
     private Renderer[] _moveOrderMarkerRenderers;
     private MaterialPropertyBlock _moveOrderMarkerPropertyBlock;
@@ -196,15 +282,19 @@ public sealed class RTSSelectionSystem
     private float _attackOrderMarkerHideTime = -1f;
     private int _lastFocusableUnitCount = -1;
     private Transform _runtimeRoot;
-    private bool _hasQueuedMoveOrder;
-    private Vector2 _queuedMoveOrderScreenPosition;
-    private int _queuedMoveOrderFrame = -1;
     private bool _explicitAttackTargetModeActive;
     private float _selectionModeHoldSeconds = 1f;
-    private Rect _lastLiveSelectionRect;
-    private bool _hasLiveSelectionRect;
-    private Vector2 _lastKnownPointerPosition;
-    private bool _hasLastKnownPointerPosition;
+    private Rect _lastLiveSelectionRect
+    {
+        get => _rtsSelectionInputSystem.LastLiveSelectionRect;
+        set => _rtsSelectionInputSystem.LastLiveSelectionRect = value;
+    }
+
+    private bool _hasLiveSelectionRect
+    {
+        get => _rtsSelectionInputSystem.HasLiveSelectionRect;
+        set => _rtsSelectionInputSystem.HasLiveSelectionRect = value;
+    }
 
     public bool HasFocusedUnit
     {
@@ -214,7 +304,7 @@ public sealed class RTSSelectionSystem
                 return false;
 
             var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            return em.Exists(_focusedUnit) && em.HasComponent<Faction>(_focusedUnit);
+            return _selectionUiQuerySystem.HasFocusedUnit(em, _focusedUnit);
         }
     }
 
@@ -227,7 +317,7 @@ public sealed class RTSSelectionSystem
 
             var em = World.DefaultGameObjectInjectionWorld.EntityManager;
             EnsureEntityQueries(em);
-            return !_selectedTagQuery.IsEmptyIgnoreFilter;
+            return _selectionUiQuerySystem.HasAnySelectedUnits(_selectedTagQuery);
         }
     }
 
@@ -238,7 +328,7 @@ public sealed class RTSSelectionSystem
             if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
                 return "Unit";
 
-            return ResolveFocusedUnitName(em, entity);
+            return _selectionUiQuerySystem.ResolveFocusedUnitName(em, entity);
         }
     }
 
@@ -249,35 +339,7 @@ public sealed class RTSSelectionSystem
             if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
                 return "Select a unit to inspect it.";
 
-            if (em.HasComponent<UnitDisplayInfo>(entity))
-            {
-                string configuredDescription = em.GetComponentData<UnitDisplayInfo>(entity).Description.ToString();
-                if (!string.IsNullOrWhiteSpace(configuredDescription))
-                    return configuredDescription;
-            }
-
-            byte factionId = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-            bool movable = em.HasComponent<UnitMove>(entity);
-            bool isVehicle = IsVehicleForVisibleSelection(em, entity);
-            bool canAttack = em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack != 0;
-
-            if (factionId == 0)
-            {
-                if (!movable)
-                    return "Player-controlled unit.";
-                if (isVehicle)
-                    return canAttack
-                        ? "Heavy combat APC. Faster than the base APC and can attack enemies."
-                        : "Support APC vehicle. Mobile but cannot attack, and will retreat when attacked.";
-
-                return "Player soldier. Click ground to issue a move order.";
-            }
-
-            if (!movable)
-                return "Enemy unit. Read-only info.";
-            if (isVehicle)
-                return canAttack ? "Enemy combat vehicle." : "Enemy support vehicle.";
-            return "Enemy mobile unit. Read-only info.";
+            return _selectionUiQuerySystem.ResolveFocusedUnitDescription(em, entity);
         }
     }
 
@@ -285,11 +347,9 @@ public sealed class RTSSelectionSystem
     {
         get
         {
-            if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !em.HasComponent<UnitHealth>(entity))
-                return "Health: -";
-
-            UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-            return $"Health: {health.Current}/{health.Max}";
+            return TryGetFocusedUnitEntity(out var em, out Entity entity)
+                ? _selectionUiQuerySystem.ResolveFocusedUnitHealthText(em, entity)
+                : "Health: -";
         }
     }
 
@@ -298,13 +358,10 @@ public sealed class RTSSelectionSystem
         current = 0;
         max = 0;
 
-        if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !em.HasComponent<UnitHealth>(entity))
+        if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
             return false;
 
-        UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-        current = health.Current;
-        max = health.Max;
-        return true;
+        return _selectionUiQuerySystem.TryGetFocusedUnitHealth(em, entity, out current, out max);
     }
 
     public bool TryGetFocusedUnitCapacityInfo(out int current, out int max, out float progress01)
@@ -313,52 +370,18 @@ public sealed class RTSSelectionSystem
         max = 0;
         progress01 = 0f;
 
-        if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !em.HasComponent<UnitResourceHauler>(entity))
-            return false;
-
-        UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(entity);
-        max = Mathf.Max(0, hauler.BarrelCapacity);
-        if (max <= 0)
-            return false;
-
-        float cargo = Mathf.Clamp(hauler.CargoOilBarrels + hauler.CargoFuelBarrels, 0f, max);
-
-        if (em.HasComponent<UnitResourceHaulOrder>(entity))
-        {
-            const byte LoadingPhase = 2;
-            const byte UnloadingPhase = 4;
-
-            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(entity);
-            if (order.ActionEndsAt > 0f)
-            {
-                if (order.Phase == LoadingPhase && hauler.FillDurationSeconds > 0.01f)
-                {
-                    float startedAt = order.ActionEndsAt - hauler.FillDurationSeconds;
-                    float fill01 = Mathf.Clamp01((Time.time - startedAt) / hauler.FillDurationSeconds);
-                    cargo = Mathf.Max(cargo, fill01 * max);
-                }
-                else if (order.Phase == UnloadingPhase && hauler.UnloadDurationSeconds > 0.01f)
-                {
-                    float startedAt = order.ActionEndsAt - hauler.UnloadDurationSeconds;
-                    float unload01 = Mathf.Clamp01((Time.time - startedAt) / hauler.UnloadDurationSeconds);
-                    cargo = Mathf.Min(cargo, (1f - unload01) * max);
-                }
-            }
-        }
-
-        progress01 = max > 0 ? Mathf.Clamp01(cargo / max) : 0f;
-        current = Mathf.Clamp(Mathf.RoundToInt(cargo), 0, max);
-        return true;
+        return TryGetFocusedUnitEntity(out var em, out Entity entity) &&
+               _selectionUiQuerySystem.TryGetFocusedUnitCapacityInfo(em, entity, Time.time, out current, out max, out progress01);
     }
 
     public bool FocusedUnitOwnedByPlayer
     {
         get
         {
-            if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !em.HasComponent<Faction>(entity))
+            if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
                 return false;
 
-            return em.GetComponentData<Faction>(entity).Id == 0;
+            return _selectionUiQuerySystem.IsOwnedByPlayer(em, entity);
         }
     }
 
@@ -373,7 +396,7 @@ public sealed class RTSSelectionSystem
             if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
                 return false;
 
-            return IsVehicleUnit(em, entity);
+            return _selectionUiQuerySystem.IsVehicleUnit(em, entity);
         }
     }
 
@@ -385,10 +408,10 @@ public sealed class RTSSelectionSystem
     {
         get
         {
-            if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !em.HasComponent<UnitCombat>(entity))
+            if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
                 return false;
 
-            return em.GetComponentData<UnitCombat>(entity).CanAttack != 0;
+            return _selectionUiQuerySystem.CanAttack(em, entity);
         }
     }
 
@@ -398,10 +421,10 @@ public sealed class RTSSelectionSystem
     {
         get
         {
-            if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !TryEnsureTransportCapacity(em, entity))
+            if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
                 return 0;
 
-            return em.GetBuffer<UnitTransportPassengerElement>(entity).Length;
+            return _selectionUiQuerySystem.GetTransportPassengerCount(em, entity, _unitTransportBoardingSystem);
         }
     }
 
@@ -412,38 +435,27 @@ public sealed class RTSSelectionSystem
         if (results == null)
             return;
 
-        results.Clear();
-        if (!TryGetFocusedUnitEntity(out var em, out Entity transport) ||
-            !TryEnsureTransportCapacity(em, transport) ||
-            !em.HasBuffer<UnitTransportPassengerElement>(transport))
+        if (TryGetFocusedUnitEntity(out var em, out Entity transport))
         {
-            return;
-        }
-
-        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
-        for (int i = 0; i < passengers.Length; i++)
-        {
-            Entity passenger = passengers[i].Passenger;
-            if (!em.Exists(passenger))
-                continue;
-
-            int current = 0;
-            int max = 0;
-            if (em.HasComponent<UnitHealth>(passenger))
+            _selectionUiPassengerScratch.Clear();
+            _selectionUiQuerySystem.GetTransportPassengers(em, transport, _unitTransportBoardingSystem, _selectionUiPassengerScratch);
+            results.Clear();
+            for (int i = 0; i < _selectionUiPassengerScratch.Count; i++)
             {
-                UnitHealth health = em.GetComponentData<UnitHealth>(passenger);
-                current = health.Current;
-                max = health.Max;
+                SelectionUiQuerySystem.TransportPassengerUiInfo passenger = _selectionUiPassengerScratch[i];
+                results.Add(new TransportPassengerUiInfo(passenger.Entity, passenger.DisplayName, passenger.HealthCurrent, passenger.HealthMax));
             }
-
-            results.Add(new TransportPassengerUiInfo(passenger, ResolveFocusedUnitName(em, passenger), current, max));
+        }
+        else
+        {
+            results.Clear();
         }
     }
 
     public void DisembarkFocusedTransport()
     {
         if (!TryGetFocusedUnitEntity(out var em, out Entity transport) ||
-            !TryEnsureTransportCapacity(em, transport) ||
+            !_unitTransportBoardingSystem.TryEnsureTransportCapacity(em, transport) ||
             !em.HasComponent<UnitGrid>(transport) ||
             !em.HasComponent<UnitFootprint>(transport))
         {
@@ -467,9 +479,9 @@ public sealed class RTSSelectionSystem
         if (em.HasComponent<LocalTransform>(transport))
             referenceCell = GridUtils.WorldToCell(grid, em.GetComponentData<LocalTransform>(transport).Position);
 
-        if (IsRopeDisembarkTransport(em, transport))
+        if (_unitTransportBoardingSystem.IsRopeDisembarkTransport(em, transport))
         {
-            StartRopeDisembarkTransport(em, transport, referenceCell);
+            _unitTransportBoardingSystem.StartRopeDisembarkTransport(em, transport, referenceCell, _unitMoveOrderSystem);
             return;
         }
 
@@ -488,7 +500,7 @@ public sealed class RTSSelectionSystem
             if (!em.Exists(passenger))
                 continue;
 
-            if (!TryFindTransportDisembarkCell(grid, walkable, blocked, occupied, reservedCells, transportCell, transportSize, referenceCell, out int2 cell))
+            if (!_unitTransportBoardingSystem.TryFindTransportDisembarkCell(grid, walkable, blocked, occupied, reservedCells, transportCell, transportSize, referenceCell, out int2 cell))
             {
                 remainingPassengers.Add(passenger);
                 continue;
@@ -513,7 +525,7 @@ public sealed class RTSSelectionSystem
                 em.RemoveComponent<UnitTransportPassenger>(passenger);
             if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
                 em.RemoveComponent<UnitTransportBoardingTarget>(passenger);
-            ClearMovementOrderComponents(em, passenger);
+            _unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
 
             if (em.HasComponent<UnitGrid>(passenger))
                 em.SetComponentData(passenger, new UnitGrid { Cell = cell });
@@ -541,11 +553,10 @@ public sealed class RTSSelectionSystem
     public bool TryGetFocusedUnitWorldPosition(out Vector3 worldPosition)
     {
         worldPosition = default;
-        if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !em.HasComponent<LocalToWorld>(entity))
+        if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
             return false;
 
-        worldPosition = em.GetComponentData<LocalToWorld>(entity).Position;
-        return true;
+        return _selectionUiQuerySystem.TryGetFocusedUnitWorldPosition(em, entity, out worldPosition);
     }
 
     public bool TryGetFocusedUnitEntityForUi(out Entity entity)
@@ -555,24 +566,9 @@ public sealed class RTSSelectionSystem
 
     public FocusedUnitUiStatus GetFocusedUnitUiStatus()
     {
-        if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
-            return FocusedUnitUiStatus.Idle;
-
-        if (em.HasComponent<UnitAirState>(entity) && em.GetComponentData<UnitAirState>(entity).ReturningHome != 0)
-            return FocusedUnitUiStatus.ReturningToBase;
-
-        if (em.HasComponent<EngageTarget>(entity))
-            return FocusedUnitUiStatus.Engaged;
-
-        if (em.HasComponent<UnitTarget>(entity) ||
-            em.HasComponent<UnitPathRequest>(entity) ||
-            em.HasComponent<UnitPathFollow>(entity) ||
-            em.HasComponent<ManualMoveOrderTag>(entity))
-        {
-            return FocusedUnitUiStatus.Moving;
-        }
-
-        return FocusedUnitUiStatus.Idle;
+        return TryGetFocusedUnitEntity(out var em, out Entity entity)
+            ? ToFocusedUnitUiStatus(_selectionUiQuerySystem.GetFocusedUnitUiStatus(em, entity))
+            : FocusedUnitUiStatus.Idle;
     }
 
     public bool TryGetFocusedUnitPortraitPose(out Vector3 worldPosition, out Vector3 forward)
@@ -580,28 +576,8 @@ public sealed class RTSSelectionSystem
         worldPosition = default;
         forward = Vector3.forward;
 
-        if (!TryGetFocusedUnitEntity(out var em, out Entity entity))
-            return false;
-
-        if (em.HasComponent<LocalToWorld>(entity))
-            worldPosition = em.GetComponentData<LocalToWorld>(entity).Position;
-        else if (em.HasComponent<LocalTransform>(entity))
-            worldPosition = em.GetComponentData<LocalTransform>(entity).Position;
-        else
-            return false;
-
-        if (em.HasComponent<LocalTransform>(entity))
-        {
-            quaternion rotation = em.GetComponentData<LocalTransform>(entity).Rotation;
-            float3 facing = math.mul(rotation, new float3(0f, 0f, 1f));
-            forward = new Vector3(facing.x, 0f, facing.z);
-            if (forward.sqrMagnitude > 0.0001f)
-                forward.Normalize();
-            else
-                forward = Vector3.forward;
-        }
-
-        return true;
+        return TryGetFocusedUnitEntity(out var em, out Entity entity) &&
+               _selectionUiQuerySystem.TryGetFocusedUnitPortraitPose(em, entity, out worldPosition, out forward);
     }
 
     public bool TryGetSelectedUnitsPortraitPose(out Vector3 centerWorldPosition, out Vector3 forward, out float framingRadius)
@@ -616,51 +592,13 @@ public sealed class RTSSelectionSystem
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
         using var selectedEntities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (selectedEntities.Length == 0)
-            return false;
-
-        Vector3 sum = Vector3.zero;
-        int counted = 0;
-        Vector3 min = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
-        Vector3 max = new(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
-        Entity forwardEntity = Entity.Null;
-
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            if (!em.Exists(entity) || !em.HasComponent<LocalToWorld>(entity))
-                continue;
-
-            Vector3 position = em.GetComponentData<LocalToWorld>(entity).Position;
-            sum += position;
-            min = Vector3.Min(min, position);
-            max = Vector3.Max(max, position);
-            counted++;
-
-            if (forwardEntity == Entity.Null)
-                forwardEntity = entity;
-        }
-
-        if (counted == 0)
-            return false;
-
-        centerWorldPosition = sum / counted;
-        Vector3 extents = max - min;
-        framingRadius = Mathf.Max(1f, Mathf.Max(extents.x, extents.z) * 0.65f);
-
-        Entity poseEntity = HasFocusedUnit && _focusedUnit != Entity.Null ? _focusedUnit : forwardEntity;
-        if (poseEntity != Entity.Null && em.Exists(poseEntity) && em.HasComponent<LocalTransform>(poseEntity))
-        {
-            quaternion rotation = em.GetComponentData<LocalTransform>(poseEntity).Rotation;
-            float3 facing = math.mul(rotation, new float3(0f, 0f, 1f));
-            forward = new Vector3(facing.x, 0f, facing.z);
-            if (forward.sqrMagnitude > 0.0001f)
-                forward.Normalize();
-            else
-                forward = Vector3.forward;
-        }
-
-        return true;
+        return _selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose(
+            em,
+            selectedEntities,
+            _focusedUnit,
+            out centerWorldPosition,
+            out forward,
+            out framingRadius);
     }
 
     public void GetSelectedUnitEntities(List<Entity> entities)
@@ -668,22 +606,27 @@ public sealed class RTSSelectionSystem
         if (entities == null)
             return;
 
-        entities.Clear();
-
         if (World.DefaultGameObjectInjectionWorld == null)
+        {
+            entities.Clear();
             return;
+        }
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
         using var selectedEntities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            if (!em.Exists(entity))
-                continue;
+        _selectionUiQuerySystem.GetSelectedUnitEntities(em, selectedEntities, entities);
+    }
 
-            entities.Add(entity);
-        }
+    private static FocusedUnitUiStatus ToFocusedUnitUiStatus(SelectionUiQuerySystem.FocusedUnitUiStatus status)
+    {
+        return status switch
+        {
+            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => FocusedUnitUiStatus.Moving,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
+            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
+            _ => FocusedUnitUiStatus.Idle
+        };
     }
 
     private void OnValidate()
@@ -779,34 +722,6 @@ public sealed class RTSSelectionSystem
         zoomTransitionSmoothTime = config.ZoomTransitionSmoothTime;
     }
 
-    private static string ResolveFocusedUnitName(EntityManager em, Entity entity)
-    {
-        if (em.HasComponent<UnitDisplayInfo>(entity))
-        {
-            string configuredName = em.GetComponentData<UnitDisplayInfo>(entity).Name.ToString();
-            if (!string.IsNullOrWhiteSpace(configuredName))
-                return configuredName;
-        }
-
-        byte factionId = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-        if (!em.HasComponent<UnitMove>(entity))
-            return factionId == 0 ? "Player Unit" : "Enemy Unit";
-
-        bool isVehicle = IsVehicleUnit(em, entity);
-        if (!isVehicle)
-            return factionId == 0 ? "Soldier" : "Enemy Soldier";
-
-        bool canAttack = em.HasComponent<UnitCombat>(entity) && em.GetComponentData<UnitCombat>(entity).CanAttack != 0;
-        if (canAttack)
-            return factionId == 0 ? "Heavy APC" : "Enemy Heavy APC";
-
-        float speed = em.HasComponent<UnitMove>(entity) ? em.GetComponentData<UnitMove>(entity).Speed : 0f;
-        if (speed >= 10.5f)
-            return factionId == 0 ? "APC 02" : "Enemy APC 02";
-
-        return factionId == 0 ? "APC 01" : "Enemy APC 01";
-    }
-
     private BattleHudGameplayBridge ResolveBattleHudBridge()
     {
         if (_battleHudBridge != null)
@@ -828,7 +743,9 @@ public sealed class RTSSelectionSystem
         if (bridge == null)
             return;
 
-        bridge.ApplySelection(ResolveFocusedUnitName(em, entity), ResolveHudSelectionStatus(em, entity));
+        bridge.ApplySelection(
+            _selectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
+            _selectionUiQuerySystem.ResolveHudSelectionStatus(em, entity));
     }
 
     private void ApplyHudSquadSelection(int selectedCount)
@@ -870,53 +787,6 @@ public sealed class RTSSelectionSystem
     private void SetHudWorldMarkersVisible(bool visible)
     {
         ResolveBattleHudBridge()?.SetWorldMarkersVisible(visible);
-    }
-
-    private static string ResolveHudSelectionStatus(EntityManager em, Entity entity)
-    {
-        var parts = new List<string>();
-
-        if (em.HasComponent<Faction>(entity))
-            parts.Add(em.GetComponentData<Faction>(entity).Id == 0 ? "PLAYER" : "ENEMY");
-
-        if (em.HasComponent<UnitHealth>(entity))
-        {
-            UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-            parts.Add($"HP {health.Current}/{health.Max}");
-        }
-
-        if (em.HasComponent<EngageTarget>(entity))
-            parts.Add("ENGAGED");
-        else if (em.HasComponent<UnitTarget>(entity) || em.HasComponent<UnitPathRequest>(entity) || em.HasComponent<UnitPathFollow>(entity))
-            parts.Add("MOVING");
-        else
-            parts.Add("READY");
-
-        return string.Join(" / ", parts);
-    }
-
-    private static bool IsVehicleUnit(EntityManager em, Entity entity)
-    {
-        if (!em.HasComponent<UnitFootprint>(entity) || !em.HasComponent<UnitMovementBehavior>(entity))
-            return false;
-
-        return UnitVehicleMovementUtility.IsVehicle(
-            em.GetComponentData<UnitFootprint>(entity),
-            em.GetComponentData<UnitMovementBehavior>(entity));
-    }
-
-    private static bool IsVehicleForVisibleSelection(EntityManager em, Entity entity)
-    {
-        if (em.HasComponent<UnitSourcePrefabKey>(entity))
-        {
-            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-            if (sourceKey.StartsWith("Unit_Veh_", System.StringComparison.OrdinalIgnoreCase))
-                return true;
-            if (sourceKey.StartsWith("Unit_Chr_", System.StringComparison.OrdinalIgnoreCase))
-                return false;
-        }
-
-        return IsVehicleUnit(em, entity);
     }
 
     public void Dispose()
@@ -1011,16 +881,8 @@ public sealed class RTSSelectionSystem
 
         if (!InitialUnitsRuntimeState.PlayRequested)
         {
-            _wasPlayRequested = false;
-            _wasBuildModeActive = false;
-            _isZoomTransitionActive = false;
-            _normalIsoModeActive = false;
-            _hasSmoothCameraFocusTarget = false;
-            _smoothCameraFocusVelocity = Vector3.zero;
-            _zoomTransitionVelocity = 0f;
-            _pitchTransitionVelocity = 0f;
-            _yawTransitionVelocity = 0f;
-            _fieldOfViewTransitionVelocity = 0f;
+            _rtsCameraSystem.ResetSession();
+            _rtsCameraSystem.ResetCameraModeSession();
             InitialUnitsRuntimeState.FullscreenMapOpen = false;
             InitialUnitsRuntimeState.FullscreenMapIsoMode = false;
             InitialUnitsRuntimeState.InitialCameraFocusRequested = false;
@@ -1118,13 +980,8 @@ public sealed class RTSSelectionSystem
             bool pointerOverAnyUi = IsPointerOverUI(pointerPosition, out string anyUiSource);
             bool pointerOverGameplayUi = IsPointerOverGameplayUi(pointerPosition, out string gameplayUiSource);
             bool pointerOverBlockingUi = InitialUnitsRuntimeState.PlayRequested ? pointerOverGameplayUi : (pointerOverAnyUi || pointerOverGameplayUi);
-            _pointerPressedOverUi = !InitialUnitsRuntimeState.PlayRequested && pointerOverBlockingUi;
-            _dragStart = pointerPosition;
-            _dragCurrent = _dragStart;
-            _lastPointerPosition = pointerPosition;
-            _dragging = false;
+            _rtsSelectionInputSystem.BeginPointerPress(pointerPosition, !InitialUnitsRuntimeState.PlayRequested && pointerOverBlockingUi);
             _cameraDragging = false;
-            _selectionModeHoldArmed = false;
 
             if (_explicitAttackTargetModeActive && !_pointerPressedOverUi)
             {
@@ -1272,16 +1129,12 @@ public sealed class RTSSelectionSystem
 
     private void QueueMoveOrder(Vector2 screenPosition)
     {
-        _queuedMoveOrderToken++;
-        _hasQueuedMoveOrder = true;
-        _queuedMoveOrderScreenPosition = screenPosition;
-        _queuedMoveOrderFrame = Time.frameCount + 1;
+        _rtsSelectionInputSystem.QueueMoveOrder(screenPosition, Time.frameCount + 1);
     }
 
     private void ArmSelectionModeHold()
     {
-        _selectionModeHoldArmed = true;
-        _selectionModeHoldStartTime = Time.unscaledTime;
+        _rtsSelectionInputSystem.ArmSelectionModeHold(Time.unscaledTime);
     }
 
     private void UpdateSelectionModeHold(bool pointerPressed, Vector2 pointerPosition)
@@ -1332,14 +1185,7 @@ public sealed class RTSSelectionSystem
 
     private void ProcessQueuedMoveOrder()
     {
-        if (!_hasQueuedMoveOrder || Time.frameCount < _queuedMoveOrderFrame)
-            return;
-
-        _hasQueuedMoveOrder = false;
-        uint token = _queuedMoveOrderToken;
-        Vector2 screenPosition = _queuedMoveOrderScreenPosition;
-
-        if (token != _queuedMoveOrderToken)
+        if (!_rtsSelectionInputSystem.TryConsumeQueuedMoveOrder(Time.frameCount, out Vector2 screenPosition))
             return;
 
         if (!InitialUnitsRuntimeState.PlayRequested || InitialUnitsRuntimeState.BuildModeActive)
@@ -1450,7 +1296,7 @@ public sealed class RTSSelectionSystem
             if (em.GetComponentData<Faction>(entity).Id != 0)
                 continue;
 
-            bool isVehicle = IsVehicleForVisibleSelection(em, entity);
+            bool isVehicle = _selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
             if (filter == VisibleUnitSelectionFilter.Soldiers && isVehicle)
                 continue;
             if (filter == VisibleUnitSelectionFilter.Vehicles && !isVehicle)
@@ -1483,7 +1329,7 @@ public sealed class RTSSelectionSystem
             if (em.GetComponentData<Faction>(entity).Id != 0)
                 continue;
 
-            bool isVehicle = IsVehicleForVisibleSelection(em, entity);
+            bool isVehicle = _selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
             if (filter == VisibleUnitSelectionFilter.Soldiers && isVehicle)
                 continue;
             if (filter == VisibleUnitSelectionFilter.Vehicles && !isVehicle)
@@ -1566,7 +1412,7 @@ public sealed class RTSSelectionSystem
         var friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
         var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
         var reservedGoalCells = new HashSet<int>();
-        var selectedCurrentCells = BuildSelectedCurrentFootprintCells(em, grid, entities);
+        var selectedCurrentCells = _unitMoveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
         var issuedGoals = new int2[entities.Length];
         var skipIssue = new bool[entities.Length];
         bool issuedMoveOrder = false;
@@ -1582,7 +1428,7 @@ public sealed class RTSSelectionSystem
         for (int i = 0; i < entities.Length; i++)
         {
             var entity = entities[i];
-            int2 issuedGoal = FindManualMoveGoal(
+            int2 issuedGoal = _unitMoveOrderSystem.FindManualMoveGoal(
                 em,
                 grid,
                 walkable,
@@ -1618,115 +1464,31 @@ public sealed class RTSSelectionSystem
             var entity = entities[i];
             int2 issuedGoal = issuedGoals[i];
 
-            if (em.HasComponent<EngageTarget>(entity))
-            {
-                em.RemoveComponent<EngageTarget>(entity);
-                structuralRemoves++;
-            }
-            if (em.HasComponent<UnitPathFollow>(entity))
-            {
-                em.RemoveComponent<UnitPathFollow>(entity);
-                structuralRemoves++;
-            }
-            if (em.HasComponent<UnitPathRange>(entity))
-            {
-                em.RemoveComponent<UnitPathRange>(entity);
-                structuralRemoves++;
-            }
-            if (em.HasComponent<UnitLongDistanceMove>(entity))
-            {
-                em.RemoveComponent<UnitLongDistanceMove>(entity);
-                structuralRemoves++;
-            }
-            if (em.HasComponent<AutoWanderMoveTag>(entity))
-            {
-                em.RemoveComponent<AutoWanderMoveTag>(entity);
-                structuralRemoves++;
-            }
-            if (!em.HasComponent<ManualMoveGroupMemberTag>(entity))
-            {
-                em.AddComponent<ManualMoveGroupMemberTag>(entity);
-                structuralAdds++;
-            }
+            bool groundUnit = !em.HasComponent<UnitAirMovement>(entity);
+            bool issuePathNow = groundUnit &&
+                                (!staggerGroundPathRequests ||
+                                 immediateGroundPathRequests < GroupMoveImmediatePathRequests);
+            int resumeFrame = groundUnit && !issuePathNow
+                ? currentFrame + 1 + (staggeredPathRequestCount / GroupMovePathRequestsPerFrame)
+                : 0;
 
-            if (em.HasComponent<UnitTarget>(entity))
-                em.SetComponentData(entity, new UnitTarget { Cell = issuedGoal });
-            else
-            {
-                em.AddComponentData(entity, new UnitTarget { Cell = issuedGoal });
-                structuralAdds++;
-            }
+            UnitMoveOrderSystem.MoveOrderCommandResult commandResult = _unitMoveOrderSystem.IssueGroupedManualMoveOrder(
+                em,
+                entity,
+                issuedGoal,
+                issuePathNow,
+                groundUnit && !issuePathNow,
+                resumeFrame,
+                currentFrame);
 
-            if (!em.HasComponent<UnitAirMovement>(entity))
-            {
-                bool issuePathNow =
-                    !staggerGroundPathRequests ||
-                    immediateGroundPathRequests < GroupMoveImmediatePathRequests;
-                if (issuePathNow)
-                {
-                    if (em.HasComponent<UnitPathRetryCooldown>(entity))
-                    {
-                        em.RemoveComponent<UnitPathRetryCooldown>(entity);
-                        structuralRemoves++;
-                    }
-
-                    if (em.HasComponent<UnitPathRequest>(entity))
-                        em.SetComponentData(entity, new UnitPathRequest { Goal = issuedGoal });
-                    else
-                    {
-                        em.AddComponentData(entity, new UnitPathRequest { Goal = issuedGoal });
-                        structuralAdds++;
-                    }
-                    pathRequestCount++;
-                    immediateGroundPathRequests++;
-                }
-                else
-                {
-                    if (em.HasComponent<UnitPathRequest>(entity))
-                    {
-                        em.RemoveComponent<UnitPathRequest>(entity);
-                        structuralRemoves++;
-                    }
-
-                    int resumeFrame = currentFrame + 1 + (staggeredPathRequestCount / GroupMovePathRequestsPerFrame);
-                    maxStaggerDelayFrames = math.max(maxStaggerDelayFrames, resumeFrame - currentFrame);
-                    var cooldown = new UnitPathRetryCooldown { ResumeFrame = resumeFrame };
-                    if (em.HasComponent<UnitPathRetryCooldown>(entity))
-                        em.SetComponentData(entity, cooldown);
-                    else
-                    {
-                        em.AddComponentData(entity, cooldown);
-                        structuralAdds++;
-                    }
-                    staggeredPathRequestCount++;
-                }
-            }
-            else if (em.HasComponent<UnitPathRequest>(entity))
-            {
-                em.RemoveComponent<UnitPathRequest>(entity);
-                structuralRemoves++;
-                if (em.HasComponent<UnitPathRetryCooldown>(entity))
-                {
-                    em.RemoveComponent<UnitPathRetryCooldown>(entity);
-                    structuralRemoves++;
-                }
-                airUnitCount++;
-            }
-            else
-            {
-                if (em.HasComponent<UnitPathRetryCooldown>(entity))
-                {
-                    em.RemoveComponent<UnitPathRetryCooldown>(entity);
-                    structuralRemoves++;
-                }
-                airUnitCount++;
-            }
-
-            if (!em.HasComponent<ManualMoveOrderTag>(entity))
-            {
-                em.AddComponent<ManualMoveOrderTag>(entity);
-                structuralAdds++;
-            }
+            structuralAdds += commandResult.StructuralAdds;
+            structuralRemoves += commandResult.StructuralRemoves;
+            pathRequestCount += commandResult.PathRequests;
+            staggeredPathRequestCount += commandResult.StaggeredPathRequests;
+            maxStaggerDelayFrames = math.max(maxStaggerDelayFrames, commandResult.MaxStaggerDelayFrames);
+            airUnitCount += commandResult.AirUnits;
+            if (commandResult.PathRequests > 0)
+                immediateGroundPathRequests += commandResult.PathRequests;
 
             issuedMoveOrder = true;
             uniqueGoalCount++;
@@ -1759,225 +1521,6 @@ public sealed class RTSSelectionSystem
         }
     }
 
-    private static int2 FindManualMoveGoal(
-        EntityManager em,
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        HashSet<int> reservedGoalCells,
-        HashSet<int> selectedCurrentCells,
-        Entity entity,
-        int2 desiredGoal,
-        int slotIndex)
-    {
-        int2 footprintSize = em.HasComponent<UnitFootprint>(entity)
-            ? em.GetComponentData<UnitFootprint>(entity).Size
-            : new int2(1, 1);
-        UnitMovementBehavior movementBehavior = em.HasComponent<UnitMovementBehavior>(entity)
-            ? em.GetComponentData<UnitMovementBehavior>(entity)
-            : default;
-        bool isVehicle = UnitVehicleMovementUtility.IsVehicle(new UnitFootprint { Size = footprintSize }, movementBehavior);
-        byte factionId = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-        int goalPadding = isVehicle ? ManualMoveGoalPaddingVehicle : ManualMoveGoalPaddingInfantry;
-        int2 slotAnchor = desiredGoal + GetManualMoveFormationOffset(slotIndex, footprintSize, goalPadding);
-
-        if (CanReserveManualMoveGoal(
-                grid,
-                walkable,
-                blocked,
-                friendlyPassFactionIds,
-                occupied,
-                reservedGoalCells,
-                selectedCurrentCells,
-                slotAnchor,
-                footprintSize,
-                goalPadding,
-                factionId))
-        {
-            ReserveManualMoveGoalFootprint(grid, reservedGoalCells, slotAnchor, footprintSize, goalPadding);
-            return slotAnchor;
-        }
-
-        int maxRadius = isVehicle ? ManualMoveGoalSearchRadiusVehicle : ManualMoveGoalSearchRadiusInfantry;
-        for (int radius = 1; radius <= maxRadius; radius++)
-        {
-            int ringLen = math.max(1, 8 * radius);
-            for (int step = 0; step < ringLen; step++)
-            {
-                int2 candidate = SquareRingOffset(radius, step) + slotAnchor;
-                if (!CanReserveManualMoveGoal(
-                        grid,
-                        walkable,
-                        blocked,
-                        friendlyPassFactionIds,
-                        occupied,
-                        reservedGoalCells,
-                        selectedCurrentCells,
-                        candidate,
-                        footprintSize,
-                        goalPadding,
-                        factionId))
-                    continue;
-
-                ReserveManualMoveGoalFootprint(grid, reservedGoalCells, candidate, footprintSize, goalPadding);
-                return candidate;
-            }
-        }
-
-        return slotAnchor;
-    }
-
-    private static int2 GetManualMoveFormationOffset(int slotIndex, int2 footprintSize, int padding)
-    {
-        if (slotIndex <= 0)
-            return int2.zero;
-
-        int2 size = UnitFootprintUtility.ClampSize(footprintSize);
-        int stride = math.max(1, math.max(size.x, size.y) + (padding * 2));
-        int ringIndex = slotIndex - 1;
-        int radius = 1;
-        int accumulated = 0;
-        while (true)
-        {
-            int ringLen = math.max(1, 8 * radius);
-            if (ringIndex < accumulated + ringLen)
-            {
-                int step = ringIndex - accumulated;
-                return SquareRingOffset(radius, step) * stride;
-            }
-
-            accumulated += ringLen;
-            radius++;
-        }
-    }
-
-    private static bool CanReserveManualMoveGoal(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        HashSet<int> reservedGoalCells,
-        HashSet<int> selectedCurrentCells,
-        int2 cell,
-        int2 footprintSize,
-        int padding,
-        byte factionId)
-    {
-        int2 size = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 min = UnitFootprintUtility.GetMinCell(cell, size);
-        int2 max = min + size;
-        int2 paddedMin = min - new int2(padding, padding);
-        int2 paddedMax = max + new int2(padding, padding);
-
-        if (paddedMin.x < 0 || paddedMin.y < 0 || paddedMax.x > grid.Width || paddedMax.y > grid.Height)
-            return false;
-
-        for (int y = paddedMin.y; y < paddedMax.y; y++)
-        {
-            int row = y * grid.Width;
-            for (int x = paddedMin.x; x < paddedMax.x; x++)
-            {
-                int idx = row + x;
-                bool insideActualFootprint = x >= min.x && x < max.x && y >= min.y && y < max.y;
-                if (insideActualFootprint)
-                {
-                    if (walkable[idx].Value == 0)
-                        return false;
-                    if (blocked.IsCreated && blocked.IsSet(idx) &&
-                        (!friendlyPassFactionIds.IsCreated || (uint)idx >= (uint)friendlyPassFactionIds.Length || friendlyPassFactionIds[idx] != factionId))
-                        return false;
-                }
-                if (occupied.IsCreated && occupied.IsSet(idx) && !selectedCurrentCells.Contains(idx))
-                    return false;
-                if (reservedGoalCells.Contains(idx))
-                    return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static HashSet<int> BuildSelectedCurrentFootprintCells(EntityManager em, in GridConfig grid, Unity.Collections.NativeArray<Entity> entities)
-    {
-        var cells = new HashSet<int>();
-        if (entities.Length == 0)
-            return cells;
-
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!em.HasComponent<UnitGrid>(entity))
-                continue;
-
-            int2 unitCell = em.GetComponentData<UnitGrid>(entity).Cell;
-            int2 unitSize = em.HasComponent<UnitFootprint>(entity)
-                ? em.GetComponentData<UnitFootprint>(entity).Size
-                : new int2(1, 1);
-            int2 min = UnitFootprintUtility.GetMinCell(unitCell, UnitFootprintUtility.ClampSize(unitSize));
-            int2 max = min + UnitFootprintUtility.ClampSize(unitSize);
-
-            for (int y = min.y; y < max.y; y++)
-            {
-                if (y < 0 || y >= grid.Height)
-                    continue;
-
-                int row = y * grid.Width;
-                for (int x = min.x; x < max.x; x++)
-                {
-                    if (x < 0 || x >= grid.Width)
-                        continue;
-
-                    cells.Add(row + x);
-                }
-            }
-        }
-
-        return cells;
-    }
-
-    private static void ReserveManualMoveGoalFootprint(
-        in GridConfig grid,
-        HashSet<int> reservedGoalCells,
-        int2 cell,
-        int2 footprintSize,
-        int padding)
-    {
-        int2 size = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 min = UnitFootprintUtility.GetMinCell(cell, size);
-        int2 max = min + size;
-        int2 paddedMin = min - new int2(padding, padding);
-        int2 paddedMax = max + new int2(padding, padding);
-        for (int y = paddedMin.y; y < paddedMax.y; y++)
-        {
-            int row = y * grid.Width;
-            for (int x = paddedMin.x; x < paddedMax.x; x++)
-                reservedGoalCells.Add(row + x);
-        }
-    }
-
-    private static int2 SquareRingOffset(int radius, int step)
-    {
-        int topLen = (2 * radius) + 1;
-        if (step < topLen)
-            return new int2(-radius + step, radius);
-
-        step -= topLen;
-        int rightLen = 2 * radius;
-        if (step < rightLen)
-            return new int2(radius, (radius - 1) - step);
-
-        step -= rightLen;
-        int bottomLen = 2 * radius;
-        if (step < bottomLen)
-            return new int2((radius - 1) - step, -radius);
-
-        step -= bottomLen;
-        return new int2(-radius, (-radius + 1) + step);
-    }
-
     private bool TryIssueBoardTransportOrderToClickedUnit(Vector2 screenPosition)
     {
         if (World.DefaultGameObjectInjectionWorld == null)
@@ -1988,14 +1531,14 @@ public sealed class RTSSelectionSystem
         if (!TryGetClickedOrNearbyBoardableTransport(screenPosition, em, out Entity transport))
             return false;
 
-        if (!IsBoardablePlayerTransport(em, transport))
+        if (!_unitTransportBoardingSystem.IsBoardablePlayerTransport(em, transport))
         {
             LogTransportBoarding($"result=TransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return false;
         }
 
         bool airTransport = em.HasComponent<UnitAirMovement>(transport);
-        bool transportLanded = IsTransportLandedForBoarding(em, transport);
+        bool transportLanded = _unitTransportBoardingSystem.IsTransportLandedForBoarding(em, transport);
         if (!transportLanded && !airTransport)
         {
             LogTransportBoarding($"result=TransportNotLanded transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
@@ -2050,7 +1593,7 @@ public sealed class RTSSelectionSystem
         int2 pendingAirPickupCell = default;
         if (airTransport && !transportLanded)
         {
-            if (!TryFindAirTransportPickupForBoarding(
+            if (!_unitTransportBoardingSystem.TryFindAirTransportPickupForBoarding(
                     em,
                     transport,
                     grid,
@@ -2086,7 +1629,7 @@ public sealed class RTSSelectionSystem
                 continue;
             }
 
-            if (!IsSoldierBoardingCandidate(em, passenger))
+            if (!_unitTransportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
             {
                 LogTransportBoarding($"result=SkipPassenger reason=NotSoldierBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
                 continue;
@@ -2095,7 +1638,8 @@ public sealed class RTSSelectionSystem
             int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
             byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
             int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
-            if (!TryFindTransportApproachCell(
+            int directBoardingCells = _unitTransportBoardingSystem.GetTransportBoardingDirectCells(em, transport);
+            if (!_unitTransportBoardingSystem.TryFindTransportApproachCell(
                     grid,
                     walkable,
                     blocked,
@@ -2113,13 +1657,13 @@ public sealed class RTSSelectionSystem
                     em.GetComponentData<UnitGrid>(transport).Cell,
                     transportSize,
                     reservedBoardingCells,
-                    em.HasComponent<UnitAirMovement>(transport) ? AirTransportDirectBoardingCells : TransportBoardingClearanceCells,
+                    directBoardingCells,
                     passengerFaction,
                     out int2 goal))
             {
                 LogTransportBoarding(
                     $"result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                    $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={(em.HasComponent<UnitAirMovement>(transport) ? AirTransportDirectBoardingCells : TransportBoardingClearanceCells)}");
+                    $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
                 continue;
             }
 
@@ -2130,7 +1674,7 @@ public sealed class RTSSelectionSystem
                 Goal = goal,
                 DirectBoarding = goal.Equals(referenceCell)
             });
-            ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+            _unitTransportBoardingSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
         }
 
         if (boardingOrders.Count <= 0)
@@ -2143,7 +1687,7 @@ public sealed class RTSSelectionSystem
 
         if (hasPendingAirPickupLanding)
         {
-            CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell);
+            _unitTransportBoardingSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, _unitMoveOrderSystem);
             LogTransportBoarding($"result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
         }
 
@@ -2151,16 +1695,13 @@ public sealed class RTSSelectionSystem
         {
             Entity passenger = boardingOrders[i].Passenger;
             int2 goal = boardingOrders[i].Goal;
-            if (!em.Exists(passenger) || !IsSoldierBoardingCandidate(em, passenger))
+            if (!em.Exists(passenger) || !_unitTransportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
                 continue;
 
-            ClearMovementOrderComponents(em, passenger);
+            _unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
             if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
                 em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
-            em.AddComponentData(passenger, new UnitTarget { Cell = goal });
-            em.AddComponentData(passenger, new UnitPathRequest { Goal = goal });
-            if (!em.HasComponent<ManualMoveOrderTag>(passenger))
-                em.AddComponent<ManualMoveOrderTag>(passenger);
+            _unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
             if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
                 em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
             else
@@ -2250,7 +1791,7 @@ public sealed class RTSSelectionSystem
         transport = Entity.Null;
         Entity clickedEntity = Entity.Null;
         bool hasClickedEntity = TryGetClickedUnitEntity(screenPosition, em, out clickedEntity);
-        if (hasClickedEntity && IsBoardablePlayerTransport(em, clickedEntity))
+        if (hasClickedEntity && _unitTransportBoardingSystem.IsBoardablePlayerTransport(em, clickedEntity))
         {
             transport = clickedEntity;
             if (logDiagnostics)
@@ -2276,7 +1817,7 @@ public sealed class RTSSelectionSystem
         {
             LogTransportBoarding(
                 $"result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
-                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
+                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(_unitTransportBoardingSystem.IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
         }
 
         if (hasClickedEntity &&
@@ -2300,12 +1841,12 @@ public sealed class RTSSelectionSystem
         for (int i = 0; i < entities.Length; i++)
         {
             Entity candidate = entities[i];
-            if (!IsBoardablePlayerTransport(em, candidate))
+            if (!_unitTransportBoardingSystem.IsBoardablePlayerTransport(em, candidate))
                 continue;
 
             int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
             int2 footprint = em.GetComponentData<UnitFootprint>(candidate).Size;
-            int clickPaddingCells = GetTransportBoardingClickPaddingCells(em, candidate, footprint);
+            int clickPaddingCells = _unitTransportBoardingSystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
             if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, clickPaddingCells))
                 continue;
 
@@ -2319,354 +1860,6 @@ public sealed class RTSSelectionSystem
         }
 
         return transport != Entity.Null;
-    }
-
-    private static int GetTransportBoardingClickPaddingCells(EntityManager em, Entity transport, int2 footprint)
-    {
-        int footprintMax = math.max(footprint.x, footprint.y);
-        if (em.Exists(transport) && em.HasComponent<UnitAirMovement>(transport))
-            return math.max(24, footprintMax + 24);
-
-        return math.max(6, footprintMax + 4);
-    }
-
-    private static bool IsBoardablePlayerTransport(EntityManager em, Entity transport)
-    {
-        return em.Exists(transport) &&
-               TryEnsureTransportCapacity(em, transport) &&
-               em.HasComponent<Faction>(transport) &&
-               em.GetComponentData<Faction>(transport).Id == 0 &&
-               em.HasComponent<UnitGrid>(transport) &&
-               em.HasComponent<UnitFootprint>(transport) &&
-               em.HasComponent<LocalTransform>(transport);
-    }
-
-    private static bool TryEnsureTransportCapacity(EntityManager em, Entity transport)
-    {
-        if (!em.Exists(transport))
-            return false;
-
-        int capacity = 0;
-        if (em.HasComponent<UnitTransportCapacity>(transport))
-            capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
-
-        if (capacity <= 0)
-            capacity = ResolveTransportCapacity(em, transport);
-        if (capacity <= 0)
-            return false;
-
-        if (em.HasComponent<UnitTransportCapacity>(transport))
-            em.SetComponentData(transport, new UnitTransportCapacity { SoldierCapacity = capacity });
-        else
-            em.AddComponentData(transport, new UnitTransportCapacity { SoldierCapacity = capacity });
-
-        if (!em.HasBuffer<UnitTransportPassengerElement>(transport))
-            em.AddBuffer<UnitTransportPassengerElement>(transport);
-
-        return true;
-    }
-
-    private static int ResolveTransportCapacity(EntityManager em, Entity entity)
-    {
-        string sourceName = string.Empty;
-        if (em.HasComponent<UnitSourcePrefabKey>(entity))
-            sourceName = em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString();
-        if (string.IsNullOrWhiteSpace(sourceName))
-            sourceName = em.GetName(entity);
-
-        return IsPersonnelTransportName(sourceName) ? 10 : 0;
-    }
-
-    private static bool IsPersonnelTransportName(string sourceName)
-    {
-        if (string.IsNullOrWhiteSpace(sourceName))
-            return false;
-
-        return sourceName.IndexOf("Unit_Veh_APC_Fast", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               sourceName.IndexOf("Unit_Veh_APC_Heavy", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               sourceName.IndexOf("Unit_Veh_APC_Slow", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               sourceName.IndexOf("Unit_Veh_APC_01", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               sourceName.IndexOf("Unit_Veh_APC_02", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               sourceName.IndexOf("Unit_Veh_Truck_Canopy", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               sourceName.IndexOf("Unit_Veh_Helicopter_Transport", System.StringComparison.OrdinalIgnoreCase) >= 0;
-    }
-
-    private static bool IsRopeDisembarkTransport(EntityManager em, Entity transport)
-    {
-        if (!em.Exists(transport) || !em.HasComponent<UnitAirMovement>(transport))
-            return false;
-
-        string sourceName = ResolveUnitSourceName(em, transport);
-        return sourceName.IndexOf("Unit_Veh_Helicopter_Transport", System.StringComparison.OrdinalIgnoreCase) >= 0;
-    }
-
-    private static bool IsTransportLandedForBoarding(EntityManager em, Entity transport)
-    {
-        if (!em.Exists(transport) || !em.HasComponent<UnitAirMovement>(transport))
-            return true;
-
-        if (!em.HasComponent<UnitAirState>(transport) || !em.HasComponent<LocalTransform>(transport))
-            return false;
-
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
-        LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
-        float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
-        bool grounded =
-            airState.Airborne == 0 &&
-            airState.TakeoffRolling == 0 &&
-            airState.LandingRolling == 0 &&
-            transform.Position.y <= groundY + AirTransportBoardingGroundedHeightTolerance;
-        return grounded && !em.HasComponent<UnitTransportRopeDisembarkRequest>(transport);
-    }
-
-    private static bool TryPrepareAirTransportPickupForBoarding(
-        EntityManager em,
-        Entity transport,
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 transportCell,
-        int2 transportSize,
-        List<Entity> selectedPassengers,
-        int selectedCount,
-        in Unity.Collections.NativeArray<Entity> liveUnitEntities,
-        in Unity.Collections.NativeArray<UnitGrid> liveUnitGrids,
-        in Unity.Collections.NativeArray<UnitFootprint> liveUnitFootprints,
-        out int2 pickupCell)
-    {
-        if (!TryFindAirTransportPickupForBoarding(
-                em,
-                transport,
-                grid,
-                walkable,
-                blocked,
-                friendlyPassFactionIds,
-                occupied,
-                transportCell,
-                transportSize,
-                selectedPassengers,
-                selectedCount,
-                liveUnitEntities,
-                liveUnitGrids,
-                liveUnitFootprints,
-                out pickupCell))
-        {
-            return false;
-        }
-
-        CommandAirTransportPickup(em, transport, grid, pickupCell);
-        LogTransportBoarding($"result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pickupCell}");
-        return true;
-    }
-
-    private static bool TryFindAirTransportPickupForBoarding(
-        EntityManager em,
-        Entity transport,
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 transportCell,
-        int2 transportSize,
-        List<Entity> selectedPassengers,
-        int selectedCount,
-        in Unity.Collections.NativeArray<Entity> liveUnitEntities,
-        in Unity.Collections.NativeArray<UnitGrid> liveUnitGrids,
-        in Unity.Collections.NativeArray<UnitFootprint> liveUnitFootprints,
-        out int2 pickupCell)
-    {
-        pickupCell = default;
-        if (!em.Exists(transport) ||
-            !em.HasComponent<UnitAirMovement>(transport) ||
-            !em.HasComponent<UnitAirState>(transport) ||
-            !em.HasComponent<LocalTransform>(transport))
-        {
-            return false;
-        }
-
-        byte factionId = em.HasComponent<Faction>(transport) ? em.GetComponentData<Faction>(transport).Id : (byte)0;
-        int count = math.min(selectedCount, selectedPassengers.Count);
-        for (int i = 0; i < count; i++)
-        {
-            Entity passenger = selectedPassengers[i];
-            if (!IsSoldierBoardingCandidate(em, passenger) || !em.HasComponent<UnitGrid>(passenger))
-                continue;
-
-            int2 passengerCell = em.GetComponentData<UnitGrid>(passenger).Cell;
-            if (!TryFindAirTransportPickupCellNearPassenger(
-                    grid,
-                    walkable,
-                    blocked,
-                    friendlyPassFactionIds,
-                    occupied,
-                    transportCell,
-                    transportSize,
-                    passengerCell,
-                    transport,
-                    liveUnitEntities,
-                    liveUnitGrids,
-                    liveUnitFootprints,
-                    factionId,
-                    out pickupCell))
-            {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool TryFindAirTransportPickupCellNearPassenger(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 transportCell,
-        int2 transportSize,
-        int2 passengerCell,
-        Entity transport,
-        in Unity.Collections.NativeArray<Entity> liveUnitEntities,
-        in Unity.Collections.NativeArray<UnitGrid> liveUnitGrids,
-        in Unity.Collections.NativeArray<UnitFootprint> liveUnitFootprints,
-        byte factionId,
-        out int2 pickupCell)
-    {
-        pickupCell = default;
-        for (int radius = 2; radius <= 10; radius++)
-        {
-            int bestScore = int.MaxValue;
-            bool found = false;
-            int minX = passengerCell.x - radius;
-            int minY = passengerCell.y - radius;
-            int maxX = passengerCell.x + radius;
-            int maxY = passengerCell.y + radius;
-            for (int y = minY; y <= maxY; y++)
-            {
-                for (int x = minX; x <= maxX; x++)
-                {
-                    if (x != minX && x != maxX && y != minY && y != maxY)
-                        continue;
-
-                    int2 candidate = new int2(x, y);
-                    if (!IsTransportApproachPassable(
-                            grid,
-                            walkable,
-                            blocked,
-                            friendlyPassFactionIds,
-                            occupied,
-                            candidate,
-                            transportSize,
-                            transportCell,
-                            transport,
-                            liveUnitEntities,
-                            liveUnitGrids,
-                            liveUnitFootprints,
-                            Entity.Null,
-                            default,
-                            default,
-                            null,
-                            candidate,
-                            factionId,
-                            false))
-                    {
-                        continue;
-                    }
-
-                    int2 delta = candidate - passengerCell;
-                    int score = math.abs(delta.x) + math.abs(delta.y);
-                    if (score >= bestScore)
-                        continue;
-
-                    bestScore = score;
-                    pickupCell = candidate;
-                    found = true;
-                }
-            }
-
-            if (found)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static void CommandAirTransportPickup(EntityManager em, Entity transport, in GridConfig grid, int2 pickupCell)
-    {
-        ClearMovementOrderComponents(em, transport);
-
-        UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
-        LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
-        float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : grid.Origin.y;
-        float3 pickupPosition = GridUtils.CellToWorldCenter(grid, pickupCell);
-        pickupPosition.y = groundY;
-
-        airState.HomePosition = pickupPosition;
-        airState.HomeCell = pickupCell;
-        airState.HomeInitialized = 1;
-        airState.ReturningHome = 0;
-        airState.TakeoffRolling = 0;
-        airState.LandingRolling = 0;
-        airState.AttackRunActive = 0;
-        airState.ReturnApproachInitialized = 0;
-        if (transform.Position.y > groundY + AirTransportBoardingGroundedHeightTolerance)
-            airState.Airborne = 1;
-        em.SetComponentData(transport, airState);
-
-        em.AddComponentData(transport, new UnitTarget { Cell = pickupCell });
-        if (!em.HasComponent<ManualMoveOrderTag>(transport))
-            em.AddComponent<ManualMoveOrderTag>(transport);
-    }
-
-    private static void StartRopeDisembarkTransport(EntityManager em, Entity transport, int2 referenceCell)
-    {
-        if (!em.Exists(transport) || !em.HasBuffer<UnitTransportPassengerElement>(transport))
-            return;
-
-        DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
-        if (passengers.Length <= 0)
-            return;
-
-        ClearMovementOrderComponents(em, transport);
-        if (em.HasComponent<UnitAirMovement>(transport) &&
-            em.HasComponent<UnitAirState>(transport) &&
-            em.HasComponent<LocalTransform>(transport))
-        {
-            UnitAirMovement airMovement = em.GetComponentData<UnitAirMovement>(transport);
-            UnitAirState airState = em.GetComponentData<UnitAirState>(transport);
-            LocalTransform transform = em.GetComponentData<LocalTransform>(transport);
-            float groundY = airState.HomeInitialized != 0 ? airState.HomePosition.y : transform.Position.y;
-            if (airState.Airborne == 0)
-            {
-                transform.Position.y = groundY + math.max(3f, airMovement.CruiseHeight);
-                em.SetComponentData(transport, transform);
-            }
-
-            airState.ReturningHome = 0;
-            airState.Airborne = 1;
-            airState.TakeoffRolling = 0;
-            airState.LandingRolling = 0;
-            airState.AttackRunActive = 0;
-            airState.ReturnApproachInitialized = 0;
-            em.SetComponentData(transport, airState);
-        }
-
-        UnitTransportRopeDisembarkRequest request = new()
-        {
-            ReferenceCell = referenceCell,
-            NextDropAt = 0f,
-            DropIntervalSeconds = 0.8f
-        };
-
-        if (em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
-            em.SetComponentData(transport, request);
-        else
-            em.AddComponentData(transport, request);
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)
@@ -2684,7 +1877,7 @@ public sealed class RTSSelectionSystem
         return em.GetName(entity);
     }
 
-    private static bool IsKnownPersonnelTransport(EntityManager em, Entity entity)
+    private bool IsKnownPersonnelTransport(EntityManager em, Entity entity)
     {
         if (!em.Exists(entity))
             return false;
@@ -2695,7 +1888,7 @@ public sealed class RTSSelectionSystem
             return true;
         }
 
-        return ResolveTransportCapacity(em, entity) > 0;
+        return _unitTransportBoardingSystem.ResolveTransportCapacity(em, entity) > 0;
     }
 
     private static bool IsPlayerFaction(EntityManager em, Entity entity)
@@ -2767,423 +1960,17 @@ public sealed class RTSSelectionSystem
 
     private void CacheSelectedMoveEntities(EntityManager em, List<Entity> entities)
     {
-        _cachedSelectedMoveEntities.Clear();
-        for (int i = 0; i < entities.Count; i++)
-            CacheSelectedMoveEntity(em, entities[i]);
+        _selectionStateSystem.CacheSelectedMoveEntities(em, entities);
     }
 
     private void CacheSelectedMoveEntity(EntityManager em, Entity entity)
     {
-        if (!IsCacheableSelectedMoveEntity(em, entity))
-            return;
-        if (_cachedSelectedMoveEntities.Contains(entity))
-            return;
-
-        _cachedSelectedMoveEntities.Add(entity);
+        _selectionStateSystem.CacheSelectedMoveEntity(em, entity);
     }
 
     private static bool IsCacheableSelectedMoveEntity(EntityManager em, Entity entity)
     {
-        return em.Exists(entity) &&
-               em.HasComponent<Faction>(entity) &&
-               em.GetComponentData<Faction>(entity).Id == 0 &&
-               em.HasComponent<UnitGrid>(entity) &&
-               em.HasComponent<UnitMove>(entity) &&
-               !em.HasComponent<Disabled>(entity) &&
-               !em.HasComponent<UnitTransportPassenger>(entity);
-    }
-
-    private static bool IsSoldierBoardingCandidate(EntityManager em, Entity entity)
-    {
-        if (!em.Exists(entity) ||
-            !em.HasComponent<Faction>(entity) ||
-            em.GetComponentData<Faction>(entity).Id != 0 ||
-            !em.HasComponent<UnitGrid>(entity) ||
-            !em.HasComponent<UnitMove>(entity) ||
-            !em.HasComponent<UnitFootprint>(entity) ||
-            !em.HasComponent<UnitMovementBehavior>(entity) ||
-            em.HasComponent<UnitAirMovement>(entity) ||
-            em.HasComponent<UnitTransportPassenger>(entity))
-        {
-            return false;
-        }
-
-        string sourceName = ResolveUnitSourceName(em, entity);
-        if (sourceName.IndexOf("_Chr_", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            sourceName.StartsWith("Unit_Chr", System.StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        if (sourceName.IndexOf("_Veh_", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-            sourceName.StartsWith("Unit_Veh", System.StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        return !UnitVehicleMovementUtility.IsVehicle(
-            em.GetComponentData<UnitFootprint>(entity),
-            em.GetComponentData<UnitMovementBehavior>(entity));
-    }
-
-    private static void ClearMovementOrderComponents(EntityManager em, Entity entity)
-    {
-        RemoveComponentIfPresent<UnitTarget>(em, entity);
-        RemoveComponentIfPresent<UnitPathRequest>(em, entity);
-        RemoveComponentIfPresent<UnitPathFollow>(em, entity);
-        RemoveComponentIfPresent<UnitPathRange>(em, entity);
-        RemoveComponentIfPresent<ManualMoveOrderTag>(em, entity);
-        RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
-        RemoveComponentIfPresent<EngageTarget>(em, entity);
-    }
-
-    private static void RemoveComponentIfPresent<T>(EntityManager em, Entity entity)
-        where T : unmanaged, IComponentData
-    {
-        if (em.Exists(entity) && em.HasComponent<T>(entity))
-            em.RemoveComponent<T>(entity);
-    }
-
-    private static bool TryFindTransportApproachCell(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 transportCell,
-        int2 transportSize,
-        int2 referenceCell,
-        int2 passengerFootprint,
-        Entity passenger,
-        in Unity.Collections.NativeArray<Entity> liveUnitEntities,
-        in Unity.Collections.NativeArray<UnitGrid> liveUnitGrids,
-        in Unity.Collections.NativeArray<UnitFootprint> liveUnitFootprints,
-        Entity ignoredOccupancyEntity,
-        int2 ignoredOccupancyCell,
-        int2 ignoredOccupancySize,
-        HashSet<int> reservedCells,
-        int directBoardingCells,
-        byte factionId,
-        out int2 goal)
-    {
-        return TryFindNearbyTransportApproachCell(
-            grid,
-            walkable,
-            blocked,
-            friendlyPassFactionIds,
-            occupied,
-            transportCell,
-            transportSize,
-            referenceCell,
-            passengerFootprint,
-            passenger,
-            liveUnitEntities,
-            liveUnitGrids,
-            liveUnitFootprints,
-            ignoredOccupancyEntity,
-            ignoredOccupancyCell,
-            ignoredOccupancySize,
-            reservedCells,
-            directBoardingCells,
-            factionId,
-            out goal);
-    }
-
-    private static bool TryFindNearbyTransportApproachCell(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 transportCell,
-        int2 transportSize,
-        int2 referenceCell,
-        int2 passengerFootprint,
-        Entity passenger,
-        in Unity.Collections.NativeArray<Entity> liveUnitEntities,
-        in Unity.Collections.NativeArray<UnitGrid> liveUnitGrids,
-        in Unity.Collections.NativeArray<UnitFootprint> liveUnitFootprints,
-        Entity ignoredOccupancyEntity,
-        int2 ignoredOccupancyCell,
-        int2 ignoredOccupancySize,
-        HashSet<int> reservedCells,
-        int directBoardingCells,
-        byte factionId,
-        out int2 goal)
-    {
-        goal = default;
-        if (!GridUtils.InBounds(referenceCell, grid.Width, grid.Height))
-            return false;
-
-        int gridSize = grid.Width * grid.Height;
-        if (gridSize <= 0 || walkable.Length < gridSize)
-            return false;
-
-        int2 size = UnitFootprintUtility.ClampSize(transportSize);
-        int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
-        int2 max = min + size;
-        if (directBoardingCells > TransportBoardingClearanceCells &&
-            UnitFootprintUtility.ContainsCellWithPadding(transportCell, size, referenceCell, directBoardingCells))
-        {
-            goal = referenceCell;
-            return true;
-        }
-
-        int maxRadius = math.max(1, directBoardingCells);
-        int bestScore = int.MaxValue;
-        bool found = false;
-        for (int radius = 1; radius <= maxRadius; radius++)
-        {
-            int minX = min.x - radius;
-            int minY = min.y - radius;
-            int maxX = max.x - 1 + radius;
-            int maxY = max.y - 1 + radius;
-
-            for (int y = minY; y <= maxY; y++)
-            {
-                for (int x = minX; x <= maxX; x++)
-                {
-                    bool onRing = x == minX || x == maxX || y == minY || y == maxY;
-                    if (!onRing)
-                        continue;
-
-                    int2 candidate = new int2(x, y);
-                    if (!GridUtils.InBounds(candidate, grid.Width, grid.Height))
-                        continue;
-
-                    if (!IsTransportApproachPassable(
-                            grid,
-                            walkable,
-                            blocked,
-                            friendlyPassFactionIds,
-                            occupied,
-                            candidate,
-                            passengerFootprint,
-                            referenceCell,
-                            passenger,
-                            liveUnitEntities,
-                            liveUnitGrids,
-                            liveUnitFootprints,
-                            ignoredOccupancyEntity,
-                            ignoredOccupancyCell,
-                            ignoredOccupancySize,
-                            reservedCells,
-                            referenceCell,
-                            factionId,
-                            candidate.Equals(referenceCell)))
-                    {
-                        continue;
-                    }
-
-                    int2 delta = candidate - referenceCell;
-                    int score = math.abs(delta.x) + math.abs(delta.y);
-                    if (score >= bestScore)
-                        continue;
-
-                    bestScore = score;
-                    goal = candidate;
-                    found = true;
-                }
-            }
-
-            if (found)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static bool IsTransportApproachPassable(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeArray<byte> friendlyPassFactionIds,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 cell,
-        int2 footprintSize,
-        int2 currentCell,
-        Entity movingEntity,
-        in Unity.Collections.NativeArray<Entity> liveUnitEntities,
-        in Unity.Collections.NativeArray<UnitGrid> liveUnitGrids,
-        in Unity.Collections.NativeArray<UnitFootprint> liveUnitFootprints,
-        Entity ignoredOccupancyEntity,
-        int2 ignoredOccupancyCell,
-        int2 ignoredOccupancySize,
-        HashSet<int> reservedCells,
-        int2 referenceCell,
-        byte factionId,
-        bool allowReferenceCellOccupied)
-    {
-        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
-        int2 max = min + clamped;
-        if (min.x < 0 || min.y < 0 || max.x > grid.Width || max.y > grid.Height)
-            return false;
-
-        for (int y = min.y; y < max.y; y++)
-        {
-            int row = y * grid.Width;
-            for (int x = min.x; x < max.x; x++)
-            {
-                int index = row + x;
-                if ((uint)index >= (uint)walkable.Length || walkable[index].Value == 0)
-                    return false;
-                if (reservedCells != null && reservedCells.Contains(index))
-                    return false;
-
-                if (blocked.IsCreated && blocked.IsSet(index) &&
-                    (!friendlyPassFactionIds.IsCreated || (uint)index >= (uint)friendlyPassFactionIds.Length || friendlyPassFactionIds[index] != factionId))
-                {
-                    return false;
-                }
-
-                bool isReferenceCell = x == referenceCell.x && y == referenceCell.y;
-                bool isCurrentFootprintCell = UnitFootprintUtility.ContainsCell(currentCell, clamped, new int2(x, y));
-                bool isIgnoredOccupancyCell =
-                    ignoredOccupancyEntity != Entity.Null &&
-                    UnitFootprintUtility.ContainsCell(ignoredOccupancyCell, ignoredOccupancySize, new int2(x, y));
-                if (!isCurrentFootprintCell &&
-                    occupied.IsCreated &&
-                    occupied.IsSet(index) &&
-                    (!allowReferenceCellOccupied || !isReferenceCell) &&
-                    !isIgnoredOccupancyCell)
-                {
-                    return false;
-                }
-            }
-        }
-
-        for (int i = 0; i < liveUnitEntities.Length; i++)
-        {
-            Entity other = liveUnitEntities[i];
-            if (other == movingEntity || other == ignoredOccupancyEntity)
-                continue;
-
-            int2 otherCell = liveUnitGrids[i].Cell;
-            int2 otherSize = liveUnitFootprints[i].Size;
-            if (UnitFootprintUtility.Overlaps(cell, clamped, otherCell, otherSize) &&
-                !UnitFootprintUtility.Overlaps(currentCell, clamped, otherCell, otherSize))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private static void ReserveFootprintCells(GridConfig grid, int2 cell, int2 footprintSize, HashSet<int> reservedCells)
-    {
-        if (reservedCells == null)
-            return;
-
-        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
-        int2 max = min + clamped;
-        for (int y = min.y; y < max.y; y++)
-        {
-            for (int x = min.x; x < max.x; x++)
-            {
-                int2 reservedCell = new int2(x, y);
-                if (GridUtils.InBounds(reservedCell, grid.Width, grid.Height))
-                    reservedCells.Add(GridUtils.CellToIndex(reservedCell, grid.Width));
-            }
-        }
-    }
-
-    private static bool TryFindTransportDisembarkCell(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeBitArray occupied,
-        HashSet<int> reservedCells,
-        int2 transportCell,
-        int2 transportSize,
-        int2 referenceCell,
-        out int2 goal)
-    {
-        return TryFindTransportRingCell(
-            grid,
-            walkable,
-            blocked,
-            occupied,
-            reservedCells,
-            transportCell,
-            transportSize,
-            referenceCell,
-            TransportDisembarkClearanceCells,
-            false,
-            out goal);
-    }
-
-    private static bool TryFindTransportRingCell(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeBitArray occupied,
-        HashSet<int> reservedCells,
-        int2 transportCell,
-        int2 transportSize,
-        int2 referenceCell,
-        int minRadius,
-        bool allowReferenceCellOccupied,
-        out int2 goal)
-    {
-        goal = default;
-        int2 size = UnitFootprintUtility.ClampSize(transportSize);
-        int2 min = UnitFootprintUtility.GetMinCell(transportCell, size);
-        int2 max = min + size;
-        int bestScore = int.MaxValue;
-        bool found = false;
-        int startRadius = math.max(1, minRadius);
-        int maxRadius = math.max(8, math.max(size.x, size.y) + 6);
-
-        for (int radius = startRadius; radius <= maxRadius; radius++)
-        {
-            int minX = min.x - radius;
-            int minY = min.y - radius;
-            int maxX = max.x - 1 + radius;
-            int maxY = max.y - 1 + radius;
-
-            for (int y = minY; y <= maxY; y++)
-            {
-                for (int x = minX; x <= maxX; x++)
-                {
-                    bool onRing = x == minX || x == maxX || y == minY || y == maxY;
-                    if (!onRing)
-                        continue;
-
-                    int2 candidate = new int2(x, y);
-                    if (!GridUtils.InBounds(candidate, grid.Width, grid.Height))
-                        continue;
-
-                    int index = GridUtils.CellToIndex(candidate, grid.Width);
-                    if (reservedCells != null && reservedCells.Contains(index))
-                        continue;
-                    if (walkable[index].Value == 0)
-                        continue;
-                    if (blocked.IsCreated && blocked.IsSet(index))
-                        continue;
-
-                    bool isReferenceCell = candidate.Equals(referenceCell);
-                    if (occupied.IsCreated && occupied.IsSet(index) && (!allowReferenceCellOccupied || !isReferenceCell))
-                        continue;
-
-                    int2 delta = candidate - referenceCell;
-                    int score = math.abs(delta.x) + math.abs(delta.y);
-                    if (score >= bestScore)
-                        continue;
-
-                    bestScore = score;
-                    goal = candidate;
-                    found = true;
-                }
-            }
-
-            if (found)
-                return true;
-        }
-
-        return false;
+        return SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
     }
 
     public bool TryIssueMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
@@ -3461,8 +2248,7 @@ public sealed class RTSSelectionSystem
 
     private void UpdateLastKnownPointerPosition(Vector2 pointerPosition)
     {
-        _lastKnownPointerPosition = pointerPosition;
-        _hasLastKnownPointerPosition = true;
+        _rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition);
     }
 
     private bool TryGetPointerPosition(out Vector2 pointerPosition)
@@ -3474,8 +2260,7 @@ public sealed class RTSSelectionSystem
             return true;
         }
 
-        pointerPosition = _lastKnownPointerPosition;
-        return _hasLastKnownPointerPosition;
+        return _rtsSelectionInputSystem.TryGetLastKnownPointerPosition(out pointerPosition);
     }
 
     private static bool TryFindBuildingApproachCell(
@@ -3565,20 +2350,8 @@ public sealed class RTSSelectionSystem
 
     private void PanCamera(Vector2 screenDelta)
     {
-        OrderScreenMarkersHideRequested?.Invoke();
-
-        Vector3 flatRight = worldCamera.transform.right;
-        flatRight.y = 0f;
-        flatRight.Normalize();
-
-        Vector3 flatForward = worldCamera.transform.forward;
-        flatForward.y = 0f;
-        flatForward.Normalize();
-
-        Vector3 worldDelta =
-            (-flatRight * screenDelta.x + -flatForward * screenDelta.y) * panSensitivity;
-
-        worldCamera.transform.position += worldDelta;
+        if (_rtsCameraSystem.PanCamera(worldCamera, screenDelta, panSensitivity))
+            OrderScreenMarkersHideRequested?.Invoke();
     }
 
     private void HandleFullscreenIsoCameraPan()
@@ -3619,13 +2392,7 @@ public sealed class RTSSelectionSystem
             float targetFieldOfView = _wasBuildModeActive ? buildModeFieldOfView : normalModeFieldOfView;
 
             if (UpdatePerspectiveCameraMode(targetHeight, targetPitch, targetYaw, targetFieldOfView))
-            {
-                _isZoomTransitionActive = false;
-                _zoomTransitionVelocity = 0f;
-                _pitchTransitionVelocity = 0f;
-                _yawTransitionVelocity = 0f;
-                _fieldOfViewTransitionVelocity = 0f;
-            }
+                _rtsCameraSystem.CompleteZoomTransition();
 
             return;
         }
@@ -3636,25 +2403,7 @@ public sealed class RTSSelectionSystem
         if (InitialUnitsRuntimeState.ZoomOutHeld)
             zoomDirection -= 1f;
 
-        if (Mathf.Approximately(zoomDirection, 0f))
-            return;
-
-        Vector3 zoomDelta = worldCamera.transform.forward * (zoomDirection * zoomSpeed * Time.deltaTime);
-        Vector3 currentPosition = worldCamera.transform.position;
-        Vector3 targetPosition = currentPosition + zoomDelta;
-
-        float clampedHeight = Mathf.Clamp(targetPosition.y, minZoomHeight, maxZoomHeight);
-        if (!Mathf.Approximately(targetPosition.y, currentPosition.y))
-        {
-            float t = (clampedHeight - currentPosition.y) / (targetPosition.y - currentPosition.y);
-            targetPosition = currentPosition + (zoomDelta * t);
-        }
-        else
-        {
-            targetPosition.y = clampedHeight;
-        }
-
-        worldCamera.transform.position = targetPosition;
+        _rtsCameraSystem.UpdatePerspectiveZoom(worldCamera, zoomDirection, zoomSpeed, Time.deltaTime, minZoomHeight, maxZoomHeight);
     }
 
     private void UpdateFullscreenIsoZoom()
@@ -3668,17 +2417,7 @@ public sealed class RTSSelectionSystem
         if (InitialUnitsRuntimeState.ZoomOutHeld)
             zoomDirection -= 1f;
 
-        if (Mathf.Approximately(zoomDirection, 0f))
-            return;
-
-        _fullscreenIsoTargetHeight = Mathf.Clamp(
-            _fullscreenIsoTargetHeight - (zoomDirection * zoomSpeed * Time.deltaTime),
-            minZoomHeight,
-            maxZoomHeight);
-        _fullscreenIsoTargetOrthographicSize = Mathf.Clamp(
-            _fullscreenIsoTargetOrthographicSize - (zoomDirection * (zoomSpeed * 0.6f) * Time.deltaTime),
-            8f,
-            48f);
+        _rtsCameraSystem.UpdateFullscreenIsoZoom(zoomDirection, zoomSpeed, Time.deltaTime, minZoomHeight, maxZoomHeight);
     }
 
     private void UpdateBuildModeCameraTransition()
@@ -3707,14 +2446,10 @@ public sealed class RTSSelectionSystem
             ApplyPerspectiveCameraModeInstant(normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
             if (worldCamera != null)
                 MoveCameraGroundCenterTo(focusWorldPosition);
-            _wasBuildModeActive = InitialUnitsRuntimeState.BuildModeActive;
             _wasPlayRequested = true;
+            _wasBuildModeActive = InitialUnitsRuntimeState.BuildModeActive;
             _isZoomTransitionActive = InitialUnitsRuntimeState.BuildModeActive;
-            _zoomTransitionVelocity = 0f;
-            _pitchTransitionVelocity = 0f;
-            _yawTransitionVelocity = 0f;
-            _fieldOfViewTransitionVelocity = 0f;
-            _orthographicSizeTransitionVelocity = 0f;
+            _rtsCameraSystem.ResetTransitionVelocities();
             return;
         }
 
@@ -3722,9 +2457,7 @@ public sealed class RTSSelectionSystem
 
         if (_wasBuildModeActive != InitialUnitsRuntimeState.BuildModeActive)
         {
-            _wasBuildModeActive = InitialUnitsRuntimeState.BuildModeActive;
-            _isZoomTransitionActive = true;
-            _zoomTransitionVelocity = 0f;
+            _rtsCameraSystem.BeginZoomTransition(InitialUnitsRuntimeState.BuildModeActive);
         }
     }
 
@@ -3735,58 +2468,27 @@ public sealed class RTSSelectionSystem
 
         MoveCameraGroundCenterTo(InitialUnitsRuntimeState.InitialCameraFocusWorld);
         InitialUnitsRuntimeState.InitialCameraFocusRequested = false;
-        _hasSmoothCameraFocusTarget = false;
-        _smoothCameraFocusVelocity = Vector3.zero;
+        _rtsCameraSystem.ClearSmoothFocusTarget();
     }
 
     private void UpdateSmoothCameraFocus()
     {
-        if (!_hasSmoothCameraFocusTarget || worldCamera == null)
+        if (!_rtsCameraSystem.HasSmoothFocusTarget || worldCamera == null)
             return;
 
         Vector3 currentGroundCenter = GetCameraGroundCenterWorld();
-        Vector3 smoothedCenter = Vector3.SmoothDamp(
-            currentGroundCenter,
-            _smoothCameraFocusTarget,
-            ref _smoothCameraFocusVelocity,
-            Mathf.Max(0.01f, zoomTransitionSmoothTime));
+        Vector3 smoothedCenter = _rtsCameraSystem.UpdateSmoothFocus(currentGroundCenter, zoomTransitionSmoothTime);
         MoveCameraGroundCenterTo(smoothedCenter);
-
-        Vector2 remaining = new(
-            _smoothCameraFocusTarget.x - smoothedCenter.x,
-            _smoothCameraFocusTarget.z - smoothedCenter.z);
-        if (remaining.sqrMagnitude <= 0.01f)
-        {
-            MoveCameraGroundCenterTo(_smoothCameraFocusTarget);
-            _hasSmoothCameraFocusTarget = false;
-            _smoothCameraFocusVelocity = Vector3.zero;
-        }
     }
 
     private void ApplyPerspectiveCameraModeInstant(float height, float pitch, float yaw, float fieldOfView)
     {
-        if (worldCamera == null)
-            return;
-
-        worldCamera.orthographic = false;
-        Vector3 position = worldCamera.transform.position;
-        position.y = height;
-        worldCamera.transform.position = position;
-        worldCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
-        worldCamera.fieldOfView = fieldOfView;
+        _rtsCameraSystem.ApplyPerspectiveCameraModeInstant(worldCamera, height, pitch, yaw, fieldOfView);
     }
 
     private void ApplyFullscreenIsoCameraModeInstant(float height, float orthographicSize, float pitch, float yaw)
     {
-        if (worldCamera == null)
-            return;
-
-        worldCamera.orthographic = true;
-        Vector3 position = worldCamera.transform.position;
-        position.y = height;
-        worldCamera.transform.position = position;
-        worldCamera.transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
-        worldCamera.orthographicSize = orthographicSize;
+        _rtsCameraSystem.ApplyFullscreenIsoCameraModeInstant(worldCamera, height, orthographicSize, pitch, yaw);
     }
 
     public void EnterFullscreenMapIsoMode(Vector3 focusWorldPosition)
@@ -3858,14 +2560,7 @@ public sealed class RTSSelectionSystem
 
     public void MoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (worldCamera == null)
-            return;
-
-        Vector3 currentGroundCenter = GetCameraGroundCenterWorld();
-        Vector3 position = worldCamera.transform.position;
-        position.x += focusWorldPosition.x - currentGroundCenter.x;
-        position.z += focusWorldPosition.z - currentGroundCenter.z;
-        worldCamera.transform.position = position;
+        _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, focusWorldPosition);
     }
 
     public void SmoothMoveCameraGroundCenterTo(Vector3 focusWorldPosition)
@@ -3873,11 +2568,8 @@ public sealed class RTSSelectionSystem
         if (worldCamera == null)
             return;
 
-        focusWorldPosition.y = 0f;
-        _smoothCameraFocusTarget = focusWorldPosition;
-        _hasSmoothCameraFocusTarget = true;
-        _smoothCameraFocusVelocity = Vector3.zero;
-        _cameraDragging = false;
+        _rtsCameraSystem.SetSmoothFocusTarget(focusWorldPosition, resetVelocity: true);
+        _rtsCameraSystem.ClearDragging();
     }
 
     public void FollowCameraGroundCenterTo(Vector3 focusWorldPosition)
@@ -3885,186 +2577,69 @@ public sealed class RTSSelectionSystem
         if (worldCamera == null)
             return;
 
-        focusWorldPosition.y = 0f;
-        _smoothCameraFocusTarget = focusWorldPosition;
-        _hasSmoothCameraFocusTarget = true;
-        _cameraDragging = false;
+        _rtsCameraSystem.SetSmoothFocusTarget(focusWorldPosition, resetVelocity: false);
+        _rtsCameraSystem.ClearDragging();
     }
 
     private Vector3 GetCameraGroundCenterWorld()
     {
-        if (worldCamera == null)
-            return Vector3.zero;
-
-        Plane groundPlane = new(Vector3.up, Vector3.zero);
-        Ray ray = worldCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        return groundPlane.Raycast(ray, out float distance) ? ray.GetPoint(distance) : worldCamera.transform.position;
+        return _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera);
     }
 
     private float GetVisibleGroundVerticalSpan()
     {
-        if (worldCamera == null)
-            return 0f;
-
-        if (!TryGetGroundPointFromViewport(new Vector2(0.5f, 0f), out Vector3 topPoint) ||
-            !TryGetGroundPointFromViewport(new Vector2(0.5f, 1f), out Vector3 bottomPoint))
-            return 0f;
-
-        return Vector3.Distance(topPoint, bottomPoint);
+        return _rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera);
     }
 
     private bool TryGetGroundPointFromViewport(Vector2 viewport, out Vector3 point)
     {
-        point = Vector3.zero;
-        if (worldCamera == null)
-            return false;
-
-        Plane groundPlane = new(Vector3.up, Vector3.zero);
-        Ray ray = worldCamera.ViewportPointToRay(new Vector3(viewport.x, viewport.y, 0f));
-        if (!groundPlane.Raycast(ray, out float distance))
-            return false;
-
-        point = ray.GetPoint(distance);
-        return true;
+        return _rtsCameraSystem.TryGetGroundPointFromViewport(worldCamera, viewport, out point);
     }
 
     private float CalculateOrthographicSizeForGroundSpan(float targetGroundSpan, float height, float pitch, float yaw)
     {
-        if (worldCamera == null || targetGroundSpan <= 0.01f)
-            return fullscreenIsoOrthographicSize;
-
-        bool originalOrthographic = worldCamera.orthographic;
-        Vector3 originalPosition = worldCamera.transform.position;
-        Quaternion originalRotation = worldCamera.transform.rotation;
-        float originalFieldOfView = worldCamera.fieldOfView;
-        float originalOrthographicSize = worldCamera.orthographicSize;
-
-        try
-        {
-            ApplyFullscreenIsoCameraModeInstant(height, 1f, pitch, yaw);
-            float spanAtUnitSize = GetVisibleGroundVerticalSpan();
-            if (spanAtUnitSize <= 0.01f)
-                return fullscreenIsoOrthographicSize;
-
-            return targetGroundSpan / spanAtUnitSize;
-        }
-        finally
-        {
-            worldCamera.orthographic = originalOrthographic;
-            worldCamera.transform.position = originalPosition;
-            worldCamera.transform.rotation = originalRotation;
-            worldCamera.fieldOfView = originalFieldOfView;
-            worldCamera.orthographicSize = originalOrthographicSize;
-        }
+        return _rtsCameraSystem.CalculateOrthographicSizeForGroundSpan(
+            worldCamera,
+            targetGroundSpan,
+            height,
+            pitch,
+            yaw,
+            fullscreenIsoOrthographicSize);
     }
 
     private float CalculatePerspectiveHeightForGroundSpan(float targetGroundSpan, float pitch, float yaw, float fieldOfView)
     {
-        if (worldCamera == null || targetGroundSpan <= 0.01f)
-            return normalModeZoomHeight;
-
-        bool originalOrthographic = worldCamera.orthographic;
-        Vector3 originalPosition = worldCamera.transform.position;
-        Quaternion originalRotation = worldCamera.transform.rotation;
-        float originalFieldOfView = worldCamera.fieldOfView;
-        float originalOrthographicSize = worldCamera.orthographicSize;
-
-        try
-        {
-            float low = minZoomHeight;
-            float high = maxZoomHeight;
-
-            for (int i = 0; i < 18; i++)
-            {
-                float mid = (low + high) * 0.5f;
-                ApplyPerspectiveCameraModeInstant(mid, pitch, yaw, fieldOfView);
-                float span = GetVisibleGroundVerticalSpan();
-                if (span < targetGroundSpan)
-                    low = mid;
-                else
-                    high = mid;
-            }
-
-            return (low + high) * 0.5f;
-        }
-        finally
-        {
-            worldCamera.orthographic = originalOrthographic;
-            worldCamera.transform.position = originalPosition;
-            worldCamera.transform.rotation = originalRotation;
-            worldCamera.fieldOfView = originalFieldOfView;
-            worldCamera.orthographicSize = originalOrthographicSize;
-        }
+        return _rtsCameraSystem.CalculatePerspectiveHeightForGroundSpan(
+            worldCamera,
+            targetGroundSpan,
+            pitch,
+            yaw,
+            fieldOfView,
+            minZoomHeight,
+            maxZoomHeight,
+            normalModeZoomHeight);
     }
 
     private bool UpdatePerspectiveCameraMode(float targetHeight, float targetPitch, float targetYaw, float targetFieldOfView)
     {
-        if (worldCamera == null)
-            return true;
-
-        if (worldCamera.orthographic)
-            worldCamera.orthographic = false;
-
-        float newHeight = Mathf.SmoothDamp(
-            worldCamera.transform.position.y,
+        return _rtsCameraSystem.UpdatePerspectiveCameraMode(
+            worldCamera,
             targetHeight,
-            ref _zoomTransitionVelocity,
-            zoomTransitionSmoothTime);
-
-        Vector3 position = worldCamera.transform.position;
-        position.y = newHeight;
-        worldCamera.transform.position = position;
-
-        Vector3 euler = worldCamera.transform.rotation.eulerAngles;
-        float newPitch = Mathf.SmoothDampAngle(euler.x, targetPitch, ref _pitchTransitionVelocity, zoomTransitionSmoothTime);
-        float newYaw = Mathf.SmoothDampAngle(euler.y, targetYaw, ref _yawTransitionVelocity, zoomTransitionSmoothTime);
-        worldCamera.transform.rotation = Quaternion.Euler(newPitch, newYaw, 0f);
-
-        worldCamera.fieldOfView = Mathf.SmoothDamp(
-            worldCamera.fieldOfView,
+            targetPitch,
+            targetYaw,
             targetFieldOfView,
-            ref _fieldOfViewTransitionVelocity,
             zoomTransitionSmoothTime);
-
-        return Mathf.Abs(newHeight - targetHeight) <= 0.05f &&
-               Mathf.Abs(Mathf.DeltaAngle(newPitch, targetPitch)) <= 0.1f &&
-               Mathf.Abs(Mathf.DeltaAngle(newYaw, targetYaw)) <= 0.1f &&
-               Mathf.Abs(worldCamera.fieldOfView - targetFieldOfView) <= 0.05f;
     }
 
     private bool UpdateFullscreenIsoCameraMode(float targetHeight, float targetOrthographicSize, float targetPitch, float targetYaw)
     {
-        if (worldCamera == null)
-            return true;
-
-        if (!worldCamera.orthographic)
-            worldCamera.orthographic = true;
-
-        float newHeight = Mathf.SmoothDamp(
-            worldCamera.transform.position.y,
+        return _rtsCameraSystem.UpdateFullscreenIsoCameraMode(
+            worldCamera,
             targetHeight,
-            ref _zoomTransitionVelocity,
-            zoomTransitionSmoothTime);
-
-        Vector3 position = worldCamera.transform.position;
-        position.y = newHeight;
-        worldCamera.transform.position = position;
-
-        Vector3 euler = worldCamera.transform.rotation.eulerAngles;
-        float newPitch = Mathf.SmoothDampAngle(euler.x, targetPitch, ref _pitchTransitionVelocity, zoomTransitionSmoothTime);
-        float newYaw = Mathf.SmoothDampAngle(euler.y, targetYaw, ref _yawTransitionVelocity, zoomTransitionSmoothTime);
-        worldCamera.transform.rotation = Quaternion.Euler(newPitch, newYaw, 0f);
-
-        worldCamera.orthographicSize = Mathf.SmoothDamp(
-            worldCamera.orthographicSize,
             targetOrthographicSize,
-            ref _orthographicSizeTransitionVelocity,
+            targetPitch,
+            targetYaw,
             zoomTransitionSmoothTime);
-
-        return Mathf.Abs(newHeight - targetHeight) <= 0.05f &&
-               Mathf.Abs(Mathf.DeltaAngle(newPitch, targetPitch)) <= 0.1f &&
-               Mathf.Abs(Mathf.DeltaAngle(newYaw, targetYaw)) <= 0.1f &&
-               Mathf.Abs(worldCamera.orthographicSize - targetOrthographicSize) <= 0.05f;
     }
 
     private void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
@@ -4196,7 +2771,7 @@ public sealed class RTSSelectionSystem
         InitialUnitsRuntimeState.SuppressNextWorldClick = true;
         _cameraDragging = false;
         if (em.HasComponent<UnitAirMovement>(entity))
-            ClearAccidentalAirSelectionMove(em, entity);
+            _unitTargetOrderSystem.ClearAccidentalAirSelectionMove(em, entity);
         ApplyHudSelection(em, entity);
         return true;
     }
@@ -4238,7 +2813,7 @@ public sealed class RTSSelectionSystem
             if (!validation.Accepted)
                 continue;
 
-            IssueMoveCommand(em, entity, goal);
+            _unitMoveOrderSystem.IssueImmediateMoveCommand(em, entity, goal);
             issuedCount++;
         }
 
@@ -4263,62 +2838,10 @@ public sealed class RTSSelectionSystem
 
         EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        TacticalCommandResult targetValidation = ValidateAttackTarget(em, targetEntity);
-        if (!targetValidation.Accepted)
-            return ApplyAndReturn(targetValidation);
-
         using var selectedEntities = _selectedAttackQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (selectedEntities.Length == 0)
-            return ApplyAndReturn(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-
-        LocalTransform targetTransform = em.GetComponentData<LocalTransform>(targetEntity);
-        int2 targetCell = em.HasComponent<UnitGrid>(targetEntity)
-            ? em.GetComponentData<UnitGrid>(targetEntity).Cell
-            : default;
-        int issuedCount = 0;
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            TacticalCommandResult sourceValidation = ValidateControllableEntity(entity);
-            if (!sourceValidation.Accepted ||
-                !em.HasComponent<UnitCombat>(entity) ||
-                em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
-            {
-                continue;
-            }
-
-            if (em.HasComponent<ManualMoveOrderTag>(entity))
-                em.RemoveComponent<ManualMoveOrderTag>(entity);
-            if (em.HasComponent<AutoWanderMoveTag>(entity))
-                em.RemoveComponent<AutoWanderMoveTag>(entity);
-            if (em.HasComponent<UnitPathFollow>(entity))
-                em.RemoveComponent<UnitPathFollow>(entity);
-            if (em.HasComponent<UnitPathRange>(entity))
-                em.RemoveComponent<UnitPathRange>(entity);
-            if (em.HasComponent<UnitPathRequest>(entity))
-                em.RemoveComponent<UnitPathRequest>(entity);
-            if (em.HasComponent<UnitTarget>(entity))
-                em.RemoveComponent<UnitTarget>(entity);
-            if (em.HasComponent<BaseBreachOrder>(entity))
-                em.RemoveComponent<BaseBreachOrder>(entity);
-
-            EngageTarget engageTarget = new()
-            {
-                Target = targetEntity,
-                Cell = targetCell,
-                Position = targetTransform.Position,
-                IsCommanded = 1
-            };
-            if (em.HasComponent<EngageTarget>(entity))
-                em.SetComponentData(entity, engageTarget);
-            else
-                em.AddComponentData(entity, engageTarget);
-            issuedCount++;
-        }
-
-        TacticalCommandResult result = issuedCount > 0
-            ? TacticalCommandResult.Success()
-            : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
+            _unitTargetOrderSystem.IssueAttackTarget(em, selectedEntities, targetEntity);
+        TacticalCommandResult result = issueResult.CommandResult;
         if (result.Accepted)
         {
             _explicitAttackTargetModeActive = false;
@@ -4349,24 +2872,6 @@ public sealed class RTSSelectionSystem
         if (em.GetComponentData<Faction>(entity).Id != 0)
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
-            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-
-        return TacticalCommandResult.Success();
-    }
-
-    private static TacticalCommandResult ValidateAttackTarget(EntityManager em, Entity targetEntity)
-    {
-        if (targetEntity == Entity.Null ||
-            !em.Exists(targetEntity) ||
-            !em.HasComponent<Faction>(targetEntity) ||
-            !em.HasComponent<LocalTransform>(targetEntity))
-        {
-            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-        }
-
-        if (em.GetComponentData<Faction>(targetEntity).Id == 0)
-            return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-        if (em.HasComponent<UnitHealth>(targetEntity) && em.GetComponentData<UnitHealth>(targetEntity).Current <= 0)
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
 
         return TacticalCommandResult.Success();
@@ -4438,10 +2943,7 @@ public sealed class RTSSelectionSystem
     public void CaptureUiClickSequence()
     {
         LogSelectionDiagnostic("result=CaptureUiClickSequence");
-        _ignoreUiClickUntilRelease = true;
-        _ignoreNextLeftMouseRelease = true;
-        _pointerPressedOverUi = true;
-        _dragging = false;
+        _rtsSelectionInputSystem.CaptureUiClickSequence();
         _cameraDragging = false;
     }
 
@@ -4489,7 +2991,7 @@ public sealed class RTSSelectionSystem
                 break;
             }
         }
-        IssueMoveCommand(em, entity, goal);
+        _unitMoveOrderSystem.IssueImmediateMoveCommand(em, entity, goal);
     }
 
     public void EnableFocusedUnitAutoAttack()
@@ -4497,20 +2999,7 @@ public sealed class RTSSelectionSystem
         if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !FocusedUnitOwnedByPlayer)
             return;
 
-        if (em.HasComponent<EngageTarget>(entity))
-            em.RemoveComponent<EngageTarget>(entity);
-        if (em.HasComponent<UnitTarget>(entity))
-            em.RemoveComponent<UnitTarget>(entity);
-        if (em.HasComponent<UnitPathRequest>(entity))
-            em.RemoveComponent<UnitPathRequest>(entity);
-        if (em.HasComponent<UnitPathFollow>(entity))
-            em.RemoveComponent<UnitPathFollow>(entity);
-        if (em.HasComponent<UnitPathRange>(entity))
-            em.RemoveComponent<UnitPathRange>(entity);
-        if (em.HasComponent<ManualMoveOrderTag>(entity))
-            em.RemoveComponent<ManualMoveOrderTag>(entity);
-        if (em.HasComponent<AutoWanderMoveTag>(entity))
-            em.RemoveComponent<AutoWanderMoveTag>(entity);
+        _unitTargetOrderSystem.ClearCommandedAttackOrderComponents(em, entity);
     }
 
     public bool IssueFocusedMissileLauncherRadarAttack()
@@ -4525,36 +3014,10 @@ public sealed class RTSSelectionSystem
             return false;
 
         byte factionId = em.GetComponentData<Faction>(launcher).Id;
-        if (!TryFindRadarTargetForMissileLauncher(em, factionId, mode, launcher, out Entity target, out int2 targetCell, out float3 targetPosition))
+        if (!_unitTargetOrderSystem.TryFindRadarTargetForMissileLauncher(em, factionId, mode == MissileLauncherTargetMode.Air, launcher, out Entity target, out int2 targetCell, out float3 targetPosition))
             return false;
 
-        if (em.HasComponent<ManualMoveOrderTag>(launcher))
-            em.RemoveComponent<ManualMoveOrderTag>(launcher);
-        if (em.HasComponent<AutoWanderMoveTag>(launcher))
-            em.RemoveComponent<AutoWanderMoveTag>(launcher);
-        if (em.HasComponent<UnitPathFollow>(launcher))
-            em.RemoveComponent<UnitPathFollow>(launcher);
-        if (em.HasComponent<UnitPathRange>(launcher))
-            em.RemoveComponent<UnitPathRange>(launcher);
-        if (em.HasComponent<UnitPathRequest>(launcher))
-            em.RemoveComponent<UnitPathRequest>(launcher);
-        if (em.HasComponent<UnitTarget>(launcher))
-            em.RemoveComponent<UnitTarget>(launcher);
-        if (em.HasComponent<BaseBreachOrder>(launcher))
-            em.RemoveComponent<BaseBreachOrder>(launcher);
-
-        EngageTarget engage = new()
-        {
-            Target = target,
-            Cell = targetCell,
-            Position = targetPosition,
-            IsCommanded = 1
-        };
-
-        if (em.HasComponent<EngageTarget>(launcher))
-            em.SetComponentData(launcher, engage);
-        else
-            em.AddComponentData(launcher, engage);
+        _unitTargetOrderSystem.IssueDirectAttackTarget(em, launcher, target, targetCell, targetPosition);
 
         ShowAttackOrderMarker(em, targetPosition);
         ClearCurrentSelection(em, "MissileLauncherRadarAttack");
@@ -4629,15 +3092,15 @@ public sealed class RTSSelectionSystem
             if (!em.Exists(entity))
                 continue;
 
-            RemoveComponentIfPresent<UnitTarget>(em, entity);
-            RemoveComponentIfPresent<UnitPathRequest>(em, entity);
-            RemoveComponentIfPresent<UnitPathFollow>(em, entity);
-            RemoveComponentIfPresent<UnitPathRange>(em, entity);
-            RemoveComponentIfPresent<UnitPathRetryCooldown>(em, entity);
-            RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
-            RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitTarget>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathRequest>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathFollow>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathRange>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathRetryCooldown>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
+            _unitMoveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
             if (clearEngageTarget)
-                RemoveComponentIfPresent<EngageTarget>(em, entity);
+                _unitMoveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, entity);
             if (!em.HasComponent<ManualMoveOrderTag>(entity))
                 em.AddComponent<ManualMoveOrderTag>(entity);
         }
@@ -4711,116 +3174,6 @@ public sealed class RTSSelectionSystem
         return MissileLauncherTargetMode.None;
     }
 
-    private static bool TryFindRadarTargetForMissileLauncher(
-        EntityManager em,
-        byte factionId,
-        MissileLauncherTargetMode mode,
-        Entity launcher,
-        out Entity bestTarget,
-        out int2 bestTargetCell,
-        out float3 bestTargetPosition)
-    {
-        bestTarget = Entity.Null;
-        bestTargetCell = default;
-        bestTargetPosition = default;
-
-        int detectorKind = mode == MissileLauncherTargetMode.Air
-            ? (byte)ThreatDetectionKind.Air
-            : (byte)ThreatDetectionKind.Ground;
-
-        using EntityQuery detectorQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<ThreatDetector>(),
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitHealth>());
-        using EntityQuery targetQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitHealth>(),
-            ComponentType.ReadOnly<LocalTransform>());
-
-        using var detectors = detectorQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        using var targets = targetQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-
-        int2 launcherCell = em.HasComponent<UnitGrid>(launcher)
-            ? em.GetComponentData<UnitGrid>(launcher).Cell
-            : default;
-        int bestLauncherDistance = int.MaxValue;
-
-        for (int i = 0; i < targets.Length; i++)
-        {
-            Entity target = targets[i];
-            if (!em.Exists(target) || target == launcher)
-                continue;
-            if (em.HasComponent<RuntimeBuildingCombatTag>(target))
-                continue;
-
-            Faction targetFaction = em.GetComponentData<Faction>(target);
-            if (targetFaction.Id == factionId)
-                continue;
-
-            UnitHealth targetHealth = em.GetComponentData<UnitHealth>(target);
-            if (targetHealth.Current <= 0)
-                continue;
-
-            bool isAirTarget = em.HasComponent<UnitAirMovement>(target);
-            if ((mode == MissileLauncherTargetMode.Air && !isAirTarget) ||
-                (mode == MissileLauncherTargetMode.Ground && isAirTarget))
-                continue;
-            if (mode == MissileLauncherTargetMode.Ground && !em.HasComponent<UnitMove>(target))
-                continue;
-
-            int2 targetCell = em.GetComponentData<UnitGrid>(target).Cell;
-            if (!IsInFriendlyDetectorRadius(em, detectors, factionId, detectorKind, targetCell))
-                continue;
-
-            int launcherDistance = ChebyshevDistance(launcherCell, targetCell);
-            if (launcherDistance >= bestLauncherDistance)
-                continue;
-
-            bestTarget = target;
-            bestTargetCell = targetCell;
-            bestTargetPosition = em.GetComponentData<LocalTransform>(target).Position;
-            bestLauncherDistance = launcherDistance;
-        }
-
-        return bestTarget != Entity.Null;
-    }
-
-    private static bool IsInFriendlyDetectorRadius(EntityManager em, Unity.Collections.NativeArray<Entity> detectors, byte factionId, int detectorKind, int2 targetCell)
-    {
-        for (int i = 0; i < detectors.Length; i++)
-        {
-            Entity detector = detectors[i];
-            if (!em.Exists(detector))
-                continue;
-
-            Faction detectorFaction = em.GetComponentData<Faction>(detector);
-            if (detectorFaction.Id != factionId)
-                continue;
-
-            UnitHealth detectorHealth = em.GetComponentData<UnitHealth>(detector);
-            if (detectorHealth.Current <= 0)
-                continue;
-
-            ThreatDetector threatDetector = em.GetComponentData<ThreatDetector>(detector);
-            if (threatDetector.Kind != detectorKind || threatDetector.RadiusCells <= 0)
-                continue;
-
-            int2 detectorCell = em.GetComponentData<UnitGrid>(detector).Cell;
-            if (ChebyshevDistance(detectorCell, targetCell) <= threatDetector.RadiusCells)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static int ChebyshevDistance(int2 a, int2 b)
-    {
-        int2 delta = math.abs(a - b);
-        return math.max(delta.x, delta.y);
-    }
-
     private bool TryFocusUnit(Vector2 screenPosition)
     {
         if (World.DefaultGameObjectInjectionWorld == null)
@@ -4830,7 +3183,7 @@ public sealed class RTSSelectionSystem
         EnsureEntityQueries(em);
         if (!TryGetClickedUnitEntity(screenPosition, em, out Entity bestEntity))
             return false;
-        if (IsBuildingEntity(em, bestEntity))
+        if (_unitTargetOrderSystem.IsBuildingEntity(em, bestEntity))
             return false;
 
         ClearCurrentSelection(em, "TryFocusUnit");
@@ -4846,38 +3199,9 @@ public sealed class RTSSelectionSystem
         InitialUnitsRuntimeState.SuppressNextWorldClick = true;
         _cameraDragging = false;
         if (em.HasComponent<UnitAirMovement>(bestEntity))
-            ClearAccidentalAirSelectionMove(em, bestEntity);
+            _unitTargetOrderSystem.ClearAccidentalAirSelectionMove(em, bestEntity);
         ApplyHudSelection(em, bestEntity);
         return true;
-    }
-
-    private static void ClearAccidentalAirSelectionMove(EntityManager em, Entity entity)
-    {
-        if (!em.Exists(entity) ||
-            !em.HasComponent<UnitAirMovement>(entity) ||
-            !em.HasComponent<UnitGrid>(entity) ||
-            em.HasComponent<EngageTarget>(entity) ||
-            !em.HasComponent<UnitTarget>(entity) ||
-            !em.HasComponent<ManualMoveOrderTag>(entity))
-        {
-            return;
-        }
-
-        int2 currentCell = em.GetComponentData<UnitGrid>(entity).Cell;
-        int2 targetCell = em.GetComponentData<UnitTarget>(entity).Cell;
-        int2 delta = targetCell - currentCell;
-        if (math.abs(delta.x) > 1 || math.abs(delta.y) > 1)
-            return;
-
-        em.RemoveComponent<UnitTarget>(entity);
-        if (em.HasComponent<UnitPathRequest>(entity))
-            em.RemoveComponent<UnitPathRequest>(entity);
-        if (em.HasComponent<UnitPathFollow>(entity))
-            em.RemoveComponent<UnitPathFollow>(entity);
-        if (em.HasComponent<UnitPathRange>(entity))
-            em.RemoveComponent<UnitPathRange>(entity);
-        if (em.HasComponent<ManualMoveOrderTag>(entity))
-            em.RemoveComponent<ManualMoveOrderTag>(entity);
     }
 
     private bool TryIssueAttackOrderToClickedUnit(Vector2 screenPosition)
@@ -4897,145 +3221,28 @@ public sealed class RTSSelectionSystem
                 ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
             return false;
         }
-        if (!em.HasComponent<Faction>(targetEntity) || em.GetComponentData<Faction>(targetEntity).Id == 0)
+
+        TacticalCommandResult targetValidation = _unitTargetOrderSystem.ValidateAttackTarget(em, targetEntity);
+        if (!targetValidation.Accepted)
         {
             if (_explicitAttackTargetModeActive)
-                ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
+                ApplyHudCommandResult(targetValidation);
             return false;
         }
 
         using var selectedEntities = _selectedAttackQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (selectedEntities.Length == 0)
+        UnitTargetOrderSystem.AttackOrderIssueResult issueResult = _unitTargetOrderSystem.IssueAttackTarget(
+            em,
+            selectedEntities,
+            targetEntity,
+            TryResolveBaseBreachTargetForAttackOrder);
+        if (!issueResult.CommandResult.Accepted)
         {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            ApplyHudCommandResult(issueResult.CommandResult);
             return false;
         }
 
-        LocalTransform targetTransform = em.GetComponentData<LocalTransform>(targetEntity);
-        int2 targetCell = em.HasComponent<UnitGrid>(targetEntity)
-            ? em.GetComponentData<UnitGrid>(targetEntity).Cell
-            : default;
-        ShowAttackOrderMarker(em, targetTransform.Position);
-
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            if (em.GetComponentData<UnitCombat>(entity).CanAttack == 0)
-                continue;
-
-            if (em.HasComponent<ManualMoveOrderTag>(entity))
-                em.RemoveComponent<ManualMoveOrderTag>(entity);
-            if (em.HasComponent<AutoWanderMoveTag>(entity))
-                em.RemoveComponent<AutoWanderMoveTag>(entity);
-            Entity engageTarget = targetEntity;
-            int2 engageCell = targetCell;
-            float3 engagePosition = targetTransform.Position;
-            bool issuedBreachOrder = false;
-            if (_buildingPlacementController != null &&
-                em.HasComponent<Faction>(entity) &&
-                em.HasComponent<UnitGrid>(entity) &&
-                _buildingPlacementController.TryResolveBaseBreachTarget(
-                    em.GetComponentData<Faction>(entity).Id,
-                    targetEntity,
-                    targetCell,
-                    em.GetComponentData<UnitGrid>(entity).Cell,
-                    out Entity breachTarget,
-                    out int2 breachCell,
-                    out float3 breachPosition,
-                    out _))
-            {
-                engageTarget = breachTarget;
-                engageCell = breachCell;
-                engagePosition = breachPosition;
-                issuedBreachOrder = true;
-            }
-
-            if (issuedBreachOrder)
-            {
-                if (em.HasComponent<EngageTarget>(entity))
-                    em.RemoveComponent<EngageTarget>(entity);
-                if (em.HasComponent<UnitTarget>(entity))
-                    em.SetComponentData(entity, new UnitTarget { Cell = engageCell });
-                else
-                    em.AddComponentData(entity, new UnitTarget { Cell = engageCell });
-                if (em.HasComponent<UnitPathRequest>(entity))
-                    em.SetComponentData(entity, new UnitPathRequest { Goal = engageCell });
-                else
-                    em.AddComponentData(entity, new UnitPathRequest { Goal = engageCell });
-                if (!em.HasComponent<ManualMoveOrderTag>(entity))
-                    em.AddComponent<ManualMoveOrderTag>(entity);
-            }
-            else if (em.HasComponent<EngageTarget>(entity))
-            {
-                em.SetComponentData(entity, new EngageTarget
-                {
-                    Target = engageTarget,
-                    Cell = engageCell,
-                    Position = engagePosition,
-                    IsCommanded = 1
-                });
-            }
-            else
-            {
-                em.AddComponentData(entity, new EngageTarget
-                {
-                    Target = engageTarget,
-                    Cell = engageCell,
-                    Position = engagePosition,
-                    IsCommanded = 1
-                });
-            }
-
-            if (issuedBreachOrder)
-            {
-                BaseBreachOrder breachOrder = new()
-                {
-                    FinalTarget = targetEntity,
-                    FinalCell = targetCell,
-                    FinalPosition = targetTransform.Position,
-                    BreachTarget = engageTarget,
-                    BreachCell = engageCell,
-                    BreachPosition = engagePosition,
-                    Stage = BaseBreachOrder.StageMovingToEnemyBreach,
-                    IsCommanded = 1
-                };
-
-                if (em.HasComponent<BaseBreachOrder>(entity))
-                    em.SetComponentData(entity, breachOrder);
-                else
-                    em.AddComponentData(entity, breachOrder);
-            }
-            else if (em.HasComponent<BaseBreachOrder>(entity))
-            {
-                em.RemoveComponent<BaseBreachOrder>(entity);
-            }
-
-            if (em.HasComponent<UnitPathFollow>(entity))
-                em.RemoveComponent<UnitPathFollow>(entity);
-            if (em.HasComponent<UnitPathRange>(entity))
-                em.RemoveComponent<UnitPathRange>(entity);
-            if (!issuedBreachOrder && em.HasComponent<UnitPathRequest>(entity))
-                em.RemoveComponent<UnitPathRequest>(entity);
-            if (!issuedBreachOrder && em.HasComponent<UnitTarget>(entity))
-                em.RemoveComponent<UnitTarget>(entity);
-        }
-
-        bool issuedAttackOrder = false;
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            if (em.GetComponentData<UnitCombat>(selectedEntities[i]).CanAttack != 0)
-            {
-                issuedAttackOrder = true;
-                break;
-            }
-        }
-
-        if (!issuedAttackOrder)
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
-            return false;
-        }
-
+        ShowAttackOrderMarker(em, issueResult.TargetPosition);
         AttackOrderScreenMarkerRequested?.Invoke(screenPosition);
         ClearCurrentSelection(em, "AttackOrderIssued");
         _focusedUnit = Entity.Null;
@@ -5046,16 +3253,28 @@ public sealed class RTSSelectionSystem
         return true;
     }
 
-    private static bool IsBuildingEntity(EntityManager em, Entity entity)
+    private bool TryResolveBaseBreachTargetForAttackOrder(
+        byte factionId,
+        Entity targetEntity,
+        int2 targetCell,
+        int2 attackerCell,
+        out Entity breachTarget,
+        out int2 breachCell,
+        out float3 breachPosition)
     {
-        if (entity == Entity.Null || !em.Exists(entity))
-            return false;
-        if (em.HasComponent<UnitMove>(entity))
-            return false;
-        if (!em.HasComponent<UnitHealth>(entity) || !em.HasComponent<UnitRespawnPrefab>(entity))
-            return false;
-
-        return em.GetComponentData<UnitRespawnPrefab>(entity).Prefab == Entity.Null;
+        breachTarget = Entity.Null;
+        breachCell = default;
+        breachPosition = default;
+        return _buildingPlacementController != null &&
+               _buildingPlacementController.TryResolveBaseBreachTarget(
+                   factionId,
+                   targetEntity,
+                   targetCell,
+                   attackerCell,
+                   out breachTarget,
+                   out breachCell,
+                   out breachPosition,
+                   out _);
     }
 
     private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
@@ -5313,38 +3532,6 @@ public sealed class RTSSelectionSystem
         {
             em.RemoveComponent<T>(entity);
         }
-    }
-
-    private static void IssueMoveCommand(EntityManager em, Entity entity, int2 goal)
-    {
-        if (em.HasComponent<EngageTarget>(entity))
-            em.RemoveComponent<EngageTarget>(entity);
-        if (em.HasComponent<UnitPathFollow>(entity))
-            em.RemoveComponent<UnitPathFollow>(entity);
-        if (em.HasComponent<UnitPathRange>(entity))
-            em.RemoveComponent<UnitPathRange>(entity);
-        if (em.HasComponent<AutoWanderMoveTag>(entity))
-            em.RemoveComponent<AutoWanderMoveTag>(entity);
-
-        if (em.HasComponent<UnitTarget>(entity))
-            em.SetComponentData(entity, new UnitTarget { Cell = goal });
-        else
-            em.AddComponentData(entity, new UnitTarget { Cell = goal });
-
-        if (!em.HasComponent<UnitAirMovement>(entity))
-        {
-            if (em.HasComponent<UnitPathRequest>(entity))
-                em.SetComponentData(entity, new UnitPathRequest { Goal = goal });
-            else
-                em.AddComponentData(entity, new UnitPathRequest { Goal = goal });
-        }
-        else if (em.HasComponent<UnitPathRequest>(entity))
-        {
-            em.RemoveComponent<UnitPathRequest>(entity);
-        }
-
-        if (!em.HasComponent<ManualMoveOrderTag>(entity))
-            em.AddComponent<ManualMoveOrderTag>(entity);
     }
 
 }

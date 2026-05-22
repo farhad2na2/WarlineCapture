@@ -176,7 +176,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
         if (menuView != null)
         {
-            menuView.Init(Selection, BuildingPlacement, worldCamera, DayNight);
+            menuView.Init(Selection, BuildingPlacement, worldCamera, DayNight, CitizenPopulation);
             menuView.NotifyBootstrapReady();
         }
 
@@ -1441,6 +1441,8 @@ public sealed class GameBootstrap : MonoBehaviour
 
         RuntimeGridBlockers = new RuntimeGridBlockerSystem();
         RuntimeGridBlockers.Init(runtimeGridBlockerConfig, _runtimeBlockerRoot, RuntimeCitySpawner);
+        RoadBuild?.BindDependencies(BuildingPlacement, MainMenu, RuntimeGridBlockers);
+        BindRuntimeGridBlockerDebugViews(RuntimeGridBlockers);
         BuildingPlacement?.BindDependencies(
             RoadBuild,
             MainMenu,
@@ -1454,6 +1456,17 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeDecorations.Init(runtimeDecorationSpawnerConfig, DecorationRoot, decorationCombinedMeshBaker, RuntimeCitySpawner, RuntimeGridBlockers);
 
         GameplayInitialized = true;
+    }
+
+    private static void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerSystem runtimeGridBlockers)
+    {
+        foreach (GridAuthoring grid in Resources.FindObjectsOfTypeAll<GridAuthoring>())
+        {
+            if (grid == null || !grid.gameObject.scene.IsValid())
+                continue;
+
+            grid.BindRuntimeGridBlockers(runtimeGridBlockers);
+        }
     }
 
     private void BindGameplayUiRuntimeDependencies()

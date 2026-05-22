@@ -31,15 +31,44 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs"
     };
 
-    private static readonly string[] LegacyStaticInstanceFiles =
-    {
-        "Assets/Game/Scripts/Authorings/FactionVisualSettingsAuthoring.cs",
-        "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs",
-        "Assets/Game/Scripts/Environment/RuntimeGridBlockerSystem.cs",
-        "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs"
-    };
+    private static readonly string[] LegacyStaticInstanceFiles = Array.Empty<string>();
 
     private static readonly string[] LegacyStaticDependencyLocatorFiles = Array.Empty<string>();
+
+    private static readonly string[] LegacyStaticRuntimeStateFiles =
+    {
+        "Assets/Game/Scripts/Systems/AISettingsRuntimeState.cs",
+        "Assets/Game/Scripts/UI/InitialUnitsRuntimeState.cs",
+        "Assets/Game/Scripts/UI/ThreatWarningRuntimeState.cs"
+    };
+
+    private static readonly string[] LegacyControllerFiles =
+    {
+        "Assets/Game/Scripts/Iso2D/WarlineCaptureIso2DCameraController.cs",
+        "Assets/Game/Scripts/TacticalMaps/M01PlayableVisualPrototypeController.cs",
+        "Assets/Game/Scripts/UI/Components/BattleHudTacticalFeedbackController.cs",
+        "Assets/Game/Scripts/UI/Popups/MissionResultPopupController.cs",
+        "Assets/Game/Scripts/UI/Screens/AssistantPanelController.cs",
+        "Assets/Game/Scripts/UI/Screens/BuildDrawerPanelController.cs",
+        "Assets/Game/Scripts/UI/Screens/CommandWheelPanelController.cs",
+        "Assets/Game/Scripts/UI/Screens/CommanderProfileScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/DistrictDetailScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/M01InfantryOnlyHudScopeController.cs",
+        "Assets/Game/Scripts/UI/Screens/MatchObjectivePanelController.cs",
+        "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsController.cs",
+        "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationCommandFeedScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationDashboardScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationEventsScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationInboxScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationLedgerScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/QuickCustomScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/SagaMapScreenController.cs",
+        "Assets/Game/Scripts/UI/Screens/SplashScreenController.cs",
+        "Assets/Game/Scripts/UI/Settings/SettingsScreenController.cs",
+        "Assets/Game/Scripts/UI/Shell/WarlineCaptureModalController.cs",
+        "Assets/Game/Scripts/UI/Shell/WarlineCaptureScreenController.cs"
+    };
 
     private static readonly string[] LegacyBootstrapRootFiles =
     {
@@ -233,6 +262,45 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsEmpty(
             newViolations,
             "Do not add new static dependency locator helpers. Pass dependencies through bootstrap/installer composition or ECS request/response components instead:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, newViolations));
+    }
+
+    [Test]
+    public void StaticRuntimeStateDebtCannotSpread()
+    {
+        string[] staticRuntimeStateFiles = Directory.GetFiles(ScriptsRoot, "*RuntimeState.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => Regex.IsMatch(File.ReadAllText(path), @"\bstatic\s+class\b"))
+            .ToArray();
+
+        string[] newViolations = staticRuntimeStateFiles
+            .Where(path => !LegacyStaticRuntimeStateFiles.Contains(path, StringComparer.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            newViolations,
+            "Do not add new static mutable gameplay runtime state files. Use ECS singleton components, normal components, buffers, or bootstrap-composed services instead:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, newViolations));
+    }
+
+    [Test]
+    public void UiControllerNamingDebtCannotSpread()
+    {
+        string[] controllerFiles = Directory.GetFiles(ScriptsRoot, "*Controller.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .ToArray();
+
+        string[] newViolations = controllerFiles
+            .Where(path => !LegacyControllerFiles.Contains(path, StringComparer.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            newViolations,
+            "Do not add new gameplay/UI-flow Controller classes. Use View for serialized references and move behavior into ECS systems, services, or shell installers:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, newViolations));
     }
@@ -437,6 +505,203 @@ public sealed class GameplayArchitectureContractTests
             "Gameplay code must use composed MainMenuPlayUI references instead of MainMenuPlayUI.Instance:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateSelectionStateSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string stateFile = "Assets/Game/Scripts/Systems/SelectionStateSystem.cs";
+        Assert.IsTrue(File.Exists(stateFile), "The RTS selection state slice must live in SelectionStateSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("SelectionStateSystem _selectionStateSystem", selection);
+        StringAssert.Contains("_selectionStateSystem.CacheSelectedMoveEntities", selection);
+        StringAssert.Contains("_selectionStateSystem.CacheSelectedMoveEntity", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"readonly\s+List<Entity>\s+_cachedSelectedMoveEntities\s*=\s*new\s*\("),
+            "Selected move cache ownership belongs in SelectionStateSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bEntity\s+_focusedUnit\s*;"),
+            "Focused unit state ownership belongs in SelectionStateSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateSelectionUiQuerySlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string uiQueryFile = "Assets/Game/Scripts/Systems/SelectionUiQuerySystem.cs";
+        Assert.IsTrue(File.Exists(uiQueryFile), "Focused and selected UI read models must live in SelectionUiQuerySystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("SelectionUiQuerySystem _selectionUiQuerySystem", selection);
+        StringAssert.Contains("_selectionUiQuerySystem.ResolveFocusedUnitName", selection);
+        StringAssert.Contains("_selectionUiQuerySystem.ResolveFocusedUnitDescription", selection);
+        StringAssert.Contains("_selectionUiQuerySystem.GetFocusedUnitUiStatus", selection);
+        StringAssert.Contains("_selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+string\s+ResolveFocusedUnitName\s*\("),
+            "Focused unit label read models belong in SelectionUiQuerySystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+string\s+ResolveHudSelectionStatus\s*\("),
+            "HUD selection status read models belong in SelectionUiQuerySystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateMoveOrderSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string moveOrderFile = "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs";
+        Assert.IsTrue(File.Exists(moveOrderFile), "Manual move-order goal and footprint rules must live in UnitMoveOrderSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("UnitMoveOrderSystem _unitMoveOrderSystem", selection);
+        StringAssert.Contains("_unitMoveOrderSystem.BuildSelectedCurrentFootprintCells", selection);
+        StringAssert.Contains("_unitMoveOrderSystem.FindManualMoveGoal", selection);
+        StringAssert.Contains("_unitMoveOrderSystem.IssueGroupedManualMoveOrder", selection);
+        StringAssert.Contains("_unitMoveOrderSystem.IssueImmediateMoveCommand", selection);
+        StringAssert.Contains("_unitMoveOrderSystem.ClearMovementOrderComponents", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+int2\s+FindManualMoveGoal\s*\("),
+            "Manual move-goal selection belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+HashSet<int>\s+BuildSelectedCurrentFootprintCells\s*\("),
+            "Selected footprint collection belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+void\s+IssueMoveCommand\s*\("),
+            "Movement command component writes belong in UnitMoveOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+void\s+ClearMovementOrderComponents\s*\("),
+            "Movement command cleanup belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateTransportBoardingSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string transportFile = "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs";
+        Assert.IsTrue(File.Exists(transportFile), "Transport boarding rules must live in UnitTransportBoardingSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("UnitTransportBoardingSystem _unitTransportBoardingSystem", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.IsBoardablePlayerTransport", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.TryEnsureTransportCapacity", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.IsTransportLandedForBoarding", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.TryFindAirTransportPickupForBoarding", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.TryFindTransportApproachCell", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.TryFindTransportDisembarkCell", selection);
+        StringAssert.Contains("_unitTransportBoardingSystem.StartRopeDisembarkTransport", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsBoardablePlayerTransport\s*\("),
+            "Boardable transport rules belong in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryEnsureTransportCapacity\s*\("),
+            "Transport capacity normalization belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindAirTransportPickupForBoarding\s*\("),
+            "Air transport pickup-cell selection belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindTransportApproachCell\s*\("),
+            "Transport boarding approach-cell selection belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindTransportDisembarkCell\s*\("),
+            "Transport disembark-cell selection belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+void\s+StartRopeDisembarkTransport\s*\("),
+            "Rope disembark request setup belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateTargetOrderSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string targetOrderFile = "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs";
+        Assert.IsTrue(File.Exists(targetOrderFile), "Target-order and target classification helpers must live in UnitTargetOrderSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("UnitTargetOrderSystem _unitTargetOrderSystem", selection);
+        StringAssert.Contains("_unitTargetOrderSystem.TryFindRadarTargetForMissileLauncher", selection);
+        StringAssert.Contains("_unitTargetOrderSystem.IsBuildingEntity", selection);
+        StringAssert.Contains("_unitTargetOrderSystem.ClearAccidentalAirSelectionMove", selection);
+        StringAssert.Contains("_unitTargetOrderSystem.IssueAttackTarget", selection);
+        StringAssert.Contains("_unitTargetOrderSystem.IssueDirectAttackTarget", selection);
+        StringAssert.Contains("_unitTargetOrderSystem.ValidateAttackTarget", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindRadarTargetForMissileLauncher\s*\("),
+            "Radar target lookup belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsBuildingEntity\s*\("),
+            "Target classification belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+TacticalCommandResult\s+ValidateAttackTarget\s*\("),
+            "Attack target validation belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"new\s+EngageTarget\s*\{"),
+            "Attack order component writes belong in UnitTargetOrderSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateCameraStateSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string cameraFile = "Assets/Game/Scripts/Systems/RtsCameraSystem.cs";
+        Assert.IsTrue(File.Exists(cameraFile), "RTS camera drag and smooth-focus state must live in RtsCameraSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("RtsCameraSystem _rtsCameraSystem", selection);
+        StringAssert.Contains("_rtsCameraSystem.ResetSession", selection);
+        StringAssert.Contains("_rtsCameraSystem.ClearSmoothFocusTarget", selection);
+        StringAssert.Contains("_rtsCameraSystem.UpdateSmoothFocus", selection);
+        StringAssert.Contains("_rtsCameraSystem.SetSmoothFocusTarget", selection);
+        StringAssert.Contains("_rtsCameraSystem.ResetCameraModeSession", selection);
+        StringAssert.Contains("_rtsCameraSystem.UpdatePerspectiveZoom", selection);
+        StringAssert.Contains("_rtsCameraSystem.UpdateFullscreenIsoZoom", selection);
+        StringAssert.Contains("_rtsCameraSystem.ApplyPerspectiveCameraModeInstant", selection);
+        StringAssert.Contains("_rtsCameraSystem.UpdatePerspectiveCameraMode", selection);
+        StringAssert.Contains("_rtsCameraSystem.UpdateFullscreenIsoCameraMode", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bprivate\s+bool\s+_cameraDragging\s*;"),
+            "Camera drag state belongs in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bprivate\s+bool\s+_hasSmoothCameraFocusTarget\s*;"),
+            "Smooth camera focus ownership belongs in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bprivate\s+Vector3\s+_smoothCameraFocus(Target|Velocity)\s*;"),
+            "Smooth camera focus vectors belong in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bprivate\s+bool\s+_(wasPlayRequested|wasBuildModeActive|isZoomTransitionActive|normalIsoModeActive)\s*;"),
+            "Camera mode transition booleans belong in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bprivate\s+float\s+_(zoomTransitionVelocity|pitchTransitionVelocity|yawTransitionVelocity|fieldOfViewTransitionVelocity|orthographicSizeTransitionVelocity|fullscreenIsoTargetHeight|fullscreenIsoTargetOrthographicSize)\s*;"),
+            "Camera transition numeric state belongs in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"worldCamera\.transform\.(position|rotation)\s*="),
+            "Camera transform writes belong in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"worldCamera\.(orthographic|fieldOfView|orthographicSize)\s*="),
+            "Camera mode writes belong in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            selection.Contains("worldCamera.ViewportPointToRay", StringComparison.Ordinal),
+            "Ground-plane camera ray queries belong in RtsCameraSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateInputStateSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
+        Assert.IsTrue(File.Exists(inputFile), "RTS pointer, drag, suppression, and queued move input state must live in RtsSelectionInputSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("RtsSelectionInputSystem _rtsSelectionInputSystem", selection);
+        StringAssert.Contains("_rtsSelectionInputSystem.BeginPointerPress", selection);
+        StringAssert.Contains("_rtsSelectionInputSystem.QueueMoveOrder", selection);
+        StringAssert.Contains("_rtsSelectionInputSystem.TryConsumeQueuedMoveOrder", selection);
+        StringAssert.Contains("_rtsSelectionInputSystem.UpdateLastKnownPointerPosition", selection);
+        StringAssert.Contains("_rtsSelectionInputSystem.CaptureUiClickSequence", selection);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"\bprivate\s+(Vector2|bool|int|float|uint|Rect)\s+_(dragStart|dragCurrent|lastPointerPosition|pointerPressedOverUi|dragging|ignoreNextLeftMouseRelease|skipNextWorldReleaseAfterSelection|ignoreWorldCommandsUntilFrame|ignoreUiClickUntilRelease|selectionModeHoldArmed|selectionModeHoldStartTime|queuedMoveOrderToken|hasQueuedMoveOrder|queuedMoveOrderScreenPosition|queuedMoveOrderFrame|lastLiveSelectionRect|hasLiveSelectionRect|lastKnownPointerPosition|hasLastKnownPointerPosition)\s*(=|;)"),
+            "RTS input/session state belongs in RtsSelectionInputSystem, not RTSSelectionSystem.");
     }
 
     [Test]

@@ -122,8 +122,6 @@ public sealed class CitizenPopulationSystem
         public int TargetBuildingId;
     }
 
-    public static CitizenPopulationSystem Instance { get; private set; }
-
     private BuildingPlacementSystem _buildingPlacementSystem;
     private DayNightSystem _dayNightSystem;
     private Camera _worldCamera;
@@ -161,10 +159,6 @@ public sealed class CitizenPopulationSystem
 
     public void Init(BuildingPlacementSystem buildingPlacementSystem, DayNightSystem dayNightSystem, Camera worldCamera)
     {
-        if (Instance != null && Instance != this)
-            Instance.Dispose();
-
-        Instance = this;
         _buildingPlacementSystem = buildingPlacementSystem;
         _dayNightSystem = dayNightSystem;
         _worldCamera = worldCamera;
@@ -518,8 +512,6 @@ public sealed class CitizenPopulationSystem
         _ecsWorld = null;
         _dayNightSystem = null;
         _worldCamera = null;
-        if (Instance == this)
-            Instance = null;
     }
 
     public bool TryGetCitizenDebugSnapshot(int citizenId, out string snapshot)

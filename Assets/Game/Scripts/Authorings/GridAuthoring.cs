@@ -8,6 +8,7 @@ using System.Collections.Generic;
 public class GridAuthoring : MonoBehaviour
 {
     [SerializeField] private GridAuthoringConfig config;
+    private RuntimeGridBlockerSystem _runtimeGridBlockers;
     private int Width => config != null ? config.Width : 16;
     private int Height => config != null ? config.Height : 16;
     private float CellSize => config != null ? config.CellSize : 1f;
@@ -39,6 +40,11 @@ public class GridAuthoring : MonoBehaviour
     public void Configure(GridAuthoringConfig config)
     {
         this.config = config;
+    }
+
+    public void BindRuntimeGridBlockers(RuntimeGridBlockerSystem runtimeGridBlockers)
+    {
+        _runtimeGridBlockers = runtimeGridBlockers;
     }
 
     private class GridBaker : Baker<GridAuthoring>
@@ -188,7 +194,6 @@ public class GridAuthoring : MonoBehaviour
 
         if (FillBuildingCells && TryGetRuntimeBuildingBlockers(out var blocked, out int blockerWidth, out int blockerHeight))
         {
-            RuntimeGridBlockerSystem blockerManager = RuntimeGridBlockerSystem.Instance;
             Gizmos.color = BuildingFillColor;
             int maxX = Mathf.Min(Width, blockerWidth);
             int maxY = Mathf.Min(Height, blockerHeight);
@@ -199,7 +204,7 @@ public class GridAuthoring : MonoBehaviour
                     int index = x + y * blockerWidth;
                     if (!blocked.IsSet(index))
                         continue;
-                    if (blockerManager != null && blockerManager.IsRuntimeBlockerCell(x, y, blockerWidth, blockerHeight))
+                    if (_runtimeGridBlockers != null && _runtimeGridBlockers.IsRuntimeBlockerCell(x, y, blockerWidth, blockerHeight))
                         continue;
 
                     var center = new Vector3((x + 0.5f) * CellSize, 0f, (y + 0.5f) * CellSize);
@@ -208,15 +213,14 @@ public class GridAuthoring : MonoBehaviour
             }
         }
 
-        if (FillRuntimeBlockerCells && RuntimeGridBlockerSystem.Instance != null)
+        if (FillRuntimeBlockerCells && _runtimeGridBlockers != null)
         {
-            RuntimeGridBlockerSystem blockerManager = RuntimeGridBlockerSystem.Instance;
             Gizmos.color = RuntimeBlockerFillColor;
             for (int y = 0; y < Height; y += filledCellStride)
             {
                 for (int x = 0; x < Width; x += filledCellStride)
                 {
-                    if (!blockerManager.IsRuntimeBlockerCell(x, y, Width, Height))
+                    if (!_runtimeGridBlockers.IsRuntimeBlockerCell(x, y, Width, Height))
                         continue;
 
                     var center = new Vector3((x + 0.5f) * CellSize, 0f, (y + 0.5f) * CellSize);

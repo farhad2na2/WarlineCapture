@@ -12,8 +12,6 @@ public sealed class FactionVisualSettingsAuthoring : MonoBehaviour
     [SerializeField, HideInInspector] private Color enemyColor = new(1f, 0.35f, 0.2f, 1f);
     [SerializeField, HideInInspector] private Color neutralColor = new(0.82f, 0.82f, 0.82f, 1f);
 
-    public static FactionVisualSettingsAuthoring Instance { get; private set; }
-
     private void OnValidate()
     {
         ApplyConfigIfAvailable();
@@ -22,13 +20,6 @@ public sealed class FactionVisualSettingsAuthoring : MonoBehaviour
     private void OnEnable()
     {
         ApplyConfigIfAvailable();
-        Instance = this;
-    }
-
-    private void OnDisable()
-    {
-        if (Instance == this)
-            Instance = null;
     }
 
     private void ApplyConfigIfAvailable()

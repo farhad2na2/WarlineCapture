@@ -61,39 +61,19 @@ public sealed class RuntimeGridBlockerSystem
     private bool _spawnFinalizing;
     private bool _readyForDependents = true;
     private int _finalizeAfterFrames = -1;
-
-    public static RuntimeGridBlockerSystem Instance { get; private set; }
-
-    public static bool AreDependentsReadyForPlacement()
-    {
-        return Instance == null || Instance._readyForDependents;
-    }
-
-    public static string GetDependencyStatus()
-    {
-        RuntimeGridBlockerSystem blocker = Instance;
-        if (blocker == null)
-            return "no-blocker-instance";
-
-        RuntimeCitySpawnerSystem citySpawner = blocker._citySpawner;
-        bool pendingCity = citySpawner != null && citySpawner.SpawnOnStartEnabled && !citySpawner.HasSpawned;
-        return $"ready={(blocker._readyForDependents ? 1 : 0)} spawnOnStart={(blocker._spawnOnStart ? 1 : 0)} spawned={(blocker._spawned ? 1 : 0)} finalizing={(blocker._spawnFinalizing ? 1 : 0)} finalizeAfter={blocker._finalizeAfterFrames} pendingCity={(pendingCity ? 1 : 0)} cityHasSpawned={(citySpawner != null && citySpawner.HasSpawned ? 1 : 0)} cityGenerating={(citySpawner != null && citySpawner.IsGenerating ? 1 : 0)}";
-    }
+    private Entity _dependencyStateEntity;
 
     public bool DependentsReadyForPlacement => _readyForDependents;
     public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _blockerCount <= 0;
 
     public void Init(RuntimeGridBlockerSystemConfig config, Transform rootTransform, RuntimeCitySpawnerSystem citySpawner)
     {
-        if (Instance != null && Instance != this)
-            Instance.Dispose();
-
-        Instance = this;
         _rootTransform = rootTransform;
         _citySpawner = citySpawner;
         ApplyConfig(config);
         LoadPrefabsIfNeeded();
         _readyForDependents = !_spawnOnStart || _prefabs.Count == 0 || _blockerCount <= 0;
+        WriteDependencyState();
     }
 
     public void Update()
@@ -107,13 +87,11 @@ public sealed class RuntimeGridBlockerSystem
         }
 
         TryAutoSpawn();
+        WriteDependencyState();
     }
 
     public void Dispose()
     {
-        if (Instance == this)
-            Instance = null;
-
         foreach (RuntimeBlockerRecord blocker in _blockersById.Values)
         {
             if (blocker.RootObject != null)
@@ -125,6 +103,8 @@ public sealed class RuntimeGridBlockerSystem
         _runtimeBlockerCellCounts = null;
         _rootTransform = null;
         _citySpawner = null;
+        _readyForDependents = true;
+        WriteDependencyState();
     }
 
     private void ApplyConfig(RuntimeGridBlockerSystemConfig config)
@@ -309,12 +289,41 @@ public sealed class RuntimeGridBlockerSystem
         _spawnFinalizing = false;
         _spawned = true;
         _readyForDependents = true;
+        WriteDependencyState();
     }
 
-    private static bool HasPendingCityGeneration()
+    private bool HasPendingCityGeneration()
     {
-        RuntimeCitySpawnerSystem citySpawner = Instance?._citySpawner;
+        RuntimeCitySpawnerSystem citySpawner = _citySpawner;
         return citySpawner != null && citySpawner.SpawnOnStartEnabled && !citySpawner.HasSpawned;
+    }
+
+    private void WriteDependencyState()
+    {
+        if (!TryGetEntityManager(out EntityManager em))
+            return;
+
+        if (_dependencyStateEntity == Entity.Null || !em.Exists(_dependencyStateEntity))
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<RuntimeGridBlockerDependencyState>());
+            _dependencyStateEntity = query.IsEmptyIgnoreFilter
+                ? em.CreateEntity(typeof(RuntimeGridBlockerDependencyState))
+                : query.GetSingletonEntity();
+        }
+
+        RuntimeCitySpawnerSystem citySpawner = _citySpawner;
+        bool pendingCity = citySpawner != null && citySpawner.SpawnOnStartEnabled && !citySpawner.HasSpawned;
+        em.SetComponentData(_dependencyStateEntity, new RuntimeGridBlockerDependencyState
+        {
+            ReadyForDependents = _readyForDependents ? (byte)1 : (byte)0,
+            SpawnOnStart = _spawnOnStart ? (byte)1 : (byte)0,
+            Spawned = _spawned ? (byte)1 : (byte)0,
+            SpawnFinalizing = _spawnFinalizing ? (byte)1 : (byte)0,
+            FinalizeAfterFrames = _finalizeAfterFrames,
+            PendingCity = pendingCity ? (byte)1 : (byte)0,
+            CityHasSpawned = citySpawner != null && citySpawner.HasSpawned ? (byte)1 : (byte)0,
+            CityGenerating = citySpawner != null && citySpawner.IsGenerating ? (byte)1 : (byte)0
+        });
     }
 
     private void CreateRuntimeBlocker(GridConfig grid, GameObject prefab, PrefabPlacementMetadata metadata, Vector2Int originCell, Vector2Int sizeCells)

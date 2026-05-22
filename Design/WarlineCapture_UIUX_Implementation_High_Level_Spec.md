@@ -239,6 +239,8 @@ Exit criteria:
 
 Goal: implement `SCN-13 Skirmish Setup` using existing AI settings.
 
+Implementation source: `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`. That spec owns the active 3D Skirmish flow, setup controls, preset behavior, result routing, and compatibility boundary with existing QuickCustom runtime names.
+
 Map current runtime settings into player-facing controls:
 
 - Enemy Type

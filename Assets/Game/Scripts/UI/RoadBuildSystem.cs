@@ -302,6 +302,7 @@ public sealed class RoadBuildSystem
     private int? _selectedBuildingId;
     private BuildingPlacementSystem _buildingPlacementController;
     private MainMenuPlayUI _mainMenuPlayUi;
+    private RuntimeGridBlockerSystem _runtimeGridBlockers;
     private World _queryWorld;
     private EntityQuery _gridDataQuery;
     private EntityQuery _roadBufferQuery;
@@ -747,10 +748,15 @@ public sealed class RoadBuildSystem
         CreatePlacementOutline();
     }
 
-    public void BindDependencies(BuildingPlacementSystem buildingPlacementController, MainMenuPlayUI mainMenuPlayUi = null)
+    public void BindDependencies(
+        BuildingPlacementSystem buildingPlacementController,
+        MainMenuPlayUI mainMenuPlayUi = null,
+        RuntimeGridBlockerSystem runtimeGridBlockers = null)
     {
         _buildingPlacementController = buildingPlacementController;
         _mainMenuPlayUi = mainMenuPlayUi;
+        if (runtimeGridBlockers != null)
+            _runtimeGridBlockers = runtimeGridBlockers;
     }
 
     private void ApplyConfigIfAvailable()
@@ -2107,7 +2113,7 @@ public sealed class RoadBuildSystem
         GameObject previewInstance = placement.PreviewInstance;
         previewInstance.name = $"{placement.Definition.DisplayName}_{_nextBuildingId}";
 
-        RuntimeGridBlockerSystem.Instance?.RemoveBlockersOverlappingFootprint(placement.OriginCell, placement.Definition.FootprintCells);
+        _runtimeGridBlockers?.RemoveBlockersOverlappingFootprint(placement.OriginCell, placement.Definition.FootprintCells);
         Entity blockerEntity = CreateBlockerEntity(placement.OriginCell, placement.Definition.FootprintCells);
         Entity combatEntity = CreateBuildingCombatEntity(placement.OriginCell, placement.Definition);
 
@@ -2192,7 +2198,7 @@ public sealed class RoadBuildSystem
                     return false;
                 if (blockerData.Blocked.IsCreated &&
                     blockerData.Blocked.IsSet(index) &&
-                    (RuntimeGridBlockerSystem.Instance == null || !RuntimeGridBlockerSystem.Instance.IsRuntimeBlockerCell(x, y, grid.Width, grid.Height)))
+                    (_runtimeGridBlockers == null || !_runtimeGridBlockers.IsRuntimeBlockerCell(x, y, grid.Width, grid.Height)))
                     return false;
             }
         }
@@ -3903,7 +3909,7 @@ public sealed class RoadBuildSystem
 
     private void RemoveRuntimeBlockersUnderRoads()
     {
-        if (RuntimeGridBlockerSystem.Instance == null || !TryGetRoadBuffer(out _, out var grid))
+        if (_runtimeGridBlockers == null || !TryGetRoadBuffer(out _, out var grid))
             return;
 
         foreach (var entry in _roadTiles)
@@ -3940,7 +3946,7 @@ public sealed class RoadBuildSystem
 
                 if (overlapMaxX > overlapMinX && overlapMaxY > overlapMinY)
                 {
-                    RuntimeGridBlockerSystem.Instance.RemoveBlockersOverlappingFootprint(
+                    _runtimeGridBlockers.RemoveBlockersOverlappingFootprint(
                         new Vector2Int(overlapMinX, overlapMinY),
                         new Vector2Int(overlapMaxX - overlapMinX, overlapMaxY - overlapMinY));
                 }

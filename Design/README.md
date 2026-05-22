@@ -12,6 +12,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Command premise: `WarlineCapture_Command_Offensive_Premise_Alignment.md` aligns the accepted proactive field-commander framing with the 3D single-map direction.
 - Large-scale movement: `WarlineCapture_LargeScale_Grid_Movement_Design.md` defines how the original grid-movement promise becomes an AAA mobile RTS design through readable squad command, tactical metadata, staged validation, and production-scale gates.
 - Level and mission planning: `WarlineCapture_Level_And_Mission_Content_Plan.md` owns the shared mission spec template, high-level Campaign chapter set, Operations hooks, Skirmish probe mapping, and acceptance gate. Dedicated chapter docs under `SagaChapters` own chapter-specific mission matrices and specs.
+- Skirmish implementation: `WarlineCapture_Skirmish_Mode_Implementation_Spec.md` is the active contract for the first player-facing Skirmish mode slice, including setup controls, launch flow, presets, result routing, and QuickCustom compatibility rules.
 - Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
 - FTUE and assistant: `WarlineCapture_FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
 - Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
@@ -39,25 +40,26 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 9. `WarlineCapture_LargeScale_Grid_Movement_Design.md`
 10. `WarlineCapture_AAA_Mobile_Technical_Targets.md`
 11. `WarlineCapture_Level_And_Mission_Content_Plan.md`
-12. `WarlineCapture_M01_FirstContact_Production_Contract.md`
-13. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-14. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-15. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-16. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-17. `WarlineCapture_Agent_Coordination_Workflow.md`
-18. `Architecture/gameplay_solid_ecs_contract.md`
-19. `Architecture/performance_regression_contract.md`
-20. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
-21. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-22. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-23. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
-24. `WarlineCapture_Economy_Reward_Design.md`
-25. `WarlineCapture_Balancing_Automated_Test_Plan.md`
-26. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-27. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
-28. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
-29. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-30. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
+12. `WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
+13. `WarlineCapture_M01_FirstContact_Production_Contract.md`
+14. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+15. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+16. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+17. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+18. `WarlineCapture_Agent_Coordination_Workflow.md`
+19. `Architecture/gameplay_solid_ecs_contract.md`
+20. `Architecture/performance_regression_contract.md`
+21. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
+22. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+23. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
+24. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+25. `WarlineCapture_Economy_Reward_Design.md`
+26. `WarlineCapture_Balancing_Automated_Test_Plan.md`
+27. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+28. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
+29. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+30. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+31. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -76,6 +78,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `WarlineCapture_AAA_Mobile_Technical_Targets.md` - concrete device-tier, frame, scale, marker, readability, and validation targets for the AAA mobile promise.
 - `WarlineCapture_M01_Metric_Scale_Readability_Contract.md` - M01 tactical metric scale and readability contract for soldier/building anchors, selection treatment, movement animation, and ECS/atlas-backed public unit presentation.
 - `WarlineCapture_Level_And_Mission_Content_Plan.md` - required mission spec template, high-level Campaign chapter set, Operations mission hooks, Skirmish probe mapping, balance targets, and mission acceptance gate.
+- `WarlineCapture_Skirmish_Mode_Implementation_Spec.md` - active implementation contract for Skirmish setup, presets, launch behavior, result routing, prefab-catalog roster use, and QuickCustom compatibility.
 - `WarlineCapture_M01_FirstContact_Production_Contract.md` - concrete first playable slice contract for M01 First Contact, including map metadata anchors, UI command feedback, FTUE targets, asset manifest, audio/VFX requirements, and validation gates.
 - `WarlineCapture_FTUE_And_Command_Assistant_Design.md` - first-time user experience and reusable ARIA command assistant design, including Chapter 1 tutorial steps, contextual recommendations, safe control takeover, data model, UI surfaces, and validation plan.
 - `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` - implementation contract for `PREFAB-05_AssistantPanel`, M01 ARIA recommendation states, runtime data fields, Show Me / Do It / Stop behavior, player-control cancellation, `BattleHudGameplayBridge` integration, asset-register implications, and acceptance checks.

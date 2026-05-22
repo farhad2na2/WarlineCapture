@@ -9,8 +9,6 @@ public sealed class RuntimeCitySpawnerSystem
 {
     private static readonly bool EnableRuntimeCityDiagnostics = false;
 
-    public static RuntimeCitySpawnerSystem Instance { get; private set; }
-
     private enum YardSide
     {
         North,
@@ -134,7 +132,6 @@ public sealed class RuntimeCitySpawnerSystem
         Transform runtimeRoot,
         MainMenuPlayUI mainMenuPlayUi = null)
     {
-        Instance = this;
         config = configAsset;
         _roadBuildController = roadBuildController;
         _buildingPlacementController = buildingPlacementController;
@@ -175,8 +172,6 @@ public sealed class RuntimeCitySpawnerSystem
 
     public void Dispose()
     {
-        if (Instance == this)
-            Instance = null;
         _generationRoutine = null;
         _cityVisualRoot = null;
         _runtimeRoot = null;

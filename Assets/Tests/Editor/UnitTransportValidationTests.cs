@@ -197,13 +197,8 @@ public sealed class UnitTransportValidationTests
         using NativeArray<UnitGrid> liveGrids = liveUnitQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
         using NativeArray<UnitFootprint> liveFootprints = liveUnitQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
 
-        MethodInfo pickupMethod = typeof(RTSSelectionSystem).GetMethod(
-            "TryPrepareAirTransportPickupForBoarding",
-            BindingFlags.Static | BindingFlags.NonPublic);
-        Assert.NotNull(pickupMethod);
-
-        object[] args =
-        {
+        var boardingRules = new UnitTransportBoardingSystem();
+        bool prepared = boardingRules.TryPrepareAirTransportPickupForBoarding(
             em,
             transport,
             grid,
@@ -218,11 +213,8 @@ public sealed class UnitTransportValidationTests
             liveEntities,
             liveGrids,
             liveFootprints,
-            default(int2)
-        };
-
-        bool prepared = (bool)pickupMethod.Invoke(null, args);
-        int2 pickupCell = (int2)args[14];
+            new UnitMoveOrderSystem(),
+            out int2 pickupCell);
 
         Assert.IsTrue(prepared, "Clicking a flying transport helicopter with a selected soldier should command a pickup landing.");
         Assert.AreNotEqual(em.GetComponentData<UnitGrid>(passenger).Cell, pickupCell, "The helicopter must land on a free nearby cell, not on top of the soldier.");
@@ -269,13 +261,8 @@ public sealed class UnitTransportValidationTests
         using NativeArray<UnitGrid> liveGrids = liveUnitQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
         using NativeArray<UnitFootprint> liveFootprints = liveUnitQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
 
-        MethodInfo findPickupMethod = typeof(RTSSelectionSystem).GetMethod(
-            "TryFindAirTransportPickupForBoarding",
-            BindingFlags.Static | BindingFlags.NonPublic);
-        Assert.NotNull(findPickupMethod);
-
-        object[] args =
-        {
+        var boardingRules = new UnitTransportBoardingSystem();
+        bool found = boardingRules.TryFindAirTransportPickupForBoarding(
             em,
             transport,
             grid,
@@ -290,10 +277,7 @@ public sealed class UnitTransportValidationTests
             liveEntities,
             liveGrids,
             liveFootprints,
-            default(int2)
-        };
-
-        bool found = (bool)findPickupMethod.Invoke(null, args);
+            out _);
 
         Assert.IsTrue(found, "Finding an airborne pickup landing cell should succeed.");
         Assert.IsFalse(em.HasComponent<UnitTarget>(transport), "Finding the pickup cell must not make structural ECS changes while grid NativeArrays are still in use.");
@@ -612,7 +596,7 @@ public sealed class UnitTransportValidationTests
         try
         {
             typeof(RTSSelectionSystem)
-                .GetField("_focusedUnit", BindingFlags.Instance | BindingFlags.NonPublic)
+                .GetProperty("_focusedUnit", BindingFlags.Instance | BindingFlags.NonPublic)
                 ?.SetValue(selection, transport);
 
             selection.DisembarkFocusedTransport();

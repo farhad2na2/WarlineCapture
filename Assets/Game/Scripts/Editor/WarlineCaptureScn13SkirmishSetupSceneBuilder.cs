@@ -1,0 +1,364 @@
+#if UNITY_EDITOR
+using TMPro;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
+{
+    private const int CanvasWidth = 4800;
+    private const int CanvasHeight = 2160;
+    private const string LayerRoot = "Assets/Game/Art/UI/Generated/SkirmishSetup/LayeredOneGo";
+    private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_SCN13_SkirmishSetup_TargetLock.prefab";
+    private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN13_SkirmishSetup_TargetLock.unity";
+    private const string CapturePath = "Design/AgentReports/Captures/SCN13_SkirmishSetup_TargetLock_2400x1080.png";
+
+    private static Color TextMain => new Color32(232, 226, 202, 255);
+    private static Color TextMuted => new Color32(192, 181, 143, 255);
+    private static Color GoldText => new Color32(238, 172, 43, 255);
+    private static Color BlueText => new Color32(96, 172, 207, 255);
+    private static Color DisabledText => new Color32(128, 124, 105, 255);
+
+    [MenuItem("WarlineCapture/Design/SCN-13 Build Skirmish Setup Target Lock")]
+    public static void BuildScene()
+    {
+        WarlineCaptureLayeredUiBuilderUtility.EnsureLayerSpriteImports(LayerRoot);
+
+        EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject prefabRoot = BuildCanvasPrefabRoot();
+
+        WarlineCaptureLayeredUiBuilderUtility.EnsureParentFolder(PrefabPath);
+        PrefabUtility.SaveAsPrefabAsset(prefabRoot, PrefabPath);
+
+        GameObject sceneCanvas = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN13_SkirmishSetup_Canvas", null);
+        RectTransform sceneCanvasRect = sceneCanvas.GetComponent<RectTransform>();
+        sceneCanvasRect.sizeDelta = new Vector2(CanvasWidth, CanvasHeight);
+        sceneCanvasRect.localPosition = Vector3.zero;
+        sceneCanvasRect.localScale = Vector3.one;
+
+        Canvas canvas = sceneCanvas.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.WorldSpace;
+        sceneCanvas.AddComponent<CanvasScaler>().uiScaleMode = CanvasScaler.ScaleMode.ConstantPixelSize;
+        sceneCanvas.AddComponent<GraphicRaycaster>();
+
+        GameObject instance = Object.Instantiate(prefabRoot, sceneCanvas.transform);
+        instance.name = "Screen_SCN13_SkirmishSetup_TargetLock";
+        WarlineCaptureLayeredUiBuilderUtility.StretchToParent(instance.GetComponent<RectTransform>());
+        Object.DestroyImmediate(prefabRoot);
+
+        WarlineCaptureLayeredUiBuilderUtility.AddEventSystem();
+        Camera camera = WarlineCaptureLayeredUiBuilderUtility.AddSceneCamera(CanvasHeight);
+        canvas.worldCamera = camera;
+
+        WarlineCaptureLayeredUiBuilderUtility.EnsureParentFolder(ScenePath);
+        EditorSceneManager.SaveScene(SceneManager.GetActiveScene(), ScenePath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"[SCN-13] Built scene={ScenePath} prefab={PrefabPath}");
+    }
+
+    [MenuItem("WarlineCapture/Design/SCN-13 Capture Skirmish Setup Target Lock")]
+    public static void CaptureScene()
+    {
+        BuildScene();
+        WarlineCaptureLayeredUiBuilderUtility.CapturePrefab(PrefabPath, CapturePath, 2400, 1080, CanvasWidth, CanvasHeight, Color.black);
+        Debug.Log($"[SCN-13] Captured {CapturePath}");
+    }
+
+    private static GameObject BuildCanvasPrefabRoot()
+    {
+        GameObject root = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("Screen_SCN13_SkirmishSetup_TargetLock", null);
+        RectTransform rootRect = root.GetComponent<RectTransform>();
+        rootRect.anchorMin = new Vector2(0.5f, 0.5f);
+        rootRect.anchorMax = new Vector2(0.5f, 0.5f);
+        rootRect.pivot = new Vector2(0.5f, 0.5f);
+        rootRect.sizeDelta = new Vector2(CanvasWidth, CanvasHeight);
+
+        Image baseImage = root.AddComponent<Image>();
+        baseImage.color = Color.black;
+        baseImage.raycastTarget = false;
+
+        WarlineCaptureScreenController screenController = root.AddComponent<WarlineCaptureScreenController>();
+        screenController.SetRouteForTests(WarlineCaptureRoute.QuickCustomSetup);
+
+        GameObject artRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN13_LayeredCanvas", root.transform);
+        WarlineCaptureLayeredUiBuilderUtility.StretchToParent(artRoot.GetComponent<RectTransform>());
+        BuildLayeredVisual(artRoot.transform);
+
+        GameObject hitRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN13_HitZones", root.transform);
+        WarlineCaptureLayeredUiBuilderUtility.StretchToParent(hitRoot.GetComponent<RectTransform>());
+        AddHitZones(hitRoot.transform);
+
+        return root;
+    }
+
+    private static void BuildLayeredVisual(Transform parent)
+    {
+        WarlineCaptureLayeredUiBuilderUtility.AddCoverImage(parent, LayerRoot, "Background_CommandTent", "scn13_background_21x9_no_ui.png", new RectInt(0, 0, CanvasWidth, CanvasHeight), Color.white);
+
+        AddHeader(parent);
+        AddTitle(parent);
+        AddPresetRail(parent);
+        AddOperationPreview(parent);
+        AddRulesPanel(parent);
+        AddBottomActions(parent);
+
+        WarlineCaptureLayeredUiBuilderUtility.ValidateMajorPanels(
+            new WarlineUiRect("Title", TitleRect()),
+            new WarlineUiRect("PresetRail", PresetRailRect()),
+            new WarlineUiRect("Preview", PreviewRect()),
+            new WarlineUiRect("Rules", RulesRect()),
+            new WarlineUiRect("Info", InfoRect()),
+            new WarlineUiRect("Reset", ResetRect()),
+            new WarlineUiRect("Randomize", RandomizeRect()),
+            new WarlineUiRect("Launch", LaunchRect()));
+    }
+
+    private static void AddHeader(Transform parent)
+    {
+        RectInt logoPanel = HeaderLogoRect();
+        RectInt resourcePanel = HeaderResourceRect();
+        RectInt actionsPanel = HeaderActionsRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Header_LogoPanel", "scn13_header_logo_panel_bg.png", logoPanel, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Header_ResourcePanel", "scn13_header_resource_panel_bg.png", resourcePanel, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Header_ActionsPanel", "scn13_header_right_actions_bg.png", actionsPanel, false, Color.white);
+
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Header_Logo", "scn13_brand_logo_lockup.png", WarlineCaptureLayeredUiBuilderUtility.Inset(logoPanel, 88, 48), 650, 135, Color.white);
+
+        AddHeaderResource(parent, "Credits", "scn13_resource_credits_coin.png", "Credits", "187,540", new RectInt(resourcePanel.x + 52, resourcePanel.y + 22, 560, 190), GoldText);
+        AddHeaderResource(parent, "Supplies", "scn13_resource_supplies_crate.png", "Supplies", "92,860", new RectInt(resourcePanel.x + 650, resourcePanel.y + 22, 570, 190), new Color32(161, 166, 105, 255));
+        AddHeaderResource(parent, "Command", "scn13_resource_command_shield.png", "Command", "2,715", new RectInt(resourcePanel.x + 1256, resourcePanel.y + 22, 540, 190), BlueText);
+
+        AddHeaderAction(parent, "Inbox", "scn13_icon_inbox_envelope.png", new RectInt(actionsPanel.x + 58, actionsPanel.y + 40, 205, 134), 150, 112);
+        AddHeaderAction(parent, "Settings", "scn13_icon_settings_gear.png", new RectInt(actionsPanel.x + 318, actionsPanel.y + 36, 190, 142), 148, 148);
+    }
+
+    private static void AddHeaderResource(Transform parent, string name, string icon, string label, string value, RectInt slot, Color valueColor)
+    {
+        RectInt iconSlot = new(slot.x + 8, slot.y + 16, 150, 150);
+        RectInt labelSlot = new(slot.x + 185, slot.y + 32, slot.width - 205, 46);
+        RectInt valueSlot = new(slot.x + 185, slot.y + 82, slot.width - 205, 70);
+        WarlineUiImagePlacement iconPlacement = WarlineCaptureLayeredUiBuilderUtility.VisibleFittedPlacement(LayerRoot, icon, iconSlot, 142, 142);
+        WarlineCaptureLayeredUiBuilderUtility.ValidateSectionContent(
+            $"Header_{name}",
+            slot,
+            new WarlineUiRect($"{name}_Icon", iconPlacement.VisibleRect),
+            new WarlineUiRect($"{name}_Label", labelSlot),
+            new WarlineUiRect($"{name}_Value", valueSlot));
+
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Header_{name}_Icon", icon, iconSlot, 142, 142, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Header_{name}_Label", label, labelSlot, 34f, TextAlignmentOptions.Left, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Header_{name}_Value", value, valueSlot, 52f, TextAlignmentOptions.Left, valueColor);
+    }
+
+    private static void AddHeaderAction(Transform parent, string name, string icon, RectInt slot, int maxW, int maxH)
+    {
+        WarlineUiImagePlacement placement = WarlineCaptureLayeredUiBuilderUtility.VisibleFittedPlacement(LayerRoot, icon, slot, maxW, maxH);
+        WarlineCaptureLayeredUiBuilderUtility.ValidateSectionContent($"HeaderAction_{name}", slot, new WarlineUiRect($"{name}_Icon", placement.VisibleRect));
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"HeaderAction_{name}", icon, slot, maxW, maxH, TextMain);
+    }
+
+    private static void AddTitle(Transform parent)
+    {
+        RectInt rect = TitleRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Title_Frame", "scn13_title_back_panel_frame.png", rect, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Title_Back", "scn13_icon_back_arrow.png", new RectInt(rect.x + 34, rect.y + 28, 118, 118), 86, 86, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Title_SkirmishIcon", "scn13_icon_skirmish_blades.png", new RectInt(rect.x + 190, rect.y + 24, 128, 122), 104, 104, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Title_Skirmish", "SKIRMISH", new RectInt(rect.x + 350, rect.y + 24, 470, 70), 62f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Title_Subtitle", "Configure Operation", new RectInt(rect.x + 350, rect.y + 94, 470, 44), 32f, TextAlignmentOptions.Left, TextMuted);
+    }
+
+    private static void AddPresetRail(Transform parent)
+    {
+        RectInt rect = PresetRailRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "PresetRail_Frame", "scn13_preset_rail_panel_frame.png", rect, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "PresetRail_Title", "OPERATION PRESETS", new RectInt(rect.x + 205, rect.y + 20, 530, 58), 38f, TextAlignmentOptions.Center, TextMuted);
+
+        AddPresetRow(parent, 0, true, "scn13_icon_preset_target.png", "Tutorial Intercept", "Elimination", false);
+        AddPresetRow(parent, 1, false, "scn13_icon_preset_convoy.png", "Convoy Pressure", "Supply Disruption", true);
+        AddPresetRow(parent, 2, false, "scn13_icon_preset_airlift.png", "Airlift Extraction", "Extraction", true);
+        AddPresetRow(parent, 3, false, "scn13_icon_preset_breach.png", "Breach Assault", "Base Assault", true);
+        AddPresetRow(parent, 4, false, "scn13_icon_preset_hidden_cell.png", "Hidden Cell Raid", "Intel Sweep", true);
+
+        RectInt manage = new(rect.x + 48, rect.y + rect.height - 130, 610, 82);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "PresetRail_ManageFrame", "scn13_secondary_action_button_frame.png", manage, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "PresetRail_ManageIcon", "scn13_icon_manage_list.png", new RectInt(manage.x + 44, manage.y + 16, 70, 54), 56, 48, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "PresetRail_ManageText", "MANAGE PRESETS", new RectInt(manage.x + 142, manage.y + 14, 390, 54), 32f, TextAlignmentOptions.Left, TextMuted);
+    }
+
+    private static void AddPresetRow(Transform parent, int index, bool selected, string icon, string title, string subtitle, bool locked)
+    {
+        RectInt row = PresetRowRect(index);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Preset_{index}_Frame", selected ? "scn13_preset_row_selected_frame.png" : "scn13_preset_row_locked_frame.png", row, false, Color.white);
+        RectInt safe = WarlineCaptureLayeredUiBuilderUtility.Inset(row, 36, 18);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Preset_{index}_Icon", icon, new RectInt(safe.x, safe.y, 110, safe.height), 92, 92, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Preset_{index}_Title", title, new RectInt(safe.x + 140, safe.y + 4, 390, 46), 37f, TextAlignmentOptions.Left, selected ? TextMain : TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Preset_{index}_Subtitle", subtitle, new RectInt(safe.x + 140, safe.y + 52, 390, 38), 27f, TextAlignmentOptions.Left, TextMuted);
+        if (selected)
+            WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Preset_{index}_SelectedDot", "scn13_selected_status_dot.png", new RectInt(row.x + row.width - 82, row.y + 38, 52, 52), 38, 38, Color.white);
+        if (locked)
+            WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Preset_{index}_Lock", "scn13_icon_lock.png", new RectInt(row.x + row.width - 95, row.y + 38, 58, 58), 46, 46, DisabledText);
+    }
+
+    private static void AddOperationPreview(Transform parent)
+    {
+        RectInt rect = PreviewRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Preview_Frame", "scn13_operation_preview_frame.png", rect, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Preview_Title", "OPERATION PREVIEW", new RectInt(rect.x + 82, rect.y + 26, 650, 54), 36f, TextAlignmentOptions.Left, TextMuted);
+
+        RectInt art = new(rect.x + 34, rect.y + 92, rect.width - 68, rect.height - 210);
+        WarlineCaptureLayeredUiBuilderUtility.AddCoverImage(parent, LayerRoot, "Preview_Art", "scn13_operation_preview_art_wide.png", art, Color.white);
+        AddMapMarkers(parent, art);
+
+        RectInt footer = new(rect.x + 38, rect.y + rect.height - 116, rect.width - 76, 86);
+        AddPreviewStat(parent, "Map", "scn13_icon_map_pin.png", "MAP", "Desert Outpost", new RectInt(footer.x, footer.y, 435, footer.height));
+        AddPreviewStat(parent, "Seed", "scn13_icon_seed_dice.png", "SEED", "104729", new RectInt(footer.x + 500, footer.y, 360, footer.height));
+        AddPreviewStat(parent, "Intel", "scn13_icon_intel_eye.png", "INTEL REVEAL", "ON", new RectInt(footer.x + 905, footer.y, 390, footer.height));
+        AddPreviewStat(parent, "Risk", "scn13_icon_civilian_group.png", "CIVILIAN RISK", "MED", new RectInt(footer.x + 1320, footer.y, 390, footer.height));
+    }
+
+    private static void AddMapMarkers(Transform parent, RectInt art)
+    {
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Warning_A", "scn13_marker_hostile_intel_diamond.png", new RectInt(art.x + 235, art.y + 230, 78, 78), 58, 58, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Warning_B", "scn13_marker_warning_triangle.png", new RectInt(art.x + 620, art.y + 335, 82, 82), 62, 62, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Target", "scn13_marker_objective_target.png", new RectInt(art.x + 1145, art.y + 355, 108, 108), 92, 92, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Deployment", "scn13_marker_deployment_flag.png", new RectInt(art.x + 1380, art.y + 510, 150, 140), 116, 116, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Marker_Zone", "scn13_marker_deployment_zone_circle.png", new RectInt(art.x + 1250, art.y + 600, 245, 140), 220, 120, Color.white);
+    }
+
+    private static void AddPreviewStat(Transform parent, string name, string icon, string label, string value, RectInt slot)
+    {
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Preview_{name}_Icon", icon, new RectInt(slot.x, slot.y + 6, 82, 74), 62, 62, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Preview_{name}_Label", label, new RectInt(slot.x + 105, slot.y + 6, slot.width - 110, 32), 24f, TextAlignmentOptions.Left, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Preview_{name}_Value", value, new RectInt(slot.x + 105, slot.y + 38, slot.width - 110, 40), 28f, TextAlignmentOptions.Left, name == "Risk" ? GoldText : new Color32(155, 168, 76, 255));
+    }
+
+    private static void AddRulesPanel(Transform parent)
+    {
+        RectInt rect = RulesRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Rules_Frame", "scn13_rules_panel_frame.png", rect, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Rules_Title", "OPERATION RULES", new RectInt(rect.x + 70, rect.y + 28, 500, 52), 38f, TextAlignmentOptions.Left, TextMuted);
+
+        AddDropdownRule(parent, 0, "scn13_icon_enemy_type.png", "ENEMY TYPE", "Balanced");
+        AddStepperRule(parent, 1, "scn13_icon_enemy_count.png", "ENEMY COUNT", "1");
+        AddDropdownRule(parent, 2, "scn13_icon_difficulty_bars.png", "DIFFICULTY", "Normal");
+        AddDropdownRule(parent, 3, "scn13_icon_starting_credits.png", "STARTING CREDITS", "Normal");
+        AddDropdownRule(parent, 4, "scn13_icon_income_chart.png", "INCOME", "1.0x");
+        AddDropdownRule(parent, 5, "scn13_icon_build_speed_gear.png", "BUILD SPEED", "Normal");
+        AddDropdownRule(parent, 6, "scn13_icon_production_factory.png", "PRODUCTION SPEED", "Normal");
+        AddDropdownRule(parent, 7, "scn13_icon_aggression_skull.png", "AGGRESSION", "Balanced");
+        AddDropdownRule(parent, 8, "scn13_icon_expansion_arrows.png", "EXPANSION", "Normal");
+        AddDropdownRule(parent, 9, "scn13_icon_win_condition_target.png", "WIN CONDITION", "Destroy All Enemies");
+        AddLockedFogRule(parent);
+    }
+
+    private static void AddDropdownRule(Transform parent, int index, string icon, string label, string value)
+    {
+        RectInt row = RuleRowRect(index);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Rule_{index}_Frame", "scn13_rule_row_frame.png", row, false, Color.white);
+        RectInt safe = WarlineCaptureLayeredUiBuilderUtility.Inset(row, 22, 8);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Icon", icon, new RectInt(safe.x, safe.y, 68, safe.height), 50, 50, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Label", label, new RectInt(safe.x + 82, safe.y + 8, 350, safe.height - 16), 27f, TextAlignmentOptions.Left, TextMuted);
+        RectInt valueFrame = new(row.x + row.width - 470, row.y + 12, 415, row.height - 24);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Rule_{index}_ValueFrame", "scn13_stepper_value_frame.png", valueFrame, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Chevron", "scn13_dropdown_chevron.png", new RectInt(valueFrame.x + valueFrame.width - 62, valueFrame.y + 12, 42, valueFrame.height - 24), 30, 24, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Value", value, new RectInt(valueFrame.x + 24, valueFrame.y + 8, valueFrame.width - 92, valueFrame.height - 16), 30f, TextAlignmentOptions.Center, new Color32(225, 216, 182, 255));
+    }
+
+    private static void AddStepperRule(Transform parent, int index, string icon, string label, string value)
+    {
+        RectInt row = RuleRowRect(index);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Rule_{index}_Frame", "scn13_rule_row_frame.png", row, false, Color.white);
+        RectInt safe = WarlineCaptureLayeredUiBuilderUtility.Inset(row, 22, 8);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Icon", icon, new RectInt(safe.x, safe.y, 68, safe.height), 50, 50, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Label", label, new RectInt(safe.x + 82, safe.y + 8, 350, safe.height - 16), 27f, TextAlignmentOptions.Left, TextMuted);
+        RectInt minus = new(row.x + row.width - 470, row.y + 12, 88, row.height - 24);
+        RectInt count = new(minus.xMax + 18, row.y + 12, 220, row.height - 24);
+        RectInt plus = new(count.xMax + 18, row.y + 12, 88, row.height - 24);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "EnemyCount_MinusFrame", "scn13_stepper_minus_frame.png", minus, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "EnemyCount_MinusIcon", "scn13_stepper_minus_icon.png", minus, 42, 20, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "EnemyCount_ValueFrame", "scn13_stepper_value_frame.png", count, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "EnemyCount_Value", value, count, 30f, TextAlignmentOptions.Center, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "EnemyCount_PlusFrame", "scn13_stepper_plus_frame.png", plus, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "EnemyCount_PlusIcon", "scn13_stepper_plus_icon.png", plus, 42, 42, TextMuted);
+    }
+
+    private static void AddLockedFogRule(Transform parent)
+    {
+        RectInt row = RuleRowRect(10);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Rule_Fog_Frame", "scn13_rule_row_frame.png", row, false, Color.white);
+        RectInt safe = WarlineCaptureLayeredUiBuilderUtility.Inset(row, 22, 8);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Rule_Fog_Icon", "scn13_icon_fog_hidden_eye.png", new RectInt(safe.x, safe.y, 68, safe.height), 50, 50, DisabledText);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Rule_Fog_Label", "FOG OF WAR\nLocked", new RectInt(safe.x + 82, safe.y + 2, 280, safe.height - 4), 25f, TextAlignmentOptions.Left, DisabledText, true);
+        RectInt chip = new(row.x + row.width - 435, row.y + 12, 380, row.height - 24);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Rule_Fog_ChipFrame", "scn13_locked_reason_chip_frame.png", chip, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Rule_Fog_Lock", "scn13_icon_lock.png", new RectInt(chip.x + 20, chip.y + 8, 44, chip.height - 16), 32, 32, DisabledText);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Rule_Fog_Reason", "Requires Fog Runtime", new RectInt(chip.x + 82, chip.y + 8, chip.width - 98, chip.height - 16), 22f, TextAlignmentOptions.Left, TextMuted);
+    }
+
+    private static void AddBottomActions(Transform parent)
+    {
+        RectInt info = InfoRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Info_Frame", "scn13_info_panel_frame.png", info, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Info_Icon", "scn13_icon_info_circle.png", new RectInt(info.x + 42, info.y + 22, 90, 90), 72, 72, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Info_Text", "Tune the enemy force, economy, and mission\nrules before deployment.", new RectInt(info.x + 160, info.y + 22, 690, 88), 31f, TextAlignmentOptions.Left, TextMuted, true);
+
+        RectInt reset = ResetRect();
+        RectInt randomize = RandomizeRect();
+        RectInt secondary = new(reset.x, reset.y, randomize.xMax - reset.x, reset.height);
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "SecondaryActions_Frame", "scn13_secondary_action_button_frame.png", secondary, false, Color.white);
+        AddSecondaryActionContent(parent, reset, "scn13_icon_reset_arrow.png", "RESET");
+        AddSecondaryActionContent(parent, randomize, "scn13_icon_seed_dice.png", "RANDOMIZE SEED");
+
+        RectInt launch = LaunchRect();
+        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Launch_Frame", "scn13_launch_cta_frame.png", launch, false, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Launch_Text", "LAUNCH MISSION", new RectInt(launch.x + 120, launch.y + 42, launch.width - 320, launch.height - 84), 68f, TextAlignmentOptions.Center, Color.black);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Launch_Chevrons", "scn13_launch_chevrons.png", new RectInt(launch.x + launch.width - 245, launch.y + 45, 160, launch.height - 90), 140, 92, new Color32(93, 73, 22, 255));
+    }
+
+    private static void AddSecondaryActionContent(Transform parent, RectInt rect, string icon, string label)
+    {
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"{label}_Icon", icon, new RectInt(rect.x + 88, rect.y + 32, 100, rect.height - 64), 76, 76, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"{label}_Text", label, new RectInt(rect.x + 210, rect.y + 32, rect.width - 250, rect.height - 64), 38f, TextAlignmentOptions.Left, TextMuted);
+    }
+
+    private static void AddHitZones(Transform parent)
+    {
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "Title_Back", new RectInt(TitleRect().x, TitleRect().y, 170, TitleRect().height));
+        for (int i = 0; i < 5; i++)
+            WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, $"Preset_{i}", PresetRowRect(i));
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "ManagePresets", new RectInt(PresetRailRect().x + 48, PresetRailRect().y + PresetRailRect().height - 130, 610, 82));
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "Reset", ResetRect());
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "RandomizeSeed", RandomizeRect());
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "LaunchMission", LaunchRect());
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "Inbox", new RectInt(HeaderActionsRect().x + 58, HeaderActionsRect().y + 40, 205, 134));
+        WarlineCaptureLayeredUiBuilderUtility.AddHitZone(parent, "Settings", new RectInt(HeaderActionsRect().x + 318, HeaderActionsRect().y + 36, 190, 142));
+    }
+
+    private static RectInt HeaderLogoRect() => new(0, 0, 1060, 240);
+    private static RectInt HeaderResourceRect() => new(2040, 0, 1970, 235);
+    private static RectInt HeaderActionsRect() => new(4150, 0, 625, 230);
+    private static RectInt TitleRect() => new(96, 260, 1100, 205);
+    private static RectInt PresetRailRect() => new(96, 474, 1015, 1234);
+    private static RectInt PreviewRect() => new(1145, 474, 2245, 1234);
+    private static RectInt RulesRect() => new(3435, 474, 1230, 1234);
+    private static RectInt InfoRect() => new(122, 1835, 1240, 210);
+    private static RectInt ResetRect() => new(1560, 1858, 760, 190);
+    private static RectInt RandomizeRect() => new(2388, 1858, 820, 190);
+    private static RectInt LaunchRect() => new(3380, 1802, 1255, 260);
+
+    private static RectInt PresetRowRect(int index)
+    {
+        RectInt rail = PresetRailRect();
+        return new RectInt(rail.x + 42, rail.y + 120 + index * 198, 870, 158);
+    }
+
+    private static RectInt RuleRowRect(int index)
+    {
+        RectInt rules = RulesRect();
+        return new RectInt(rules.x + 50, rules.y + 112 + index * 82, rules.width - 100, 70);
+    }
+}
+#endif

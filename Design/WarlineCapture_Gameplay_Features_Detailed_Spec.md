@@ -285,6 +285,8 @@ Add:
 
 ## Phase 2 - Skirmish Gameplay
 
+Use `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md` as the active implementation contract for Skirmish. This section remains the code-oriented summary; the dedicated spec owns player flow, presets, UI/control requirements, result routing, prefab-catalog roster usage, and QuickCustom compatibility rules.
+
 ### New Types
 
 Create:

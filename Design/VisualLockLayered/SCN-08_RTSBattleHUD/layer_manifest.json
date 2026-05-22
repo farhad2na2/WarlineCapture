@@ -1,0 +1,1366 @@
+{
+  "surface_id": "SCN-08_RTSBattleHUD",
+  "workflow": "VisualLockLayered V01 3D Match HUD Green-Source Extraction",
+  "target_reference": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/reference/SCN-08_RTSBattleHUD_Landscape_Target.png",
+  "rule": "Generated implementation sources only. The target-lock mockup was not sliced for layers.",
+  "sources": [
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Battlefield_21x9_NoUI.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_MinimapContent.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_SquadPortraits_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png"
+  ],
+  "layers": [
+    {
+      "id": "scn08_battlefield_21x9_no_ui",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_battlefield_21x9_no_ui.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Battlefield_21x9_NoUI.png",
+      "source_box": null,
+      "size": {
+        "width": 1915,
+        "height": 821
+      },
+      "key_green": false
+    },
+    {
+      "id": "scn08_minimap_content",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_content.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_MinimapContent.png",
+      "source_box": null,
+      "size": {
+        "width": 1254,
+        "height": 1254
+      },
+      "key_green": false
+    },
+    {
+      "id": "scn08_objective_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_objective_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        20,
+        42,
+        361,
+        260
+      ],
+      "size": {
+        "width": 341,
+        "height": 218
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_title_banner_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_title_banner_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        415,
+        44,
+        699,
+        112
+      ],
+      "size": {
+        "width": 284,
+        "height": 68
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_resource_strip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_resource_strip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        750,
+        43,
+        1467,
+        113
+      ],
+      "size": {
+        "width": 717,
+        "height": 70
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_top_icon_button_frame_a",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_top_icon_button_frame_a.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1506,
+        42,
+        1575,
+        104
+      ],
+      "size": {
+        "width": 69,
+        "height": 62
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_top_icon_button_frame_b",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_top_icon_button_frame_b.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1587,
+        42,
+        1655,
+        104
+      ],
+      "size": {
+        "width": 68,
+        "height": 62
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_mode_banner_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_mode_banner_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        750,
+        141,
+        1317,
+        211
+      ],
+      "size": {
+        "width": 567,
+        "height": 70
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_jump_button_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_jump_button_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1342,
+        141,
+        1493,
+        204
+      ],
+      "size": {
+        "width": 151,
+        "height": 63
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_selected_entity_portrait_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_selected_entity_portrait_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        433,
+        143,
+        650,
+        462
+      ],
+      "size": {
+        "width": 217,
+        "height": 319
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_right_quick_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_right_quick_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1507,
+        244,
+        1648,
+        886
+      ],
+      "size": {
+        "width": 141,
+        "height": 642
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_threat_row_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_threat_row_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        819,
+        245,
+        1140,
+        322
+      ],
+      "size": {
+        "width": 321,
+        "height": 77
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_side_quick_button_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_side_quick_button_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1421,
+        277,
+        1491,
+        342
+      ],
+      "size": {
+        "width": 70,
+        "height": 65
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_selected_entity_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_selected_entity_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        18,
+        288,
+        277,
+        789
+      ],
+      "size": {
+        "width": 259,
+        "height": 501
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_rule_toast_chip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_rule_toast_chip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        786,
+        355,
+        1161,
+        421
+      ],
+      "size": {
+        "width": 375,
+        "height": 66
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_invalid_command_toast_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_invalid_command_toast_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        743,
+        446,
+        1225,
+        523
+      ],
+      "size": {
+        "width": 482,
+        "height": 77
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_squad_tray_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_squad_tray_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        299,
+        495,
+        720,
+        571
+      ],
+      "size": {
+        "width": 421,
+        "height": 76
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_squad_card_normal_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_squad_card_normal_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        293,
+        609,
+        429,
+        875
+      ],
+      "size": {
+        "width": 136,
+        "height": 266
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_squad_card_selected_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_squad_card_selected_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        438,
+        608,
+        578,
+        875
+      ],
+      "size": {
+        "width": 140,
+        "height": 267
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_bar_rail_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_bar_rail_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        594,
+        610,
+        1087,
+        698
+      ],
+      "size": {
+        "width": 493,
+        "height": 88
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_minimap_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1103,
+        578,
+        1408,
+        889
+      ],
+      "size": {
+        "width": 305,
+        "height": 311
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_minimap_zoom_button_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_zoom_button_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1419,
+        692,
+        1494,
+        775
+      ],
+      "size": {
+        "width": 75,
+        "height": 83
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_button_normal_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_button_normal_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        593,
+        726,
+        672,
+        833
+      ],
+      "size": {
+        "width": 79,
+        "height": 107
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_button_selected_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_button_selected_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        675,
+        726,
+        756,
+        833
+      ],
+      "size": {
+        "width": 81,
+        "height": 107
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_button_frame_alt_1",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_button_frame_alt_1.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        758,
+        726,
+        838,
+        833
+      ],
+      "size": {
+        "width": 80,
+        "height": 107
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_button_frame_alt_2",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_button_frame_alt_2.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        841,
+        726,
+        921,
+        833
+      ],
+      "size": {
+        "width": 80,
+        "height": 107
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_button_frame_alt_3",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_button_frame_alt_3.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        924,
+        726,
+        1004,
+        833
+      ],
+      "size": {
+        "width": 80,
+        "height": 107
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_button_frame_alt_4",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_button_frame_alt_4.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        1006,
+        726,
+        1087,
+        833
+      ],
+      "size": {
+        "width": 81,
+        "height": 107
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_ability_chip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_ability_chip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        28,
+        808,
+        100,
+        875
+      ],
+      "size": {
+        "width": 72,
+        "height": 67
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_small_square_button_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_small_square_button_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Frames_Green.png",
+      "source_box": [
+        110,
+        808,
+        182,
+        875
+      ],
+      "size": {
+        "width": 72,
+        "height": 67
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_objective_list",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_objective_list.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        70,
+        60,
+        210,
+        180
+      ],
+      "size": {
+        "width": 104,
+        "height": 91
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_checkbox_empty",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_checkbox_empty.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        250,
+        60,
+        390,
+        190
+      ],
+      "size": {
+        "width": 94,
+        "height": 97
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_checkbox_checked",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_checkbox_checked.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        430,
+        60,
+        590,
+        190
+      ],
+      "size": {
+        "width": 95,
+        "height": 97
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_objective_star",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_objective_star.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        620,
+        50,
+        785,
+        190
+      ],
+      "size": {
+        "width": 114,
+        "height": 112
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_timer_clock",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_timer_clock.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        805,
+        50,
+        975,
+        195
+      ],
+      "size": {
+        "width": 108,
+        "height": 111
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_threat_warning",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_threat_warning.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1015,
+        50,
+        1180,
+        195
+      ],
+      "size": {
+        "width": 123,
+        "height": 112
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_hostile_diamond",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_hostile_diamond.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1215,
+        30,
+        1400,
+        205
+      ],
+      "size": {
+        "width": 140,
+        "height": 144
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_jump_arrow",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_jump_arrow.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1410,
+        45,
+        1630,
+        195
+      ],
+      "size": {
+        "width": 167,
+        "height": 109
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_resource_credits_coin",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_resource_credits_coin.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        60,
+        220,
+        215,
+        385
+      ],
+      "size": {
+        "width": 121,
+        "height": 123
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_resource_fuel_can",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_resource_fuel_can.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        250,
+        220,
+        395,
+        385
+      ],
+      "size": {
+        "width": 93,
+        "height": 118
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_resource_supply_crate",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_resource_supply_crate.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        430,
+        220,
+        610,
+        390
+      ],
+      "size": {
+        "width": 137,
+        "height": 118
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_civilian_group",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_civilian_group.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        620,
+        220,
+        790,
+        390
+      ],
+      "size": {
+        "width": 131,
+        "height": 115
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_pause",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_pause.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        820,
+        220,
+        980,
+        390
+      ],
+      "size": {
+        "width": 113,
+        "height": 113
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_settings_gear",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_settings_gear.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1015,
+        220,
+        1185,
+        390
+      ],
+      "size": {
+        "width": 117,
+        "height": 122
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_build_tools",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_build_tools.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1200,
+        220,
+        1390,
+        390
+      ],
+      "size": {
+        "width": 118,
+        "height": 115
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_support_parachute",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_support_parachute.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1435,
+        220,
+        1615,
+        395
+      ],
+      "size": {
+        "width": 114,
+        "height": 143
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_select_cursor",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_select_cursor.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        50,
+        385,
+        210,
+        565
+      ],
+      "size": {
+        "width": 88,
+        "height": 137
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_move_chevrons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_move_chevrons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        235,
+        385,
+        405,
+        565
+      ],
+      "size": {
+        "width": 128,
+        "height": 117
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_attack_crosshair",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_attack_crosshair.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        445,
+        385,
+        615,
+        565
+      ],
+      "size": {
+        "width": 130,
+        "height": 133
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_hold_shield",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_hold_shield.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        630,
+        385,
+        790,
+        565
+      ],
+      "size": {
+        "width": 106,
+        "height": 132
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_stop_hand",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_stop_hand.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        815,
+        385,
+        970,
+        565
+      ],
+      "size": {
+        "width": 89,
+        "height": 124
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_scan_radar",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_scan_radar.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        990,
+        385,
+        1165,
+        565
+      ],
+      "size": {
+        "width": 122,
+        "height": 126
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_command_board_vehicle",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_command_board_vehicle.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1180,
+        395,
+        1380,
+        565
+      ],
+      "size": {
+        "width": 160,
+        "height": 94
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_health_bar_small_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_health_bar_small_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1390,
+        395,
+        1660,
+        560
+      ],
+      "size": {
+        "width": 220,
+        "height": 57
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_health_bar_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_health_bar_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        45,
+        570,
+        325,
+        690
+      ],
+      "size": {
+        "width": 250,
+        "height": 60
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_status_segment_strip",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_status_segment_strip.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        345,
+        570,
+        640,
+        690
+      ],
+      "size": {
+        "width": 257,
+        "height": 50
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_shield_rank_badge",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_shield_rank_badge.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        660,
+        550,
+        795,
+        725
+      ],
+      "size": {
+        "width": 99,
+        "height": 136
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_squad_number_badge_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_squad_number_badge_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        835,
+        570,
+        975,
+        710
+      ],
+      "size": {
+        "width": 105,
+        "height": 108
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_minimap_north_arrow",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_north_arrow.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1000,
+        570,
+        1160,
+        710
+      ],
+      "size": {
+        "width": 115,
+        "height": 118
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_minimap_zoom_plus_icon",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_zoom_plus_icon.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1180,
+        570,
+        1305,
+        710
+      ],
+      "size": {
+        "width": 104,
+        "height": 105
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_minimap_zoom_minus_icon",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_zoom_minus_icon.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1335,
+        570,
+        1460,
+        710
+      ],
+      "size": {
+        "width": 104,
+        "height": 105
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_minimap_focus_target_icon",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_minimap_focus_target_icon.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        1490,
+        570,
+        1615,
+        710
+      ],
+      "size": {
+        "width": 104,
+        "height": 105
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_menu_list",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_menu_list.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        55,
+        735,
+        200,
+        870
+      ],
+      "size": {
+        "width": 115,
+        "height": 114
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_icon_invalid_warning",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_icon_invalid_warning.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        240,
+        730,
+        385,
+        875
+      ],
+      "size": {
+        "width": 112,
+        "height": 127
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_current_order_chevrons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_current_order_chevrons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_Icons_Green.png",
+      "source_box": [
+        415,
+        735,
+        600,
+        865
+      ],
+      "size": {
+        "width": 157,
+        "height": 84
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_selection_ring",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_selection_ring.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        30,
+        30,
+        610,
+        230
+      ],
+      "size": {
+        "width": 511,
+        "height": 155
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_move_destination",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_move_destination.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        620,
+        30,
+        970,
+        230
+      ],
+      "size": {
+        "width": 277,
+        "height": 176
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_path_line",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_path_line.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        990,
+        45,
+        1625,
+        230
+      ],
+      "size": {
+        "width": 558,
+        "height": 99
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_attack_target_ring",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_attack_target_ring.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        55,
+        250,
+        345,
+        505
+      ],
+      "size": {
+        "width": 227,
+        "height": 183
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_hostile_diamond",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_hostile_diamond.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        410,
+        250,
+        620,
+        520
+      ],
+      "size": {
+        "width": 166,
+        "height": 219
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_objective_star_pin",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_objective_star_pin.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        745,
+        245,
+        915,
+        535
+      ],
+      "size": {
+        "width": 139,
+        "height": 237
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_civilian_risk_zone",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_civilian_risk_zone.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        1030,
+        245,
+        1300,
+        535
+      ],
+      "size": {
+        "width": 270,
+        "height": 243
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_threat_warning_pin",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_threat_warning_pin.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        1400,
+        245,
+        1605,
+        515
+      ],
+      "size": {
+        "width": 121,
+        "height": 198
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_minimap_viewport_rect",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_minimap_viewport_rect.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        55,
+        530,
+        435,
+        720
+      ],
+      "size": {
+        "width": 343,
+        "height": 147
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_friendly_minimap_dot",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_friendly_minimap_dot.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        485,
+        540,
+        610,
+        665
+      ],
+      "size": {
+        "width": 51,
+        "height": 52
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_hostile_minimap_dot",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_hostile_minimap_dot.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        620,
+        540,
+        740,
+        665
+      ],
+      "size": {
+        "width": 58,
+        "height": 58
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_civilian_minimap_dot",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_civilian_minimap_dot.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        750,
+        540,
+        875,
+        665
+      ],
+      "size": {
+        "width": 57,
+        "height": 56
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_build_valid_footprint",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_build_valid_footprint.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        900,
+        520,
+        1305,
+        720
+      ],
+      "size": {
+        "width": 395,
+        "height": 118
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_invalid_command_x",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_invalid_command_x.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        1340,
+        510,
+        1605,
+        735
+      ],
+      "size": {
+        "width": 206,
+        "height": 157
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_scan_ping_ring",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_scan_ping_ring.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        360,
+        690,
+        720,
+        910
+      ],
+      "size": {
+        "width": 343,
+        "height": 161
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_marker_command_focus_brackets",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_marker_command_focus_brackets.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_WorldMarkers_Green.png",
+      "source_box": [
+        820,
+        705,
+        1290,
+        910
+      ],
+      "size": {
+        "width": 403,
+        "height": 145
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_portrait_rifle_squad",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_portrait_rifle_squad.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_SquadPortraits_Green.png",
+      "source_box": [
+        36,
+        219,
+        497,
+        603
+      ],
+      "size": {
+        "width": 461,
+        "height": 384
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_portrait_fast_apc",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_portrait_fast_apc.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_SquadPortraits_Green.png",
+      "source_box": [
+        540,
+        218,
+        984,
+        604
+      ],
+      "size": {
+        "width": 444,
+        "height": 386
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_portrait_recon_drone",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_portrait_recon_drone.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_SquadPortraits_Green.png",
+      "source_box": [
+        1028,
+        218,
+        1449,
+        604
+      ],
+      "size": {
+        "width": 421,
+        "height": 386
+      },
+      "key_green": true
+    },
+    {
+      "id": "scn08_portrait_bomb_suit",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/layers/scn08_portrait_bomb_suit.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-08_RTSBattleHUD/generated_v01/source/SCN-08_SquadPortraits_Green.png",
+      "source_box": [
+        1492,
+        219,
+        1875,
+        603
+      ],
+      "size": {
+        "width": 383,
+        "height": 384
+      },
+      "key_green": true
+    }
+  ]
+}

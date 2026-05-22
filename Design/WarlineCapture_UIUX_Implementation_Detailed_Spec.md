@@ -508,6 +508,8 @@ Move current gameplay speed and AI controls into:
 
 ## Phase 5 Detailed Tasks - Skirmish Setup
 
+Use `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md` as the active source for player-facing Skirmish flow, setup controls, launch behavior, presets, result routing, and 3D single-map alignment.
+
 ### Current Gap
 
 Existing AI settings are buried in `Panel_Settings`. The target has a dedicated custom setup screen.

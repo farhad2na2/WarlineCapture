@@ -2,8 +2,6 @@ using UnityEngine;
 
 public sealed class MainMenuPlayUI
 {
-    public static MainMenuPlayUI Instance { get; private set; }
-
     private RTSSelectionSystem _selectionController;
 
     public void Init(
@@ -12,10 +10,6 @@ public sealed class MainMenuPlayUI
         RTSSelectionSystem selectionController,
         DayNightSystem dayNightSystem)
     {
-        if (Instance != null && Instance != this)
-            Instance.Dispose();
-
-        Instance = this;
         _selectionController = selectionController;
         InitialUnitsRuntimeState.PlayRequested = false;
         InitialUnitsRuntimeState.SelectionModeActive = false;
@@ -27,9 +21,6 @@ public sealed class MainMenuPlayUI
 
     public void Dispose()
     {
-        if (Instance == this)
-            Instance = null;
-
         _selectionController = null;
     }
 

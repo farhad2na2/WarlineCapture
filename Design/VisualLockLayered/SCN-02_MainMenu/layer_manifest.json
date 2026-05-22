@@ -1,0 +1,1005 @@
+{
+  "surface_id": "SCN-02_MainMenu",
+  "surface_name": "Main Menu",
+  "workflow": "VisualLockLayered V15 3D Green-Screen",
+  "target_reference": "Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png",
+  "source_sheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+  "background_art_source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_BackgroundArt_21x9_NoUI.png",
+  "mode_thumbnail_source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_ModeThumbnails_Wide_Source.png",
+  "brand_logo_source": "Assets/Game/Art/UI/Generated/MainMenu/ComponentCanvas/Cleaned/brand_logo_lockup.png",
+  "contact_sheet": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/layers_contact_sheet.png",
+  "header_split_preview": "Design/VisualLockLayered/SCN-02_MainMenu/validation/header_split_preview.png",
+  "regeneration_status": "Current layer sheet is not final. Header, logo, and right action panel require a fresh generated layer source; do not crop implementation assets from the target reference.",
+  "game_direction": "Full 3D single-map mobile RTS command-base main menu, aligned with Demo/Demo2 gameplay references.",
+  "live_text": [
+    "WARLINE CAPTURE",
+    "Credits",
+    "187,540",
+    "Supplies",
+    "92,860",
+    "Command",
+    "2,715",
+    "Campaign",
+    "Operations",
+    "Skirmish",
+    "Store",
+    "Commander",
+    "Settings",
+    "COMMANDER",
+    "FIELD COMMANDER",
+    "LEVEL 38",
+    "READINESS",
+    "SQUAD MANAGEMENT",
+    "INTEL REPORT",
+    "LOCKED",
+    "COMMS ONLINE",
+    "DEPLOY OPERATION"
+  ],
+  "runtime_bound_values": [
+    "credits_amount",
+    "supplies_amount",
+    "command_amount",
+    "selected_mode",
+    "mode_progress",
+    "districts_controlled",
+    "custom_setup_count",
+    "commander_level",
+    "readiness_meter",
+    "feature_unlock_states",
+    "comms_status"
+  ],
+  "layers": [
+    {
+      "id": "scn02_header_logo_panel_bg",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_header_logo_panel_bg.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        24,
+        24,
+        430,
+        148
+      ],
+      "role": "Responsive top-left logo panel background",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_header_logo_panel_bg.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 406,
+        "height": 124,
+        "transparent_pixels": 1251,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 49093
+      }
+    },
+    {
+      "id": "scn02_header_resource_panel_bg",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_header_resource_panel_bg.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        430,
+        24,
+        950,
+        148
+      ],
+      "role": "Responsive top resource panel background, can stretch between logo and command panels",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_header_resource_panel_bg.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 520,
+        "height": 124,
+        "transparent_pixels": 1177,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 63303
+      }
+    },
+    {
+      "id": "scn02_header_command_panel_bg",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_header_command_panel_bg.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        950,
+        24,
+        1325,
+        148
+      ],
+      "role": "Responsive top command resource panel background",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_header_command_panel_bg.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 375,
+        "height": 124,
+        "transparent_pixels": 750,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 45750
+      }
+    },
+    {
+      "id": "scn02_header_right_actions_bg",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_header_right_actions_bg.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1325,
+        24,
+        1648,
+        148
+      ],
+      "role": "Responsive top-right inbox/settings action panel background",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_header_right_actions_bg.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 323,
+        "height": 124,
+        "transparent_pixels": 1101,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 38951
+      }
+    },
+    {
+      "id": "scn02_nav_button_selected_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_nav_button_selected_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        29,
+        181,
+        382,
+        269
+      ],
+      "role": "Selected left navigation button frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_nav_button_selected_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 353,
+        "height": 88,
+        "transparent_pixels": 823,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 30241
+      }
+    },
+    {
+      "id": "scn02_nav_button_inactive_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_nav_button_inactive_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        29,
+        285,
+        382,
+        374
+      ],
+      "role": "Inactive left navigation button frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_nav_button_inactive_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 353,
+        "height": 89,
+        "transparent_pixels": 832,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 30585
+      }
+    },
+    {
+      "id": "scn02_mode_card_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_mode_card_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        410,
+        181,
+        726,
+        592
+      ],
+      "role": "Primary mode card frame with header/footer lanes",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_mode_card_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 316,
+        "height": 411,
+        "transparent_pixels": 76827,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 53049
+      }
+    },
+    {
+      "id": "scn02_mode_card_thumbnail_mask_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_mode_card_thumbnail_mask_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        746,
+        181,
+        986,
+        593
+      ],
+      "role": "Mode card thumbnail frame/mask variant",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_mode_card_thumbnail_mask_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 240,
+        "height": 410,
+        "transparent_pixels": 48713,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 49687
+      }
+    },
+    {
+      "id": "scn02_commander_panel_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_commander_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1017,
+        181,
+        1318,
+        674
+      ],
+      "role": "Right commander profile panel frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_commander_panel_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 301,
+        "height": 493,
+        "transparent_pixels": 1250,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 147143
+      }
+    },
+    {
+      "id": "scn02_commander_portrait_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_commander_portrait_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1398,
+        185,
+        1562,
+        356
+      ],
+      "role": "Standalone commander portrait frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_commander_portrait_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 164,
+        "height": 171,
+        "transparent_pixels": 19711,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 8333
+      }
+    },
+    {
+      "id": "scn02_locked_row_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_locked_row_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1345,
+        391,
+        1640,
+        463
+      ],
+      "role": "Locked feature row frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_locked_row_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 295,
+        "height": 72,
+        "transparent_pixels": 117,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 21123
+      }
+    },
+    {
+      "id": "scn02_deploy_cta_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_deploy_cta_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1342,
+        605,
+        1652,
+        691
+      ],
+      "role": "Gold Deploy Operation CTA button frame, label is live TMP",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_deploy_cta_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 310,
+        "height": 86,
+        "transparent_pixels": 518,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 26142
+      }
+    },
+    {
+      "id": "scn02_comms_status_panel_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_comms_status_panel_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        24,
+        758,
+        352,
+        897
+      ],
+      "role": "Bottom-left comms/status panel frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_comms_status_panel_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 328,
+        "height": 136,
+        "transparent_pixels": 1338,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 43270
+      }
+    },
+    {
+      "id": "scn02_mode_progress_meter_frame",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_mode_progress_meter_frame.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        838,
+        708,
+        1218,
+        752
+      ],
+      "role": "Progress/readiness meter frame",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_mode_progress_meter_frame.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        24,
+        24,
+        24,
+        24
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 380,
+        "height": 44,
+        "transparent_pixels": 205,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 16515
+      }
+    },
+    {
+      "id": "scn02_readiness_segments",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_readiness_segments.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        837,
+        771,
+        1219,
+        816
+      ],
+      "role": "Readiness/progress fill segment strip",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_readiness_segments.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 376,
+        "height": 39,
+        "transparent_pixels": 1050,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 13614
+      }
+    },
+    {
+      "id": "scn02_resource_coin_badge",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_resource_coin_badge.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        426,
+        617,
+        510,
+        696
+      ],
+      "role": "Credits resource coin/star badge",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_resource_coin_badge.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 82,
+        "height": 79,
+        "transparent_pixels": 1444,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 5034
+      }
+    },
+    {
+      "id": "scn02_resource_supplies_crate",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_resource_supplies_crate.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        538,
+        616,
+        630,
+        700
+      ],
+      "role": "Supplies crate icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_resource_supplies_crate.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 86,
+        "height": 79,
+        "transparent_pixels": 1442,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 5352
+      }
+    },
+    {
+      "id": "scn02_resource_command_shield",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_resource_command_shield.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        677,
+        608,
+        750,
+        696
+      ],
+      "role": "Command resource shield badge",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_resource_command_shield.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 70,
+        "height": 88,
+        "transparent_pixels": 1360,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 4800
+      }
+    },
+    {
+      "id": "scn02_icon_campaign_crosshair",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_campaign_crosshair.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        422,
+        725,
+        492,
+        799
+      ],
+      "role": "Campaign route icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_campaign_crosshair.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 70,
+        "height": 72,
+        "transparent_pixels": 3228,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 1812
+      }
+    },
+    {
+      "id": "scn02_icon_operations_pin",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_operations_pin.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        518,
+        724,
+        584,
+        800
+      ],
+      "role": "Operations route icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_operations_pin.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 64,
+        "height": 72,
+        "transparent_pixels": 2113,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 2495
+      }
+    },
+    {
+      "id": "scn02_icon_skirmish_blades",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_skirmish_blades.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        611,
+        722,
+        678,
+        798
+      ],
+      "role": "Skirmish route icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_skirmish_blades.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 65,
+        "height": 66,
+        "transparent_pixels": 2352,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 1938
+      }
+    },
+    {
+      "id": "scn02_icon_store_cart",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_store_cart.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        702,
+        724,
+        772,
+        797
+      ],
+      "role": "Store / Command Exchange route icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_store_cart.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 66,
+        "height": 63,
+        "transparent_pixels": 2045,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 2113
+      }
+    },
+    {
+      "id": "scn02_icon_commander_bust",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_commander_bust.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        421,
+        815,
+        492,
+        892
+      ],
+      "role": "Commander route icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_commander_bust.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 61,
+        "height": 70,
+        "transparent_pixels": 1974,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 2296
+      }
+    },
+    {
+      "id": "scn02_icon_settings_gear",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_settings_gear.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        516,
+        816,
+        589,
+        892
+      ],
+      "role": "Settings route icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_settings_gear.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 67,
+        "height": 70,
+        "transparent_pixels": 2174,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 2516
+      }
+    },
+    {
+      "id": "scn02_icon_inbox_envelope",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_inbox_envelope.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        612,
+        826,
+        686,
+        887
+      ],
+      "role": "Inbox / messages icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_inbox_envelope.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 67,
+        "height": 50,
+        "transparent_pixels": 505,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 2845
+      }
+    },
+    {
+      "id": "scn02_icon_lock",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_icon_lock.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        714,
+        815,
+        773,
+        891
+      ],
+      "role": "Locked-state icon",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_icon_lock.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 56,
+        "height": 68,
+        "transparent_pixels": 1357,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 2451
+      }
+    },
+    {
+      "id": "scn02_trim_corner_brackets",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_trim_corner_brackets.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1270,
+        754,
+        1410,
+        867
+      ],
+      "role": "Decorative corner brackets",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_trim_corner_brackets.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 140,
+        "height": 112,
+        "transparent_pixels": 11873,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 3807
+      }
+    },
+    {
+      "id": "scn02_trim_slashes_and_bolts",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_trim_slashes_and_bolts.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_LayerSourceSheet_Green.png",
+      "source_box": [
+        1403,
+        786,
+        1650,
+        875
+      ],
+      "role": "Decorative slashes, bolts, and accent trims",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_trim_slashes_and_bolts.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "chroma_key_00ff00",
+      "live_text_rule": "Contains no baked text. Text, numbers, unlock labels, and route labels must be TMP/runtime-bound.",
+      "stats": {
+        "width": 244,
+        "height": 89,
+        "transparent_pixels": 17148,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 4568
+      }
+    },
+    {
+      "id": "scn02_background_art",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_background_art.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_BackgroundArt_21x9_NoUI.png",
+      "source_box": [
+        0,
+        0,
+        1915,
+        821
+      ],
+      "role": "21:9-safe no-UI 3D command-base background art. Use cover/crop, never stretch.",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_background_art.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "opaque_rectangular_art",
+      "live_text_rule": "Opaque art only. Do not bake gameplay data or mode labels into this layer.",
+      "stats": {
+        "width": 1915,
+        "height": 821,
+        "transparent_pixels": 0,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 1572215
+      }
+    },
+    {
+      "id": "scn02_campaign_thumbnail_art",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_campaign_thumbnail_art.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_ModeThumbnails_Wide_Source.png",
+      "source_box": [
+        20,
+        20,
+        1652,
+        311
+      ],
+      "role": "Wide Campaign mode card 3D thumbnail art with horizontal overscan for 20:9/21:9 reveal",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_campaign_thumbnail_art.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "opaque_rectangular_art",
+      "live_text_rule": "Opaque art only. Do not bake gameplay data or mode labels into this layer.",
+      "stats": {
+        "width": 1632,
+        "height": 291,
+        "transparent_pixels": 0,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 474912
+      }
+    },
+    {
+      "id": "scn02_operations_thumbnail_art",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_operations_thumbnail_art.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_ModeThumbnails_Wide_Source.png",
+      "source_box": [
+        20,
+        323,
+        1652,
+        616
+      ],
+      "role": "Wide Operations mode card 3D thumbnail art with horizontal overscan for 20:9/21:9 reveal",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_operations_thumbnail_art.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "opaque_rectangular_art",
+      "live_text_rule": "Opaque art only. Do not bake gameplay data or mode labels into this layer.",
+      "stats": {
+        "width": 1632,
+        "height": 293,
+        "transparent_pixels": 0,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 478176
+      }
+    },
+    {
+      "id": "scn02_skirmish_thumbnail_art",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_skirmish_thumbnail_art.png",
+      "source": "Design/VisualLockLayered/SCN-02_MainMenu/generated_one_go/source/SCN-02_MainMenu_ModeThumbnails_Wide_Source.png",
+      "source_box": [
+        20,
+        631,
+        1652,
+        922
+      ],
+      "role": "Wide Skirmish mode card 3D thumbnail art with horizontal overscan for 20:9/21:9 reveal",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_skirmish_thumbnail_art.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "opaque_rectangular_art",
+      "live_text_rule": "Opaque art only. Do not bake gameplay data or mode labels into this layer.",
+      "stats": {
+        "width": 1632,
+        "height": 291,
+        "transparent_pixels": 0,
+        "partial_alpha_pixels": 0,
+        "opaque_pixels": 474912
+      }
+    },
+    {
+      "id": "scn02_brand_logo_lockup",
+      "file": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_brand_logo_lockup.png",
+      "source": "Assets/Game/Art/UI/Generated/MainMenu/ComponentCanvas/Cleaned/brand_logo_lockup.png",
+      "source_box": "trimmed_alpha_full_image",
+      "role": "Separate Warline Capture logo lockup for top-left header panel",
+      "unity_destination": "Assets/Game/Art/UI/Generated/MainMenu/V15/scn02_brand_logo_lockup.png",
+      "sprite_import_type": "Sprite (2D and UI)",
+      "slicing_border": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "alpha_rule": "native_alpha_from_source",
+      "live_text_rule": "Logo art only. Do not use for route labels, resources, or dynamic text.",
+      "stats": {
+        "width": 1828,
+        "height": 461,
+        "transparent_pixels": 387451,
+        "partial_alpha_pixels": 75890,
+        "opaque_pixels": 379367
+      }
+    }
+  ]
+}

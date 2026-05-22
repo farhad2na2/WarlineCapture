@@ -12,6 +12,7 @@ All new packs must align with:
 - Command-base menu presentation.
 - Campaign / Operations / Skirmish player-facing modes.
 - 3D operation-map planning, briefing, minimap, deployment, threat, and battle camera states.
+- Gameplay scene references for menu/card/HUD imagery: `Assets/Game/Scenes/Demo.unity` and `Assets/Game/Scenes/Demo2.unity`.
 - Prefab-catalog unit/building display names and descriptions from `Assets/Game/Configs/Prefabs`.
 - Armory roster inspection through `SCN-19 Armory` and `POP-09 Ability / Upgrade Detail`.
 
@@ -34,6 +35,8 @@ Design/VisualLockLayered/<SurfaceId>/
 Do not start Unity Canvas implementation for a surface until the pack has the reference image, separated layers, manifest, contact sheet, and README.
 
 Use `WORKFLOW_V15_3D_GREENSCREEN.md` and `prompts/visual_lock_layered_v15_3d_green_background.md` for the active UI-agent workflow: generate target and layers, use transparent PNGs or clean `#00ff00` chroma-key backgrounds, extract to alpha, write the manifest, validate the layer pack, then convert to Unity Canvas.
+
+For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_MainMenu/REFERENCE_MOCKUP_REQUESTS.md`. Do not request separated layers until one main menu reference is approved.
 
 ## Active Screen Inventory
 

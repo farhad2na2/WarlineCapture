@@ -1,4 +1,5 @@
 using System;
+using Unity.Entities;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -69,6 +70,32 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
         _contextFactory = contextFactory;
         _commandExecutor = executor;
         WirePanelController();
+    }
+
+    public void BindRuntimeDependencies(
+        World world,
+        TacticalMapRuntimeLoader loader,
+        RTSSelectionSystem selectionSystem,
+        BattleHudGameplayBridge gameplayBridge,
+        WarlineCaptureRouter router = null,
+        WarlineCaptureMatchResultFlow resultFlow = null,
+        MatchObjectivePanelController objectivePanel = null)
+    {
+        EnsureRuntime();
+        _contextFactory = null;
+        _contextProvider = new AssistantContextProvider(
+            world,
+            loader,
+            selectionSystem,
+            gameplayBridge,
+            router,
+            resultFlow,
+            objectivePanel);
+        _commandExecutor = new CommandIntentExecutor(
+            _assistantService.SessionState,
+            world,
+            loader,
+            selectionSystem);
     }
 
     public AssistantPanelPresentationData RefreshNow()

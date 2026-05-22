@@ -7,9 +7,12 @@ using UnityEngine;
 public partial struct AIProductionSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
+    private EntityQuery _buildingPlacementRuntimeQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<AIProductionPlan>();
         state.RequireForUpdate<FactionEconomy>();
     }
@@ -19,7 +22,7 @@ public partial struct AIProductionSystem : ISystem
         if (!InitialUnitsRuntimeState.PlayRequested)
             return;
 
-        BuildingPlacementSystem buildingPlacement = BuildingPlacementSystem.Instance;
+        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
         if (buildingPlacement == null)
             return;
 
@@ -140,6 +143,15 @@ public partial struct AIProductionSystem : ISystem
         entity = Entity.Null;
         economy = default;
         return false;
+    }
+
+    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    {
+        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
+            return null;
+
+        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
+        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
     }
 
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)

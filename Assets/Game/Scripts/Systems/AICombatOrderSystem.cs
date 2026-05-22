@@ -9,9 +9,12 @@ using UnityEngine;
 public partial struct AICombatOrderSystem : ISystem
 {
     private const float OrderRefreshSeconds = 2f;
+    private EntityQuery _buildingPlacementRuntimeQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<AISquad>();
         state.RequireForUpdate<AISquadUnit>();
     }
@@ -29,6 +32,7 @@ public partial struct AICombatOrderSystem : ISystem
         NativeArray<FactionControlEntry> controls = hasControls
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
             : default;
+        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
 
         EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
         using NativeArray<Entity> squadEntities = squadQuery.ToEntityArray(Allocator.Temp);
@@ -61,7 +65,7 @@ public partial struct AICombatOrderSystem : ISystem
                 if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
                     continue;
 
-                IssueEngageOrder(em, ecb, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
+                IssueEngageOrder(em, ecb, buildingPlacement, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
                 issued++;
             }
 
@@ -140,20 +144,27 @@ public partial struct AICombatOrderSystem : ISystem
         return new float3(targetCell.x, 0f, targetCell.y);
     }
 
-    private static void IssueEngageOrder(EntityManager em, EntityCommandBuffer ecb, Entity unit, Entity target, int2 targetCell, float3 targetPosition)
+    private static void IssueEngageOrder(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        BuildingPlacementSystem buildingPlacement,
+        Entity unit,
+        Entity target,
+        int2 targetCell,
+        float3 targetPosition)
     {
         Entity engageTarget = target;
         int2 engageCell = targetCell;
         float3 engagePosition = targetPosition;
         bool issuedBreachOrder = false;
 
-        if (BuildingPlacementSystem.Instance != null &&
+        if (buildingPlacement != null &&
             em.HasComponent<Faction>(unit) &&
             em.HasComponent<UnitGrid>(unit))
         {
             byte attackerFaction = em.GetComponentData<Faction>(unit).Id;
             int2 attackerCell = em.GetComponentData<UnitGrid>(unit).Cell;
-            if (BuildingPlacementSystem.Instance.TryResolveBaseBreachTarget(
+            if (buildingPlacement.TryResolveBaseBreachTarget(
                     attackerFaction,
                     target,
                     targetCell,
@@ -267,5 +278,14 @@ public partial struct AICombatOrderSystem : ISystem
         }
 
         return factionId != 0;
+    }
+
+    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    {
+        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
+            return null;
+
+        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
+        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
     }
 }

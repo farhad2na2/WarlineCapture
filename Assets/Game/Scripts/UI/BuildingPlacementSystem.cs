@@ -183,7 +183,6 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    public static BuildingPlacementSystem Instance { get; private set; }
     private static readonly bool EnableBuildingPlacementDiagnostics = false;
     private static readonly bool EnableBuildingDestroyDiagnostics = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
@@ -409,6 +408,10 @@ public sealed class BuildingPlacementSystem
     private int _activePlacementCost;
     private RoadBuildSystem _roadBuildController;
     private MainMenuPlayUI _mainMenuPlayUi;
+    private RTSSelectionSystem _selectionSystem;
+    private RuntimeGridBlockerSystem _runtimeGridBlockerSystem;
+    private RuntimeCitySpawnerSystem _runtimeCitySpawnerSystem;
+    private CitizenPopulationSystem _citizenPopulationSystem;
     private FactionVisualSettings _factionVisualSettings;
     private DayNightSystem _dayNightSystem;
     private World _queryWorld;
@@ -528,48 +531,23 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
             return;
 
-        int width = grid.Width;
-        int height = grid.Height;
-        int prefixWidth = width + 1;
-        int prefixHeight = height + 1;
-        int totalLength = prefixWidth * prefixHeight;
-        if (_placementInvalidPrefix == null || _placementInvalidPrefix.Length != totalLength)
-            _placementInvalidPrefix = new int[totalLength];
-        else
-            System.Array.Clear(_placementInvalidPrefix, 0, _placementInvalidPrefix.Length);
-
         bool[] roadFootprintMask = null;
-        _roadBuildController ??= RoadBuildSystem.Instance;
         if (_roadBuildController != null)
         {
-            roadFootprintMask = new bool[width * height];
+            roadFootprintMask = new bool[grid.Width * grid.Height];
             _roadBuildController.FillRoadFootprintMask(grid, roadFootprintMask);
         }
 
-        RuntimeGridBlockerSystem runtimeGridBlockerSystem = RuntimeGridBlockerSystem.Instance;
-        for (int y = 0; y < height; y++)
-        {
-            int rowPrefix = 0;
-            int rowBase = (y + 1) * prefixWidth;
-            int prevRowBase = y * prefixWidth;
-            for (int x = 0; x < width; x++)
-            {
-                int index = GridUtils.CellToIndex(new int2(x, y), width);
-                bool blockedByRoad = roads[index].Value != 0 || (roadFootprintMask != null && roadFootprintMask[index]);
-                bool blockedByStaticBlocker =
-                    blockerData.Blocked.IsCreated &&
-                    blockerData.Blocked.IsSet(index) &&
-                    (runtimeGridBlockerSystem == null || !runtimeGridBlockerSystem.IsRuntimeBlockerCell(x, y, width, height));
-                if (blockedByRoad || blockedByStaticBlocker)
-                    rowPrefix++;
-
-                _placementInvalidPrefix[rowBase + x + 1] = _placementInvalidPrefix[prevRowBase + x + 1] + rowPrefix;
-            }
-        }
-
-        _placementInvalidPrefixWidth = prefixWidth;
-        _placementInvalidPrefixHeight = prefixHeight;
-        _hasPlacementInvalidPrefix = true;
+        BuildingPlacementValidationSystem.RebuildInvalidPrefix(
+            grid,
+            roads,
+            blockerData,
+            roadFootprintMask,
+            IsRuntimeBlockerCell,
+            ref _placementInvalidPrefix,
+            out _placementInvalidPrefixWidth,
+            out _placementInvalidPrefixHeight,
+            out _hasPlacementInvalidPrefix);
     }
 
     private bool HasCachedInvalidCellInFootprint(Vector2Int originCell, Vector2Int footprintCells)
@@ -577,18 +555,18 @@ public sealed class BuildingPlacementSystem
         if (!_hasPlacementInvalidPrefix)
             return false;
 
-        int xMin = originCell.x;
-        int yMin = originCell.y;
-        int xMax = originCell.x + footprintCells.x;
-        int yMax = originCell.y + footprintCells.y;
-        if (xMin < 0 || yMin < 0 || xMax >= _placementInvalidPrefixWidth || yMax >= _placementInvalidPrefixHeight)
-            return true;
+        return BuildingPlacementValidationSystem.HasCachedInvalidCellInFootprint(
+            _placementInvalidPrefix,
+            _placementInvalidPrefixWidth,
+            _placementInvalidPrefixHeight,
+            originCell,
+            footprintCells);
+    }
 
-        int topRight = _placementInvalidPrefix[yMax * _placementInvalidPrefixWidth + xMax];
-        int topLeft = _placementInvalidPrefix[yMax * _placementInvalidPrefixWidth + xMin];
-        int bottomRight = _placementInvalidPrefix[yMin * _placementInvalidPrefixWidth + xMax];
-        int bottomLeft = _placementInvalidPrefix[yMin * _placementInvalidPrefixWidth + xMin];
-        return (topRight - topLeft - bottomRight + bottomLeft) > 0;
+    private bool IsRuntimeBlockerCell(int x, int y, int width, int height)
+    {
+        return _runtimeGridBlockerSystem != null &&
+            _runtimeGridBlockerSystem.IsRuntimeBlockerCell(x, y, width, height);
     }
     public GameObject SelectedBuildingPrimarySpawnUnitPrefab => TryGetSelectedBuildingProductionPrefab(CreateSlot.Primary);
     public GameObject SelectedBuildingSecondarySpawnUnitPrefab => TryGetSelectedBuildingProductionPrefab(CreateSlot.Secondary);
@@ -1337,7 +1315,7 @@ public sealed class BuildingPlacementSystem
         return requestedBarrels - remaining;
     }
 
-    private static bool IsHouseBuilding(RuntimeBuildingData building)
+    private bool IsHouseBuilding(RuntimeBuildingData building)
     {
         if (building?.Definition == null)
             return false;
@@ -1349,9 +1327,8 @@ public sealed class BuildingPlacementSystem
             return false;
 
         string prefabName = building.Definition.Prefab != null ? building.Definition.Prefab.name : string.Empty;
-        RuntimeCitySpawnerSystem runtimeCitySpawner = RuntimeCitySpawnerSystem.Instance;
-        if (runtimeCitySpawner != null && building.Definition.Prefab != null)
-            return runtimeCitySpawner.IsConfiguredHousePrefab(building.Definition.Prefab);
+        if (_runtimeCitySpawnerSystem != null && building.Definition.Prefab != null)
+            return _runtimeCitySpawnerSystem.IsConfiguredHousePrefab(building.Definition.Prefab);
 
         return prefabName.IndexOf("house", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
                !building.Definition.IsWall;
@@ -1581,10 +1558,6 @@ public sealed class BuildingPlacementSystem
         FactionVisualSettings factionVisualSettings,
         DayNightSystem dayNightSystem)
     {
-        if (Instance != null && Instance != this)
-            Instance.Dispose();
-
-        Instance = this;
         config = configAsset;
         worldCamera = sceneWorldCamera;
         _runtimeRoot = runtimeRoot;
@@ -1605,10 +1578,25 @@ public sealed class BuildingPlacementSystem
         CreatePlacementOutline();
     }
 
-    public void BindDependencies(RoadBuildSystem roadBuildController, MainMenuPlayUI mainMenuPlayUi, DayNightSystem dayNightSystem = null)
+    public void BindDependencies(
+        RoadBuildSystem roadBuildController,
+        MainMenuPlayUI mainMenuPlayUi,
+        DayNightSystem dayNightSystem = null,
+        RTSSelectionSystem selectionSystem = null,
+        RuntimeGridBlockerSystem runtimeGridBlockerSystem = null,
+        RuntimeCitySpawnerSystem runtimeCitySpawnerSystem = null,
+        CitizenPopulationSystem citizenPopulationSystem = null)
     {
         _roadBuildController = roadBuildController;
         _mainMenuPlayUi = mainMenuPlayUi;
+        if (selectionSystem != null)
+            _selectionSystem = selectionSystem;
+        if (runtimeGridBlockerSystem != null)
+            _runtimeGridBlockerSystem = runtimeGridBlockerSystem;
+        if (runtimeCitySpawnerSystem != null)
+            _runtimeCitySpawnerSystem = runtimeCitySpawnerSystem;
+        if (citizenPopulationSystem != null)
+            _citizenPopulationSystem = citizenPopulationSystem;
         if (dayNightSystem != null)
             _dayNightSystem = dayNightSystem;
     }
@@ -1712,9 +1700,6 @@ public sealed class BuildingPlacementSystem
 
     public void Dispose()
     {
-        if (Instance == this)
-            Instance = null;
-
         ExitBuildMode();
 
         foreach (var building in _runtimeBuildings.Values)
@@ -2534,7 +2519,7 @@ public sealed class BuildingPlacementSystem
         _activePlacementCost = 0;
         PlaceBuilding(_activePlacement);
         GameRuntimeStats.RecordBuildingBuilt();
-        MainMenuPlayUI.Instance?.NotifyStaticMinimapChanged();
+        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
         _preserveBuildingSelectionOnNextExitBuildMode = true;
         ExitBuildMode(clearBuildingSelection: false);
         return true;
@@ -2861,7 +2846,7 @@ public sealed class BuildingPlacementSystem
         if (_activeBuildingId == buildingId)
             _activeBuildingId = null;
 
-        CitizenPopulationSystem.Instance?.NotifyHomeBuildingDestroyed(buildingId);
+        _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId);
         if (EnableBuildingDestroyDiagnostics)
             Debug.Log($"[BuildingDestroyed] runtimeEntity buildingId={buildingId}");
 
@@ -2924,7 +2909,7 @@ public sealed class BuildingPlacementSystem
         if (_activePlacement != null &&
             TryGetGridData(out _, out GridConfig grid, out _, out _))
         {
-            RTSSelectionSystem.Instance?.SmoothMoveCameraGroundCenterTo(
+            _selectionSystem?.SmoothMoveCameraGroundCenterTo(
                 ResolveCurrentPlacementFocusWorldPosition(_activePlacement, grid));
         }
     }
@@ -2949,7 +2934,7 @@ public sealed class BuildingPlacementSystem
             return;
         }
 
-        RTSSelectionSystem selectionController = RTSSelectionSystem.Instance;
+        RTSSelectionSystem selectionSystem = _selectionSystem;
 
         if (updateCellFromPointer)
         {
@@ -2986,7 +2971,7 @@ public sealed class BuildingPlacementSystem
             RebuildWallPlacementPreview(placement, wallOrigins, vertical, grid);
             UpdateWallPlacementOutline(GetAllWallPlacementOrigins(placement, wallOrigins), wallFootprint, grid, placement.IsValid);
             if (shouldFollowCamera)
-                selectionController?.FollowCameraGroundCenterTo(ResolvePlacementFocusWorldPosition(placement, grid, wallOrigins, wallFootprint));
+                selectionSystem?.FollowCameraGroundCenterTo(ResolvePlacementFocusWorldPosition(placement, grid, wallOrigins, wallFootprint));
             return;
         }
 
@@ -2996,7 +2981,7 @@ public sealed class BuildingPlacementSystem
         PositionBuildingObject(placement.PreviewInstance, placement.OriginCell, placement.Definition, grid, placement.AutoRotateVertical);
         UpdatePlacementOutline(placement.OriginCell, placementFootprint, grid, placement.IsValid);
         if (shouldFollowCamera)
-            selectionController?.FollowCameraGroundCenterTo(GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
+            selectionSystem?.FollowCameraGroundCenterTo(GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
     }
 
     private Vector3 ResolvePlacementFocusWorldPosition(
@@ -3099,7 +3084,7 @@ public sealed class BuildingPlacementSystem
 
         bool pathBlocking = ShouldRuntimeBuildingBlockPathing(definition);
         if (removeOverlappingBlockers && pathBlocking)
-            RuntimeGridBlockerSystem.Instance?.RemoveBlockersOverlappingFootprint(originCell, definition.FootprintCells);
+            _runtimeGridBlockerSystem?.RemoveBlockersOverlappingFootprint(originCell, definition.FootprintCells);
         Entity blockerEntity = pathBlocking ? CreateBlockerEntity(definition, originCell, definition.FootprintCells) : Entity.Null;
         Entity combatEntity = CreateBuildingCombatEntity(originCell, definition, 0, instance.transform.rotation);
         if (_deferRuntimeBuildingSideEffectsDepth > 0)
@@ -3149,11 +3134,10 @@ public sealed class BuildingPlacementSystem
         _activeBuildingId = building.Id;
         InitialUnitsRuntimeState.SuppressNextWorldClick = true;
         RefreshBuildingMarkerVisibility();
-        RTSSelectionSystem selectionController = RTSSelectionSystem.Instance;
-        selectionController?.ClearFocusedUnit();
+        _selectionSystem?.ClearFocusedUnit();
 
         Vector3 focusWorldPosition = ResolveBuildingFocusWorldPosition(building);
-        selectionController?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
+        _selectionSystem?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
     }
 
     private static bool ShouldAutoSelectAfterPlacement(BuildingDefinition definition)
@@ -3735,7 +3719,7 @@ public sealed class BuildingPlacementSystem
 
         _runtimeBuildings.Remove(buildingId);
         RefreshBuildingMarkerVisibility();
-        MainMenuPlayUI.Instance?.NotifyStaticMinimapChanged();
+        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
         return true;
     }
 
@@ -3770,7 +3754,7 @@ public sealed class BuildingPlacementSystem
 
         building.IsDestroyed = true;
         building.DestroyedCleanupAt = Time.time + DestroyedBuildingLifetimeSeconds;
-        CitizenPopulationSystem.Instance?.NotifyHomeBuildingDestroyed(building.Id);
+        _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(building.Id);
         RememberOpenBaseBreach(building);
         DestroyRuntimeBuildingBlockerEntity(building);
 
@@ -3924,7 +3908,7 @@ public sealed class BuildingPlacementSystem
         if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building))
             return;
 
-        CitizenPopulationSystem.Instance?.NotifyHomeBuildingDestroyed(buildingId);
+        _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId);
 
         if (TryGetEntityManager(out EntityManager em))
         {
@@ -4780,8 +4764,8 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridCell(screenPosition, grid, out Vector2Int cell))
             return;
 
-        var selectionController = RTSSelectionSystem.Instance;
-        if (selectionController != null && selectionController.IsBoardablePlayerTransportClick(screenPosition))
+        RTSSelectionSystem selectionSystem = _selectionSystem;
+        if (selectionSystem != null && selectionSystem.IsBoardablePlayerTransportClick(screenPosition))
             return;
 
         foreach (var entry in _runtimeBuildings)
@@ -4800,11 +4784,11 @@ public sealed class BuildingPlacementSystem
             if (TryAssignSelectedHaulerOrders(entry.Key))
             {
                 InitialUnitsRuntimeState.SuppressNextWorldClick = true;
-                RTSSelectionSystem.Instance?.ClearFocusedUnit();
+                selectionSystem?.ClearFocusedUnit();
                 return;
             }
 
-            if (selectionController != null && selectionController.TryIssueMoveOrderToBuilding(min, size))
+            if (selectionSystem != null && selectionSystem.TryIssueMoveOrderToBuilding(min, size))
             {
                 InitialUnitsRuntimeState.SuppressNextWorldClick = true;
                 ClearSelectedBuilding("MoveOrderToBuilding");
@@ -4814,7 +4798,7 @@ public sealed class BuildingPlacementSystem
             _selectedBuildingId = entry.Key;
             _activeBuildingId = entry.Key;
             InitialUnitsRuntimeState.SuppressNextWorldClick = true;
-            selectionController?.ClearFocusedUnit();
+            selectionSystem?.ClearFocusedUnit();
             return;
         }
     }
@@ -5732,7 +5716,7 @@ public sealed class BuildingPlacementSystem
                     Vector2Int otherFootprint = GetWallSegmentFootprint(placement.Definition, otherRun.Vertical);
                     for (int otherIndex = 0; otherIndex < otherRun.Origins.Count; otherIndex++)
                     {
-                        if (!DoWallSegmentsConflict(run.Origins[i], footprint, run.Vertical, otherRun.Origins[otherIndex], otherFootprint, otherRun.Vertical))
+                        if (!BuildingPlacementValidationSystem.DoWallSegmentsConflict(run.Origins[i], footprint, run.Vertical, otherRun.Origins[otherIndex], otherFootprint, otherRun.Vertical))
                             continue;
 
                         return false;
@@ -5775,7 +5759,7 @@ public sealed class BuildingPlacementSystem
                 {
                     for (int j = 0; j < run.Origins.Count; j++)
                     {
-                        if (!DoWallSegmentsConflict(origins[i], footprintCells, vertical, run.Origins[j], committedFootprint, run.Vertical))
+                        if (!BuildingPlacementValidationSystem.DoWallSegmentsConflict(origins[i], footprintCells, vertical, run.Origins[j], committedFootprint, run.Vertical))
                             continue;
 
                         return false;
@@ -5971,36 +5955,18 @@ public sealed class BuildingPlacementSystem
             ? GetEffectivePlacementRect(definition, originCell, grid, rotateVertical)
             : new RectInt(originCell, footprintCells);
 
-        if (placementRect.xMin < 0 || placementRect.yMin < 0)
-            return false;
-        if (placementRect.xMax > grid.Width || placementRect.yMax > grid.Height)
-            return false;
-
-        if (OverlapsAnyRuntimeBuilding(placementRect))
-            return false;
-
-        if (_hasPlacementInvalidPrefix)
-            return !HasCachedInvalidCellInFootprint(placementRect.position, placementRect.size);
-
-        for (int y = placementRect.yMin; y < placementRect.yMax; y++)
-        {
-            for (int x = placementRect.xMin; x < placementRect.xMax; x++)
-            {
-                int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
-                if (roads[index].Value != 0)
-                    return false;
-                if (blockerData.Blocked.IsCreated &&
-                    blockerData.Blocked.IsSet(index) &&
-                    (RuntimeGridBlockerSystem.Instance == null || !RuntimeGridBlockerSystem.Instance.IsRuntimeBlockerCell(x, y, grid.Width, grid.Height)))
-                    return false;
-            }
-        }
-
-        _roadBuildController ??= RoadBuildSystem.Instance;
-        if (_roadBuildController != null && _roadBuildController.HasRoadInFootprint(grid, placementRect.position, placementRect.size))
-            return false;
-
-        return true;
+        return BuildingPlacementValidationSystem.IsPlacementRectValid(
+            placementRect,
+            grid,
+            roads,
+            blockerData,
+            _hasPlacementInvalidPrefix,
+            _placementInvalidPrefix,
+            _placementInvalidPrefixWidth,
+            _placementInvalidPrefixHeight,
+            IsRuntimeBlockerCell,
+            _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : null,
+            OverlapsAnyRuntimeBuilding);
     }
 
     private bool IsWallPlacementValid(
@@ -6012,33 +5978,18 @@ public sealed class BuildingPlacementSystem
         DynamicBlockerData blockerData,
         bool allowExistingWallOverlap = false)
     {
-        if (originCell.x < 0 || originCell.y < 0)
-            return false;
-        if (originCell.x + footprintCells.x > grid.Width || originCell.y + footprintCells.y > grid.Height)
-            return false;
-
-        for (int y = originCell.y; y < originCell.y + footprintCells.y; y++)
-        {
-            for (int x = originCell.x; x < originCell.x + footprintCells.x; x++)
-            {
-                int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
-                if (roads[index].Value != 0)
-                    return false;
-
-                if (blockerData.Blocked.IsCreated &&
-                    blockerData.Blocked.IsSet(index) &&
-                    (RuntimeGridBlockerSystem.Instance == null || !RuntimeGridBlockerSystem.Instance.IsRuntimeBlockerCell(x, y, grid.Width, grid.Height)) &&
-                    !IsPerpendicularWallOverlapCell(x, y, vertical) &&
-                    !(allowExistingWallOverlap && IsLinearWallOverlapCell(x, y)))
-                    return false;
-            }
-        }
-
-        _roadBuildController ??= RoadBuildSystem.Instance;
-        if (_roadBuildController != null && _roadBuildController.HasRoadInFootprint(grid, originCell, footprintCells))
-            return false;
-
-        return true;
+        return BuildingPlacementValidationSystem.IsWallFootprintValid(
+            originCell,
+            footprintCells,
+            vertical,
+            grid,
+            roads,
+            blockerData,
+            allowExistingWallOverlap,
+            IsRuntimeBlockerCell,
+            (x, y) => IsPerpendicularWallOverlapCell(x, y, vertical),
+            IsLinearWallOverlapCell,
+            _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : null);
     }
 
     private bool IsLinearWallOverlapCell(int x, int y)
@@ -6079,26 +6030,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return false;
-    }
-
-    private static bool DoWallSegmentsConflict(
-        Vector2Int originA,
-        Vector2Int footprintA,
-        bool verticalA,
-        Vector2Int originB,
-        Vector2Int footprintB,
-        bool verticalB)
-    {
-        bool overlaps =
-            originA.x < originB.x + footprintB.x &&
-            originA.x + footprintA.x > originB.x &&
-            originA.y < originB.y + footprintB.y &&
-            originA.y + footprintA.y > originB.y;
-
-        if (!overlaps)
-            return false;
-
-        return verticalA == verticalB;
     }
 
     private Entity CreateBlockerEntity(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells)
@@ -6681,11 +6612,10 @@ public sealed class BuildingPlacementSystem
         InitialUnitsRuntimeState.SuppressNextWorldClick = true;
         RefreshBuildingMarkerVisibility();
 
-        RTSSelectionSystem selectionController = RTSSelectionSystem.Instance;
-        selectionController?.ClearFocusedUnit();
+        _selectionSystem?.ClearFocusedUnit();
 
         Vector3 focusWorldPosition = ResolveProductionRequestFocusWorldPosition(building, producedUnitPrefab);
-        selectionController?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
+        _selectionSystem?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
     }
 
     private void RememberCampProductionFocus(RuntimeBuildingData building, GameObject producedUnitPrefab)
@@ -9116,13 +9046,11 @@ public sealed class BuildingPlacementSystem
 
     private bool IsPointerOverPlacementUi(Vector2 screenPosition)
     {
-        _mainMenuPlayUi ??= MainMenuPlayUI.Instance;
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverPlacementUi(screenPosition);
     }
 
     private bool IsPointerOverAnyGameplayUi(Vector2 screenPosition)
     {
-        _mainMenuPlayUi ??= MainMenuPlayUI.Instance;
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out _);
     }
 
@@ -9158,17 +9086,6 @@ public sealed class BuildingPlacementSystem
                 reserved.Set(index, true);
             }
         }
-    }
-
-    private static T ResolveDependency<T>() where T : class
-    {
-        if (typeof(T) == typeof(RoadBuildSystem))
-            return RoadBuildSystem.Instance as T;
-        if (typeof(T) == typeof(MainMenuPlayUI))
-            return MainMenuPlayUI.Instance as T;
-        if (typeof(T) == typeof(RTSSelectionSystem))
-            return RTSSelectionSystem.Instance as T;
-        return null;
     }
 
 }

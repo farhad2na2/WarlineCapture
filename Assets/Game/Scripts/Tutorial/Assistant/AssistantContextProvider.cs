@@ -40,7 +40,7 @@ public sealed class AssistantContextProvider
     {
         World world = ResolveWorld();
         TacticalMapRuntimeLoader loader = ResolveLoader();
-        RTSSelectionSystem selectionSystem = _selectionSystem ?? RTSSelectionSystem.Instance;
+        RTSSelectionSystem selectionSystem = _selectionSystem;
         BattleHudGameplayBridge bridge = _gameplayBridge ?? BattleHudGameplayBridge.ResolveActive();
         WarlineCaptureRouter router = _router ?? ResolveActiveRouter();
         WarlineCaptureMatchResultFlow resultFlow = _resultFlow ?? ResolveResultFlow();

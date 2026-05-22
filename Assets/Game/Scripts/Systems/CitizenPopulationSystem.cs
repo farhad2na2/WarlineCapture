@@ -200,8 +200,6 @@ public sealed class CitizenPopulationSystem
         try
         {
         if (_buildingPlacementSystem == null)
-            _buildingPlacementSystem = BuildingPlacementSystem.Instance;
-        if (_buildingPlacementSystem == null)
             return;
 
         RefreshRuntimeBuildingLists();

@@ -36,19 +36,10 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/Authorings/FactionVisualSettingsAuthoring.cs",
         "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs",
         "Assets/Game/Scripts/Environment/RuntimeGridBlockerSystem.cs",
-        "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs",
-        "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs",
-        "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
-        "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
-        "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+        "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs"
     };
 
-    private static readonly string[] LegacyStaticDependencyLocatorFiles =
-    {
-        "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs",
-        "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
-        "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
-    };
+    private static readonly string[] LegacyStaticDependencyLocatorFiles = Array.Empty<string>();
 
     private static readonly string[] LegacyBootstrapRootFiles =
     {
@@ -82,6 +73,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("New domain gameplay types should end in `Entity`, `Component`, or `System`", contract);
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
         StringAssert.Contains("Existing `AILog` usage is grandfathered as migration debt", contract);
+        StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
+        StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
     }
 
     [Test]
@@ -232,9 +225,228 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             newViolations,
-            "Do not add new static dependency locator helpers. Pass dependencies through bootstrap/installer composition, command/query ports, or ECS data instead:" +
+            "Do not add new static dependency locator helpers. Pass dependencies through bootstrap/installer composition or ECS request/response components instead:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, newViolations));
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustNotReachThroughRuntimeSingletonDependencies()
+    {
+        const string file = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        string text = File.ReadAllText(file);
+        string[] forbiddenRuntimeSingletonReads =
+        {
+            "MainMenuPlayUI.Instance",
+            "RoadBuildSystem.Instance",
+            "RTSSelectionSystem.Instance",
+            "RuntimeGridBlockerSystem.Instance",
+            "RuntimeCitySpawnerSystem.Instance",
+            "CitizenPopulationSystem.Instance"
+        };
+
+        string[] violations = forbiddenRuntimeSingletonReads
+            .Where(token => text.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "BuildingPlacementSystem dependencies must be supplied by GameBootstrap/installer composition, not reacquired through runtime singleton Instance calls:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void UiPeerSystemsMustNotReachThroughBuildingPlacementSingleton()
+    {
+        string[] files =
+        {
+            "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
+            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+        };
+
+        string[] violations = files
+            .Where(file => File.ReadAllText(file).Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "UI peer systems must use the BuildingPlacementSystem supplied by bootstrap composition, not BuildingPlacementSystem.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void AiSystemsMustNotReachThroughBuildingPlacementSingleton()
+    {
+        string[] files =
+        {
+            "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
+            "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
+            "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
+            "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
+            "Assets/Game/Scripts/Systems/AIProductionSystem.cs"
+        };
+
+        string[] violations = files
+            .Where(file => File.ReadAllText(file).Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "AI systems must read BuildingPlacementRuntimeComponent from ECS runtime data instead of BuildingPlacementSystem.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void InitialSpawnSystemMustNotReachThroughBuildingPlacementSingleton()
+    {
+        const string file = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";
+        string text = File.ReadAllText(file);
+
+        Assert.IsFalse(
+            text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
+            "InitialUnitsSpawnSystem must read BuildingPlacementRuntimeComponent from ECS runtime data instead of BuildingPlacementSystem.Instance.");
+    }
+
+    [Test]
+    public void RuntimeCitySpawnerSystemMustNotReachThroughBuildingPlacementSingleton()
+    {
+        const string file = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        string text = File.ReadAllText(file);
+
+        Assert.IsFalse(
+            text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
+            "RuntimeCitySpawnerSystem must use the BuildingPlacementSystem supplied by bootstrap composition instead of BuildingPlacementSystem.Instance.");
+    }
+
+    [Test]
+    public void CitizenPopulationSystemMustNotReachThroughBuildingPlacementSingleton()
+    {
+        const string file = "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs";
+        string text = File.ReadAllText(file);
+
+        Assert.IsFalse(
+            text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
+            "CitizenPopulationSystem must use the BuildingPlacementSystem supplied by bootstrap composition instead of BuildingPlacementSystem.Instance.");
+    }
+
+    [Test]
+    public void CodebaseMustNotReadBuildingPlacementSingleton()
+    {
+        string[] violations = Directory.GetFiles("Assets", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Do not read BuildingPlacementSystem.Instance. Use bootstrap composition or BuildingPlacementRuntimeComponent:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void EditorTestsMustNotReadBuildingPlacementSingleton()
+    {
+        string[] violations = Directory.GetFiles("Assets/Tests/Editor", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => path != "Assets/Tests/Editor/GameplayArchitectureContractTests.cs")
+            .Where(path => File.ReadAllText(path).Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Editor tests must pass BuildingPlacementSystem explicitly instead of reading BuildingPlacementSystem.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void CompositionBoundSystemsMustNotReachThroughRoadBuildSingleton()
+    {
+        string[] files =
+        {
+            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs",
+            "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs"
+        };
+
+        string[] violations = files
+            .Where(file => File.ReadAllText(file).Contains("RoadBuildSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Systems that receive RoadBuildSystem from bootstrap composition must not reacquire it through RoadBuildSystem.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void CodebaseMustNotReadRoadBuildSingleton()
+    {
+        string[] violations = Directory.GetFiles("Assets", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("RoadBuildSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Gameplay code must use composed RoadBuildSystem references instead of RoadBuildSystem.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void CodebaseMustNotReadRtsSelectionSingleton()
+    {
+        string[] violations = Directory.GetFiles("Assets", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("RTSSelectionSystem.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Gameplay code must use composed RTSSelectionSystem references instead of RTSSelectionSystem.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void CodebaseMustNotReadMainMenuSingleton()
+    {
+        string[] violations = Directory.GetFiles("Assets", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("MainMenuPlayUI.Instance", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Gameplay code must use composed MainMenuPlayUI references instead of MainMenuPlayUI.Instance:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedValidationSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string validationFile = "Assets/Game/Scripts/Systems/BuildingPlacementValidationSystem.cs";
+        Assert.IsTrue(File.Exists(validationFile), "The building validation slice must live in BuildingPlacementValidationSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("BuildingPlacementValidationSystem.RebuildInvalidPrefix", placement);
+        StringAssert.Contains("BuildingPlacementValidationSystem.IsPlacementRectValid", placement);
+        StringAssert.Contains("BuildingPlacementValidationSystem.IsWallFootprintValid", placement);
+        StringAssert.Contains("BuildingPlacementValidationSystem.DoWallSegmentsConflict", placement);
+        Assert.IsFalse(
+            placement.Contains("private static bool DoWallSegmentsConflict", StringComparison.Ordinal),
+            "Wall segment conflict rules belong in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

@@ -56,7 +56,6 @@ public sealed class RTSSelectionSystem
         Vehicles
     }
 
-    public static RTSSelectionSystem Instance { get; private set; }
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorId = Shader.PropertyToID("_Color");
 
@@ -701,10 +700,6 @@ public sealed class RTSSelectionSystem
         BuildingPlacementSystem buildingPlacementController,
         FactionVisualSettings factionVisualSettings)
     {
-        if (Instance != null && Instance != this)
-            Instance.Dispose();
-
-        Instance = this;
         config = configAsset;
         worldCamera = sceneWorldCamera;
         _runtimeRoot = runtimeRoot;
@@ -926,8 +921,6 @@ public sealed class RTSSelectionSystem
 
     public void Dispose()
     {
-        if (Instance == this)
-            Instance = null;
         if (_pixel != null)
             Destroy(_pixel);
         if (_moveOrderMarker != null && moveOrderMarkerPrefab != null)
@@ -1112,7 +1105,6 @@ public sealed class RTSSelectionSystem
 
         if (pointer.WasPressedThisFrame)
         {
-            _mainMenuPlayUi ??= MainMenuPlayUI.Instance;
             if (_mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverSelectionCancelUi(pointerPosition))
             {
                 _mainMenuPlayUi.TriggerSelectionCancel();
@@ -1309,7 +1301,6 @@ public sealed class RTSSelectionSystem
             return;
         }
 
-        _mainMenuPlayUi ??= MainMenuPlayUI.Instance;
         if (_mainMenuPlayUi == null || !_mainMenuPlayUi.CanTriggerSelectionModeFromHold())
         {
             _selectionModeHoldArmed = false;
@@ -1374,10 +1365,6 @@ public sealed class RTSSelectionSystem
     {
         if (worldCamera == null)
             return;
-
-        _roadBuildController ??= RoadBuildSystem.Instance;
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
-        _mainMenuPlayUi ??= MainMenuPlayUI.Instance;
 
         if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
             return;
@@ -1523,7 +1510,6 @@ public sealed class RTSSelectionSystem
         _focusedUnit = selected.Count == 1 ? selected[0] : Entity.Null;
         if (_focusedUnit != Entity.Null)
         {
-            _buildingPlacementController ??= BuildingPlacementSystem.Instance;
             _buildingPlacementController?.ClearSelectedBuilding("RTSSelection.SelectUnitsInRectangle");
             ApplyHudSelection(em, _focusedUnit);
         }
@@ -3571,7 +3557,6 @@ public sealed class RTSSelectionSystem
 
     private bool IsPointerOverGameplayUi(Vector2 screenPosition, out string source)
     {
-        _mainMenuPlayUi ??= MainMenuPlayUI.Instance;
         if (_mainMenuPlayUi != null)
             return _mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out source);
 
@@ -4205,7 +4190,6 @@ public sealed class RTSSelectionSystem
         LogSelectionDiagnostic($"result=Focus source=FocusUnitEntity entity={DescribeTransportBoardingEntity(em, entity)} cache={_cachedSelectedMoveEntities.Count}");
 
         _focusedUnit = entity;
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         _buildingPlacementController?.ClearSelectedBuilding("RTSSelection.FocusUnitEntity");
         _ignoreNextLeftMouseRelease = true;
         _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
@@ -4856,7 +4840,6 @@ public sealed class RTSSelectionSystem
         LogSelectionDiagnostic($"result=Focus source=TryFocusUnit entity={DescribeTransportBoardingEntity(em, bestEntity)} cache={_cachedSelectedMoveEntities.Count}");
 
         _focusedUnit = bestEntity;
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         _buildingPlacementController?.ClearSelectedBuilding("RTSSelection.TryFocusUnit");
         _ignoreNextLeftMouseRelease = true;
         _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
@@ -4948,10 +4931,10 @@ public sealed class RTSSelectionSystem
             int2 engageCell = targetCell;
             float3 engagePosition = targetTransform.Position;
             bool issuedBreachOrder = false;
-            if (BuildingPlacementSystem.Instance != null &&
+            if (_buildingPlacementController != null &&
                 em.HasComponent<Faction>(entity) &&
                 em.HasComponent<UnitGrid>(entity) &&
-                BuildingPlacementSystem.Instance.TryResolveBaseBreachTarget(
+                _buildingPlacementController.TryResolveBaseBreachTarget(
                     em.GetComponentData<Faction>(entity).Id,
                     targetEntity,
                     targetCell,
@@ -5364,14 +5347,4 @@ public sealed class RTSSelectionSystem
             em.AddComponent<ManualMoveOrderTag>(entity);
     }
 
-    private static T ResolveDependency<T>() where T : class
-    {
-        if (typeof(T) == typeof(MainMenuPlayUI))
-            return MainMenuPlayUI.Instance as T;
-        if (typeof(T) == typeof(RoadBuildSystem))
-            return RoadBuildSystem.Instance as T;
-        if (typeof(T) == typeof(BuildingPlacementSystem))
-            return BuildingPlacementSystem.Instance as T;
-        return null;
-    }
 }

@@ -11,7 +11,6 @@ using static UnityEngine.Object;
 
 public sealed class RoadBuildSystem
 {
-    public static RoadBuildSystem Instance { get; private set; }
     public enum BuildToolMode
     {
         None,
@@ -302,6 +301,7 @@ public sealed class RoadBuildSystem
     private RoadBuildSessionSnapshot _roadBuildSessionSnapshot;
     private int? _selectedBuildingId;
     private BuildingPlacementSystem _buildingPlacementController;
+    private MainMenuPlayUI _mainMenuPlayUi;
     private World _queryWorld;
     private EntityQuery _gridDataQuery;
     private EntityQuery _roadBufferQuery;
@@ -731,10 +731,6 @@ public sealed class RoadBuildSystem
 
     public void Init(RoadBuildSystemConfig configAsset, Camera sceneWorldCamera, Transform runtimeRoot, BuildingPlacementSystem buildingPlacementController)
     {
-        if (Instance != null && Instance != this)
-            Instance.Dispose();
-
-        Instance = this;
         config = configAsset;
         worldCamera = sceneWorldCamera;
         _runtimeRoot = runtimeRoot;
@@ -751,9 +747,10 @@ public sealed class RoadBuildSystem
         CreatePlacementOutline();
     }
 
-    public void BindDependencies(BuildingPlacementSystem buildingPlacementController)
+    public void BindDependencies(BuildingPlacementSystem buildingPlacementController, MainMenuPlayUI mainMenuPlayUi = null)
     {
         _buildingPlacementController = buildingPlacementController;
+        _mainMenuPlayUi = mainMenuPlayUi;
     }
 
     private void ApplyConfigIfAvailable()
@@ -785,9 +782,6 @@ public sealed class RoadBuildSystem
 
     public void Dispose()
     {
-        if (Instance == this)
-            Instance = null;
-
         ExitBuildMode();
         _skipBuildClickFrames = 0;
 
@@ -982,22 +976,9 @@ public sealed class RoadBuildSystem
             return;
         }
 
-        var controller = Instance;
         InitialUnitsRuntimeState.BuildModeActive = enabled;
         if (enabled)
             InitialUnitsRuntimeState.SelectionModeActive = false;
-
-        if (controller == null)
-            return;
-
-        if (enabled)
-        {
-            controller.ActivateRoadBuildMode();
-        }
-        else
-        {
-            controller.ExitBuildMode();
-        }
     }
 
     private Transform CreateRuntimeChildRoot(string name)
@@ -1032,7 +1013,7 @@ public sealed class RoadBuildSystem
     {
         RemoveRuntimeBlockersUnderRoads();
         _roadBuildSessionSnapshot = null;
-        MainMenuPlayUI.Instance?.NotifyStaticMinimapChanged();
+        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
     }
 
     public void CancelRoadBuildSession()
@@ -1042,7 +1023,7 @@ public sealed class RoadBuildSystem
 
         RestoreRoadBuildSession(_roadBuildSessionSnapshot);
         _roadBuildSessionSnapshot = null;
-        MainMenuPlayUI.Instance?.NotifyStaticMinimapChanged();
+        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
     }
 
     public void BeginSoldierBasePlacement()
@@ -1050,7 +1031,6 @@ public sealed class RoadBuildSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         if (_buildingPlacementController != null)
         {
             _buildingPlacementController.BeginSoldierBasePlacement();
@@ -1076,7 +1056,6 @@ public sealed class RoadBuildSystem
 
     public void ConfirmBuildingPlacement()
     {
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         if (_buildingPlacementController != null)
         {
             _buildingPlacementController.ConfirmBuildingPlacement();
@@ -1092,7 +1071,6 @@ public sealed class RoadBuildSystem
 
     public void CancelBuildingPlacement()
     {
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         if (_buildingPlacementController != null)
         {
             _buildingPlacementController.CancelBuildingPlacement();
@@ -1107,7 +1085,6 @@ public sealed class RoadBuildSystem
 
     public void CreateSoldierFromSelectedBuilding()
     {
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         if (_buildingPlacementController != null)
         {
             _buildingPlacementController.CreateUnitFromSelectedBuilding();
@@ -1124,7 +1101,6 @@ public sealed class RoadBuildSystem
 
     public void DeleteSelectedBuilding()
     {
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         if (_buildingPlacementController != null)
         {
             _buildingPlacementController.DeleteSelectedBuilding();
@@ -2319,7 +2295,6 @@ public sealed class RoadBuildSystem
 
     public void HandleRuntimeBuildingEntityDestroyed(int buildingId, Entity blockerEntity, GameObject buildingObject)
     {
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
         if (_buildingPlacementController != null)
         {
             _buildingPlacementController.HandleRuntimeBuildingEntityDestroyed(buildingId, blockerEntity, buildingObject);
@@ -3847,15 +3822,6 @@ public sealed class RoadBuildSystem
             _previewObjectTypes[preview] = type;
 
         return preview;
-    }
-
-    private static T ResolveDependency<T>() where T : class
-    {
-        if (typeof(T) == typeof(BuildingPlacementSystem))
-            return BuildingPlacementSystem.Instance as T;
-        if (typeof(T) == typeof(MainMenuPlayUI))
-            return MainMenuPlayUI.Instance as T;
-        return null;
     }
 
     private void ReleasePreviewObject(GameObject preview)

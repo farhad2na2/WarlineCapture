@@ -6,9 +6,12 @@ using UnityEngine;
 public partial struct AIFactionControlSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
+    private EntityQuery _buildingPlacementRuntimeQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<FactionControlConfigTag>();
         state.RequireForUpdate<Faction>();
     }
@@ -22,6 +25,7 @@ public partial struct AIFactionControlSystem : ISystem
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         DynamicBuffer<FactionControlEntry> controls = SystemAPI.GetSingletonBuffer<FactionControlEntry>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
+        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
 
         for (int controlIndex = 0; controlIndex < controls.Length; controlIndex++)
         {
@@ -60,8 +64,8 @@ public partial struct AIFactionControlSystem : ISystem
             {
                 control.LastLogTime = now;
                 controls[controlIndex] = control;
-                int controlledBuildings = BuildingPlacementSystem.Instance != null
-                    ? BuildingPlacementSystem.Instance.CountRuntimeBuildingsForFaction(control.FactionId)
+                int controlledBuildings = buildingPlacement != null
+                    ? buildingPlacement.CountRuntimeBuildingsForFaction(control.FactionId)
                     : 0;
                 AILog.Log($"[AIControlMode] faction={control.FactionId} mode={(aiControlled ? "Auto" : "Manual")} controlledUnits={controlledUnits} controlledBuildings={controlledBuildings}");
             }
@@ -76,6 +80,15 @@ public partial struct AIFactionControlSystem : ISystem
     {
         if (!state.EntityManager.HasComponent<T>(entity))
             ecb.AddComponent<T>(entity);
+    }
+
+    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    {
+        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
+            return null;
+
+        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
+        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
     }
 
     private static void RemoveIfPresent<T>(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)

@@ -79,6 +79,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public UnitImpostorRenderSystem UnitImpostors { get; private set; }
     public CitizenPopulationSystem CitizenPopulation { get; private set; }
     public bool GameplayInitialized { get; private set; }
+    private Entity _buildingPlacementRuntimeEntity;
     private bool _gameplayStartPending;
     private Transform _runtimeBlockerRoot;
     private Transform _runtimeCityRoot;
@@ -145,12 +146,13 @@ public sealed class GameBootstrap : MonoBehaviour
 
         BuildingPlacement = new BuildingPlacementSystem();
         BuildingPlacement.Init(buildingPlacementConfig, worldCamera, _runtimeUiRoot, RoadBuild, null, FactionVisuals, DayNight);
+        EnsureBuildingPlacementRuntimeComponent();
 
         Selection = new RTSSelectionSystem();
         Selection.Init(rtsSelectionConfig, worldCamera, _runtimeUiRoot, null, RoadBuild, BuildingPlacement, FactionVisuals);
 
         RoadBuild.BindDependencies(BuildingPlacement);
-        BuildingPlacement.BindDependencies(RoadBuild, null, DayNight);
+        BuildingPlacement.BindDependencies(RoadBuild, null, DayNight, Selection);
         Selection.BindDependencies(null, RoadBuild, BuildingPlacement);
 
         UnitAttackTraces = new UnitAttackTraceSystem();
@@ -161,6 +163,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
         CitizenPopulation = new CitizenPopulationSystem();
         CitizenPopulation.Init(BuildingPlacement, DayNight, worldCamera);
+        BuildingPlacement.BindDependencies(RoadBuild, null, DayNight, Selection, citizenPopulationSystem: CitizenPopulation);
         GameStrings.Init(gameStringsConfig);
         SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
         InitialUnitsRuntimeState.WorldCamera = worldCamera;
@@ -181,15 +184,19 @@ public sealed class GameBootstrap : MonoBehaviour
         {
             MainMenu = new MainMenuPlayUI();
             MainMenu.Init(RoadBuild, BuildingPlacement, Selection, DayNight);
-            BuildingPlacement?.BindDependencies(RoadBuild, MainMenu, DayNight);
+            RoadBuild?.BindDependencies(BuildingPlacement, MainMenu);
+            BuildingPlacement?.BindDependencies(RoadBuild, MainMenu, DayNight, Selection);
             Selection?.BindDependencies(MainMenu, RoadBuild, BuildingPlacement);
+            BindGameplayUiRuntimeDependencies();
         }
         catch (Exception exception)
         {
             MainMenu = null;
             Debug.LogException(exception);
-            BuildingPlacement?.BindDependencies(RoadBuild, null, DayNight);
+            RoadBuild?.BindDependencies(BuildingPlacement, null);
+            BuildingPlacement?.BindDependencies(RoadBuild, null, DayNight, Selection);
             Selection?.BindDependencies(null, RoadBuild, BuildingPlacement);
+            BindGameplayUiRuntimeDependencies();
         }
     }
 
@@ -1109,6 +1116,7 @@ public sealed class GameBootstrap : MonoBehaviour
         if (menuView != null)
             menuView.GameRequested -= BeginGameplay;
 
+        ClearBuildingPlacementRuntimeComponent();
         MainMenu?.Dispose();
         Selection?.Dispose();
         BuildingPlacement?.Dispose();
@@ -1135,6 +1143,46 @@ public sealed class GameBootstrap : MonoBehaviour
         InitialUnitsRuntimeState.WorldCamera = null;
         DisposeProfilerRecorders();
         SharedPrefabPreviewCache.ReleaseAll();
+    }
+
+    private void EnsureBuildingPlacementRuntimeComponent()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated || BuildingPlacement == null)
+            return;
+
+        EntityManager em = world.EntityManager;
+        if (_buildingPlacementRuntimeEntity == Entity.Null || !em.Exists(_buildingPlacementRuntimeEntity))
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+            if (!query.IsEmptyIgnoreFilter)
+            {
+                _buildingPlacementRuntimeEntity = query.GetSingletonEntity();
+            }
+            else
+            {
+                _buildingPlacementRuntimeEntity = em.CreateEntity();
+                em.SetName(_buildingPlacementRuntimeEntity, "BuildingPlacementRuntimeEntity");
+                em.AddComponentObject(_buildingPlacementRuntimeEntity, new BuildingPlacementRuntimeComponent());
+            }
+        }
+
+        BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
+        component.BuildingPlacement = BuildingPlacement;
+    }
+
+    private void ClearBuildingPlacementRuntimeComponent()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated || _buildingPlacementRuntimeEntity == Entity.Null)
+            return;
+
+        EntityManager em = world.EntityManager;
+        if (!em.Exists(_buildingPlacementRuntimeEntity) || !em.HasComponent<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity))
+            return;
+
+        BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
+        component.BuildingPlacement = null;
     }
 
     private void StartProfilerRecorders()
@@ -1389,15 +1437,76 @@ public sealed class GameBootstrap : MonoBehaviour
             return;
 
         RuntimeCitySpawner = new RuntimeCitySpawnerSystem();
-        RuntimeCitySpawner.Init(runtimeCitySpawnerConfig, RoadBuild, BuildingPlacement, _runtimeCityRoot);
+        RuntimeCitySpawner.Init(runtimeCitySpawnerConfig, RoadBuild, BuildingPlacement, _runtimeCityRoot, MainMenu);
 
         RuntimeGridBlockers = new RuntimeGridBlockerSystem();
         RuntimeGridBlockers.Init(runtimeGridBlockerConfig, _runtimeBlockerRoot, RuntimeCitySpawner);
+        BuildingPlacement?.BindDependencies(
+            RoadBuild,
+            MainMenu,
+            DayNight,
+            Selection,
+            RuntimeGridBlockers,
+            RuntimeCitySpawner,
+            CitizenPopulation);
 
         RuntimeDecorations = new RuntimeDecorationSpawnerSystem();
         RuntimeDecorations.Init(runtimeDecorationSpawnerConfig, DecorationRoot, decorationCombinedMeshBaker, RuntimeCitySpawner, RuntimeGridBlockers);
 
         GameplayInitialized = true;
+    }
+
+    private void BindGameplayUiRuntimeDependencies()
+    {
+        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
+        World world = World.DefaultGameObjectInjectionWorld;
+
+        foreach (MatchOverlayCommandControlsController controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsController>())
+        {
+            if (IsLoadedSceneObject(controls))
+                controls.BindDependencies(Selection);
+        }
+
+        foreach (AssistantRuntimeBinding binding in Resources.FindObjectsOfTypeAll<AssistantRuntimeBinding>())
+        {
+            if (!IsLoadedSceneObject(binding))
+                continue;
+
+            WarlineCaptureRouter router = binding.GetComponentInParent<WarlineCaptureRouter>(true);
+            WarlineCaptureMatchResultFlow resultFlow = binding.GetComponentInParent<WarlineCaptureMatchResultFlow>(true);
+            MatchObjectivePanelController objectivePanel = binding.GetComponentInParent<MatchObjectivePanelController>(true);
+            BattleHudGameplayBridge bridge = binding.GetComponentInParent<BattleHudGameplayBridge>(true);
+            if (bridge == null)
+                bridge = FindLoadedSceneComponent<BattleHudGameplayBridge>();
+
+            binding.BindRuntimeDependencies(
+                world,
+                loader,
+                Selection,
+                bridge,
+                router,
+                resultFlow,
+                objectivePanel);
+        }
+    }
+
+    private static T FindLoadedSceneComponent<T>() where T : Component
+    {
+        foreach (T component in Resources.FindObjectsOfTypeAll<T>())
+        {
+            if (IsLoadedSceneObject(component))
+                return component;
+        }
+
+        return null;
+    }
+
+    private static bool IsLoadedSceneObject(Component component)
+    {
+        return component != null &&
+            component.gameObject != null &&
+            component.gameObject.scene.IsValid() &&
+            component.gameObject.scene.isLoaded;
     }
 
     private bool IsGameplayStartComplete()

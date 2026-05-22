@@ -137,6 +137,23 @@ Use narrow migrations. Do not rewrite the entire project at once.
 6. Convert mission-specific hardcoding into mission configs and systems.
 7. Retire legacy class names only when touching that domain for real behavior work.
 
+## Building Domain Migration
+
+`BuildingPlacementSystem` is legacy facade debt. It must shrink by domain slice instead of gaining new behavior.
+
+Allowed direction:
+- `BuildingPlacementSystem` keeps active placement lifecycle and temporary facade methods during migration.
+- Footprint, road, blocker, and wall-placement validity belong in `BuildingPlacementValidationSystem`.
+- Runtime building records belong in a future `RuntimeBuildingSystem`.
+- Building visuals belong in a future `BuildingVisualSystem`.
+- Building combat/destruction belongs in a future `BuildingCombatSystem`.
+- Resources belong in a future `FactionResourceSystem`.
+- Hauler behavior belongs in a future `ResourceHaulerSystem`.
+- Unit production belongs in a future `BuildingProductionSystem`.
+- UI read models belong in a temporary `BuildingUiQuerySystem` until UI uses ECS query/request components.
+
+When touching building code, do not add a new responsibility to `BuildingPlacementSystem`; extract or extend the matching `*System` slice.
+
 ## Decision Test
 
 For every class, answer:

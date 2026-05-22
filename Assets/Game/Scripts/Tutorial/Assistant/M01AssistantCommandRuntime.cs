@@ -9,22 +9,22 @@ public static class M01AssistantCommandRuntime
 
     public static TacticalCommandResult TrySelectRuntimeEntity(string runtimeEntityId)
     {
-        return TrySelectRuntimeEntity(World.DefaultGameObjectInjectionWorld, RTSSelectionSystem.Instance, runtimeEntityId);
+        return TrySelectRuntimeEntity(World.DefaultGameObjectInjectionWorld, null, runtimeEntityId);
     }
 
     public static TacticalCommandResult TryIssueMoveToAnchor(TacticalMapRuntimeLoader loader, string anchorId)
     {
-        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, loader, RTSSelectionSystem.Instance, anchorId);
+        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, loader, null, anchorId);
     }
 
     public static TacticalCommandResult TryIssueMoveToAnchor(string anchorId)
     {
-        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, ResolveActiveLoader(), RTSSelectionSystem.Instance, anchorId);
+        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, ResolveActiveLoader(), null, anchorId);
     }
 
     public static TacticalCommandResult TryIssueAttackTarget(string runtimeEntityId)
     {
-        return TryIssueAttackTarget(World.DefaultGameObjectInjectionWorld, RTSSelectionSystem.Instance, runtimeEntityId);
+        return TryIssueAttackTarget(World.DefaultGameObjectInjectionWorld, null, runtimeEntityId);
     }
 
     public static TacticalCommandResult TrySelectRuntimeEntity(

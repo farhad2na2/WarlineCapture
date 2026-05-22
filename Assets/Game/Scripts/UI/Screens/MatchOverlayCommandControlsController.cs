@@ -7,7 +7,7 @@ public sealed class MatchOverlayCommandControlsController : MonoBehaviour
     [SerializeField] private Button stopButton;
     [SerializeField] private Button commandWheelStopButton;
     [SerializeField] private CommandWheelPanelController commandWheelPanel;
-    private RTSSelectionSystem _selectionSystemOverride;
+    private RTSSelectionSystem _selectionSystem;
 
     public Button HoldButton => holdButton;
     public Button StopButton => stopButton;
@@ -39,7 +39,12 @@ public sealed class MatchOverlayCommandControlsController : MonoBehaviour
 
     public void SetSelectionSystemForTests(RTSSelectionSystem selectionSystem)
     {
-        _selectionSystemOverride = selectionSystem;
+        BindDependencies(selectionSystem);
+    }
+
+    public void BindDependencies(RTSSelectionSystem selectionSystem)
+    {
+        _selectionSystem = selectionSystem;
     }
 
     public bool IssueHoldCommand()
@@ -74,6 +79,6 @@ public sealed class MatchOverlayCommandControlsController : MonoBehaviour
 
     private RTSSelectionSystem ResolveSelectionSystem()
     {
-        return _selectionSystemOverride ?? RTSSelectionSystem.Instance;
+        return _selectionSystem;
     }
 }

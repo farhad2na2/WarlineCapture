@@ -5,9 +5,12 @@ public partial struct AIEconomySystem : ISystem
 {
     private const float MinSellBarrels = 1f;
     private const float LogIntervalSeconds = 10f;
+    private EntityQuery _buildingPlacementRuntimeQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<FactionEconomy>();
     }
 
@@ -16,7 +19,7 @@ public partial struct AIEconomySystem : ISystem
         if (!InitialUnitsRuntimeState.PlayRequested)
             return;
 
-        BuildingPlacementSystem buildingPlacement = BuildingPlacementSystem.Instance;
+        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
 
@@ -79,5 +82,14 @@ public partial struct AIEconomySystem : ISystem
 
             economyRef.ValueRW = economy;
         }
+    }
+
+    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    {
+        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
+            return null;
+
+        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
+        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
     }
 }

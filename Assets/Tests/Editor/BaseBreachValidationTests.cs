@@ -826,7 +826,7 @@ public sealed class BaseBreachValidationTests
             NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
 
             int2 startCell = FindFreeCellNear(grid, walkable, blockerData.Blocked, blockerData.FriendlyPassFactionIds, occupancyData.Occupied, playerAnchor + new Vector2Int(-96, 6), 0);
-            Entity target = FindEnemyInnerBuildingTarget(em, 1, new int2(enemyAnchor.x, enemyAnchor.y));
+            Entity target = FindEnemyInnerBuildingTarget(buildingPlacement, em, 1, new int2(enemyAnchor.x, enemyAnchor.y));
             Assert.AreNotEqual(Entity.Null, target, "The actual initial enemy base should expose a non-wall building combat target.");
             int2 targetCell = em.GetComponentData<UnitGrid>(target).Cell;
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
@@ -1050,10 +1050,13 @@ public sealed class BaseBreachValidationTests
         return false;
     }
 
-    private static Entity FindEnemyInnerBuildingTarget(EntityManager em, byte factionId, int2 baseCenter)
+    private static Entity FindEnemyInnerBuildingTarget(BuildingPlacementSystem buildingPlacement, EntityManager em, byte factionId, int2 baseCenter)
     {
         Entity best = Entity.Null;
         int bestScore = int.MaxValue;
+        if (buildingPlacement == null)
+            return best;
+
         using EntityQuery query = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -1066,7 +1069,7 @@ public sealed class BaseBreachValidationTests
             Entity entity = entities[i];
             if (em.GetComponentData<Faction>(entity).Id != factionId ||
                 em.GetComponentData<UnitHealth>(entity).Current <= 0 ||
-                !BuildingPlacementSystem.Instance.TryGetRuntimeBuildingCombatInfo(entity, out bool isGate, out bool isWall, out _) ||
+                !buildingPlacement.TryGetRuntimeBuildingCombatInfo(entity, out bool isGate, out bool isWall, out _) ||
                 isGate ||
                 isWall)
             {

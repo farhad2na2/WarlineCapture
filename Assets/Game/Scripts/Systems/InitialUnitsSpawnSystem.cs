@@ -18,9 +18,12 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private const int DiagnosticIntervalFrames = 120;
 
     private int _nextDiagnosticFrame;
+    private EntityQuery _buildingPlacementRuntimeQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<InitialUnitsSpawnConfig>();
         state.RequireForUpdate<DynamicOccupancyData>();
@@ -38,6 +41,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         bool useM01CompactRuntime = Chapter01M01PlayableRuntime.IsActiveMission();
         var queueEntity = RespawnQueueUtils.GetOrCreateQueue(ref state);
         var em = state.EntityManager;
+        BuildingPlacementSystem buildingPlacementController = GetBuildingPlacement(ref state);
 
         var initQuery = SystemAPI.QueryBuilder()
             .WithAll<InitialUnitsSpawnConfig>()
@@ -76,9 +80,9 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(entity);
             var rng = new Unity.Mathematics.Random(math.max(1u, progress.RandomState));
 
-            if (progress.InitialBuildingsSpawned == 0 && BuildingPlacementSystem.Instance != null)
+            if (progress.InitialBuildingsSpawned == 0 && buildingPlacementController != null)
             {
-                BuildingPlacementSystem.Instance.SetInitialResourceTotals(
+                buildingPlacementController.SetInitialResourceTotals(
                     config.InitialDollars,
                     config.InitialOil,
                     config.InitialFuel);
@@ -110,7 +114,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
             if (progress.InitialBuildingsSpawned == 0)
             {
-                BuildingPlacementSystem buildingPlacementController = BuildingPlacementSystem.Instance;
                 bool allInitialBuildingsSpawned = true;
                 if (useM01CompactRuntime)
                 {
@@ -211,7 +214,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     float3 pos = default;
                     bool foundPlatformSpawn = isAirUnit &&
                         TryGetInitialAirPlatformSpawn(
-                            BuildingPlacementSystem.Instance,
+                            buildingPlacementController,
                             unitSpawn.FactionId,
                             unitSpawn.SpawnOffset,
                             grid,
@@ -396,6 +399,15 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         return false;
     }
 
+    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    {
+        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
+            return null;
+
+        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
+        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
+    }
+
     private static bool TrySpawnInitialFactionBases(
         BuildingPlacementSystem buildingPlacementController,
         InitialUnitsSpawnConfig config,
@@ -526,7 +538,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                         Vector3 coreFocus = GetFootprintCenterWorld(actualOrigin, actualFootprint, grid);
                         InitialUnitsRuntimeState.InitialCameraFocusWorld = coreFocus;
                         InitialUnitsRuntimeState.InitialCameraFocusRequested = true;
-                        RTSSelectionSystem.Instance?.MoveCameraGroundCenterTo(coreFocus);
                     }
                     spawnedForFaction++;
                 }

@@ -104,6 +104,7 @@ public sealed class RuntimeCitySpawnerSystem
 
     private BuildingPlacementSystem _buildingPlacementController;
     private RoadBuildSystem _roadBuildController;
+    private MainMenuPlayUI _mainMenuPlayUi;
     private Transform _cityVisualRoot;
     private IEnumerator _generationRoutine;
     private int _generationStartedFrame = -1;
@@ -130,13 +131,15 @@ public sealed class RuntimeCitySpawnerSystem
         RuntimeCitySpawnerSystemConfig configAsset,
         RoadBuildSystem roadBuildController,
         BuildingPlacementSystem buildingPlacementController,
-        Transform runtimeRoot)
+        Transform runtimeRoot,
+        MainMenuPlayUI mainMenuPlayUi = null)
     {
         Instance = this;
         config = configAsset;
         _roadBuildController = roadBuildController;
         _buildingPlacementController = buildingPlacementController;
         _runtimeRoot = runtimeRoot;
+        _mainMenuPlayUi = mainMenuPlayUi;
         ApplyConfigIfAvailable();
     }
 
@@ -275,9 +278,6 @@ public sealed class RuntimeCitySpawnerSystem
             return;
         }
 
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
-        _roadBuildController ??= RoadBuildSystem.Instance;
-
         if (_roadBuildController == null)
             return;
         if (generateBuildings && _buildingPlacementController == null)
@@ -362,9 +362,6 @@ public sealed class RuntimeCitySpawnerSystem
             return;
         if (cityCount <= 0)
             return;
-
-        _buildingPlacementController ??= BuildingPlacementSystem.Instance;
-        _roadBuildController ??= RoadBuildSystem.Instance;
 
         if (_roadBuildController == null)
             return;
@@ -558,7 +555,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (generateBuildings)
                 _buildingPlacementController?.EndDeferredRuntimeBuildingSideEffects();
 
-            MainMenuPlayUI.Instance?.NotifyStaticMinimapChanged();
+            _mainMenuPlayUi?.NotifyStaticMinimapChanged();
             _spawned = true;
             if (EnableRuntimeCityDiagnostics)
                 Debug.Log($"[RuntimeCityState] frame={Time.frameCount} reason=completed cities={cities.Count} ageFrames={Time.frameCount - _generationStartedFrame} steps={_generationMoveNextCount}");

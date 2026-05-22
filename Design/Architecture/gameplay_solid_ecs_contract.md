@@ -144,10 +144,10 @@ Use narrow migrations. Do not rewrite the entire project at once.
 Allowed direction:
 - `BuildingPlacementSystem` keeps active placement lifecycle and temporary facade methods during migration.
 - Footprint, road, blocker, and wall-placement validity belong in `BuildingPlacementValidationSystem`.
-- Runtime building records belong in a future `RuntimeBuildingSystem`.
-- Building visuals belong in a future `BuildingVisualSystem`.
-- Building combat/destruction belongs in a future `BuildingCombatSystem`.
-- Resources belong in a future `FactionResourceSystem`.
+- Runtime building registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`.
+- Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; full building visual ownership should continue moving there by slice.
+- Building destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`; full building combat ownership should continue moving there by slice.
+- Resource storage classification, capacity display math, resource totals, faction economy snapshots, and sell/drain behavior belong in `FactionResourceSystem`; resource production ticks should continue moving there by slice.
 - Hauler behavior belongs in a future `ResourceHaulerSystem`.
 - Unit production belongs in a future `BuildingProductionSystem`.
 - UI read models belong in a temporary `BuildingUiQuerySystem` until UI uses ECS query/request components.

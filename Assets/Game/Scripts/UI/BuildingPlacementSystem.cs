@@ -228,17 +228,8 @@ public sealed class BuildingPlacementSystem
         public Vector3 RunwayHalfExtents;
     }
 
-    private sealed class RuntimeBuildingData
+    private sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuilding, FactionResourceSystem.IResourceBuilding
     {
-        public sealed class AnimatedPart
-        {
-            public Transform Transform;
-            public Vector3 BaseLocalEulerAngles;
-            public Vector3 Axis;
-            public float AngleLimit;
-            public float PhaseOffset;
-        }
-
         public sealed class PendingDropVisual
         {
             public PendingProduction Production;
@@ -291,12 +282,12 @@ public sealed class BuildingPlacementSystem
             public bool TransportRequiresAirportRunway;
         }
 
-        public int Id;
+        public int Id { get; set; }
         public BuildingDefinition Definition;
         public GameObject Instance;
         public Vector2Int OriginCell;
-        public Entity CombatEntity;
-        public Entity BlockerEntity;
+        public Entity CombatEntity { get; set; }
+        public Entity BlockerEntity { get; set; }
         public Transform FactionMarker;
         public Renderer[] FactionMarkerRenderers;
         public Transform SelectionMarker;
@@ -306,20 +297,24 @@ public sealed class BuildingPlacementSystem
         public float DoorOpen01;
         public Transform DestroyedVisual;
         public Transform[] AliveVisualRoots;
-        public AnimatedPart[] AnimatedParts;
+        public BuildingVisualSystem.AnimatedPart[] AnimatedParts;
         public Vector3[] ProductionSpawnLocalPositions;
         public Entity[] ProducedUnitSlots;
         public List<Entity> ProducedUnits;
         public Dictionary<Entity, GameObject> ProducedUnitPrefabs;
         public List<PendingProduction> PendingProductions;
         public ActiveProductionTransport ActiveTransport;
-        public bool IsDestroyed;
+        public bool IsDestroyed { get; set; }
         public bool IsCityGenerated;
-        public bool HasOwnerFaction;
-        public byte OwnerFactionId;
-        public float DestroyedCleanupAt;
-        public float StoredOilBarrels;
-        public float StoredFuelBarrels;
+        public bool HasOwnerFaction { get; set; }
+        public byte OwnerFactionId { get; set; }
+        public float DestroyedCleanupAt { get; set; }
+        public float StoredOilBarrels { get; set; }
+        public float StoredFuelBarrels { get; set; }
+        public int OilStorageCapacity => Definition != null ? Definition.OilStorageCapacity : 0;
+        public int FuelStorageCapacity => Definition != null ? Definition.FuelStorageCapacity : 0;
+        public float OilBarrelsPerDay => Definition != null ? Definition.OilBarrelsPerDay : 0f;
+        public float FuelBarrelsPerDay => Definition != null ? Definition.FuelBarrelsPerDay : 0f;
     }
 
     private readonly struct RuntimeBaseBreach
@@ -389,7 +384,11 @@ public sealed class BuildingPlacementSystem
     [SerializeField, HideInInspector] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f);
     [SerializeField, HideInInspector] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
 
-    private readonly Dictionary<int, RuntimeBuildingData> _runtimeBuildings = new();
+    private readonly RuntimeBuildingSystem<RuntimeBuildingData> _runtimeBuildingSystem = new();
+    private readonly BuildingVisualSystem _buildingVisualSystem = new();
+    private readonly BuildingCombatSystem _buildingCombatSystem = new();
+    private readonly FactionResourceSystem _factionResourceSystem = new();
+    private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
     private readonly Dictionary<GameObject, CachedRuntimeBuildingMetadata> _runtimeBuildingMetadataCache = new();
     private readonly Dictionary<string, GameObject> _spawnablesByKey = new();
     private readonly Dictionary<string, GameObject> _unitSpawnPrefabsByKey = new();
@@ -424,9 +423,6 @@ public sealed class BuildingPlacementSystem
     private EntityQuery _livePlayerUnitsQuery;
     private EntityQuery _liveUnitFootprintQuery;
     private EntityQuery _liveFactionUnitsQuery;
-    private int _nextBuildingId = 1;
-    private int? _selectedBuildingId;
-    private int? _activeBuildingId;
     private uint _buildingSpawnRandomState = 0x12345678u;
     private bool _isDraggingPlacement;
     private bool _ignorePointerUpdatesUntilRelease;
@@ -447,24 +443,11 @@ public sealed class BuildingPlacementSystem
     private const int BarrierDoorDetectPaddingCells = 8;
     private const float OilBarrelsPerFuelBarrel = 2f;
 
-    private int? ActiveBuildingId
-    {
-        get
-        {
-            if (_activeBuildingId.HasValue && _runtimeBuildings.ContainsKey(_activeBuildingId.Value))
-                return _activeBuildingId.Value;
-            if (_selectedBuildingId.HasValue && _runtimeBuildings.ContainsKey(_selectedBuildingId.Value))
-            {
-                _activeBuildingId = _selectedBuildingId.Value;
-                return _selectedBuildingId.Value;
-            }
-            return null;
-        }
-    }
+    private int? ActiveBuildingId => _runtimeBuildingSystem.CurrentActiveBuildingId;
 
     public bool HasPendingBuildingPlacement => _activePlacement != null;
     public bool CanConfirmBuildingPlacement => _activePlacement != null && _activePlacement.IsValid;
-    public bool HasSelectedBuilding => _selectedBuildingId.HasValue && _runtimeBuildings.ContainsKey(_selectedBuildingId.Value);
+    public bool HasSelectedBuilding => _runtimeBuildingSystem.HasSelectedBuilding();
     public bool HasActiveBuilding => ActiveBuildingId.HasValue;
     public int? CurrentActiveBuildingId => ActiveBuildingId;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
@@ -699,21 +682,7 @@ public sealed class BuildingPlacementSystem
         if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) || building?.Definition == null)
             return false;
 
-        max = GetDisplayedOilCapacity(building);
-        if (max > 0)
-        {
-            current = Mathf.Clamp(Mathf.CeilToInt(building.StoredOilBarrels), 0, max);
-            progress01 = Mathf.Clamp01(building.StoredOilBarrels / max);
-            return true;
-        }
-
-        max = Mathf.Max(0, building.Definition.FuelStorageCapacity);
-        if (max <= 0)
-            return false;
-
-        current = Mathf.Clamp(Mathf.FloorToInt(building.StoredFuelBarrels), 0, max);
-        progress01 = Mathf.Clamp01(building.StoredFuelBarrels / max);
-        return true;
+        return _factionResourceSystem.TryGetPrimaryCapacityInfo(building, OilBarrelsPerFuelBarrel, out current, out max, out progress01);
     }
 
     public void GetFriendlyPendingProductionUiEntries(List<PendingProductionUiEntry> entries)
@@ -748,24 +717,6 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    private static int GetDisplayedOilCapacity(RuntimeBuildingData building)
-    {
-        if (building?.Definition == null)
-            return 0;
-
-        int explicitOilCapacity = Mathf.Max(0, building.Definition.OilStorageCapacity);
-        if (explicitOilCapacity > 0)
-            return explicitOilCapacity;
-
-        if (building.Definition.FuelBarrelsPerDay > 0f)
-        {
-            int derivedFromFuel = Mathf.CeilToInt(Mathf.Max(1f, building.Definition.FuelStorageCapacity) * OilBarrelsPerFuelBarrel);
-            return Mathf.Max(1, derivedFromFuel);
-        }
-
-        return 0;
-    }
-
     public bool TryGetSelectedBuildingCapacity2Info(out int current, out int max, out float progress01)
     {
         current = 0;
@@ -779,68 +730,44 @@ public sealed class BuildingPlacementSystem
         if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) || building?.Definition == null)
             return false;
 
-        max = Mathf.Max(0, building.Definition.FuelStorageCapacity);
-        if (max <= 0)
-            return false;
-
-        current = Mathf.Clamp(Mathf.FloorToInt(building.StoredFuelBarrels), 0, max);
-        progress01 = Mathf.Clamp01(building.StoredFuelBarrels / max);
-        return true;
+        return _factionResourceSystem.TryGetFuelCapacityInfo(building, out current, out max, out progress01);
     }
 
     public void GetResourceTotals(out int dollars, out int oilBarrels, out int fuelBarrels)
     {
         dollars = _resourceDollars;
-        oilBarrels = 0;
-        fuelBarrels = 0;
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building == null || building.IsDestroyed || building.Definition == null)
-                continue;
-
-            if (!IsResourceStorageBuilding(building))
-                continue;
-
-            if (building.Definition.OilStorageCapacity > 0)
-                oilBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredOilBarrels));
-            if (building.Definition.FuelStorageCapacity > 0)
-            fuelBarrels += Mathf.Max(0, Mathf.FloorToInt(building.StoredFuelBarrels));
-        }
+        _factionResourceSystem.GetResourceTotals(_runtimeBuildings, out oilBarrels, out fuelBarrels);
     }
 
     public int CurrentDollars => _resourceDollars;
 
     public bool TryGetFactionResourceEconomy(byte factionId, out FactionResourceEconomySnapshot snapshot)
     {
-        float oil = 0f;
-        float fuel = 0f;
-        float oilRate = 0f;
-        float fuelRate = 0f;
-        int resourceBuildingCount = 0;
-
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (!IsFactionResourceBuilding(building, factionId))
-                continue;
-
-            resourceBuildingCount++;
-            oil += Mathf.Max(0f, building.StoredOilBarrels);
-            fuel += Mathf.Max(0f, building.StoredFuelBarrels);
-            oilRate += Mathf.Max(0f, building.Definition.OilBarrelsPerDay);
-            fuelRate += Mathf.Max(0f, building.Definition.FuelBarrelsPerDay);
-        }
-
-        snapshot = new FactionResourceEconomySnapshot(oil, fuel, oilRate, fuelRate, resourceBuildingCount);
-        return resourceBuildingCount > 0;
+        bool hasEconomy = _factionResourceSystem.TryGetFactionResourceEconomy(
+            _runtimeBuildings,
+            factionId,
+            out FactionResourceSystem.ResourceEconomySnapshot resourceSnapshot);
+        snapshot = new FactionResourceEconomySnapshot(
+            resourceSnapshot.StoredOilBarrels,
+            resourceSnapshot.StoredFuelBarrels,
+            resourceSnapshot.OilBarrelsPerDay,
+            resourceSnapshot.FuelBarrelsPerDay,
+            resourceSnapshot.ResourceBuildingCount);
+        return hasEconomy;
     }
 
     public void SellFactionResources(byte factionId, float requestedOilBarrels, float requestedFuelBarrels, out float soldOilBarrels, out float soldFuelBarrels)
     {
-        soldOilBarrels = DrainFactionResource(factionId, Mathf.Max(0f, requestedOilBarrels), ResourceHaulKind.Oil);
-        soldFuelBarrels = DrainFactionResource(factionId, Mathf.Max(0f, requestedFuelBarrels), ResourceHaulKind.Fuel);
+        soldOilBarrels = _factionResourceSystem.DrainFactionResource(
+            _runtimeBuildings,
+            factionId,
+            Mathf.Max(0f, requestedOilBarrels),
+            FactionResourceSystem.ResourceKind.Oil);
+        soldFuelBarrels = _factionResourceSystem.DrainFactionResource(
+            _runtimeBuildings,
+            factionId,
+            Mathf.Max(0f, requestedFuelBarrels),
+            FactionResourceSystem.ResourceKind.Fuel);
     }
 
     public int CountRuntimeBuildingsForFaction(byte factionId)
@@ -1262,59 +1189,6 @@ public sealed class BuildingPlacementSystem
         _resourceDollars = Mathf.Max(0, dollars);
     }
 
-    private static bool IsResourceStorageBuilding(RuntimeBuildingData building)
-    {
-        if (building?.Definition == null)
-            return false;
-
-        bool storesOil = building.Definition.OilStorageCapacity > 0;
-        bool storesFuel = building.Definition.FuelStorageCapacity > 0;
-        bool producesOil = building.Definition.OilBarrelsPerDay > 0f;
-        bool producesFuel = building.Definition.FuelBarrelsPerDay > 0f;
-        return (storesOil || storesFuel) && !producesOil && !producesFuel;
-    }
-
-    private static bool IsFactionResourceBuilding(RuntimeBuildingData building, byte factionId)
-    {
-        if (building?.Definition == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-            return false;
-
-        return building.Definition.OilStorageCapacity > 0 ||
-               building.Definition.FuelStorageCapacity > 0 ||
-               building.Definition.OilBarrelsPerDay > 0f ||
-               building.Definition.FuelBarrelsPerDay > 0f;
-    }
-
-    private float DrainFactionResource(byte factionId, float requestedBarrels, ResourceHaulKind resourceKind)
-    {
-        if (requestedBarrels <= 0f)
-            return 0f;
-
-        float remaining = requestedBarrels;
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (!IsFactionResourceBuilding(building, factionId))
-                continue;
-
-            float stored = resourceKind == ResourceHaulKind.Fuel ? building.StoredFuelBarrels : building.StoredOilBarrels;
-            float drained = Mathf.Min(Mathf.Max(0f, stored), remaining);
-            if (drained <= 0f)
-                continue;
-
-            if (resourceKind == ResourceHaulKind.Fuel)
-                building.StoredFuelBarrels = Mathf.Max(0f, building.StoredFuelBarrels - drained);
-            else
-                building.StoredOilBarrels = Mathf.Max(0f, building.StoredOilBarrels - drained);
-
-            remaining -= drained;
-            if (remaining <= 0.001f)
-                break;
-        }
-
-        return requestedBarrels - remaining;
-    }
-
     private bool IsHouseBuilding(RuntimeBuildingData building)
     {
         if (building?.Definition == null)
@@ -1716,7 +1590,7 @@ public sealed class BuildingPlacementSystem
             }
         }
 
-        _runtimeBuildings.Clear();
+        _runtimeBuildingSystem.Clear();
 
         for (int i = 0; i < _configuredSpawnableDefinitions.Count; i++)
             CleanupCombinedVisualTemplate(_configuredSpawnableDefinitions[i]);
@@ -2780,7 +2654,7 @@ public sealed class BuildingPlacementSystem
         if (!DeleteBuilding(buildingId, true))
             return false;
 
-        if (_selectedBuildingId == buildingId || _activeBuildingId == buildingId)
+        if (_runtimeBuildingSystem.SelectedBuildingId == buildingId || _runtimeBuildingSystem.ActiveBuildingId == buildingId)
             ClearSelectedBuilding("DeleteBuildingById");
 
         return true;
@@ -2793,8 +2667,7 @@ public sealed class BuildingPlacementSystem
 
     public void ClearSelectedBuilding(string reason)
     {
-        _selectedBuildingId = null;
-        _activeBuildingId = null;
+        _runtimeBuildingSystem.ClearSelection();
         RefreshBuildingMarkerVisibility();
     }
 
@@ -2841,10 +2714,8 @@ public sealed class BuildingPlacementSystem
             return;
         }
 
-        if (_selectedBuildingId == buildingId)
-            _selectedBuildingId = null;
-        if (_activeBuildingId == buildingId)
-            _activeBuildingId = null;
+        if (_runtimeBuildingSystem.SelectedBuildingId == buildingId || _runtimeBuildingSystem.ActiveBuildingId == buildingId)
+            _runtimeBuildingSystem.ClearSelection();
 
         _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId);
         if (EnableBuildingDestroyDiagnostics)
@@ -2853,7 +2724,7 @@ public sealed class BuildingPlacementSystem
         if (blockerEntity != Entity.Null && TryGetEntityManager(out EntityManager em) && em.Exists(blockerEntity))
             em.DestroyEntity(blockerEntity);
 
-        _runtimeBuildings.Remove(buildingId);
+        _runtimeBuildingSystem.RemoveBuilding(buildingId);
         if (buildingObject != null)
             Destroy(buildingObject);
         RefreshBuildingMarkerVisibility();
@@ -3076,7 +2947,8 @@ public sealed class BuildingPlacementSystem
 
     private RuntimeBuildingData RegisterRuntimeBuilding(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers = true)
     {
-        instance.name = $"{definition.DisplayName}_{_nextBuildingId}";
+        int buildingId = _runtimeBuildingSystem.AllocateId();
+        instance.name = $"{definition.DisplayName}_{buildingId}";
 
         RectInt occupiedRect = new(originCell, definition.FootprintCells);
         if (TryGetGridData(out _, out GridConfig grid, out _, out _))
@@ -3100,7 +2972,7 @@ public sealed class BuildingPlacementSystem
 
         var building = new RuntimeBuildingData
         {
-            Id = _nextBuildingId++,
+            Id = buildingId,
             Definition = definition,
             Instance = instance,
             OriginCell = originCell,
@@ -3117,7 +2989,7 @@ public sealed class BuildingPlacementSystem
 
         InitializeBuildingVisuals(building);
         AttachRuntimeLink(building);
-        _runtimeBuildings.Add(building.Id, building);
+        _runtimeBuildingSystem.AddBuilding(building.Id, building);
         if (_deferRuntimeBuildingSideEffectsDepth > 0)
             _pendingMarkerRefresh = true;
         else
@@ -3130,8 +3002,7 @@ public sealed class BuildingPlacementSystem
         if (building == null)
             return;
 
-        _selectedBuildingId = building.Id;
-        _activeBuildingId = building.Id;
+        _runtimeBuildingSystem.SelectBuilding(building.Id);
         InitialUnitsRuntimeState.SuppressNextWorldClick = true;
         RefreshBuildingMarkerVisibility();
         _selectionSystem?.ClearFocusedUnit();
@@ -3717,7 +3588,7 @@ public sealed class BuildingPlacementSystem
         if (destroyVisual && building.Instance != null)
             Destroy(building.Instance);
 
-        _runtimeBuildings.Remove(buildingId);
+        _runtimeBuildingSystem.RemoveBuilding(buildingId);
         RefreshBuildingMarkerVisibility();
         _mainMenuPlayUi?.NotifyStaticMinimapChanged();
         return true;
@@ -3725,21 +3596,7 @@ public sealed class BuildingPlacementSystem
 
     private void UpdateDestroyedBuildings()
     {
-        if (_runtimeBuildings.Count == 0)
-            return;
-
-        List<int> cleanupIds = null;
-        float now = Time.time;
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (!building.IsDestroyed || now < building.DestroyedCleanupAt)
-                continue;
-
-            cleanupIds ??= new List<int>();
-            cleanupIds.Add(entry.Key);
-        }
-
+        List<int> cleanupIds = _buildingCombatSystem.CollectDestroyedCleanupIds(_runtimeBuildings, Time.time);
         if (cleanupIds == null)
             return;
 
@@ -3749,28 +3606,24 @@ public sealed class BuildingPlacementSystem
 
     private bool BeginDestroyedBuildingState(RuntimeBuildingData building)
     {
-        if (building == null || building.IsDestroyed)
+        if (!_buildingCombatSystem.TryMarkDestroyed(building, Time.time, DestroyedBuildingLifetimeSeconds))
             return false;
 
-        building.IsDestroyed = true;
-        building.DestroyedCleanupAt = Time.time + DestroyedBuildingLifetimeSeconds;
         _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(building.Id);
         RememberOpenBaseBreach(building);
         DestroyRuntimeBuildingBlockerEntity(building);
 
-        if (_selectedBuildingId == building.Id)
-            _selectedBuildingId = null;
-        if (_activeBuildingId == building.Id)
-            _activeBuildingId = null;
+        if (_runtimeBuildingSystem.SelectedBuildingId == building.Id || _runtimeBuildingSystem.ActiveBuildingId == building.Id)
+            _runtimeBuildingSystem.ClearSelection();
 
-        SetTransformVisible(building.SelectionMarker, false);
-        SetTransformVisible(building.FactionMarker, false);
+        _buildingVisualSystem.SetTransformVisible(building.SelectionMarker, false);
+        _buildingVisualSystem.SetTransformVisible(building.FactionMarker, false);
         if (building.AliveVisualRoots != null)
         {
             for (int i = 0; i < building.AliveVisualRoots.Length; i++)
-                SetTransformVisible(building.AliveVisualRoots[i], false);
+                _buildingVisualSystem.SetTransformVisible(building.AliveVisualRoots[i], false);
         }
-        SetTransformVisible(building.DestroyedVisual, true);
+        _buildingVisualSystem.SetTransformVisible(building.DestroyedVisual, true);
         RefreshBuildingMarkerVisibility();
         return true;
     }
@@ -3786,18 +3639,15 @@ public sealed class BuildingPlacementSystem
             if (building == null || building.IsDestroyed || building.CombatEntity == Entity.Null)
                 continue;
 
-            if (!em.Exists(building.CombatEntity))
+            BuildingCombatSystem.RuntimeCombatState combatState = _buildingCombatSystem.ResolveRuntimeCombatState(building, em);
+            if (combatState == BuildingCombatSystem.RuntimeCombatState.MissingCombatEntity)
             {
                 BeginDestroyedBuildingState(building);
                 building.CombatEntity = Entity.Null;
                 continue;
             }
 
-            if (!em.HasComponent<UnitHealth>(building.CombatEntity))
-                continue;
-
-            UnitHealth health = em.GetComponentData<UnitHealth>(building.CombatEntity);
-            if (health.Current <= 0)
+            if (combatState == BuildingCombatSystem.RuntimeCombatState.DeadCombatEntity)
                 BeginDestroyedBuildingState(building);
         }
     }
@@ -3811,18 +3661,16 @@ public sealed class BuildingPlacementSystem
 
     private void DestroyRuntimeBuildingBlockerEntity(RuntimeBuildingData building)
     {
-        if (building == null ||
-            building.BlockerEntity == Entity.Null ||
-            !TryGetEntityManager(out EntityManager em) ||
-            !em.Exists(building.BlockerEntity))
+        if (building == null)
+            return;
+
+        if (!TryGetEntityManager(out EntityManager em))
         {
-            if (building != null)
-                building.BlockerEntity = Entity.Null;
+            building.BlockerEntity = Entity.Null;
             return;
         }
 
-        em.DestroyEntity(building.BlockerEntity);
-        building.BlockerEntity = Entity.Null;
+        _buildingCombatSystem.DestroyBlockerEntity(building, em);
     }
 
     private void RememberOpenBaseBreach(RuntimeBuildingData building)
@@ -3918,7 +3766,7 @@ public sealed class BuildingPlacementSystem
                 em.DestroyEntity(building.BlockerEntity);
         }
 
-        _runtimeBuildings.Remove(buildingId);
+        _runtimeBuildingSystem.RemoveBuilding(buildingId);
         if (building.Instance != null)
             Destroy(building.Instance);
         RefreshBuildingMarkerVisibility();
@@ -3933,10 +3781,10 @@ public sealed class BuildingPlacementSystem
             ? building.Instance.transform.GetChild(0)
             : building.Instance.transform;
 
-        building.FactionMarker = FindDescendantByName(visualRoot, "FactionMarker");
-        building.SelectionMarker = FindDescendantByName(visualRoot, "SelectionMarker");
-        building.DoorZ = FindDescendantByName(visualRoot, "Door_Z");
-        building.DestroyedVisual = FindDescendantByName(visualRoot, "Destroyed");
+        building.FactionMarker = _buildingVisualSystem.FindDescendantByName(visualRoot, "FactionMarker");
+        building.SelectionMarker = _buildingVisualSystem.FindDescendantByName(visualRoot, "SelectionMarker");
+        building.DoorZ = _buildingVisualSystem.FindDescendantByName(visualRoot, "Door_Z");
+        building.DestroyedVisual = _buildingVisualSystem.FindDescendantByName(visualRoot, "Destroyed");
 
         if (building.DoorZ != null)
         {
@@ -3961,14 +3809,14 @@ public sealed class BuildingPlacementSystem
         }
 
         building.AliveVisualRoots = aliveRoots.ToArray();
-        building.AnimatedParts = FindAnimatedBuildingParts(visualRoot);
+        building.AnimatedParts = _buildingVisualSystem.FindAnimatedBuildingParts(visualRoot);
 
         Color factionColor = _factionVisualSettings != null
             ? _factionVisualSettings.GetColor(0)
             : new Color(0.12f, 0.72f, 1f, 1f);
 
-        ApplyMarkerColor(building.FactionMarkerRenderers, factionColor);
-        SetTransformVisible(building.DestroyedVisual, false);
+        _buildingVisualSystem.ApplyMarkerColor(building.FactionMarkerRenderers, factionColor, _markerPropertyBlock);
+        _buildingVisualSystem.SetTransformVisible(building.DestroyedVisual, false);
     }
 
     private void SetRuntimeBuildingOwnerFaction(RuntimeBuildingData building, byte? ownerFactionId)
@@ -3992,7 +3840,7 @@ public sealed class BuildingPlacementSystem
             : building.OwnerFactionId == 0
                 ? new Color(0.12f, 0.72f, 1f, 1f)
                 : new Color(0.92f, 0.2f, 0.16f, 1f);
-        ApplyMarkerColor(building.FactionMarkerRenderers, factionColor);
+        _buildingVisualSystem.ApplyMarkerColor(building.FactionMarkerRenderers, factionColor, _markerPropertyBlock);
     }
 
     private void UpdateRuntimeGateFriendlyPassFaction(RuntimeBuildingData building, byte? ownerFactionId)
@@ -4269,86 +4117,8 @@ public sealed class BuildingPlacementSystem
                                    building.Definition.FuelBarrelsPerDay > 0f &&
                                    building.StoredOilBarrels > 0f &&
                                    building.StoredFuelBarrels < building.Definition.FuelStorageCapacity;
-            UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
+            _buildingVisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
         }
-    }
-
-    private static void UpdateAnimatedBuildingParts(RuntimeBuildingData.AnimatedPart[] animatedParts, bool active, float time)
-    {
-        if (animatedParts == null)
-            return;
-
-        for (int i = 0; i < animatedParts.Length; i++)
-        {
-            RuntimeBuildingData.AnimatedPart part = animatedParts[i];
-            if (part?.Transform == null)
-                continue;
-
-            Vector3 localEuler = part.BaseLocalEulerAngles;
-            if (active)
-            {
-                float angle = Mathf.Sin((time * 1.5f) + part.PhaseOffset) * part.AngleLimit;
-                localEuler += part.Axis * angle;
-            }
-
-            part.Transform.localEulerAngles = localEuler;
-        }
-    }
-
-    private static RuntimeBuildingData.AnimatedPart[] FindAnimatedBuildingParts(Transform root)
-    {
-        if (root == null)
-            return null;
-
-        List<RuntimeBuildingData.AnimatedPart> matches = null;
-        foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
-        {
-            if (!TryParseAnimatedPartName(child.name, out Vector3 axis, out float angleLimit))
-                continue;
-
-            matches ??= new List<RuntimeBuildingData.AnimatedPart>();
-            matches.Add(new RuntimeBuildingData.AnimatedPart
-            {
-                Transform = child,
-                BaseLocalEulerAngles = child.localEulerAngles,
-                Axis = axis,
-                AngleLimit = angleLimit,
-                PhaseOffset = matches.Count * 0.35f
-            });
-        }
-
-        return matches?.ToArray();
-    }
-
-    private static bool TryParseAnimatedPartName(string name, out Vector3 axis, out float angleLimit)
-    {
-        axis = Vector3.zero;
-        angleLimit = 0f;
-        if (string.IsNullOrWhiteSpace(name))
-            return false;
-
-        int lastUnderscore = name.LastIndexOf('_');
-        if (lastUnderscore <= 0 || lastUnderscore >= name.Length - 1)
-            return false;
-
-        string angleToken = name[(lastUnderscore + 1)..];
-        if (!float.TryParse(angleToken, NumberStyles.Float, CultureInfo.InvariantCulture, out angleLimit))
-            return false;
-
-        int axisUnderscore = name.LastIndexOf('_', lastUnderscore - 1);
-        if (axisUnderscore <= 0 || axisUnderscore >= lastUnderscore - 1)
-            return false;
-
-        string axisToken = name[(axisUnderscore + 1)..lastUnderscore];
-        axis = axisToken switch
-        {
-            "X" => Vector3.right,
-            "Y" => Vector3.up,
-            "Z" => Vector3.forward,
-            _ => Vector3.zero
-        };
-
-        return axis != Vector3.zero && angleLimit > 0f;
     }
 
     private void RefreshBuildingMarkerVisibility()
@@ -4357,9 +4127,9 @@ public sealed class BuildingPlacementSystem
         {
             RuntimeBuildingData building = entry.Value;
             bool selected = !building.IsDestroyed && ActiveBuildingId.HasValue && ActiveBuildingId.Value == entry.Key;
-            SetTransformVisible(building.SelectionMarker, selected);
+            _buildingVisualSystem.SetTransformVisible(building.SelectionMarker, selected);
             if (building.IsDestroyed)
-                SetTransformVisible(building.FactionMarker, false);
+                _buildingVisualSystem.SetTransformVisible(building.FactionMarker, false);
         }
     }
 
@@ -4540,54 +4310,6 @@ public sealed class BuildingPlacementSystem
         if (angle > 180f)
             angle -= 360f;
         return angle;
-    }
-
-    private void ApplyMarkerColor(Renderer[] renderers, Color color)
-    {
-        if (renderers == null)
-            return;
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Renderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            renderer.GetPropertyBlock(_markerPropertyBlock);
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_BaseColor"))
-                _markerPropertyBlock.SetColor("_BaseColor", color);
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_Color"))
-                _markerPropertyBlock.SetColor("_Color", color);
-            renderer.SetPropertyBlock(_markerPropertyBlock);
-        }
-    }
-
-    private static void SetTransformVisible(Transform target, bool visible)
-    {
-        if (target == null)
-            return;
-
-        if (target.gameObject.activeSelf == visible)
-            return;
-
-        target.gameObject.SetActive(visible);
-    }
-
-    private static Transform FindDescendantByName(Transform root, string targetName)
-    {
-        if (root == null || string.IsNullOrEmpty(targetName))
-            return null;
-        if (root.name == targetName)
-            return root;
-
-        for (int i = 0; i < root.childCount; i++)
-        {
-            Transform found = FindDescendantByName(root.GetChild(i), targetName);
-            if (found != null)
-                return found;
-        }
-
-        return null;
     }
 
     private void RedirectUnitsAroundPlacedBuilding(RectInt footprintRect)
@@ -4795,8 +4517,7 @@ public sealed class BuildingPlacementSystem
                 return;
             }
 
-            _selectedBuildingId = entry.Key;
-            _activeBuildingId = entry.Key;
+            _runtimeBuildingSystem.SelectBuilding(entry.Key);
             InitialUnitsRuntimeState.SuppressNextWorldClick = true;
             selectionSystem?.ClearFocusedUnit();
             return;
@@ -4817,7 +4538,7 @@ public sealed class BuildingPlacementSystem
 
         bool clickedIsOilSource = IsOilSourceBuilding(clickedBuilding);
         bool clickedIsFuelBuilding = IsFuelBuilding(clickedBuilding);
-        bool clickedIsStorage = IsResourceStorageBuilding(clickedBuilding);
+        bool clickedIsStorage = _factionResourceSystem.IsResourceStorageBuilding(clickedBuilding);
         if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
             return false;
 
@@ -4948,7 +4669,7 @@ public sealed class BuildingPlacementSystem
 
     private bool TryGetRuntimeBuilding(int id, out RuntimeBuildingData building)
     {
-        if (_runtimeBuildings.TryGetValue(id, out building) && building != null && !building.IsDestroyed)
+        if (_runtimeBuildingSystem.TryGetBuilding(id, out building) && building != null && !building.IsDestroyed)
             return true;
 
         building = null;
@@ -6607,8 +6328,7 @@ public sealed class BuildingPlacementSystem
         if (building == null)
             return;
 
-        _selectedBuildingId = building.Id;
-        _activeBuildingId = building.Id;
+        _runtimeBuildingSystem.SelectBuilding(building.Id);
         InitialUnitsRuntimeState.SuppressNextWorldClick = true;
         RefreshBuildingMarkerVisibility();
 
@@ -7192,7 +6912,7 @@ public sealed class BuildingPlacementSystem
         GameObject instance = Instantiate(pending.TransportPrefab);
         instance.name = $"{pending.TransportPrefab.name}_Delivery_{building.Id}";
         HideTransportRuntimeMarkers(instance.transform);
-        Transform doorTransform = FindDescendantByName(instance.transform, "Door_X");
+        Transform doorTransform = _buildingVisualSystem.FindDescendantByName(instance.transform, "Door_X");
 
         RuntimeBuildingData.ActiveProductionTransport transport = new RuntimeBuildingData.ActiveProductionTransport
         {

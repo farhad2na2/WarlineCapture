@@ -75,6 +75,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Existing `AILog` usage is grandfathered as migration debt", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
+        StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
+        StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
+        StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
+        StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, and sell/drain behavior belong in `FactionResourceSystem`", contract);
     }
 
     [Test]
@@ -447,6 +451,112 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             placement.Contains("private static bool DoWallSegmentsConflict", StringComparison.Ordinal),
             "Wall segment conflict rules belong in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateRuntimeBuildingRegistrySlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string runtimeBuildingFile = "Assets/Game/Scripts/Systems/RuntimeBuildingSystem.cs";
+        Assert.IsTrue(File.Exists(runtimeBuildingFile), "The runtime building registry slice must live in RuntimeBuildingSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("RuntimeBuildingSystem<RuntimeBuildingData>", placement);
+        StringAssert.Contains("IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings", placement);
+        StringAssert.Contains("_runtimeBuildingSystem.AllocateId()", placement);
+        StringAssert.Contains("_runtimeBuildingSystem.AddBuilding", placement);
+        StringAssert.Contains("_runtimeBuildingSystem.RemoveBuilding", placement);
+        StringAssert.Contains("_runtimeBuildingSystem.SelectBuilding", placement);
+        StringAssert.Contains("_runtimeBuildingSystem.ClearSelection", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bint\s+_nextBuildingId\b"),
+            "Runtime building id allocation belongs in RuntimeBuildingSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bint\?\s+_selectedBuildingId\b|\bint\?\s+_activeBuildingId\b"),
+            "Active/selected runtime building ids belong in RuntimeBuildingSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedVisualSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string visualFile = "Assets/Game/Scripts/Systems/BuildingVisualSystem.cs";
+        Assert.IsTrue(File.Exists(visualFile), "The building visual slice must live in BuildingVisualSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("BuildingVisualSystem _buildingVisualSystem", placement);
+        StringAssert.Contains("_buildingVisualSystem.FindDescendantByName", placement);
+        StringAssert.Contains("_buildingVisualSystem.SetTransformVisible", placement);
+        StringAssert.Contains("_buildingVisualSystem.ApplyMarkerColor", placement);
+        StringAssert.Contains("_buildingVisualSystem.FindAnimatedBuildingParts", placement);
+        StringAssert.Contains("_buildingVisualSystem.UpdateAnimatedBuildingParts", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Transform\s+FindDescendantByName\b"),
+            "Descendant lookup belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+SetTransformVisible\b"),
+            "Transform visibility belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+ApplyMarkerColor\b"),
+            "Marker color application belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+UpdateAnimatedBuildingParts\b"),
+            "Animated building part updates belong in BuildingVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?BuildingVisualSystem\.AnimatedPart\[\]\s+FindAnimatedBuildingParts\b|\bprivate\s+(?:static\s+)?RuntimeBuildingData\.AnimatedPart\[\]\s+FindAnimatedBuildingParts\b"),
+            "Animated building part discovery belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryParseAnimatedPartName\b"),
+            "Animated building part name parsing belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedCombatSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string combatFile = "Assets/Game/Scripts/Systems/BuildingCombatSystem.cs";
+        Assert.IsTrue(File.Exists(combatFile), "The building combat slice must live in BuildingCombatSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("BuildingCombatSystem _buildingCombatSystem", placement);
+        StringAssert.Contains("_buildingCombatSystem.TryMarkDestroyed", placement);
+        StringAssert.Contains("_buildingCombatSystem.CollectDestroyedCleanupIds", placement);
+        StringAssert.Contains("_buildingCombatSystem.ResolveRuntimeCombatState", placement);
+        StringAssert.Contains("_buildingCombatSystem.DestroyBlockerEntity", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bbuilding\.IsDestroyed\s*=\s*true\b"),
+            "Destroyed state mutation belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bbuilding\.DestroyedCleanupAt\s*="),
+            "Destroyed cleanup timing belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedResourceSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string resourceFile = "Assets/Game/Scripts/Systems/FactionResourceSystem.cs";
+        Assert.IsTrue(File.Exists(resourceFile), "The faction resource slice must live in FactionResourceSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        StringAssert.Contains("FactionResourceSystem _factionResourceSystem", placement);
+        StringAssert.Contains("_factionResourceSystem.TryGetPrimaryCapacityInfo", placement);
+        StringAssert.Contains("_factionResourceSystem.TryGetFuelCapacityInfo", placement);
+        StringAssert.Contains("_factionResourceSystem.GetResourceTotals", placement);
+        StringAssert.Contains("_factionResourceSystem.TryGetFactionResourceEconomy", placement);
+        StringAssert.Contains("_factionResourceSystem.DrainFactionResource", placement);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsResourceStorageBuilding\b"),
+            "Resource storage classification belongs in FactionResourceSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsFactionResourceBuilding\b"),
+            "Faction resource classification belongs in FactionResourceSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?float\s+DrainFactionResource\b"),
+            "Faction resource drain behavior belongs in FactionResourceSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?int\s+GetDisplayedOilCapacity\b"),
+            "Resource capacity display math belongs in FactionResourceSystem, not BuildingPlacementSystem.");
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

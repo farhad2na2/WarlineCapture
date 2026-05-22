@@ -10,6 +10,7 @@ public sealed class RTSSelectionSystem
 {
     private const bool EnableMoveOrderDiagnostics = false;
     private static readonly bool EnableGroupMoveValidationLog = false;
+    private static readonly RuntimeDiagnosticsSystem RuntimeDiagnostics = new();
     private const int GroupMoveStaggerMinGroundUnits = 12;
     private const int GroupMoveImmediatePathRequests = 8;
     private const int GroupMovePathRequestsPerFrame = 8;
@@ -83,13 +84,13 @@ public sealed class RTSSelectionSystem
 
     private static void LogTransportBoarding(string message)
     {
-        if (InitialUnitsRuntimeState.TransportBoardingDiagnostics)
+        if (RuntimeDiagnostics.ShouldLogTransportBoarding)
             Debug.Log($"[TransportBoard] {message}");
     }
 
     private static void LogSelectionDiagnostic(string message)
     {
-        if (InitialUnitsRuntimeState.TransportBoardingDiagnostics)
+        if (RuntimeDiagnostics.ShouldLogTransportBoarding)
             Debug.Log($"[Selection] {message}");
     }
 

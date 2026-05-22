@@ -20,6 +20,8 @@ This document connects every planned UI element to gameplay design so screens ca
 - `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 - `WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `WarlineCapture_M01_FirstContact_Production_Contract.md`
+- `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `WarlineCapture_Match_Selection_Implementation_Spec.md`
 
 ## Global Rule
 
@@ -263,9 +265,12 @@ Alignment note: the Main Menu resource strip is `Credits`, `Supplies`, and `Comm
 
 ## SCN-08 RTS Battle HUD
 
+Implementation source of truth: `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md` owns the complete live match HUD contract. `WarlineCapture_Match_Selection_Implementation_Spec.md` owns selection-specific behavior.
+
 | Control | Gameplay Purpose | Route Or Effect | Gameplay Data | Enable Rule |
 |---|---|---|---|---|
 | Squad card | Select/focus combat group. | Updates selection/focus. | `SelectedUnitGroup`, ECS entity refs, health state. | Enabled for alive/available squads. |
+| SELECT | Enter explicit selection mode for tap/drag unit selection. | Cancels active command targeting, sets selection-mode state, then waits for battlefield tap/drag. | `RTSSelectionSystem`, `SelectionStateSystem`, selected ECS refs. | Enabled only when the match accepts explicit selection input; disabled in M01 tutorial scope when direct squad/card selection is the teaching path. See `WarlineCapture_Match_Selection_Implementation_Spec.md`. |
 | STOP | Cancel movement/active order. | Issues stop command. | `RTSSelectionSystem`, selected units. | Enabled when selection can receive orders. |
 | HOLD | Hold position/defensive stance. | Issues hold command. | Selected unit command capability. | Enabled for controllable combat units. |
 | MOVE | Enter move target mode. | Awaits map target then issues move. | Pathing/grid state. | Enabled for movable selected units. |

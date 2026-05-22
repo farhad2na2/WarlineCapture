@@ -39,6 +39,8 @@ The generated pack contains separate source groups for battlefield art, HUD fram
 ## Design Source
 
 - `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
+- `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `Design/WarlineCapture_Match_Selection_Implementation_Spec.md`
 - `Design/WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
 - `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
 - `Design/VisualLockLayered/SCN-02_MainMenu/reference/SCN-02_MainMenu_Landscape_Target.png`
@@ -53,7 +55,7 @@ The target asks for a AAA mobile RTS match HUD with:
 - top resource/status strip with Credits, Fuel, Supply, Civilian Risk, pause, and settings
 - objective panel for capture/clear/protect goals
 - selected squad panel with role, health, ability chips, and rule feedback
-- bottom squad tray using current roster examples: Rifle Squad, Fast APC, Recon Drone, Bomb Suit
+- bottom squad tray using four quick-select roster cards. Current implementation ids are `Squad_Rifle`, `Squad_APC`, `Squad_Tank`, and `Squad_Helicopter`; these are active controllable group slots, not command buttons. M01 enables only Rifle Squad and keeps the other visible cards disabled/neutral if the layout shows them.
 - bottom command bar for Select, Move, Attack, Hold, Stop, Build, Scan, and Support
 - minimap, threat feed, jump action, world selection rings, path line, objective marker, hostile marker, and invalid-command feedback
 

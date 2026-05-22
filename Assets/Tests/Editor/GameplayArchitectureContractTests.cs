@@ -16,7 +16,6 @@ public sealed class GameplayArchitectureContractTests
     private static readonly string[] LegacyAILogCallFiles =
     {
         "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs",
-        "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
         "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
         "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
         "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
@@ -27,7 +26,6 @@ public sealed class GameplayArchitectureContractTests
 
     private static readonly string[] HotAILogCallFiles =
     {
-        "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs",
         "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs",
         "Assets/Game/Scripts/Systems/AIEconomySystem.cs",
         "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs",
@@ -232,6 +230,19 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void AIBuildPlannerSystemMustUseEcsDiagnosticEvents()
+    {
+        const string buildPlannerFile = "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs";
+        string code = File.ReadAllText(buildPlannerFile);
+
+        Assert.IsFalse(
+            code.Contains("AILog.", StringComparison.Ordinal),
+            "AIBuildPlannerSystem must use ECS diagnostic events instead of the static AILog facade.");
+        StringAssert.Contains("AIDiagnosticLogComponent", code);
+        StringAssert.Contains("EnqueueDiagnostic", code);
+    }
+
+    [Test]
     public void ProductionScriptsMustNotReadVerboseAILogsFromLegacyRuntimeState()
     {
         string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
@@ -250,6 +261,25 @@ public sealed class GameplayArchitectureContractTests
             Assert.IsFalse(
                 code.Contains("InitialUnitsRuntimeState.ShouldLogAI", StringComparison.Ordinal),
                 $"{file} must read AI log policy through RuntimeDiagnosticsSystem or RuntimeDiagnosticsStateComponent.");
+        }
+    }
+
+    [Test]
+    public void ProductionScriptsMustNotReadTransportBoardingDiagnosticsFromLegacyRuntimeState()
+    {
+        string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => path != "Assets/Game/Scripts/UI/InitialUnitsRuntimeState.cs")
+            .Where(path => path != "Assets/Game/Scripts/Systems/RuntimeDiagnosticsSystem.cs")
+            .ToArray();
+
+        foreach (string file in scriptFiles)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.TransportBoardingDiagnostics", StringComparison.Ordinal),
+                $"{file} must read/write TransportBoardingDiagnostics through RuntimeDiagnosticsSystem or RuntimeDiagnosticsStateComponent.");
         }
     }
 

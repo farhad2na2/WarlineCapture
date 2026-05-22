@@ -254,7 +254,33 @@ AI log enablement now flows through a runtime diagnostics boundary:
 
 Direct production access to `InitialUnitsRuntimeState.VerboseAILogs` and `InitialUnitsRuntimeState.ShouldLogAI` is now blocked by architecture contract coverage, with `RuntimeDiagnosticsSystem` remaining the sole production compatibility bridge.
 
+## Seventeenth Extraction Started
+
+Transport boarding diagnostics now flow through the runtime diagnostics boundary:
+
+- `RuntimeDiagnosticsStateComponent`
+- `RuntimeDiagnosticsSystem`
+
+The migrated production callers are:
+
+- `RTSSelectionSystem`
+- `UnitTransportBoardingSystem`
+
+Direct production access to `InitialUnitsRuntimeState.TransportBoardingDiagnostics` is now blocked by architecture contract coverage, with `RuntimeDiagnosticsSystem` remaining the sole production compatibility bridge.
+
+## Eighteenth Extraction Started
+
+`AIBuildPlannerSystem` no longer calls the static `AILog` facade.
+
+AI build diagnostics now flow through ECS diagnostic events:
+
+- `AIDiagnosticLogQueueComponent`
+- `AIDiagnosticLogComponent`
+- `AIDiagnosticLogFlushSystem`
+
+The build planner gates diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries, and lets the flush system write logs at the shell/logging boundary.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.
-2. Continue replacing direct static runtime state reads from `InitialUnitsRuntimeState` with runtime ECS data. Next likely caller group: transport boarding diagnostics.
+2. Continue retiring static diagnostics/logging debt by migrating `AIProductionSystem` to the ECS AI diagnostic log event path.

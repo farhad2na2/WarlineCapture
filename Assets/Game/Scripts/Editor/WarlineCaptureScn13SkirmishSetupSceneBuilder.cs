@@ -340,8 +340,8 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
     {
         RectInt info = InfoRect();
         WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "Info_Frame", "scn13_info_panel_frame.png", info, new Vector4(48f, 48f, 34f, 34f), SubtleChrome);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Info_Icon", "scn13_icon_info_circle.png", new RectInt(info.x + 42, info.y + 22, 90, 90), 72, 72, TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Info_Text", "Tune the enemy force, economy, and mission\nrules before deployment.", new RectInt(info.x + 160, info.y + 22, 690, 88), 31f, TextAlignmentOptions.Left, TextMuted, true);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Info_Icon", "scn13_icon_info_circle.png", new RectInt(info.x + 44, info.y + 34, 88, 88), 72, 72, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Info_Text", "Tune the enemy force, economy, and mission\nrules before deployment.", new RectInt(info.x + 160, info.y + 34, 900, 96), 29f, TextAlignmentOptions.Left, TextMuted, true);
 
         RectInt reset = ResetRect();
         RectInt randomize = RandomizeRect();
@@ -352,8 +352,8 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
 
         RectInt launch = LaunchRect();
         WarlineCaptureLayeredUiBuilderUtility.AddSlicedImage(parent, LayerRoot, "Launch_Frame", "scn13_launch_cta_frame.png", launch, new Vector4(54f, 54f, 31f, 31f), Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Launch_Text", "LAUNCH MISSION", new RectInt(launch.x + 120, launch.y + 42, launch.width - 320, launch.height - 84), 68f, TextAlignmentOptions.Center, Color.black);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Launch_Chevrons", "scn13_launch_chevrons.png", new RectInt(launch.x + launch.width - 245, launch.y + 45, 160, launch.height - 90), 140, 92, new Color32(93, 73, 22, 255));
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Launch_Text", "LAUNCH MISSION", new RectInt(launch.x + 125, launch.y + 46, launch.width - 330, launch.height - 92), 66f, TextAlignmentOptions.Center, Color.black);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Launch_Chevrons", "scn13_launch_chevrons.png", new RectInt(launch.x + launch.width - 245, launch.y + 48, 160, launch.height - 96), 138, 90, new Color32(93, 73, 22, 255));
     }
 
     private static void AddSecondaryActionContent(Transform parent, RectInt rect, string icon, string label)

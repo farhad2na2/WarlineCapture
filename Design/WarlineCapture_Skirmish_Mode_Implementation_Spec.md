@@ -141,6 +141,23 @@ SkirmishSessionConfig
 
 Do not persist raw ECS world state for Skirmish. Persist only the last setup, selected preset, result summary, and balance/report data.
 
+## Skirmish Match Quick Groups
+
+Skirmish uses the `SCN-08` squad tray differently from authored Campaign missions.
+
+Source of truth: `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`.
+
+Rules:
+
+- The four bottom squad-tray cards are dynamic recommended command groups.
+- They are populated from the player's current fielded units and tactical situation, not from an authored mission list.
+- Each card selects the specific recommended group assigned to that slot.
+- A card does not select every unit of the same type globally unless those units are explicitly part of the same command group.
+- The runtime should prefer useful groups: active selection, groups under attack, objective-critical groups, idle groups needing attention, armor, transport, air/support, builders, repair, anti-air, or scouts.
+- If the player has airplanes instead of helicopters, the air/support card should show the airplane group. Helicopter is only a default visual example, not a fixed rule.
+- If no useful group exists for a slot, the slot is hidden/collapsed or disabled with a clear reason.
+- Future player pinning may lock a group into a slot; pinned groups should not be replaced by dynamic recommendation until unpinned or invalidated.
+
 ## Starter Presets
 
 Skirmish presets should mirror Campaign/Operations mission archetypes so testing remains useful.

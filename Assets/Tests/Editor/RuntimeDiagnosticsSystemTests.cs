@@ -14,12 +14,14 @@ public sealed class RuntimeDiagnosticsSystemTests
         _world = new World("RuntimeDiagnosticsSystemTests");
         World.DefaultGameObjectInjectionWorld = _world;
         InitialUnitsRuntimeState.VerboseAILogs = false;
+        InitialUnitsRuntimeState.TransportBoardingDiagnostics = false;
     }
 
     [TearDown]
     public void TearDown()
     {
         InitialUnitsRuntimeState.VerboseAILogs = false;
+        InitialUnitsRuntimeState.TransportBoardingDiagnostics = false;
         if (World.DefaultGameObjectInjectionWorld == _world)
             World.DefaultGameObjectInjectionWorld = _previousWorld;
         _world?.Dispose();
@@ -38,16 +40,31 @@ public sealed class RuntimeDiagnosticsSystemTests
     }
 
     [Test]
+    public void SettingTransportBoardingDiagnostics_WritesLegacyAndEcsSingleton()
+    {
+        var diagnosticsSystem = new RuntimeDiagnosticsSystem();
+
+        diagnosticsSystem.TransportBoardingDiagnostics = true;
+
+        Assert.IsTrue(InitialUnitsRuntimeState.TransportBoardingDiagnostics);
+        RuntimeDiagnosticsStateComponent state = ReadSingleton<RuntimeDiagnosticsStateComponent>();
+        Assert.AreEqual(1, state.TransportBoardingDiagnostics);
+    }
+
+    [Test]
     public void ReadDiagnosticsState_MirrorsLegacyStateIntoEcsSingleton()
     {
         InitialUnitsRuntimeState.VerboseAILogs = true;
+        InitialUnitsRuntimeState.TransportBoardingDiagnostics = true;
         var diagnosticsSystem = new RuntimeDiagnosticsSystem();
 
         RuntimeDiagnosticsStateComponent state = diagnosticsSystem.ReadDiagnosticsState();
 
         Assert.AreEqual(1, state.VerboseAILogs);
+        Assert.AreEqual(1, state.TransportBoardingDiagnostics);
         RuntimeDiagnosticsStateComponent singleton = ReadSingleton<RuntimeDiagnosticsStateComponent>();
         Assert.AreEqual(1, singleton.VerboseAILogs);
+        Assert.AreEqual(1, singleton.TransportBoardingDiagnostics);
     }
 
     [Test]
@@ -55,17 +72,22 @@ public sealed class RuntimeDiagnosticsSystemTests
     {
         var diagnosticsSystem = new RuntimeDiagnosticsSystem();
         diagnosticsSystem.VerboseAILogs = true;
+        diagnosticsSystem.TransportBoardingDiagnostics = true;
         RuntimeDiagnosticsStateComponent state = diagnosticsSystem.ReadDiagnosticsState();
         Assert.AreEqual(1, state.VerboseAILogs);
+        Assert.AreEqual(1, state.TransportBoardingDiagnostics);
 
         Entity stateEntity = ReadSingletonEntity<RuntimeDiagnosticsStateComponent>();
         state.VerboseAILogs = 0;
+        state.TransportBoardingDiagnostics = 0;
         _world.EntityManager.SetComponentData(stateEntity, state);
 
         RuntimeDiagnosticsStateComponent reread = diagnosticsSystem.ReadDiagnosticsState();
 
         Assert.AreEqual(0, reread.VerboseAILogs);
+        Assert.AreEqual(0, reread.TransportBoardingDiagnostics);
         Assert.IsTrue(InitialUnitsRuntimeState.VerboseAILogs);
+        Assert.IsTrue(InitialUnitsRuntimeState.TransportBoardingDiagnostics);
     }
 
     private T ReadSingleton<T>() where T : unmanaged, IComponentData

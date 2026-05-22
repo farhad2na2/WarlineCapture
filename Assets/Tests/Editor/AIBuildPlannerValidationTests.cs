@@ -98,9 +98,11 @@ public sealed class AIBuildPlannerValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = _world.CreateSystem<AIBuildPlannerSystem>();
+        SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         system.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);

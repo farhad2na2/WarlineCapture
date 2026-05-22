@@ -98,6 +98,7 @@ public sealed class AIEndToEndValidationTests
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle buildSystem = _world.CreateSystem<AIBuildPlannerSystem>();
+        SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
         SystemHandle productionSystem = _world.CreateSystem<AIProductionSystem>();
         SystemHandle squadSystem = _world.CreateSystem<AISquadSystem>();
         SystemHandle targetingSystem = _world.CreateSystem<AITargetingSystem>();
@@ -105,6 +106,7 @@ public sealed class AIEndToEndValidationTests
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         buildSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
         Assert.AreEqual(1, _buildingPlacement.CountRuntimeBuildingsForFaction(1, "Tent_Regular"));
 

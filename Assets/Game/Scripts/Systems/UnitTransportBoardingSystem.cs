@@ -12,6 +12,7 @@ public partial struct UnitTransportBoardingSystem : ISystem
     private const int AirBoardingClearanceCells = 1;
     private const float AirBoardingGroundedHeightTolerance = 3f;
     private const int DiagnosticLogIntervalFrames = 180;
+    private static readonly RuntimeDiagnosticsSystem RuntimeDiagnostics = new();
 
     public void OnCreate(ref SystemState state)
     {
@@ -860,13 +861,13 @@ public partial struct UnitTransportBoardingSystem : ISystem
 
     private static void LogDiagnostic(string message)
     {
-        if (InitialUnitsRuntimeState.TransportBoardingDiagnostics)
+        if (RuntimeDiagnostics.ShouldLogTransportBoarding)
             Debug.Log($"[TransportBoard] {message}");
     }
 
     private static void LogPeriodic(Entity entity, string message)
     {
-        if (!InitialUnitsRuntimeState.TransportBoardingDiagnostics)
+        if (!RuntimeDiagnostics.ShouldLogTransportBoarding)
             return;
 
         if (Time.frameCount % DiagnosticLogIntervalFrames == 0)

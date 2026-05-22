@@ -134,6 +134,8 @@ M01 has no production building placement. Still define runtime footprint metadat
 
 M01 must support both direct and explicit command flows, even if the direct flow is the primary mobile path.
 
+Match HUD source of truth: `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`. Selection source of truth: `WarlineCapture_Match_Selection_Implementation_Spec.md`. M01 may keep `SELECT` visible but disabled/neutral while teaching direct squad selection; the player must be able to select by tapping the friendly squad in the world or the enabled rifle squad card.
+
 | Player Action | Gameplay Result | Required UI Feedback | Owner Surface |
 |---|---|---|---|
 | Tap friendly squad | Select squad. | Selection ring, squad card selected, `BattleHud.SelectedEntityPanel` populated. | `SCN-08` |

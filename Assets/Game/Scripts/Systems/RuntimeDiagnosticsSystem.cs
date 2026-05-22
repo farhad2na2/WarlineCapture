@@ -20,6 +20,18 @@ public sealed class RuntimeDiagnosticsSystem
 
     public bool ShouldLogAI => Application.isBatchMode || InitialUnitsRuntimeState.VerboseAILogs;
 
+    public bool TransportBoardingDiagnostics
+    {
+        get => ReadDiagnosticsState().TransportBoardingDiagnostics != 0;
+        set => WriteDiagnosticsState(state =>
+        {
+            state.TransportBoardingDiagnostics = ToByte(value);
+            return state;
+        });
+    }
+
+    public bool ShouldLogTransportBoarding => InitialUnitsRuntimeState.TransportBoardingDiagnostics;
+
     public RuntimeDiagnosticsStateComponent ReadDiagnosticsState()
     {
         RuntimeDiagnosticsStateComponent state = LegacyDiagnosticsState();
@@ -96,13 +108,15 @@ public sealed class RuntimeDiagnosticsSystem
     {
         return new RuntimeDiagnosticsStateComponent
         {
-            VerboseAILogs = ToByte(InitialUnitsRuntimeState.VerboseAILogs)
+            VerboseAILogs = ToByte(InitialUnitsRuntimeState.VerboseAILogs),
+            TransportBoardingDiagnostics = ToByte(InitialUnitsRuntimeState.TransportBoardingDiagnostics)
         };
     }
 
     private static void ApplyLegacyDiagnosticsState(RuntimeDiagnosticsStateComponent state)
     {
         InitialUnitsRuntimeState.VerboseAILogs = state.VerboseAILogs != 0;
+        InitialUnitsRuntimeState.TransportBoardingDiagnostics = state.TransportBoardingDiagnostics != 0;
     }
 
     private static byte ToByte(bool value)
@@ -112,6 +126,7 @@ public sealed class RuntimeDiagnosticsSystem
 
     private static bool DiagnosticsStateEquals(RuntimeDiagnosticsStateComponent left, RuntimeDiagnosticsStateComponent right)
     {
-        return left.VerboseAILogs == right.VerboseAILogs;
+        return left.VerboseAILogs == right.VerboseAILogs &&
+            left.TransportBoardingDiagnostics == right.TransportBoardingDiagnostics;
     }
 }

@@ -8,10 +8,14 @@ public partial struct AIBuildPlannerSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
     private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<AIDiagnosticLogComponent>());
         state.RequireForUpdate(_buildingPlacementRuntimeQuery);
         state.RequireForUpdate<AIBuildPlan>();
         state.RequireForUpdate<FactionEconomy>();
@@ -35,6 +39,7 @@ public partial struct AIBuildPlannerSystem : ISystem
         NativeArray<FactionControlEntry> controls = hasControls
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
             : default;
+        bool shouldLog = ShouldQueueDiagnostics(ref state);
 
         EntityManager em = state.EntityManager;
         EntityQuery planQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>(), ComponentType.ReadOnly<AIBuildPlanEntry>());
@@ -55,7 +60,7 @@ public partial struct AIBuildPlannerSystem : ISystem
             DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);
             if (entries.Length == 0)
             {
-                LogNoPlanIfNeeded(ref plan, now);
+                LogNoPlanIfNeeded(ref state, ref plan, now, shouldLog);
                 em.SetComponentData(planEntity, plan);
                 continue;
             }
@@ -85,8 +90,8 @@ public partial struct AIBuildPlannerSystem : ISystem
                 {
                     plan.NextBuildIndex = entryIndex + 1;
                     plan.LastBuildTime = now;
-                    if (AILog.IsEnabled)
-                        AILog.Log($"[AIBuild] faction={plan.FactionId} building={buildingId} result=MissingConfig");
+                    if (shouldLog)
+                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={buildingId} result=MissingConfig");
                     break;
                 }
 
@@ -94,8 +99,8 @@ public partial struct AIBuildPlannerSystem : ISystem
                 if (economy.Money < cost)
                 {
                     plan.LastBuildTime = now;
-                    if (AILog.IsEnabled)
-                        AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
+                    if (shouldLog)
+                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
                     break;
                 }
 
@@ -116,24 +121,24 @@ public partial struct AIBuildPlannerSystem : ISystem
                 plan.LastBuildTime = now;
                 if (!placed)
                 {
-                    if (AILog.IsEnabled)
-                        AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(preferredOrigin.x, preferredOrigin.y)} cost={cost} result=Blocked");
+                    if (shouldLog)
+                        EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(preferredOrigin.x, preferredOrigin.y)} cost={cost} result=Blocked");
                     break;
                 }
 
                 economy.Money = Mathf.Max(0, economy.Money - cost);
                 em.SetComponentData(economyEntity, economy);
                 plan.NextBuildIndex = entryIndex + 1;
-                if (AILog.IsEnabled)
-                    AILog.Log($"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(actualOrigin.x, actualOrigin.y)} cost={cost} result=Placed");
+                if (shouldLog)
+                    EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} building={spawnable.DisplayName} cell={new int2(actualOrigin.x, actualOrigin.y)} cost={cost} result=Placed");
                 break;
             }
 
             if (!handledDecision && now - plan.LastLogTime >= LogIntervalSeconds)
             {
                 plan.LastLogTime = now;
-                if (AILog.IsEnabled)
-                    AILog.Log($"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={buildingPlacement.CountRuntimeBuildingsForFaction(plan.FactionId)}");
+                if (shouldLog)
+                    EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=Complete ownedBuildings={buildingPlacement.CountRuntimeBuildingsForFaction(plan.FactionId)}");
             }
 
             em.SetComponentData(planEntity, plan);
@@ -222,13 +227,41 @@ public partial struct AIBuildPlannerSystem : ISystem
         return result < 0 ? result + modulo : result;
     }
 
-    private static void LogNoPlanIfNeeded(ref AIBuildPlan plan, float now)
+    private bool ShouldQueueDiagnostics(ref SystemState state)
+    {
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().VerboseAILogs != 0;
+    }
+
+    private void EnqueueDiagnostic(ref SystemState state, FixedString512Bytes message)
+    {
+        EntityManager em = state.EntityManager;
+        Entity queueEntity;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            queueEntity = em.CreateEntity(typeof(AIDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "AIDiagnosticLogQueue");
+            em.AddBuffer<AIDiagnosticLogComponent>(queueEntity);
+        }
+        else
+        {
+            queueEntity = _diagnosticLogQueueQuery.GetSingletonEntity();
+        }
+
+        DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
+        logs.Add(new AIDiagnosticLogComponent { Message = message });
+    }
+
+    private void LogNoPlanIfNeeded(ref SystemState state, ref AIBuildPlan plan, float now, bool shouldLog)
     {
         if (now - plan.LastLogTime < LogIntervalSeconds)
             return;
 
         plan.LastLogTime = now;
-        if (AILog.IsEnabled)
-            AILog.Log($"[AIBuild] faction={plan.FactionId} result=NoPlan");
+        if (shouldLog)
+            EnqueueDiagnostic(ref state, $"[AIBuild] faction={plan.FactionId} result=NoPlan");
     }
 }

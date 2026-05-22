@@ -105,6 +105,8 @@ The bridge owns these calls:
 - `ApplyCommandResult(TacticalCommandResult result)`
 - `SetWorldMarkersVisible(bool visible)`
 
+Match HUD implementation source: `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md` owns the complete `SCN-08` behavior for all match buttons, panels, warnings, overlays, command feedback, minimap/camera jumps, pause/result routes, and acceptance tests. Selection implementation source: `WarlineCapture_Match_Selection_Implementation_Spec.md` owns the exact player-facing and runtime behavior for tapping units, squad cards, the `SELECT` HUD button, drag selection, disabled states, input suppression, and M01 selection exceptions. This handoff spec only defines the bridge API.
+
 Command modes:
 
 - `None`
@@ -134,6 +136,8 @@ The gameplay agent should call the bridge, not write UI text directly.
 ## Remaining Gameplay Agent Work
 
 ### 1. Plug Selection Into HUD
+
+Use `WarlineCapture_Match_Selection_Implementation_Spec.md` as the canonical selection contract.
 
 When a unit or squad is selected:
 

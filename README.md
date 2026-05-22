@@ -57,6 +57,8 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
 - `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
+- `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
+- `Design/WarlineCapture_Match_Selection_Implementation_Spec.md`
 - `Design/WarlineCapture_M01_FirstContact_Production_Contract.md`
 - `Design/WarlineCapture_FTUE_And_Command_Assistant_Design.md`
 - `Design/WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
@@ -76,6 +78,8 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
   - Product Gameplay
     - [Large-Scale Grid Movement Design](Design/WarlineCapture_LargeScale_Grid_Movement_Design.md)
     - [Skirmish Mode Implementation Spec](Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md)
+    - [Match HUD And Gameplay Implementation Spec](Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md)
+    - [Match Selection Implementation Spec](Design/WarlineCapture_Match_Selection_Implementation_Spec.md)
     - [Level And Mission Content Plan](Design/WarlineCapture_Level_And_Mission_Content_Plan.md)
       - [Chapter 1: First Response](Design/SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md)
       - [Chapter 2: Broken Grid](Design/SagaChapters/WarlineCapture_Saga_Chapter02_Broken_Grid.md)

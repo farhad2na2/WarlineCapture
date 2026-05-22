@@ -134,7 +134,8 @@ Gameplay code must not add new calls to static logging facades such as `AILog.*`
 - A test-local logger implementation.
 
 Existing `AILog` usage is grandfathered as migration debt and should be retired by domain slice.
-AI log enablement must flow through `RuntimeDiagnosticsStateComponent` and `RuntimeDiagnosticsSystem`. `InitialUnitsRuntimeState.VerboseAILogs` and `InitialUnitsRuntimeState.ShouldLogAI` are legacy compatibility state and must not be read directly by production systems outside the diagnostics boundary.
+AI log enablement and transport boarding diagnostics must flow through `RuntimeDiagnosticsStateComponent` and `RuntimeDiagnosticsSystem`. `InitialUnitsRuntimeState.VerboseAILogs`, `InitialUnitsRuntimeState.ShouldLogAI`, and `InitialUnitsRuntimeState.TransportBoardingDiagnostics` are legacy compatibility state and must not be read directly by production systems outside the diagnostics boundary.
+AI domain logs that are migrated off `AILog` must use ECS diagnostic event buffers such as `AIDiagnosticLogComponent`, flushed by a shell-edge logging system such as `AIDiagnosticLogFlushSystem`. Hot systems must gate diagnostic message construction before formatting strings.
 
 ## Refactor Direction
 

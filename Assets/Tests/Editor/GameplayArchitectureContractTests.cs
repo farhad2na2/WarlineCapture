@@ -9,9 +9,12 @@ using NUnit.Framework;
 public sealed class GameplayArchitectureContractTests
 {
     private const string ContractPath = "Design/Architecture/gameplay_solid_ecs_contract.md";
+    private const string GameBootstrapAuditPath = "Design/Architecture/gamebootstrap_responsibility_audit.md";
+    private const string GameBootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
     private const string ScriptsRoot = "Assets/Game/Scripts";
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
+    private const int LegacyGameBootstrapDirectLogCallCount = 7;
 
     private static readonly string[] LegacyAILogCallFiles = Array.Empty<string>();
 
@@ -67,6 +70,40 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/Bootstrap/FactionVisualSettings.cs"
     };
 
+    private static readonly string[] LegacyGameBootstrapDomainPolicyMethods =
+    {
+        "ApplyFixedTacticalMissionGuardrails",
+        "ApplyM01ProductionSceneVisibility",
+        "FocusCameraOnConfiguredFactionBase",
+        "FocusCameraOnM01CameraStart",
+        "ApplyM01ProductionCameraPose",
+        "ResolveM01ProductionOrthographicSize",
+        "ApplyM01ProductionCameraPoseForCurrentAspect",
+        "TryResolveM01ProductionFrameCenter",
+        "IncludeM01FrameAnchor",
+        "ApplyM01ProductionCameraPoseIfActive",
+        "ClampM01CameraCenterToTacticalMap",
+        "TryGetConfiguredFactionSpawnCell"
+    };
+
+    private static readonly string[] GameBootstrapDomainPolicyMethodTokens =
+    {
+        "AI",
+        "AIBuild",
+        "AIProduction",
+        "AISquad",
+        "AITarget",
+        "FactionEconom",
+        "FactionControl",
+        "M01",
+        "Mission",
+        "Tactical",
+        "CameraPose",
+        "CameraStart",
+        "FrameAnchor",
+        "SpawnCell"
+    };
+
     private static readonly string[] DomainPolicyTokens =
     {
         "M01",
@@ -94,6 +131,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("use `RuntimeGameplayStateSystem` as the compatibility boundary", contract);
         StringAssert.Contains("New domain gameplay types should end in `Entity`, `Component`, or `System`", contract);
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
+        StringAssert.Contains("gamebootstrap_responsibility_audit.md", contract);
+        StringAssert.Contains("AI startup config projection is owned by `AIStartupSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
@@ -104,6 +143,112 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
         StringAssert.Contains("Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, production slot reservation, pending queue removal, ready/soon transport-pending lookup, and transport launch delay math belong in `BuildingProductionSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI read models belong in `BuildingUiQuerySystem`", contract);
+    }
+
+    [Test]
+    public void GameBootstrapResponsibilityAuditExists()
+    {
+        Assert.IsTrue(File.Exists(GameBootstrapAuditPath), $"{GameBootstrapAuditPath} must map bootstrap debt before refactoring.");
+
+        string audit = File.ReadAllText(GameBootstrapAuditPath);
+        StringAssert.Contains("Target Responsibility", audit);
+        StringAssert.Contains("AI Startup Policy And Plan Mutation", audit);
+        StringAssert.Contains("Faction Economy Startup Policy", audit);
+        StringAssert.Contains("Fixed Tactical Mission Guardrails", audit);
+        StringAssert.Contains("Camera And Framing Policy", audit);
+        StringAssert.Contains("Gameplay Feature Runtime Updates", audit);
+        StringAssert.Contains("Diagnostics And Performance Logging", audit);
+        StringAssert.Contains("Broad Scene Lookup And UI Runtime Binding", audit);
+        StringAssert.Contains("Recommended Migration Order", audit);
+    }
+
+    [Test]
+    public void GameBootstrapDomainPolicyMethodDebtCannotGrow()
+    {
+        string[] violations = GetMethodNames(GameBootstrapPath)
+            .Where(IsGameBootstrapDomainPolicyMethodName)
+            .Where(method => !LegacyGameBootstrapDomainPolicyMethods.Contains(method, StringComparer.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Do not add new domain-policy methods to GameBootstrap. Move new AI, mission, camera, faction, spawning, or diagnostics policy into ECS systems/configs or audited feature installers:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void GameBootstrapDirectDebugLogDebtCannotGrow()
+    {
+        string code = File.ReadAllText(GameBootstrapPath);
+        int directLogCallCount = Regex.Matches(code, @"Debug\.Log(?:Exception|Warning|Error)?\s*\(").Count;
+
+        Assert.LessOrEqual(
+            directLogCallCount,
+            LegacyGameBootstrapDirectLogCallCount,
+            "Do not add direct Debug.Log* calls to GameBootstrap. Move diagnostics into ECS diagnostic events or a shell logging service.");
+
+        foreach (Match match in Regex.Matches(code, @"Debug\.Log(?:Warning|Error)?\s*\(\s*(?:\$)?""\[([^\]]+)\]"))
+        {
+            string category = match.Groups[1].Value;
+            if (category.Contains("{", StringComparison.Ordinal))
+                continue;
+
+            Assert.IsTrue(
+                category == "FreezeDetect" || category == "FrameRateDiag" || category == "FrameRateDiag:PreGame" || category == "PerfDiag" || category == "PerfDiag:PreGame",
+                $"Unexpected GameBootstrap direct log category '{category}'. Add diagnostics through a logging boundary instead.");
+        }
+    }
+
+    [Test]
+    public void GameBootstrapMustDelegateAIStartupSlice()
+    {
+        const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        Assert.IsTrue(File.Exists(aiStartupFile), "AI startup config projection must live in AIStartupSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("AIStartupSystem _aiStartupSystem", bootstrap);
+        StringAssert.Contains("_aiStartupSystem.LogConfigValidation", bootstrap);
+        StringAssert.Contains("_aiStartupSystem.Initialize", bootstrap);
+
+        string[] migratedMethodNames =
+        {
+            "DisableGenericAIPlansForFixedTacticalMission",
+            "DisableAIBuildPlans",
+            "DisableAIProductionPlans",
+            "DisableAISquadPlans",
+            "LogAIConfigValidation",
+            "ShouldQueueAIConfigDiagnostics",
+            "TryEnqueueAIDiagnostic",
+            "FlushQueuedAIDiagnostics",
+            "EnsureFactionEconomiesInitialized",
+            "EnsureFactionControlConfigInitialized",
+            "EnsureAIBuildPlansInitialized",
+            "AddBuildPlanEntries",
+            "EnsureAIProductionPlansInitialized",
+            "AddProductionPlanEntries",
+            "EnsureAISquadPlansInitialized",
+            "EnsureAITargetPrioritySettingsInitialized",
+            "ShouldIncludeAIConfig"
+        };
+
+        foreach (string methodName in migratedMethodNames)
+        {
+            Assert.IsFalse(
+                Regex.IsMatch(bootstrap, $@"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+{methodName}\s*\("),
+                $"{methodName} belongs in AIStartupSystem, not GameBootstrap.");
+        }
+    }
+
+    [Test]
+    public void AIStartupSystemMustNotUseStaticRuntimeHelpers()
+    {
+        const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        string code = File.ReadAllText(aiStartupFile);
+
+        Assert.IsFalse(
+            Regex.IsMatch(code, @"\bstatic\b"),
+            "AIStartupSystem owns ECS startup mutation and diagnostics; keep it instance-scoped rather than adding static runtime helpers.");
     }
 
     [Test]
@@ -311,14 +456,14 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void GameBootstrapAIConfigDiagnosticsMustUseEcsDiagnosticEvents()
+    public void AIStartupConfigDiagnosticsMustUseEcsDiagnosticEvents()
     {
-        const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
-        string code = File.ReadAllText(bootstrapFile);
+        const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        string code = File.ReadAllText(aiStartupFile);
 
         Assert.IsFalse(
             code.Contains("AILog.", StringComparison.Ordinal),
-            "GameBootstrap AI config diagnostics must use ECS diagnostic events instead of the static AILog facade.");
+            "AI startup config diagnostics must use ECS diagnostic events instead of the static AILog facade.");
         StringAssert.Contains("AIDiagnosticLogComponent", code);
         StringAssert.Contains("TryEnqueueAIDiagnostic", code);
         StringAssert.Contains("FlushQueuedAIDiagnostics", code);
@@ -1299,6 +1444,23 @@ public sealed class GameplayArchitectureContractTests
         string text = File.ReadAllText(file);
         foreach (Match match in Regex.Matches(text, @"\b(?:public|internal|private)?\s*(?:sealed\s+|static\s+|abstract\s+|partial\s+)*class\s+([A-Za-z_][A-Za-z0-9_]*)"))
             yield return match.Groups[1].Value;
+    }
+
+    private static IEnumerable<string> GetMethodNames(string file)
+    {
+        string text = File.ReadAllText(file);
+        foreach (Match match in Regex.Matches(
+                     text,
+                     @"^\s*(?:public|private|internal|protected)\s+(?:static\s+)?(?:[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*\(",
+                     RegexOptions.Multiline))
+        {
+            yield return match.Groups[1].Value;
+        }
+    }
+
+    private static bool IsGameBootstrapDomainPolicyMethodName(string methodName)
+    {
+        return GameBootstrapDomainPolicyMethodTokens.Any(token => methodName.Contains(token, StringComparison.Ordinal));
     }
 
     private static string NormalizePath(string path)

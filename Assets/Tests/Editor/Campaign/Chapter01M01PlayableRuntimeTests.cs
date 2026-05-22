@@ -189,13 +189,14 @@ public sealed class Chapter01M01PlayableRuntimeTests
         Entity squadPlan = em.CreateEntity(typeof(AISquadPlan));
         em.SetComponentData(squadPlan, new AISquadPlan { FactionId = 1, Enabled = 1 });
 
-        GameBootstrap.DisableGenericAIPlansForFixedTacticalMission(_world, false);
+        AIStartupSystem aiStartupSystem = new();
+        aiStartupSystem.DisableGenericAIPlansForFixedTacticalMission(_world, false);
 
         Assert.AreEqual(1, em.GetComponentData<AIBuildPlan>(buildPlan).Enabled, "Non-M01 AI build plans must remain available.");
         Assert.AreEqual(1, em.GetComponentData<AIProductionPlan>(productionPlan).Enabled, "Non-M01 AI production plans must remain available.");
         Assert.AreEqual(1, em.GetComponentData<AISquadPlan>(squadPlan).Enabled, "Non-M01 AI squad plans must remain available.");
 
-        GameBootstrap.DisableGenericAIPlansForFixedTacticalMission(_world, true);
+        aiStartupSystem.DisableGenericAIPlansForFixedTacticalMission(_world, true);
 
         Assert.AreEqual(0, em.GetComponentData<AIBuildPlan>(buildPlan).Enabled, "M01 uses authored patrol scripting, not generic base-building AI.");
         Assert.AreEqual(0, em.GetComponentData<AIProductionPlan>(productionPlan).Enabled, "M01 should not emit generic producer-missing log noise.");

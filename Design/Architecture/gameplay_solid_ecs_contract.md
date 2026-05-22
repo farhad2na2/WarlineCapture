@@ -35,6 +35,9 @@ Not allowed:
 
 If a bootstrap change adds domain behavior, move it into a feature installer, ECS system, service, or config.
 
+The current bootstrap migration map is `Design/Architecture/gamebootstrap_responsibility_audit.md`. `GameBootstrap` is legacy composition debt and should shrink by the audited slices; do not add new AI, mission, camera, spawning, routing, asset-resolution, or diagnostics policy to it.
+AI startup config projection is owned by `AIStartupSystem`; `GameBootstrap` may pass serialized `AIControllerConfig` references into that system, but it must not create or mutate `FactionEconomy`, `FactionControlEntry`, `AIBuildPlan`, `AIProductionPlan`, `AISquadPlan`, `AITargetPrioritySetting`, or AI diagnostic events directly.
+
 ### ECS Components
 
 Components hold data only. They should not own behavior beyond trivial value construction.

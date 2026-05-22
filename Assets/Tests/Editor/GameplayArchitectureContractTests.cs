@@ -31,6 +31,25 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/UI/RuntimeLogBuffer.cs"
     };
 
+    private static readonly string[] LegacyStaticInstanceFiles =
+    {
+        "Assets/Game/Scripts/Authorings/FactionVisualSettingsAuthoring.cs",
+        "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs",
+        "Assets/Game/Scripts/Environment/RuntimeGridBlockerSystem.cs",
+        "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs",
+        "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs",
+        "Assets/Game/Scripts/UI/MainMenuPlayUI.cs",
+        "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
+        "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+    };
+
+    private static readonly string[] LegacyStaticDependencyLocatorFiles =
+    {
+        "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs",
+        "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
+        "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+    };
+
     private static readonly string[] LegacyBootstrapRootFiles =
     {
         "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs",
@@ -59,6 +78,7 @@ public sealed class GameplayArchitectureContractTests
         string contract = File.ReadAllText(ContractPath);
         StringAssert.Contains("Bootstrap composes the application", contract);
         StringAssert.Contains("Gameplay runtime is ECS data plus ECS systems", contract);
+        StringAssert.Contains("Runtime gameplay code must not introduce singleton access patterns", contract);
         StringAssert.Contains("Existing `AILog` usage is grandfathered as migration debt", contract);
     }
 
@@ -169,6 +189,50 @@ public sealed class GameplayArchitectureContractTests
             "Do not add new runtime static logging facades. Add an interface service or ECS log-event stream instead:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, staticLogFacades));
+    }
+
+    [Test]
+    public void RuntimeStaticInstanceSingletonDebtCannotSpread()
+    {
+        string[] staticInstanceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => Regex.IsMatch(
+                File.ReadAllText(path),
+                @"\bstatic\s+[A-Za-z_][A-Za-z0-9_<>,\s\.]*\s+Instance\s*(?:\{|=>|;)"))
+            .ToArray();
+
+        string[] newViolations = staticInstanceFiles
+            .Where(path => !LegacyStaticInstanceFiles.Contains(path, StringComparer.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            newViolations,
+            "Do not add new runtime singleton Instance declarations. Use bootstrap injection, service interfaces at the shell edge, or ECS singleton components instead:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, newViolations));
+    }
+
+    [Test]
+    public void RuntimeStaticDependencyLocatorDebtCannotSpread()
+    {
+        string[] dependencyLocatorFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => Regex.IsMatch(
+                File.ReadAllText(path),
+                @"\bstatic\s+[A-Za-z_][A-Za-z0-9_<>,\s\.]*\s+ResolveDependency\s*<"))
+            .ToArray();
+
+        string[] newViolations = dependencyLocatorFiles
+            .Where(path => !LegacyStaticDependencyLocatorFiles.Contains(path, StringComparer.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            newViolations,
+            "Do not add new static dependency locator helpers. Pass dependencies through bootstrap/installer composition, command/query ports, or ECS data instead:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, newViolations));
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

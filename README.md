@@ -299,6 +299,7 @@ The target runtime pattern is ECS-first:
 - ScriptableObjects describe config only.
 - Services bridge external concerns such as logging, persistence, asset lookup, telemetry, and platform APIs.
 - Gameplay systems should prefer ECS data/event streams over direct service/static calls.
+- Runtime gameplay code must not add singleton access patterns such as `static Instance`, global service locators, or singleton fallback lookups. Static code is acceptable only for pure, stateless math/data conversion helpers.
 
 Bootstrap responsibility:
 
@@ -326,8 +327,9 @@ When adding a new runtime system:
 - use `*Config` ScriptableObjects for configurable data
 - use feature installers/services only at the shell edge
 - do not add new static runtime service facades such as `AILog`
+- do not add new `static Instance` singletons or `ResolveDependency<T>()` fallback locators
 
-Existing classes such as `GameBootstrap`, `AILog`, and mixed runtime managers are migration debt. Do not expand those patterns; retire them by domain slice when touching related behavior.
+Existing classes such as `GameBootstrap`, `AILog`, `BuildingPlacementSystem.Instance`, and mixed runtime managers are migration debt. Do not expand those patterns; retire them by domain slice when touching related behavior.
 
 ## Config Pattern
 

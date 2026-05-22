@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine.InputSystem;
@@ -10,7 +11,6 @@ public sealed class RTSSelectionSystem
 {
     private const bool EnableMoveOrderDiagnostics = false;
     private static readonly bool EnableGroupMoveValidationLog = false;
-    private static readonly RuntimeDiagnosticsSystem RuntimeDiagnostics = new();
     private const int GroupMoveStaggerMinGroundUnits = 12;
     private const int GroupMoveImmediatePathRequests = 8;
     private const int GroupMovePathRequestsPerFrame = 8;
@@ -82,16 +82,46 @@ public sealed class RTSSelectionSystem
         public bool DirectBoarding;
     }
 
-    private static void LogTransportBoarding(string message)
+    private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)
     {
-        if (RuntimeDiagnostics.ShouldLogTransportBoarding)
-            Debug.Log($"[TransportBoard] {message}");
+        if (Application.isBatchMode)
+            return true;
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
+        return !query.IsEmptyIgnoreFilter &&
+            em.GetComponentData<RuntimeDiagnosticsStateComponent>(query.GetSingletonEntity()).TransportBoardingDiagnostics != 0;
+    }
+
+    private static Entity EnsureTransportBoardingDiagnosticQueue(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<TransportBoardingDiagnosticLogComponent>());
+        if (!query.IsEmptyIgnoreFilter)
+            return query.GetSingletonEntity();
+
+        Entity queueEntity = em.CreateEntity(typeof(TransportBoardingDiagnosticLogQueueComponent));
+        em.SetName(queueEntity, "TransportBoardingDiagnosticLogQueue");
+        em.AddBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
+        return queueEntity;
+    }
+
+    private static void EnqueueTransportBoardingDiagnostic(EntityManager em, FixedString512Bytes message)
+    {
+        Entity queueEntity = EnsureTransportBoardingDiagnosticQueue(em);
+        DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs = em.GetBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
+        logs.Add(new TransportBoardingDiagnosticLogComponent { Message = message });
     }
 
     private static void LogSelectionDiagnostic(string message)
     {
-        if (RuntimeDiagnostics.ShouldLogTransportBoarding)
-            Debug.Log($"[Selection] {message}");
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        EntityManager em = world.EntityManager;
+        if (ShouldQueueTransportBoardingDiagnostics(em))
+            EnqueueTransportBoardingDiagnostic(em, $"[Selection] {message}");
     }
 
     private const float DefaultPanSensitivity = 0.03f;
@@ -1533,9 +1563,11 @@ public sealed class RTSSelectionSystem
         if (!TryGetClickedOrNearbyBoardableTransport(screenPosition, em, out Entity transport))
             return false;
 
+        bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
         if (!_unitTransportBoardingSystem.IsBoardablePlayerTransport(em, transport))
         {
-            LogTransportBoarding($"result=TransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return false;
         }
 
@@ -1543,13 +1575,15 @@ public sealed class RTSSelectionSystem
         bool transportLanded = _unitTransportBoardingSystem.IsTransportLandedForBoarding(em, transport);
         if (!transportLanded && !airTransport)
         {
-            LogTransportBoarding($"result=TransportNotLanded transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotLanded transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return false;
         }
 
         if (!transportLanded && em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
         {
-            LogTransportBoarding($"result=TransportBusyRopeDisembark transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportBusyRopeDisembark transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return false;
         }
 
@@ -1558,22 +1592,29 @@ public sealed class RTSSelectionSystem
         int availableSeats = capacity - occupiedSeats;
         if (availableSeats <= 0)
         {
-            LogTransportBoarding($"result=NoSeats transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoSeats transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity}");
             return false;
         }
 
         int selectedCount = CollectSelectedBoardingSourceEntities(em, _selectedBoardingSourceEntities, out int selectedTagCount, out int selectedMoveCount, out bool usedCachedSelection);
         if (selectedCount == 0)
         {
-            LogTransportBoarding(
-                $"result=NoSelectedPassengers transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity} " +
-                $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} cached={_cachedSelectedMoveEntities.Count}");
+            if (shouldLogTransportBoarding)
+            {
+                EnqueueTransportBoardingDiagnostic(
+                    em,
+                    $"[TransportBoard] result=NoSelectedPassengers transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity} " +
+                    $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} cached={_cachedSelectedMoveEntities.Count}");
+            }
+
             return false;
         }
 
         if (_gridPathingQuery.IsEmptyIgnoreFilter)
         {
-            LogTransportBoarding($"result=NoGridPathing transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} usedCache={(usedCachedSelection ? 1 : 0)}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} usedCache={(usedCachedSelection ? 1 : 0)}");
             return false;
         }
 
@@ -1612,7 +1653,8 @@ public sealed class RTSSelectionSystem
                     liveUnitFootprints,
                     out pendingAirPickupCell))
             {
-                LogTransportBoarding($"result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount}");
+                if (shouldLogTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount}");
                 return false;
             }
 
@@ -1627,13 +1669,15 @@ public sealed class RTSSelectionSystem
             Entity passenger = _selectedBoardingSourceEntities[i];
             if (passenger == transport)
             {
-                LogTransportBoarding($"result=SkipPassenger reason=IsTransport passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+                if (shouldLogTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=IsTransport passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
                 continue;
             }
 
             if (!_unitTransportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
             {
-                LogTransportBoarding($"result=SkipPassenger reason=NotSoldierBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
+                if (shouldLogTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotSoldierBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
                 continue;
             }
 
@@ -1663,9 +1707,14 @@ public sealed class RTSSelectionSystem
                     passengerFaction,
                     out int2 goal))
             {
-                LogTransportBoarding(
-                    $"result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                    $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
+                if (shouldLogTransportBoarding)
+                {
+                    EnqueueTransportBoardingDiagnostic(
+                        em,
+                        $"[TransportBoard] result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                        $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
+                }
+
                 continue;
             }
 
@@ -1681,16 +1730,22 @@ public sealed class RTSSelectionSystem
 
         if (boardingOrders.Count <= 0)
         {
-            LogTransportBoarding(
-                $"result=NoBoardingOrders transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} " +
-                $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats}/{capacity} availableSeats={availableSeats}");
+            if (shouldLogTransportBoarding)
+            {
+                EnqueueTransportBoardingDiagnostic(
+                    em,
+                    $"[TransportBoard] result=NoBoardingOrders transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} " +
+                    $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats}/{capacity} availableSeats={availableSeats}");
+            }
+
             return false;
         }
 
         if (hasPendingAirPickupLanding)
         {
             _unitTransportBoardingSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, _unitMoveOrderSystem);
-            LogTransportBoarding($"result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
         }
 
         for (int i = 0; i < boardingOrders.Count; i++)
@@ -1709,9 +1764,13 @@ public sealed class RTSSelectionSystem
             else
                 em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
 
-            LogTransportBoarding(
-                $"result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
+            if (shouldLogTransportBoarding)
+            {
+                EnqueueTransportBoardingDiagnostic(
+                    em,
+                    $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
+                    $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
+            }
         }
 
         ShowMoveOrderMarker(em, transportCell, em.GetComponentData<LocalTransform>(transport).Position, 0);
@@ -1791,34 +1850,36 @@ public sealed class RTSSelectionSystem
     private bool TryGetClickedOrNearbyBoardableTransport(Vector2 screenPosition, EntityManager em, out Entity transport, bool logDiagnostics = true)
     {
         transport = Entity.Null;
+        bool shouldLogTransportBoarding = logDiagnostics && ShouldQueueTransportBoardingDiagnostics(em);
         Entity clickedEntity = Entity.Null;
         bool hasClickedEntity = TryGetClickedUnitEntity(screenPosition, em, out clickedEntity);
         if (hasClickedEntity && _unitTransportBoardingSystem.IsBoardablePlayerTransport(em, clickedEntity))
         {
             transport = clickedEntity;
-            if (logDiagnostics)
-                LogTransportBoarding($"result=ClickedTransport transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedTransport transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return true;
         }
 
         if (!TryGetClickedCell(screenPosition, em, out int2 clickedCell, out _))
         {
-            if (logDiagnostics && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
-                LogTransportBoarding($"result=NoClickedCell clicked={DescribeTransportBoardingEntity(em, clickedEntity)} {DescribeTransportAirState(em, clickedEntity)}");
+            if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoClickedCell clicked={DescribeTransportBoardingEntity(em, clickedEntity)} {DescribeTransportAirState(em, clickedEntity)}");
             return false;
         }
 
         if (TryFindNearbyBoardableTransport(em, clickedCell, out transport))
         {
-            if (logDiagnostics)
-                LogTransportBoarding($"result=NearbyTransport clickedCell={clickedCell} transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NearbyTransport clickedCell={clickedCell} transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return true;
         }
 
-        if (logDiagnostics && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
+        if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
         {
-            LogTransportBoarding(
-                $"result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
+            EnqueueTransportBoardingDiagnostic(
+                em,
+                $"[TransportBoard] result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
                 $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(_unitTransportBoardingSystem.IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
         }
 

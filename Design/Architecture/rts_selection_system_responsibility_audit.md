@@ -364,6 +364,18 @@ Bootstrap AI config diagnostics now flow through the same ECS diagnostic event p
 
 `GameBootstrap` now gates AI config diagnostic message construction before formatting strings, queues `AIDiagnosticLogComponent` entries at gameplay start, and explicitly flushes that queue through `AIDiagnosticLogFlushSystem` so startup validation remains visible at the shell/logging boundary. The diagnostic component now carries a severity byte so missing-config diagnostics can remain warnings without reintroducing static `AILog` calls.
 
+## Twenty-Sixth Extraction Started
+
+Transport boarding diagnostics no longer call `Debug.Log` directly from the boarding command/execution paths.
+
+Transport boarding diagnostics now flow through an ECS diagnostic event path:
+
+- `TransportBoardingDiagnosticLogQueueComponent`
+- `TransportBoardingDiagnosticLogComponent`
+- `TransportBoardingDiagnosticLogFlushSystem`
+
+`RTSSelectionSystem` and `UnitTransportBoardingSystem` now gate transport diagnostic message construction before formatting entity/pathing details, queue `TransportBoardingDiagnosticLogComponent` entries, and let the flush system write Unity logs at the shell/logging boundary.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.

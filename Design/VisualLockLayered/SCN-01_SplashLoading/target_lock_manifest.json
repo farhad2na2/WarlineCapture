@@ -1,0 +1,27 @@
+{
+  "scene": "SCN-01_SplashLoading",
+  "status": "target-lock-reference-generated",
+  "target": "reference/SCN-01_SplashLoading_Landscape_Target.png",
+  "backgroundSource": "generated_one_go/source/SCN-01_SplashLoading_Background_21x9_NoUI.png",
+  "logoSource": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_brand_logo_lockup.png",
+  "runtimeStates": [
+    "App boot fake 2-second loading",
+    "Pre-match operation loading"
+  ],
+  "liveText": [
+    "StatusText",
+    "ProgressPercentText",
+    "TipText",
+    "BottomStatusText"
+  ],
+  "liveValues": [
+    "LoadingProgress",
+    "NextRoute",
+    "MinimumVisibleDuration",
+    "AsyncLoadState"
+  ],
+  "notes": [
+    "Target lock is a composed reference only. Do not flatten into Unity UI.",
+    "Use separable background, logo, frame, bar, fill, and live TMP text in implementation."
+  ]
+}

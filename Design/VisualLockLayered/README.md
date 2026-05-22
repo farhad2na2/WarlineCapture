@@ -42,7 +42,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 
 | Surface | Player-Facing Purpose | New 3D Direction Requirement |
 |---|---|---|
-| `SCN-01_SplashLoading` | App entry and loading. | Brand-first military command tone; no old map art. |
+| `SCN-01_SplashLoading` | App entry and pre-match loading. | Shared branded loading surface for app boot fake load and operation-map loading. Target-lock generated. |
 | `SCN-02_MainMenu` | Command-base hub. | Campaign, Operations, Skirmish, Store, Commander, Settings; Credits, Supplies, Command. |
 | `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with Armory/upgrades links. |
 | `SCN-04_SettingsAccessibility` | Settings and accessibility. | Command-base shell; reachable from Main Menu and Pause. Target and V01 layer pack generated. |

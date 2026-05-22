@@ -13,7 +13,7 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01";
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_SCN08_RTSBattleHUD_TargetLock.prefab";
     private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN08_RTSBattleHUD_TargetLock.unity";
-    private const string CapturePath = "Design/AgentReports/Captures/SCN08_RTSBattleHUD_TargetLock_V03_2400x1080.png";
+    private const string CapturePath = "Design/AgentReports/Captures/SCN08_RTSBattleHUD_TargetLock_V04_2400x1080.png";
 
     private static Color TextMain => new Color32(224, 214, 184, 255);
     private static Color TextMuted => new Color32(172, 160, 128, 255);
@@ -174,12 +174,12 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Selected_Role", "Squad  -  Anti-Infantry", new RectInt(rect.x + 98, rect.y + 75, 230, 28), 18f, TextAlignmentOptions.Left, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddCoverImage(parent, LayerRoot, "Selected_Portrait", "scn08_portrait_rifle_squad.png", new RectInt(rect.x + 34, rect.y + 118, 306, 170), Color.white);
         AddHealth(parent, "Selected_Health", new RectInt(rect.x + 36, rect.y + 309, 300, 36), "120/120");
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Selected_OrderLabel", "ORDER", new RectInt(rect.x + 36, rect.y + 346, 120, 26), 17f, TextAlignmentOptions.Left, TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Selected_OrderValue", "Moving", new RectInt(rect.x + 36, rect.y + 371, 170, 30), 22f, TextAlignmentOptions.Left, Green);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Selected_OrderChevron", "scn08_current_order_chevrons.png", new RectInt(rect.x + 308, rect.y + 361, 42, 42), 34, 28, Green);
-        AddAbility(parent, rect.x + 42, rect.y + 414, "scn08_command_scan_radar.png", "SCAN");
-        AddAbility(parent, rect.x + 144, rect.y + 414, "scn08_command_hold_shield.png", "HOLD");
-        AddAbility(parent, rect.x + 246, rect.y + 414, "scn08_command_board_vehicle.png", "BOARD");
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Selected_OrderLabel", "ORDER", new RectInt(rect.x + 36, rect.y + 342, 120, 26), 17f, TextAlignmentOptions.Left, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Selected_OrderValue", "Moving", new RectInt(rect.x + 36, rect.y + 367, 170, 30), 22f, TextAlignmentOptions.Left, Green);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Selected_OrderChevron", "scn08_current_order_chevrons.png", new RectInt(rect.x + 306, rect.y + 357, 42, 42), 34, 28, Green);
+        AddAbility(parent, rect.x + 42, rect.y + 418, "scn08_command_scan_radar.png", "SCAN");
+        AddAbility(parent, rect.x + 144, rect.y + 418, "scn08_command_hold_shield.png", "HOLD");
+        AddAbility(parent, rect.x + 246, rect.y + 418, "scn08_command_board_vehicle.png", "BOARD");
     }
 
     private static void AddSquadTray(Transform parent)
@@ -230,10 +230,10 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
     {
         RectInt rect = RightQuickRect();
         AddFrame(parent, "RightQuick_Frame", "scn08_right_quick_panel_frame.png", rect);
-        AddQuickButton(parent, rect.x + 20, rect.y + 78, "scn08_icon_pause.png", string.Empty);
-        AddQuickButton(parent, rect.x + 20, rect.y + 166, "scn08_icon_settings_gear.png", string.Empty);
-        AddQuickButton(parent, rect.x + 20, rect.y + 254, "scn08_icon_build_tools.png", "BUILD");
-        AddQuickButton(parent, rect.x + 20, rect.y + 350, "scn08_icon_support_parachute.png", "SUPPORT");
+        AddQuickButton(parent, rect.x + 20, rect.y + 70, "scn08_icon_pause.png", string.Empty);
+        AddQuickButton(parent, rect.x + 20, rect.y + 156, "scn08_icon_settings_gear.png", string.Empty);
+        AddQuickButton(parent, rect.x + 20, rect.y + 242, "scn08_icon_build_tools.png", "BUILD");
+        AddQuickButton(parent, rect.x + 20, rect.y + 334, "scn08_icon_support_parachute.png", "SUPPORT");
         AddZoomButton(parent, rect.x + 24, 812, "scn08_minimap_zoom_plus_icon.png");
         AddZoomButton(parent, rect.x + 24, 895, "scn08_minimap_zoom_minus_icon.png");
         AddZoomButton(parent, rect.x + 24, 978, "scn08_minimap_focus_target_icon.png");
@@ -244,7 +244,7 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
         AddFrame(parent, $"Quick_{icon}_Frame", "scn08_side_quick_button_frame.png", new RectInt(x, y, 70, 72));
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Quick_{icon}_Icon", icon, new RectInt(x + 12, y + 8, 46, 44), 38, 38, TextMain);
         if (!string.IsNullOrEmpty(label))
-            WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Quick_{label}_Text", label, new RectInt(x - 4, y + 49, 78, 24), 13f, TextAlignmentOptions.Center, TextMuted);
+            WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Quick_{label}_Text", label, new RectInt(x - 4, y + 48, 78, 22), 12f, TextAlignmentOptions.Center, TextMuted);
     }
 
     private static void AddMiniMap(Transform parent)
@@ -270,14 +270,14 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
 
     private static void AddWorldMarkers(Transform parent)
     {
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_Path", "scn08_marker_path_line.png", new RectInt(1120, 420, 420, 210), 390, 86, new Color(0.65f, 0.85f, 0.34f, 0.72f));
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_SelectionRing", "scn08_marker_selection_ring.png", new RectInt(1000, 570, 310, 128), 290, 88, new Color(0.65f, 0.85f, 0.34f, 0.80f));
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_MoveDestination", "scn08_marker_move_destination.png", new RectInt(1290, 408, 120, 88), 92, 62, new Color(0.65f, 0.85f, 0.34f, 0.82f));
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_Path", "scn08_marker_path_line.png", new RectInt(1130, 408, 410, 205), 380, 84, new Color(0.65f, 0.85f, 0.34f, 0.72f));
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_SelectionRing", "scn08_marker_selection_ring.png", new RectInt(980, 515, 330, 132), 305, 92, new Color(0.65f, 0.85f, 0.34f, 0.80f));
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_MoveDestination", "scn08_marker_move_destination.png", new RectInt(1285, 402, 120, 88), 92, 62, new Color(0.65f, 0.85f, 0.34f, 0.82f));
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_Objective", "scn08_marker_objective_star_pin.png", new RectInt(650, 235, 90, 150), 76, 126, Gold);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_EnemyA", "scn08_marker_hostile_diamond.png", new RectInt(805, 242, 82, 110), 64, 86, Red);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_EnemyB", "scn08_marker_hostile_diamond.png", new RectInt(1535, 225, 82, 110), 64, 86, Red);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_CivilianRisk", "scn08_marker_civilian_risk_zone.png", new RectInt(1760, 480, 150, 128), 132, 100, Gold);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_Focus", "scn08_marker_command_focus_brackets.png", new RectInt(1010, 575, 270, 110), 230, 70, new Color(0.65f, 0.85f, 0.34f, 0.58f));
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_CivilianRisk", "scn08_marker_civilian_risk_zone.png", new RectInt(1760, 472, 150, 128), 132, 100, Gold);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "World_Focus", "scn08_marker_command_focus_brackets.png", new RectInt(995, 520, 280, 112), 240, 74, new Color(0.65f, 0.85f, 0.34f, 0.58f));
     }
 
     private static void AddAbility(Transform parent, int x, int y, string icon, string label)

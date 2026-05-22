@@ -12,10 +12,13 @@ public partial struct UnitTransportBoardingSystem : ISystem
     private const int AirBoardingClearanceCells = 1;
     private const float AirBoardingGroundedHeightTolerance = 3f;
     private const int DiagnosticLogIntervalFrames = 180;
-    private static readonly RuntimeDiagnosticsSystem RuntimeDiagnostics = new();
+    private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
+        _diagnosticLogQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<TransportBoardingDiagnosticLogComponent>());
         state.RequireForUpdate<UnitTransportBoardingTarget>();
     }
 
@@ -23,6 +26,12 @@ public partial struct UnitTransportBoardingSystem : ISystem
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         EntityManager em = state.EntityManager;
+        bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(ref state);
+        bool shouldLogPeriodicTransportBoarding =
+            shouldLogTransportBoarding && Time.frameCount % DiagnosticLogIntervalFrames == 0;
+        Entity diagnosticQueueEntity = shouldLogTransportBoarding
+            ? EnsureTransportBoardingDiagnosticQueue(ref state)
+            : Entity.Null;
 
         foreach (var (boarding, passengerGrid, passengerTransform, entity) in
                  SystemAPI.Query<RefRO<UnitTransportBoardingTarget>, RefRO<UnitGrid>, RefRO<LocalTransform>>()
@@ -37,14 +46,16 @@ public partial struct UnitTransportBoardingSystem : ISystem
                 !em.HasComponent<UnitFootprint>(transport) ||
                 !em.HasComponent<LocalTransform>(transport))
             {
-                LogDiagnostic($"result=Cancel reason=TransportMissingOrInvalid passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)}");
+                if (shouldLogTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(ref state, diagnosticQueueEntity, $"[TransportBoard] result=Cancel reason=TransportMissingOrInvalid passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)}");
                 ecb.RemoveComponent<UnitTransportBoardingTarget>(entity);
                 continue;
             }
 
             if (!IsTransportLandedForBoarding(em, transport))
             {
-                LogPeriodic(entity, $"result=Waiting reason=TransportNotLanded passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} {DescribeAirState(em, transport)}");
+                if (shouldLogPeriodicTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(ref state, diagnosticQueueEntity, $"[TransportBoard] result=Waiting reason=TransportNotLanded passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} {DescribeAirState(em, transport)}");
                 continue;
             }
 
@@ -52,7 +63,8 @@ public partial struct UnitTransportBoardingSystem : ISystem
             int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
             if (passengers.Length >= capacity)
             {
-                LogDiagnostic($"result=Cancel reason=NoSeats passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} seats={passengers.Length}/{capacity}");
+                if (shouldLogTransportBoarding)
+                    EnqueueTransportBoardingDiagnostic(ref state, diagnosticQueueEntity, $"[TransportBoard] result=Cancel reason=NoSeats passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} seats={passengers.Length}/{capacity}");
                 ecb.RemoveComponent<UnitTransportBoardingTarget>(entity);
                 continue;
             }
@@ -88,18 +100,24 @@ public partial struct UnitTransportBoardingSystem : ISystem
                 math.max(math.abs(passengerCell.x - transportCell.x), math.abs(passengerCell.y - transportCell.y)) <= boardCellDistance;
             if (!reachedTransport)
             {
-                LogPeriodic(
-                    entity,
-                    $"result=Waiting reason=NotReached passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} " +
-                    $"passengerCell={passengerCell} goal={boardingGoal} transportCell={transportCell} transportSize={transportSize} " +
-                    $"distGoal={distanceToBoardingGoal} clearance={boardingClearance} movementFinished={(movementFinished ? 1 : 0)} " +
-                    $"hasTarget={(em.HasComponent<UnitTarget>(entity) ? 1 : 0)} hasRequest={(em.HasComponent<UnitPathRequest>(entity) ? 1 : 0)} hasFollow={(em.HasComponent<UnitPathFollow>(entity) ? 1 : 0)} " +
-                    $"reachedGoal={(reachedBoardingGoal ? 1 : 0)} settledNearGoal={(settledNearBoardingGoal ? 1 : 0)} nearTransport={(nearTransportFootprint ? 1 : 0)} seats={passengers.Length}/{capacity}");
+                if (shouldLogPeriodicTransportBoarding)
+                {
+                    EnqueueTransportBoardingDiagnostic(
+                        ref state,
+                        diagnosticQueueEntity,
+                        $"[TransportBoard] result=Waiting reason=NotReached passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} " +
+                        $"passengerCell={passengerCell} goal={boardingGoal} transportCell={transportCell} transportSize={transportSize} " +
+                        $"distGoal={distanceToBoardingGoal} clearance={boardingClearance} movementFinished={(movementFinished ? 1 : 0)} " +
+                        $"hasTarget={(em.HasComponent<UnitTarget>(entity) ? 1 : 0)} hasRequest={(em.HasComponent<UnitPathRequest>(entity) ? 1 : 0)} hasFollow={(em.HasComponent<UnitPathFollow>(entity) ? 1 : 0)} " +
+                        $"reachedGoal={(reachedBoardingGoal ? 1 : 0)} settledNearGoal={(settledNearBoardingGoal ? 1 : 0)} nearTransport={(nearTransportFootprint ? 1 : 0)} seats={passengers.Length}/{capacity}");
+                }
+
                 continue;
             }
 
             passengers.Add(new UnitTransportPassengerElement { Passenger = entity });
-            LogDiagnostic($"result=Boarded passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} seats={passengers.Length}/{capacity}");
+            if (shouldLogTransportBoarding)
+                EnqueueTransportBoardingDiagnostic(ref state, diagnosticQueueEntity, $"[TransportBoard] result=Boarded passenger={DescribeBoardingEntity(em, entity)} transport={DescribeBoardingEntity(em, transport)} seats={passengers.Length}/{capacity}");
             UnitTransportVisualUtility.SetPassengerHidden(em, entity, ecb);
             ecb.RemoveComponent<UnitTransportBoardingTarget>(entity);
             RemoveIfPresent<UnitTarget>(ref ecb, em, entity);
@@ -859,19 +877,40 @@ public partial struct UnitTransportBoardingSystem : ISystem
         return false;
     }
 
-    private static void LogDiagnostic(string message)
+    private bool ShouldQueueTransportBoardingDiagnostics(ref SystemState state)
     {
-        if (RuntimeDiagnostics.ShouldLogTransportBoarding)
-            Debug.Log($"[TransportBoard] {message}");
+        if (Application.isBatchMode)
+            return true;
+
+        return SystemAPI.HasSingleton<RuntimeDiagnosticsStateComponent>() &&
+            SystemAPI.GetSingleton<RuntimeDiagnosticsStateComponent>().TransportBoardingDiagnostics != 0;
     }
 
-    private static void LogPeriodic(Entity entity, string message)
+    private Entity EnsureTransportBoardingDiagnosticQueue(ref SystemState state)
     {
-        if (!RuntimeDiagnostics.ShouldLogTransportBoarding)
+        EntityManager em = state.EntityManager;
+        if (_diagnosticLogQueueQuery.IsEmptyIgnoreFilter)
+        {
+            Entity queueEntity = em.CreateEntity(typeof(TransportBoardingDiagnosticLogQueueComponent));
+            em.SetName(queueEntity, "TransportBoardingDiagnosticLogQueue");
+            em.AddBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
+            return queueEntity;
+        }
+
+        return _diagnosticLogQueueQuery.GetSingletonEntity();
+    }
+
+    private static void EnqueueTransportBoardingDiagnostic(
+        ref SystemState state,
+        Entity diagnosticQueueEntity,
+        FixedString512Bytes message)
+    {
+        if (diagnosticQueueEntity == Entity.Null)
             return;
 
-        if (Time.frameCount % DiagnosticLogIntervalFrames == 0)
-            Debug.Log($"[TransportBoard] {message}");
+        DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs =
+            state.EntityManager.GetBuffer<TransportBoardingDiagnosticLogComponent>(diagnosticQueueEntity);
+        logs.Add(new TransportBoardingDiagnosticLogComponent { Message = message });
     }
 
     private static string DescribeBoardingEntity(EntityManager em, Entity entity)

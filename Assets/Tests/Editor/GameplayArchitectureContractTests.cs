@@ -325,6 +325,29 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void TransportBoardingDiagnosticsMustUseEcsDiagnosticEvents()
+    {
+        string[] transportDiagnosticFiles =
+        {
+            "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
+            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+        };
+
+        foreach (string file in transportDiagnosticFiles)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                Regex.IsMatch(code, @"Debug\.Log(?:Warning|Error)?\s*\(\s*\$?""\[TransportBoard\]"),
+                $"{file} must queue transport boarding diagnostics through ECS events instead of calling Debug.Log directly.");
+            Assert.IsFalse(
+                code.Contains("RuntimeDiagnostics.ShouldLogTransportBoarding", StringComparison.Ordinal),
+                $"{file} must read transport diagnostic enablement from RuntimeDiagnosticsStateComponent or a shell boundary.");
+            StringAssert.Contains("TransportBoardingDiagnosticLogComponent", code);
+            StringAssert.Contains("EnqueueTransportBoardingDiagnostic", code);
+        }
+    }
+
+    [Test]
     public void ProductionScriptsMustNotReadVerboseAILogsFromLegacyRuntimeState()
     {
         string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)

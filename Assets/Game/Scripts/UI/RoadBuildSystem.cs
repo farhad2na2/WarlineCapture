@@ -11,6 +11,8 @@ using static UnityEngine.Object;
 
 public sealed class RoadBuildSystem
 {
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+
     public enum BuildToolMode
     {
         None,
@@ -367,7 +369,7 @@ public sealed class RoadBuildSystem
             ? _buildingPlacementController.HasSelectedBuilding
             : _selectedBuildingId.HasValue && _runtimeBuildings.ContainsKey(_selectedBuildingId.Value);
 
-    public bool IsRoadBuildModeActive => InitialUnitsRuntimeState.BuildModeActive && _activeBuildTool == BuildToolMode.Road;
+    public bool IsRoadBuildModeActive => _runtimeGameplayStateSystem.BuildModeActive && _activeBuildTool == BuildToolMode.Road;
     public bool IsDraggingBuildInteraction => _isDrawing || (_activeBuildingPlacement != null && _isDraggingBuildingPlacement);
 
     private void OnValidate()
@@ -724,7 +726,7 @@ public sealed class RoadBuildSystem
                 return "Road build mode active";
             if (HasSelectedBuilding)
                 return "Building selected";
-            if (InitialUnitsRuntimeState.BuildModeActive)
+            if (_runtimeGameplayStateSystem.BuildModeActive)
                 return "Build mode active";
             return "Simulation running";
         }
@@ -895,7 +897,7 @@ public sealed class RoadBuildSystem
 
     public void Update()
     {
-        bool roadModeActive = InitialUnitsRuntimeState.PlayRequested && InitialUnitsRuntimeState.BuildModeActive && _activeBuildTool == BuildToolMode.Road;
+        bool roadModeActive = _runtimeGameplayStateSystem.PlayRequested && _runtimeGameplayStateSystem.BuildModeActive && _activeBuildTool == BuildToolMode.Road;
         if (!roadModeActive)
         {
             ClearPreview();
@@ -926,7 +928,7 @@ public sealed class RoadBuildSystem
             return;
         }
 
-        if (!InitialUnitsRuntimeState.PlayRequested || !InitialUnitsRuntimeState.BuildModeActive)
+        if (!_runtimeGameplayStateSystem.PlayRequested || !_runtimeGameplayStateSystem.BuildModeActive)
         {
             HidePlacementOutline();
             return;
@@ -959,7 +961,7 @@ public sealed class RoadBuildSystem
 
     public void OnGui()
     {
-        if (!InitialUnitsRuntimeState.PlayRequested || !InitialUnitsRuntimeState.BuildModeActive || !_pendingDeleteStrokeId.HasValue)
+        if (!_runtimeGameplayStateSystem.PlayRequested || !_runtimeGameplayStateSystem.BuildModeActive || !_pendingDeleteStrokeId.HasValue)
             return;
 
         const int deleteRoadWindowId = 12001;
@@ -976,15 +978,16 @@ public sealed class RoadBuildSystem
 
     public static void SetBuildMode(bool enabled)
     {
+        var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
         if (enabled && WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
         {
-            InitialUnitsRuntimeState.BuildModeActive = false;
+            runtimeGameplayStateSystem.BuildModeActive = false;
             return;
         }
 
-        InitialUnitsRuntimeState.BuildModeActive = enabled;
+        runtimeGameplayStateSystem.BuildModeActive = enabled;
         if (enabled)
-            InitialUnitsRuntimeState.SelectionModeActive = false;
+            runtimeGameplayStateSystem.SelectionModeActive = false;
     }
 
     private Transform CreateRuntimeChildRoot(string name)
@@ -1002,8 +1005,8 @@ public sealed class RoadBuildSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        InitialUnitsRuntimeState.BuildModeActive = true;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = true;
+        _runtimeGameplayStateSystem.SelectionModeActive = false;
         BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build);
 
         if (_activeBuildTool != BuildToolMode.Road)
@@ -1049,8 +1052,8 @@ public sealed class RoadBuildSystem
             return;
         }
 
-        InitialUnitsRuntimeState.BuildModeActive = true;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = true;
+        _runtimeGameplayStateSystem.SelectionModeActive = false;
         BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build);
         _activeBuildTool = BuildToolMode.SoldierBase;
         _pendingDeleteStrokeId = null;
@@ -1127,7 +1130,7 @@ public sealed class RoadBuildSystem
 
     public void ExitBuildMode()
     {
-        InitialUnitsRuntimeState.BuildModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = false;
         _activeBuildTool = BuildToolMode.None;
         _isDraggingBuildingPlacement = false;
         CancelPendingBuild();

@@ -23,6 +23,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private const int MaxAutoProfilerMarkerRecorders = 32;
     private const float M01PlayableStartOrthographicSize = 0.96f;
     private const float M01PlayableCameraHeight = 10f;
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -222,16 +223,16 @@ public sealed class GameBootstrap : MonoBehaviour
         EnsureAITargetPrioritySettingsInitialized();
         EnsureGameplaySystemsInitialized();
         _gameplayStartPending = true;
-        InitialUnitsRuntimeState.PlayRequested = true;
+        _runtimeGameplayStateSystem.PlayRequested = true;
         InitialUnitsRuntimeState.WorldCamera = worldCamera;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
-        InitialUnitsRuntimeState.BuildModeActive = false;
-        InitialUnitsRuntimeState.ZoomInHeld = false;
-        InitialUnitsRuntimeState.ZoomOutHeld = false;
-        InitialUnitsRuntimeState.SuppressNextWorldClick = true;
-        InitialUnitsRuntimeState.FullscreenMapOpen = false;
-        InitialUnitsRuntimeState.FullscreenMapIsoMode = false;
-        InitialUnitsRuntimeState.InitialCameraFocusRequested = false;
+        _runtimeGameplayStateSystem.SelectionModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = false;
+        _runtimeGameplayStateSystem.ZoomInHeld = false;
+        _runtimeGameplayStateSystem.ZoomOutHeld = false;
+        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+        _runtimeGameplayStateSystem.FullscreenMapOpen = false;
+        _runtimeGameplayStateSystem.FullscreenMapIsoMode = false;
+        _runtimeGameplayStateSystem.InitialCameraFocusRequested = false;
         if (!FocusCameraOnM01CameraStart())
             FocusCameraOnConfiguredFactionBase(0);
     }
@@ -985,7 +986,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void Update()
     {
-        bool gameplayActive = GameplayInitialized && InitialUnitsRuntimeState.PlayRequested;
+        bool gameplayActive = GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested;
         double now = Time.realtimeSinceStartupAsDouble;
         bool applicationFocused = Application.isFocused;
         if (applicationFocused != _lastApplicationFocused)
@@ -1087,7 +1088,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!(GameplayInitialized && InitialUnitsRuntimeState.PlayRequested))
+        if (!(GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested))
             return;
 
         double start = Time.realtimeSinceStartupAsDouble;
@@ -1100,7 +1101,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!(GameplayInitialized && InitialUnitsRuntimeState.PlayRequested))
+        if (!(GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested))
             return;
 
         double start = Time.realtimeSinceStartupAsDouble;
@@ -1524,7 +1525,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private bool IsGameplayStartComplete()
     {
-        if (!GameplayInitialized || !InitialUnitsRuntimeState.PlayRequested)
+        if (!GameplayInitialized || !_runtimeGameplayStateSystem.PlayRequested)
             return false;
         if (RuntimeCitySpawner != null && !RuntimeCitySpawner.HasSpawned)
             return false;
@@ -1613,7 +1614,7 @@ public sealed class GameBootstrap : MonoBehaviour
             $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
             $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
             $"memory={BuildMemoryDiagString()} uiToolkit=0 " +
-            $"gameplayInitialized={(GameplayInitialized ? 1 : 0)} playRequested={(InitialUnitsRuntimeState.PlayRequested ? 1 : 0)} " +
+            $"gameplayInitialized={(GameplayInitialized ? 1 : 0)} playRequested={(_runtimeGameplayStateSystem.PlayRequested ? 1 : 0)} " +
             $"focused={(Application.isFocused ? 1 : 0)} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} " +
             $"markers={BuildProfilerMarkerDiagString()}");
     }

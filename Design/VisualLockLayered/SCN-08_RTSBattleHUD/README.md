@@ -7,9 +7,13 @@ Date: 2026-05-22
 
 - Reference target: `reference/SCN-08_RTSBattleHUD_Landscape_Target.png`
 - Candidate source: `reference/SCN-08_RTSBattleHUD_TargetLock_V01.png`
+- 16:9 reference target: `reference/SCN-08_RTSBattleHUD_16x9_Landscape_Target.png`
+- 16:9 candidate source: `reference/SCN-08_RTSBattleHUD_16x9_TargetLock_V01.png`
 - Canonical size: `2400 x 1080`
 
 This target is the active 3D match screen for WarlineCapture. It shows the player commanding squads on one large 3D Middle East town map, with objective tracking, squad selection, command actions, minimap awareness, threat feed, and civilian-risk feedback.
+
+The 16:9 reference is a layout target only. It keeps the same gameplay/state content as the 20:9 target but compresses horizontal spacing so the HUD remains readable without clipping the left panels, bottom commands, right controls, or minimap.
 
 ## Layer Pack
 

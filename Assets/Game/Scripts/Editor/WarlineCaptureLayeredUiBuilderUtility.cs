@@ -102,6 +102,21 @@ public static class WarlineCaptureLayeredUiBuilderUtility
         return image;
     }
 
+    public static Image AddSlicedImage(Transform parent, string layerRoot, string name, string spriteName, RectInt rect, Vector4 spriteBorder, Color color)
+    {
+        EnsureSpriteBorder($"{layerRoot}/{spriteName}", spriteBorder);
+        Sprite sprite = LoadSprite(layerRoot, spriteName);
+        GameObject gameObject = CreateRectObject(name, parent);
+        ApplyTopLeftRect(gameObject.GetComponent<RectTransform>(), ToArray(rect));
+        Image image = gameObject.AddComponent<Image>();
+        image.sprite = sprite;
+        image.color = color;
+        image.type = Image.Type.Sliced;
+        image.preserveAspect = false;
+        image.raycastTarget = false;
+        return image;
+    }
+
     public static Image AddFittedImage(Transform parent, string layerRoot, string name, string spriteName, RectInt slot, int maxWidth, int maxHeight, Color color)
     {
         WarlineUiImagePlacement placement = VisibleFittedPlacement(layerRoot, spriteName, slot, maxWidth, maxHeight);
@@ -378,6 +393,24 @@ public static class WarlineCaptureLayeredUiBuilderUtility
         importer.wrapMode = TextureWrapMode.Clamp;
         importer.textureCompression = TextureImporterCompression.Uncompressed;
         importer.maxTextureSize = 4096;
+        importer.SaveAndReimport();
+    }
+
+    private static void EnsureSpriteBorder(string assetPath, Vector4 spriteBorder)
+    {
+        TextureImporter importer = AssetImporter.GetAtPath(assetPath) as TextureImporter;
+        if (importer == null)
+            return;
+
+        importer.textureType = TextureImporterType.Sprite;
+        importer.spriteImportMode = SpriteImportMode.Single;
+        importer.alphaIsTransparency = true;
+        importer.mipmapEnabled = false;
+        importer.isReadable = true;
+        importer.wrapMode = TextureWrapMode.Clamp;
+        importer.textureCompression = TextureImporterCompression.Uncompressed;
+        importer.maxTextureSize = 4096;
+        importer.spriteBorder = spriteBorder;
         importer.SaveAndReimport();
     }
 

@@ -177,7 +177,37 @@ Target owner: `RtsCameraSystem` or a shell-edge camera service fed by ECS camera
 
 `RTSSelectionSystem` still performs input orchestration and gameplay command dispatch; this slice only moved mutable input session state and small state-only helpers.
 
+## Tenth Extraction Started
+
+`RuntimeGameplayStateSystem` now owns the compatibility boundary for the first migrated `InitialUnitsRuntimeState` flags used by `RTSSelectionSystem`:
+
+- Play/build/map mode flags through `RuntimeGameplayStateComponent`.
+- Selection-mode and world-click suppression flags through `RuntimeGameplayStateComponent`.
+- Camera zoom-held flags through `RuntimeCameraInputComponent`.
+- Initial camera-focus requests through `RuntimeCameraFocusRequestComponent`.
+
+The wrapper still mirrors the legacy static state so other unmigrated callers keep working during the migration.
+
+## Eleventh Extraction Started
+
+The first UI caller group now routes migrated runtime flags through `RuntimeGameplayStateSystem`:
+
+- `MainMenuPlayUI`
+- `MenuView`
+
+These callers no longer touch the migrated `InitialUnitsRuntimeState` play/build/map, selection mode, suppress-click, zoom-held, or camera-focus flags directly. `PlayerAutoModeEnabled` remains on the legacy static state for now because it has not been moved into an ECS singleton component yet.
+
+## Twelfth Extraction Started
+
+The build-mode caller group now routes migrated runtime flags through `RuntimeGameplayStateSystem`:
+
+- `RoadBuildSystem`
+- `BuildingPlacementSystem`
+- `GameBootstrap`
+
+These callers no longer touch the migrated `InitialUnitsRuntimeState` play/build/map, selection mode, suppress-click, zoom-held, or camera-focus flags directly. `GameBootstrap` still assigns `InitialUnitsRuntimeState.WorldCamera` because camera object references are legacy compatibility state outside this migrated slice.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.
-2. Replace static runtime state reads from `InitialUnitsRuntimeState` with ECS singleton request/state components.
+2. Continue replacing direct static runtime state reads from `InitialUnitsRuntimeState` with `RuntimeGameplayStateSystem` and ECS singleton request/state components. Next likely caller group: diagnostics/camera object reference cleanup around `WorldCamera` and remaining non-migrated static state.

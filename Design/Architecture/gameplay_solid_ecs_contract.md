@@ -116,6 +116,13 @@ Allowed static code is limited to pure, stateless operations:
 
 If a class needs runtime collaborators, pass them through bootstrap composition or ECS data/events. If a class needs shared gameplay state, represent it as ECS singleton components, normal components, or buffers owned by systems.
 
+`InitialUnitsRuntimeState` is legacy compatibility debt. New or touched gameplay code must not add direct reads/writes to its mutable flags. During migration, use `RuntimeGameplayStateSystem` as the compatibility boundary and mirror gameplay state through:
+- `RuntimeGameplayStateComponent`
+- `RuntimeCameraInputComponent`
+- `RuntimeCameraFocusRequestComponent`
+
+Once a flag is migrated behind `RuntimeGameplayStateSystem`, callers in that slice should use the boundary instead of touching `InitialUnitsRuntimeState` directly.
+
 ## Logging
 
 Gameplay code must not add new calls to static logging facades such as `AILog.*` or direct `Debug.Log*`. New gameplay logging should use one of:

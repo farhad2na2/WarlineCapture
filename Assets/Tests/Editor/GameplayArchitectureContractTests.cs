@@ -99,6 +99,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Bootstrap composes the application", contract);
         StringAssert.Contains("Gameplay runtime is ECS data plus ECS systems", contract);
         StringAssert.Contains("Runtime gameplay code must not introduce singleton access patterns", contract);
+        StringAssert.Contains("`InitialUnitsRuntimeState` is legacy compatibility debt", contract);
+        StringAssert.Contains("use `RuntimeGameplayStateSystem` as the compatibility boundary", contract);
         StringAssert.Contains("New domain gameplay types should end in `Entity`, `Component`, or `System`", contract);
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
         StringAssert.Contains("Existing `AILog` usage is grandfathered as migration debt", contract);
@@ -702,6 +704,74 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(selection, @"\bprivate\s+(Vector2|bool|int|float|uint|Rect)\s+_(dragStart|dragCurrent|lastPointerPosition|pointerPressedOverUi|dragging|ignoreNextLeftMouseRelease|skipNextWorldReleaseAfterSelection|ignoreWorldCommandsUntilFrame|ignoreUiClickUntilRelease|selectionModeHoldArmed|selectionModeHoldStartTime|queuedMoveOrderToken|hasQueuedMoveOrder|queuedMoveOrderScreenPosition|queuedMoveOrderFrame|lastLiveSelectionRect|hasLiveSelectionRect|lastKnownPointerPosition|hasLastKnownPointerPosition)\s*(=|;)"),
             "RTS input/session state belongs in RtsSelectionInputSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustUseRuntimeGameplayStateBoundary()
+    {
+        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
+        const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
+        const string roadBuildFile = "Assets/Game/Scripts/UI/RoadBuildSystem.cs";
+        const string buildingPlacementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string gameBootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string stateSystemFile = "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs";
+        const string stateComponentsFile = "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs";
+        Assert.IsTrue(File.Exists(stateSystemFile), "Runtime gameplay state access must go through RuntimeGameplayStateSystem.");
+        Assert.IsTrue(File.Exists(stateComponentsFile), "Runtime gameplay state must have ECS singleton components.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string mainMenuPlay = File.ReadAllText(mainMenuPlayFile);
+        string menuView = File.ReadAllText(menuViewFile);
+        string roadBuild = File.ReadAllText(roadBuildFile);
+        string buildingPlacement = File.ReadAllText(buildingPlacementFile);
+        string gameBootstrap = File.ReadAllText(gameBootstrapFile);
+        string components = File.ReadAllText(stateComponentsFile);
+        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", selection);
+        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", mainMenuPlay);
+        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", menuView);
+        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", roadBuild);
+        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", buildingPlacement);
+        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", gameBootstrap);
+        StringAssert.Contains("RuntimeGameplayStateComponent : IComponentData", components);
+        StringAssert.Contains("RuntimeCameraInputComponent : IComponentData", components);
+        StringAssert.Contains("RuntimeCameraFocusRequestComponent : IComponentData", components);
+
+        string[] migratedFields =
+        {
+            "PlayRequested",
+            "InitialCameraFocusRequested",
+            "InitialCameraFocusWorld",
+            "SelectionModeActive",
+            "BuildModeActive",
+            "FullscreenMapOpen",
+            "FullscreenMapIsoMode",
+            "ZoomInHeld",
+            "ZoomOutHeld",
+            "SuppressNextWorldClick"
+        };
+
+        foreach (string field in migratedFields)
+        {
+            Assert.IsFalse(
+                selection.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
+                $"RTSSelectionSystem must use RuntimeGameplayStateSystem for {field}.");
+            Assert.IsFalse(
+                mainMenuPlay.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
+                $"MainMenuPlayUI must use RuntimeGameplayStateSystem for {field}.");
+            Assert.IsFalse(
+                menuView.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
+                $"MenuView must use RuntimeGameplayStateSystem for {field}.");
+            Assert.IsFalse(
+                roadBuild.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
+                $"RoadBuildSystem must use RuntimeGameplayStateSystem for {field}.");
+            Assert.IsFalse(
+                buildingPlacement.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
+                $"BuildingPlacementSystem must use RuntimeGameplayStateSystem for {field}.");
+            Assert.IsFalse(
+                gameBootstrap.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
+                $"GameBootstrap must use RuntimeGameplayStateSystem for {field}.");
+        }
     }
 
     [Test]

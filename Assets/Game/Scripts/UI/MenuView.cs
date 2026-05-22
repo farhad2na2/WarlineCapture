@@ -223,6 +223,7 @@ namespace Game.Scripts.UI
         private Camera _worldCamera;
         private DayNightSystem _dayNightSystem;
         private CitizenPopulationSystem _citizenPopulationSystem;
+        private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
         private readonly List<Entity> _selectedUnits = new();
         private bool _initialized;
         private bool _gameStartPending;
@@ -579,7 +580,7 @@ namespace Game.Scripts.UI
             if (!_initialized || _gameStartPending || HasModalPanelOpen())
                 return;
 
-            bool playRequested = InitialUnitsRuntimeState.PlayRequested;
+            bool playRequested = _runtimeGameplayStateSystem.PlayRequested;
             if (playRequested)
                 SyncTacticalWarningPanel();
 
@@ -668,7 +669,7 @@ namespace Game.Scripts.UI
                     CloseGenericWarningPanel();
                 }
             }
-            if (InitialUnitsRuntimeState.PlayRequested)
+            if (_runtimeGameplayStateSystem.PlayRequested)
                 SyncTacticalWarningPanel();
 
             _wasPrimaryPointerPressed = primaryPointerPressed;
@@ -878,8 +879,8 @@ namespace Game.Scripts.UI
 
         private void ApplyZoomDirectionState()
         {
-            InitialUnitsRuntimeState.ZoomInHeld = _activeZoomDirection > 0;
-            InitialUnitsRuntimeState.ZoomOutHeld = _activeZoomDirection < 0;
+            _runtimeGameplayStateSystem.ZoomInHeld = _activeZoomDirection > 0;
+            _runtimeGameplayStateSystem.ZoomOutHeld = _activeZoomDirection < 0;
         }
 
         private void SyncZoomHoldState()
@@ -995,7 +996,7 @@ namespace Game.Scripts.UI
             _selectionSystem?.CaptureUiClickSequence();
             _selectionSystem?.DeselectAllUnits("MenuView.ButtonSelectClicked");
             _buildingPlacementSystem?.ExitBuildMode();
-            InitialUnitsRuntimeState.SelectionModeActive = true;
+            _runtimeGameplayStateSystem.SelectionModeActive = true;
             if (_buttonSelect != null)
                 _buttonSelect.gameObject.SetActive(false);
         }
@@ -1579,7 +1580,7 @@ namespace Game.Scripts.UI
 
         private void UpdateCanvasMinimap()
         {
-            if (menuType != MenuType.Game || !InitialUnitsRuntimeState.PlayRequested)
+            if (menuType != MenuType.Game || !_runtimeGameplayStateSystem.PlayRequested)
                 return;
 
             ResolveGamePanels();
@@ -1620,7 +1621,7 @@ namespace Game.Scripts.UI
 
         private void UpdateFullscreenMap()
         {
-            if (menuType != MenuType.Game || gameMenuType != GameMenuType.Map || !InitialUnitsRuntimeState.PlayRequested)
+            if (menuType != MenuType.Game || gameMenuType != GameMenuType.Map || !_runtimeGameplayStateSystem.PlayRequested)
                 return;
 
             ResolveGamePanels();
@@ -2527,7 +2528,7 @@ namespace Game.Scripts.UI
                     rectLocalPoint.x - _fullscreenMapCameraRect.rect.xMin,
                     _fullscreenMapCameraRect.rect.yMax - rectLocalPoint.y);
                 _fullscreenMapCameraRectDragging = true;
-                InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
                 return;
             }
 
@@ -2626,7 +2627,7 @@ namespace Game.Scripts.UI
 
         private void SyncGameSelectionPanels()
         {
-            bool hasSelectedBuilding = InitialUnitsRuntimeState.PlayRequested &&
+            bool hasSelectedBuilding = _runtimeGameplayStateSystem.PlayRequested &&
                                        _buildingPlacementSystem != null &&
                                        _buildingPlacementSystem.HasActiveBuilding;
 
@@ -3183,7 +3184,7 @@ namespace Game.Scripts.UI
             bool hasVisibleSelectable = hasVisibleUnits || hasVisibleBuildings;
 
             if (_buttonSelect != null)
-                _buttonSelect.gameObject.SetActive(hasVisibleSelectable && !InitialUnitsRuntimeState.SelectionModeActive);
+                _buttonSelect.gameObject.SetActive(hasVisibleSelectable && !_runtimeGameplayStateSystem.SelectionModeActive);
             if (_buttonSelectAll != null)
                 _buttonSelectAll.gameObject.SetActive(hasVisibleUnits);
             if (_buttonSelectAllSoldiers != null)
@@ -4799,7 +4800,7 @@ namespace Game.Scripts.UI
             if (_buttonAutoMode == null)
                 return;
 
-            bool isVisible = InitialUnitsRuntimeState.PlayRequested && menuType == MenuType.Game;
+            bool isVisible = _runtimeGameplayStateSystem.PlayRequested && menuType == MenuType.Game;
             _buttonAutoMode.gameObject.SetActive(isVisible);
             if (_autoModeLabel == null)
                 _autoModeLabel = _buttonAutoMode.GetComponentInChildren<TMP_Text>(true);
@@ -5613,7 +5614,7 @@ namespace Game.Scripts.UI
 
         private void SuppressNextWorldClick()
         {
-            InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
             StopCoroutine(nameof(ClearWorldClickSuppressionAtEndOfFrame));
             StartCoroutine(nameof(ClearWorldClickSuppressionAtEndOfFrame));
         }
@@ -5621,7 +5622,7 @@ namespace Game.Scripts.UI
         private IEnumerator ClearWorldClickSuppressionAtEndOfFrame()
         {
             yield return null;
-            InitialUnitsRuntimeState.SuppressNextWorldClick = false;
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = false;
         }
 
         private IEnumerator SelectCurrentCampTabNextFrame()

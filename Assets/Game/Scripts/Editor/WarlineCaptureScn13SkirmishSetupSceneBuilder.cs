@@ -20,6 +20,8 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
     private static Color GoldText => new Color32(238, 172, 43, 255);
     private static Color BlueText => new Color32(96, 172, 207, 255);
     private static Color DisabledText => new Color32(128, 124, 105, 255);
+    private static Color DropdownText => new Color32(238, 229, 192, 255);
+    private static Color TextShadow => new Color32(8, 8, 6, 210);
 
     [MenuItem("WarlineCapture/Design/SCN-13 Build Skirmish Setup Target Lock")]
     public static void BuildScene()
@@ -261,10 +263,25 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
         RectInt safe = WarlineCaptureLayeredUiBuilderUtility.Inset(row, 22, 8);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Icon", icon, new RectInt(safe.x, safe.y, 68, safe.height), 50, 50, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Label", label, new RectInt(safe.x + 82, safe.y + 8, 350, safe.height - 16), 27f, TextAlignmentOptions.Left, TextMuted);
-        RectInt valueFrame = new(row.x + row.width - 470, row.y + 12, 415, row.height - 24);
+        RectInt valueFrame = new(row.x + row.width - 610, row.y + 8, 555, row.height - 16);
         WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Rule_{index}_ValueFrame", "scn13_stepper_value_frame.png", valueFrame, false, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Chevron", "scn13_dropdown_chevron.png", new RectInt(valueFrame.x + valueFrame.width - 62, valueFrame.y + 12, 42, valueFrame.height - 24), 30, 24, TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Value", value, new RectInt(valueFrame.x + 24, valueFrame.y + 8, valueFrame.width - 92, valueFrame.height - 16), 30f, TextAlignmentOptions.Center, new Color32(225, 216, 182, 255));
+        AddDropdownValue(parent, index, value, valueFrame);
+    }
+
+    private static void AddDropdownValue(Transform parent, int index, string value, RectInt valueFrame)
+    {
+        float valueFontSize = value.Length > 15 ? 35f : 40f;
+        RectInt textRect = new(valueFrame.x + 58, valueFrame.y + 6, valueFrame.width - 132, valueFrame.height - 12);
+        RectInt shadowRect = new(textRect.x + 3, textRect.y + 3, textRect.width, textRect.height);
+        TMP_Text shadow = WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_ValueShadow", value, shadowRect, valueFontSize, TextAlignmentOptions.MidlineLeft, TextShadow);
+        shadow.fontStyle = FontStyles.Bold;
+
+        TMP_Text text = WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Rule_{index}_Value", value, textRect, valueFontSize, TextAlignmentOptions.MidlineLeft, DropdownText);
+        text.fontStyle = FontStyles.Bold;
+        text.characterSpacing = 0f;
+
+        RectInt chevron = new(valueFrame.x + valueFrame.width - 86, valueFrame.y + 16, 64, valueFrame.height - 32);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Rule_{index}_Chevron", "scn13_dropdown_chevron.png", chevron, 46, 36, DropdownText);
     }
 
     private static void AddStepperRule(Transform parent, int index, string icon, string label, string value)
@@ -358,7 +375,7 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
     private static RectInt RuleRowRect(int index)
     {
         RectInt rules = RulesRect();
-        return new RectInt(rules.x + 50, rules.y + 112 + index * 82, rules.width - 100, 70);
+        return new RectInt(rules.x + 50, rules.y + 96 + index * 94, rules.width - 100, 90);
     }
 }
 #endif

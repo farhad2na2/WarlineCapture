@@ -2,6 +2,7 @@ using UnityEngine;
 
 public sealed class MainMenuPlayUI
 {
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private RTSSelectionSystem _selectionController;
 
     public void Init(
@@ -11,12 +12,12 @@ public sealed class MainMenuPlayUI
         DayNightSystem dayNightSystem)
     {
         _selectionController = selectionController;
-        InitialUnitsRuntimeState.PlayRequested = false;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
-        InitialUnitsRuntimeState.BuildModeActive = false;
-        InitialUnitsRuntimeState.ZoomInHeld = false;
-        InitialUnitsRuntimeState.ZoomOutHeld = false;
-        InitialUnitsRuntimeState.SuppressNextWorldClick = false;
+        _runtimeGameplayStateSystem.PlayRequested = false;
+        _runtimeGameplayStateSystem.SelectionModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = false;
+        _runtimeGameplayStateSystem.ZoomInHeld = false;
+        _runtimeGameplayStateSystem.ZoomOutHeld = false;
+        _runtimeGameplayStateSystem.SuppressNextWorldClick = false;
     }
 
     public void Dispose()
@@ -76,8 +77,8 @@ public sealed class MainMenuPlayUI
 
     public void TriggerSelectionModeFromHold()
     {
-        InitialUnitsRuntimeState.SelectionModeActive = true;
-        InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+        _runtimeGameplayStateSystem.SelectionModeActive = true;
+        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
     }
 
     public void TriggerSelectionCancel()

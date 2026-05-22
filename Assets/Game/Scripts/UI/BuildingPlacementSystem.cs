@@ -16,6 +16,8 @@ using ResourceHaulPhase = ResourceHaulerSystem.ResourceHaulPhase;
 
 public sealed class BuildingPlacementSystem
 {
+    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+
     private enum DragFirstAxis
     {
         None,
@@ -1692,7 +1694,7 @@ public sealed class BuildingPlacementSystem
             return;
         }
 
-        if (!InitialUnitsRuntimeState.PlayRequested)
+        if (!_runtimeGameplayStateSystem.PlayRequested)
         {
             HidePlacementOutline();
             afterInputOutline = Time.realtimeSinceStartupAsDouble;
@@ -1702,7 +1704,7 @@ public sealed class BuildingPlacementSystem
             return;
         }
 
-        if (!InitialUnitsRuntimeState.BuildModeActive)
+        if (!_runtimeGameplayStateSystem.BuildModeActive)
             HidePlacementOutline();
         afterInputOutline = Time.realtimeSinceStartupAsDouble;
 
@@ -1719,7 +1721,7 @@ public sealed class BuildingPlacementSystem
 
             if (!ignoreBecauseCommandUiPressed && !overGameplayUi && overUnitCommandUi && HasActiveBuilding)
             {
-                InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
                 afterInput = Time.realtimeSinceStartupAsDouble;
                 afterInputBuildingClick = afterInput;
                 return;
@@ -2231,7 +2233,7 @@ public sealed class BuildingPlacementSystem
     public void CancelBuildingPlacement()
     {
         CancelPlacement();
-        InitialUnitsRuntimeState.BuildModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = false;
         BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode();
     }
 
@@ -2508,7 +2510,7 @@ public sealed class BuildingPlacementSystem
     private void ExitBuildMode(bool clearBuildingSelection)
     {
         bool shouldClearSelection = clearBuildingSelection && !_preserveBuildingSelectionOnNextExitBuildMode;
-        InitialUnitsRuntimeState.BuildModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = false;
         _isDraggingPlacement = false;
         _ignorePointerUpdatesUntilRelease = false;
         CancelPlacement();
@@ -2575,8 +2577,8 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        InitialUnitsRuntimeState.BuildModeActive = true;
-        InitialUnitsRuntimeState.SelectionModeActive = false;
+        _runtimeGameplayStateSystem.BuildModeActive = true;
+        _runtimeGameplayStateSystem.SelectionModeActive = false;
         BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build);
         ClearSelectedBuilding("BeginPlacement");
         CancelPlacement();
@@ -2832,7 +2834,7 @@ public sealed class BuildingPlacementSystem
             return;
 
         _runtimeBuildingSystem.SelectBuilding(building.Id);
-        InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         RefreshBuildingMarkerVisibility();
         _selectionSystem?.ClearFocusedUnit();
 
@@ -4334,20 +4336,20 @@ public sealed class BuildingPlacementSystem
 
             if (TryAssignSelectedHaulerOrders(entry.Key))
             {
-                InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
                 selectionSystem?.ClearFocusedUnit();
                 return;
             }
 
             if (selectionSystem != null && selectionSystem.TryIssueMoveOrderToBuilding(min, size))
             {
-                InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
                 ClearSelectedBuilding("MoveOrderToBuilding");
                 return;
             }
 
             _runtimeBuildingSystem.SelectBuilding(entry.Key);
-            InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
             selectionSystem?.ClearFocusedUnit();
             return;
         }
@@ -6096,7 +6098,7 @@ public sealed class BuildingPlacementSystem
             return;
 
         _runtimeBuildingSystem.SelectBuilding(building.Id);
-        InitialUnitsRuntimeState.SuppressNextWorldClick = true;
+        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         RefreshBuildingMarkerVisibility();
 
         _selectionSystem?.ClearFocusedUnit();

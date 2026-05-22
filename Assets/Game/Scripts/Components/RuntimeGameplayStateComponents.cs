@@ -1,0 +1,24 @@
+using Unity.Entities;
+using Unity.Mathematics;
+
+public struct RuntimeGameplayStateComponent : IComponentData
+{
+    public byte PlayRequested;
+    public byte SelectionModeActive;
+    public byte BuildModeActive;
+    public byte FullscreenMapOpen;
+    public byte FullscreenMapIsoMode;
+    public byte SuppressNextWorldClick;
+}
+
+public struct RuntimeCameraInputComponent : IComponentData
+{
+    public byte ZoomInHeld;
+    public byte ZoomOutHeld;
+}
+
+public struct RuntimeCameraFocusRequestComponent : IComponentData
+{
+    public byte Requested;
+    public float3 World;
+}

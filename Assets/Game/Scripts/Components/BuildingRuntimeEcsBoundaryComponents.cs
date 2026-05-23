@@ -66,6 +66,23 @@ public struct BuildingFactionUnitProductionRequest : IBufferElementData
     public int ProducedCount;
 }
 
+public struct BuildingFactionResourceSellRequest : IBufferElementData
+{
+    public const byte Pending = 0;
+    public const byte Succeeded = 1;
+    public const byte Failed = 2;
+    public const byte NoneSold = 1;
+
+    public int RequestId;
+    public byte FactionId;
+    public float RequestedOilBarrels;
+    public float RequestedFuelBarrels;
+    public byte Status;
+    public byte ResultCode;
+    public float SoldOilBarrels;
+    public float SoldFuelBarrels;
+}
+
 public struct BuildingRuntimeSpawnRequest : IBufferElementData
 {
     public const byte Pending = 0;

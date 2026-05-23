@@ -30,6 +30,39 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private void ProcessRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
     {
+        ProcessResourceSellRequests(buildingPlacement, em, boundaryEntity);
+        ProcessProductionRequests(buildingPlacement, em, boundaryEntity);
+        ProcessRuntimeSpawnRequests(buildingPlacement, em, boundaryEntity);
+    }
+
+    private void ProcessResourceSellRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    {
+        DynamicBuffer<BuildingFactionResourceSellRequest> sellRequests =
+            EnsureBoundaryBuffer<BuildingFactionResourceSellRequest>(em, boundaryEntity);
+        for (int i = 0; i < sellRequests.Length; i++)
+        {
+            BuildingFactionResourceSellRequest request = sellRequests[i];
+            if (request.Status != BuildingFactionResourceSellRequest.Pending)
+                continue;
+
+            buildingPlacement.SellFactionResources(
+                request.FactionId,
+                Mathf.Max(0f, request.RequestedOilBarrels),
+                Mathf.Max(0f, request.RequestedFuelBarrels),
+                out float soldOil,
+                out float soldFuel);
+            request.Status = BuildingFactionResourceSellRequest.Succeeded;
+            request.ResultCode = soldOil > 0f || soldFuel > 0f
+                ? (byte)0
+                : BuildingFactionResourceSellRequest.NoneSold;
+            request.SoldOilBarrels = soldOil;
+            request.SoldFuelBarrels = soldFuel;
+            sellRequests[i] = request;
+        }
+    }
+
+    private void ProcessProductionRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    {
         DynamicBuffer<BuildingFactionUnitProductionRequest> productionRequests =
             EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em, boundaryEntity);
         for (int i = 0; i < productionRequests.Length; i++)
@@ -53,7 +86,10 @@ public sealed class BuildingRuntimeBoundarySystem
             request.ProducedCount = result.ProducedCount;
             productionRequests[i] = request;
         }
+    }
 
+    private void ProcessRuntimeSpawnRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    {
         DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
             EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
         for (int i = 0; i < spawnRequests.Length; i++)

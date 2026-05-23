@@ -1279,6 +1279,7 @@ public sealed class GameplayArchitectureContractTests
             "BuildingRuntimeOwnedBuildingSummary",
             "BuildingRuntimeUnitProductionSummary",
             "BuildingFactionUnitProductionRequest",
+            "BuildingFactionResourceSellRequest",
             "BuildingRuntimeSpawnRequest"
         };
 
@@ -1292,12 +1293,14 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeUnitProductionSummary>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingFactionUnitProductionRequest>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingFactionResourceSellRequest>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeSpawnRequest>", bootstrap);
 
         StringAssert.Contains("BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem", placement);
         StringAssert.Contains("UpdateBuildingRuntimeBoundary", placement);
         StringAssert.Contains("_buildingRuntimeBoundarySystem.Update", placement);
         StringAssert.Contains("ProcessRequests", boundarySystem);
+        StringAssert.Contains("ProcessResourceSellRequests", boundarySystem);
         StringAssert.Contains("PublishReadModelIfDue", boundarySystem);
         StringAssert.Contains("PublishConfiguredSpawnablesReadModel", boundarySystem);
         StringAssert.Contains("PublishRuntimeFactionSummaries", boundarySystem);
@@ -1331,10 +1334,16 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("BuildingRuntimeBoundaryTag", economy);
         StringAssert.Contains("BuildingRuntimeFactionSummary", economy);
+        StringAssert.Contains("BuildingFactionResourceSellRequest", economy);
+        StringAssert.Contains("EnqueueSellRequest", economy);
+        StringAssert.Contains("ProcessCompletedSellRequests", economy);
         Assert.IsFalse(
             economy.Contains("buildingPlacement.TryGetFactionResourceEconomy", StringComparison.Ordinal) ||
-            economy.Contains("BuildingPlacementSystem.FactionResourceEconomySnapshot", StringComparison.Ordinal),
-            "AIEconomySystem resource-economy reads must come from BuildingRuntimeFactionSummary, not BuildingPlacementSystem.");
+            economy.Contains("BuildingPlacementSystem.FactionResourceEconomySnapshot", StringComparison.Ordinal) ||
+            economy.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            economy.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            economy.Contains("SellFactionResources", StringComparison.Ordinal),
+            "AIEconomySystem building/resource reads and sell mutations must use ECS boundary buffers, not BuildingPlacementSystem.");
     }
 
     [Test]

@@ -296,6 +296,7 @@ public sealed class GameBootstrap : MonoBehaviour
         EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
         EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);
         EnsureBuffer<BuildingFactionUnitProductionRequest>(em, entity);
+        EnsureBuffer<BuildingFactionResourceSellRequest>(em, entity);
         EnsureBuffer<BuildingRuntimeSpawnRequest>(em, entity);
     }
 

@@ -144,7 +144,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement visual instance creation, placement visual positioning, prefab model bounds, and transformed bounds helpers belong in `BuildingPlacementVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
-        StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
+        StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`; resource-hauler update orchestration, selected-hauler assignment bridging, hauler move-order/path request bridging, building approach checks, and building approach-cell search belong in `BuildingResourceHaulerBridgeSystem`", contract);
         StringAssert.Contains("Unit production queue item initialization, player unit production queue mutation, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
         StringAssert.Contains("Selected-building unit production request routing, camp item request failure policy, UI production arm consumption, friendly producer lookup, production request focus, and last camp production focus memory belong in `BuildingProductionRequestSystem`", contract);
         StringAssert.Contains("Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`", contract);
@@ -2301,24 +2301,41 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string haulerFile = "Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs";
+        const string haulerBridgeFile = "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeSystem.cs";
         Assert.IsTrue(File.Exists(haulerFile), "The resource hauler slice must live in ResourceHaulerSystem.");
+        Assert.IsTrue(File.Exists(haulerBridgeFile), "The resource hauler building bridge must live in BuildingResourceHaulerBridgeSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string haulerBridge = File.ReadAllText(haulerBridgeFile);
         StringAssert.Contains("ResourceHaulerSystem _resourceHaulerSystem", placement);
-        StringAssert.Contains("_resourceHaulerSystem.IsOilSourceBuilding", placement);
-        StringAssert.Contains("_resourceHaulerSystem.IsFuelBuilding", placement);
-        StringAssert.Contains("_resourceHaulerSystem.HasAvailableFuelForHauler", placement);
-        StringAssert.Contains("_resourceHaulerSystem.CreateOrder", placement);
-        StringAssert.Contains("_resourceHaulerSystem.SetTravelPhase", placement);
-        StringAssert.Contains("_resourceHaulerSystem.SetPhase", placement);
-        StringAssert.Contains("_resourceHaulerSystem.AdvanceTimedAction", placement);
-        StringAssert.Contains("_resourceHaulerSystem.ResetActionTimer", placement);
-        StringAssert.Contains("_resourceHaulerSystem.GetLoadAmount", placement);
-        StringAssert.Contains("_resourceHaulerSystem.GetCargo", placement);
-        StringAssert.Contains("_resourceHaulerSystem.TryCompleteLoad", placement);
-        StringAssert.Contains("_resourceHaulerSystem.RevertLoad", placement);
-        StringAssert.Contains("_resourceHaulerSystem.HasReceivingCapacity", placement);
-        StringAssert.Contains("_resourceHaulerSystem.TryCompleteUnload", placement);
+        StringAssert.Contains("BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem", placement);
+        StringAssert.Contains("CreateBuildingResourceHaulerBridgeContext", placement);
+        StringAssert.Contains("_buildingResourceHaulerBridgeSystem.UpdateResourceHaulers", placement);
+        StringAssert.Contains("_buildingResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders", placement);
+        StringAssert.Contains("_buildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell", placement);
+        StringAssert.Contains("_buildingResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell", placement);
+
+        StringAssert.Contains("context.ResourceHaulerSystem.IsOilSourceBuilding", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.IsFuelBuilding", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.HasAvailableFuelForHauler", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.CreateOrder", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.SetTravelPhase", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.SetPhase", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.AdvanceTimedAction", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.ResetActionTimer", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.GetLoadAmount", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.GetCargo", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.TryCompleteLoad", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.RevertLoad", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.HasReceivingCapacity", haulerBridge);
+        StringAssert.Contains("context.ResourceHaulerSystem.TryCompleteUnload", haulerBridge);
+        StringAssert.Contains("TryIssueHaulerMoveToBuilding", haulerBridge);
+        StringAssert.Contains("TryFindNearestBuilding", haulerBridge);
+        StringAssert.Contains("TryFindBuildingApproachCell", haulerBridge);
+        StringAssert.Contains("HasGoalOrPathRequest", haulerBridge);
+        StringAssert.Contains("IsHaulerAtBuildingApproach", haulerBridge);
+        StringAssert.Contains("AddComponent<ManualMoveOrderTag>", haulerBridge);
+        StringAssert.Contains("UnitPathRequest", haulerBridge);
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsOilSourceBuilding\b"),
             "Hauler oil source classification belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
@@ -2343,6 +2360,24 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\border\.ActionEndsAt\s*="),
             "Hauler action timer mutation belongs in ResourceHaulerSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryIssueHaulerMoveToBuilding\b"),
+            "Hauler move-order/path request bridging belongs in BuildingResourceHaulerBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryFindNearestBuilding\b"),
+            "Hauler nearest-building lookup belongs in BuildingResourceHaulerBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+static\s+bool\s+HasGoalOrPathRequest\b"),
+            "Hauler path-request checks belong in BuildingResourceHaulerBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+static\s+bool\s+TryFindBuildingApproachCell\b"),
+            "Hauler building approach search belongs in BuildingResourceHaulerBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+static\s+void\s+TryScoreBuildingApproachCandidate\b"),
+            "Hauler building approach scoring belongs in BuildingResourceHaulerBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+static\s+int\s+AxisDistance\b"),
+            "Hauler building approach distance math belongs in BuildingResourceHaulerBridgeSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

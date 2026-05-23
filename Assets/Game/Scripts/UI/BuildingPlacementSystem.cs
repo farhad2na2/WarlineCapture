@@ -10,8 +10,6 @@ using SnivelerCode.GpuAnimation.Scripts.Components;
 using static UnityEngine.Object;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
-using ResourceHaulKind = ResourceHaulerSystem.ResourceHaulKind;
-using ResourceHaulPhase = ResourceHaulerSystem.ResourceHaulPhase;
 
 public sealed class BuildingPlacementSystem
 {
@@ -161,7 +159,6 @@ public sealed class BuildingPlacementSystem
     private static readonly bool EnableBuildingPlacementDiagnostics = false;
     private static readonly bool EnableBuildingDestroyDiagnostics = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
-    private static readonly bool VerboseResourceHaulerLogs = false;
     private const float DestroyedBuildingLifetimeSeconds = 5f;
 
     internal sealed class BuildingDefinition
@@ -336,6 +333,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem = new();
     private readonly BuildingRuntimeEntitySystem _buildingRuntimeEntitySystem = new();
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
+    private readonly BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -828,13 +826,8 @@ public sealed class BuildingPlacementSystem
             {
                 breachCell = outsideApproachCell;
             }
-            else if (TryFindBuildingApproachCell(
-                    grid,
-                    walkable,
-                    blockerData.Blocked,
-                    occupied,
-                    breachBuilding.OriginCell,
-                    breachBuilding.Definition.FootprintCells,
+            else if (TryGetRuntimeBuildingApproachCell(
+                    breachBuilding,
                     new int2(1, 1),
                     attackerCell,
                     out int2 approachCell))
@@ -1425,235 +1418,19 @@ public sealed class BuildingPlacementSystem
 
     private void UpdateResourceHaulers()
     {
-        if (UnitPathfindingSystem.HasPendingPathJob)
-            return;
-
-        if (!TryGetEntityManager(out EntityManager em))
-            return;
-        EnsureEntityQueries(em);
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return;
-
-        using var haulerQuery = _haulerUnitsQuery.ToEntityArray(Allocator.Temp);
-
-        if (haulerQuery.Length == 0)
-            return;
-
-        float now = Time.time;
-        for (int i = 0; i < haulerQuery.Length; i++)
-        {
-            Entity entity = haulerQuery[i];
-            if (!em.Exists(entity))
-                continue;
-
-            UnitResourceHauler hauler = em.GetComponentData<UnitResourceHauler>(entity);
-            UnitResourceHaulOrder order = em.GetComponentData<UnitResourceHaulOrder>(entity);
-            int2 footprintSize = em.HasComponent<UnitFootprint>(entity)
-                ? em.GetComponentData<UnitFootprint>(entity).Size
-                : new int2(1, 1);
-            ResourceHaulKind resourceKind = (ResourceHaulKind)order.ResourceKind;
-
-            if (!TryGetRuntimeBuilding(order.SourceBuildingId, out RuntimeBuildingData source) ||
-                !TryGetRuntimeBuilding(order.DestinationBuildingId, out RuntimeBuildingData destination))
-            {
-                em.RemoveComponent<UnitResourceHaulOrder>(entity);
-                continue;
-            }
-
-            int2 currentCell = em.GetComponentData<UnitGrid>(entity).Cell;
-            switch ((ResourceHaulPhase)order.Phase)
-            {
-                case ResourceHaulPhase.None:
-                {
-                    if (!TryIssueHaulerMoveToBuilding(em, entity, source, out int2 goal))
-                        continue;
-
-                    _resourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulPhase.ToSource, goal);
-                    em.SetComponentData(entity, order);
-                    break;
-                }
-
-                case ResourceHaulPhase.ToSource:
-                {
-                    if (!IsHaulerAtBuildingApproach(currentCell, footprintSize, source, grid))
-                    {
-                        if (VerboseResourceHaulerLogs)
-                            Debug.Log($"[ResourceHauler] entity={entity} phase=ToSource current={currentCell} target={order.TargetCell} source={source.Id} sourceOrigin={source.OriginCell}");
-                        if (!HasGoalOrPathRequest(em, entity, order.TargetCell))
-                        {
-                            if (VerboseResourceHaulerLogs)
-                                Debug.Log($"[ResourceHauler] entity={entity} reissuing-source-move source={source.Id}");
-                            TryIssueHaulerMoveToBuilding(em, entity, source, out _);
-                        }
-                        break;
-                    }
-
-                    if (VerboseResourceHaulerLogs)
-                        Debug.Log($"[ResourceHauler] entity={entity} arrived-source source={source.Id} current={currentCell}");
-                    _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.Loading);
-                    em.SetComponentData(entity, order);
-                    break;
-                }
-
-                case ResourceHaulPhase.Loading:
-                {
-                    float loadAmount = _resourceHaulerSystem.GetLoadAmount(hauler);
-                    if (loadAmount <= 0f)
-                    {
-                        Debug.LogWarning($"[ResourceHauler] entity={entity} invalid-capacity capacity={hauler.BarrelCapacity}");
-                        em.RemoveComponent<UnitResourceHaulOrder>(entity);
-                        break;
-                    }
-
-                    float sourceStored = resourceKind == ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-                    float currentCargo = resourceKind == ResourceHaulKind.Fuel ? hauler.CargoFuelBarrels : hauler.CargoOilBarrels;
-                    if (VerboseResourceHaulerLogs)
-                        Debug.Log($"[ResourceHauler] entity={entity} phase=Loading resource={resourceKind} current={currentCell} source={source.Id} stored={sourceStored:0.##} cargo={currentCargo:0.##}/{loadAmount:0.##} actionEndsAt={order.ActionEndsAt:0.##} now={now:0.##}");
-                    if (!_resourceHaulerSystem.HasEnoughSourceResource(source, resourceKind, loadAmount))
-                    {
-                        if (VerboseResourceHaulerLogs)
-                            Debug.Log($"[ResourceHauler] entity={entity} waiting-for-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
-                        break;
-                    }
-
-                    ResourceHaulerSystem.TimedActionState loadTimer = _resourceHaulerSystem.AdvanceTimedAction(ref order, now, hauler.FillDurationSeconds);
-                    if (loadTimer == ResourceHaulerSystem.TimedActionState.Started)
-                    {
-                        em.SetComponentData(entity, order);
-                        if (VerboseResourceHaulerLogs)
-                            Debug.Log($"[ResourceHauler] entity={entity} loading-started source={source.Id} fillDuration={hauler.FillDurationSeconds:0.##} completeAt={order.ActionEndsAt:0.##}");
-                        break;
-                    }
-                    if (loadTimer == ResourceHaulerSystem.TimedActionState.Waiting)
-                    {
-                        if (VerboseResourceHaulerLogs)
-                            Debug.Log($"[ResourceHauler] entity={entity} loading-in-progress source={source.Id} remaining={order.ActionEndsAt - now:0.##}");
-                        break;
-                    }
-
-                    sourceStored = resourceKind == ResourceHaulKind.Fuel ? source.StoredFuelBarrels : source.StoredOilBarrels;
-                    if (!_resourceHaulerSystem.HasEnoughSourceResource(source, resourceKind, loadAmount))
-                    {
-                        _resourceHaulerSystem.ResetActionTimer(ref order);
-                        em.SetComponentData(entity, order);
-                        if (VerboseResourceHaulerLogs)
-                            Debug.Log($"[ResourceHauler] entity={entity} loading-reset-insufficient-resource resource={resourceKind} source={source.Id} stored={sourceStored:0.##} need={loadAmount:0.##}");
-                        break;
-                    }
-
-                    if (!_resourceHaulerSystem.TryCompleteLoad(source, resourceKind, loadAmount, ref hauler))
-                        break;
-                    em.SetComponentData(entity, hauler);
-                    if (VerboseResourceHaulerLogs)
-                        Debug.Log($"[ResourceHauler] entity={entity} loading-complete resource={resourceKind} source={source.Id} loaded={loadAmount:0.##}");
-
-                    if (!TryIssueHaulerMoveToBuilding(em, entity, destination, out int2 destinationGoal))
-                    {
-                        _resourceHaulerSystem.RevertLoad(source, resourceKind, loadAmount, ref hauler);
-                        em.SetComponentData(entity, hauler);
-                        if (VerboseResourceHaulerLogs)
-                            Debug.LogWarning($"[ResourceHauler] entity={entity} failed-destination-move destination={destination.Id} revertedLoad={loadAmount:0.##}");
-                        break;
-                    }
-
-                    _resourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulPhase.ToDestination, destinationGoal);
-                    em.SetComponentData(entity, order);
-                    if (VerboseResourceHaulerLogs)
-                        Debug.Log($"[ResourceHauler] entity={entity} to-destination destination={destination.Id} target={destinationGoal}");
-                    break;
-                }
-
-                case ResourceHaulPhase.ToDestination:
-                {
-                    if (!IsHaulerAtBuildingApproach(currentCell, footprintSize, destination, grid))
-                    {
-                        if (!HasGoalOrPathRequest(em, entity, order.TargetCell))
-                            TryIssueHaulerMoveToBuilding(em, entity, destination, out _);
-                        break;
-                    }
-
-                    _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.Unloading);
-                    em.SetComponentData(entity, order);
-                    break;
-                }
-
-                case ResourceHaulPhase.Unloading:
-                {
-                    float cargo = _resourceHaulerSystem.GetCargo(hauler, resourceKind);
-                    if (cargo <= 0f)
-                    {
-                        _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.None);
-                        em.SetComponentData(entity, order);
-                        break;
-                    }
-
-                    if (!_resourceHaulerSystem.HasReceivingCapacity(destination, resourceKind, cargo))
-                        break;
-
-                    ResourceHaulerSystem.TimedActionState unloadTimer = _resourceHaulerSystem.AdvanceTimedAction(ref order, now, hauler.UnloadDurationSeconds);
-                    if (unloadTimer == ResourceHaulerSystem.TimedActionState.Started ||
-                        unloadTimer == ResourceHaulerSystem.TimedActionState.Waiting)
-                    {
-                        em.SetComponentData(entity, order);
-                        break;
-                    }
-
-                    if (!_resourceHaulerSystem.HasReceivingCapacity(destination, resourceKind, cargo))
-                    {
-                        _resourceHaulerSystem.ResetActionTimer(ref order);
-                        em.SetComponentData(entity, order);
-                        break;
-                    }
-
-                    if (!_resourceHaulerSystem.TryCompleteUnload(destination, resourceKind, ref hauler))
-                        break;
-                    em.SetComponentData(entity, hauler);
-
-                    if (!TryIssueHaulerMoveToBuilding(em, entity, source, out int2 sourceGoal))
-                    {
-                        _resourceHaulerSystem.SetPhase(ref order, ResourceHaulPhase.None);
-                        em.SetComponentData(entity, order);
-                        break;
-                    }
-
-                    _resourceHaulerSystem.SetTravelPhase(ref order, ResourceHaulPhase.ToSource, sourceGoal);
-                    em.SetComponentData(entity, order);
-                    break;
-                }
-            }
-        }
+        _buildingResourceHaulerBridgeSystem.UpdateResourceHaulers(
+            CreateBuildingResourceHaulerBridgeContext(),
+            UnitPathfindingSystem.HasPendingPathJob,
+            Time.time);
     }
 
     private bool IsHaulerAtBuildingApproach(int2 currentCell, int2 footprintSize, RuntimeBuildingData building, GridConfig grid)
     {
-        if (building?.Definition == null)
-            return false;
-
-        int2 clampedFootprint = UnitFootprintUtility.ClampSize(footprintSize);
-        int2 unitMin = UnitFootprintUtility.GetMinCell(currentCell, clampedFootprint);
-        RectInt unitRect = new(unitMin.x, unitMin.y, clampedFootprint.x, clampedFootprint.y);
-        RectInt buildingRect = GetEffectivePlacementRect(building.Definition, building.OriginCell, grid);
-        if (unitRect.Overlaps(buildingRect))
-            return false;
-
-        int distanceX = AxisDistance(unitRect.xMin, unitRect.xMax, buildingRect.xMin, buildingRect.xMax);
-        int distanceY = AxisDistance(unitRect.yMin, unitRect.yMax, buildingRect.yMin, buildingRect.yMax);
-        int approachDistance = math.max(distanceX, distanceY);
-
-        // Allow a small stand-off so large trucks can wait/load beside a building
-        // even when pathfinding settles them slightly outside the tight 1-cell ring.
-        return approachDistance <= 2;
-    }
-
-    private static int AxisDistance(int minA, int maxA, int minB, int maxB)
-    {
-        if (maxA <= minB)
-            return minB - maxA;
-
-        if (maxB <= minA)
-            return minA - maxB;
-
-        return 0;
+        return _buildingResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell(
+            CreateBuildingResourceHaulerBridgeContext(),
+            building,
+            currentCell,
+            footprintSize);
     }
 
     private void CleanupRecentSpawnReservations()
@@ -2874,137 +2651,9 @@ public sealed class BuildingPlacementSystem
 
     private bool TryAssignSelectedHaulerOrders(int clickedBuildingId)
     {
-        if (!TryGetEntityManager(out EntityManager em))
-            return false;
-        if (!TryGetRuntimeBuilding(clickedBuildingId, out RuntimeBuildingData clickedBuilding))
-            return false;
-
-        EnsureEntityQueries(em);
-        using var selected = _selectedUnitsQuery.ToEntityArray(Allocator.Temp);
-        if (selected.Length == 0)
-            return false;
-
-        bool clickedIsOilSource = _resourceHaulerSystem.IsOilSourceBuilding(clickedBuilding);
-        bool clickedIsFuelBuilding = _resourceHaulerSystem.IsFuelBuilding(clickedBuilding);
-        bool clickedIsStorage = _factionResourceSystem.IsResourceStorageBuilding(clickedBuilding);
-        if (!clickedIsOilSource && !clickedIsFuelBuilding && !clickedIsStorage)
-            return false;
-
-        RuntimeBuildingData source = clickedBuilding;
-        RuntimeBuildingData destination = clickedBuilding;
-        ResourceHaulKind resourceKind = ResourceHaulKind.Oil;
-        if (clickedIsOilSource)
-        {
-            if (!TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.IsFuelBuilding(candidate), out destination))
-                return false;
-            resourceKind = ResourceHaulKind.Oil;
-        }
-        else if (clickedIsFuelBuilding)
-        {
-            if (!TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.IsOilSourceBuilding(candidate), out source))
-                return false;
-            destination = clickedBuilding;
-            resourceKind = ResourceHaulKind.Oil;
-        }
-        else
-        {
-            destination = clickedBuilding;
-            if (TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.HasAvailableFuelForHauler(candidate), out source))
-                resourceKind = ResourceHaulKind.Fuel;
-            else if (TryFindNearestBuilding(clickedBuilding, candidate => _resourceHaulerSystem.IsOilSourceBuilding(candidate), out source))
-                resourceKind = ResourceHaulKind.Oil;
-            else
-                return false;
-        }
-
-        bool assignedAny = false;
-        for (int i = 0; i < selected.Length; i++)
-        {
-            Entity unit = selected[i];
-            if (!em.Exists(unit) || !em.HasComponent<UnitResourceHauler>(unit) || em.HasComponent<UnitAirMovement>(unit))
-                continue;
-
-            if (!TryIssueHaulerMoveToBuilding(em, unit, source, out int2 sourceGoal))
-                continue;
-
-            UnitResourceHaulOrder order = _resourceHaulerSystem.CreateOrder(source.Id, destination.Id, sourceGoal, resourceKind);
-
-            if (em.HasComponent<UnitResourceHaulOrder>(unit))
-                em.SetComponentData(unit, order);
-            else
-                em.AddComponentData(unit, order);
-
-            assignedAny = true;
-        }
-
-        return assignedAny;
-    }
-
-    private bool TryFindNearestBuilding(RuntimeBuildingData originBuilding, System.Predicate<RuntimeBuildingData> predicate, out RuntimeBuildingData result)
-    {
-        result = null;
-        if (originBuilding == null || predicate == null)
-            return false;
-
-        Vector3 origin = ResolveBuildingFocusWorldPosition(originBuilding);
-        float bestDistanceSq = float.MaxValue;
-
-        foreach (var pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData candidate = pair.Value;
-            if (candidate == null || candidate == originBuilding || candidate.IsDestroyed || !predicate(candidate))
-                continue;
-
-            Vector3 candidatePosition = ResolveBuildingFocusWorldPosition(candidate);
-            float distanceSq = (candidatePosition - origin).sqrMagnitude;
-            if (distanceSq >= bestDistanceSq)
-                continue;
-
-            bestDistanceSq = distanceSq;
-            result = candidate;
-        }
-
-        return result != null;
-    }
-
-    private bool TryIssueHaulerMoveToBuilding(EntityManager em, Entity unit, RuntimeBuildingData building, out int2 goal)
-    {
-        goal = default;
-        if (building == null || building.IsDestroyed || !em.Exists(unit) || !TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
-            return false;
-
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-        int2 referenceCell = em.GetComponentData<UnitGrid>(unit).Cell;
-        int2 unitFootprint = em.HasComponent<UnitFootprint>(unit)
-            ? em.GetComponentData<UnitFootprint>(unit).Size
-            : new int2(1, 1);
-        if (!TryFindBuildingApproachCell(grid, walkable, blockerData.Blocked, occupied, building.OriginCell, building.Definition.FootprintCells, unitFootprint, referenceCell, out goal))
-            return false;
-
-        if (em.HasComponent<EngageTarget>(unit))
-            em.RemoveComponent<EngageTarget>(unit);
-        if (em.HasComponent<UnitPathFollow>(unit))
-            em.RemoveComponent<UnitPathFollow>(unit);
-        if (em.HasComponent<UnitPathRange>(unit))
-            em.RemoveComponent<UnitPathRange>(unit);
-        if (em.HasComponent<AutoWanderMoveTag>(unit))
-            em.RemoveComponent<AutoWanderMoveTag>(unit);
-
-        if (em.HasComponent<UnitTarget>(unit))
-            em.SetComponentData(unit, new UnitTarget { Cell = goal });
-        else
-            em.AddComponentData(unit, new UnitTarget { Cell = goal });
-
-        if (em.HasComponent<UnitPathRequest>(unit))
-            em.SetComponentData(unit, new UnitPathRequest { Goal = goal });
-        else
-            em.AddComponentData(unit, new UnitPathRequest { Goal = goal });
-
-        if (!em.HasComponent<ManualMoveOrderTag>(unit))
-            em.AddComponent<ManualMoveOrderTag>(unit);
-
-        return true;
+        return _buildingResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders(
+            CreateBuildingResourceHaulerBridgeContext(),
+            clickedBuildingId);
     }
 
     private bool TryGetRuntimeBuilding(int id, out RuntimeBuildingData building)
@@ -3014,94 +2663,6 @@ public sealed class BuildingPlacementSystem
 
         building = null;
         return false;
-    }
-
-    private static bool HasGoalOrPathRequest(EntityManager em, Entity entity, int2 goal)
-    {
-        bool sameTarget = em.HasComponent<UnitTarget>(entity) && em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal);
-        bool sameRequest = em.HasComponent<UnitPathRequest>(entity) && em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal);
-        return sameTarget || sameRequest;
-    }
-
-    private static bool TryFindBuildingApproachCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        Vector2Int originCell,
-        Vector2Int footprintCells,
-        int2 unitFootprint,
-        int2 referenceCell,
-        out int2 goal)
-    {
-        goal = default;
-        int maxRadius = math.max(grid.Width, grid.Height);
-        int bestScore = int.MaxValue;
-        bool found = false;
-        RectInt buildingRect = new(originCell, footprintCells);
-        int2 clampedUnitFootprint = UnitFootprintUtility.ClampSize(unitFootprint);
-
-        for (int extraRadius = 1; extraRadius <= maxRadius; extraRadius++)
-        {
-            int minX = originCell.x - extraRadius;
-            int minY = originCell.y - extraRadius;
-            int maxX = originCell.x + footprintCells.x - 1 + extraRadius;
-            int maxY = originCell.y + footprintCells.y - 1 + extraRadius;
-
-            for (int x = minX; x <= maxX; x++)
-            {
-                TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, x, minY, ref bestScore, ref goal, ref found);
-                if (maxY != minY)
-                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, x, maxY, ref bestScore, ref goal, ref found);
-            }
-
-            for (int y = minY + 1; y < maxY; y++)
-            {
-                TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, minX, y, ref bestScore, ref goal, ref found);
-                if (maxX != minX)
-                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, buildingRect, clampedUnitFootprint, referenceCell, maxX, y, ref bestScore, ref goal, ref found);
-            }
-
-            if (found)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static void TryScoreBuildingApproachCandidate(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeBitArray occupied,
-        RectInt buildingRect,
-        int2 unitFootprint,
-        int2 referenceCell,
-        int x,
-        int y,
-        ref int bestScore,
-        ref int2 bestCell,
-        ref bool found)
-    {
-        if ((uint)x >= (uint)grid.Width || (uint)y >= (uint)grid.Height)
-            return;
-
-        int2 candidateCell = new(x, y);
-        int2 candidateMin = UnitFootprintUtility.GetMinCell(candidateCell, unitFootprint);
-        RectInt unitRect = new(candidateMin.x, candidateMin.y, unitFootprint.x, unitFootprint.y);
-        if (unitRect.Overlaps(buildingRect))
-            return;
-
-        if (!UnitFootprintUtility.CanPlace(grid, walkable, blocked, default, occupied, candidateCell, unitFootprint, referenceCell, 0))
-            return;
-
-        int score = math.abs(referenceCell.x - x) + math.abs(referenceCell.y - y);
-        if (!found || score < bestScore)
-        {
-            bestScore = score;
-            bestCell = candidateCell;
-            found = true;
-        }
     }
 
     private GameObject CreateBuildingVisualInstance(BuildingDefinition definition, Transform parent)
@@ -3512,6 +3073,22 @@ public sealed class BuildingPlacementSystem
             () => _redirectUnitsQuery);
     }
 
+    private BuildingResourceHaulerBridgeSystem.Context CreateBuildingResourceHaulerBridgeContext()
+    {
+        return new BuildingResourceHaulerBridgeSystem.Context(
+            _runtimeBuildings,
+            _resourceHaulerSystem,
+            _factionResourceSystem,
+            TryGetEntityManager,
+            TryGetGridData,
+            EnsureEntityQueries,
+            () => _haulerUnitsQuery,
+            () => _selectedUnitsQuery,
+            TryGetRuntimeBuilding,
+            ResolveBuildingFocusWorldPosition,
+            (building, grid) => GetEffectivePlacementRect(building.Definition, building.OriginCell, grid));
+    }
+
     private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()
     {
         return new BuildingSpawnPrefabSystem.Context(
@@ -3584,23 +3161,9 @@ public sealed class BuildingPlacementSystem
 
     private bool TryGetRuntimeBuildingApproachCell(RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal)
     {
-        goal = default;
-        if (building == null || building.IsDestroyed)
-            return false;
-        if (!TryGetEntityManager(out EntityManager em))
-            return false;
-        if (!TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
-            return false;
-
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-        return TryFindBuildingApproachCell(
-            grid,
-            walkable,
-            blockerData.Blocked,
-            occupied,
-            building.OriginCell,
-            building.Definition.FootprintCells,
+        return _buildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell(
+            CreateBuildingResourceHaulerBridgeContext(),
+            building,
             unitFootprint,
             referenceCell,
             out goal);

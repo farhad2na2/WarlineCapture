@@ -1179,7 +1179,6 @@ public sealed class BuildingPlacementSystem
 
         EnsureEntityQueries(em);
         _buildingRuntimeBoundarySystem.Update(
-            this,
             _buildingDefinitionSystem,
             _buildingRuntimeSpawnSystem,
             CreateBuildingRuntimeSpawnContext(),
@@ -1187,6 +1186,7 @@ public sealed class BuildingPlacementSystem
             CreateBuildingProductionRequestContext(),
             _buildingRuntimeQuerySystem,
             CreateBuildingRuntimeQueryContext(),
+            _factionResourceSystem,
             em,
             _buildingRuntimeBoundaryQuery,
             _runtimeBuildings,

@@ -12,7 +12,6 @@ public sealed class BuildingRuntimeBoundarySystem
     private float _nextPublishAt;
 
     internal void Update(
-        BuildingPlacementSystem buildingPlacement,
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
@@ -20,16 +19,17 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingProductionRequestSystem.Context productionRequestContext,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        FactionResourceSystem factionResourceSystem,
         EntityManager em,
         EntityQuery boundaryQuery,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         float now)
     {
-        if (buildingPlacement == null ||
-            definitionSystem == null ||
+        if (definitionSystem == null ||
             runtimeSpawnSystem == null ||
             productionRequestSystem == null ||
             runtimeQuerySystem == null ||
+            factionResourceSystem == null ||
             runtimeBuildings == null)
         {
             return;
@@ -39,7 +39,6 @@ public sealed class BuildingRuntimeBoundarySystem
             return;
 
         ProcessRequests(
-            buildingPlacement,
             definitionSystem,
             runtimeSpawnSystem,
             runtimeSpawnContext,
@@ -47,14 +46,16 @@ public sealed class BuildingRuntimeBoundarySystem
             productionRequestContext,
             runtimeQuerySystem,
             runtimeQueryContext,
+            factionResourceSystem,
+            runtimeBuildings,
             em,
             boundaryEntity,
             now);
         PublishReadModelIfDue(
-            buildingPlacement,
             definitionSystem,
             runtimeQuerySystem,
             runtimeQueryContext,
+            factionResourceSystem,
             em,
             boundaryEntity,
             runtimeBuildings,
@@ -62,7 +63,6 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void ProcessRequests(
-        BuildingPlacementSystem buildingPlacement,
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
@@ -70,16 +70,22 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingProductionRequestSystem.Context productionRequestContext,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        FactionResourceSystem factionResourceSystem,
+        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity,
         float now)
     {
-        ProcessResourceSellRequests(buildingPlacement, em, boundaryEntity);
+        ProcessResourceSellRequests(factionResourceSystem, runtimeBuildings, em, boundaryEntity);
         ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
         ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
     }
 
-    private void ProcessResourceSellRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void ProcessResourceSellRequests(
+        FactionResourceSystem factionResourceSystem,
+        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        EntityManager em,
+        Entity boundaryEntity)
     {
         DynamicBuffer<BuildingFactionResourceSellRequest> sellRequests =
             EnsureBoundaryBuffer<BuildingFactionResourceSellRequest>(em, boundaryEntity);
@@ -89,12 +95,16 @@ public sealed class BuildingRuntimeBoundarySystem
             if (request.Status != BuildingFactionResourceSellRequest.Pending)
                 continue;
 
-            buildingPlacement.SellFactionResources(
+            float soldOil = factionResourceSystem.DrainFactionResource(
+                runtimeBuildings,
                 request.FactionId,
                 Mathf.Max(0f, request.RequestedOilBarrels),
+                FactionResourceSystem.ResourceKind.Oil);
+            float soldFuel = factionResourceSystem.DrainFactionResource(
+                runtimeBuildings,
+                request.FactionId,
                 Mathf.Max(0f, request.RequestedFuelBarrels),
-                out float soldOil,
-                out float soldFuel);
+                FactionResourceSystem.ResourceKind.Fuel);
             request.Status = BuildingFactionResourceSellRequest.Succeeded;
             request.ResultCode = soldOil > 0f || soldFuel > 0f
                 ? (byte)0
@@ -199,10 +209,10 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishReadModelIfDue(
-        BuildingPlacementSystem buildingPlacement,
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        FactionResourceSystem factionResourceSystem,
         EntityManager em,
         Entity boundaryEntity,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -214,8 +224,8 @@ public sealed class BuildingRuntimeBoundarySystem
         _nextPublishAt = now + PublishIntervalSeconds;
         PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
         PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
-        PublishRuntimeFactionSummaries(buildingPlacement, em, boundaryEntity, runtimeBuildings);
-        PublishRuntimeOwnedBuildingSummaries(buildingPlacement, definitionSystem, em, boundaryEntity);
+        PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
+        PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
         PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
     }
 
@@ -276,7 +286,9 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishRuntimeFactionSummaries(
-        BuildingPlacementSystem buildingPlacement,
+        FactionResourceSystem factionResourceSystem,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
@@ -289,11 +301,14 @@ public sealed class BuildingRuntimeBoundarySystem
         for (int i = 0; i < _factionIds.Count; i++)
         {
             byte factionId = _factionIds[i];
-            buildingPlacement.TryGetFactionResourceEconomy(factionId, out BuildingPlacementSystem.FactionResourceEconomySnapshot economy);
+            factionResourceSystem.TryGetFactionResourceEconomy(
+                runtimeBuildings,
+                factionId,
+                out FactionResourceSystem.ResourceEconomySnapshot economy);
             buffer.Add(new BuildingRuntimeFactionSummary
             {
                 FactionId = factionId,
-                BuildingCount = buildingPlacement.CountRuntimeBuildingsForFaction(factionId),
+                BuildingCount = runtimeQuerySystem.CountRuntimeBuildingsForFaction(runtimeQueryContext, factionId),
                 StoredOilBarrels = economy.StoredOilBarrels,
                 StoredFuelBarrels = economy.StoredFuelBarrels,
                 OilBarrelsPerDay = economy.OilBarrelsPerDay,
@@ -303,8 +318,9 @@ public sealed class BuildingRuntimeBoundarySystem
     }
 
     private void PublishRuntimeOwnedBuildingSummaries(
-        BuildingPlacementSystem buildingPlacement,
         BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity)
     {
@@ -329,7 +345,7 @@ public sealed class BuildingRuntimeBoundarySystem
                 {
                     FactionId = factionId,
                     BuildingId = buildingId,
-                    Count = buildingPlacement.CountRuntimeBuildingsForFaction(factionId, buildingId.ToString())
+                    Count = runtimeQuerySystem.CountRuntimeBuildingsForFaction(runtimeQueryContext, factionId, buildingId.ToString())
                 });
             }
         }

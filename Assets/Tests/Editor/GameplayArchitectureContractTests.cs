@@ -1301,6 +1301,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingRuntimeBoundarySystem.Update", placement);
         StringAssert.Contains("ProcessRequests", boundarySystem);
         StringAssert.Contains("ProcessResourceSellRequests", boundarySystem);
+        StringAssert.Contains("FactionResourceSystem", boundarySystem);
+        StringAssert.Contains("DrainFactionResource", boundarySystem);
+        StringAssert.Contains("TryGetFactionResourceEconomy", boundarySystem);
         StringAssert.Contains("QueueFactionUnitProductionRequest", boundarySystem);
         StringAssert.Contains("ProcessRuntimeSpawnRequests", boundarySystem);
         StringAssert.Contains("TryResolveConfiguredBuildingDefinition", boundarySystem);
@@ -1338,6 +1341,12 @@ public sealed class GameplayArchitectureContractTests
             boundarySystem.Contains("buildingPlacement.CountRuntimeProducedUnitsForFaction", StringComparison.Ordinal) ||
             boundarySystem.Contains("buildingPlacement.CountPendingProductionsForFaction", StringComparison.Ordinal),
             "BuildingRuntimeBoundarySystem unit read-model and production-summary publishing must use BuildingDefinitionSystem and BuildingRuntimeQuerySystem directly.");
+
+        Assert.IsFalse(
+            boundarySystem.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            boundarySystem.Contains("buildingPlacement.", StringComparison.Ordinal) ||
+            boundarySystem.Contains("SellFactionResources", StringComparison.Ordinal),
+            "BuildingRuntimeBoundarySystem must not depend on BuildingPlacementSystem; resource requests and summaries must use FactionResourceSystem directly.");
     }
 
     [Test]

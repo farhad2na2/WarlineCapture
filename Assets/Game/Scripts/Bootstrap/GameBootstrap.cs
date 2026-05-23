@@ -15,6 +15,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly PerformanceDiagnosticsSystem _performanceDiagnosticsSystem = new();
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
+    private readonly RuntimeRootSystem _runtimeRootSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -84,7 +85,7 @@ public sealed class GameBootstrap : MonoBehaviour
         Application.runInBackground = true;
         _performanceDiagnosticsSystem.Initialize();
 
-        EnsureRuntimeRoots();
+        _runtimeRootSystem.Ensure(transform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot);
 
         DayNight = new DayNightSystem();
         DayNight.Init(dayNightConfig, directionalLight, globalVolume);
@@ -379,30 +380,6 @@ public sealed class GameBootstrap : MonoBehaviour
 
         BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
         component.BuildingPlacement = null;
-    }
-
-    private void EnsureRuntimeRoots()
-    {
-        if (_runtimeBlockerRoot == null)
-        {
-            var runtimeBlockersObject = new GameObject("RuntimeBlockers");
-            runtimeBlockersObject.transform.SetParent(transform, false);
-            _runtimeBlockerRoot = runtimeBlockersObject.transform;
-        }
-
-        if (_runtimeCityRoot == null)
-        {
-            var runtimeCityObject = new GameObject("RuntimeCity");
-            runtimeCityObject.transform.SetParent(transform, false);
-            _runtimeCityRoot = runtimeCityObject.transform;
-        }
-
-        if (_runtimeUiRoot == null)
-        {
-            var runtimeUiObject = new GameObject("RuntimeUi");
-            runtimeUiObject.transform.SetParent(transform, false);
-            _runtimeUiRoot = runtimeUiObject.transform;
-        }
     }
 
     private void EnsureGameplaySystemsInitialized()

@@ -35,10 +35,12 @@ Current examples:
 - Scene refs: `MenuView`, `Camera`, `Light`, `Volume`, runtime roots, tactical binder.
 - Config refs: selection, road build, building placement, attack trace, city/decorations/blockers, day/night, faction visuals, strings, prefab preview, AI controller configs.
 - Runtime shell object creation: `DayNightSystem`, `FactionVisualSettings`, `RoadBuildSystem`, `BuildingPlacementSystem`, `RTSSelectionSystem`, `UnitAttackTraceSystem`, `UnitImpostorRenderSystem`, `CitizenPopulationSystem`.
+- Runtime root creation is delegated to `RuntimeRootSystem` so root names and parent transforms stay centralized without introducing a bootstrap `Installer` type.
 
 Target:
 - Keep as bootstrap composition temporarily.
 - Later split pure wiring into feature installers named `*Installer` only if that reduces `GameBootstrap` without moving gameplay policy into another shell class.
+- Runtime root creation may stay in `RuntimeRootSystem`; bootstrap should only request roots and pass them to runtime systems.
 
 Validation:
 - Existing `NewBootstrapRootFilesMustBeCompositionOnly`.

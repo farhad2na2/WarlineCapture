@@ -528,6 +528,34 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void GameBootstrapMustDelegateRuntimeRootCreation()
+    {
+        const string runtimeRootSystemFile = "Assets/Game/Scripts/Systems/RuntimeRootSystem.cs";
+        string retiredRuntimeRootBootstrapFile = Path.Combine(BootstrapRoot, "RuntimeRoot" + "Installer.cs").Replace('\\', '/');
+        Assert.IsFalse(File.Exists(retiredRuntimeRootBootstrapFile), "Runtime roots must follow the ECS-style System naming boundary.");
+        Assert.IsTrue(File.Exists(runtimeRootSystemFile), "Runtime root creation must live in RuntimeRootSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("RuntimeRootSystem _runtimeRootSystem", bootstrap);
+        StringAssert.Contains("_runtimeRootSystem.Ensure(transform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot)", bootstrap);
+        Assert.IsFalse(
+            Regex.IsMatch(bootstrap, @"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+EnsureRuntimeRoots\s*\("),
+            "Runtime root creation belongs in RuntimeRootSystem, not GameBootstrap.");
+        Assert.IsFalse(bootstrap.Contains("new GameObject(\"RuntimeBlockers\")", StringComparison.Ordinal), "RuntimeBlockers root creation belongs in RuntimeRootSystem.");
+        Assert.IsFalse(bootstrap.Contains("new GameObject(\"RuntimeCity\")", StringComparison.Ordinal), "RuntimeCity root creation belongs in RuntimeRootSystem.");
+        Assert.IsFalse(bootstrap.Contains("new GameObject(\"RuntimeUi\")", StringComparison.Ordinal), "RuntimeUi root creation belongs in RuntimeRootSystem.");
+
+        string runtimeRootSystem = File.ReadAllText(runtimeRootSystemFile);
+        StringAssert.Contains("\"RuntimeBlockers\"", runtimeRootSystem);
+        StringAssert.Contains("\"RuntimeCity\"", runtimeRootSystem);
+        StringAssert.Contains("\"RuntimeUi\"", runtimeRootSystem);
+        StringAssert.Contains("SetParent(owner, false)", runtimeRootSystem);
+        Assert.IsFalse(
+            Regex.IsMatch(runtimeRootSystem, @"\bstatic\b"),
+            "RuntimeRootSystem must stay instance-scoped.");
+    }
+
+    [Test]
     public void NewBootstrapRootFilesMustBeCompositionOnly()
     {
         string[] rootBootstrapFiles = Directory.GetFiles(BootstrapRoot, "*.cs", SearchOption.TopDirectoryOnly)

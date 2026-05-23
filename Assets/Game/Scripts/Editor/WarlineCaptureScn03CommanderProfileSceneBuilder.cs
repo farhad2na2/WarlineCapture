@@ -389,7 +389,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
     private static RectInt HeaderRect() => new(0, 0, CanvasWidth, 126);
     private static RectInt IdentityRect() => new(74, 140, 512, 826);
     private static RectInt OverviewRect() => new(628, 140, 910, 414);
-    private static RectInt RewardTrackRect() => new(628, 552, 910, 184);
+    private static RectInt RewardTrackRect() => new(628, 560, 910, 176);
     private static RectInt RecentHistoryRect() => new(628, 756, 910, 200);
     private static RectInt ArmoryRect() => new(1590, 140, 728, 380);
     private static RectInt ProfileRewardsRect() => new(1590, 540, 728, 205);

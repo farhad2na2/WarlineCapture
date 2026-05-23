@@ -1,6 +1,6 @@
 # POP-05 Mission Result Visual Lock
 
-Status: Victory, partial-success, defeat, and withdrawn target-locks generated. V01 implementation layer pack exists for the shared result shell.
+Status: Victory shared shell layer pack generated. Partial-success, defeat, and withdrawn target-locks plus variant layer add-on generated.
 Date: 2026-05-23
 
 ## Active Target
@@ -13,6 +13,9 @@ Date: 2026-05-23
 - Variant manifest: `target_lock_variants_manifest.json`
 - Variant prompt: `prompts/POP-05_MissionResult_AllResultVariants_TargetLock_V01.md`
 - Variant review sheet: `validation/POP-05_MissionResult_targetlock_variants_contact_sheet.png`
+- Variant layer prompt: `prompts/POP-05_MissionResult_ResultVariants_LayerPack_V01.md`
+- Variant layer manifest: `generated_variants_v01/layer_manifest.json`
+- Variant layer contact sheet: `validation/POP-05_MissionResult_variant_layers_contact_sheet.png`
 - Canonical size: `2400 x 1080`
 
 This target is the active result/debrief screen for the 3D single-map WarlineCapture direction. `POP-05` is one reusable screen with runtime variants for victory, partial success, defeat, withdrawal, and future auto-resolved Operations outcomes. It reports tactical outcome, star scoring, objective completion/failure, performance stats, authored rewards, and district/civilian consequences after a match.
@@ -22,12 +25,22 @@ This target is the active result/debrief screen for the 3D single-map WarlineCap
 | State Id | Header Direction | Visual Tone | Primary CTA | Target Status |
 |---|---|---|---|---|
 | `VictoryComplete` | `OPERATION COMPLETE` / mission success title | Gold success, olive confirmation, clear-result energy. | `CONTINUE` | Current target-lock generated. |
-| `PartialSuccess` | `OBJECTIVE SECURED` / `PARTIAL SUCCESS` | Gold plus amber caution; success with visible cost. | `CONTINUE` | Target-lock generated. |
-| `DefeatFailed` | `OPERATION FAILED` | Warning amber/red, damaged command readout, no celebration. | `RETRY OPERATION` | Target-lock generated. |
-| `Withdrawn` | `FORCE WITHDRAWN` | Muted amber/olive, recovered assets and abandoned goals. | `RETURN TO MAP` | Target-lock generated. |
+| `PartialSuccess` | `OBJECTIVE SECURED` / `PARTIAL SUCCESS` | Gold plus amber caution; success with visible cost. | `CONTINUE` | Target-lock and variant layers generated. |
+| `DefeatFailed` | `OPERATION FAILED` | Warning amber/red, damaged command readout, no celebration. | `RETRY OPERATION` | Target-lock and variant layers generated. |
+| `Withdrawn` | `FORCE WITHDRAWN` | Muted amber/olive, recovered assets and abandoned goals. | `RETURN TO MAP` | Target-lock and variant layers generated. |
 | `SimulationResolved` | `OPERATION RESOLVED` | Neutral command report for Operations auto-resolution. | `VIEW DISTRICT` | Can reuse partial-success shell until a dedicated target is requested. |
 
 The implementation should bind all state-specific text, values, stars, rewards, deltas, CTA labels, and route buttons from `MissionResultData`. Do not create separate Unity prefabs unless a future layout requirement proves the shared shell cannot support a state.
+
+## Variant Layer Add-On
+
+Use the V01 shared shell for common result frames and controls, then add `generated_variants_v01/layer_manifest.json` for state-specific art:
+
+- partial/defeat/withdrawn no-UI backgrounds
+- partial/defeat/withdrawn mission snapshot art
+- failed, warning, abandoned, extracted, unknown, lock, retry, return-map, main-menu, loadout, dim-star, partial-star, disabled-reward, and header-accent sprites
+
+These variant layers were generated from separate source art. The target-lock mockups were not sliced.
 
 ## Layer Pack
 
@@ -40,6 +53,14 @@ Active implementation pack:
 - Generated V01 manifest: `generated_v01/layer_manifest.json`
 
 The generated pack contains separate source groups for no-UI background art, mission snapshot art, blank result frames, buttons, stars, reward icons, consequence icons, stat icons, route icons, and progress/status elements. Text and numbers should be live in Unity.
+
+Variant implementation pack:
+
+- Manifest: `generated_variants_v01/layer_manifest.json`
+- Layers: `generated_variants_v01/layers/`
+- Mirrored layer copies for current workflow compatibility: `layers/pop05_variant_*`, `layers/pop05_partial_*`, `layers/pop05_defeat_*`, `layers/pop05_withdrawn_*`
+- Source images: `generated_variants_v01/source/`
+- Contact sheet: `validation/POP-05_MissionResult_variant_layers_contact_sheet.png`
 
 ## Layer Rules Applied
 

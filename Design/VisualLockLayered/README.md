@@ -65,7 +65,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `POP-02_ConfirmRaid` | Raid confirmation. | Intel confidence, civilian risk, district consequence. |
 | `POP-03_BuildPlacement` | Build placement confirmation. | 3D socket/footprint validity and blocked/civilian-zone reasons. |
 | `POP-04_RewardUnlock` | Major reward/unlock celebration. | Authored reward reveal; no hidden odds. |
-| `POP-05_MissionResult` | Result, stats, stars, rewards. | Victory, partial success, defeat, withdrawal, and Operation-resolved variants over one reusable result shell. Victory/partial/defeat/withdrawn targets generated; V01 layer pack exists for shared shell. |
+| `POP-05_MissionResult` | Result, stats, stars, rewards. | Victory, partial success, defeat, withdrawal, and Operation-resolved variants over one reusable result shell. Victory shared shell layer pack plus partial/defeat/withdrawn variant targets and layer add-on generated. |
 | `POP-06_EndOfDayReport` | Operations day resolution. | District deltas and saved Operation state. |
 | `POP-07_PauseOptions` | Pause/options. | Resume, Settings, restart, exit to Main Menu with confirmation. |
 | `POP-08_IntelReveal` | Intel/evidence reveal. | Evidence, confidence delta, archive route. |

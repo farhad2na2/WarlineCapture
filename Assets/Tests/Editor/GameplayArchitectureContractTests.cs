@@ -124,6 +124,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("AI default build and production fallback ids are owned by authored `AIPlanEntryStartupConfig` assets", contract);
         StringAssert.Contains("Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`", contract);
         StringAssert.Contains("Configured faction spawn-cell resolution is owned by `InitialFactionSpawnCellSystem`", contract);
+        StringAssert.Contains("Broad scene lookup and UI runtime binding are owned by `GameplaySceneBindingSystem`", contract);
         StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
         StringAssert.Contains("Managed gameplay runtime update extraction is paused", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
@@ -454,6 +455,45 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", bootstrap);
         StringAssert.Contains("WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene", bootstrap);
         StringAssert.Contains("IsGameplayStartComplete", bootstrap);
+    }
+
+    [Test]
+    public void GameBootstrapMustDelegateBroadSceneLookupAndUiRuntimeBinding()
+    {
+        const string sceneBindingFile = "Assets/Game/Scripts/Systems/GameplaySceneBindingSystem.cs";
+        Assert.IsTrue(File.Exists(sceneBindingFile), "Broad scene lookup and UI runtime binding must live outside GameBootstrap.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("GameplaySceneBindingSystem _gameplaySceneBindingSystem", bootstrap);
+        StringAssert.Contains("_gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies", bootstrap);
+        StringAssert.Contains("_gameplaySceneBindingSystem.BindRuntimeGridBlockerDebugViews", bootstrap);
+
+        string[] migratedMethodNames =
+        {
+            "BindRuntimeGridBlockerDebugViews",
+            "BindGameplayUiRuntimeDependencies",
+            "FindLoadedSceneComponent",
+            "IsLoadedSceneObject"
+        };
+
+        foreach (string methodName in migratedMethodNames)
+        {
+            Assert.IsFalse(
+                Regex.IsMatch(bootstrap, $@"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+{methodName}\s*\("),
+                $"{methodName} belongs in GameplaySceneBindingSystem, not GameBootstrap.");
+        }
+
+        Assert.IsFalse(
+            bootstrap.Contains("Resources.FindObjectsOfTypeAll", StringComparison.Ordinal),
+            "GameBootstrap must not perform broad scene lookup directly. Use GameplaySceneBindingSystem or explicit scene references.");
+
+        string sceneBinding = File.ReadAllText(sceneBindingFile);
+        StringAssert.Contains("Resources.FindObjectsOfTypeAll", sceneBinding);
+        StringAssert.Contains("BindGameplayUiRuntimeDependencies", sceneBinding);
+        StringAssert.Contains("BindRuntimeGridBlockerDebugViews", sceneBinding);
+        Assert.IsFalse(
+            Regex.IsMatch(sceneBinding, @"\bstatic\b"),
+            "GameplaySceneBindingSystem owns startup scene binding as injected instance behavior; keep it instance-scoped.");
     }
 
     [Test]

@@ -14,6 +14,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly MissionStartupSystem _missionStartupSystem = new();
     private readonly PerformanceDiagnosticsSystem _performanceDiagnosticsSystem = new();
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
+    private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -137,7 +138,10 @@ public sealed class GameBootstrap : MonoBehaviour
             RoadBuild?.BindDependencies(BuildingPlacement, MainMenu);
             BuildingPlacement?.BindDependencies(RoadBuild, MainMenu, DayNight, Selection);
             Selection?.BindDependencies(MainMenu, RoadBuild, BuildingPlacement);
-            BindGameplayUiRuntimeDependencies();
+            _gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies(
+                chapter01TacticalBinder,
+                World.DefaultGameObjectInjectionWorld,
+                Selection);
         }
         catch (Exception exception)
         {
@@ -146,7 +150,10 @@ public sealed class GameBootstrap : MonoBehaviour
             RoadBuild?.BindDependencies(BuildingPlacement, null);
             BuildingPlacement?.BindDependencies(RoadBuild, null, DayNight, Selection);
             Selection?.BindDependencies(null, RoadBuild, BuildingPlacement);
-            BindGameplayUiRuntimeDependencies();
+            _gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies(
+                chapter01TacticalBinder,
+                World.DefaultGameObjectInjectionWorld,
+                Selection);
         }
     }
 
@@ -417,7 +424,7 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeGridBlockers = new RuntimeGridBlockerSystem();
         RuntimeGridBlockers.Init(runtimeGridBlockerConfig, _runtimeBlockerRoot, RuntimeCitySpawner);
         RoadBuild?.BindDependencies(BuildingPlacement, MainMenu, RuntimeGridBlockers);
-        BindRuntimeGridBlockerDebugViews(RuntimeGridBlockers);
+        _gameplaySceneBindingSystem.BindRuntimeGridBlockerDebugViews(RuntimeGridBlockers);
         BuildingPlacement?.BindDependencies(
             RoadBuild,
             MainMenu,
@@ -431,70 +438,6 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeDecorations.Init(runtimeDecorationSpawnerConfig, DecorationRoot, decorationCombinedMeshBaker, RuntimeCitySpawner, RuntimeGridBlockers);
 
         GameplayInitialized = true;
-    }
-
-    private static void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerSystem runtimeGridBlockers)
-    {
-        foreach (GridAuthoring grid in Resources.FindObjectsOfTypeAll<GridAuthoring>())
-        {
-            if (grid == null || !grid.gameObject.scene.IsValid())
-                continue;
-
-            grid.BindRuntimeGridBlockers(runtimeGridBlockers);
-        }
-    }
-
-    private void BindGameplayUiRuntimeDependencies()
-    {
-        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
-        World world = World.DefaultGameObjectInjectionWorld;
-
-        foreach (MatchOverlayCommandControlsController controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsController>())
-        {
-            if (IsLoadedSceneObject(controls))
-                controls.BindDependencies(Selection);
-        }
-
-        foreach (AssistantRuntimeBinding binding in Resources.FindObjectsOfTypeAll<AssistantRuntimeBinding>())
-        {
-            if (!IsLoadedSceneObject(binding))
-                continue;
-
-            WarlineCaptureRouter router = binding.GetComponentInParent<WarlineCaptureRouter>(true);
-            WarlineCaptureMatchResultFlow resultFlow = binding.GetComponentInParent<WarlineCaptureMatchResultFlow>(true);
-            MatchObjectivePanelController objectivePanel = binding.GetComponentInParent<MatchObjectivePanelController>(true);
-            BattleHudGameplayBridge bridge = binding.GetComponentInParent<BattleHudGameplayBridge>(true);
-            if (bridge == null)
-                bridge = FindLoadedSceneComponent<BattleHudGameplayBridge>();
-
-            binding.BindRuntimeDependencies(
-                world,
-                loader,
-                Selection,
-                bridge,
-                router,
-                resultFlow,
-                objectivePanel);
-        }
-    }
-
-    private static T FindLoadedSceneComponent<T>() where T : Component
-    {
-        foreach (T component in Resources.FindObjectsOfTypeAll<T>())
-        {
-            if (IsLoadedSceneObject(component))
-                return component;
-        }
-
-        return null;
-    }
-
-    private static bool IsLoadedSceneObject(Component component)
-    {
-        return component != null &&
-            component.gameObject != null &&
-            component.gameObject.scene.IsValid() &&
-            component.gameObject.scene.isLoaded;
     }
 
     private bool IsGameplayStartComplete()

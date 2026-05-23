@@ -2,6 +2,7 @@
   "surface": "POP-05_MissionResult",
   "canonicalSpec": "Design/WarlineCapture_Mission_Result_State_Spec.md",
   "sharedLayerPack": "layer_manifest.json",
+  "variantLayerPack": "generated_variants_v01/layer_manifest.json",
   "canonicalSize": {
     "width": 2400,
     "height": 1080
@@ -19,21 +20,21 @@
       "header": "OBJECTIVE SECURED",
       "primaryCta": "CONTINUE",
       "reference": "reference/POP-05_MissionResult_PartialSuccess_Target.png",
-      "status": "generated"
+      "status": "target-and-variant-layers-generated"
     },
     {
       "stateId": "DefeatFailed",
       "header": "OPERATION FAILED",
       "primaryCta": "RETRY OPERATION",
       "reference": "reference/POP-05_MissionResult_Defeat_Target.png",
-      "status": "generated"
+      "status": "target-and-variant-layers-generated"
     },
     {
       "stateId": "Withdrawn",
       "header": "FORCE WITHDRAWN",
       "primaryCta": "RETURN TO MAP",
       "reference": "reference/POP-05_MissionResult_Withdrawn_Target.png",
-      "status": "generated"
+      "status": "target-and-variant-layers-generated"
     },
     {
       "stateId": "SimulationResolved",

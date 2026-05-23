@@ -258,7 +258,10 @@ Focused validation:
 
 ### Broad Scene Lookup And UI Runtime Binding
 
-Current bootstrap debt:
+Migrated owner:
+- `GameplaySceneBindingSystem`
+
+Former bootstrap debt:
 - `BindRuntimeGridBlockerDebugViews`
 - `BindGameplayUiRuntimeDependencies`
 - `FindLoadedSceneComponent`
@@ -274,9 +277,10 @@ Target behavior:
 - Scene objects should register through explicit references, authoring, or ECS data.
 
 Migration order:
-1. Replace broad lookup for runtime grid blocker debug views with explicit scene binding.
-2. Replace assistant/command controls lookup with scene bootstrap references or installer config.
-3. Add no-broad-lookup guardrails for new bootstrap code.
+1. Done: move runtime grid blocker debug-view broad lookup into `GameplaySceneBindingSystem`.
+2. Done: move assistant/command controls UI runtime binding broad lookup into `GameplaySceneBindingSystem`.
+3. Done: add no-broad-lookup guardrails for `GameBootstrap`.
+4. Later replace `GameplaySceneBindingSystem` broad lookup with explicit scene references or authored binding config.
 
 Focused validation:
 - UI/assistant runtime binding tests.

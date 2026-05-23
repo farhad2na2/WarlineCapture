@@ -179,16 +179,8 @@ public sealed class GameBootstrap : MonoBehaviour
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
         EnsureGameplaySystemsInitialized();
         _gameplayStartPending = true;
-        _runtimeGameplayStateSystem.PlayRequested = true;
         _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
-        _runtimeGameplayStateSystem.SelectionModeActive = false;
-        _runtimeGameplayStateSystem.BuildModeActive = false;
-        _runtimeGameplayStateSystem.ZoomInHeld = false;
-        _runtimeGameplayStateSystem.ZoomOutHeld = false;
-        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-        _runtimeGameplayStateSystem.FullscreenMapOpen = false;
-        _runtimeGameplayStateSystem.FullscreenMapIsoMode = false;
-        _runtimeGameplayStateSystem.InitialCameraFocusRequested = false;
+        _runtimeGameplayStateSystem.ResetForGameplayStart();
         _missionStartupSystem.FocusInitialCamera(
             World.DefaultGameObjectInjectionWorld,
             Selection,

@@ -11,5 +11,5 @@
   },
   "route": "SCN-02_MainMenu > SCN-03_CommanderProfile > SCN-19_Armory",
   "headerPattern": "SCN-13_SkirmishSetup secondary-screen header: local left Back button beside title; no far-right global Back button.",
-  "nextStep": "Await approval before generating V15 separated layers."
+  "nextStep": "Use layer_manifest.json for Unity Canvas conversion after visual approval."
 }

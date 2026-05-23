@@ -9,8 +9,11 @@ Date: 2026-05-23
 ## Current Target
 
 - Reference target: `reference/SCN-19_Armory_Landscape_Target.png`
-- Source prompt: `prompts/SCN-19_Armory_TargetLock_V02.md`
-- Status: target-lock reference generated; separated implementation layers not requested yet.
+- Target source prompt: `prompts/SCN-19_Armory_TargetLock_V02.md`
+- Layer source prompt: `prompts/SCN-19_Armory_LayerPack_V01.md`
+- Layer manifest: `layer_manifest.json`
+- Contact sheet: `generated_one_go/layers_contact_sheet.png`
+- Status: target-lock reference and V01 separated implementation layer pack generated.
 
 ## Header Rule
 
@@ -28,6 +31,6 @@ Use the `SCN-13 Skirmish Setup` secondary-screen header pattern:
 - Bottom tabs: Owned, Upgrade Tracks, Parts, Gear Modules.
 - Route breadcrumb: Main Menu > Commander Profile > Armory.
 
-## Layering Notes For Next Pass
+## Layering Notes
 
-The target-lock is not an implementation layer pack. When layers are requested, regenerate clean layers through the active V15 workflow. Do not cut this reference target into parts. Text must remain live in Unity, and icons, frames, bars, roster art, selected-item art, category buttons, CTA buttons, and progress components must be separate.
+The target-lock was not cut into parts. V01 layers were generated from fresh source sheets through the active V15 workflow. Text must remain live in Unity, and icons, frames, bars, roster art, selected-item art, category buttons, CTA buttons, and progress components are separate.

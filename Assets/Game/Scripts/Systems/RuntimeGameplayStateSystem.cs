@@ -127,6 +127,33 @@ public sealed class RuntimeGameplayStateSystem
         });
     }
 
+    public void ResetForGameplayStart()
+    {
+        WriteGameplayState(state =>
+        {
+            state.PlayRequested = 1;
+            state.SelectionModeActive = 0;
+            state.BuildModeActive = 0;
+            state.FullscreenMapOpen = 0;
+            state.FullscreenMapIsoMode = 0;
+            state.SuppressNextWorldClick = 1;
+            return state;
+        });
+
+        WriteCameraInput(input =>
+        {
+            input.ZoomInHeld = 0;
+            input.ZoomOutHeld = 0;
+            return input;
+        });
+
+        WriteCameraFocusRequest(request =>
+        {
+            request.Requested = 0;
+            return request;
+        });
+    }
+
     public bool TryConsumeInitialCameraFocus(out Vector3 focusWorld)
     {
         RuntimeCameraFocusRequestComponent request = ReadCameraFocusRequest();

@@ -1351,6 +1351,7 @@ public sealed class GameplayArchitectureContractTests
         string roadBuild = File.ReadAllText(roadBuildFile);
         string buildingPlacement = File.ReadAllText(buildingPlacementFile);
         string gameBootstrap = File.ReadAllText(gameBootstrapFile);
+        string stateSystem = File.ReadAllText(stateSystemFile);
         string components = File.ReadAllText(stateComponentsFile);
         StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", selection);
         StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", mainMenuPlay);
@@ -1358,6 +1359,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", roadBuild);
         StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", buildingPlacement);
         StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", gameBootstrap);
+        StringAssert.Contains("ResetForGameplayStart", stateSystem);
+        StringAssert.Contains("_runtimeGameplayStateSystem.ResetForGameplayStart", gameBootstrap);
         StringAssert.Contains("RuntimeGameplayStateComponent : IComponentData", components);
         StringAssert.Contains("RuntimeCameraInputComponent : IComponentData", components);
         StringAssert.Contains("RuntimeCameraFocusRequestComponent : IComponentData", components);
@@ -1397,6 +1400,26 @@ public sealed class GameplayArchitectureContractTests
             Assert.IsFalse(
                 gameBootstrap.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
                 $"GameBootstrap must use RuntimeGameplayStateSystem for {field}.");
+        }
+
+        string[] bootstrapStartResetAssignments =
+        {
+            "PlayRequested = true",
+            "SelectionModeActive = false",
+            "BuildModeActive = false",
+            "FullscreenMapOpen = false",
+            "FullscreenMapIsoMode = false",
+            "ZoomInHeld = false",
+            "ZoomOutHeld = false",
+            "SuppressNextWorldClick = true",
+            "InitialCameraFocusRequested = false"
+        };
+
+        foreach (string assignment in bootstrapStartResetAssignments)
+        {
+            Assert.IsFalse(
+                gameBootstrap.Contains($"_runtimeGameplayStateSystem.{assignment}", StringComparison.Ordinal),
+                $"Gameplay start state reset belongs in RuntimeGameplayStateSystem.ResetForGameplayStart, not GameBootstrap.");
         }
     }
 

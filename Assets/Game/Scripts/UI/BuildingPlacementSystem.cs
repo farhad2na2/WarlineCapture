@@ -156,7 +156,6 @@ public sealed class BuildingPlacementSystem
     private static readonly bool EnableBuildingDestroyDiagnostics = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
     private const float DestroyedBuildingLifetimeSeconds = 5f;
-    private const float EcsBoundaryPublishIntervalSeconds = 0.5f;
 
     [SerializeField] private BuildingPlacementSystemConfig config;
     [SerializeField, HideInInspector] private Camera worldCamera;
@@ -202,6 +201,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingRuntimeEntitySystem _buildingRuntimeEntitySystem = new();
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
     private readonly BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem = new();
+    private readonly BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem = new();
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
     private int[] _placementInvalidPrefix;
     private int _resourceDollars;
@@ -229,7 +229,6 @@ public sealed class BuildingPlacementSystem
     private EntityQuery _liveFactionUnitsQuery;
     private EntityQuery _buildingRuntimeBoundaryQuery;
     private uint _buildingSpawnRandomState = 0x12345678u;
-    private float _nextEcsBoundaryPublishAt;
     private MaterialPropertyBlock _markerPropertyBlock;
     private bool _hasPlacementInvalidPrefix;
     private int _placementInvalidPrefixWidth;
@@ -237,7 +236,6 @@ public sealed class BuildingPlacementSystem
     private Transform _runtimeRoot;
     private readonly List<BuildingPlacementPreviewSystem.WallPreviewRun> _wallPreviewRuns = new();
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
-    private readonly List<byte> _ecsBoundaryFactionIds = new();
     private bool _preserveBuildingSelectionOnNextExitBuildMode;
     private const float OilBarrelsPerFuelBarrel = 2f;
 
@@ -1067,8 +1065,7 @@ public sealed class BuildingPlacementSystem
         afterDoors = Time.realtimeSinceStartupAsDouble;
         _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility);
         afterMarkers = Time.realtimeSinceStartupAsDouble;
-        ProcessBuildingRuntimeEcsRequests();
-        PublishBuildingRuntimeEcsReadModelIfDue();
+        UpdateBuildingRuntimeBoundary();
 
         if (worldCamera == null)
             return;
@@ -1176,271 +1173,13 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    private void ProcessBuildingRuntimeEcsRequests()
+    private void UpdateBuildingRuntimeBoundary()
     {
-        if (!TryGetBuildingRuntimeBoundaryEntity(out EntityManager em, out Entity boundaryEntity))
+        if (!TryGetEntityManager(out EntityManager em))
             return;
-
-        DynamicBuffer<BuildingFactionUnitProductionRequest> productionRequests =
-            EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em, boundaryEntity);
-        for (int i = 0; i < productionRequests.Length; i++)
-        {
-            BuildingFactionUnitProductionRequest request = productionRequests[i];
-            if (request.Status != BuildingFactionUnitProductionRequest.Pending)
-                continue;
-
-            bool queued = TryQueueFactionUnitProduction(
-                request.FactionId,
-                request.UnitId.ToString(),
-                out FactionUnitProductionResult result);
-            request.Status = queued
-                ? BuildingFactionUnitProductionRequest.Succeeded
-                : BuildingFactionUnitProductionRequest.Failed;
-            request.ResultCode = (byte)result.Code;
-            request.ProducerDisplayName = ToFixedString128(result.ProducerDisplayName);
-            request.UnitDisplayName = ToFixedString128(result.UnitDisplayName);
-            request.Cost = result.Cost;
-            request.QueueCount = result.QueueCount;
-            request.ProducedCount = result.ProducedCount;
-            productionRequests[i] = request;
-        }
-
-        DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
-            EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
-        for (int i = 0; i < spawnRequests.Length; i++)
-        {
-            BuildingRuntimeSpawnRequest request = spawnRequests[i];
-            if (request.Status != BuildingRuntimeSpawnRequest.Pending)
-                continue;
-
-            if (!TryGetConfiguredSpawnable(request.BuildingId.ToString(), out ConfiguredSpawnableEntry spawnable) ||
-                spawnable.Prefab == null ||
-                !spawnable.CanRequest)
-            {
-                request.Status = BuildingRuntimeSpawnRequest.Failed;
-                request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
-                spawnRequests[i] = request;
-                continue;
-            }
-
-            bool placed = TrySpawnRuntimeBuilding(
-                spawnable.Prefab,
-                new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
-                out int buildingId,
-                out Vector2Int actualOrigin,
-                out Vector2Int actualFootprint,
-                spawnable.DisplayName,
-                spawnable.DisplayName,
-                null,
-                500,
-                false,
-                request.FactionId,
-                request.RotateVertical != 0);
-
-            request.Status = placed
-                ? BuildingRuntimeSpawnRequest.Succeeded
-                : BuildingRuntimeSpawnRequest.Failed;
-            request.ResultCode = placed ? (byte)0 : BuildingRuntimeSpawnRequest.Blocked;
-            request.BuildingRuntimeId = placed ? buildingId : 0;
-            request.ActualOrigin = placed ? new int2(actualOrigin.x, actualOrigin.y) : default;
-            request.ActualFootprint = placed ? new int2(actualFootprint.x, actualFootprint.y) : default;
-            spawnRequests[i] = request;
-        }
-    }
-
-    private void PublishBuildingRuntimeEcsReadModelIfDue()
-    {
-        float now = Time.time;
-        if (now < _nextEcsBoundaryPublishAt)
-            return;
-
-        _nextEcsBoundaryPublishAt = now + EcsBoundaryPublishIntervalSeconds;
-        if (!TryGetBuildingRuntimeBoundaryEntity(out EntityManager em, out Entity boundaryEntity))
-            return;
-
-        PublishConfiguredSpawnablesReadModel(em, boundaryEntity);
-        PublishConfiguredUnitsReadModel(em, boundaryEntity);
-        PublishRuntimeFactionSummaries(em, boundaryEntity);
-        PublishRuntimeOwnedBuildingSummaries(em, boundaryEntity);
-        PublishRuntimeUnitProductionSummaries(em, boundaryEntity);
-    }
-
-    private void PublishConfiguredSpawnablesReadModel(EntityManager em, Entity boundaryEntity)
-    {
-        DynamicBuffer<BuildingConfiguredSpawnableReadModel> buffer =
-            EnsureBoundaryBuffer<BuildingConfiguredSpawnableReadModel>(em, boundaryEntity);
-        buffer.Clear();
-
-        for (int i = 0; i < ConfiguredSpawnableCount; i++)
-        {
-            if (!TryGetConfiguredSpawnable(i, out ConfiguredSpawnableEntry entry) || entry.Prefab == null)
-                continue;
-
-            buffer.Add(new BuildingConfiguredSpawnableReadModel
-            {
-                BuildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
-                DisplayName = ToFixedString128(entry.DisplayName),
-                Price = Mathf.Max(0, entry.Price),
-                CanRequest = entry.CanRequest ? (byte)1 : (byte)0
-            });
-        }
-    }
-
-    private void PublishConfiguredUnitsReadModel(EntityManager em, Entity boundaryEntity)
-    {
-        DynamicBuffer<BuildingConfiguredUnitReadModel> buffer =
-            EnsureBoundaryBuffer<BuildingConfiguredUnitReadModel>(em, boundaryEntity);
-        buffer.Clear();
-
-        for (int i = 0; i < ConfiguredUnitCount; i++)
-        {
-            if (!TryGetConfiguredUnit(i, out ConfiguredUnitEntry entry) || entry.Prefab == null)
-                continue;
-
-            buffer.Add(new BuildingConfiguredUnitReadModel
-            {
-                UnitId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
-                DisplayName = ToFixedString128(entry.DisplayName),
-                Price = Mathf.Max(0, entry.Price),
-                CanRequest = entry.CanRequest ? (byte)1 : (byte)0,
-                IsVehicle = entry.IsVehicle ? (byte)1 : (byte)0
-            });
-        }
-    }
-
-    private void PublishRuntimeFactionSummaries(EntityManager em, Entity boundaryEntity)
-    {
-        RefreshEcsBoundaryFactionIds();
-        DynamicBuffer<BuildingRuntimeFactionSummary> buffer =
-            EnsureBoundaryBuffer<BuildingRuntimeFactionSummary>(em, boundaryEntity);
-        buffer.Clear();
-
-        for (int i = 0; i < _ecsBoundaryFactionIds.Count; i++)
-        {
-            byte factionId = _ecsBoundaryFactionIds[i];
-            TryGetFactionResourceEconomy(factionId, out FactionResourceEconomySnapshot economy);
-            buffer.Add(new BuildingRuntimeFactionSummary
-            {
-                FactionId = factionId,
-                BuildingCount = CountRuntimeBuildingsForFaction(factionId),
-                StoredOilBarrels = economy.StoredOilBarrels,
-                StoredFuelBarrels = economy.StoredFuelBarrels,
-                OilBarrelsPerDay = economy.OilBarrelsPerDay,
-                FuelBarrelsPerDay = economy.FuelBarrelsPerDay
-            });
-        }
-    }
-
-    private void PublishRuntimeOwnedBuildingSummaries(EntityManager em, Entity boundaryEntity)
-    {
-        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer =
-            EnsureBoundaryBuffer<BuildingRuntimeOwnedBuildingSummary>(em, boundaryEntity);
-        buffer.Clear();
-
-        for (int factionIndex = 0; factionIndex < _ecsBoundaryFactionIds.Count; factionIndex++)
-        {
-            byte factionId = _ecsBoundaryFactionIds[factionIndex];
-            for (int i = 0; i < ConfiguredSpawnableCount; i++)
-            {
-                if (!TryGetConfiguredSpawnable(i, out ConfiguredSpawnableEntry entry) || entry.Prefab == null)
-                    continue;
-
-                FixedString128Bytes buildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName);
-                buffer.Add(new BuildingRuntimeOwnedBuildingSummary
-                {
-                    FactionId = factionId,
-                    BuildingId = buildingId,
-                    Count = CountRuntimeBuildingsForFaction(factionId, buildingId.ToString())
-                });
-            }
-        }
-    }
-
-    private void PublishRuntimeUnitProductionSummaries(EntityManager em, Entity boundaryEntity)
-    {
-        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer =
-            EnsureBoundaryBuffer<BuildingRuntimeUnitProductionSummary>(em, boundaryEntity);
-        buffer.Clear();
-
-        for (int factionIndex = 0; factionIndex < _ecsBoundaryFactionIds.Count; factionIndex++)
-        {
-            byte factionId = _ecsBoundaryFactionIds[factionIndex];
-            for (int i = 0; i < ConfiguredUnitCount; i++)
-            {
-                if (!TryGetConfiguredUnit(i, out ConfiguredUnitEntry entry) || entry.Prefab == null)
-                    continue;
-
-                FixedString128Bytes unitId = ResolveBoundaryId(entry.Prefab, entry.DisplayName);
-                string unitIdString = unitId.ToString();
-                buffer.Add(new BuildingRuntimeUnitProductionSummary
-                {
-                    FactionId = factionId,
-                    UnitId = unitId,
-                    ProducedCount = CountRuntimeProducedUnitsForFaction(factionId, unitIdString),
-                    QueuedCount = CountPendingProductionsForFaction(factionId, unitIdString)
-                });
-            }
-        }
-    }
-
-    private void RefreshEcsBoundaryFactionIds()
-    {
-        _ecsBoundaryFactionIds.Clear();
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || !building.HasOwnerFaction)
-                continue;
-
-            AddEcsBoundaryFactionId(building.OwnerFactionId);
-        }
-    }
-
-    private void AddEcsBoundaryFactionId(byte factionId)
-    {
-        for (int i = 0; i < _ecsBoundaryFactionIds.Count; i++)
-        {
-            if (_ecsBoundaryFactionIds[i] == factionId)
-                return;
-        }
-
-        _ecsBoundaryFactionIds.Add(factionId);
-    }
-
-    private bool TryGetBuildingRuntimeBoundaryEntity(out EntityManager em, out Entity boundaryEntity)
-    {
-        em = default;
-        boundaryEntity = Entity.Null;
-        if (!TryGetEntityManager(out em))
-            return false;
 
         EnsureEntityQueries(em);
-        if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        boundaryEntity = _buildingRuntimeBoundaryQuery.GetSingletonEntity();
-        return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
-    }
-
-    private static DynamicBuffer<T> EnsureBoundaryBuffer<T>(EntityManager em, Entity entity)
-        where T : unmanaged, IBufferElementData
-    {
-        if (!em.HasBuffer<T>(entity))
-            em.AddBuffer<T>(entity);
-
-        return em.GetBuffer<T>(entity);
-    }
-
-    private static FixedString128Bytes ResolveBoundaryId(GameObject prefab, string fallback)
-    {
-        string source = prefab != null ? prefab.name : fallback;
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(source);
-        return ToFixedString128(string.IsNullOrEmpty(normalized) ? fallback : normalized);
-    }
-
-    private static FixedString128Bytes ToFixedString128(string value)
-    {
-        return new FixedString128Bytes(value ?? string.Empty);
+        _buildingRuntimeBoundarySystem.Update(this, em, _buildingRuntimeBoundaryQuery, _runtimeBuildings, Time.time);
     }
 
     private BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()

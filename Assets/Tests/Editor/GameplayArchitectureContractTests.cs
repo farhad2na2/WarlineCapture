@@ -1259,11 +1259,14 @@ public sealed class GameplayArchitectureContractTests
     public void BuildingRuntimeEcsBoundaryMustStayExplicit()
     {
         const string boundaryFile = "Assets/Game/Scripts/Components/BuildingRuntimeEcsBoundaryComponents.cs";
+        const string boundarySystemFile = "Assets/Game/Scripts/Systems/BuildingRuntimeBoundarySystem.cs";
         const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         Assert.IsTrue(File.Exists(boundaryFile), "Building runtime ECS boundary components must be explicit ECS contracts.");
+        Assert.IsTrue(File.Exists(boundarySystemFile), "Building runtime boundary publish/consume orchestration must live in BuildingRuntimeBoundarySystem.");
 
         string boundary = File.ReadAllText(boundaryFile);
+        string boundarySystem = File.ReadAllText(boundarySystemFile);
         string bootstrap = File.ReadAllText(bootstrapFile);
         string placement = File.ReadAllText(placementFile);
 
@@ -1291,11 +1294,22 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("EnsureBuffer<BuildingFactionUnitProductionRequest>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeSpawnRequest>", bootstrap);
 
-        StringAssert.Contains("ProcessBuildingRuntimeEcsRequests", placement);
-        StringAssert.Contains("PublishBuildingRuntimeEcsReadModelIfDue", placement);
+        StringAssert.Contains("BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem", placement);
+        StringAssert.Contains("UpdateBuildingRuntimeBoundary", placement);
+        StringAssert.Contains("_buildingRuntimeBoundarySystem.Update", placement);
+        StringAssert.Contains("ProcessRequests", boundarySystem);
+        StringAssert.Contains("PublishReadModelIfDue", boundarySystem);
+        StringAssert.Contains("PublishConfiguredSpawnablesReadModel", boundarySystem);
+        StringAssert.Contains("PublishRuntimeFactionSummaries", boundarySystem);
         StringAssert.Contains("BuildingRuntimeBoundaryTag", placement);
-        StringAssert.Contains("TryGetBuildingRuntimeBoundaryEntity", placement);
-        StringAssert.Contains("EcsBoundaryPublishIntervalSeconds", placement);
+        StringAssert.Contains("PublishIntervalSeconds", boundarySystem);
+
+        Assert.IsFalse(
+            placement.Contains("PublishConfiguredSpawnablesReadModel", StringComparison.Ordinal) ||
+            placement.Contains("PublishRuntimeFactionSummaries", StringComparison.Ordinal) ||
+            placement.Contains("ProcessBuildingRuntimeEcsRequests", StringComparison.Ordinal) ||
+            placement.Contains("PublishBuildingRuntimeEcsReadModelIfDue", StringComparison.Ordinal),
+            "Building runtime boundary publish/consume logic belongs in BuildingRuntimeBoundarySystem, not BuildingPlacementSystem.");
     }
 
     [Test]

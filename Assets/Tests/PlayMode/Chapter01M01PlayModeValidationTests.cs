@@ -923,7 +923,8 @@ public sealed class Chapter01M01PlayModeValidationTests
         {
             camera.targetTexture = renderTexture;
             camera.aspect = width / (float)height;
-            context.Bootstrap.ApplyM01ProductionCameraPoseForCurrentAspect();
+            MissionStartupSystem missionStartupSystem = new();
+            missionStartupSystem.ApplyM01ProductionCameraPoseForCurrentAspect(camera, context.Loader);
             if (focusEntity != Entity.Null &&
                 context.World.EntityManager.Exists(focusEntity) &&
                 context.World.EntityManager.HasComponent<LocalTransform>(focusEntity))

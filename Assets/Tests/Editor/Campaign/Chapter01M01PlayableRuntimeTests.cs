@@ -189,18 +189,35 @@ public sealed class Chapter01M01PlayableRuntimeTests
         Entity squadPlan = em.CreateEntity(typeof(AISquadPlan));
         em.SetComponentData(squadPlan, new AISquadPlan { FactionId = 1, Enabled = 1 });
 
-        AIStartupSystem aiStartupSystem = new();
-        aiStartupSystem.DisableGenericAIPlansForFixedTacticalMission(_world, false);
+        MissionStartupSystem missionStartupSystem = new();
+        missionStartupSystem.DisableGenericAIPlansForFixedTacticalMission(_world, false);
 
         Assert.AreEqual(1, em.GetComponentData<AIBuildPlan>(buildPlan).Enabled, "Non-M01 AI build plans must remain available.");
         Assert.AreEqual(1, em.GetComponentData<AIProductionPlan>(productionPlan).Enabled, "Non-M01 AI production plans must remain available.");
         Assert.AreEqual(1, em.GetComponentData<AISquadPlan>(squadPlan).Enabled, "Non-M01 AI squad plans must remain available.");
 
-        aiStartupSystem.DisableGenericAIPlansForFixedTacticalMission(_world, true);
+        missionStartupSystem.DisableGenericAIPlansForFixedTacticalMission(_world, true);
 
         Assert.AreEqual(0, em.GetComponentData<AIBuildPlan>(buildPlan).Enabled, "M01 uses authored patrol scripting, not generic base-building AI.");
         Assert.AreEqual(0, em.GetComponentData<AIProductionPlan>(productionPlan).Enabled, "M01 should not emit generic producer-missing log noise.");
         Assert.AreEqual(0, em.GetComponentData<AISquadPlan>(squadPlan).Enabled, "M01 should not emit generic squad-waiting log noise.");
+    }
+
+    [Test]
+    public void MissionStartupSystem_AppliesM01CameraFraming()
+    {
+        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
+        Camera camera = _cameraObject.GetComponent<Camera>();
+        camera.aspect = 16f / 9f;
+
+        MissionStartupSystem missionStartupSystem = new();
+        Assert.IsTrue(missionStartupSystem.ApplyM01ProductionCameraPoseForCurrentAspect(camera, loader));
+
+        Assert.IsTrue(camera.orthographic);
+        Assert.AreEqual(10f, camera.transform.position.y, 0.0001f);
+        Assert.AreEqual(90f, camera.transform.rotation.eulerAngles.x, 0.0001f);
+        Assert.GreaterOrEqual(camera.orthographicSize, 0.72f);
+        Assert.LessOrEqual(camera.orthographicSize, 0.96f);
     }
 
     private TacticalMapRuntimeLoader CreateLoadedRuntimeLoader()

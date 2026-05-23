@@ -44,7 +44,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 |---|---|---|
 | `SCN-01_SplashLoading` | App entry and pre-match loading. | Shared branded loading surface for app boot fake load and operation-map loading. Target-lock generated. |
 | `SCN-02_MainMenu` | Command-base hub. | Campaign, Operations, Skirmish, Store, Commander, Settings; Credits, Supplies, Command. |
-| `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with Armory/upgrades links. |
+| `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with `Open Armory` route to SCN-19. Target-lock generated. |
 | `SCN-04_SettingsAccessibility` | Settings and accessibility. | Command-base shell; reachable from Main Menu and Pause. Target and V01 layer pack generated. |
 | `SCN-05_CampaignMap` | Campaign mission selection. | Campaign nodes selected from command table/world overlay; launches 3D operation maps. |
 | `SCN-06_MissionBriefing` | Objectives, intel, rewards, deployment preview. | Uses `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`. |
@@ -64,7 +64,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `POP-01_ThreatAlert` | Threat alert and jump. | Jumps inside same 3D operation map. |
 | `POP-02_ConfirmRaid` | Raid confirmation. | Intel confidence, civilian risk, district consequence. |
 | `POP-03_BuildPlacement` | Build placement confirmation. | 3D socket/footprint validity and blocked/civilian-zone reasons. |
-| `POP-04_RewardUnlock` | Major reward/unlock celebration. | Concrete deterministic reward; no hidden odds. |
+| `POP-04_RewardUnlock` | Major reward/unlock celebration. | Authored reward reveal; no hidden odds. |
 | `POP-05_MissionResult` | Result, stats, stars, rewards. | Tactical success plus district consequence. Target and V01 layer pack generated. |
 | `POP-06_EndOfDayReport` | Operations day resolution. | District deltas and saved Operation state. |
 | `POP-07_PauseOptions` | Pause/options. | Resume, Settings, restart, exit to Main Menu with confirmation. |

@@ -36,7 +36,8 @@ Not allowed:
 If a bootstrap change adds domain behavior, move it into a feature installer, ECS system, service, or config.
 
 The current bootstrap migration map is `Design/Architecture/gamebootstrap_responsibility_audit.md`. `GameBootstrap` is legacy composition debt and should shrink by the audited slices; do not add new AI, mission, camera, spawning, routing, asset-resolution, or diagnostics policy to it.
-AI startup config projection is owned by `AIStartupSystem`; `GameBootstrap` may pass serialized `AIControllerConfig` references into that system, but it must not create or mutate `FactionEconomy`, `FactionControlEntry`, `AIBuildPlan`, `AIProductionPlan`, `AISquadPlan`, `AITargetPrioritySetting`, or AI diagnostic events directly.
+AI startup config projection is owned by `AIStartupSystem`; `GameBootstrap` may pass serialized `AIControllerConfig` references into that system, but it must not create or mutate `FactionEconomy`, `FactionControlEntry`, `AIBuildPlan`, `AIProductionPlan`, `AISquadPlan`, `AITargetPrioritySetting`, or AI diagnostic events directly, and it must not own mission-specific fixed tactical policy.
+Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`; `GameBootstrap` may pass serialized mission binders, cameras, and legacy visual roots into that system, but it must not calculate mission camera framing, hide mission-specific visual roots, run fixed tactical mission guardrails directly, or disable generic AI plans for a fixed tactical mission.
 
 ### ECS Components
 

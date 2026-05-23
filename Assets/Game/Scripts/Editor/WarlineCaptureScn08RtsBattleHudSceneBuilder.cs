@@ -13,7 +13,7 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/MatchHUD/TargetLockV01";
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_SCN08_RTSBattleHUD_TargetLock.prefab";
     private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN08_RTSBattleHUD_TargetLock.unity";
-    private const string CapturePath = "Design/AgentReports/Captures/SCN08_RTSBattleHUD_TargetLock_V07_2400x1080.png";
+    private const string CapturePath = "Design/AgentReports/Captures/SCN08_RTSBattleHUD_TargetLock_V08_2400x1080.png";
 
     private static Color TextMain => new Color32(224, 214, 184, 255);
     private static Color TextMuted => new Color32(172, 160, 128, 255);
@@ -133,10 +133,12 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "MenuButton_Icon", "scn08_icon_menu_list.png", new RectInt(menu.x + 16, menu.y + 15, 50, 48), 42, 42, TextMain);
 
         RectInt threat = new(1818, 112, 552, 74);
-        AddFrame(parent, "ThreatJump_Frame", "scn08_jump_button_frame.png", threat);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "ThreatJump_Icon", "scn08_icon_threat_warning.png", new RectInt(threat.x + 36, threat.y + 14, 54, 46), 38, 38, Gold);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "ThreatJump_Text", "Hostile cell spotted", new RectInt(threat.x + 104, threat.y + 20, 282, 34), 21f, TextAlignmentOptions.Left, TextMain);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "ThreatJump_Action", "JUMP", new RectInt(threat.x + 420, threat.y + 17, 98, 38), 24f, TextAlignmentOptions.Center, TextMain);
+        AddFrame(parent, "ThreatJump_Frame", "scn08_threat_row_frame.png", threat);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "ThreatJump_Icon", "scn08_icon_threat_warning.png", new RectInt(threat.x + 34, threat.y + 14, 54, 46), 38, 38, Gold);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "ThreatJump_Text", "Hostile cell spotted", new RectInt(threat.x + 102, threat.y + 19, 282, 34), 21f, TextAlignmentOptions.Left, TextMain);
+        RectInt jumpButton = new(threat.x + 413, threat.y + 12, 112, 50);
+        AddFrame(parent, "ThreatJump_ActionFrame", "scn08_jump_button_frame.png", jumpButton);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "ThreatJump_Action", "JUMP", new RectInt(jumpButton.x + 12, jumpButton.y + 8, 88, 32), 22f, TextAlignmentOptions.Center, TextMain);
     }
 
     private static void AddResource(Transform parent, string name, string icon, string label, string value, RectInt rect, Color valueColor)
@@ -185,7 +187,7 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
     private static void AddSquadTray(Transform parent)
     {
         RectInt tray = SquadTrayRect();
-        AddFrame(parent, "SquadTray_Frame", "scn08_squad_tray_frame.png", tray);
+        AddFrameTinted(parent, "SquadTray_Frame", "scn08_squad_tray_frame.png", tray, new Color(1f, 1f, 1f, 0.72f));
         AddSquadCard(parent, new RectInt(tray.x + 12, tray.y + 12, 196, 222), "1", "Rifle Squad", "scn08_portrait_rifle_squad.png", "120/120", true);
         AddSquadCard(parent, new RectInt(tray.x + 220, tray.y + 16, 196, 218), "2", "Fast APC", "scn08_portrait_fast_apc.png", "240/240", false);
         AddSquadCard(parent, new RectInt(tray.x + 428, tray.y + 16, 196, 218), "3", "Recon Drone", "scn08_portrait_recon_drone.png", "80/80", false);
@@ -230,7 +232,7 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
     private static void AddRightQuickPanel(Transform parent)
     {
         RectInt rect = RightQuickRect();
-        AddFrame(parent, "RightQuick_Frame", "scn08_right_quick_panel_frame.png", rect);
+        AddFrameTinted(parent, "RightQuick_Frame", "scn08_right_quick_panel_frame.png", rect, new Color(1f, 1f, 1f, 0.90f));
         AddQuickButton(parent, rect.x + 17, rect.y + 34, "scn08_icon_pause.png", string.Empty);
         AddQuickButton(parent, rect.x + 17, rect.y + 126, "scn08_icon_settings_gear.png", string.Empty);
         AddQuickButton(parent, rect.x + 17, rect.y + 218, "scn08_icon_build_tools.png", "BUILD");

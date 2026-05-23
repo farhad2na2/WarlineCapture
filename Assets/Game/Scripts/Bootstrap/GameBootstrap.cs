@@ -21,11 +21,10 @@ public sealed class GameBootstrap : MonoBehaviour
     private const double SlowFrameDiagThresholdSeconds = 0.025d;
     private const double SlowFrameDiagCooldownSeconds = 0.5d;
     private const int MaxAutoProfilerMarkerRecorders = 32;
-    private const float M01PlayableStartOrthographicSize = 0.96f;
-    private const float M01PlayableCameraHeight = 10f;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
     private readonly AIStartupSystem _aiStartupSystem = new();
+    private readonly MissionStartupSystem _missionStartupSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -207,17 +206,15 @@ public sealed class GameBootstrap : MonoBehaviour
     {
         GameRuntimeStats.Reset();
         _aiStartupSystem.LogConfigValidation(aiControllerConfigs);
-        chapter01TacticalBinder?.TryApplyActiveMission(worldCamera);
-        Chapter01M01PlayableRuntime.TryInitializeActiveMission(
+        _missionStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
-            chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null,
-            out _);
-        ApplyM01ProductionSceneVisibility();
-        ApplyFixedTacticalMissionGuardrails();
+            chapter01TacticalBinder,
+            worldCamera,
+            DayNight,
+            legacyVisualRootsDisabledForM01);
         AIStartupSystem.Result aiStartupResult = _aiStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
             aiControllerConfigs,
-            Chapter01M01PlayableRuntime.IsActiveMission(),
             TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
@@ -233,180 +230,18 @@ public sealed class GameBootstrap : MonoBehaviour
         _runtimeGameplayStateSystem.FullscreenMapOpen = false;
         _runtimeGameplayStateSystem.FullscreenMapIsoMode = false;
         _runtimeGameplayStateSystem.InitialCameraFocusRequested = false;
-        if (!FocusCameraOnM01CameraStart())
-            FocusCameraOnConfiguredFactionBase(0);
+        _missionStartupSystem.FocusInitialCamera(
+            World.DefaultGameObjectInjectionWorld,
+            Selection,
+            worldCamera,
+            GetMapLoader(),
+            TryGetConfiguredFactionSpawnCell,
+            0);
     }
 
-    private void ApplyFixedTacticalMissionGuardrails()
+    private TacticalMapRuntimeLoader GetMapLoader()
     {
-        if (DayNight == null)
-            return;
-
-        DayNight.SetRuntimeVisualsEnabled(!Chapter01M01PlayableRuntime.IsActiveMission());
-    }
-
-    private void ApplyM01ProductionSceneVisibility()
-    {
-        bool hideLegacyVisuals = Chapter01M01PlayableRuntime.IsActiveMission();
-        if (legacyVisualRootsDisabledForM01 == null)
-            return;
-
-        for (int i = 0; i < legacyVisualRootsDisabledForM01.Length; i++)
-        {
-            GameObject visualRoot = legacyVisualRootsDisabledForM01[i];
-            if (visualRoot != null)
-                visualRoot.SetActive(!hideLegacyVisuals);
-        }
-    }
-
-    private void FocusCameraOnConfiguredFactionBase(byte factionId)
-    {
-        if (Selection == null || !TryGetConfiguredFactionSpawnCell(factionId, out int2 spawnCell))
-            return;
-
-        Vector3 focusWorldPosition = new(spawnCell.x, 0f, spawnCell.y);
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world != null && world.IsCreated)
-        {
-            EntityManager em = world.EntityManager;
-            using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-            if (!gridQuery.IsEmptyIgnoreFilter)
-            {
-                Entity gridEntity = gridQuery.GetSingletonEntity();
-                GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-                focusWorldPosition = GridUtils.CellToWorldCenter(grid, spawnCell);
-            }
-        }
-
-        Selection.FollowCameraGroundCenterTo(focusWorldPosition);
-    }
-
-    private bool FocusCameraOnM01CameraStart()
-    {
-        if (Selection == null ||
-            !Chapter01M01PlayableRuntime.TryGetCameraStartWorld(
-                chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null,
-                out Vector3 cameraStartWorld))
-        {
-            return false;
-        }
-
-        ApplyM01ProductionCameraPose(cameraStartWorld);
-        Selection.FollowCameraGroundCenterTo(cameraStartWorld);
-        Selection.MoveCameraGroundCenterTo(cameraStartWorld);
-        ApplyM01ProductionCameraPose(cameraStartWorld);
-        return true;
-    }
-
-    private void ApplyM01ProductionCameraPose(Vector3 cameraStartWorld)
-    {
-        if (worldCamera == null)
-            return;
-
-        worldCamera.orthographic = true;
-        worldCamera.orthographicSize = ResolveM01ProductionOrthographicSize();
-        worldCamera.nearClipPlane = Mathf.Min(worldCamera.nearClipPlane, 0.05f);
-        worldCamera.farClipPlane = Mathf.Max(worldCamera.farClipPlane, M01PlayableCameraHeight + 10f);
-        cameraStartWorld = ClampM01CameraCenterToTacticalMap(cameraStartWorld);
-        worldCamera.transform.SetPositionAndRotation(
-            new Vector3(cameraStartWorld.x, M01PlayableCameraHeight, cameraStartWorld.z),
-            Quaternion.Euler(90f, 0f, 0f));
-    }
-
-    private float ResolveM01ProductionOrthographicSize()
-    {
-        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
-        TacticalMapDefinition definition = loader != null ? loader.Definition : null;
-        if (definition == null || worldCamera == null || worldCamera.aspect <= 0.0001f)
-            return M01PlayableStartOrthographicSize;
-
-        float widthFitOrthographicSize = definition.VisibleWorldSize.x / (2f * worldCamera.aspect);
-        return Mathf.Clamp(widthFitOrthographicSize, 0.72f, M01PlayableStartOrthographicSize);
-    }
-
-    public bool ApplyM01ProductionCameraPoseForCurrentAspect()
-    {
-        if (!Chapter01M01PlayableRuntime.TryGetCameraStartWorld(
-                chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null,
-                out Vector3 cameraStartWorld))
-        {
-            return false;
-        }
-
-        Vector3 cameraCenter = TryResolveM01ProductionFrameCenter(out Vector3 productionFrameCenter)
-            ? productionFrameCenter
-            : cameraStartWorld;
-        ApplyM01ProductionCameraPose(cameraCenter);
-        return true;
-    }
-
-    private bool TryResolveM01ProductionFrameCenter(out Vector3 cameraCenter)
-    {
-        cameraCenter = default;
-        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
-        if (loader == null)
-            return false;
-
-        bool hasAny = false;
-        Vector3 min = Vector3.zero;
-        Vector3 max = Vector3.zero;
-        IncludeM01FrameAnchor(loader, Chapter01M01PlayableRuntime.PlayerSpawnAnchorId, ref min, ref max, ref hasAny);
-        IncludeM01FrameAnchor(loader, Chapter01M01PlayableRuntime.EnemySpawnAnchorId, ref min, ref max, ref hasAny);
-        IncludeM01FrameAnchor(loader, Chapter01M01PlayableRuntime.DecorCommandPointEntityId, ref min, ref max, ref hasAny);
-        IncludeM01FrameAnchor(loader, Chapter01M01PlayableRuntime.ObjectiveAnchorId, ref min, ref max, ref hasAny);
-        if (!hasAny)
-            return false;
-
-        cameraCenter = (min + max) * 0.5f;
-        cameraCenter.y = 0f;
-        return true;
-    }
-
-    private static void IncludeM01FrameAnchor(TacticalMapRuntimeLoader loader, string anchorId, ref Vector3 min, ref Vector3 max, ref bool hasAny)
-    {
-        if (loader == null || !loader.TryGetAnchorWorldPosition(anchorId, out Vector3 world))
-            return;
-
-        if (!hasAny)
-        {
-            min = world;
-            max = world;
-            hasAny = true;
-            return;
-        }
-
-        min = Vector3.Min(min, world);
-        max = Vector3.Max(max, world);
-    }
-
-    private void ApplyM01ProductionCameraPoseIfActive()
-    {
-        ApplyM01ProductionCameraPoseForCurrentAspect();
-    }
-
-    private Vector3 ClampM01CameraCenterToTacticalMap(Vector3 cameraCenter)
-    {
-        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
-        TacticalMapDefinition definition = loader != null ? loader.Definition : null;
-        if (definition == null || worldCamera == null || !worldCamera.orthographic)
-            return cameraCenter;
-
-        float halfHeight = worldCamera.orthographicSize;
-        float halfWidth = halfHeight * worldCamera.aspect;
-        float xMin = definition.WorldOrigin.x + halfWidth;
-        float xMax = definition.WorldOrigin.x + definition.VisibleWorldSize.x - halfWidth;
-        float zMin = definition.WorldOrigin.y + halfHeight;
-        float zMax = definition.WorldOrigin.y + definition.VisibleWorldSize.y - halfHeight;
-        float mapCenterX = definition.WorldOrigin.x + definition.VisibleWorldSize.x * 0.5f;
-        float mapCenterZ = definition.WorldOrigin.y + definition.VisibleWorldSize.y * 0.5f;
-
-        cameraCenter.x = xMin <= xMax
-            ? Mathf.Clamp(cameraCenter.x, xMin, xMax)
-            : mapCenterX;
-        cameraCenter.z = zMin <= zMax
-            ? Mathf.Clamp(cameraCenter.z, zMin, zMax)
-            : mapCenterZ;
-        return cameraCenter;
+        return chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
     }
 
     private bool TryGetConfiguredFactionSpawnCell(byte factionId, out int2 spawnCell)
@@ -492,17 +327,15 @@ public sealed class GameBootstrap : MonoBehaviour
         if (gameplayActive)
         {
             GameRuntimeStats.RecordMissionElapsed(Time.deltaTime);
-            hadSlowStep |= TimedStep("Chapter01M01Runtime", () =>
-            {
-                Chapter01M01PlayableRuntime.TryInitializeActiveMission(
-                    World.DefaultGameObjectInjectionWorld,
-                    chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null,
-                    out _);
-            });
+            hadSlowStep |= TimedStep(
+                "MissionRuntime",
+                () => _missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld, GetMapLoader()));
             hadSlowStep |= TimedStep("RoadBuild", () => RoadBuild?.Update());
             hadSlowStep |= TimedStep("BuildingPlacement", () => BuildingPlacement?.Update());
             hadSlowStep |= TimedStep("Selection", () => Selection?.Update());
-            hadSlowStep |= TimedStep("M01ProductionCamera", ApplyM01ProductionCameraPoseIfActive);
+            hadSlowStep |= TimedStep(
+                "MissionCamera",
+                () => _missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(worldCamera, GetMapLoader()));
             hadSlowStep |= TimedStep("RuntimeCitySpawner", () => RuntimeCitySpawner?.Update());
             hadSlowStep |= TimedStep("RuntimeGridBlockers", () => RuntimeGridBlockers?.Update());
             hadSlowStep |= TimedStep("RuntimeDecorations", () => RuntimeDecorations?.Update());

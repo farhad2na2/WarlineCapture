@@ -32,7 +32,6 @@ public sealed class AIStartupSystemValidationTests
         AIStartupSystem.Result result = system.Initialize(
             world,
             new[] { enemy, playerAuto },
-            false,
             TryResolveFactionSpawnCell);
 
         EntityManager em = world.EntityManager;
@@ -62,21 +61,6 @@ public sealed class AIStartupSystemValidationTests
         DynamicBuffer<FactionControlEntry> controlEntries = GetFactionControlEntries(em);
         Assert.IsTrue(ContainsFactionControl(controlEntries, 0, true, true));
         Assert.IsTrue(ContainsFactionControl(controlEntries, 1, true, false));
-    }
-
-    [Test]
-    public void Initialize_DisablesGenericPlansForFixedTacticalMission()
-    {
-        AIControllerConfig enemy = LoadAIConfig("Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset");
-        using var world = new World("AIStartupSystemFixedTacticalTests");
-
-        AIStartupSystem system = new();
-        system.Initialize(world, new[] { enemy }, true, TryResolveFactionSpawnCell);
-
-        EntityManager em = world.EntityManager;
-        Assert.AreEqual(0, GetComponentForFaction<AIBuildPlan>(em, 1, plan => plan.FactionId).Enabled);
-        Assert.AreEqual(0, GetComponentForFaction<AIProductionPlan>(em, 1, plan => plan.FactionId).Enabled);
-        Assert.AreEqual(0, GetComponentForFaction<AISquadPlan>(em, 1, plan => plan.FactionId).Enabled);
     }
 
     private static bool TryResolveFactionSpawnCell(byte factionId, out int2 spawnCell)

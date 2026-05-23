@@ -72,17 +72,6 @@ public sealed class GameplayArchitectureContractTests
 
     private static readonly string[] LegacyGameBootstrapDomainPolicyMethods =
     {
-        "ApplyFixedTacticalMissionGuardrails",
-        "ApplyM01ProductionSceneVisibility",
-        "FocusCameraOnConfiguredFactionBase",
-        "FocusCameraOnM01CameraStart",
-        "ApplyM01ProductionCameraPose",
-        "ResolveM01ProductionOrthographicSize",
-        "ApplyM01ProductionCameraPoseForCurrentAspect",
-        "TryResolveM01ProductionFrameCenter",
-        "IncludeM01FrameAnchor",
-        "ApplyM01ProductionCameraPoseIfActive",
-        "ClampM01CameraCenterToTacticalMap",
         "TryGetConfiguredFactionSpawnCell"
     };
 
@@ -133,6 +122,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
         StringAssert.Contains("gamebootstrap_responsibility_audit.md", contract);
         StringAssert.Contains("AI startup config projection is owned by `AIStartupSystem`", contract);
+        StringAssert.Contains("Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
@@ -213,10 +203,6 @@ public sealed class GameplayArchitectureContractTests
 
         string[] migratedMethodNames =
         {
-            "DisableGenericAIPlansForFixedTacticalMission",
-            "DisableAIBuildPlans",
-            "DisableAIProductionPlans",
-            "DisableAISquadPlans",
             "LogAIConfigValidation",
             "ShouldQueueAIConfigDiagnostics",
             "TryEnqueueAIDiagnostic",
@@ -249,6 +235,55 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(code, @"\bstatic\b"),
             "AIStartupSystem owns ECS startup mutation and diagnostics; keep it instance-scoped rather than adding static runtime helpers.");
+        Assert.IsFalse(
+            code.Contains("FixedTactical", StringComparison.Ordinal),
+            "Mission-specific fixed tactical policy belongs in MissionStartupSystem, not AIStartupSystem.");
+    }
+
+    [Test]
+    public void GameBootstrapMustDelegateMissionStartupAndCameraSlice()
+    {
+        const string missionStartupFile = "Assets/Game/Scripts/Systems/MissionStartupSystem.cs";
+        Assert.IsTrue(File.Exists(missionStartupFile), "Mission startup and M01 camera/framing policy must live in MissionStartupSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("MissionStartupSystem _missionStartupSystem", bootstrap);
+        StringAssert.Contains("_missionStartupSystem.Initialize", bootstrap);
+        StringAssert.Contains("_missionStartupSystem.FocusInitialCamera", bootstrap);
+        StringAssert.Contains("_missionStartupSystem.UpdateActiveMission", bootstrap);
+        StringAssert.Contains("_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", bootstrap);
+
+        string[] migratedMethodNames =
+        {
+            "ApplyFixedTacticalMissionGuardrails",
+            "DisableGenericAIPlansForFixedTacticalMission",
+            "DisableAIBuildPlans",
+            "DisableAIProductionPlans",
+            "DisableAISquadPlans",
+            "ApplyM01ProductionSceneVisibility",
+            "FocusCameraOnConfiguredFactionBase",
+            "FocusCameraOnM01CameraStart",
+            "ApplyM01ProductionCameraPose",
+            "ResolveM01ProductionOrthographicSize",
+            "ApplyM01ProductionCameraPoseForCurrentAspect",
+            "TryResolveM01ProductionFrameCenter",
+            "IncludeM01FrameAnchor",
+            "ApplyM01ProductionCameraPoseIfActive",
+            "ClampM01CameraCenterToTacticalMap"
+        };
+
+        foreach (string methodName in migratedMethodNames)
+        {
+            Assert.IsFalse(
+                Regex.IsMatch(bootstrap, $@"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+{methodName}\s*\("),
+                $"{methodName} belongs in MissionStartupSystem, not GameBootstrap.");
+        }
+
+        string missionStartup = File.ReadAllText(missionStartupFile);
+        StringAssert.Contains("DisableGenericAIPlansForFixedTacticalMission", missionStartup);
+        Assert.IsFalse(
+            Regex.IsMatch(missionStartup, @"\bstatic\b"),
+            "MissionStartupSystem owns mission startup mutation and camera policy; keep it instance-scoped rather than adding static runtime helpers.");
     }
 
     [Test]

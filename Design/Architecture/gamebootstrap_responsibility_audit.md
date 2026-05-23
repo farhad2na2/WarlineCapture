@@ -68,10 +68,6 @@ Former bootstrap debt:
 - `EnsureAIProductionPlansInitialized`
 - `EnsureAISquadPlansInitialized`
 - `EnsureAITargetPrioritySettingsInitialized`
-- `DisableGenericAIPlansForFixedTacticalMission`
-- `DisableAIBuildPlans`
-- `DisableAIProductionPlans`
-- `DisableAISquadPlans`
 - `ShouldIncludeAIConfig`
 - AI default build and production entries.
 
@@ -83,11 +79,12 @@ Target owner:
 Target behavior:
 - Bootstrap should publish AI config data or install/request AI startup only.
 - An ECS startup system should create/update `FactionControlEntry`, `AIBuildPlan`, `AIProductionPlan`, `AISquadPlan`, `AITargetPrioritySetting`, and AI diagnostics.
+- Mission-specific fixed tactical policy belongs to `MissionStartupSystem`, not AI startup.
 
 Migration order:
 1. Done: move AI startup data projection into `AIStartupSystem` without changing config semantics.
 2. Move default AI build/production fallback entries into config or ECS startup helpers.
-3. Move fixed tactical AI disabling into mission startup policy.
+3. Done: move fixed tactical AI disabling into mission startup policy.
 4. Leave bootstrap with one call to install/request AI startup.
 
 Focused validation:
@@ -119,7 +116,10 @@ Focused validation:
 
 ### Fixed Tactical Mission Guardrails
 
-Current bootstrap debt:
+Migrated owner:
+- `MissionStartupSystem`
+
+Former bootstrap debt:
 - `chapter01TacticalBinder?.TryApplyActiveMission`
 - `Chapter01M01PlayableRuntime.TryInitializeActiveMission`
 - `ApplyM01ProductionSceneVisibility`
@@ -137,10 +137,10 @@ Target behavior:
 - Mission startup should decide active mission, legacy visual visibility, day/night guardrails, and mission-specific AI behavior.
 
 Migration order:
-1. Move M01 active mission initialization behind a mission startup request/component.
-2. Move legacy visual root enable/disable to a mission scene binding or mission shell adapter.
-3. Move day/night mission guardrail to mission startup data.
-4. Move fixed tactical AI disabling to mission startup.
+1. Done: move M01 active mission initialization behind `MissionStartupSystem`.
+2. Done: move legacy visual root enable/disable to `MissionStartupSystem`.
+3. Done: move day/night mission guardrail to `MissionStartupSystem`.
+4. Done: move fixed tactical AI disabling to mission startup.
 
 Focused validation:
 - M01 playmode/startup tests.
@@ -148,7 +148,13 @@ Focused validation:
 
 ### Camera And Framing Policy
 
+Migrated owner:
+- `MissionStartupSystem`
+
 Current bootstrap debt:
+- `TryGetConfiguredFactionSpawnCell`
+
+Former bootstrap debt:
 - `M01PlayableStartOrthographicSize`
 - `M01PlayableCameraHeight`
 - `FocusCameraOnConfiguredFactionBase`
@@ -160,7 +166,6 @@ Current bootstrap debt:
 - `IncludeM01FrameAnchor`
 - `ApplyM01ProductionCameraPoseIfActive`
 - `ClampM01CameraCenterToTacticalMap`
-- `TryGetConfiguredFactionSpawnCell`
 
 Target owner:
 - `RtsCameraSystem`
@@ -173,9 +178,9 @@ Target behavior:
 - Camera/framing systems should resolve mission framing and write camera/focus requests.
 
 Migration order:
-1. Move M01 camera constants into mission camera config.
-2. Move M01 frame anchor calculation into `MissionCameraSystem`.
-3. Move fallback faction-base focus into camera request data.
+1. Done: move M01 camera constants into `MissionStartupSystem` as interim mission camera policy.
+2. Done: move M01 frame anchor calculation into `MissionStartupSystem` as interim mission camera policy.
+3. Done: move fallback faction-base focus behind `MissionStartupSystem` with a bootstrap-provided spawn resolver.
 4. Remove direct camera transform writes from bootstrap.
 
 Focused validation:

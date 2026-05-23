@@ -25,7 +25,6 @@ public sealed class AIStartupSystem
     public Result Initialize(
         World world,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
-        bool activeFixedTacticalMission,
         TryResolveFactionSpawnCell resolveFactionSpawnCell)
     {
         Result result = default;
@@ -43,7 +42,6 @@ public sealed class AIStartupSystem
             EnsureAITargetPrioritySettingsInitialized(em, aiControllerConfigs);
         }
 
-        DisableGenericAIPlansForFixedTacticalMission(world, activeFixedTacticalMission);
         return result;
     }
 
@@ -103,17 +101,6 @@ public sealed class AIStartupSystem
             $"expansion={AISettingsRuntimeState.Expansion} targetPriority={AISettingsRuntimeState.TargetPriority} " +
             $"playerAuto={(AISettingsRuntimeState.PlayerAutoAIEnabled ? 1 : 0)} enemyCount={AISettingsRuntimeState.EnemyAICount}");
         FlushQueuedAIDiagnostics(queuedDiagnostics);
-    }
-
-    public void DisableGenericAIPlansForFixedTacticalMission(World world, bool activeFixedTacticalMission)
-    {
-        if (!activeFixedTacticalMission || world == null || !world.IsCreated)
-            return;
-
-        EntityManager em = world.EntityManager;
-        DisableAIBuildPlans(em);
-        DisableAIProductionPlans(em);
-        DisableAISquadPlans(em);
     }
 
     private bool ShouldQueueAIConfigDiagnostics()
@@ -559,54 +546,6 @@ public sealed class AIStartupSystem
                 FactionId = factionId,
                 Priority = config.Role == AIControllerRole.Enemy ? (byte)AISettingsRuntimeState.TargetPriority : (byte)AITargetPriority.Balanced
             });
-        }
-    }
-
-    private void DisableAIBuildPlans(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AIBuildPlan>(entity))
-                continue;
-
-            AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(entity);
-            plan.Enabled = 0;
-            em.SetComponentData(entity, plan);
-        }
-    }
-
-    private void DisableAIProductionPlans(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIProductionPlan>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AIProductionPlan>(entity))
-                continue;
-
-            AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(entity);
-            plan.Enabled = 0;
-            em.SetComponentData(entity, plan);
-        }
-    }
-
-    private void DisableAISquadPlans(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AISquadPlan>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<AISquadPlan>(entity))
-                continue;
-
-            AISquadPlan plan = em.GetComponentData<AISquadPlan>(entity);
-            plan.Enabled = 0;
-            em.SetComponentData(entity, plan);
         }
     }
 

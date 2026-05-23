@@ -106,8 +106,7 @@ public static class Chapter01M01PlayableRuntime
             return false;
         }
 
-        bool hasCommandPoint = false;
-        Vector3 commandPointWorld = default;
+        bool hasCommandPoint = loader.TryGetAnchorWorldPosition(DecorCommandPointEntityId, out Vector3 commandPointWorld);
         EntityManager em = world.EntityManager;
         Entity player = ResolveOrCreateMissionUnit(
             em,
@@ -317,12 +316,11 @@ public static class Chapter01M01PlayableRuntime
 
         if (em.HasComponent<UnitTarget>(enemy))
             em.RemoveComponent<UnitTarget>(enemy);
-        if (em.HasComponent<UnitPathRequest>(enemy))
-            em.RemoveComponent<UnitPathRequest>(enemy);
         if (em.HasComponent<UnitPathFollow>(enemy))
             em.RemoveComponent<UnitPathFollow>(enemy);
         if (em.HasComponent<UnitPathRange>(enemy))
             em.RemoveComponent<UnitPathRange>(enemy);
+        SetComponent(em, enemy, new UnitPathRequest { Goal = b });
     }
 
     private static int2 ResolveAnchorCell(TacticalMapRuntimeLoader loader, string anchorId, Vector3 fallbackWorld)

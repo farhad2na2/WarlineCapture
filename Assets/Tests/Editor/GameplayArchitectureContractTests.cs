@@ -137,6 +137,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
+        StringAssert.Contains("Placement visual instance creation, placement visual positioning, prefab model bounds, and transformed bounds helpers belong in `BuildingPlacementVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
@@ -1996,6 +1997,43 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryParseAnimatedPartName\b"),
             "Animated building part name parsing belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedPlacementVisualSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementVisualFile = "Assets/Game/Scripts/Systems/BuildingPlacementVisualSystem.cs";
+        Assert.IsTrue(File.Exists(placementVisualFile), "The placement visual slice must live in BuildingPlacementVisualSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string placementVisual = File.ReadAllText(placementVisualFile);
+        StringAssert.Contains("BuildingPlacementVisualSystem _buildingPlacementVisualSystem", placement);
+        StringAssert.Contains("_buildingPlacementVisualSystem.CreateBuildingVisualInstance", placement);
+        StringAssert.Contains("_buildingPlacementVisualSystem.PositionBuildingObject", placement);
+
+        StringAssert.Contains("CreateBuildingVisualInstance", placementVisual);
+        StringAssert.Contains("PositionBuildingObject", placementVisual);
+        StringAssert.Contains("TryGetPrefabModelBounds", placementVisual);
+        StringAssert.Contains("TransformBounds", placementVisual);
+        StringAssert.Contains("CombinedMesh", placementVisual);
+        StringAssert.Contains("SetPositionAndRotation", placementVisual);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"Object\.Instantiate\s*\("),
+            "Placement visual instantiation belongs in BuildingPlacementVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"transform\.Find\s*\(\s*""CombinedMesh""\s*\)"),
+            "Placement visual child selection belongs in BuildingPlacementVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"SetPositionAndRotation\s*\("),
+            "Placement visual positioning belongs in BuildingPlacementVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryGetPrefabModelBounds\b"),
+            "Prefab model bounds belong in BuildingPlacementVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Bounds\s+TransformBounds\b"),
+            "Transformed bounds math belongs in BuildingPlacementVisualSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

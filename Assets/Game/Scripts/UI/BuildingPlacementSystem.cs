@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using SnivelerCode.GpuAnimation.Scripts.Components;
 using static UnityEngine.Object;
+using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
 using ResourceHaulKind = ResourceHaulerSystem.ResourceHaulKind;
 using ResourceHaulPhase = ResourceHaulerSystem.ResourceHaulPhase;
@@ -295,23 +296,6 @@ public sealed class BuildingPlacementSystem
         public IReadOnlyList<Transform> AliveVisualRootTransforms => AliveVisualRoots;
     }
 
-    private sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
-    {
-        public BuildingDefinition Definition { get; set; }
-        public GameObject PreviewInstance { get; set; }
-        public Vector2Int OriginCell { get; set; }
-        public Vector2Int CommittedOriginCell { get; set; }
-        public Vector2Int DragStartOriginCell { get; set; }
-        public Vector2Int DragCurrentOriginCell { get; set; }
-        public BuildingPlacementInputSystem.DragFirstAxis DragFirstAxis { get; set; }
-        public bool AutoRotateVertical { get; set; }
-        public List<BuildingPlacementInputSystem.WallRun> CommittedWallRuns { get; set; }
-        public bool HideCurrentWallPreview { get; set; }
-        public bool IsValid { get; set; }
-        public float LastPointerMovedAt { get; set; }
-        public Vector2 LastPointerScreenPosition { get; set; }
-    }
-
     [SerializeField] private BuildingPlacementSystemConfig config;
     [SerializeField, HideInInspector] private Camera worldCamera;
     [SerializeField, HideInInspector] private List<GameObject> spawnables = new();
@@ -345,6 +329,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingBarrierSystem _buildingBarrierSystem = new();
     private readonly BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem = new();
     private readonly BuildingDefinitionSystem _buildingDefinitionSystem = new();
+    private readonly BuildingPlacementLifecycleSystem _buildingPlacementLifecycleSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -357,8 +342,6 @@ public sealed class BuildingPlacementSystem
     private BuildingDefinition _soldierBaseDefinition;
     private BuildingDefinition _soldierTentDefinition;
     private BuildingDefinition _factoryDefinition;
-    private PlacementState _activePlacement;
-    private int _activePlacementCost;
     private RoadBuildSystem _roadBuildController;
     private MainMenuPlayUI _mainMenuPlayUi;
     private RTSSelectionSystem _selectionSystem;
@@ -392,8 +375,8 @@ public sealed class BuildingPlacementSystem
 
     private int? ActiveBuildingId => _runtimeBuildingSystem.CurrentActiveBuildingId;
 
-    public bool HasPendingBuildingPlacement => _activePlacement != null;
-    public bool CanConfirmBuildingPlacement => _activePlacement != null && _activePlacement.IsValid;
+    public bool HasPendingBuildingPlacement => _buildingPlacementLifecycleSystem.HasPendingBuildingPlacement;
+    public bool CanConfirmBuildingPlacement => _buildingPlacementLifecycleSystem.CanConfirmBuildingPlacement;
     public bool HasSelectedBuilding => _runtimeBuildingSystem.HasSelectedBuilding();
     public bool HasActiveBuilding => ActiveBuildingId.HasValue;
     public int? CurrentActiveBuildingId => ActiveBuildingId;
@@ -968,7 +951,7 @@ public sealed class BuildingPlacementSystem
         return _buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(lookupKey, out prefab);
     }
 
-    public bool IsDraggingPlacementPreview => _activePlacement != null && _buildingPlacementInputSystem.IsDraggingPlacement;
+    public bool IsDraggingPlacementPreview => _buildingPlacementLifecycleSystem.HasPendingBuildingPlacement && _buildingPlacementInputSystem.IsDraggingPlacement;
 
     public bool TryResolveSpawnUnitPrefab(Entity prefabEntity, out GameObject spawnUnitPrefab)
     {
@@ -1036,7 +1019,7 @@ public sealed class BuildingPlacementSystem
     {
         get
         {
-            return _buildingPlacementQuerySystem.GetPlacementStatusText(_activePlacement);
+            return _buildingPlacementQuerySystem.GetPlacementStatusText(_buildingPlacementLifecycleSystem.ActivePlacement);
         }
     }
 
@@ -1322,17 +1305,18 @@ public sealed class BuildingPlacementSystem
         if (!hasPointer)
             return;
 
-        if (_activePlacement != null)
+        PlacementState activePlacement = _buildingPlacementLifecycleSystem.ActivePlacement;
+        if (activePlacement != null)
         {
             Vector2 pointerPosition = pointer.Position;
             if (pointer.WasPressedThisFrame)
             {
                 bool hasGridForInput = TryGetGridData(out _, out GridConfig inputGrid, out _, out _);
                 _buildingPlacementInputSystem.TryBeginDrag(
-                    _activePlacement,
+                    activePlacement,
                     pointerPosition,
                     IsPointerOverPlacementUi(pointerPosition),
-                    BuildingBarrierSystem.IsLinearWallDefinition(_activePlacement.Definition),
+                    BuildingBarrierSystem.IsLinearWallDefinition(activePlacement.Definition),
                     hasGridForInput,
                     inputGrid,
                     TryGetGridCell,
@@ -1341,8 +1325,8 @@ public sealed class BuildingPlacementSystem
             if (pointer.WasReleasedThisFrame)
             {
                 _buildingPlacementInputSystem.HandlePointerRelease(
-                    _activePlacement,
-                    BuildingBarrierSystem.IsLinearWallDefinition(_activePlacement.Definition),
+                    activePlacement,
+                    BuildingBarrierSystem.IsLinearWallDefinition(activePlacement.Definition),
                     BuildingPlacementCommitSystem.GetWallSegmentFootprint);
             }
             if (!pointer.IsPressed)
@@ -1822,28 +1806,9 @@ public sealed class BuildingPlacementSystem
 
     public bool ConfirmBuildingPlacement()
     {
-        if (_activePlacement == null || !_activePlacement.IsValid)
+        if (!_buildingPlacementLifecycleSystem.Confirm(CreatePlacementConfirmContext()))
             return false;
 
-        if (BuildingBarrierSystem.IsLinearWallDefinition(_activePlacement.Definition) &&
-            (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) ||
-             !_buildingPlacementValidationSystem.AreAllPendingWallRunsValid(
-                 _activePlacement,
-                 _buildingPlacementInputSystem,
-                 BuildingPlacementCommitSystem.GetWallSegmentFootprint,
-                 grid,
-                 roads,
-                 blockerData,
-                 CreateWallValidationContext())))
-            return false;
-
-        int placementCost = Mathf.Max(0, _activePlacementCost);
-        if (placementCost > 0 && !TrySpendDollars(placementCost))
-            return false;
-
-        _activePlacement.OriginCell = _activePlacement.CommittedOriginCell;
-        _activePlacementCost = 0;
-        PlaceBuilding(_activePlacement);
         GameRuntimeStats.RecordBuildingBuilt();
         _mainMenuPlayUi?.NotifyStaticMinimapChanged();
         _preserveBuildingSelectionOnNextExitBuildMode = true;
@@ -1853,7 +1818,7 @@ public sealed class BuildingPlacementSystem
 
     public void CancelBuildingPlacement()
     {
-        CancelPlacement();
+        CancelActivePlacement();
         _runtimeGameplayStateSystem.BuildModeActive = false;
         BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode();
     }
@@ -2040,7 +2005,7 @@ public sealed class BuildingPlacementSystem
         bool shouldClearSelection = clearBuildingSelection && !_preserveBuildingSelectionOnNextExitBuildMode;
         _runtimeGameplayStateSystem.BuildModeActive = false;
         _buildingPlacementInputSystem.Reset();
-        CancelPlacement();
+        CancelActivePlacement();
         if (shouldClearSelection)
             ClearSelectedBuilding("ExitBuildMode");
         _preserveBuildingSelectionOnNextExitBuildMode = false;
@@ -2050,10 +2015,7 @@ public sealed class BuildingPlacementSystem
 
     public void NotifyPlacementUiPointerDown()
     {
-        if (_activePlacement == null)
-            return;
-
-        _buildingPlacementInputSystem.NotifyPlacementUiPointerDown(_activePlacement);
+        _buildingPlacementLifecycleSystem.NotifyPlacementUiPointerDown(_buildingPlacementInputSystem);
     }
 
     public void HandleRuntimeBuildingEntityDestroyed(int buildingId, Entity blockerEntity, GameObject buildingObject)
@@ -2065,15 +2027,71 @@ public sealed class BuildingPlacementSystem
             buildingObject);
     }
 
-    private void CancelPlacement()
+    private void CancelActivePlacement()
     {
-        if (_activePlacement?.PreviewInstance != null)
-            Destroy(_activePlacement.PreviewInstance);
+        _buildingPlacementLifecycleSystem.Cancel(CreatePlacementCancelContext());
+    }
 
-        _activePlacement = null;
-        _activePlacementCost = 0;
-        _buildingPlacementInputSystem.Reset();
-        _buildingPlacementPreviewSystem.HideOutline();
+    private BuildingPlacementLifecycleSystem.CancelContext CreatePlacementCancelContext()
+    {
+        return new BuildingPlacementLifecycleSystem.CancelContext(
+            _buildingPlacementInputSystem,
+            _buildingPlacementPreviewSystem,
+            preview => DestroyRuntimeObject(preview));
+    }
+
+    private BuildingPlacementLifecycleSystem.BeginContext CreatePlacementBeginContext()
+    {
+        return new BuildingPlacementLifecycleSystem.BeginContext(
+            _runtimeGameplayStateSystem,
+            _buildingPlacementInputSystem,
+            _buildingPlacementPreviewSystem,
+            _buildingRoot,
+            CreateBuildingVisualInstance,
+            preview => DestroyRuntimeObject(preview),
+            GetCenterScreenPlacementOrigin,
+            TryResolveInitialPlacementOrigin,
+            UpdatePlacementVisual,
+            FocusActivePlacement,
+            () => BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build),
+            () => ClearSelectedBuilding("BeginPlacement"));
+    }
+
+    private BuildingPlacementLifecycleSystem.ConfirmContext CreatePlacementConfirmContext()
+    {
+        return new BuildingPlacementLifecycleSystem.ConfirmContext(
+            ValidateActivePlacementForConfirm,
+            TrySpendDollars,
+            PlaceBuilding);
+    }
+
+    private void FocusActivePlacement(PlacementState placement)
+    {
+        if (placement != null &&
+            TryGetGridData(out _, out GridConfig grid, out _, out _))
+        {
+            _selectionSystem?.SmoothMoveCameraGroundCenterTo(
+                ResolveCurrentPlacementFocusWorldPosition(placement, grid));
+        }
+    }
+
+    private bool ValidateActivePlacementForConfirm(PlacementState placement)
+    {
+        if (placement == null)
+            return false;
+
+        if (!BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
+            return true;
+
+        return TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) &&
+               _buildingPlacementValidationSystem.AreAllPendingWallRunsValid(
+                   placement,
+                   _buildingPlacementInputSystem,
+                   BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+                   grid,
+                   roads,
+                   blockerData,
+                   CreateWallValidationContext());
     }
 
     private void BeginPlacement(BuildingDefinition definition)
@@ -2081,50 +2099,16 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        _runtimeGameplayStateSystem.BuildModeActive = true;
-        _runtimeGameplayStateSystem.SelectionModeActive = false;
-        BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build);
-        ClearSelectedBuilding("BeginPlacement");
-        CancelPlacement();
-        _activePlacementCost = 0;
-        _buildingPlacementInputSystem.Reset();
-
-        Vector2Int origin = GetCenterScreenPlacementOrigin(definition.FootprintCells);
-        if (TryResolveInitialPlacementOrigin(definition, origin, out Vector2Int resolvedOrigin))
-            origin = resolvedOrigin;
-
-        _activePlacement = new PlacementState
-        {
-            Definition = definition,
-            PreviewInstance = CreateBuildingVisualInstance(definition, _buildingRoot),
-            OriginCell = origin,
-            CommittedOriginCell = origin,
-            DragStartOriginCell = origin,
-            DragCurrentOriginCell = origin,
-            DragFirstAxis = BuildingPlacementInputSystem.DragFirstAxis.None,
-            AutoRotateVertical = false,
-            CommittedWallRuns = new List<BuildingPlacementInputSystem.WallRun>(),
-            HideCurrentWallPreview = false,
-            LastPointerMovedAt = Time.time,
-            LastPointerScreenPosition = GamePointerInput.TryGetPointerPosition(out Vector2 pointerPosition) ? pointerPosition : Vector2.zero
-        };
-
-        UpdatePlacementVisual(_activePlacement, false, default);
-
-        if (_activePlacement != null &&
-            TryGetGridData(out _, out GridConfig grid, out _, out _))
-        {
-            _selectionSystem?.SmoothMoveCameraGroundCenterTo(
-                ResolveCurrentPlacementFocusWorldPosition(_activePlacement, grid));
-        }
+        _buildingPlacementLifecycleSystem.Begin(definition, CreatePlacementBeginContext());
     }
 
     private void UpdatePlacement(Vector2 screenPosition)
     {
-        if (_activePlacement == null)
+        PlacementState activePlacement = _buildingPlacementLifecycleSystem.ActivePlacement;
+        if (activePlacement == null)
             return;
 
-        UpdatePlacementVisual(_activePlacement, _buildingPlacementInputSystem.ShouldUpdateCellFromPointer, screenPosition);
+        UpdatePlacementVisual(activePlacement, _buildingPlacementInputSystem.ShouldUpdateCellFromPointer, screenPosition);
     }
 
     private void UpdatePlacementVisual(PlacementState placement, bool updateCellFromPointer, Vector2 screenPosition)
@@ -2302,7 +2286,7 @@ public sealed class BuildingPlacementSystem
             DestroyRuntimeObject);
 
         RuntimeBuildingData building = _buildingPlacementCommitSystem.CommitPlacement(request, context);
-        placement.PreviewInstance = null;
+        _buildingPlacementLifecycleSystem.ReleasePreviewOwnership(placement);
         if (building != null)
             SelectAndFocusBuilding(building);
     }
@@ -3722,7 +3706,8 @@ public sealed class BuildingPlacementSystem
 
     private bool IsPlacementValid(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerData blockerData)
     {
-        return IsPlacementValid(_activePlacement?.Definition, originCell, footprintCells, ResolvePlacementRotateVertical(_activePlacement), grid, roads, blockerData);
+        PlacementState activePlacement = _buildingPlacementLifecycleSystem.ActivePlacement;
+        return IsPlacementValid(activePlacement?.Definition, originCell, footprintCells, ResolvePlacementRotateVertical(activePlacement), grid, roads, blockerData);
     }
 
     private bool IsPlacementValid(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells, bool rotateVertical, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerData blockerData)
@@ -3956,7 +3941,7 @@ public sealed class BuildingPlacementSystem
             BeginPlacementForConfiguredSpawnable,
             TrySpendDollars,
             amount => _resourceDollars += Mathf.Max(0, amount),
-            cost => _activePlacementCost = Mathf.Max(0, cost),
+            _buildingPlacementLifecycleSystem.SetActivePlacementCost,
             QueuePlayerUnitProduction,
             buildingId => _runtimeBuildingSystem.SelectBuilding(buildingId),
             () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,

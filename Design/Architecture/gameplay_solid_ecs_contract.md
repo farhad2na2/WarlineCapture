@@ -166,7 +166,7 @@ Use narrow migrations. Do not rewrite the entire project at once.
 `BuildingPlacementSystem` is legacy facade debt. It must shrink by domain slice instead of gaining new behavior.
 
 Allowed direction:
-- `BuildingPlacementSystem` keeps active placement lifecycle and temporary facade methods during migration.
+- `BuildingPlacementSystem` keeps only temporary facade methods during migration; active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`.
 - Footprint, road, blocker, wall-placement validity, wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`.
 - Runtime building registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`.
 - Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`.

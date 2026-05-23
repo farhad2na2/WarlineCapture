@@ -129,6 +129,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
+        StringAssert.Contains("active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`", contract);
         StringAssert.Contains("wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
@@ -2466,6 +2467,55 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsPointerOverActivePlacement\b"),
             "Active-placement hit testing belongs in BuildingPlacementInputSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateActivePlacementLifecycleSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string lifecycleFile = "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleSystem.cs";
+        Assert.IsTrue(File.Exists(lifecycleFile), "The active placement lifecycle slice must live in BuildingPlacementLifecycleSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string lifecycle = File.ReadAllText(lifecycleFile);
+        StringAssert.Contains("BuildingPlacementLifecycleSystem _buildingPlacementLifecycleSystem", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.HasPendingBuildingPlacement", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.CanConfirmBuildingPlacement", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.ActivePlacement", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.Begin", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.Confirm", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.Cancel", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.NotifyPlacementUiPointerDown", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.SetActivePlacementCost", placement);
+        StringAssert.Contains("_buildingPlacementLifecycleSystem.ReleasePreviewOwnership", placement);
+
+        StringAssert.Contains("PlacementState : BuildingPlacementInputSystem.IPlacementState", lifecycle);
+        StringAssert.Contains("PlacementState ActivePlacement", lifecycle);
+        StringAssert.Contains("ActivePlacementCost", lifecycle);
+        StringAssert.Contains("HasPendingBuildingPlacement", lifecycle);
+        StringAssert.Contains("CanConfirmBuildingPlacement", lifecycle);
+        StringAssert.Contains("SetActivePlacementCost", lifecycle);
+        StringAssert.Contains("NotifyPlacementUiPointerDown", lifecycle);
+        StringAssert.Contains("Begin(BuildingDefinition definition", lifecycle);
+        StringAssert.Contains("Confirm(ConfirmContext context)", lifecycle);
+        StringAssert.Contains("ReleasePreviewOwnership", lifecycle);
+        StringAssert.Contains("Cancel(CancelContext context)", lifecycle);
+
+        Assert.IsFalse(
+            placement.Contains("_activePlacement", StringComparison.Ordinal),
+            "Active placement mutable state belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("_activePlacementCost", StringComparison.Ordinal),
+            "Active placement cost state belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("private sealed class PlacementState", StringComparison.Ordinal),
+            "Active placement state shape belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+PlacementState\s*\{"),
+            "Active placement state construction belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bDestroy\s*\(\s*(?:_activePlacement|activePlacement|placement)\.PreviewInstance\s*\)"),
+            "Active preview cancellation belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

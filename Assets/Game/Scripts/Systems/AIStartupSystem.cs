@@ -7,6 +7,9 @@ using UnityEngine;
 public sealed class AIStartupSystem
 {
     private readonly RuntimeDiagnosticsSystem _runtimeDiagnosticsSystem = new();
+    private readonly FactionEconomyStartupSystem _factionEconomyStartupSystem = new();
+    private readonly AIFactionControlStartupSystem _factionControlStartupSystem = new();
+    private readonly AIPlanEntryStartupSystem _planEntryStartupSystem = new();
 
     public delegate bool TryResolveFactionSpawnCell(byte factionId, out int2 spawnCell);
 
@@ -25,6 +28,7 @@ public sealed class AIStartupSystem
     public Result Initialize(
         World world,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AIPlanEntryStartupConfig planEntryConfig,
         TryResolveFactionSpawnCell resolveFactionSpawnCell)
     {
         Result result = default;
@@ -34,10 +38,11 @@ public sealed class AIStartupSystem
         EntityManager em = world.EntityManager;
         if (aiControllerConfigs != null)
         {
-            EnsureFactionEconomiesInitialized(em, aiControllerConfigs);
-            result = EnsureFactionControlConfigInitialized(em, aiControllerConfigs);
-            EnsureAIBuildPlansInitialized(em, aiControllerConfigs, resolveFactionSpawnCell);
-            EnsureAIProductionPlansInitialized(em, aiControllerConfigs);
+            _factionEconomyStartupSystem.Initialize(em, aiControllerConfigs);
+            AIFactionControlStartupSystem.Result factionControlResult = _factionControlStartupSystem.Initialize(em, aiControllerConfigs);
+            result = new Result(factionControlResult.HasPlayerAutoMode, factionControlResult.PlayerAutoModeEnabled);
+            EnsureAIBuildPlansInitialized(em, aiControllerConfigs, planEntryConfig, resolveFactionSpawnCell);
+            EnsureAIProductionPlansInitialized(em, aiControllerConfigs, planEntryConfig);
             EnsureAISquadPlansInitialized(em, aiControllerConfigs);
             EnsureAITargetPrioritySettingsInitialized(em, aiControllerConfigs);
         }
@@ -155,147 +160,10 @@ public sealed class AIStartupSystem
         flushSystem.Update(world.Unmanaged);
     }
 
-    private void EnsureFactionEconomiesInitialized(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
-    {
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionEconomy>());
-        using var entities = query.ToEntityArray(Allocator.Temp);
-        Dictionary<byte, Entity> economyEntitiesByFaction = new();
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!em.Exists(entity) || !em.HasComponent<FactionEconomy>(entity))
-                continue;
-
-            FactionEconomy economy = em.GetComponentData<FactionEconomy>(entity);
-            economyEntitiesByFaction[economy.FactionId] = entity;
-        }
-
-        int enemyConfigIndex = 0;
-        for (int i = 0; i < aiControllerConfigs.Count; i++)
-        {
-            AIControllerConfig config = aiControllerConfigs[i];
-            if (config == null)
-                continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
-                continue;
-
-            byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
-            if (!economyEntitiesByFaction.TryGetValue(factionId, out Entity economyEntity) || economyEntity == Entity.Null)
-            {
-                economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
-                economyEntitiesByFaction[factionId] = economyEntity;
-            }
-            else if (!em.HasComponent<FactionEconomyPolicy>(economyEntity))
-            {
-                em.AddComponent<FactionEconomyPolicy>(economyEntity);
-            }
-
-            em.SetComponentData(economyEntity, new FactionEconomy
-            {
-                FactionId = factionId,
-                Money = AISettingsRuntimeState.ApplyStartingMoney(config.StartingMoney, config.Role),
-                Oil = 0f,
-                Fuel = 0f,
-                OilIncomeRate = 0f,
-                FuelIncomeRate = 0f,
-                LastSellTime = 0f,
-                LastLogTime = -999f
-            });
-
-            em.SetComponentData(economyEntity, new FactionEconomyPolicy
-            {
-                Enabled = AISettingsRuntimeState.ResolveEnabled(config) ? (byte)1 : (byte)0,
-                IncomeMultiplier = AISettingsRuntimeState.ApplyIncomeMultiplier(config.IncomeMultiplier, config.Role),
-                OilSellPrice = Mathf.Max(0, config.OilSellPrice),
-                FuelSellPrice = Mathf.Max(0, config.FuelSellPrice),
-                SellIntervalSeconds = Mathf.Max(1f, config.BuildIntervalSeconds)
-            });
-        }
-    }
-
-    private Result EnsureFactionControlConfigInitialized(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
-    {
-        Entity configEntity;
-        using (EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<FactionControlConfigTag>()))
-        {
-            using var entities = query.ToEntityArray(Allocator.Temp);
-            configEntity = entities.Length > 0 ? entities[0] : Entity.Null;
-        }
-
-        if (configEntity == Entity.Null)
-        {
-            configEntity = em.CreateEntity(typeof(FactionControlConfigTag));
-            em.AddBuffer<FactionControlEntry>(configEntity);
-        }
-        else if (!em.HasBuffer<FactionControlEntry>(configEntity))
-        {
-            em.AddBuffer<FactionControlEntry>(configEntity);
-        }
-
-        DynamicBuffer<FactionControlEntry> entries = em.GetBuffer<FactionControlEntry>(configEntity);
-        entries.Clear();
-
-        bool hasPlayerEntry = false;
-        bool hasEnemyEntry = false;
-        bool playerAutoModeEnabled = false;
-        int enemyConfigIndex = 0;
-        for (int i = 0; i < aiControllerConfigs.Count; i++)
-        {
-            AIControllerConfig config = aiControllerConfigs[i];
-            if (config == null)
-                continue;
-            if (!ShouldIncludeAIConfig(config, ref enemyConfigIndex))
-                continue;
-
-            byte factionId = (byte)Mathf.Clamp(config.FactionId, 0, byte.MaxValue);
-            bool isPlayer = config.Role == AIControllerRole.PlayerAuto;
-            bool isAIControlled = AISettingsRuntimeState.ResolveEnabled(config) && (!isPlayer || AISettingsRuntimeState.PlayerAutoAIEnabled);
-            entries.Add(new FactionControlEntry
-            {
-                FactionId = factionId,
-                AIControlled = isAIControlled ? (byte)1 : (byte)0,
-                IsPlayerFaction = isPlayer ? (byte)1 : (byte)0,
-                LastLogTime = -999f
-            });
-
-            if (isPlayer)
-            {
-                playerAutoModeEnabled = isAIControlled;
-                AISettingsRuntimeState.PlayerAutoAIEnabled = isAIControlled;
-                hasPlayerEntry = true;
-            }
-            if (config.Role == AIControllerRole.Enemy)
-                hasEnemyEntry = true;
-        }
-
-        if (!hasPlayerEntry)
-        {
-            entries.Add(new FactionControlEntry
-            {
-                FactionId = 0,
-                AIControlled = 0,
-                IsPlayerFaction = 1,
-                LastLogTime = -999f
-            });
-        }
-
-        if (!hasEnemyEntry)
-        {
-            entries.Add(new FactionControlEntry
-            {
-                FactionId = 1,
-                AIControlled = 1,
-                IsPlayerFaction = 0,
-                LastLogTime = -999f
-            });
-        }
-
-        return new Result(true, playerAutoModeEnabled);
-    }
-
     private void EnsureAIBuildPlansInitialized(
         EntityManager em,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AIPlanEntryStartupConfig planEntryConfig,
         TryResolveFactionSpawnCell resolveFactionSpawnCell)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIBuildPlan>());
@@ -348,35 +216,14 @@ public sealed class AIStartupSystem
 
             DynamicBuffer<AIBuildPlanEntry> entries = em.GetBuffer<AIBuildPlanEntry>(planEntity);
             entries.Clear();
-            AddBuildPlanEntries(entries, config.PreferredBuildingIds);
+            _planEntryStartupSystem.WriteBuildPlanEntries(entries, config.PreferredBuildingIds, planEntryConfig);
         }
     }
 
-    private void AddBuildPlanEntries(DynamicBuffer<AIBuildPlanEntry> entries, List<string> preferredBuildingIds)
-    {
-        if (preferredBuildingIds != null)
-        {
-            for (int i = 0; i < preferredBuildingIds.Count; i++)
-            {
-                string buildingId = preferredBuildingIds[i];
-                if (string.IsNullOrWhiteSpace(buildingId))
-                    continue;
-
-                entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes(buildingId) });
-            }
-        }
-
-        if (entries.Length > 0)
-            return;
-
-        entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Tent_Regular") });
-        entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Building_Barrack") });
-        entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Building_OilPump") });
-        entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Building_Fuel_Bladder") });
-        entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Building_Ammunition_Depot") });
-    }
-
-    private void EnsureAIProductionPlansInitialized(EntityManager em, IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+    private void EnsureAIProductionPlansInitialized(
+        EntityManager em,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AIPlanEntryStartupConfig planEntryConfig)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<AIProductionPlan>());
         using var entities = query.ToEntityArray(Allocator.Temp);
@@ -426,33 +273,11 @@ public sealed class AIStartupSystem
 
             DynamicBuffer<AIProductionPlanEntry> entries = em.GetBuffer<AIProductionPlanEntry>(planEntity);
             entries.Clear();
-            AddProductionPlanEntries(entries, config.PreferredUnitIds, config.PreferredVehicleIds);
-        }
-    }
-
-    private void AddProductionPlanEntries(DynamicBuffer<AIProductionPlanEntry> entries, List<string> preferredUnitIds, List<string> preferredVehicleIds)
-    {
-        AddProductionPlanEntries(entries, preferredUnitIds);
-        AddProductionPlanEntries(entries, preferredVehicleIds);
-
-        if (entries.Length > 0)
-            return;
-
-        entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Unit_Chr_Soldier_Male_02_Alt_04") });
-    }
-
-    private void AddProductionPlanEntries(DynamicBuffer<AIProductionPlanEntry> entries, List<string> preferredUnitIds)
-    {
-        if (preferredUnitIds == null)
-            return;
-
-        for (int i = 0; i < preferredUnitIds.Count; i++)
-        {
-            string unitId = preferredUnitIds[i];
-            if (string.IsNullOrWhiteSpace(unitId))
-                continue;
-
-            entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes(unitId) });
+            _planEntryStartupSystem.WriteProductionPlanEntries(
+                entries,
+                config.PreferredUnitIds,
+                config.PreferredVehicleIds,
+                planEntryConfig);
         }
     }
 

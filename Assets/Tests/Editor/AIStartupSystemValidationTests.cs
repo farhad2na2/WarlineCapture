@@ -26,12 +26,14 @@ public sealed class AIStartupSystemValidationTests
     {
         AIControllerConfig enemy = LoadAIConfig("Assets/Game/Configs/Scene/Game_AI_Enemy_Config.asset");
         AIControllerConfig playerAuto = LoadAIConfig("Assets/Game/Configs/Scene/Game_AI_PlayerAuto_Config.asset");
+        AIPlanEntryStartupConfig planEntryConfig = LoadPlanEntryConfig();
         using var world = new World("AIStartupSystemValidationTests");
 
         AIStartupSystem system = new();
         AIStartupSystem.Result result = system.Initialize(
             world,
             new[] { enemy, playerAuto },
+            planEntryConfig,
             TryResolveFactionSpawnCell);
 
         EntityManager em = world.EntityManager;
@@ -79,6 +81,14 @@ public sealed class AIStartupSystemValidationTests
     {
         AIControllerConfig config = AssetDatabase.LoadAssetAtPath<AIControllerConfig>(path);
         Assert.NotNull(config, $"Missing AI config asset at {path}");
+        return config;
+    }
+
+    private static AIPlanEntryStartupConfig LoadPlanEntryConfig()
+    {
+        const string path = "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset";
+        AIPlanEntryStartupConfig config = AssetDatabase.LoadAssetAtPath<AIPlanEntryStartupConfig>(path);
+        Assert.NotNull(config, $"Missing AI plan entry startup config asset at {path}");
         return config;
     }
 

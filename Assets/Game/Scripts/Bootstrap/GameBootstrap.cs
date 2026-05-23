@@ -48,6 +48,7 @@ public sealed class GameBootstrap : MonoBehaviour
     [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
     [SerializeField] private GameStringsConfig gameStringsConfig;
     [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
+    [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
     [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
 
     public Camera WorldCamera => worldCamera;
@@ -66,6 +67,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
     public DayNightSystemConfig DayNightConfig => dayNightConfig;
     public GameStringsConfig GameStringsConfig => gameStringsConfig;
+    public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
     public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
 
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
@@ -215,6 +217,7 @@ public sealed class GameBootstrap : MonoBehaviour
         AIStartupSystem.Result aiStartupResult = _aiStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
             aiControllerConfigs,
+            aiPlanEntryConfig,
             TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;

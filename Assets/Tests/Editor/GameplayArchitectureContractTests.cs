@@ -122,6 +122,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
         StringAssert.Contains("gamebootstrap_responsibility_audit.md", contract);
         StringAssert.Contains("AI startup config projection is owned by `AIStartupSystem`", contract);
+        StringAssert.Contains("Faction economy startup projection is owned by `FactionEconomyStartupSystem`", contract);
+        StringAssert.Contains("AI faction-control startup projection is owned by `AIFactionControlStartupSystem`", contract);
+        StringAssert.Contains("AI default build and production fallback ids are owned by authored `AIPlanEntryStartupConfig` assets", contract);
         StringAssert.Contains("Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
@@ -222,8 +225,101 @@ public sealed class GameplayArchitectureContractTests
         {
             Assert.IsFalse(
                 Regex.IsMatch(bootstrap, $@"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+{methodName}\s*\("),
-                $"{methodName} belongs in AIStartupSystem, not GameBootstrap.");
+                $"{methodName} belongs outside GameBootstrap.");
         }
+    }
+
+    [Test]
+    public void AIStartupSystemMustDelegateDefaultPlanEntries()
+    {
+        const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        const string planEntryStartupFile = "Assets/Game/Scripts/Systems/AIPlanEntryStartupSystem.cs";
+        const string planEntryConfigFile = "Assets/Game/Configs/Scene/Game_AI_PlanEntry_Startup_Config.asset";
+        Assert.IsTrue(File.Exists(planEntryStartupFile), "AI plan entry buffer writing must live in AIPlanEntryStartupSystem.");
+        Assert.IsTrue(File.Exists(planEntryConfigFile), "AI default plan entry ids must live in an authored AIPlanEntryStartupConfig asset.");
+
+        string aiStartup = File.ReadAllText(aiStartupFile);
+        StringAssert.Contains("AIPlanEntryStartupSystem _planEntryStartupSystem", aiStartup);
+        StringAssert.Contains("_planEntryStartupSystem.WriteBuildPlanEntries", aiStartup);
+        StringAssert.Contains("_planEntryStartupSystem.WriteProductionPlanEntries", aiStartup);
+        StringAssert.Contains("AIPlanEntryStartupConfig planEntryConfig", aiStartup);
+
+        string[] defaultIds =
+        {
+            "Tent_Regular",
+            "Building_Barrack",
+            "Building_OilPump",
+            "Building_Fuel_Bladder",
+            "Building_Ammunition_Depot",
+            "Unit_Chr_Soldier_Male_02_Alt_04"
+        };
+
+        foreach (string defaultId in defaultIds)
+        {
+            Assert.IsFalse(aiStartup.Contains(defaultId, StringComparison.Ordinal), $"{defaultId} belongs in authored AIPlanEntryStartupConfig assets, not AIStartupSystem.");
+            Assert.IsFalse(File.ReadAllText(planEntryStartupFile).Contains(defaultId, StringComparison.Ordinal), $"{defaultId} belongs in authored AIPlanEntryStartupConfig assets, not AIPlanEntryStartupSystem.");
+            StringAssert.Contains(defaultId, File.ReadAllText(planEntryConfigFile));
+        }
+
+        Assert.IsFalse(
+            Regex.IsMatch(aiStartup, @"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+Add(?:Build|Production)PlanEntries\s*\("),
+            "AIStartupSystem should delegate default/preferred plan-entry population.");
+
+        string planEntryStartup = File.ReadAllText(planEntryStartupFile);
+        Assert.IsFalse(
+            Regex.IsMatch(planEntryStartup, @"\bstatic\b"),
+            "AIPlanEntryStartupSystem owns mutable ECS buffer population and should stay instance-scoped.");
+        StringAssert.Contains("config.FallbackBuildingIds", planEntryStartup);
+        StringAssert.Contains("config.FallbackProductionUnitIds", planEntryStartup);
+    }
+
+    [Test]
+    public void AIStartupSystemMustDelegateFactionEconomyStartupProjection()
+    {
+        const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        const string economyStartupFile = "Assets/Game/Scripts/Systems/FactionEconomyStartupSystem.cs";
+        Assert.IsTrue(File.Exists(economyStartupFile), "Faction economy startup projection must live in FactionEconomyStartupSystem.");
+
+        string aiStartup = File.ReadAllText(aiStartupFile);
+        StringAssert.Contains("FactionEconomyStartupSystem _factionEconomyStartupSystem", aiStartup);
+        StringAssert.Contains("_factionEconomyStartupSystem.Initialize", aiStartup);
+        Assert.IsFalse(
+            Regex.IsMatch(aiStartup, @"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+EnsureFactionEconomiesInitialized\s*\("),
+            "AIStartupSystem should delegate faction economy projection.");
+        Assert.IsFalse(aiStartup.Contains("new FactionEconomy", StringComparison.Ordinal), "AIStartupSystem must not construct FactionEconomy directly.");
+        Assert.IsFalse(aiStartup.Contains("new FactionEconomyPolicy", StringComparison.Ordinal), "AIStartupSystem must not construct FactionEconomyPolicy directly.");
+
+        string economyStartup = File.ReadAllText(economyStartupFile);
+        StringAssert.Contains("new FactionEconomy", economyStartup);
+        StringAssert.Contains("new FactionEconomyPolicy", economyStartup);
+        Assert.IsFalse(
+            Regex.IsMatch(economyStartup, @"\bstatic\b"),
+            "FactionEconomyStartupSystem owns mutable ECS projection and should stay instance-scoped.");
+    }
+
+    [Test]
+    public void AIStartupSystemMustDelegateFactionControlStartupProjection()
+    {
+        const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        const string factionControlStartupFile = "Assets/Game/Scripts/Systems/AIFactionControlStartupSystem.cs";
+        Assert.IsTrue(File.Exists(factionControlStartupFile), "Faction-control startup projection must live in AIFactionControlStartupSystem.");
+
+        string aiStartup = File.ReadAllText(aiStartupFile);
+        StringAssert.Contains("AIFactionControlStartupSystem _factionControlStartupSystem", aiStartup);
+        StringAssert.Contains("_factionControlStartupSystem.Initialize", aiStartup);
+        StringAssert.Contains("new Result(factionControlResult.HasPlayerAutoMode, factionControlResult.PlayerAutoModeEnabled)", aiStartup);
+        Assert.IsFalse(
+            Regex.IsMatch(aiStartup, @"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+EnsureFactionControlConfigInitialized\s*\("),
+            "AIStartupSystem should delegate faction-control projection.");
+        Assert.IsFalse(aiStartup.Contains("new FactionControlEntry", StringComparison.Ordinal), "AIStartupSystem must not construct FactionControlEntry directly.");
+        Assert.IsFalse(aiStartup.Contains("CreateEntity(typeof(FactionControlConfigTag))", StringComparison.Ordinal), "AIStartupSystem must not create FactionControlConfigTag directly.");
+
+        string factionControlStartup = File.ReadAllText(factionControlStartupFile);
+        StringAssert.Contains("new FactionControlEntry", factionControlStartup);
+        StringAssert.Contains("FactionControlConfigTag", factionControlStartup);
+        Assert.IsFalse(
+            Regex.IsMatch(factionControlStartup, @"\bstatic\b"),
+            "AIFactionControlStartupSystem owns mutable ECS projection and should stay instance-scoped.");
     }
 
     [Test]

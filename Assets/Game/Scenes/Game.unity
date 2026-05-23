@@ -9656,6 +9656,7 @@ MonoBehaviour:
   factionVisualConfig: {fileID: 11400000, guid: b201000000000000000000000000000a, type: 2}
   gameStringsConfig: {fileID: 11400000, guid: 6bdf401b93264f908f8a9d6c0bfb6b93, type: 2}
   prefabPreviewCameraConfig: {fileID: 11400000, guid: 22b4ed6a358014f0fa1ff5472f267b0c, type: 2}
+  aiPlanEntryConfig: {fileID: 11400000, guid: 8ac55f91a18b4e56b3ef2ed875c904d7, type: 2}
   aiControllerConfigs:
   - {fileID: 11400000, guid: fb8b5c545d7f641d3b153c2f18c57aad, type: 2}
   - {fileID: 11400000, guid: 34d062317806444e2a70cd1ed240fc5a, type: 2}

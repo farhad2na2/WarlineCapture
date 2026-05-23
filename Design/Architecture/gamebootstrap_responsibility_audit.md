@@ -60,6 +60,9 @@ Validation:
 
 Migrated owner:
 - `AIStartupSystem`
+- `AIFactionControlStartupSystem`
+- `AIPlanEntryStartupSystem`
+- `AIPlanEntryStartupConfig` asset for default fallback ids
 
 Former bootstrap debt:
 - `LogAIConfigValidation`
@@ -73,6 +76,9 @@ Former bootstrap debt:
 
 Target owner:
 - `AIStartupSystem`
+- `AIFactionControlStartupSystem` for faction-control config singleton and entry buffer writes
+- `AIPlanEntryStartupSystem` for preferred/default build and production plan-entry buffer writes
+- `AIPlanEntryStartupConfig` for authored default build and production fallback ids
 - AI startup config components/buffers
 - AI config baking/authoring path where appropriate
 
@@ -83,9 +89,11 @@ Target behavior:
 
 Migration order:
 1. Done: move AI startup data projection into `AIStartupSystem` without changing config semantics.
-2. Move default AI build/production fallback entries into config or ECS startup helpers.
-3. Done: move fixed tactical AI disabling into mission startup policy.
-4. Leave bootstrap with one call to install/request AI startup.
+2. Done: move default AI build/production fallback entry writes into `AIPlanEntryStartupSystem`.
+3. Done: move default AI build/production fallback ids into authored `AIPlanEntryStartupConfig`.
+4. Done: move fixed tactical AI disabling into mission startup policy.
+5. Done: move faction-control startup projection into `AIFactionControlStartupSystem`.
+6. Leave bootstrap with one call to install/request AI startup.
 
 Focused validation:
 - `GameplayArchitectureContractTests`
@@ -94,7 +102,10 @@ Focused validation:
 
 ### Faction Economy Startup Policy
 
-Current bootstrap debt:
+Migrated owner:
+- `FactionEconomyStartupSystem`
+
+Former bootstrap debt:
 - `EnsureFactionEconomiesInitialized`
 
 Target owner:
@@ -106,9 +117,9 @@ Target behavior:
 - ECS startup should initialize `FactionEconomy` and `FactionEconomyPolicy` from config data.
 
 Migration order:
-1. Extract economy startup projection into `FactionEconomyStartupSystem`.
-2. Keep data identical to the current bootstrap output.
-3. Add focused tests for player-auto and enemy faction entries.
+1. Done: extract economy startup projection into `FactionEconomyStartupSystem`.
+2. Done: keep data identical to the current bootstrap output.
+3. Done: add focused tests for enemy faction entries, disabled enemy indexes, and existing economy entities.
 
 Focused validation:
 - `AIEconomyValidationTests`

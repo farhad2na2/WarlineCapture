@@ -1307,6 +1307,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryPlaceRuntimeBuilding", boundarySystem);
         StringAssert.Contains("PublishReadModelIfDue", boundarySystem);
         StringAssert.Contains("PublishConfiguredSpawnablesReadModel", boundarySystem);
+        StringAssert.Contains("PublishConfiguredUnitsReadModel", boundarySystem);
+        StringAssert.Contains("PublishRuntimeUnitProductionSummaries", boundarySystem);
+        StringAssert.Contains("TryGetConfiguredUnitReadModel", boundarySystem);
+        StringAssert.Contains("CountRuntimeProducedUnitsForFaction", boundarySystem);
+        StringAssert.Contains("CountPendingProductionsForFaction", boundarySystem);
         StringAssert.Contains("PublishRuntimeFactionSummaries", boundarySystem);
         StringAssert.Contains("BuildingRuntimeBoundaryTag", placement);
         StringAssert.Contains("PublishIntervalSeconds", boundarySystem);
@@ -1327,6 +1332,12 @@ public sealed class GameplayArchitectureContractTests
             boundarySystem.Contains("buildingPlacement.TryQueueFactionUnitProduction", StringComparison.Ordinal) ||
             boundarySystem.Contains("BuildingPlacementSystem.FactionUnitProductionResult", StringComparison.Ordinal),
             "BuildingRuntimeBoundarySystem production requests must use BuildingProductionRequestSystem and BuildingProductionSystem ownership, not BuildingPlacementSystem facade production calls.");
+
+        Assert.IsFalse(
+            boundarySystem.Contains("buildingPlacement.TryGetConfiguredUnit", StringComparison.Ordinal) ||
+            boundarySystem.Contains("buildingPlacement.CountRuntimeProducedUnitsForFaction", StringComparison.Ordinal) ||
+            boundarySystem.Contains("buildingPlacement.CountPendingProductionsForFaction", StringComparison.Ordinal),
+            "BuildingRuntimeBoundarySystem unit read-model and production-summary publishing must use BuildingDefinitionSystem and BuildingRuntimeQuerySystem directly.");
     }
 
     [Test]

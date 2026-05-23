@@ -25,6 +25,7 @@ internal sealed class BuildingDefinitionSystem
     private readonly Dictionary<GameObject, CachedRuntimeBuildingMetadata> _runtimeBuildingMetadataCache = new();
     private readonly Dictionary<string, GameObject> _spawnablesByKey = new();
     private readonly Dictionary<string, GameObject> _unitSpawnPrefabsByKey = new();
+    private readonly List<GameObject> _configuredUnitSpawnPrefabs = new();
     private readonly List<BuildingDefinition> _configuredSpawnableDefinitions = new();
     private readonly Dictionary<GameObject, BuildingDefinition> _configuredDefinitionsByPrefab = new();
 
@@ -32,11 +33,13 @@ internal sealed class BuildingDefinitionSystem
     public IReadOnlyList<BuildingDefinition> ConfiguredSpawnableDefinitions => _configuredSpawnableDefinitions;
     public IReadOnlyDictionary<GameObject, BuildingDefinition> ConfiguredDefinitionsByPrefab => _configuredDefinitionsByPrefab;
     public int ConfiguredSpawnableCount => _configuredSpawnableDefinitions.Count;
+    public int ConfiguredUnitCount => _configuredUnitSpawnPrefabs.Count;
 
     public void RebuildSpawnablesLookup(IReadOnlyList<GameObject> spawnables, IReadOnlyList<GameObject> unitSpawnPrefabs)
     {
         _spawnablesByKey.Clear();
         _unitSpawnPrefabsByKey.Clear();
+        _configuredUnitSpawnPrefabs.Clear();
 
         if (spawnables != null)
         {
@@ -47,7 +50,12 @@ internal sealed class BuildingDefinitionSystem
         if (unitSpawnPrefabs != null)
         {
             for (int i = 0; i < unitSpawnPrefabs.Count; i++)
+            {
+                GameObject prefab = unitSpawnPrefabs[i];
+                if (prefab != null && !_configuredUnitSpawnPrefabs.Contains(prefab))
+                    _configuredUnitSpawnPrefabs.Add(prefab);
                 RegisterSpawnableLookupAliases(_unitSpawnPrefabsByKey, unitSpawnPrefabs[i]);
+            }
         }
     }
 
@@ -96,6 +104,7 @@ internal sealed class BuildingDefinitionSystem
     public void ClearUnitLookup()
     {
         _unitSpawnPrefabsByKey.Clear();
+        _configuredUnitSpawnPrefabs.Clear();
     }
 
     public BuildingDefinition FindConfiguredDefinition(string displayName)
@@ -186,6 +195,44 @@ internal sealed class BuildingDefinitionSystem
         prefab = null;
         string key = GetSpawnableLookupKey(lookupKey);
         return !string.IsNullOrEmpty(key) && _unitSpawnPrefabsByKey.TryGetValue(key, out prefab) && prefab != null;
+    }
+
+    public bool TryGetConfiguredUnitReadModel(
+        int index,
+        out GameObject prefab,
+        out string displayName,
+        out int price,
+        out bool canRequest,
+        out bool isVehicle)
+    {
+        prefab = null;
+        displayName = string.Empty;
+        price = 0;
+        canRequest = false;
+        isVehicle = false;
+
+        if (index < 0 || index >= _configuredUnitSpawnPrefabs.Count)
+            return false;
+
+        prefab = _configuredUnitSpawnPrefabs[index];
+        if (prefab == null)
+            return false;
+
+        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
+        displayName = ResolveConfiguredUnitDisplayName(prefab, authoring);
+        Vector2Int footprint = authoring != null ? authoring.GetConfiguredFootprintCells() : Vector2Int.one;
+        isVehicle = footprint.x > 1 || footprint.y > 1 || prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0;
+        price = authoring != null ? authoring.Price : (isVehicle ? 15000 : 10000);
+        canRequest = authoring == null || authoring.CanRequest;
+        return true;
+    }
+
+    private static string ResolveConfiguredUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
+    {
+        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
+            return authoring.ConfiguredDisplayName;
+
+        return prefab != null ? prefab.name : "Unit";
     }
 
     public BuildingDefinition CreateRuntimeBuildingDefinition(

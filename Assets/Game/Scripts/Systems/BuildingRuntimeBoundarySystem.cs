@@ -50,7 +50,15 @@ public sealed class BuildingRuntimeBoundarySystem
             em,
             boundaryEntity,
             now);
-        PublishReadModelIfDue(buildingPlacement, definitionSystem, em, boundaryEntity, runtimeBuildings, now);
+        PublishReadModelIfDue(
+            buildingPlacement,
+            definitionSystem,
+            runtimeQuerySystem,
+            runtimeQueryContext,
+            em,
+            boundaryEntity,
+            runtimeBuildings,
+            now);
     }
 
     private void ProcessRequests(
@@ -193,6 +201,8 @@ public sealed class BuildingRuntimeBoundarySystem
     private void PublishReadModelIfDue(
         BuildingPlacementSystem buildingPlacement,
         BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -203,10 +213,10 @@ public sealed class BuildingRuntimeBoundarySystem
 
         _nextPublishAt = now + PublishIntervalSeconds;
         PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
-        PublishConfiguredUnitsReadModel(buildingPlacement, em, boundaryEntity);
+        PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
         PublishRuntimeFactionSummaries(buildingPlacement, em, boundaryEntity, runtimeBuildings);
         PublishRuntimeOwnedBuildingSummaries(buildingPlacement, definitionSystem, em, boundaryEntity);
-        PublishRuntimeUnitProductionSummaries(buildingPlacement, em, boundaryEntity);
+        PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
     }
 
     private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
@@ -234,24 +244,33 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void PublishConfiguredUnitsReadModel(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void PublishConfiguredUnitsReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
     {
         DynamicBuffer<BuildingConfiguredUnitReadModel> buffer =
             EnsureBoundaryBuffer<BuildingConfiguredUnitReadModel>(em, boundaryEntity);
         buffer.Clear();
 
-        for (int i = 0; i < buildingPlacement.ConfiguredUnitCount; i++)
+        for (int i = 0; i < definitionSystem.ConfiguredUnitCount; i++)
         {
-            if (!buildingPlacement.TryGetConfiguredUnit(i, out BuildingPlacementSystem.ConfiguredUnitEntry entry) || entry.Prefab == null)
+            if (!definitionSystem.TryGetConfiguredUnitReadModel(
+                    i,
+                    out GameObject prefab,
+                    out string displayName,
+                    out int price,
+                    out bool canRequest,
+                    out bool isVehicle) ||
+                prefab == null)
+            {
                 continue;
+            }
 
             buffer.Add(new BuildingConfiguredUnitReadModel
             {
-                UnitId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
-                DisplayName = ToFixedString128(entry.DisplayName),
-                Price = Mathf.Max(0, entry.Price),
-                CanRequest = entry.CanRequest ? (byte)1 : (byte)0,
-                IsVehicle = entry.IsVehicle ? (byte)1 : (byte)0
+                UnitId = ResolveBoundaryId(prefab, displayName),
+                DisplayName = ToFixedString128(displayName),
+                Price = Mathf.Max(0, price),
+                CanRequest = canRequest ? (byte)1 : (byte)0,
+                IsVehicle = isVehicle ? (byte)1 : (byte)0
             });
         }
     }
@@ -316,7 +335,12 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void PublishRuntimeUnitProductionSummaries(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void PublishRuntimeUnitProductionSummaries(
+        BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        EntityManager em,
+        Entity boundaryEntity)
     {
         DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer =
             EnsureBoundaryBuffer<BuildingRuntimeUnitProductionSummary>(em, boundaryEntity);
@@ -325,19 +349,28 @@ public sealed class BuildingRuntimeBoundarySystem
         for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
         {
             byte factionId = _factionIds[factionIndex];
-            for (int i = 0; i < buildingPlacement.ConfiguredUnitCount; i++)
+            for (int i = 0; i < definitionSystem.ConfiguredUnitCount; i++)
             {
-                if (!buildingPlacement.TryGetConfiguredUnit(i, out BuildingPlacementSystem.ConfiguredUnitEntry entry) || entry.Prefab == null)
+                if (!definitionSystem.TryGetConfiguredUnitReadModel(
+                        i,
+                        out GameObject prefab,
+                        out string displayName,
+                        out _,
+                        out _,
+                        out _) ||
+                    prefab == null)
+                {
                     continue;
+                }
 
-                FixedString128Bytes unitId = ResolveBoundaryId(entry.Prefab, entry.DisplayName);
+                FixedString128Bytes unitId = ResolveBoundaryId(prefab, displayName);
                 string unitIdString = unitId.ToString();
                 buffer.Add(new BuildingRuntimeUnitProductionSummary
                 {
                     FactionId = factionId,
                     UnitId = unitId,
-                    ProducedCount = buildingPlacement.CountRuntimeProducedUnitsForFaction(factionId, unitIdString),
-                    QueuedCount = buildingPlacement.CountPendingProductionsForFaction(factionId, unitIdString)
+                    ProducedCount = runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, factionId, unitIdString),
+                    QueuedCount = runtimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitIdString)
                 });
             }
         }

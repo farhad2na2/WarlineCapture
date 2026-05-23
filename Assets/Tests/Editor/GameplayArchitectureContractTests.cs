@@ -153,7 +153,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Active placement pointer event orchestration, drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`", contract);
         StringAssert.Contains("Placement/grid math, footprint center projection, center-screen placement origin resolution, screen-to-grid raycasts, placement footprint rotation, and placement focus bounds belong in `BuildingPlacementGridSystem`", contract);
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
-        StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-building target selection, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
+        StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
     }
 
@@ -2890,8 +2890,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("CreateBuildingBarrierContext", placement);
         StringAssert.Contains("_buildingBarrierSystem.UpdateRoadBarrierDoors", placement);
         StringAssert.Contains("_buildingBarrierSystem.RememberOpenBaseBreach", placement);
-        StringAssert.Contains("_buildingBarrierSystem.TryFindEnemyWallPerimeterContainingCell", placement);
-        StringAssert.Contains("_buildingBarrierSystem.TryFindBreachBuilding", placement);
+        StringAssert.Contains("_buildingBarrierSystem.TryResolveBaseBreachTarget", placement);
         StringAssert.Contains("_buildingBarrierSystem.GetRuntimeRoadBarrierGateRects", placement);
         StringAssert.Contains("_buildingBarrierSystem.SetBarrierDoorOpen01", placement);
         StringAssert.Contains("_buildingBarrierSystem.ShouldAlignGateToNearbyWall", placement);
@@ -2902,6 +2901,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("HasOpenBaseBreach", barrier);
         StringAssert.Contains("TryFindEnemyWallPerimeterContainingCell", barrier);
         StringAssert.Contains("TryFindBreachBuilding", barrier);
+        StringAssert.Contains("TryResolveBaseBreachTarget", barrier);
+        StringAssert.Contains("TryFindBreachApproachCell", barrier);
+        StringAssert.Contains("ResolvePerimeterOutsideDirection", barrier);
+        StringAssert.Contains("TryScoreBreachApproachCandidate", barrier);
+        StringAssert.Contains("IsOutsidePerimeterOnSide", barrier);
         StringAssert.Contains("UpdateRoadBarrierDoors", barrier);
         StringAssert.Contains("GetRuntimeRoadBarrierGateRects", barrier);
         StringAssert.Contains("UpdateRoadBarrierDoorVisual", barrier);
@@ -2923,6 +2927,21 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryFindBreachBuilding\b"),
             "Breach-building target selection belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"TryFindRuntimeBuildingByCombatEntity"),
+            "Breach final-target building lookup belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryFindBreachApproachCell\b"),
+            "Breach approach-cell search belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?int2\s+ResolvePerimeterOutsideDirection\b"),
+            "Breach perimeter outside-direction selection belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+TryScoreBreachApproachCandidate\b"),
+            "Breach approach-cell scoring belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsOutsidePerimeterOnSide\b"),
+            "Breach perimeter-side checks belong in BuildingBarrierSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+void\s+UpdateRoadBarrierDoors\b"),
             "Road barrier door polling belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");

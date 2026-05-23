@@ -762,79 +762,16 @@ public sealed class BuildingPlacementSystem
         out float3 breachPosition,
         out string reason)
     {
-        breachTarget = Entity.Null;
-        breachCell = default;
-        breachPosition = default;
-        reason = string.Empty;
-
-        if (TryFindRuntimeBuildingByCombatEntity(finalTarget, out RuntimeBuildingData finalBuilding) &&
-            finalBuilding?.Definition != null &&
-            (finalBuilding.Definition.IsWall || BuildingBarrierSystem.IsWallGateDefinition(finalBuilding.Definition)))
-            return false;
-
-        BuildingBarrierSystem.Context barrierContext = CreateBuildingBarrierContext();
-        if (!_buildingBarrierSystem.TryFindEnemyWallPerimeterContainingCell(barrierContext, attackerFactionId, finalTargetCell, out byte breachedFactionId, out RectInt breachedPerimeter))
-            return false;
-
-        if (_buildingBarrierSystem.HasOpenBaseBreach(barrierContext, breachedFactionId, breachedPerimeter))
-            return false;
-
-        if (!_buildingBarrierSystem.TryFindBreachBuilding(barrierContext, breachedFactionId, attackerCell, preferGate: true, out RuntimeBuildingData breachBuilding, out reason) &&
-            !_buildingBarrierSystem.TryFindBreachBuilding(barrierContext, breachedFactionId, attackerCell, preferGate: false, out breachBuilding, out reason))
-        {
-            return false;
-        }
-
-        if (breachBuilding == null ||
-            breachBuilding.CombatEntity == Entity.Null ||
-            breachBuilding.CombatEntity == finalTarget ||
-            !TryGetEntityManager(out EntityManager em) ||
-            !em.Exists(breachBuilding.CombatEntity) ||
-            !em.HasComponent<UnitHealth>(breachBuilding.CombatEntity) ||
-            em.GetComponentData<UnitHealth>(breachBuilding.CombatEntity).Current <= 0 ||
-            !em.HasComponent<LocalTransform>(breachBuilding.CombatEntity))
-        {
-            return false;
-        }
-
-        breachTarget = breachBuilding.CombatEntity;
-        int2 centerCell = new(
-            breachBuilding.OriginCell.x + Mathf.Max(1, breachBuilding.Definition.FootprintCells.x) / 2,
-            breachBuilding.OriginCell.y + Mathf.Max(1, breachBuilding.Definition.FootprintCells.y) / 2);
-        breachCell = centerCell;
-        if (TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData) &&
-            em.HasComponent<DynamicOccupancyData>(gridEntity))
-        {
-            NativeArray<GridWalkable> walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-            NativeBitArray occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-            if (TryFindBreachApproachCell(
-                    grid,
-                    walkable,
-                    blockerData.Blocked,
-                    blockerData.FriendlyPassFactionIds,
-                    occupied,
-                    breachBuilding.OriginCell,
-                    breachBuilding.Definition.FootprintCells,
-                    breachedPerimeter,
-                    new int2(1, 1),
-                    attackerCell,
-                    attackerFactionId,
-                    out int2 outsideApproachCell))
-            {
-                breachCell = outsideApproachCell;
-            }
-            else if (TryGetRuntimeBuildingApproachCell(
-                    breachBuilding,
-                    new int2(1, 1),
-                    attackerCell,
-                    out int2 approachCell))
-            {
-                breachCell = approachCell;
-            }
-        }
-
-        breachPosition = em.GetComponentData<LocalTransform>(breachBuilding.CombatEntity).Position;
-        return true;
+        return _buildingBarrierSystem.TryResolveBaseBreachTarget(
+            CreateBuildingBarrierContext(),
+            attackerFactionId,
+            finalTarget,
+            finalTargetCell,
+            attackerCell,
+            out breachTarget,
+            out breachCell,
+            out breachPosition,
+            out reason);
     }
 
     public bool TryGetRuntimeBuildingApproachCell(int buildingId, int2 unitFootprint, int2 referenceCell, out int2 goal)
@@ -2399,149 +2336,6 @@ public sealed class BuildingPlacementSystem
             ownerFactionId);
     }
 
-    private bool TryFindRuntimeBuildingByCombatEntity(Entity combatEntity, out RuntimeBuildingData building)
-    {
-        building = null;
-        if (combatEntity == Entity.Null)
-            return false;
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData candidate = entry.Value;
-            if (candidate == null || candidate.CombatEntity != combatEntity)
-                continue;
-
-            building = candidate;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool TryFindBreachApproachCell(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeArray<byte> friendlyPassFactionIds,
-        in NativeBitArray occupied,
-        Vector2Int originCell,
-        Vector2Int footprintCells,
-        RectInt perimeterRect,
-        int2 unitFootprint,
-        int2 referenceCell,
-        byte factionId,
-        out int2 goal)
-    {
-        goal = default;
-        RectInt breachRect = new(originCell, footprintCells);
-        int2 outsideDirection = ResolvePerimeterOutsideDirection(breachRect, perimeterRect);
-        if (outsideDirection.x == 0 && outsideDirection.y == 0)
-            return false;
-
-        int2 clampedUnitFootprint = UnitFootprintUtility.ClampSize(unitFootprint);
-        int2 breachCenter = new(
-            breachRect.xMin + Mathf.Max(1, breachRect.width) / 2,
-            breachRect.yMin + Mathf.Max(1, breachRect.height) / 2);
-
-        bool found = false;
-        int bestScore = int.MaxValue;
-        const int maxApproachDistance = 18;
-        for (int distance = 1; distance <= maxApproachDistance; distance++)
-        {
-            int lateralPadding = math.min(6, distance + 2);
-            if (outsideDirection.x != 0)
-            {
-                int x = outsideDirection.x < 0
-                    ? breachRect.xMin - distance
-                    : breachRect.xMax - 1 + distance;
-                for (int y = breachRect.yMin - lateralPadding; y <= breachRect.yMax - 1 + lateralPadding; y++)
-                    TryScoreBreachApproachCandidate(grid, walkable, blocked, friendlyPassFactionIds, occupied, perimeterRect, outsideDirection, clampedUnitFootprint, referenceCell, breachCenter, factionId, x, y, ref bestScore, ref goal, ref found);
-            }
-            else
-            {
-                int y = outsideDirection.y < 0
-                    ? breachRect.yMin - distance
-                    : breachRect.yMax - 1 + distance;
-                for (int x = breachRect.xMin - lateralPadding; x <= breachRect.xMax - 1 + lateralPadding; x++)
-                    TryScoreBreachApproachCandidate(grid, walkable, blocked, friendlyPassFactionIds, occupied, perimeterRect, outsideDirection, clampedUnitFootprint, referenceCell, breachCenter, factionId, x, y, ref bestScore, ref goal, ref found);
-            }
-
-            if (found)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static int2 ResolvePerimeterOutsideDirection(RectInt breachRect, RectInt perimeterRect)
-    {
-        float breachCenterX = breachRect.xMin + (Mathf.Max(1, breachRect.width) * 0.5f);
-        float breachCenterY = breachRect.yMin + (Mathf.Max(1, breachRect.height) * 0.5f);
-        int distLeft = Mathf.RoundToInt(Mathf.Abs(breachCenterX - perimeterRect.xMin));
-        int distRight = Mathf.RoundToInt(Mathf.Abs(breachCenterX - (perimeterRect.xMax - 1)));
-        int distBottom = Mathf.RoundToInt(Mathf.Abs(breachCenterY - perimeterRect.yMin));
-        int distTop = Mathf.RoundToInt(Mathf.Abs(breachCenterY - (perimeterRect.yMax - 1)));
-        int best = Mathf.Min(Mathf.Min(distLeft, distRight), Mathf.Min(distBottom, distTop));
-
-        if (best == distLeft)
-            return new int2(-1, 0);
-        if (best == distRight)
-            return new int2(1, 0);
-        if (best == distBottom)
-            return new int2(0, -1);
-        return new int2(0, 1);
-    }
-
-    private static void TryScoreBreachApproachCandidate(
-        in GridConfig grid,
-        in NativeArray<GridWalkable> walkable,
-        in NativeBitArray blocked,
-        in NativeArray<byte> friendlyPassFactionIds,
-        in NativeBitArray occupied,
-        RectInt perimeterRect,
-        int2 outsideDirection,
-        int2 unitFootprint,
-        int2 referenceCell,
-        int2 breachCenter,
-        byte factionId,
-        int x,
-        int y,
-        ref int bestScore,
-        ref int2 bestCell,
-        ref bool found)
-    {
-        if ((uint)x >= (uint)grid.Width || (uint)y >= (uint)grid.Height)
-            return;
-
-        int2 candidate = new(x, y);
-        if (!IsOutsidePerimeterOnSide(candidate, perimeterRect, outsideDirection))
-            return;
-
-        if (!UnitFootprintUtility.CanPlace(grid, walkable, blocked, friendlyPassFactionIds, occupied, candidate, unitFootprint, referenceCell, factionId))
-            return;
-
-        int referenceScore = math.abs(referenceCell.x - x) + math.abs(referenceCell.y - y);
-        int breachScore = math.abs(breachCenter.x - x) + math.abs(breachCenter.y - y);
-        int score = referenceScore + (breachScore * 2);
-        if (found && score >= bestScore)
-            return;
-
-        bestScore = score;
-        bestCell = candidate;
-        found = true;
-    }
-
-    private static bool IsOutsidePerimeterOnSide(int2 cell, RectInt perimeterRect, int2 outsideDirection)
-    {
-        if (outsideDirection.x < 0)
-            return cell.x < perimeterRect.xMin;
-        if (outsideDirection.x > 0)
-            return cell.x >= perimeterRect.xMax;
-        if (outsideDirection.y < 0)
-            return cell.y < perimeterRect.yMin;
-        return cell.y >= perimeterRect.yMax;
-    }
-
     private void UpdateBuildingResourceVisuals()
     {
         if (_runtimeBuildings.Count == 0)
@@ -3215,9 +3009,11 @@ public sealed class BuildingPlacementSystem
         return new BuildingBarrierSystem.Context(
             _runtimeBuildings,
             TryGetEntityManager,
+            TryGetGridData,
             EnsureEntityQueries,
             () => _liveFactionUnitsQuery,
-            BuildingBarrierSystem.IsWallGateDefinition);
+            BuildingBarrierSystem.IsWallGateDefinition,
+            TryGetRuntimeBuildingApproachCell);
     }
 
     private bool TryGetGridForSelection(out GridConfig grid)

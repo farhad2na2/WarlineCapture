@@ -17,6 +17,8 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
     private readonly ManagedGameplayStartupSystem _managedGameplayStartupSystem = new();
+    private readonly MenuStartupSystem _menuStartupSystem = new();
+    private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -117,39 +119,19 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void Start()
     {
-        if (menuView != null)
-            menuView.GameRequested += BeginGameplay;
-
-        if (menuView != null)
-        {
-            menuView.Init(Selection, BuildingPlacement, worldCamera, DayNight, CitizenPopulation);
-            menuView.NotifyBootstrapReady();
-        }
-
-        try
-        {
-            MainMenu = new MainMenuPlayUI();
-            MainMenu.Init(RoadBuild, BuildingPlacement, Selection, DayNight);
-            RoadBuild?.BindDependencies(BuildingPlacement, MainMenu);
-            BuildingPlacement?.BindDependencies(RoadBuild, MainMenu, DayNight, Selection);
-            Selection?.BindDependencies(MainMenu, RoadBuild, BuildingPlacement);
-            _gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies(
-                chapter01TacticalBinder,
-                World.DefaultGameObjectInjectionWorld,
-                Selection);
-        }
-        catch (Exception exception)
-        {
-            MainMenu = null;
-            Debug.LogException(exception);
-            RoadBuild?.BindDependencies(BuildingPlacement, null);
-            BuildingPlacement?.BindDependencies(RoadBuild, null, DayNight, Selection);
-            Selection?.BindDependencies(null, RoadBuild, BuildingPlacement);
-            _gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies(
-                chapter01TacticalBinder,
-                World.DefaultGameObjectInjectionWorld,
-                Selection);
-        }
+        MainMenu = _menuStartupSystem.Initialize(
+            menuView,
+            BeginGameplay,
+            RoadBuild,
+            BuildingPlacement,
+            Selection,
+            DayNight,
+            CitizenPopulation,
+            worldCamera,
+            _gameplaySceneBindingSystem,
+            chapter01TacticalBinder,
+            World.DefaultGameObjectInjectionWorld,
+            Debug.LogException);
     }
 
     public void BeginGameplay()
@@ -172,7 +154,7 @@ public sealed class GameBootstrap : MonoBehaviour
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
-        EnsureGameplaySystemsInitialized();
+        InitializeGameplaySystemsIfNeeded();
         _gameplayStartPending = true;
         _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
         _runtimeGameplayStateSystem.ResetForGameplayStart();
@@ -304,8 +286,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (menuView != null)
-            menuView.GameRequested -= BeginGameplay;
+        _menuStartupSystem.Shutdown(menuView, BeginGameplay);
 
         ClearBuildingPlacementRuntimeComponent();
         MainMenu?.Dispose();
@@ -376,30 +357,30 @@ public sealed class GameBootstrap : MonoBehaviour
         component.BuildingPlacement = null;
     }
 
-    private void EnsureGameplaySystemsInitialized()
+    private void InitializeGameplaySystemsIfNeeded()
     {
         if (GameplayInitialized)
             return;
 
-        RuntimeCitySpawner = new RuntimeCitySpawnerSystem();
-        RuntimeCitySpawner.Init(runtimeCitySpawnerConfig, RoadBuild, BuildingPlacement, _runtimeCityRoot, MainMenu);
-
-        RuntimeGridBlockers = new RuntimeGridBlockerSystem();
-        RuntimeGridBlockers.Init(runtimeGridBlockerConfig, _runtimeBlockerRoot, RuntimeCitySpawner);
-        RoadBuild?.BindDependencies(BuildingPlacement, MainMenu, RuntimeGridBlockers);
-        _gameplaySceneBindingSystem.BindRuntimeGridBlockerDebugViews(RuntimeGridBlockers);
-        BuildingPlacement?.BindDependencies(
+        GameplayFeatureStartupSystem.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
+            runtimeCitySpawnerConfig,
+            runtimeGridBlockerConfig,
+            runtimeDecorationSpawnerConfig,
             RoadBuild,
+            BuildingPlacement,
             MainMenu,
             DayNight,
             Selection,
-            RuntimeGridBlockers,
-            RuntimeCitySpawner,
-            CitizenPopulation);
+            CitizenPopulation,
+            _runtimeCityRoot,
+            _runtimeBlockerRoot,
+            DecorationRoot,
+            decorationCombinedMeshBaker,
+            _gameplaySceneBindingSystem);
 
-        RuntimeDecorations = new RuntimeDecorationSpawnerSystem();
-        RuntimeDecorations.Init(runtimeDecorationSpawnerConfig, DecorationRoot, decorationCombinedMeshBaker, RuntimeCitySpawner, RuntimeGridBlockers);
-
+        RuntimeCitySpawner = gameplaySystems.RuntimeCitySpawner;
+        RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers;
+        RuntimeDecorations = gameplaySystems.RuntimeDecorations;
         GameplayInitialized = true;
     }
 

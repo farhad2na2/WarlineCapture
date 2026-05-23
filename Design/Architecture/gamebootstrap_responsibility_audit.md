@@ -35,6 +35,7 @@ Current examples:
 - Scene refs: `MenuView`, `Camera`, `Light`, `Volume`, runtime roots, tactical binder.
 - Config refs: selection, road build, building placement, attack trace, city/decorations/blockers, day/night, faction visuals, strings, prefab preview, AI controller configs.
 - Managed gameplay shell object creation and first-pass wiring are delegated to `ManagedGameplayStartupSystem`: `DayNightSystem`, `FactionVisualSettings`, `RoadBuildSystem`, `BuildingPlacementSystem`, `RTSSelectionSystem`, `UnitAttackTraceSystem`, `UnitImpostorRenderSystem`, `CitizenPopulationSystem`, `GameStrings`, and `SharedPrefabPreviewCache`.
+- Menu/UI startup binding is delegated to `MenuStartupSystem`: `MenuView` event subscription, menu view initialization, `MainMenuPlayUI` construction, menu dependency rebinding, and scene UI runtime dependency binding.
 - Runtime root creation is delegated to `RuntimeRootSystem` so root names and parent transforms stay centralized behind an ECS-aligned system boundary.
 
 Target:
@@ -42,6 +43,7 @@ Target:
 - Later split pure wiring into narrow startup systems only if that reduces `GameBootstrap` without moving gameplay policy into another shell class.
 - Runtime root creation may stay in `RuntimeRootSystem`; bootstrap should only request roots and pass them to runtime systems.
 - Managed gameplay startup may stay in `ManagedGameplayStartupSystem`; bootstrap should assign returned references and own only lifecycle/bridge calls.
+- Menu/UI startup binding may stay in `MenuStartupSystem`; bootstrap should assign the returned main-menu reference and call shutdown for event unbinding.
 
 Validation:
 - Existing `NewBootstrapRootFilesMustBeCompositionOnly`.
@@ -225,7 +227,7 @@ Target behavior:
 
 Migration order:
 1. Paused: do not re-extract the managed runtime loop through a managed wrapper without a focused FPS regression capture/contract.
-2. Paused: keep `EnsureGameplaySystemsInitialized` in `GameBootstrap` after the `GameplayFeatureInitializationSystem` extraction correlated with a 60 FPS to roughly 30 FPS regression during user runtime validation.
+2. Done: move `EnsureGameplaySystemsInitialized` construction and dependency binding into `GameplayFeatureStartupSystem` while keeping per-frame runtime update ownership in `GameBootstrap` until a focused FPS regression contract exists.
 3. Continue moving managed runtime systems into ECS domain systems by existing domain migrations.
 
 Focused validation:

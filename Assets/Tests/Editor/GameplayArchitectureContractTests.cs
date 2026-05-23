@@ -497,7 +497,7 @@ public sealed class GameplayArchitectureContractTests
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("GameplaySceneBindingSystem _gameplaySceneBindingSystem", bootstrap);
-        StringAssert.Contains("_gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies", bootstrap);
+        StringAssert.Contains("_menuStartupSystem.Initialize", bootstrap);
 
         string[] migratedMethodNames =
         {
@@ -525,6 +525,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(sceneBinding, @"\bstatic\b"),
             "GameplaySceneBindingSystem owns startup scene binding as injected instance behavior; keep it instance-scoped.");
+
+        string menuStartup = File.ReadAllText("Assets/Game/Scripts/Systems/MenuStartupSystem.cs");
+        StringAssert.Contains("sceneBindingSystem?.BindGameplayUiRuntimeDependencies", menuStartup);
     }
 
     [Test]
@@ -597,6 +600,93 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(startup, @"\bstatic\b"),
             "ManagedGameplayStartupSystem owns managed startup state and should stay instance-scoped.");
+    }
+
+    [Test]
+    public void GameBootstrapMustDelegateMenuStartupBinding()
+    {
+        const string menuStartupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
+        Assert.IsTrue(File.Exists(menuStartupFile), "Menu and UI startup binding must live in MenuStartupSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("MenuStartupSystem _menuStartupSystem", bootstrap);
+        StringAssert.Contains("_menuStartupSystem.Initialize", bootstrap);
+        StringAssert.Contains("_menuStartupSystem.Shutdown", bootstrap);
+        StringAssert.Contains("Debug.LogException", bootstrap);
+
+        string[] menuStartupDebtTokens =
+        {
+            "menuView.GameRequested +=",
+            "menuView.GameRequested -=",
+            "menuView.Init(",
+            "menuView.NotifyBootstrapReady",
+            "new MainMenuPlayUI()",
+            "mainMenu.Init",
+            "BindGameplayUiRuntimeDependencies"
+        };
+
+        foreach (string token in menuStartupDebtTokens)
+        {
+            Assert.IsFalse(
+                bootstrap.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in MenuStartupSystem, not GameBootstrap.");
+        }
+
+        string startup = File.ReadAllText(menuStartupFile);
+        foreach (string token in menuStartupDebtTokens)
+            StringAssert.Contains(token, startup);
+        StringAssert.Contains("logException?.Invoke(exception)", startup);
+        Assert.IsFalse(
+            startup.Contains("Debug.LogException", StringComparison.Ordinal),
+            "MenuStartupSystem must receive logging through a shell callback instead of calling Debug directly.");
+        Assert.IsFalse(
+            Regex.IsMatch(startup, @"\bstatic\b"),
+            "MenuStartupSystem owns menu startup state and should stay instance-scoped.");
+    }
+
+    [Test]
+    public void GameBootstrapMustDelegateGameplayFeatureStartup()
+    {
+        const string gameplayFeatureStartupFile = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
+        Assert.IsTrue(File.Exists(gameplayFeatureStartupFile), "Runtime gameplay feature startup must live in GameplayFeatureStartupSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("GameplayFeatureStartupSystem _gameplayFeatureStartupSystem", bootstrap);
+        StringAssert.Contains("_gameplayFeatureStartupSystem.Initialize", bootstrap);
+        StringAssert.Contains("RuntimeCitySpawner = gameplaySystems.RuntimeCitySpawner", bootstrap);
+        StringAssert.Contains("RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers", bootstrap);
+        StringAssert.Contains("RuntimeDecorations = gameplaySystems.RuntimeDecorations", bootstrap);
+        StringAssert.Contains("GameplayInitialized = true", bootstrap);
+        Assert.IsFalse(
+            Regex.IsMatch(bootstrap, @"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+EnsureGameplaySystemsInitialized\s*\("),
+            "EnsureGameplaySystemsInitialized must not return to GameBootstrap.");
+
+        string[] gameplayStartupDebtTokens =
+        {
+            "new RuntimeCitySpawnerSystem()",
+            "runtimeCitySpawner.Init",
+            "new RuntimeGridBlockerSystem()",
+            "runtimeGridBlockers.Init",
+            "BindRuntimeGridBlockerDebugViews(runtimeGridBlockers)",
+            "new RuntimeDecorationSpawnerSystem()",
+            "runtimeDecorations.Init"
+        };
+
+        foreach (string token in gameplayStartupDebtTokens)
+        {
+            Assert.IsFalse(
+                bootstrap.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in GameplayFeatureStartupSystem, not GameBootstrap.");
+        }
+
+        string startup = File.ReadAllText(gameplayFeatureStartupFile);
+        foreach (string token in gameplayStartupDebtTokens)
+            StringAssert.Contains(token, startup);
+        StringAssert.Contains("roadBuild?.BindDependencies(buildingPlacement, mainMenu, runtimeGridBlockers)", startup);
+        StringAssert.Contains("buildingPlacement?.BindDependencies(", startup);
+        Assert.IsFalse(
+            Regex.IsMatch(startup, @"\bstatic\b"),
+            "GameplayFeatureStartupSystem owns feature startup state and should stay instance-scoped.");
     }
 
     [Test]

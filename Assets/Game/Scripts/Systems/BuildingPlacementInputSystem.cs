@@ -32,8 +32,41 @@ internal sealed class BuildingPlacementInputSystem
     }
 
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
+    public delegate bool TryGetGridForInputDelegate(out GridConfig grid);
     public delegate Vector2Int CenterCellToOriginDelegate(Vector2Int centerCell, Vector2Int footprintCells);
     public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, bool vertical);
+    public delegate bool IsPointerOverPlacementUiDelegate(Vector2 screenPosition);
+    public delegate bool IsLinearWallDefinitionDelegate(BuildingPlacementSystem.BuildingDefinition definition);
+    public delegate void UpdatePlacementFromPointerDelegate(Vector2 screenPosition);
+
+    public readonly struct ActivePlacementPointerContext
+    {
+        public readonly TryGetGridForInputDelegate TryGetGridForInput;
+        public readonly TryGetGridCellDelegate TryGetGridCell;
+        public readonly CenterCellToOriginDelegate CenterCellToOrigin;
+        public readonly GetWallSegmentFootprintDelegate GetWallSegmentFootprint;
+        public readonly IsPointerOverPlacementUiDelegate IsPointerOverPlacementUi;
+        public readonly IsLinearWallDefinitionDelegate IsLinearWallDefinition;
+        public readonly UpdatePlacementFromPointerDelegate UpdatePlacementFromPointer;
+
+        public ActivePlacementPointerContext(
+            TryGetGridForInputDelegate tryGetGridForInput,
+            TryGetGridCellDelegate tryGetGridCell,
+            CenterCellToOriginDelegate centerCellToOrigin,
+            GetWallSegmentFootprintDelegate getWallSegmentFootprint,
+            IsPointerOverPlacementUiDelegate isPointerOverPlacementUi,
+            IsLinearWallDefinitionDelegate isLinearWallDefinition,
+            UpdatePlacementFromPointerDelegate updatePlacementFromPointer)
+        {
+            TryGetGridForInput = tryGetGridForInput;
+            TryGetGridCell = tryGetGridCell;
+            CenterCellToOrigin = centerCellToOrigin;
+            GetWallSegmentFootprint = getWallSegmentFootprint;
+            IsPointerOverPlacementUi = isPointerOverPlacementUi;
+            IsLinearWallDefinition = isLinearWallDefinition;
+            UpdatePlacementFromPointer = updatePlacementFromPointer;
+        }
+    }
 
     public bool IsDraggingPlacement { get; private set; }
     public bool IgnorePointerUpdatesUntilRelease { get; private set; }
@@ -52,6 +85,46 @@ internal sealed class BuildingPlacementInputSystem
 
         IsDraggingPlacement = false;
         IgnorePointerUpdatesUntilRelease = true;
+    }
+
+    public void UpdateActivePlacementPointer(
+        IPlacementState placement,
+        GamePointerState pointer,
+        ActivePlacementPointerContext context)
+    {
+        if (placement == null)
+            return;
+
+        Vector2 pointerPosition = pointer.Position;
+        bool isLinearWall = context.IsLinearWallDefinition != null && context.IsLinearWallDefinition(placement.Definition);
+        if (pointer.WasPressedThisFrame)
+        {
+            GridConfig inputGrid = default;
+            bool hasGridForInput = context.TryGetGridForInput != null && context.TryGetGridForInput(out inputGrid);
+            bool isPointerOverPlacementUi = context.IsPointerOverPlacementUi != null && context.IsPointerOverPlacementUi(pointerPosition);
+            TryBeginDrag(
+                placement,
+                pointerPosition,
+                isPointerOverPlacementUi,
+                isLinearWall,
+                hasGridForInput,
+                inputGrid,
+                context.TryGetGridCell,
+                context.CenterCellToOrigin);
+        }
+
+        if (pointer.WasReleasedThisFrame)
+        {
+            HandlePointerRelease(
+                placement,
+                isLinearWall,
+                context.GetWallSegmentFootprint);
+        }
+
+        if (!pointer.IsPressed)
+            HandlePointerNotPressed();
+
+        context.UpdatePlacementFromPointer?.Invoke(pointerPosition);
     }
 
     public void TryBeginDrag(

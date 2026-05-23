@@ -1308,31 +1308,10 @@ public sealed class BuildingPlacementSystem
         PlacementState activePlacement = _buildingPlacementLifecycleSystem.ActivePlacement;
         if (activePlacement != null)
         {
-            Vector2 pointerPosition = pointer.Position;
-            if (pointer.WasPressedThisFrame)
-            {
-                bool hasGridForInput = TryGetGridData(out _, out GridConfig inputGrid, out _, out _);
-                _buildingPlacementInputSystem.TryBeginDrag(
-                    activePlacement,
-                    pointerPosition,
-                    IsPointerOverPlacementUi(pointerPosition),
-                    BuildingBarrierSystem.IsLinearWallDefinition(activePlacement.Definition),
-                    hasGridForInput,
-                    inputGrid,
-                    TryGetGridCell,
-                    CenterCellToOrigin);
-            }
-            if (pointer.WasReleasedThisFrame)
-            {
-                _buildingPlacementInputSystem.HandlePointerRelease(
-                    activePlacement,
-                    BuildingBarrierSystem.IsLinearWallDefinition(activePlacement.Definition),
-                    BuildingPlacementCommitSystem.GetWallSegmentFootprint);
-            }
-            if (!pointer.IsPressed)
-                _buildingPlacementInputSystem.HandlePointerNotPressed();
-
-            UpdatePlacement(pointerPosition);
+            _buildingPlacementInputSystem.UpdateActivePlacementPointer(
+                activePlacement,
+                pointer,
+                CreateActivePlacementPointerContext());
             afterInput = Time.realtimeSinceStartupAsDouble;
             afterInputOutline = afterInput;
             afterInputUi = afterInput;
@@ -1422,6 +1401,24 @@ public sealed class BuildingPlacementSystem
                     $"buildings={_runtimeBuildings.Count}");
             }
         }
+    }
+
+    private BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()
+    {
+        return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
+            TryGetGridForPlacementInput,
+            TryGetGridCell,
+            CenterCellToOrigin,
+            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+            IsPointerOverPlacementUi,
+            BuildingBarrierSystem.IsLinearWallDefinition,
+            UpdatePlacement);
+    }
+
+    private bool TryGetGridForPlacementInput(out GridConfig grid)
+    {
+        bool hasGrid = TryGetGridData(out _, out grid, out _, out _);
+        return hasGrid;
     }
 
     private void UpdateResourceProduction()

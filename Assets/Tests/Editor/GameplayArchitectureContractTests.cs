@@ -145,7 +145,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`", contract);
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
         StringAssert.Contains("Placement commit expansion, wall-run origin construction, wall segment footprint/rotation helpers, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`", contract);
-        StringAssert.Contains("Active placement drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`", contract);
+        StringAssert.Contains("Active placement pointer event orchestration, drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`", contract);
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-building target selection, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
@@ -2444,17 +2444,27 @@ public sealed class GameplayArchitectureContractTests
         string placement = File.ReadAllText(placementFile);
         string input = File.ReadAllText(inputFile);
         StringAssert.Contains("BuildingPlacementInputSystem _buildingPlacementInputSystem", placement);
-        StringAssert.Contains("_buildingPlacementInputSystem.TryBeginDrag", placement);
-        StringAssert.Contains("_buildingPlacementInputSystem.HandlePointerRelease", placement);
+        StringAssert.Contains("_buildingPlacementInputSystem.UpdateActivePlacementPointer", placement);
         StringAssert.Contains("_buildingPlacementInputSystem.ApplyPointerHover", placement);
         StringAssert.Contains("_buildingPlacementInputSystem.BuildWallPlacementOrigins", placement);
 
+        StringAssert.Contains("UpdateActivePlacementPointer", input);
+        StringAssert.Contains("ActivePlacementPointerContext", input);
         StringAssert.Contains("TryBeginDrag", input);
         StringAssert.Contains("ApplyPointerHover", input);
         StringAssert.Contains("IsPointerOverPlacement", input);
         StringAssert.Contains("BuildWallPlacementOrigins", input);
         StringAssert.Contains("BuildFinalWallRuns", input);
         StringAssert.Contains("CommitCurrentWallRun", input);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingPlacementInputSystem\.TryBeginDrag\s*\("),
+            "Active placement pointer press orchestration belongs in BuildingPlacementInputSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingPlacementInputSystem\.HandlePointerRelease\s*\("),
+            "Active placement pointer release orchestration belongs in BuildingPlacementInputSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingPlacementInputSystem\.HandlePointerNotPressed\s*\("),
+            "Active placement pointer release-state orchestration belongs in BuildingPlacementInputSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+UpdateWallDragAxis\b"),
             "Wall drag axis mutation belongs in BuildingPlacementInputSystem, not BuildingPlacementSystem.");

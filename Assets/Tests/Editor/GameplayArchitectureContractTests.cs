@@ -133,6 +133,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
+        StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
@@ -1838,6 +1839,72 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+bool\s+TryGetRuntimeBuildingApproachCell\([\s\S]*?TryFindBuildingApproachCell[\s\S]*?public\s+bool\s+IsRuntimeBuildingApproachCell"),
             "Runtime approach-cell query routing belongs in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedDefinitionSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string definitionFile = "Assets/Game/Scripts/Systems/BuildingDefinitionSystem.cs";
+        Assert.IsTrue(File.Exists(definitionFile), "Building definition and prefab metadata behavior must live in BuildingDefinitionSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string definition = File.ReadAllText(definitionFile);
+
+        StringAssert.Contains("BuildingDefinitionSystem _buildingDefinitionSystem", placement);
+        StringAssert.Contains("_buildingDefinitionSystem.RebuildSpawnablesLookup", placement);
+        StringAssert.Contains("_buildingDefinitionSystem.RebuildConfiguredSpawnableDefinitions", placement);
+        StringAssert.Contains("_buildingDefinitionSystem.CreateRuntimeBuildingDefinition", placement);
+        StringAssert.Contains("_buildingDefinitionSystem.TryGetConfiguredSpawnable", placement);
+        StringAssert.Contains("_buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab", placement);
+        StringAssert.Contains("_buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab", placement);
+        StringAssert.Contains("BuildingDefinitionSystem.GetProductionPrefab", placement);
+        StringAssert.Contains("BuildingDefinitionSystem.TryGetPrefabLocalBounds", placement);
+        StringAssert.Contains("BuildingDefinitionSystem.RuntimeBuildingMatchesId", placement);
+        StringAssert.Contains("BuildingDefinitionSystem.UnitPrefabMatchesId", placement);
+
+        StringAssert.Contains("CachedRuntimeBuildingMetadata", definition);
+        StringAssert.Contains("RebuildConfiguredSpawnableDefinitions", definition);
+        StringAssert.Contains("CreateRuntimeBuildingDefinition", definition);
+        StringAssert.Contains("CreateDefinition", definition);
+        StringAssert.Contains("TryGetPrefabLocalBounds", definition);
+        StringAssert.Contains("FindProductionSpawnLocalPositions", definition);
+        StringAssert.Contains("RegisterSpawnableLookupAliases", definition);
+
+        string[] placementStateDebtTokens =
+        {
+            "CachedRuntimeBuildingMetadata",
+            "_runtimeBuildingMetadataCache",
+            "_spawnablesByKey",
+            "_configuredDefinitionsByPrefab",
+            "_configuredSpawnableDefinitions",
+            "_unitSpawnPrefabsByKey"
+        };
+
+        foreach (string token in placementStateDebtTokens)
+        {
+            Assert.IsFalse(
+                placement.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in BuildingDefinitionSystem, not BuildingPlacementSystem.");
+        }
+
+        string[] migratedMethodPatterns =
+        {
+            @"\bprivate\s+(?:static\s+)?bool\s+TryGetPrefabLocalBounds\b",
+            @"\bprivate\s+(?:static\s+)?Vector3\[\]\s+FindProductionSpawnLocalPositions\b",
+            @"\bprivate\s+(?:static\s+)?void\s+RegisterSpawnableLookupAliases\b",
+            @"\bprivate\s+BuildingDefinition\s+CreateRuntimeBuildingDefinition\b",
+            @"\bprivate\s+BuildingDefinition\s+CreateDefinition\b",
+            @"\bprivate\s+(?:static\s+)?bool\s+RuntimeDefinitionMatchesId\b",
+            @"\bprivate\s+(?:static\s+)?bool\s+UnitPrefabMatchesId\b"
+        };
+
+        foreach (string pattern in migratedMethodPatterns)
+        {
+            Assert.IsFalse(
+                Regex.IsMatch(placement, pattern),
+                "Building definition/prefab metadata helpers belong in BuildingDefinitionSystem, not BuildingPlacementSystem.");
+        }
     }
 
     [Test]

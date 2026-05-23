@@ -5,7 +5,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Globalization;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using SnivelerCode.GpuAnimation.Scripts.Components;
 using static UnityEngine.Object;
@@ -313,20 +312,6 @@ public sealed class BuildingPlacementSystem
         public Vector2 LastPointerScreenPosition { get; set; }
     }
 
-    private sealed class CachedRuntimeBuildingMetadata
-    {
-        public BuildingDefinitionAuthoring Authoring;
-        public bool HasVisualFootprint;
-        public Vector2Int VisualFootprint;
-        public Bounds LocalBounds;
-        public bool HasLocalBounds;
-        public bool HasRunway;
-        public Vector3 RunwayLocalPosition;
-        public Quaternion RunwayLocalRotation;
-        public Vector3 RunwayHalfExtents;
-        public Vector3[] ProductionSpawnLocalPositions;
-    }
-
     [SerializeField] private BuildingPlacementSystemConfig config;
     [SerializeField, HideInInspector] private Camera worldCamera;
     [SerializeField, HideInInspector] private List<GameObject> spawnables = new();
@@ -358,16 +343,12 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingSelectionSystem _buildingSelectionSystem = new();
     private readonly BuildingBarrierSystem _buildingBarrierSystem = new();
     private readonly BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem = new();
+    private readonly BuildingDefinitionSystem _buildingDefinitionSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingForwardAction _alignNewestProducedUnitRotationForTransport;
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
-    private readonly Dictionary<GameObject, CachedRuntimeBuildingMetadata> _runtimeBuildingMetadataCache = new();
-    private readonly Dictionary<string, GameObject> _spawnablesByKey = new();
-    private readonly Dictionary<string, GameObject> _unitSpawnPrefabsByKey = new();
-    private readonly List<BuildingDefinition> _configuredSpawnableDefinitions = new();
-    private readonly Dictionary<GameObject, BuildingDefinition> _configuredDefinitionsByPrefab = new();
     private readonly List<RectInt> _deferredRedirectFootprints = new();
     private int[] _placementInvalidPrefix;
     private int _resourceDollars;
@@ -418,7 +399,7 @@ public sealed class BuildingPlacementSystem
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
-    public int ConfiguredSpawnableCount => _configuredSpawnableDefinitions.Count;
+    public int ConfiguredSpawnableCount => _buildingDefinitionSystem.ConfiguredSpawnableCount;
     public int ConfiguredUnitCount => unitSpawnPrefabs != null ? unitSpawnPrefabs.Count : 0;
 
     public BuildingPlacementSystem()
@@ -694,7 +675,7 @@ public sealed class BuildingPlacementSystem
 
     public bool TryGetConfiguredUnit(string unitId, out ConfiguredUnitEntry entry)
     {
-        string normalized = NormalizeSpawnableKey(unitId);
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
         if (string.IsNullOrEmpty(normalized))
         {
             entry = default;
@@ -705,7 +686,7 @@ public sealed class BuildingPlacementSystem
         {
             if (!TryGetConfiguredUnit(i, out ConfiguredUnitEntry candidate))
                 continue;
-            if (!UnitPrefabMatchesId(candidate.Prefab, normalized))
+            if (!BuildingDefinitionSystem.UnitPrefabMatchesId(candidate.Prefab, normalized))
                 continue;
 
             entry = candidate;
@@ -973,22 +954,17 @@ public sealed class BuildingPlacementSystem
             return false;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        string key = GetSpawnableLookupKey(em.GetName(prefabEntity));
-        return !string.IsNullOrEmpty(key) && _spawnablesByKey.TryGetValue(key, out prefab) && prefab != null;
+        return _buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab(em.GetName(prefabEntity), out prefab);
     }
 
     public bool TryResolveConfiguredSpawnablePrefab(string lookupKey, out GameObject prefab)
     {
-        prefab = null;
-        string key = GetSpawnableLookupKey(lookupKey);
-        return !string.IsNullOrEmpty(key) && _spawnablesByKey.TryGetValue(key, out prefab) && prefab != null;
+        return _buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab(lookupKey, out prefab);
     }
 
     public bool TryResolveConfiguredUnitSpawnPrefab(string lookupKey, out GameObject prefab)
     {
-        prefab = null;
-        string key = GetSpawnableLookupKey(lookupKey);
-        return !string.IsNullOrEmpty(key) && _unitSpawnPrefabsByKey.TryGetValue(key, out prefab) && prefab != null;
+        return _buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(lookupKey, out prefab);
     }
 
     public bool IsDraggingPlacementPreview => _activePlacement != null && _buildingPlacementInputSystem.IsDraggingPlacement;
@@ -1034,9 +1010,7 @@ public sealed class BuildingPlacementSystem
         if (em.HasComponent<UnitSourcePrefabKey>(unitEntity))
         {
             string key = em.GetComponentData<UnitSourcePrefabKey>(unitEntity).Value.ToString();
-            if (!string.IsNullOrEmpty(key) &&
-                _unitSpawnPrefabsByKey.TryGetValue(GetSpawnableLookupKey(key), out prefab) &&
-                prefab != null)
+            if (!string.IsNullOrEmpty(key) && _buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(key, out prefab))
             {
                 return true;
             }
@@ -1189,80 +1163,19 @@ public sealed class BuildingPlacementSystem
 
     private void RebuildSpawnablesLookup()
     {
-        _spawnablesByKey.Clear();
-        _unitSpawnPrefabsByKey.Clear();
         if (spawnables == null)
             spawnables = new List<GameObject>();
 
-        for (int i = 0; i < spawnables.Count; i++)
-        {
-            GameObject prefab = spawnables[i];
-            if (prefab == null)
-                continue;
-
-            RegisterSpawnableLookupAliases(_spawnablesByKey, prefab);
-        }
-
-        if (unitSpawnPrefabs == null)
-            return;
-
-        for (int i = 0; i < unitSpawnPrefabs.Count; i++)
-        {
-            GameObject prefab = unitSpawnPrefabs[i];
-            if (prefab == null)
-                continue;
-
-            RegisterSpawnableLookupAliases(_unitSpawnPrefabsByKey, prefab);
-        }
+        _buildingDefinitionSystem.RebuildSpawnablesLookup(spawnables, unitSpawnPrefabs);
     }
 
     private void RebuildConfiguredSpawnableDefinitions()
     {
-        for (int i = 0; i < _configuredSpawnableDefinitions.Count; i++)
-            CleanupCombinedVisualTemplate(_configuredSpawnableDefinitions[i]);
+        _buildingDefinitionSystem.RebuildConfiguredSpawnableDefinitions(spawnables, _buildingRunwaySystem, DestroyRuntimeObject);
 
-        _configuredSpawnableDefinitions.Clear();
-        _configuredDefinitionsByPrefab.Clear();
-
-        if (spawnables == null)
-            return;
-
-        for (int i = 0; i < spawnables.Count; i++)
-        {
-            GameObject prefab = spawnables[i];
-            if (prefab == null)
-                continue;
-
-            BuildingDefinition definition = CreateDefinition(
-                prefab,
-                prefab.name,
-                "Operational building.",
-                500,
-                null,
-                null,
-                null);
-            BuildCombinedVisualTemplate(definition);
-            CacheBuildingBounds(definition);
-            _configuredSpawnableDefinitions.Add(definition);
-            _configuredDefinitionsByPrefab[prefab] = definition;
-        }
-
-        _soldierBaseDefinition = FindConfiguredDefinition("Soldier Base");
-        _soldierTentDefinition = FindConfiguredDefinition("Soldier Tent");
-        _factoryDefinition = FindConfiguredDefinition("Factory");
-    }
-
-    private BuildingDefinition FindConfiguredDefinition(string displayName)
-    {
-        string key = NormalizeSpawnableKey(displayName);
-        for (int i = 0; i < _configuredSpawnableDefinitions.Count; i++)
-        {
-            BuildingDefinition definition = _configuredSpawnableDefinitions[i];
-            if (NormalizeSpawnableKey(definition.DisplayName) == key)
-                return definition;
-        }
-
-        return null;
+        _soldierBaseDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Soldier Base");
+        _soldierTentDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Soldier Tent");
+        _factoryDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Factory");
     }
 
     public void Dispose()
@@ -1285,11 +1198,8 @@ public sealed class BuildingPlacementSystem
 
         _runtimeBuildingSystem.Clear();
 
-        for (int i = 0; i < _configuredSpawnableDefinitions.Count; i++)
-            CleanupCombinedVisualTemplate(_configuredSpawnableDefinitions[i]);
-        _configuredSpawnableDefinitions.Clear();
-        _configuredDefinitionsByPrefab.Clear();
-        _unitSpawnPrefabsByKey.Clear();
+        _buildingDefinitionSystem.ClearConfiguredSpawnableDefinitions(DestroyRuntimeObject);
+        _buildingDefinitionSystem.ClearUnitLookup();
         _soldierBaseDefinition = null;
         _soldierTentDefinition = null;
         _factoryDefinition = null;
@@ -1821,40 +1731,12 @@ public sealed class BuildingPlacementSystem
 
     public bool TryGetConfiguredSpawnable(int index, out ConfiguredSpawnableEntry entry)
     {
-        if (index >= 0 && index < _configuredSpawnableDefinitions.Count)
-        {
-            entry = BuildConfiguredSpawnableEntry(_configuredSpawnableDefinitions[index]);
-            return true;
-        }
-
-        entry = default;
-        return false;
+        return _buildingDefinitionSystem.TryGetConfiguredSpawnable(index, out entry);
     }
 
     public bool TryGetConfiguredSpawnable(string buildingId, out ConfiguredSpawnableEntry entry)
     {
-        string normalized = NormalizeSpawnableKey(buildingId);
-        if (!string.IsNullOrEmpty(normalized) &&
-            _spawnablesByKey.TryGetValue(normalized, out GameObject prefab) &&
-            prefab != null &&
-            _configuredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition matchedDefinition))
-        {
-            entry = BuildConfiguredSpawnableEntry(matchedDefinition);
-            return true;
-        }
-
-        for (int i = 0; i < _configuredSpawnableDefinitions.Count; i++)
-        {
-            BuildingDefinition definition = _configuredSpawnableDefinitions[i];
-            if (definition == null || !RuntimeDefinitionMatchesId(definition, normalized))
-                continue;
-
-            entry = BuildConfiguredSpawnableEntry(definition);
-            return true;
-        }
-
-        entry = default;
-        return false;
+        return _buildingDefinitionSystem.TryGetConfiguredSpawnable(buildingId, out entry);
     }
 
     public bool TryGetConfiguredUnit(int index, out ConfiguredUnitEntry entry)
@@ -1886,23 +1768,6 @@ public sealed class BuildingPlacementSystem
         return false;
     }
 
-    private static ConfiguredSpawnableEntry BuildConfiguredSpawnableEntry(BuildingDefinition definition)
-    {
-        if (definition == null)
-            return default;
-
-        bool canRequest = true;
-        int price = 20000;
-        BuildingDefinitionAuthoring authoring = definition.Prefab != null ? definition.Prefab.GetComponent<BuildingDefinitionAuthoring>() : null;
-        if (authoring != null)
-        {
-            canRequest = authoring.ConfiguredCanRequest;
-            price = authoring.ConfiguredPrice;
-        }
-
-        return new ConfiguredSpawnableEntry(definition.DisplayName, definition.Description, definition.Prefab, canRequest, price);
-    }
-
     private static string ResolveConfiguredUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
     {
         if (prefab == null)
@@ -1919,11 +1784,7 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return false;
 
-        if (index < 0 || index >= _configuredSpawnableDefinitions.Count)
-            return false;
-
-        BuildingDefinition definition = _configuredSpawnableDefinitions[index];
-        if (definition == null || definition.Prefab == null)
+        if (!_buildingDefinitionSystem.TryGetConfiguredDefinition(index, out BuildingDefinition definition) || definition.Prefab == null)
             return false;
 
         BeginPlacement(definition);
@@ -1935,7 +1796,7 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return false;
 
-        if (prefab == null || !_configuredDefinitionsByPrefab.TryGetValue(prefab, out BuildingDefinition definition) || definition == null)
+        if (!_buildingDefinitionSystem.TryGetConfiguredDefinition(prefab, out BuildingDefinition definition))
             return false;
 
         BeginPlacement(definition);
@@ -1944,7 +1805,7 @@ public sealed class BuildingPlacementSystem
 
     public bool IsConfiguredSpawnablePrefab(GameObject prefab)
     {
-        return prefab != null && _configuredDefinitionsByPrefab.ContainsKey(prefab);
+        return _buildingDefinitionSystem.IsConfiguredSpawnablePrefab(prefab);
     }
 
     public bool ConfirmBuildingPlacement()
@@ -2484,12 +2345,13 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
             return 0;
 
-        BuildingDefinition definition = CreateRuntimeBuildingDefinition(
+        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
             prefab,
             prefab.name,
             "Defensive wall.",
             new Vector2Int(4, 1),
-            500);
+            500,
+            _buildingRunwaySystem);
         definition.IsWall = true;
         if (!IsLinearWallDefinition(definition))
             return 0;
@@ -2531,12 +2393,13 @@ public sealed class BuildingPlacementSystem
         if (prefab == null)
             return false;
 
-        BuildingDefinition definition = CreateRuntimeBuildingDefinition(
+        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
             prefab,
             prefab.name,
             "Defensive wall.",
             new Vector2Int(4, 1),
-            500);
+            500,
+            _buildingRunwaySystem);
         definition.IsWall = true;
         footprint = GetWallSegmentFootprint(definition, rotateVertical);
         return footprint.x > 0 && footprint.y > 0;
@@ -2554,12 +2417,13 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
             return false;
 
-        BuildingDefinition definition = CreateRuntimeBuildingDefinition(
+        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
             prefab,
             prefab.name,
             "Defensive wall.",
             new Vector2Int(4, 1),
-            500);
+            500,
+            _buildingRunwaySystem);
         definition.IsWall = true;
         if (!IsLinearWallDefinition(definition))
             return false;
@@ -2598,12 +2462,13 @@ public sealed class BuildingPlacementSystem
         if (prefab == null)
             return false;
 
-        BuildingDefinition definition = CreateRuntimeBuildingDefinition(
+        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
             prefab,
             fallbackDisplayName,
             fallbackDescription,
             fallbackFootprint ?? new Vector2Int(10, 10),
-            fallbackMaxHealth);
+            fallbackMaxHealth,
+            _buildingRunwaySystem);
         actualFootprint = GetPlacementFootprint(definition, rotateVertical);
 
         if (!TrySpawnInitialBuilding(definition, preferredOrigin, rotateVertical, out RuntimeBuildingData building))
@@ -2623,12 +2488,13 @@ public sealed class BuildingPlacementSystem
         if (prefab == null)
             return false;
 
-        BuildingDefinition definition = CreateRuntimeBuildingDefinition(
+        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
             prefab,
             prefab.name,
             "Operational building.",
             new Vector2Int(10, 10),
-            500);
+            500,
+            _buildingRunwaySystem);
         footprint = GetPlacementFootprint(definition, rotateVertical);
         return footprint.x > 0 && footprint.y > 0;
     }
@@ -2647,7 +2513,7 @@ public sealed class BuildingPlacementSystem
             return false;
 
         int remainingSlotIndex = Mathf.Max(0, flattenedSlotIndex);
-        string normalizedBuildingId = NormalizeSpawnableKey(buildingId);
+        string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
         foreach (KeyValuePair<int, RuntimeBuildingData> entry in _runtimeBuildings)
         {
             RuntimeBuildingData building = entry.Value;
@@ -2658,7 +2524,7 @@ public sealed class BuildingPlacementSystem
                 building.Instance == null ||
                 building.ProductionSpawnLocalPositions == null ||
                 building.ProductionSpawnLocalPositions.Length == 0 ||
-                !RuntimeBuildingMatchesId(building, normalizedBuildingId))
+                !BuildingDefinitionSystem.RuntimeBuildingMatchesId(building, normalizedBuildingId))
                 continue;
 
             if (remainingSlotIndex >= building.ProductionSpawnLocalPositions.Length)
@@ -2725,76 +2591,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return origins;
-    }
-
-    private BuildingDefinition CreateRuntimeBuildingDefinition(
-        GameObject prefab,
-        string fallbackDisplayName,
-        string fallbackDescription,
-        Vector2Int fallbackFootprint,
-        int fallbackMaxHealth)
-    {
-        CachedRuntimeBuildingMetadata metadata = GetOrCreateRuntimeBuildingMetadata(prefab);
-        List<BuildingDefinition.ProductionSlotDefinition> productionSlots = BuildProductionSlots(metadata.Authoring, null, null, null, null);
-
-        return new BuildingDefinition
-        {
-            DisplayName = metadata.Authoring != null && !string.IsNullOrWhiteSpace(metadata.Authoring.ConfiguredDisplayName) ? metadata.Authoring.ConfiguredDisplayName : fallbackDisplayName,
-            Description = metadata.Authoring != null && !string.IsNullOrWhiteSpace(metadata.Authoring.ConfiguredDescription) ? metadata.Authoring.ConfiguredDescription : fallbackDescription,
-            MaxHealth = metadata.Authoring != null ? Mathf.Max(1, metadata.Authoring.ConfiguredMaxHealth) : Mathf.Max(1, fallbackMaxHealth),
-            ProductionSlots = productionSlots,
-            SpawnUnitPrefab = GetProductionPrefab(productionSlots, 0),
-            SecondarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 1),
-            TertiarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 2),
-            QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
-            Prefab = prefab,
-            FootprintCells = metadata.HasVisualFootprint
-                ? metadata.VisualFootprint
-                : metadata.Authoring != null
-                    ? new Vector2Int(Mathf.Max(1, metadata.Authoring.ConfiguredFootprintCells.x), Mathf.Max(1, metadata.Authoring.ConfiguredFootprintCells.y))
-                    : fallbackFootprint,
-            Role = metadata.Authoring != null ? metadata.Authoring.ConfiguredRole : BuildingRole.None,
-            IsWall = metadata.Authoring != null && metadata.Authoring.ConfiguredIsWall,
-            OilBarrelsPerDay = metadata.Authoring != null ? Mathf.Max(0f, metadata.Authoring.ConfiguredOilBarrelsPerDay) : 0f,
-            OilStorageCapacity = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredOilStorageCapacity) : 0,
-            FuelBarrelsPerDay = metadata.Authoring != null ? Mathf.Max(0f, metadata.Authoring.ConfiguredFuelBarrelsPerDay) : 0f,
-            FuelStorageCapacity = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredFuelStorageCapacity) : 0,
-            RefugeeCapacity = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredRefugeeCapacity) : 0,
-            RefugeeUpkeepPerCitizenPerDay = metadata.Authoring != null ? Mathf.Max(0, metadata.Authoring.ConfiguredRefugeeUpkeepPerCitizenPerDay) : 0,
-            LocalBounds = metadata.LocalBounds,
-            HasLocalBounds = metadata.HasLocalBounds,
-            ProductionSpawnLocalPositions = metadata.ProductionSpawnLocalPositions,
-            HasRunway = metadata.HasRunway,
-            RunwayLocalPosition = metadata.RunwayLocalPosition,
-            RunwayLocalRotation = metadata.RunwayLocalRotation,
-            RunwayHalfExtents = metadata.RunwayHalfExtents
-        };
-    }
-
-    private CachedRuntimeBuildingMetadata GetOrCreateRuntimeBuildingMetadata(GameObject prefab)
-    {
-        if (prefab == null)
-            return new CachedRuntimeBuildingMetadata();
-
-        if (_runtimeBuildingMetadataCache.TryGetValue(prefab, out CachedRuntimeBuildingMetadata cached))
-            return cached;
-
-        cached = new CachedRuntimeBuildingMetadata
-        {
-            Authoring = prefab.GetComponent<BuildingDefinitionAuthoring>()
-        };
-
-        if (TryGetFootprintFromVisualBounds(prefab, out Vector2Int visualFootprint))
-        {
-            cached.HasVisualFootprint = true;
-            cached.VisualFootprint = visualFootprint;
-        }
-
-        cached.HasLocalBounds = TryGetPrefabLocalBounds(prefab, out cached.LocalBounds);
-        cached.HasRunway = _buildingRunwaySystem.TryGetRunwayLocalData(prefab, out cached.RunwayLocalPosition, out cached.RunwayLocalRotation, out cached.RunwayHalfExtents);
-        cached.ProductionSpawnLocalPositions = FindProductionSpawnLocalPositions(prefab);
-        _runtimeBuildingMetadataCache[prefab] = cached;
-        return cached;
     }
 
     private bool TrySpawnInitialBuilding(
@@ -3702,46 +3498,6 @@ public sealed class BuildingPlacementSystem
                prefabName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
-    private void CacheBuildingBounds(BuildingDefinition definition)
-    {
-        if (definition == null || definition.HasLocalBounds || (definition.VisualTemplate == null && definition.Prefab == null))
-            return;
-
-        GameObject temp = definition.VisualTemplate != null
-            ? Object.Instantiate(definition.VisualTemplate)
-            : Object.Instantiate(definition.Prefab);
-        temp.hideFlags = HideFlags.HideAndDontSave;
-        if (TryGetLocalBounds(temp, out Bounds localBounds))
-        {
-            definition.LocalBounds = localBounds;
-            definition.HasLocalBounds = true;
-        }
-
-        DestroyRuntimeObject(temp);
-    }
-
-    private static void CleanupCombinedVisualTemplate(BuildingDefinition definition)
-    {
-        if (definition == null)
-            return;
-
-        if (definition.VisualTemplate != null)
-            DestroyRuntimeObject(definition.VisualTemplate);
-
-        if (definition.GeneratedMeshes != null)
-        {
-            for (int i = 0; i < definition.GeneratedMeshes.Count; i++)
-            {
-                Mesh mesh = definition.GeneratedMeshes[i];
-                if (mesh != null)
-                    DestroyRuntimeObject(mesh);
-            }
-        }
-
-        definition.VisualTemplate = null;
-        definition.GeneratedMeshes = null;
-    }
-
     private static GameObject CreateBuildingVisualInstance(BuildingDefinition definition, Transform parent)
     {
         if (definition == null)
@@ -3771,55 +3527,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return wrapper;
-    }
-
-    private static void BuildCombinedVisualTemplate(BuildingDefinition definition)
-    {
-        // Building visuals are already authored/baked in the prefab asset.
-        // Avoid any extra runtime combine step here.
-        if (definition == null)
-            return;
-
-        definition.VisualTemplate = null;
-    }
-
-    private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)
-    {
-        bounds = default;
-        var renderers = target.GetComponentsInChildren<Renderer>(true);
-        bool hasBounds = false;
-        Matrix4x4 worldToLocal = target.transform.worldToLocalMatrix;
-        foreach (Renderer renderer in renderers)
-        {
-            Bounds rendererBounds = renderer.bounds;
-            Vector3 min = rendererBounds.min;
-            Vector3 max = rendererBounds.max;
-            for (int x = 0; x < 2; x++)
-            {
-                for (int y = 0; y < 2; y++)
-                {
-                    for (int z = 0; z < 2; z++)
-                    {
-                        Vector3 corner = new(
-                            x == 0 ? min.x : max.x,
-                            y == 0 ? min.y : max.y,
-                            z == 0 ? min.z : max.z);
-                        Vector3 localCorner = worldToLocal.MultiplyPoint3x4(corner);
-                        if (!hasBounds)
-                        {
-                            bounds = new Bounds(localCorner, Vector3.zero);
-                            hasBounds = true;
-                        }
-                        else
-                        {
-                            bounds.Encapsulate(localCorner);
-                        }
-                    }
-                }
-            }
-        }
-
-        return hasBounds;
     }
 
     private void PositionBuildingObject(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical = false)
@@ -4293,7 +4000,9 @@ public sealed class BuildingPlacementSystem
 
     private static bool ShouldRuntimeBuildingBlockPathing(BuildingDefinition definition)
     {
-        return !RuntimeDefinitionMatchesId(definition, NormalizeSpawnableKey("Building_Helipad"));
+        return !BuildingDefinitionSystem.RuntimeDefinitionMatchesId(
+            definition,
+            BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Helipad"));
     }
 
     private Entity CreateBuildingCombatEntity(Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation)
@@ -4356,298 +4065,6 @@ public sealed class BuildingPlacementSystem
         return entity;
     }
 
-    private BuildingDefinition CreateDefinition(
-        GameObject prefab,
-        string fallbackDisplayName,
-        string fallbackDescription,
-        int fallbackMaxHealth,
-        GameObject fallbackPrimarySpawnUnitPrefab,
-        GameObject fallbackSecondarySpawnUnitPrefab,
-        GameObject fallbackTertiarySpawnUnitPrefab)
-    {
-        BuildingDefinitionAuthoring authoring = prefab != null ? prefab.GetComponent<BuildingDefinitionAuthoring>() : null;
-        if (authoring != null)
-            authoring.ApplyConfigIfAvailable();
-        Vector2Int footprint = authoring != null
-            ? new Vector2Int(Mathf.Max(1, authoring.ConfiguredFootprintCells.x), Mathf.Max(1, authoring.ConfiguredFootprintCells.y))
-            : Vector2Int.one;
-        if (TryGetFootprintFromVisualBounds(prefab, out Vector2Int visualFootprint))
-            footprint = visualFootprint;
-
-        Bounds localBounds = default;
-        bool hasLocalBounds = TryGetPrefabLocalBounds(prefab, out localBounds);
-        bool hasRunway = _buildingRunwaySystem.TryGetRunwayLocalData(prefab, out Vector3 runwayLocalPosition, out Quaternion runwayLocalRotation, out Vector3 runwayHalfExtents);
-
-        List<BuildingDefinition.ProductionSlotDefinition> productionSlots = BuildProductionSlots(
-            authoring,
-            fallbackPrimarySpawnUnitPrefab,
-            fallbackSecondarySpawnUnitPrefab,
-            fallbackTertiarySpawnUnitPrefab,
-            null);
-
-        return new BuildingDefinition
-        {
-            DisplayName = authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName) ? authoring.ConfiguredDisplayName : fallbackDisplayName,
-            Description = authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDescription) ? authoring.ConfiguredDescription : fallbackDescription,
-            MaxHealth = authoring != null ? Mathf.Max(1, authoring.ConfiguredMaxHealth) : Mathf.Max(1, fallbackMaxHealth),
-            ProductionSlots = productionSlots,
-            SpawnUnitPrefab = GetProductionPrefab(productionSlots, 0),
-            SecondarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 1),
-            TertiarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 2),
-            QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
-            Prefab = prefab,
-            FootprintCells = footprint,
-            Role = authoring != null ? authoring.ConfiguredRole : BuildingRole.None,
-            IsWall = authoring != null && authoring.ConfiguredIsWall,
-            OilBarrelsPerDay = authoring != null ? Mathf.Max(0f, authoring.ConfiguredOilBarrelsPerDay) : 0f,
-            OilStorageCapacity = authoring != null ? Mathf.Max(0, authoring.ConfiguredOilStorageCapacity) : 0,
-            FuelBarrelsPerDay = authoring != null ? Mathf.Max(0f, authoring.ConfiguredFuelBarrelsPerDay) : 0f,
-            FuelStorageCapacity = authoring != null ? Mathf.Max(0, authoring.ConfiguredFuelStorageCapacity) : 0,
-            RefugeeCapacity = authoring != null ? Mathf.Max(0, authoring.ConfiguredRefugeeCapacity) : 0,
-            RefugeeUpkeepPerCitizenPerDay = authoring != null ? Mathf.Max(0, authoring.ConfiguredRefugeeUpkeepPerCitizenPerDay) : 0,
-            ThreatDetectionKind = authoring != null ? authoring.ConfiguredThreatDetectionKind : ThreatDetectionKind.None,
-            ThreatDetectionRadiusCells = authoring != null ? Mathf.Max(0, authoring.ConfiguredThreatDetectionRadiusCells) : 0,
-            LocalBounds = localBounds,
-            HasLocalBounds = hasLocalBounds,
-            ProductionSpawnLocalPositions = FindProductionSpawnLocalPositions(prefab),
-            HasRunway = hasRunway,
-            RunwayLocalPosition = runwayLocalPosition,
-            RunwayLocalRotation = runwayLocalRotation,
-            RunwayHalfExtents = runwayHalfExtents
-        };
-    }
-
-    private BuildingDefinition CreateConfiguredDefinition(
-        string fallbackDisplayName,
-        string fallbackDescription,
-        int fallbackMaxHealth,
-        GameObject fallbackPrimarySpawnUnitPrefab,
-        GameObject fallbackSecondarySpawnUnitPrefab,
-        GameObject fallbackTertiarySpawnUnitPrefab)
-    {
-        GameObject prefab = TryGetSpawnablePrefab(fallbackDisplayName);
-        return CreateDefinition(
-            prefab,
-            fallbackDisplayName,
-            fallbackDescription,
-            fallbackMaxHealth,
-            fallbackPrimarySpawnUnitPrefab,
-            fallbackSecondarySpawnUnitPrefab,
-            fallbackTertiarySpawnUnitPrefab);
-    }
-
-    private GameObject TryGetSpawnablePrefab(string displayName)
-    {
-        string key = NormalizeSpawnableKey(displayName);
-        return !string.IsNullOrEmpty(key) && _spawnablesByKey.TryGetValue(key, out GameObject prefab) ? prefab : null;
-    }
-
-    private static string GetSpawnableLookupKey(GameObject prefab)
-    {
-        if (prefab == null)
-            return string.Empty;
-
-        BuildingDefinitionAuthoring authoring = prefab.GetComponent<BuildingDefinitionAuthoring>();
-        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
-            return NormalizeSpawnableKey(authoring.ConfiguredDisplayName);
-
-        return NormalizeSpawnableKey(prefab.name);
-    }
-
-    private static string GetSpawnableLookupKey(string name)
-    {
-        return NormalizeSpawnableKey(name);
-    }
-
-    private static string NormalizeSpawnableKey(string value)
-    {
-        if (string.IsNullOrWhiteSpace(value))
-            return string.Empty;
-
-        return value.Trim().ToLowerInvariant();
-    }
-
-    private static bool RuntimeBuildingMatchesId(RuntimeBuildingData building, string normalizedBuildingId)
-    {
-        return building?.Definition != null && RuntimeDefinitionMatchesId(building.Definition, normalizedBuildingId);
-    }
-
-    private static bool UnitPrefabMatchesId(GameObject prefab, string normalizedUnitId)
-    {
-        if (string.IsNullOrEmpty(normalizedUnitId))
-            return true;
-        if (prefab == null)
-            return false;
-
-        if (NormalizeSpawnableKey(prefab.name) == normalizedUnitId)
-            return true;
-
-        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-        if (authoring != null && NormalizeSpawnableKey(authoring.ConfiguredDisplayName) == normalizedUnitId)
-            return true;
-
-        return false;
-    }
-
-    private static bool RuntimeDefinitionMatchesId(BuildingDefinition definition, string normalizedBuildingId)
-    {
-        if (definition == null || string.IsNullOrEmpty(normalizedBuildingId))
-            return false;
-
-        if (NormalizeSpawnableKey(definition.DisplayName) == normalizedBuildingId)
-            return true;
-
-        if (definition.Prefab != null)
-        {
-            if (NormalizeSpawnableKey(definition.Prefab.name) == normalizedBuildingId)
-                return true;
-
-            BuildingDefinitionAuthoring authoring = definition.Prefab.GetComponent<BuildingDefinitionAuthoring>();
-            if (authoring != null && NormalizeSpawnableKey(authoring.ConfiguredDisplayName) == normalizedBuildingId)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static void RegisterSpawnableLookupAliases(Dictionary<string, GameObject> lookup, GameObject prefab)
-    {
-        if (lookup == null || prefab == null)
-            return;
-
-        string prefabNameKey = NormalizeSpawnableKey(prefab.name);
-        if (!string.IsNullOrEmpty(prefabNameKey))
-            lookup[prefabNameKey] = prefab;
-
-        string displayNameKey = GetSpawnableLookupKey(prefab);
-        if (!string.IsNullOrEmpty(displayNameKey) && displayNameKey != prefabNameKey && !lookup.ContainsKey(displayNameKey))
-            lookup[displayNameKey] = prefab;
-    }
-
-    private static Vector3[] FindProductionSpawnLocalPositions(GameObject prefab)
-    {
-        if (prefab == null)
-            return null;
-
-        List<(int index, Vector3 position)> matches = new();
-        Transform[] transforms = prefab.GetComponentsInChildren<Transform>(true);
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            Transform candidate = transforms[i];
-            if (candidate == null)
-                continue;
-
-            if (!TryParseSpawnPointIndex(candidate.name, out int index))
-                continue;
-
-            matches.Add((index, candidate.localPosition));
-        }
-
-        if (matches.Count == 0)
-            return null;
-
-        matches.Sort((a, b) => a.index.CompareTo(b.index));
-        Vector3[] ordered = new Vector3[matches.Count];
-        for (int i = 0; i < matches.Count; i++)
-            ordered[i] = matches[i].position;
-        return ordered;
-    }
-
-    private static bool TryParseSpawnPointIndex(string name, out int index)
-    {
-        index = -1;
-        if (string.IsNullOrWhiteSpace(name) || !name.StartsWith("Spawn_", System.StringComparison.OrdinalIgnoreCase))
-            return false;
-
-        string suffix = name.Substring("Spawn_".Length);
-        return int.TryParse(suffix, NumberStyles.Integer, CultureInfo.InvariantCulture, out index);
-    }
-
-    private static BuildingDefinition.ProductionSlotDefinition GetProductionOrFallback(
-        BuildingDefinitionAuthoring authoring,
-        int index,
-        GameObject fallbackSpawnUnitPrefab)
-    {
-        if (authoring != null)
-        {
-            BuildingDefinitionAuthoring.ProductionDefinition production = authoring.GetProductionOrDefault(index);
-            if (production != null)
-            {
-                return new BuildingDefinition.ProductionSlotDefinition
-                {
-                    SpawnUnitPrefab = production.spawnUnitPrefab
-                };
-            }
-        }
-
-        return new BuildingDefinition.ProductionSlotDefinition
-        {
-            SpawnUnitPrefab = fallbackSpawnUnitPrefab
-        };
-    }
-
-    private static List<BuildingDefinition.ProductionSlotDefinition> BuildProductionSlots(
-        BuildingDefinitionAuthoring authoring,
-        params GameObject[] fallbackSpawnUnitPrefabs)
-    {
-        int configuredCount = authoring != null ? Mathf.Max(0, authoring.ConfiguredProductionCount) : 0;
-        int fallbackCount = fallbackSpawnUnitPrefabs != null ? fallbackSpawnUnitPrefabs.Length : 0;
-        int count = Mathf.Max(configuredCount, fallbackCount);
-        var slots = new List<BuildingDefinition.ProductionSlotDefinition>(count);
-        for (int i = 0; i < count; i++)
-        {
-            GameObject fallback = i < fallbackCount ? fallbackSpawnUnitPrefabs[i] : null;
-            BuildingDefinition.ProductionSlotDefinition slot = GetProductionOrFallback(authoring, i, fallback);
-            if (slot == null || slot.SpawnUnitPrefab == null)
-                continue;
-            slots.Add(slot);
-        }
-
-        return slots;
-    }
-
-    private static int GetProductionCount(BuildingDefinition definition)
-    {
-        if (definition == null)
-            return 0;
-
-        if (definition.ProductionSlots != null && definition.ProductionSlots.Count > 0)
-            return definition.ProductionSlots.Count;
-
-        int count = 0;
-        if (definition.SpawnUnitPrefab != null) count = 1;
-        if (definition.SecondarySpawnUnitPrefab != null) count = 2;
-        if (definition.TertiarySpawnUnitPrefab != null) count = 3;
-        if (definition.QuaternarySpawnUnitPrefab != null) count = 4;
-        return count;
-    }
-
-    private static GameObject GetProductionPrefab(List<BuildingDefinition.ProductionSlotDefinition> slots, int index)
-    {
-        if (slots == null || index < 0 || index >= slots.Count)
-            return null;
-
-        return slots[index]?.SpawnUnitPrefab;
-    }
-
-    private static GameObject GetProductionPrefab(BuildingDefinition definition, int index)
-    {
-        if (definition == null || index < 0)
-            return null;
-
-        if (definition.ProductionSlots != null && index < definition.ProductionSlots.Count)
-            return definition.ProductionSlots[index]?.SpawnUnitPrefab;
-
-        return index switch
-        {
-            0 => definition.SpawnUnitPrefab,
-            1 => definition.SecondarySpawnUnitPrefab,
-            2 => definition.TertiarySpawnUnitPrefab,
-            3 => definition.QuaternarySpawnUnitPrefab,
-            _ => null
-        };
-    }
-
     private bool TryFindFirstFactionProducerBuilding(byte factionId, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
     {
         buildingId = 0;
@@ -4666,10 +4083,10 @@ public sealed class BuildingPlacementSystem
             if (!building.HasOwnerFaction || building.OwnerFactionId != factionId)
                 continue;
 
-            int productionCount = GetProductionCount(building.Definition);
+            int productionCount = BuildingDefinitionSystem.GetProductionCount(building.Definition);
             for (int i = 0; i < productionCount; i++)
             {
-                if (GetProductionPrefab(building.Definition, i) != unitPrefab)
+                if (BuildingDefinitionSystem.GetProductionPrefab(building.Definition, i) != unitPrefab)
                     continue;
                 if (!CanQueueUnitFromBuilding(building, unitPrefab, false))
                     continue;
@@ -4682,95 +4099,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return false;
-    }
-
-    private static bool TryGetFootprintFromVisualBounds(GameObject prefab, out Vector2Int footprint)
-    {
-        footprint = default;
-        if (prefab == null)
-            return false;
-
-        if (!TryGetPrefabLocalBounds(prefab, out Bounds localBounds))
-            return false;
-
-        int width = Mathf.Max(1, Mathf.CeilToInt(Mathf.Abs(localBounds.size.x)));
-        int height = Mathf.Max(1, Mathf.CeilToInt(Mathf.Abs(localBounds.size.z)));
-        footprint = new Vector2Int(width, height);
-        return true;
-    }
-
-    private static bool TryGetPrefabLocalBounds(GameObject prefab, out Bounds localBounds)
-    {
-        localBounds = default;
-        if (prefab == null)
-            return false;
-
-        if (TryGetModelLocalBounds(prefab.transform, out localBounds))
-            return true;
-
-        return TryGetLocalBounds(prefab, out localBounds);
-    }
-
-    private static bool TryGetModelLocalBounds(Transform root, out Bounds combinedBounds)
-    {
-        combinedBounds = default;
-        if (root == null)
-            return false;
-
-        Transform modelRoot = root.Find("Model");
-        if (modelRoot == null)
-            return false;
-
-        MeshRenderer[] renderers = modelRoot.GetComponentsInChildren<MeshRenderer>(true);
-        Matrix4x4 worldToLocal = root.worldToLocalMatrix;
-        bool hasBounds = false;
-
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            MeshRenderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            Bounds localBounds = TransformRendererBounds(worldToLocal * renderer.localToWorldMatrix, renderer.localBounds);
-            if (!hasBounds)
-            {
-                combinedBounds = localBounds;
-                hasBounds = true;
-            }
-            else
-            {
-                combinedBounds.Encapsulate(localBounds);
-            }
-        }
-
-        return hasBounds;
-    }
-
-    private static Bounds TransformRendererBounds(Matrix4x4 matrix, Bounds bounds)
-    {
-        Vector3 center = bounds.center;
-        Vector3 extents = bounds.extents;
-
-        Vector3 min = new(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
-        Vector3 max = new(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);
-
-        for (int x = -1; x <= 1; x += 2)
-        {
-            for (int y = -1; y <= 1; y += 2)
-            {
-                for (int z = -1; z <= 1; z += 2)
-                {
-                    Vector3 corner = center + Vector3.Scale(extents, new Vector3(x, y, z));
-                    Vector3 transformed = matrix.MultiplyPoint3x4(corner);
-                    min = Vector3.Min(min, transformed);
-                    max = Vector3.Max(max, transformed);
-                }
-            }
-        }
-
-        Bounds transformedBounds = new();
-        transformedBounds.SetMinMax(min, max);
-        return transformedBounds;
     }
 
     private void ProcessPendingProductions()
@@ -4849,15 +4177,15 @@ public sealed class BuildingPlacementSystem
     {
         return new BuildingProductionRequestSystem.Context(
             _runtimeBuildings,
-            _configuredSpawnableDefinitions,
-            _configuredDefinitionsByPrefab,
+            _buildingDefinitionSystem.ConfiguredSpawnableDefinitions,
+            _buildingDefinitionSystem.ConfiguredDefinitionsByPrefab,
             unitSpawnPrefabs,
-            _unitSpawnPrefabsByKey,
+            _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
             _resourceDollars,
             _buildingProductionSystem,
             _buildingRunwaySystem,
-            GetProductionPrefab,
-            TryGetPrefabLocalBounds,
+            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
             BeginPlacementForConfiguredSpawnable,
             TrySpendDollars,
             amount => _resourceDollars += Mathf.Max(0, amount),
@@ -4891,10 +4219,10 @@ public sealed class BuildingPlacementSystem
     {
         return new BuildingProductionSystem.QueueContext(
             unitSpawnPrefabs,
-            _unitSpawnPrefabsByKey,
+            _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
             _buildingProductionSlotSystem,
-            TryGetPrefabLocalBounds,
-            RuntimeBuildingMatchesId);
+            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
     private BuildingSpawnSystem.Context CreateBuildingSpawnContext()
@@ -4906,8 +4234,8 @@ public sealed class BuildingPlacementSystem
             _buildingSpawnPrefabSystem,
             CreateBuildingSpawnPrefabContext(),
             _buildingProductionSlotSystem,
-            GetProductionPrefab,
-            RuntimeBuildingMatchesId);
+            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
     private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()
@@ -4960,10 +4288,10 @@ public sealed class BuildingPlacementSystem
             _runtimeBuildings,
             TryGetEntityManager,
             _buildingProductionSystem,
-            NormalizeSpawnableKey,
+            BuildingDefinitionSystem.NormalizeSpawnableKey,
             IsHouseBuilding,
-            RuntimeBuildingMatchesId,
-            UnitPrefabMatchesId,
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+            BuildingDefinitionSystem.UnitPrefabMatchesId,
             TryResolveBuildingFocusWorldPosition,
             TryGetRuntimeBuildingApproachCell,
             IsRuntimeBuildingApproachCell,
@@ -5042,8 +4370,8 @@ public sealed class BuildingPlacementSystem
         return new BuildingPlacementQuerySystem.Context(
             _runtimeBuildings,
             ActiveBuildingId,
-            GetProductionCount,
-            GetProductionPrefab,
+            BuildingDefinitionSystem.GetProductionCount,
+            BuildingDefinitionSystem.GetProductionPrefab,
             hasEntityManager,
             em);
     }

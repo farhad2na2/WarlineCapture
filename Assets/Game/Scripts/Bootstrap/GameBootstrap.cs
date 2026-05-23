@@ -281,8 +281,29 @@ public sealed class GameBootstrap : MonoBehaviour
             }
         }
 
+        EnsureBuildingRuntimeBoundaryBuffers(em, _buildingPlacementRuntimeEntity);
         BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
         component.BuildingPlacement = BuildingPlacement;
+    }
+
+    private static void EnsureBuildingRuntimeBoundaryBuffers(EntityManager em, Entity entity)
+    {
+        if (!em.HasComponent<BuildingRuntimeBoundaryTag>(entity))
+            em.AddComponent<BuildingRuntimeBoundaryTag>(entity);
+        EnsureBuffer<BuildingConfiguredSpawnableReadModel>(em, entity);
+        EnsureBuffer<BuildingConfiguredUnitReadModel>(em, entity);
+        EnsureBuffer<BuildingRuntimeFactionSummary>(em, entity);
+        EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(em, entity);
+        EnsureBuffer<BuildingRuntimeUnitProductionSummary>(em, entity);
+        EnsureBuffer<BuildingFactionUnitProductionRequest>(em, entity);
+        EnsureBuffer<BuildingRuntimeSpawnRequest>(em, entity);
+    }
+
+    private static void EnsureBuffer<T>(EntityManager em, Entity entity)
+        where T : unmanaged, IBufferElementData
+    {
+        if (!em.HasBuffer<T>(entity))
+            em.AddBuffer<T>(entity);
     }
 
     private void ClearBuildingPlacementRuntimeComponent()

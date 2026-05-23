@@ -155,6 +155,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
+        StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
     }
 
     [Test]
@@ -1252,6 +1253,49 @@ public sealed class GameplayArchitectureContractTests
             "AI systems must read BuildingPlacementRuntimeComponent from ECS runtime data instead of BuildingPlacementSystem.Instance:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingRuntimeEcsBoundaryMustStayExplicit()
+    {
+        const string boundaryFile = "Assets/Game/Scripts/Components/BuildingRuntimeEcsBoundaryComponents.cs";
+        const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        Assert.IsTrue(File.Exists(boundaryFile), "Building runtime ECS boundary components must be explicit ECS contracts.");
+
+        string boundary = File.ReadAllText(boundaryFile);
+        string bootstrap = File.ReadAllText(bootstrapFile);
+        string placement = File.ReadAllText(placementFile);
+
+        string[] boundaryContracts =
+        {
+            "BuildingRuntimeBoundaryTag",
+            "BuildingConfiguredSpawnableReadModel",
+            "BuildingConfiguredUnitReadModel",
+            "BuildingRuntimeFactionSummary",
+            "BuildingRuntimeOwnedBuildingSummary",
+            "BuildingRuntimeUnitProductionSummary",
+            "BuildingFactionUnitProductionRequest",
+            "BuildingRuntimeSpawnRequest"
+        };
+
+        foreach (string contract in boundaryContracts)
+            StringAssert.Contains(contract, boundary);
+
+        StringAssert.Contains("EnsureBuildingRuntimeBoundaryBuffers", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingConfiguredSpawnableReadModel>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingConfiguredUnitReadModel>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingRuntimeFactionSummary>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingRuntimeUnitProductionSummary>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingFactionUnitProductionRequest>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingRuntimeSpawnRequest>", bootstrap);
+
+        StringAssert.Contains("ProcessBuildingRuntimeEcsRequests", placement);
+        StringAssert.Contains("PublishBuildingRuntimeEcsReadModelIfDue", placement);
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", placement);
+        StringAssert.Contains("TryGetBuildingRuntimeBoundaryEntity", placement);
+        StringAssert.Contains("EcsBoundaryPublishIntervalSeconds", placement);
     }
 
     [Test]

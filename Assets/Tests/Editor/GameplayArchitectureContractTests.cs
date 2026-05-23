@@ -137,6 +137,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
+        StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
@@ -1849,6 +1850,56 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"AddComponentData\s*\(\s*entity\s*,\s*new\s+GridBlockerSize"),
             "Runtime blocker size setup belongs in BuildingRuntimeEntitySystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegatePlacementRedirectSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string redirectFile = "Assets/Game/Scripts/Systems/BuildingPlacementRedirectSystem.cs";
+        Assert.IsTrue(File.Exists(redirectFile), "Placement redirect side effects must live in BuildingPlacementRedirectSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string redirect = File.ReadAllText(redirectFile);
+        StringAssert.Contains("BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem", placement);
+        StringAssert.Contains("CreateBuildingPlacementRedirectContext", placement);
+        StringAssert.Contains("_buildingPlacementRedirectSystem.BeginDeferredRuntimeBuildingSideEffects", placement);
+        StringAssert.Contains("_buildingPlacementRedirectSystem.EndDeferredRuntimeBuildingSideEffects", placement);
+        StringAssert.Contains("_buildingPlacementRedirectSystem.FlushPendingMarkerRefresh", placement);
+        StringAssert.Contains("_buildingPlacementRedirectSystem.RedirectUnitsAroundPlacedBuilding", placement);
+        StringAssert.Contains("_buildingPlacementRedirectSystem.AddDeferredRedirectFootprint", placement);
+        StringAssert.Contains("_buildingPlacementRedirectSystem.MarkPendingMarkerRefresh", placement);
+
+        StringAssert.Contains("BeginDeferredRuntimeBuildingSideEffects", redirect);
+        StringAssert.Contains("EndDeferredRuntimeBuildingSideEffects", redirect);
+        StringAssert.Contains("FlushPendingMarkerRefresh", redirect);
+        StringAssert.Contains("RedirectUnitsAroundPlacedBuildings", redirect);
+        StringAssert.Contains("DoesRemainingPathIntersectFootprint", redirect);
+        StringAssert.Contains("TryFindNearestPerimeterCell", redirect);
+        StringAssert.Contains("ReserveBuildingBuffer", redirect);
+        StringAssert.Contains("RemoveComponent<ManualMoveOrderTag>", redirect);
+
+        Assert.IsFalse(
+            placement.Contains("_deferredRedirectFootprints", StringComparison.Ordinal),
+            "Deferred redirect footprints belong in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("_pendingMarkerRefresh", StringComparison.Ordinal),
+            "Pending marker refresh deferral belongs in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("_deferRuntimeBuildingSideEffectsDepth", StringComparison.Ordinal),
+            "Runtime side-effect defer depth belongs in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+RedirectUnitsAroundPlacedBuildings\b"),
+            "Placed-building unit redirect scans belong in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+DoesRemainingPathIntersectFootprint\b"),
+            "Redirect path intersection checks belong in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryFindNearestPerimeterCell\b"),
+            "Redirect perimeter-goal search belongs in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+ReserveBuildingBuffer\b"),
+            "Redirect reservation buffers belong in BuildingPlacementRedirectSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

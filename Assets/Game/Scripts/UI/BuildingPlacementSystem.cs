@@ -291,18 +291,6 @@ public sealed class BuildingPlacementSystem
         public float FuelBarrelsPerDay => Definition != null ? Definition.FuelBarrelsPerDay : 0f;
     }
 
-    private readonly struct RuntimeBaseBreach
-    {
-        public readonly byte OwnerFactionId;
-        public readonly RectInt Rect;
-
-        public RuntimeBaseBreach(byte ownerFactionId, RectInt rect)
-        {
-            OwnerFactionId = ownerFactionId;
-            Rect = rect;
-        }
-    }
-
     private sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
     {
         public BuildingDefinition Definition { get; set; }
@@ -354,6 +342,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingSpawnSystem _buildingSpawnSystem = new();
     private readonly BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem = new();
     private readonly BuildingProductionSlotSystem _buildingProductionSlotSystem = new();
+    private readonly BuildingPlacementQuerySystem _buildingPlacementQuerySystem = new();
     private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
@@ -361,6 +350,8 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
     private readonly BuildingProductionRequestSystem _buildingProductionRequestSystem = new();
     private readonly BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem = new();
+    private readonly BuildingSelectionSystem _buildingSelectionSystem = new();
+    private readonly BuildingBarrierSystem _buildingBarrierSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -408,10 +399,7 @@ public sealed class BuildingPlacementSystem
     private Transform _runtimeRoot;
     private readonly List<BuildingPlacementPreviewSystem.WallPreviewRun> _wallPreviewRuns = new();
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
-    private readonly List<RuntimeBaseBreach> _openBaseBreaches = new();
     private bool _preserveBuildingSelectionOnNextExitBuildMode;
-    private const float BarrierDoorOpenCloseSpeed = 2f;
-    private const int BarrierDoorDetectPaddingCells = 8;
     private const float OilBarrelsPerFuelBarrel = 2f;
 
     private int? ActiveBuildingId => _runtimeBuildingSystem.CurrentActiveBuildingId;
@@ -537,21 +525,9 @@ public sealed class BuildingPlacementSystem
 
     public void GetSelectedBuildingProductionPrefabs(List<GameObject> prefabs)
     {
-        prefabs?.Clear();
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue || prefabs == null)
-            return;
-
-        if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) || building?.Definition == null)
-            return;
-
-        int count = GetProductionCount(building.Definition);
-        for (int i = 0; i < count; i++)
-        {
-            GameObject prefab = GetProductionPrefab(building.Definition, i);
-            if (prefab != null)
-                prefabs.Add(prefab);
-        }
+        _buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefabs(
+            CreateBuildingPlacementQueryContext(),
+            prefabs);
     }
 
     public void GetSelectedBuildingProducedUnits(List<Entity> units)
@@ -972,14 +948,15 @@ public sealed class BuildingPlacementSystem
             (finalBuilding.Definition.IsWall || IsWallGateDefinition(finalBuilding.Definition)))
             return false;
 
-        if (!TryFindEnemyWallPerimeterContainingCell(attackerFactionId, finalTargetCell, out byte breachedFactionId, out RectInt breachedPerimeter))
+        BuildingBarrierSystem.Context barrierContext = CreateBuildingBarrierContext();
+        if (!_buildingBarrierSystem.TryFindEnemyWallPerimeterContainingCell(barrierContext, attackerFactionId, finalTargetCell, out byte breachedFactionId, out RectInt breachedPerimeter))
             return false;
 
-        if (HasOpenBaseBreach(breachedFactionId, breachedPerimeter))
+        if (_buildingBarrierSystem.HasOpenBaseBreach(barrierContext, breachedFactionId, breachedPerimeter))
             return false;
 
-        if (!TryFindBreachBuilding(breachedFactionId, attackerCell, preferGate: true, out RuntimeBuildingData breachBuilding, out reason) &&
-            !TryFindBreachBuilding(breachedFactionId, attackerCell, preferGate: false, out breachBuilding, out reason))
+        if (!_buildingBarrierSystem.TryFindBreachBuilding(barrierContext, breachedFactionId, attackerCell, preferGate: true, out RuntimeBuildingData breachBuilding, out reason) &&
+            !_buildingBarrierSystem.TryFindBreachBuilding(barrierContext, breachedFactionId, attackerCell, preferGate: false, out breachBuilding, out reason))
         {
             return false;
         }
@@ -1211,24 +1188,16 @@ public sealed class BuildingPlacementSystem
 
     public GameObject TryGetSelectedBuildingProductionPrefab(int productionIndex)
     {
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue || !_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building))
-            return null;
-
-        return GetProductionPrefab(building.Definition, productionIndex);
+        return _buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefab(
+            CreateBuildingPlacementQueryContext(),
+            productionIndex);
     }
 
     public string PlacementStatusText
     {
         get
         {
-            if (_activePlacement == null)
-                return "Choose a build type.";
-
-            string state = _activePlacement.IsValid ? "Valid placement" : "Blocked by road or blocker";
-            Vector2Int origin = _activePlacement.OriginCell;
-            Vector2Int size = _activePlacement.Definition.FootprintCells;
-            return $"{_activePlacement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
+            return _buildingPlacementQuerySystem.GetPlacementStatusText(_activePlacement);
         }
     }
 
@@ -1236,12 +1205,7 @@ public sealed class BuildingPlacementSystem
     {
         get
         {
-            int? buildingId = ActiveBuildingId;
-            if (!buildingId.HasValue)
-                return "Building";
-
-            RuntimeBuildingData building = _runtimeBuildings[buildingId.Value];
-            return $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})";
+            return _buildingPlacementQuerySystem.GetSelectedBuildingLabel(CreateBuildingPlacementQueryContext());
         }
     }
 
@@ -1249,14 +1213,7 @@ public sealed class BuildingPlacementSystem
     {
         get
         {
-            int? buildingId = ActiveBuildingId;
-            if (!buildingId.HasValue)
-                return "Building";
-
-            RuntimeBuildingData building = _runtimeBuildings[buildingId.Value];
-            return string.IsNullOrWhiteSpace(building.Definition.DisplayName)
-                ? "Building"
-                : building.Definition.DisplayName;
+            return _buildingPlacementQuerySystem.GetSelectedBuildingDisplayName(CreateBuildingPlacementQueryContext());
         }
     }
 
@@ -1264,53 +1221,23 @@ public sealed class BuildingPlacementSystem
     {
         get
         {
-            int? buildingId = ActiveBuildingId;
-            if (!buildingId.HasValue)
-                return "Select a building to see its options.";
-
-            RuntimeBuildingData building = _runtimeBuildings[buildingId.Value];
-            string description = string.IsNullOrWhiteSpace(building.Definition.Description)
-                ? "Operational building."
-                : building.Definition.Description;
-            return $"{description} Footprint: {building.Definition.FootprintCells.x}x{building.Definition.FootprintCells.y}.";
+            return _buildingPlacementQuerySystem.GetSelectedBuildingDescription(CreateBuildingPlacementQueryContext());
         }
     }
 
     public bool TryGetSelectedBuildingPreviewPrefab(out GameObject prefab)
     {
-        prefab = null;
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue || !_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) || building?.Definition == null)
-            return false;
-
-        prefab = building.Definition.Prefab;
-        return prefab != null;
+        return _buildingPlacementQuerySystem.TryGetSelectedBuildingPreviewPrefab(
+            CreateBuildingPlacementQueryContext(),
+            out prefab);
     }
 
     public bool TryGetSelectedBuildingHealth(out int current, out int max)
     {
-        current = 0;
-        max = 0;
-
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue)
-            return false;
-
-        RuntimeBuildingData building = _runtimeBuildings[buildingId.Value];
-        max = Mathf.Max(1, building.Definition.MaxHealth);
-        current = max;
-
-        if (building.CombatEntity == Entity.Null || World.DefaultGameObjectInjectionWorld == null)
-            return true;
-
-        EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-        if (!entityManager.Exists(building.CombatEntity) || !entityManager.HasComponent<UnitHealth>(building.CombatEntity))
-            return true;
-
-        UnitHealth health = entityManager.GetComponentData<UnitHealth>(building.CombatEntity);
-        current = health.Current;
-        max = Mathf.Max(1, health.Max);
-        return true;
+        return _buildingPlacementQuerySystem.TryGetSelectedBuildingHealth(
+            CreateBuildingPlacementQueryContext(),
+            out current,
+            out max);
     }
 
     public string DeleteButtonText => "Destroy";
@@ -1603,7 +1530,7 @@ public sealed class BuildingPlacementSystem
         SyncDestroyedRuntimeBuildingCombatEntities();
         UpdateDestroyedBuildings();
         afterDestroyed = Time.realtimeSinceStartupAsDouble;
-        UpdateRoadBarrierDoors(Time.deltaTime);
+        _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), Time.deltaTime);
         afterDoors = Time.realtimeSinceStartupAsDouble;
         if (_pendingMarkerRefresh)
         {
@@ -2357,8 +2284,7 @@ public sealed class BuildingPlacementSystem
 
     public void ClearSelectedBuilding(string reason)
     {
-        _runtimeBuildingSystem.ClearSelection();
-        RefreshBuildingMarkerVisibility();
+        _buildingSelectionSystem.ClearSelectedBuilding(CreateBuildingSelectionContext());
     }
 
     public void ExitBuildMode()
@@ -2655,30 +2581,12 @@ public sealed class BuildingPlacementSystem
 
     private void SelectAndFocusBuilding(RuntimeBuildingData building)
     {
-        if (building == null)
-            return;
-
-        _runtimeBuildingSystem.SelectBuilding(building.Id);
-        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-        RefreshBuildingMarkerVisibility();
-        _selectionSystem?.ClearFocusedUnit();
-
-        Vector3 focusWorldPosition = ResolveBuildingFocusWorldPosition(building);
-        _selectionSystem?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
+        _buildingSelectionSystem.SelectAndFocusBuilding(CreateBuildingSelectionContext(), building);
     }
 
     private Vector3 ResolveBuildingFocusWorldPosition(RuntimeBuildingData building)
     {
-        if (building?.Instance == null)
-            return Vector3.zero;
-
-        if (building.Definition != null &&
-            TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return GetFootprintCenter(building.OriginCell, building.Definition.FootprintCells, grid);
-
-        Vector3 position = building.Instance.transform.position;
-        position.y = 0f;
-        return position;
+        return _buildingSelectionSystem.ResolveBuildingFocusWorldPosition(CreateBuildingSelectionContext(), building);
     }
 
     public void SpawnInitialTestRoster(Vector2Int anchorCell)
@@ -3229,7 +3137,7 @@ public sealed class BuildingPlacementSystem
             return false;
 
         _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(building.Id);
-        RememberOpenBaseBreach(building);
+        _buildingBarrierSystem.RememberOpenBaseBreach(CreateBuildingBarrierContext(), building);
         DestroyRuntimeBuildingBlockerEntity(building);
 
         if (_runtimeBuildingSystem.SelectedBuildingId == building.Id || _runtimeBuildingSystem.ActiveBuildingId == building.Id)
@@ -3292,84 +3200,6 @@ public sealed class BuildingPlacementSystem
         _buildingCombatSystem.DestroyBlockerEntity(building, em);
     }
 
-    private void RememberOpenBaseBreach(RuntimeBuildingData building)
-    {
-        if (building?.Definition == null ||
-            !building.HasOwnerFaction ||
-            (!building.Definition.IsWall && !IsWallGateDefinition(building.Definition)))
-        {
-            return;
-        }
-
-        RectInt rect = new(building.OriginCell, building.Definition.FootprintCells);
-        for (int i = 0; i < _openBaseBreaches.Count; i++)
-        {
-            RuntimeBaseBreach existing = _openBaseBreaches[i];
-            if (existing.OwnerFactionId == building.OwnerFactionId && existing.Rect == rect)
-                return;
-        }
-
-        _openBaseBreaches.Add(new RuntimeBaseBreach(building.OwnerFactionId, rect));
-    }
-
-    private bool HasOpenBaseBreach(byte ownerFactionId, RectInt perimeterRect)
-    {
-        for (int i = 0; i < _openBaseBreaches.Count; i++)
-        {
-            RuntimeBaseBreach breach = _openBaseBreaches[i];
-            if (breach.OwnerFactionId != ownerFactionId)
-                continue;
-            if (!RectTouchesPerimeter(breach.Rect, perimeterRect))
-                continue;
-            if (HasActiveWallOrGateOverlapping(breach.Rect, ownerFactionId))
-                continue;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool HasActiveWallOrGateOverlapping(RectInt rect, byte ownerFactionId)
-    {
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building == null ||
-                building.IsDestroyed ||
-                building.Definition == null ||
-                !building.HasOwnerFaction ||
-                building.OwnerFactionId != ownerFactionId ||
-                (!building.Definition.IsWall && !IsWallGateDefinition(building.Definition)))
-            {
-                continue;
-            }
-
-            RectInt buildingRect = new(building.OriginCell, building.Definition.FootprintCells);
-            if (RectsOverlap(rect, buildingRect))
-                return true;
-        }
-
-        return false;
-    }
-
-    private static bool RectTouchesPerimeter(RectInt rect, RectInt perimeterRect)
-    {
-        return RectsOverlap(rect, perimeterRect) ||
-               (rect.xMin <= perimeterRect.xMin && rect.xMax > perimeterRect.xMin && rect.yMin < perimeterRect.yMax && rect.yMax > perimeterRect.yMin) ||
-               (rect.xMin < perimeterRect.xMax && rect.xMax >= perimeterRect.xMax && rect.yMin < perimeterRect.yMax && rect.yMax > perimeterRect.yMin) ||
-               (rect.yMin <= perimeterRect.yMin && rect.yMax > perimeterRect.yMin && rect.xMin < perimeterRect.xMax && rect.xMax > perimeterRect.xMin) ||
-               (rect.yMin < perimeterRect.yMax && rect.yMax >= perimeterRect.yMax && rect.xMin < perimeterRect.xMax && rect.xMax > perimeterRect.xMin);
-    }
-
-    private static bool RectsOverlap(RectInt a, RectInt b)
-    {
-        return a.xMin < b.xMax &&
-               a.xMax > b.xMin &&
-               a.yMin < b.yMax &&
-               a.yMax > b.yMin;
-    }
-
     private void FinalizeDestroyedBuilding(int buildingId)
     {
         if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building))
@@ -3410,7 +3240,7 @@ public sealed class BuildingPlacementSystem
             building.DoorClosedLocalEulerZ = 0f;
             building.DoorOpenLocalEulerZ = NormalizeSignedAngle(building.DoorZ.localEulerAngles.z);
             building.DoorOpen01 = 0f;
-            SetBarrierDoorOpen01(building, 0f);
+            _buildingBarrierSystem.SetBarrierDoorOpen01(building, 0f);
         }
 
         if (building.FactionMarker != null)
@@ -3502,52 +3332,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return false;
-    }
-
-    private bool TryFindEnemyWallPerimeterContainingCell(byte attackerFactionId, int2 targetCell, out byte breachedFactionId, out RectInt breachedPerimeter)
-    {
-        breachedFactionId = 0;
-        breachedPerimeter = default;
-        var perimeters = new Dictionary<byte, RectInt>();
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building == null ||
-                building.IsDestroyed ||
-                building.Definition == null ||
-                !building.HasOwnerFaction ||
-                building.OwnerFactionId == attackerFactionId ||
-                (!building.Definition.IsWall && !IsWallGateDefinition(building.Definition)))
-                continue;
-
-            RectInt rect = new(building.OriginCell, building.Definition.FootprintCells);
-            if (perimeters.TryGetValue(building.OwnerFactionId, out RectInt existing))
-                perimeters[building.OwnerFactionId] = UnionRects(existing, rect);
-            else
-                perimeters.Add(building.OwnerFactionId, rect);
-        }
-
-        int bestArea = int.MaxValue;
-        foreach (var pair in perimeters)
-        {
-            RectInt rect = pair.Value;
-            if (targetCell.x < rect.xMin ||
-                targetCell.x >= rect.xMax ||
-                targetCell.y < rect.yMin ||
-                targetCell.y >= rect.yMax)
-                continue;
-
-            int area = Mathf.Max(1, rect.width) * Mathf.Max(1, rect.height);
-            if (area >= bestArea)
-                continue;
-
-            bestArea = area;
-            breachedFactionId = pair.Key;
-            breachedPerimeter = rect;
-        }
-
-        return bestArea < int.MaxValue;
     }
 
     private static bool TryFindBreachApproachCell(
@@ -3674,49 +3458,6 @@ public sealed class BuildingPlacementSystem
         return cell.y >= perimeterRect.yMax;
     }
 
-    private bool TryFindBreachBuilding(byte breachedFactionId, int2 attackerCell, bool preferGate, out RuntimeBuildingData breachBuilding, out string reason)
-    {
-        breachBuilding = null;
-        reason = preferGate ? "Gate" : "Wall";
-        int bestScore = int.MaxValue;
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building == null ||
-                building.IsDestroyed ||
-                building.Definition == null ||
-                !building.HasOwnerFaction ||
-                building.OwnerFactionId != breachedFactionId ||
-                building.CombatEntity == Entity.Null)
-                continue;
-
-            bool isGate = IsWallGateDefinition(building.Definition);
-            bool isWall = building.Definition.IsWall;
-            if (preferGate ? !isGate : (!isWall || isGate))
-                continue;
-
-            if (!TryGetEntityManager(out EntityManager em) ||
-                !em.Exists(building.CombatEntity) ||
-                !em.HasComponent<UnitHealth>(building.CombatEntity) ||
-                em.GetComponentData<UnitHealth>(building.CombatEntity).Current <= 0)
-                continue;
-
-            int2 center = new(
-                building.OriginCell.x + Mathf.Max(1, building.Definition.FootprintCells.x) / 2,
-                building.OriginCell.y + Mathf.Max(1, building.Definition.FootprintCells.y) / 2);
-            int2 delta = center - attackerCell;
-            int score = delta.x * delta.x + delta.y * delta.y;
-            if (score >= bestScore)
-                continue;
-
-            bestScore = score;
-            breachBuilding = building;
-        }
-
-        return breachBuilding != null;
-    }
-
     private void UpdateBuildingResourceVisuals()
     {
         if (_runtimeBuildings.Count == 0)
@@ -3752,58 +3493,10 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    private void UpdateRoadBarrierDoors(float deltaTime)
-    {
-        if (_runtimeBuildings.Count == 0)
-            return;
-
-        bool hasRoadGate = false;
-        foreach (var entry in _runtimeBuildings)
-        {
-            if (IsActiveRoadGateBuilding(entry.Value))
-            {
-                hasRoadGate = true;
-                break;
-            }
-        }
-        if (!hasRoadGate)
-            return;
-
-        if (!TryGetEntityManager(out EntityManager em))
-            return;
-
-        EnsureEntityQueries(em);
-        if (_liveFactionUnitsQuery.IsEmptyIgnoreFilter)
-        {
-            foreach (var entry in _runtimeBuildings)
-            {
-                RuntimeBuildingData building = entry.Value;
-                if (IsActiveRoadGateBuilding(building))
-                    UpdateRoadBarrierDoorVisual(building, false, deltaTime);
-            }
-            return;
-        }
-
-        using var factions = _liveFactionUnitsQuery.ToComponentDataArray<Faction>(Allocator.Temp);
-        using var unitGrids = _liveFactionUnitsQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
-        using var footprints = _liveFactionUnitsQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (!IsActiveRoadGateBuilding(building))
-                continue;
-
-            bool shouldOpen = building.HasOwnerFaction &&
-                HasNearbyFriendlyUnit(building, factions, unitGrids, footprints, building.OwnerFactionId);
-            UpdateRoadBarrierDoorVisual(building, shouldOpen, deltaTime);
-        }
-    }
-
 #if UNITY_EDITOR
     public void UpdateRoadBarrierDoorsForTests(float deltaTime)
     {
-        UpdateRoadBarrierDoors(deltaTime);
+        _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), deltaTime);
     }
 
     public bool TryGetRuntimeBuildingDoorOpen01ForTests(int buildingId, out float open01)
@@ -3837,91 +3530,9 @@ public sealed class BuildingPlacementSystem
 
     public int GetRuntimeRoadBarrierGateRectsForTests(byte factionId, List<RectInt> rects, List<int> buildingIds = null)
     {
-        rects?.Clear();
-        buildingIds?.Clear();
-        int count = 0;
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (!IsActiveRoadGateBuilding(building) ||
-                !building.HasOwnerFaction ||
-                building.OwnerFactionId != factionId)
-            {
-                continue;
-            }
-
-            count++;
-            rects?.Add(new RectInt(building.OriginCell, building.Definition.FootprintCells));
-            buildingIds?.Add(building.Id);
-        }
-
-        return count;
+        return _buildingBarrierSystem.GetRuntimeRoadBarrierGateRects(CreateBuildingBarrierContext(), factionId, rects, buildingIds);
     }
 #endif
-
-    private static bool IsActiveRoadGateBuilding(RuntimeBuildingData building)
-    {
-        return building != null &&
-               !building.IsDestroyed &&
-               building.DoorZ != null &&
-               IsWallGateDefinition(building.Definition);
-    }
-
-    private void UpdateRoadBarrierDoorVisual(RuntimeBuildingData building, bool shouldOpen, float deltaTime)
-    {
-        if (building == null || building.IsDestroyed || building.DoorZ == null)
-            return;
-        if (!IsWallGateDefinition(building.Definition))
-            return;
-
-        float target = shouldOpen ? 1f : 0f;
-        building.DoorOpen01 = Mathf.MoveTowards(building.DoorOpen01, target, deltaTime * BarrierDoorOpenCloseSpeed);
-        SetBarrierDoorOpen01(building, building.DoorOpen01);
-    }
-
-    private static void SetBarrierDoorOpen01(RuntimeBuildingData building, float open01)
-    {
-        if (building?.DoorZ == null)
-            return;
-
-        Vector3 localEuler = building.DoorZ.localEulerAngles;
-        localEuler.z = Mathf.LerpAngle(building.DoorClosedLocalEulerZ, building.DoorOpenLocalEulerZ, Mathf.Clamp01(open01));
-        building.DoorZ.localEulerAngles = localEuler;
-    }
-
-    private static bool HasNearbyFriendlyUnit(
-        RuntimeBuildingData building,
-        NativeArray<Faction> factions,
-        NativeArray<UnitGrid> unitGrids,
-        NativeArray<UnitFootprint> footprints,
-        byte factionId)
-    {
-        if (building?.Definition == null)
-            return false;
-
-        Vector2Int origin = building.OriginCell;
-        Vector2Int size = building.Definition.FootprintCells;
-        int minX = origin.x - BarrierDoorDetectPaddingCells;
-        int minY = origin.y - BarrierDoorDetectPaddingCells;
-        int maxX = origin.x + size.x + BarrierDoorDetectPaddingCells;
-        int maxY = origin.y + size.y + BarrierDoorDetectPaddingCells;
-
-        int count = Mathf.Min(factions.Length, Mathf.Min(unitGrids.Length, footprints.Length));
-        for (int i = 0; i < count; i++)
-        {
-            if (factions[i].Id != factionId)
-                continue;
-
-            int2 unitSize = UnitFootprintUtility.ClampSize(footprints[i].Size);
-            int2 unitMin = UnitFootprintUtility.GetMinCell(unitGrids[i].Cell, unitSize);
-            int2 unitMax = unitMin + unitSize;
-            if (unitMin.x < maxX && unitMax.x > minX &&
-                unitMin.y < maxY && unitMax.y > minY)
-                return true;
-        }
-
-        return false;
-    }
 
     private static float NormalizeSignedAngle(float angle)
     {
@@ -4105,42 +3716,7 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridCell(screenPosition, grid, out Vector2Int cell))
             return;
 
-        RTSSelectionSystem selectionSystem = _selectionSystem;
-        if (selectionSystem != null && selectionSystem.IsBoardablePlayerTransportClick(screenPosition))
-            return;
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            Vector2Int min = entry.Value.OriginCell;
-            Vector2Int size = entry.Value.Definition.FootprintCells;
-            if (ShouldUseExpandedSelectionArea(entry.Value.Definition))
-            {
-                min -= Vector2Int.one;
-                size += new Vector2Int(2, 2);
-            }
-
-            if (cell.x < min.x || cell.y < min.y || cell.x >= min.x + size.x || cell.y >= min.y + size.y)
-                continue;
-
-            if (TryAssignSelectedHaulerOrders(entry.Key))
-            {
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                selectionSystem?.ClearFocusedUnit();
-                return;
-            }
-
-            if (selectionSystem != null && selectionSystem.TryIssueMoveOrderToBuilding(min, size))
-            {
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                ClearSelectedBuilding("MoveOrderToBuilding");
-                return;
-            }
-
-            _runtimeBuildingSystem.SelectBuilding(entry.Key);
-            _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-            selectionSystem?.ClearFocusedUnit();
-            return;
-        }
+        _buildingSelectionSystem.HandleBuildingSelectionClick(CreateBuildingSelectionContext(), screenPosition, cell);
     }
 
     private bool TryAssignSelectedHaulerOrders(int clickedBuildingId)
@@ -4647,15 +4223,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return false;
-    }
-
-    private static RectInt UnionRects(RectInt a, RectInt b)
-    {
-        int xMin = Mathf.Min(a.xMin, b.xMin);
-        int yMin = Mathf.Min(a.yMin, b.yMin);
-        int xMax = Mathf.Max(a.xMax, b.xMax);
-        int yMax = Mathf.Max(a.yMax, b.yMax);
-        return new RectInt(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
     private bool ResolvePlacementRotateVertical(PlacementState placement)
@@ -5658,6 +5225,50 @@ public sealed class BuildingPlacementSystem
     }
 
     private bool TryGetGridForRuntimeCreation(out GridConfig grid)
+    {
+        return TryGetGridData(out _, out grid, out _, out _);
+    }
+
+    private BuildingSelectionSystem.Context CreateBuildingSelectionContext()
+    {
+        return new BuildingSelectionSystem.Context(
+            _runtimeBuildingSystem,
+            _runtimeBuildings,
+            TryGetGridForSelection,
+            GetFootprintCenter,
+            () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
+            RefreshBuildingMarkerVisibility,
+            () => _selectionSystem?.ClearFocusedUnit(),
+            position => _selectionSystem?.SmoothMoveCameraGroundCenterTo(position),
+            position => _selectionSystem != null && _selectionSystem.IsBoardablePlayerTransportClick(position),
+            TryAssignSelectedHaulerOrders,
+            (min, size) => _selectionSystem != null && _selectionSystem.TryIssueMoveOrderToBuilding(min, size),
+            ShouldUseExpandedSelectionArea);
+    }
+
+    private BuildingPlacementQuerySystem.Context CreateBuildingPlacementQueryContext()
+    {
+        bool hasEntityManager = TryGetEntityManager(out EntityManager em);
+        return new BuildingPlacementQuerySystem.Context(
+            _runtimeBuildings,
+            ActiveBuildingId,
+            GetProductionCount,
+            GetProductionPrefab,
+            hasEntityManager,
+            em);
+    }
+
+    private BuildingBarrierSystem.Context CreateBuildingBarrierContext()
+    {
+        return new BuildingBarrierSystem.Context(
+            _runtimeBuildings,
+            TryGetEntityManager,
+            EnsureEntityQueries,
+            () => _liveFactionUnitsQuery,
+            IsWallGateDefinition);
+    }
+
+    private bool TryGetGridForSelection(out GridConfig grid)
     {
         return TryGetGridData(out _, out grid, out _, out _);
     }

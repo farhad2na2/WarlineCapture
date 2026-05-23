@@ -1,0 +1,148 @@
+using System.Collections.Generic;
+using Unity.Entities;
+using UnityEngine;
+using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
+using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
+
+internal sealed class BuildingPlacementQuerySystem
+{
+    public delegate int GetProductionCountDelegate(BuildingDefinition definition);
+    public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
+
+    public readonly struct Context
+    {
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly int? ActiveBuildingId;
+        public readonly GetProductionCountDelegate GetProductionCount;
+        public readonly GetProductionPrefabDelegate GetProductionPrefab;
+        public readonly bool HasEntityManager;
+        public readonly EntityManager EntityManager;
+
+        public Context(
+            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            int? activeBuildingId,
+            GetProductionCountDelegate getProductionCount,
+            GetProductionPrefabDelegate getProductionPrefab,
+            bool hasEntityManager,
+            EntityManager entityManager)
+        {
+            RuntimeBuildings = runtimeBuildings;
+            ActiveBuildingId = activeBuildingId;
+            GetProductionCount = getProductionCount;
+            GetProductionPrefab = getProductionPrefab;
+            HasEntityManager = hasEntityManager;
+            EntityManager = entityManager;
+        }
+    }
+
+    public GameObject GetSelectedBuildingProductionPrefab(Context context, int productionIndex)
+    {
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+            return null;
+
+        return context.GetProductionPrefab?.Invoke(building.Definition, productionIndex);
+    }
+
+    public void GetSelectedBuildingProductionPrefabs(Context context, List<GameObject> prefabs)
+    {
+        prefabs?.Clear();
+        if (prefabs == null ||
+            context.GetProductionCount == null ||
+            context.GetProductionPrefab == null ||
+            !TryGetActiveBuilding(context, out RuntimeBuildingData building) ||
+            building?.Definition == null)
+        {
+            return;
+        }
+
+        int count = context.GetProductionCount(building.Definition);
+        for (int i = 0; i < count; i++)
+        {
+            GameObject prefab = context.GetProductionPrefab(building.Definition, i);
+            if (prefab != null)
+                prefabs.Add(prefab);
+        }
+    }
+
+    public string GetPlacementStatusText(BuildingPlacementInputSystem.IPlacementState placement)
+    {
+        if (placement == null)
+            return "Choose a build type.";
+
+        string state = placement.IsValid ? "Valid placement" : "Blocked by road or blocker";
+        Vector2Int origin = placement.OriginCell;
+        Vector2Int size = placement.Definition.FootprintCells;
+        return $"{placement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
+    }
+
+    public string GetSelectedBuildingLabel(Context context)
+    {
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+            return "Building";
+
+        return $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})";
+    }
+
+    public string GetSelectedBuildingDisplayName(Context context)
+    {
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+            return "Building";
+
+        return string.IsNullOrWhiteSpace(building.Definition.DisplayName)
+            ? "Building"
+            : building.Definition.DisplayName;
+    }
+
+    public string GetSelectedBuildingDescription(Context context)
+    {
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+            return "Select a building to see its options.";
+
+        string description = string.IsNullOrWhiteSpace(building.Definition.Description)
+            ? "Operational building."
+            : building.Definition.Description;
+        return $"{description} Footprint: {building.Definition.FootprintCells.x}x{building.Definition.FootprintCells.y}.";
+    }
+
+    public bool TryGetSelectedBuildingPreviewPrefab(Context context, out GameObject prefab)
+    {
+        prefab = null;
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+            return false;
+
+        prefab = building.Definition.Prefab;
+        return prefab != null;
+    }
+
+    public bool TryGetSelectedBuildingHealth(Context context, out int current, out int max)
+    {
+        current = 0;
+        max = 0;
+
+        if (!TryGetActiveBuilding(context, out RuntimeBuildingData building) || building?.Definition == null)
+            return false;
+
+        max = Mathf.Max(1, building.Definition.MaxHealth);
+        current = max;
+
+        if (building.CombatEntity == Entity.Null || !context.HasEntityManager)
+            return true;
+
+        EntityManager entityManager = context.EntityManager;
+        if (!entityManager.Exists(building.CombatEntity) || !entityManager.HasComponent<UnitHealth>(building.CombatEntity))
+            return true;
+
+        UnitHealth health = entityManager.GetComponentData<UnitHealth>(building.CombatEntity);
+        current = health.Current;
+        max = Mathf.Max(1, health.Max);
+        return true;
+    }
+
+    private static bool TryGetActiveBuilding(Context context, out RuntimeBuildingData building)
+    {
+        building = null;
+        return context.ActiveBuildingId.HasValue &&
+               context.RuntimeBuildings != null &&
+               context.RuntimeBuildings.TryGetValue(context.ActiveBuildingId.Value, out building);
+    }
+}

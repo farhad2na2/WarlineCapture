@@ -132,6 +132,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
+        StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
         StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
@@ -142,7 +143,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
         StringAssert.Contains("Placement commit expansion, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`", contract);
         StringAssert.Contains("Active placement drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`", contract);
-        StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI read models belong in `BuildingUiQuerySystem`", contract);
+        StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
+        StringAssert.Contains("Road barrier gate classification, base-breach memory, enemy wall/gate perimeter lookup, breach-building target selection, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
+        StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
     }
 
     [Test]
@@ -1779,6 +1782,40 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedSelectionSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs";
+        Assert.IsTrue(File.Exists(selectionFile), "Building selection behavior must live in BuildingSelectionSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string selection = File.ReadAllText(selectionFile);
+        StringAssert.Contains("BuildingSelectionSystem _buildingSelectionSystem", placement);
+        StringAssert.Contains("CreateBuildingSelectionContext", placement);
+        StringAssert.Contains("_buildingSelectionSystem.ClearSelectedBuilding", placement);
+        StringAssert.Contains("_buildingSelectionSystem.SelectAndFocusBuilding", placement);
+        StringAssert.Contains("_buildingSelectionSystem.ResolveBuildingFocusWorldPosition", placement);
+        StringAssert.Contains("_buildingSelectionSystem.HandleBuildingSelectionClick", placement);
+
+        StringAssert.Contains("SelectAndFocusBuilding", selection);
+        StringAssert.Contains("ResolveBuildingFocusWorldPosition", selection);
+        StringAssert.Contains("HandleBuildingSelectionClick", selection);
+        StringAssert.Contains("TryAssignSelectedHaulerOrders", selection);
+        StringAssert.Contains("TryIssueMoveOrderToBuilding", selection);
+        StringAssert.Contains("IsBoardablePlayerTransportClick", selection);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_runtimeBuildingSystem\.SelectBuilding\(entry\.Key\)"),
+            "Building click selection routing belongs in BuildingSelectionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"TryAssignSelectedHaulerOrders\(entry\.Key\)"),
+            "Building click hauler-order routing belongs in BuildingSelectionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"IsBoardablePlayerTransportClick\(screenPosition\)"),
+            "Building click transport-selection guard belongs in BuildingSelectionSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
     public void BuildingPlacementSystemMustDelegateExtractedVisualSlice()
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
@@ -2249,14 +2286,40 @@ public sealed class GameplayArchitectureContractTests
     public void BuildingPlacementSystemMustDelegateExtractedUiQuerySlice()
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementQueryFile = "Assets/Game/Scripts/Systems/BuildingPlacementQuerySystem.cs";
         const string uiQueryFile = "Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs";
+        Assert.IsTrue(File.Exists(placementQueryFile), "The selected-building scalar query slice must live in BuildingPlacementQuerySystem.");
         Assert.IsTrue(File.Exists(uiQueryFile), "The temporary building UI read model slice must live in BuildingUiQuerySystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string placementQuery = File.ReadAllText(placementQueryFile);
+        StringAssert.Contains("BuildingPlacementQuerySystem _buildingPlacementQuerySystem", placement);
+        StringAssert.Contains("CreateBuildingPlacementQueryContext", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefab", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.GetPlacementStatusText", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.GetSelectedBuildingLabel", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.GetSelectedBuildingDisplayName", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.GetSelectedBuildingDescription", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.TryGetSelectedBuildingPreviewPrefab", placement);
+        StringAssert.Contains("_buildingPlacementQuerySystem.TryGetSelectedBuildingHealth", placement);
+
+        StringAssert.Contains("GetPlacementStatusText", placementQuery);
+        StringAssert.Contains("GetSelectedBuildingLabel", placementQuery);
+        StringAssert.Contains("GetSelectedBuildingDisplayName", placementQuery);
+        StringAssert.Contains("GetSelectedBuildingDescription", placementQuery);
+        StringAssert.Contains("TryGetSelectedBuildingPreviewPrefab", placementQuery);
+        StringAssert.Contains("TryGetSelectedBuildingHealth", placementQuery);
+
         StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", placement);
         StringAssert.Contains("_buildingUiQuerySystem.GetProducedUnits", placement);
         StringAssert.Contains("_buildingUiQuerySystem.AddProducedUnitEntries", placement);
         StringAssert.Contains("_buildingUiQuerySystem.AddPendingProductionUiEntries", placement);
+        Assert.IsFalse(
+            placement.Contains("return $\"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})\";", StringComparison.Ordinal),
+            "Selected-building label formatting belongs in BuildingPlacementQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+bool\s+TryGetSelectedBuildingHealth\([\s\S]*?GetComponentData<UnitHealth>[\s\S]*?public\s+string\s+DeleteButtonText"),
+            "Selected-building health lookup belongs in BuildingPlacementQuerySystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"entries\.Add\(new\s+ProducedUnitUiEntry\(Entity\.Null"),
             "Pending produced-unit UI entry shaping belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
@@ -2269,6 +2332,65 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+void\s+GetSelectedBuildingProducedUnitEntries\([\s\S]*?ProducedUnitPrefabs\.Remove\(unit\)[\s\S]*?public\s+bool\s+TryGetSelectedBuildingCapacityInfo"),
             "Selected-building produced-unit prefab UI pruning belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedBarrierSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string barrierFile = "Assets/Game/Scripts/Systems/BuildingBarrierSystem.cs";
+        Assert.IsTrue(File.Exists(barrierFile), "The road barrier and base-breach slice must live in BuildingBarrierSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string barrier = File.ReadAllText(barrierFile);
+        StringAssert.Contains("BuildingBarrierSystem _buildingBarrierSystem", placement);
+        StringAssert.Contains("CreateBuildingBarrierContext", placement);
+        StringAssert.Contains("_buildingBarrierSystem.UpdateRoadBarrierDoors", placement);
+        StringAssert.Contains("_buildingBarrierSystem.RememberOpenBaseBreach", placement);
+        StringAssert.Contains("_buildingBarrierSystem.TryFindEnemyWallPerimeterContainingCell", placement);
+        StringAssert.Contains("_buildingBarrierSystem.TryFindBreachBuilding", placement);
+        StringAssert.Contains("_buildingBarrierSystem.GetRuntimeRoadBarrierGateRects", placement);
+        StringAssert.Contains("_buildingBarrierSystem.SetBarrierDoorOpen01", placement);
+
+        StringAssert.Contains("RememberOpenBaseBreach", barrier);
+        StringAssert.Contains("HasOpenBaseBreach", barrier);
+        StringAssert.Contains("TryFindEnemyWallPerimeterContainingCell", barrier);
+        StringAssert.Contains("TryFindBreachBuilding", barrier);
+        StringAssert.Contains("UpdateRoadBarrierDoors", barrier);
+        StringAssert.Contains("GetRuntimeRoadBarrierGateRects", barrier);
+        StringAssert.Contains("UpdateRoadBarrierDoorVisual", barrier);
+        StringAssert.Contains("SetBarrierDoorOpen01", barrier);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+RememberOpenBaseBreach\b"),
+            "Base-breach memory belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+HasOpenBaseBreach\b"),
+            "Open breach lookup belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryFindEnemyWallPerimeterContainingCell\b"),
+            "Enemy wall/gate perimeter lookup belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryFindBreachBuilding\b"),
+            "Breach-building target selection belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+UpdateRoadBarrierDoors\b"),
+            "Road barrier door polling belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsActiveRoadGateBuilding\b"),
+            "Road gate active classification belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+UpdateRoadBarrierDoorVisual\b"),
+            "Barrier door visual open-state updates belong in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+SetBarrierDoorOpen01\b"),
+            "Barrier door transform mutation belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+HasNearbyFriendlyUnit\b"),
+            "Barrier door proximity checks belong in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("RuntimeBaseBreach", StringComparison.Ordinal),
+            "Base breach runtime state belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

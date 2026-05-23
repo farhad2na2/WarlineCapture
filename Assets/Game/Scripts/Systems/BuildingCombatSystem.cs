@@ -20,6 +20,65 @@ public sealed class BuildingCombatSystem
         Entity BlockerEntity { get; set; }
     }
 
+    public interface IRuntimeBuildingVisualState : IRuntimeBuilding
+    {
+        GameObject InstanceObject { get; }
+        Transform FactionMarkerTransform { get; }
+        Transform SelectionMarkerTransform { get; }
+        Transform DestroyedVisualTransform { get; }
+        IReadOnlyList<Transform> AliveVisualRootTransforms { get; }
+    }
+
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+    public delegate void BuildingAction<TBuilding>(TBuilding building)
+        where TBuilding : class, IRuntimeBuildingVisualState;
+    public delegate void BuildingIdAction(int buildingId);
+    public delegate void ObjectAction(Object target);
+    public delegate void TransformVisibilityAction(Transform target, bool visible);
+    public delegate void LogAction(string message);
+
+    public readonly struct Context<TBuilding>
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        public readonly RuntimeBuildingSystem<TBuilding> RuntimeBuildingSystem;
+        public readonly IReadOnlyDictionary<int, TBuilding> RuntimeBuildings;
+        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingAction<TBuilding> RememberOpenBaseBreach;
+        public readonly BuildingIdAction NotifyHomeBuildingDestroyed;
+        public readonly TransformVisibilityAction SetTransformVisible;
+        public readonly ObjectAction DestroyObject;
+        public readonly System.Action RefreshBuildingMarkerVisibility;
+        public readonly System.Action NotifyStaticMinimapChanged;
+        public readonly LogAction Log;
+        public readonly bool EnableDestroyDiagnostics;
+
+        public Context(
+            RuntimeBuildingSystem<TBuilding> runtimeBuildingSystem,
+            IReadOnlyDictionary<int, TBuilding> runtimeBuildings,
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingAction<TBuilding> rememberOpenBaseBreach,
+            BuildingIdAction notifyHomeBuildingDestroyed,
+            TransformVisibilityAction setTransformVisible,
+            ObjectAction destroyObject,
+            System.Action refreshBuildingMarkerVisibility,
+            System.Action notifyStaticMinimapChanged,
+            LogAction log,
+            bool enableDestroyDiagnostics)
+        {
+            RuntimeBuildingSystem = runtimeBuildingSystem;
+            RuntimeBuildings = runtimeBuildings;
+            TryGetEntityManager = tryGetEntityManager;
+            RememberOpenBaseBreach = rememberOpenBaseBreach;
+            NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
+            SetTransformVisible = setTransformVisible;
+            DestroyObject = destroyObject;
+            RefreshBuildingMarkerVisibility = refreshBuildingMarkerVisibility;
+            NotifyStaticMinimapChanged = notifyStaticMinimapChanged;
+            Log = log;
+            EnableDestroyDiagnostics = enableDestroyDiagnostics;
+        }
+    }
+
     public bool TryMarkDestroyed(IRuntimeBuilding building, float now, float destroyedLifetimeSeconds)
     {
         if (building == null || building.IsDestroyed)
@@ -75,5 +134,205 @@ public sealed class BuildingCombatSystem
             entityManager.DestroyEntity(blockerEntity);
 
         building.BlockerEntity = Entity.Null;
+    }
+
+    public bool DeleteBuilding<TBuilding>(Context<TBuilding> context, int buildingId, bool destroyVisual, float now, float destroyedLifetimeSeconds)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (context.RuntimeBuildingSystem == null ||
+            !context.RuntimeBuildingSystem.TryGetBuilding(buildingId, out TBuilding building))
+        {
+            return false;
+        }
+
+        if (destroyVisual && BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds))
+            return true;
+
+        DestroyRuntimeBuildingEntities(context, building);
+
+        if (destroyVisual)
+            DestroyRuntimeBuildingObject(context, building.InstanceObject);
+
+        context.RuntimeBuildingSystem.RemoveBuilding(buildingId);
+        context.RefreshBuildingMarkerVisibility?.Invoke();
+        context.NotifyStaticMinimapChanged?.Invoke();
+        return true;
+    }
+
+    public void HandleRuntimeBuildingEntityDestroyed<TBuilding>(
+        Context<TBuilding> context,
+        int buildingId,
+        Entity blockerEntity,
+        GameObject buildingObject)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (context.RuntimeBuildingSystem != null &&
+            context.RuntimeBuildingSystem.TryGetBuilding(buildingId, out TBuilding destroyedBuilding) &&
+            destroyedBuilding != null &&
+            destroyedBuilding.IsDestroyed)
+        {
+            DestroyEntity(context, blockerEntity);
+            destroyedBuilding.CombatEntity = Entity.Null;
+            destroyedBuilding.BlockerEntity = Entity.Null;
+            return;
+        }
+
+        if (context.RuntimeBuildingSystem != null &&
+            (context.RuntimeBuildingSystem.SelectedBuildingId == buildingId ||
+             context.RuntimeBuildingSystem.ActiveBuildingId == buildingId))
+        {
+            context.RuntimeBuildingSystem.ClearSelection();
+        }
+
+        context.NotifyHomeBuildingDestroyed?.Invoke(buildingId);
+        if (context.EnableDestroyDiagnostics)
+            context.Log?.Invoke($"[BuildingDestroyed] runtimeEntity buildingId={buildingId}");
+
+        DestroyEntity(context, blockerEntity);
+        context.RuntimeBuildingSystem?.RemoveBuilding(buildingId);
+        DestroyRuntimeBuildingObject(context, buildingObject);
+        context.RefreshBuildingMarkerVisibility?.Invoke();
+    }
+
+    public void UpdateDestroyedBuildings<TBuilding>(Context<TBuilding> context, float now)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        List<int> cleanupIds = CollectDestroyedCleanupIds(context.RuntimeBuildings, now);
+        if (cleanupIds == null)
+            return;
+
+        for (int i = 0; i < cleanupIds.Count; i++)
+            FinalizeDestroyedBuilding(context, cleanupIds[i]);
+    }
+
+    public void SyncDestroyedRuntimeBuildingCombatEntities<TBuilding>(Context<TBuilding> context, float now, float destroyedLifetimeSeconds)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (context.RuntimeBuildings == null ||
+            context.RuntimeBuildings.Count == 0 ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return;
+        }
+
+        foreach (var entry in context.RuntimeBuildings)
+        {
+            TBuilding building = entry.Value;
+            if (building == null || building.IsDestroyed || building.CombatEntity == Entity.Null)
+                continue;
+
+            RuntimeCombatState combatState = ResolveRuntimeCombatState(building, em);
+            if (combatState == RuntimeCombatState.MissingCombatEntity)
+            {
+                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
+                building.CombatEntity = Entity.Null;
+                continue;
+            }
+
+            if (combatState == RuntimeCombatState.DeadCombatEntity)
+                BeginDestroyedBuildingState(context, building, now, destroyedLifetimeSeconds);
+        }
+    }
+
+    public bool BeginDestroyedBuildingState<TBuilding>(Context<TBuilding> context, TBuilding building, float now, float destroyedLifetimeSeconds)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (!TryMarkDestroyed(building, now, destroyedLifetimeSeconds))
+            return false;
+
+        context.NotifyHomeBuildingDestroyed?.Invoke(building.Id);
+        context.RememberOpenBaseBreach?.Invoke(building);
+        DestroyRuntimeBuildingBlockerEntity(context, building);
+
+        if (context.RuntimeBuildingSystem != null &&
+            (context.RuntimeBuildingSystem.SelectedBuildingId == building.Id ||
+             context.RuntimeBuildingSystem.ActiveBuildingId == building.Id))
+        {
+            context.RuntimeBuildingSystem.ClearSelection();
+        }
+
+        context.SetTransformVisible?.Invoke(building.SelectionMarkerTransform, false);
+        context.SetTransformVisible?.Invoke(building.FactionMarkerTransform, false);
+        IReadOnlyList<Transform> aliveRoots = building.AliveVisualRootTransforms;
+        if (aliveRoots != null)
+        {
+            for (int i = 0; i < aliveRoots.Count; i++)
+                context.SetTransformVisible?.Invoke(aliveRoots[i], false);
+        }
+
+        context.SetTransformVisible?.Invoke(building.DestroyedVisualTransform, true);
+        context.RefreshBuildingMarkerVisibility?.Invoke();
+        return true;
+    }
+
+    public void DestroyRuntimeBuildingBlockerEntity<TBuilding>(Context<TBuilding> context, TBuilding building)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (building == null)
+            return;
+
+        if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
+        {
+            building.BlockerEntity = Entity.Null;
+            return;
+        }
+
+        DestroyBlockerEntity(building, em);
+    }
+
+    public void FinalizeDestroyedBuilding<TBuilding>(Context<TBuilding> context, int buildingId)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (context.RuntimeBuildingSystem == null ||
+            !context.RuntimeBuildingSystem.TryGetBuilding(buildingId, out TBuilding building))
+        {
+            return;
+        }
+
+        context.NotifyHomeBuildingDestroyed?.Invoke(buildingId);
+        DestroyRuntimeBuildingEntities(context, building);
+        context.RuntimeBuildingSystem.RemoveBuilding(buildingId);
+        DestroyRuntimeBuildingObject(context, building.InstanceObject);
+        context.RefreshBuildingMarkerVisibility?.Invoke();
+    }
+
+    private static void DestroyRuntimeBuildingEntities<TBuilding>(Context<TBuilding> context, TBuilding building)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (building == null ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return;
+        }
+
+        DestroyEntity(context, building.CombatEntity);
+        DestroyEntity(context, building.BlockerEntity);
+        building.CombatEntity = Entity.Null;
+        building.BlockerEntity = Entity.Null;
+    }
+
+    private static void DestroyEntity<TBuilding>(Context<TBuilding> context, Entity entity)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (entity == Entity.Null ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em) ||
+            !em.Exists(entity))
+        {
+            return;
+        }
+
+        em.DestroyEntity(entity);
+    }
+
+    private static void DestroyRuntimeBuildingObject<TBuilding>(Context<TBuilding> context, Object target)
+        where TBuilding : class, IRuntimeBuildingVisualState
+    {
+        if (target == null)
+            return;
+
+        context.DestroyObject?.Invoke(target);
     }
 }

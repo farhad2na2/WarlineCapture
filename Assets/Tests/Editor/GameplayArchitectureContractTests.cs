@@ -134,7 +134,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
-        StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
+        StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
         StringAssert.Contains("Unit production queue item initialization, player unit production queue mutation, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
@@ -1747,19 +1747,22 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string runtimeBuildingFile = "Assets/Game/Scripts/Systems/RuntimeBuildingSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
+        const string combatFile = "Assets/Game/Scripts/Systems/BuildingCombatSystem.cs";
         Assert.IsTrue(File.Exists(runtimeBuildingFile), "The runtime building registry slice must live in RuntimeBuildingSystem.");
         Assert.IsTrue(File.Exists(runtimeCreationFile), "Runtime building creation orchestration must live in BuildingRuntimeCreationSystem.");
+        Assert.IsTrue(File.Exists(combatFile), "Runtime building destruction/removal orchestration must live in BuildingCombatSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string runtimeCreation = File.ReadAllText(runtimeCreationFile);
+        string combat = File.ReadAllText(combatFile);
         StringAssert.Contains("RuntimeBuildingSystem<RuntimeBuildingData>", placement);
         StringAssert.Contains("IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings", placement);
         StringAssert.Contains("BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem", placement);
         StringAssert.Contains("_buildingRuntimeCreationSystem.RegisterRuntimeBuilding", placement);
         StringAssert.Contains("CreateBuildingRuntimeCreationContext", placement);
-        StringAssert.Contains("_runtimeBuildingSystem.RemoveBuilding", placement);
+        StringAssert.Contains("context.RuntimeBuildingSystem.RemoveBuilding", combat);
         StringAssert.Contains("_runtimeBuildingSystem.SelectBuilding", placement);
-        StringAssert.Contains("_runtimeBuildingSystem.ClearSelection", placement);
+        StringAssert.Contains("context.RuntimeBuildingSystem.ClearSelection", combat);
         StringAssert.Contains("context.RuntimeBuildingSystem.AllocateId()", runtimeCreation);
         StringAssert.Contains("context.RuntimeBuildingSystem.AddBuilding", runtimeCreation);
         StringAssert.Contains("new RuntimeBuildingData", runtimeCreation);
@@ -1857,17 +1860,41 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(combatFile), "The building combat slice must live in BuildingCombatSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string combat = File.ReadAllText(combatFile);
         StringAssert.Contains("BuildingCombatSystem _buildingCombatSystem", placement);
-        StringAssert.Contains("_buildingCombatSystem.TryMarkDestroyed", placement);
-        StringAssert.Contains("_buildingCombatSystem.CollectDestroyedCleanupIds", placement);
-        StringAssert.Contains("_buildingCombatSystem.ResolveRuntimeCombatState", placement);
-        StringAssert.Contains("_buildingCombatSystem.DestroyBlockerEntity", placement);
+        StringAssert.Contains("_buildingCombatSystem.DeleteBuilding", placement);
+        StringAssert.Contains("_buildingCombatSystem.HandleRuntimeBuildingEntityDestroyed", placement);
+        StringAssert.Contains("_buildingCombatSystem.UpdateDestroyedBuildings", placement);
+        StringAssert.Contains("_buildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities", placement);
+
+        StringAssert.Contains("TryMarkDestroyed", combat);
+        StringAssert.Contains("CollectDestroyedCleanupIds", combat);
+        StringAssert.Contains("ResolveRuntimeCombatState", combat);
+        StringAssert.Contains("DestroyBlockerEntity", combat);
+        StringAssert.Contains("DeleteBuilding", combat);
+        StringAssert.Contains("HandleRuntimeBuildingEntityDestroyed", combat);
+        StringAssert.Contains("UpdateDestroyedBuildings", combat);
+        StringAssert.Contains("SyncDestroyedRuntimeBuildingCombatEntities", combat);
+        StringAssert.Contains("BeginDestroyedBuildingState", combat);
+        StringAssert.Contains("FinalizeDestroyedBuilding", combat);
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bbuilding\.IsDestroyed\s*=\s*true\b"),
             "Destroyed state mutation belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bbuilding\.DestroyedCleanupAt\s*="),
             "Destroyed cleanup timing belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+DeleteBuilding\b"),
+            "Building deletion orchestration belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+BeginDestroyedBuildingState\b"),
+            "Destroyed visual/state orchestration belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+FinalizeDestroyedBuilding\b"),
+            "Destroyed cleanup finalization belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+DestroyRuntimeBuildingBlockerEntity\b"),
+            "Runtime blocker cleanup belongs in BuildingCombatSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

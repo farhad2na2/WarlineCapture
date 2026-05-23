@@ -202,7 +202,7 @@ public sealed class BuildingPlacementSystem
         public Vector3 RunwayHalfExtents;
     }
 
-    internal sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuilding, FactionResourceSystem.IResourceBuilding
+    internal sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuildingVisualState, FactionResourceSystem.IResourceBuilding
     {
         internal sealed class PendingDropVisual
         {
@@ -289,6 +289,11 @@ public sealed class BuildingPlacementSystem
         public int FuelStorageCapacity => Definition != null ? Definition.FuelStorageCapacity : 0;
         public float OilBarrelsPerDay => Definition != null ? Definition.OilBarrelsPerDay : 0f;
         public float FuelBarrelsPerDay => Definition != null ? Definition.FuelBarrelsPerDay : 0f;
+        public GameObject InstanceObject => Instance;
+        public Transform FactionMarkerTransform => FactionMarker;
+        public Transform SelectionMarkerTransform => SelectionMarker;
+        public Transform DestroyedVisualTransform => DestroyedVisual;
+        public IReadOnlyList<Transform> AliveVisualRootTransforms => AliveVisualRoots;
     }
 
     private sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
@@ -2268,13 +2273,12 @@ public sealed class BuildingPlacementSystem
 
     public bool DeleteBuildingById(int buildingId)
     {
-        if (!DeleteBuilding(buildingId, true))
-            return false;
-
-        if (_runtimeBuildingSystem.SelectedBuildingId == buildingId || _runtimeBuildingSystem.ActiveBuildingId == buildingId)
-            ClearSelectedBuilding("DeleteBuildingById");
-
-        return true;
+        return _buildingCombatSystem.DeleteBuilding(
+            CreateBuildingCombatContext(),
+            buildingId,
+            destroyVisual: true,
+            Time.time,
+            DestroyedBuildingLifetimeSeconds);
     }
 
     public void ClearSelectedBuilding()
@@ -2315,32 +2319,11 @@ public sealed class BuildingPlacementSystem
 
     public void HandleRuntimeBuildingEntityDestroyed(int buildingId, Entity blockerEntity, GameObject buildingObject)
     {
-        if (_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData destroyedBuilding) &&
-            destroyedBuilding != null &&
-            destroyedBuilding.IsDestroyed)
-        {
-            if (blockerEntity != Entity.Null && TryGetEntityManager(out EntityManager destroyedEm) && destroyedEm.Exists(blockerEntity))
-                destroyedEm.DestroyEntity(blockerEntity);
-
-            destroyedBuilding.CombatEntity = Entity.Null;
-            destroyedBuilding.BlockerEntity = Entity.Null;
-            return;
-        }
-
-        if (_runtimeBuildingSystem.SelectedBuildingId == buildingId || _runtimeBuildingSystem.ActiveBuildingId == buildingId)
-            _runtimeBuildingSystem.ClearSelection();
-
-        _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId);
-        if (EnableBuildingDestroyDiagnostics)
-            Debug.Log($"[BuildingDestroyed] runtimeEntity buildingId={buildingId}");
-
-        if (blockerEntity != Entity.Null && TryGetEntityManager(out EntityManager em) && em.Exists(blockerEntity))
-            em.DestroyEntity(blockerEntity);
-
-        _runtimeBuildingSystem.RemoveBuilding(buildingId);
-        if (buildingObject != null)
-            Destroy(buildingObject);
-        RefreshBuildingMarkerVisibility();
+        _buildingCombatSystem.HandleRuntimeBuildingEntityDestroyed(
+            CreateBuildingCombatContext(),
+            buildingId,
+            blockerEntity,
+            buildingObject);
     }
 
     private void CancelPlacement()
@@ -3096,87 +3079,17 @@ public sealed class BuildingPlacementSystem
         return false;
     }
 
-    private bool DeleteBuilding(int buildingId, bool destroyVisual)
-    {
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building))
-            return false;
-
-        if (destroyVisual && BeginDestroyedBuildingState(building))
-            return true;
-
-        if (TryGetEntityManager(out EntityManager em))
-        {
-            if (building.CombatEntity != Entity.Null && em.Exists(building.CombatEntity))
-                em.DestroyEntity(building.CombatEntity);
-            if (building.BlockerEntity != Entity.Null && em.Exists(building.BlockerEntity))
-                em.DestroyEntity(building.BlockerEntity);
-        }
-
-        if (destroyVisual && building.Instance != null)
-            Destroy(building.Instance);
-
-        _runtimeBuildingSystem.RemoveBuilding(buildingId);
-        RefreshBuildingMarkerVisibility();
-        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
-        return true;
-    }
-
     private void UpdateDestroyedBuildings()
     {
-        List<int> cleanupIds = _buildingCombatSystem.CollectDestroyedCleanupIds(_runtimeBuildings, Time.time);
-        if (cleanupIds == null)
-            return;
-
-        for (int i = 0; i < cleanupIds.Count; i++)
-            FinalizeDestroyedBuilding(cleanupIds[i]);
-    }
-
-    private bool BeginDestroyedBuildingState(RuntimeBuildingData building)
-    {
-        if (!_buildingCombatSystem.TryMarkDestroyed(building, Time.time, DestroyedBuildingLifetimeSeconds))
-            return false;
-
-        _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(building.Id);
-        _buildingBarrierSystem.RememberOpenBaseBreach(CreateBuildingBarrierContext(), building);
-        DestroyRuntimeBuildingBlockerEntity(building);
-
-        if (_runtimeBuildingSystem.SelectedBuildingId == building.Id || _runtimeBuildingSystem.ActiveBuildingId == building.Id)
-            _runtimeBuildingSystem.ClearSelection();
-
-        _buildingVisualSystem.SetTransformVisible(building.SelectionMarker, false);
-        _buildingVisualSystem.SetTransformVisible(building.FactionMarker, false);
-        if (building.AliveVisualRoots != null)
-        {
-            for (int i = 0; i < building.AliveVisualRoots.Length; i++)
-                _buildingVisualSystem.SetTransformVisible(building.AliveVisualRoots[i], false);
-        }
-        _buildingVisualSystem.SetTransformVisible(building.DestroyedVisual, true);
-        RefreshBuildingMarkerVisibility();
-        return true;
+        _buildingCombatSystem.UpdateDestroyedBuildings(CreateBuildingCombatContext(), Time.time);
     }
 
     private void SyncDestroyedRuntimeBuildingCombatEntities()
     {
-        if (_runtimeBuildings.Count == 0 || !TryGetEntityManager(out EntityManager em))
-            return;
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building == null || building.IsDestroyed || building.CombatEntity == Entity.Null)
-                continue;
-
-            BuildingCombatSystem.RuntimeCombatState combatState = _buildingCombatSystem.ResolveRuntimeCombatState(building, em);
-            if (combatState == BuildingCombatSystem.RuntimeCombatState.MissingCombatEntity)
-            {
-                BeginDestroyedBuildingState(building);
-                building.CombatEntity = Entity.Null;
-                continue;
-            }
-
-            if (combatState == BuildingCombatSystem.RuntimeCombatState.DeadCombatEntity)
-                BeginDestroyedBuildingState(building);
-        }
+        _buildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities(
+            CreateBuildingCombatContext(),
+            Time.time,
+            DestroyedBuildingLifetimeSeconds);
     }
 
 #if UNITY_EDITOR
@@ -3185,41 +3098,6 @@ public sealed class BuildingPlacementSystem
         SyncDestroyedRuntimeBuildingCombatEntities();
     }
 #endif
-
-    private void DestroyRuntimeBuildingBlockerEntity(RuntimeBuildingData building)
-    {
-        if (building == null)
-            return;
-
-        if (!TryGetEntityManager(out EntityManager em))
-        {
-            building.BlockerEntity = Entity.Null;
-            return;
-        }
-
-        _buildingCombatSystem.DestroyBlockerEntity(building, em);
-    }
-
-    private void FinalizeDestroyedBuilding(int buildingId)
-    {
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building))
-            return;
-
-        _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId);
-
-        if (TryGetEntityManager(out EntityManager em))
-        {
-            if (building.CombatEntity != Entity.Null && em.Exists(building.CombatEntity))
-                em.DestroyEntity(building.CombatEntity);
-            if (building.BlockerEntity != Entity.Null && em.Exists(building.BlockerEntity))
-                em.DestroyEntity(building.BlockerEntity);
-        }
-
-        _runtimeBuildingSystem.RemoveBuilding(buildingId);
-        if (building.Instance != null)
-            Destroy(building.Instance);
-        RefreshBuildingMarkerVisibility();
-    }
 
     private void InitializeBuildingVisuals(RuntimeBuildingData building)
     {
@@ -5222,6 +5100,22 @@ public sealed class BuildingPlacementSystem
             () => _pendingMarkerRefresh = true,
             InitializeBuildingVisuals,
             RefreshBuildingMarkerVisibility);
+    }
+
+    private BuildingCombatSystem.Context<RuntimeBuildingData> CreateBuildingCombatContext()
+    {
+        return new BuildingCombatSystem.Context<RuntimeBuildingData>(
+            _runtimeBuildingSystem,
+            _runtimeBuildings,
+            TryGetEntityManager,
+            building => _buildingBarrierSystem.RememberOpenBaseBreach(CreateBuildingBarrierContext(), building),
+            buildingId => _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId),
+            _buildingVisualSystem.SetTransformVisible,
+            DestroyRuntimeObject,
+            RefreshBuildingMarkerVisibility,
+            () => _mainMenuPlayUi?.NotifyStaticMinimapChanged(),
+            message => Debug.Log(message),
+            EnableBuildingDestroyDiagnostics);
     }
 
     private bool TryGetGridForRuntimeCreation(out GridConfig grid)

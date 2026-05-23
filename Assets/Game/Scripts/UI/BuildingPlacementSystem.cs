@@ -330,6 +330,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem = new();
     private readonly BuildingDefinitionSystem _buildingDefinitionSystem = new();
     private readonly BuildingPlacementLifecycleSystem _buildingPlacementLifecycleSystem = new();
+    private readonly BuildingPlacementGridSystem _buildingPlacementGridSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -1408,7 +1409,7 @@ public sealed class BuildingPlacementSystem
         return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
             TryGetGridForPlacementInput,
             TryGetGridCell,
-            CenterCellToOrigin,
+            BuildingPlacementGridSystem.CenterCellToOrigin,
             BuildingPlacementCommitSystem.GetWallSegmentFootprint,
             IsPointerOverPlacementUi,
             BuildingBarrierSystem.IsLinearWallDefinition,
@@ -2129,7 +2130,7 @@ public sealed class BuildingPlacementSystem
             grid,
             Time.time,
             TryGetGridCell,
-            CenterCellToOrigin);
+            BuildingPlacementGridSystem.CenterCellToOrigin);
 
         if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
         {
@@ -2167,7 +2168,16 @@ public sealed class BuildingPlacementSystem
                 placement.IsValid,
                 GetFootprintCenter);
             if (shouldFollowCamera)
-                selectionSystem?.FollowCameraGroundCenterTo(ResolvePlacementFocusWorldPosition(placement, grid, wallOrigins, wallFootprint));
+            {
+                IReadOnlyList<Vector2Int> allOrigins = _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, wallOrigins);
+                selectionSystem?.FollowCameraGroundCenterTo(
+                    _buildingPlacementGridSystem.ResolvePlacementFocusWorldPosition(
+                        placement,
+                        allOrigins,
+                        grid,
+                        wallFootprint,
+                        buildPlaneY));
+            }
             return;
         }
 
@@ -2186,35 +2196,6 @@ public sealed class BuildingPlacementSystem
             selectionSystem?.FollowCameraGroundCenterTo(GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
     }
 
-    private Vector3 ResolvePlacementFocusWorldPosition(
-        PlacementState placement,
-        GridConfig grid,
-        List<Vector2Int> currentWallOrigins,
-        Vector2Int wallFootprint)
-    {
-        if (placement == null)
-            return Vector3.zero;
-
-        List<Vector2Int> allOrigins = _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, currentWallOrigins);
-        if (allOrigins == null || allOrigins.Count == 0)
-            return GetFootprintCenter(placement.OriginCell, wallFootprint, grid);
-
-        int minX = int.MaxValue;
-        int minY = int.MaxValue;
-        int maxX = int.MinValue;
-        int maxY = int.MinValue;
-        for (int i = 0; i < allOrigins.Count; i++)
-        {
-            Vector2Int origin = allOrigins[i];
-            minX = Mathf.Min(minX, origin.x);
-            minY = Mathf.Min(minY, origin.y);
-            maxX = Mathf.Max(maxX, origin.x + wallFootprint.x);
-            maxY = Mathf.Max(maxY, origin.y + wallFootprint.y);
-        }
-
-        return GetFootprintCenter(new Vector2Int(minX, minY), new Vector2Int(maxX - minX, maxY - minY), grid);
-    }
-
     private Vector3 ResolveCurrentPlacementFocusWorldPosition(PlacementState placement, GridConfig grid)
     {
         if (placement == null)
@@ -2224,7 +2205,14 @@ public sealed class BuildingPlacementSystem
         {
             bool vertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
             Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
-            return ResolvePlacementFocusWorldPosition(placement, grid, _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint), wallFootprint);
+            List<Vector2Int> currentOrigins = _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
+            IReadOnlyList<Vector2Int> allOrigins = _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, currentOrigins);
+            return _buildingPlacementGridSystem.ResolvePlacementFocusWorldPosition(
+                placement,
+                allOrigins,
+                grid,
+                wallFootprint,
+                buildPlaneY);
         }
 
         bool rotateVertical = ResolvePlacementRotateVertical(placement);
@@ -3592,18 +3580,9 @@ public sealed class BuildingPlacementSystem
         return false;
     }
 
-    private static Vector2Int GetPlacementFootprint(BuildingDefinition definition, bool rotateVertical)
+    private Vector2Int GetPlacementFootprint(BuildingDefinition definition, bool rotateVertical)
     {
-        if (definition == null)
-            return Vector2Int.one;
-
-        if (!rotateVertical)
-            return definition.FootprintCells;
-
-        if (BuildingBarrierSystem.IsLinearWallDefinition(definition))
-            return BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, true);
-
-        return new Vector2Int(definition.FootprintCells.y, definition.FootprintCells.x);
+        return _buildingPlacementGridSystem.GetPlacementFootprint(definition, rotateVertical);
     }
 
     private void RebuildWallPlacementPreview(PlacementState placement, List<Vector2Int> origins, bool vertical, GridConfig grid)
@@ -3676,10 +3655,7 @@ public sealed class BuildingPlacementSystem
 
     private Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
     {
-        return new Vector3(
-            grid.Origin.x + (originCell.x + footprintCells.x * 0.5f) * grid.CellSize,
-            buildPlaneY,
-            grid.Origin.z + (originCell.y + footprintCells.y * 0.5f) * grid.CellSize);
+        return _buildingPlacementGridSystem.GetFootprintCenter(originCell, footprintCells, grid, buildPlaneY);
     }
 
     private Vector2Int GetCenterScreenPlacementOrigin(Vector2Int footprintCells)
@@ -3687,18 +3663,12 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
             return Vector2Int.zero;
 
-        Vector2 centerScreen = new(Screen.width * 0.5f, Screen.height * 0.5f);
-        if (TryGetGridCell(centerScreen, grid, out Vector2Int centerCell))
-            return CenterCellToOrigin(centerCell, footprintCells);
-
-        return Vector2Int.zero;
-    }
-
-    private static Vector2Int CenterCellToOrigin(Vector2Int centerCell, Vector2Int footprintCells)
-    {
-        return new Vector2Int(
-            centerCell.x - Mathf.FloorToInt(footprintCells.x * 0.5f),
-            centerCell.y - Mathf.FloorToInt(footprintCells.y * 0.5f));
+        return _buildingPlacementGridSystem.GetCenterScreenPlacementOrigin(
+            footprintCells,
+            grid,
+            worldCamera,
+            buildPlaneY,
+            new Vector2(Screen.width, Screen.height));
     }
 
     private bool IsPlacementValid(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, DynamicBuffer<GridRoad> roads, DynamicBlockerData blockerData)
@@ -4547,18 +4517,7 @@ public sealed class BuildingPlacementSystem
 
     private bool TryGetGridCell(Vector2 screenPosition, GridConfig grid, out Vector2Int cell)
     {
-        cell = default;
-        Ray ray = worldCamera.ScreenPointToRay(screenPosition);
-        Plane plane = new(Vector3.up, new Vector3(0f, buildPlaneY, 0f));
-        if (!plane.Raycast(ray, out float distance))
-            return false;
-
-        int2 gridCell = GridUtils.WorldToCell(grid, ray.GetPoint(distance));
-        if (!GridUtils.InBounds(gridCell, grid.Width, grid.Height))
-            return false;
-
-        cell = new Vector2Int(gridCell.x, gridCell.y);
-        return true;
+        return _buildingPlacementGridSystem.TryGetGridCell(screenPosition, grid, worldCamera, buildPlaneY, out cell);
     }
 
     private static bool IsPointerOverUI(Vector2 screenPosition)

@@ -146,6 +146,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
         StringAssert.Contains("Placement commit expansion, wall-run origin construction, wall segment footprint/rotation helpers, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`", contract);
         StringAssert.Contains("Active placement pointer event orchestration, drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`", contract);
+        StringAssert.Contains("Placement/grid math, footprint center projection, center-screen placement origin resolution, screen-to-grid raycasts, placement footprint rotation, and placement focus bounds belong in `BuildingPlacementGridSystem`", contract);
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-building target selection, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
@@ -2526,6 +2527,49 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bDestroy\s*\(\s*(?:_activePlacement|activePlacement|placement)\.PreviewInstance\s*\)"),
             "Active preview cancellation belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedGridSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string gridFile = "Assets/Game/Scripts/Systems/BuildingPlacementGridSystem.cs";
+        Assert.IsTrue(File.Exists(gridFile), "The placement/grid math slice must live in BuildingPlacementGridSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string grid = File.ReadAllText(gridFile);
+        StringAssert.Contains("BuildingPlacementGridSystem _buildingPlacementGridSystem", placement);
+        StringAssert.Contains("_buildingPlacementGridSystem.GetFootprintCenter", placement);
+        StringAssert.Contains("_buildingPlacementGridSystem.GetCenterScreenPlacementOrigin", placement);
+        StringAssert.Contains("_buildingPlacementGridSystem.GetPlacementFootprint", placement);
+        StringAssert.Contains("_buildingPlacementGridSystem.TryGetGridCell", placement);
+        StringAssert.Contains("_buildingPlacementGridSystem.ResolvePlacementFocusWorldPosition", placement);
+        StringAssert.Contains("BuildingPlacementGridSystem.CenterCellToOrigin", placement);
+
+        StringAssert.Contains("GetFootprintCenter", grid);
+        StringAssert.Contains("GetCenterScreenPlacementOrigin", grid);
+        StringAssert.Contains("CenterCellToOrigin", grid);
+        StringAssert.Contains("TryGetGridCell", grid);
+        StringAssert.Contains("GetPlacementFootprint", grid);
+        StringAssert.Contains("ResolvePlacementFocusWorldPosition", grid);
+        StringAssert.Contains("ScreenPointToRay", grid);
+        StringAssert.Contains("GridUtils.WorldToCell", grid);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"ScreenPointToRay\s*\("),
+            "Screen-to-grid raycast math belongs in BuildingPlacementGridSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"GridUtils\.WorldToCell\s*\(\s*grid\s*,\s*ray\.GetPoint"),
+            "Screen-to-grid conversion belongs in BuildingPlacementGridSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+Plane\s*\("),
+            "Grid plane raycast construction belongs in BuildingPlacementGridSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"private\s+Vector3\s+ResolvePlacementFocusWorldPosition\s*\("),
+            "Placement focus bounds belong in BuildingPlacementGridSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+Vector2Int\s*\(\s*definition\.FootprintCells\.y\s*,\s*definition\.FootprintCells\.x\s*\)"),
+            "Placement footprint rotation belongs in BuildingPlacementGridSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

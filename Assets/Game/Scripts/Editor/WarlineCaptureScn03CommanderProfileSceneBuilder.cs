@@ -13,7 +13,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/CommanderProfile/TargetLockV01";
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_SCN03_CommanderProfile_TargetLock.prefab";
     private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN03_CommanderProfile_TargetLock.unity";
-    private const string CapturePath = "Design/AgentReports/Captures/SCN03_CommanderProfile_TargetLock_V01_2400x1080.png";
+    private const string CapturePath = "Design/AgentReports/Captures/SCN03_CommanderProfile_TargetLock_V02_2400x1080.png";
 
     private static Color TextMain => new Color32(230, 223, 199, 255);
     private static Color TextMuted => new Color32(180, 169, 126, 255);
@@ -130,9 +130,9 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
         RectInt header = HeaderRect();
         WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Header_Frame", "scn03_chrome_01_top_header_bar_frame.png", header, false, Color.white);
 
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Header_Brand", "shared_brand_logo_lockup.png", new RectInt(38, 20, 382, 78), 360, 70, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Header_Title", "COMMANDER PROFILE", new RectInt(540, 18, 470, 54), 39f, TextAlignmentOptions.Left, TextMain);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Header_Subtitle", "Identity, progression, rewards, history, and roster access", new RectInt(542, 70, 570, 28), 18f, TextAlignmentOptions.Left, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Header_Brand", "shared_brand_logo_lockup.png", new RectInt(38, 18, 408, 82), 388, 74, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Header_Title", "COMMANDER PROFILE", new RectInt(540, 17, 540, 54), 35f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Header_Subtitle", "Identity, progression, rewards, history, and roster access", new RectInt(542, 70, 600, 28), 16.5f, TextAlignmentOptions.Left, TextMuted);
 
         AddHeaderResource(parent, "Credits", "scn03_icon_03_credits_coin.png", "Credits", "187,540", new RectInt(1110, 15, 315, 92), Gold);
         AddHeaderResource(parent, "Supplies", "scn03_icon_04_supplies_crate.png", "Supplies", "92,860", new RectInt(1452, 15, 315, 92), new Color32(164, 169, 108, 255));
@@ -165,7 +165,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
         RectInt rect = IdentityRect();
         WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Identity_Frame", "scn03_chrome_02_commander_identity_panel_frame.png", rect, false, Color.white);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Identity_TitleIcon", "scn03_icon_02_commander_rank_shield.png", new RectInt(rect.x + 31, rect.y + 17, 58, 58), 44, 52, Gold);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_Title", "COMMANDER IDENTITY", new RectInt(rect.x + 96, rect.y + 21, 350, 42), 29f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_Title", "COMMANDER IDENTITY", new RectInt(rect.x + 96, rect.y + 23, 365, 38), 24f, TextAlignmentOptions.Left, TextMain);
 
         RectInt portraitFrame = new(rect.x + 48, rect.y + 72, rect.width - 96, 418);
         AddRectStroke(parent, "Identity_PortraitStroke", portraitFrame, new Color(0.88f, 0.67f, 0.12f, 0.82f), 2);
@@ -174,7 +174,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
 
         RectInt info = new(rect.x + 40, rect.y + 506, rect.width - 80, 172);
         AddRectStroke(parent, "Identity_InfoStroke", info, Stroke, 2);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_Name", "FIELD COMMANDER", new RectInt(info.x + 18, info.y + 18, 260, 38), 31f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_Name", "FIELD COMMANDER", new RectInt(info.x + 18, info.y + 19, 280, 36), 25f, TextAlignmentOptions.Left, TextMain);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_Level", "LEVEL 38", new RectInt(info.x + 18, info.y + 56, 220, 30), 22f, TextAlignmentOptions.Left, Gold);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_Profile", "PROFILE", new RectInt(info.x + info.width - 104, info.y + 25, 85, 28), 17f, TextAlignmentOptions.Right, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Identity_XpLabel", "2,740 / 3,200 XP TO LEVEL 39", new RectInt(info.x + 18, info.y + 102, 330, 24), 17f, TextAlignmentOptions.Left, TextMuted);
@@ -194,7 +194,8 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
         for (int i = 0; i < tabs.Length; i++)
         {
             RectInt tab = new(rect.x + 34 + i * 158, rect.y + 64, 130, 48);
-            WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, $"Overview_Tab_{i}", i == 0 ? "scn03_chrome_10_selected_small_button_frame.png" : "scn03_chrome_09_secondary_small_button_frame.png", tab, false, i == 0 ? new Color(0.95f, 0.90f, 0.34f, 0.75f) : Color.white);
+            if (i == 0)
+                WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, $"Overview_Tab_{i}_SelectedFill", WarlineCaptureLayeredUiBuilderUtility.Inset(tab, 5, 6), new Color(0.58f, 0.60f, 0.18f, 0.62f));
             WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Overview_Tab_{i}_Text", tabs[i], WarlineCaptureLayeredUiBuilderUtility.Inset(tab, 8, 10), 17f, TextAlignmentOptions.Center, i == 0 ? TextMain : TextMuted);
         }
 
@@ -210,7 +211,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
     {
         AddRectStroke(parent, $"Stat_{name}_Stroke", rect, Stroke, 2);
         WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, $"Stat_{name}_Fill", WarlineCaptureLayeredUiBuilderUtility.Inset(rect, 3, 3), PanelFill);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Stat_{name}_Label", label, new RectInt(rect.x + 25, rect.y + 22, rect.width - 50, 30), 19f, TextAlignmentOptions.Left, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Stat_{name}_Label", label, new RectInt(rect.x + 25, rect.y + 22, rect.width - 50, 30), 16.5f, TextAlignmentOptions.Left, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Stat_{name}_Value", value, new RectInt(rect.x + 25, rect.y + 54, rect.width - 50, 42), 34f, TextAlignmentOptions.Left, valueColor);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Stat_{name}_Sub", sub, new RectInt(rect.x + 25, rect.y + 93, rect.width - 50, 24), 16f, TextAlignmentOptions.Left, TextMuted);
     }
@@ -219,7 +220,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
     {
         RectInt rect = RewardTrackRect();
         WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "RewardTrack_Frame", "scn03_chrome_05_reward_track_panel_frame.png", rect, false, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "RewardTrack_Title", "COMMANDER REWARD TRACK", new RectInt(rect.x + 35, rect.y + 23, 360, 35), 25f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "RewardTrack_Title", "COMMANDER REWARD TRACK", new RectInt(rect.x + 35, rect.y + 23, 420, 35), 22f, TextAlignmentOptions.Left, TextMain);
 
         int startX = rect.x + 50;
         for (int i = 0; i < 6; i++)
@@ -311,7 +312,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
     {
         RectInt rect = AccountSnapshotRect();
         WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "AccountSnapshot_Frame", "scn03_chrome_08_account_snapshot_panel_frame.png", rect, false, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "AccountSnapshot_Title", "ACCOUNT SNAPSHOT", new RectInt(rect.x + 28, rect.y + 22, 300, 34), 27f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "AccountSnapshot_Title", "ACCOUNT SNAPSHOT", new RectInt(rect.x + 28, rect.y + 22, 330, 34), 24f, TextAlignmentOptions.Left, TextMain);
         AddSnapshotCell(parent, "Campaign", "CAMPAIGN", "35%", new RectInt(rect.x + 28, rect.y + 76, 310, 64));
         AddSnapshotCell(parent, "Operations", "OPERATIONS", "6/18", new RectInt(rect.x + 365, rect.y + 76, 310, 64));
         AddSnapshotCell(parent, "Skirmish", "SKIRMISH", "12 WINS", new RectInt(rect.x + 28, rect.y + 155, 310, 64));

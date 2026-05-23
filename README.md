@@ -291,7 +291,7 @@ The gameplay architecture contract is `Design/Architecture/gameplay_solid_ecs_co
 - `Assets/Game/Scripts/Authorings`
   Thin ECS authoring/baker adapters used by the scene or subscene at bake time.
 - `Assets/Game/Scripts/Bootstrap`
-  Composition-only startup code, feature installers, service registries, and shell services. Bootstrap must not own gameplay policy.
+  Composition-only startup code, ECS-aligned startup systems, service registries, and shell services. Bootstrap must not own gameplay policy.
 - `Assets/Game/Scripts/UI`
   Canvas views and UI adapters. UI views display data and emit commands; they do not own gameplay rules.
 - `Assets/Game/Scripts/Environment`
@@ -335,7 +335,7 @@ When adding a new runtime system:
 - use an authoring/baker only to convert Unity references into ECS data
 - use a UI `*View` only for Canvas/reference binding; views may expose visual setters and wire UI events to ECS requests, but must not own gameplay policy, UI flow policy, validation, resource rules, production rules, selection rules, mission rules, AI rules, or state transitions
 - use `*Config` ScriptableObjects for configurable data
-- use feature installers/services only at the shell edge
+- use ECS-aligned startup systems or services only at the shell edge
 - do not add static runtime service facades; use ECS event buffers or shell-injected services for diagnostics/logging
 - do not add new `static Instance` singletons or `ResolveDependency<T>()` fallback locators
 - do not add new gameplay-domain `*Port`, `*Presenter`, `*Controller`, `*Manager`, `*State`, `*Rules`, `*Builder`, `*Session`, or `*Element` types

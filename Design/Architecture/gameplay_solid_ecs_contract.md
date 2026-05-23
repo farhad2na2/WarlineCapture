@@ -33,7 +33,7 @@ Not allowed:
 - Asset-resolution policy.
 - Static gameplay logging.
 
-If a bootstrap change adds domain behavior, move it into a feature installer, ECS system, service, or config.
+If a bootstrap change adds domain behavior, move it into an ECS startup system, service, or config.
 
 The current bootstrap migration map is `Design/Architecture/gamebootstrap_responsibility_audit.md`. `GameBootstrap` is legacy composition debt and should shrink by the audited slices; do not add new AI, mission, camera, spawning, routing, asset-resolution, or diagnostics policy to it.
 AI startup config projection is owned by `AIStartupSystem`; `GameBootstrap` may pass serialized `AIControllerConfig` references into that system, but it must not create or mutate `FactionEconomy`, `FactionControlEntry`, `AIBuildPlan`, `AIProductionPlan`, `AISquadPlan`, `AITargetPrioritySetting`, or AI diagnostic events directly, and it must not own mission-specific fixed tactical policy.
@@ -153,8 +153,8 @@ Transport boarding diagnostics must use ECS diagnostic event buffers such as `Tr
 
 Use narrow migrations. Do not rewrite the entire project at once.
 
-1. Introduce service interfaces and feature installers at the shell edge.
-2. Move bootstrap domain behavior into feature installers and ECS startup systems.
+1. Introduce service interfaces and ECS-aligned startup systems at the shell edge.
+2. Move bootstrap domain behavior into ECS startup systems, services, or configs.
 3. Convert `static Instance` access and static runtime state into explicit injection or ECS singleton components.
 4. Replace singleton fallback lookups with configured dependencies, ECS queries, or ECS request/response components.
 5. Replace static logging with ECS log events plus a log flush service.

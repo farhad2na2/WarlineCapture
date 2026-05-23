@@ -34,17 +34,18 @@ Current owner:
 Current examples:
 - Scene refs: `MenuView`, `Camera`, `Light`, `Volume`, runtime roots, tactical binder.
 - Config refs: selection, road build, building placement, attack trace, city/decorations/blockers, day/night, faction visuals, strings, prefab preview, AI controller configs.
-- Runtime shell object creation: `DayNightSystem`, `FactionVisualSettings`, `RoadBuildSystem`, `BuildingPlacementSystem`, `RTSSelectionSystem`, `UnitAttackTraceSystem`, `UnitImpostorRenderSystem`, `CitizenPopulationSystem`.
-- Runtime root creation is delegated to `RuntimeRootSystem` so root names and parent transforms stay centralized without introducing a bootstrap `Installer` type.
+- Managed gameplay shell object creation and first-pass wiring are delegated to `ManagedGameplayStartupSystem`: `DayNightSystem`, `FactionVisualSettings`, `RoadBuildSystem`, `BuildingPlacementSystem`, `RTSSelectionSystem`, `UnitAttackTraceSystem`, `UnitImpostorRenderSystem`, `CitizenPopulationSystem`, `GameStrings`, and `SharedPrefabPreviewCache`.
+- Runtime root creation is delegated to `RuntimeRootSystem` so root names and parent transforms stay centralized behind an ECS-aligned system boundary.
 
 Target:
 - Keep as bootstrap composition temporarily.
-- Later split pure wiring into feature installers named `*Installer` only if that reduces `GameBootstrap` without moving gameplay policy into another shell class.
+- Later split pure wiring into narrow startup systems only if that reduces `GameBootstrap` without moving gameplay policy into another shell class.
 - Runtime root creation may stay in `RuntimeRootSystem`; bootstrap should only request roots and pass them to runtime systems.
+- Managed gameplay startup may stay in `ManagedGameplayStartupSystem`; bootstrap should assign returned references and own only lifecycle/bridge calls.
 
 Validation:
 - Existing `NewBootstrapRootFilesMustBeCompositionOnly`.
-- Existing `NewBootstrapRootFilesMustUseInstallerOrServiceNaming`.
+- Existing `NewBootstrapRootFilesMustUseCompositionBoundaryNaming`.
 
 ### Runtime Gameplay State Boundary
 
@@ -143,7 +144,7 @@ Former bootstrap debt:
 Target owner:
 - `MissionStartupSystem`
 - Mission config component/buffer
-- Shell installer only for scene reference binding
+- Scene reference binding remains a shell boundary until it can be authored as config/ECS data.
 
 Target behavior:
 - Bootstrap should not know `M01` policy.
@@ -216,7 +217,7 @@ Former bootstrap debt:
 Target owner:
 - ECS systems where possible.
 - Shell services only where Unity object lifecycle requires it.
-- Feature installers for temporary managed systems.
+- Startup systems for temporary managed systems.
 
 Target behavior:
 - Bootstrap should not own a long per-frame gameplay update list.
@@ -272,7 +273,7 @@ Former bootstrap debt:
 
 Target owner:
 - Explicit scene binders.
-- Feature installers.
+- Startup systems.
 - UI views that expose serialized references only.
 
 Target behavior:
@@ -295,7 +296,7 @@ Current guardrails should be extended so:
 - The audit document must exist and list all target owner buckets.
 - New domain-policy method names in `GameBootstrap` are rejected unless explicitly added to the legacy debt list as part of a reviewed migration.
 - Direct bootstrap `Debug.Log*` diagnostics cannot grow.
-- New bootstrap root files must remain composition-only and use installer/service/config naming.
+- New bootstrap root files must remain composition-only and use system/service/registry/config naming.
 
 Reducing existing debt should never require weakening these tests.
 
@@ -307,5 +308,5 @@ Reducing existing debt should never require weakening these tests.
 4. Extract fixed tactical mission startup into mission ECS data/system.
 5. In progress: extract M01 camera/framing into `MissionCameraSystem`; camera request components remain a future ECS migration after runtime behavior is stable.
 6. Move performance diagnostics into a diagnostics boundary.
-7. Replace broad scene lookup binding with explicit scene references/installers.
+7. Replace broad scene lookup binding with explicit scene references or authored binding config.
 8. Collapse `GameBootstrap` to composition plus lifecycle calls only.

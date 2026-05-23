@@ -166,7 +166,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             violations,
-            "Do not add new domain-policy methods to GameBootstrap. Move new AI, mission, camera, faction, spawning, or diagnostics policy into ECS systems/configs or audited feature installers:" +
+            "Do not add new domain-policy methods to GameBootstrap. Move new AI, mission, camera, faction, spawning, or diagnostics policy into ECS systems/configs or audited startup boundaries:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }
@@ -556,6 +556,50 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void GameBootstrapMustDelegateManagedGameplayStartup()
+    {
+        const string managedGameplayStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        Assert.IsTrue(File.Exists(managedGameplayStartupFile), "Managed gameplay construction and first-pass wiring must live in ManagedGameplayStartupSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("ManagedGameplayStartupSystem _managedGameplayStartupSystem", bootstrap);
+        StringAssert.Contains("_managedGameplayStartupSystem.Initialize", bootstrap);
+        StringAssert.Contains("EnsureBuildingPlacementRuntimeComponent", bootstrap);
+        StringAssert.Contains("_runtimeCameraReferenceSystem.SetWorldCamera", bootstrap);
+
+        string[] managedStartupDebtTokens =
+        {
+            "new DayNightSystem()",
+            "new FactionVisualSettings()",
+            "new RoadBuildSystem()",
+            "new BuildingPlacementSystem()",
+            "new RTSSelectionSystem()",
+            "new UnitAttackTraceSystem()",
+            "new UnitImpostorRenderSystem()",
+            "new CitizenPopulationSystem()",
+            "GameStrings.Init",
+            "SharedPrefabPreviewCache.Init"
+        };
+
+        foreach (string token in managedStartupDebtTokens)
+        {
+            Assert.IsFalse(
+                bootstrap.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in ManagedGameplayStartupSystem, not GameBootstrap.");
+        }
+
+        string startup = File.ReadAllText(managedGameplayStartupFile);
+        foreach (string token in managedStartupDebtTokens)
+            StringAssert.Contains(token, startup);
+        StringAssert.Contains("roadBuild.BindDependencies(buildingPlacement)", startup);
+        StringAssert.Contains("selection.BindDependencies(null, roadBuild, buildingPlacement)", startup);
+        StringAssert.Contains("citizenPopulation.Init(buildingPlacement, dayNight, worldCamera)", startup);
+        Assert.IsFalse(
+            Regex.IsMatch(startup, @"\bstatic\b"),
+            "ManagedGameplayStartupSystem owns managed startup state and should stay instance-scoped.");
+    }
+
+    [Test]
     public void NewBootstrapRootFilesMustBeCompositionOnly()
     {
         string[] rootBootstrapFiles = Directory.GetFiles(BootstrapRoot, "*.cs", SearchOption.TopDirectoryOnly)
@@ -578,7 +622,7 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void NewBootstrapRootFilesMustUseInstallerOrServiceNaming()
+    public void NewBootstrapRootFilesMustUseCompositionBoundaryNaming()
     {
         string[] rootBootstrapFiles = Directory.GetFiles(BootstrapRoot, "*.cs", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
@@ -590,12 +634,12 @@ public sealed class GameplayArchitectureContractTests
         {
             foreach (string typeName in GetTopLevelTypeNames(file))
             {
-                if (!typeName.EndsWith("Installer", StringComparison.Ordinal) &&
+                if (!typeName.EndsWith("System", StringComparison.Ordinal) &&
                     !typeName.EndsWith("Service", StringComparison.Ordinal) &&
                     !typeName.EndsWith("Registry", StringComparison.Ordinal) &&
                     !typeName.EndsWith("Config", StringComparison.Ordinal))
                 {
-                    violations.Add($"{file} declares '{typeName}'. New bootstrap root types must be installers, services, registries, or configs.");
+                    violations.Add($"{file} declares '{typeName}'. New bootstrap root types must be systems, services, registries, or configs.");
                 }
             }
         }
@@ -838,23 +882,23 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void SceneStartupInstallersMustNotHardcodeMissionOrRoutePolicy()
+    public void SceneStartupBoundariesMustNotHardcodeMissionOrRoutePolicy()
     {
         if (!Directory.Exists(ScenesRoot))
-            Assert.Pass("No scene startup installer folder exists.");
+            Assert.Pass("No scene startup boundary folder exists.");
 
-        string[] installerFiles = Directory.GetFiles(ScenesRoot, "*Installer.cs", SearchOption.AllDirectories)
+        string[] startupFiles = Directory.GetFiles(ScenesRoot, "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
             .ToArray();
 
         List<string> violations = new();
-        foreach (string file in installerFiles)
+        foreach (string file in startupFiles)
         {
             string text = File.ReadAllText(file);
             if (text.Contains("ChapterOneMissionCatalog.", StringComparison.Ordinal))
-                violations.Add($"{file} hardcodes a mission catalog id. Scene startup installers must read mission identity from config.");
+                violations.Add($"{file} hardcodes a mission catalog id. Scene startup boundaries must read mission identity from config.");
             if (Regex.IsMatch(text, @"WarlineCaptureRoute\.[A-Za-z0-9_]+"))
-                violations.Add($"{file} hardcodes a route value. Scene startup installers must read route policy from config.");
+                violations.Add($"{file} hardcodes a route value. Scene startup boundaries must read route policy from config.");
         }
 
         Assert.IsEmpty(violations, string.Join(Environment.NewLine, violations));
@@ -916,7 +960,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             newViolations,
-            "Do not add new static dependency locator helpers. Pass dependencies through bootstrap/installer composition or ECS request/response components instead:" +
+            "Do not add new static dependency locator helpers. Pass dependencies through bootstrap composition or ECS request/response components instead:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, newViolations));
     }
@@ -955,7 +999,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             newViolations,
-            "Do not add new gameplay/UI-flow Controller classes. Use View for serialized references and move behavior into ECS systems, services, or shell installers:" +
+            "Do not add new gameplay/UI-flow Controller classes. Use View for serialized references and move behavior into ECS systems, services, or startup boundaries:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, newViolations));
     }
@@ -981,7 +1025,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             violations,
-            "BuildingPlacementSystem dependencies must be supplied by GameBootstrap/installer composition, not reacquired through runtime singleton Instance calls:" +
+            "BuildingPlacementSystem dependencies must be supplied by GameBootstrap composition, not reacquired through runtime singleton Instance calls:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }

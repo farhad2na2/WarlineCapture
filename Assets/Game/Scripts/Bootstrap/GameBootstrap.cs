@@ -16,6 +16,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
+    private readonly ManagedGameplayStartupSystem _managedGameplayStartupSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -87,37 +88,30 @@ public sealed class GameBootstrap : MonoBehaviour
 
         _runtimeRootSystem.Ensure(transform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot);
 
-        DayNight = new DayNightSystem();
-        DayNight.Init(dayNightConfig, directionalLight, globalVolume);
+        ManagedGameplayStartupSystem.Result managedSystems = _managedGameplayStartupSystem.Initialize(
+            dayNightConfig,
+            factionVisualConfig,
+            roadBuildConfig,
+            buildingPlacementConfig,
+            rtsSelectionConfig,
+            unitAttackTraceConfig,
+            gameStringsConfig,
+            prefabPreviewCameraConfig,
+            worldCamera,
+            directionalLight,
+            globalVolume,
+            _runtimeUiRoot,
+            gameObject.layer);
 
-        FactionVisuals = new FactionVisualSettings();
-        FactionVisuals.Init(factionVisualConfig);
-
-        RoadBuild = new RoadBuildSystem();
-        RoadBuild.Init(roadBuildConfig, worldCamera, _runtimeUiRoot, null);
-
-        BuildingPlacement = new BuildingPlacementSystem();
-        BuildingPlacement.Init(buildingPlacementConfig, worldCamera, _runtimeUiRoot, RoadBuild, null, FactionVisuals, DayNight);
+        DayNight = managedSystems.DayNight;
+        FactionVisuals = managedSystems.FactionVisuals;
+        RoadBuild = managedSystems.RoadBuild;
+        BuildingPlacement = managedSystems.BuildingPlacement;
+        Selection = managedSystems.Selection;
+        UnitAttackTraces = managedSystems.UnitAttackTraces;
+        UnitImpostors = managedSystems.UnitImpostors;
+        CitizenPopulation = managedSystems.CitizenPopulation;
         EnsureBuildingPlacementRuntimeComponent();
-
-        Selection = new RTSSelectionSystem();
-        Selection.Init(rtsSelectionConfig, worldCamera, _runtimeUiRoot, null, RoadBuild, BuildingPlacement, FactionVisuals);
-
-        RoadBuild.BindDependencies(BuildingPlacement);
-        BuildingPlacement.BindDependencies(RoadBuild, null, DayNight, Selection);
-        Selection.BindDependencies(null, RoadBuild, BuildingPlacement);
-
-        UnitAttackTraces = new UnitAttackTraceSystem();
-        UnitAttackTraces.Init(unitAttackTraceConfig, worldCamera, gameObject.layer, FactionVisuals);
-
-        UnitImpostors = new UnitImpostorRenderSystem();
-        UnitImpostors.Init(worldCamera, gameObject.layer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
-
-        CitizenPopulation = new CitizenPopulationSystem();
-        CitizenPopulation.Init(BuildingPlacement, DayNight, worldCamera);
-        BuildingPlacement.BindDependencies(RoadBuild, null, DayNight, Selection, citizenPopulationSystem: CitizenPopulation);
-        GameStrings.Init(gameStringsConfig);
-        SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
         _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
     }
 

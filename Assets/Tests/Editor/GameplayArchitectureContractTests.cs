@@ -129,7 +129,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
-        StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
+        StringAssert.Contains("wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
@@ -143,10 +143,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Selected-building unit production request routing, camp item request failure policy, UI production arm consumption, friendly producer lookup, production request focus, and last camp production focus memory belong in `BuildingProductionRequestSystem`", contract);
         StringAssert.Contains("Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`", contract);
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
-        StringAssert.Contains("Placement commit expansion, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`", contract);
+        StringAssert.Contains("Placement commit expansion, wall-run origin construction, wall segment footprint/rotation helpers, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`", contract);
         StringAssert.Contains("Active placement drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`", contract);
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
-        StringAssert.Contains("Road barrier gate classification, base-breach memory, enemy wall/gate perimeter lookup, breach-building target selection, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
+        StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-building target selection, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
     }
 
@@ -1734,13 +1734,34 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(validationFile), "The building validation slice must live in BuildingPlacementValidationSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string validation = File.ReadAllText(validationFile);
         StringAssert.Contains("BuildingPlacementValidationSystem.RebuildInvalidPrefix", placement);
         StringAssert.Contains("BuildingPlacementValidationSystem.IsPlacementRectValid", placement);
-        StringAssert.Contains("BuildingPlacementValidationSystem.IsWallFootprintValid", placement);
-        StringAssert.Contains("BuildingPlacementValidationSystem.DoWallSegmentsConflict", placement);
+        StringAssert.Contains("_buildingPlacementValidationSystem.AreAllPendingWallRunsValid", placement);
+        StringAssert.Contains("_buildingPlacementValidationSystem.AreWallPlacementOriginsValid", placement);
+        StringAssert.Contains("_buildingPlacementValidationSystem.IsWallPlacementValid", placement);
+        StringAssert.Contains("CreateWallValidationContext", placement);
+        StringAssert.Contains("IsWallFootprintValid", validation);
+        StringAssert.Contains("DoWallSegmentsConflict", validation);
+        StringAssert.Contains("AreAllPendingWallRunsValid", validation);
+        StringAssert.Contains("AreWallPlacementOriginsValid", validation);
+        StringAssert.Contains("IsLinearWallOverlapCell", validation);
+        StringAssert.Contains("IsPerpendicularWallOverlapCell", validation);
         Assert.IsFalse(
             placement.Contains("private static bool DoWallSegmentsConflict", StringComparison.Ordinal),
             "Wall segment conflict rules belong in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+AreAllPendingWallRunsValid\b"),
+            "Pending wall-run validation belongs in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+AreWallPlacementOriginsValid\b"),
+            "Wall origin validation belongs in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+IsWallPlacementValid\b"),
+            "Wall segment placement validity belongs in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+IsLinearWallOverlapCell\b|\bprivate\s+bool\s+IsPerpendicularWallOverlapCell\b"),
+            "Wall overlap-cell checks belong in BuildingPlacementValidationSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -2388,7 +2409,19 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("CommitWallPlacement", commit);
         StringAssert.Contains("CommitSinglePlacement", commit);
         StringAssert.Contains("BuildFinalWallRuns", commit);
+        StringAssert.Contains("BuildWallRunOrigins", commit);
+        StringAssert.Contains("GetWallSegmentFootprint", commit);
+        StringAssert.Contains("ResolvePlacementWorldRotation", commit);
         StringAssert.Contains("ShouldAutoSelectAfterPlacement", commit);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?List<Vector2Int>\s+BuildWallRunOrigins\b"),
+            "Wall-run origin construction belongs in BuildingPlacementCommitSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Vector2Int\s+GetWallSegmentFootprint\b"),
+            "Wall segment footprint helpers belong in BuildingPlacementCommitSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Quaternion\s+ResolvePlacementWorldRotation\b"),
+            "Wall placement rotation helpers belong in BuildingPlacementCommitSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+ShouldAutoSelectAfterPlacement\b"),
             "Post-placement auto-select policy belongs in BuildingPlacementCommitSystem, not BuildingPlacementSystem.");
@@ -2504,6 +2537,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingBarrierSystem.TryFindBreachBuilding", placement);
         StringAssert.Contains("_buildingBarrierSystem.GetRuntimeRoadBarrierGateRects", placement);
         StringAssert.Contains("_buildingBarrierSystem.SetBarrierDoorOpen01", placement);
+        StringAssert.Contains("_buildingBarrierSystem.ShouldAlignGateToNearbyWall", placement);
+        StringAssert.Contains("BuildingBarrierSystem.IsWallGateDefinition", placement);
+        StringAssert.Contains("BuildingBarrierSystem.IsLinearWallDefinition", placement);
 
         StringAssert.Contains("RememberOpenBaseBreach", barrier);
         StringAssert.Contains("HasOpenBaseBreach", barrier);
@@ -2513,6 +2549,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("GetRuntimeRoadBarrierGateRects", barrier);
         StringAssert.Contains("UpdateRoadBarrierDoorVisual", barrier);
         StringAssert.Contains("SetBarrierDoorOpen01", barrier);
+        StringAssert.Contains("ShouldAlignGateToNearbyWall", barrier);
+        StringAssert.Contains("TryResolveNearbyWallVertical", barrier);
+        StringAssert.Contains("IsWallGateDefinition", barrier);
+        StringAssert.Contains("IsLinearWallDefinition", barrier);
 
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+void\s+RememberOpenBaseBreach\b"),
@@ -2544,6 +2584,15 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             placement.Contains("RuntimeBaseBreach", StringComparison.Ordinal),
             "Base breach runtime state belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsWallGateDefinition\b"),
+            "Road barrier gate classification belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsLinearWallDefinition\b"),
+            "Linear wall classification belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryResolveNearbyWallVertical\b"),
+            "Gate-to-nearby-wall alignment lookup belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

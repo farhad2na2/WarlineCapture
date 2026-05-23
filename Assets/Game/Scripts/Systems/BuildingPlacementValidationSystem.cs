@@ -1,11 +1,33 @@
 using System;
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
+using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
+using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 public sealed class BuildingPlacementValidationSystem
 {
+    internal delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
+
+    internal readonly struct WallValidationContext
+    {
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly Func<int, int, int, int, bool> IsRuntimeBlockerCell;
+        public readonly Func<GridConfig, Vector2Int, Vector2Int, bool> HasRoadInFootprint;
+
+        public WallValidationContext(
+            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            Func<int, int, int, int, bool> isRuntimeBlockerCell,
+            Func<GridConfig, Vector2Int, Vector2Int, bool> hasRoadInFootprint)
+        {
+            RuntimeBuildings = runtimeBuildings;
+            IsRuntimeBlockerCell = isRuntimeBlockerCell;
+            HasRoadInFootprint = hasRoadInFootprint;
+        }
+    }
+
     public static bool IsFootprintInsideGrid(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
     {
         return originCell.x >= 0 &&
@@ -181,6 +203,127 @@ public sealed class BuildingPlacementValidationSystem
         return verticalA == verticalB;
     }
 
+    internal bool AreAllPendingWallRunsValid(
+        BuildingPlacementInputSystem.IPlacementState placement,
+        BuildingPlacementInputSystem inputSystem,
+        GetWallSegmentFootprintDelegate getWallSegmentFootprint,
+        GridConfig grid,
+        DynamicBuffer<GridRoad> roads,
+        DynamicBlockerData blockerData,
+        WallValidationContext context)
+    {
+        if (inputSystem == null || getWallSegmentFootprint == null)
+            return false;
+
+        List<BuildingPlacementInputSystem.WallRun> runs = inputSystem.BuildFinalWallRuns(placement, getWallSegmentFootprint.Invoke);
+        if (runs.Count == 0)
+            return false;
+
+        for (int runIndex = 0; runIndex < runs.Count; runIndex++)
+        {
+            BuildingPlacementInputSystem.WallRun run = runs[runIndex];
+            if (run?.Origins == null || run.Origins.Count == 0)
+                return false;
+
+            Vector2Int footprint = getWallSegmentFootprint(placement.Definition, run.Vertical);
+            for (int i = 0; i < run.Origins.Count; i++)
+            {
+                if (!IsWallPlacementValid(run.Origins[i], footprint, run.Vertical, grid, roads, blockerData, context))
+                    return false;
+
+                for (int otherRunIndex = 0; otherRunIndex < runs.Count; otherRunIndex++)
+                {
+                    if (otherRunIndex == runIndex)
+                        continue;
+
+                    BuildingPlacementInputSystem.WallRun otherRun = runs[otherRunIndex];
+                    if (otherRun?.Origins == null || otherRun.Origins.Count == 0)
+                        continue;
+
+                    Vector2Int otherFootprint = getWallSegmentFootprint(placement.Definition, otherRun.Vertical);
+                    for (int otherIndex = 0; otherIndex < otherRun.Origins.Count; otherIndex++)
+                    {
+                        if (!DoWallSegmentsConflict(run.Origins[i], footprint, run.Vertical, otherRun.Origins[otherIndex], otherFootprint, otherRun.Vertical))
+                            continue;
+
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    internal bool AreWallPlacementOriginsValid(
+        BuildingPlacementInputSystem.IPlacementState placement,
+        IReadOnlyList<Vector2Int> origins,
+        Vector2Int footprintCells,
+        bool vertical,
+        GridConfig grid,
+        DynamicBuffer<GridRoad> roads,
+        DynamicBlockerData blockerData,
+        WallValidationContext context,
+        GetWallSegmentFootprintDelegate getWallSegmentFootprint)
+    {
+        if (origins == null || origins.Count == 0)
+            return false;
+
+        for (int i = 0; i < origins.Count; i++)
+        {
+            if (!IsWallPlacementValid(origins[i], footprintCells, vertical, grid, roads, blockerData, context))
+                return false;
+        }
+
+        if (placement?.CommittedWallRuns != null)
+        {
+            for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
+            {
+                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
+                if (run?.Origins == null)
+                    continue;
+
+                Vector2Int committedFootprint = getWallSegmentFootprint(placement.Definition, run.Vertical);
+                for (int i = 0; i < origins.Count; i++)
+                {
+                    for (int j = 0; j < run.Origins.Count; j++)
+                    {
+                        if (!DoWallSegmentsConflict(origins[i], footprintCells, vertical, run.Origins[j], committedFootprint, run.Vertical))
+                            continue;
+
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return true;
+    }
+
+    internal bool IsWallPlacementValid(
+        Vector2Int originCell,
+        Vector2Int footprintCells,
+        bool vertical,
+        GridConfig grid,
+        DynamicBuffer<GridRoad> roads,
+        DynamicBlockerData blockerData,
+        WallValidationContext context,
+        bool allowExistingWallOverlap = false)
+    {
+        return IsWallFootprintValid(
+            originCell,
+            footprintCells,
+            vertical,
+            grid,
+            roads,
+            blockerData,
+            allowExistingWallOverlap,
+            context.IsRuntimeBlockerCell,
+            (x, y) => IsPerpendicularWallOverlapCell(context.RuntimeBuildings, x, y, vertical),
+            (x, y) => IsLinearWallOverlapCell(context.RuntimeBuildings, x, y),
+            context.HasRoadInFootprint);
+    }
+
     private static bool HasBlockedCell(
         Vector2Int originCell,
         Vector2Int footprintCells,
@@ -214,5 +357,51 @@ public sealed class BuildingPlacementValidationSystem
         int height)
     {
         return isRuntimeBlockerCell != null && isRuntimeBlockerCell(x, y, width, height);
+    }
+
+    private static bool IsLinearWallOverlapCell(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings, int x, int y)
+    {
+        if (runtimeBuildings == null)
+            return false;
+
+        foreach (var entry in runtimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building?.Definition == null || !BuildingBarrierSystem.IsLinearWallDefinition(building.Definition))
+                continue;
+
+            Vector2Int min = building.OriginCell;
+            Vector2Int size = building.Definition.FootprintCells;
+            if (x >= min.x && x < min.x + size.x &&
+                y >= min.y && y < min.y + size.y)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsPerpendicularWallOverlapCell(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings, int x, int y, bool vertical)
+    {
+        if (runtimeBuildings == null)
+            return false;
+
+        foreach (var entry in runtimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building?.Definition == null || !BuildingBarrierSystem.IsLinearWallDefinition(building.Definition))
+                continue;
+
+            bool buildingVertical = building.Definition.FootprintCells.y > building.Definition.FootprintCells.x;
+            if (buildingVertical == vertical)
+                continue;
+
+            Vector2Int min = building.OriginCell;
+            Vector2Int size = building.Definition.FootprintCells;
+            if (x >= min.x && x < min.x + size.x &&
+                y >= min.y && y < min.y + size.y)
+                return true;
+        }
+
+        return false;
     }
 }

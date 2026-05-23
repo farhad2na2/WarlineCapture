@@ -335,6 +335,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementQuerySystem _buildingPlacementQuerySystem = new();
     private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
+    private readonly BuildingPlacementValidationSystem _buildingPlacementValidationSystem = new();
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
     private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
     private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
@@ -805,7 +806,7 @@ public sealed class BuildingPlacementSystem
 
         if (TryFindRuntimeBuildingByCombatEntity(finalTarget, out RuntimeBuildingData finalBuilding) &&
             finalBuilding?.Definition != null &&
-            (finalBuilding.Definition.IsWall || IsWallGateDefinition(finalBuilding.Definition)))
+            (finalBuilding.Definition.IsWall || BuildingBarrierSystem.IsWallGateDefinition(finalBuilding.Definition)))
             return false;
 
         BuildingBarrierSystem.Context barrierContext = CreateBuildingBarrierContext();
@@ -1331,7 +1332,7 @@ public sealed class BuildingPlacementSystem
                     _activePlacement,
                     pointerPosition,
                     IsPointerOverPlacementUi(pointerPosition),
-                    IsLinearWallDefinition(_activePlacement.Definition),
+                    BuildingBarrierSystem.IsLinearWallDefinition(_activePlacement.Definition),
                     hasGridForInput,
                     inputGrid,
                     TryGetGridCell,
@@ -1341,8 +1342,8 @@ public sealed class BuildingPlacementSystem
             {
                 _buildingPlacementInputSystem.HandlePointerRelease(
                     _activePlacement,
-                    IsLinearWallDefinition(_activePlacement.Definition),
-                    GetWallSegmentFootprint);
+                    BuildingBarrierSystem.IsLinearWallDefinition(_activePlacement.Definition),
+                    BuildingPlacementCommitSystem.GetWallSegmentFootprint);
             }
             if (!pointer.IsPressed)
                 _buildingPlacementInputSystem.HandlePointerNotPressed();
@@ -1682,6 +1683,17 @@ public sealed class BuildingPlacementSystem
         return approachDistance <= 2;
     }
 
+    private static int AxisDistance(int minA, int maxA, int minB, int maxB)
+    {
+        if (maxA <= minB)
+            return minB - maxA;
+
+        if (maxB <= minA)
+            return minA - maxB;
+
+        return 0;
+    }
+
     private void CleanupRecentSpawnReservations()
     {
         _buildingSpawnSystem.CleanupRecentSpawnReservations(Time.time);
@@ -1813,9 +1825,16 @@ public sealed class BuildingPlacementSystem
         if (_activePlacement == null || !_activePlacement.IsValid)
             return false;
 
-        if (IsLinearWallDefinition(_activePlacement.Definition) &&
+        if (BuildingBarrierSystem.IsLinearWallDefinition(_activePlacement.Definition) &&
             (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) ||
-             !AreAllPendingWallRunsValid(_activePlacement, grid, roads, blockerData)))
+             !_buildingPlacementValidationSystem.AreAllPendingWallRunsValid(
+                 _activePlacement,
+                 _buildingPlacementInputSystem,
+                 BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+                 grid,
+                 roads,
+                 blockerData,
+                 CreateWallValidationContext())))
             return false;
 
         int placementCost = Mathf.Max(0, _activePlacementCost);
@@ -2131,17 +2150,33 @@ public sealed class BuildingPlacementSystem
             TryGetGridCell,
             CenterCellToOrigin);
 
-        if (IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
         {
             List<Vector2Int> wallOrigins = placement.HideCurrentWallPreview
                 ? new List<Vector2Int>()
-                : _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, GetWallSegmentFootprint);
+                : _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
             bool vertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
             placement.AutoRotateVertical = vertical;
-            Vector2Int wallFootprint = GetWallSegmentFootprint(placement.Definition, vertical);
+            Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
             placement.IsValid = placement.HideCurrentWallPreview
-                ? AreAllPendingWallRunsValid(placement, grid, roads, blockerData)
-                : AreWallPlacementOriginsValid(placement, wallOrigins, wallFootprint, vertical, grid, roads, blockerData);
+                ? _buildingPlacementValidationSystem.AreAllPendingWallRunsValid(
+                    placement,
+                    _buildingPlacementInputSystem,
+                    BuildingPlacementCommitSystem.GetWallSegmentFootprint,
+                    grid,
+                    roads,
+                    blockerData,
+                    CreateWallValidationContext())
+                : _buildingPlacementValidationSystem.AreWallPlacementOriginsValid(
+                    placement,
+                    wallOrigins,
+                    wallFootprint,
+                    vertical,
+                    grid,
+                    roads,
+                    blockerData,
+                    CreateWallValidationContext(),
+                    BuildingPlacementCommitSystem.GetWallSegmentFootprint);
             RebuildWallPlacementPreview(placement, wallOrigins, vertical, grid);
             _buildingPlacementPreviewSystem.UpdateWallOutline(
                 _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, wallOrigins),
@@ -2204,11 +2239,11 @@ public sealed class BuildingPlacementSystem
         if (placement == null)
             return Vector3.zero;
 
-        if (IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
         {
             bool vertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
-            Vector2Int wallFootprint = GetWallSegmentFootprint(placement.Definition, vertical);
-            return ResolvePlacementFocusWorldPosition(placement, grid, _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, GetWallSegmentFootprint), wallFootprint);
+            Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(placement.Definition, vertical);
+            return ResolvePlacementFocusWorldPosition(placement, grid, _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint), wallFootprint);
         }
 
         bool rotateVertical = ResolvePlacementRotateVertical(placement);
@@ -2237,11 +2272,11 @@ public sealed class BuildingPlacementSystem
 
         List<Vector2Int> currentWallOrigins = null;
         bool currentWallVertical = false;
-        if (IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
         {
             currentWallVertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
             if (!placement.HideCurrentWallPreview)
-                currentWallOrigins = _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, GetWallSegmentFootprint);
+                currentWallOrigins = _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
         }
 
         var request = new BuildingPlacementCommitSystem.CommitRequest(
@@ -2249,7 +2284,7 @@ public sealed class BuildingPlacementSystem
             placement.PreviewInstance,
             placement.OriginCell,
             placement.AutoRotateVertical,
-            IsLinearWallDefinition(placement.Definition),
+            BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition),
             placement.HideCurrentWallPreview,
             _wallCommitRuns,
             currentWallOrigins,
@@ -2263,7 +2298,7 @@ public sealed class BuildingPlacementSystem
             RegisterRuntimeBuilding,
             CloneDefinitionWithFootprint,
             GetPlacementFootprint,
-            GetWallSegmentFootprint,
+            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
             DestroyRuntimeObject);
 
         RuntimeBuildingData building = _buildingPlacementCommitSystem.CommitPlacement(request, context);
@@ -2353,7 +2388,7 @@ public sealed class BuildingPlacementSystem
             500,
             _buildingRunwaySystem);
         definition.IsWall = true;
-        if (!IsLinearWallDefinition(definition))
+        if (!BuildingBarrierSystem.IsLinearWallDefinition(definition))
             return 0;
 
         bool vertical = Mathf.Abs(endOrigin.y - startOrigin.y) > Mathf.Abs(endOrigin.x - startOrigin.x);
@@ -2362,8 +2397,8 @@ public sealed class BuildingPlacementSystem
         else
             endOrigin.y = startOrigin.y;
 
-        Vector2Int wallFootprint = GetWallSegmentFootprint(definition, vertical);
-        List<Vector2Int> origins = BuildWallRunOrigins(startOrigin, endOrigin, wallFootprint, vertical);
+        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, vertical);
+        List<Vector2Int> origins = BuildingPlacementCommitSystem.BuildWallRunOrigins(startOrigin, endOrigin, wallFootprint, vertical);
         int spawned = 0;
         for (int i = 0; i < origins.Count; i++)
         {
@@ -2371,7 +2406,14 @@ public sealed class BuildingPlacementSystem
             if (!TryGetGridData(out _, out grid, out DynamicBuffer<GridRoad> currentRoads, out DynamicBlockerData currentBlockerData))
                 break;
 
-            if (!IsWallPlacementValid(origin, wallFootprint, vertical, grid, currentRoads, currentBlockerData))
+            if (!_buildingPlacementValidationSystem.IsWallPlacementValid(
+                    origin,
+                    wallFootprint,
+                    vertical,
+                    grid,
+                    currentRoads,
+                    currentBlockerData,
+                    CreateWallValidationContext()))
                 continue;
 
             GameObject instance = CreateBuildingVisualInstance(definition, _buildingRoot);
@@ -2401,7 +2443,7 @@ public sealed class BuildingPlacementSystem
             500,
             _buildingRunwaySystem);
         definition.IsWall = true;
-        footprint = GetWallSegmentFootprint(definition, rotateVertical);
+        footprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);
         return footprint.x > 0 && footprint.y > 0;
     }
 
@@ -2425,11 +2467,19 @@ public sealed class BuildingPlacementSystem
             500,
             _buildingRunwaySystem);
         definition.IsWall = true;
-        if (!IsLinearWallDefinition(definition))
+        if (!BuildingBarrierSystem.IsLinearWallDefinition(definition))
             return false;
 
-        Vector2Int wallFootprint = GetWallSegmentFootprint(definition, rotateVertical);
-        if (!IsWallPlacementValid(origin, wallFootprint, rotateVertical, grid, roads, blockerData, allowExistingWallOverlap))
+        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);
+        if (!_buildingPlacementValidationSystem.IsWallPlacementValid(
+                origin,
+                wallFootprint,
+                rotateVertical,
+                grid,
+                roads,
+                blockerData,
+                CreateWallValidationContext(),
+                allowExistingWallOverlap))
             return false;
 
         GameObject instance = CreateBuildingVisualInstance(definition, _buildingRoot);
@@ -2563,34 +2613,6 @@ public sealed class BuildingPlacementSystem
             ref _buildingSpawnRandomState,
             out cell,
             out worldPosition);
-    }
-
-    private static List<Vector2Int> BuildWallRunOrigins(Vector2Int start, Vector2Int end, Vector2Int footprint, bool vertical)
-    {
-        var origins = new List<Vector2Int> { start };
-        if (start == end)
-            return origins;
-
-        if (vertical)
-        {
-            int stepCells = Mathf.Max(1, footprint.y);
-            int delta = end.y - start.y;
-            int direction = delta >= 0 ? 1 : -1;
-            int segmentCount = Mathf.Abs(delta) / stepCells;
-            for (int i = 1; i <= segmentCount; i++)
-                origins.Add(new Vector2Int(start.x, start.y + direction * stepCells * i));
-        }
-        else
-        {
-            int stepCells = Mathf.Max(1, footprint.x);
-            int delta = end.x - start.x;
-            int direction = delta >= 0 ? 1 : -1;
-            int segmentCount = Mathf.Abs(delta) / stepCells;
-            for (int i = 1; i <= segmentCount; i++)
-                origins.Add(new Vector2Int(start.x + direction * stepCells * i, start.y));
-        }
-
-        return origins;
     }
 
     private bool TrySpawnInitialBuilding(
@@ -2829,7 +2851,7 @@ public sealed class BuildingPlacementSystem
     {
         if (building?.Definition == null ||
             building.BlockerEntity == Entity.Null ||
-            !IsWallGateDefinition(building.Definition) ||
+            !BuildingBarrierSystem.IsWallGateDefinition(building.Definition) ||
             !TryGetEntityManager(out EntityManager em) ||
             !em.Exists(building.BlockerEntity))
             return;
@@ -3484,20 +3506,6 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    private static bool ShouldUseExpandedSelectionArea(BuildingDefinition definition)
-    {
-        if (definition == null)
-            return false;
-
-        if (IsLinearWallDefinition(definition))
-            return true;
-
-        string displayName = definition.DisplayName ?? string.Empty;
-        string prefabName = definition.Prefab != null ? definition.Prefab.name : string.Empty;
-        return displayName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               prefabName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0;
-    }
-
     private static GameObject CreateBuildingVisualInstance(BuildingDefinition definition, Transform parent)
     {
         if (definition == null)
@@ -3534,7 +3542,8 @@ public sealed class BuildingPlacementSystem
         if (instance == null)
             return;
 
-        if (!rotateVertical && ShouldAlignGateToNearbyWall(definition) && TryResolveNearbyWallVertical(originCell, definition, out bool gateVertical))
+        if (!rotateVertical &&
+            _buildingBarrierSystem.ShouldAlignGateToNearbyWall(CreateBuildingBarrierContext(), originCell, definition, out bool gateVertical))
             rotateVertical = gateVertical;
 
         Vector2Int footprintCells = GetPlacementFootprint(definition, rotateVertical);
@@ -3543,7 +3552,7 @@ public sealed class BuildingPlacementSystem
         if (definition.HasLocalBounds)
             offset = new Vector3(definition.LocalBounds.center.x, 0f, definition.LocalBounds.center.z);
 
-        Quaternion worldRotation = ResolvePlacementWorldRotation(definition, rotateVertical);
+        Quaternion worldRotation = BuildingPlacementCommitSystem.ResolvePlacementWorldRotation(definition, rotateVertical);
         instance.transform.SetPositionAndRotation(center, worldRotation);
         instance.transform.localScale = Vector3.one;
 
@@ -3554,87 +3563,6 @@ public sealed class BuildingPlacementSystem
             visualRoot.localRotation = Quaternion.identity;
             visualRoot.localScale = Vector3.one;
         }
-    }
-
-    private static bool IsLinearWallDefinition(BuildingDefinition definition)
-    {
-        return definition != null && definition.IsWall;
-    }
-
-    private static bool IsWallGateDefinition(BuildingDefinition definition)
-    {
-        if (definition == null)
-            return false;
-
-        string displayName = definition.DisplayName ?? string.Empty;
-        string prefabName = definition.Prefab != null ? definition.Prefab.name : string.Empty;
-        return displayName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
-               prefabName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0;
-    }
-
-    private static bool ShouldAlignGateToNearbyWall(BuildingDefinition definition)
-    {
-        return IsWallGateDefinition(definition);
-    }
-
-    private static Quaternion ResolvePlacementWorldRotation(BuildingDefinition definition, bool rotateVertical)
-    {
-        bool rotateNinety = rotateVertical;
-        if (IsLinearWallDefinition(definition) && IsWallLengthAxisLocalZ(definition))
-            rotateNinety = !rotateNinety;
-
-        return rotateNinety ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
-    }
-
-    private static bool IsWallLengthAxisLocalZ(BuildingDefinition definition)
-    {
-        if (definition == null || !definition.HasLocalBounds)
-            return false;
-
-        return Mathf.Abs(definition.LocalBounds.size.z) > Mathf.Abs(definition.LocalBounds.size.x);
-    }
-
-    private bool TryResolveNearbyWallVertical(Vector2Int originCell, BuildingDefinition definition, out bool vertical)
-    {
-        vertical = false;
-        if (definition == null || _runtimeBuildings == null || _runtimeBuildings.Count == 0)
-            return false;
-
-        RectInt gateRect = new(originCell, definition.FootprintCells);
-        int bestDistance = int.MaxValue;
-        bool found = false;
-
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building?.Definition == null || !IsLinearWallDefinition(building.Definition))
-                continue;
-
-            Vector2Int wallSize = building.Definition.FootprintCells;
-            RectInt wallRect = new(building.OriginCell, wallSize);
-            int dx = AxisDistance(gateRect.xMin, gateRect.xMax, wallRect.xMin, wallRect.xMax);
-            int dy = AxisDistance(gateRect.yMin, gateRect.yMax, wallRect.yMin, wallRect.yMax);
-            int distance = dx + dy;
-            if (distance > 1 || distance >= bestDistance)
-                continue;
-
-            bestDistance = distance;
-            vertical = wallSize.y > wallSize.x;
-            found = true;
-        }
-
-        return found;
-    }
-
-    private static int AxisDistance(int minA, int maxA, int minB, int maxB)
-    {
-        if (maxA <= minB)
-            return minB - maxA;
-
-        if (maxB <= minA)
-            return minA - maxB;
-
-        return 0;
     }
 
     private RectInt GetEffectivePlacementRect(BuildingDefinition definition, Vector2Int originCell, GridConfig grid, bool rotateVertical = false)
@@ -3674,11 +3602,10 @@ public sealed class BuildingPlacementSystem
         if (placement?.Definition == null)
             return false;
 
-        if (IsLinearWallDefinition(placement.Definition))
+        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
             return _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
 
-        if (ShouldAlignGateToNearbyWall(placement.Definition) &&
-            TryResolveNearbyWallVertical(placement.OriginCell, placement.Definition, out bool gateVertical))
+        if (_buildingBarrierSystem.ShouldAlignGateToNearbyWall(CreateBuildingBarrierContext(), placement.OriginCell, placement.Definition, out bool gateVertical))
             return gateVertical;
 
         return false;
@@ -3692,99 +3619,10 @@ public sealed class BuildingPlacementSystem
         if (!rotateVertical)
             return definition.FootprintCells;
 
-        if (IsLinearWallDefinition(definition))
-            return GetWallSegmentFootprint(definition, true);
+        if (BuildingBarrierSystem.IsLinearWallDefinition(definition))
+            return BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, true);
 
         return new Vector2Int(definition.FootprintCells.y, definition.FootprintCells.x);
-    }
-
-    private bool AreAllPendingWallRunsValid(
-        PlacementState placement,
-        GridConfig grid,
-        DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData)
-    {
-        List<BuildingPlacementInputSystem.WallRun> runs = _buildingPlacementInputSystem.BuildFinalWallRuns(placement, GetWallSegmentFootprint);
-        if (runs.Count == 0)
-            return false;
-
-        for (int runIndex = 0; runIndex < runs.Count; runIndex++)
-        {
-            BuildingPlacementInputSystem.WallRun run = runs[runIndex];
-            if (run?.Origins == null || run.Origins.Count == 0)
-                return false;
-
-            Vector2Int footprint = GetWallSegmentFootprint(placement.Definition, run.Vertical);
-            for (int i = 0; i < run.Origins.Count; i++)
-            {
-                if (!IsWallPlacementValid(run.Origins[i], footprint, run.Vertical, grid, roads, blockerData))
-                    return false;
-
-                for (int otherRunIndex = 0; otherRunIndex < runs.Count; otherRunIndex++)
-                {
-                    if (otherRunIndex == runIndex)
-                        continue;
-
-                    BuildingPlacementInputSystem.WallRun otherRun = runs[otherRunIndex];
-                    if (otherRun?.Origins == null || otherRun.Origins.Count == 0)
-                        continue;
-
-                    Vector2Int otherFootprint = GetWallSegmentFootprint(placement.Definition, otherRun.Vertical);
-                    for (int otherIndex = 0; otherIndex < otherRun.Origins.Count; otherIndex++)
-                    {
-                        if (!BuildingPlacementValidationSystem.DoWallSegmentsConflict(run.Origins[i], footprint, run.Vertical, otherRun.Origins[otherIndex], otherFootprint, otherRun.Vertical))
-                            continue;
-
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private bool AreWallPlacementOriginsValid(
-        PlacementState placement,
-        List<Vector2Int> origins,
-        Vector2Int footprintCells,
-        bool vertical,
-        GridConfig grid,
-        DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData)
-    {
-        if (origins == null || origins.Count == 0)
-            return false;
-
-        for (int i = 0; i < origins.Count; i++)
-        {
-            if (!IsWallPlacementValid(origins[i], footprintCells, vertical, grid, roads, blockerData))
-                return false;
-        }
-
-        if (placement?.CommittedWallRuns != null)
-        {
-            for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
-            {
-                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
-                if (run?.Origins == null)
-                    continue;
-
-                Vector2Int committedFootprint = GetWallSegmentFootprint(placement.Definition, run.Vertical);
-                for (int i = 0; i < origins.Count; i++)
-                {
-                    for (int j = 0; j < run.Origins.Count; j++)
-                    {
-                        if (!BuildingPlacementValidationSystem.DoWallSegmentsConflict(origins[i], footprintCells, vertical, run.Origins[j], committedFootprint, run.Vertical))
-                            continue;
-
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
     }
 
     private void RebuildWallPlacementPreview(PlacementState placement, List<Vector2Int> origins, bool vertical, GridConfig grid)
@@ -3816,22 +3654,6 @@ public sealed class BuildingPlacementSystem
             grid,
             CreateBuildingVisualInstance,
             PositionBuildingObject);
-    }
-
-    private static Vector2Int GetWallSegmentFootprint(BuildingDefinition definition, bool vertical)
-    {
-        if (definition == null)
-            return Vector2Int.one;
-
-        int lengthCells = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(
-            Mathf.Abs(definition.LocalBounds.size.x),
-            Mathf.Abs(definition.LocalBounds.size.z))));
-        int thicknessCells = Mathf.Max(1, Mathf.RoundToInt(Mathf.Min(
-            Mathf.Abs(definition.LocalBounds.size.x),
-            Mathf.Abs(definition.LocalBounds.size.z))));
-
-        Vector2Int footprint = new(lengthCells, thicknessCells);
-        return vertical ? new Vector2Int(footprint.y, footprint.x) : footprint;
     }
 
     private static BuildingDefinition CloneDefinitionWithFootprint(BuildingDefinition definition, Vector2Int footprintCells)
@@ -3923,67 +3745,12 @@ public sealed class BuildingPlacementSystem
             OverlapsAnyRuntimeBuilding);
     }
 
-    private bool IsWallPlacementValid(
-        Vector2Int originCell,
-        Vector2Int footprintCells,
-        bool vertical,
-        GridConfig grid,
-        DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
-        bool allowExistingWallOverlap = false)
+    private BuildingPlacementValidationSystem.WallValidationContext CreateWallValidationContext()
     {
-        return BuildingPlacementValidationSystem.IsWallFootprintValid(
-            originCell,
-            footprintCells,
-            vertical,
-            grid,
-            roads,
-            blockerData,
-            allowExistingWallOverlap,
+        return new BuildingPlacementValidationSystem.WallValidationContext(
+            _runtimeBuildings,
             IsRuntimeBlockerCell,
-            (x, y) => IsPerpendicularWallOverlapCell(x, y, vertical),
-            IsLinearWallOverlapCell,
             _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : null);
-    }
-
-    private bool IsLinearWallOverlapCell(int x, int y)
-    {
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building?.Definition == null || !IsLinearWallDefinition(building.Definition))
-                continue;
-
-            Vector2Int min = building.OriginCell;
-            Vector2Int size = building.Definition.FootprintCells;
-            if (x >= min.x && x < min.x + size.x &&
-                y >= min.y && y < min.y + size.y)
-                return true;
-        }
-
-        return false;
-    }
-
-    private bool IsPerpendicularWallOverlapCell(int x, int y, bool vertical)
-    {
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building?.Definition == null || !IsLinearWallDefinition(building.Definition))
-                continue;
-
-            bool buildingVertical = building.Definition.FootprintCells.y > building.Definition.FootprintCells.x;
-            if (buildingVertical == vertical)
-                continue;
-
-            Vector2Int min = building.OriginCell;
-            Vector2Int size = building.Definition.FootprintCells;
-            if (x >= min.x && x < min.x + size.x &&
-                y >= min.y && y < min.y + size.y)
-                return true;
-        }
-
-        return false;
     }
 
     private Entity CreateBlockerEntity(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells)
@@ -4295,7 +4062,7 @@ public sealed class BuildingPlacementSystem
             TryResolveBuildingFocusWorldPosition,
             TryGetRuntimeBuildingApproachCell,
             IsRuntimeBuildingApproachCell,
-            IsWallGateDefinition);
+            BuildingBarrierSystem.IsWallGateDefinition);
     }
 
     private bool TryResolveBuildingFocusWorldPosition(RuntimeBuildingData building, out Vector3 worldPosition)
@@ -4361,7 +4128,7 @@ public sealed class BuildingPlacementSystem
             position => _selectionSystem != null && _selectionSystem.IsBoardablePlayerTransportClick(position),
             TryAssignSelectedHaulerOrders,
             (min, size) => _selectionSystem != null && _selectionSystem.TryIssueMoveOrderToBuilding(min, size),
-            ShouldUseExpandedSelectionArea);
+            BuildingBarrierSystem.ShouldUseExpandedSelectionArea);
     }
 
     private BuildingPlacementQuerySystem.Context CreateBuildingPlacementQueryContext()
@@ -4383,7 +4150,7 @@ public sealed class BuildingPlacementSystem
             TryGetEntityManager,
             EnsureEntityQueries,
             () => _liveFactionUnitsQuery,
-            IsWallGateDefinition);
+            BuildingBarrierSystem.IsWallGateDefinition);
     }
 
     private bool TryGetGridForSelection(out GridConfig grid)

@@ -324,6 +324,68 @@ internal sealed class BuildingBarrierSystem
         building.DoorZ.localEulerAngles = localEuler;
     }
 
+    public bool TryResolveNearbyWallVertical(Context context, Vector2Int originCell, BuildingDefinition definition, out bool vertical)
+    {
+        vertical = false;
+        if (definition == null || context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
+            return false;
+
+        RectInt gateRect = new(originCell, definition.FootprintCells);
+        int bestDistance = int.MaxValue;
+        bool found = false;
+
+        foreach (var entry in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building?.Definition == null || !IsLinearWallDefinition(building.Definition))
+                continue;
+
+            Vector2Int wallSize = building.Definition.FootprintCells;
+            RectInt wallRect = new(building.OriginCell, wallSize);
+            int dx = AxisDistance(gateRect.xMin, gateRect.xMax, wallRect.xMin, wallRect.xMax);
+            int dy = AxisDistance(gateRect.yMin, gateRect.yMax, wallRect.yMin, wallRect.yMax);
+            int distance = dx + dy;
+            if (distance > 1 || distance >= bestDistance)
+                continue;
+
+            bestDistance = distance;
+            vertical = wallSize.y > wallSize.x;
+            found = true;
+        }
+
+        return found;
+    }
+
+    public bool ShouldAlignGateToNearbyWall(Context context, Vector2Int originCell, BuildingDefinition definition, out bool vertical)
+    {
+        vertical = false;
+        return IsWallGateDefinition(definition) && TryResolveNearbyWallVertical(context, originCell, definition, out vertical);
+    }
+
+    public static bool IsLinearWallDefinition(BuildingDefinition definition)
+    {
+        return definition != null && definition.IsWall;
+    }
+
+    public static bool IsWallGateDefinition(BuildingDefinition definition)
+    {
+        if (definition == null)
+            return false;
+
+        string displayName = definition.DisplayName ?? string.Empty;
+        string prefabName = definition.Prefab != null ? definition.Prefab.name : string.Empty;
+        return displayName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+               prefabName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0;
+    }
+
+    public static bool ShouldUseExpandedSelectionArea(BuildingDefinition definition)
+    {
+        if (definition == null)
+            return false;
+
+        return IsLinearWallDefinition(definition) || IsWallGateDefinition(definition);
+    }
+
     private bool HasActiveWallOrGateOverlapping(Context context, RectInt rect, byte ownerFactionId)
     {
         if (context.RuntimeBuildings == null)
@@ -365,6 +427,17 @@ internal sealed class BuildingBarrierSystem
                a.xMax > b.xMin &&
                a.yMin < b.yMax &&
                a.yMax > b.yMin;
+    }
+
+    private static int AxisDistance(int minA, int maxA, int minB, int maxB)
+    {
+        if (maxA <= minB)
+            return minB - maxA;
+
+        if (maxB <= minA)
+            return minA - maxB;
+
+        return 0;
     }
 
     private static RectInt UnionRects(RectInt a, RectInt b)
@@ -412,8 +485,8 @@ internal sealed class BuildingBarrierSystem
 
     private static bool IsWallGateDefinition(Context context, BuildingDefinition definition)
     {
-        return definition != null &&
-               context.IsWallGateDefinition != null &&
-               context.IsWallGateDefinition(definition);
+        return context.IsWallGateDefinition != null
+            ? context.IsWallGateDefinition(definition)
+            : IsWallGateDefinition(definition);
     }
 }

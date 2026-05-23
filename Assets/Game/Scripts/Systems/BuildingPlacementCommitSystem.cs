@@ -97,6 +97,59 @@ internal sealed class BuildingPlacementCommitSystem
     public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, bool vertical);
     public delegate void DestroyRuntimeObjectDelegate(UnityEngine.Object target);
 
+    public static List<Vector2Int> BuildWallRunOrigins(Vector2Int start, Vector2Int end, Vector2Int footprint, bool vertical)
+    {
+        var origins = new List<Vector2Int> { start };
+        if (start == end)
+            return origins;
+
+        if (vertical)
+        {
+            int stepCells = Mathf.Max(1, footprint.y);
+            int delta = end.y - start.y;
+            int direction = delta >= 0 ? 1 : -1;
+            int segmentCount = Mathf.Abs(delta) / stepCells;
+            for (int i = 1; i <= segmentCount; i++)
+                origins.Add(new Vector2Int(start.x, start.y + direction * stepCells * i));
+        }
+        else
+        {
+            int stepCells = Mathf.Max(1, footprint.x);
+            int delta = end.x - start.x;
+            int direction = delta >= 0 ? 1 : -1;
+            int segmentCount = Mathf.Abs(delta) / stepCells;
+            for (int i = 1; i <= segmentCount; i++)
+                origins.Add(new Vector2Int(start.x + direction * stepCells * i, start.y));
+        }
+
+        return origins;
+    }
+
+    public static Vector2Int GetWallSegmentFootprint(BuildingPlacementSystem.BuildingDefinition definition, bool vertical)
+    {
+        if (definition == null)
+            return Vector2Int.one;
+
+        int lengthCells = Mathf.Max(1, Mathf.RoundToInt(Mathf.Max(
+            Mathf.Abs(definition.LocalBounds.size.x),
+            Mathf.Abs(definition.LocalBounds.size.z))));
+        int thicknessCells = Mathf.Max(1, Mathf.RoundToInt(Mathf.Min(
+            Mathf.Abs(definition.LocalBounds.size.x),
+            Mathf.Abs(definition.LocalBounds.size.z))));
+
+        Vector2Int footprint = new(lengthCells, thicknessCells);
+        return vertical ? new Vector2Int(footprint.y, footprint.x) : footprint;
+    }
+
+    public static Quaternion ResolvePlacementWorldRotation(BuildingPlacementSystem.BuildingDefinition definition, bool rotateVertical)
+    {
+        bool rotateNinety = rotateVertical;
+        if (BuildingBarrierSystem.IsLinearWallDefinition(definition) && IsWallLengthAxisLocalZ(definition))
+            rotateNinety = !rotateNinety;
+
+        return rotateNinety ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
+    }
+
     public RuntimeBuildingData CommitPlacement(CommitRequest request, CommitContext context)
     {
         if (request.Definition == null || context.RegisterRuntimeBuilding == null || context.CloneDefinitionWithFootprint == null)
@@ -188,5 +241,13 @@ internal sealed class BuildingPlacementCommitSystem
                definition.SecondarySpawnUnitPrefab != null ||
                definition.TertiarySpawnUnitPrefab != null ||
                definition.QuaternarySpawnUnitPrefab != null;
+    }
+
+    private static bool IsWallLengthAxisLocalZ(BuildingPlacementSystem.BuildingDefinition definition)
+    {
+        if (definition == null || !definition.HasLocalBounds)
+            return false;
+
+        return Mathf.Abs(definition.LocalBounds.size.z) > Mathf.Abs(definition.LocalBounds.size.x);
     }
 }

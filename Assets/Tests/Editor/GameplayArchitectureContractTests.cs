@@ -136,6 +136,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
         StringAssert.Contains("Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
+        StringAssert.Contains("Selected-building unit production request routing, camp item request failure policy, UI production arm consumption, friendly producer lookup, production request focus, and last camp production focus memory belong in `BuildingProductionRequestSystem`", contract);
         StringAssert.Contains("Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`", contract);
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
         StringAssert.Contains("Placement commit expansion, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`", contract);
@@ -2067,6 +2068,60 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryGetRunwayFootprintRect\b"),
             "Runway placement footprint expansion belongs in BuildingRunwaySystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedProductionRequestSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string requestFile = "Assets/Game/Scripts/Systems/BuildingProductionRequestSystem.cs";
+        Assert.IsTrue(File.Exists(requestFile), "The building production request slice must live in BuildingProductionRequestSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string request = File.ReadAllText(requestFile);
+        StringAssert.Contains("BuildingProductionRequestSystem _buildingProductionRequestSystem", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.CreateUnitFromBuilding", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.TryRequestCampItem", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.GetCampRequestFailure", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.FocusLastCampProductionRequest", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.ArmNextProductionFromUi", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.CanCreateUnitFromSelectedBuilding", placement);
+        StringAssert.Contains("_buildingProductionRequestSystem.CanQueueUnitFromBuilding", placement);
+
+        StringAssert.Contains("TryRequestCampItem", request);
+        StringAssert.Contains("GetCampRequestFailure", request);
+        StringAssert.Contains("TryFindFirstFriendlyProducerBuilding", request);
+        StringAssert.Contains("TryGetRequiredProducerDisplayName", request);
+        StringAssert.Contains("SelectBuildingForProductionRequest", request);
+        StringAssert.Contains("RememberCampProductionFocus", request);
+        StringAssert.Contains("ResolveProductionRequestFocusWorldPosition", request);
+        StringAssert.Contains("ConsumeUiProductionArm", request);
+
+        Assert.IsFalse(
+            placement.Contains("_armedProductionFrame", StringComparison.Ordinal),
+            "UI production arm state belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("_lastCampProductionFocusBuilding", StringComparison.Ordinal) ||
+            placement.Contains("_lastCampProductionFocusPrefab", StringComparison.Ordinal),
+            "Last camp production focus memory belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryFindFirstFriendlyProducerBuilding\b"),
+            "Friendly producer lookup belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryGetRequiredProducerDisplayName\b"),
+            "Required producer display lookup belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+SelectBuildingForProductionRequest\b"),
+            "Production request focus belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+RememberCampProductionFocus\b"),
+            "Deferred camp production focus memory belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+Vector3\s+ResolveProductionRequestFocusWorldPosition\b"),
+            "Production request focus position policy belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+ConsumeUiProductionArm\b"),
+            "UI production arm consumption belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

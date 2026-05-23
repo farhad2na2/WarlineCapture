@@ -163,7 +163,6 @@ public sealed class BuildingPlacementSystem
     private const double FreezeLogThresholdSeconds = 0.05d;
     private static readonly bool VerboseResourceHaulerLogs = false;
     private const float DestroyedBuildingLifetimeSeconds = 5f;
-    private int _armedProductionFrame = -1;
 
     internal sealed class BuildingDefinition
     {
@@ -360,6 +359,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
     private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
     private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
+    private readonly BuildingProductionRequestSystem _buildingProductionRequestSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -401,8 +401,6 @@ public sealed class BuildingPlacementSystem
     private MaterialPropertyBlock _markerPropertyBlock;
     private int _deferRuntimeBuildingSideEffectsDepth;
     private bool _pendingMarkerRefresh;
-    private RuntimeBuildingData _lastCampProductionFocusBuilding;
-    private GameObject _lastCampProductionFocusPrefab;
     private bool _hasPlacementInvalidPrefix;
     private int _placementInvalidPrefixWidth;
     private int _placementInvalidPrefixHeight;
@@ -2247,43 +2245,20 @@ public sealed class BuildingPlacementSystem
 
     public void CreateUnitFromBuilding(int buildingId, int productionIndex)
     {
-        bool armed = ConsumeUiProductionArm();
-        if (!armed)
-            return;
-
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building))
-            return;
-
-        GameObject spawnUnitPrefab = GetProductionPrefab(building.Definition, productionIndex);
-        if (spawnUnitPrefab == null)
-            return;
-
-        if (!CanQueueUnitFromBuilding(building, spawnUnitPrefab, true))
-            return;
-
-        bool queued = TryQueuePlayerUnitFromBuilding(building, productionIndex, spawnUnitPrefab);
-        if (!queued)
-            Debug.LogWarning($"Unable to create a unit for the selected building '{building.Definition.DisplayName}'.");
+        _buildingProductionRequestSystem.CreateUnitFromBuilding(
+            CreateBuildingProductionRequestContext(),
+            buildingId,
+            productionIndex,
+            Time.frameCount);
     }
 
     public CampRequestFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
     {
-        requiredBuildingDisplayName = string.Empty;
-        if (prefab == null)
-            return CampRequestFailure.InvalidSelection;
-
-        int normalizedPrice = Mathf.Max(0, price);
-        if (_resourceDollars < normalizedPrice)
-            return CampRequestFailure.NotEnoughMoney;
-
-        if (_configuredDefinitionsByPrefab.ContainsKey(prefab))
-            return CampRequestFailure.None;
-
-        if (TryFindFirstFriendlyProducerBuilding(prefab, out _, out _, out _))
-            return CampRequestFailure.None;
-
-        TryGetRequiredProducerDisplayName(prefab, out requiredBuildingDisplayName);
-        return CampRequestFailure.MissingProducerBuilding;
+        return _buildingProductionRequestSystem.GetCampRequestFailure(
+            CreateBuildingProductionRequestContext(),
+            prefab,
+            price,
+            out requiredBuildingDisplayName);
     }
 
     public CampRequestFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName)
@@ -2293,68 +2268,23 @@ public sealed class BuildingPlacementSystem
 
     public CampRequestFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
     {
-        CampRequestFailure failure = GetCampRequestFailure(prefab, price, out requiredBuildingDisplayName);
-        if (failure != CampRequestFailure.None)
-            return failure;
-
-        if (_configuredDefinitionsByPrefab.ContainsKey(prefab))
-        {
-            if (!BeginPlacementForConfiguredSpawnable(prefab))
-            {
-                return CampRequestFailure.InvalidSelection;
-            }
-
-            _activePlacementCost = Mathf.Max(0, price);
-            return CampRequestFailure.None;
-        }
-
-        if (!TryFindFirstFriendlyProducerBuilding(prefab, out int producerBuildingId, out int productionIndex, out _))
-        {
-            TryGetRequiredProducerDisplayName(prefab, out requiredBuildingDisplayName);
-            return CampRequestFailure.MissingProducerBuilding;
-        }
-
-        if (!TrySpendDollars(price))
-            return CampRequestFailure.NotEnoughMoney;
-
-        if (!_runtimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) || producerBuilding == null)
-        {
-            _resourceDollars += Mathf.Max(0, price);
-            return CampRequestFailure.InvalidSelection;
-        }
-
-        if (focusProducerOnSuccess)
-            SelectBuildingForProductionRequest(producerBuilding, prefab);
-        else
-            RememberCampProductionFocus(producerBuilding, prefab);
-        ArmNextProductionFromUi();
-        CreateUnitFromBuilding(producerBuildingId, productionIndex);
-        GameRuntimeStats.RecordUnitOrdered(prefab);
-        return CampRequestFailure.None;
+        return _buildingProductionRequestSystem.TryRequestCampItem(
+            CreateBuildingProductionRequestContext(),
+            prefab,
+            price,
+            focusProducerOnSuccess,
+            Time.frameCount,
+            out requiredBuildingDisplayName);
     }
 
     public void FocusLastCampProductionRequest()
     {
-        if (_lastCampProductionFocusBuilding == null || _lastCampProductionFocusPrefab == null)
-            return;
-
-        SelectBuildingForProductionRequest(_lastCampProductionFocusBuilding, _lastCampProductionFocusPrefab);
-        _lastCampProductionFocusBuilding = null;
-        _lastCampProductionFocusPrefab = null;
+        _buildingProductionRequestSystem.FocusLastCampProductionRequest(CreateBuildingProductionRequestContext());
     }
 
     public void ArmNextProductionFromUi()
     {
-        _armedProductionFrame = Time.frameCount;
-    }
-
-    private bool ConsumeUiProductionArm()
-    {
-        if (_armedProductionFrame != Time.frameCount)
-            return false;
-
-        _armedProductionFrame = -1;
-        return true;
+        _buildingProductionRequestSystem.ArmNextProductionFromUi(Time.frameCount);
     }
 
     public void CreateSoldierFromSelectedBuilding()
@@ -2384,39 +2314,19 @@ public sealed class BuildingPlacementSystem
 
     public bool CanCreateUnitFromSelectedBuilding(int productionIndex)
     {
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue || !_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building))
-            return false;
-
-        GameObject spawnUnitPrefab = GetProductionPrefab(building.Definition, productionIndex);
-
-        return spawnUnitPrefab != null && CanQueueUnitFromBuilding(building, spawnUnitPrefab, false);
+        return _buildingProductionRequestSystem.CanCreateUnitFromSelectedBuilding(
+            CreateBuildingProductionRequestContext(),
+            ActiveBuildingId,
+            productionIndex);
     }
 
     private bool CanQueueUnitFromBuilding(RuntimeBuildingData building, GameObject spawnUnitPrefab, bool logReason)
     {
-        if (building == null || spawnUnitPrefab == null)
-            return false;
-
-        BuildingProductionSystem.ProductionTransportSettings transportSettings = _buildingProductionSystem.ResolveProductionTransportSettings(
+        return _buildingProductionRequestSystem.CanQueueUnitFromBuilding(
+            CreateBuildingProductionRequestContext(),
+            building,
             spawnUnitPrefab,
-            unitSpawnPrefabs,
-            _unitSpawnPrefabsByKey,
-            TryGetPrefabLocalBounds);
-
-        if (transportSettings.TransportPrefab == null)
-            return true;
-
-        if (transportSettings.RequiresAirportRunway &&
-            transportSettings.Mode == ProductionTransportMode.Plane &&
-            !_buildingRunwaySystem.TryGetNearestAirportRunway(_runtimeBuildings, building.Instance != null ? building.Instance.transform.position : Vector3.zero, out _, out _, out _, out _))
-        {
-            if (logReason)
-                Debug.LogWarning($"[BuildingSpawn] No airport runway is available for '{spawnUnitPrefab.name}'.");
-            return false;
-        }
-
-        return true;
+            logReason);
     }
 
     public void DeleteSelectedBuilding()
@@ -5503,42 +5413,6 @@ public sealed class BuildingPlacementSystem
         };
     }
 
-    private bool TryFindFirstFriendlyProducerBuilding(GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
-    {
-        buildingId = 0;
-        productionIndex = -1;
-        buildingDisplayName = string.Empty;
-        if (unitPrefab == null)
-            return false;
-
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building?.Definition == null || building.IsDestroyed)
-                continue;
-            if (building.IsCityGenerated)
-                continue;
-            if (building.HasOwnerFaction && building.OwnerFactionId != 0)
-                continue;
-
-            int productionCount = GetProductionCount(building.Definition);
-            for (int i = 0; i < productionCount; i++)
-            {
-                if (GetProductionPrefab(building.Definition, i) != unitPrefab)
-                    continue;
-                if (!CanQueueUnitFromBuilding(building, unitPrefab, false))
-                    continue;
-
-                buildingId = pair.Key;
-                productionIndex = i;
-                buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private bool TryFindFirstFactionProducerBuilding(byte factionId, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
     {
         buildingId = 0;
@@ -5573,81 +5447,6 @@ public sealed class BuildingPlacementSystem
         }
 
         return false;
-    }
-
-    private bool TryGetRequiredProducerDisplayName(GameObject unitPrefab, out string buildingDisplayName)
-    {
-        buildingDisplayName = string.Empty;
-        if (unitPrefab == null)
-            return false;
-
-        for (int i = 0; i < _configuredSpawnableDefinitions.Count; i++)
-        {
-            BuildingDefinition definition = _configuredSpawnableDefinitions[i];
-            if (definition == null)
-                continue;
-
-            int productionCount = GetProductionCount(definition);
-            for (int productionIndex = 0; productionIndex < productionCount; productionIndex++)
-            {
-                if (GetProductionPrefab(definition, productionIndex) != unitPrefab)
-                    continue;
-
-                buildingDisplayName = string.IsNullOrWhiteSpace(definition.DisplayName) ? "Building" : definition.DisplayName;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void SelectBuildingForProductionRequest(RuntimeBuildingData building, GameObject producedUnitPrefab)
-    {
-        if (building == null)
-            return;
-
-        _runtimeBuildingSystem.SelectBuilding(building.Id);
-        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-        RefreshBuildingMarkerVisibility();
-
-        _selectionSystem?.ClearFocusedUnit();
-
-        Vector3 focusWorldPosition = ResolveProductionRequestFocusWorldPosition(building, producedUnitPrefab);
-        _selectionSystem?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
-    }
-
-    private void RememberCampProductionFocus(RuntimeBuildingData building, GameObject producedUnitPrefab)
-    {
-        _lastCampProductionFocusBuilding = building;
-        _lastCampProductionFocusPrefab = producedUnitPrefab;
-    }
-
-    private Vector3 ResolveProductionRequestFocusWorldPosition(RuntimeBuildingData producerBuilding, GameObject producedUnitPrefab)
-    {
-        if (producerBuilding == null)
-            return Vector3.zero;
-
-        BuildingProductionSystem.ProductionTransportSettings transportSettings = _buildingProductionSystem.ResolveProductionTransportSettings(
-            producedUnitPrefab,
-            unitSpawnPrefabs,
-            _unitSpawnPrefabsByKey,
-            TryGetPrefabLocalBounds);
-
-        if (transportSettings.Mode == ProductionTransportMode.Plane &&
-            transportSettings.RequiresAirportRunway &&
-            _buildingRunwaySystem.TryGetNearestAirportRunway(
-                _runtimeBuildings,
-                producerBuilding.Instance != null ? producerBuilding.Instance.transform.position : Vector3.zero,
-                out _,
-                out Vector3 runwayCenter,
-                out _,
-                out _))
-        {
-            runwayCenter.y = 0f;
-            return runwayCenter;
-        }
-
-        return ResolveBuildingFocusWorldPosition(producerBuilding);
     }
 
     private static bool TryGetFootprintFromVisualBounds(GameObject prefab, out Vector2Int footprint)
@@ -5868,6 +5667,34 @@ public sealed class BuildingPlacementSystem
             _resolveProductionGroundGoalCellForTransport,
             _moveNewestProducedUnitToCellForTransport,
             _alignNewestProducedUnitRotationForTransport);
+    }
+
+    private BuildingProductionRequestSystem.Context CreateBuildingProductionRequestContext()
+    {
+        return new BuildingProductionRequestSystem.Context(
+            _runtimeBuildings,
+            _configuredSpawnableDefinitions,
+            _configuredDefinitionsByPrefab,
+            unitSpawnPrefabs,
+            _unitSpawnPrefabsByKey,
+            _resourceDollars,
+            _buildingProductionSystem,
+            _buildingRunwaySystem,
+            GetProductionPrefab,
+            TryGetPrefabLocalBounds,
+            BeginPlacementForConfiguredSpawnable,
+            TrySpendDollars,
+            amount => _resourceDollars += Mathf.Max(0, amount),
+            cost => _activePlacementCost = Mathf.Max(0, cost),
+            TryQueuePlayerUnitFromBuilding,
+            buildingId => _runtimeBuildingSystem.SelectBuilding(buildingId),
+            () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
+            RefreshBuildingMarkerVisibility,
+            () => _selectionSystem?.ClearFocusedUnit(),
+            position => _selectionSystem?.SmoothMoveCameraGroundCenterTo(position),
+            ResolveBuildingFocusWorldPosition,
+            GameRuntimeStats.RecordUnitOrdered,
+            Debug.LogWarning);
     }
 
     private BuildingSpawnSystem.Context CreateBuildingSpawnContext()

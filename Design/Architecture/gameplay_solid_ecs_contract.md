@@ -170,6 +170,7 @@ Allowed direction:
 - Footprint, road, blocker, and wall-placement validity belong in `BuildingPlacementValidationSystem`.
 - Runtime building registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`.
 - Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`.
+- Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`.
 - Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`.
 - Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; full building visual ownership should continue moving there by slice.
 - Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`; full building combat ownership should continue moving there by slice.

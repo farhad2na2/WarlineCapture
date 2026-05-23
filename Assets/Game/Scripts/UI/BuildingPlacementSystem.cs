@@ -357,6 +357,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem = new();
     private readonly BuildingSelectionSystem _buildingSelectionSystem = new();
     private readonly BuildingBarrierSystem _buildingBarrierSystem = new();
+    private readonly BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -673,96 +674,22 @@ public sealed class BuildingPlacementSystem
 
     public int CountRuntimeBuildingsForFaction(byte factionId)
     {
-        int count = 0;
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-
-            count++;
-        }
-
-        return count;
+        return _buildingRuntimeQuerySystem.CountRuntimeBuildingsForFaction(CreateBuildingRuntimeQueryContext(), factionId);
     }
 
     public int CountRuntimeBuildingsForFaction(byte factionId, string buildingId)
     {
-        string normalized = NormalizeSpawnableKey(buildingId);
-        if (string.IsNullOrEmpty(normalized))
-            return CountRuntimeBuildingsForFaction(factionId);
-
-        int count = 0;
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-            if (!RuntimeBuildingMatchesId(building, normalized))
-                continue;
-
-            count++;
-        }
-
-        return count;
+        return _buildingRuntimeQuerySystem.CountRuntimeBuildingsForFaction(CreateBuildingRuntimeQueryContext(), factionId, buildingId);
     }
 
     public int CountRuntimeProducedUnitsForFaction(byte factionId, string unitId)
     {
-        string normalized = NormalizeSpawnableKey(unitId);
-        int count = 0;
-        if (!TryGetEntityManager(out EntityManager em))
-            return 0;
-
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-            if (building.ProducedUnits == null)
-                continue;
-
-            _buildingProductionSystem.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
-            for (int i = 0; i < building.ProducedUnits.Count; i++)
-            {
-                Entity unit = building.ProducedUnits[i];
-                if (em.HasComponent<Faction>(unit) && em.GetComponentData<Faction>(unit).Id != factionId)
-                    continue;
-                if (!RuntimeProducedUnitMatchesId(building, unit, normalized))
-                    continue;
-
-                count++;
-            }
-        }
-
-        return count;
+        return _buildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction(CreateBuildingRuntimeQueryContext(), factionId, unitId);
     }
 
     public int CountPendingProductionsForFaction(byte factionId, string unitId)
     {
-        string normalized = NormalizeSpawnableKey(unitId);
-        int count = 0;
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || !building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-            if (building.PendingProductions == null)
-                continue;
-
-            for (int i = 0; i < building.PendingProductions.Count; i++)
-            {
-                RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-                if (pending == null)
-                    continue;
-                if (!UnitPrefabMatchesId(pending.Prefab, normalized))
-                    continue;
-
-                count++;
-            }
-        }
-
-        return count;
+        return _buildingRuntimeQuerySystem.CountPendingProductionsForFaction(CreateBuildingRuntimeQueryContext(), factionId, unitId);
     }
 
     public bool TryGetConfiguredUnit(string unitId, out ConfiguredUnitEntry entry)
@@ -828,109 +755,56 @@ public sealed class BuildingPlacementSystem
 
     public void GetRuntimeHouseBuildingIds(List<int> results)
     {
-        if (results == null)
-            return;
-
-        results.Clear();
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || building.Instance == null)
-                continue;
-            if (!IsHouseBuilding(building))
-                continue;
-
-            results.Add(pair.Key);
-        }
+        _buildingRuntimeQuerySystem.GetRuntimeHouseBuildingIds(CreateBuildingRuntimeQueryContext(), results);
     }
 
     public void GetRuntimeBuildingIdsByRole(BuildingRole role, List<int> results)
     {
-        if (results == null)
-            return;
-
-        results.Clear();
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building?.Definition == null || building.IsDestroyed)
-                continue;
-
-            if (building.Definition.Role != role)
-                continue;
-
-            results.Add(pair.Key);
-        }
+        _buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole(CreateBuildingRuntimeQueryContext(), role, results);
     }
 
     public bool TryGetRuntimeBuildingFocusWorldPosition(int buildingId, out Vector3 worldPosition)
     {
-        worldPosition = Vector3.zero;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null)
-            return false;
-
-        worldPosition = ResolveBuildingFocusWorldPosition(building);
-        return true;
+        return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingFocusWorldPosition(CreateBuildingRuntimeQueryContext(), buildingId, out worldPosition);
     }
 
     public bool TryGetRuntimeBuildingDestroyedState(int buildingId, out bool isDestroyed)
     {
-        isDestroyed = false;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null)
-            return false;
-
-        isDestroyed = building.IsDestroyed;
-        return true;
+        return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingDestroyedState(CreateBuildingRuntimeQueryContext(), buildingId, out isDestroyed);
     }
 
     public bool TryGetRuntimeBuildingRefugeeSettings(int buildingId, out int refugeeCapacity, out int upkeepPerCitizenPerDay)
     {
-        refugeeCapacity = 0;
-        upkeepPerCitizenPerDay = 0;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building?.Definition == null)
-            return false;
-
-        refugeeCapacity = Mathf.Max(0, building.Definition.RefugeeCapacity);
-        upkeepPerCitizenPerDay = Mathf.Max(0, building.Definition.RefugeeUpkeepPerCitizenPerDay);
-        return true;
+        return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingRefugeeSettings(
+            CreateBuildingRuntimeQueryContext(),
+            buildingId,
+            out refugeeCapacity,
+            out upkeepPerCitizenPerDay);
     }
 
     public bool IsRuntimeBuildingCityGenerated(int buildingId)
     {
-        return _runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) &&
-               building != null &&
-               building.IsCityGenerated;
+        return _buildingRuntimeQuerySystem.IsRuntimeBuildingCityGenerated(CreateBuildingRuntimeQueryContext(), buildingId);
     }
 
     public bool IsRuntimeBuildingWall(int buildingId)
     {
-        return _runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) &&
-               building?.Definition != null &&
-               building.Definition.IsWall;
+        return _buildingRuntimeQuerySystem.IsRuntimeBuildingWall(CreateBuildingRuntimeQueryContext(), buildingId);
     }
 
     public bool TryGetRuntimeBuildingOwnerFaction(int buildingId, out byte factionId)
     {
-        factionId = 0;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null || !building.HasOwnerFaction)
-            return false;
-
-        factionId = building.OwnerFactionId;
-        return true;
+        return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingOwnerFaction(CreateBuildingRuntimeQueryContext(), buildingId, out factionId);
     }
 
     public bool TryGetRuntimeBuildingCombatInfo(Entity combatEntity, out bool isGate, out bool isWall, out byte ownerFactionId)
     {
-        isGate = false;
-        isWall = false;
-        ownerFactionId = 0;
-        if (!TryFindRuntimeBuildingByCombatEntity(combatEntity, out RuntimeBuildingData building) || building?.Definition == null)
-            return false;
-
-        isGate = IsWallGateDefinition(building.Definition);
-        isWall = building.Definition.IsWall;
-        ownerFactionId = building.HasOwnerFaction ? building.OwnerFactionId : (byte)0;
-        return true;
+        return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingCombatInfo(
+            CreateBuildingRuntimeQueryContext(),
+            combatEntity,
+            out isGate,
+            out isWall,
+            out ownerFactionId);
     }
 
     public bool TryResolveBaseBreachTarget(
@@ -1025,23 +899,9 @@ public sealed class BuildingPlacementSystem
 
     public bool TryGetRuntimeBuildingApproachCell(int buildingId, int2 unitFootprint, int2 referenceCell, out int2 goal)
     {
-        goal = default;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null || building.IsDestroyed)
-            return false;
-        if (!TryGetEntityManager(out EntityManager em))
-            return false;
-        if (!TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
-            return false;
-
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-        return TryFindBuildingApproachCell(
-            grid,
-            walkable,
-            blockerData.Blocked,
-            occupied,
-            building.OriginCell,
-            building.Definition.FootprintCells,
+        return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingApproachCell(
+            CreateBuildingRuntimeQueryContext(),
+            buildingId,
             unitFootprint,
             referenceCell,
             out goal);
@@ -1049,12 +909,11 @@ public sealed class BuildingPlacementSystem
 
     public bool IsRuntimeBuildingApproachCell(int buildingId, int2 currentCell, int2 unitFootprint)
     {
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null || building.IsDestroyed)
-            return false;
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return false;
-
-        return IsHaulerAtBuildingApproach(currentCell, unitFootprint, building, grid);
+        return _buildingRuntimeQuerySystem.IsRuntimeBuildingApproachCell(
+            CreateBuildingRuntimeQueryContext(),
+            buildingId,
+            currentCell,
+            unitFootprint);
     }
 
     public bool TryResolveConfiguredUnitPrefabEntity(GameObject unitPrefab, out Entity prefabEntity)
@@ -4613,29 +4472,6 @@ public sealed class BuildingPlacementSystem
         return building?.Definition != null && RuntimeDefinitionMatchesId(building.Definition, normalizedBuildingId);
     }
 
-    private bool RuntimeProducedUnitMatchesId(RuntimeBuildingData building, Entity unit, string normalizedUnitId)
-    {
-        if (string.IsNullOrEmpty(normalizedUnitId))
-            return true;
-        if (building?.ProducedUnitPrefabs != null &&
-            building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
-            UnitPrefabMatchesId(prefab, normalizedUnitId))
-        {
-            return true;
-        }
-        if (TryGetEntityManager(out EntityManager em) &&
-            unit != Entity.Null &&
-            em.Exists(unit) &&
-            em.HasComponent<UnitSourcePrefabKey>(unit))
-        {
-            string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString();
-            if (NormalizeSpawnableKey(sourceKey) == normalizedUnitId)
-                return true;
-        }
-
-        return false;
-    }
-
     private static bool UnitPrefabMatchesId(GameObject prefab, string normalizedUnitId)
     {
         if (string.IsNullOrEmpty(normalizedUnitId))
@@ -5116,6 +4952,66 @@ public sealed class BuildingPlacementSystem
             () => _mainMenuPlayUi?.NotifyStaticMinimapChanged(),
             message => Debug.Log(message),
             EnableBuildingDestroyDiagnostics);
+    }
+
+    private BuildingRuntimeQuerySystem.Context CreateBuildingRuntimeQueryContext()
+    {
+        return new BuildingRuntimeQuerySystem.Context(
+            _runtimeBuildings,
+            TryGetEntityManager,
+            _buildingProductionSystem,
+            NormalizeSpawnableKey,
+            IsHouseBuilding,
+            RuntimeBuildingMatchesId,
+            UnitPrefabMatchesId,
+            TryResolveBuildingFocusWorldPosition,
+            TryGetRuntimeBuildingApproachCell,
+            IsRuntimeBuildingApproachCell,
+            IsWallGateDefinition);
+    }
+
+    private bool TryResolveBuildingFocusWorldPosition(RuntimeBuildingData building, out Vector3 worldPosition)
+    {
+        worldPosition = Vector3.zero;
+        if (building == null)
+            return false;
+
+        worldPosition = ResolveBuildingFocusWorldPosition(building);
+        return true;
+    }
+
+    private bool TryGetRuntimeBuildingApproachCell(RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal)
+    {
+        goal = default;
+        if (building == null || building.IsDestroyed)
+            return false;
+        if (!TryGetEntityManager(out EntityManager em))
+            return false;
+        if (!TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
+            return false;
+
+        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
+        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
+        return TryFindBuildingApproachCell(
+            grid,
+            walkable,
+            blockerData.Blocked,
+            occupied,
+            building.OriginCell,
+            building.Definition.FootprintCells,
+            unitFootprint,
+            referenceCell,
+            out goal);
+    }
+
+    private bool IsRuntimeBuildingApproachCell(RuntimeBuildingData building, int2 currentCell, int2 unitFootprint)
+    {
+        if (building == null || building.IsDestroyed)
+            return false;
+        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
+            return false;
+
+        return IsHaulerAtBuildingApproach(currentCell, unitFootprint, building, grid);
     }
 
     private bool TryGetGridForRuntimeCreation(out GridConfig grid)

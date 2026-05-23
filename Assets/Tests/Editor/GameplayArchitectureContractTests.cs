@@ -132,6 +132,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
+        StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
@@ -1785,6 +1786,61 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void BuildingPlacementSystemMustDelegateExtractedRuntimeQuerySlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string runtimeQueryFile = "Assets/Game/Scripts/Systems/BuildingRuntimeQuerySystem.cs";
+        Assert.IsTrue(File.Exists(runtimeQueryFile), "Runtime building read/query behavior must live in BuildingRuntimeQuerySystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string runtimeQuery = File.ReadAllText(runtimeQueryFile);
+        StringAssert.Contains("BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem", placement);
+        StringAssert.Contains("CreateBuildingRuntimeQueryContext", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.CountRuntimeBuildingsForFaction", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.CountPendingProductionsForFaction", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.GetRuntimeHouseBuildingIds", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingFocusWorldPosition", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingDestroyedState", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingRefugeeSettings", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.IsRuntimeBuildingCityGenerated", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.IsRuntimeBuildingWall", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingOwnerFaction", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingCombatInfo", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingApproachCell", placement);
+        StringAssert.Contains("_buildingRuntimeQuerySystem.IsRuntimeBuildingApproachCell", placement);
+
+        StringAssert.Contains("CountRuntimeBuildingsForFaction", runtimeQuery);
+        StringAssert.Contains("CountRuntimeProducedUnitsForFaction", runtimeQuery);
+        StringAssert.Contains("CountPendingProductionsForFaction", runtimeQuery);
+        StringAssert.Contains("GetRuntimeHouseBuildingIds", runtimeQuery);
+        StringAssert.Contains("GetRuntimeBuildingIdsByRole", runtimeQuery);
+        StringAssert.Contains("TryGetRuntimeBuildingFocusWorldPosition", runtimeQuery);
+        StringAssert.Contains("TryGetRuntimeBuildingDestroyedState", runtimeQuery);
+        StringAssert.Contains("TryGetRuntimeBuildingRefugeeSettings", runtimeQuery);
+        StringAssert.Contains("TryGetRuntimeBuildingCombatInfo", runtimeQuery);
+        StringAssert.Contains("TryGetRuntimeBuildingApproachCell", runtimeQuery);
+        StringAssert.Contains("IsRuntimeBuildingApproachCell", runtimeQuery);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+int\s+CountRuntimeBuildingsForFaction\([\s\S]*?foreach\s*\(KeyValuePair<int,\s*RuntimeBuildingData>[\s\S]*?public\s+int\s+CountRuntimeBuildingsForFaction\(byte\s+factionId,\s+string\s+buildingId\)"),
+            "Faction building count iteration belongs in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+int\s+CountRuntimeProducedUnitsForFaction\([\s\S]*?PruneProducedUnits[\s\S]*?public\s+int\s+CountPendingProductionsForFaction"),
+            "Produced-unit count pruning and iteration belong in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+void\s+GetRuntimeHouseBuildingIds\([\s\S]*?foreach\s*\(KeyValuePair<int,\s*RuntimeBuildingData>[\s\S]*?public\s+void\s+GetRuntimeBuildingIdsByRole"),
+            "Runtime house id queries belong in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+bool\s+TryGetRuntimeBuildingCombatInfo\([\s\S]*?TryFindRuntimeBuildingByCombatEntity[\s\S]*?public\s+bool\s+TryResolveBaseBreachTarget"),
+            "Runtime combat entity info queries belong in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+bool\s+TryGetRuntimeBuildingApproachCell\([\s\S]*?TryFindBuildingApproachCell[\s\S]*?public\s+bool\s+IsRuntimeBuildingApproachCell"),
+            "Runtime approach-cell query routing belongs in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
     public void BuildingPlacementSystemMustDelegateExtractedSelectionSlice()
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
@@ -1991,14 +2047,17 @@ public sealed class GameplayArchitectureContractTests
         const string spawnFile = "Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs";
         const string spawnPrefabFile = "Assets/Game/Scripts/Systems/BuildingSpawnPrefabSystem.cs";
         const string runwayFile = "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs";
+        const string runtimeQueryFile = "Assets/Game/Scripts/Systems/BuildingRuntimeQuerySystem.cs";
         Assert.IsTrue(File.Exists(productionFile), "The building production slice must live in BuildingProductionSystem.");
         Assert.IsTrue(File.Exists(productionSlotFile), "The production slot slice must live in BuildingProductionSlotSystem.");
         Assert.IsTrue(File.Exists(productionTransportFile), "The active production transport visual/update slice must live in BuildingProductionTransportSystem.");
         Assert.IsTrue(File.Exists(spawnFile), "The produced-unit spawn slice must live in BuildingSpawnSystem.");
         Assert.IsTrue(File.Exists(spawnPrefabFile), "The spawn prefab/entity resolution slice must live in BuildingSpawnPrefabSystem.");
         Assert.IsTrue(File.Exists(runwayFile), "The runway slice must live in BuildingRunwaySystem.");
+        Assert.IsTrue(File.Exists(runtimeQueryFile), "Produced-unit count read models must delegate pruning through BuildingRuntimeQuerySystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string runtimeQuery = File.ReadAllText(runtimeQueryFile);
         StringAssert.Contains("BuildingProductionSystem _buildingProductionSystem", placement);
         StringAssert.Contains("BuildingProductionSlotSystem _buildingProductionSlotSystem", placement);
         StringAssert.Contains("BuildingProductionTransportSystem _buildingProductionTransportSystem", placement);
@@ -2011,7 +2070,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingProductionSystem.DelayPendingProduction", placement);
         StringAssert.Contains("_buildingProductionSystem.IsReady", placement);
         StringAssert.Contains("_buildingProductionSystem.IsReadyWithin", placement);
-        StringAssert.Contains("_buildingProductionSystem.PruneProducedUnits", placement);
+        StringAssert.Contains("context.ProductionSystem?.PruneProducedUnits", runtimeQuery);
         StringAssert.Contains("_buildingProductionSystem.RemovePendingAt", placement);
 
         string production = File.ReadAllText(productionFile);

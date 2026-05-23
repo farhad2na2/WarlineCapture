@@ -135,7 +135,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
-        StringAssert.Contains("Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
+        StringAssert.Contains("Unit production queue item initialization, player unit production queue mutation, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
         StringAssert.Contains("Selected-building unit production request routing, camp item request failure policy, UI production arm consumption, friendly producer lookup, production request focus, and last camp production focus memory belong in `BuildingProductionRequestSystem`", contract);
         StringAssert.Contains("Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`", contract);
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
@@ -1923,20 +1923,19 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingSpawnSystem _buildingSpawnSystem", placement);
         StringAssert.Contains("BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem", placement);
         StringAssert.Contains("BuildingRunwaySystem _buildingRunwaySystem", placement);
-        StringAssert.Contains("_buildingProductionSystem.InitializePendingProduction", placement);
+        StringAssert.Contains("_buildingProductionSystem.TryQueuePlayerUnitFromBuilding", placement);
         StringAssert.Contains("_buildingProductionSystem.GetProgress", placement);
         StringAssert.Contains("_buildingProductionSystem.ShouldLaunchTransport", placement);
         StringAssert.Contains("_buildingProductionSystem.DelayPendingProduction", placement);
         StringAssert.Contains("_buildingProductionSystem.IsReady", placement);
         StringAssert.Contains("_buildingProductionSystem.IsReadyWithin", placement);
         StringAssert.Contains("_buildingProductionSystem.PruneProducedUnits", placement);
-        StringAssert.Contains("_buildingProductionSlotSystem.TryReserveProductionSlot", placement);
         StringAssert.Contains("_buildingProductionSystem.RemovePendingAt", placement);
-        StringAssert.Contains("_buildingProductionSystem.ResolveProductionDurationSeconds", placement);
-        StringAssert.Contains("_buildingProductionSystem.ResolveProductionTransportSettings", placement);
-        StringAssert.Contains("_buildingProductionSystem.IsHelicopterUnitPrefab", placement);
 
         string production = File.ReadAllText(productionFile);
+        StringAssert.Contains("TryQueuePlayerUnitFromBuilding", production);
+        StringAssert.Contains("building.PendingProductions.Add", production);
+        StringAssert.Contains("context.ProductionSlotSystem?.TryReserveProductionSlot", production);
         StringAssert.Contains("ProductionTransportSettings", production);
         StringAssert.Contains("ResolveProductionTransportSettings", production);
         StringAssert.Contains("ResolveProductionDurationSeconds", production);
@@ -1975,6 +1974,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"new\s+RuntimeBuildingData\.PendingProduction\s*\{"),
             "Pending production initialization belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryQueuePlayerUnitFromBuilding\b"),
+            "Player production queue mutation belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"PendingProductions\.Add"),
+            "Pending production queue append belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"pending\.StartedAt\s*\+="),
             "Pending production delay mutation belongs in BuildingProductionSystem, not BuildingPlacementSystem.");

@@ -828,7 +828,7 @@ public sealed class BuildingPlacementSystem
             return false;
         }
 
-        if (!TryQueuePlayerUnitFromBuilding(producerBuilding, productionIndex, unit.Prefab))
+        if (!QueuePlayerUnitProduction(producerBuilding, productionIndex, unit.Prefab))
         {
             result = new FactionUnitProductionResult(FactionUnitProductionResultCode.ProducerUnavailable, producerDisplayName, unit.DisplayName, unit.Price, CountPendingProductionsForFaction(factionId, unitId), CountRuntimeProducedUnitsForFaction(factionId, unitId));
             return false;
@@ -5209,11 +5209,6 @@ public sealed class BuildingPlacementSystem
         return building?.Definition != null && RuntimeDefinitionMatchesId(building.Definition, normalizedBuildingId);
     }
 
-    private static bool IsRuntimeBuildingId(RuntimeBuildingData building, string buildingId)
-    {
-        return RuntimeBuildingMatchesId(building, NormalizeSpawnableKey(buildingId));
-    }
-
     private bool RuntimeProducedUnitMatchesId(RuntimeBuildingData building, Entity unit, string normalizedUnitId)
     {
         if (string.IsNullOrEmpty(normalizedUnitId))
@@ -5546,57 +5541,6 @@ public sealed class BuildingPlacementSystem
         link.Configure(this, building.Id, building.CombatEntity, building.BlockerEntity);
     }
 
-    private bool TryQueuePlayerUnitFromBuilding(RuntimeBuildingData building, int productionIndex, GameObject spawnUnitPrefab)
-    {
-        if (building == null || spawnUnitPrefab == null)
-            return false;
-
-        building.PendingProductions ??= new List<RuntimeBuildingData.PendingProduction>();
-        building.ProducedUnits ??= new List<Entity>();
-        if (!TryGetEntityManager(out EntityManager em))
-            return false;
-
-        _buildingProductionSystem.PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, em);
-
-        int reservedProductionSlotIndex = -1;
-        if (building.ProductionSpawnLocalPositions != null &&
-            building.ProducedUnitSlots != null &&
-            building.ProductionSpawnLocalPositions.Length > 0)
-        {
-            _buildingProductionSlotSystem.TryReserveProductionSlot(building, em, out reservedProductionSlotIndex);
-
-            bool allowUnreservedHelicopterHelipadSpawn =
-                _buildingProductionSystem.IsHelicopterUnitPrefab(spawnUnitPrefab) &&
-                building.HasOwnerFaction &&
-                IsRuntimeBuildingId(building, "Building_Helipad");
-            if (reservedProductionSlotIndex < 0 && !allowUnreservedHelicopterHelipadSpawn)
-                return false;
-        }
-
-        float now = Time.time;
-        BuildingProductionSystem.ProductionTransportSettings transportSettings = _buildingProductionSystem.ResolveProductionTransportSettings(
-            spawnUnitPrefab,
-            unitSpawnPrefabs,
-            _unitSpawnPrefabsByKey,
-            TryGetPrefabLocalBounds);
-        RuntimeBuildingData.PendingProduction queuedProduction = new();
-        _buildingProductionSystem.InitializePendingProduction(
-            queuedProduction,
-            productionIndex,
-            spawnUnitPrefab,
-            now,
-            _buildingProductionSystem.ResolveProductionDurationSeconds(spawnUnitPrefab),
-            reservedProductionSlotIndex,
-            transportSettings.TransportPrefab,
-            transportSettings.ArrivalSeconds,
-            transportSettings.HoldForNextReadySeconds,
-            transportSettings.MaxConcurrent,
-            transportSettings.Mode,
-            transportSettings.RequiresAirportRunway);
-        building.PendingProductions.Add(queuedProduction);
-        return true;
-    }
-
     private void ProcessPendingProductions()
     {
         if (_runtimeBuildings.Count == 0)
@@ -5686,7 +5630,7 @@ public sealed class BuildingPlacementSystem
             TrySpendDollars,
             amount => _resourceDollars += Mathf.Max(0, amount),
             cost => _activePlacementCost = Mathf.Max(0, cost),
-            TryQueuePlayerUnitFromBuilding,
+            QueuePlayerUnitProduction,
             buildingId => _runtimeBuildingSystem.SelectBuilding(buildingId),
             () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
             RefreshBuildingMarkerVisibility,
@@ -5695,6 +5639,30 @@ public sealed class BuildingPlacementSystem
             ResolveBuildingFocusWorldPosition,
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning);
+    }
+
+    private bool QueuePlayerUnitProduction(RuntimeBuildingData building, int productionIndex, GameObject spawnUnitPrefab)
+    {
+        if (!TryGetEntityManager(out EntityManager em))
+            return false;
+
+        return _buildingProductionSystem.TryQueuePlayerUnitFromBuilding(
+            CreateBuildingProductionQueueContext(),
+            building,
+            productionIndex,
+            spawnUnitPrefab,
+            em,
+            Time.time);
+    }
+
+    private BuildingProductionSystem.QueueContext CreateBuildingProductionQueueContext()
+    {
+        return new BuildingProductionSystem.QueueContext(
+            unitSpawnPrefabs,
+            _unitSpawnPrefabsByKey,
+            _buildingProductionSlotSystem,
+            TryGetPrefabLocalBounds,
+            RuntimeBuildingMatchesId);
     }
 
     private BuildingSpawnSystem.Context CreateBuildingSpawnContext()

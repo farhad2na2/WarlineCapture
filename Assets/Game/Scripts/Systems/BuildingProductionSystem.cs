@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
+using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 public sealed class BuildingProductionSystem
 {
     public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
+    internal delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingData building, string normalizedBuildingId);
 
     public enum ProductionTransportMode : byte
     {
@@ -66,6 +68,85 @@ public sealed class BuildingProductionSystem
             RemainingSeconds = remainingSeconds;
             Progress01 = progress01;
         }
+    }
+
+    internal readonly struct QueueContext
+    {
+        public readonly IReadOnlyList<GameObject> UnitSpawnPrefabs;
+        public readonly IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey;
+        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
+        public readonly TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
+        public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
+
+        public QueueContext(
+            IReadOnlyList<GameObject> unitSpawnPrefabs,
+            IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+            BuildingProductionSlotSystem productionSlotSystem,
+            TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
+            RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId)
+        {
+            UnitSpawnPrefabs = unitSpawnPrefabs;
+            UnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
+            ProductionSlotSystem = productionSlotSystem;
+            TryGetPrefabLocalBounds = tryGetPrefabLocalBounds;
+            RuntimeBuildingMatchesId = runtimeBuildingMatchesId;
+        }
+    }
+
+    internal bool TryQueuePlayerUnitFromBuilding(
+        QueueContext context,
+        RuntimeBuildingData building,
+        int productionIndex,
+        GameObject spawnUnitPrefab,
+        EntityManager entityManager,
+        float now)
+    {
+        if (building == null || spawnUnitPrefab == null)
+            return false;
+
+        building.PendingProductions ??= new List<RuntimeBuildingData.PendingProduction>();
+        building.ProducedUnits ??= new List<Entity>();
+
+        PruneProducedUnits(building.ProducedUnits, building.ProducedUnitSlots, building.ProducedUnitPrefabs, entityManager);
+
+        int reservedProductionSlotIndex = -1;
+        if (building.ProductionSpawnLocalPositions != null &&
+            building.ProducedUnitSlots != null &&
+            building.ProductionSpawnLocalPositions.Length > 0)
+        {
+            context.ProductionSlotSystem?.TryReserveProductionSlot(building, entityManager, out reservedProductionSlotIndex);
+
+            bool allowUnreservedHelicopterHelipadSpawn =
+                IsHelicopterUnitPrefab(spawnUnitPrefab) &&
+                building.HasOwnerFaction &&
+                context.RuntimeBuildingMatchesId != null &&
+                context.RuntimeBuildingMatchesId(building, "building_helipad");
+            if (reservedProductionSlotIndex < 0 && !allowUnreservedHelicopterHelipadSpawn)
+                return false;
+        }
+
+        ProductionTransportSettings transportSettings = ResolveProductionTransportSettings(
+            spawnUnitPrefab,
+            context.UnitSpawnPrefabs,
+            context.UnitSpawnPrefabsByKey,
+            context.TryGetPrefabLocalBounds);
+
+        RuntimeBuildingData.PendingProduction queuedProduction = new();
+        InitializePendingProduction(
+            queuedProduction,
+            productionIndex,
+            spawnUnitPrefab,
+            now,
+            ResolveProductionDurationSeconds(spawnUnitPrefab),
+            reservedProductionSlotIndex,
+            transportSettings.TransportPrefab,
+            transportSettings.ArrivalSeconds,
+            transportSettings.HoldForNextReadySeconds,
+            transportSettings.MaxConcurrent,
+            transportSettings.Mode,
+            transportSettings.RequiresAirportRunway);
+        building.PendingProductions.Add(queuedProduction);
+        return true;
     }
 
     public void InitializePendingProduction(

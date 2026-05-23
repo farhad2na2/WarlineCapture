@@ -133,6 +133,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
+        StringAssert.Contains("Runtime building blocker entity creation, runtime building combat entity creation, path-blocking policy for runtime buildings, and runtime building combat component setup belong in `BuildingRuntimeEntitySystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
@@ -1810,6 +1811,44 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+void\s+AttachRuntimeLink\b"),
             "Runtime building link attachment belongs in BuildingRuntimeCreationSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateRuntimeEntityCreationSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string runtimeEntityFile = "Assets/Game/Scripts/Systems/BuildingRuntimeEntitySystem.cs";
+        Assert.IsTrue(File.Exists(runtimeEntityFile), "Runtime blocker/combat entity creation must live in BuildingRuntimeEntitySystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string runtimeEntity = File.ReadAllText(runtimeEntityFile);
+        StringAssert.Contains("BuildingRuntimeEntitySystem _buildingRuntimeEntitySystem", placement);
+        StringAssert.Contains("CreateBuildingRuntimeEntityContext", placement);
+        StringAssert.Contains("_buildingRuntimeEntitySystem.CreateBlockerEntity", placement);
+        StringAssert.Contains("_buildingRuntimeEntitySystem.ShouldRuntimeBuildingBlockPathing", placement);
+        StringAssert.Contains("_buildingRuntimeEntitySystem.CreateBuildingCombatEntity", placement);
+
+        StringAssert.Contains("CreateBlockerEntity", runtimeEntity);
+        StringAssert.Contains("ShouldRuntimeBuildingBlockPathing", runtimeEntity);
+        StringAssert.Contains("CreateBuildingCombatEntity", runtimeEntity);
+        StringAssert.Contains("GridBlockerSize", runtimeEntity);
+        StringAssert.Contains("StaticGridBlocker", runtimeEntity);
+        StringAssert.Contains("RuntimeBuildingCombatTag", runtimeEntity);
+        StringAssert.Contains("UnitHealth", runtimeEntity);
+        StringAssert.Contains("ThreatDetector", runtimeEntity);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+Entity\s+CreateBlockerEntity[\s\S]*?em\.CreateEntity\s*\("),
+            "Runtime blocker entity creation belongs in BuildingRuntimeEntitySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+Entity\s+CreateBuildingCombatEntity[\s\S]*?em\.CreateEntity\s*\("),
+            "Runtime building combat entity creation belongs in BuildingRuntimeEntitySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"AddComponent<RuntimeBuildingCombatTag>\s*\("),
+            "Runtime building combat tag setup belongs in BuildingRuntimeEntitySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"AddComponentData\s*\(\s*entity\s*,\s*new\s+GridBlockerSize"),
+            "Runtime blocker size setup belongs in BuildingRuntimeEntitySystem, not BuildingPlacementSystem.");
     }
 
     [Test]

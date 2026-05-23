@@ -1,0 +1,111 @@
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Transforms;
+using UnityEngine;
+using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
+
+internal sealed class BuildingRuntimeEntitySystem
+{
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+    public delegate bool TryGetGridDataDelegate(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData);
+    public delegate Vector3 GetFootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
+
+    public readonly struct Context
+    {
+        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly TryGetGridDataDelegate TryGetGridData;
+        public readonly GetFootprintCenterDelegate GetFootprintCenter;
+
+        public Context(
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            TryGetGridDataDelegate tryGetGridData,
+            GetFootprintCenterDelegate getFootprintCenter)
+        {
+            TryGetEntityManager = tryGetEntityManager;
+            TryGetGridData = tryGetGridData;
+            GetFootprintCenter = getFootprintCenter;
+        }
+    }
+
+    public Entity CreateBlockerEntity(Context context, BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells)
+    {
+        if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
+            return Entity.Null;
+
+        Entity entity = em.CreateEntity();
+        em.AddComponentData(entity, new UnitGrid { Cell = new int2(originCell.x, originCell.y) });
+        em.AddComponentData(entity, new GridBlockerSize { Size = new int2(footprintCells.x, footprintCells.y) });
+        em.AddComponent<StaticGridBlocker>(entity);
+        return entity;
+    }
+
+    public bool ShouldRuntimeBuildingBlockPathing(BuildingDefinition definition)
+    {
+        return !BuildingDefinitionSystem.RuntimeDefinitionMatchesId(
+            definition,
+            BuildingDefinitionSystem.NormalizeSpawnableKey("Building_Helipad"));
+    }
+
+    public Entity CreateBuildingCombatEntity(Context context, Vector2Int originCell, BuildingDefinition definition, byte ownerFactionId, Quaternion worldRotation)
+    {
+        if (definition == null)
+            return Entity.Null;
+        if (context.TryGetEntityManager == null || !context.TryGetEntityManager(out EntityManager em))
+            return Entity.Null;
+        if (context.TryGetGridData == null || !context.TryGetGridData(out _, out GridConfig grid, out _, out _))
+            return Entity.Null;
+        if (context.GetFootprintCenter == null)
+            return Entity.Null;
+
+        Vector2Int footprintCells = new(Mathf.Max(1, definition.FootprintCells.x), Mathf.Max(1, definition.FootprintCells.y));
+        float3 center = (float3)context.GetFootprintCenter(originCell, footprintCells, grid);
+        int maxHealth = Mathf.Max(1, definition.MaxHealth);
+        Entity entity = em.CreateEntity();
+        em.AddComponentData(entity, new LocalTransform
+        {
+            Position = center,
+            Rotation = new quaternion(worldRotation.x, worldRotation.y, worldRotation.z, worldRotation.w),
+            Scale = 1f
+        });
+        em.AddComponentData(entity, new LocalToWorld());
+        em.AddComponentData(entity, new UnitGrid
+        {
+            Cell = new int2(originCell.x + footprintCells.x / 2, originCell.y + footprintCells.y / 2)
+        });
+        em.AddComponentData(entity, new UnitFootprint
+        {
+            Size = new int2(footprintCells.x, footprintCells.y)
+        });
+        em.AddComponent<RuntimeBuildingCombatTag>(entity);
+        em.AddComponentData(entity, new UnitGridInitialized());
+        em.AddComponentData(entity, new Faction { Id = ownerFactionId });
+        em.AddComponentData(entity, new UnitHealth { Current = maxHealth, Max = maxHealth });
+        em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
+        em.AddComponentData(entity, new UnitSourcePrefabKey
+        {
+            Value = new FixedString64Bytes(definition.Prefab != null ? definition.Prefab.name : definition.DisplayName)
+        });
+        em.AddComponentData(entity, new UnitDisplayInfo
+        {
+            Name = new FixedString64Bytes(string.IsNullOrWhiteSpace(definition.DisplayName) ? "Building" : definition.DisplayName),
+            Description = new FixedString128Bytes(definition.Description ?? string.Empty)
+        });
+        if (definition.ThreatDetectionKind != ThreatDetectionKind.None && definition.ThreatDetectionRadiusCells > 0)
+        {
+            em.AddComponentData(entity, new ThreatDetector
+            {
+                Kind = (byte)definition.ThreatDetectionKind,
+                RadiusCells = Mathf.Max(0, definition.ThreatDetectionRadiusCells)
+            });
+        }
+        em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
+        em.AddComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        em.AddComponentData(entity, new UnitAnimationSettings
+        {
+            AttackAnimationSeconds = 0.1f,
+            DeathAnimationSeconds = 0.01f
+        });
+        return entity;
+    }
+}

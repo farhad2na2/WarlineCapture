@@ -5,7 +5,8 @@
   "notes": [
     "Layer pack generated from separate green-background source sheets, not from the target mockup.",
     "Status text, percent, tips, route state, and loading progress must be live UI text/data.",
-    "Screen is shared for app boot loading and pre-match operation loading."
+    "Screen is shared for app boot loading and pre-match operation loading.",
+    "Brand/logo art is intentionally excluded from this V01 layer pack until a fresh isolated logo source is approved; do not reuse old SCN-02 logo art and do not crop logo art from target mockups."
   ],
   "layers": [
     {
@@ -19,18 +20,6 @@
         "meshType": "FullRect"
       },
       "liveTextRule": "No live text in opaque background."
-    },
-    {
-      "id": "scn01_brand_logo_lockup",
-      "file": "layers/scn01_brand_logo_lockup.png",
-      "source": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_brand_logo_lockup.png",
-      "category": "brand",
-      "unityImport": {
-        "textureType": "Sprite",
-        "alphaIsTransparency": true,
-        "meshType": "FullRect"
-      },
-      "liveTextRule": "Brand art only; loading labels and values remain live UI text."
     },
     {
       "id": "scn01_chrome_01_outer_screen_frame",
@@ -349,24 +338,6 @@
         "height": 84
       },
       "category": "chrome",
-      "unityImport": {
-        "textureType": "Sprite",
-        "alphaIsTransparency": true,
-        "meshType": "FullRect"
-      },
-      "liveTextRule": "No labels or values are baked into this layer; bind labels and values in Unity TMP."
-    },
-    {
-      "id": "scn01_icon_01_warline_emblem_mark",
-      "file": "layers/scn01_icon_01_warline_emblem_mark.png",
-      "source": "generated_one_go/source/SCN-01_SplashLoading_IconSource_Green.png",
-      "sourceRect": {
-        "x": 37,
-        "y": 84,
-        "width": 271,
-        "height": 318
-      },
-      "category": "icon",
       "unityImport": {
         "textureType": "Sprite",
         "alphaIsTransparency": true,

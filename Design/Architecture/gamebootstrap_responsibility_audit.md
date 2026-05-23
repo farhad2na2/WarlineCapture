@@ -227,7 +227,10 @@ Focused validation:
 
 ### Diagnostics And Performance Logging
 
-Current bootstrap debt:
+Migrated owner:
+- `PerformanceDiagnosticsSystem`
+
+Former bootstrap debt:
 - `FreezeDetect` direct `Debug.Log`.
 - `FrameRateDiag` direct `Debug.Log`.
 - `PerfDiag` direct `Debug.Log`.
@@ -242,8 +245,8 @@ Target behavior:
 - Bootstrap should not format or emit gameplay/performance diagnostics directly.
 
 Migration order:
-1. Move direct log emission to a diagnostics boundary.
-2. Move profiler recorder collection into a shell diagnostic service.
+1. Done: move direct log emission to `PerformanceDiagnosticsSystem`.
+2. Done: move profiler recorder collection to `PerformanceDiagnosticsSystem`.
 3. Keep current message content stable until QA accepts the migration.
 
 Focused validation:

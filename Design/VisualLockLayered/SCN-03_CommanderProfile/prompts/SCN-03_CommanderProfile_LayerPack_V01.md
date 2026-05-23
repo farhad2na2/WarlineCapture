@@ -12,7 +12,7 @@ Required source groups:
 
 - `SCN-03_CommanderProfile_Background_21x9_NoUI.png`: opaque wide command-base background with no UI, logo, text, labels, or numbers.
 - `SCN-03_CommanderProfile_ChromeSource_Green.png`: green-background sheet of blank frames, panels, buttons, tabs, reward nodes, meter frames, strips, and chips.
-- `SCN-03_CommanderProfile_IconSource_Green.png`: green-background sheet of separate icons for brand mark, commander rank, resources, navigation, profile actions, roster categories, rewards, history, and disabled states.
+- `SCN-03_CommanderProfile_IconSource_Green.png`: green-background sheet of separate non-brand icons for commander rank, resources, navigation, profile actions, roster categories, rewards, history, and disabled states.
 - `SCN-03_CommanderProfile_CommanderPortraitSource_Green.png`: green-background commander portrait/scan card source.
 
 Live text and runtime values:
@@ -25,6 +25,7 @@ Layer rules:
 - Frames contain no labels or counters.
 - Buttons contain no text.
 - Icons are separate from frames.
+- Brand/logo art is a separate approved source asset, not part of this icon sheet.
 - Progress bars use separate frame/fill assets.
 - Reward nodes are separate visual states.
 - Background art is the only opaque full-screen layer.

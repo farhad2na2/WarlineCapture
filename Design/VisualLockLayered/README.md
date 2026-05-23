@@ -42,9 +42,9 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 
 | Surface | Player-Facing Purpose | New 3D Direction Requirement |
 |---|---|---|
-| `SCN-01_SplashLoading` | App entry and pre-match loading. | Shared branded loading surface for app boot fake load and operation-map loading. Target-lock generated. |
+| `SCN-01_SplashLoading` | App entry and pre-match loading. | Shared branded loading surface for app boot fake load and operation-map loading. Target and V01 layer pack generated; QA cleanup and brand logo layer pending fresh isolated approval. |
 | `SCN-02_MainMenu` | Command-base hub. | Campaign, Operations, Skirmish, Store, Commander, Settings; Credits, Supplies, Command. |
-| `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with `Open Armory` route to SCN-19. Target-lock generated. |
+| `SCN-03_CommanderProfile` | Profile, XP, history, reward track. | Commander identity and progression, with `Open Armory` route to SCN-19. Target and V01 layer pack generated; brand logo layer pending fresh isolated approval. |
 | `SCN-04_SettingsAccessibility` | Settings and accessibility. | Command-base shell; reachable from Main Menu and Pause. Target and V01 layer pack generated. |
 | `SCN-05_CampaignMap` | Campaign mission selection. | Campaign nodes selected from command table/world overlay; launches 3D operation maps. |
 | `SCN-06_MissionBriefing` | Objectives, intel, rewards, deployment preview. | Uses `OperationMapId`, `PlanningCameraId`, `MinimapProjectionId`. |
@@ -55,7 +55,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `SCN-11_OperationsDashboard` | District operations command. | District state, warnings, raids, resources, consequences. |
 | `SCN-12_DistrictDetailActions` | District action detail. | Patrol, scan, aid, raid, repair, evacuate, build outpost with civilian/infrastructure consequences. |
 | `SCN-13_SkirmishSetup` | Configurable replay setup. | Player-facing Skirmish naming; selectable operation-map presets and AI/rule controls. Target and V01 layer pack generated. |
-| `SCN-14_CommandExchange` | Store / command exchange. | Deterministic products, disabled purchase states, no direct Campaign stars or Operation metric purchase. |
+| `SCN-14_CommandExchange` | Store / command exchange. | Fixed catalog products, disabled purchase states, no direct Campaign stars or Operation metric purchase. |
 | `SCN-15_Inbox` | Inbox and reports. | Empty/designed-unavailable state until services exist. |
 | `SCN-16_Events` | Events and challenges. | Empty/designed-unavailable state until event service exists. |
 | `SCN-17_Ranking` | Local/account ranking categories. | No network dependency in first target. |

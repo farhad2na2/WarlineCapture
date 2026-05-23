@@ -126,6 +126,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("AI faction-control startup projection is owned by `AIFactionControlStartupSystem`", contract);
         StringAssert.Contains("AI default build and production fallback ids are owned by authored `AIPlanEntryStartupConfig` assets", contract);
         StringAssert.Contains("Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`", contract);
+        StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
@@ -380,6 +381,56 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(missionStartup, @"\bstatic\b"),
             "MissionStartupSystem owns mission startup mutation and camera policy; keep it instance-scoped rather than adding static runtime helpers.");
+    }
+
+    [Test]
+    public void GameBootstrapMustDelegatePerformanceDiagnostics()
+    {
+        const string performanceDiagnosticsFile = "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystem.cs";
+        Assert.IsTrue(File.Exists(performanceDiagnosticsFile), "Performance diagnostics must live in PerformanceDiagnosticsSystem.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("PerformanceDiagnosticsSystem _performanceDiagnosticsSystem", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.Initialize", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.BeginUpdate", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.BeginStep", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.EndStep", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.EndUpdate", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.BeginTimedSection", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.EndLateUpdate", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.EndOnGui", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.Dispose", bootstrap);
+
+        string[] bootstrapDiagnosticDebtTokens =
+        {
+            "[FreezeDetect]",
+            "[FrameRateDiag]",
+            "[FrameRateDiag:PreGame]",
+            "[PerfDiag]",
+            "[PerfDiag:PreGame]",
+            "ProfilerRecorder",
+            "FrameTimingManager",
+            "GC.CollectionCount",
+            "BuildGcDeltaString",
+            "BuildProfilerMarkerDiagString"
+        };
+
+        foreach (string token in bootstrapDiagnosticDebtTokens)
+        {
+            Assert.IsFalse(
+                bootstrap.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in PerformanceDiagnosticsSystem, not GameBootstrap.");
+        }
+
+        string diagnostics = File.ReadAllText(performanceDiagnosticsFile);
+        StringAssert.Contains("[FreezeDetect]", diagnostics);
+        StringAssert.Contains("FrameRateDiag", diagnostics);
+        StringAssert.Contains("PerfDiag", diagnostics);
+        StringAssert.Contains("ProfilerRecorder", diagnostics);
+        StringAssert.Contains("FrameTimingManager", diagnostics);
+        Assert.IsFalse(
+            Regex.IsMatch(diagnostics, @"\bstatic\b"),
+            "PerformanceDiagnosticsSystem owns mutable recorder and frame state; keep it instance-scoped.");
     }
 
     [Test]

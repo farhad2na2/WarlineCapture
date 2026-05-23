@@ -5,7 +5,8 @@
   "notes": [
     "Layer pack generated from separate green-background source sheets, not from the target mockup.",
     "Text, values, counters, tabs, reward labels, history rows, and route hints must be live UI text.",
-    "Open Armory routes from SCN-03 to SCN-19."
+    "Open Armory routes from SCN-03 to SCN-19.",
+    "Brand/logo art is intentionally excluded from this V01 layer pack until a fresh isolated logo source is approved; do not reuse old SCN-02 logo art and do not crop logo art from target mockups."
   ],
   "layers": [
     {
@@ -19,18 +20,6 @@
         "meshType": "FullRect"
       },
       "liveTextRule": "No live text in this opaque background."
-    },
-    {
-      "id": "scn03_brand_logo_lockup",
-      "file": "layers/scn03_brand_logo_lockup.png",
-      "source": "Design/VisualLockLayered/SCN-02_MainMenu/layers/scn02_brand_logo_lockup.png",
-      "category": "brand",
-      "unityImport": {
-        "textureType": "Sprite",
-        "alphaIsTransparency": true,
-        "meshType": "FullRect"
-      },
-      "liveTextRule": "Brand art only; screen title and all values remain live UI text."
     },
     {
       "id": "scn03_chrome_01_top_header_bar_frame",
@@ -385,24 +374,6 @@
         "height": 73
       },
       "category": "chrome",
-      "unityImport": {
-        "textureType": "Sprite",
-        "alphaIsTransparency": true,
-        "meshType": "FullRect"
-      },
-      "liveTextRule": "No labels or values are baked into this layer; bind labels and values in Unity TMP."
-    },
-    {
-      "id": "scn03_icon_01_warline_emblem_mark",
-      "file": "layers/scn03_icon_01_warline_emblem_mark.png",
-      "source": "generated_one_go/source/SCN-03_CommanderProfile_IconSource_Green.png",
-      "sourceRect": {
-        "x": 53,
-        "y": 49,
-        "width": 244,
-        "height": 290
-      },
-      "category": "icon",
       "unityImport": {
         "textureType": "Sprite",
         "alphaIsTransparency": true,

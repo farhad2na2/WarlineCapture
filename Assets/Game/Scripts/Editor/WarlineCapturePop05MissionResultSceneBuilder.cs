@@ -13,7 +13,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/MissionResult/TargetLockV01";
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_POP05_MissionResult_TargetLock.prefab";
     private const string ScenePath = "Assets/Game/Scenes/DesignTargets/POP05_MissionResult_TargetLock.unity";
-    private const string CapturePath = "Design/AgentReports/Captures/POP05_MissionResult_TargetLock_V04_2400x1080.png";
+    private const string CapturePath = "Design/AgentReports/Captures/POP05_MissionResult_TargetLock_V07_2400x1080.png";
 
     private static Color TextMain => new Color32(225, 216, 188, 255);
     private static Color TextMuted => new Color32(169, 154, 112, 255);
@@ -241,6 +241,8 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         AddFrame(parent, "Consequences_Frame", "pop05_consequences_panel_frame.png", rect, 16);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Consequences_TitleIcon", "pop05_consequences_compass_icon.png", new RectInt(rect.x + 34, rect.y + 27, 54, 50), 38, 38, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Consequences_Title", "CONSEQUENCES", new RectInt(rect.x + 98, rect.y + 29, 260, 34), 26f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, "Consequences_InteriorCleanPlate", new RectInt(rect.x + 20, rect.y + 84, rect.width - 40, 230), new Color32(10, 12, 10, 232));
+        WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, "Consequences_TitleDivider", new RectInt(rect.x + 48, rect.y + 88, rect.width - 96, 1), new Color(0.78f, 0.64f, 0.28f, 0.18f));
         AddConsequenceRow(parent, rect, 0, "pop05_consequence_civilian_group.png", "Civilian Safety", "+8", Green);
         AddConsequenceRow(parent, rect, 1, "pop05_consequence_district_trust_shield.png", "District Trust", "+6", Green);
         AddConsequenceRow(parent, rect, 2, "pop05_consequence_hostile_influence.png", "Hostile Influence", "-4", Red);
@@ -249,10 +251,13 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
 
     private static void AddConsequenceRow(Transform parent, RectInt panel, int index, string icon, string label, string value, Color valueColor)
     {
-        RectInt row = new(panel.x + 40, panel.y + 134 + index * 48, panel.width - 80, 40);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Consequence_{index}_Icon", icon, new RectInt(row.x + 2, row.y + 3, 48, 34), 36, 32, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Consequence_{index}_Label", label, new RectInt(row.x + 66, row.y + 6, 280, 26), 17f, TextAlignmentOptions.Left, TextMain);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Consequence_{index}_Value", value, new RectInt(row.x + row.width - 128, row.y + 6, 112, 26), 18f, TextAlignmentOptions.Right, valueColor);
+        RectInt row = new(panel.x + 52, panel.y + 96 + index * 50, panel.width - 104, 42);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, $"Consequence_{index}_Icon", icon, new RectInt(row.x + 2, row.y + 5, 44, 34), 34, 32, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Consequence_{index}_Label", label, new RectInt(row.x + 62, row.y + 7, 280, 27), 18f, TextAlignmentOptions.Left, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, $"Consequence_{index}_Value", value, new RectInt(row.x + row.width - 112, row.y + 7, 100, 27), 18f, TextAlignmentOptions.Right, valueColor);
+
+        if (index < 3)
+            WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, $"Consequence_{index}_Divider", new RectInt(row.x + 60, row.y + row.height + 3, row.width - 72, 1), new Color(0.78f, 0.64f, 0.28f, 0.14f));
     }
 
     private static void AddBottomActions(Transform parent)

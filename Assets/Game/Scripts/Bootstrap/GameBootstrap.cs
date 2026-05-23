@@ -1,8 +1,5 @@
 using UnityEngine;
-using Unity.Profiling;
-using Unity.Profiling.LowLevel.Unsafe;
 using UnityEngine.Rendering;
-using UnityEngine.Profiling;
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
@@ -12,19 +9,11 @@ using Game.Scripts.UI;
 [DisallowMultipleComponent]
 public sealed class GameBootstrap : MonoBehaviour
 {
-    private const double FreezeLogThresholdSeconds = 0.15d;
-    private static readonly bool EnableFrameRateDiagnostics = true;
-    private static readonly bool EnableSlowFrameDiagnostics = true;
-    private const double LowFpsDiagThreshold = 30d;
-    private const double FrameRateDiagIntervalSeconds = 2d;
-    private const double FpsUiUpdateIntervalSeconds = 0.25d;
-    private const double SlowFrameDiagThresholdSeconds = 0.025d;
-    private const double SlowFrameDiagCooldownSeconds = 0.5d;
-    private const int MaxAutoProfilerMarkerRecorders = 32;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
     private readonly AIStartupSystem _aiStartupSystem = new();
     private readonly MissionStartupSystem _missionStartupSystem = new();
+    private readonly PerformanceDiagnosticsSystem _performanceDiagnosticsSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -88,54 +77,11 @@ public sealed class GameBootstrap : MonoBehaviour
     private Transform _runtimeBlockerRoot;
     private Transform _runtimeCityRoot;
     private Transform _runtimeUiRoot;
-    private readonly System.Text.StringBuilder _freezeLogBuilder = new();
-    private readonly System.Text.StringBuilder _lastStepLogBuilder = new();
-    private readonly Dictionary<string, StepPerfStats> _stepPerfStats = new();
-    private double _lastUpdateTimestamp;
-    private double _suppressFrameGapUntilTimestamp;
-    private double _nextFrameRateDiagTimestamp;
-    private double _nextSlowFrameDiagTimestamp;
-    private double _frameRateDiagAccumulatedSeconds;
-    private double _frameRateDiagUpdateAccumulatedSeconds;
-    private double _frameRateDiagMaxUpdateSeconds;
-    private double _fpsUiAccumulatedSeconds;
-    private int _frameRateDiagFrames;
-    private int _fpsUiFrames;
-    private bool _lastApplicationFocused;
-    private bool _applicationPaused;
-    private int _lastGcGen0Count;
-    private int _lastGcGen1Count;
-    private int _lastGcGen2Count;
-    private ProfilerRecorder _drawCallsRecorder;
-    private ProfilerRecorder _batchesRecorder;
-    private ProfilerRecorder _setPassCallsRecorder;
-    private ProfilerRecorder _trianglesRecorder;
-    private ProfilerRecorder _verticesRecorder;
-    private readonly List<NamedProfilerRecorder> _markerRecorders = new();
-
-    private struct StepPerfStats
-    {
-        public double TotalSeconds;
-        public double MaxSeconds;
-        public int Samples;
-    }
-
-    private struct NamedProfilerRecorder
-    {
-        public string Name;
-        public ProfilerRecorder Recorder;
-    }
 
     private void Awake()
     {
         Application.runInBackground = true;
-        _lastApplicationFocused = Application.isFocused;
-        _lastUpdateTimestamp = Time.realtimeSinceStartupAsDouble;
-        _nextFrameRateDiagTimestamp = _lastUpdateTimestamp + FrameRateDiagIntervalSeconds;
-        StartProfilerRecorders();
-        _lastGcGen0Count = GC.CollectionCount(0);
-        _lastGcGen1Count = GC.CollectionCount(1);
-        _lastGcGen2Count = GC.CollectionCount(2);
+        _performanceDiagnosticsSystem.Initialize();
 
         EnsureRuntimeRoots();
 
@@ -296,57 +242,64 @@ public sealed class GameBootstrap : MonoBehaviour
     private void Update()
     {
         bool gameplayActive = GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested;
-        double now = Time.realtimeSinceStartupAsDouble;
-        bool applicationFocused = Application.isFocused;
-        if (applicationFocused != _lastApplicationFocused)
-        {
-            _lastApplicationFocused = applicationFocused;
-            _lastUpdateTimestamp = now;
-            _suppressFrameGapUntilTimestamp = now + 0.5d;
-        }
-
-        bool canReportFrameGap =
-            gameplayActive &&
-            applicationFocused &&
-            !_applicationPaused &&
-            now >= _suppressFrameGapUntilTimestamp;
-
-        if (canReportFrameGap && _lastUpdateTimestamp > 0d)
-        {
-            double gapSeconds = now - _lastUpdateTimestamp;
-            if (gapSeconds >= FreezeLogThresholdSeconds)
-            {
-                Debug.Log($"[FreezeDetect] Frame gap frame={Time.frameCount} Gap={(gapSeconds * 1000d):F1}ms GC={BuildGcDeltaString()} LastSteps={_lastStepLogBuilder}");
-            }
-        }
-        _lastUpdateTimestamp = now;
-
-        double frameStart = Time.realtimeSinceStartupAsDouble;
-        _freezeLogBuilder.Clear();
-        _lastStepLogBuilder.Clear();
+        _performanceDiagnosticsSystem.BeginUpdate(gameplayActive);
         bool hadSlowStep = false;
 
-        hadSlowStep |= TimedStep("MenuCanvasInput", () => menuView?.SyncInputState());
+        double stepStart = _performanceDiagnosticsSystem.BeginStep();
+        menuView?.SyncInputState();
+        hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MenuCanvasInput", stepStart);
         if (gameplayActive)
         {
             GameRuntimeStats.RecordMissionElapsed(Time.deltaTime);
-            hadSlowStep |= TimedStep(
-                "MissionRuntime",
-                () => _missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld, GetMapLoader()));
-            hadSlowStep |= TimedStep("RoadBuild", () => RoadBuild?.Update());
-            hadSlowStep |= TimedStep("BuildingPlacement", () => BuildingPlacement?.Update());
-            hadSlowStep |= TimedStep("Selection", () => Selection?.Update());
-            hadSlowStep |= TimedStep(
-                "MissionCamera",
-                () => _missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(worldCamera, GetMapLoader()));
-            hadSlowStep |= TimedStep("RuntimeCitySpawner", () => RuntimeCitySpawner?.Update());
-            hadSlowStep |= TimedStep("RuntimeGridBlockers", () => RuntimeGridBlockers?.Update());
-            hadSlowStep |= TimedStep("RuntimeDecorations", () => RuntimeDecorations?.Update());
-            hadSlowStep |= TimedStep("DayNight", () => DayNight?.Update());
-            hadSlowStep |= TimedStep("CitizenPopulation", () => CitizenPopulation?.Update());
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            _missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld, GetMapLoader());
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MissionRuntime", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            RoadBuild?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            BuildingPlacement?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            Selection?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("Selection", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            _missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(worldCamera, GetMapLoader());
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MissionCamera", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            RuntimeCitySpawner?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RuntimeCitySpawner", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            RuntimeGridBlockers?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RuntimeGridBlockers", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            RuntimeDecorations?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RuntimeDecorations", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            DayNight?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("DayNight", stepStart);
+
+            stepStart = _performanceDiagnosticsSystem.BeginStep();
+            CitizenPopulation?.Update();
+            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("CitizenPopulation", stepStart);
         }
-        hadSlowStep |= TimedStep("MenuCanvas", () => menuView?.SyncRuntimeState());
-        hadSlowStep |= TimedStep("MainMenu", () => MainMenu?.Update());
+
+        stepStart = _performanceDiagnosticsSystem.BeginStep();
+        menuView?.SyncRuntimeState();
+        hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MenuCanvas", stepStart);
+
+        stepStart = _performanceDiagnosticsSystem.BeginStep();
+        MainMenu?.Update();
+        hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
 
         if (_gameplayStartPending && IsGameplayStartComplete())
         {
@@ -357,40 +310,23 @@ public sealed class GameBootstrap : MonoBehaviour
         if (gameplayActive)
             WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene();
 
-        double totalSeconds = Time.realtimeSinceStartupAsDouble - frameStart;
-        RecordUpdateFrameStats(totalSeconds);
-        if (gameplayActive && (hadSlowStep || totalSeconds >= FreezeLogThresholdSeconds))
-        {
-            if (_freezeLogBuilder.Length > 0)
-                _freezeLogBuilder.Append(", ");
-
-            _freezeLogBuilder.Append("GC=");
-            _freezeLogBuilder.Append(BuildGcDeltaString());
-            _freezeLogBuilder.Append(", ");
-            _freezeLogBuilder.Append("Total=");
-            _freezeLogBuilder.Append((totalSeconds * 1000d).ToString("F1"));
-            _freezeLogBuilder.Append("ms");
-            Debug.Log($"[FreezeDetect] Update hitch frame={Time.frameCount} {_freezeLogBuilder}");
-        }
-        LogSlowUpdateDiagnosticsIfNeeded(gameplayActive, totalSeconds, now);
-
-        UpdateFpsLabel();
-        UpdateFrameRateDiagnostics(gameplayActive, now);
-        CaptureGcCounts();
+        _performanceDiagnosticsSystem.EndUpdate(
+            gameplayActive,
+            hadSlowStep,
+            menuView,
+            UnitImpostors?.LastDrawnCount ?? 0,
+            GameplayInitialized,
+            _runtimeGameplayStateSystem.PlayRequested);
     }
 
     private void OnApplicationFocus(bool hasFocus)
     {
-        _lastApplicationFocused = hasFocus;
-        _lastUpdateTimestamp = Time.realtimeSinceStartupAsDouble;
-        _suppressFrameGapUntilTimestamp = _lastUpdateTimestamp + 0.5d;
+        _performanceDiagnosticsSystem.OnApplicationFocus(hasFocus);
     }
 
     private void OnApplicationPause(bool pauseStatus)
     {
-        _applicationPaused = pauseStatus;
-        _lastUpdateTimestamp = Time.realtimeSinceStartupAsDouble;
-        _suppressFrameGapUntilTimestamp = _lastUpdateTimestamp + 0.5d;
+        _performanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
     }
 
     private void LateUpdate()
@@ -398,12 +334,10 @@ public sealed class GameBootstrap : MonoBehaviour
         if (!(GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested))
             return;
 
-        double start = Time.realtimeSinceStartupAsDouble;
+        double start = _performanceDiagnosticsSystem.BeginTimedSection();
         UnitAttackTraces?.LateUpdate();
         UnitImpostors?.LateUpdate();
-        double elapsed = Time.realtimeSinceStartupAsDouble - start;
-        if (elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect] LateUpdate hitch frame={Time.frameCount} UnitRenderLate={(elapsed * 1000d):F1}ms impostors={UnitImpostors?.LastDrawnCount ?? 0} GC={BuildGcDeltaString()}");
+        _performanceDiagnosticsSystem.EndLateUpdate(start, UnitImpostors?.LastDrawnCount ?? 0);
     }
 
     private void OnGUI()
@@ -411,12 +345,10 @@ public sealed class GameBootstrap : MonoBehaviour
         if (!(GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested))
             return;
 
-        double start = Time.realtimeSinceStartupAsDouble;
+        double start = _performanceDiagnosticsSystem.BeginTimedSection();
         RoadBuild?.OnGui();
         Selection?.OnGui();
-        double elapsed = Time.realtimeSinceStartupAsDouble - start;
-        if (elapsed >= FreezeLogThresholdSeconds)
-            Debug.Log($"[FreezeDetect] OnGUI hitch frame={Time.frameCount} Total={(elapsed * 1000d):F1}ms GC={BuildGcDeltaString()}");
+        _performanceDiagnosticsSystem.EndOnGui(start);
     }
 
     private void OnDestroy()
@@ -449,7 +381,7 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeGridBlockers = null;
         RuntimeCitySpawner = null;
         _runtimeCameraReferenceSystem.ClearWorldCamera();
-        DisposeProfilerRecorders();
+        _performanceDiagnosticsSystem.Dispose();
         SharedPrefabPreviewCache.ReleaseAll();
     }
 
@@ -491,228 +423,6 @@ public sealed class GameBootstrap : MonoBehaviour
 
         BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
         component.BuildingPlacement = null;
-    }
-
-    private void StartProfilerRecorders()
-    {
-        _drawCallsRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Draw Calls Count");
-        _batchesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Batches Count");
-        _setPassCallsRecorder = StartProfilerRecorder(ProfilerCategory.Render, "SetPass Calls Count");
-        _trianglesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Triangles Count");
-        _verticesRecorder = StartProfilerRecorder(ProfilerCategory.Render, "Vertices Count");
-        AddProfilerMarkerRecorder(ProfilerCategory.Internal, "PlayerLoop");
-        AddProfilerMarkerRecorder(ProfilerCategory.Internal, "EditorLoop");
-        AddProfilerMarkerRecorder(ProfilerCategory.Internal, "Overhead");
-        AddProfilerMarkerRecorder(ProfilerCategory.Internal, "WaitForTargetFPS");
-        AddProfilerMarkerRecorder(ProfilerCategory.Render, "Camera.Render");
-        AddProfilerMarkerRecorder(ProfilerCategory.Render, "RenderPipelineManager.DoRenderLoop_Internal");
-        AddProfilerMarkerRecorder(ProfilerCategory.Render, "Gfx.WaitForPresentOnGfxThread");
-        AddProfilerMarkerRecorder(ProfilerCategory.Render, "Gfx.PresentFrame");
-        AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "BehaviourUpdate");
-        AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "LateBehaviourUpdate");
-        AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "Canvas.SendWillRenderCanvases");
-        AddAvailablePlayerLoopMarkerRecorders();
-    }
-
-    private static ProfilerRecorder StartProfilerRecorder(ProfilerCategory category, string statName)
-    {
-        try
-        {
-            return ProfilerRecorder.StartNew(category, statName);
-        }
-        catch
-        {
-            return default;
-        }
-    }
-
-    private void AddProfilerMarkerRecorder(ProfilerCategory category, string statName)
-    {
-        if (HasProfilerMarkerRecorder(statName))
-            return;
-
-        ProfilerRecorder recorder = StartProfilerRecorder(category, statName);
-        if (!recorder.Valid)
-            return;
-
-        _markerRecorders.Add(new NamedProfilerRecorder
-        {
-            Name = statName,
-            Recorder = recorder
-        });
-    }
-
-    private void AddAvailablePlayerLoopMarkerRecorders()
-    {
-        try
-        {
-            List<ProfilerRecorderHandle> handles = new();
-            ProfilerRecorderHandle.GetAvailable(handles);
-            int added = 0;
-            for (int i = 0; i < handles.Count && added < MaxAutoProfilerMarkerRecorders; i++)
-            {
-                ProfilerRecorderHandle handle = handles[i];
-                ProfilerRecorderDescription description = ProfilerRecorderHandle.GetDescription(handle);
-                string name = description.Name.ToString();
-                if (!ShouldTrackProfilerMarker(name) || HasProfilerMarkerRecorder(name))
-                    continue;
-
-                ProfilerRecorder recorder = StartProfilerRecorder(description.Category, name);
-                if (!recorder.Valid)
-                    continue;
-
-                _markerRecorders.Add(new NamedProfilerRecorder
-                {
-                    Name = name,
-                    Recorder = recorder
-                });
-                added++;
-            }
-        }
-        catch
-        {
-            // Marker enumeration is diagnostic-only and can vary by Unity/editor platform.
-        }
-    }
-
-    private bool HasProfilerMarkerRecorder(string statName)
-    {
-        for (int i = 0; i < _markerRecorders.Count; i++)
-        {
-            if (string.Equals(_markerRecorders[i].Name, statName, StringComparison.Ordinal))
-                return true;
-        }
-
-        return false;
-    }
-
-    private static bool ShouldTrackProfilerMarker(string name)
-    {
-        if (string.IsNullOrEmpty(name))
-            return false;
-
-        return
-            name.Contains("PlayerLoop", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("EditorLoop", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Update", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Render", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Camera", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Canvas", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("UI", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Entities", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Script", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Wait", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Present", StringComparison.OrdinalIgnoreCase) ||
-            name.Contains("Gfx", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private void DisposeProfilerRecorders()
-    {
-        if (_drawCallsRecorder.Valid) _drawCallsRecorder.Dispose();
-        if (_batchesRecorder.Valid) _batchesRecorder.Dispose();
-        if (_setPassCallsRecorder.Valid) _setPassCallsRecorder.Dispose();
-        if (_trianglesRecorder.Valid) _trianglesRecorder.Dispose();
-        if (_verticesRecorder.Valid) _verticesRecorder.Dispose();
-        for (int i = 0; i < _markerRecorders.Count; i++)
-        {
-            ProfilerRecorder recorder = _markerRecorders[i].Recorder;
-            if (recorder.Valid)
-                recorder.Dispose();
-        }
-        _markerRecorders.Clear();
-    }
-
-    private void UpdateFrameRateDiagnostics(bool gameplayActive, double now)
-    {
-        if (!EnableFrameRateDiagnostics)
-            return;
-
-        if (_applicationPaused)
-        {
-            _frameRateDiagFrames = 0;
-            _frameRateDiagAccumulatedSeconds = 0d;
-            _frameRateDiagUpdateAccumulatedSeconds = 0d;
-            _frameRateDiagMaxUpdateSeconds = 0d;
-            _stepPerfStats.Clear();
-            _nextFrameRateDiagTimestamp = now + FrameRateDiagIntervalSeconds;
-            return;
-        }
-
-        _frameRateDiagFrames++;
-        _frameRateDiagAccumulatedSeconds += Time.unscaledDeltaTime;
-        if (now < _nextFrameRateDiagTimestamp)
-            return;
-
-        double averageFrameMs = _frameRateDiagFrames > 0
-            ? (_frameRateDiagAccumulatedSeconds * 1000d) / _frameRateDiagFrames
-            : 0d;
-        double averageFps = averageFrameMs > 0d ? 1000d / averageFrameMs : 0d;
-        double updateAverageMs = _frameRateDiagFrames > 0
-            ? (_frameRateDiagUpdateAccumulatedSeconds * 1000d) / _frameRateDiagFrames
-            : 0d;
-        if (averageFps < LowFpsDiagThreshold)
-        {
-            GetRuntimeUnitCounts(out int units, out int modelInstances);
-            string label = gameplayActive ? "FrameRateDiag" : "FrameRateDiag:PreGame";
-            string preGameDetails = gameplayActive
-                ? string.Empty
-                : $" vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} lastSteps={_lastStepLogBuilder}";
-            Debug.Log(
-                $"[{label}] fps={averageFps:F1} avgFrame={averageFrameMs:F1}ms " +
-                $"updateAvg={updateAverageMs:F1}ms updateMax={_frameRateDiagMaxUpdateSeconds * 1000d:F1}ms " +
-                $"{BuildFrameTimingDiagString()} " +
-                $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
-                $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
-                $"units={units} models={modelInstances} impostors={UnitImpostors?.LastDrawnCount ?? 0} " +
-                $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)}{preGameDetails} " +
-                $"stepStats={BuildStepStatsString()} markers={BuildProfilerMarkerDiagString()}");
-        }
-
-        _frameRateDiagFrames = 0;
-        _frameRateDiagAccumulatedSeconds = 0d;
-        _frameRateDiagUpdateAccumulatedSeconds = 0d;
-        _frameRateDiagMaxUpdateSeconds = 0d;
-        _stepPerfStats.Clear();
-        _nextFrameRateDiagTimestamp = now + FrameRateDiagIntervalSeconds;
-    }
-
-    private void UpdateFpsLabel()
-    {
-        if (menuView == null)
-            return;
-
-        _fpsUiFrames++;
-        _fpsUiAccumulatedSeconds += Time.unscaledDeltaTime;
-        if (_fpsUiAccumulatedSeconds < FpsUiUpdateIntervalSeconds)
-            return;
-
-        double fps = _fpsUiAccumulatedSeconds > 0d ? _fpsUiFrames / _fpsUiAccumulatedSeconds : 0d;
-        menuView.SetFpsLabel(Mathf.RoundToInt((float)fps));
-        _fpsUiFrames = 0;
-        _fpsUiAccumulatedSeconds = 0d;
-    }
-
-    private static long ReadProfilerRecorder(ProfilerRecorder recorder)
-    {
-        return recorder.Valid ? recorder.LastValue : -1L;
-    }
-
-    private static void GetRuntimeUnitCounts(out int units, out int modelInstances)
-    {
-        units = 0;
-        modelInstances = 0;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return;
-
-        EntityManager em = world.EntityManager;
-        using EntityQuery unitQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<Faction>());
-        using EntityQuery modelQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitModelInstanceReference>());
-        units = unitQuery.CalculateEntityCount();
-        modelInstances = modelQuery.CalculateEntityCount();
     }
 
     private void EnsureRuntimeRoots()
@@ -860,158 +570,4 @@ public sealed class GameBootstrap : MonoBehaviour
         return totalConfigCount == 0 || initializedConfigCount >= totalConfigCount;
     }
 
-    private bool TimedStep(string name, System.Action action)
-    {
-        double start = Time.realtimeSinceStartupAsDouble;
-        action?.Invoke();
-        double elapsed = Time.realtimeSinceStartupAsDouble - start;
-        RecordStepStats(name, elapsed);
-
-        if (_lastStepLogBuilder.Length > 0)
-            _lastStepLogBuilder.Append(", ");
-
-        _lastStepLogBuilder.Append(name);
-        _lastStepLogBuilder.Append('=');
-        _lastStepLogBuilder.Append((elapsed * 1000d).ToString("F1"));
-        _lastStepLogBuilder.Append("ms");
-
-        if (elapsed < FreezeLogThresholdSeconds)
-            return false;
-
-        if (_freezeLogBuilder.Length > 0)
-            _freezeLogBuilder.Append(", ");
-
-        _freezeLogBuilder.Append(name);
-        _freezeLogBuilder.Append('=');
-        _freezeLogBuilder.Append((elapsed * 1000d).ToString("F1"));
-        _freezeLogBuilder.Append("ms");
-        return true;
-    }
-
-    private void RecordUpdateFrameStats(double totalSeconds)
-    {
-        _frameRateDiagUpdateAccumulatedSeconds += totalSeconds;
-        if (totalSeconds > _frameRateDiagMaxUpdateSeconds)
-            _frameRateDiagMaxUpdateSeconds = totalSeconds;
-    }
-
-    private void RecordStepStats(string name, double elapsed)
-    {
-        if (!_stepPerfStats.TryGetValue(name, out StepPerfStats stats))
-            stats = default;
-
-        stats.TotalSeconds += elapsed;
-        stats.Samples++;
-        if (elapsed > stats.MaxSeconds)
-            stats.MaxSeconds = elapsed;
-        _stepPerfStats[name] = stats;
-    }
-
-    private void LogSlowUpdateDiagnosticsIfNeeded(bool gameplayActive, double totalSeconds, double now)
-    {
-        if (!EnableSlowFrameDiagnostics || totalSeconds < SlowFrameDiagThresholdSeconds || now < _nextSlowFrameDiagTimestamp)
-            return;
-
-        _nextSlowFrameDiagTimestamp = now + SlowFrameDiagCooldownSeconds;
-        GetRuntimeUnitCounts(out int units, out int modelInstances);
-        string label = gameplayActive ? "PerfDiag" : "PerfDiag:PreGame";
-        Debug.Log(
-            $"[{label}] slowUpdate frame={Time.frameCount} total={totalSeconds * 1000d:F1}ms " +
-            $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={_lastStepLogBuilder} units={units} models={modelInstances} " +
-            $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
-            $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
-            $"memory={BuildMemoryDiagString()} uiToolkit=0 " +
-            $"gameplayInitialized={(GameplayInitialized ? 1 : 0)} playRequested={(_runtimeGameplayStateSystem.PlayRequested ? 1 : 0)} " +
-            $"focused={(Application.isFocused ? 1 : 0)} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} " +
-            $"markers={BuildProfilerMarkerDiagString()}");
-    }
-
-    private string BuildStepStatsString()
-    {
-        if (_stepPerfStats.Count == 0)
-            return "none";
-
-        System.Text.StringBuilder builder = new();
-        foreach (KeyValuePair<string, StepPerfStats> pair in _stepPerfStats)
-        {
-            StepPerfStats stats = pair.Value;
-            double avgMs = stats.Samples > 0 ? (stats.TotalSeconds * 1000d) / stats.Samples : 0d;
-            if (builder.Length > 0)
-                builder.Append("|");
-            builder.Append(pair.Key);
-            builder.Append(":avg=");
-            builder.Append(avgMs.ToString("F1"));
-            builder.Append("ms,max=");
-            builder.Append((stats.MaxSeconds * 1000d).ToString("F1"));
-            builder.Append("ms");
-        }
-
-        return builder.ToString();
-    }
-
-    private static string BuildMemoryDiagString()
-    {
-        return
-            $"alloc={Profiler.GetTotalAllocatedMemoryLong() / (1024L * 1024L)}MB " +
-            $"reserved={Profiler.GetTotalReservedMemoryLong() / (1024L * 1024L)}MB " +
-            $"mono={Profiler.GetMonoUsedSizeLong() / (1024L * 1024L)}MB";
-    }
-
-    private static string BuildFrameTimingDiagString()
-    {
-        FrameTimingManager.CaptureFrameTimings();
-        FrameTiming[] timings = new FrameTiming[1];
-        uint count = FrameTimingManager.GetLatestTimings(1, timings);
-        if (count == 0)
-            return "frameTiming=unavailable";
-
-        FrameTiming timing = timings[0];
-        return
-            $"cpuFrame={timing.cpuFrameTime:F1}ms " +
-            $"cpuMain={timing.cpuMainThreadFrameTime:F1}ms " +
-            $"cpuRender={timing.cpuRenderThreadFrameTime:F1}ms " +
-            $"gpu={timing.gpuFrameTime:F1}ms";
-    }
-
-    private string BuildProfilerMarkerDiagString()
-    {
-        if (_markerRecorders.Count == 0)
-            return "none";
-
-        System.Text.StringBuilder builder = new();
-        for (int i = 0; i < _markerRecorders.Count; i++)
-        {
-            NamedProfilerRecorder entry = _markerRecorders[i];
-            if (!entry.Recorder.Valid)
-                continue;
-
-            long value = entry.Recorder.LastValue;
-            if (value <= 0)
-                continue;
-
-            if (builder.Length > 0)
-                builder.Append("|");
-            builder.Append(entry.Name);
-            builder.Append("=");
-            builder.Append((value / 1000000d).ToString("F1"));
-            builder.Append("ms");
-        }
-
-        return builder.Length > 0 ? builder.ToString() : "none-active";
-    }
-
-    private string BuildGcDeltaString()
-    {
-        int gen0 = GC.CollectionCount(0);
-        int gen1 = GC.CollectionCount(1);
-        int gen2 = GC.CollectionCount(2);
-        return $"{gen0 - _lastGcGen0Count}/{gen1 - _lastGcGen1Count}/{gen2 - _lastGcGen2Count}";
-    }
-
-    private void CaptureGcCounts()
-    {
-        _lastGcGen0Count = GC.CollectionCount(0);
-        _lastGcGen1Count = GC.CollectionCount(1);
-        _lastGcGen2Count = GC.CollectionCount(2);
-    }
 }

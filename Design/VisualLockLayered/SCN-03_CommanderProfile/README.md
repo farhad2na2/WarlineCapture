@@ -1,6 +1,6 @@
 # SCN-03 Commander Profile Visual Lock
 
-Status: Target-lock mockup and V01 implementation layer pack generated.
+Status: Target-lock mockup and V01 implementation layer pack generated. Brand logo layer pending fresh isolated approval.
 Date: 2026-05-23
 
 ## Active Target
@@ -34,6 +34,7 @@ SCN-02 Main Menu
 
 - This is a target-lock mockup only; do not flatten it into Unity.
 - All labels, values, counters, reward states, tab names, and recent history rows must be live UI text.
+- The logo must come from a fresh isolated brand-lockup asset matching the approved target. Do not reuse the old SCN-02 logo layer and do not crop logo art from target mockups.
 - `Open Armory` routes to `SCN-19 Armory`.
 - `Edit ID` routes to commander identity editing / `POP-11` when available.
 - The generated V01 layer pack is available for Canvas conversion after review.
@@ -46,4 +47,4 @@ SCN-02 Main Menu
 - Contact sheet: `generated_one_go/layers_contact_sheet.png`
 - Validation contact sheet: `validation/SCN-03_CommanderProfile_layers_contact_sheet.png`
 
-The V01 pack contains separate background art, brand logo, panel chrome, tab/button frames, reward nodes, meter parts, icons, and commander portrait art. Parent frames do not intentionally carry route labels, values, counters, reward labels, or player stats.
+The V01 pack contains separate background art, panel chrome, tab/button frames, reward nodes, meter parts, non-brand icons, and commander portrait art. Brand/logo art is intentionally excluded until the fresh isolated logo source is approved. Parent frames do not intentionally carry route labels, values, counters, reward labels, or player stats.

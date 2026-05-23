@@ -49,6 +49,13 @@ internal sealed class BuildingRuntimeOwnershipSystem
         }
 
         em.SetComponentData(building.CombatEntity, new Faction { Id = building.OwnerFactionId });
+        if (em.HasComponent<RuntimeBuildingCombatInfo>(building.CombatEntity))
+        {
+            RuntimeBuildingCombatInfo info = em.GetComponentData<RuntimeBuildingCombatInfo>(building.CombatEntity);
+            info.RuntimeBuildingId = building.Id;
+            info.OwnerFactionId = building.OwnerFactionId;
+            em.SetComponentData(building.CombatEntity, info);
+        }
     }
 
     private static void UpdateRuntimeGateFriendlyPassFaction(Context context, RuntimeBuildingData building, byte? ownerFactionId)

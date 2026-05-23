@@ -77,6 +77,14 @@ internal sealed class BuildingRuntimeEntitySystem
             Size = new int2(footprintCells.x, footprintCells.y)
         });
         em.AddComponent<RuntimeBuildingCombatTag>(entity);
+        em.AddComponentData(entity, new RuntimeBuildingCombatInfo
+        {
+            OwnerFactionId = ownerFactionId,
+            OriginCell = new int2(originCell.x, originCell.y),
+            FootprintCells = new int2(footprintCells.x, footprintCells.y),
+            IsWall = definition.IsWall ? (byte)1 : (byte)0,
+            IsGate = BuildingBarrierSystem.IsWallGateDefinition(definition) ? (byte)1 : (byte)0
+        });
         em.AddComponentData(entity, new UnitGridInitialized());
         em.AddComponentData(entity, new Faction { Id = ownerFactionId });
         em.AddComponentData(entity, new UnitHealth { Current = maxHealth, Max = maxHealth });

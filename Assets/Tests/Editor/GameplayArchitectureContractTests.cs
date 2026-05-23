@@ -1403,6 +1403,31 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void AiCombatOrderMustUseRuntimeBuildingCombatInfo()
+    {
+        const string combatOrderFile = "Assets/Game/Scripts/Systems/AICombatOrderSystem.cs";
+        const string combatComponentsFile = "Assets/Game/Scripts/Components/CombatComponents.cs";
+        const string runtimeEntityFile = "Assets/Game/Scripts/Systems/BuildingRuntimeEntitySystem.cs";
+        const string ownershipFile = "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipSystem.cs";
+
+        string combatOrder = File.ReadAllText(combatOrderFile);
+        string combatComponents = File.ReadAllText(combatComponentsFile);
+        string runtimeEntity = File.ReadAllText(runtimeEntityFile);
+        string ownership = File.ReadAllText(ownershipFile);
+
+        StringAssert.Contains("RuntimeBuildingCombatInfo", combatComponents);
+        StringAssert.Contains("RuntimeBuildingCombatInfo", runtimeEntity);
+        StringAssert.Contains("RuntimeBuildingCombatInfo", ownership);
+        StringAssert.Contains("RuntimeBuildingCombatInfo", combatOrder);
+        StringAssert.Contains("TryResolveBaseBreachTarget", combatOrder);
+        Assert.IsFalse(
+            combatOrder.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            combatOrder.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            combatOrder.Contains("buildingPlacement", StringComparison.Ordinal),
+            "AICombatOrderSystem must resolve base-breach orders from ECS RuntimeBuildingCombatInfo, not the managed BuildingPlacementSystem bridge.");
+    }
+
+    [Test]
     public void AiBuildPlannerMustUseBuildingRuntimeBoundaryRequests()
     {
         const string buildPlannerFile = "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs";

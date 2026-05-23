@@ -529,7 +529,7 @@ internal sealed class BuildingBarrierSystem
         return false;
     }
 
-    private static bool TryFindBreachApproachCell(
+    public static bool TryFindBreachApproachCell(
         in GridConfig grid,
         in NativeArray<GridWalkable> walkable,
         in NativeBitArray blocked,

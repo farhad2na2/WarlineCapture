@@ -145,7 +145,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`; resource-hauler update orchestration, selected-hauler assignment bridging, hauler move-order/path request bridging, building approach checks, and building approach-cell search belong in `BuildingResourceHaulerBridgeSystem`", contract);
-        StringAssert.Contains("Unit production queue item initialization, player unit production queue mutation, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
+        StringAssert.Contains("Unit production queue item initialization, player unit production queue mutation, pending production timing/progress, readiness checks, produced-unit liveness pruning, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; production slot discovery, pending-slot reservation checks, slot occupancy cleanup, and production slot reservation belong in `BuildingProductionSlotSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; production transport ground-cell conversion, produced-unit movement orders, produced-unit rotation alignment, and transport-spawn bridging belong in `BuildingProductionTransportBridgeSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`; spawn prefab registry lookup, prefab entity resolution, and live-unit prefab fallback lookup belong in `BuildingSpawnPrefabSystem`", contract);
         StringAssert.Contains("Selected-building unit production request routing, camp item request failure policy, UI production arm consumption, friendly producer lookup, production request focus, and last camp production focus memory belong in `BuildingProductionRequestSystem`", contract);
         StringAssert.Contains("Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`", contract);
         StringAssert.Contains("Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`", contract);
@@ -2174,6 +2174,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingRuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint", placement);
         StringAssert.Contains("_buildingRuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint", placement);
         StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnInitialBuilding", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin", placement);
 
         StringAssert.Contains("TrySpawnRuntimeBuilding", runtimeSpawn);
         StringAssert.Contains("TrySpawnRuntimeWallRun", runtimeSpawn);
@@ -2181,6 +2182,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryGetRuntimeWallSegmentFootprint", runtimeSpawn);
         StringAssert.Contains("TryGetRuntimeBuildingPlacementFootprint", runtimeSpawn);
         StringAssert.Contains("TryFindValidInitialBuildingOrigin", runtimeSpawn);
+        StringAssert.Contains("TryResolveInitialPlacementOrigin", runtimeSpawn);
         StringAssert.Contains("CloneDefinitionWithFootprint", runtimeSpawn);
         StringAssert.Contains("BuildWallRunOrigins", runtimeSpawn);
         StringAssert.Contains("IsWallPlacementValid", runtimeSpawn);
@@ -2198,6 +2200,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bTryFindValidInitialBuildingOrigin\b"),
             "Initial building origin search belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"for\s*\(\s*int\s+radius\s*=\s*1\s*;\s*radius\s*<=\s*maxRadius"),
+            "Active placement initial origin radius search belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"for\s*\(\s*int\s+y\s*=\s*0\s*;\s*y\s*<=\s*Mathf\.Max\(0,\s*grid\.Height\s*-\s*footprint\.y\)"),
+            "Active placement full-grid origin fallback belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"new\s+Vector2Int\s*\(\s*4\s*,\s*1\s*\)"),
             "Runtime wall fallback footprint policy belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
@@ -2413,6 +2421,7 @@ public sealed class GameplayArchitectureContractTests
         const string productionFile = "Assets/Game/Scripts/Systems/BuildingProductionSystem.cs";
         const string productionSlotFile = "Assets/Game/Scripts/Systems/BuildingProductionSlotSystem.cs";
         const string productionTransportFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs";
+        const string productionTransportBridgeFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeSystem.cs";
         const string spawnFile = "Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs";
         const string spawnPrefabFile = "Assets/Game/Scripts/Systems/BuildingSpawnPrefabSystem.cs";
         const string runwayFile = "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs";
@@ -2420,6 +2429,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(productionFile), "The building production slice must live in BuildingProductionSystem.");
         Assert.IsTrue(File.Exists(productionSlotFile), "The production slot slice must live in BuildingProductionSlotSystem.");
         Assert.IsTrue(File.Exists(productionTransportFile), "The active production transport visual/update slice must live in BuildingProductionTransportSystem.");
+        Assert.IsTrue(File.Exists(productionTransportBridgeFile), "The production transport ECS bridge must live in BuildingProductionTransportBridgeSystem.");
         Assert.IsTrue(File.Exists(spawnFile), "The produced-unit spawn slice must live in BuildingSpawnSystem.");
         Assert.IsTrue(File.Exists(spawnPrefabFile), "The spawn prefab/entity resolution slice must live in BuildingSpawnPrefabSystem.");
         Assert.IsTrue(File.Exists(runwayFile), "The runway slice must live in BuildingRunwaySystem.");
@@ -2430,6 +2440,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingProductionSystem _buildingProductionSystem", placement);
         StringAssert.Contains("BuildingProductionSlotSystem _buildingProductionSlotSystem", placement);
         StringAssert.Contains("BuildingProductionTransportSystem _buildingProductionTransportSystem", placement);
+        StringAssert.Contains("BuildingProductionTransportBridgeSystem _buildingProductionTransportBridgeSystem", placement);
         StringAssert.Contains("BuildingSpawnSystem _buildingSpawnSystem", placement);
         StringAssert.Contains("BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem", placement);
         StringAssert.Contains("BuildingRunwaySystem _buildingRunwaySystem", placement);
@@ -2465,6 +2476,16 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("context.ProductionSystem.FindNextReadyTransportPending", productionTransport);
         StringAssert.Contains("context.ProductionSystem.FindNextSoonTransportPending", productionTransport);
         StringAssert.Contains("context.ProductionSystem.RemovePendingProduction", productionTransport);
+
+        string productionTransportBridge = File.ReadAllText(productionTransportBridgeFile);
+        StringAssert.Contains("ResolveProductionGroundGoalCell", productionTransportBridge);
+        StringAssert.Contains("MoveNewestProducedUnitToCell", productionTransportBridge);
+        StringAssert.Contains("AlignNewestProducedUnitRotation", productionTransportBridge);
+        StringAssert.Contains("TrySpawnPlayerUnitNearBuilding", productionTransportBridge);
+        StringAssert.Contains("GridUtils.WorldToCell", productionTransportBridge);
+        StringAssert.Contains("UnitPathRequest", productionTransportBridge);
+        StringAssert.Contains("quaternion.LookRotationSafe", productionTransportBridge);
+        StringAssert.Contains("context.SpawnSystem.TrySpawnPlayerUnitNearBuilding", productionTransportBridge);
 
         string spawn = File.ReadAllText(spawnFile);
         StringAssert.Contains("TrySpawnPlayerUnitNearBuilding", spawn);
@@ -2550,6 +2571,18 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryAcquireProductionTransportLane\b"),
             "Production transport lane reservation belongs in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"GridUtils\.WorldToCell\(grid,\s*worldPosition\)"),
+            "Production transport ground-cell conversion belongs in BuildingProductionTransportBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+UnitPathRequest\s*\{\s*Goal\s*=\s*goalCell\s*\}"),
+            "Produced-unit transport move orders belong in BuildingProductionTransportBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"quaternion\.LookRotationSafe\(\(float3\)forward,\s*math\.up\(\)\)"),
+            "Produced-unit transport rotation alignment belongs in BuildingProductionTransportBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingSpawnSystem\.TrySpawnPlayerUnitNearBuilding\("),
+            "Production transport spawn bridging belongs in BuildingProductionTransportBridgeSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryResolveHelicopterSpawnForFaction\b"),
             "Helipad spawn fallback belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");

@@ -308,6 +308,7 @@ public sealed class BuildingPlacementSystem
     private readonly ResourceHaulerSystem _resourceHaulerSystem = new();
     private readonly BuildingProductionSystem _buildingProductionSystem = new();
     private readonly BuildingProductionTransportSystem _buildingProductionTransportSystem = new();
+    private readonly BuildingProductionTransportBridgeSystem _buildingProductionTransportBridgeSystem = new();
     private readonly BuildingSpawnSystem _buildingSpawnSystem = new();
     private readonly BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem = new();
     private readonly BuildingProductionSlotSystem _buildingProductionSlotSystem = new();
@@ -2206,60 +2207,11 @@ public sealed class BuildingPlacementSystem
 
     private bool TryResolveInitialPlacementOrigin(BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin)
     {
-        resolvedOrigin = preferredOrigin;
-        if (definition == null)
-            return false;
-        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
-            return false;
-
-        bool rotateVertical = false;
-        Vector2Int footprint = GetPlacementFootprint(definition, rotateVertical);
-        Vector2Int clampedPreferred = new(
-            Mathf.Clamp(preferredOrigin.x, 0, Mathf.Max(0, grid.Width - footprint.x)),
-            Mathf.Clamp(preferredOrigin.y, 0, Mathf.Max(0, grid.Height - footprint.y)));
-
-        if (IsPlacementValid(definition, clampedPreferred, footprint, rotateVertical, grid, roads, blockerData))
-        {
-            resolvedOrigin = clampedPreferred;
-            return true;
-        }
-
-        int maxRadius = Mathf.Max(grid.Width, grid.Height);
-        for (int radius = 1; radius <= maxRadius; radius++)
-        {
-            for (int dy = -radius; dy <= radius; dy++)
-            {
-                for (int dx = -radius; dx <= radius; dx++)
-                {
-                    if (Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius)
-                        continue;
-
-                    Vector2Int candidate = clampedPreferred + new Vector2Int(dx, dy);
-                    candidate.x = Mathf.Clamp(candidate.x, 0, Mathf.Max(0, grid.Width - footprint.x));
-                    candidate.y = Mathf.Clamp(candidate.y, 0, Mathf.Max(0, grid.Height - footprint.y));
-                    if (!IsPlacementValid(definition, candidate, footprint, rotateVertical, grid, roads, blockerData))
-                        continue;
-
-                    resolvedOrigin = candidate;
-                    return true;
-                }
-            }
-        }
-
-        for (int y = 0; y <= Mathf.Max(0, grid.Height - footprint.y); y++)
-        {
-            for (int x = 0; x <= Mathf.Max(0, grid.Width - footprint.x); x++)
-            {
-                Vector2Int candidate = new(x, y);
-                if (!IsPlacementValid(definition, candidate, footprint, rotateVertical, grid, roads, blockerData))
-                    continue;
-
-                resolvedOrigin = candidate;
-                return true;
-            }
-        }
-
-        return false;
+        return _buildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin(
+            CreateBuildingRuntimeSpawnContext(),
+            definition,
+            preferredOrigin,
+            out resolvedOrigin);
     }
 
     private void UpdateDestroyedBuildings()
@@ -2684,6 +2636,16 @@ public sealed class BuildingPlacementSystem
             _alignNewestProducedUnitRotationForTransport);
     }
 
+    private BuildingProductionTransportBridgeSystem.Context CreateBuildingProductionTransportBridgeContext()
+    {
+        return new BuildingProductionTransportBridgeSystem.Context(
+            TryGetEntityManager,
+            TryGetGridData,
+            EnsureEntityQueries,
+            _buildingSpawnSystem,
+            CreateBuildingSpawnContext());
+    }
+
     private BuildingProductionRequestSystem.Context CreateBuildingProductionRequestContext()
     {
         return new BuildingProductionRequestSystem.Context(
@@ -2964,58 +2926,25 @@ public sealed class BuildingPlacementSystem
 
     private int2 ResolveProductionGroundGoalCell(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending, Vector3 worldPosition)
     {
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return int2.zero;
-
-        return GridUtils.WorldToCell(grid, worldPosition);
+        return _buildingProductionTransportBridgeSystem.ResolveProductionGroundGoalCell(
+            CreateBuildingProductionTransportBridgeContext(),
+            worldPosition);
     }
 
     private void MoveNewestProducedUnitToCell(RuntimeBuildingData building, int2 goalCell)
     {
-        if (building?.ProducedUnits == null || building.ProducedUnits.Count == 0)
-            return;
-        if (!TryGetEntityManager(out EntityManager em))
-            return;
-
-        Entity entity = building.ProducedUnits[building.ProducedUnits.Count - 1];
-        if (entity == Entity.Null || !em.Exists(entity))
-            return;
-
-        bool isAirUnit = em.HasComponent<UnitAirMovement>(entity);
-        bool isSpawnTransit = em.HasComponent<UnitSpawnTransitTag>(entity);
-        if (isAirUnit && !isSpawnTransit)
-            return;
-
-        if (em.HasComponent<UnitTarget>(entity))
-            em.SetComponentData(entity, new UnitTarget { Cell = goalCell });
-        else
-            em.AddComponentData(entity, new UnitTarget { Cell = goalCell });
-
-        if (em.HasComponent<UnitPathRequest>(entity))
-            em.SetComponentData(entity, new UnitPathRequest { Goal = goalCell });
-        else
-            em.AddComponentData(entity, new UnitPathRequest { Goal = goalCell });
+        _buildingProductionTransportBridgeSystem.MoveNewestProducedUnitToCell(
+            CreateBuildingProductionTransportBridgeContext(),
+            building,
+            goalCell);
     }
 
     private void AlignNewestProducedUnitRotation(RuntimeBuildingData building, Vector3 forward)
     {
-        if (building?.ProducedUnits == null || building.ProducedUnits.Count == 0)
-            return;
-        if (!TryGetEntityManager(out EntityManager em))
-            return;
-
-        Entity entity = building.ProducedUnits[building.ProducedUnits.Count - 1];
-        if (entity == Entity.Null || !em.Exists(entity) || !em.HasComponent<LocalTransform>(entity))
-            return;
-
-        forward.y = 0f;
-        if (forward.sqrMagnitude <= 0.0001f)
-            return;
-
-        forward.Normalize();
-        LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
-        transform.Rotation = quaternion.LookRotationSafe((float3)forward, math.up());
-        em.SetComponentData(entity, transform);
+        _buildingProductionTransportBridgeSystem.AlignNewestProducedUnitRotation(
+            CreateBuildingProductionTransportBridgeContext(),
+            building,
+            forward);
     }
 
     private bool TrySpawnPlayerUnitNearBuilding(RuntimeBuildingData building, int productionIndex)
@@ -3030,24 +2959,13 @@ public sealed class BuildingPlacementSystem
 
     private bool TrySpawnPlayerUnitNearBuilding(RuntimeBuildingData building, int productionIndex, int reservedProductionSlotIndex, Vector3? overrideWorldPosition, int2? overrideCell)
     {
-        if (!TryGetEntityManager(out EntityManager em))
-            return false;
-
-        if (!TryGetGridData(out Entity gridEntity, out GridConfig grid, out _, out DynamicBlockerData blockerData))
-            return false;
-
-        EnsureEntityQueries(em);
-        return _buildingSpawnSystem.TrySpawnPlayerUnitNearBuilding(
-            CreateBuildingSpawnContext(),
+        return _buildingProductionTransportBridgeSystem.TrySpawnPlayerUnitNearBuilding(
+            CreateBuildingProductionTransportBridgeContext(),
             building,
             productionIndex,
             reservedProductionSlotIndex,
             overrideWorldPosition,
             overrideCell,
-            em,
-            gridEntity,
-            grid,
-            blockerData,
             ref _buildingSpawnRandomState);
     }
 

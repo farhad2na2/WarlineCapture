@@ -134,6 +134,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
+        StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
@@ -1742,12 +1743,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingPlacementValidationSystem.IsPlacementRectValid", placement);
         StringAssert.Contains("_buildingPlacementValidationSystem.AreAllPendingWallRunsValid", placement);
         StringAssert.Contains("_buildingPlacementValidationSystem.AreWallPlacementOriginsValid", placement);
-        StringAssert.Contains("_buildingPlacementValidationSystem.IsWallPlacementValid", placement);
         StringAssert.Contains("CreateWallValidationContext", placement);
         StringAssert.Contains("IsWallFootprintValid", validation);
         StringAssert.Contains("DoWallSegmentsConflict", validation);
         StringAssert.Contains("AreAllPendingWallRunsValid", validation);
         StringAssert.Contains("AreWallPlacementOriginsValid", validation);
+        StringAssert.Contains("IsWallPlacementValid", validation);
         StringAssert.Contains("IsLinearWallOverlapCell", validation);
         StringAssert.Contains("IsPerpendicularWallOverlapCell", validation);
         Assert.IsFalse(
@@ -1870,15 +1871,17 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string definitionFile = "Assets/Game/Scripts/Systems/BuildingDefinitionSystem.cs";
+        const string runtimeSpawnFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnSystem.cs";
         Assert.IsTrue(File.Exists(definitionFile), "Building definition and prefab metadata behavior must live in BuildingDefinitionSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string definition = File.ReadAllText(definitionFile);
+        string runtimeSpawn = File.ReadAllText(runtimeSpawnFile);
 
         StringAssert.Contains("BuildingDefinitionSystem _buildingDefinitionSystem", placement);
         StringAssert.Contains("_buildingDefinitionSystem.RebuildSpawnablesLookup", placement);
         StringAssert.Contains("_buildingDefinitionSystem.RebuildConfiguredSpawnableDefinitions", placement);
-        StringAssert.Contains("_buildingDefinitionSystem.CreateRuntimeBuildingDefinition", placement);
+        StringAssert.Contains("context.DefinitionSystem.CreateRuntimeBuildingDefinition", runtimeSpawn);
         StringAssert.Contains("_buildingDefinitionSystem.TryGetConfiguredSpawnable", placement);
         StringAssert.Contains("_buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab", placement);
         StringAssert.Contains("_buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab", placement);
@@ -2034,6 +2037,56 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Bounds\s+TransformBounds\b"),
             "Transformed bounds math belongs in BuildingPlacementVisualSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateRuntimeManualSpawnSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string runtimeSpawnFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnSystem.cs";
+        Assert.IsTrue(File.Exists(runtimeSpawnFile), "Runtime/manual building spawn orchestration must live in BuildingRuntimeSpawnSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string runtimeSpawn = File.ReadAllText(runtimeSpawnFile);
+        StringAssert.Contains("BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem", placement);
+        StringAssert.Contains("CreateBuildingRuntimeSpawnContext", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.SpawnInitialTestRoster", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeBuilding", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeWallRun", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeWallSegment", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnInitialBuilding", placement);
+
+        StringAssert.Contains("TrySpawnRuntimeBuilding", runtimeSpawn);
+        StringAssert.Contains("TrySpawnRuntimeWallRun", runtimeSpawn);
+        StringAssert.Contains("TrySpawnRuntimeWallSegment", runtimeSpawn);
+        StringAssert.Contains("TryGetRuntimeWallSegmentFootprint", runtimeSpawn);
+        StringAssert.Contains("TryGetRuntimeBuildingPlacementFootprint", runtimeSpawn);
+        StringAssert.Contains("TryFindValidInitialBuildingOrigin", runtimeSpawn);
+        StringAssert.Contains("CloneDefinitionWithFootprint", runtimeSpawn);
+        StringAssert.Contains("BuildWallRunOrigins", runtimeSpawn);
+        StringAssert.Contains("IsWallPlacementValid", runtimeSpawn);
+        StringAssert.Contains("CreateRuntimeBuildingDefinition", runtimeSpawn);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"BuildWallRunOrigins\s*\("),
+            "Runtime wall-run origin construction belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"IsWallPlacementValid\s*\("),
+            "Runtime wall spawn validation orchestration belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"CreateRuntimeBuildingDefinition\s*\("),
+            "Runtime spawn definition creation orchestration belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bTryFindValidInitialBuildingOrigin\b"),
+            "Initial building origin search belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+Vector2Int\s*\(\s*4\s*,\s*1\s*\)"),
+            "Runtime wall fallback footprint policy belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+Vector2Int\s*\(\s*10\s*,\s*10\s*\)"),
+            "Runtime building fallback footprint policy belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

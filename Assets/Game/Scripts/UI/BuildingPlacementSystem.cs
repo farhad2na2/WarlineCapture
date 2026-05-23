@@ -332,6 +332,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementLifecycleSystem _buildingPlacementLifecycleSystem = new();
     private readonly BuildingPlacementGridSystem _buildingPlacementGridSystem = new();
     private readonly BuildingPlacementVisualSystem _buildingPlacementVisualSystem = new();
+    private readonly BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -2299,17 +2300,12 @@ public sealed class BuildingPlacementSystem
 
     public void SpawnInitialTestRoster(Vector2Int anchorCell)
     {
-        if (TrySpawnInitialBuilding(_soldierBaseDefinition, anchorCell + new Vector2Int(-18, -10), out _))
-        {
-        }
-
-        if (TrySpawnInitialBuilding(_soldierTentDefinition, anchorCell + new Vector2Int(-18, 16), out _))
-        {
-        }
-
-        if (TrySpawnInitialBuilding(_factoryDefinition, anchorCell + new Vector2Int(18, -4), out _))
-        {
-        }
+        _buildingRuntimeSpawnSystem.SpawnInitialTestRoster(
+            CreateBuildingRuntimeSpawnContext(),
+            _soldierBaseDefinition,
+            _soldierTentDefinition,
+            _factoryDefinition,
+            anchorCell);
     }
 
     public bool TrySpawnRuntimeBuilding(
@@ -2345,76 +2341,21 @@ public sealed class BuildingPlacementSystem
         Vector2Int endOrigin,
         byte? ownerFactionId = null)
     {
-        if (prefab == null)
-            return 0;
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return 0;
-
-        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
+        return _buildingRuntimeSpawnSystem.TrySpawnRuntimeWallRun(
+            CreateBuildingRuntimeSpawnContext(),
             prefab,
-            prefab.name,
-            "Defensive wall.",
-            new Vector2Int(4, 1),
-            500,
-            _buildingRunwaySystem);
-        definition.IsWall = true;
-        if (!BuildingBarrierSystem.IsLinearWallDefinition(definition))
-            return 0;
-
-        bool vertical = Mathf.Abs(endOrigin.y - startOrigin.y) > Mathf.Abs(endOrigin.x - startOrigin.x);
-        if (vertical)
-            endOrigin.x = startOrigin.x;
-        else
-            endOrigin.y = startOrigin.y;
-
-        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, vertical);
-        List<Vector2Int> origins = BuildingPlacementCommitSystem.BuildWallRunOrigins(startOrigin, endOrigin, wallFootprint, vertical);
-        int spawned = 0;
-        for (int i = 0; i < origins.Count; i++)
-        {
-            Vector2Int origin = origins[i];
-            if (!TryGetGridData(out _, out grid, out DynamicBuffer<GridRoad> currentRoads, out DynamicBlockerData currentBlockerData))
-                break;
-
-            if (!_buildingPlacementValidationSystem.IsWallPlacementValid(
-                    origin,
-                    wallFootprint,
-                    vertical,
-                    grid,
-                    currentRoads,
-                    currentBlockerData,
-                    CreateWallValidationContext()))
-                continue;
-
-            GameObject instance = CreateBuildingVisualInstance(definition, _buildingRoot);
-            if (instance == null)
-                continue;
-
-            PositionBuildingObject(instance, origin, definition, grid, vertical);
-            RuntimeBuildingData building = RegisterRuntimeBuilding(CloneDefinitionWithFootprint(definition, wallFootprint), instance, origin);
-            SetRuntimeBuildingOwnerFaction(building, ownerFactionId);
-            spawned++;
-        }
-
-        return spawned;
+            startOrigin,
+            endOrigin,
+            ownerFactionId);
     }
 
     public bool TryGetRuntimeWallSegmentFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
     {
-        footprint = default;
-        if (prefab == null)
-            return false;
-
-        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
+        return _buildingRuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
+            CreateBuildingRuntimeSpawnContext(),
             prefab,
-            prefab.name,
-            "Defensive wall.",
-            new Vector2Int(4, 1),
-            500,
-            _buildingRunwaySystem);
-        definition.IsWall = true;
-        footprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);
-        return footprint.x > 0 && footprint.y > 0;
+            rotateVertical,
+            out footprint);
     }
 
     public bool TrySpawnRuntimeWallSegment(
@@ -2424,42 +2365,13 @@ public sealed class BuildingPlacementSystem
         byte? ownerFactionId = null,
         bool allowExistingWallOverlap = false)
     {
-        if (prefab == null)
-            return false;
-        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
-            return false;
-
-        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
+        return _buildingRuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
+            CreateBuildingRuntimeSpawnContext(),
             prefab,
-            prefab.name,
-            "Defensive wall.",
-            new Vector2Int(4, 1),
-            500,
-            _buildingRunwaySystem);
-        definition.IsWall = true;
-        if (!BuildingBarrierSystem.IsLinearWallDefinition(definition))
-            return false;
-
-        Vector2Int wallFootprint = BuildingPlacementCommitSystem.GetWallSegmentFootprint(definition, rotateVertical);
-        if (!_buildingPlacementValidationSystem.IsWallPlacementValid(
-                origin,
-                wallFootprint,
-                rotateVertical,
-                grid,
-                roads,
-                blockerData,
-                CreateWallValidationContext(),
-                allowExistingWallOverlap))
-            return false;
-
-        GameObject instance = CreateBuildingVisualInstance(definition, _buildingRoot);
-        if (instance == null)
-            return false;
-
-        PositionBuildingObject(instance, origin, definition, grid, rotateVertical);
-        RuntimeBuildingData building = RegisterRuntimeBuilding(CloneDefinitionWithFootprint(definition, wallFootprint), instance, origin, removeOverlappingBlockers: !allowExistingWallOverlap);
-        SetRuntimeBuildingOwnerFaction(building, ownerFactionId);
-        return true;
+            origin,
+            rotateVertical,
+            ownerFactionId,
+            allowExistingWallOverlap);
     }
 
     public bool TrySpawnRuntimeBuilding(
@@ -2479,44 +2391,35 @@ public sealed class BuildingPlacementSystem
         buildingId = 0;
         actualOrigin = default;
         actualFootprint = default;
-        if (prefab == null)
+        if (!_buildingRuntimeSpawnSystem.TrySpawnRuntimeBuilding(
+                CreateBuildingRuntimeSpawnContext(),
+                prefab,
+                preferredOrigin,
+                fallbackDisplayName,
+                fallbackDescription,
+                fallbackFootprint,
+                fallbackMaxHealth,
+                isCityGenerated,
+                ownerFactionId,
+                rotateVertical,
+                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+        {
             return false;
+        }
 
-        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
-            prefab,
-            fallbackDisplayName,
-            fallbackDescription,
-            fallbackFootprint ?? new Vector2Int(10, 10),
-            fallbackMaxHealth,
-            _buildingRunwaySystem);
-        actualFootprint = GetPlacementFootprint(definition, rotateVertical);
-
-        if (!TrySpawnInitialBuilding(definition, preferredOrigin, rotateVertical, out RuntimeBuildingData building))
-            return false;
-
-        building.IsCityGenerated = isCityGenerated;
-        SetRuntimeBuildingOwnerFaction(building, ownerFactionId);
-        buildingId = building.Id;
-        actualOrigin = building.OriginCell;
-        actualFootprint = building.Definition.FootprintCells;
+        buildingId = result.BuildingId;
+        actualOrigin = result.ActualOrigin;
+        actualFootprint = result.ActualFootprint;
         return true;
     }
 
     public bool TryGetRuntimeBuildingPlacementFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
     {
-        footprint = default;
-        if (prefab == null)
-            return false;
-
-        BuildingDefinition definition = _buildingDefinitionSystem.CreateRuntimeBuildingDefinition(
+        return _buildingRuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
+            CreateBuildingRuntimeSpawnContext(),
             prefab,
-            prefab.name,
-            "Operational building.",
-            new Vector2Int(10, 10),
-            500,
-            _buildingRunwaySystem);
-        footprint = GetPlacementFootprint(definition, rotateVertical);
-        return footprint.x > 0 && footprint.y > 0;
+            rotateVertical,
+            out footprint);
     }
 
     public bool TryGetFactionProductionSpawnPoint(
@@ -2591,23 +2494,12 @@ public sealed class BuildingPlacementSystem
         bool rotateVertical,
         out RuntimeBuildingData building)
     {
-        building = null;
-        if (definition == null || definition.Prefab == null)
-            return false;
-
-        if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
-            return false;
-
-        if (!TryFindValidInitialBuildingOrigin(definition, preferredOrigin, rotateVertical, grid, roads, blockerData, out Vector2Int originCell))
-            return false;
-
-        GameObject instance = CreateBuildingVisualInstance(definition, _buildingRoot);
-        if (instance == null)
-            return false;
-
-        PositionBuildingObject(instance, originCell, definition, grid, rotateVertical);
-        building = RegisterRuntimeBuilding(CloneDefinitionWithFootprint(definition, GetPlacementFootprint(definition, rotateVertical)), instance, originCell);
-        return true;
+        return _buildingRuntimeSpawnSystem.TrySpawnInitialBuilding(
+            CreateBuildingRuntimeSpawnContext(),
+            definition,
+            preferredOrigin,
+            rotateVertical,
+            out building);
     }
 
     private bool TrySpawnInitialBuilding(
@@ -2615,57 +2507,11 @@ public sealed class BuildingPlacementSystem
         Vector2Int preferredOrigin,
         out RuntimeBuildingData building)
     {
-        return TrySpawnInitialBuilding(definition, preferredOrigin, false, out building);
-    }
-
-    private bool TryFindValidInitialBuildingOrigin(
-        BuildingDefinition definition,
-        Vector2Int preferredOrigin,
-        bool rotateVertical,
-        GridConfig grid,
-        DynamicBuffer<GridRoad> roads,
-        DynamicBlockerData blockerData,
-        out Vector2Int originCell)
-    {
-        originCell = default;
-        Vector2Int clampedPreferred = new(
-            Mathf.Clamp(preferredOrigin.x, 0, Mathf.Max(0, grid.Width - GetPlacementFootprint(definition, rotateVertical).x)),
-            Mathf.Clamp(preferredOrigin.y, 0, Mathf.Max(0, grid.Height - GetPlacementFootprint(definition, rotateVertical).y)));
-
-        Vector2Int placementFootprint = GetPlacementFootprint(definition, rotateVertical);
-        RectInt preferredPlacementRect = GetEffectivePlacementRect(definition, clampedPreferred, grid, rotateVertical);
-        int maxSearchRadius = Mathf.Max(
-            24,
-            Mathf.Min(
-                160,
-                Mathf.Max(
-                    placementFootprint.x,
-                    placementFootprint.y,
-                    preferredPlacementRect.width,
-                    preferredPlacementRect.height)));
-        for (int radius = 0; radius <= maxSearchRadius; radius++)
-        {
-            for (int dy = -radius; dy <= radius; dy++)
-            {
-                for (int dx = -radius; dx <= radius; dx++)
-                {
-                    if (radius > 0 && Mathf.Abs(dx) != radius && Mathf.Abs(dy) != radius)
-                        continue;
-
-                    Vector2Int candidate = clampedPreferred + new Vector2Int(dx, dy);
-                    RectInt candidateRect = GetEffectivePlacementRect(definition, candidate, grid, rotateVertical);
-                    if (HasCachedInvalidCellInFootprint(candidateRect.position, candidateRect.size))
-                        continue;
-                    if (!IsPlacementValid(definition, candidate, placementFootprint, rotateVertical, grid, roads, blockerData))
-                        continue;
-
-                    originCell = candidate;
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return _buildingRuntimeSpawnSystem.TrySpawnInitialBuilding(
+            CreateBuildingRuntimeSpawnContext(),
+            definition,
+            preferredOrigin,
+            out building);
     }
 
     private bool TryResolveInitialPlacementOrigin(BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin)
@@ -3587,39 +3433,7 @@ public sealed class BuildingPlacementSystem
 
     private static BuildingDefinition CloneDefinitionWithFootprint(BuildingDefinition definition, Vector2Int footprintCells)
     {
-        if (definition == null)
-            return null;
-
-        return new BuildingDefinition
-        {
-            DisplayName = definition.DisplayName,
-            Description = definition.Description,
-            MaxHealth = definition.MaxHealth,
-            ProductionSlots = definition.ProductionSlots,
-            SpawnUnitPrefab = definition.SpawnUnitPrefab,
-            SecondarySpawnUnitPrefab = definition.SecondarySpawnUnitPrefab,
-            TertiarySpawnUnitPrefab = definition.TertiarySpawnUnitPrefab,
-            QuaternarySpawnUnitPrefab = definition.QuaternarySpawnUnitPrefab,
-            Prefab = definition.Prefab,
-            FootprintCells = footprintCells,
-            Role = definition.Role,
-            IsWall = definition.IsWall,
-            OilBarrelsPerDay = definition.OilBarrelsPerDay,
-            OilStorageCapacity = definition.OilStorageCapacity,
-            FuelBarrelsPerDay = definition.FuelBarrelsPerDay,
-            FuelStorageCapacity = definition.FuelStorageCapacity,
-            RefugeeCapacity = definition.RefugeeCapacity,
-            RefugeeUpkeepPerCitizenPerDay = definition.RefugeeUpkeepPerCitizenPerDay,
-            LocalBounds = definition.LocalBounds,
-            HasLocalBounds = definition.HasLocalBounds,
-            VisualTemplate = definition.VisualTemplate,
-            GeneratedMeshes = definition.GeneratedMeshes,
-            ProductionSpawnLocalPositions = definition.ProductionSpawnLocalPositions,
-            HasRunway = definition.HasRunway,
-            RunwayLocalPosition = definition.RunwayLocalPosition,
-            RunwayLocalRotation = definition.RunwayLocalRotation,
-            RunwayHalfExtents = definition.RunwayHalfExtents
-        };
+        return BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint(definition, footprintCells);
     }
 
     private Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
@@ -3924,6 +3738,25 @@ public sealed class BuildingPlacementSystem
             _buildingProductionSlotSystem,
             BuildingDefinitionSystem.GetProductionPrefab,
             BuildingDefinitionSystem.RuntimeBuildingMatchesId);
+    }
+
+    private BuildingRuntimeSpawnSystem.Context CreateBuildingRuntimeSpawnContext()
+    {
+        return new BuildingRuntimeSpawnSystem.Context(
+            _buildingRoot,
+            _buildingDefinitionSystem,
+            _buildingRunwaySystem,
+            _buildingPlacementValidationSystem,
+            CreateWallValidationContext(),
+            TryGetGridData,
+            GetPlacementFootprint,
+            GetEffectivePlacementRect,
+            IsPlacementValid,
+            HasCachedInvalidCellInFootprint,
+            CreateBuildingVisualInstance,
+            PositionBuildingObject,
+            RegisterRuntimeBuilding,
+            SetRuntimeBuildingOwnerFaction);
     }
 
     private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()

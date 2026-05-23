@@ -1,5 +1,6 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System.Collections.Generic;
+using System.Reflection;
 using NUnit.Framework;
 using Unity.Entities;
 using UnityEngine;
@@ -35,6 +36,101 @@ public sealed class BuildingProductionSystemTests
         Assert.AreEqual(2, pending.TransportMaxConcurrent);
         Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Plane, pending.TransportMode);
         Assert.IsTrue(pending.TransportRequiresAirportRunway);
+    }
+
+    [Test]
+    public void ResolveProductionDurationSeconds_UsesUnitAuthoringDuration()
+    {
+        GameObject prefab = new("Unit_Infantry_Test");
+        try
+        {
+            UnitGridAuthoring authoring = prefab.AddComponent<UnitGridAuthoring>();
+            SetAuthoringField(authoring, "productionDurationSeconds", 12.5f);
+
+            var system = new BuildingProductionSystem();
+
+            Assert.AreEqual(12.5f, system.ResolveProductionDurationSeconds(prefab), 0.0001f);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(prefab);
+        }
+    }
+
+    [Test]
+    public void ResolveProductionTransportSettings_UsesConfiguredTransportAuthoring()
+    {
+        GameObject producedPrefab = new("Unit_Infantry_Test");
+        GameObject transportPrefab = new("Unit_Veh_Helicopter_Transport");
+        try
+        {
+            UnitGridAuthoring producedAuthoring = producedPrefab.AddComponent<UnitGridAuthoring>();
+            UnitGridAuthoring transportAuthoring = transportPrefab.AddComponent<UnitGridAuthoring>();
+            SetAuthoringField(producedAuthoring, "productionTransportPrefab", transportPrefab);
+            SetAuthoringField(transportAuthoring, "productionTransportArrivalSeconds", 8f);
+            SetAuthoringField(transportAuthoring, "productionTransportHoldForNextReadySeconds", 3f);
+            SetAuthoringField(transportAuthoring, "productionTransportMaxConcurrent", 4);
+
+            var system = new BuildingProductionSystem();
+            BuildingProductionSystem.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
+                producedPrefab,
+                new[] { transportPrefab },
+                new Dictionary<string, GameObject> { ["unit_veh_helicopter_transport"] = transportPrefab },
+                null);
+
+            Assert.AreSame(transportPrefab, settings.TransportPrefab);
+            Assert.AreEqual(8f, settings.ArrivalSeconds, 0.0001f);
+            Assert.AreEqual(3f, settings.HoldForNextReadySeconds, 0.0001f);
+            Assert.AreEqual(4, settings.MaxConcurrent);
+            Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Helicopter, settings.Mode);
+            Assert.IsFalse(settings.RequiresAirportRunway);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(producedPrefab);
+            UnityEngine.Object.DestroyImmediate(transportPrefab);
+        }
+    }
+
+    [Test]
+    public void ResolveProductionTransportSettings_DefaultsLargeVehicleToPlaneTransport()
+    {
+        GameObject producedPrefab = new("Unit_Veh_TankHeavy_Test");
+        GameObject helicopterPrefab = new("Unit_Veh_Helicopter_Transport");
+        GameObject planePrefab = new("Unit_Veh_Plane_Transport");
+        try
+        {
+            producedPrefab.AddComponent<UnitGridAuthoring>();
+            helicopterPrefab.AddComponent<UnitGridAuthoring>();
+            planePrefab.AddComponent<UnitGridAuthoring>();
+
+            var prefabsByKey = new Dictionary<string, GameObject>
+            {
+                ["unit_veh_helicopter_transport"] = helicopterPrefab,
+                ["unit_veh_plane_transport"] = planePrefab
+            };
+            var system = new BuildingProductionSystem();
+            BuildingProductionSystem.ProductionTransportSettings settings = system.ResolveProductionTransportSettings(
+                producedPrefab,
+                new[] { helicopterPrefab, planePrefab },
+                prefabsByKey,
+                (GameObject _, out Bounds bounds) =>
+                {
+                    bounds = new Bounds(Vector3.zero, new Vector3(3f, 1f, 2f));
+                    return true;
+                });
+
+            Assert.AreSame(planePrefab, settings.TransportPrefab);
+            Assert.AreEqual(BuildingProductionSystem.ProductionTransportMode.Plane, settings.Mode);
+            Assert.IsTrue(settings.RequiresAirportRunway);
+            Assert.AreEqual(1, settings.MaxConcurrent);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(producedPrefab);
+            UnityEngine.Object.DestroyImmediate(helicopterPrefab);
+            UnityEngine.Object.DestroyImmediate(planePrefab);
+        }
     }
 
     [Test]
@@ -234,6 +330,13 @@ public sealed class BuildingProductionSystemTests
         public int TransportMaxConcurrent { get; set; }
         public BuildingProductionSystem.ProductionTransportMode TransportMode { get; set; }
         public bool TransportRequiresAirportRunway { get; set; }
+    }
+
+    private static void SetAuthoringField<T>(UnitGridAuthoring authoring, string fieldName, T value)
+    {
+        FieldInfo field = typeof(UnitGridAuthoring).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.IsNotNull(field, $"{nameof(UnitGridAuthoring)} must expose serialized field '{fieldName}' for this test.");
+        field.SetValue(authoring, value);
     }
 }
 #endif

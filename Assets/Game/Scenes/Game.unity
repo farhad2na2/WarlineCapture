@@ -9639,8 +9639,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameBootstrap
   menuView: {fileID: 7788238636331706619}
   worldCamera: {fileID: 1220593093}
-  directionalLight: {fileID: 0}
-  globalVolume: {fileID: 0}
+  directionalLight: {fileID: 466276141}
+  globalVolume: {fileID: 756031881}
   decorationCombinedMeshBaker: {fileID: 1026090171}
   decorationRoot: {fileID: 1026090170}
   chapter01TacticalBinder: {fileID: 0}

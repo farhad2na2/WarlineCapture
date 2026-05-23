@@ -18,27 +18,28 @@ public sealed class WarlineCaptureUiArmoryTests
         Assert.AreEqual(WarlineCaptureRoute.Armory, controller.Route);
         Assert.IsNull(prefab.GetComponent<Image>(), "Armory must not bake the full target image into the screen root.");
 
+        Transform visual = VisualRoot(prefab);
         AssertChildren(
-            prefab.transform,
-            "ShellFill",
-            "ShellFrame",
-            "HeaderBar",
+            visual,
+            "ShellFill_Viewport/ShellFill",
+            "HeaderBar/LogoPanel",
             "HeaderBar/BackButton/IconImage",
             "HeaderBar/TitleText",
             "HeaderBar/CreditsCounter/IconImage",
-            "HeaderBar/MaterialsCounter/ValueText",
+            "HeaderBar/SuppliesCounter/ValueText",
             "CategoryRail/UnitsButton/IconImage",
             "CategoryRail/VehiclesButton/LabelText",
             "RosterPanel",
-            "RosterPanel/RifleSquadCard/ArtImage",
-            "RosterPanel/ApcArmorCard/ProgressFrame",
-            "RosterPanel/ApcArmorCard/ProgressFill",
-            "InspectionPanel",
-            "InspectionPanel/SelectedArtImage",
-            "InspectionPanel/TierTrack/TierPip_1",
+            "RosterPanel/RiflemanCard/ArtImage_Viewport/ArtImage",
+            "RosterPanel/RiflemanCard/Progress/ProgressFrame",
+            "RosterPanel/RiflemanCard/Progress/ProgressFill",
+            "RosterPanel/TransportHelicopterCard/StateIcon",
+            "InspectionPanel/Frame",
+            "InspectionPanel/SelectedArtImage_Viewport/SelectedArtImage",
             "InspectionPanel/PartsProgress/ProgressFrame",
-            "InspectionPanel/ArmorStatRow/IconImage",
-            "InspectionPanel/UpgradeLockedButton/LockIcon",
+            "InspectionPanel/HealthStatRow/IconImage",
+            "InspectionPanel/MoveAbility/IconImage",
+            "InspectionPanel/EquipButton/DisabledIcon",
             "BottomTabBar/OwnedTab/LabelText",
             "DisabledReasonPanel/WarningIcon");
     }
@@ -47,51 +48,55 @@ public sealed class WarlineCaptureUiArmoryTests
     public void ArmoryScreen_UsesOneGoLayerPackAssets()
     {
         GameObject prefab = LoadPrefab();
+        Transform visual = VisualRoot(prefab);
 
-        AssertImageSpritePath(prefab.transform, "ShellFrame", "screen_shell_frame.png");
-        AssertImageSpritePath(prefab.transform, "HeaderBar", "header_bar_frame.png");
-        AssertImageSpritePath(prefab.transform, "HeaderBar/CreditsCounter", "resource_counter_frame.png");
-        AssertImageSpritePath(prefab.transform, "CategoryRail/UnitsButton", "category_button_selected_background.png");
-        AssertImageSpritePath(prefab.transform, "CategoryRail/VehiclesButton", "category_button_normal_background.png");
-        AssertImageSpritePath(prefab.transform, "RosterPanel", "roster_panel_frame.png");
-        AssertImageSpritePath(prefab.transform, "RosterPanel/ApcArmorCard", "item_card_selected_frame.png");
-        AssertImageSpritePath(prefab.transform, "RosterPanel/ApcArmorCard/ArtImage", "art_apc_armor.png");
-        AssertImageSpritePath(prefab.transform, "InspectionPanel", "inspection_panel_frame.png");
-        AssertImageSpritePath(prefab.transform, "InspectionPanel/SelectedArtImage", "art_apc_armor.png");
-        AssertImageSpritePath(prefab.transform, "InspectionPanel/UpgradeLockedButton", "disabled_primary_button_background.png");
-        AssertImageSpritePath(prefab.transform, "DisabledReasonPanel", "disabled_reason_frame.png");
+        AssertImageSpritePath(visual, "ShellFill_Viewport/ShellFill", "scn19_background_21x9_no_ui.png");
+        AssertImageSpritePath(visual, "HeaderBar/LogoPanel", "scn19_header_logo_panel_bg.png");
+        AssertImageSpritePath(visual, "HeaderBar/ResourcePanel", "scn19_header_resource_panel_bg.png");
+        AssertImageSpritePath(visual, "HeaderBar/CreditsCounter/IconImage", "scn19_resource_credits_coin.png");
+        AssertImageSpritePath(visual, "CategoryRail/UnitsButton", "scn19_category_button_selected_frame.png");
+        AssertImageSpritePath(visual, "CategoryRail/VehiclesButton", "scn19_category_button_default_frame.png");
+        AssertImageSpritePath(visual, "RosterPanel/RiflemanCard", "scn19_roster_card_selected_frame.png");
+        AssertImageSpritePath(visual, "RosterPanel/RiflemanCard/ArtImage_Viewport/ArtImage", "scn19_art_rifleman_male_ii.png");
+        AssertImageSpritePath(visual, "InspectionPanel/Frame", "scn19_inspection_panel_frame.png");
+        AssertImageSpritePath(visual, "InspectionPanel/SelectedArtImage_Viewport/SelectedArtImage", "scn19_art_rifleman_male_ii.png");
+        AssertImageSpritePath(visual, "InspectionPanel/UpgradeButton", "scn19_cta_primary_gold_frame.png");
+        AssertImageSpritePath(visual, "InspectionPanel/EquipButton", "scn19_cta_disabled_frame.png");
+        AssertImageSpritePath(visual, "DisabledReasonPanel/Frame", "scn19_small_status_chip_frame.png");
     }
 
     [Test]
     public void ArmoryScreen_PreservesLiveTextAndDisabledUpgradeContract()
     {
         GameObject prefab = LoadPrefab();
+        Transform visual = VisualRoot(prefab);
 
-        AssertText(prefab.transform, "HeaderBar/TitleText", "ARMORY");
-        AssertText(prefab.transform, "HeaderBar/CreditsCounter/ValueText", "125,430");
-        AssertText(prefab.transform, "CategoryRail/UnitsButton/LabelText", "UNITS");
-        AssertText(prefab.transform, "RosterPanel/ApcArmorCard/TitleText", "APC ARMOR");
-        AssertText(prefab.transform, "InspectionPanel/TitleText", "APC ARMOR UPGRADE");
-        AssertText(prefab.transform, "InspectionPanel/PartsProgress/ValueText", "18 / 40");
-        AssertText(prefab.transform, "InspectionPanel/UnlockSourceText", "Unlock source: Chapter 1 M03 Reward");
+        AssertText(visual, "HeaderBar/TitleText", "ARMORY");
+        AssertText(visual, "HeaderBar/CreditsCounter/ValueText", "187,540");
+        AssertText(visual, "CategoryRail/UnitsButton/LabelText", "UNITS");
+        AssertText(visual, "RosterPanel/RiflemanCard/TitleText", "RIFLEMAN MALE II");
+        AssertText(visual, "InspectionPanel/TitleText", "RIFLEMAN MALE II");
+        AssertText(visual, "InspectionPanel/PartsProgress/ValueText", "38 / 60");
+        AssertText(visual, "InspectionPanel/SourceRow/ValueText", "Barracks Level 4");
 
-        Button upgradeButton = prefab.transform.Find("InspectionPanel/UpgradeLockedButton").GetComponent<Button>();
-        Assert.NotNull(upgradeButton);
-        Assert.IsFalse(upgradeButton.interactable, "Upgrade action remains disabled until upgrade service and inventory persistence exist.");
-        AssertText(prefab.transform, "InspectionPanel/UpgradeLockedButton/LabelText", "NOT ENOUGH PARTS");
-        AssertText(prefab.transform, "DisabledReasonPanel/ReasonText", "Upgrade service and inventory persistence pending.");
+        Button equipButton = visual.Find("InspectionPanel/EquipButton").GetComponent<Button>();
+        Assert.NotNull(equipButton);
+        Assert.IsFalse(equipButton.interactable, "Equip remains disabled until roster equipment persistence exists.");
+        AssertText(visual, "InspectionPanel/EquipButton/LabelText", "EQUIP");
+        AssertText(visual, "DisabledReasonPanel/ReasonText", "Equip is disabled until roster equipment persistence is connected.");
     }
 
     [Test]
     public void ArmoryScreen_UsesAnimatedTabAndCardButtons()
     {
         GameObject prefab = LoadPrefab();
+        Transform visual = VisualRoot(prefab);
 
-        AssertAnimatedButton(prefab, "CategoryRail/UnitsButton", true);
-        AssertAnimatedButton(prefab, "CategoryRail/VehiclesButton", false);
-        AssertAnimatedButton(prefab, "RosterPanel/ApcArmorCard", true);
-        AssertAnimatedButton(prefab, "BottomTabBar/OwnedTab", true);
-        AssertAnimatedButton(prefab, "BottomTabBar/PartsTab", false);
+        AssertAnimatedButton(visual, "CategoryRail/UnitsButton", true);
+        AssertAnimatedButton(visual, "CategoryRail/VehiclesButton", false);
+        AssertAnimatedButton(visual, "RosterPanel/RiflemanCard", true);
+        AssertAnimatedButton(visual, "BottomTabBar/OwnedTab", true);
+        AssertAnimatedButton(visual, "BottomTabBar/PartsTab", false);
     }
 
     private static GameObject LoadPrefab()
@@ -99,6 +104,13 @@ public sealed class WarlineCaptureUiArmoryTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ArmoryPrefabPath);
         Assert.NotNull(prefab, ArmoryPrefabPath);
         return prefab;
+    }
+
+    private static Transform VisualRoot(GameObject prefab)
+    {
+        Transform visual = prefab.transform.Find("SCN19_LayeredCanvas");
+        Assert.NotNull(visual);
+        return visual;
     }
 
     private static void AssertChildren(Transform root, params string[] paths)
@@ -126,9 +138,9 @@ public sealed class WarlineCaptureUiArmoryTests
         Assert.AreEqual(expected, text.text, path);
     }
 
-    private static void AssertAnimatedButton(GameObject prefab, string path, bool selected)
+    private static void AssertAnimatedButton(Transform root, string path, bool selected)
     {
-        Transform target = prefab.transform.Find(path);
+        Transform target = root.Find(path);
         Assert.NotNull(target, path);
         Button button = target.GetComponent<Button>();
         Assert.NotNull(button, path);

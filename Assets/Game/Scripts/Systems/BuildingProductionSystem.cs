@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class BuildingProductionSystem
 {
+    public delegate bool TryGetPrefabLocalBoundsDelegate(GameObject prefab, out Bounds localBounds);
+
     public enum ProductionTransportMode : byte
     {
         Helicopter = 0,
@@ -24,6 +26,32 @@ public sealed class BuildingProductionSystem
         int TransportMaxConcurrent { get; set; }
         ProductionTransportMode TransportMode { get; set; }
         bool TransportRequiresAirportRunway { get; set; }
+    }
+
+    public readonly struct ProductionTransportSettings
+    {
+        public readonly GameObject TransportPrefab;
+        public readonly float ArrivalSeconds;
+        public readonly float HoldForNextReadySeconds;
+        public readonly int MaxConcurrent;
+        public readonly ProductionTransportMode Mode;
+        public readonly bool RequiresAirportRunway;
+
+        public ProductionTransportSettings(
+            GameObject transportPrefab,
+            float arrivalSeconds,
+            float holdForNextReadySeconds,
+            int maxConcurrent,
+            ProductionTransportMode mode,
+            bool requiresAirportRunway)
+        {
+            TransportPrefab = transportPrefab;
+            ArrivalSeconds = arrivalSeconds;
+            HoldForNextReadySeconds = holdForNextReadySeconds;
+            MaxConcurrent = maxConcurrent;
+            Mode = mode;
+            RequiresAirportRunway = requiresAirportRunway;
+        }
     }
 
     public readonly struct PendingProductionProgress
@@ -68,6 +96,99 @@ public sealed class BuildingProductionSystem
         pending.TransportMaxConcurrent = transportMaxConcurrent;
         pending.TransportMode = transportMode;
         pending.TransportRequiresAirportRunway = transportRequiresAirportRunway;
+    }
+
+    public float ResolveProductionDurationSeconds(GameObject spawnUnitPrefab)
+    {
+        if (spawnUnitPrefab == null)
+            return 60f;
+
+        UnitGridAuthoring authoring = spawnUnitPrefab.GetComponent<UnitGridAuthoring>();
+        if (authoring == null)
+            return 60f;
+
+        return Mathf.Max(0.01f, authoring.ProductionDurationSeconds);
+    }
+
+    public ProductionTransportSettings ResolveProductionTransportSettings(
+        GameObject spawnUnitPrefab,
+        IReadOnlyList<GameObject> unitSpawnPrefabs,
+        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+        TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
+    {
+        GameObject transportPrefab = null;
+        float arrivalSeconds = 5f;
+        float holdForNextReadySeconds = 4f;
+        int maxConcurrent = 1;
+        ProductionTransportMode transportMode = ProductionTransportMode.Helicopter;
+        bool requiresAirportRunway = false;
+        if (spawnUnitPrefab == null)
+            return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
+
+        UnitGridAuthoring producedAuthoring = spawnUnitPrefab.GetComponent<UnitGridAuthoring>();
+        transportPrefab = producedAuthoring != null ? producedAuthoring.ProductionTransportPrefab : null;
+
+        if (transportPrefab == null)
+            transportPrefab = TryResolveDefaultProductionTransportPrefab(spawnUnitPrefab, unitSpawnPrefabs, unitSpawnPrefabsByKey, tryGetPrefabLocalBounds);
+
+        if (transportPrefab == null && producedAuthoring != null && producedAuthoring.IsAirUnit)
+        {
+            transportPrefab = spawnUnitPrefab;
+            arrivalSeconds = Mathf.Max(0.5f, producedAuthoring.ProductionTransportArrivalSeconds);
+            holdForNextReadySeconds = Mathf.Max(0.5f, producedAuthoring.ProductionTransportHoldForNextReadySeconds);
+            maxConcurrent = 64;
+
+            string producedName = spawnUnitPrefab.name;
+            bool usesRunwaySelfArrival =
+                producedAuthoring.ProductionTransportUsesRunwayLanding ||
+                producedAuthoring.ProductionTransportRequiresAirportRunway ||
+                producedName.IndexOf("Plane", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                producedName.IndexOf("Drone", System.StringComparison.OrdinalIgnoreCase) >= 0 ||
+                producedName.IndexOf("Jet", System.StringComparison.OrdinalIgnoreCase) >= 0;
+
+            if (usesRunwaySelfArrival)
+            {
+                transportMode = ProductionTransportMode.Plane;
+                requiresAirportRunway = true;
+                maxConcurrent = 1;
+            }
+            else
+            {
+                transportMode = ProductionTransportMode.AirSelf;
+            }
+        }
+
+        if (transportPrefab == null)
+            return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
+
+        UnitGridAuthoring transportAuthoring = transportPrefab.GetComponent<UnitGridAuthoring>();
+        if (transportAuthoring != null)
+        {
+            arrivalSeconds = transportAuthoring.ProductionTransportArrivalSeconds;
+            holdForNextReadySeconds = transportAuthoring.ProductionTransportHoldForNextReadySeconds;
+            maxConcurrent = transportAuthoring.ProductionTransportMaxConcurrent;
+            requiresAirportRunway = transportAuthoring.ProductionTransportRequiresAirportRunway;
+            if (transportAuthoring.ProductionTransportUsesRunwayLanding)
+                transportMode = ProductionTransportMode.Plane;
+        }
+
+        if (string.Equals(transportPrefab.name, "Unit_Veh_Helicopter_Transport", System.StringComparison.Ordinal))
+        {
+            maxConcurrent = Mathf.Max(2, maxConcurrent);
+        }
+        else if (string.Equals(transportPrefab.name, "Unit_Veh_Plane_Transport", System.StringComparison.Ordinal))
+        {
+            maxConcurrent = 1;
+            requiresAirportRunway = true;
+            transportMode = ProductionTransportMode.Plane;
+        }
+
+        return new ProductionTransportSettings(transportPrefab, arrivalSeconds, holdForNextReadySeconds, maxConcurrent, transportMode, requiresAirportRunway);
+    }
+
+    public bool IsHelicopterUnitPrefab(GameObject prefab)
+    {
+        return prefab != null && prefab.name.StartsWith("Unit_Veh_Helicopter_", System.StringComparison.OrdinalIgnoreCase);
     }
 
     public PendingProductionProgress GetProgress(IPendingProduction pending, float now, bool capTransportProgress)
@@ -273,5 +394,118 @@ public sealed class BuildingProductionSystem
 
         return !entityManager.HasComponent<UnitHealth>(unit) ||
                entityManager.GetComponentData<UnitHealth>(unit).Current > 0;
+    }
+
+    private GameObject TryResolveDefaultProductionTransportPrefab(
+        GameObject spawnUnitPrefab,
+        IReadOnlyList<GameObject> unitSpawnPrefabs,
+        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
+        TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
+    {
+        if (spawnUnitPrefab == null)
+            return null;
+
+        UnitGridAuthoring authoring = spawnUnitPrefab.GetComponent<UnitGridAuthoring>();
+        if (authoring == null)
+            return null;
+
+        GameObject helicopter = TryResolveConfiguredUnitPrefab(
+            "Unit_Veh_Helicopter_Transport",
+            unitSpawnPrefabs,
+            unitSpawnPrefabsByKey);
+        if (helicopter == null)
+            return null;
+
+        if (authoring.IsAirUnit)
+            return null;
+
+        bool isLikelyVehicle = IsLikelyGroundVehiclePrefab(spawnUnitPrefab);
+        if (!isLikelyVehicle)
+            return helicopter;
+
+        Vector2Int size = ResolveEffectiveProductionFootprintCells(spawnUnitPrefab, authoring, tryGetPrefabLocalBounds);
+        if (size.x <= 1 && size.y <= 1)
+            return helicopter;
+
+        return TryResolveConfiguredUnitPrefab(
+            "Unit_Veh_Plane_Transport",
+            unitSpawnPrefabs,
+            unitSpawnPrefabsByKey);
+    }
+
+    private static GameObject TryResolveConfiguredUnitPrefab(
+        string prefabName,
+        IReadOnlyList<GameObject> unitSpawnPrefabs,
+        IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey)
+    {
+        if (string.IsNullOrWhiteSpace(prefabName))
+            return null;
+
+        string key = NormalizeLookupKey(prefabName);
+        if (unitSpawnPrefabsByKey != null &&
+            unitSpawnPrefabsByKey.TryGetValue(key, out GameObject prefab) &&
+            prefab != null)
+        {
+            return prefab;
+        }
+
+        if (unitSpawnPrefabs == null)
+            return null;
+
+        for (int i = 0; i < unitSpawnPrefabs.Count; i++)
+        {
+            GameObject candidate = unitSpawnPrefabs[i];
+            if (candidate != null && string.Equals(candidate.name, prefabName, System.StringComparison.Ordinal))
+                return candidate;
+        }
+
+        return null;
+    }
+
+    private static bool IsLikelyGroundVehiclePrefab(GameObject prefab)
+    {
+        if (prefab == null)
+            return false;
+
+        string name = prefab.name;
+        if (name.IndexOf("_Veh_", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return true;
+
+        if (name.IndexOf("Vehicle", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return true;
+
+        if (name.IndexOf("Tank", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return true;
+
+        if (name.IndexOf("APC", System.StringComparison.OrdinalIgnoreCase) >= 0)
+            return true;
+
+        return false;
+    }
+
+    private static Vector2Int ResolveEffectiveProductionFootprintCells(
+        GameObject spawnUnitPrefab,
+        UnitGridAuthoring authoring,
+        TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds)
+    {
+        Vector2Int configured = authoring != null ? authoring.GetConfiguredFootprintCells() : Vector2Int.one;
+        if (configured.x > 1 || configured.y > 1)
+            return configured;
+
+        if (tryGetPrefabLocalBounds != null && tryGetPrefabLocalBounds(spawnUnitPrefab, out Bounds localBounds))
+        {
+            Vector2Int modelFootprint = new(
+                Mathf.Max(1, Mathf.CeilToInt(localBounds.size.x)),
+                Mathf.Max(1, Mathf.CeilToInt(localBounds.size.z)));
+            if (modelFootprint.x > configured.x || modelFootprint.y > configured.y)
+                return modelFootprint;
+        }
+
+        return configured;
+    }
+
+    private static string NormalizeLookupKey(string value)
+    {
+        return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim().ToLowerInvariant();
     }
 }

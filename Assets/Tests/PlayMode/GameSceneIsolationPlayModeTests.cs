@@ -59,7 +59,7 @@ public sealed class GameSceneIsolationPlayModeTests
         Assert.NotNull(bootstrap.GlobalVolume);
         Assert.AreEqual("Global Volume", bootstrap.GlobalVolume.name);
         Assert.NotNull(bootstrap.DirectionalLight);
-        Assert.AreEqual("Directional Light (1)", bootstrap.DirectionalLight.name);
+        Assert.AreEqual("Directional light", bootstrap.DirectionalLight.name);
         Assert.NotNull(bootstrap.DecorationRoot);
         Assert.AreEqual("Decorations", bootstrap.DecorationRoot.name);
 

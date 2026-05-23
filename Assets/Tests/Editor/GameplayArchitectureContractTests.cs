@@ -135,7 +135,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
         StringAssert.Contains("Hauler source/destination classification, order construction, phase/timer state mutation, cargo capacity checks, and load/unload resource transfer mutation belong in `ResourceHaulerSystem`", contract);
-        StringAssert.Contains("Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, production slot reservation, pending queue removal, ready/soon transport-pending lookup, and transport launch delay math belong in `BuildingProductionSystem`", contract);
+        StringAssert.Contains("Unit production queue item initialization, pending production timing/progress, readiness checks, produced-unit liveness pruning, production slot reservation, pending queue removal, ready/soon transport-pending lookup, production duration, transport settings/fallback policy, transport unit classification, and transport launch delay math belong in `BuildingProductionSystem`; active production transport visual state, arrival/drop/departure updates, transport lanes, transport drop visuals, and transport visual helpers belong in `BuildingProductionTransportSystem`; produced-unit spawn placement, recent spawn reservations, strict spawn-cell search, dynamic occupancy reservation, helipad spawn fallback, and spawned ECS unit initialization belong in `BuildingSpawnSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI read models belong in `BuildingUiQuerySystem`", contract);
     }
 
@@ -1899,10 +1899,16 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string productionFile = "Assets/Game/Scripts/Systems/BuildingProductionSystem.cs";
+        const string productionTransportFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs";
+        const string spawnFile = "Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs";
         Assert.IsTrue(File.Exists(productionFile), "The building production slice must live in BuildingProductionSystem.");
+        Assert.IsTrue(File.Exists(productionTransportFile), "The active production transport visual/update slice must live in BuildingProductionTransportSystem.");
+        Assert.IsTrue(File.Exists(spawnFile), "The produced-unit spawn slice must live in BuildingSpawnSystem.");
 
         string placement = File.ReadAllText(placementFile);
         StringAssert.Contains("BuildingProductionSystem _buildingProductionSystem", placement);
+        StringAssert.Contains("BuildingProductionTransportSystem _buildingProductionTransportSystem", placement);
+        StringAssert.Contains("BuildingSpawnSystem _buildingSpawnSystem", placement);
         StringAssert.Contains("_buildingProductionSystem.InitializePendingProduction", placement);
         StringAssert.Contains("_buildingProductionSystem.GetProgress", placement);
         StringAssert.Contains("_buildingProductionSystem.ShouldLaunchTransport", placement);
@@ -1911,10 +1917,31 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingProductionSystem.IsReadyWithin", placement);
         StringAssert.Contains("_buildingProductionSystem.PruneProducedUnits", placement);
         StringAssert.Contains("_buildingProductionSystem.TryReserveProductionSlot", placement);
-        StringAssert.Contains("_buildingProductionSystem.FindNextReadyTransportPending", placement);
-        StringAssert.Contains("_buildingProductionSystem.FindNextSoonTransportPending", placement);
-        StringAssert.Contains("_buildingProductionSystem.RemovePendingProduction", placement);
         StringAssert.Contains("_buildingProductionSystem.RemovePendingAt", placement);
+        StringAssert.Contains("_buildingProductionSystem.ResolveProductionDurationSeconds", placement);
+        StringAssert.Contains("_buildingProductionSystem.ResolveProductionTransportSettings", placement);
+        StringAssert.Contains("_buildingProductionSystem.IsHelicopterUnitPrefab", placement);
+
+        string production = File.ReadAllText(productionFile);
+        StringAssert.Contains("ProductionTransportSettings", production);
+        StringAssert.Contains("ResolveProductionTransportSettings", production);
+        StringAssert.Contains("ResolveProductionDurationSeconds", production);
+        StringAssert.Contains("TryResolveDefaultProductionTransportPrefab", production);
+
+        string productionTransport = File.ReadAllText(productionTransportFile);
+        StringAssert.Contains("TryEnsureActiveProductionTransport", productionTransport);
+        StringAssert.Contains("UpdateActiveProductionTransport", productionTransport);
+        StringAssert.Contains("StartActiveTransportDrop", productionTransport);
+        StringAssert.Contains("UpdateActiveTransportDrop", productionTransport);
+        StringAssert.Contains("context.ProductionSystem.FindNextReadyTransportPending", productionTransport);
+        StringAssert.Contains("context.ProductionSystem.FindNextSoonTransportPending", productionTransport);
+        StringAssert.Contains("context.ProductionSystem.RemovePendingProduction", productionTransport);
+
+        string spawn = File.ReadAllText(spawnFile);
+        StringAssert.Contains("TrySpawnPlayerUnitNearBuilding", spawn);
+        StringAssert.Contains("TryResolveAvailableFactionHelipadSpawn", spawn);
+        StringAssert.Contains("TryFindStrictSpawnCell", spawn);
+        StringAssert.Contains("ReserveDynamicOccupancy", spawn);
         Assert.IsFalse(
             Regex.IsMatch(placement, @"new\s+RuntimeBuildingData\.PendingProduction\s*\{"),
             "Pending production initialization belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
@@ -1945,6 +1972,54 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"PendingProductions\.RemoveAt"),
             "Pending production removal belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?float\s+ResolveProductionDurationSeconds\b"),
+            "Production duration policy belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+ResolveProductionTransportSettings\b"),
+            "Production transport settings policy belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?GameObject\s+TryResolveDefaultProductionTransportPrefab\b"),
+            "Default production transport fallback policy belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsLikelyGroundVehiclePrefab\b"),
+            "Production transport vehicle classification belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Vector2Int\s+ResolveEffectiveProductionFootprintCells\b"),
+            "Production footprint policy for transport fallback belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsHelicopterUnitPrefab\b"),
+            "Production helicopter classification belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryEnsureActiveProductionTransport\b"),
+            "Active production transport creation belongs in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+UpdateActiveProductionTransport\b"),
+            "Active production transport updates belong in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+StartActiveTransportDrop\b"),
+            "Production transport drop visual setup belongs in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+UpdateActiveTransportDrop\b"),
+            "Production transport drop visual updates belong in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryAcquireProductionTransportLane\b"),
+            "Production transport lane reservation belongs in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryResolveHelicopterSpawnForFaction\b"),
+            "Helipad spawn fallback belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryFindStrictSpawnCell\b"),
+            "Strict spawn-cell search belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryFindStrictSpawnCellAdjacentToBuilding\b"),
+            "Adjacent spawn-cell search belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+ReserveDynamicOccupancy\b"),
+            "Produced-unit dynamic occupancy reservation belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?void\s+ReserveRecentSpawnBuffers\b"),
+            "Recent spawn reservation buffering belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

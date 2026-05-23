@@ -307,6 +307,7 @@ public sealed class BuildingPlacementSystem
     private readonly FactionResourceSystem _factionResourceSystem = new();
     private readonly ResourceHaulerSystem _resourceHaulerSystem = new();
     private readonly BuildingProductionSystem _buildingProductionSystem = new();
+    private readonly BuildingProductionUpdateSystem _buildingProductionUpdateSystem = new();
     private readonly BuildingProductionTransportSystem _buildingProductionTransportSystem = new();
     private readonly BuildingProductionTransportBridgeSystem _buildingProductionTransportBridgeSystem = new();
     private readonly BuildingSpawnSystem _buildingSpawnSystem = new();
@@ -2566,60 +2567,19 @@ public sealed class BuildingPlacementSystem
 
     private void ProcessPendingProductions()
     {
-        if (_runtimeBuildings.Count == 0)
-            return;
+        _buildingProductionUpdateSystem.UpdatePendingProductions(
+            CreateBuildingProductionUpdateContext(),
+            Time.time,
+            Time.deltaTime);
+    }
 
-        float now = Time.time;
-        BuildingProductionTransportSystem.Context transportContext = CreateProductionTransportContext();
-        foreach (var pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
-            {
-                _buildingProductionTransportSystem.UpdateActiveProductionTransport(transportContext, building, now, Time.deltaTime);
-                continue;
-            }
-
-            _buildingProductionTransportSystem.UpdateActiveProductionTransport(transportContext, building, now, Time.deltaTime);
-
-            for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
-            {
-                RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-                if (pending == null)
-                {
-                    _buildingProductionSystem.RemovePendingAt(building.PendingProductions, i);
-                    continue;
-                }
-
-                BuildingProductionSystem.PendingProductionProgress progress = _buildingProductionSystem.GetProgress(
-                    pending,
-                    now,
-                    pending.TransportPrefab != null);
-
-                if (pending.TransportPrefab != null)
-                {
-                    float transportLaunchWindow = Mathf.Max(0.5f, pending.TransportArrivalSeconds);
-                    if (_buildingProductionSystem.IsReadyWithin(pending, now, transportLaunchWindow) ||
-                        _buildingProductionSystem.ShouldLaunchTransport(pending, now))
-                    {
-                        if (_buildingProductionTransportSystem.TryEnsureActiveProductionTransport(transportContext, building, pending, now))
-                        {
-                        }
-                        else
-                        {
-                            _buildingProductionSystem.DelayPendingProduction(pending, Time.deltaTime);
-                        }
-                    }
-                    continue;
-                }
-
-                if (progress.RemainingSeconds > 0f || !_buildingProductionSystem.IsReady(pending, now))
-                    continue;
-
-                if (TrySpawnPlayerUnitNearBuilding(building, pending.ProductionIndex, pending.ReservedProductionSlotIndex))
-                    _buildingProductionSystem.RemovePendingAt(building.PendingProductions, i);
-            }
-        }
+    private BuildingProductionUpdateSystem.Context CreateBuildingProductionUpdateContext()
+    {
+        return new BuildingProductionUpdateSystem.Context(
+            _runtimeBuildings,
+            _buildingProductionSystem,
+            _buildingProductionTransportSystem,
+            CreateProductionTransportContext());
     }
 
     private BuildingProductionTransportSystem.Context CreateProductionTransportContext()

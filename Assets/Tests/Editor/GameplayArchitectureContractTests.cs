@@ -2419,6 +2419,7 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string productionFile = "Assets/Game/Scripts/Systems/BuildingProductionSystem.cs";
+        const string productionUpdateFile = "Assets/Game/Scripts/Systems/BuildingProductionUpdateSystem.cs";
         const string productionSlotFile = "Assets/Game/Scripts/Systems/BuildingProductionSlotSystem.cs";
         const string productionTransportFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs";
         const string productionTransportBridgeFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeSystem.cs";
@@ -2428,6 +2429,7 @@ public sealed class GameplayArchitectureContractTests
         const string runwayFile = "Assets/Game/Scripts/Systems/BuildingRunwaySystem.cs";
         const string runtimeQueryFile = "Assets/Game/Scripts/Systems/BuildingRuntimeQuerySystem.cs";
         Assert.IsTrue(File.Exists(productionFile), "The building production slice must live in BuildingProductionSystem.");
+        Assert.IsTrue(File.Exists(productionUpdateFile), "The pending production runtime update loop must live in BuildingProductionUpdateSystem.");
         Assert.IsTrue(File.Exists(productionSlotFile), "The production slot slice must live in BuildingProductionSlotSystem.");
         Assert.IsTrue(File.Exists(productionTransportFile), "The active production transport visual/update slice must live in BuildingProductionTransportSystem.");
         Assert.IsTrue(File.Exists(productionTransportBridgeFile), "The production transport ECS bridge must live in BuildingProductionTransportBridgeSystem.");
@@ -2440,6 +2442,7 @@ public sealed class GameplayArchitectureContractTests
         string placement = File.ReadAllText(placementFile);
         string runtimeQuery = File.ReadAllText(runtimeQueryFile);
         StringAssert.Contains("BuildingProductionSystem _buildingProductionSystem", placement);
+        StringAssert.Contains("BuildingProductionUpdateSystem _buildingProductionUpdateSystem", placement);
         StringAssert.Contains("BuildingProductionSlotSystem _buildingProductionSlotSystem", placement);
         StringAssert.Contains("BuildingProductionTransportSystem _buildingProductionTransportSystem", placement);
         StringAssert.Contains("BuildingProductionTransportBridgeSystem _buildingProductionTransportBridgeSystem", placement);
@@ -2447,13 +2450,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem", placement);
         StringAssert.Contains("BuildingRunwaySystem _buildingRunwaySystem", placement);
         StringAssert.Contains("_buildingProductionSystem.TryQueuePlayerUnitFromBuilding", placement);
-        StringAssert.Contains("_buildingProductionSystem.GetProgress", placement);
-        StringAssert.Contains("_buildingProductionSystem.ShouldLaunchTransport", placement);
-        StringAssert.Contains("_buildingProductionSystem.DelayPendingProduction", placement);
-        StringAssert.Contains("_buildingProductionSystem.IsReady", placement);
-        StringAssert.Contains("_buildingProductionSystem.IsReadyWithin", placement);
+        StringAssert.Contains("_buildingProductionUpdateSystem.UpdatePendingProductions", placement);
         StringAssert.Contains("context.ProductionSystem?.PruneProducedUnits", runtimeQuery);
-        StringAssert.Contains("_buildingProductionSystem.RemovePendingAt", placement);
 
         string production = File.ReadAllText(productionFile);
         StringAssert.Contains("TryQueuePlayerUnitFromBuilding", production);
@@ -2463,6 +2461,17 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("ResolveProductionTransportSettings", production);
         StringAssert.Contains("ResolveProductionDurationSeconds", production);
         StringAssert.Contains("TryResolveDefaultProductionTransportPrefab", production);
+
+        string productionUpdate = File.ReadAllText(productionUpdateFile);
+        StringAssert.Contains("UpdatePendingProductions", productionUpdate);
+        StringAssert.Contains("context.TransportSystem.UpdateActiveProductionTransport", productionUpdate);
+        StringAssert.Contains("context.TransportSystem.TryEnsureActiveProductionTransport", productionUpdate);
+        StringAssert.Contains("context.ProductionSystem.GetProgress", productionUpdate);
+        StringAssert.Contains("context.ProductionSystem.ShouldLaunchTransport", productionUpdate);
+        StringAssert.Contains("context.ProductionSystem.DelayPendingProduction", productionUpdate);
+        StringAssert.Contains("context.ProductionSystem.IsReady", productionUpdate);
+        StringAssert.Contains("context.ProductionSystem.IsReadyWithin", productionUpdate);
+        StringAssert.Contains("context.ProductionSystem.RemovePendingAt", productionUpdate);
 
         string productionSlot = File.ReadAllText(productionSlotFile);
         StringAssert.Contains("TryReserveProductionSlot", productionSlot);
@@ -2525,6 +2534,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"pending\.ReadyAt\s*\+="),
             "Pending production delay mutation belongs in BuildingProductionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingProductionSystem\.(?:GetProgress|ShouldLaunchTransport|DelayPendingProduction|IsReady|IsReadyWithin|RemovePendingAt)\b"),
+            "Pending production update orchestration belongs in BuildingProductionUpdateSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"Mathf\.Clamp01\(\(now\s*-\s*pending\.StartedAt\)\s*/"),
             "Pending production progress math belongs in BuildingProductionSystem, not BuildingPlacementSystem.");

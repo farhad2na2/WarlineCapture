@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 public sealed class BuildingProductionSystem
 {

@@ -1,6 +1,5 @@
 using Unity.Entities;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 internal sealed class BuildingRuntimeOwnershipSystem
 {

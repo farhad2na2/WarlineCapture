@@ -4,8 +4,6 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 internal sealed class BuildingBarrierSystem
 {

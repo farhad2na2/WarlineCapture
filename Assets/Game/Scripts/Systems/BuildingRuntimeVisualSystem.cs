@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 internal sealed class BuildingRuntimeVisualSystem
 {

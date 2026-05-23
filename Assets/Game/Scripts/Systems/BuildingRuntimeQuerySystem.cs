@@ -3,8 +3,6 @@ using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 internal sealed class BuildingRuntimeQuerySystem
 {

@@ -7,7 +7,6 @@ using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 internal sealed class BuildingProductionTransportSystem
 {

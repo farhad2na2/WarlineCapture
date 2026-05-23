@@ -17,8 +17,8 @@ internal sealed class BuildingPlacementPreviewSystem
         }
     }
 
-    public delegate GameObject CreateVisualDelegate(BuildingPlacementSystem.BuildingDefinition definition, Transform parent);
-    public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingPlacementSystem.BuildingDefinition definition, GridConfig grid, bool rotateVertical);
+    public delegate GameObject CreateVisualDelegate(BuildingDefinition definition, Transform parent);
+    public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
     public delegate Vector3 FootprintCenterDelegate(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid);
 
     private GameObject _placementOutline;
@@ -83,7 +83,7 @@ internal sealed class BuildingPlacementPreviewSystem
         Vector2Int originCell,
         Vector2Int footprintCells,
         GridConfig grid,
-        BuildingPlacementSystem.BuildingDefinition definition,
+        BuildingDefinition definition,
         bool valid,
         FootprintCenterDelegate getFootprintCenter)
     {
@@ -110,7 +110,7 @@ internal sealed class BuildingPlacementPreviewSystem
         IReadOnlyList<Vector2Int> origins,
         Vector2Int footprintCells,
         GridConfig grid,
-        BuildingPlacementSystem.BuildingDefinition definition,
+        BuildingDefinition definition,
         bool valid,
         FootprintCenterDelegate getFootprintCenter)
     {
@@ -144,7 +144,7 @@ internal sealed class BuildingPlacementPreviewSystem
 
     public void RebuildWallPreview(
         GameObject previewInstance,
-        BuildingPlacementSystem.BuildingDefinition definition,
+        BuildingDefinition definition,
         IReadOnlyList<WallPreviewRun> committedRuns,
         IReadOnlyList<Vector2Int> currentOrigins,
         bool vertical,
@@ -195,7 +195,7 @@ internal sealed class BuildingPlacementPreviewSystem
         }
     }
 
-    private float GetOutlineHeight(BuildingPlacementSystem.BuildingDefinition definition)
+    private float GetOutlineHeight(BuildingDefinition definition)
     {
         float baseHeight = Mathf.Max(0.5f, _outlineHeight);
         if (definition?.HasLocalBounds == true)

@@ -18,7 +18,7 @@ internal sealed class BuildingPlacementInputSystem
 
     public interface IPlacementState
     {
-        BuildingPlacementSystem.BuildingDefinition Definition { get; }
+        BuildingDefinition Definition { get; }
         Vector2Int OriginCell { get; set; }
         Vector2Int CommittedOriginCell { get; set; }
         Vector2Int DragStartOriginCell { get; set; }
@@ -34,9 +34,9 @@ internal sealed class BuildingPlacementInputSystem
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
     public delegate bool TryGetGridForInputDelegate(out GridConfig grid);
     public delegate Vector2Int CenterCellToOriginDelegate(Vector2Int centerCell, Vector2Int footprintCells);
-    public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, bool vertical);
+    public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
     public delegate bool IsPointerOverPlacementUiDelegate(Vector2 screenPosition);
-    public delegate bool IsLinearWallDefinitionDelegate(BuildingPlacementSystem.BuildingDefinition definition);
+    public delegate bool IsLinearWallDefinitionDelegate(BuildingDefinition definition);
     public delegate void UpdatePlacementFromPointerDelegate(Vector2 screenPosition);
 
     public readonly struct ActivePlacementPointerContext

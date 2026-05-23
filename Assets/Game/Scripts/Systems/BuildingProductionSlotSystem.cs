@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 internal sealed class BuildingProductionSlotSystem
 {

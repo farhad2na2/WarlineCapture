@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 internal sealed class BuildingRunwaySystem
 {
-    public delegate Vector2Int GetPlacementFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, bool rotateVertical);
+    public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
 
     public bool TryGetNearestAirportRunway(
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -44,7 +43,7 @@ internal sealed class BuildingRunwaySystem
     }
 
     public RectInt GetEffectivePlacementRect(
-        BuildingPlacementSystem.BuildingDefinition definition,
+        BuildingDefinition definition,
         Vector2Int originCell,
         GridConfig grid,
         bool rotateVertical,
@@ -133,7 +132,7 @@ internal sealed class BuildingRunwaySystem
     }
 
     private bool TryGetRunwayFootprintRect(
-        BuildingPlacementSystem.BuildingDefinition definition,
+        BuildingDefinition definition,
         Vector2Int originCell,
         GridConfig grid,
         bool rotateVertical,

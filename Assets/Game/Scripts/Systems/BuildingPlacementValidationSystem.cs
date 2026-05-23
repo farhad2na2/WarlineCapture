@@ -4,8 +4,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 public sealed class BuildingPlacementValidationSystem
 {

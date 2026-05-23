@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 internal sealed class BuildingPlacementGridSystem
 {

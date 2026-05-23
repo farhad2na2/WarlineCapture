@@ -1,5 +1,4 @@
 using UnityEngine;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 internal sealed class BuildingPlacementVisualSystem
 {

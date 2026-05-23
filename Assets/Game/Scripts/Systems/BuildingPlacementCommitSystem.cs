@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 
 internal sealed class BuildingPlacementCommitSystem
 {
@@ -18,7 +17,7 @@ internal sealed class BuildingPlacementCommitSystem
 
     public readonly struct CommitRequest
     {
-        public readonly BuildingPlacementSystem.BuildingDefinition Definition;
+        public readonly BuildingDefinition Definition;
         public readonly GameObject PreviewInstance;
         public readonly Vector2Int OriginCell;
         public readonly bool AutoRotateVertical;
@@ -29,7 +28,7 @@ internal sealed class BuildingPlacementCommitSystem
         public readonly bool CurrentWallVertical;
 
         public CommitRequest(
-            BuildingPlacementSystem.BuildingDefinition definition,
+            BuildingDefinition definition,
             GameObject previewInstance,
             Vector2Int originCell,
             bool autoRotateVertical,
@@ -89,12 +88,12 @@ internal sealed class BuildingPlacementCommitSystem
         }
     }
 
-    public delegate GameObject CreateVisualDelegate(BuildingPlacementSystem.BuildingDefinition definition, Transform parent);
-    public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingPlacementSystem.BuildingDefinition definition, GridConfig grid, bool rotateVertical);
-    public delegate RuntimeBuildingData RegisterRuntimeBuildingDelegate(BuildingPlacementSystem.BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
-    public delegate BuildingPlacementSystem.BuildingDefinition CloneDefinitionWithFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, Vector2Int footprintCells);
-    public delegate Vector2Int GetPlacementFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, bool rotateVertical);
-    public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingPlacementSystem.BuildingDefinition definition, bool vertical);
+    public delegate GameObject CreateVisualDelegate(BuildingDefinition definition, Transform parent);
+    public delegate void PositionVisualDelegate(GameObject instance, Vector2Int originCell, BuildingDefinition definition, GridConfig grid, bool rotateVertical);
+    public delegate RuntimeBuildingData RegisterRuntimeBuildingDelegate(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers);
+    public delegate BuildingDefinition CloneDefinitionWithFootprintDelegate(BuildingDefinition definition, Vector2Int footprintCells);
+    public delegate Vector2Int GetPlacementFootprintDelegate(BuildingDefinition definition, bool rotateVertical);
+    public delegate Vector2Int GetWallSegmentFootprintDelegate(BuildingDefinition definition, bool vertical);
     public delegate void DestroyRuntimeObjectDelegate(UnityEngine.Object target);
 
     public static List<Vector2Int> BuildWallRunOrigins(Vector2Int start, Vector2Int end, Vector2Int footprint, bool vertical)
@@ -125,7 +124,7 @@ internal sealed class BuildingPlacementCommitSystem
         return origins;
     }
 
-    public static Vector2Int GetWallSegmentFootprint(BuildingPlacementSystem.BuildingDefinition definition, bool vertical)
+    public static Vector2Int GetWallSegmentFootprint(BuildingDefinition definition, bool vertical)
     {
         if (definition == null)
             return Vector2Int.one;
@@ -141,7 +140,7 @@ internal sealed class BuildingPlacementCommitSystem
         return vertical ? new Vector2Int(footprint.y, footprint.x) : footprint;
     }
 
-    public static Quaternion ResolvePlacementWorldRotation(BuildingPlacementSystem.BuildingDefinition definition, bool rotateVertical)
+    public static Quaternion ResolvePlacementWorldRotation(BuildingDefinition definition, bool rotateVertical)
     {
         bool rotateNinety = rotateVertical;
         if (BuildingBarrierSystem.IsLinearWallDefinition(definition) && IsWallLengthAxisLocalZ(definition))
@@ -180,7 +179,7 @@ internal sealed class BuildingPlacementCommitSystem
                     continue;
 
                 context.PositionVisual(instance, run.Origins[i], request.Definition, context.Grid, run.Vertical);
-                BuildingPlacementSystem.BuildingDefinition segmentDefinition = context.CloneDefinitionWithFootprint(request.Definition, wallFootprint);
+                BuildingDefinition segmentDefinition = context.CloneDefinitionWithFootprint(request.Definition, wallFootprint);
                 lastBuilding = context.RegisterRuntimeBuilding(segmentDefinition, instance, run.Origins[i], true);
             }
         }
@@ -200,7 +199,7 @@ internal sealed class BuildingPlacementCommitSystem
             context.PositionVisual(request.PreviewInstance, request.OriginCell, request.Definition, context.Grid, request.AutoRotateVertical);
 
         Vector2Int footprint = context.GetPlacementFootprint(request.Definition, request.AutoRotateVertical);
-        BuildingPlacementSystem.BuildingDefinition committedDefinition = context.CloneDefinitionWithFootprint(request.Definition, footprint);
+        BuildingDefinition committedDefinition = context.CloneDefinitionWithFootprint(request.Definition, footprint);
         RuntimeBuildingData building = context.RegisterRuntimeBuilding(committedDefinition, request.PreviewInstance, request.OriginCell, true);
         return ShouldAutoSelectAfterPlacement(building?.Definition) ? building : null;
     }
@@ -223,7 +222,7 @@ internal sealed class BuildingPlacementCommitSystem
             runs.Add(new WallRun(request.CurrentWallOrigins, request.CurrentWallVertical));
     }
 
-    private static bool ShouldAutoSelectAfterPlacement(BuildingPlacementSystem.BuildingDefinition definition)
+    private static bool ShouldAutoSelectAfterPlacement(BuildingDefinition definition)
     {
         if (definition == null)
             return false;
@@ -243,7 +242,7 @@ internal sealed class BuildingPlacementCommitSystem
                definition.QuaternarySpawnUnitPrefab != null;
     }
 
-    private static bool IsWallLengthAxisLocalZ(BuildingPlacementSystem.BuildingDefinition definition)
+    private static bool IsWallLengthAxisLocalZ(BuildingDefinition definition)
     {
         if (definition == null || !definition.HasLocalBounds)
             return false;

@@ -1961,11 +1961,17 @@ public sealed class GameplayArchitectureContractTests
     public void BuildingPlacementSystemMustDelegateExtractedDefinitionSlice()
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string definitionDataFile = "Assets/Game/Scripts/Systems/BuildingDefinition.cs";
+        const string runtimeBuildingDataFile = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
         const string definitionFile = "Assets/Game/Scripts/Systems/BuildingDefinitionSystem.cs";
         const string runtimeSpawnFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnSystem.cs";
+        Assert.IsTrue(File.Exists(definitionDataFile), "BuildingDefinition must be a standalone domain data contract, not nested under BuildingPlacementSystem.");
+        Assert.IsTrue(File.Exists(runtimeBuildingDataFile), "RuntimeBuildingData must be a standalone domain data contract, not nested under BuildingPlacementSystem.");
         Assert.IsTrue(File.Exists(definitionFile), "Building definition and prefab metadata behavior must live in BuildingDefinitionSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string definitionData = File.ReadAllText(definitionDataFile);
+        string runtimeBuildingData = File.ReadAllText(runtimeBuildingDataFile);
         string definition = File.ReadAllText(definitionFile);
         string runtimeSpawn = File.ReadAllText(runtimeSpawnFile);
 
@@ -1988,6 +1994,22 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryGetPrefabLocalBounds", definition);
         StringAssert.Contains("FindProductionSpawnLocalPositions", definition);
         StringAssert.Contains("RegisterSpawnableLookupAliases", definition);
+        StringAssert.Contains("internal sealed class BuildingDefinition", definitionData);
+        StringAssert.Contains("internal sealed class RuntimeBuildingData", runtimeBuildingData);
+        StringAssert.Contains("BuildingDefinition Definition", runtimeBuildingData);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"internal\s+sealed\s+class\s+BuildingDefinition\b"),
+            "BuildingDefinition must not be nested inside BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"internal\s+sealed\s+class\s+RuntimeBuildingData\b"),
+            "RuntimeBuildingData must not be nested inside BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(definition, @"BuildingPlacementSystem\.(?:BuildingDefinition|RuntimeBuildingData)"),
+            "BuildingDefinitionSystem must use standalone building data contracts, not facade-nested types.");
+        Assert.IsFalse(
+            Regex.IsMatch(runtimeSpawn, @"BuildingPlacementSystem\.(?:BuildingDefinition|RuntimeBuildingData)"),
+            "BuildingRuntimeSpawnSystem must use standalone building data contracts, not facade-nested types.");
 
         string[] placementStateDebtTokens =
         {

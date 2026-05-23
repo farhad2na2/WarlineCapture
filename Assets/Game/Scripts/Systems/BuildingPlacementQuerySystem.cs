@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 
 internal sealed class BuildingPlacementQuerySystem
 {

@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
-using BuildingDefinition = BuildingPlacementSystem.BuildingDefinition;
 using CampRequestFailure = BuildingPlacementSystem.CampRequestFailure;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
 

@@ -6,12 +6,14 @@ using UnityEngine;
 public partial struct AIFactionControlSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
-    private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _buildingRuntimeBoundaryQuery;
     private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
-        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeFactionSummary>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -31,7 +33,6 @@ public partial struct AIFactionControlSystem : ISystem
         Entity diagnosticQueueEntity = shouldLogDiagnostics ? EnsureDiagnosticQueue(ref state) : Entity.Null;
         DynamicBuffer<FactionControlEntry> controls = SystemAPI.GetSingletonBuffer<FactionControlEntry>();
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
 
         for (int controlIndex = 0; controlIndex < controls.Length; controlIndex++)
         {
@@ -70,9 +71,7 @@ public partial struct AIFactionControlSystem : ISystem
             {
                 control.LastLogTime = now;
                 controls[controlIndex] = control;
-                int controlledBuildings = buildingPlacement != null
-                    ? buildingPlacement.CountRuntimeBuildingsForFaction(control.FactionId)
-                    : 0;
+                TryGetFactionBuildingCount(ref state, control.FactionId, out int controlledBuildings);
                 EnqueueDiagnostic(
                     ref state,
                     diagnosticQueueEntity,
@@ -91,13 +90,29 @@ public partial struct AIFactionControlSystem : ISystem
             ecb.AddComponent<T>(entity);
     }
 
-    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    private bool TryGetFactionBuildingCount(ref SystemState state, byte factionId, out int buildingCount)
     {
-        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
-            return null;
+        buildingCount = 0;
+        if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)
+            return false;
 
-        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
-        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
+        Entity entity = _buildingRuntimeBoundaryQuery.GetSingletonEntity();
+        if (!state.EntityManager.HasBuffer<BuildingRuntimeFactionSummary>(entity))
+            return false;
+
+        DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
+            state.EntityManager.GetBuffer<BuildingRuntimeFactionSummary>(entity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeFactionSummary summary = summaries[i];
+            if (summary.FactionId != factionId)
+                continue;
+
+            buildingCount = summary.BuildingCount;
+            return true;
+        }
+
+        return false;
     }
 
     private static void RemoveIfPresent<T>(ref EntityCommandBuffer ecb, ref SystemState state, Entity entity)

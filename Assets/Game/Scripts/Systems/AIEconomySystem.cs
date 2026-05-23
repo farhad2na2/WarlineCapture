@@ -7,11 +7,15 @@ public partial struct AIEconomySystem : ISystem
     private const float MinSellBarrels = 1f;
     private const float LogIntervalSeconds = 10f;
     private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _buildingRuntimeBoundaryQuery;
     private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
         _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingRuntimeFactionSummary>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
@@ -24,7 +28,6 @@ public partial struct AIEconomySystem : ISystem
         if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
-        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
         double elapsedTime = SystemAPI.Time.ElapsedTime;
         float now = elapsedTime > float.MaxValue ? float.MaxValue : (float)elapsedTime;
         bool shouldLogDiagnostics = ShouldQueueDiagnostics(ref state);
@@ -42,8 +45,7 @@ public partial struct AIEconomySystem : ISystem
             float oilIncomeRate = 0f;
             float fuelIncomeRate = 0f;
 
-            if (buildingPlacement != null &&
-                buildingPlacement.TryGetFactionResourceEconomy(economy.FactionId, out BuildingPlacementSystem.FactionResourceEconomySnapshot snapshot))
+            if (TryGetFactionResourceEconomy(ref state, economy.FactionId, out BuildingRuntimeFactionSummary snapshot))
             {
                 storedOil = snapshot.StoredOilBarrels;
                 storedFuel = snapshot.StoredFuelBarrels;
@@ -55,17 +57,21 @@ public partial struct AIEconomySystem : ISystem
             float soldOil = 0f;
             float soldFuel = 0f;
             float sellInterval = Mathf.Max(1f, policy.SellIntervalSeconds);
-            if (buildingPlacement != null && now - economy.LastSellTime >= sellInterval)
+            if (now - economy.LastSellTime >= sellInterval)
             {
                 float oilToSell = Mathf.Floor(storedOil);
                 float fuelToSell = Mathf.Floor(storedFuel);
                 if (oilToSell >= MinSellBarrels || fuelToSell >= MinSellBarrels)
                 {
-                    buildingPlacement.SellFactionResources(economy.FactionId, oilToSell, fuelToSell, out soldOil, out soldFuel);
-                    revenue = Mathf.RoundToInt(soldOil * Mathf.Max(0, policy.OilSellPrice) + soldFuel * Mathf.Max(0, policy.FuelSellPrice));
-                    storedOil = Mathf.Max(0f, storedOil - soldOil);
-                    storedFuel = Mathf.Max(0f, storedFuel - soldFuel);
-                    economy.Money = Mathf.Max(0, economy.Money + revenue);
+                    BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
+                    if (buildingPlacement != null)
+                    {
+                        buildingPlacement.SellFactionResources(economy.FactionId, oilToSell, fuelToSell, out soldOil, out soldFuel);
+                        revenue = Mathf.RoundToInt(soldOil * Mathf.Max(0, policy.OilSellPrice) + soldFuel * Mathf.Max(0, policy.FuelSellPrice));
+                        storedOil = Mathf.Max(0f, storedOil - soldOil);
+                        storedFuel = Mathf.Max(0f, storedFuel - soldFuel);
+                        economy.Money = Mathf.Max(0, economy.Money + revenue);
+                    }
                 }
 
                 economy.LastSellTime = now;
@@ -91,6 +97,31 @@ public partial struct AIEconomySystem : ISystem
 
             economyRef.ValueRW = economy;
         }
+    }
+
+    private bool TryGetFactionResourceEconomy(ref SystemState state, byte factionId, out BuildingRuntimeFactionSummary snapshot)
+    {
+        snapshot = default;
+        if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = _buildingRuntimeBoundaryQuery.GetSingletonEntity();
+        if (!state.EntityManager.HasBuffer<BuildingRuntimeFactionSummary>(entity))
+            return false;
+
+        DynamicBuffer<BuildingRuntimeFactionSummary> summaries =
+            state.EntityManager.GetBuffer<BuildingRuntimeFactionSummary>(entity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeFactionSummary summary = summaries[i];
+            if (summary.FactionId != factionId)
+                continue;
+
+            snapshot = summary;
+            return true;
+        }
+
+        return false;
     }
 
     private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)

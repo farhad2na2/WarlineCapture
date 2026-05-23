@@ -1299,6 +1299,31 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void AiFactionControlAndEconomyMustReadBuildingRuntimeBoundary()
+    {
+        const string factionControlFile = "Assets/Game/Scripts/Systems/AIFactionControlSystem.cs";
+        const string economyFile = "Assets/Game/Scripts/Systems/AIEconomySystem.cs";
+        string factionControl = File.ReadAllText(factionControlFile);
+        string economy = File.ReadAllText(economyFile);
+
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", factionControl);
+        StringAssert.Contains("BuildingRuntimeFactionSummary", factionControl);
+        StringAssert.Contains("TryGetFactionBuildingCount", factionControl);
+        Assert.IsFalse(
+            factionControl.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            factionControl.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            factionControl.Contains("CountRuntimeBuildingsForFaction", StringComparison.Ordinal),
+            "AIFactionControlSystem building-count reads must come from BuildingRuntimeFactionSummary, not BuildingPlacementSystem.");
+
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", economy);
+        StringAssert.Contains("BuildingRuntimeFactionSummary", economy);
+        Assert.IsFalse(
+            economy.Contains("buildingPlacement.TryGetFactionResourceEconomy", StringComparison.Ordinal) ||
+            economy.Contains("BuildingPlacementSystem.FactionResourceEconomySnapshot", StringComparison.Ordinal),
+            "AIEconomySystem resource-economy reads must come from BuildingRuntimeFactionSummary, not BuildingPlacementSystem.");
+    }
+
+    [Test]
     public void InitialSpawnSystemMustNotReachThroughBuildingPlacementSingleton()
     {
         const string file = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";

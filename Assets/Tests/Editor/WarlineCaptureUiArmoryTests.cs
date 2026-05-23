@@ -8,6 +8,7 @@ public sealed class WarlineCaptureUiArmoryTests
 {
     private const string ArmoryPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_Armory.prefab";
     private const string ArmoryLayerRoot = "Assets/Game/Art/UI/Generated/Armory/LayeredOneGo";
+    private const string RosterContentPath = "RosterPanel/RosterScrollRect/Viewport/Content";
 
     [Test]
     public void ArmoryScreen_HasLayeredVisualLockHierarchy()
@@ -30,10 +31,11 @@ public sealed class WarlineCaptureUiArmoryTests
             "CategoryRail/UnitsButton/IconImage",
             "CategoryRail/VehiclesButton/LabelText",
             "RosterPanel",
-            "RosterPanel/RiflemanCard/ArtImage_Viewport/ArtImage",
-            "RosterPanel/RiflemanCard/Progress/ProgressFrame",
-            "RosterPanel/RiflemanCard/Progress/ProgressFill",
-            "RosterPanel/TransportHelicopterCard/StateIcon",
+            "RosterPanel/RosterScrollRect/Viewport",
+            $"{RosterContentPath}/RiflemanCard/ArtImage_Viewport/ArtImage",
+            $"{RosterContentPath}/RiflemanCard/Progress/ProgressFrame",
+            $"{RosterContentPath}/RiflemanCard/Progress/ProgressFill",
+            $"{RosterContentPath}/TransportHelicopterCard/StateIcon",
             "InspectionPanel/Frame",
             "InspectionPanel/SelectedArtImage_Viewport/SelectedArtImage",
             "InspectionPanel/PartsProgress/ProgressFrame",
@@ -56,8 +58,8 @@ public sealed class WarlineCaptureUiArmoryTests
         AssertImageSpritePath(visual, "HeaderBar/CreditsCounter/IconImage", "scn19_resource_credits_coin.png");
         AssertImageSpritePath(visual, "CategoryRail/UnitsButton", "scn19_category_button_selected_frame.png");
         AssertImageSpritePath(visual, "CategoryRail/VehiclesButton", "scn19_category_button_default_frame.png");
-        AssertImageSpritePath(visual, "RosterPanel/RiflemanCard", "scn19_roster_card_selected_frame.png");
-        AssertImageSpritePath(visual, "RosterPanel/RiflemanCard/ArtImage_Viewport/ArtImage", "scn19_art_rifleman_male_ii.png");
+        AssertImageSpritePath(visual, $"{RosterContentPath}/RiflemanCard", "scn19_roster_card_selected_frame.png");
+        AssertImageSpritePath(visual, $"{RosterContentPath}/RiflemanCard/ArtImage_Viewport/ArtImage", "scn19_art_rifleman_male_ii.png");
         AssertImageSpritePath(visual, "InspectionPanel/Frame", "scn19_inspection_panel_frame.png");
         AssertImageSpritePath(visual, "InspectionPanel/SelectedArtImage_Viewport/SelectedArtImage", "scn19_art_rifleman_male_ii.png");
         AssertImageSpritePath(visual, "InspectionPanel/UpgradeButton", "scn19_cta_primary_gold_frame.png");
@@ -74,7 +76,7 @@ public sealed class WarlineCaptureUiArmoryTests
         AssertText(visual, "HeaderBar/TitleText", "ARMORY");
         AssertText(visual, "HeaderBar/CreditsCounter/ValueText", "187,540");
         AssertText(visual, "CategoryRail/UnitsButton/LabelText", "UNITS");
-        AssertText(visual, "RosterPanel/RiflemanCard/TitleText", "RIFLEMAN MALE II");
+        AssertText(visual, $"{RosterContentPath}/RiflemanCard/TitleText", "RIFLEMAN MALE II");
         AssertText(visual, "InspectionPanel/TitleText", "RIFLEMAN MALE II");
         AssertText(visual, "InspectionPanel/PartsProgress/ValueText", "38 / 60");
         AssertText(visual, "InspectionPanel/SourceRow/ValueText", "Barracks Level 4");
@@ -94,9 +96,30 @@ public sealed class WarlineCaptureUiArmoryTests
 
         AssertAnimatedButton(visual, "CategoryRail/UnitsButton", true);
         AssertAnimatedButton(visual, "CategoryRail/VehiclesButton", false);
-        AssertAnimatedButton(visual, "RosterPanel/RiflemanCard", true);
+        AssertAnimatedButton(visual, $"{RosterContentPath}/RiflemanCard", true);
         AssertAnimatedButton(visual, "BottomTabBar/OwnedTab", true);
         AssertAnimatedButton(visual, "BottomTabBar/PartsTab", false);
+    }
+
+    [Test]
+    public void ArmoryScreen_RosterUsesVerticalScrollViewport()
+    {
+        GameObject prefab = LoadPrefab();
+        Transform visual = VisualRoot(prefab);
+
+        Transform scrollTransform = visual.Find("RosterPanel/RosterScrollRect");
+        Assert.NotNull(scrollTransform);
+
+        ScrollRect scrollRect = scrollTransform.GetComponent<ScrollRect>();
+        Assert.NotNull(scrollRect);
+        Assert.IsTrue(scrollRect.vertical);
+        Assert.IsFalse(scrollRect.horizontal);
+        Assert.AreEqual(ScrollRect.MovementType.Clamped, scrollRect.movementType);
+        Assert.NotNull(scrollRect.viewport);
+        Assert.NotNull(scrollRect.content);
+        Assert.NotNull(scrollRect.viewport.GetComponent<RectMask2D>());
+        Assert.Greater(scrollRect.content.rect.height, scrollRect.viewport.rect.height, "Roster content must be taller than the viewport so owned units can scroll vertically.");
+        Assert.IsNull(visual.Find("RosterPanel/RiflemanCard"), "Roster cards must live inside the scroll content, not directly under RosterPanel.");
     }
 
     private static GameObject LoadPrefab()

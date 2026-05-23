@@ -13,13 +13,6 @@ internal sealed class BuildingProductionTransportSystem
 {
     private const float ProductionTransportLaneSpacing = 12f;
 
-    public delegate bool TryGetNearestAirportRunwayDelegate(
-        Vector3 origin,
-        out RuntimeBuildingData airport,
-        out Vector3 runwayCenter,
-        out Quaternion runwayRotation,
-        out Vector3 runwayHalfExtents);
-
     public delegate bool TrySpawnPlayerUnitNearBuildingDelegate(
         RuntimeBuildingData building,
         int productionIndex,
@@ -41,7 +34,7 @@ internal sealed class BuildingProductionTransportSystem
         public readonly Camera WorldCamera;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingVisualSystem VisualSystem;
-        public readonly TryGetNearestAirportRunwayDelegate TryGetNearestAirportRunway;
+        public readonly BuildingRunwaySystem RunwaySystem;
         public readonly TrySpawnPlayerUnitNearBuildingDelegate TrySpawnPlayerUnitNearBuilding;
         public readonly ResolveProductionGroundGoalCellDelegate ResolveProductionGroundGoalCell;
         public readonly BuildingCellAction MoveNewestProducedUnitToCell;
@@ -52,7 +45,7 @@ internal sealed class BuildingProductionTransportSystem
             Camera worldCamera,
             BuildingProductionSystem productionSystem,
             BuildingVisualSystem visualSystem,
-            TryGetNearestAirportRunwayDelegate tryGetNearestAirportRunway,
+            BuildingRunwaySystem runwaySystem,
             TrySpawnPlayerUnitNearBuildingDelegate trySpawnPlayerUnitNearBuilding,
             ResolveProductionGroundGoalCellDelegate resolveProductionGroundGoalCell,
             BuildingCellAction moveNewestProducedUnitToCell,
@@ -62,7 +55,7 @@ internal sealed class BuildingProductionTransportSystem
             WorldCamera = worldCamera;
             ProductionSystem = productionSystem;
             VisualSystem = visualSystem;
-            TryGetNearestAirportRunway = tryGetNearestAirportRunway;
+            RunwaySystem = runwaySystem;
             TrySpawnPlayerUnitNearBuilding = trySpawnPlayerUnitNearBuilding;
             ResolveProductionGroundGoalCell = resolveProductionGroundGoalCell;
             MoveNewestProducedUnitToCell = moveNewestProducedUnitToCell;
@@ -90,8 +83,9 @@ internal sealed class BuildingProductionTransportSystem
 
         if (pending.TransportMode == ProductionTransportMode.Plane)
         {
-            if (context.TryGetNearestAirportRunway == null ||
-                !context.TryGetNearestAirportRunway(
+            if (context.RunwaySystem == null ||
+                !context.RunwaySystem.TryGetNearestAirportRunway(
+                    context.RuntimeBuildings,
                     building.Instance != null ? building.Instance.transform.position : Vector3.zero,
                     out _,
                     out Vector3 runwayCenter,

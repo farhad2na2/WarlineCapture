@@ -26,7 +26,7 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
     private static readonly Color Gold = new Color32(238, 172, 43, 255);
     private static readonly Color Olive = new Color32(160, 176, 72, 255);
     private static readonly Color Blue = new Color32(96, 172, 207, 255);
-    private static readonly Color PanelWash = new Color(0f, 0f, 0f, 0.22f);
+    private static readonly Color PanelWash = new Color(0f, 0f, 0f, 0.14f);
 
     private static readonly string[] LayerFiles =
     {
@@ -343,9 +343,9 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
     {
         RectInt rect = new(0, index * 111, 410, 96);
         Button button = AddButton(parent, name, selected ? "scn19_category_button_selected_frame.png" : "scn19_category_button_default_frame.png", rect, selected, true);
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(button.transform, LayerRoot, "IconImage", icon, new RectInt(25, 14, 88, 70), 70, 62, TextMain);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "LabelText", label, new RectInt(132, 18, 230, 34), 27f, TextAlignmentOptions.Left, selected ? TextMain : TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "CountText", count, new RectInt(132, 56, 170, 25), 19f, TextAlignmentOptions.Left, selected ? Gold : Olive);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(button.transform, LayerRoot, "IconImage", icon, new RectInt(31, 16, 76, 66), 62, 58, TextMain);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "LabelText", label, new RectInt(132, 16, 230, 36), 27f, TextAlignmentOptions.Left, selected ? TextMain : TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "CountText", count, new RectInt(132, 56, 170, 26), 19f, TextAlignmentOptions.Left, selected ? Gold : Olive);
     }
 
     private static void AddRoster(Transform parent)
@@ -357,12 +357,40 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         AddDropdown(roster.transform, "FilterDropdown", "FILTER: ALL", new RectInt(0, 0, 315, 58));
         AddDropdown(roster.transform, "SortDropdown", "SORT: RARITY", new RectInt(rect.width - 315, 0, 315, 58));
 
+        RectInt viewport = RosterViewportRect();
+        GameObject scrollRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("RosterScrollRect", roster.transform);
+        WarlineCaptureLayeredUiBuilderUtility.ApplyTopLeftRect(scrollRoot.GetComponent<RectTransform>(), WarlineCaptureLayeredUiBuilderUtility.ToArray(viewport));
+        Image scrollRaycast = scrollRoot.AddComponent<Image>();
+        scrollRaycast.color = new Color(1f, 1f, 1f, 0.001f);
+        scrollRaycast.raycastTarget = true;
+
+        ScrollRect scrollRect = scrollRoot.AddComponent<ScrollRect>();
+        scrollRect.horizontal = false;
+        scrollRect.vertical = true;
+        scrollRect.inertia = true;
+        scrollRect.movementType = ScrollRect.MovementType.Clamped;
+        scrollRect.scrollSensitivity = 38f;
+
+        GameObject viewportObject = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("Viewport", scrollRoot.transform);
+        WarlineCaptureLayeredUiBuilderUtility.StretchToParent(viewportObject.GetComponent<RectTransform>());
+        Image viewportRaycast = viewportObject.AddComponent<Image>();
+        viewportRaycast.color = new Color(1f, 1f, 1f, 0.001f);
+        viewportRaycast.raycastTarget = true;
+        viewportObject.AddComponent<RectMask2D>();
+
+        GameObject content = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("Content", viewportObject.transform);
+        RectTransform contentRect = content.GetComponent<RectTransform>();
+        WarlineCaptureLayeredUiBuilderUtility.ApplyTopLeftRect(contentRect, WarlineCaptureLayeredUiBuilderUtility.ToArray(new RectInt(0, 0, viewport.width, RosterContentHeight())));
+        scrollRect.viewport = viewportObject.GetComponent<RectTransform>();
+        scrollRect.content = contentRect;
+        scrollRect.verticalNormalizedPosition = 1f;
+
         for (int i = 0; i < RosterItems.Length; i++)
         {
             int col = i % 4;
             int row = i / 4;
-            RectInt card = new(col * 292, 78 + row * 246, 270, 230);
-            AddRosterCard(roster.transform, RosterItems[i], card);
+            RectInt card = new(col * 292, row * 264, 270, 254);
+            AddRosterCard(content.transform, RosterItems[i], card);
         }
     }
 
@@ -379,52 +407,52 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         Button button = AddButton(parent, item.ObjectName, frame, rect, item.Selected, !item.Locked);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(button.transform, LayerRoot, "CardTypeIcon", item.Icon, new RectInt(12, 8, 32, 32), 25, 25, TextMuted);
         WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "TitleText", item.Title, new RectInt(48, 8, 200, 28), item.Title.Length > 15 ? 15.5f : 17.5f, TextAlignmentOptions.Left, TextMain);
-        WarlineCaptureLayeredUiBuilderUtility.AddCoverImage(button.transform, LayerRoot, "ArtImage", item.Art, new RectInt(14, 43, rect.width - 28, 112), Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "RoleText", item.Role, new RectInt(16, 158, 124, 24), 15f, TextAlignmentOptions.Left, TextMuted);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "LevelText", $"LVL {item.Level}", new RectInt(rect.width - 82, 158, 66, 24), 15f, TextAlignmentOptions.Right, TextMuted);
-        AddProgress(button.transform, "Progress", new RectInt(16, 186, 128, 13), item.Selected ? 0.68f : 0.48f, Gold);
+        WarlineCaptureLayeredUiBuilderUtility.AddCoverImage(button.transform, LayerRoot, "ArtImage", item.Art, new RectInt(14, 43, rect.width - 28, 132), Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "RoleText", item.Role, new RectInt(16, 180, 124, 24), 15f, TextAlignmentOptions.Left, TextMuted);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "LevelText", $"LVL {item.Level}", new RectInt(rect.width - 82, 180, 66, 24), 15f, TextAlignmentOptions.Right, TextMuted);
+        AddProgress(button.transform, "Progress", new RectInt(16, 209, 128, 13), item.Selected ? 0.68f : 0.48f, Gold);
 
         string stateText = item.Locked ? "LOCKED" : item.UpgradeReady ? "UPGRADE READY" : "OWNED";
         Color stateColor = item.Locked ? new Color32(132, 130, 112, 255) : item.UpgradeReady ? Gold : Olive;
-        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "StateText", stateText, new RectInt(125, 200, 112, 24), item.UpgradeReady ? 13.5f : 14.5f, TextAlignmentOptions.Right, stateColor);
+        WarlineCaptureLayeredUiBuilderUtility.AddText(button.transform, "StateText", stateText, new RectInt(123, 224, 114, 24), item.UpgradeReady ? 13.5f : 14.5f, TextAlignmentOptions.Right, stateColor);
         string badge = item.Locked ? "scn19_badge_locked_padlock.png" : item.UpgradeReady ? "scn19_badge_upgrade_ready_chevrons.png" : "scn19_badge_owned_checkmark.png";
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(button.transform, LayerRoot, "StateIcon", badge, new RectInt(rect.width - 34, 202, 24, 24), 20, 20, Color.white);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(button.transform, LayerRoot, "StateIcon", badge, new RectInt(rect.width - 34, 225, 24, 24), 20, 20, Color.white);
     }
 
     private static void AddInspection(Transform parent)
     {
         RectInt rect = InspectionRect();
         AddSliced(parent, "InspectionPanel/Frame", "scn19_inspection_panel_frame.png", rect, new Vector4(60, 60, 34, 34), Color.white);
-        AddSliced(parent, "InspectionPanel/HeaderBand", "scn19_small_status_chip_frame.png", new RectInt(rect.x + 20, rect.y + 24, rect.width - 40, 230), new Vector4(24, 24, 12, 12), new Color(1f, 1f, 1f, 0.28f));
+        AddSliced(parent, "InspectionPanel/HeaderBand", "scn19_small_status_chip_frame.png", new RectInt(rect.x + 20, rect.y + 24, rect.width - 40, 228), new Vector4(24, 24, 12, 12), new Color(1f, 1f, 1f, 0.14f));
         AddText(parent, "InspectionPanel/TitleText", "RIFLEMAN MALE II", new RectInt(rect.x + 30, rect.y + 36, 310, 42), 30f, TextAlignmentOptions.Left, TextMain);
         AddText(parent, "InspectionPanel/RoleText", "INFANTRY", new RectInt(rect.x + 30, rect.y + 84, 160, 30), 21f, TextAlignmentOptions.Left, Olive);
         AddText(parent, "InspectionPanel/DescriptionText", "Reliable frontline infantry equipped for patrols, defense, and direct engagements.", new RectInt(rect.x + 30, rect.y + 124, 280, 90), 17f, TextAlignmentOptions.Left, TextMuted, true);
-        AddCover(parent, "InspectionPanel/SelectedArtImage", "scn19_art_rifleman_male_ii.png", new RectInt(rect.x + 310, rect.y + 28, 260, 300), new Color(1f, 1f, 1f, 0.9f));
+        AddCover(parent, "InspectionPanel/SelectedArtImage", "scn19_art_rifleman_male_ii.png", new RectInt(rect.x + 285, rect.y + 18, 300, 328), new Color(1f, 1f, 1f, 0.8f));
 
         AddStatRow(parent, "HealthStatRow", "scn19_icon_health_cross.png", "HEALTH", "220", new RectInt(rect.x + 30, rect.y + 245, 330, 42));
         AddStatRow(parent, "DamageStatRow", "scn19_icon_damage_burst.png", "DAMAGE", "28", new RectInt(rect.x + 30, rect.y + 293, 330, 42));
         AddStatRow(parent, "RangeStatRow", "scn19_icon_range_reticle.png", "RANGE", "35 m", new RectInt(rect.x + 30, rect.y + 341, 330, 42));
         AddStatRow(parent, "SpeedStatRow", "scn19_icon_speed_boot.png", "SPEED", "4.6 m/s", new RectInt(rect.x + 30, rect.y + 389, 330, 42));
 
-        AddText(parent, "InspectionPanel/AbilitiesTitle", "ABILITIES", new RectInt(rect.x + 30, rect.y + 462, 160, 26), 18f, TextAlignmentOptions.Left, TextMuted);
-        AddAbility(parent, "MoveAbility", "scn19_icon_move_runner.png", "MOVE", new RectInt(rect.x + 30, rect.y + 499, 118, 76));
-        AddAbility(parent, "AttackAbility", "scn19_icon_attack_reticle.png", "ATTACK", new RectInt(rect.x + 160, rect.y + 499, 118, 76));
-        AddAbility(parent, "HoldAbility", "scn19_icon_hold_shield.png", "HOLD", new RectInt(rect.x + 290, rect.y + 499, 118, 76));
-        AddAbility(parent, "PatrolAbility", "scn19_icon_patrol_chevrons.png", "PATROL", new RectInt(rect.x + 420, rect.y + 499, 118, 76));
+        AddText(parent, "InspectionPanel/AbilitiesTitle", "ABILITIES", new RectInt(rect.x + 30, rect.y + 452, 160, 26), 18f, TextAlignmentOptions.Left, TextMuted);
+        AddAbility(parent, "MoveAbility", "scn19_icon_move_runner.png", "MOVE", new RectInt(rect.x + 30, rect.y + 488, 118, 76));
+        AddAbility(parent, "AttackAbility", "scn19_icon_attack_reticle.png", "ATTACK", new RectInt(rect.x + 160, rect.y + 488, 118, 76));
+        AddAbility(parent, "HoldAbility", "scn19_icon_hold_shield.png", "HOLD", new RectInt(rect.x + 290, rect.y + 488, 118, 76));
+        AddAbility(parent, "PatrolAbility", "scn19_icon_patrol_chevrons.png", "PATROL", new RectInt(rect.x + 420, rect.y + 488, 118, 76));
 
-        AddText(parent, "InspectionPanel/UpgradeTrackTitle", "UPGRADE TRACK", new RectInt(rect.x + 30, rect.y + 596, 190, 26), 18f, TextAlignmentOptions.Left, TextMuted);
-        AddText(parent, "InspectionPanel/TierText", "TIER II", new RectInt(rect.x + rect.width - 135, rect.y + 596, 105, 26), 18f, TextAlignmentOptions.Right, TextMuted);
-        AddPartsProgress(parent, new RectInt(rect.x + 30, rect.y + 636, rect.width - 60, 58));
-        AddSourceRow(parent, new RectInt(rect.x + 30, rect.y + 706, rect.width - 60, 64));
+        AddText(parent, "InspectionPanel/UpgradeTrackTitle", "UPGRADE TRACK", new RectInt(rect.x + 30, rect.y + 584, 190, 26), 18f, TextAlignmentOptions.Left, TextMuted);
+        AddText(parent, "InspectionPanel/TierText", "TIER II", new RectInt(rect.x + rect.width - 135, rect.y + 584, 105, 26), 18f, TextAlignmentOptions.Right, TextMuted);
+        AddPartsProgress(parent, new RectInt(rect.x + 30, rect.y + 623, rect.width - 60, 58));
+        AddSourceRow(parent, new RectInt(rect.x + 30, rect.y + 695, rect.width - 60, 64));
 
-        AddCta(parent, "InspectionPanel/UpgradeButton", "UPGRADE", new RectInt(rect.x + 30, rect.y + 778, 160, 62), "scn19_cta_primary_gold_frame.png", true, true);
-        AddCta(parent, "InspectionPanel/InspectAbilitiesButton", "INSPECT ABILITIES", new RectInt(rect.x + 205, rect.y + 778, 210, 62), "scn19_cta_secondary_dark_frame.png", false, true);
-        AddCta(parent, "InspectionPanel/EquipButton", "EQUIP", new RectInt(rect.x + 430, rect.y + 778, 130, 62), "scn19_cta_disabled_frame.png", false, false);
+        AddCta(parent, "InspectionPanel/UpgradeButton", "UPGRADE", new RectInt(rect.x + 30, rect.y + 775, 160, 62), "scn19_cta_primary_gold_frame.png", true, true);
+        AddCta(parent, "InspectionPanel/InspectAbilitiesButton", "INSPECT ABILITIES", new RectInt(rect.x + 205, rect.y + 775, 210, 62), "scn19_cta_secondary_dark_frame.png", false, true);
+        AddCta(parent, "InspectionPanel/EquipButton", "EQUIP", new RectInt(rect.x + 430, rect.y + 775, 130, 62), "scn19_cta_disabled_frame.png", false, false);
     }
 
     private static void AddStatRow(Transform parent, string name, string icon, string label, string value, RectInt rect)
     {
-        AddSliced(parent, $"InspectionPanel/{name}/Frame", "scn19_small_status_chip_frame.png", new RectInt(rect.x - 8, rect.y - 2, rect.width + 16, rect.height), new Vector4(18, 18, 8, 8), new Color(1f, 1f, 1f, 0.72f));
+        AddSliced(parent, $"InspectionPanel/{name}/Frame", "scn19_small_status_chip_frame.png", new RectInt(rect.x - 8, rect.y - 2, rect.width + 16, rect.height), new Vector4(18, 18, 8, 8), new Color(1f, 1f, 1f, 0.46f));
         AddFitted(parent, $"InspectionPanel/{name}/IconImage", icon, new RectInt(rect.x, rect.y, 36, rect.height), 28, 28, TextMuted);
         AddText(parent, $"InspectionPanel/{name}/LabelText", label, new RectInt(rect.x + 52, rect.y + 7, 180, 26), 17f, TextAlignmentOptions.Left, TextMuted);
         AddText(parent, $"InspectionPanel/{name}/ValueText", value, new RectInt(rect.x + rect.width - 120, rect.y + 7, 115, 26), 17f, TextAlignmentOptions.Right, Gold);
@@ -465,6 +493,7 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
     {
         GameObject tabs = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("BottomTabBar", parent);
         WarlineCaptureLayeredUiBuilderUtility.ApplyTopLeftRect(tabs.GetComponent<RectTransform>(), WarlineCaptureLayeredUiBuilderUtility.ToArray(BottomTabsRect()));
+        AddSliced(tabs.transform, "ContinuousBackFrame", "scn19_bottom_tab_default_frame.png", new RectInt(0, 0, BottomTabsRect().width, 64), new Vector4(28, 28, 12, 12), new Color(1f, 1f, 1f, 0.56f));
         AddBottomTab(tabs.transform, "OwnedTab", "scn19_icon_units_group.png", "OWNED", new RectInt(0, 0, 270, 64), true);
         AddBottomTab(tabs.transform, "UpgradeTracksTab", "scn19_icon_upgrades_chevrons.png", "UPGRADE TRACKS", new RectInt(270, 0, 342, 64), false);
         AddBottomTab(tabs.transform, "PartsTab", "scn19_icon_blueprint_parts.png", "PARTS", new RectInt(612, 0, 270, 64), false);
@@ -491,7 +520,7 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         AddText(parent, "RouteBreadcrumbStrip/ProfileText", "COMMANDER PROFILE", new RectInt(route.x + 245, route.y + 12, 210, 24), 17f, TextAlignmentOptions.Center, TextMuted);
         AddText(parent, "RouteBreadcrumbStrip/ArmoryText", "ARMORY", new RectInt(route.x + 490, route.y + 12, 110, 24), 17f, TextAlignmentOptions.Center, Olive);
 
-        RectInt disabled = new(InspectionRect().x + 30, InspectionRect().y + 778, InspectionRect().width - 60, 62);
+        RectInt disabled = new(InspectionRect().x + 30, InspectionRect().y + 775, InspectionRect().width - 60, 62);
         AddSliced(parent, "DisabledReasonPanel/Frame", "scn19_small_status_chip_frame.png", disabled, new Vector4(24, 24, 12, 12), new Color(1f, 1f, 1f, 0f));
         AddFitted(parent, "DisabledReasonPanel/WarningIcon", "scn19_icon_disabled_slash.png", new RectInt(disabled.x + 18, disabled.y + 13, 34, 32), 26, 26, new Color(1f, 1f, 1f, 0f));
         AddText(parent, "DisabledReasonPanel/ReasonText", "Equip is disabled until roster equipment persistence is connected.", new RectInt(disabled.x + 66, disabled.y + 15, disabled.width - 86, 28), 17f, TextAlignmentOptions.Left, new Color(Gold.r, Gold.g, Gold.b, 0f));
@@ -678,6 +707,8 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
     private static RectInt TitleRect() => new(112, 112, 318, 86);
     private static RectInt CategoryRailRect() => new(18, 210, 410, 662);
     private static RectInt RosterRect() => new(490, 132, 1146, 810);
+    private static RectInt RosterViewportRect() => new(0, 70, RosterRect().width, RosterRect().height - 70);
+    private static int RosterContentHeight() => Mathf.CeilToInt(RosterItems.Length / 4f) * 264 - 10;
     private static RectInt InspectionRect() => new(1738, 132, 595, 825);
     private static RectInt BottomTabsRect() => new(490, 966, 1248, 68);
     private static RectInt CommsRect() => new(18, 918, 280, 78);

@@ -5,7 +5,6 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 using System.Globalization;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using SnivelerCode.GpuAnimation.Scripts.Components;
@@ -367,8 +366,12 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingProductionSystem _buildingProductionSystem = new();
     private readonly BuildingProductionTransportSystem _buildingProductionTransportSystem = new();
     private readonly BuildingSpawnSystem _buildingSpawnSystem = new();
+    private readonly BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem = new();
+    private readonly BuildingProductionSlotSystem _buildingProductionSlotSystem = new();
     private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
-    private readonly BuildingProductionTransportSystem.TryGetNearestAirportRunwayDelegate _tryGetNearestAirportRunwayForTransport;
+    private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
+    private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
+    private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -383,8 +386,6 @@ public sealed class BuildingPlacementSystem
     private int[] _placementInvalidPrefix;
     private int _resourceDollars;
     private Transform _buildingRoot;
-    private GameObject _placementOutline;
-    private MeshRenderer _placementOutlineRenderer;
     private BuildingDefinition _soldierBaseDefinition;
     private BuildingDefinition _soldierTentDefinition;
     private BuildingDefinition _factoryDefinition;
@@ -420,6 +421,8 @@ public sealed class BuildingPlacementSystem
     private int _placementInvalidPrefixWidth;
     private int _placementInvalidPrefixHeight;
     private Transform _runtimeRoot;
+    private readonly List<BuildingPlacementPreviewSystem.WallPreviewRun> _wallPreviewRuns = new();
+    private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
     private readonly List<RuntimeBaseBreach> _openBaseBreaches = new();
     private bool _preserveBuildingSelectionOnNextExitBuildMode;
     private const float BarrierDoorOpenCloseSpeed = 2f;
@@ -441,7 +444,6 @@ public sealed class BuildingPlacementSystem
 
     public BuildingPlacementSystem()
     {
-        _tryGetNearestAirportRunwayForTransport = TryGetNearestAirportRunway;
         _trySpawnPlayerUnitNearBuildingForTransport = TrySpawnPlayerUnitNearBuilding;
         _resolveProductionGroundGoalCellForTransport = ResolveProductionGroundGoalCell;
         _moveNewestProducedUnitToCellForTransport = MoveNewestProducedUnitToCell;
@@ -1094,7 +1096,12 @@ public sealed class BuildingPlacementSystem
         if (unitPrefab == null || !TryGetEntityManager(out EntityManager em))
             return false;
 
-        return TryGetSpawnUnitPrefabEntity(em, unitPrefab, out prefabEntity);
+        EnsureEntityQueries(em);
+        return _buildingSpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
+            CreateBuildingSpawnPrefabContext(),
+            em,
+            unitPrefab,
+            out prefabEntity);
     }
 
     public bool TrySpendDollars(int amount)
@@ -1168,7 +1175,11 @@ public sealed class BuildingPlacementSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        return TryResolveSpawnUnitPrefabFromRegistry(em, prefabEntity, out spawnUnitPrefab);
+        return _buildingSpawnPrefabSystem.TryResolveSpawnUnitPrefabFromRegistry(
+            CreateBuildingSpawnPrefabContext(),
+            em,
+            prefabEntity,
+            out spawnUnitPrefab);
     }
 
     public bool TryResolveLiveUnitPreviewPrefab(Entity unitEntity, out GameObject prefab)
@@ -1203,30 +1214,6 @@ public sealed class BuildingPlacementSystem
             {
                 return true;
             }
-        }
-
-        return false;
-    }
-
-    private bool TryResolveSpawnUnitPrefabFromRegistry(EntityManager em, Entity prefabEntity, out GameObject spawnUnitPrefab)
-    {
-        spawnUnitPrefab = null;
-        if (_unitPrefabRegistryQuery.IsEmptyIgnoreFilter || unitSpawnPrefabs == null || unitSpawnPrefabs.Count == 0)
-            return false;
-
-        Entity registryEntity = _unitPrefabRegistryQuery.GetSingletonEntity();
-        DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        int count = math.min(registry.Length, unitSpawnPrefabs.Count);
-        if (count <= 0)
-            return false;
-
-        for (int i = 0; i < count; i++)
-        {
-            if (registry[i].Prefab != prefabEntity)
-                continue;
-
-            spawnUnitPrefab = unitSpawnPrefabs[i];
-            return spawnUnitPrefab != null;
         }
 
         return false;
@@ -1374,7 +1361,12 @@ public sealed class BuildingPlacementSystem
         _buildingRoot.localScale = Vector3.one;
 
         RebuildConfiguredSpawnableDefinitions();
-        CreatePlacementOutline();
+        _buildingPlacementPreviewSystem.Init(
+            _runtimeRoot,
+            placementOutlineHeight,
+            placementValidColor,
+            placementInvalidColor,
+            DestroyRuntimeObject);
     }
 
     public void BindDependencies(
@@ -1526,8 +1518,7 @@ public sealed class BuildingPlacementSystem
         _soldierTentDefinition = null;
         _factoryDefinition = null;
 
-        if (_placementOutline != null)
-            DestroyRuntimeObject(_placementOutline);
+        _buildingPlacementPreviewSystem.Dispose();
         if (_buildingRoot != null)
             DestroyRuntimeObject(_buildingRoot.gameObject);
     }
@@ -1702,7 +1693,7 @@ public sealed class BuildingPlacementSystem
 
         if (!_runtimeGameplayStateSystem.PlayRequested)
         {
-            HidePlacementOutline();
+            _buildingPlacementPreviewSystem.HideOutline();
             afterInputOutline = Time.realtimeSinceStartupAsDouble;
             afterInput = afterInputOutline;
             afterInputUi = afterInput;
@@ -1711,7 +1702,7 @@ public sealed class BuildingPlacementSystem
         }
 
         if (!_runtimeGameplayStateSystem.BuildModeActive)
-            HidePlacementOutline();
+            _buildingPlacementPreviewSystem.HideOutline();
         afterInputOutline = Time.realtimeSinceStartupAsDouble;
 
         if (pointer.WasPressedThisFrame)
@@ -2454,7 +2445,7 @@ public sealed class BuildingPlacementSystem
 
         if (transportSettings.RequiresAirportRunway &&
             transportSettings.Mode == ProductionTransportMode.Plane &&
-            !TryGetNearestAirportRunway(building.Instance != null ? building.Instance.transform.position : Vector3.zero, out _, out _, out _, out _))
+            !_buildingRunwaySystem.TryGetNearestAirportRunway(_runtimeBuildings, building.Instance != null ? building.Instance.transform.position : Vector3.zero, out _, out _, out _, out _))
         {
             if (logReason)
                 Debug.LogWarning($"[BuildingSpawn] No airport runway is available for '{spawnUnitPrefab.name}'.");
@@ -2510,7 +2501,7 @@ public sealed class BuildingPlacementSystem
         if (shouldClearSelection)
             ClearSelectedBuilding("ExitBuildMode");
         _preserveBuildingSelectionOnNextExitBuildMode = false;
-        HidePlacementOutline();
+        _buildingPlacementPreviewSystem.HideOutline();
         BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode();
     }
 
@@ -2562,7 +2553,7 @@ public sealed class BuildingPlacementSystem
         _activePlacement = null;
         _activePlacementCost = 0;
         _isDraggingPlacement = false;
-        HidePlacementOutline();
+        _buildingPlacementPreviewSystem.HideOutline();
     }
 
     private void BeginPlacement(BuildingDefinition definition)
@@ -2625,7 +2616,7 @@ public sealed class BuildingPlacementSystem
         if (!TryGetGridData(out _, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData))
         {
             placement.IsValid = false;
-            HidePlacementOutline();
+            _buildingPlacementPreviewSystem.HideOutline();
             return;
         }
 
@@ -2664,7 +2655,13 @@ public sealed class BuildingPlacementSystem
                 ? AreAllPendingWallRunsValid(placement, grid, roads, blockerData)
                 : AreWallPlacementOriginsValid(placement, wallOrigins, wallFootprint, vertical, grid, roads, blockerData);
             RebuildWallPlacementPreview(placement, wallOrigins, vertical, grid);
-            UpdateWallPlacementOutline(GetAllWallPlacementOrigins(placement, wallOrigins), wallFootprint, grid, placement.IsValid);
+            _buildingPlacementPreviewSystem.UpdateWallOutline(
+                GetAllWallPlacementOrigins(placement, wallOrigins),
+                wallFootprint,
+                grid,
+                placement.Definition,
+                placement.IsValid,
+                GetFootprintCenter);
             if (shouldFollowCamera)
                 selectionSystem?.FollowCameraGroundCenterTo(ResolvePlacementFocusWorldPosition(placement, grid, wallOrigins, wallFootprint));
             return;
@@ -2674,7 +2671,13 @@ public sealed class BuildingPlacementSystem
         Vector2Int placementFootprint = GetPlacementFootprint(placement.Definition, placement.AutoRotateVertical);
         placement.IsValid = IsPlacementValid(placement.OriginCell, placementFootprint, grid, roads, blockerData);
         PositionBuildingObject(placement.PreviewInstance, placement.OriginCell, placement.Definition, grid, placement.AutoRotateVertical);
-        UpdatePlacementOutline(placement.OriginCell, placementFootprint, grid, placement.IsValid);
+        _buildingPlacementPreviewSystem.UpdateOutline(
+            placement.OriginCell,
+            placementFootprint,
+            grid,
+            placement.Definition,
+            placement.IsValid,
+            GetFootprintCenter);
         if (shouldFollowCamera)
             selectionSystem?.FollowCameraGroundCenterTo(GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
     }
@@ -2727,45 +2730,57 @@ public sealed class BuildingPlacementSystem
 
     private void PlaceBuilding(PlacementState placement)
     {
-        if (IsLinearWallDefinition(placement.Definition) &&
-            TryGetGridData(out _, out GridConfig grid, out _, out _))
-        {
-            RuntimeBuildingData lastBuilding = null;
-            List<PlacementState.WallRun> wallRuns = BuildFinalWallRuns(placement);
-            for (int runIndex = 0; runIndex < wallRuns.Count; runIndex++)
-            {
-                PlacementState.WallRun run = wallRuns[runIndex];
-                Vector2Int wallFootprint = GetWallSegmentFootprint(placement.Definition, run.Vertical);
-                for (int i = 0; i < run.Origins.Count; i++)
-                {
-                    GameObject instance = CreateBuildingVisualInstance(placement.Definition, _buildingRoot);
-                    if (instance == null)
-                        continue;
-
-                    PositionBuildingObject(instance, run.Origins[i], placement.Definition, grid, run.Vertical);
-                    BuildingDefinition segmentDefinition = CloneDefinitionWithFootprint(placement.Definition, wallFootprint);
-                    lastBuilding = RegisterRuntimeBuilding(segmentDefinition, instance, run.Origins[i]);
-                }
-            }
-
-            if (placement.PreviewInstance != null)
-                Destroy(placement.PreviewInstance);
-            placement.PreviewInstance = null;
-
-            if (lastBuilding != null && ShouldAutoSelectAfterPlacement(lastBuilding.Definition))
-                SelectAndFocusBuilding(lastBuilding);
+        if (placement == null)
             return;
+
+        bool hasGrid = TryGetGridData(out _, out GridConfig placementGrid, out _, out _);
+        _wallCommitRuns.Clear();
+        if (placement.CommittedWallRuns != null)
+        {
+            for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
+            {
+                PlacementState.WallRun run = placement.CommittedWallRuns[i];
+                if (run?.Origins == null || run.Origins.Count == 0)
+                    continue;
+
+                _wallCommitRuns.Add(new BuildingPlacementCommitSystem.WallRun(run.Origins, run.Vertical));
+            }
         }
 
-        if (TryGetGridData(out _, out GridConfig placementGrid, out _, out _))
-            PositionBuildingObject(placement.PreviewInstance, placement.OriginCell, placement.Definition, placementGrid, placement.AutoRotateVertical);
+        List<Vector2Int> currentWallOrigins = null;
+        bool currentWallVertical = false;
+        if (IsLinearWallDefinition(placement.Definition))
+        {
+            currentWallVertical = IsWallPlacementVertical(placement);
+            if (!placement.HideCurrentWallPreview)
+                currentWallOrigins = BuildWallPlacementOrigins(placement);
+        }
 
-        RuntimeBuildingData building = RegisterRuntimeBuilding(
-            CloneDefinitionWithFootprint(placement.Definition, GetPlacementFootprint(placement.Definition, placement.AutoRotateVertical)),
+        var request = new BuildingPlacementCommitSystem.CommitRequest(
+            placement.Definition,
             placement.PreviewInstance,
-            placement.OriginCell);
+            placement.OriginCell,
+            placement.AutoRotateVertical,
+            IsLinearWallDefinition(placement.Definition),
+            placement.HideCurrentWallPreview,
+            _wallCommitRuns,
+            currentWallOrigins,
+            currentWallVertical);
+        var context = new BuildingPlacementCommitSystem.CommitContext(
+            _buildingRoot,
+            hasGrid,
+            placementGrid,
+            CreateBuildingVisualInstance,
+            PositionBuildingObject,
+            RegisterRuntimeBuilding,
+            CloneDefinitionWithFootprint,
+            GetPlacementFootprint,
+            GetWallSegmentFootprint,
+            DestroyRuntimeObject);
+
+        RuntimeBuildingData building = _buildingPlacementCommitSystem.CommitPlacement(request, context);
         placement.PreviewInstance = null;
-        if (ShouldAutoSelectAfterPlacement(building.Definition))
+        if (building != null)
             SelectAndFocusBuilding(building);
     }
 
@@ -2833,26 +2848,6 @@ public sealed class BuildingPlacementSystem
 
         Vector3 focusWorldPosition = ResolveBuildingFocusWorldPosition(building);
         _selectionSystem?.SmoothMoveCameraGroundCenterTo(focusWorldPosition);
-    }
-
-    private static bool ShouldAutoSelectAfterPlacement(BuildingDefinition definition)
-    {
-        if (definition == null)
-            return false;
-
-        if (definition.ProductionSlots != null)
-        {
-            for (int i = 0; i < definition.ProductionSlots.Count; i++)
-            {
-                if (definition.ProductionSlots[i]?.SpawnUnitPrefab != null)
-                    return true;
-            }
-        }
-
-        return definition.SpawnUnitPrefab != null ||
-               definition.SecondarySpawnUnitPrefab != null ||
-               definition.TertiarySpawnUnitPrefab != null ||
-               definition.QuaternarySpawnUnitPrefab != null;
     }
 
     private Vector3 ResolveBuildingFocusWorldPosition(RuntimeBuildingData building)
@@ -3229,7 +3224,7 @@ public sealed class BuildingPlacementSystem
         }
 
         cached.HasLocalBounds = TryGetPrefabLocalBounds(prefab, out cached.LocalBounds);
-        cached.HasRunway = TryGetRunwayLocalData(prefab, out cached.RunwayLocalPosition, out cached.RunwayLocalRotation, out cached.RunwayHalfExtents);
+        cached.HasRunway = _buildingRunwaySystem.TryGetRunwayLocalData(prefab, out cached.RunwayLocalPosition, out cached.RunwayLocalRotation, out cached.RunwayHalfExtents);
         cached.ProductionSpawnLocalPositions = FindProductionSpawnLocalPositions(prefab);
         _runtimeBuildingMetadataCache[prefab] = cached;
         return cached;
@@ -4577,97 +4572,6 @@ public sealed class BuildingPlacementSystem
                prefabName.IndexOf("Road_Barrier", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
-    private void CreatePlacementOutline()
-    {
-        _placementOutline = new GameObject("PlacementOutline");
-        _placementOutline.transform.SetParent(_runtimeRoot, false);
-        GameObject box = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        box.name = "PlacementVolume";
-        box.transform.SetParent(_placementOutline.transform, false);
-        var collider = box.GetComponent<Collider>();
-        if (collider != null)
-            DestroyRuntimeObject(collider);
-        
-
-        _placementOutlineRenderer = box.GetComponent<MeshRenderer>();
-        _placementOutlineRenderer.shadowCastingMode = ShadowCastingMode.Off;
-        _placementOutlineRenderer.receiveShadows = false;
-        _placementOutlineRenderer.sharedMaterial = CreatePlacementMaterial();
-
-        ApplyPlacementMaterialColor(placementValidColor);
-        _placementOutline.SetActive(false);
-    }
-
-    private void UpdatePlacementOutline(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid, bool valid)
-    {
-        if (_placementOutline == null || _placementOutlineRenderer == null)
-            return;
-
-        float width = footprintCells.x * grid.CellSize;
-        float depth = footprintCells.y * grid.CellSize;
-        float height = GetPlacementOutlineHeight();
-        Vector3 center = GetFootprintCenter(originCell, footprintCells, grid) + new Vector3(0f, height * 0.5f, 0f);
-
-        _placementOutline.transform.SetPositionAndRotation(center, Quaternion.identity);
-        _placementOutlineRenderer.transform.localPosition = Vector3.zero;
-        _placementOutlineRenderer.transform.localScale = new Vector3(
-            Mathf.Max(grid.CellSize, width),
-            height,
-            Mathf.Max(grid.CellSize, depth));
-
-        ApplyPlacementMaterialColor(valid ? placementValidColor : placementInvalidColor);
-        _placementOutline.SetActive(true);
-    }
-
-    private void HidePlacementOutline()
-    {
-        if (_placementOutline != null && _placementOutline.activeSelf)
-            _placementOutline.SetActive(false);
-    }
-
-    private Material CreatePlacementMaterial()
-    {
-        Shader shader =
-            Shader.Find("Universal Render Pipeline/Unlit") ??
-            Shader.Find("Universal Render Pipeline/Simple Lit") ??
-            Shader.Find("Universal Render Pipeline/Lit") ??
-            Shader.Find("Sprites/Default") ??
-            Shader.Find("Unlit/Color") ??
-            Shader.Find("Standard");
-        var material = new Material(shader);
-        material.renderQueue = (int)RenderQueue.Transparent;
-        material.SetOverrideTag("RenderType", "Transparent");
-        if (material.HasProperty("_Surface"))
-            material.SetFloat("_Surface", 1f);
-        if (material.HasProperty("_Blend"))
-            material.SetFloat("_Blend", 0f);
-        if (material.HasProperty("_SrcBlend"))
-            material.SetFloat("_SrcBlend", (float)BlendMode.SrcAlpha);
-        if (material.HasProperty("_DstBlend"))
-            material.SetFloat("_DstBlend", (float)BlendMode.OneMinusSrcAlpha);
-        if (material.HasProperty("_ZWrite"))
-            material.SetFloat("_ZWrite", 0f);
-        material.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-        material.DisableKeyword("_ALPHATEST_ON");
-        material.EnableKeyword("_ALPHABLEND_ON");
-        material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
-        return material;
-    }
-
-    private void ApplyPlacementMaterialColor(Color color)
-    {
-        if (_placementOutlineRenderer == null)
-            return;
-
-        Color c = color;
-        c.a = 0.28f;
-        Material material = _placementOutlineRenderer.sharedMaterial;
-        if (material.HasProperty("_BaseColor"))
-            material.SetColor("_BaseColor", c);
-        if (material.HasProperty("_Color"))
-            material.SetColor("_Color", c);
-    }
-
     private void CacheBuildingBounds(BuildingDefinition definition)
     {
         if (definition == null || definition.HasLocalBounds || (definition.VisualTemplate == null && definition.Prefab == null))
@@ -4898,63 +4802,13 @@ public sealed class BuildingPlacementSystem
 
     private RectInt GetEffectivePlacementRect(BuildingDefinition definition, Vector2Int originCell, GridConfig grid, bool rotateVertical = false)
     {
-        Vector2Int modelFootprint = GetPlacementFootprint(definition, rotateVertical);
-        RectInt modelRect = new(originCell, modelFootprint);
-        if (definition == null || !definition.HasRunway)
-            return modelRect;
-
-        if (!TryGetRunwayFootprintRect(definition, originCell, grid, rotateVertical, out RectInt runwayRect))
-            return modelRect;
-
-        return UnionRects(modelRect, runwayRect);
-    }
-
-    private bool TryGetRunwayFootprintRect(BuildingDefinition definition, Vector2Int originCell, GridConfig grid, bool rotateVertical, out RectInt runwayRect)
-    {
-        runwayRect = default;
-        if (definition == null || !definition.HasRunway || grid.CellSize <= 0f)
-            return false;
-
-        Vector2Int modelFootprint = GetPlacementFootprint(definition, rotateVertical);
-        Vector3 buildingCenter = GetFootprintCenter(originCell, modelFootprint, grid);
-        Vector3 visualOffset = definition.HasLocalBounds
-            ? new Vector3(definition.LocalBounds.center.x, 0f, definition.LocalBounds.center.z)
-            : Vector3.zero;
-        Quaternion placementRotation = rotateVertical ? Quaternion.Euler(0f, 90f, 0f) : Quaternion.identity;
-        Vector3 runwayCenter = buildingCenter + placementRotation * (definition.RunwayLocalPosition - visualOffset);
-        Quaternion runwayRotation = placementRotation * definition.RunwayLocalRotation;
-
-        Vector3 halfExtents = definition.RunwayHalfExtents;
-        Vector3[] corners =
-        {
-            runwayCenter + runwayRotation * new Vector3(-halfExtents.x, 0f, -halfExtents.z),
-            runwayCenter + runwayRotation * new Vector3(-halfExtents.x, 0f, halfExtents.z),
-            runwayCenter + runwayRotation * new Vector3(halfExtents.x, 0f, -halfExtents.z),
-            runwayCenter + runwayRotation * new Vector3(halfExtents.x, 0f, halfExtents.z)
-        };
-
-        float minX = float.PositiveInfinity;
-        float minZ = float.PositiveInfinity;
-        float maxX = float.NegativeInfinity;
-        float maxZ = float.NegativeInfinity;
-        for (int i = 0; i < corners.Length; i++)
-        {
-            Vector3 local = corners[i] - (Vector3)grid.Origin;
-            minX = Mathf.Min(minX, local.x);
-            minZ = Mathf.Min(minZ, local.z);
-            maxX = Mathf.Max(maxX, local.x);
-            maxZ = Mathf.Max(maxZ, local.z);
-        }
-
-        int cellMinX = Mathf.FloorToInt(minX / grid.CellSize);
-        int cellMinY = Mathf.FloorToInt(minZ / grid.CellSize);
-        int cellMaxX = Mathf.CeilToInt(maxX / grid.CellSize);
-        int cellMaxY = Mathf.CeilToInt(maxZ / grid.CellSize);
-        if (cellMaxX <= cellMinX || cellMaxY <= cellMinY)
-            return false;
-
-        runwayRect = new RectInt(cellMinX, cellMinY, cellMaxX - cellMinX, cellMaxY - cellMinY);
-        return true;
+        return _buildingRunwaySystem.GetEffectivePlacementRect(
+            definition,
+            originCell,
+            grid,
+            rotateVertical,
+            buildPlaneY,
+            GetPlacementFootprint);
     }
 
     private bool OverlapsAnyRuntimeBuilding(RectInt candidateRect)
@@ -5242,10 +5096,7 @@ public sealed class BuildingPlacementSystem
         if (placement?.PreviewInstance == null)
             return;
 
-        Transform root = placement.PreviewInstance.transform;
-        for (int i = root.childCount - 1; i >= 0; i--)
-            Destroy(root.GetChild(i).gameObject);
-
+        _wallPreviewRuns.Clear();
         if (placement.CommittedWallRuns != null)
         {
             for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
@@ -5254,52 +5105,21 @@ public sealed class BuildingPlacementSystem
                 if (run?.Origins == null)
                     continue;
 
-                for (int i = 0; i < run.Origins.Count; i++)
-                {
-                    GameObject segment = CreateBuildingVisualInstance(placement.Definition, root);
-                    if (segment == null)
-                        continue;
-
-                    PositionBuildingObject(segment, run.Origins[i], placement.Definition, grid, run.Vertical);
-                    SetPreviewSegmentValid(segment, true);
-                }
+                _wallPreviewRuns.Add(new BuildingPlacementPreviewSystem.WallPreviewRun(run.Origins, run.Vertical));
             }
         }
 
-        if (placement.HideCurrentWallPreview)
-            return;
-
-        for (int i = 0; i < origins.Count; i++)
-        {
-            GameObject segment = CreateBuildingVisualInstance(placement.Definition, root);
-            if (segment == null)
-                continue;
-
-            PositionBuildingObject(segment, origins[i], placement.Definition, grid, vertical);
-            SetPreviewSegmentValid(segment, placement.IsValid);
-        }
-    }
-
-    private void SetPreviewSegmentValid(GameObject segment, bool valid)
-    {
-        if (segment == null)
-            return;
-
-        Renderer[] renderers = segment.GetComponentsInChildren<Renderer>(true);
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            Renderer renderer = renderers[i];
-            if (renderer == null)
-                continue;
-
-            renderer.GetPropertyBlock(_markerPropertyBlock);
-            Color tint = valid ? Color.white : new Color(1f, 0.45f, 0.45f, 1f);
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_BaseColor"))
-                _markerPropertyBlock.SetColor("_BaseColor", tint);
-            if (renderer.sharedMaterial != null && renderer.sharedMaterial.HasProperty("_Color"))
-                _markerPropertyBlock.SetColor("_Color", tint);
-            renderer.SetPropertyBlock(_markerPropertyBlock);
-        }
+        _buildingPlacementPreviewSystem.RebuildWallPreview(
+            placement.PreviewInstance,
+            placement.Definition,
+            _wallPreviewRuns,
+            origins,
+            vertical,
+            placement.HideCurrentWallPreview,
+            placement.IsValid,
+            grid,
+            CreateBuildingVisualInstance,
+            PositionBuildingObject);
     }
 
     private static Vector2Int GetWallSegmentFootprint(BuildingDefinition definition, bool vertical)
@@ -5353,34 +5173,6 @@ public sealed class BuildingPlacementSystem
             RunwayLocalRotation = definition.RunwayLocalRotation,
             RunwayHalfExtents = definition.RunwayHalfExtents
         };
-    }
-
-    private void UpdateWallPlacementOutline(List<Vector2Int> origins, Vector2Int footprintCells, GridConfig grid, bool valid)
-    {
-        if (origins == null || origins.Count == 0)
-        {
-            HidePlacementOutline();
-            return;
-        }
-
-        int minX = int.MaxValue;
-        int minY = int.MaxValue;
-        int maxX = int.MinValue;
-        int maxY = int.MinValue;
-        for (int i = 0; i < origins.Count; i++)
-        {
-            Vector2Int origin = origins[i];
-            minX = Mathf.Min(minX, origin.x);
-            minY = Mathf.Min(minY, origin.y);
-            maxX = Mathf.Max(maxX, origin.x + footprintCells.x);
-            maxY = Mathf.Max(maxY, origin.y + footprintCells.y);
-        }
-
-        UpdatePlacementOutline(
-            new Vector2Int(minX, minY),
-            new Vector2Int(maxX - minX, maxY - minY),
-            grid,
-            valid);
     }
 
     private Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
@@ -5575,7 +5367,7 @@ public sealed class BuildingPlacementSystem
         return entity;
     }
 
-    private static BuildingDefinition CreateDefinition(
+    private BuildingDefinition CreateDefinition(
         GameObject prefab,
         string fallbackDisplayName,
         string fallbackDescription,
@@ -5595,7 +5387,7 @@ public sealed class BuildingPlacementSystem
 
         Bounds localBounds = default;
         bool hasLocalBounds = TryGetPrefabLocalBounds(prefab, out localBounds);
-        bool hasRunway = TryGetRunwayLocalData(prefab, out Vector3 runwayLocalPosition, out Quaternion runwayLocalRotation, out Vector3 runwayHalfExtents);
+        bool hasRunway = _buildingRunwaySystem.TryGetRunwayLocalData(prefab, out Vector3 runwayLocalPosition, out Quaternion runwayLocalRotation, out Vector3 runwayHalfExtents);
 
         List<BuildingDefinition.ProductionSlotDefinition> productionSlots = BuildProductionSlots(
             authoring,
@@ -5798,76 +5590,6 @@ public sealed class BuildingPlacementSystem
         for (int i = 0; i < matches.Count; i++)
             ordered[i] = matches[i].position;
         return ordered;
-    }
-
-    private static bool TryGetRunwayLocalData(GameObject prefab, out Vector3 localPosition, out Quaternion localRotation, out Vector3 halfExtents)
-    {
-        localPosition = Vector3.zero;
-        localRotation = Quaternion.identity;
-        halfExtents = new Vector3(8f, 0.5f, 24f);
-        if (prefab == null)
-            return false;
-
-        Transform runway = null;
-        Transform[] transforms = prefab.GetComponentsInChildren<Transform>(true);
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            if (transforms[i] != null && transforms[i].name == "Runway")
-            {
-                runway = transforms[i];
-                break;
-            }
-        }
-
-        if (runway == null)
-            return false;
-
-        Transform runwayStart = null;
-        Transform runwayEnd = null;
-        for (int i = 0; i < runway.childCount; i++)
-        {
-            Transform child = runway.GetChild(i);
-            if (child == null)
-                continue;
-            if (child.name == "Runway_Start")
-                runwayStart = child;
-            else if (child.name == "Runway_End")
-                runwayEnd = child;
-        }
-
-        if (runwayStart != null && runwayEnd != null)
-        {
-            Vector3 worldStart = runwayStart.position;
-            Vector3 worldEnd = runwayEnd.position;
-            Vector3 worldDirection = worldEnd - worldStart;
-            Vector3 planarDirection = new Vector3(worldDirection.x, 0f, worldDirection.z);
-            if (planarDirection.sqrMagnitude > 0.0001f)
-            {
-                Vector3 worldCenter = (worldStart + worldEnd) * 0.5f;
-                localPosition = prefab.transform.InverseTransformPoint(worldCenter);
-                Quaternion worldRotation = Quaternion.LookRotation(planarDirection.normalized, Vector3.up);
-                localRotation = Quaternion.Inverse(prefab.transform.rotation) * worldRotation;
-                halfExtents = new Vector3(
-                    8f,
-                    0.5f,
-                    Mathf.Max(8f, planarDirection.magnitude * 0.5f));
-                return true;
-            }
-        }
-
-        localPosition = runway.localPosition;
-        localRotation = runway.localRotation;
-
-        Renderer runwayRenderer = runway.GetComponentInChildren<Renderer>(true);
-        if (runwayRenderer != null)
-        {
-            Bounds bounds = runwayRenderer.localBounds;
-            halfExtents = bounds.extents;
-            if (halfExtents.x <= 0.01f || halfExtents.z <= 0.01f)
-                halfExtents = new Vector3(8f, 0.5f, 24f);
-        }
-
-        return true;
     }
 
     private static bool TryParseSpawnPointIndex(string name, out int index)
@@ -6097,7 +5819,8 @@ public sealed class BuildingPlacementSystem
 
         if (transportSettings.Mode == ProductionTransportMode.Plane &&
             transportSettings.RequiresAirportRunway &&
-            TryGetNearestAirportRunway(
+            _buildingRunwaySystem.TryGetNearestAirportRunway(
+                _runtimeBuildings,
                 producerBuilding.Instance != null ? producerBuilding.Instance.transform.position : Vector3.zero,
                 out _,
                 out Vector3 runwayCenter,
@@ -6208,37 +5931,6 @@ public sealed class BuildingPlacementSystem
         link.Configure(this, building.Id, building.CombatEntity, building.BlockerEntity);
     }
 
-    private bool TryGetAvailableProductionSpawnSlot(RuntimeBuildingData building, EntityManager em, out int slotIndex, out Vector3 spawnLocalPosition)
-    {
-        slotIndex = -1;
-        spawnLocalPosition = Vector3.zero;
-        if (building == null || building.ProductionSpawnLocalPositions == null || building.ProducedUnitSlots == null)
-            return false;
-
-        int count = math.min(building.ProductionSpawnLocalPositions.Length, building.ProducedUnitSlots.Length);
-        for (int i = 0; i < count; i++)
-        {
-            Entity occupant = building.ProducedUnitSlots[i];
-            if (occupant != Entity.Null)
-            {
-                bool occupied = em.Exists(occupant);
-                if (occupied && em.HasComponent<UnitHealth>(occupant))
-                    occupied = em.GetComponentData<UnitHealth>(occupant).Current > 0;
-
-                if (occupied)
-                    continue;
-
-                building.ProducedUnitSlots[i] = Entity.Null;
-            }
-
-            slotIndex = i;
-            spawnLocalPosition = building.ProductionSpawnLocalPositions[i];
-            return true;
-        }
-
-        return false;
-    }
-
     private bool TryQueuePlayerUnitFromBuilding(RuntimeBuildingData building, int productionIndex, GameObject spawnUnitPrefab)
     {
         if (building == null || spawnUnitPrefab == null)
@@ -6256,12 +5948,7 @@ public sealed class BuildingPlacementSystem
             building.ProducedUnitSlots != null &&
             building.ProductionSpawnLocalPositions.Length > 0)
         {
-            _buildingProductionSystem.TryReserveProductionSlot(
-                building.PendingProductions,
-                building.ProducedUnitSlots,
-                building.ProductionSpawnLocalPositions.Length,
-                em,
-                out reservedProductionSlotIndex);
+            _buildingProductionSlotSystem.TryReserveProductionSlot(building, em, out reservedProductionSlotIndex);
 
             bool allowUnreservedHelicopterHelipadSpawn =
                 _buildingProductionSystem.IsHelicopterUnitPrefab(spawnUnitPrefab) &&
@@ -6360,7 +6047,7 @@ public sealed class BuildingPlacementSystem
             worldCamera,
             _buildingProductionSystem,
             _buildingVisualSystem,
-            _tryGetNearestAirportRunwayForTransport,
+            _buildingRunwaySystem,
             _trySpawnPlayerUnitNearBuildingForTransport,
             _resolveProductionGroundGoalCellForTransport,
             _moveNewestProducedUnitToCellForTransport,
@@ -6373,44 +6060,20 @@ public sealed class BuildingPlacementSystem
             _runtimeBuildings,
             _liveUnitFootprintQuery,
             _buildingProductionSystem,
+            _buildingSpawnPrefabSystem,
+            CreateBuildingSpawnPrefabContext(),
+            _buildingProductionSlotSystem,
             GetProductionPrefab,
-            TryGetSpawnUnitPrefabEntity,
-            TryGetAvailableProductionSpawnSlot,
             RuntimeBuildingMatchesId);
     }
 
-    private bool TryGetNearestAirportRunway(
-        Vector3 origin,
-        out RuntimeBuildingData airport,
-        out Vector3 runwayCenter,
-        out Quaternion runwayRotation,
-        out Vector3 runwayHalfExtents)
+    private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()
     {
-        airport = null;
-        runwayCenter = Vector3.zero;
-        runwayRotation = Quaternion.identity;
-        runwayHalfExtents = new Vector3(8f, 0.5f, 24f);
-        float bestDistance = float.PositiveInfinity;
-
-        foreach (var pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData candidate = pair.Value;
-            if (candidate == null || candidate.IsDestroyed || candidate.Instance == null || candidate.Definition == null || !candidate.Definition.HasRunway)
-                continue;
-
-            Vector3 candidateCenter = candidate.Instance.transform.TransformPoint(candidate.Definition.RunwayLocalPosition);
-            float distance = (candidateCenter - origin).sqrMagnitude;
-            if (distance >= bestDistance)
-                continue;
-
-            bestDistance = distance;
-            airport = candidate;
-            runwayCenter = candidateCenter;
-            runwayRotation = candidate.Instance.transform.rotation * candidate.Definition.RunwayLocalRotation;
-            runwayHalfExtents = Vector3.Scale(candidate.Definition.RunwayHalfExtents, candidate.Instance.transform.lossyScale);
-        }
-
-        return airport != null;
+        return new BuildingSpawnPrefabSystem.Context(
+            unitSpawnPrefabs,
+            _unitPrefabRegistryQuery,
+            _spawnPrefabCandidatesQuery,
+            _livePlayerUnitsQuery);
     }
 
     private int2 ResolveProductionGroundGoalCell(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending, Vector3 worldPosition)
@@ -6561,108 +6224,6 @@ public sealed class BuildingPlacementSystem
         Bounds transformedBounds = new();
         transformedBounds.SetMinMax(min, max);
         return transformedBounds;
-    }
-
-    private bool TryGetSpawnUnitPrefabEntity(EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
-    {
-        prefabEntity = Entity.Null;
-        if (spawnUnitPrefab == null)
-            return false;
-
-        EnsureEntityQueries(em);
-
-        return TryGetSpawnUnitPrefabEntityFromRegistry(em, spawnUnitPrefab, out prefabEntity) ||
-               TryGetSpawnUnitPrefabEntityFromPrefabQuery(em, spawnUnitPrefab, out prefabEntity) ||
-               TryGetPlayerUnitPrefabEntityFromLiveUnits(em, spawnUnitPrefab, out prefabEntity);
-    }
-
-    private bool TryGetSpawnUnitPrefabEntityFromRegistry(EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
-    {
-        prefabEntity = Entity.Null;
-        if (_unitPrefabRegistryQuery.IsEmptyIgnoreFilter || unitSpawnPrefabs == null || unitSpawnPrefabs.Count == 0)
-            return false;
-
-        Entity registryEntity = _unitPrefabRegistryQuery.GetSingletonEntity();
-        DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(registryEntity);
-        string targetKey = GetSpawnableLookupKey(spawnUnitPrefab);
-        int count = math.min(registry.Length, unitSpawnPrefabs.Count);
-        if (string.IsNullOrEmpty(targetKey) || count <= 0)
-            return false;
-
-        for (int i = 0; i < count; i++)
-        {
-            GameObject configuredPrefab = unitSpawnPrefabs[i];
-            if (configuredPrefab == null)
-                continue;
-
-            if (!NamesMatch(GetSpawnableLookupKey(configuredPrefab), targetKey))
-                continue;
-
-            prefabEntity = registry[i].Prefab;
-            if (prefabEntity == Entity.Null)
-                return false;
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool TryGetSpawnUnitPrefabEntityFromPrefabQuery(EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
-    {
-        prefabEntity = Entity.Null;
-
-        EnsureEntityQueries(em);
-        using var entities = _spawnPrefabCandidatesQuery.ToEntityArray(Allocator.Temp);
-        string targetName = spawnUnitPrefab.name;
-
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity candidate = entities[i];
-            if (!NamesMatch(em.GetName(candidate), targetName))
-                continue;
-
-            prefabEntity = candidate;
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool TryGetPlayerUnitPrefabEntityFromLiveUnits(EntityManager em, GameObject spawnUnitPrefab, out Entity prefabEntity)
-    {
-        prefabEntity = Entity.Null;
-        string targetName = spawnUnitPrefab != null ? spawnUnitPrefab.name : string.Empty;
-        EnsureEntityQueries(em);
-        using var entities = _livePlayerUnitsQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (em.HasComponent<StaticGridBlocker>(entity))
-                continue;
-            if (em.GetComponentData<Faction>(entity).Id != 0)
-                continue;
-
-            Entity candidate = em.GetComponentData<UnitRespawnPrefab>(entity).Prefab;
-            if (candidate == Entity.Null)
-                continue;
-            if (!NamesMatch(em.GetName(candidate), targetName))
-                continue;
-
-            prefabEntity = candidate;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool NamesMatch(string candidateName, string targetName)
-    {
-        if (string.IsNullOrWhiteSpace(candidateName) || string.IsNullOrWhiteSpace(targetName))
-            return false;
-
-        return string.Equals(candidateName, targetName, System.StringComparison.OrdinalIgnoreCase) ||
-               string.Equals(candidateName.Replace(" (Clone)", string.Empty), targetName, System.StringComparison.OrdinalIgnoreCase);
     }
 
     private static int2 FindSpawnCellAdjacentToBuilding(
@@ -6944,15 +6505,6 @@ public sealed class BuildingPlacementSystem
     private static bool IsPointerOverBlockingUI(Vector2 screenPosition)
     {
         return false;
-    }
-
-    private float GetPlacementOutlineHeight()
-    {
-        float baseHeight = Mathf.Max(0.5f, placementOutlineHeight);
-        if (_activePlacement?.Definition?.HasLocalBounds == true)
-            baseHeight = Mathf.Max(baseHeight, _activePlacement.Definition.LocalBounds.size.y + placementOutlineHeight);
-
-        return baseHeight;
     }
 
     private bool IsPointerOverPlacementUi(Vector2 screenPosition)

@@ -9,8 +9,6 @@ using RuntimeBuildingData = BuildingPlacementSystem.RuntimeBuildingData;
 internal sealed class BuildingSpawnSystem
 {
     public delegate GameObject GetProductionPrefabDelegate(BuildingPlacementSystem.BuildingDefinition definition, int index);
-    public delegate bool TryGetSpawnUnitPrefabEntityDelegate(EntityManager entityManager, GameObject spawnUnitPrefab, out Entity prefabEntity);
-    public delegate bool TryGetAvailableProductionSpawnSlotDelegate(RuntimeBuildingData building, EntityManager entityManager, out int slotIndex, out Vector3 spawnLocalPosition);
     public delegate bool RuntimeBuildingMatchesIdDelegate(RuntimeBuildingData building, string normalizedBuildingId);
 
     private sealed class RecentSpawnReservation
@@ -27,26 +25,29 @@ internal sealed class BuildingSpawnSystem
         public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
         public readonly EntityQuery LiveUnitFootprintQuery;
         public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
+        public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
+        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
         public readonly GetProductionPrefabDelegate GetProductionPrefab;
-        public readonly TryGetSpawnUnitPrefabEntityDelegate TryGetSpawnUnitPrefabEntity;
-        public readonly TryGetAvailableProductionSpawnSlotDelegate TryGetAvailableProductionSpawnSlot;
         public readonly RuntimeBuildingMatchesIdDelegate RuntimeBuildingMatchesId;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
             EntityQuery liveUnitFootprintQuery,
             BuildingProductionSystem productionSystem,
+            BuildingSpawnPrefabSystem spawnPrefabSystem,
+            BuildingSpawnPrefabSystem.Context spawnPrefabContext,
+            BuildingProductionSlotSystem productionSlotSystem,
             GetProductionPrefabDelegate getProductionPrefab,
-            TryGetSpawnUnitPrefabEntityDelegate tryGetSpawnUnitPrefabEntity,
-            TryGetAvailableProductionSpawnSlotDelegate tryGetAvailableProductionSpawnSlot,
             RuntimeBuildingMatchesIdDelegate runtimeBuildingMatchesId)
         {
             RuntimeBuildings = runtimeBuildings;
             LiveUnitFootprintQuery = liveUnitFootprintQuery;
             ProductionSystem = productionSystem;
+            SpawnPrefabSystem = spawnPrefabSystem;
+            SpawnPrefabContext = spawnPrefabContext;
+            ProductionSlotSystem = productionSlotSystem;
             GetProductionPrefab = getProductionPrefab;
-            TryGetSpawnUnitPrefabEntity = tryGetSpawnUnitPrefabEntity;
-            TryGetAvailableProductionSpawnSlot = tryGetAvailableProductionSpawnSlot;
             RuntimeBuildingMatchesId = runtimeBuildingMatchesId;
         }
     }
@@ -129,8 +130,8 @@ internal sealed class BuildingSpawnSystem
             return false;
 
         GameObject spawnUnitPrefab = context.GetProductionPrefab(building.Definition, productionIndex);
-        if (context.TryGetSpawnUnitPrefabEntity == null ||
-            !context.TryGetSpawnUnitPrefabEntity(em, spawnUnitPrefab, out Entity prefabEntity))
+        if (context.SpawnPrefabSystem == null ||
+            !context.SpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(context.SpawnPrefabContext, em, spawnUnitPrefab, out Entity prefabEntity))
         {
 #if UNITY_EDITOR
             Debug.LogWarning($"[BuildingSpawn] Could not resolve ECS prefab entity for spawn prefab '{(spawnUnitPrefab != null ? spawnUnitPrefab.name : "<null>")}' from building '{building.Definition.DisplayName}'.");
@@ -231,8 +232,8 @@ internal sealed class BuildingSpawnSystem
                 productionSlotIndex = reservedProductionSlotIndex;
                 productionSpawnLocalPosition = building.ProductionSpawnLocalPositions[reservedProductionSlotIndex];
             }
-            else if (context.TryGetAvailableProductionSpawnSlot == null ||
-                     !context.TryGetAvailableProductionSpawnSlot(building, em, out productionSlotIndex, out productionSpawnLocalPosition))
+            else if (context.ProductionSlotSystem == null ||
+                     !context.ProductionSlotSystem.TryGetAvailableProductionSpawnSlot(building, em, out productionSlotIndex, out productionSpawnLocalPosition))
             {
                 cell = default;
                 pos = default;
@@ -534,9 +535,9 @@ internal sealed class BuildingSpawnSystem
                 : building.ProductionSpawnLocalPositions.Length;
             for (int i = 0; i < count; i++)
             {
-                if (IsProductionSlotReservedByPending(building, i))
+                if (context.ProductionSlotSystem.IsProductionSlotReservedByPending(building, i))
                     continue;
-                if (IsProductionSlotOccupied(building, em, i))
+                if (context.ProductionSlotSystem.IsProductionSlotOccupied(building, em, i))
                     continue;
 
                 Vector3 candidateWorld = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
@@ -824,39 +825,6 @@ internal sealed class BuildingSpawnSystem
                !building.IsDestroyed &&
                building.HasOwnerFaction &&
                building.OwnerFactionId == factionId;
-    }
-
-    private static bool IsProductionSlotReservedByPending(RuntimeBuildingData building, int slotIndex)
-    {
-        if (building?.PendingProductions == null)
-            return false;
-
-        for (int i = 0; i < building.PendingProductions.Count; i++)
-        {
-            RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
-            if (pending != null && pending.ReservedProductionSlotIndex == slotIndex)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static bool IsProductionSlotOccupied(RuntimeBuildingData building, EntityManager em, int slotIndex)
-    {
-        if (building?.ProducedUnitSlots == null ||
-            slotIndex < 0 ||
-            slotIndex >= building.ProducedUnitSlots.Length)
-            return false;
-
-        Entity occupant = building.ProducedUnitSlots[slotIndex];
-        bool occupied = occupant != Entity.Null && em.Exists(occupant);
-        if (occupied && em.HasComponent<UnitHealth>(occupant))
-            occupied = em.GetComponentData<UnitHealth>(occupant).Current > 0;
-
-        if (!occupied && occupant != Entity.Null)
-            building.ProducedUnitSlots[slotIndex] = Entity.Null;
-
-        return occupied;
     }
 
     private static bool TryGetFactionRuntimeBuildingCenter(Context context, byte factionId, RuntimeBuildingData sourceBuilding, out int2 center)

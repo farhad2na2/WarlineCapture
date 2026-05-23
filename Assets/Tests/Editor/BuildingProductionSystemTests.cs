@@ -241,29 +241,6 @@ public sealed class BuildingProductionSystemTests
     }
 
     [Test]
-    public void TryReserveProductionSlot_SkipsPendingAndOccupiedSlots()
-    {
-        using World world = new("BuildingProductionSystemTests");
-        EntityManager entityManager = world.EntityManager;
-        Entity alive = entityManager.CreateEntity(typeof(UnitHealth));
-        entityManager.SetComponentData(alive, new UnitHealth { Current = 5, Max = 10 });
-        Entity dead = entityManager.CreateEntity(typeof(UnitHealth));
-        entityManager.SetComponentData(dead, new UnitHealth { Current = 0, Max = 10 });
-        var pending = new List<BuildingProductionSystem.IPendingProduction>
-        {
-            new TestPendingProduction { ReservedProductionSlotIndex = 0 }
-        };
-        Entity[] slots = { Entity.Null, alive, dead };
-
-        var system = new BuildingProductionSystem();
-        bool reserved = system.TryReserveProductionSlot(pending, slots, 3, entityManager, out int slotIndex);
-
-        Assert.IsTrue(reserved);
-        Assert.AreEqual(2, slotIndex);
-        Assert.AreEqual(Entity.Null, slots[2]);
-    }
-
-    [Test]
     public void TransportPendingQueries_FindReadyAndSoonEntries()
     {
         var transportPrefab = new GameObject("Transport");

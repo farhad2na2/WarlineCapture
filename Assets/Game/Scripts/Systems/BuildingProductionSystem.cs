@@ -341,52 +341,6 @@ public sealed class BuildingProductionSystem
         }
     }
 
-    public bool TryReserveProductionSlot(
-        IReadOnlyList<IPendingProduction> pendingProductions,
-        Entity[] producedUnitSlots,
-        int productionSpawnSlotCount,
-        EntityManager entityManager,
-        out int reservedProductionSlotIndex)
-    {
-        reservedProductionSlotIndex = -1;
-        if (producedUnitSlots == null || productionSpawnSlotCount <= 0)
-            return false;
-
-        int count = Mathf.Min(productionSpawnSlotCount, producedUnitSlots.Length);
-        for (int i = 0; i < count; i++)
-        {
-            if (IsSlotReservedByPending(pendingProductions, i))
-                continue;
-
-            Entity occupant = producedUnitSlots[i];
-            if (IsProducedUnitAlive(occupant, entityManager))
-                continue;
-
-            if (occupant != Entity.Null)
-                producedUnitSlots[i] = Entity.Null;
-
-            reservedProductionSlotIndex = i;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static bool IsSlotReservedByPending(IReadOnlyList<IPendingProduction> pendingProductions, int slotIndex)
-    {
-        if (pendingProductions == null)
-            return false;
-
-        for (int i = 0; i < pendingProductions.Count; i++)
-        {
-            IPendingProduction pending = pendingProductions[i];
-            if (pending != null && pending.ReservedProductionSlotIndex == slotIndex)
-                return true;
-        }
-
-        return false;
-    }
-
     private static bool IsProducedUnitAlive(Entity unit, EntityManager entityManager)
     {
         if (unit == Entity.Null || !entityManager.Exists(unit))

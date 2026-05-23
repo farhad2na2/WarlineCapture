@@ -16,18 +16,40 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        BuildingProductionRequestSystem productionRequestSystem,
+        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         EntityQuery boundaryQuery,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         float now)
     {
-        if (buildingPlacement == null || definitionSystem == null || runtimeSpawnSystem == null || runtimeBuildings == null)
+        if (buildingPlacement == null ||
+            definitionSystem == null ||
+            runtimeSpawnSystem == null ||
+            productionRequestSystem == null ||
+            runtimeQuerySystem == null ||
+            runtimeBuildings == null)
+        {
             return;
+        }
 
         if (!TryGetBoundaryEntity(em, boundaryQuery, out Entity boundaryEntity))
             return;
 
-        ProcessRequests(buildingPlacement, definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
+        ProcessRequests(
+            buildingPlacement,
+            definitionSystem,
+            runtimeSpawnSystem,
+            runtimeSpawnContext,
+            productionRequestSystem,
+            productionRequestContext,
+            runtimeQuerySystem,
+            runtimeQueryContext,
+            em,
+            boundaryEntity,
+            now);
         PublishReadModelIfDue(buildingPlacement, definitionSystem, em, boundaryEntity, runtimeBuildings, now);
     }
 
@@ -36,11 +58,16 @@ public sealed class BuildingRuntimeBoundarySystem
         BuildingDefinitionSystem definitionSystem,
         BuildingRuntimeSpawnSystem runtimeSpawnSystem,
         BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        BuildingProductionRequestSystem productionRequestSystem,
+        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
-        Entity boundaryEntity)
+        Entity boundaryEntity,
+        float now)
     {
         ProcessResourceSellRequests(buildingPlacement, em, boundaryEntity);
-        ProcessProductionRequests(buildingPlacement, em, boundaryEntity);
+        ProcessProductionRequests(productionRequestSystem, productionRequestContext, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, now);
         ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
     }
 
@@ -70,7 +97,14 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void ProcessProductionRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void ProcessProductionRequests(
+        BuildingProductionRequestSystem productionRequestSystem,
+        BuildingProductionRequestSystem.Context productionRequestContext,
+        BuildingRuntimeQuerySystem runtimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        EntityManager em,
+        Entity boundaryEntity,
+        float now)
     {
         DynamicBuffer<BuildingFactionUnitProductionRequest> productionRequests =
             EnsureBoundaryBuffer<BuildingFactionUnitProductionRequest>(em, boundaryEntity);
@@ -80,19 +114,22 @@ public sealed class BuildingRuntimeBoundarySystem
             if (request.Status != BuildingFactionUnitProductionRequest.Pending)
                 continue;
 
-            bool queued = buildingPlacement.TryQueueFactionUnitProduction(
+            bool queued = productionRequestSystem.QueueFactionUnitProductionRequest(
+                productionRequestContext,
                 request.FactionId,
                 request.UnitId.ToString(),
-                out BuildingPlacementSystem.FactionUnitProductionResult result);
+                em,
+                now,
+                ref request);
             request.Status = queued
                 ? BuildingFactionUnitProductionRequest.Succeeded
                 : BuildingFactionUnitProductionRequest.Failed;
-            request.ResultCode = (byte)result.Code;
-            request.ProducerDisplayName = ToFixedString128(result.ProducerDisplayName);
-            request.UnitDisplayName = ToFixedString128(result.UnitDisplayName);
-            request.Cost = result.Cost;
-            request.QueueCount = result.QueueCount;
-            request.ProducedCount = result.ProducedCount;
+            if (request.ResultCode != BuildingFactionUnitProductionRequest.MissingUnitConfig)
+            {
+                string unitId = request.UnitId.ToString();
+                request.QueueCount = runtimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, request.FactionId, unitId);
+                request.ProducedCount = runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, request.FactionId, unitId);
+            }
             productionRequests[i] = request;
         }
     }

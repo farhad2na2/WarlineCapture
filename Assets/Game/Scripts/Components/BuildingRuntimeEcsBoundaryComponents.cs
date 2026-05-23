@@ -53,6 +53,9 @@ public struct BuildingFactionUnitProductionRequest : IBufferElementData
     public const byte Pending = 0;
     public const byte Succeeded = 1;
     public const byte Failed = 2;
+    public const byte MissingUnitConfig = 1;
+    public const byte MissingProducerBuilding = 2;
+    public const byte ProducerUnavailable = 3;
 
     public int RequestId;
     public byte FactionId;

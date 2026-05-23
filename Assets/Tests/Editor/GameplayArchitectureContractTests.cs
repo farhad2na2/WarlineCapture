@@ -1301,6 +1301,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingRuntimeBoundarySystem.Update", placement);
         StringAssert.Contains("ProcessRequests", boundarySystem);
         StringAssert.Contains("ProcessResourceSellRequests", boundarySystem);
+        StringAssert.Contains("QueueFactionUnitProductionRequest", boundarySystem);
         StringAssert.Contains("ProcessRuntimeSpawnRequests", boundarySystem);
         StringAssert.Contains("TryResolveConfiguredBuildingDefinition", boundarySystem);
         StringAssert.Contains("TryPlaceRuntimeBuilding", boundarySystem);
@@ -1321,6 +1322,11 @@ public sealed class GameplayArchitectureContractTests
             boundarySystem.Contains(".TrySpawnRuntimeBuilding", StringComparison.Ordinal) ||
             boundarySystem.Contains(".TryGetConfiguredSpawnable", StringComparison.Ordinal),
             "BuildingRuntimeBoundarySystem spawn requests must use BuildingRuntimeSpawnSystem and BuildingDefinitionSystem boundaries, not BuildingPlacementSystem facade spawn/config calls.");
+
+        Assert.IsFalse(
+            boundarySystem.Contains("buildingPlacement.TryQueueFactionUnitProduction", StringComparison.Ordinal) ||
+            boundarySystem.Contains("BuildingPlacementSystem.FactionUnitProductionResult", StringComparison.Ordinal),
+            "BuildingRuntimeBoundarySystem production requests must use BuildingProductionRequestSystem and BuildingProductionSystem ownership, not BuildingPlacementSystem facade production calls.");
     }
 
     [Test]

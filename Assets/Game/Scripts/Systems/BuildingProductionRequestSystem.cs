@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Entities;
 using UnityEngine;
 using CampRequestFailure = BuildingPlacementSystem.CampRequestFailure;
 using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode;
@@ -27,6 +29,7 @@ internal sealed class BuildingProductionRequestSystem
         public readonly IReadOnlyDictionary<string, GameObject> UnitSpawnPrefabsByKey;
         public readonly int ResourceDollars;
         public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionSystem.QueueContext ProductionQueueContext;
         public readonly BuildingRunwaySystem RunwaySystem;
         public readonly GetProductionPrefabDelegate GetProductionPrefab;
         public readonly BuildingProductionSystem.TryGetPrefabLocalBoundsDelegate TryGetPrefabLocalBounds;
@@ -52,6 +55,7 @@ internal sealed class BuildingProductionRequestSystem
             IReadOnlyDictionary<string, GameObject> unitSpawnPrefabsByKey,
             int resourceDollars,
             BuildingProductionSystem productionSystem,
+            BuildingProductionSystem.QueueContext productionQueueContext,
             BuildingRunwaySystem runwaySystem,
             GetProductionPrefabDelegate getProductionPrefab,
             BuildingProductionSystem.TryGetPrefabLocalBoundsDelegate tryGetPrefabLocalBounds,
@@ -76,6 +80,7 @@ internal sealed class BuildingProductionRequestSystem
             UnitSpawnPrefabsByKey = unitSpawnPrefabsByKey;
             ResourceDollars = resourceDollars;
             ProductionSystem = productionSystem;
+            ProductionQueueContext = productionQueueContext;
             RunwaySystem = runwaySystem;
             GetProductionPrefab = getProductionPrefab;
             TryGetPrefabLocalBounds = tryGetPrefabLocalBounds;
@@ -251,6 +256,61 @@ internal sealed class BuildingProductionRequestSystem
         return true;
     }
 
+    public bool QueueFactionUnitProductionRequest(
+        Context context,
+        byte factionId,
+        string unitId,
+        EntityManager entityManager,
+        float now,
+        ref BuildingFactionUnitProductionRequest request)
+    {
+        if (!TryResolveConfiguredUnit(context, unitId, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
+            unitPrefab == null ||
+            !canRequest)
+        {
+            request.ResultCode = BuildingFactionUnitProductionRequest.MissingUnitConfig;
+            request.ProducerDisplayName = ToFixedString128(string.Empty);
+            request.UnitDisplayName = ToFixedString128(string.IsNullOrWhiteSpace(unitDisplayName) ? unitId : unitDisplayName);
+            request.Cost = 0;
+            return false;
+        }
+
+        request.UnitDisplayName = ToFixedString128(unitDisplayName);
+        request.Cost = Mathf.Max(0, unitPrice);
+
+        if (!TryFindFirstFactionProducerBuilding(context, factionId, unitPrefab, out int producerBuildingId, out int productionIndex, out string producerDisplayName))
+        {
+            request.ResultCode = BuildingFactionUnitProductionRequest.MissingProducerBuilding;
+            request.ProducerDisplayName = ToFixedString128(string.Empty);
+            return false;
+        }
+
+        request.ProducerDisplayName = ToFixedString128(producerDisplayName);
+        if (context.RuntimeBuildings == null ||
+            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) ||
+            producerBuilding == null)
+        {
+            request.ResultCode = BuildingFactionUnitProductionRequest.ProducerUnavailable;
+            return false;
+        }
+
+        if (context.ProductionSystem == null ||
+            !context.ProductionSystem.TryQueuePlayerUnitFromBuilding(
+                context.ProductionQueueContext,
+                producerBuilding,
+                productionIndex,
+                unitPrefab,
+                entityManager,
+                now))
+        {
+            request.ResultCode = BuildingFactionUnitProductionRequest.ProducerUnavailable;
+            return false;
+        }
+
+        request.ResultCode = 0;
+        return true;
+    }
+
     public bool TryFindFirstFriendlyProducerBuilding(Context context, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
     {
         buildingId = 0;
@@ -285,6 +345,109 @@ internal sealed class BuildingProductionRequestSystem
         }
 
         return false;
+    }
+
+    private bool TryFindFirstFactionProducerBuilding(Context context, byte factionId, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
+    {
+        buildingId = 0;
+        productionIndex = -1;
+        buildingDisplayName = string.Empty;
+        if (unitPrefab == null || context.RuntimeBuildings == null || context.GetProductionPrefab == null)
+            return false;
+
+        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = pair.Value;
+            if (building?.Definition == null || building.IsDestroyed)
+                continue;
+            if (building.IsCityGenerated)
+                continue;
+            if (!building.HasOwnerFaction || building.OwnerFactionId != factionId)
+                continue;
+
+            int productionCount = GetProductionCount(building.Definition);
+            for (int i = 0; i < productionCount; i++)
+            {
+                if (context.GetProductionPrefab(building.Definition, i) != unitPrefab)
+                    continue;
+                if (!CanQueueUnitFromBuilding(context, building, unitPrefab, false))
+                    continue;
+
+                buildingId = pair.Key;
+                productionIndex = i;
+                buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveConfiguredUnit(
+        Context context,
+        string unitId,
+        out GameObject unitPrefab,
+        out string displayName,
+        out int price,
+        out bool canRequest)
+    {
+        unitPrefab = null;
+        displayName = unitId ?? string.Empty;
+        price = 0;
+        canRequest = false;
+
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
+        if (string.IsNullOrEmpty(normalized))
+            return false;
+
+        if (context.UnitSpawnPrefabsByKey != null &&
+            context.UnitSpawnPrefabsByKey.TryGetValue(normalized, out unitPrefab) &&
+            unitPrefab != null)
+        {
+            return TryBuildConfiguredUnit(unitPrefab, out displayName, out price, out canRequest);
+        }
+
+        if (context.UnitSpawnPrefabs == null)
+            return false;
+
+        for (int i = 0; i < context.UnitSpawnPrefabs.Count; i++)
+        {
+            GameObject candidate = context.UnitSpawnPrefabs[i];
+            if (candidate == null || !BuildingDefinitionSystem.UnitPrefabMatchesId(candidate, normalized))
+                continue;
+
+            unitPrefab = candidate;
+            return TryBuildConfiguredUnit(candidate, out displayName, out price, out canRequest);
+        }
+
+        return false;
+    }
+
+    private static bool TryBuildConfiguredUnit(GameObject prefab, out string displayName, out int price, out bool canRequest)
+    {
+        displayName = prefab != null ? prefab.name : string.Empty;
+        price = 0;
+        canRequest = false;
+        if (prefab == null)
+            return false;
+
+        UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
+        displayName = ResolveConfiguredUnitDisplayName(prefab, authoring);
+        price = authoring != null ? Mathf.Max(0, authoring.Price) : 10000;
+        canRequest = authoring == null || authoring.CanRequest;
+        return true;
+    }
+
+    private static string ResolveConfiguredUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
+    {
+        if (authoring != null && !string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName))
+            return authoring.ConfiguredDisplayName;
+        return prefab != null ? prefab.name : "Unit";
+    }
+
+    private static FixedString128Bytes ToFixedString128(string value)
+    {
+        return new FixedString128Bytes(value ?? string.Empty);
     }
 
     public bool TryGetRequiredProducerDisplayName(Context context, GameObject unitPrefab, out string buildingDisplayName)

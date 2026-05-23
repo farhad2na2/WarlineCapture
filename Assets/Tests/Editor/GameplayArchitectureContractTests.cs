@@ -2484,6 +2484,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("UpdateActiveProductionTransport", productionTransport);
         StringAssert.Contains("StartActiveTransportDrop", productionTransport);
         StringAssert.Contains("UpdateActiveTransportDrop", productionTransport);
+        StringAssert.Contains("BuildingProductionTransportBridgeSystem TransportBridgeSystem", productionTransport);
+        StringAssert.Contains("context.TransportBridgeSystem.ResolveProductionGroundGoalCell", productionTransport);
+        StringAssert.Contains("context.TransportBridgeSystem?.MoveNewestProducedUnitToCell", productionTransport);
+        StringAssert.Contains("context.TransportBridgeSystem?.AlignNewestProducedUnitRotation", productionTransport);
+        StringAssert.Contains("context.TransportBridgeSystem.TrySpawnPlayerUnitNearBuilding", productionTransport);
         StringAssert.Contains("context.ProductionSystem.FindNextReadyTransportPending", productionTransport);
         StringAssert.Contains("context.ProductionSystem.FindNextSoonTransportPending", productionTransport);
         StringAssert.Contains("context.ProductionSystem.RemovePendingProduction", productionTransport);
@@ -2603,6 +2608,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"_buildingSpawnSystem\.TrySpawnPlayerUnitNearBuilding\("),
             "Production transport spawn bridging belongs in BuildingProductionTransportBridgeSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"BuildingProductionTransportSystem\.(?:TrySpawnPlayerUnitNearBuildingDelegate|ResolveProductionGroundGoalCellDelegate|BuildingCellAction|BuildingForwardAction)"),
+            "BuildingPlacementSystem must not keep production transport wrapper delegates.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:int2|void|bool)\s+(?:ResolveProductionGroundGoalCell|MoveNewestProducedUnitToCell|AlignNewestProducedUnitRotation|TrySpawnPlayerUnitNearBuilding)\b"),
+            "Production transport wrapper methods belong in BuildingProductionTransportSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryResolveHelicopterSpawnForFaction\b"),
             "Helipad spawn fallback belongs in BuildingSpawnSystem, not BuildingPlacementSystem.");

@@ -13,21 +13,6 @@ internal sealed class BuildingProductionTransportSystem
 {
     private const float ProductionTransportLaneSpacing = 12f;
 
-    public delegate bool TrySpawnPlayerUnitNearBuildingDelegate(
-        RuntimeBuildingData building,
-        int productionIndex,
-        int reservedProductionSlotIndex,
-        Vector3? overrideWorldPosition,
-        int2? overrideCell);
-
-    public delegate int2 ResolveProductionGroundGoalCellDelegate(
-        RuntimeBuildingData building,
-        RuntimeBuildingData.PendingProduction pending,
-        Vector3 worldPosition);
-
-    public delegate void BuildingCellAction(RuntimeBuildingData building, int2 cell);
-    public delegate void BuildingForwardAction(RuntimeBuildingData building, Vector3 forward);
-
     public readonly struct Context
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
@@ -35,10 +20,8 @@ internal sealed class BuildingProductionTransportSystem
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly BuildingVisualSystem VisualSystem;
         public readonly BuildingRunwaySystem RunwaySystem;
-        public readonly TrySpawnPlayerUnitNearBuildingDelegate TrySpawnPlayerUnitNearBuilding;
-        public readonly ResolveProductionGroundGoalCellDelegate ResolveProductionGroundGoalCell;
-        public readonly BuildingCellAction MoveNewestProducedUnitToCell;
-        public readonly BuildingForwardAction AlignNewestProducedUnitRotation;
+        public readonly BuildingProductionTransportBridgeSystem TransportBridgeSystem;
+        public readonly BuildingProductionTransportBridgeSystem.Context TransportBridgeContext;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -46,20 +29,16 @@ internal sealed class BuildingProductionTransportSystem
             BuildingProductionSystem productionSystem,
             BuildingVisualSystem visualSystem,
             BuildingRunwaySystem runwaySystem,
-            TrySpawnPlayerUnitNearBuildingDelegate trySpawnPlayerUnitNearBuilding,
-            ResolveProductionGroundGoalCellDelegate resolveProductionGroundGoalCell,
-            BuildingCellAction moveNewestProducedUnitToCell,
-            BuildingForwardAction alignNewestProducedUnitRotation)
+            BuildingProductionTransportBridgeSystem transportBridgeSystem,
+            BuildingProductionTransportBridgeSystem.Context transportBridgeContext)
         {
             RuntimeBuildings = runtimeBuildings;
             WorldCamera = worldCamera;
             ProductionSystem = productionSystem;
             VisualSystem = visualSystem;
             RunwaySystem = runwaySystem;
-            TrySpawnPlayerUnitNearBuilding = trySpawnPlayerUnitNearBuilding;
-            ResolveProductionGroundGoalCell = resolveProductionGroundGoalCell;
-            MoveNewestProducedUnitToCell = moveNewestProducedUnitToCell;
-            AlignNewestProducedUnitRotation = alignNewestProducedUnitRotation;
+            TransportBridgeSystem = transportBridgeSystem;
+            TransportBridgeContext = transportBridgeContext;
         }
     }
 
@@ -189,7 +168,7 @@ internal sealed class BuildingProductionTransportSystem
         return true;
     }
 
-    public void UpdateActiveProductionTransport(Context context, RuntimeBuildingData building, float now, float deltaTime)
+    public void UpdateActiveProductionTransport(Context context, RuntimeBuildingData building, float now, float deltaTime, ref uint randomState)
     {
         if (building == null || building.ActiveTransport == null || building.ActiveTransport.Transform == null)
             return;
@@ -205,7 +184,7 @@ internal sealed class BuildingProductionTransportSystem
                 break;
 
             case 1:
-                UpdateDeliveryPhase(context, building, transport, now);
+                UpdateDeliveryPhase(context, building, transport, now, ref randomState);
                 break;
 
             case 2:
@@ -249,7 +228,7 @@ internal sealed class BuildingProductionTransportSystem
         transport.NextDropReadyAt = transport.Mode == ProductionTransportMode.Plane ? now + 2f : now;
     }
 
-    private void UpdateDeliveryPhase(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now)
+    private void UpdateDeliveryPhase(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now, ref uint randomState)
     {
         if (transport.Mode == ProductionTransportMode.AirSelf)
         {
@@ -269,12 +248,12 @@ internal sealed class BuildingProductionTransportSystem
         if (transport.Mode == ProductionTransportMode.Plane)
             SetProductionTransportDoorOpen01(transport, Mathf.Clamp01((now - transport.PhaseStartedAt) / 1.25f));
 
-        if (TryCompleteSelfArrival(context, building, transport, now))
+        if (TryCompleteSelfArrival(context, building, transport, now, ref randomState))
             return;
 
         if (transport.ActiveDrop != null)
         {
-            UpdateActiveTransportDrop(context, building, transport, now);
+            UpdateActiveTransportDrop(context, building, transport, now, ref randomState);
             return;
         }
 
@@ -294,7 +273,7 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private bool TryCompleteSelfArrival(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now)
+    private bool TryCompleteSelfArrival(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now, ref uint randomState)
     {
         if (transport.Mode == ProductionTransportMode.AirSelf)
         {
@@ -302,11 +281,11 @@ internal sealed class BuildingProductionTransportSystem
             if (readyAirPending == null)
                 return false;
 
-            int2 airCell = context.ResolveProductionGroundGoalCell(building, readyAirPending, transport.TouchdownPosition);
-            if (context.TrySpawnPlayerUnitNearBuilding(building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell))
+            int2 airCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
+            if (TrySpawnPlayerUnitNearBuilding(context, building, readyAirPending.ProductionIndex, readyAirPending.ReservedProductionSlotIndex, transport.TouchdownPosition, airCell, ref randomState))
             {
                 context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readyAirPending);
-                context.AlignNewestProducedUnitRotation(building, transport.Transform.forward);
+                AlignNewestProducedUnitRotation(context, building, transport.Transform.forward);
             }
 
             DestroyTransport(building, transport);
@@ -321,23 +300,22 @@ internal sealed class BuildingProductionTransportSystem
             return false;
 
         Vector3 runwaySpawnPosition = transport.HoverPosition;
-        int2 runwayCell = context.ResolveProductionGroundGoalCell(building, readySelfArrivalPending, runwaySpawnPosition);
-        int2 finalGoalCell = context.ResolveProductionGroundGoalCell(
-            building,
-            readySelfArrivalPending,
-            ResolveProductionTransportDropPosition(building, readySelfArrivalPending));
+        int2 runwayCell = ResolveProductionGroundGoalCell(context, runwaySpawnPosition);
+        int2 finalGoalCell = ResolveProductionGroundGoalCell(context, ResolveProductionTransportDropPosition(building, readySelfArrivalPending));
 
-        if (context.TrySpawnPlayerUnitNearBuilding(
+        if (TrySpawnPlayerUnitNearBuilding(
+            context,
             building,
             readySelfArrivalPending.ProductionIndex,
             readySelfArrivalPending.ReservedProductionSlotIndex,
             runwaySpawnPosition,
-            runwayCell))
+            runwayCell,
+            ref randomState))
         {
             context.ProductionSystem.RemovePendingProduction(building.PendingProductions, readySelfArrivalPending);
-            context.AlignNewestProducedUnitRotation(building, transport.Transform.forward);
+            AlignNewestProducedUnitRotation(context, building, transport.Transform.forward);
             ConfigureNewestRunwayUnit(building, readySelfArrivalPending, transport, runwayCell, context);
-            context.MoveNewestProducedUnitToCell(building, finalGoalCell);
+            MoveNewestProducedUnitToCell(context, building, finalGoalCell);
         }
 
         DestroyTransport(building, transport);
@@ -372,7 +350,7 @@ internal sealed class BuildingProductionTransportSystem
         UnitAirState airState = em.GetComponentData<UnitAirState>(newest);
         airState.UsesRunway = 1;
         airState.RunwayTakeoffPosition = transport.TouchdownPosition;
-        airState.RunwayTakeoffCell = context.ResolveProductionGroundGoalCell(building, pending, transport.TouchdownPosition);
+        airState.RunwayTakeoffCell = ResolveProductionGroundGoalCell(context, transport.TouchdownPosition);
         airState.RunwayLandingPosition = transport.HoverPosition;
         airState.RunwayLandingCell = runwayCell;
         airState.Airborne = 0;
@@ -457,8 +435,8 @@ internal sealed class BuildingProductionTransportSystem
             ? ResolvePlaneTransportRolloutWorldPosition(transport)
             : finalSpawnPosition;
         int2 finalGoalCell = transport.Mode == ProductionTransportMode.Plane
-            ? context.ResolveProductionGroundGoalCell(building, pending, finalSpawnPosition)
-            : context.ResolveProductionGroundGoalCell(building, pending, dropEndPosition);
+            ? ResolveProductionGroundGoalCell(context, finalSpawnPosition)
+            : ResolveProductionGroundGoalCell(context, dropEndPosition);
 
         GameObject visual = Instantiate(pending.Prefab);
         visual.name = $"{pending.Prefab.name}_TransportDrop";
@@ -544,7 +522,7 @@ internal sealed class BuildingProductionTransportSystem
         }
     }
 
-    private static void UpdateActiveTransportDrop(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now)
+    private static void UpdateActiveTransportDrop(Context context, RuntimeBuildingData building, RuntimeBuildingData.ActiveProductionTransport transport, float now, ref uint randomState)
     {
         RuntimeBuildingData.PendingDropVisual drop = transport.ActiveDrop;
         if (drop == null)
@@ -590,20 +568,60 @@ internal sealed class BuildingProductionTransportSystem
 
         if (transport.Mode == ProductionTransportMode.Plane)
         {
-            int2 startCell = context.ResolveProductionGroundGoalCell(building, production, drop.EndPosition);
-            if (context.TrySpawnPlayerUnitNearBuilding(building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell))
+            int2 startCell = ResolveProductionGroundGoalCell(context, drop.EndPosition);
+            if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, drop.EndPosition, startCell, ref randomState))
             {
-                context.AlignNewestProducedUnitRotation(building, -transport.Transform.forward);
-                context.MoveNewestProducedUnitToCell(building, drop.FinalGoalCell);
+                AlignNewestProducedUnitRotation(context, building, -transport.Transform.forward);
+                MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
             }
         }
-        else if (context.TrySpawnPlayerUnitNearBuilding(building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null))
+        else if (TrySpawnPlayerUnitNearBuilding(context, building, production.ProductionIndex, production.ReservedProductionSlotIndex, null, null, ref randomState))
         {
-            context.MoveNewestProducedUnitToCell(building, drop.FinalGoalCell);
+            MoveNewestProducedUnitToCell(context, building, drop.FinalGoalCell);
         }
 
         transport.ActiveDrop = null;
         transport.NextDropReadyAt = now;
+    }
+
+    public static int2 ResolveProductionGroundGoalCell(Context context, Vector3 worldPosition)
+    {
+        if (context.TransportBridgeSystem == null)
+            return int2.zero;
+
+        return context.TransportBridgeSystem.ResolveProductionGroundGoalCell(context.TransportBridgeContext, worldPosition);
+    }
+
+    public static void MoveNewestProducedUnitToCell(Context context, RuntimeBuildingData building, int2 goalCell)
+    {
+        context.TransportBridgeSystem?.MoveNewestProducedUnitToCell(context.TransportBridgeContext, building, goalCell);
+    }
+
+    public static void AlignNewestProducedUnitRotation(Context context, RuntimeBuildingData building, Vector3 forward)
+    {
+        context.TransportBridgeSystem?.AlignNewestProducedUnitRotation(context.TransportBridgeContext, building, forward);
+    }
+
+    public static bool TrySpawnPlayerUnitNearBuilding(
+        Context context,
+        RuntimeBuildingData building,
+        int productionIndex,
+        int reservedProductionSlotIndex,
+        Vector3? overrideWorldPosition,
+        int2? overrideCell,
+        ref uint randomState)
+    {
+        if (context.TransportBridgeSystem == null)
+            return false;
+
+        return context.TransportBridgeSystem.TrySpawnPlayerUnitNearBuilding(
+            context.TransportBridgeContext,
+            building,
+            productionIndex,
+            reservedProductionSlotIndex,
+            overrideWorldPosition,
+            overrideCell,
+            ref randomState);
     }
 
     private static Vector3 ResolveTransportVisualCenterWorld(RuntimeBuildingData.ActiveProductionTransport transport)

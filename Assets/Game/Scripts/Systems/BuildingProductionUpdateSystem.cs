@@ -24,7 +24,7 @@ internal sealed class BuildingProductionUpdateSystem
         }
     }
 
-    public void UpdatePendingProductions(Context context, float now, float deltaTime)
+    public void UpdatePendingProductions(Context context, float now, float deltaTime, ref uint randomState)
     {
         if (context.RuntimeBuildings == null || context.RuntimeBuildings.Count == 0)
             return;
@@ -34,11 +34,11 @@ internal sealed class BuildingProductionUpdateSystem
             RuntimeBuildingData building = pair.Value;
             if (building == null || building.PendingProductions == null || building.PendingProductions.Count == 0)
             {
-                context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime);
+                context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
                 continue;
             }
 
-            context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime);
+            context.TransportSystem.UpdateActiveProductionTransport(context.TransportContext, building, now, deltaTime, ref randomState);
 
             for (int i = building.PendingProductions.Count - 1; i >= 0; i--)
             {
@@ -69,12 +69,14 @@ internal sealed class BuildingProductionUpdateSystem
                 if (progress.RemainingSeconds > 0f || !context.ProductionSystem.IsReady(pending, now))
                     continue;
 
-                if (context.TransportContext.TrySpawnPlayerUnitNearBuilding(
+                if (BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuilding(
+                        context.TransportContext,
                         building,
                         pending.ProductionIndex,
                         pending.ReservedProductionSlotIndex,
                         null,
-                        null))
+                        null,
+                        ref randomState))
                 {
                     context.ProductionSystem.RemovePendingAt(building.PendingProductions, i);
                 }

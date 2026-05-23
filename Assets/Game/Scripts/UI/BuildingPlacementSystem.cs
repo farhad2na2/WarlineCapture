@@ -334,10 +334,6 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingRuntimeEntitySystem _buildingRuntimeEntitySystem = new();
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
     private readonly BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem = new();
-    private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
-    private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
-    private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
-    private readonly BuildingProductionTransportSystem.BuildingForwardAction _alignNewestProducedUnitRotationForTransport;
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
     private int[] _placementInvalidPrefix;
     private int _resourceDollars;
@@ -386,14 +382,6 @@ public sealed class BuildingPlacementSystem
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
     public int ConfiguredSpawnableCount => _buildingDefinitionSystem.ConfiguredSpawnableCount;
     public int ConfiguredUnitCount => unitSpawnPrefabs != null ? unitSpawnPrefabs.Count : 0;
-
-    public BuildingPlacementSystem()
-    {
-        _trySpawnPlayerUnitNearBuildingForTransport = TrySpawnPlayerUnitNearBuilding;
-        _resolveProductionGroundGoalCellForTransport = ResolveProductionGroundGoalCell;
-        _moveNewestProducedUnitToCellForTransport = MoveNewestProducedUnitToCell;
-        _alignNewestProducedUnitRotationForTransport = AlignNewestProducedUnitRotation;
-    }
 
     public bool HasVisibleSelectableBuilding(Camera camera = null)
     {
@@ -2570,7 +2558,8 @@ public sealed class BuildingPlacementSystem
         _buildingProductionUpdateSystem.UpdatePendingProductions(
             CreateBuildingProductionUpdateContext(),
             Time.time,
-            Time.deltaTime);
+            Time.deltaTime,
+            ref _buildingSpawnRandomState);
     }
 
     private BuildingProductionUpdateSystem.Context CreateBuildingProductionUpdateContext()
@@ -2590,10 +2579,8 @@ public sealed class BuildingPlacementSystem
             _buildingProductionSystem,
             _buildingVisualSystem,
             _buildingRunwaySystem,
-            _trySpawnPlayerUnitNearBuildingForTransport,
-            _resolveProductionGroundGoalCellForTransport,
-            _moveNewestProducedUnitToCellForTransport,
-            _alignNewestProducedUnitRotationForTransport);
+            _buildingProductionTransportBridgeSystem,
+            CreateBuildingProductionTransportBridgeContext());
     }
 
     private BuildingProductionTransportBridgeSystem.Context CreateBuildingProductionTransportBridgeContext()
@@ -2882,51 +2869,6 @@ public sealed class BuildingPlacementSystem
     private bool TryGetGridForSelection(out GridConfig grid)
     {
         return TryGetGridData(out _, out grid, out _, out _);
-    }
-
-    private int2 ResolveProductionGroundGoalCell(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending, Vector3 worldPosition)
-    {
-        return _buildingProductionTransportBridgeSystem.ResolveProductionGroundGoalCell(
-            CreateBuildingProductionTransportBridgeContext(),
-            worldPosition);
-    }
-
-    private void MoveNewestProducedUnitToCell(RuntimeBuildingData building, int2 goalCell)
-    {
-        _buildingProductionTransportBridgeSystem.MoveNewestProducedUnitToCell(
-            CreateBuildingProductionTransportBridgeContext(),
-            building,
-            goalCell);
-    }
-
-    private void AlignNewestProducedUnitRotation(RuntimeBuildingData building, Vector3 forward)
-    {
-        _buildingProductionTransportBridgeSystem.AlignNewestProducedUnitRotation(
-            CreateBuildingProductionTransportBridgeContext(),
-            building,
-            forward);
-    }
-
-    private bool TrySpawnPlayerUnitNearBuilding(RuntimeBuildingData building, int productionIndex)
-    {
-        return TrySpawnPlayerUnitNearBuilding(building, productionIndex, -1, null, null);
-    }
-
-    private bool TrySpawnPlayerUnitNearBuilding(RuntimeBuildingData building, int productionIndex, int reservedProductionSlotIndex)
-    {
-        return TrySpawnPlayerUnitNearBuilding(building, productionIndex, reservedProductionSlotIndex, null, null);
-    }
-
-    private bool TrySpawnPlayerUnitNearBuilding(RuntimeBuildingData building, int productionIndex, int reservedProductionSlotIndex, Vector3? overrideWorldPosition, int2? overrideCell)
-    {
-        return _buildingProductionTransportBridgeSystem.TrySpawnPlayerUnitNearBuilding(
-            CreateBuildingProductionTransportBridgeContext(),
-            building,
-            productionIndex,
-            reservedProductionSlotIndex,
-            overrideWorldPosition,
-            overrideCell,
-            ref _buildingSpawnRandomState);
     }
 
     private bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData)

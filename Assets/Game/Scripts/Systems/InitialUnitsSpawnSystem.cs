@@ -16,14 +16,18 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private const int InitialSpawnBatchSize = 24;
     private const int InitialBlockerBatchSize = 24;
     private const int DiagnosticIntervalFrames = 120;
+    private const int InitialBaseCoreRequestEntryIndex = -100;
 
     private int _nextDiagnosticFrame;
-    private EntityQuery _buildingPlacementRuntimeQuery;
+    private EntityQuery _buildingRuntimeBoundaryQuery;
 
     public void OnCreate(ref SystemState state)
     {
-        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
-        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
+        _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingConfiguredSpawnableReadModel>(),
+            ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
+        state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
         state.RequireForUpdate<GridConfig>();
         state.RequireForUpdate<InitialUnitsSpawnConfig>();
         state.RequireForUpdate<DynamicOccupancyData>();
@@ -42,7 +46,9 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         bool useM01CompactRuntime = Chapter01M01PlayableRuntime.IsActiveMission();
         var queueEntity = RespawnQueueUtils.GetOrCreateQueue(ref state);
         var em = state.EntityManager;
-        BuildingPlacementSystem buildingPlacementController = GetBuildingPlacement(ref state);
+        Entity boundaryEntity = TryGetBuildingRuntimeBoundaryEntity(ref state, out Entity foundBoundaryEntity)
+            ? foundBoundaryEntity
+            : Entity.Null;
 
         var initQuery = SystemAPI.QueryBuilder()
             .WithAll<InitialUnitsSpawnConfig>()
@@ -59,6 +65,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 {
                     RandomState = math.max(1u, config.RandomSeed),
                     BlockersSpawned = 0,
+                    InitialResourcesApplied = 0,
+                    InitialBuildingRequestsIssued = 0,
                     InitialBuildingsSpawned = 0
                 });
                 DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> progressBuffer = em.AddBuffer<InitialUnitsFactionUnitSpawnProgress>(entity);
@@ -81,12 +89,11 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             InitialUnitsSpawnProgress progress = em.GetComponentData<InitialUnitsSpawnProgress>(entity);
             var rng = new Unity.Mathematics.Random(math.max(1u, progress.RandomState));
 
-            if (progress.InitialBuildingsSpawned == 0 && buildingPlacementController != null)
+            if (progress.InitialResourcesApplied == 0)
             {
-                buildingPlacementController.SetInitialResourceTotals(
-                    config.InitialDollars,
-                    config.InitialOil,
-                    config.InitialFuel);
+                ApplyInitialResourceTotals(em, config);
+                progress.InitialResourcesApplied = 1;
+                em.SetComponentData(entity, progress);
             }
 
             var queueState = state.EntityManager.GetComponentData<RespawnQueueState>(queueEntity);
@@ -115,56 +122,52 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
             if (progress.InitialBuildingsSpawned == 0)
             {
-                bool allInitialBuildingsSpawned = true;
+                bool allInitialBuildingsSpawned = false;
                 if (useM01CompactRuntime)
                 {
                     progress.InitialBuildingsSpawned = 1;
                     em.SetComponentData(entity, progress);
                 }
-                else if (buildingPlacementController != null)
+                else if (boundaryEntity != Entity.Null)
                 {
                     var baseGrid = SystemAPI.GetSingleton<GridConfig>();
-                    if (config.CreateFactionBases != 0 &&
-                        !TrySpawnInitialFactionBases(buildingPlacementController, config, baseGrid, factionSpawns))
+                    if (progress.InitialBuildingRequestsIssued == 0)
                     {
-                        allInitialBuildingsSpawned = false;
+                        int queuedInitialBuildingRequests = 0;
+                        bool issuedInitialBuildingRequests = true;
+                        int baseRequestCount = 0;
+                        if (config.CreateFactionBases != 0 &&
+                            !EnqueueInitialFactionBaseRequests(ref state, boundaryEntity, entity, config, baseGrid, factionSpawns, out baseRequestCount))
+                        {
+                            issuedInitialBuildingRequests = false;
+                        }
+                        else
+                        {
+                            queuedInitialBuildingRequests += baseRequestCount;
+                        }
+
+                        int configuredBuildingRequestCount = 0;
+                        if (issuedInitialBuildingRequests &&
+                            !TryEnqueueInitialBuildingSpawnEntries(ref state, boundaryEntity, entity, config, factionSpawns, out configuredBuildingRequestCount))
+                        {
+                            issuedInitialBuildingRequests = false;
+                        }
+                        else
+                        {
+                            queuedInitialBuildingRequests += configuredBuildingRequestCount;
+                        }
+
+                        if (issuedInitialBuildingRequests && queuedInitialBuildingRequests > 0)
+                            progress.InitialBuildingRequestsIssued = 1;
+
+                        allInitialBuildingsSpawned = issuedInitialBuildingRequests && queuedInitialBuildingRequests == 0;
                     }
-
-                    DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawnsBuffer = em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(entity);
-                    var buildingSpawns = new NativeArray<InitialUnitsFactionBuildingSpawnEntry>(buildingSpawnsBuffer.Length, Allocator.Temp);
-                    for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
-                        buildingSpawns[buildingIndex] = buildingSpawnsBuffer[buildingIndex];
-
-                    for (int buildingIndex = 0; buildingIndex < buildingSpawns.Length; buildingIndex++)
+                    else
                     {
-                        InitialUnitsFactionBuildingSpawnEntry building = buildingSpawns[buildingIndex];
-                        if (building.Prefab == Entity.Null)
-                            continue;
-
-                        if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell))
-                        {
-                            allInitialBuildingsSpawned = false;
-                            continue;
-                        }
-
-                        if (!buildingPlacementController.TryResolveConfiguredSpawnablePrefab(building.PrefabLookupKey.ToString(), out GameObject buildingPrefab))
-                        {
-                            allInitialBuildingsSpawned = false;
-                            continue;
-                        }
-
-                        Vector2Int origin = new(factionSpawnCell.x + building.OriginOffset.x, factionSpawnCell.y + building.OriginOffset.y);
-                        if (!buildingPlacementController.TrySpawnRuntimeBuilding(
-                            buildingPrefab,
-                            origin,
-                            out _,
-                            ownerFactionId: building.FactionId))
-                        {
-                            allInitialBuildingsSpawned = false;
-                        }
+                        allInitialBuildingsSpawned = ProcessCompletedInitialBuildingRequests(ref state, boundaryEntity, entity, baseGrid, out bool shouldRetryInitialBuildings);
+                        if (shouldRetryInitialBuildings)
+                            progress.InitialBuildingRequestsIssued = 0;
                     }
-
-                    buildingSpawns.Dispose();
                 }
                 else
                 {
@@ -175,6 +178,19 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     progress.InitialBuildingsSpawned = 1;
 
                 em.SetComponentData(entity, progress);
+            }
+
+            if (!useM01CompactRuntime &&
+                progress.InitialBuildingsSpawned == 0 &&
+                RequiresInitialBuildingCompletion(em, entity, config))
+            {
+                queueState.RandomState = rng.state;
+                em.SetComponentData(queueEntity, queueState);
+                progress.RandomState = math.max(1u, rng.state);
+                em.SetComponentData(entity, progress);
+                ecb.Dispose();
+                factionSpawns.Dispose();
+                continue;
             }
 
             var grid = SystemAPI.GetSingleton<GridConfig>();
@@ -215,7 +231,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     float3 pos = default;
                     bool foundPlatformSpawn = isAirUnit &&
                         TryGetInitialAirPlatformSpawn(
-                            buildingPlacementController,
+                            ref state,
+                            boundaryEntity,
                             unitSpawn.FactionId,
                             unitSpawn.SpawnOffset,
                             grid,
@@ -412,30 +429,65 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         return false;
     }
 
-    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    private bool TryGetBuildingRuntimeBoundaryEntity(ref SystemState state, out Entity entity)
     {
-        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
-            return null;
+        entity = Entity.Null;
+        if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)
+            return false;
 
-        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
-        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
+        entity = _buildingRuntimeBoundaryQuery.GetSingletonEntity();
+        return entity != Entity.Null && state.EntityManager.Exists(entity);
     }
 
-    private static bool TrySpawnInitialFactionBases(
-        BuildingPlacementSystem buildingPlacementController,
+    private static void ApplyInitialResourceTotals(EntityManager em, InitialUnitsSpawnConfig config)
+    {
+        Entity economyEntity = Entity.Null;
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionEconomy>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            FactionEconomy economy = em.GetComponentData<FactionEconomy>(entities[i]);
+            if (economy.FactionId != 0)
+                continue;
+
+            economyEntity = entities[i];
+            economy.Money = math.max(0, config.InitialDollars);
+            em.SetComponentData(economyEntity, economy);
+            return;
+        }
+
+        economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
+        em.SetComponentData(economyEntity, new FactionEconomy
+        {
+            FactionId = 0,
+            Money = math.max(0, config.InitialDollars)
+        });
+        em.SetComponentData(economyEntity, new FactionEconomyPolicy
+        {
+            Enabled = 0,
+            IncomeMultiplier = 1f
+        });
+    }
+
+    private static bool EnqueueInitialFactionBaseRequests(
+        ref SystemState state,
+        Entity boundaryEntity,
+        Entity configEntity,
         InitialUnitsSpawnConfig config,
         GridConfig grid,
-        NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns)
+        NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+        out int requestCount)
     {
-        if (buildingPlacementController == null)
+        requestCount = 0;
+        if (boundaryEntity == Entity.Null)
             return false;
 
-        if (!TryResolveBasePrefab(buildingPlacementController, config.BaseWallPrefabLookupKey, "Wall_Dirt_Straight", out GameObject wallPrefab) &&
-            !TryResolveBasePrefab(buildingPlacementController, config.BaseWallPrefabLookupKey, "Wall_Fence_Straight", out wallPrefab))
+        if (!TryResolveSpawnableId(ref state, boundaryEntity, config.BaseWallPrefabLookupKey, "Wall_Dirt_Straight", out string wallId, out BuildingConfiguredSpawnableReadModel wallModel) &&
+            !TryResolveSpawnableId(ref state, boundaryEntity, config.BaseWallPrefabLookupKey, "Wall_Fence_Straight", out wallId, out wallModel))
             return false;
-        if (!TryResolveBasePrefab(buildingPlacementController, config.BaseGatePrefabLookupKey, "Building_Road_Barrier", out GameObject gatePrefab))
+        if (!TryResolveSpawnableId(ref state, boundaryEntity, config.BaseGatePrefabLookupKey, "Building_Road_Barrier", out string gateId, out BuildingConfiguredSpawnableReadModel gateModel))
             return false;
-        if (!TryResolveBasePrefab(buildingPlacementController, config.BaseCoreBuildingPrefabLookupKey, "Building_Ammunition_Depot", out _))
+        if (!TryResolveSpawnableId(ref state, boundaryEntity, config.BaseCoreBuildingPrefabLookupKey, "Building_Ammunition_Depot", out _, out _))
             return false;
 
         var placements = new List<InitialFactionBasePlacement>();
@@ -443,18 +495,28 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             config.BaseHalfWidthCells,
             config.BaseHalfHeightCells,
             placements);
-        Vector2Int bottomGateFootprint = Vector2Int.one;
-        Vector2Int sideGateFootprint = Vector2Int.one;
-        if (buildingPlacementController.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int resolvedBottomGateFootprint))
-            bottomGateFootprint = resolvedBottomGateFootprint;
-        if (buildingPlacementController.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, true, out Vector2Int resolvedSideGateFootprint))
-            sideGateFootprint = resolvedSideGateFootprint;
-        Vector2Int bottomWallFootprint = Vector2Int.one;
-        Vector2Int sideWallFootprint = Vector2Int.one;
-        if (buildingPlacementController.TryGetRuntimeWallSegmentFootprint(wallPrefab, false, out Vector2Int resolvedBottomWallFootprint))
-            bottomWallFootprint = resolvedBottomWallFootprint;
-        if (buildingPlacementController.TryGetRuntimeWallSegmentFootprint(wallPrefab, true, out Vector2Int resolvedSideWallFootprint))
-            sideWallFootprint = resolvedSideWallFootprint;
+        var placementIds = new Dictionary<string, string>();
+        var placementModels = new Dictionary<string, BuildingConfiguredSpawnableReadModel>();
+        for (int placementIndex = 0; placementIndex < placements.Count; placementIndex++)
+        {
+            InitialFactionBasePlacement placement = placements[placementIndex];
+            if (placement.Kind == InitialFactionBasePlacementKind.Gate ||
+                placementIds.ContainsKey(placement.PrefabKey))
+            {
+                continue;
+            }
+
+            if (!TryResolveSpawnableId(ref state, boundaryEntity, new FixedString128Bytes(placement.PrefabKey), placement.PrefabKey, out string resolvedId, out BuildingConfiguredSpawnableReadModel resolvedModel))
+                return false;
+
+            placementIds.Add(placement.PrefabKey, resolvedId);
+            placementModels.Add(placement.PrefabKey, resolvedModel);
+        }
+
+        Vector2Int bottomGateFootprint = ToFootprint(gateModel.FootprintCells, false);
+        Vector2Int sideGateFootprint = ToFootprint(gateModel.FootprintCells, true);
+        Vector2Int bottomWallFootprint = ToFootprint(wallModel.FootprintCells, false);
+        Vector2Int sideWallFootprint = ToFootprint(wallModel.FootprintCells, true);
         int gateHalfGap = InitialFactionBaseLayoutPlanner.CalculateGateHalfGap(bottomGateFootprint, sideGateFootprint, bottomWallFootprint, sideWallFootprint);
         var wallRuns = new List<InitialFactionBaseWallRun>();
         InitialFactionBaseLayoutPlanner.BuildWallRuns(config.BaseHalfWidthCells, config.BaseHalfHeightCells, gateHalfGap, wallRuns);
@@ -473,132 +535,281 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         {
             InitialUnitsFactionSpawnEntry factionSpawn = factionSpawns[factionIndex];
             Vector2Int anchor = new(factionSpawn.SpawnCell.x, factionSpawn.SpawnCell.y);
-            int spawnedForFaction = 0;
-            int expectedGatesPerBase = CountPlannedPlacements(placements, "Building_Road_Barrier");
-
-            if (buildingPlacementController.CountRuntimeBuildingsForFaction(factionSpawn.FactionId, "Building_Road_Barrier") < expectedGatesPerBase)
+            for (int wallRunIndex = 0; wallRunIndex < wallRuns.Count; wallRunIndex++)
             {
-                for (int wallRunIndex = 0; wallRunIndex < wallRuns.Count; wallRunIndex++)
-                {
-                    InitialFactionBaseWallRun run = wallRuns[wallRunIndex];
-                    spawnedForFaction += buildingPlacementController.TrySpawnRuntimeWallRun(
-                        wallPrefab,
-                        anchor + run.StartOffset,
-                        anchor + run.EndOffset,
-                        factionSpawn.FactionId);
-                }
+                InitialFactionBaseWallRun run = wallRuns[wallRunIndex];
+                EnqueueInitialBuildingSpawnRequest(
+                    ref state,
+                    boundaryEntity,
+                    configEntity,
+                    factionSpawn.FactionId,
+                    wallId,
+                    new int2(anchor.x + run.StartOffset.x, anchor.y + run.StartOffset.y),
+                    false,
+                    BuildingRuntimeSpawnRequest.KindWallRun,
+                    new int2(anchor.x + run.EndOffset.x, anchor.y + run.EndOffset.y));
+                requestCount++;
+            }
 
-                for (int flankIndex = 0; flankIndex < gateFlankWalls.Count; flankIndex++)
-                {
-                    InitialFactionBaseGateFlankWall flank = gateFlankWalls[flankIndex];
-                    if (buildingPlacementController.TrySpawnRuntimeWallSegment(
-                            wallPrefab,
-                            anchor + flank.OriginOffset,
-                            flank.RotateVertical,
-                            factionSpawn.FactionId,
-                            allowExistingWallOverlap: true))
-                    {
-                        spawnedForFaction++;
-                    }
-                    else
-                    {
-                        if (EnableInitialSpawnDiagnostics)
-                            Debug.LogWarning($"[InitialBase] faction={factionSpawn.FactionId} kind=GateFlankWall result=PlacementFailed origin={anchor + flank.OriginOffset}");
-                        allSpawned = false;
-                    }
-                }
+            for (int flankIndex = 0; flankIndex < gateFlankWalls.Count; flankIndex++)
+            {
+                InitialFactionBaseGateFlankWall flank = gateFlankWalls[flankIndex];
+                EnqueueInitialBuildingSpawnRequest(
+                    ref state,
+                    boundaryEntity,
+                    configEntity,
+                    factionSpawn.FactionId,
+                    wallId,
+                    new int2(anchor.x + flank.OriginOffset.x, anchor.y + flank.OriginOffset.y),
+                    flank.RotateVertical,
+                    BuildingRuntimeSpawnRequest.KindWallSegment,
+                    default,
+                    allowExistingWallOverlap: true);
+                requestCount++;
             }
 
             for (int placementIndex = 0; placementIndex < placements.Count; placementIndex++)
             {
                 InitialFactionBasePlacement placement = placements[placementIndex];
-                if (buildingPlacementController.CountRuntimeBuildingsForFaction(factionSpawn.FactionId, placement.PrefabKey) >= CountPlannedPlacements(placements, placement.PrefabKey))
-                    continue;
-
-                GameObject prefab = placement.Kind == InitialFactionBasePlacementKind.Gate
-                    ? gatePrefab
-                    : null;
-                if (prefab == null && !TryResolveBasePrefab(buildingPlacementController, new FixedString128Bytes(placement.PrefabKey), placement.PrefabKey, out prefab))
-                    prefab = null;
-
-                if (prefab == null)
+                string buildingId;
+                BuildingConfiguredSpawnableReadModel model;
+                if (placement.Kind == InitialFactionBasePlacementKind.Gate)
                 {
-                    allSpawned = false;
-                    continue;
-                }
-
-                Vector2Int footprint = Vector2Int.one;
-                if (!buildingPlacementController.TryGetRuntimeBuildingPlacementFootprint(prefab, placement.RotateVertical, out footprint))
-                    footprint = Vector2Int.one;
-                Vector2Int origin = InitialFactionBaseLayoutPlanner.ResolvePlacementOrigin(anchor, placement, footprint);
-                if (!buildingPlacementController.TrySpawnRuntimeBuilding(
-                        prefab,
-                        origin,
-                        out _,
-                        out Vector2Int actualOrigin,
-                        out Vector2Int actualFootprint,
-                        ownerFactionId: factionSpawn.FactionId,
-                        rotateVertical: placement.RotateVertical))
-                {
-                    if (EnableInitialSpawnDiagnostics)
-                        Debug.LogWarning($"[InitialBase] faction={factionSpawn.FactionId} kind={placement.Kind} result=PlacementFailed origin={origin}");
-                    allSpawned = false;
+                    buildingId = gateId;
+                    model = gateModel;
                 }
                 else
                 {
-                    if (factionSpawn.FactionId == 0 &&
-                        placement.Kind == InitialFactionBasePlacementKind.CoreBuilding &&
-                        !Chapter01M01PlayableRuntime.IsActiveMission())
-                    {
-                        Vector3 coreFocus = GetFootprintCenterWorld(actualOrigin, actualFootprint, grid);
-                        InitialUnitsRuntimeState.InitialCameraFocusWorld = coreFocus;
-                        InitialUnitsRuntimeState.InitialCameraFocusRequested = true;
-                    }
-                    spawnedForFaction++;
+                    buildingId = placementIds[placement.PrefabKey];
+                    model = placementModels[placement.PrefabKey];
                 }
-            }
 
-            if (EnableInitialSpawnDiagnostics)
-                LogInitialBaseCounts(buildingPlacementController, factionSpawn.FactionId, spawnedForFaction, factionSpawn.SpawnCell);
+                Vector2Int footprint = ToFootprint(model.FootprintCells, placement.RotateVertical);
+                Vector2Int origin = InitialFactionBaseLayoutPlanner.ResolvePlacementOrigin(anchor, placement, footprint);
+                EnqueueInitialBuildingSpawnRequest(
+                    ref state,
+                    boundaryEntity,
+                    configEntity,
+                    factionSpawn.FactionId,
+                    buildingId,
+                    new int2(origin.x, origin.y),
+                    placement.RotateVertical,
+                    BuildingRuntimeSpawnRequest.KindBuilding,
+                    default,
+                    false,
+                    factionSpawn.FactionId == 0 && placement.Kind == InitialFactionBasePlacementKind.CoreBuilding
+                        ? InitialBaseCoreRequestEntryIndex
+                        : 0);
+                requestCount++;
+            }
         }
 
         return allSpawned;
     }
 
-    private static int CountPlannedPlacements(List<InitialFactionBasePlacement> placements, string prefabKey)
+    private static bool TryEnqueueInitialBuildingSpawnEntries(
+        ref SystemState state,
+        Entity boundaryEntity,
+        Entity configEntity,
+        InitialUnitsSpawnConfig config,
+        NativeArray<InitialUnitsFactionSpawnEntry> factionSpawns,
+        out int requestCount)
     {
-        if (placements == null || string.IsNullOrWhiteSpace(prefabKey))
-            return 0;
-
-        int count = 0;
-        for (int i = 0; i < placements.Count; i++)
+        requestCount = 0;
+        DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawnsBuffer =
+            state.EntityManager.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
+        for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
         {
-            if (placements[i].PrefabKey == prefabKey)
-                count++;
+            InitialUnitsFactionBuildingSpawnEntry building = buildingSpawnsBuffer[buildingIndex];
+            if (building.Prefab == Entity.Null)
+                continue;
+
+            if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out _) ||
+                !TryResolveSpawnableReadModel(ref state, boundaryEntity, building.PrefabLookupKey.ToString(), out _))
+            {
+                return false;
+            }
         }
 
-        return count;
+        for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
+        {
+            InitialUnitsFactionBuildingSpawnEntry building = buildingSpawnsBuffer[buildingIndex];
+            if (building.Prefab == Entity.Null)
+                continue;
+
+            TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell);
+            string buildingId = building.PrefabLookupKey.ToString();
+            int2 origin = factionSpawnCell + building.OriginOffset;
+            EnqueueInitialBuildingSpawnRequest(
+                ref state,
+                boundaryEntity,
+                configEntity,
+                building.FactionId,
+                buildingId,
+                origin,
+                false);
+            requestCount++;
+        }
+
+        return true;
     }
 
-    private static void LogInitialBaseCounts(BuildingPlacementSystem buildingPlacementController, byte factionId, int spawnedForFaction, int2 center)
+    private static bool ProcessCompletedInitialBuildingRequests(
+        ref SystemState state,
+        Entity boundaryEntity,
+        Entity configEntity,
+        GridConfig grid,
+        out bool shouldRetry)
     {
-        if (buildingPlacementController == null)
-            return;
+        shouldRetry = false;
+        if (boundaryEntity == Entity.Null ||
+            !state.EntityManager.HasBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity))
+        {
+            return false;
+        }
 
-        Debug.Log(
-            $"[InitialBase] faction={factionId} result=Spawned buildings={spawnedForFaction} center={center} " +
-            $"roadBarrier={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Road_Barrier")} " +
-            $"guardTower={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_GuardTower")} " +
-            $"guardTowerBig={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_GuardTower_Big")} " +
-            $"oilPump={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_OilPump")} " +
-            $"refinery={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Refinery")} " +
-            $"refineryBig={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Refinery_Big")} " +
-            $"satelliteDish={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Satelite_Dish")} " +
-            $"waterTank={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_WaterTank")} " +
-            $"airport={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Airport")} " +
-            $"helipad={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Helipad")} " +
-            $"ammunitionDepot={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Ammunition_Depot")} " +
-            $"barrack={buildingPlacementController.CountRuntimeBuildingsForFaction(factionId, "Building_Barrack")}");
+        bool sawRequest = false;
+        bool hasPending = false;
+        bool hasFailure = false;
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+            state.EntityManager.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+        for (int i = requests.Length - 1; i >= 0; i--)
+        {
+            BuildingRuntimeSpawnRequest request = requests[i];
+            if (request.PlanEntity != configEntity)
+                continue;
+
+            sawRequest = true;
+            if (request.Status == BuildingRuntimeSpawnRequest.Pending)
+            {
+                hasPending = true;
+                continue;
+            }
+
+            if (request.Status == BuildingRuntimeSpawnRequest.Succeeded)
+            {
+                if (request.FactionId == 0 &&
+                    request.EntryIndex == InitialBaseCoreRequestEntryIndex &&
+                    !Chapter01M01PlayableRuntime.IsActiveMission())
+                {
+                    Vector3 coreFocus = GetFootprintCenterWorld(
+                        new Vector2Int(request.ActualOrigin.x, request.ActualOrigin.y),
+                        new Vector2Int(request.ActualFootprint.x, request.ActualFootprint.y),
+                        grid);
+                    InitialUnitsRuntimeState.InitialCameraFocusWorld = coreFocus;
+                    InitialUnitsRuntimeState.InitialCameraFocusRequested = true;
+                }
+            }
+            else
+            {
+                hasFailure = true;
+            }
+
+            requests.RemoveAt(i);
+        }
+
+        if (hasPending)
+            return false;
+
+        shouldRetry = sawRequest && hasFailure;
+        return sawRequest && !hasFailure;
+    }
+
+    private static bool RequiresInitialBuildingCompletion(EntityManager em, Entity configEntity, InitialUnitsSpawnConfig config)
+    {
+        if (config.CreateFactionBases != 0)
+            return true;
+
+        return em.HasBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity) &&
+               em.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity).Length > 0;
+    }
+
+    private static void EnqueueInitialBuildingSpawnRequest(
+        ref SystemState state,
+        Entity boundaryEntity,
+        Entity configEntity,
+        byte factionId,
+        string buildingId,
+        int2 origin,
+        bool rotateVertical,
+        byte requestKind = BuildingRuntimeSpawnRequest.KindBuilding,
+        int2 endOrigin = default,
+        bool allowExistingWallOverlap = false,
+        int entryIndex = 0)
+    {
+        DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
+            state.EntityManager.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
+        requests.Add(new BuildingRuntimeSpawnRequest
+        {
+            RequestId = requests.Length + 1,
+            RequestKind = requestKind,
+            FactionId = factionId,
+            BuildingId = new FixedString128Bytes(BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)),
+            PreferredOrigin = origin,
+            EndOrigin = endOrigin,
+            RotateVertical = rotateVertical ? (byte)1 : (byte)0,
+            AllowExistingWallOverlap = allowExistingWallOverlap ? (byte)1 : (byte)0,
+            Status = BuildingRuntimeSpawnRequest.Pending,
+            PlanEntity = configEntity,
+            EntryIndex = entryIndex
+        });
+    }
+
+    private static bool TryResolveSpawnableId(
+        ref SystemState state,
+        Entity boundaryEntity,
+        FixedString128Bytes configuredKey,
+        string fallbackKey,
+        out string buildingId,
+        out BuildingConfiguredSpawnableReadModel model)
+    {
+        model = default;
+        buildingId = configuredKey.ToString();
+        if (!string.IsNullOrWhiteSpace(buildingId) &&
+            TryResolveSpawnableReadModel(ref state, boundaryEntity, buildingId, out model))
+        {
+            return true;
+        }
+
+        buildingId = fallbackKey;
+        return !string.IsNullOrWhiteSpace(buildingId) &&
+               TryResolveSpawnableReadModel(ref state, boundaryEntity, buildingId, out model);
+    }
+
+    private static bool TryResolveSpawnableReadModel(
+        ref SystemState state,
+        Entity boundaryEntity,
+        string buildingId,
+        out BuildingConfiguredSpawnableReadModel model)
+    {
+        model = default;
+        if (boundaryEntity == Entity.Null ||
+            !state.EntityManager.HasBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        DynamicBuffer<BuildingConfiguredSpawnableReadModel> spawnables =
+            state.EntityManager.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnables.Length; i++)
+        {
+            BuildingConfiguredSpawnableReadModel candidate = spawnables[i];
+            if (candidate.BuildingId.ToString() != normalized)
+                continue;
+
+            model = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static Vector2Int ToFootprint(int2 footprint, bool rotateVertical)
+    {
+        int x = math.max(1, footprint.x);
+        int y = math.max(1, footprint.y);
+        return rotateVertical ? new Vector2Int(y, x) : new Vector2Int(x, y);
     }
 
     private static Vector3 GetFootprintCenterWorld(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
@@ -651,7 +862,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     }
 
     private static bool TryGetInitialAirPlatformSpawn(
-        BuildingPlacementSystem buildingPlacementController,
+        ref SystemState state,
+        Entity boundaryEntity,
         byte factionId,
         int2 configuredSpawnOffset,
         GridConfig grid,
@@ -660,13 +872,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     {
         cell = default;
         position = default;
-        if (buildingPlacementController == null)
-            return false;
-
-        bool useHelipad = configuredSpawnOffset.y <= -45;
-        string buildingId = useHelipad ? "Building_Helipad" : "Building_Airport";
-        int slotIndex = ResolveInitialAirPlatformSlotIndex(configuredSpawnOffset, useHelipad);
-        return buildingPlacementController.TryGetFactionProductionSpawnPoint(factionId, buildingId, slotIndex, grid, out cell, out position);
+        return false;
     }
 
     private static int ResolveInitialAirPlatformSlotIndex(int2 configuredSpawnOffset, bool useHelipad)
@@ -686,25 +892,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         if (x < 70)
             return 1;
         return 2;
-    }
-
-    private static bool TryResolveBasePrefab(
-        BuildingPlacementSystem buildingPlacementController,
-        FixedString128Bytes configuredKey,
-        string fallbackKey,
-        out GameObject prefab)
-    {
-        prefab = null;
-        if (buildingPlacementController == null)
-            return false;
-
-        string key = configuredKey.ToString();
-        if (!string.IsNullOrWhiteSpace(key) &&
-            buildingPlacementController.TryResolveConfiguredSpawnablePrefab(key, out prefab))
-            return true;
-
-        return !string.IsNullOrWhiteSpace(fallbackKey) &&
-               buildingPlacementController.TryResolveConfiguredSpawnablePrefab(fallbackKey, out prefab);
     }
 
     private static void LogInitialSpawnCellDuplicates(ref SystemState state, in GridConfig grid)

@@ -56,6 +56,8 @@ public struct InitialUnitsSpawnProgress : IComponentData
 {
     public uint RandomState;
     public int BlockersSpawned;
+    public byte InitialResourcesApplied;
+    public byte InitialBuildingRequestsIssued;
     public byte InitialBuildingsSpawned;
 }
 

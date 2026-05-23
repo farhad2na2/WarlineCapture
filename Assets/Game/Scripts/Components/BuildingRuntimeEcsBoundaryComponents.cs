@@ -11,6 +11,7 @@ public struct BuildingConfiguredSpawnableReadModel : IBufferElementData
     public FixedString128Bytes BuildingId;
     public FixedString128Bytes DisplayName;
     public int Price;
+    public int2 FootprintCells;
     public byte CanRequest;
 }
 
@@ -93,12 +94,18 @@ public struct BuildingRuntimeSpawnRequest : IBufferElementData
     public const byte Failed = 2;
     public const byte MissingConfig = 1;
     public const byte Blocked = 2;
+    public const byte KindBuilding = 0;
+    public const byte KindWallRun = 1;
+    public const byte KindWallSegment = 2;
 
     public int RequestId;
+    public byte RequestKind;
     public byte FactionId;
     public FixedString128Bytes BuildingId;
     public int2 PreferredOrigin;
+    public int2 EndOrigin;
     public byte RotateVertical;
+    public byte AllowExistingWallOverlap;
     public byte Status;
     public byte ResultCode;
     public Entity PlanEntity;
@@ -108,4 +115,5 @@ public struct BuildingRuntimeSpawnRequest : IBufferElementData
     public int BuildingRuntimeId;
     public int2 ActualOrigin;
     public int2 ActualFootprint;
+    public int SpawnedCount;
 }

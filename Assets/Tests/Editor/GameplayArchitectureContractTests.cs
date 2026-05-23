@@ -1455,9 +1455,15 @@ public sealed class GameplayArchitectureContractTests
         const string file = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";
         string text = File.ReadAllText(file);
 
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", text);
+        StringAssert.Contains("BuildingRuntimeSpawnRequest", text);
+        StringAssert.Contains("BuildingConfiguredSpawnableReadModel", text);
         Assert.IsFalse(
-            text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
-            "InitialUnitsSpawnSystem must read BuildingPlacementRuntimeComponent from ECS runtime data instead of BuildingPlacementSystem.Instance.");
+            text.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            text.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            text.Contains("buildingPlacement", StringComparison.Ordinal) ||
+            text.Contains("TrySpawnRuntimeBuilding", StringComparison.Ordinal),
+            "InitialUnitsSpawnSystem must use ECS building runtime boundary buffers for initial base/building spawning, not BuildingPlacementSystem.");
     }
 
     [Test]

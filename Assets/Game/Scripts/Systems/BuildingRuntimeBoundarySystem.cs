@@ -198,18 +198,46 @@ public sealed class BuildingRuntimeBoundarySystem
             }
 
             // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.
-            bool placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
-                runtimeSpawnContext,
-                spawnable.Prefab,
-                new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
-                spawnable.DisplayName,
-                spawnable.Description,
-                null,
-                500,
-                false,
-                request.FactionId,
-                request.RotateVertical != 0,
-                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result);
+            bool placed;
+            BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result = default;
+            if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallRun)
+            {
+                int spawned = runtimeSpawnSystem.TrySpawnRuntimeWallRun(
+                    runtimeSpawnContext,
+                    spawnable.Prefab,
+                    new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
+                    new Vector2Int(request.EndOrigin.x, request.EndOrigin.y),
+                    request.FactionId);
+                placed = spawned > 0;
+                request.SpawnedCount = spawned;
+            }
+            else if (request.RequestKind == BuildingRuntimeSpawnRequest.KindWallSegment)
+            {
+                placed = runtimeSpawnSystem.TrySpawnRuntimeWallSegment(
+                    runtimeSpawnContext,
+                    spawnable.Prefab,
+                    new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
+                    request.RotateVertical != 0,
+                    request.FactionId,
+                    request.AllowExistingWallOverlap != 0);
+                request.SpawnedCount = placed ? 1 : 0;
+            }
+            else
+            {
+                placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
+                    runtimeSpawnContext,
+                    spawnable.Prefab,
+                    new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
+                    spawnable.DisplayName,
+                    spawnable.Description,
+                    null,
+                    500,
+                    false,
+                    request.FactionId,
+                    request.RotateVertical != 0,
+                    out result);
+                request.SpawnedCount = placed ? 1 : 0;
+            }
 
             request.Status = placed
                 ? BuildingRuntimeSpawnRequest.Succeeded
@@ -277,6 +305,9 @@ public sealed class BuildingRuntimeBoundarySystem
                 BuildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName),
                 DisplayName = ToFixedString128(entry.DisplayName),
                 Price = Mathf.Max(0, entry.Price),
+                FootprintCells = new int2(
+                    Mathf.Max(1, definition.FootprintCells.x),
+                    Mathf.Max(1, definition.FootprintCells.y)),
                 CanRequest = entry.CanRequest ? (byte)1 : (byte)0
             });
         }

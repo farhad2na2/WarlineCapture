@@ -134,6 +134,33 @@ internal sealed class BuildingRuntimeSpawnSystem
         return true;
     }
 
+    public bool TryPlaceRuntimeBuilding(
+        Context context,
+        GameObject prefab,
+        Vector2Int preferredOrigin,
+        string fallbackDisplayName,
+        string fallbackDescription,
+        Vector2Int? fallbackFootprint,
+        int fallbackMaxHealth,
+        bool isCityGenerated,
+        byte? ownerFactionId,
+        bool rotateVertical,
+        out SpawnRuntimeBuildingResult result)
+    {
+        return TrySpawnRuntimeBuilding(
+            context,
+            prefab,
+            preferredOrigin,
+            fallbackDisplayName,
+            fallbackDescription,
+            fallbackFootprint,
+            fallbackMaxHealth,
+            isCityGenerated,
+            ownerFactionId,
+            rotateVertical,
+            out result);
+    }
+
     public int TrySpawnRuntimeWallRun(
         Context context,
         GameObject prefab,

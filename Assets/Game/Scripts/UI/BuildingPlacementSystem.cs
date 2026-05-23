@@ -1178,7 +1178,15 @@ public sealed class BuildingPlacementSystem
             return;
 
         EnsureEntityQueries(em);
-        _buildingRuntimeBoundarySystem.Update(this, em, _buildingRuntimeBoundaryQuery, _runtimeBuildings, Time.time);
+        _buildingRuntimeBoundarySystem.Update(
+            this,
+            _buildingDefinitionSystem,
+            _buildingRuntimeSpawnSystem,
+            CreateBuildingRuntimeSpawnContext(),
+            em,
+            _buildingRuntimeBoundaryQuery,
+            _runtimeBuildings,
+            Time.time);
     }
 
     private BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()

@@ -1301,6 +1301,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingRuntimeBoundarySystem.Update", placement);
         StringAssert.Contains("ProcessRequests", boundarySystem);
         StringAssert.Contains("ProcessResourceSellRequests", boundarySystem);
+        StringAssert.Contains("ProcessRuntimeSpawnRequests", boundarySystem);
+        StringAssert.Contains("TryResolveConfiguredBuildingDefinition", boundarySystem);
+        StringAssert.Contains("TryPlaceRuntimeBuilding", boundarySystem);
         StringAssert.Contains("PublishReadModelIfDue", boundarySystem);
         StringAssert.Contains("PublishConfiguredSpawnablesReadModel", boundarySystem);
         StringAssert.Contains("PublishRuntimeFactionSummaries", boundarySystem);
@@ -1313,6 +1316,11 @@ public sealed class GameplayArchitectureContractTests
             placement.Contains("ProcessBuildingRuntimeEcsRequests", StringComparison.Ordinal) ||
             placement.Contains("PublishBuildingRuntimeEcsReadModelIfDue", StringComparison.Ordinal),
             "Building runtime boundary publish/consume logic belongs in BuildingRuntimeBoundarySystem, not BuildingPlacementSystem.");
+
+        Assert.IsFalse(
+            boundarySystem.Contains(".TrySpawnRuntimeBuilding", StringComparison.Ordinal) ||
+            boundarySystem.Contains(".TryGetConfiguredSpawnable", StringComparison.Ordinal),
+            "BuildingRuntimeBoundarySystem spawn requests must use BuildingRuntimeSpawnSystem and BuildingDefinitionSystem boundaries, not BuildingPlacementSystem facade spawn/config calls.");
     }
 
     [Test]

@@ -13,26 +13,35 @@ public sealed class BuildingRuntimeBoundarySystem
 
     internal void Update(
         BuildingPlacementSystem buildingPlacement,
+        BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
+        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
         EntityManager em,
         EntityQuery boundaryQuery,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         float now)
     {
-        if (buildingPlacement == null || runtimeBuildings == null)
+        if (buildingPlacement == null || definitionSystem == null || runtimeSpawnSystem == null || runtimeBuildings == null)
             return;
 
         if (!TryGetBoundaryEntity(em, boundaryQuery, out Entity boundaryEntity))
             return;
 
-        ProcessRequests(buildingPlacement, em, boundaryEntity);
-        PublishReadModelIfDue(buildingPlacement, em, boundaryEntity, runtimeBuildings, now);
+        ProcessRequests(buildingPlacement, definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
+        PublishReadModelIfDue(buildingPlacement, definitionSystem, em, boundaryEntity, runtimeBuildings, now);
     }
 
-    private void ProcessRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void ProcessRequests(
+        BuildingPlacementSystem buildingPlacement,
+        BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
+        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        EntityManager em,
+        Entity boundaryEntity)
     {
         ProcessResourceSellRequests(buildingPlacement, em, boundaryEntity);
         ProcessProductionRequests(buildingPlacement, em, boundaryEntity);
-        ProcessRuntimeSpawnRequests(buildingPlacement, em, boundaryEntity);
+        ProcessRuntimeSpawnRequests(definitionSystem, runtimeSpawnSystem, runtimeSpawnContext, em, boundaryEntity);
     }
 
     private void ProcessResourceSellRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
@@ -88,7 +97,12 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void ProcessRuntimeSpawnRequests(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void ProcessRuntimeSpawnRequests(
+        BuildingDefinitionSystem definitionSystem,
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
+        BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+        EntityManager em,
+        Entity boundaryEntity)
     {
         DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
             EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
@@ -98,9 +112,7 @@ public sealed class BuildingRuntimeBoundarySystem
             if (request.Status != BuildingRuntimeSpawnRequest.Pending)
                 continue;
 
-            if (!buildingPlacement.TryGetConfiguredSpawnable(request.BuildingId.ToString(), out BuildingPlacementSystem.ConfiguredSpawnableEntry spawnable) ||
-                spawnable.Prefab == null ||
-                !spawnable.CanRequest)
+            if (!TryResolveConfiguredBuildingDefinition(definitionSystem, request.BuildingId.ToString(), out BuildingDefinition definition))
             {
                 request.Status = BuildingRuntimeSpawnRequest.Failed;
                 request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
@@ -108,33 +120,42 @@ public sealed class BuildingRuntimeBoundarySystem
                 continue;
             }
 
-            bool placed = buildingPlacement.TrySpawnRuntimeBuilding(
+            var spawnable = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
+            if (spawnable.Prefab == null || !spawnable.CanRequest)
+            {
+                request.Status = BuildingRuntimeSpawnRequest.Failed;
+                request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
+                spawnRequests[i] = request;
+                continue;
+            }
+
+            bool placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
+                runtimeSpawnContext,
                 spawnable.Prefab,
                 new Vector2Int(request.PreferredOrigin.x, request.PreferredOrigin.y),
-                out int buildingId,
-                out Vector2Int actualOrigin,
-                out Vector2Int actualFootprint,
                 spawnable.DisplayName,
-                spawnable.DisplayName,
+                spawnable.Description,
                 null,
                 500,
                 false,
                 request.FactionId,
-                request.RotateVertical != 0);
+                request.RotateVertical != 0,
+                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result);
 
             request.Status = placed
                 ? BuildingRuntimeSpawnRequest.Succeeded
                 : BuildingRuntimeSpawnRequest.Failed;
             request.ResultCode = placed ? (byte)0 : BuildingRuntimeSpawnRequest.Blocked;
-            request.BuildingRuntimeId = placed ? buildingId : 0;
-            request.ActualOrigin = placed ? new int2(actualOrigin.x, actualOrigin.y) : default;
-            request.ActualFootprint = placed ? new int2(actualFootprint.x, actualFootprint.y) : default;
+            request.BuildingRuntimeId = placed ? result.BuildingId : 0;
+            request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
+            request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
             spawnRequests[i] = request;
         }
     }
 
     private void PublishReadModelIfDue(
         BuildingPlacementSystem buildingPlacement,
+        BuildingDefinitionSystem definitionSystem,
         EntityManager em,
         Entity boundaryEntity,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -144,22 +165,26 @@ public sealed class BuildingRuntimeBoundarySystem
             return;
 
         _nextPublishAt = now + PublishIntervalSeconds;
-        PublishConfiguredSpawnablesReadModel(buildingPlacement, em, boundaryEntity);
+        PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
         PublishConfiguredUnitsReadModel(buildingPlacement, em, boundaryEntity);
         PublishRuntimeFactionSummaries(buildingPlacement, em, boundaryEntity, runtimeBuildings);
-        PublishRuntimeOwnedBuildingSummaries(buildingPlacement, em, boundaryEntity);
+        PublishRuntimeOwnedBuildingSummaries(buildingPlacement, definitionSystem, em, boundaryEntity);
         PublishRuntimeUnitProductionSummaries(buildingPlacement, em, boundaryEntity);
     }
 
-    private void PublishConfiguredSpawnablesReadModel(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
     {
         DynamicBuffer<BuildingConfiguredSpawnableReadModel> buffer =
             EnsureBoundaryBuffer<BuildingConfiguredSpawnableReadModel>(em, boundaryEntity);
         buffer.Clear();
 
-        for (int i = 0; i < buildingPlacement.ConfiguredSpawnableCount; i++)
+        for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
         {
-            if (!buildingPlacement.TryGetConfiguredSpawnable(i, out BuildingPlacementSystem.ConfiguredSpawnableEntry entry) || entry.Prefab == null)
+            if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition definition))
+                continue;
+
+            var entry = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
+            if (entry.Prefab == null)
                 continue;
 
             buffer.Add(new BuildingConfiguredSpawnableReadModel
@@ -221,7 +246,11 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
-    private void PublishRuntimeOwnedBuildingSummaries(BuildingPlacementSystem buildingPlacement, EntityManager em, Entity boundaryEntity)
+    private void PublishRuntimeOwnedBuildingSummaries(
+        BuildingPlacementSystem buildingPlacement,
+        BuildingDefinitionSystem definitionSystem,
+        EntityManager em,
+        Entity boundaryEntity)
     {
         DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer =
             EnsureBoundaryBuffer<BuildingRuntimeOwnedBuildingSummary>(em, boundaryEntity);
@@ -230,9 +259,13 @@ public sealed class BuildingRuntimeBoundarySystem
         for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
         {
             byte factionId = _factionIds[factionIndex];
-            for (int i = 0; i < buildingPlacement.ConfiguredSpawnableCount; i++)
+            for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
             {
-                if (!buildingPlacement.TryGetConfiguredSpawnable(i, out BuildingPlacementSystem.ConfiguredSpawnableEntry entry) || entry.Prefab == null)
+                if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition definition))
+                    continue;
+
+                var entry = BuildingDefinitionSystem.BuildConfiguredSpawnableEntry(definition);
+                if (entry.Prefab == null)
                     continue;
 
                 FixedString128Bytes buildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName);
@@ -271,6 +304,37 @@ public sealed class BuildingRuntimeBoundarySystem
                 });
             }
         }
+    }
+
+    private static bool TryResolveConfiguredBuildingDefinition(
+        BuildingDefinitionSystem definitionSystem,
+        string buildingId,
+        out BuildingDefinition definition)
+    {
+        definition = null;
+        if (definitionSystem == null)
+            return false;
+
+        if (definitionSystem.TryResolveConfiguredSpawnablePrefab(buildingId, out GameObject prefab) &&
+            definitionSystem.TryGetConfiguredDefinition(prefab, out definition))
+        {
+            return true;
+        }
+
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        for (int i = 0; i < definitionSystem.ConfiguredSpawnableCount; i++)
+        {
+            if (!definitionSystem.TryGetConfiguredDefinition(i, out BuildingDefinition candidate))
+                continue;
+
+            if (!BuildingDefinitionSystem.RuntimeDefinitionMatchesId(candidate, normalized))
+                continue;
+
+            definition = candidate;
+            return true;
+        }
+
+        return false;
     }
 
     private void RefreshFactionIds(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)

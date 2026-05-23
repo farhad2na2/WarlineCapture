@@ -1347,6 +1347,28 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void AiProductionMustUseBuildingRuntimeBoundaryRequests()
+    {
+        const string productionFile = "Assets/Game/Scripts/Systems/AIProductionSystem.cs";
+        string production = File.ReadAllText(productionFile);
+
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", production);
+        StringAssert.Contains("BuildingConfiguredUnitReadModel", production);
+        StringAssert.Contains("BuildingRuntimeUnitProductionSummary", production);
+        StringAssert.Contains("BuildingFactionUnitProductionRequest", production);
+        StringAssert.Contains("EnqueueProductionRequest", production);
+        StringAssert.Contains("ProcessCompletedProductionRequests", production);
+        Assert.IsFalse(
+            production.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            production.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            production.Contains("TryQueueFactionUnitProduction", StringComparison.Ordinal) ||
+            production.Contains("TryGetConfiguredUnit", StringComparison.Ordinal) ||
+            production.Contains("CountRuntimeProducedUnitsForFaction", StringComparison.Ordinal) ||
+            production.Contains("CountPendingProductionsForFaction", StringComparison.Ordinal),
+            "AIProductionSystem building/unit reads and production mutations must use ECS boundary buffers, not BuildingPlacementSystem.");
+    }
+
+    [Test]
     public void InitialSpawnSystemMustNotReachThroughBuildingPlacementSingleton()
     {
         const string file = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";

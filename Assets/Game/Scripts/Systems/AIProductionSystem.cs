@@ -7,16 +7,21 @@ using UnityEngine;
 public partial struct AIProductionSystem : ISystem
 {
     private const float LogIntervalSeconds = 10f;
-    private EntityQuery _buildingPlacementRuntimeQuery;
+    private int _nextProductionRequestId;
+    private EntityQuery _buildingRuntimeBoundaryQuery;
     private EntityQuery _diagnosticLogQueueQuery;
 
     public void OnCreate(ref SystemState state)
     {
-        _buildingPlacementRuntimeQuery = state.GetEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+        _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
+            ComponentType.ReadOnly<BuildingConfiguredUnitReadModel>(),
+            ComponentType.ReadOnly<BuildingRuntimeUnitProductionSummary>(),
+            ComponentType.ReadWrite<BuildingFactionUnitProductionRequest>());
         _diagnosticLogQueueQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<AIDiagnosticLogQueueComponent>(),
             ComponentType.ReadWrite<AIDiagnosticLogComponent>());
-        state.RequireForUpdate(_buildingPlacementRuntimeQuery);
+        state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
         state.RequireForUpdate<AIProductionPlan>();
         state.RequireForUpdate<FactionEconomy>();
         state.RequireForUpdate<RuntimeGameplayStateComponent>();
@@ -27,8 +32,7 @@ public partial struct AIProductionSystem : ISystem
         if (SystemAPI.GetSingleton<RuntimeGameplayStateComponent>().PlayRequested == 0)
             return;
 
-        BuildingPlacementSystem buildingPlacement = GetBuildingPlacement(ref state);
-        if (buildingPlacement == null)
+        if (!TryGetBuildingRuntimeBoundaryEntity(ref state, out Entity boundaryEntity))
             return;
 
         double elapsedTime = SystemAPI.Time.ElapsedTime;
@@ -51,6 +55,12 @@ public partial struct AIProductionSystem : ISystem
             if (plan.Enabled == 0 || !IsFactionAIControlled(plan.FactionId, hasControls, controls))
                 continue;
 
+            if (!TryFindEconomyEntity(em, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
+                continue;
+
+            ProcessCompletedProductionRequests(ref state, boundaryEntity, ref economy, shouldLog);
+            em.SetComponentData(economyEntity, economy);
+
             float interval = Mathf.Max(0.1f, plan.UnitProductionIntervalSeconds);
             if (now - plan.LastProductionTime < interval)
                 continue;
@@ -63,9 +73,6 @@ public partial struct AIProductionSystem : ISystem
                 continue;
             }
 
-            if (!TryFindEconomyEntity(em, plan.FactionId, out Entity economyEntity, out FactionEconomy economy))
-                continue;
-
             bool handledDecision = false;
             int attempts = math.max(1, entries.Length);
             int maxQueuedUnits = math.max(1, plan.MaxQueuedUnits);
@@ -77,15 +84,19 @@ public partial struct AIProductionSystem : ISystem
                 if (string.IsNullOrWhiteSpace(unitId))
                     continue;
 
-                int producedCount = buildingPlacement.CountRuntimeProducedUnitsForFaction(plan.FactionId, unitId);
-                int queuedCount = buildingPlacement.CountPendingProductionsForFaction(plan.FactionId, unitId);
+                TryGetUnitProductionSummary(ref state, boundaryEntity, plan.FactionId, unitId, out int producedCount, out int queuedCount);
                 if (producedCount + queuedCount >= targetProducedUnits || queuedCount >= maxQueuedUnits)
                     continue;
 
                 handledDecision = true;
-                if (!buildingPlacement.TryGetConfiguredUnit(unitId, out BuildingPlacementSystem.ConfiguredUnitEntry unit) ||
-                    unit.Prefab == null ||
-                    !unit.CanRequest)
+                if (HasPendingProductionRequest(ref state, boundaryEntity, plan.FactionId, unitId))
+                {
+                    plan.LastProductionTime = now;
+                    break;
+                }
+
+                if (!TryResolveUnitReadModel(ref state, boundaryEntity, unitId, out BuildingConfiguredUnitReadModel unit) ||
+                    unit.CanRequest == 0)
                 {
                     plan.NextUnitIndex = entryIndex + 1;
                     plan.LastProductionTime = now;
@@ -99,24 +110,15 @@ public partial struct AIProductionSystem : ISystem
                 {
                     plan.LastProductionTime = now;
                     if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} unit={unit.DisplayName} cost={cost} result=InsufficientFunds money={economy.Money}");
+                        EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} unit={unit.DisplayName.ToString()} cost={cost} result=InsufficientFunds money={economy.Money}");
                     break;
                 }
 
-                bool queued = buildingPlacement.TryQueueFactionUnitProduction(plan.FactionId, unitId, out BuildingPlacementSystem.FactionUnitProductionResult result);
+                EnqueueProductionRequest(ref state, boundaryEntity, plan.FactionId, unitId);
                 plan.LastProductionTime = now;
-                if (!queued)
-                {
-                    if (shouldLog)
-                        EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} producer={result.ProducerDisplayName} unit={result.UnitDisplayName} cost={result.Cost} queue={result.QueueCount} result={result.Code}");
-                    break;
-                }
-
-                economy.Money = Mathf.Max(0, economy.Money - cost);
-                em.SetComponentData(economyEntity, economy);
                 plan.NextUnitIndex = entryIndex + 1;
                 if (shouldLog)
-                    EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} producer={result.ProducerDisplayName} unit={result.UnitDisplayName} cost={cost} queue={result.QueueCount} result=Queued");
+                    EnqueueDiagnostic(ref state, $"[AIProduction] faction={plan.FactionId} unit={unit.DisplayName.ToString()} cost={cost} result=Requested");
                 break;
             }
 
@@ -156,13 +158,149 @@ public partial struct AIProductionSystem : ISystem
         return false;
     }
 
-    private BuildingPlacementSystem GetBuildingPlacement(ref SystemState state)
+    private bool TryGetBuildingRuntimeBoundaryEntity(ref SystemState state, out Entity entity)
     {
-        if (_buildingPlacementRuntimeQuery.IsEmptyIgnoreFilter)
-            return null;
+        entity = Entity.Null;
+        if (_buildingRuntimeBoundaryQuery.IsEmptyIgnoreFilter)
+            return false;
 
-        Entity entity = _buildingPlacementRuntimeQuery.GetSingletonEntity();
-        return state.EntityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity).BuildingPlacement;
+        entity = _buildingRuntimeBoundaryQuery.GetSingletonEntity();
+        return entity != Entity.Null && state.EntityManager.Exists(entity);
+    }
+
+    private bool TryResolveUnitReadModel(ref SystemState state, Entity boundaryEntity, string unitId, out BuildingConfiguredUnitReadModel unit)
+    {
+        unit = default;
+        if (!state.EntityManager.HasBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity))
+            return false;
+
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
+        DynamicBuffer<BuildingConfiguredUnitReadModel> units =
+            state.EntityManager.GetBuffer<BuildingConfiguredUnitReadModel>(boundaryEntity, true);
+        for (int i = 0; i < units.Length; i++)
+        {
+            BuildingConfiguredUnitReadModel candidate = units[i];
+            if (candidate.UnitId.ToString() != normalized)
+                continue;
+
+            unit = candidate;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool TryGetUnitProductionSummary(
+        ref SystemState state,
+        Entity boundaryEntity,
+        byte factionId,
+        string unitId,
+        out int producedCount,
+        out int queuedCount)
+    {
+        producedCount = 0;
+        queuedCount = 0;
+        if (!state.EntityManager.HasBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity))
+            return false;
+
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries =
+            state.EntityManager.GetBuffer<BuildingRuntimeUnitProductionSummary>(boundaryEntity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeUnitProductionSummary summary = summaries[i];
+            if (summary.FactionId != factionId || summary.UnitId.ToString() != normalized)
+                continue;
+
+            producedCount = summary.ProducedCount;
+            queuedCount = summary.QueuedCount;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool HasPendingProductionRequest(ref SystemState state, Entity boundaryEntity, byte factionId, string unitId)
+    {
+        if (!state.EntityManager.HasBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity))
+            return false;
+
+        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
+        DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
+            state.EntityManager.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity, true);
+        for (int i = 0; i < requests.Length; i++)
+        {
+            BuildingFactionUnitProductionRequest request = requests[i];
+            if (request.FactionId == factionId &&
+                request.UnitId.ToString() == normalized &&
+                request.Status == BuildingFactionUnitProductionRequest.Pending)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void EnqueueProductionRequest(ref SystemState state, Entity boundaryEntity, byte factionId, string unitId)
+    {
+        DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
+            state.EntityManager.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+        requests.Add(new BuildingFactionUnitProductionRequest
+        {
+            RequestId = ++_nextProductionRequestId,
+            FactionId = factionId,
+            UnitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(unitId)),
+            Status = BuildingFactionUnitProductionRequest.Pending
+        });
+    }
+
+    private void ProcessCompletedProductionRequests(
+        ref SystemState state,
+        Entity boundaryEntity,
+        ref FactionEconomy economy,
+        bool shouldLog)
+    {
+        if (!state.EntityManager.HasBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity))
+            return;
+
+        DynamicBuffer<BuildingFactionUnitProductionRequest> requests =
+            state.EntityManager.GetBuffer<BuildingFactionUnitProductionRequest>(boundaryEntity);
+        for (int i = requests.Length - 1; i >= 0; i--)
+        {
+            BuildingFactionUnitProductionRequest request = requests[i];
+            if (request.FactionId != economy.FactionId ||
+                request.Status == BuildingFactionUnitProductionRequest.Pending)
+            {
+                continue;
+            }
+
+            if (request.Status == BuildingFactionUnitProductionRequest.Succeeded)
+                economy.Money = Mathf.Max(0, economy.Money - Mathf.Max(0, request.Cost));
+
+            if (shouldLog)
+            {
+                EnqueueDiagnostic(
+                    ref state,
+                    $"[AIProduction] faction={request.FactionId} producer={request.ProducerDisplayName.ToString()} unit={request.UnitDisplayName.ToString()} cost={request.Cost} queue={request.QueueCount} result={ProductionResultLabel(request)}");
+            }
+
+            requests.RemoveAt(i);
+        }
+    }
+
+    private static string ProductionResultLabel(BuildingFactionUnitProductionRequest request)
+    {
+        if (request.Status == BuildingFactionUnitProductionRequest.Succeeded)
+            return "Queued";
+
+        return request.ResultCode switch
+        {
+            1 => "MissingUnitConfig",
+            2 => "MissingProducerBuilding",
+            3 => "ProducerUnavailable",
+            _ => "Failed"
+        };
     }
 
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
@@ -215,6 +353,11 @@ public partial struct AIProductionSystem : ISystem
 
         DynamicBuffer<AIDiagnosticLogComponent> logs = em.GetBuffer<AIDiagnosticLogComponent>(queueEntity);
         logs.Add(new AIDiagnosticLogComponent { Message = message });
+    }
+
+    private static FixedString128Bytes ToFixedString128(string value)
+    {
+        return new FixedString128Bytes(value ?? string.Empty);
     }
 
     private void LogNoPlanIfNeeded(ref SystemState state, ref AIProductionPlan plan, float now, bool shouldLog)

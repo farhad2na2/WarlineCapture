@@ -9,6 +9,7 @@ public sealed class BuildingRuntimeBoundarySystem
     private const float PublishIntervalSeconds = 0.5f;
 
     private readonly List<byte> _factionIds = new();
+    private readonly List<int> _pendingSpawnRequestIndices = new();
     private float _nextPublishAt;
 
     internal void Update(
@@ -159,10 +160,22 @@ public sealed class BuildingRuntimeBoundarySystem
         EntityManager em,
         Entity boundaryEntity)
     {
+        _pendingSpawnRequestIndices.Clear();
         DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
             EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
         for (int i = 0; i < spawnRequests.Length; i++)
         {
+            if (spawnRequests[i].Status == BuildingRuntimeSpawnRequest.Pending)
+                _pendingSpawnRequestIndices.Add(i);
+        }
+
+        for (int pendingIndex = 0; pendingIndex < _pendingSpawnRequestIndices.Count; pendingIndex++)
+        {
+            int i = _pendingSpawnRequestIndices[pendingIndex];
+            spawnRequests = EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
+            if ((uint)i >= (uint)spawnRequests.Length)
+                continue;
+
             BuildingRuntimeSpawnRequest request = spawnRequests[i];
             if (request.Status != BuildingRuntimeSpawnRequest.Pending)
                 continue;
@@ -171,7 +184,7 @@ public sealed class BuildingRuntimeBoundarySystem
             {
                 request.Status = BuildingRuntimeSpawnRequest.Failed;
                 request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
-                spawnRequests[i] = request;
+                WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
                 continue;
             }
 
@@ -180,10 +193,11 @@ public sealed class BuildingRuntimeBoundarySystem
             {
                 request.Status = BuildingRuntimeSpawnRequest.Failed;
                 request.ResultCode = BuildingRuntimeSpawnRequest.MissingConfig;
-                spawnRequests[i] = request;
+                WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
                 continue;
             }
 
+            // Runtime spawn creates/updates entities, so any DynamicBuffer handle captured before it is invalid afterwards.
             bool placed = runtimeSpawnSystem.TryPlaceRuntimeBuilding(
                 runtimeSpawnContext,
                 spawnable.Prefab,
@@ -204,8 +218,22 @@ public sealed class BuildingRuntimeBoundarySystem
             request.BuildingRuntimeId = placed ? result.BuildingId : 0;
             request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
             request.ActualFootprint = placed ? new int2(result.ActualFootprint.x, result.ActualFootprint.y) : default;
-            spawnRequests[i] = request;
+            WriteRuntimeSpawnRequest(em, boundaryEntity, i, request);
         }
+    }
+
+    private static void WriteRuntimeSpawnRequest(
+        EntityManager em,
+        Entity boundaryEntity,
+        int index,
+        BuildingRuntimeSpawnRequest request)
+    {
+        DynamicBuffer<BuildingRuntimeSpawnRequest> spawnRequests =
+            EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
+        if ((uint)index >= (uint)spawnRequests.Length)
+            return;
+
+        spawnRequests[index] = request;
     }
 
     private void PublishReadModelIfDue(

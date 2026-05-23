@@ -333,6 +333,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementGridSystem _buildingPlacementGridSystem = new();
     private readonly BuildingPlacementVisualSystem _buildingPlacementVisualSystem = new();
     private readonly BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem = new();
+    private readonly BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -2641,49 +2642,10 @@ public sealed class BuildingPlacementSystem
 
     private void SetRuntimeBuildingOwnerFaction(RuntimeBuildingData building, byte? ownerFactionId)
     {
-        if (building == null)
-            return;
-
-        building.HasOwnerFaction = ownerFactionId.HasValue;
-        building.OwnerFactionId = ownerFactionId.GetValueOrDefault();
-        UpdateRuntimeGateFriendlyPassFaction(building, ownerFactionId);
-        if (building.CombatEntity != Entity.Null &&
-            TryGetEntityManager(out EntityManager em) &&
-            em.Exists(building.CombatEntity) &&
-            em.HasComponent<Faction>(building.CombatEntity))
-        {
-            em.SetComponentData(building.CombatEntity, new Faction { Id = building.OwnerFactionId });
-        }
-
-        Color factionColor = _factionVisualSettings != null
-            ? _factionVisualSettings.GetColor(building.OwnerFactionId)
-            : building.OwnerFactionId == 0
-                ? new Color(0.12f, 0.72f, 1f, 1f)
-                : new Color(0.92f, 0.2f, 0.16f, 1f);
-        _buildingVisualSystem.ApplyMarkerColor(building.FactionMarkerRenderers, factionColor, _markerPropertyBlock);
-    }
-
-    private void UpdateRuntimeGateFriendlyPassFaction(RuntimeBuildingData building, byte? ownerFactionId)
-    {
-        if (building?.Definition == null ||
-            building.BlockerEntity == Entity.Null ||
-            !BuildingBarrierSystem.IsWallGateDefinition(building.Definition) ||
-            !TryGetEntityManager(out EntityManager em) ||
-            !em.Exists(building.BlockerEntity))
-            return;
-
-        if (!ownerFactionId.HasValue)
-        {
-            if (em.HasComponent<FriendlyPassGridBlocker>(building.BlockerEntity))
-                em.RemoveComponent<FriendlyPassGridBlocker>(building.BlockerEntity);
-            return;
-        }
-
-        var pass = new FriendlyPassGridBlocker { AllowedFactionId = ownerFactionId.Value };
-        if (em.HasComponent<FriendlyPassGridBlocker>(building.BlockerEntity))
-            em.SetComponentData(building.BlockerEntity, pass);
-        else
-            em.AddComponentData(building.BlockerEntity, pass);
+        _buildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction(
+            CreateBuildingRuntimeOwnershipContext(),
+            building,
+            ownerFactionId);
     }
 
     private bool TryFindRuntimeBuildingByCombatEntity(Entity combatEntity, out RuntimeBuildingData building)
@@ -3757,6 +3719,15 @@ public sealed class BuildingPlacementSystem
             PositionBuildingObject,
             RegisterRuntimeBuilding,
             SetRuntimeBuildingOwnerFaction);
+    }
+
+    private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()
+    {
+        return new BuildingRuntimeOwnershipSystem.Context(
+            TryGetEntityManager,
+            _buildingVisualSystem,
+            _factionVisualSettings,
+            _markerPropertyBlock);
     }
 
     private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()

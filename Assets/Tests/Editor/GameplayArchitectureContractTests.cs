@@ -135,6 +135,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
+        StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
@@ -2087,6 +2088,42 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"new\s+Vector2Int\s*\(\s*10\s*,\s*10\s*\)"),
             "Runtime building fallback footprint policy belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemMustDelegateRuntimeOwnershipSlice()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string runtimeOwnershipFile = "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipSystem.cs";
+        Assert.IsTrue(File.Exists(runtimeOwnershipFile), "Runtime owner-faction assignment must live in BuildingRuntimeOwnershipSystem.");
+
+        string placement = File.ReadAllText(placementFile);
+        string runtimeOwnership = File.ReadAllText(runtimeOwnershipFile);
+        StringAssert.Contains("BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem", placement);
+        StringAssert.Contains("CreateBuildingRuntimeOwnershipContext", placement);
+        StringAssert.Contains("_buildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction", placement);
+        StringAssert.Contains("SetRuntimeBuildingOwnerFaction", runtimeOwnership);
+        StringAssert.Contains("UpdateRuntimeGateFriendlyPassFaction", runtimeOwnership);
+        StringAssert.Contains("FriendlyPassGridBlocker", runtimeOwnership);
+        StringAssert.Contains("em.SetComponentData(building.CombatEntity, new Faction", runtimeOwnership);
+        StringAssert.Contains("ApplyMarkerColor", runtimeOwnership);
+        StringAssert.Contains("ResolveFactionColor", runtimeOwnership);
+
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"building\.HasOwnerFaction\s*=\s*ownerFactionId\.HasValue"),
+            "Runtime owner-faction assignment belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"building\.OwnerFactionId\s*=\s*ownerFactionId\.GetValueOrDefault"),
+            "Runtime owner-faction assignment belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("FriendlyPassGridBlocker", StringComparison.Ordinal),
+            "Gate friendly-pass blocker updates belong in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"em\.SetComponentData\s*\(\s*building\.CombatEntity\s*,\s*new\s+Faction"),
+            "Runtime combat Faction projection belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"GetColor\s*\(\s*building\.OwnerFactionId\s*\)"),
+            "Runtime owner marker color projection belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

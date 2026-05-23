@@ -29,7 +29,8 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         Victory,
         Partial,
         Defeat,
-        Withdrawn
+        Withdrawn,
+        Resolved
     }
 
     private readonly struct ObjectiveRow
@@ -190,6 +191,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         CaptureVariant(CreateVariant(ResultVariant.Partial));
         CaptureVariant(CreateVariant(ResultVariant.Defeat));
         CaptureVariant(CreateVariant(ResultVariant.Withdrawn));
+        CaptureVariant(CreateVariant(ResultVariant.Resolved));
     }
 
     private static void CaptureVariant(VariantConfig config)
@@ -476,6 +478,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
             ResultVariant.Partial => CreatePartial(),
             ResultVariant.Defeat => CreateDefeat(),
             ResultVariant.Withdrawn => CreateWithdrawn(),
+            ResultVariant.Resolved => CreateResolved(),
             _ => CreateVictory()
         };
     }
@@ -672,12 +675,61 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
             "pop05_variant_main_menu_arrow.png");
     }
 
+    private static VariantConfig CreateResolved()
+    {
+        return new VariantConfig(
+            ResultVariant.Resolved,
+            "Resolved",
+            "OPERATION RESOLVED",
+            "SIMULATION RESOLVED",
+            "CAMPAIGN  Saga Campaign        CHAPTER  01        MISSION  First Response        DURATION  AUTO",
+            "pop05_partial_background_21x9_no_ui.png",
+            "pop05_partial_mission_snapshot_art.png",
+            "pop05_variant_partial_header_accent.png",
+            "DISTRICT STATE UPDATED",
+            "The operation was resolved by command simulation. Review the district state and choose the next tactical assignment.",
+            "1 / 3 STARS",
+            new[] { 1, 0, 0 },
+            new[]
+            {
+                new ObjectiveRow("Resolve operation outcome", "RESOLVED", "pop05_checkbox_checked.png", Green),
+                new ObjectiveRow("Protect convoy route", "ESTIMATED", "pop05_variant_icon_unknown_question.png", TextMuted),
+                new ObjectiveRow("Verify civilian impact", "PENDING", "pop05_variant_icon_warning_triangle.png", Gold)
+            },
+            new[]
+            {
+                new StatRow("Enemies", "pop05_stat_enemies_defeated_crosshair.png", "ENEMIES", "Auto", Gold),
+                new StatRow("Units", "pop05_stat_units_lost_shield.png", "UNITS LOST", "Est.", Gold),
+                new StatRow("Civilians", "pop05_consequence_civilian_group.png", "CIVILIANS", "Est.", Gold),
+                new StatRow("Time", "pop05_stat_timer_clock.png", "TIME", "AUTO", Gold)
+            },
+            new[]
+            {
+                new RewardRow("pop05_reward_commander_xp_shield.png", "Commander XP", "+520", Gold),
+                new RewardRow("pop05_reward_credits_coin.png", "Credits", "+740", Gold),
+                new RewardRow("pop05_reward_supplies_crate.png", "Supplies", "+260", Green),
+                new RewardRow("pop05_reward_intel_document.png", "Intel", "District", TextMain)
+            },
+            new[]
+            {
+                new ConsequenceRow("pop05_consequence_civilian_group.png", "Civilian Safety", "Estimated", Gold),
+                new ConsequenceRow("pop05_consequence_district_trust_shield.png", "District Trust", "+1", Green),
+                new ConsequenceRow("pop05_consequence_hostile_influence.png", "Hostile Influence", "+2", Red),
+                new ConsequenceRow("pop05_consequence_infrastructure.png", "Infrastructure", "Updated", Gold)
+            },
+            "pop05_route_path_icon.png",
+            "Open updated district state",
+            "VIEW DISTRICT",
+            "pop05_continue_chevrons_icon.png");
+    }
+
     private static Color HeaderTitleColor(VariantConfig config)
     {
         return config.Variant switch
         {
             ResultVariant.Defeat => Red,
             ResultVariant.Withdrawn => Blue,
+            ResultVariant.Resolved => Gold,
             ResultVariant.Partial => Gold,
             _ => Gold
         };
@@ -689,6 +741,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         {
             ResultVariant.Defeat => Red,
             ResultVariant.Withdrawn => Blue,
+            ResultVariant.Resolved => Green,
             _ => Green
         };
     }
@@ -704,6 +757,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         {
             ResultVariant.Defeat => 44,
             ResultVariant.Withdrawn => 92,
+            ResultVariant.Resolved => 104,
             ResultVariant.Partial => 118,
             _ => 150
         };
@@ -715,6 +769,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         {
             ResultVariant.Defeat => "+120 XP",
             ResultVariant.Withdrawn => "+420 XP",
+            ResultVariant.Resolved => "+520 XP",
             ResultVariant.Partial => "+780 XP",
             _ => "+1,250 XP"
         };

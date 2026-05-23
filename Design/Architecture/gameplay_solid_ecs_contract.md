@@ -169,6 +169,7 @@ Allowed direction:
 - `BuildingPlacementSystem` keeps active placement lifecycle and temporary facade methods during migration.
 - Footprint, road, blocker, and wall-placement validity belong in `BuildingPlacementValidationSystem`.
 - Runtime building registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`.
+- Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`.
 - Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; full building visual ownership should continue moving there by slice.
 - Building destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`; full building combat ownership should continue moving there by slice.
 - Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`.

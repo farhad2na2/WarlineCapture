@@ -360,6 +360,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
     private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
     private readonly BuildingProductionRequestSystem _buildingProductionRequestSystem = new();
+    private readonly BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -2644,54 +2645,12 @@ public sealed class BuildingPlacementSystem
 
     private RuntimeBuildingData RegisterRuntimeBuilding(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers = true)
     {
-        int buildingId = _runtimeBuildingSystem.AllocateId();
-        instance.name = $"{definition.DisplayName}_{buildingId}";
-
-        RectInt occupiedRect = new(originCell, definition.FootprintCells);
-        if (TryGetGridData(out _, out GridConfig grid, out _, out _))
-            occupiedRect = GetEffectivePlacementRect(definition, originCell, grid);
-
-        bool pathBlocking = ShouldRuntimeBuildingBlockPathing(definition);
-        if (removeOverlappingBlockers && pathBlocking)
-            _runtimeGridBlockerSystem?.RemoveBlockersOverlappingFootprint(originCell, definition.FootprintCells);
-        Entity blockerEntity = pathBlocking ? CreateBlockerEntity(definition, originCell, definition.FootprintCells) : Entity.Null;
-        Entity combatEntity = CreateBuildingCombatEntity(originCell, definition, 0, instance.transform.rotation);
-        if (_deferRuntimeBuildingSideEffectsDepth > 0)
-        {
-            if (pathBlocking)
-                _deferredRedirectFootprints.Add(occupiedRect);
-            _pendingMarkerRefresh = true;
-        }
-        else if (pathBlocking)
-        {
-            RedirectUnitsAroundPlacedBuilding(occupiedRect);
-        }
-
-        var building = new RuntimeBuildingData
-        {
-            Id = buildingId,
-            Definition = definition,
-            Instance = instance,
-            OriginCell = originCell,
-            CombatEntity = combatEntity,
-            BlockerEntity = blockerEntity,
-            ProductionSpawnLocalPositions = definition.ProductionSpawnLocalPositions,
-            ProducedUnits = new List<Entity>(),
-            PendingProductions = new List<RuntimeBuildingData.PendingProduction>(),
-            StoredOilBarrels = 0f,
-            StoredFuelBarrels = 0f
-        };
-        if (building.ProductionSpawnLocalPositions != null && building.ProductionSpawnLocalPositions.Length > 0)
-            building.ProducedUnitSlots = new Entity[building.ProductionSpawnLocalPositions.Length];
-
-        InitializeBuildingVisuals(building);
-        AttachRuntimeLink(building);
-        _runtimeBuildingSystem.AddBuilding(building.Id, building);
-        if (_deferRuntimeBuildingSideEffectsDepth > 0)
-            _pendingMarkerRefresh = true;
-        else
-            RefreshBuildingMarkerVisibility();
-        return building;
+        return _buildingRuntimeCreationSystem.RegisterRuntimeBuilding(
+            CreateBuildingRuntimeCreationContext(),
+            definition,
+            instance,
+            originCell,
+            removeOverlappingBlockers);
     }
 
     private void SelectAndFocusBuilding(RuntimeBuildingData building)
@@ -5533,14 +5492,6 @@ public sealed class BuildingPlacementSystem
         return transformedBounds;
     }
 
-    private void AttachRuntimeLink(RuntimeBuildingData building)
-    {
-        RuntimeBuildingEntityLink link = building.Instance.GetComponent<RuntimeBuildingEntityLink>();
-        if (link == null)
-            link = building.Instance.AddComponent<RuntimeBuildingEntityLink>();
-        link.Configure(this, building.Id, building.CombatEntity, building.BlockerEntity);
-    }
-
     private void ProcessPendingProductions()
     {
         if (_runtimeBuildings.Count == 0)
@@ -5685,6 +5636,30 @@ public sealed class BuildingPlacementSystem
             _unitPrefabRegistryQuery,
             _spawnPrefabCandidatesQuery,
             _livePlayerUnitsQuery);
+    }
+
+    private BuildingRuntimeCreationSystem.Context CreateBuildingRuntimeCreationContext()
+    {
+        return new BuildingRuntimeCreationSystem.Context(
+            _runtimeBuildingSystem,
+            this,
+            _deferRuntimeBuildingSideEffectsDepth > 0,
+            TryGetGridForRuntimeCreation,
+            (definition, origin, grid) => GetEffectivePlacementRect(definition, origin, grid),
+            ShouldRuntimeBuildingBlockPathing,
+            (origin, footprint) => _runtimeGridBlockerSystem?.RemoveBlockersOverlappingFootprint(origin, footprint),
+            CreateBlockerEntity,
+            CreateBuildingCombatEntity,
+            RedirectUnitsAroundPlacedBuilding,
+            rect => _deferredRedirectFootprints.Add(rect),
+            () => _pendingMarkerRefresh = true,
+            InitializeBuildingVisuals,
+            RefreshBuildingMarkerVisibility);
+    }
+
+    private bool TryGetGridForRuntimeCreation(out GridConfig grid)
+    {
+        return TryGetGridData(out _, out grid, out _, out _);
     }
 
     private int2 ResolveProductionGroundGoalCell(RuntimeBuildingData building, RuntimeBuildingData.PendingProduction pending, Vector3 worldPosition)

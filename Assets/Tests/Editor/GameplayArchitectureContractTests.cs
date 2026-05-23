@@ -131,6 +131,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
+        StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
         StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
         StringAssert.Contains("destruction state, cleanup timing, blocker cleanup, and combat-health destruction checks belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
@@ -1742,22 +1743,39 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string runtimeBuildingFile = "Assets/Game/Scripts/Systems/RuntimeBuildingSystem.cs";
+        const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
         Assert.IsTrue(File.Exists(runtimeBuildingFile), "The runtime building registry slice must live in RuntimeBuildingSystem.");
+        Assert.IsTrue(File.Exists(runtimeCreationFile), "Runtime building creation orchestration must live in BuildingRuntimeCreationSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string runtimeCreation = File.ReadAllText(runtimeCreationFile);
         StringAssert.Contains("RuntimeBuildingSystem<RuntimeBuildingData>", placement);
         StringAssert.Contains("IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings", placement);
-        StringAssert.Contains("_runtimeBuildingSystem.AllocateId()", placement);
-        StringAssert.Contains("_runtimeBuildingSystem.AddBuilding", placement);
+        StringAssert.Contains("BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem", placement);
+        StringAssert.Contains("_buildingRuntimeCreationSystem.RegisterRuntimeBuilding", placement);
+        StringAssert.Contains("CreateBuildingRuntimeCreationContext", placement);
         StringAssert.Contains("_runtimeBuildingSystem.RemoveBuilding", placement);
         StringAssert.Contains("_runtimeBuildingSystem.SelectBuilding", placement);
         StringAssert.Contains("_runtimeBuildingSystem.ClearSelection", placement);
+        StringAssert.Contains("context.RuntimeBuildingSystem.AllocateId()", runtimeCreation);
+        StringAssert.Contains("context.RuntimeBuildingSystem.AddBuilding", runtimeCreation);
+        StringAssert.Contains("new RuntimeBuildingData", runtimeCreation);
+        StringAssert.Contains("PendingProductions = new List<RuntimeBuildingData.PendingProduction>()", runtimeCreation);
+        StringAssert.Contains("ProducedUnits = new List<Entity>()", runtimeCreation);
+        StringAssert.Contains("ProducedUnitSlots = new Entity", runtimeCreation);
+        StringAssert.Contains("AttachRuntimeLink", runtimeCreation);
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bint\s+_nextBuildingId\b"),
             "Runtime building id allocation belongs in RuntimeBuildingSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bint\?\s+_selectedBuildingId\b|\bint\?\s+_activeBuildingId\b"),
             "Active/selected runtime building ids belong in RuntimeBuildingSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"new\s+RuntimeBuildingData\s*\{"),
+            "Runtime building data creation belongs in BuildingRuntimeCreationSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+void\s+AttachRuntimeLink\b"),
+            "Runtime building link attachment belongs in BuildingRuntimeCreationSystem, not BuildingPlacementSystem.");
     }
 
     [Test]

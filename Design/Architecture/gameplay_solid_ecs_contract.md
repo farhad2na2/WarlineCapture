@@ -44,7 +44,7 @@ Mission startup is owned by `MissionStartupSystem`; M01 camera/framing policy is
 Configured faction spawn-cell resolution is owned by `InitialFactionSpawnCellSystem`; `GameBootstrap` may configure that system with the ECS world and authored fallback initial-unit config, but it must not query `InitialUnitsSpawnConfig` buffers or fallback faction lists directly.
 Broad scene lookup and UI runtime binding are owned by `GameplaySceneBindingSystem`; `GameBootstrap` may call that boundary during startup, but it must not call `Resources.FindObjectsOfTypeAll`, discover loaded scene UI collaborators directly, or own loaded-scene filtering helpers.
 Performance diagnostics are owned by `PerformanceDiagnosticsSystem`; `GameBootstrap` may bracket lifecycle calls through that system, but it must not format or emit `FreezeDetect`, `FrameRateDiag`, or `PerfDiag` diagnostics directly and must not own profiler recorder state.
-Managed gameplay runtime update extraction is paused until there is a focused FPS regression capture/contract for the gameplay scene. `GameBootstrap` may temporarily keep the existing per-frame managed update loop as legacy debt to preserve the 60 FPS target; do not re-extract that loop through another managed wrapper unless the change proves no runtime FPS regression.
+Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`. `GameBootstrap` may call that system from Unity lifecycle methods and pass current composed references into it, but it must not own the long managed `Update`, `LateUpdate`, or `OnGUI` step sequence directly.
 
 ### ECS Components
 

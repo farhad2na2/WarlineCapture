@@ -207,8 +207,8 @@ Focused validation:
 
 ### Gameplay Feature Runtime Updates
 
-Current owner:
-- `GameBootstrap` legacy runtime loop, retained after the `GameplayRuntimeUpdateSystem` extraction regressed runtime FPS.
+Migrated owner:
+- `GameplayRuntimeUpdateSystem`
 
 Former bootstrap debt:
 - `Update` calls runtime systems manually.
@@ -223,11 +223,12 @@ Target owner:
 
 Target behavior:
 - Bootstrap should not own a long per-frame gameplay update list.
+- Bootstrap may call `GameplayRuntimeUpdateSystem` from Unity `Update`, `LateUpdate`, and `OnGUI`, passing current composed references and the pending-start flag by reference.
 - Temporary managed systems should be grouped behind a composed shell feature until they are ECS-owned.
 
 Migration order:
-1. Paused: do not re-extract the managed runtime loop through a managed wrapper without a focused FPS regression capture/contract.
-2. Done: move `EnsureGameplaySystemsInitialized` construction and dependency binding into `GameplayFeatureStartupSystem` while keeping per-frame runtime update ownership in `GameBootstrap` until a focused FPS regression contract exists.
+1. Done: extract the managed runtime update loop into `GameplayRuntimeUpdateSystem` while preserving update labels and order.
+2. Done: move `EnsureGameplaySystemsInitialized` construction and dependency binding into `GameplayFeatureStartupSystem`.
 3. Continue moving managed runtime systems into ECS domain systems by existing domain migrations.
 
 Focused validation:

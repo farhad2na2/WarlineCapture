@@ -126,7 +126,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Configured faction spawn-cell resolution is owned by `InitialFactionSpawnCellSystem`", contract);
         StringAssert.Contains("Broad scene lookup and UI runtime binding are owned by `GameplaySceneBindingSystem`", contract);
         StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
-        StringAssert.Contains("Managed gameplay runtime update extraction is paused", contract);
+        StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
@@ -354,8 +354,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_missionStartupSystem.FocusInitialCamera", bootstrap);
         StringAssert.Contains("_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell", bootstrap);
 
-        StringAssert.Contains("_missionStartupSystem.UpdateActiveMission", bootstrap);
-        StringAssert.Contains("_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", bootstrap);
+        string runtimeUpdate = File.ReadAllText("Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs");
+        StringAssert.Contains("missionStartupSystem.UpdateActiveMission", runtimeUpdate);
+        StringAssert.Contains("missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", runtimeUpdate);
 
         string[] migratedMethodNames =
         {
@@ -476,17 +477,89 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void ManagedRuntimeUpdateLoopExtractionMustStayPausedUntilPerformanceContractExists()
+    public void GameBootstrapMustDelegateManagedRuntimeUpdateLoop()
     {
         const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
-        Assert.IsFalse(File.Exists(runtimeUpdateFile), "Do not restore GameplayRuntimeUpdateSystem until a focused FPS regression contract exists.");
+        Assert.IsTrue(File.Exists(runtimeUpdateFile), "Managed runtime update orchestration must live in GameplayRuntimeUpdateSystem.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
-        StringAssert.Contains("GameRuntimeStats.RecordMissionElapsed", bootstrap);
-        StringAssert.Contains("_missionStartupSystem.UpdateActiveMission", bootstrap);
-        StringAssert.Contains("_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", bootstrap);
-        StringAssert.Contains("WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene", bootstrap);
-        StringAssert.Contains("IsGameplayStartComplete", bootstrap);
+        StringAssert.Contains("GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem", bootstrap);
+        StringAssert.Contains("_gameplayRuntimeUpdateSystem.Update", bootstrap);
+        StringAssert.Contains("_gameplayRuntimeUpdateSystem.LateUpdate", bootstrap);
+        StringAssert.Contains("_gameplayRuntimeUpdateSystem.OnGui", bootstrap);
+        StringAssert.Contains("ref _gameplayStartPending", bootstrap);
+
+        string[] bootstrapRuntimeUpdateDebtTokens =
+        {
+            "GameRuntimeStats.RecordMissionElapsed",
+            "_missionStartupSystem.UpdateActiveMission",
+            "_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive",
+            "RuntimeCitySpawner?.Update",
+            "RuntimeGridBlockers?.Update",
+            "RuntimeDecorations?.Update",
+            "WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene",
+            "IsGameplayStartComplete",
+            "UnitAttackTraces?.LateUpdate",
+            "UnitImpostors?.LateUpdate",
+            "RoadBuild?.OnGui",
+            "Selection?.OnGui"
+        };
+
+        foreach (string token in bootstrapRuntimeUpdateDebtTokens)
+        {
+            Assert.IsFalse(
+                bootstrap.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in GameplayRuntimeUpdateSystem, not GameBootstrap.");
+        }
+
+        string runtimeUpdate = File.ReadAllText(runtimeUpdateFile);
+        string[] runtimeUpdateRequiredTokens =
+        {
+            "GameRuntimeStats.RecordMissionElapsed",
+            "missionStartupSystem.UpdateActiveMission",
+            "missionStartupSystem.ApplyM01ProductionCameraPoseIfActive",
+            "runtimeCitySpawner?.Update",
+            "runtimeGridBlockers?.Update",
+            "runtimeDecorations?.Update",
+            "WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene",
+            "IsGameplayStartComplete",
+            "unitAttackTraces?.LateUpdate",
+            "unitImpostors?.LateUpdate",
+            "roadBuild?.OnGui",
+            "selection?.OnGui"
+        };
+
+        foreach (string token in runtimeUpdateRequiredTokens)
+            StringAssert.Contains(token, runtimeUpdate);
+
+        string[] orderedStepLabels =
+        {
+            "\"MenuCanvasInput\"",
+            "\"MissionRuntime\"",
+            "\"RoadBuild\"",
+            "\"BuildingPlacement\"",
+            "\"Selection\"",
+            "\"MissionCamera\"",
+            "\"RuntimeCitySpawner\"",
+            "\"RuntimeGridBlockers\"",
+            "\"RuntimeDecorations\"",
+            "\"DayNight\"",
+            "\"CitizenPopulation\"",
+            "\"MenuCanvas\"",
+            "\"MainMenu\""
+        };
+
+        int previousIndex = -1;
+        foreach (string label in orderedStepLabels)
+        {
+            int index = runtimeUpdate.IndexOf(label, StringComparison.Ordinal);
+            Assert.Greater(index, previousIndex, $"{label} must keep the established managed update order.");
+            previousIndex = index;
+        }
+
+        Assert.IsFalse(
+            Regex.IsMatch(runtimeUpdate, @"\bstatic\b"),
+            "GameplayRuntimeUpdateSystem owns runtime update orchestration and should stay instance-scoped.");
     }
 
     [Test]

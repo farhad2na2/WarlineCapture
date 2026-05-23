@@ -19,6 +19,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly ManagedGameplayStartupSystem _managedGameplayStartupSystem = new();
     private readonly MenuStartupSystem _menuStartupSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
+    private readonly GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -174,82 +175,25 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void Update()
     {
-        bool gameplayActive = GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested;
-        _performanceDiagnosticsSystem.BeginUpdate(gameplayActive);
-        bool hadSlowStep = false;
-
-        double stepStart = _performanceDiagnosticsSystem.BeginStep();
-        menuView?.SyncInputState();
-        hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MenuCanvasInput", stepStart);
-        if (gameplayActive)
-        {
-            GameRuntimeStats.RecordMissionElapsed(Time.deltaTime);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            _missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld, GetMapLoader());
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MissionRuntime", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            RoadBuild?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            BuildingPlacement?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            Selection?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("Selection", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            _missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(worldCamera, GetMapLoader());
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MissionCamera", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            RuntimeCitySpawner?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RuntimeCitySpawner", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            RuntimeGridBlockers?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RuntimeGridBlockers", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            RuntimeDecorations?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("RuntimeDecorations", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            DayNight?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("DayNight", stepStart);
-
-            stepStart = _performanceDiagnosticsSystem.BeginStep();
-            CitizenPopulation?.Update();
-            hadSlowStep |= _performanceDiagnosticsSystem.EndStep("CitizenPopulation", stepStart);
-        }
-
-        stepStart = _performanceDiagnosticsSystem.BeginStep();
-        menuView?.SyncRuntimeState();
-        hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MenuCanvas", stepStart);
-
-        stepStart = _performanceDiagnosticsSystem.BeginStep();
-        MainMenu?.Update();
-        hadSlowStep |= _performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
-
-        if (_gameplayStartPending && IsGameplayStartComplete())
-        {
-            _gameplayStartPending = false;
-            menuView?.NotifyGameplayReady();
-        }
-
-        if (gameplayActive)
-            WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene();
-
-        _performanceDiagnosticsSystem.EndUpdate(
-            gameplayActive,
-            hadSlowStep,
+        _gameplayRuntimeUpdateSystem.Update(
             menuView,
-            UnitImpostors?.LastDrawnCount ?? 0,
             GameplayInitialized,
-            _runtimeGameplayStateSystem.PlayRequested);
+            _runtimeGameplayStateSystem,
+            _performanceDiagnosticsSystem,
+            _missionStartupSystem,
+            GetMapLoader(),
+            RoadBuild,
+            BuildingPlacement,
+            Selection,
+            worldCamera,
+            RuntimeCitySpawner,
+            RuntimeGridBlockers,
+            RuntimeDecorations,
+            DayNight,
+            CitizenPopulation,
+            MainMenu,
+            UnitImpostors,
+            ref _gameplayStartPending);
     }
 
     private void OnApplicationFocus(bool hasFocus)
@@ -264,24 +208,22 @@ public sealed class GameBootstrap : MonoBehaviour
 
     private void LateUpdate()
     {
-        if (!(GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested))
-            return;
-
-        double start = _performanceDiagnosticsSystem.BeginTimedSection();
-        UnitAttackTraces?.LateUpdate();
-        UnitImpostors?.LateUpdate();
-        _performanceDiagnosticsSystem.EndLateUpdate(start, UnitImpostors?.LastDrawnCount ?? 0);
+        _gameplayRuntimeUpdateSystem.LateUpdate(
+            GameplayInitialized,
+            _runtimeGameplayStateSystem,
+            _performanceDiagnosticsSystem,
+            UnitAttackTraces,
+            UnitImpostors);
     }
 
     private void OnGUI()
     {
-        if (!(GameplayInitialized && _runtimeGameplayStateSystem.PlayRequested))
-            return;
-
-        double start = _performanceDiagnosticsSystem.BeginTimedSection();
-        RoadBuild?.OnGui();
-        Selection?.OnGui();
-        _performanceDiagnosticsSystem.EndOnGui(start);
+        _gameplayRuntimeUpdateSystem.OnGui(
+            GameplayInitialized,
+            _runtimeGameplayStateSystem,
+            _performanceDiagnosticsSystem,
+            RoadBuild,
+            Selection);
     }
 
     private void OnDestroy()
@@ -382,36 +324,6 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers;
         RuntimeDecorations = gameplaySystems.RuntimeDecorations;
         GameplayInitialized = true;
-    }
-
-    private bool IsGameplayStartComplete()
-    {
-        if (!GameplayInitialized || !_runtimeGameplayStateSystem.PlayRequested)
-            return false;
-        if (RuntimeCitySpawner != null && !RuntimeCitySpawner.HasSpawned)
-            return false;
-        if (RuntimeGridBlockers != null && !RuntimeGridBlockers.HasSpawned)
-            return false;
-        if (RuntimeDecorations != null && !RuntimeDecorations.HasSpawned)
-            return false;
-
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager em = world.EntityManager;
-        EntityQuery allSpawnConfigs = em.CreateEntityQuery(
-            ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
-        EntityQuery initializedSpawnConfigs = em.CreateEntityQuery(
-            ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
-            ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
-
-        int totalConfigCount = allSpawnConfigs.CalculateEntityCount();
-        int initializedConfigCount = initializedSpawnConfigs.CalculateEntityCount();
-        allSpawnConfigs.Dispose();
-        initializedSpawnConfigs.Dispose();
-
-        return totalConfigCount == 0 || initializedConfigCount >= totalConfigCount;
     }
 
 }

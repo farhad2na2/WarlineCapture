@@ -32,10 +32,12 @@ public sealed class WarlineCaptureUiArmoryTests
             "CategoryRail/VehiclesButton/LabelText",
             "RosterPanel",
             "RosterPanel/RosterScrollRect/Viewport",
+            "RosterPanel/RosterVerticalScrollbar/Sliding Area/Handle",
             $"{RosterContentPath}/RiflemanCard/ArtImage_Viewport/ArtImage",
             $"{RosterContentPath}/RiflemanCard/Progress/ProgressFrame",
             $"{RosterContentPath}/RiflemanCard/Progress/ProgressFill",
             $"{RosterContentPath}/TransportHelicopterCard/StateIcon",
+            $"{RosterContentPath}/HelipadCard/TitleText",
             "InspectionPanel/Frame",
             "InspectionPanel/SelectedArtImage_Viewport/SelectedArtImage",
             "InspectionPanel/PartsProgress/ProgressFrame",
@@ -117,8 +119,11 @@ public sealed class WarlineCaptureUiArmoryTests
         Assert.AreEqual(ScrollRect.MovementType.Clamped, scrollRect.movementType);
         Assert.NotNull(scrollRect.viewport);
         Assert.NotNull(scrollRect.content);
+        Assert.NotNull(scrollRect.verticalScrollbar);
+        Assert.AreEqual(Scrollbar.Direction.BottomToTop, scrollRect.verticalScrollbar.direction);
+        Assert.AreEqual(ScrollRect.ScrollbarVisibility.Permanent, scrollRect.verticalScrollbarVisibility);
         Assert.NotNull(scrollRect.viewport.GetComponent<RectMask2D>());
-        Assert.Greater(scrollRect.content.rect.height, scrollRect.viewport.rect.height, "Roster content must be taller than the viewport so owned units can scroll vertically.");
+        Assert.Greater(scrollRect.content.rect.height, scrollRect.viewport.rect.height * 1.4f, "Roster content must be meaningfully taller than the viewport so owned units can scroll vertically.");
         Assert.IsNull(visual.Find("RosterPanel/RiflemanCard"), "Roster cards must live inside the scroll content, not directly under RosterPanel.");
     }
 

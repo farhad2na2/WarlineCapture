@@ -17,13 +17,6 @@ public sealed class BuildingPlacementSystem
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
-    private enum DragFirstAxis
-    {
-        None,
-        Horizontal,
-        Vertical
-    }
-
     public readonly struct ProducedUnitUiEntry
     {
         public readonly Entity Unit;
@@ -311,27 +304,21 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    private sealed class PlacementState
+    private sealed class PlacementState : BuildingPlacementInputSystem.IPlacementState
     {
-        public sealed class WallRun
-        {
-            public List<Vector2Int> Origins;
-            public bool Vertical;
-        }
-
-        public BuildingDefinition Definition;
-        public GameObject PreviewInstance;
-        public Vector2Int OriginCell;
-        public Vector2Int CommittedOriginCell;
-        public Vector2Int DragStartOriginCell;
-        public Vector2Int DragCurrentOriginCell;
-        public DragFirstAxis DragFirstAxis;
-        public bool AutoRotateVertical;
-        public List<WallRun> CommittedWallRuns;
-        public bool HideCurrentWallPreview;
-        public bool IsValid;
-        public float LastPointerMovedAt;
-        public Vector2 LastPointerScreenPosition;
+        public BuildingDefinition Definition { get; set; }
+        public GameObject PreviewInstance { get; set; }
+        public Vector2Int OriginCell { get; set; }
+        public Vector2Int CommittedOriginCell { get; set; }
+        public Vector2Int DragStartOriginCell { get; set; }
+        public Vector2Int DragCurrentOriginCell { get; set; }
+        public BuildingPlacementInputSystem.DragFirstAxis DragFirstAxis { get; set; }
+        public bool AutoRotateVertical { get; set; }
+        public List<BuildingPlacementInputSystem.WallRun> CommittedWallRuns { get; set; }
+        public bool HideCurrentWallPreview { get; set; }
+        public bool IsValid { get; set; }
+        public float LastPointerMovedAt { get; set; }
+        public Vector2 LastPointerScreenPosition { get; set; }
     }
 
     private sealed class CachedRuntimeBuildingMetadata
@@ -372,6 +359,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
     private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
+    private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
     private readonly BuildingProductionTransportSystem.TrySpawnPlayerUnitNearBuildingDelegate _trySpawnPlayerUnitNearBuildingForTransport;
     private readonly BuildingProductionTransportSystem.ResolveProductionGroundGoalCellDelegate _resolveProductionGroundGoalCellForTransport;
     private readonly BuildingProductionTransportSystem.BuildingCellAction _moveNewestProducedUnitToCellForTransport;
@@ -410,8 +398,6 @@ public sealed class BuildingPlacementSystem
     private EntityQuery _liveUnitFootprintQuery;
     private EntityQuery _liveFactionUnitsQuery;
     private uint _buildingSpawnRandomState = 0x12345678u;
-    private bool _isDraggingPlacement;
-    private bool _ignorePointerUpdatesUntilRelease;
     private MaterialPropertyBlock _markerPropertyBlock;
     private int _deferRuntimeBuildingSideEffectsDepth;
     private bool _pendingMarkerRefresh;
@@ -1165,7 +1151,7 @@ public sealed class BuildingPlacementSystem
         return !string.IsNullOrEmpty(key) && _unitSpawnPrefabsByKey.TryGetValue(key, out prefab) && prefab != null;
     }
 
-    public bool IsDraggingPlacementPreview => _activePlacement != null && _isDraggingPlacement;
+    public bool IsDraggingPlacementPreview => _activePlacement != null && _buildingPlacementInputSystem.IsDraggingPlacement;
 
     public bool TryResolveSpawnUnitPrefab(Entity prefabEntity, out GameObject spawnUnitPrefab)
     {
@@ -1638,50 +1624,28 @@ public sealed class BuildingPlacementSystem
         if (_activePlacement != null)
         {
             Vector2 pointerPosition = pointer.Position;
-            if (pointer.WasPressedThisFrame &&
-                !_ignorePointerUpdatesUntilRelease &&
-                !IsPointerOverPlacementUi(pointerPosition))
+            if (pointer.WasPressedThisFrame)
             {
-                bool canStartDrag = IsPointerOverActivePlacement(pointerPosition);
-                if (!canStartDrag &&
-                    IsLinearWallDefinition(_activePlacement.Definition) &&
-                    TryGetGridData(out _, out GridConfig grid, out _, out _) &&
-                    TryGetGridCell(pointerPosition, grid, out Vector2Int clickedCell))
-                {
-                    Vector2Int clickedOrigin = CenterCellToOrigin(clickedCell, _activePlacement.Definition.FootprintCells);
-                    _activePlacement.OriginCell = clickedOrigin;
-                    _activePlacement.CommittedOriginCell = clickedOrigin;
-                    _activePlacement.DragStartOriginCell = clickedOrigin;
-                    _activePlacement.DragCurrentOriginCell = clickedOrigin;
-                    _activePlacement.DragFirstAxis = DragFirstAxis.None;
-                    _activePlacement.HideCurrentWallPreview = false;
-                    canStartDrag = true;
-                }
-
-                if (canStartDrag)
-                {
-                    _isDraggingPlacement = true;
-                    _activePlacement.CommittedOriginCell = _activePlacement.OriginCell;
-                    _activePlacement.DragStartOriginCell = _activePlacement.OriginCell;
-                    _activePlacement.DragCurrentOriginCell = _activePlacement.OriginCell;
-                    _activePlacement.DragFirstAxis = DragFirstAxis.None;
-                    _activePlacement.HideCurrentWallPreview = false;
-                }
+                bool hasGridForInput = TryGetGridData(out _, out GridConfig inputGrid, out _, out _);
+                _buildingPlacementInputSystem.TryBeginDrag(
+                    _activePlacement,
+                    pointerPosition,
+                    IsPointerOverPlacementUi(pointerPosition),
+                    IsLinearWallDefinition(_activePlacement.Definition),
+                    hasGridForInput,
+                    inputGrid,
+                    TryGetGridCell,
+                    CenterCellToOrigin);
             }
             if (pointer.WasReleasedThisFrame)
             {
-                if (_isDraggingPlacement &&
-                    _activePlacement != null &&
-                    IsLinearWallDefinition(_activePlacement.Definition) &&
-                    _activePlacement.IsValid)
-                {
-                    CommitCurrentWallRun(_activePlacement);
-                }
-                _isDraggingPlacement = false;
-                _ignorePointerUpdatesUntilRelease = false;
+                _buildingPlacementInputSystem.HandlePointerRelease(
+                    _activePlacement,
+                    IsLinearWallDefinition(_activePlacement.Definition),
+                    GetWallSegmentFootprint);
             }
-            if (_isDraggingPlacement && !pointer.IsPressed)
-                _isDraggingPlacement = false;
+            if (!pointer.IsPressed)
+                _buildingPlacementInputSystem.HandlePointerNotPressed();
 
             UpdatePlacement(pointerPosition);
             afterInput = Time.realtimeSinceStartupAsDouble;
@@ -2495,8 +2459,7 @@ public sealed class BuildingPlacementSystem
     {
         bool shouldClearSelection = clearBuildingSelection && !_preserveBuildingSelectionOnNextExitBuildMode;
         _runtimeGameplayStateSystem.BuildModeActive = false;
-        _isDraggingPlacement = false;
-        _ignorePointerUpdatesUntilRelease = false;
+        _buildingPlacementInputSystem.Reset();
         CancelPlacement();
         if (shouldClearSelection)
             ClearSelectedBuilding("ExitBuildMode");
@@ -2510,9 +2473,7 @@ public sealed class BuildingPlacementSystem
         if (_activePlacement == null)
             return;
 
-        _activePlacement.CommittedOriginCell = _activePlacement.OriginCell;
-        _isDraggingPlacement = false;
-        _ignorePointerUpdatesUntilRelease = true;
+        _buildingPlacementInputSystem.NotifyPlacementUiPointerDown(_activePlacement);
     }
 
     public void HandleRuntimeBuildingEntityDestroyed(int buildingId, Entity blockerEntity, GameObject buildingObject)
@@ -2552,7 +2513,7 @@ public sealed class BuildingPlacementSystem
 
         _activePlacement = null;
         _activePlacementCost = 0;
-        _isDraggingPlacement = false;
+        _buildingPlacementInputSystem.Reset();
         _buildingPlacementPreviewSystem.HideOutline();
     }
 
@@ -2567,8 +2528,7 @@ public sealed class BuildingPlacementSystem
         ClearSelectedBuilding("BeginPlacement");
         CancelPlacement();
         _activePlacementCost = 0;
-        _isDraggingPlacement = false;
-        _ignorePointerUpdatesUntilRelease = false;
+        _buildingPlacementInputSystem.Reset();
 
         Vector2Int origin = GetCenterScreenPlacementOrigin(definition.FootprintCells);
         if (TryResolveInitialPlacementOrigin(definition, origin, out Vector2Int resolvedOrigin))
@@ -2582,9 +2542,9 @@ public sealed class BuildingPlacementSystem
             CommittedOriginCell = origin,
             DragStartOriginCell = origin,
             DragCurrentOriginCell = origin,
-            DragFirstAxis = DragFirstAxis.None,
+            DragFirstAxis = BuildingPlacementInputSystem.DragFirstAxis.None,
             AutoRotateVertical = false,
-            CommittedWallRuns = new List<PlacementState.WallRun>(),
+            CommittedWallRuns = new List<BuildingPlacementInputSystem.WallRun>(),
             HideCurrentWallPreview = false,
             LastPointerMovedAt = Time.time,
             LastPointerScreenPosition = GamePointerInput.TryGetPointerPosition(out Vector2 pointerPosition) ? pointerPosition : Vector2.zero
@@ -2605,7 +2565,7 @@ public sealed class BuildingPlacementSystem
         if (_activePlacement == null)
             return;
 
-        UpdatePlacementVisual(_activePlacement, _isDraggingPlacement && !_ignorePointerUpdatesUntilRelease, screenPosition);
+        UpdatePlacementVisual(_activePlacement, _buildingPlacementInputSystem.ShouldUpdateCellFromPointer, screenPosition);
     }
 
     private void UpdatePlacementVisual(PlacementState placement, bool updateCellFromPointer, Vector2 screenPosition)
@@ -2622,33 +2582,21 @@ public sealed class BuildingPlacementSystem
 
         RTSSelectionSystem selectionSystem = _selectionSystem;
 
-        if (updateCellFromPointer)
-        {
-            if ((screenPosition - placement.LastPointerScreenPosition).sqrMagnitude > 1f)
-            {
-                placement.LastPointerMovedAt = Time.time;
-                placement.LastPointerScreenPosition = screenPosition;
-            }
-
-            bool pointerIdle = Time.time - placement.LastPointerMovedAt >= 1f;
-            if (!pointerIdle && TryGetGridCell(screenPosition, grid, out Vector2Int hoveredCell))
-            {
-                Vector2Int newOrigin = CenterCellToOrigin(hoveredCell, placement.Definition.FootprintCells);
-                placement.OriginCell = newOrigin;
-                placement.CommittedOriginCell = placement.OriginCell;
-                placement.DragCurrentOriginCell = placement.OriginCell;
-                UpdateWallDragAxis(placement);
-            }
-        }
-
-        bool shouldFollowCamera = Time.time - placement.LastPointerMovedAt >= 1f;
+        bool shouldFollowCamera = _buildingPlacementInputSystem.ApplyPointerHover(
+            placement,
+            updateCellFromPointer,
+            screenPosition,
+            grid,
+            Time.time,
+            TryGetGridCell,
+            CenterCellToOrigin);
 
         if (IsLinearWallDefinition(placement.Definition))
         {
             List<Vector2Int> wallOrigins = placement.HideCurrentWallPreview
                 ? new List<Vector2Int>()
-                : BuildWallPlacementOrigins(placement);
-            bool vertical = IsWallPlacementVertical(placement);
+                : _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, GetWallSegmentFootprint);
+            bool vertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
             placement.AutoRotateVertical = vertical;
             Vector2Int wallFootprint = GetWallSegmentFootprint(placement.Definition, vertical);
             placement.IsValid = placement.HideCurrentWallPreview
@@ -2656,7 +2604,7 @@ public sealed class BuildingPlacementSystem
                 : AreWallPlacementOriginsValid(placement, wallOrigins, wallFootprint, vertical, grid, roads, blockerData);
             RebuildWallPlacementPreview(placement, wallOrigins, vertical, grid);
             _buildingPlacementPreviewSystem.UpdateWallOutline(
-                GetAllWallPlacementOrigins(placement, wallOrigins),
+                _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, wallOrigins),
                 wallFootprint,
                 grid,
                 placement.Definition,
@@ -2691,7 +2639,7 @@ public sealed class BuildingPlacementSystem
         if (placement == null)
             return Vector3.zero;
 
-        List<Vector2Int> allOrigins = GetAllWallPlacementOrigins(placement, currentWallOrigins);
+        List<Vector2Int> allOrigins = _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, currentWallOrigins);
         if (allOrigins == null || allOrigins.Count == 0)
             return GetFootprintCenter(placement.OriginCell, wallFootprint, grid);
 
@@ -2718,9 +2666,9 @@ public sealed class BuildingPlacementSystem
 
         if (IsLinearWallDefinition(placement.Definition))
         {
-            bool vertical = IsWallPlacementVertical(placement);
+            bool vertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
             Vector2Int wallFootprint = GetWallSegmentFootprint(placement.Definition, vertical);
-            return ResolvePlacementFocusWorldPosition(placement, grid, BuildWallPlacementOrigins(placement), wallFootprint);
+            return ResolvePlacementFocusWorldPosition(placement, grid, _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, GetWallSegmentFootprint), wallFootprint);
         }
 
         bool rotateVertical = ResolvePlacementRotateVertical(placement);
@@ -2739,7 +2687,7 @@ public sealed class BuildingPlacementSystem
         {
             for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
             {
-                PlacementState.WallRun run = placement.CommittedWallRuns[i];
+                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[i];
                 if (run?.Origins == null || run.Origins.Count == 0)
                     continue;
 
@@ -2751,9 +2699,9 @@ public sealed class BuildingPlacementSystem
         bool currentWallVertical = false;
         if (IsLinearWallDefinition(placement.Definition))
         {
-            currentWallVertical = IsWallPlacementVertical(placement);
+            currentWallVertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
             if (!placement.HideCurrentWallPreview)
-                currentWallOrigins = BuildWallPlacementOrigins(placement);
+                currentWallOrigins = _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, GetWallSegmentFootprint);
         }
 
         var request = new BuildingPlacementCommitSystem.CommitRequest(
@@ -4847,7 +4795,7 @@ public sealed class BuildingPlacementSystem
             return false;
 
         if (IsLinearWallDefinition(placement.Definition))
-            return IsWallPlacementVertical(placement);
+            return _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
 
         if (ShouldAlignGateToNearbyWall(placement.Definition) &&
             TryResolveNearbyWallVertical(placement.OriginCell, placement.Definition, out bool gateVertical))
@@ -4870,151 +4818,19 @@ public sealed class BuildingPlacementSystem
         return new Vector2Int(definition.FootprintCells.y, definition.FootprintCells.x);
     }
 
-    private static void UpdateWallDragAxis(PlacementState placement)
-    {
-        Vector2Int delta = placement.DragCurrentOriginCell - placement.DragStartOriginCell;
-        if (delta.x == 0 && delta.y == 0)
-        {
-            placement.DragFirstAxis = DragFirstAxis.None;
-            return;
-        }
-
-        placement.DragFirstAxis = Mathf.Abs(delta.x) >= Mathf.Abs(delta.y)
-            ? DragFirstAxis.Horizontal
-            : DragFirstAxis.Vertical;
-    }
-
-    private static bool IsWallPlacementVertical(PlacementState placement)
-    {
-        if (placement == null)
-            return false;
-
-        Vector2Int delta = placement.DragCurrentOriginCell - placement.DragStartOriginCell;
-        return Mathf.Abs(delta.y) > Mathf.Abs(delta.x);
-    }
-
-    private static List<Vector2Int> BuildWallPlacementOrigins(PlacementState placement)
-    {
-        var origins = new List<Vector2Int>();
-        if (placement == null)
-            return origins;
-
-        Vector2Int start = placement.DragStartOriginCell;
-        Vector2Int end = placement.DragCurrentOriginCell;
-        bool vertical = IsWallPlacementVertical(placement);
-        Vector2Int footprint = GetWallSegmentFootprint(placement.Definition, vertical);
-        if (vertical)
-            end.x = start.x;
-        else
-            end.y = start.y;
-
-        origins.Add(start);
-        if (start == end)
-            return origins;
-
-        if (vertical)
-        {
-            int stepCells = Mathf.Max(1, footprint.y);
-            int delta = end.y - start.y;
-            int direction = delta >= 0 ? 1 : -1;
-            int segmentCount = Mathf.Abs(delta) / stepCells;
-            for (int i = 1; i <= segmentCount; i++)
-                origins.Add(new Vector2Int(start.x, start.y + (direction * stepCells * i)));
-        }
-        else
-        {
-            int stepCells = Mathf.Max(1, footprint.x);
-            int delta = end.x - start.x;
-            int direction = delta >= 0 ? 1 : -1;
-            int segmentCount = Mathf.Abs(delta) / stepCells;
-            for (int i = 1; i <= segmentCount; i++)
-                origins.Add(new Vector2Int(start.x + (direction * stepCells * i), start.y));
-        }
-
-        return origins;
-    }
-
-    private static List<Vector2Int> GetAllWallPlacementOrigins(PlacementState placement, List<Vector2Int> currentOrigins)
-    {
-        var origins = new List<Vector2Int>();
-        if (placement?.CommittedWallRuns != null)
-        {
-            for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
-            {
-                PlacementState.WallRun run = placement.CommittedWallRuns[i];
-                if (run?.Origins == null)
-                    continue;
-                origins.AddRange(run.Origins);
-            }
-        }
-
-        if (!placement.HideCurrentWallPreview && currentOrigins != null)
-            origins.AddRange(currentOrigins);
-
-        return origins;
-    }
-
-    private static List<PlacementState.WallRun> BuildFinalWallRuns(PlacementState placement)
-    {
-        var runs = new List<PlacementState.WallRun>();
-        if (placement?.CommittedWallRuns != null)
-        {
-            for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
-            {
-                PlacementState.WallRun run = placement.CommittedWallRuns[i];
-                if (run?.Origins == null || run.Origins.Count == 0)
-                    continue;
-                runs.Add(run);
-            }
-        }
-
-        if (placement != null && !placement.HideCurrentWallPreview)
-        {
-            List<Vector2Int> currentOrigins = BuildWallPlacementOrigins(placement);
-            if (currentOrigins.Count > 0)
-            {
-                runs.Add(new PlacementState.WallRun
-                {
-                    Origins = currentOrigins,
-                    Vertical = IsWallPlacementVertical(placement)
-                });
-            }
-        }
-
-        return runs;
-    }
-
-    private static void CommitCurrentWallRun(PlacementState placement)
-    {
-        if (placement == null)
-            return;
-
-        List<Vector2Int> origins = BuildWallPlacementOrigins(placement);
-        if (origins.Count == 0)
-            return;
-
-        placement.CommittedWallRuns ??= new List<PlacementState.WallRun>();
-        placement.CommittedWallRuns.Add(new PlacementState.WallRun
-        {
-            Origins = origins,
-            Vertical = IsWallPlacementVertical(placement)
-        });
-        placement.HideCurrentWallPreview = true;
-    }
-
     private bool AreAllPendingWallRunsValid(
         PlacementState placement,
         GridConfig grid,
         DynamicBuffer<GridRoad> roads,
         DynamicBlockerData blockerData)
     {
-        List<PlacementState.WallRun> runs = BuildFinalWallRuns(placement);
+        List<BuildingPlacementInputSystem.WallRun> runs = _buildingPlacementInputSystem.BuildFinalWallRuns(placement, GetWallSegmentFootprint);
         if (runs.Count == 0)
             return false;
 
         for (int runIndex = 0; runIndex < runs.Count; runIndex++)
         {
-            PlacementState.WallRun run = runs[runIndex];
+            BuildingPlacementInputSystem.WallRun run = runs[runIndex];
             if (run?.Origins == null || run.Origins.Count == 0)
                 return false;
 
@@ -5029,7 +4845,7 @@ public sealed class BuildingPlacementSystem
                     if (otherRunIndex == runIndex)
                         continue;
 
-                    PlacementState.WallRun otherRun = runs[otherRunIndex];
+                    BuildingPlacementInputSystem.WallRun otherRun = runs[otherRunIndex];
                     if (otherRun?.Origins == null || otherRun.Origins.Count == 0)
                         continue;
 
@@ -5070,7 +4886,7 @@ public sealed class BuildingPlacementSystem
         {
             for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
             {
-                PlacementState.WallRun run = placement.CommittedWallRuns[runIndex];
+                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
                 if (run?.Origins == null)
                     continue;
 
@@ -5101,7 +4917,7 @@ public sealed class BuildingPlacementSystem
         {
             for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
             {
-                PlacementState.WallRun run = placement.CommittedWallRuns[runIndex];
+                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
                 if (run?.Origins == null)
                     continue;
 
@@ -6515,23 +6331,6 @@ public sealed class BuildingPlacementSystem
     private bool IsPointerOverAnyGameplayUi(Vector2 screenPosition)
     {
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out _);
-    }
-
-    private bool IsPointerOverActivePlacement(Vector2 screenPosition)
-    {
-        if (_activePlacement == null)
-            return false;
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return false;
-        if (!TryGetGridCell(screenPosition, grid, out Vector2Int cell))
-            return false;
-
-        Vector2Int origin = _activePlacement.OriginCell;
-        Vector2Int size = _activePlacement.Definition.FootprintCells;
-        return cell.x >= origin.x &&
-               cell.y >= origin.y &&
-               cell.x < origin.x + size.x &&
-               cell.y < origin.y + size.y;
     }
 
     private static void ReserveBuildingBuffer(ref NativeBitArray reserved, GridConfig grid, Vector2Int originCell, Vector2Int footprintCells, int extraRadius)

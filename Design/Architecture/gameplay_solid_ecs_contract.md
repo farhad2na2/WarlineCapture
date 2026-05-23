@@ -177,6 +177,7 @@ Allowed direction:
 - Runway prefab metadata discovery, runway footprint expansion for placement validity, and nearest airport runway lookup belong in `BuildingRunwaySystem`.
 - Placement outline object lifetime, outline material/color updates, wall preview segment rebuilds, and preview segment validity tinting belong in `BuildingPlacementPreviewSystem`.
 - Placement commit expansion, wall segment runtime creation, committed placement preview consumption, and post-placement auto-select policy belong in `BuildingPlacementCommitSystem`.
+- Active placement drag state, pointer-to-cell placement movement, wall drag axis/origin expansion, committed wall-run input state, and active-placement hit testing belong in `BuildingPlacementInputSystem`.
 - Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI read models belong in `BuildingUiQuerySystem` until UI uses ECS query/request components.
 
 When touching building code, do not add a new responsibility to `BuildingPlacementSystem`; extract or extend the matching `*System` slice.

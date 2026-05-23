@@ -162,7 +162,15 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         new("OilPumpCard", "OIL PUMP", "BUILDING", "scn19_art_oil_pump.png", "scn19_icon_buildings.png", false, false, false, 6),
         new("OilRefineryCard", "OIL REFINERY", "BUILDING", "scn19_art_oil_refinery.png", "scn19_icon_buildings.png", false, false, true, 7),
         new("GuardTowerCard", "GUARD TOWER", "BUILDING", "scn19_art_guard_tower.png", "scn19_icon_buildings.png", false, false, false, 5),
-        new("AmmunitionDepotCard", "AMMUNITION DEPOT", "BUILDING", "scn19_art_ammunition_depot.png", "scn19_icon_buildings.png", false, true, false, 6)
+        new("AmmunitionDepotCard", "AMMUNITION DEPOT", "BUILDING", "scn19_art_ammunition_depot.png", "scn19_icon_buildings.png", false, true, false, 6),
+        new("HeavyGunnerCard", "HEAVY GUNNER", "INFANTRY", "scn19_art_field_commander.png", "scn19_icon_units_group.png", false, false, false, 10),
+        new("AdvancedRiflemanCard", "ADVANCED RIFLEMAN", "INFANTRY", "scn19_art_rifleman_male_ii.png", "scn19_icon_units_group.png", false, false, true, 13),
+        new("SidearmSpecialistCard", "SIDEARM SPECIALIST", "INFANTRY", "scn19_art_marksman_male_i.png", "scn19_icon_units_group.png", false, false, false, 8),
+        new("BombSuitSpecialistCard", "BOMB SUIT SPECIALIST", "INFANTRY", "scn19_art_assault_breacher_female_ii.png", "scn19_icon_units_group.png", false, true, false, 12),
+        new("HeavyApcCard", "HEAVY APC", "VEHICLE", "scn19_art_cargo_truck.png", "scn19_icon_vehicle_truck.png", false, false, false, 10),
+        new("RadarTankCard", "RADAR TANK", "VEHICLE", "scn19_art_canopy_truck.png", "scn19_icon_vehicle_truck.png", false, false, false, 9),
+        new("LightAttackHelicopterCard", "LIGHT ATTACK HELO", "AIRCRAFT", "scn19_art_attack_helicopter.png", "scn19_icon_aircraft_helicopter.png", false, false, true, 11),
+        new("HelipadCard", "HELIPAD", "BUILDING", "scn19_art_guard_tower.png", "scn19_icon_buildings.png", false, false, false, 7)
     };
 
     [MenuItem("WarlineCapture/Design/SCN-19 Build Armory One-Go")]
@@ -370,6 +378,8 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         scrollRect.inertia = true;
         scrollRect.movementType = ScrollRect.MovementType.Clamped;
         scrollRect.scrollSensitivity = 38f;
+        scrollRect.verticalScrollbar = AddRosterScrollbar(roster.transform, new RectInt(rect.width - 14, viewport.y + 4, 10, viewport.height - 8));
+        scrollRect.verticalScrollbarVisibility = ScrollRect.ScrollbarVisibility.Permanent;
 
         GameObject viewportObject = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("Viewport", scrollRoot.transform);
         WarlineCaptureLayeredUiBuilderUtility.StretchToParent(viewportObject.GetComponent<RectTransform>());
@@ -392,6 +402,42 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
             RectInt card = new(col * 292, row * 264, 270, 254);
             AddRosterCard(content.transform, RosterItems[i], card);
         }
+    }
+
+    private static Scrollbar AddRosterScrollbar(Transform parent, RectInt rect)
+    {
+        GameObject scrollbarObject = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("RosterVerticalScrollbar", parent);
+        WarlineCaptureLayeredUiBuilderUtility.ApplyTopLeftRect(scrollbarObject.GetComponent<RectTransform>(), WarlineCaptureLayeredUiBuilderUtility.ToArray(rect));
+        Image track = scrollbarObject.AddComponent<Image>();
+        track.color = new Color(0.02f, 0.025f, 0.02f, 0.72f);
+        track.raycastTarget = true;
+
+        Scrollbar scrollbar = scrollbarObject.AddComponent<Scrollbar>();
+        scrollbar.direction = Scrollbar.Direction.BottomToTop;
+        scrollbar.numberOfSteps = 0;
+
+        GameObject slidingArea = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("Sliding Area", scrollbarObject.transform);
+        RectTransform slidingAreaRect = slidingArea.GetComponent<RectTransform>();
+        slidingAreaRect.anchorMin = Vector2.zero;
+        slidingAreaRect.anchorMax = Vector2.one;
+        slidingAreaRect.offsetMin = new Vector2(0f, 8f);
+        slidingAreaRect.offsetMax = new Vector2(0f, -8f);
+        slidingAreaRect.localScale = Vector3.one;
+
+        GameObject handleObject = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("Handle", slidingArea.transform);
+        RectTransform handleRect = handleObject.GetComponent<RectTransform>();
+        handleRect.anchorMin = new Vector2(0f, 0f);
+        handleRect.anchorMax = new Vector2(1f, 1f);
+        handleRect.offsetMin = Vector2.zero;
+        handleRect.offsetMax = Vector2.zero;
+        handleRect.localScale = Vector3.one;
+        Image handle = handleObject.AddComponent<Image>();
+        handle.color = new Color(Gold.r, Gold.g, Gold.b, 0.88f);
+        handle.raycastTarget = true;
+
+        scrollbar.handleRect = handleRect;
+        scrollbar.targetGraphic = handle;
+        return scrollbar;
     }
 
     private static void AddDropdown(Transform parent, string name, string label, RectInt rect)

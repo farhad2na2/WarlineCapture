@@ -140,7 +140,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
-        StringAssert.Contains("animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`", contract);
+        StringAssert.Contains("Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; runtime building visual initialization, runtime resource animation updates, and runtime marker visibility projection belong in `BuildingRuntimeVisualSystem`", contract);
         StringAssert.Contains("Placement visual instance creation, placement visual positioning, prefab model bounds, and transformed bounds helpers belong in `BuildingPlacementVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshots, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
@@ -2064,15 +2064,26 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string visualFile = "Assets/Game/Scripts/Systems/BuildingVisualSystem.cs";
+        const string runtimeVisualFile = "Assets/Game/Scripts/Systems/BuildingRuntimeVisualSystem.cs";
         Assert.IsTrue(File.Exists(visualFile), "The building visual slice must live in BuildingVisualSystem.");
+        Assert.IsTrue(File.Exists(runtimeVisualFile), "The runtime building visual slice must live in BuildingRuntimeVisualSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string runtimeVisual = File.ReadAllText(runtimeVisualFile);
         StringAssert.Contains("BuildingVisualSystem _buildingVisualSystem", placement);
-        StringAssert.Contains("_buildingVisualSystem.FindDescendantByName", placement);
-        StringAssert.Contains("_buildingVisualSystem.SetTransformVisible", placement);
-        StringAssert.Contains("_buildingVisualSystem.ApplyMarkerColor", placement);
-        StringAssert.Contains("_buildingVisualSystem.FindAnimatedBuildingParts", placement);
-        StringAssert.Contains("_buildingVisualSystem.UpdateAnimatedBuildingParts", placement);
+        StringAssert.Contains("BuildingRuntimeVisualSystem _buildingRuntimeVisualSystem", placement);
+        StringAssert.Contains("CreateBuildingRuntimeVisualContext", placement);
+        StringAssert.Contains("_buildingRuntimeVisualSystem.InitializeBuildingVisuals", placement);
+        StringAssert.Contains("_buildingRuntimeVisualSystem.UpdateBuildingResourceVisuals", placement);
+        StringAssert.Contains("_buildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility", placement);
+        StringAssert.Contains("FindDescendantByName", runtimeVisual);
+        StringAssert.Contains("SetTransformVisible", runtimeVisual);
+        StringAssert.Contains("ApplyMarkerColor", runtimeVisual);
+        StringAssert.Contains("FindAnimatedBuildingParts", runtimeVisual);
+        StringAssert.Contains("UpdateAnimatedBuildingParts", runtimeVisual);
+        StringAssert.Contains("InitializeBuildingVisuals", runtimeVisual);
+        StringAssert.Contains("UpdateBuildingResourceVisuals", runtimeVisual);
+        StringAssert.Contains("RefreshBuildingMarkerVisibility", runtimeVisual);
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?Transform\s+FindDescendantByName\b"),
             "Descendant lookup belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
@@ -2091,6 +2102,21 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+TryParseAnimatedPartName\b"),
             "Animated building part name parsing belongs in BuildingVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"building\.FactionMarker\s*=\s*_buildingVisualSystem\.FindDescendantByName"),
+            "Runtime building visual initialization belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"building\.AnimatedParts\s*=\s*_buildingVisualSystem\.FindAnimatedBuildingParts"),
+            "Runtime animated-part discovery assignment belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bStoredOilBarrels\s*<\s*building\.Definition\.OilStorageCapacity"),
+            "Runtime resource animation state projection belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"SetTransformVisible\(building\.SelectionMarker,\s*selected\)"),
+            "Runtime selection marker projection belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?float\s+NormalizeSignedAngle\b"),
+            "Runtime door visual angle normalization belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -2892,7 +2918,6 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingBarrierSystem.RememberOpenBaseBreach", placement);
         StringAssert.Contains("_buildingBarrierSystem.TryResolveBaseBreachTarget", placement);
         StringAssert.Contains("_buildingBarrierSystem.GetRuntimeRoadBarrierGateRects", placement);
-        StringAssert.Contains("_buildingBarrierSystem.SetBarrierDoorOpen01", placement);
         StringAssert.Contains("_buildingBarrierSystem.ShouldAlignGateToNearbyWall", placement);
         StringAssert.Contains("BuildingBarrierSystem.IsWallGateDefinition", placement);
         StringAssert.Contains("BuildingBarrierSystem.IsLinearWallDefinition", placement);

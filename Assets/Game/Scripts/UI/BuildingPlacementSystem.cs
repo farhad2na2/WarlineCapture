@@ -302,6 +302,7 @@ public sealed class BuildingPlacementSystem
 
     private readonly RuntimeBuildingSystem<RuntimeBuildingData> _runtimeBuildingSystem = new();
     private readonly BuildingVisualSystem _buildingVisualSystem = new();
+    private readonly BuildingRuntimeVisualSystem _buildingRuntimeVisualSystem = new();
     private readonly BuildingCombatSystem _buildingCombatSystem = new();
     private readonly FactionResourceSystem _factionResourceSystem = new();
     private readonly ResourceHaulerSystem _resourceHaulerSystem = new();
@@ -2283,49 +2284,9 @@ public sealed class BuildingPlacementSystem
 
     private void InitializeBuildingVisuals(RuntimeBuildingData building)
     {
-        if (building?.Instance == null)
-            return;
-
-        Transform visualRoot = building.Instance.transform.childCount > 0
-            ? building.Instance.transform.GetChild(0)
-            : building.Instance.transform;
-
-        building.FactionMarker = _buildingVisualSystem.FindDescendantByName(visualRoot, "FactionMarker");
-        building.SelectionMarker = _buildingVisualSystem.FindDescendantByName(visualRoot, "SelectionMarker");
-        building.DoorZ = _buildingVisualSystem.FindDescendantByName(visualRoot, "Door_Z");
-        building.DestroyedVisual = _buildingVisualSystem.FindDescendantByName(visualRoot, "Destroyed");
-
-        if (building.DoorZ != null)
-        {
-            building.DoorClosedLocalEulerZ = 0f;
-            building.DoorOpenLocalEulerZ = NormalizeSignedAngle(building.DoorZ.localEulerAngles.z);
-            building.DoorOpen01 = 0f;
-            _buildingBarrierSystem.SetBarrierDoorOpen01(building, 0f);
-        }
-
-        if (building.FactionMarker != null)
-            building.FactionMarkerRenderers = building.FactionMarker.GetComponentsInChildren<Renderer>(true);
-
-        var aliveRoots = new List<Transform>();
-        for (int i = 0; i < visualRoot.childCount; i++)
-        {
-            Transform child = visualRoot.GetChild(i);
-            if (child == building.DestroyedVisual ||
-                child == building.FactionMarker ||
-                child == building.SelectionMarker)
-                continue;
-            aliveRoots.Add(child);
-        }
-
-        building.AliveVisualRoots = aliveRoots.ToArray();
-        building.AnimatedParts = _buildingVisualSystem.FindAnimatedBuildingParts(visualRoot);
-
-        Color factionColor = _factionVisualSettings != null
-            ? _factionVisualSettings.GetColor(0)
-            : new Color(0.12f, 0.72f, 1f, 1f);
-
-        _buildingVisualSystem.ApplyMarkerColor(building.FactionMarkerRenderers, factionColor, _markerPropertyBlock);
-        _buildingVisualSystem.SetTransformVisible(building.DestroyedVisual, false);
+        _buildingRuntimeVisualSystem.InitializeBuildingVisuals(
+            CreateBuildingRuntimeVisualContext(),
+            building);
     }
 
     private void SetRuntimeBuildingOwnerFaction(RuntimeBuildingData building, byte? ownerFactionId)
@@ -2338,37 +2299,14 @@ public sealed class BuildingPlacementSystem
 
     private void UpdateBuildingResourceVisuals()
     {
-        if (_runtimeBuildings.Count == 0)
-            return;
-
-        float time = Time.time;
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            if (building == null || building.IsDestroyed || building.AnimatedParts == null || building.AnimatedParts.Length == 0 || building.Definition == null)
-                continue;
-
-            bool isProducingOil = building.Definition.OilStorageCapacity > 0 &&
-                                  building.Definition.OilBarrelsPerDay > 0f &&
-                                  building.StoredOilBarrels < building.Definition.OilStorageCapacity;
-            bool isProducingFuel = building.Definition.FuelStorageCapacity > 0 &&
-                                   building.Definition.FuelBarrelsPerDay > 0f &&
-                                   building.StoredOilBarrels > 0f &&
-                                   building.StoredFuelBarrels < building.Definition.FuelStorageCapacity;
-            _buildingVisualSystem.UpdateAnimatedBuildingParts(building.AnimatedParts, isProducingOil || isProducingFuel, time);
-        }
+        _buildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(
+            CreateBuildingRuntimeVisualContext(),
+            Time.time);
     }
 
     private void RefreshBuildingMarkerVisibility()
     {
-        foreach (var entry in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = entry.Value;
-            bool selected = !building.IsDestroyed && ActiveBuildingId.HasValue && ActiveBuildingId.Value == entry.Key;
-            _buildingVisualSystem.SetTransformVisible(building.SelectionMarker, selected);
-            if (building.IsDestroyed)
-                _buildingVisualSystem.SetTransformVisible(building.FactionMarker, false);
-        }
+        _buildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(CreateBuildingRuntimeVisualContext());
     }
 
 #if UNITY_EDITOR
@@ -2411,14 +2349,6 @@ public sealed class BuildingPlacementSystem
         return _buildingBarrierSystem.GetRuntimeRoadBarrierGateRects(CreateBuildingBarrierContext(), factionId, rects, buildingIds);
     }
 #endif
-
-    private static float NormalizeSignedAngle(float angle)
-    {
-        angle %= 360f;
-        if (angle > 180f)
-            angle -= 360f;
-        return angle;
-    }
 
     private void RedirectUnitsAroundPlacedBuilding(RectInt footprintRect)
     {
@@ -2853,6 +2783,17 @@ public sealed class BuildingPlacementSystem
             TryGetEntityManager,
             TryGetGridData,
             GetFootprintCenter);
+    }
+
+    private BuildingRuntimeVisualSystem.Context CreateBuildingRuntimeVisualContext()
+    {
+        return new BuildingRuntimeVisualSystem.Context(
+            _runtimeBuildings,
+            _buildingVisualSystem,
+            _buildingBarrierSystem,
+            _factionVisualSettings,
+            _markerPropertyBlock,
+            () => ActiveBuildingId);
     }
 
     private BuildingPlacementRedirectSystem.Context CreateBuildingPlacementRedirectContext()

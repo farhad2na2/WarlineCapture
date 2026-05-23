@@ -1369,6 +1369,28 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void AiBuildPlannerMustUseBuildingRuntimeBoundaryRequests()
+    {
+        const string buildPlannerFile = "Assets/Game/Scripts/Systems/AIBuildPlannerSystem.cs";
+        string buildPlanner = File.ReadAllText(buildPlannerFile);
+
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", buildPlanner);
+        StringAssert.Contains("BuildingConfiguredSpawnableReadModel", buildPlanner);
+        StringAssert.Contains("BuildingRuntimeFactionSummary", buildPlanner);
+        StringAssert.Contains("BuildingRuntimeOwnedBuildingSummary", buildPlanner);
+        StringAssert.Contains("BuildingRuntimeSpawnRequest", buildPlanner);
+        StringAssert.Contains("EnqueueSpawnRequest", buildPlanner);
+        StringAssert.Contains("ProcessCompletedSpawnRequests", buildPlanner);
+        Assert.IsFalse(
+            buildPlanner.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            buildPlanner.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            buildPlanner.Contains("TrySpawnRuntimeBuilding", StringComparison.Ordinal) ||
+            buildPlanner.Contains("TryGetConfiguredSpawnable", StringComparison.Ordinal) ||
+            buildPlanner.Contains("CountRuntimeBuildingsForFaction", StringComparison.Ordinal),
+            "AIBuildPlannerSystem building reads and spawn mutations must use ECS boundary buffers, not BuildingPlacementSystem.");
+    }
+
+    [Test]
     public void InitialSpawnSystemMustNotReachThroughBuildingPlacementSingleton()
     {
         const string file = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";

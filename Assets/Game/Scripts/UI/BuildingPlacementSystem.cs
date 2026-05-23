@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -2786,16 +2785,6 @@ public sealed class BuildingPlacementSystem
     private bool TryGetGridCell(Vector2 screenPosition, GridConfig grid, out Vector2Int cell)
     {
         return _buildingPlacementGridSystem.TryGetGridCell(screenPosition, grid, worldCamera, buildPlaneY, out cell);
-    }
-
-    private static bool IsPointerOverUI(Vector2 screenPosition)
-    {
-        return false;
-    }
-
-    private static bool IsPointerOverBlockingUI(Vector2 screenPosition)
-    {
-        return false;
     }
 
     private bool IsPointerOverPlacementUi(Vector2 screenPosition)

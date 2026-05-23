@@ -98,6 +98,10 @@ public struct BuildingRuntimeSpawnRequest : IBufferElementData
     public byte RotateVertical;
     public byte Status;
     public byte ResultCode;
+    public Entity PlanEntity;
+    public int EntryIndex;
+    public int Cost;
+    public FixedString128Bytes DisplayName;
     public int BuildingRuntimeId;
     public int2 ActualOrigin;
     public int2 ActualFootprint;

@@ -59,6 +59,7 @@ public struct InitialUnitsSpawnProgress : IComponentData
     public byte InitialResourcesApplied;
     public byte InitialBuildingRequestsIssued;
     public byte InitialBuildingsSpawned;
+    public int InitialBuildingCompletionWaitFrames;
 }
 
 public struct InitialUnitsBlockerChurnConfig : IComponentData

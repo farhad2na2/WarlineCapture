@@ -49,6 +49,15 @@ public struct BuildingRuntimeUnitProductionSummary : IBufferElementData
     public int QueuedCount;
 }
 
+public struct BuildingFactionProductionSpawnPointReadModel : IBufferElementData
+{
+    public byte FactionId;
+    public FixedString128Bytes BuildingId;
+    public int SlotIndex;
+    public int2 Cell;
+    public float3 WorldPosition;
+}
+
 public struct BuildingFactionUnitProductionRequest : IBufferElementData
 {
     public const byte Pending = 0;

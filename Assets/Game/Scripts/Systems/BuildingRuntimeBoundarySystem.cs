@@ -11,6 +11,7 @@ public sealed class BuildingRuntimeBoundarySystem
     private readonly List<byte> _factionIds = new();
     private readonly List<int> _pendingSpawnRequestIndices = new();
     private float _nextPublishAt;
+    private bool _forcePublishNextUpdate;
 
     internal void Update(
         BuildingDefinitionSystem definitionSystem,
@@ -242,6 +243,8 @@ public sealed class BuildingRuntimeBoundarySystem
             request.Status = placed
                 ? BuildingRuntimeSpawnRequest.Succeeded
                 : BuildingRuntimeSpawnRequest.Failed;
+            if (placed)
+                _forcePublishNextUpdate = true;
             request.ResultCode = placed ? (byte)0 : BuildingRuntimeSpawnRequest.Blocked;
             request.BuildingRuntimeId = placed ? result.BuildingId : 0;
             request.ActualOrigin = placed ? new int2(result.ActualOrigin.x, result.ActualOrigin.y) : default;
@@ -274,15 +277,17 @@ public sealed class BuildingRuntimeBoundarySystem
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         float now)
     {
-        if (now < _nextPublishAt)
+        if (!_forcePublishNextUpdate && now < _nextPublishAt)
             return;
 
+        _forcePublishNextUpdate = false;
         _nextPublishAt = now + PublishIntervalSeconds;
         PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
         PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
         PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
         PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
         PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
+        PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
     }
 
     private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
@@ -451,6 +456,53 @@ public sealed class BuildingRuntimeBoundarySystem
         }
     }
 
+    private void PublishFactionProductionSpawnPointsReadModel(
+        EntityManager em,
+        Entity boundaryEntity,
+        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+    {
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> buffer =
+            EnsureBoundaryBuffer<BuildingFactionProductionSpawnPointReadModel>(em, boundaryEntity);
+        buffer.Clear();
+
+        if (!TryGetGridConfig(em, out GridConfig grid))
+            return;
+
+        foreach (KeyValuePair<int, RuntimeBuildingData> entry in runtimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building == null ||
+                building.IsDestroyed ||
+                !building.HasOwnerFaction ||
+                building.Instance == null ||
+                building.Definition == null ||
+                building.Definition.Prefab == null ||
+                building.ProductionSpawnLocalPositions == null ||
+                building.ProductionSpawnLocalPositions.Length == 0)
+            {
+                continue;
+            }
+
+            FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
+            for (int i = 0; i < building.ProductionSpawnLocalPositions.Length; i++)
+            {
+                Vector3 world = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[i]);
+                int2 cell = GridUtils.WorldToCell(grid, world);
+                if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
+                    continue;
+
+                buffer.Add(new BuildingFactionProductionSpawnPointReadModel
+                {
+                    FactionId = building.OwnerFactionId,
+                    BuildingId = buildingId,
+                    SlotIndex = i,
+                    Cell = cell,
+                    WorldPosition = new float3(world.x, world.y, world.z)
+                });
+            }
+        }
+    }
+
     private static bool TryResolveConfiguredBuildingDefinition(
         BuildingDefinitionSystem definitionSystem,
         string buildingId,
@@ -513,6 +565,19 @@ public sealed class BuildingRuntimeBoundarySystem
             boundaryEntity = boundaryQuery.GetSingletonEntity();
 
         return boundaryEntity != Entity.Null && em.Exists(boundaryEntity);
+    }
+
+    private static bool TryGetGridConfig(EntityManager em, out GridConfig grid)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (query.IsEmptyIgnoreFilter)
+        {
+            grid = default;
+            return false;
+        }
+
+        grid = em.GetComponentData<GridConfig>(query.GetSingletonEntity());
+        return true;
     }
 
     private static DynamicBuffer<T> EnsureBoundaryBuffer<T>(EntityManager em, Entity entity)

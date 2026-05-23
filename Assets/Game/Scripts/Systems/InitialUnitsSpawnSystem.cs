@@ -17,6 +17,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private const int InitialBlockerBatchSize = 24;
     private const int DiagnosticIntervalFrames = 120;
     private const int InitialBaseCoreRequestEntryIndex = -100;
+    private const int MaxInitialBuildingCompletionWaitFrames = 300;
 
     private int _nextDiagnosticFrame;
     private EntityQuery _buildingRuntimeBoundaryQuery;
@@ -26,6 +27,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         _buildingRuntimeBoundaryQuery = state.GetEntityQuery(
             ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>(),
             ComponentType.ReadOnly<BuildingConfiguredSpawnableReadModel>(),
+            ComponentType.ReadOnly<BuildingFactionProductionSpawnPointReadModel>(),
             ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>());
         state.RequireForUpdate(_buildingRuntimeBoundaryQuery);
         state.RequireForUpdate<GridConfig>();
@@ -67,7 +69,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     BlockersSpawned = 0,
                     InitialResourcesApplied = 0,
                     InitialBuildingRequestsIssued = 0,
-                    InitialBuildingsSpawned = 0
+                    InitialBuildingsSpawned = 0,
+                    InitialBuildingCompletionWaitFrames = 0
                 });
                 DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> progressBuffer = em.AddBuffer<InitialUnitsFactionUnitSpawnProgress>(entity);
                 progressBuffer.ResizeUninitialized(unitSpawnCount);
@@ -164,9 +167,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     }
                     else
                     {
-                        allInitialBuildingsSpawned = ProcessCompletedInitialBuildingRequests(ref state, boundaryEntity, entity, baseGrid, out bool shouldRetryInitialBuildings);
-                        if (shouldRetryInitialBuildings)
-                            progress.InitialBuildingRequestsIssued = 0;
+                        allInitialBuildingsSpawned = ProcessCompletedInitialBuildingRequests(ref state, boundaryEntity, entity, baseGrid);
                     }
                 }
                 else
@@ -178,19 +179,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     progress.InitialBuildingsSpawned = 1;
 
                 em.SetComponentData(entity, progress);
-            }
-
-            if (!useM01CompactRuntime &&
-                progress.InitialBuildingsSpawned == 0 &&
-                RequiresInitialBuildingCompletion(em, entity, config))
-            {
-                queueState.RandomState = rng.state;
-                em.SetComponentData(queueEntity, queueState);
-                progress.RandomState = math.max(1u, rng.state);
-                em.SetComponentData(entity, progress);
-                ecb.Dispose();
-                factionSpawns.Dispose();
-                continue;
             }
 
             var grid = SystemAPI.GetSingleton<GridConfig>();
@@ -239,9 +227,18 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                             out cell,
                             out pos);
                     bool foundSpawnCell = foundPlatformSpawn ||
-                        (isAirUnit
-                            ? TryReserveInitialAirSpawnCell(grid, walkable, dynamicBlocked, occupied, ref reserved, unitSpawnCenter, footprintSize, out cell)
-                            : SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, walkable, dynamicBlocked, occupied, ref reserved, unitSpawnCenter, config.SpawnRadiusCells, footprintSize, out cell));
+                        TryFindInitialUnitSpawnCell(
+                            ref rng,
+                            grid,
+                            walkable,
+                            dynamicBlocked,
+                            occupied,
+                            ref reserved,
+                            unitSpawnCenter,
+                            math.max(0, config.SpawnRadiusCells),
+                            footprintSize,
+                            isAirUnit,
+                            out cell);
                     if (!foundSpawnCell)
                     {
                         if (EnableInitialSpawnDiagnostics)
@@ -322,8 +319,26 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 }
             }
 
+            bool allBlockersSpawned = progress.BlockersSpawned >= blockerTargetCount;
+            bool canCompleteInitialSpawn = CanCompleteInitialSpawn(em, entity, config, progress);
             if (allUnitsSpawned &&
-                progress.BlockersSpawned >= blockerTargetCount)
+                allBlockersSpawned &&
+                !canCompleteInitialSpawn)
+            {
+                progress.InitialBuildingCompletionWaitFrames++;
+                if (progress.InitialBuildingCompletionWaitFrames >= MaxInitialBuildingCompletionWaitFrames)
+                {
+                    progress.InitialBuildingsSpawned = 1;
+                    canCompleteInitialSpawn = true;
+                    Debug.LogWarning($"[InitialSpawn] fail-open initial building completion after {progress.InitialBuildingCompletionWaitFrames} frames. The startup loading gate will clear, but initial buildings may be missing or incomplete.");
+                }
+
+                em.SetComponentData(entity, progress);
+            }
+
+            if (allUnitsSpawned &&
+                canCompleteInitialSpawn &&
+                allBlockersSpawned)
             {
                 completedInitialSpawn = true;
                 ecb.AddComponent<InitialUnitsSpawnInitialized>(entity);
@@ -507,7 +522,12 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             }
 
             if (!TryResolveSpawnableId(ref state, boundaryEntity, new FixedString128Bytes(placement.PrefabKey), placement.PrefabKey, out string resolvedId, out BuildingConfiguredSpawnableReadModel resolvedModel))
-                return false;
+            {
+                if (placement.Kind == InitialFactionBasePlacementKind.CoreBuilding)
+                    return false;
+
+                continue;
+            }
 
             placementIds.Add(placement.PrefabKey, resolvedId);
             placementModels.Add(placement.PrefabKey, resolvedModel);
@@ -580,8 +600,12 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 }
                 else
                 {
-                    buildingId = placementIds[placement.PrefabKey];
-                    model = placementModels[placement.PrefabKey];
+                    if (!placementIds.TryGetValue(placement.PrefabKey, out buildingId) ||
+                        !placementModels.TryGetValue(placement.PrefabKey, out model))
+                    {
+                        continue;
+                    }
+
                 }
 
                 Vector2Int footprint = ToFootprint(model.FootprintCells, placement.RotateVertical);
@@ -616,6 +640,9 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         out int requestCount)
     {
         requestCount = 0;
+        if (boundaryEntity == Entity.Null)
+            return false;
+
         DynamicBuffer<InitialUnitsFactionBuildingSpawnEntry> buildingSpawnsBuffer =
             state.EntityManager.GetBuffer<InitialUnitsFactionBuildingSpawnEntry>(configEntity);
         for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
@@ -624,21 +651,19 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             if (building.Prefab == Entity.Null)
                 continue;
 
-            if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out _) ||
-                !TryResolveSpawnableReadModel(ref state, boundaryEntity, building.PrefabLookupKey.ToString(), out _))
+            if (!TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell))
             {
-                return false;
-            }
-        }
-
-        for (int buildingIndex = 0; buildingIndex < buildingSpawnsBuffer.Length; buildingIndex++)
-        {
-            InitialUnitsFactionBuildingSpawnEntry building = buildingSpawnsBuffer[buildingIndex];
-            if (building.Prefab == Entity.Null)
+                Debug.LogWarning($"[InitialSpawn] skipping initial building entry with no faction spawn. faction={building.FactionId} prefab={building.Prefab}");
                 continue;
+            }
 
-            TryGetFactionSpawnCell(factionSpawns, building.FactionId, out int2 factionSpawnCell);
             string buildingId = building.PrefabLookupKey.ToString();
+            if (!TryResolveSpawnableReadModel(ref state, boundaryEntity, buildingId, out _))
+            {
+                Debug.LogWarning($"[InitialSpawn] skipping unresolved initial building entry. faction={building.FactionId} buildingId={buildingId}");
+                continue;
+            }
+
             int2 origin = factionSpawnCell + building.OriginOffset;
             EnqueueInitialBuildingSpawnRequest(
                 ref state,
@@ -658,10 +683,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         ref SystemState state,
         Entity boundaryEntity,
         Entity configEntity,
-        GridConfig grid,
-        out bool shouldRetry)
+        GridConfig grid)
     {
-        shouldRetry = false;
         if (boundaryEntity == Entity.Null ||
             !state.EntityManager.HasBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity))
         {
@@ -670,7 +693,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
         bool sawRequest = false;
         bool hasPending = false;
-        bool hasFailure = false;
         DynamicBuffer<BuildingRuntimeSpawnRequest> requests =
             state.EntityManager.GetBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity);
         for (int i = requests.Length - 1; i >= 0; i--)
@@ -700,10 +722,6 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     InitialUnitsRuntimeState.InitialCameraFocusRequested = true;
                 }
             }
-            else
-            {
-                hasFailure = true;
-            }
 
             requests.RemoveAt(i);
         }
@@ -711,8 +729,17 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         if (hasPending)
             return false;
 
-        shouldRetry = sawRequest && hasFailure;
-        return sawRequest && !hasFailure;
+        return sawRequest;
+    }
+
+    private static bool CanCompleteInitialSpawn(
+        EntityManager em,
+        Entity configEntity,
+        InitialUnitsSpawnConfig config,
+        InitialUnitsSpawnProgress progress)
+    {
+        return progress.InitialBuildingsSpawned != 0 ||
+               !RequiresInitialBuildingCompletion(em, configEntity, config);
     }
 
     private static bool RequiresInitialBuildingCompletion(EntityManager em, Entity configEntity, InitialUnitsSpawnConfig config)
@@ -861,6 +888,38 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         return true;
     }
 
+    private static bool TryFindInitialUnitSpawnCell(
+        ref Unity.Mathematics.Random rng,
+        in GridConfig grid,
+        in NativeArray<GridWalkable> walkable,
+        in NativeBitArray blocked,
+        in NativeBitArray occupied,
+        ref NativeBitArray reserved,
+        int2 center,
+        int radiusCells,
+        int2 footprintSize,
+        bool isAirUnit,
+        out int2 cell)
+    {
+        if (isAirUnit &&
+            TryReserveInitialAirSpawnCell(grid, walkable, blocked, occupied, ref reserved, center, footprintSize, out cell))
+        {
+            return true;
+        }
+
+        return SpawnCellUtility.TryFindSpawnCellNear(
+            ref rng,
+            grid,
+            walkable,
+            blocked,
+            occupied,
+            ref reserved,
+            center,
+            radiusCells,
+            footprintSize,
+            out cell);
+    }
+
     private static bool TryGetInitialAirPlatformSpawn(
         ref SystemState state,
         Entity boundaryEntity,
@@ -872,6 +931,40 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     {
         cell = default;
         position = default;
+        if (boundaryEntity == Entity.Null ||
+            !state.EntityManager.HasBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity))
+        {
+            return false;
+        }
+
+        bool useHelipad = configuredSpawnOffset.y <= -45;
+        string buildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(useHelipad ? "Building_Helipad" : "Building_Airport");
+        int remainingSlotIndex = ResolveInitialAirPlatformSlotIndex(configuredSpawnOffset, useHelipad);
+        DynamicBuffer<BuildingFactionProductionSpawnPointReadModel> spawnPoints =
+            state.EntityManager.GetBuffer<BuildingFactionProductionSpawnPointReadModel>(boundaryEntity, true);
+        for (int i = 0; i < spawnPoints.Length; i++)
+        {
+            BuildingFactionProductionSpawnPointReadModel spawnPoint = spawnPoints[i];
+            if (spawnPoint.FactionId != factionId ||
+                spawnPoint.BuildingId.ToString() != buildingId)
+            {
+                continue;
+            }
+
+            if (remainingSlotIndex > 0)
+            {
+                remainingSlotIndex--;
+                continue;
+            }
+
+            if (!GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height))
+                return false;
+
+            cell = spawnPoint.Cell;
+            position = spawnPoint.WorldPosition;
+            return true;
+        }
+
         return false;
     }
 

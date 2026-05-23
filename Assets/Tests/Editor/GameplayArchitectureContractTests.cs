@@ -1292,6 +1292,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeFactionSummary>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeUnitProductionSummary>", bootstrap);
+        StringAssert.Contains("EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingFactionUnitProductionRequest>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingFactionResourceSellRequest>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeSpawnRequest>", bootstrap);
@@ -1458,6 +1459,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingRuntimeBoundaryTag", text);
         StringAssert.Contains("BuildingRuntimeSpawnRequest", text);
         StringAssert.Contains("BuildingConfiguredSpawnableReadModel", text);
+        StringAssert.Contains("BuildingFactionProductionSpawnPointReadModel", text);
+        StringAssert.Contains("CanCompleteInitialSpawn", text);
+        StringAssert.Contains("RequiresInitialBuildingCompletion", text);
         Assert.IsFalse(
             text.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
             text.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||

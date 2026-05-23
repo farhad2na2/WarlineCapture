@@ -94,7 +94,7 @@ These rules apply to visible UI elements even when they are not clickable.
 | Mission/key art image | Preview scenario content. | `MissionConfig.OperationMapId`, `ScenarioSetup.OperationMapId`, planning camera/key-art id. | Replaceable per mission; no baked objectives/rewards text. Art may show the 3D town/base context, but interactive buildings/objectives must remain runtime/state data. |
 | Objective row | Explain active requirement. | `ObjectiveConfig` or `ObjectiveRuntimeState`. | Required, bonus, complete, and failed states must be visually distinct. |
 | Star goal row | Explain bonus scoring. | `StarGoalConfig` or `StarGoalState`. | Must be visible before and after mission. |
-| Reward icon/tile | Preview or show deterministic grant. | `RewardConfig`, `RewardItemConfig`, `RewardGrantResult`. | Uses only canonical reward types from `WarlineCapture_Economy_Reward_Design.md`; no hidden odds or unexplained containers. |
+| Reward icon/tile | Preview or show fixed grant. | `RewardConfig`, `RewardItemConfig`, `RewardGrantResult`. | Uses only canonical reward types from `WarlineCapture_Economy_Reward_Design.md`; no hidden odds or unexplained containers. |
 | Unit/building/gear thumbnail | Identify selectable gameplay object. | Unit/building/gear config id and art id. | Locked/unavailable state must show reason. |
 | Warning row/icon | Communicate threat or operation urgency. | `ThreatEvent`, `OperationEvent`. | Severity state required; critical warnings cannot be color-only. |
 | Map region/node marker | Represent selectable spatial/progression object. | `DistrictState` or `SagaMissionNodeConfig`. | Locked/current/completed/selected states required. |
@@ -134,7 +134,7 @@ Every listed element must be data-bound, explicitly decorative, authored empty s
 | SCN-11 Operation Dashboard | District map/regions, metric sidebar, daily briefing, active warning rows, resource/day header, bottom action bar. | Operation state, district states, operation metrics, event list, resource state, day/time, action availability. |
 | SCN-12 District Detail | District key art, map inset, stat list, intel confidence meter, known threat card, recent activity list, action grid. | Selected district, metrics, intel confidence, threat estimate, recent activity, action availability/costs. |
 | SCN-13 Skirmish | Preset selector, AI/rules controls, sliders/steppers/dropdowns/toggles, operation-map preview, special-rule/dev-only group, launch state. | QuickGameConfig or SkirmishConfig, AI profiles, rule configs, operation map definitions, debug permission, scenario validation. |
-| SCN-14 Command Exchange | Store category tabs, product cards, selected product detail, deterministic contents, disabled purchase/restore states. | Store catalog, wallet, product config, receipt state, reward config, target item ids. |
+| SCN-14 Command Exchange | Store category tabs, product cards, selected product detail, fixed listed contents, disabled purchase/restore states. | Store catalog, wallet, product config, receipt state, reward config, target item ids. |
 | SCN-19 Armory | Roster category rail, Owned/Upgrade/Parts/Gear tabs, unit/building/support cards, lock badges, inspection panel, ability list, upgrade track, source links. | Prefab catalog display names/descriptions, combat catalog ids, visual catalog ids, unlock state, item level/tier, ability configs, upgrade track configs, BlueprintParts, GearModule inventory. |
 | POP-01 Threat Alert | Warning icon, threat title/body, ETA/route row, strength meter, jump/close buttons. | Threat event id, type, ETA, route, estimated strength, world position. |
 | POP-02 Confirm Raid | District/target thumbnail, intel confidence meter, collateral risk meter, warning text, cost row, buttons. | District id, suspected target, intel confidence, collateral risk, civilian density, raid cost. |
@@ -213,7 +213,7 @@ Alignment note: the Main Menu resource strip is `Credits`, `Supplies`, and `Comm
 | Upgrades tab | Show unit/building/support upgrade state. | Switch local tab. | `PlayerInventory`, `UnlockState`, upgrade configs. | Locked until upgrade data exists. |
 | Stats tab | Show lifetime performance. | Switch local tab. | `AccountStats`. | Enabled after profile default exists. |
 | Badges tab | Show earned identity cosmetics. | Switch local tab. | Badge/cosmetic ownership. | Enabled; may show empty state. |
-| Reward track nodes | Inspect/claim deterministic rewards. | Open reward detail or claim via `RewardService`. | `RewardTrackProgress`, `RewardConfig`. | Claim enabled only for earned unclaimed nodes. |
+| Reward track nodes | Inspect/claim fixed rewards. | Open reward detail or claim via `RewardService`. | `RewardTrackProgress`, `RewardConfig`. | Claim enabled only for earned unclaimed nodes. |
 
 ## SCN-04 Settings / Accessibility
 
@@ -260,7 +260,7 @@ Alignment note: the Main Menu resource strip is `Credits`, `Supplies`, and `Comm
 | Home | Abandon setup and return to hub. | Confirmation then SCN-02. | Unsaved loadout state. | Requires confirmation. |
 | Unit card | Inspect/change selected squad or vehicle. | Open roster selector. | `PlayerUnitRoster`, `SelectedLoadout`, mission restrictions. | Disabled for locked or mission-banned units. |
 | Support slot | Choose or inspect tactical support ability. | Open support selector; detail/long-press opens `POP-09`. | `SupportAbilityInventory`, slot unlock state, ability availability spec. | Locked slots show unlock requirement and route to detail instead of failing silently. |
-| Gear card | Choose deterministic gear/module or inspect upgrade requirement. | Open equipment selector; detail/long-press opens `POP-09` for linked upgrade tracks. | `GearInventory`, mission restrictions, upgrade availability spec. | Disabled if gear type is incompatible; detail still explains the requirement. |
+| Gear card | Choose fixed gear/module or inspect upgrade requirement. | Open equipment selector; detail/long-press opens `POP-09` for linked upgrade tracks. | `GearInventory`, mission restrictions, upgrade availability spec. | Disabled if gear type is incompatible; detail still explains the requirement. |
 | Deploy | Launch tactical match. | Build `GameLaunchPayload` and call `BeginGameplay(payload)`. | `SelectedLoadout`, `MissionConfig`, `ScenarioSetup`. | Enabled only when loadout validates and deploy cost is payable. |
 
 ## SCN-08 RTS Battle HUD
@@ -312,7 +312,7 @@ Implementation source of truth: `WarlineCapture_Match_HUD_And_Gameplay_Implement
 | District region | Inspect district state/actions. | Route/open SCN-12. | `DistrictState`. | Enabled for known districts. |
 | Active warning row | Inspect or launch urgent event. | Opens warning detail, briefing, or match route. | `OperationEvent`, pending mission. | Enabled for actionable events. |
 | Intel Report | Open intel archive. | Route/modal for intel archive. | `IntelArchive`, evidence items. | Enabled once Operation state exists; may show empty state. |
-| Black Market | Open Operation supply exchange. | Route to Command Exchange Operation category. | Operation supplies, Credits, Materials, Fuel, Intel, Command Authority, catalog. | `DesignedUnavailable` shows deterministic Operation supply catalog with purchase buttons disabled. |
+| Black Market | Open Operation supply exchange. | Route to Command Exchange Operation category. | Operation supplies, Credits, Materials, Fuel, Intel, Command Authority, catalog. | `DesignedUnavailable` shows fixed Operation supply catalog with purchase buttons disabled. |
 | Armory | Open loadout/upgrades support. | Route `SCN-19 Armory`. | `PlayerInventory`, upgrade configs, Gear Modules, BlueprintParts. | Opens the Armory screen; upgrade CTAs stay disabled until service, inventory, and validation requirements are satisfied. |
 | Command Log | Inspect operation history. | Opens history/log route. | Operation event history. | Enabled when logs exist; otherwise empty state. |
 | End Day | Resolve operation simulation. | Runs `OperationSimulationService.EndDay`, saves, opens POP-06. | `OperationState`, district events. | Enabled only when no blocking required action is unresolved. |
@@ -353,7 +353,7 @@ Implementation source of truth: `WarlineCapture_Match_HUD_And_Gameplay_Implement
 | Control | Gameplay Purpose | Route Or Effect | Gameplay Data | Enable Rule |
 |---|---|---|---|---|
 | Back | Return to caller. | Router back. | Caller route. | Enabled unless purchase/receipt flow is active. |
-| Category tab | Filter store products. | Local catalog filter. | `StoreCatalog`, product category. | Enabled when category has visible deterministic products. |
+| Category tab | Filter store products. | Local catalog filter. | `StoreCatalog`, product category. | Enabled when category has visible fixed catalog products. |
 | Product card | Inspect product contents. | Select product; ability/upgrade target opens `POP-09`. | Product config, reward item list, target id. | Enabled for inspection even when purchase is disabled. |
 | Purchase button | Buy product. | Starts receipt flow. | Wallet, platform store, receipt service, product id. | Disabled until wallet, receipt, catalog, profile persistence, and reward grant services are implemented. |
 | Restore purchases | Restore non-consumable entitlements. | Starts platform restore. | Receipt service, entitlement state. | Hidden until platform receipt support exists. |

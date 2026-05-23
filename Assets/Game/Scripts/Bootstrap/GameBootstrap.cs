@@ -3,7 +3,6 @@ using UnityEngine.Rendering;
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
-using Unity.Mathematics;
 using Game.Scripts.UI;
 
 [DisallowMultipleComponent]
@@ -14,6 +13,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly AIStartupSystem _aiStartupSystem = new();
     private readonly MissionStartupSystem _missionStartupSystem = new();
     private readonly PerformanceDiagnosticsSystem _performanceDiagnosticsSystem = new();
+    private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -153,6 +153,9 @@ public sealed class GameBootstrap : MonoBehaviour
     public void BeginGameplay()
     {
         GameRuntimeStats.Reset();
+        _initialFactionSpawnCellSystem.Configure(
+            World.DefaultGameObjectInjectionWorld,
+            buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
         _aiStartupSystem.LogConfigValidation(aiControllerConfigs);
         _missionStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
@@ -164,7 +167,7 @@ public sealed class GameBootstrap : MonoBehaviour
             World.DefaultGameObjectInjectionWorld,
             aiControllerConfigs,
             aiPlanEntryConfig,
-            TryGetConfiguredFactionSpawnCell);
+            _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
         EnsureGameplaySystemsInitialized();
@@ -184,59 +187,13 @@ public sealed class GameBootstrap : MonoBehaviour
             Selection,
             worldCamera,
             GetMapLoader(),
-            TryGetConfiguredFactionSpawnCell,
+            _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
             0);
     }
 
     private TacticalMapRuntimeLoader GetMapLoader()
     {
         return chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
-    }
-
-    private bool TryGetConfiguredFactionSpawnCell(byte factionId, out int2 spawnCell)
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world != null && world.IsCreated)
-        {
-            EntityManager em = world.EntityManager;
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
-            using var entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
-            for (int entityIndex = 0; entityIndex < entities.Length; entityIndex++)
-            {
-                Entity entity = entities[entityIndex];
-                if (!em.Exists(entity) || !em.HasBuffer<InitialUnitsFactionSpawnEntry>(entity))
-                    continue;
-
-                DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = em.GetBuffer<InitialUnitsFactionSpawnEntry>(entity);
-                for (int i = 0; i < factionSpawns.Length; i++)
-                {
-                    if (factionSpawns[i].FactionId != factionId)
-                        continue;
-
-                    spawnCell = factionSpawns[i].SpawnCell;
-                    return true;
-                }
-            }
-        }
-
-        InitialUnitsSpawnerAuthoringConfig initialUnitsConfig = buildingPlacementConfig != null
-            ? buildingPlacementConfig.InitialUnitsConfig
-            : null;
-        if (initialUnitsConfig != null && initialUnitsConfig.Factions != null)
-        {
-            for (int i = 0; i < initialUnitsConfig.Factions.Count; i++)
-            {
-                InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = initialUnitsConfig.Factions[i];
-                if (faction == null || faction.FactionId != factionId)
-                    continue;
-
-                spawnCell = new int2(faction.SpawnCell.x, faction.SpawnCell.y);
-                return true;
-            }
-        }
-
-        spawnCell = default;
-        return false;
     }
 
     private void Update()

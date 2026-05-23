@@ -251,7 +251,7 @@ Required standard:
 
 - Match the active WarlineCapture military RTS UI language: command-base black/olive metal, gold action accents, restrained blue information accents, Oxanium-style typography, dense but readable tactical composition, and high-quality 3D operation-map or command-room context where the target calls for a popup or target-lock presentation.
 - Preserve functional clarity: dynamic text, ids, state labels, icon slots, control names, and runtime-owned data surfaces must be readable and implementable.
-- Do not accept state boards, wireframes, flat deterministic placeholders, generic sci-fi UI sheets, unstyled layout diagrams, or low-detail mockups as final target locks.
+- Do not accept state boards, wireframes, flat scripted placeholders, generic sci-fi UI sheets, unstyled layout diagrams, or low-detail mockups as final target locks.
 - Do not accept a target only because it looks high quality. If it looks like a beautiful standalone sci-fi mockup but does not belong to the existing WarlineCapture target family, mark it `needs fixes`.
 - For regenerated target locks, require a side-by-side/contact-sheet comparison against nearby accepted targets when style drift is a risk. The comparison must show that the new target can sit inside the same product family without looking foreign.
 - Do not treat a flat visual target as a sliced implementation asset or mark art rows complete until the asset register records review/approval plus runtime wiring when required.

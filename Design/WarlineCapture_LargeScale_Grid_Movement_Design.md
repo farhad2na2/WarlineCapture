@@ -261,7 +261,7 @@ Track these in probes or reports:
 - `ScenarioSetup` should reference stable map IDs: `LevelId`, `OperationMapId`, `PlanningCameraId`, and `MinimapProjectionId`.
 - UI should consume typed command outcomes and reason codes, not infer movement validity from screen position alone.
 - ARIA should use typed command intents and metadata anchors for Show Me / Do It behavior.
-- Balance probes should run with fixed seeds first, then expand to seed sweeps after deterministic behavior is stable.
+- Balance probes should run with fixed seeds first, then expand to seed sweeps after repeatable behavior is stable.
 
 ## Design Decision
 

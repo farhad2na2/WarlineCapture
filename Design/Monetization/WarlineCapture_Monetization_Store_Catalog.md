@@ -47,7 +47,7 @@ Store products that target an ability or upgrade track must expose `POP-09 Abili
 | Id | Name | Price | Rotation | Contents | Notes |
 |---|---|---:|---|---|---|
 | `pc.featured.command_ready.week01` | Command Ready Bundle | `$9.99` | Weekly | 7,500 Credits; 800 Materials; 200 Command Authority; 2 Intel; 2 Rush Tickets | Good first featured offer after starter purchase. |
-| `pc.featured.airlift_support.week01` | Airlift Support Bundle | `$14.99` | Weekly, after air units unlock | 300 Command Authority; Helicopter skin; Transport upgrade parts x30; 3 Rush Tickets | Cosmetic-forward with deterministic parts. |
+| `pc.featured.airlift_support.week01` | Airlift Support Bundle | `$14.99` | Weekly, after air units unlock | 300 Command Authority; Helicopter skin; Transport upgrade parts x30; 3 Rush Tickets | Cosmetic-forward with listed parts. |
 | `pc.featured.district_recovery.week01` | District Recovery Bundle | `$9.99` | Operation event | 1 Repair Convoy; 2 Aid Convoys; 3 Intel; 600 Materials | Appears after high-damage Operation day. |
 
 ## Resource Bundles
@@ -92,7 +92,7 @@ Store products that target an ability or upgrade track must expose `POP-09 Abili
 | Id | Name | Price | Contents |
 |---|---|---:|---|
 | `pc.season.pass.standard` | Season Pass | `$9.99` | Unlocks premium reward track lane for current season |
-| `pc.season.pass.plus10` | Season Pass + 10 Levels | `$19.99` | Premium lane plus 10 deterministic level claims |
+| `pc.season.pass.plus10` | Season Pass + 10 Levels | `$19.99` | Premium lane plus 10 fixed level claims |
 
 ## First-Pass Store Layout
 
@@ -121,7 +121,7 @@ Grid:
 
 ## Balance Notes
 
-- Every deterministic gameplay-affecting item should have an earn path through Campaign, Operations, profile levels, or events.
+- Every gameplay-affecting item should have an earn path through Campaign, Operations, profile levels, or events.
 - Paid resource bundles should be useful but not so large that Chapter 1 economy tuning becomes irrelevant.
 - Duplicate starter pack unit unlocks convert to item-specific BlueprintParts.
 - Cosmetic ownership should be permanent and account-wide.
@@ -139,7 +139,7 @@ Each catalog content line maps to canonical reward types in `Design/WarlineCaptu
 | Ranger Squad parts, Guard Tower blueprint parts, Transport upgrade parts, APC armor module parts, Drone Scan support parts | `BlueprintParts` with `TargetItemId`. |
 | Helicopter skin, commander frame, unit card skin set, base banner, HUD accent theme, profile badge, district map marker set | `Cosmetic`. |
 | Aid Convoy, Repair Convoy, readiness action authority | `OperationSupply`. |
-| Season pass and pass plus levels | Product entitlement that unlocks deterministic `RewardConfig` claim nodes. |
+| Season pass and pass plus levels | Product entitlement that unlocks fixed `RewardConfig` claim nodes. |
 
 Concrete early store target ids:
 

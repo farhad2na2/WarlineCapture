@@ -97,7 +97,7 @@ When changing a hot system, validation should show that the changed scenario sta
 
 1. Establish or reuse a focused scenario.
 2. Warm up the scene.
-3. Run deterministic gameplay interactions.
+3. Run fixed-seed gameplay interactions.
 4. Capture structured frame/system/GC metrics.
 5. Assert against the current budget.
 6. If a budget fails, write the offender, scenario, system sample, likely owner, and next fix path in the handoff report.

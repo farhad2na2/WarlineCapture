@@ -121,7 +121,7 @@ If multiple friendly selectable entities overlap under the tap:
 1. Prefer currently highlighted/closest screen-space unit.
 2. Prefer controllable combat units over passive support props.
 3. Prefer squad representative/root over individual soldier mesh if the unit is represented as a squad.
-4. Break ties deterministically by stable entity id.
+4. Break ties by stable entity id in a repeatable order.
 
 ## Multi-Selection Rules
 

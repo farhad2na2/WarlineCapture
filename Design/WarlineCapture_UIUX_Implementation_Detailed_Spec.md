@@ -782,7 +782,7 @@ On match end:
 ### Tests
 
 - Objective manager evaluates simple win/loss.
-- Mission result shows victory and defeat variants.
+- Mission result shows victory, partial success, defeat, and withdrawal variants.
 - Star goals produce expected count.
 
 ## Phase 9 Detailed Tasks - Campaign

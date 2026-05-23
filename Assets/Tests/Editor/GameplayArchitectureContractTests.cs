@@ -70,10 +70,7 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/Bootstrap/FactionVisualSettings.cs"
     };
 
-    private static readonly string[] LegacyGameBootstrapDomainPolicyMethods =
-    {
-        "TryGetConfiguredFactionSpawnCell"
-    };
+    private static readonly string[] LegacyGameBootstrapDomainPolicyMethods = Array.Empty<string>();
 
     private static readonly string[] GameBootstrapDomainPolicyMethodTokens =
     {
@@ -126,7 +123,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("AI faction-control startup projection is owned by `AIFactionControlStartupSystem`", contract);
         StringAssert.Contains("AI default build and production fallback ids are owned by authored `AIPlanEntryStartupConfig` assets", contract);
         StringAssert.Contains("Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`", contract);
+        StringAssert.Contains("Configured faction spawn-cell resolution is owned by `InitialFactionSpawnCellSystem`", contract);
         StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
+        StringAssert.Contains("Managed gameplay runtime update extraction is paused", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("validity belong in `BuildingPlacementValidationSystem`", contract);
@@ -341,12 +340,17 @@ public sealed class GameplayArchitectureContractTests
     public void GameBootstrapMustDelegateMissionStartupAndCameraSlice()
     {
         const string missionStartupFile = "Assets/Game/Scripts/Systems/MissionStartupSystem.cs";
+        const string initialFactionSpawnCellFile = "Assets/Game/Scripts/Systems/InitialFactionSpawnCellSystem.cs";
         Assert.IsTrue(File.Exists(missionStartupFile), "Mission startup and M01 camera/framing policy must live in MissionStartupSystem.");
+        Assert.IsTrue(File.Exists(initialFactionSpawnCellFile), "Configured faction spawn-cell resolution must live outside GameBootstrap.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("MissionStartupSystem _missionStartupSystem", bootstrap);
+        StringAssert.Contains("InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem", bootstrap);
         StringAssert.Contains("_missionStartupSystem.Initialize", bootstrap);
         StringAssert.Contains("_missionStartupSystem.FocusInitialCamera", bootstrap);
+        StringAssert.Contains("_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell", bootstrap);
+
         StringAssert.Contains("_missionStartupSystem.UpdateActiveMission", bootstrap);
         StringAssert.Contains("_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", bootstrap);
 
@@ -366,7 +370,8 @@ public sealed class GameplayArchitectureContractTests
             "TryResolveM01ProductionFrameCenter",
             "IncludeM01FrameAnchor",
             "ApplyM01ProductionCameraPoseIfActive",
-            "ClampM01CameraCenterToTacticalMap"
+            "ClampM01CameraCenterToTacticalMap",
+            "TryGetConfiguredFactionSpawnCell"
         };
 
         foreach (string methodName in migratedMethodNames)
@@ -381,6 +386,13 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(missionStartup, @"\bstatic\b"),
             "MissionStartupSystem owns mission startup mutation and camera policy; keep it instance-scoped rather than adding static runtime helpers.");
+
+        string initialFactionSpawnCell = File.ReadAllText(initialFactionSpawnCellFile);
+        StringAssert.Contains("InitialUnitsSpawnConfig", initialFactionSpawnCell);
+        StringAssert.Contains("InitialUnitsSpawnerAuthoringConfig", initialFactionSpawnCell);
+        Assert.IsFalse(
+            Regex.IsMatch(initialFactionSpawnCell, @"\bstatic\b"),
+            "InitialFactionSpawnCellSystem owns configured spawn-cell lookup as injected state; keep it instance-scoped.");
     }
 
     [Test]
@@ -392,13 +404,8 @@ public sealed class GameplayArchitectureContractTests
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("PerformanceDiagnosticsSystem _performanceDiagnosticsSystem", bootstrap);
         StringAssert.Contains("_performanceDiagnosticsSystem.Initialize", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.BeginUpdate", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.BeginStep", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.EndStep", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.EndUpdate", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.BeginTimedSection", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.EndLateUpdate", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.EndOnGui", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.OnApplicationFocus", bootstrap);
+        StringAssert.Contains("_performanceDiagnosticsSystem.OnApplicationPause", bootstrap);
         StringAssert.Contains("_performanceDiagnosticsSystem.Dispose", bootstrap);
 
         string[] bootstrapDiagnosticDebtTokens =
@@ -428,9 +435,25 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("PerfDiag", diagnostics);
         StringAssert.Contains("ProfilerRecorder", diagnostics);
         StringAssert.Contains("FrameTimingManager", diagnostics);
+        StringAssert.Contains("BeginStep", diagnostics);
+        StringAssert.Contains("EndStep", diagnostics);
         Assert.IsFalse(
             Regex.IsMatch(diagnostics, @"\bstatic\b"),
             "PerformanceDiagnosticsSystem owns mutable recorder and frame state; keep it instance-scoped.");
+    }
+
+    [Test]
+    public void ManagedRuntimeUpdateLoopExtractionMustStayPausedUntilPerformanceContractExists()
+    {
+        const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
+        Assert.IsFalse(File.Exists(runtimeUpdateFile), "Do not restore GameplayRuntimeUpdateSystem until a focused FPS regression contract exists.");
+
+        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        StringAssert.Contains("GameRuntimeStats.RecordMissionElapsed", bootstrap);
+        StringAssert.Contains("_missionStartupSystem.UpdateActiveMission", bootstrap);
+        StringAssert.Contains("_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive", bootstrap);
+        StringAssert.Contains("WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene", bootstrap);
+        StringAssert.Contains("IsGameplayStartComplete", bootstrap);
     }
 
     [Test]

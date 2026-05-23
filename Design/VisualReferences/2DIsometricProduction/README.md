@@ -6,7 +6,7 @@ This folder contains the active 2D-isometric production references for WarlineCa
 
 ## Active Direction
 
-Use large authored 2D isometric terrain macro tiles plus deterministic gameplay metadata.
+Use large authored 2D isometric terrain macro tiles plus repeatable gameplay metadata.
 
 Do not continue the removed tiny road tile, road chunk, generated road overlay, or procedural final-art attempts.
 

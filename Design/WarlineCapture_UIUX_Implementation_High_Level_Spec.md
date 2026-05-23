@@ -173,7 +173,7 @@ Exit criteria:
 
 - App opens to Splash or Main Menu.
 - Main Menu can route to existing gameplay.
-- Back navigation is deterministic.
+- Back navigation is predictable.
 - Modal overlay can block input and close cleanly.
 
 ## Phase 2 - Shared Visual Components
@@ -328,7 +328,7 @@ Initial objectives:
 Exit criteria:
 
 - A match can produce win/loss result data.
-- `POP-05 Mission Result` can show victory/defeat, stats, stars, and rewards.
+- `POP-05 Mission Result` can show victory, partial success, defeat, withdrawal, stats, stars, consequences, routes, and rewards.
 - Reward popup can show placeholder grants without persistence first.
 
 ## Phase 7 - Campaign

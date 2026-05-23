@@ -28,7 +28,7 @@ The shop should support the three-mode product:
 - Operations: OperationSupply drops, armory stock, Black Market rotations, and resource-backed district recovery support.
 - Skirmish: cosmetic themes, map presets, no progression-pressure monetization.
 
-Campaign monetization never sells campaign stars. Chapter reward bundles mean deterministic resource, BlueprintParts, GearModule, Cosmetic, Supplies, or Command bundles tied to chapter progress.
+Campaign monetization never sells campaign stars. Chapter reward bundles mean fixed resource, BlueprintParts, GearModule, Cosmetic, Supplies, or Command bundles tied to chapter progress.
 
 ## Design Principles
 
@@ -39,7 +39,7 @@ Campaign monetization never sells campaign stars. Chapter reward bundles mean de
    Rewards in Mission Briefing, Mission Result, Reward Unlock, Commander Profile, and Operation End-of-Day must remain understandable. Paid grants use the same `RewardConfig` and `RewardService` model planned in gameplay docs.
 
 3. Sell preparation and identity, not hidden odds.
-   Avoid casino-style loot presentation. Supply cases should be deterministic bundles or transparent selection boxes with listed contents.
+   Avoid casino-style loot presentation. Supply cases should be fixed-content bundles or transparent selection boxes with listed contents.
 
 4. Match the visual lock.
    Store UI uses command-base dark black/olive HUD panels, worn metal bevels, olive selected states, amber/gold reward accents, muted blue command-resource accents, Oxanium-like typography, and separate reusable cards/icons.
@@ -56,7 +56,7 @@ Campaign monetization never sells campaign stars. Chapter reward bundles mean de
 | Credits | Main spendable resource for buildings, unit production support, common upgrades | Missions, Operation actions, daily reports | Yes, in capped bundles | Maps to tactical Money where the UI needs a player-facing label. |
 | Materials | Construction and repair economy | Build objectives, Operation repair, chapter rewards | Yes, in capped bundles | Used for base and district recovery, not instant wins. |
 | Fuel | Tactical and strategic mobility resource | Refineries, fuel objectives, Operation logistics, mission rewards | Yes, in capped bundles | Used for deploy costs, vehicle/air support, extraction, and readiness; never injected into an active match. |
-| Command Authority | Premium command resource | Profile level milestones, events, purchases | Yes | Used for cosmetics, deterministic bundles, rush tickets. |
+| Command Authority | Premium command resource | Profile level milestones, events, purchases | Yes | Used for cosmetics, fixed-content bundles, rush tickets. |
 | Intel | Limited tactical intel access | Mission rewards, Operation scans, evidence rewards, star-threshold rewards, store bundles | Limited | Reveals mission intel and evidence details, does not reveal hidden win states. |
 | Rush Tickets | Time/completion accelerators | Events, starter packs, paid bundles | Yes | Only for production queues and Operation timers where design permits. |
 
@@ -73,7 +73,7 @@ Automated balance harness tests, opt-in gameplay/economy probes, and report expe
 | Cosmetic skins | Commander frames, unit card skins, squad banners, base HUD themes | Camouflage that affects readability or combat stats |
 | Operation supplies | Aid drops, Repair Convoys, Intel Dossiers, Readiness Boosts as `OperationSupply` grants | Removing district consequences completely or granting OperationTrust, OperationSecurity, OperationIntel, or OperationInfrastructure directly |
 | Armory bundles | Gear modules, support ability parts, upgrade materials | Selling exclusive combat-only power with no earn path |
-| Season pass | Extra deterministic reward track lane | Random loot, hidden odds, mandatory competitive power |
+| Season pass | Extra fixed reward track lane | Random loot, hidden odds, mandatory competitive power |
 
 ## Store Grant Alignment
 
@@ -142,8 +142,8 @@ Detailed contents are in `WarlineCapture_Monetization_Store_Catalog.md`.
 
 The Commander Profile visual lock already includes `REWARD TRACK / SEASON 7`. This should become a season track with:
 
-- Free lane: Command Authority, Credits, cosmetic badges, deterministic resource bundles, CommanderXP.
-- Premium lane: extra cosmetics, deterministic armory bundles, operation supplies, commander frame.
+- Free lane: Command Authority, Credits, cosmetic badges, fixed resource bundles, CommanderXP.
+- Premium lane: extra cosmetics, fixed armory bundles, operation supplies, commander frame.
 - No hidden random rewards.
 - No paid-only unit that has no gameplay earn path.
 - No direct CampaignStars, OperationTrust, OperationSecurity, OperationIntel, or OperationInfrastructure grants.
@@ -151,7 +151,7 @@ The Commander Profile visual lock already includes `REWARD TRACK / SEASON 7`. Th
 Recommended price anchor:
 
 - Season Pass: `$9.99`
-- Premium + 10 deterministic season claim nodes: `$19.99`
+- Premium + 10 fixed season claim nodes: `$19.99`
 
 ## Pricing Architecture
 
@@ -162,7 +162,7 @@ Use familiar mobile price anchors while keeping the first implementation conserv
 | Entry | `$0.99` to `$1.99` | First purchase, small Command Authority bundles |
 | Starter | `$4.99` | Primary starter pack |
 | Core | `$9.99` | Season pass, strong bundles |
-| Premium | `$19.99` | Operation Founder, pass plus deterministic season claim nodes |
+| Premium | `$19.99` | Operation Founder, pass plus fixed season claim nodes |
 | Whale-safe cap | `$49.99` | Large Command Authority/resource pack with strict purchase and economy caps |
 
 First implementation ships the designed Command Exchange catalog with purchase CTAs in `DesignedUnavailable` state. Release purchase activation requires profile persistence, RewardService, wallet, receipt validation, and platform product ids.
@@ -172,7 +172,7 @@ First implementation ships the designed Command Exchange catalog with purchase C
 ### Phase 1 - Design and Data
 
 - Add this strategy.
-- Add deterministic catalog definitions.
+- Add fixed catalog definitions.
 - Add visual targets and item card art under `Design/Monetization`.
 
 ### Phase 2 - Reward/Progression Foundation

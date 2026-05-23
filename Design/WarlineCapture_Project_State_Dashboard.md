@@ -257,7 +257,7 @@ xychart-beta
 - Every Chapter 1 mission now carries an authored Operation outcome reward: operation supply plus targeted North Bridge, Old Market, or Port Breach metric gains.
 - Operations-launched mission sessions now prioritize Operations reward rows in Mission Briefing and Mission Result, while Campaign-launched sessions keep default reward ordering.
 - ProgressionService now provides the first commander XP table, derived commander level updates, and account combat-stat accumulation from mission results.
-- RewardTrackService now provides deterministic commander-level reward milestones, persisted claimed-node ids, eligibility checks, and first claim grants.
+- RewardTrackService now provides fixed commander-level reward milestones, persisted claimed-node ids, eligibility checks, and first claim grants.
 - MissionHistoryService now archives recent local mission result summaries into saved profile data for the Commander Profile history tab.
 - CommanderProfileScreenController now binds saved profile wallet, level, unlock, win/loss, combat-total, saved recent mission report data, reward-track eligibility, claimable reward-track row buttons with modal detail/claim feedback, local tab content, and a first-claim CTA into SCN-03 Commander Profile.
 

@@ -51,5 +51,5 @@ Use Mastery bands for finale missions and Standard bands for setup missions. Rep
 - Multi-objective HUD remains readable on mobile landscape.
 - Planning previews do not replace combat-scale validation; each objective lane must be playable and readable on the 3D operation map.
 - The final mission does not rely on hidden objectives or hidden score.
-- Rewards use deterministic `RewardConfig` entries.
+- Rewards use fixed `RewardConfig` entries.
 - Campaign completion does not grant store-only power or bypass Operations consequences.

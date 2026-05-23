@@ -1,6 +1,6 @@
 # WarlineCapture Design Index
 
-Date: 2026-05-21
+Date: 2026-05-23
 
 This folder is the source of truth for WarlineCapture product design, gameplay planning, UI/UX implementation, visual targets, audio direction, monetization planning, marketing asset workflow, and the active 3D single-map production direction.
 
@@ -15,6 +15,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Skirmish implementation: `WarlineCapture_Skirmish_Mode_Implementation_Spec.md` is the active contract for the first player-facing Skirmish mode slice, including setup controls, launch flow, presets, result routing, and QuickCustom compatibility rules.
 - Match HUD implementation: `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md` is the active contract for `SCN-08` match buttons, panels, warnings, overlays, command feedback, minimap/camera jumps, build/production drawer, command wheel, pause/result routing, and match acceptance checks.
 - Match selection implementation: `WarlineCapture_Match_Selection_Implementation_Spec.md` is the active contract for unit selection, the `SELECT` HUD button, squad-card selection, drag selection, input suppression, M01 exceptions, and HUD bridge calls.
+- Mission result states: `WarlineCapture_Mission_Result_State_Spec.md` is the active contract for `POP-05` victory, partial success, defeat, withdrawal, operation-resolved states, result data, CTA order, rewards, consequences, and routes.
 - Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
 - FTUE and assistant: `WarlineCapture_FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
 - Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
@@ -46,26 +47,27 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 12. `WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
 13. `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
 14. `WarlineCapture_Match_Selection_Implementation_Spec.md`
-15. `WarlineCapture_M01_FirstContact_Production_Contract.md`
-16. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-17. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-18. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-19. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-20. `WarlineCapture_Agent_Coordination_Workflow.md`
-21. `Architecture/gameplay_solid_ecs_contract.md`
-22. `Architecture/performance_regression_contract.md`
-23. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
-24. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-25. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-26. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
-27. `WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
-28. `WarlineCapture_Economy_Reward_Design.md`
-29. `WarlineCapture_Balancing_Automated_Test_Plan.md`
-30. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-31. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
-32. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
-33. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-34. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
+15. `WarlineCapture_Mission_Result_State_Spec.md`
+16. `WarlineCapture_M01_FirstContact_Production_Contract.md`
+17. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+18. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+19. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+20. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+21. `WarlineCapture_Agent_Coordination_Workflow.md`
+22. `Architecture/gameplay_solid_ecs_contract.md`
+23. `Architecture/performance_regression_contract.md`
+24. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
+25. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+26. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
+27. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+28. `WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
+29. `WarlineCapture_Economy_Reward_Design.md`
+30. `WarlineCapture_Balancing_Automated_Test_Plan.md`
+31. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+32. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
+33. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+34. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+35. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -87,6 +89,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `WarlineCapture_Skirmish_Mode_Implementation_Spec.md` - active implementation contract for Skirmish setup, presets, launch behavior, result routing, prefab-catalog roster use, and QuickCustom compatibility.
 - `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md` - canonical implementation contract for live match HUD controls, panels, warnings, command feedback, world markers, build drawer, command wheel, minimap/camera jumps, assistant hooks, pause/result routing, M01 restrictions, and acceptance tests.
 - `WarlineCapture_Match_Selection_Implementation_Spec.md` - canonical implementation contract for unit selection, the `SELECT` HUD button, squad-card selection, drag selection, disabled states, input suppression, M01 exception behavior, and `BattleHudGameplayBridge` selection calls.
+- `WarlineCapture_Mission_Result_State_Spec.md` - canonical result-state contract for `POP-05`, including victory, partial success, defeat, withdrawal, Operation auto-resolution, result data, route rules, and acceptance tests.
 - `WarlineCapture_M01_FirstContact_Production_Contract.md` - concrete first playable slice contract for M01 First Contact, including map metadata anchors, UI command feedback, FTUE targets, asset manifest, audio/VFX requirements, and validation gates.
 - `WarlineCapture_FTUE_And_Command_Assistant_Design.md` - first-time user experience and reusable ARIA command assistant design, including Chapter 1 tutorial steps, contextual recommendations, safe control takeover, data model, UI surfaces, and validation plan.
 - `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` - implementation contract for `PREFAB-05_AssistantPanel`, M01 ARIA recommendation states, runtime data fields, Show Me / Do It / Stop behavior, player-control cancellation, `BattleHudGameplayBridge` integration, asset-register implications, and acceptance checks.

@@ -79,7 +79,8 @@
   <text x="610" y="776" text-anchor="middle" class="small">Match HUD Spec</text>
   <path class="line" d="M610 798 L610 815"/>
   <rect x="440" y="815" width="340" height="58" rx="6" class="leaf"/>
-  <text x="610" y="851" text-anchor="middle" class="small">Match Selection Spec</text>
+  <text x="610" y="843" text-anchor="middle" class="small">Match Selection Spec</text>
+  <text x="610" y="866" text-anchor="middle" class="tiny">Mission Result State Spec</text>
   <path class="line" d="M610 873 L610 890"/>
   <rect x="440" y="890" width="340" height="58" rx="6" class="leaf"/>
   <text x="610" y="926" text-anchor="middle" class="small">Level &amp; Mission Plan</text>

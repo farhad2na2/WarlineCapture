@@ -12,8 +12,8 @@ If `Design/AgentTasks/art-atlas_current.md` says `Status: held`, stop. Do not sc
 
 - Read `Design/AgentTasks/art-atlas_current.md`.
 - For any target-lock bitmap mockup, VisualLockLayered reference image, contact sheet, or flattened review PNG, use the imagegen skill/workflow as the source of the visual. This is mandatory.
-- Never create target-lock visuals with deterministic local rendering, scripted compositing, manual shape overlays, pixel patching, HTML/CSS screenshots, layout-debug renders, programmatic HUD assembly, or other non-imagegen visual construction. Deterministic tooling may only be used after an imagegen result is selected to package metadata, inspect dimensions, prepare layer manifests, or validate files.
-- If Art/Atlas cannot access or use imagegen for a routed visual target task, stop and write a blocker report. Do not substitute deterministic output.
+- Never create target-lock visuals with local scripted rendering, scripted compositing, manual shape overlays, pixel patching, HTML/CSS screenshots, layout-debug renders, programmatic HUD assembly, or other non-imagegen visual construction. Scripted tooling may only be used after an imagegen result is selected to package metadata, inspect dimensions, prepare layer manifests, or validate files.
+- If Art/Atlas cannot access or use imagegen for a routed visual target task, stop and write a blocker report. Do not substitute local scripted output.
 - Check `Design/AgentReports/` for new Art/Atlas-relevant handoffs or blocker reports.
 - Assess new relevant handoffs as accepted, needs fixes, or blocked.
 - Continue the current Art/Atlas task if actionable.
@@ -25,7 +25,7 @@ If `Design/AgentTasks/art-atlas_current.md` says `Status: held`, stop. Do not sc
 ## Guardrails
 
 - Do not assume a task outside `Design/AgentTasks/art-atlas_current.md`.
-- Imagegen-only rule is permanent for visual target art: no deterministic generated art, no patched local composites, no programmer-looking placeholders, and no assembled mockups presented as final target-lock imagery.
-- Layer manifests, source notes, slicing specs, and metadata can be deterministic documentation, but the visual target bitmap itself must come from imagegen.
+- Imagegen-only rule is permanent for visual target art: no local scripted generated art, no patched local composites, no programmer-looking placeholders, and no assembled mockups presented as final target-lock imagery.
+- Layer manifests, source notes, slicing specs, and metadata can be structured documentation, but the visual target bitmap itself must come from imagegen.
 - Do not modify source docs or other lane task files unless explicitly asked.
 - Do not run `git add`, `git commit`, or `git push` unless PM/user explicitly assigns that git operation to Art/Atlas for a named file set.

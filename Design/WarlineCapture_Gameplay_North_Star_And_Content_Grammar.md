@@ -178,8 +178,8 @@ Avoid exposing every resource and reward type in Chapter 1.
 | Chapter 1 onboarding | CommanderXP, Credits, Materials, Fuel, first UnitUnlock or BuildingUnlock. |
 | Chapter 1 late | Intel, SupportAbilityUnlock, BlueprintParts. |
 | Operation intro | OperationTrust, OperationSecurity, OperationIntel, OperationInfrastructure, OperationSupply. |
-| Profile/store layer | Command Authority, Rush Tickets, Cosmetics, deterministic bundles. |
-| Season/events | Extra deterministic claim nodes, event cosmetics, capped bundles. |
+| Profile/store layer | Command Authority, Rush Tickets, Cosmetics, fixed-content bundles. |
+| Season/events | Extra fixed claim nodes, event cosmetics, capped bundles. |
 
 ## Chapter 1 Teaching Arc
 

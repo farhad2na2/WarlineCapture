@@ -249,7 +249,7 @@ Operations unlock catalog access through district state, outpost tier, armory ti
 
 - `UnitUnlock`, `BuildingUnlock`, `SupportAbilityUnlock`, `GearModule`, and `BlueprintParts` target ids must exist in the balance config.
 - Duplicate unlocks convert through explicit item-specific `BlueprintParts` rules from `WarlineCapture_Economy_Reward_Design.md`.
-- Store items may grant resources, parts, cosmetics, support supplies, or deterministic unlocks only when those items have a non-paid earn path.
+- Store items may grant resources, parts, cosmetics, support supplies, or fixed unlocks only when those items have a non-paid earn path.
 - Store purchases cannot grant direct Operation metrics, Campaign stars, hidden objective completion, active-match combat cooldown removal, or direct tier application.
 
 ## Visual Rules

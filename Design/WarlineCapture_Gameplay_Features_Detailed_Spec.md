@@ -38,7 +38,7 @@ Every implemented visible UI element must also satisfy `Design/WarlineCapture_UI
 - Planning, briefing, minimap, deployment, threat, and battle views are camera/UI states over one `OperationMapDefinition`; they are not separate map products.
 - Runtime gameplay should consume the existing simulation systems first, then let the active battlefield presentation resolve those IDs to 3D operation-map scenes, metadata, entity presentation, markers, and camera states.
 - Spawn positions, objective target areas, command ranges, camera defaults, minimap scale, civilian-risk areas, and enemy wave paths must be validated for 3D mobile readability.
-- Manual art validation belongs to the 3D operation-map validation path and prefab-catalog presentation work. Normal gameplay tests should validate data contracts and deterministic behavior, not final art quality.
+- Manual art validation belongs to the 3D operation-map validation path and prefab-catalog presentation work. Normal gameplay tests should validate data contracts and repeatable behavior, not final art quality.
 
 ## 3D Operation-Map Metadata Rules
 
@@ -638,8 +638,8 @@ Current implementation note:
 
 Current progression implementation note:
 
-- `ProgressionService` provides the first deterministic commander XP table from level 1-10, derives commander level from total XP, preserves a higher saved level if present, and accumulates account result stats from `MissionResultData`.
-- `RewardTrackService` provides the first deterministic commander-level reward track, including milestone eligibility, persisted claimed-node ids, duplicate/locked claim protection, and grants for credits, materials, rush tickets, command authority, and cosmetics.
+- `ProgressionService` provides the first fixed commander XP table from level 1-10, derives commander level from total XP, preserves a higher saved level if present, and accumulates account result stats from `MissionResultData`.
+- `RewardTrackService` provides the first fixed commander-level reward track, including milestone eligibility, persisted claimed-node ids, duplicate/locked claim protection, and grants for credits, materials, rush tickets, command authority, and cosmetics.
 - `MissionHistoryService` archives recent local mission results into saved profile data, ordered newest-first and capped for a lightweight Profile History surface.
 - `CommanderProfileScreenController` binds saved profile state into `SCN-03 Commander Profile`, including wallet counters, commander level/XP progress, unlock counts, win/loss history, account combat totals, saved recent mission report data, reward-track eligibility, claimable reward-track row buttons with modal detail/claim feedback, local tab content, and a first-claim CTA.
 
@@ -1178,7 +1178,7 @@ Example match length classification:
 
 ### Initial Probe Scenarios
 
-Create deterministic named probes:
+Create repeatable named probes:
 
 - `QuickCustom_Default_Medium`
 - `QuickCustom_Hard_Swarm`
@@ -1223,7 +1223,7 @@ The runner should make it obvious that it is optional tuning tooling, not build 
 
 Keep one tiny normal validation test only if needed:
 
-- The balance harness can instantiate a minimal deterministic scenario.
+- The balance harness can instantiate a minimal fixed-seed scenario.
 - The test does not judge balance quality.
 - The test does not run long simulations.
 

@@ -44,7 +44,7 @@ Existing runtime/helper files:
 |---|---|
 | `Assets/Game/Scripts/Balance/BalanceMetrics.cs` | Serializable metrics payload for Quick Custom balance reports. |
 | `Assets/Game/Scripts/Balance/BalanceMetricSample.cs` | Lightweight sampled runtime-counter payload used by opt-in probes until full simulation metrics replace it. |
-| `Assets/Game/Scripts/Balance/BalanceProbeDefinition.cs` | Shared probe metadata/config/sample definition used by multiple deterministic probe scenarios. |
+| `Assets/Game/Scripts/Balance/BalanceProbeDefinition.cs` | Shared probe metadata/config/sample definition used by multiple fixed-seed probe scenarios. |
 | `Assets/Game/Scripts/Balance/BalanceOutcomeClassifier.cs` | Classifies report outcomes as `Good`, `Watch`, `Problem`, or `InvalidRun`. |
 | `Assets/Game/Scripts/Balance/BalanceReportWriter.cs` | Writes JSON and Markdown reports outside `Assets`, currently under `Library/WarlineCaptureBalanceReports`. |
 | `Assets/Tests/Editor/Balance/QuickCustomBalanceProbe.cs` | Opt-in report-producing Quick Custom probes, currently `QuickCustom_Default_Medium` and `QuickCustom_Hard_Swarm`. |
@@ -204,4 +204,4 @@ Library/WarlineCaptureBalanceReports
 - Opt-in probes write JSON and Markdown reports outside `Assets`.
 - Balance classifications appear in reports but do not fail tests by themselves.
 - Store, reward, and economy data tests use the canonical resource/reward vocabulary from `WarlineCapture_Economy_Reward_Design.md`.
-- New probes are deterministic by default through fixed seeds.
+- New probes use fixed seeds by default.

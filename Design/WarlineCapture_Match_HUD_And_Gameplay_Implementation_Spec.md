@@ -33,7 +33,7 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 2. Canvas UI may request actions, but gameplay systems own gameplay state.
 3. Gameplay systems must update the HUD through typed bridge/controller calls, not by writing directly to child object paths.
 4. UI clicks must never leak into world clicks.
-5. Disabled visible buttons must not mutate state and must expose a deterministic disabled reason when the player can interact with them.
+5. Disabled visible buttons must not mutate state and must expose a explicit disabled reason when the player can interact with them.
 6. Match HUD art must be separated into background/chrome, icons, text, fills, meters, and markers. No gameplay text, progress, lock icon, star, health bar, or state icon may be baked into static panel art.
 7. Production match presentation is full 3D single-map RTS. Do not add 2.5D/isometric-only assumptions to match behavior.
 
@@ -132,7 +132,7 @@ Canonical current card ids:
 |---|---|---|---|---|---|---|
 | `SquadTray/Squad_Rifle` | Primary infantry squad slot. | Rifle Squad / command squad. | Select squad; second tap may focus camera. | Baseline command group for M01 and early missions. | Enabled when at least one alive/controllable infantry squad exists. | Disabled/hidden if no infantry squad is deployed; in M01 this is the only enabled card. |
 | `SquadTray/Squad_APC` | Transport / light vehicle slot. | APC or troop carrier. | Select vehicle; second tap may focus camera; command wheel can expose load/unload. | Teaches mixed infantry/vehicle command and transport state. | Enabled when deployed vehicle is controllable and alive. | Disabled with reason such as `NotDeployed`, `Locked`, `Destroyed`, or `MissionUnavailable`. |
-| `SquadTray/Squad_Tank` | Armor / heavy vehicle slot. | Tank or heavy armor group. | Select armor group; second tap may focus camera. | Gives fast access to high-value combat unit in larger battles. | Enabled when deployed armor is controllable and alive. | Disabled with deterministic reason; do not show as a fake usable button. |
+| `SquadTray/Squad_Tank` | Armor / heavy vehicle slot. | Tank or heavy armor group. | Select armor group; second tap may focus camera. | Gives fast access to high-value combat unit in larger battles. | Enabled when deployed armor is controllable and alive. | Disabled with explicit reason; do not show as a fake usable button. |
 | `SquadTray/Squad_Helicopter` | Air/support slot. | Helicopter / air support group. | Select air/support unit; command wheel can expose transport, extract, or support commands. | Keeps air/rapid-response units accessible on large 3D maps. | Enabled when deployed air/support unit is controllable and mission allows it. | Disabled in M01 and missions without air/support; show lock/unavailable state if visible. |
 
 Population rules:
@@ -245,7 +245,7 @@ Build placement mode must clear command targeting, block selection/move/attack w
 | Attack segment | Start attack targeting. | combat capability. | Same as `ATTACK`. | Disabled with reason if no attack. |
 | Stop/Hold segment | Stop or hold. | command capability/order state. | Same as command bar. | Immediate command or reject. |
 | Extract / Load / Unload / Rope Drop | Transport actions. | transport/boarding state. | Start typed transport command. | Disabled unless transport conditions valid. |
-| Patrol / Breach / Special segments | Advanced context actions. | ability/skill availability. | Start typed command/targeting. | Disabled with deterministic reason. |
+| Patrol / Breach / Special segments | Advanced context actions. | ability/skill availability. | Start typed command/targeting. | Disabled with explicit reason. |
 | Close button | Close wheel. | Wheel state. | Return to HUD. | Does not clear selection. |
 
 Wheel segments and command-bar buttons must share the same capability/reason-code model.
@@ -290,11 +290,11 @@ Warning severity:
 | Route | Trigger | Owns Simulation? | Required Buttons |
 |---|---|---|---|
 | `POP-07 Pause / Options` | Pause button, platform back/menu. | Pauses match until resume/route. | Resume, Restart if supported, Settings, Abandon/Exit with confirmation. |
-| `POP-05 Mission Result` | Victory/defeat/abort result flow. | Match ended or frozen. | Continue, Replay if supported, reward/stat rows. |
+| `POP-05 Mission Result` | Victory, partial success, defeat, withdrawal, or operation-resolved result flow. | Match ended or frozen. | Continue/retry/return route, Replay if supported, reward/stat rows. |
 | Settings from pause | Pause menu action. | Simulation remains paused. | Back returns to pause, not directly to live match unless explicitly resumed. |
 | Abandon/Exit | Pause menu action. | Ends or leaves match after confirmation. | Confirmation required if progress can be lost. |
 
-Result popup must show objective outcome, stars, combat stats, civilian/district consequence, rewards, and next route. It must not show fake rewards or baked values; all reward rows bind to result/reward services.
+Result popup must follow `Design/WarlineCapture_Mission_Result_State_Spec.md`. It must show objective outcome, failure/success reason, stars, combat stats, civilian/district consequence, rewards, and next route. It must not show fake rewards or baked values; all reward rows bind to result/reward services.
 
 ## Assistant And FTUE Match Rules
 

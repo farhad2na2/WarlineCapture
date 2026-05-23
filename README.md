@@ -81,6 +81,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
     - [Skirmish Mode Implementation Spec](Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md)
     - [Match HUD And Gameplay Implementation Spec](Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md)
     - [Match Selection Implementation Spec](Design/WarlineCapture_Match_Selection_Implementation_Spec.md)
+    - [Mission Result State Spec](Design/WarlineCapture_Mission_Result_State_Spec.md)
     - [Level And Mission Content Plan](Design/WarlineCapture_Level_And_Mission_Content_Plan.md)
       - [Chapter 1: First Response](Design/SagaChapters/WarlineCapture_Saga_Chapter01_First_Response.md)
       - [Chapter 2: Broken Grid](Design/SagaChapters/WarlineCapture_Saga_Chapter02_Broken_Grid.md)

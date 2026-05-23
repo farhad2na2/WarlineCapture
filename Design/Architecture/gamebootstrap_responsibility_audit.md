@@ -161,11 +161,10 @@ Focused validation:
 
 Migrated owner:
 - `MissionStartupSystem`
-
-Current bootstrap debt:
-- `TryGetConfiguredFactionSpawnCell`
+- `InitialFactionSpawnCellSystem`
 
 Former bootstrap debt:
+- `TryGetConfiguredFactionSpawnCell`
 - `M01PlayableStartOrthographicSize`
 - `M01PlayableCameraHeight`
 - `FocusCameraOnConfiguredFactionBase`
@@ -181,6 +180,7 @@ Former bootstrap debt:
 Target owner:
 - `RtsCameraSystem`
 - `MissionCameraSystem`
+- `InitialFactionSpawnCellSystem` for configured faction spawn-cell lookup until spawn config is fully ECS-authored.
 - `RuntimeCameraFocusRequestComponent`
 - Mission camera config data
 
@@ -192,7 +192,8 @@ Migration order:
 1. Done: move M01 camera constants into `MissionStartupSystem` as interim mission camera policy.
 2. Done: move M01 frame anchor calculation into `MissionStartupSystem` as interim mission camera policy.
 3. Done: move fallback faction-base focus behind `MissionStartupSystem` with a bootstrap-provided spawn resolver.
-4. Remove direct camera transform writes from bootstrap.
+4. Done: move configured faction spawn-cell lookup out of `GameBootstrap` into `InitialFactionSpawnCellSystem`.
+5. Remove direct camera transform writes from bootstrap.
 
 Focused validation:
 - Existing camera/runtime-state tests.
@@ -200,11 +201,13 @@ Focused validation:
 
 ### Gameplay Feature Runtime Updates
 
-Current bootstrap debt:
+Current owner:
+- `GameBootstrap` legacy runtime loop, retained after the `GameplayRuntimeUpdateSystem` extraction regressed runtime FPS.
+
+Former bootstrap debt:
 - `Update` calls runtime systems manually.
 - `LateUpdate` calls attack traces and impostors.
 - `OnGUI` calls road build and selection GUI.
-- `EnsureGameplaySystemsInitialized`
 - `IsGameplayStartComplete`
 
 Target owner:
@@ -217,8 +220,8 @@ Target behavior:
 - Temporary managed systems should be grouped behind a composed shell feature until they are ECS-owned.
 
 Migration order:
-1. Group temporary managed update calls behind a feature runtime shell.
-2. Move gameplay-complete readiness into ECS startup/readiness components.
+1. Paused: do not re-extract the managed runtime loop through a managed wrapper without a focused FPS regression capture/contract.
+2. Move `EnsureGameplaySystemsInitialized` into a feature installer only if the change does not alter per-frame runtime behavior.
 3. Continue moving managed runtime systems into ECS domain systems by existing domain migrations.
 
 Focused validation:

@@ -23,7 +23,7 @@ Do not continue:
 - stale 2D M01 V32 soldier/package revisions;
 - stale 2D target-lock mockup production;
 - stale UI sprite/slice production;
-- old deterministic/imagegen correction loops;
+- old local-render/imagegen correction loops;
 - any Art/Atlas work inferred only from `Design/AgentReports/` history.
 
 ## Continue Behavior

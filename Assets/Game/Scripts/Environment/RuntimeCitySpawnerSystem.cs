@@ -101,7 +101,8 @@ public sealed class RuntimeCitySpawnerSystem
     private GameObject houseWallGatePrefab;
     private GameObject houseWallPillarPrefab;
 
-    private BuildingPlacementSystem _buildingPlacementController;
+    private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem;
+    private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
     private RoadBuildSystem _roadBuildController;
     private MainMenuPlayUI _mainMenuPlayUi;
     private Transform _cityVisualRoot;
@@ -126,19 +127,30 @@ public sealed class RuntimeCitySpawnerSystem
     private static readonly Vector2Int West = new(-1, 0);
     private static readonly Vector2Int[] CardinalDirections = { North, East, South, West };
 
-    public void Init(
+    internal void Init(
         RuntimeCitySpawnerSystemConfig configAsset,
         RoadBuildSystem roadBuildController,
-        BuildingPlacementSystem buildingPlacementController,
+        BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
+        BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         Transform runtimeRoot,
         MainMenuPlayUI mainMenuPlayUi = null)
     {
         config = configAsset;
         _roadBuildController = roadBuildController;
-        _buildingPlacementController = buildingPlacementController;
+        _buildingRuntimeCitySpawnSystem = buildingRuntimeCitySpawnSystem;
+        _buildingRuntimeCitySpawnContext = buildingRuntimeCitySpawnContext;
         _runtimeRoot = runtimeRoot;
         _mainMenuPlayUi = mainMenuPlayUi;
         ApplyConfigIfAvailable();
+    }
+
+    public void InitForRoadOnly(
+        RuntimeCitySpawnerSystemConfig configAsset,
+        RoadBuildSystem roadBuildController,
+        Transform runtimeRoot,
+        MainMenuPlayUI mainMenuPlayUi = null)
+    {
+        Init(configAsset, roadBuildController, null, default, runtimeRoot, mainMenuPlayUi);
     }
 
     private bool ShouldYield(int completedWorkItems)
@@ -176,6 +188,40 @@ public sealed class RuntimeCitySpawnerSystem
         _generationRoutine = null;
         _cityVisualRoot = null;
         _runtimeRoot = null;
+    }
+
+    private bool TrySpawnCityBuilding(
+        GameObject prefab,
+        Vector2Int preferredOrigin,
+        out int buildingId,
+        out Vector2Int actualOrigin,
+        out Vector2Int actualFootprint,
+        string fallbackDisplayName,
+        string fallbackDescription,
+        Vector2Int? fallbackFootprint,
+        int fallbackMaxHealth)
+    {
+        buildingId = 0;
+        actualOrigin = default;
+        actualFootprint = default;
+        return _buildingRuntimeCitySpawnSystem != null &&
+            _buildingRuntimeCitySpawnSystem.TrySpawnRuntimeBuilding(
+                _buildingRuntimeCitySpawnContext,
+                prefab,
+                preferredOrigin,
+                out buildingId,
+                out actualOrigin,
+                out actualFootprint,
+                fallbackDisplayName,
+                fallbackDescription,
+                fallbackFootprint,
+                fallbackMaxHealth);
+    }
+
+    private bool DeleteCityBuilding(int buildingId)
+    {
+        return _buildingRuntimeCitySpawnSystem != null &&
+            _buildingRuntimeCitySpawnSystem.DeleteBuildingById(_buildingRuntimeCitySpawnContext, buildingId);
     }
 
     public bool IsConfiguredHousePrefab(GameObject prefab)
@@ -276,7 +322,7 @@ public sealed class RuntimeCitySpawnerSystem
 
         if (_roadBuildController == null)
             return;
-        if (generateBuildings && _buildingPlacementController == null)
+        if (generateBuildings && _buildingRuntimeCitySpawnSystem == null)
             return;
         if (!_roadBuildController.TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells))
             return;
@@ -361,7 +407,7 @@ public sealed class RuntimeCitySpawnerSystem
 
         if (_roadBuildController == null)
             return;
-        if (generateBuildings && _buildingPlacementController == null)
+        if (generateBuildings && _buildingRuntimeCitySpawnSystem == null)
             return;
         if (!_roadBuildController.TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells))
             return;
@@ -409,7 +455,7 @@ public sealed class RuntimeCitySpawnerSystem
         var occupiedRoadCells = new HashSet<Vector2Int>();
         _roadBuildController?.BeginDeferredRoadEcsSync();
         if (generateBuildings)
-            _buildingPlacementController?.BeginDeferredRuntimeBuildingSideEffects();
+            _buildingRuntimeCitySpawnSystem?.BeginDeferredSideEffects(_buildingRuntimeCitySpawnContext);
 
         try
         {
@@ -549,7 +595,7 @@ public sealed class RuntimeCitySpawnerSystem
             }
 
             if (generateBuildings)
-                _buildingPlacementController?.EndDeferredRuntimeBuildingSideEffects();
+                _buildingRuntimeCitySpawnSystem?.EndDeferredSideEffects(_buildingRuntimeCitySpawnContext);
 
             _mainMenuPlayUi?.NotifyStaticMinimapChanged();
             _spawned = true;
@@ -560,7 +606,7 @@ public sealed class RuntimeCitySpawnerSystem
         finally
         {
             if (generateBuildings)
-                _buildingPlacementController?.EndDeferredRuntimeBuildingSideEffects();
+                _buildingRuntimeCitySpawnSystem?.EndDeferredSideEffects(_buildingRuntimeCitySpawnContext);
             _roadBuildController?.EndDeferredRoadEcsSync();
         }
     }
@@ -1370,7 +1416,7 @@ public sealed class RuntimeCitySpawnerSystem
                 if (WouldBeTooCloseToReserved(hallOrigin, footprint, reservedFootprints, landmarkClearanceCells))
                     continue;
 
-                if (!_buildingPlacementController.TrySpawnRuntimeBuilding(
+                if (!TrySpawnCityBuilding(
                         hallPrefab,
                         hallOrigin,
                         out int buildingId,
@@ -1379,15 +1425,14 @@ public sealed class RuntimeCitySpawnerSystem
                         hallPrefab.name,
                         "Old town civic center.",
                         footprint,
-                        defaultBuildingMaxHealth,
-                        true))
+                        defaultBuildingMaxHealth))
                 {
                     continue;
                 }
 
                 if (WouldBeTooCloseToReserved(actualHallOrigin, actualHallFootprint, reservedFootprints, landmarkClearanceCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
@@ -1432,7 +1477,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, landmarkClearanceCells))
                 continue;
 
-            if (_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (TrySpawnCityBuilding(
                     clockTowerPrefab,
                     preferredOrigin,
                     out int buildingId,
@@ -1441,18 +1486,17 @@ public sealed class RuntimeCitySpawnerSystem
                     "Clock Tower",
                     "Clock tower at the heart of the old town.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 if (DoesRectOverlapRoadCells(new RectInt(actualOrigin, actualFootprint), roadCellSizeInGridCells, roadCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
                 if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, landmarkClearanceCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
@@ -1496,7 +1540,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, landmarkClearanceCells))
                 continue;
 
-            if (_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (TrySpawnCityBuilding(
                     fountainPrefab,
                     preferredOrigin,
                     out int buildingId,
@@ -1505,18 +1549,17 @@ public sealed class RuntimeCitySpawnerSystem
                     "Fountain",
                     "Town fountain near the center square.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 if (DoesRectOverlapRoadCells(new RectInt(actualOrigin, actualFootprint), roadCellSizeInGridCells, roadCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
                 if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, landmarkClearanceCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
@@ -1560,7 +1603,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, landmarkClearanceCells))
                 continue;
 
-            if (_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (TrySpawnCityBuilding(
                     monumentPrefab,
                     preferredOrigin,
                     out int buildingId,
@@ -1569,18 +1612,17 @@ public sealed class RuntimeCitySpawnerSystem
                     "Monument",
                     "Town monument near the center square.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 if (DoesRectOverlapRoadCells(new RectInt(actualOrigin, actualFootprint), roadCellSizeInGridCells, roadCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
                 if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, landmarkClearanceCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
@@ -1624,7 +1666,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, landmarkClearanceCells))
                 continue;
 
-            if (_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (TrySpawnCityBuilding(
                     pillarPrefab,
                     preferredOrigin,
                     out int buildingId,
@@ -1633,18 +1675,17 @@ public sealed class RuntimeCitySpawnerSystem
                     "Pillar",
                     "Stone pillar near the center district.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 if (DoesRectOverlapRoadCells(new RectInt(actualOrigin, actualFootprint), roadCellSizeInGridCells, roadCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
                 if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, landmarkClearanceCells))
                 {
-                    _buildingPlacementController.DeleteBuildingById(buildingId);
+                    DeleteCityBuilding(buildingId);
                     continue;
                 }
 
@@ -1896,7 +1937,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, 0))
                 continue;
 
-            if (!_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (!TrySpawnCityBuilding(
                     prefab,
                     preferredOrigin,
                     out int buildingId,
@@ -1905,13 +1946,12 @@ public sealed class RuntimeCitySpawnerSystem
                     fallbackDisplayName,
                     fallbackDescription,
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
                 continue;
 
             if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, 0))
             {
-                _buildingPlacementController.DeleteBuildingById(buildingId);
+                DeleteCityBuilding(buildingId);
                 continue;
             }
 
@@ -1966,7 +2006,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, 0))
                 continue;
 
-            if (!_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (!TrySpawnCityBuilding(
                     prefab,
                     preferredOrigin,
                     out int buildingId,
@@ -1975,15 +2015,14 @@ public sealed class RuntimeCitySpawnerSystem
                     "House",
                     "Rural old town house.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 continue;
             }
 
             if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, 0))
             {
-                _buildingPlacementController.DeleteBuildingById(buildingId);
+                DeleteCityBuilding(buildingId);
                 continue;
             }
 
@@ -2339,7 +2378,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, 0))
                 continue;
 
-            if (!_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (!TrySpawnCityBuilding(
                     prefab,
                     preferredOrigin,
                     out int buildingId,
@@ -2348,15 +2387,14 @@ public sealed class RuntimeCitySpawnerSystem
                     "City Decoration",
                     "Decorative old-town structure.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 continue;
             }
 
             if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, 0))
             {
-                _buildingPlacementController.DeleteBuildingById(buildingId);
+                DeleteCityBuilding(buildingId);
                 continue;
             }
 
@@ -2406,7 +2444,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, 0))
                 continue;
 
-            if (!_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (!TrySpawnCityBuilding(
                     prefab,
                     preferredOrigin,
                     out int buildingId,
@@ -2415,15 +2453,14 @@ public sealed class RuntimeCitySpawnerSystem
                     "Archway",
                     "Decorative archway near the town center.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 continue;
             }
 
             if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, 0))
             {
-                _buildingPlacementController.DeleteBuildingById(buildingId);
+                DeleteCityBuilding(buildingId);
                 continue;
             }
 
@@ -2487,7 +2524,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(preferredOrigin, footprint, reservedFootprints, 0))
                 continue;
 
-            if (!_buildingPlacementController.TrySpawnRuntimeBuilding(
+            if (!TrySpawnCityBuilding(
                     prefab,
                     preferredOrigin,
                     out int buildingId,
@@ -2496,8 +2533,7 @@ public sealed class RuntimeCitySpawnerSystem
                     "City Decoration",
                     "Decorative structure beside a town building.",
                     footprint,
-                    defaultBuildingMaxHealth,
-                    true))
+                    defaultBuildingMaxHealth))
             {
                 continue;
             }
@@ -2505,7 +2541,7 @@ public sealed class RuntimeCitySpawnerSystem
             if (WouldBeTooCloseToReserved(actualOrigin, actualFootprint, reservedFootprints, 0) ||
                 !TouchesRect(new RectInt(actualOrigin, actualFootprint), anchorRect))
             {
-                _buildingPlacementController.DeleteBuildingById(buildingId);
+                DeleteCityBuilding(buildingId);
                 continue;
             }
 

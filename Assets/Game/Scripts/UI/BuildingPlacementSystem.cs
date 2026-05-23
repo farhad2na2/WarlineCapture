@@ -196,6 +196,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementGridSystem _buildingPlacementGridSystem = new();
     private readonly BuildingPlacementVisualSystem _buildingPlacementVisualSystem = new();
     private readonly BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem = new();
+    private readonly BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem = new();
     private readonly BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem = new();
     private readonly BuildingRuntimeEntitySystem _buildingRuntimeEntitySystem = new();
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
@@ -245,6 +246,7 @@ public sealed class BuildingPlacementSystem
     public bool HasSelectedBuilding => _runtimeBuildingSystem.HasSelectedBuilding();
     public bool HasActiveBuilding => ActiveBuildingId.HasValue;
     public int? CurrentActiveBuildingId => ActiveBuildingId;
+    internal BuildingRuntimeCitySpawnSystem RuntimeCitySpawnSystem => _buildingRuntimeCitySpawnSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -2567,6 +2569,15 @@ public sealed class BuildingPlacementSystem
             PositionBuildingObject,
             RegisterRuntimeBuilding,
             SetRuntimeBuildingOwnerFaction);
+    }
+
+    internal BuildingRuntimeCitySpawnSystem.Context CreateRuntimeCitySpawnContext()
+    {
+        return new BuildingRuntimeCitySpawnSystem.Context(
+            CreateBuildingRuntimeSpawnContext(),
+            DeleteBuildingById,
+            BeginDeferredRuntimeBuildingSideEffects,
+            EndDeferredRuntimeBuildingSideEffects);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

@@ -136,6 +136,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime building blocker entity creation, runtime building combat entity creation, path-blocking policy for runtime buildings, and runtime building combat component setup belong in `BuildingRuntimeEntitySystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
+        StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
@@ -1471,14 +1472,16 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void RuntimeCitySpawnerSystemMustNotReachThroughBuildingPlacementSingleton()
+    public void RuntimeCitySpawnerSystemMustUseRuntimeCitySpawnBoundary()
     {
         const string file = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
         string text = File.ReadAllText(file);
 
+        StringAssert.Contains("BuildingRuntimeCitySpawnSystem", text);
         Assert.IsFalse(
-            text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
-            "RuntimeCitySpawnerSystem must use the BuildingPlacementSystem supplied by bootstrap composition instead of BuildingPlacementSystem.Instance.");
+            text.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            text.Contains("_buildingPlacement", StringComparison.Ordinal),
+            "RuntimeCitySpawnerSystem must use the building runtime city-spawn boundary instead of the BuildingPlacementSystem facade.");
     }
 
     [Test]

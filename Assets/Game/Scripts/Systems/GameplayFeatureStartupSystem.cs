@@ -36,7 +36,13 @@ public sealed class GameplayFeatureStartupSystem
         GameplaySceneBindingSystem sceneBindingSystem)
     {
         var runtimeCitySpawner = new RuntimeCitySpawnerSystem();
-        runtimeCitySpawner.Init(runtimeCitySpawnerConfig, roadBuild, buildingPlacement, runtimeCityRoot, mainMenu);
+        runtimeCitySpawner.Init(
+            runtimeCitySpawnerConfig,
+            roadBuild,
+            buildingPlacement?.RuntimeCitySpawnSystem,
+            buildingPlacement != null ? buildingPlacement.CreateRuntimeCitySpawnContext() : default,
+            runtimeCityRoot,
+            mainMenu);
 
         var runtimeGridBlockers = new RuntimeGridBlockerSystem();
         runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCitySpawner);

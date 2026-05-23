@@ -198,7 +198,7 @@ public sealed class Chapter01TacticalRuntimeBindingTests
                 roads[i] = new GridRoad { Value = (byte)(i % 2) };
 
             RuntimeCitySpawnerSystem spawner = new();
-            spawner.Init(null, null, null, runtimeRoot.transform);
+            spawner.InitForRoadOnly(null, null, runtimeRoot.transform);
             spawner.Update();
 
             Assert.IsTrue(spawner.HasSpawned, "M01 fixed tactical missions should bypass random city generation and unblock gameplay startup.");

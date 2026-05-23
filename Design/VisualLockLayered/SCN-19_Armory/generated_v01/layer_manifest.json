@@ -1,0 +1,1352 @@
+{
+  "surface_id": "SCN-19_Armory",
+  "workflow": "VisualLockLayered V15 3D Green-Source Extraction",
+  "target_reference": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/reference/SCN-19_Armory_Landscape_Target.png",
+  "rule": "Generated implementation sources only. The target-lock mockup was not sliced for layers.",
+  "sources": [
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Background_21x9_NoUI.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+    "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png"
+  ],
+  "layers": [
+    {
+      "id": "scn19_background_21x9_no_ui",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_background_21x9_no_ui.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Background_21x9_NoUI.png",
+      "source_box": null,
+      "size": {
+        "width": 1915,
+        "height": 821
+      },
+      "role": "Background",
+      "unityDestination": "Background",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_header_logo_panel_bg",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_header_logo_panel_bg.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        34,
+        35,
+        548,
+        126
+      ],
+      "size": {
+        "width": 514,
+        "height": 91
+      },
+      "role": "Header/LogoPanel",
+      "unityDestination": "Header/LogoPanel",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_header_resource_panel_bg",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_header_resource_panel_bg.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        570,
+        37,
+        1054,
+        123
+      ],
+      "size": {
+        "width": 484,
+        "height": 86
+      },
+      "role": "Header/ResourcePanel",
+      "unityDestination": "Header/ResourcePanel",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_header_right_actions_bg",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_header_right_actions_bg.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        1088,
+        37,
+        1502,
+        122
+      ],
+      "size": {
+        "width": 414,
+        "height": 85
+      },
+      "role": "Header/RightActions",
+      "unityDestination": "Header/RightActions",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_title_back_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_title_back_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        36,
+        152,
+        412,
+        238
+      ],
+      "size": {
+        "width": 376,
+        "height": 86
+      },
+      "role": "Header/TitleBackPanel",
+      "unityDestination": "Header/TitleBackPanel",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_category_button_selected_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_category_button_selected_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        445,
+        157,
+        736,
+        232
+      ],
+      "size": {
+        "width": 291,
+        "height": 75
+      },
+      "role": "CategoryRail/SelectedButton",
+      "unityDestination": "CategoryRail/SelectedButton",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_category_button_default_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_category_button_default_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        770,
+        157,
+        1077,
+        232
+      ],
+      "size": {
+        "width": 307,
+        "height": 75
+      },
+      "role": "CategoryRail/DefaultButton",
+      "unityDestination": "CategoryRail/DefaultButton",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_dropdown_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_dropdown_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        1155,
+        157,
+        1402,
+        232
+      ],
+      "size": {
+        "width": 247,
+        "height": 75
+      },
+      "role": "Roster/DropdownFrame",
+      "unityDestination": "Roster/DropdownFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_roster_card_selected_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_roster_card_selected_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        47,
+        272,
+        338,
+        686
+      ],
+      "size": {
+        "width": 291,
+        "height": 414
+      },
+      "role": "Roster/CardSelectedFrame",
+      "unityDestination": "Roster/CardSelectedFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_roster_card_default_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_roster_card_default_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        382,
+        272,
+        670,
+        686
+      ],
+      "size": {
+        "width": 288,
+        "height": 414
+      },
+      "role": "Roster/CardDefaultFrame",
+      "unityDestination": "Roster/CardDefaultFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_roster_card_locked_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_roster_card_locked_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        712,
+        272,
+        996,
+        686
+      ],
+      "size": {
+        "width": 284,
+        "height": 414
+      },
+      "role": "Roster/CardLockedFrame",
+      "unityDestination": "Roster/CardLockedFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_inspection_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_inspection_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        1040,
+        256,
+        1483,
+        820
+      ],
+      "size": {
+        "width": 443,
+        "height": 564
+      },
+      "role": "Inspection/PanelFrame",
+      "unityDestination": "Inspection/PanelFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_bottom_tab_selected_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_bottom_tab_selected_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        43,
+        725,
+        222,
+        802
+      ],
+      "size": {
+        "width": 179,
+        "height": 77
+      },
+      "role": "BottomTabs/SelectedFrame",
+      "unityDestination": "BottomTabs/SelectedFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_bottom_tab_default_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_bottom_tab_default_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        249,
+        725,
+        423,
+        802
+      ],
+      "size": {
+        "width": 174,
+        "height": 77
+      },
+      "role": "BottomTabs/DefaultFrame",
+      "unityDestination": "BottomTabs/DefaultFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_cta_primary_gold_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_cta_primary_gold_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        454,
+        725,
+        626,
+        802
+      ],
+      "size": {
+        "width": 172,
+        "height": 77
+      },
+      "role": "Inspection/PrimaryCTAFrame",
+      "unityDestination": "Inspection/PrimaryCTAFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_cta_secondary_dark_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_cta_secondary_dark_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        654,
+        725,
+        812,
+        802
+      ],
+      "size": {
+        "width": 158,
+        "height": 77
+      },
+      "role": "Inspection/SecondaryCTAFrame",
+      "unityDestination": "Inspection/SecondaryCTAFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_cta_disabled_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_cta_disabled_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        842,
+        725,
+        976,
+        802
+      ],
+      "size": {
+        "width": 134,
+        "height": 77
+      },
+      "role": "Inspection/DisabledCTAFrame",
+      "unityDestination": "Inspection/DisabledCTAFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_progress_meter_empty_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_progress_meter_empty_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        49,
+        841,
+        388,
+        867
+      ],
+      "size": {
+        "width": 339,
+        "height": 26
+      },
+      "role": "Meters/EmptyFrame",
+      "unityDestination": "Meters/EmptyFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_small_status_chip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_small_status_chip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        416,
+        836,
+        810,
+        878
+      ],
+      "size": {
+        "width": 394,
+        "height": 42
+      },
+      "role": "Common/StatusChipFrame",
+      "unityDestination": "Common/StatusChipFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_small_counter_chip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_small_counter_chip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        845,
+        836,
+        970,
+        878
+      ],
+      "size": {
+        "width": 125,
+        "height": 42
+      },
+      "role": "Common/CounterChipFrame",
+      "unityDestination": "Common/CounterChipFrame",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_route_breadcrumb_strip_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_route_breadcrumb_strip_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        40,
+        908,
+        1010,
+        980
+      ],
+      "size": {
+        "width": 970,
+        "height": 72
+      },
+      "role": "Footer/BreadcrumbStrip",
+      "unityDestination": "Footer/BreadcrumbStrip",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_comms_status_panel_frame",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_comms_status_panel_frame.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Frames_Green.png",
+      "source_box": [
+        1044,
+        851,
+        1483,
+        963
+      ],
+      "size": {
+        "width": 439,
+        "height": 112
+      },
+      "role": "Footer/CommsPanel",
+      "unityDestination": "Footer/CommsPanel",
+      "spriteImport": "Single",
+      "alphaRule": "alpha_png",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_back_arrow",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_back_arrow.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        53,
+        180,
+        153,
+        278
+      ],
+      "size": {
+        "width": 100,
+        "height": 98
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_armory_crossed_weapons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_armory_crossed_weapons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        209,
+        173,
+        324,
+        289
+      ],
+      "size": {
+        "width": 115,
+        "height": 116
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_units_group",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_units_group.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        376,
+        182,
+        498,
+        283
+      ],
+      "size": {
+        "width": 122,
+        "height": 101
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_vehicle_truck",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_vehicle_truck.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        549,
+        196,
+        676,
+        277
+      ],
+      "size": {
+        "width": 127,
+        "height": 81
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_aircraft_helicopter",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_aircraft_helicopter.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        729,
+        197,
+        858,
+        279
+      ],
+      "size": {
+        "width": 129,
+        "height": 82
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_buildings",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_buildings.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        913,
+        178,
+        1016,
+        283
+      ],
+      "size": {
+        "width": 103,
+        "height": 105
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_support_plus",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_support_plus.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1070,
+        179,
+        1175,
+        286
+      ],
+      "size": {
+        "width": 105,
+        "height": 107
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_upgrades_chevrons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_upgrades_chevrons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1235,
+        178,
+        1311,
+        292
+      ],
+      "size": {
+        "width": 76,
+        "height": 114
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_resource_credits_coin",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_resource_credits_coin.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1363,
+        174,
+        1481,
+        294
+      ],
+      "size": {
+        "width": 118,
+        "height": 120
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_resource_supplies_crate",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_resource_supplies_crate.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        62,
+        360,
+        214,
+        487
+      ],
+      "size": {
+        "width": 152,
+        "height": 127
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_resource_command_shield",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_resource_command_shield.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        293,
+        353,
+        398,
+        485
+      ],
+      "size": {
+        "width": 105,
+        "height": 132
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_inbox_envelope",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_inbox_envelope.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        658,
+        367,
+        768,
+        477
+      ],
+      "size": {
+        "width": 110,
+        "height": 110
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_settings_gear",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_settings_gear.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        988,
+        362,
+        1096,
+        473
+      ],
+      "size": {
+        "width": 108,
+        "height": 111
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_dropdown_chevron",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_dropdown_chevron.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1153,
+        363,
+        1239,
+        472
+      ],
+      "size": {
+        "width": 86,
+        "height": 109
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_badge_owned_checkmark",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_badge_owned_checkmark.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1304,
+        366,
+        1390,
+        461
+      ],
+      "size": {
+        "width": 86,
+        "height": 95
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_badge_locked_padlock",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_badge_locked_padlock.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        473,
+        381,
+        584,
+        467
+      ],
+      "size": {
+        "width": 111,
+        "height": 86
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_badge_upgrade_ready_chevrons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_badge_upgrade_ready_chevrons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        841,
+        400,
+        923,
+        448
+      ],
+      "size": {
+        "width": 82,
+        "height": 48
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_health_cross",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_health_cross.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        60,
+        551,
+        164,
+        659
+      ],
+      "size": {
+        "width": 104,
+        "height": 108
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_damage_burst",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_damage_burst.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        245,
+        546,
+        355,
+        660
+      ],
+      "size": {
+        "width": 110,
+        "height": 114
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_range_reticle",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_range_reticle.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        449,
+        541,
+        570,
+        666
+      ],
+      "size": {
+        "width": 121,
+        "height": 125
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_speed_boot",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_speed_boot.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        631,
+        560,
+        752,
+        649
+      ],
+      "size": {
+        "width": 121,
+        "height": 89
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_move_runner",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_move_runner.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        818,
+        552,
+        926,
+        665
+      ],
+      "size": {
+        "width": 108,
+        "height": 113
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_attack_reticle",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_attack_reticle.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        990,
+        546,
+        1110,
+        668
+      ],
+      "size": {
+        "width": 120,
+        "height": 122
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_hold_shield",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_hold_shield.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1182,
+        552,
+        1276,
+        670
+      ],
+      "size": {
+        "width": 94,
+        "height": 118
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_patrol_chevrons",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_patrol_chevrons.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1351,
+        549,
+        1428,
+        666
+      ],
+      "size": {
+        "width": 77,
+        "height": 117
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_blueprint_parts",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_blueprint_parts.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        213,
+        730,
+        329,
+        835
+      ],
+      "size": {
+        "width": 116,
+        "height": 105
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_source_building",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_source_building.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        56,
+        732,
+        154,
+        838
+      ],
+      "size": {
+        "width": 98,
+        "height": 106
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_selected_glow_strip",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_selected_glow_strip.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        374,
+        770,
+        739,
+        824
+      ],
+      "size": {
+        "width": 320,
+        "height": 40
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_progress_fill_gold_segment",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_progress_fill_gold_segment.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        798,
+        772,
+        910,
+        818
+      ],
+      "size": {
+        "width": 112,
+        "height": 46
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_progress_fill_olive_segment",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_progress_fill_olive_segment.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        971,
+        772,
+        1083,
+        818
+      ],
+      "size": {
+        "width": 112,
+        "height": 46
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_disabled_slash",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_disabled_slash.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1145,
+        736,
+        1253,
+        846
+      ],
+      "size": {
+        "width": 108,
+        "height": 110
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_icon_comms_signal",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_icon_comms_signal.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_Icons_Green.png",
+      "source_box": [
+        1318,
+        751,
+        1430,
+        833
+      ],
+      "size": {
+        "width": 112,
+        "height": 82
+      },
+      "role": "Icons",
+      "unityDestination": "Icons",
+      "spriteImport": "Single",
+      "alphaRule": "chroma_key_extracted",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_rifleman_male_ii",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_rifleman_male_ii.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        24,
+        32,
+        364,
+        370
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_marksman_male_i",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_marksman_male_i.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        376,
+        32,
+        716,
+        370
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_assault_breacher_female_ii",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_assault_breacher_female_ii.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        728,
+        32,
+        1068,
+        370
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_field_commander",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_field_commander.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        1080,
+        32,
+        1420,
+        370
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_cargo_truck",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_cargo_truck.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        24,
+        382,
+        364,
+        720
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_canopy_truck",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_canopy_truck.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        376,
+        382,
+        716,
+        720
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_attack_helicopter",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_attack_helicopter.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        728,
+        382,
+        1068,
+        720
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_transport_helicopter",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_transport_helicopter.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        1080,
+        382,
+        1420,
+        720
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_oil_pump",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_oil_pump.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        24,
+        732,
+        364,
+        1070
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_oil_refinery",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_oil_refinery.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        376,
+        732,
+        716,
+        1070
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_guard_tower",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_guard_tower.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        728,
+        732,
+        1068,
+        1070
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    },
+    {
+      "id": "scn19_art_ammunition_depot",
+      "file": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/layers/scn19_art_ammunition_depot.png",
+      "source": "/Users/farhad/Projects/WarlineCapture/Design/VisualLockLayered/SCN-19_Armory/generated_one_go/source/SCN-19_RosterArt_RectTiles.png",
+      "source_box": [
+        1080,
+        732,
+        1420,
+        1070
+      ],
+      "size": {
+        "width": 340,
+        "height": 338
+      },
+      "role": "RosterArt",
+      "unityDestination": "RosterArt",
+      "spriteImport": "Single",
+      "alphaRule": "opaque_rect",
+      "liveText": "No baked dynamic text; labels and values are TMP/runtime-bound."
+    }
+  ],
+  "runtimeBindings": {
+    "liveText": [
+      "resource labels and values",
+      "screen title and subtitle",
+      "category names and counts",
+      "filter and sort labels",
+      "roster display names, roles, levels, owned/locked states",
+      "inspection display name, description, stats, abilities, upgrade progress, source text",
+      "CTA labels",
+      "bottom tabs and breadcrumb"
+    ],
+    "runtimeData": [
+      "PlayerInventory",
+      "prefab displayName and description",
+      "UnlockState",
+      "CombatCatalog ids",
+      "AbilityConfig",
+      "UpgradeTrackConfig",
+      "BlueprintParts",
+      "GearModule inventory",
+      "wallet Credits/Supplies/Command"
+    ]
+  }
+}

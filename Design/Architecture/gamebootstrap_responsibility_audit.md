@@ -161,6 +161,7 @@ Focused validation:
 
 Migrated owner:
 - `MissionStartupSystem`
+- `MissionCameraSystem`
 - `InitialFactionSpawnCellSystem`
 
 Former bootstrap debt:
@@ -189,11 +190,11 @@ Target behavior:
 - Camera/framing systems should resolve mission framing and write camera/focus requests.
 
 Migration order:
-1. Done: move M01 camera constants into `MissionStartupSystem` as interim mission camera policy.
-2. Done: move M01 frame anchor calculation into `MissionStartupSystem` as interim mission camera policy.
+1. Done: move M01 camera constants into `MissionCameraSystem`.
+2. Done: move M01 frame anchor calculation into `MissionCameraSystem`.
 3. Done: move fallback faction-base focus behind `MissionStartupSystem` with a bootstrap-provided spawn resolver.
 4. Done: move configured faction spawn-cell lookup out of `GameBootstrap` into `InitialFactionSpawnCellSystem`.
-5. Remove direct camera transform writes from bootstrap.
+5. Done: keep direct camera transform writes inside `MissionCameraSystem`, not bootstrap or mission startup coordination.
 
 Focused validation:
 - Existing camera/runtime-state tests.
@@ -221,7 +222,7 @@ Target behavior:
 
 Migration order:
 1. Paused: do not re-extract the managed runtime loop through a managed wrapper without a focused FPS regression capture/contract.
-2. Move `EnsureGameplaySystemsInitialized` into a feature installer only if the change does not alter per-frame runtime behavior.
+2. Paused: keep `EnsureGameplaySystemsInitialized` in `GameBootstrap` after the `GameplayFeatureInitializationSystem` extraction correlated with a 60 FPS to roughly 30 FPS regression during user runtime validation.
 3. Continue moving managed runtime systems into ECS domain systems by existing domain migrations.
 
 Focused validation:
@@ -302,7 +303,7 @@ Reducing existing debt should never require weakening these tests.
 2. Extract AI startup policy into `AIStartupSystem`.
 3. Extract faction economy startup into `FactionEconomyStartupSystem`.
 4. Extract fixed tactical mission startup into mission ECS data/system.
-5. Extract M01 camera/framing into `MissionCameraSystem` and camera request components.
+5. In progress: extract M01 camera/framing into `MissionCameraSystem`; camera request components remain a future ECS migration after runtime behavior is stable.
 6. Move performance diagnostics into a diagnostics boundary.
 7. Replace broad scene lookup binding with explicit scene references/installers.
 8. Collapse `GameBootstrap` to composition plus lifecycle calls only.

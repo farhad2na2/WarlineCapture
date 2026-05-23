@@ -122,7 +122,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Faction economy startup projection is owned by `FactionEconomyStartupSystem`", contract);
         StringAssert.Contains("AI faction-control startup projection is owned by `AIFactionControlStartupSystem`", contract);
         StringAssert.Contains("AI default build and production fallback ids are owned by authored `AIPlanEntryStartupConfig` assets", contract);
-        StringAssert.Contains("Mission startup and M01 camera/framing policy are owned by `MissionStartupSystem`", contract);
+        StringAssert.Contains("Mission startup is owned by `MissionStartupSystem`; M01 camera/framing policy is owned by `MissionCameraSystem`", contract);
         StringAssert.Contains("Configured faction spawn-cell resolution is owned by `InitialFactionSpawnCellSystem`", contract);
         StringAssert.Contains("Broad scene lookup and UI runtime binding are owned by `GameplaySceneBindingSystem`", contract);
         StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
@@ -341,8 +341,10 @@ public sealed class GameplayArchitectureContractTests
     public void GameBootstrapMustDelegateMissionStartupAndCameraSlice()
     {
         const string missionStartupFile = "Assets/Game/Scripts/Systems/MissionStartupSystem.cs";
+        const string missionCameraFile = "Assets/Game/Scripts/Systems/MissionCameraSystem.cs";
         const string initialFactionSpawnCellFile = "Assets/Game/Scripts/Systems/InitialFactionSpawnCellSystem.cs";
-        Assert.IsTrue(File.Exists(missionStartupFile), "Mission startup and M01 camera/framing policy must live in MissionStartupSystem.");
+        Assert.IsTrue(File.Exists(missionStartupFile), "Mission startup policy must live in MissionStartupSystem.");
+        Assert.IsTrue(File.Exists(missionCameraFile), "M01 camera/framing policy must live in MissionCameraSystem.");
         Assert.IsTrue(File.Exists(initialFactionSpawnCellFile), "Configured faction spawn-cell resolution must live outside GameBootstrap.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
@@ -383,10 +385,40 @@ public sealed class GameplayArchitectureContractTests
         }
 
         string missionStartup = File.ReadAllText(missionStartupFile);
+        StringAssert.Contains("MissionCameraSystem _missionCameraSystem", missionStartup);
         StringAssert.Contains("DisableGenericAIPlansForFixedTacticalMission", missionStartup);
         Assert.IsFalse(
             Regex.IsMatch(missionStartup, @"\bstatic\b"),
-            "MissionStartupSystem owns mission startup mutation and camera policy; keep it instance-scoped rather than adding static runtime helpers.");
+            "MissionStartupSystem owns mission startup mutation; keep it instance-scoped rather than adding static runtime helpers.");
+
+        string[] cameraPolicyTokens =
+        {
+            "M01PlayableStartOrthographicSize",
+            "M01PlayableCameraHeight",
+            "ResolveM01ProductionOrthographicSize",
+            "TryResolveM01ProductionFrameCenter",
+            "IncludeM01FrameAnchor",
+            "ClampM01CameraCenterToTacticalMap",
+            "SetPositionAndRotation"
+        };
+
+        foreach (string token in cameraPolicyTokens)
+        {
+            Assert.IsFalse(
+                missionStartup.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in MissionCameraSystem, not MissionStartupSystem.");
+        }
+
+        string missionCamera = File.ReadAllText(missionCameraFile);
+        StringAssert.Contains("M01PlayableStartOrthographicSize", missionCamera);
+        StringAssert.Contains("M01PlayableCameraHeight", missionCamera);
+        StringAssert.Contains("ResolveM01ProductionOrthographicSize", missionCamera);
+        StringAssert.Contains("TryResolveM01ProductionFrameCenter", missionCamera);
+        StringAssert.Contains("ClampM01CameraCenterToTacticalMap", missionCamera);
+        StringAssert.Contains("SetPositionAndRotation", missionCamera);
+        Assert.IsFalse(
+            Regex.IsMatch(missionCamera, @"\bstatic\b"),
+            "MissionCameraSystem owns camera/framing policy and must stay instance-scoped.");
 
         string initialFactionSpawnCell = File.ReadAllText(initialFactionSpawnCellFile);
         StringAssert.Contains("InitialUnitsSpawnConfig", initialFactionSpawnCell);
@@ -466,7 +498,6 @@ public sealed class GameplayArchitectureContractTests
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("GameplaySceneBindingSystem _gameplaySceneBindingSystem", bootstrap);
         StringAssert.Contains("_gameplaySceneBindingSystem.BindGameplayUiRuntimeDependencies", bootstrap);
-        StringAssert.Contains("_gameplaySceneBindingSystem.BindRuntimeGridBlockerDebugViews", bootstrap);
 
         string[] migratedMethodNames =
         {

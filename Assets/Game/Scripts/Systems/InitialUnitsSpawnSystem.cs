@@ -227,7 +227,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                             : SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, walkable, dynamicBlocked, occupied, ref reserved, unitSpawnCenter, config.SpawnRadiusCells, footprintSize, out cell));
                     if (!foundSpawnCell)
                     {
-                        Debug.LogWarning($"[InitialSpawn] no-free-cell faction={unitSpawn.FactionId} prefab={unitSpawn.Prefab} center={unitSpawnCenter} radius={config.SpawnRadiusCells} footprint={footprintSize}");
+                        if (EnableInitialSpawnDiagnostics)
+                            Debug.LogWarning($"[InitialSpawn] no-free-cell faction={unitSpawn.FactionId} prefab={unitSpawn.Prefab} center={unitSpawnCenter} radius={config.SpawnRadiusCells} footprint={footprintSize}");
                         break;
                     }
 
@@ -276,7 +277,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
                 if (!SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, walkable, dynamicBlocked, occupied, ref reserved, new int2(grid.Width / 2, grid.Height / 2), math.max(0, config.SpawnRadiusCells) + 20, new int2(1, 1), out int2 cell))
                 {
-                    Debug.LogWarning($"[InitialSpawn] no-free-blocker-cell center={new int2(grid.Width / 2, grid.Height / 2)} radius={math.max(0, config.SpawnRadiusCells) + 20}");
+                    if (EnableInitialSpawnDiagnostics)
+                        Debug.LogWarning($"[InitialSpawn] no-free-blocker-cell center={new int2(grid.Width / 2, grid.Height / 2)} radius={math.max(0, config.SpawnRadiusCells) + 20}");
                     break;
                 }
 
@@ -500,7 +502,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                     }
                     else
                     {
-                        Debug.LogWarning($"[InitialBase] faction={factionSpawn.FactionId} kind=GateFlankWall result=PlacementFailed origin={anchor + flank.OriginOffset}");
+                        if (EnableInitialSpawnDiagnostics)
+                            Debug.LogWarning($"[InitialBase] faction={factionSpawn.FactionId} kind=GateFlankWall result=PlacementFailed origin={anchor + flank.OriginOffset}");
                         allSpawned = false;
                     }
                 }
@@ -537,7 +540,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                         ownerFactionId: factionSpawn.FactionId,
                         rotateVertical: placement.RotateVertical))
                 {
-                    Debug.LogWarning($"[InitialBase] faction={factionSpawn.FactionId} kind={placement.Kind} result=PlacementFailed origin={origin}");
+                    if (EnableInitialSpawnDiagnostics)
+                        Debug.LogWarning($"[InitialBase] faction={factionSpawn.FactionId} kind={placement.Kind} result=PlacementFailed origin={origin}");
                     allSpawned = false;
                 }
                 else
@@ -554,7 +558,8 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 }
             }
 
-            LogInitialBaseCounts(buildingPlacementController, factionSpawn.FactionId, spawnedForFaction, factionSpawn.SpawnCell);
+            if (EnableInitialSpawnDiagnostics)
+                LogInitialBaseCounts(buildingPlacementController, factionSpawn.FactionId, spawnedForFaction, factionSpawn.SpawnCell);
         }
 
         return allSpawned;

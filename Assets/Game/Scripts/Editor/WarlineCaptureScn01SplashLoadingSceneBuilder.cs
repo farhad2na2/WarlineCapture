@@ -13,7 +13,7 @@ public static class WarlineCaptureScn01SplashLoadingSceneBuilder
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/SplashLoading/TargetLockV01";
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_SCN01_SplashLoading_TargetLock.prefab";
     private const string ScenePath = "Assets/Game/Scenes/DesignTargets/SCN01_SplashLoading_TargetLock.unity";
-    private const string CapturePath = "Design/AgentReports/Captures/SCN01_SplashLoading_TargetLock_V03_2400x1080.png";
+    private const string CapturePath = "Design/AgentReports/Captures/SCN01_SplashLoading_TargetLock_V04_2400x1080.png";
 
     private static Color TextMain => new Color32(226, 219, 197, 255);
     private static Color TextMuted => new Color32(178, 171, 148, 255);
@@ -133,14 +133,9 @@ public static class WarlineCaptureScn01SplashLoadingSceneBuilder
 
     private static void AddBrand(Transform parent)
     {
-        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Brand_CommandShield", "scn01_icon_02_command_shield.png", new RectInt(726, 198, 206, 220), 174, 202, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Brand_WarlineShadow", "WARLINE", new RectInt(964, 210, 780, 112), 98f, TextAlignmentOptions.Left, new Color(0f, 0f, 0f, 0.72f));
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Brand_Warline", "WARLINE", new RectInt(954, 198, 780, 112), 98f, TextAlignmentOptions.Left, Color.white);
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Brand_CaptureShadow", "C A P T U R E", new RectInt(990, 326, 620, 76), 58f, TextAlignmentOptions.Left, new Color(0f, 0f, 0f, 0.72f));
-        WarlineCaptureLayeredUiBuilderUtility.AddText(parent, "Brand_Capture", "C A P T U R E", new RectInt(980, 316, 620, 76), 58f, TextAlignmentOptions.Left, Gold);
-        WarlineCaptureLayeredUiBuilderUtility.AddImage(parent, LayerRoot, "Brand_GoldChevron", "scn01_chrome_16_gold_chevron_trio.png", new RectInt(1538, 332, 134, 58), true, Gold);
+        WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(parent, LayerRoot, "Brand_LogoLockup", "scn01_brand_logo_lockup.png", new RectInt(590, 168, 1220, 298), 1120, 252, Color.white);
 
-        RectInt system = new(994, 440, 414, 48);
+        RectInt system = new(994, 474, 414, 48);
         WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, "CommandSystem_Back", system, DarkPanel);
         WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, "CommandSystem_TopLine", new RectInt(system.x, system.y, system.width, 2), new Color(0.82f, 0.66f, 0.24f, 0.65f));
         WarlineCaptureLayeredUiBuilderUtility.AddSolidImage(parent, "CommandSystem_BottomLine", new RectInt(system.x, system.yMax - 2, system.width, 2), new Color(0.82f, 0.66f, 0.24f, 0.65f));

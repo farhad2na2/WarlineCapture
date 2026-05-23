@@ -60,7 +60,7 @@ For `SCN-02_MainMenu`, start with reference-only mockup candidates in `SCN-02_Ma
 | `SCN-16_Events` | Events and challenges. | Empty/designed-unavailable state until event service exists. |
 | `SCN-17_Ranking` | Local/account ranking categories. | No network dependency in first target. |
 | `SCN-18_CommandFeed` | Command/system feed. | Local system feed and Operation report entries. |
-| `SCN-19_Armory` | Unit/building/support roster inspection. | Shows name, description, role, unlock state, level/tier, stats, abilities, upgrades, parts, source. |
+| `SCN-19_Armory` | Unit/building/support roster inspection. | Shows name, description, role, unlock state, level/tier, stats, abilities, upgrades, parts, source. Target generated with Skirmish-style secondary header; layers pending approval. |
 | `POP-01_ThreatAlert` | Threat alert and jump. | Jumps inside same 3D operation map. |
 | `POP-02_ConfirmRaid` | Raid confirmation. | Intel confidence, civilian risk, district consequence. |
 | `POP-03_BuildPlacement` | Build placement confirmation. | 3D socket/footprint validity and blocked/civilian-zone reasons. |

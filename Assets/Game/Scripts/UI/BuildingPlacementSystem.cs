@@ -7,8 +7,6 @@ using static UnityEngine.Object;
 using CampRequestFailure = BuildingUiCommandSystem.CampRequestFailure;
 using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
 using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
-using FactionResourceEconomySnapshot = FactionResourceSystem.FactionResourceEconomySnapshot;
-using FactionUnitProductionResult = BuildingProductionRequestSystem.FactionUnitProductionResult;
 using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 using ProducedUnitUiEntry = BuildingUiQuerySystem.ProducedUnitUiEntry;
@@ -321,55 +319,6 @@ public sealed class BuildingPlacementSystem
 
     public int CurrentDollars => _runtimeResourceSystem.CurrentDollars;
 
-    public bool TryGetFactionResourceEconomy(byte factionId, out FactionResourceEconomySnapshot snapshot)
-    {
-        bool hasEconomy = _factionResourceSystem.TryGetFactionResourceEconomy(
-            _runtimeBuildings,
-            factionId,
-            out FactionResourceSystem.ResourceEconomySnapshot resourceSnapshot);
-        snapshot = new FactionResourceEconomySnapshot(
-            resourceSnapshot.StoredOilBarrels,
-            resourceSnapshot.StoredFuelBarrels,
-            resourceSnapshot.OilBarrelsPerDay,
-            resourceSnapshot.FuelBarrelsPerDay,
-            resourceSnapshot.ResourceBuildingCount);
-        return hasEconomy;
-    }
-
-    public void SellFactionResources(byte factionId, float requestedOilBarrels, float requestedFuelBarrels, out float soldOilBarrels, out float soldFuelBarrels)
-    {
-        soldOilBarrels = _factionResourceSystem.DrainFactionResource(
-            _runtimeBuildings,
-            factionId,
-            Mathf.Max(0f, requestedOilBarrels),
-            FactionResourceSystem.ResourceKind.Oil);
-        soldFuelBarrels = _factionResourceSystem.DrainFactionResource(
-            _runtimeBuildings,
-            factionId,
-            Mathf.Max(0f, requestedFuelBarrels),
-            FactionResourceSystem.ResourceKind.Fuel);
-    }
-
-    public int CountRuntimeBuildingsForFaction(byte factionId)
-    {
-        return _buildingRuntimeQuerySystem.CountRuntimeBuildingsForFaction(CreateBuildingRuntimeQueryContext(), factionId);
-    }
-
-    public int CountRuntimeBuildingsForFaction(byte factionId, string buildingId)
-    {
-        return _buildingRuntimeQuerySystem.CountRuntimeBuildingsForFaction(CreateBuildingRuntimeQueryContext(), factionId, buildingId);
-    }
-
-    public int CountRuntimeProducedUnitsForFaction(byte factionId, string unitId)
-    {
-        return _buildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction(CreateBuildingRuntimeQueryContext(), factionId, unitId);
-    }
-
-    public int CountPendingProductionsForFaction(byte factionId, string unitId)
-    {
-        return _buildingRuntimeQuerySystem.CountPendingProductionsForFaction(CreateBuildingRuntimeQueryContext(), factionId, unitId);
-    }
-
     public bool TryGetConfiguredUnit(string unitId, out ConfiguredUnitEntry entry)
     {
         string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
@@ -392,15 +341,6 @@ public sealed class BuildingPlacementSystem
 
         entry = default;
         return false;
-    }
-
-    internal bool TryQueueFactionUnitProduction(byte factionId, string unitId, out FactionUnitProductionResult result)
-    {
-        return _buildingProductionRequestSystem.TryQueueFactionUnitProduction(
-            CreateBuildingProductionRequestContext(),
-            factionId,
-            unitId,
-            out result);
     }
 
     public void GetRuntimeHouseBuildingIds(List<int> results)
@@ -2314,8 +2254,18 @@ public sealed class BuildingPlacementSystem
             ResolveBuildingFocusWorldPosition,
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning,
-            CountPendingProductionsForFaction,
-            CountRuntimeProducedUnitsForFaction);
+            ResolvePendingProductionCountForFaction,
+            ResolveRuntimeProducedUnitCountForFaction);
+    }
+
+    private int ResolvePendingProductionCountForFaction(byte factionId, string unitId)
+    {
+        return _buildingRuntimeQuerySystem.CountPendingProductionsForFaction(CreateBuildingRuntimeQueryContext(), factionId, unitId);
+    }
+
+    private int ResolveRuntimeProducedUnitCountForFaction(byte factionId, string unitId)
+    {
+        return _buildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction(CreateBuildingRuntimeQueryContext(), factionId, unitId);
     }
 
     private bool QueuePlayerUnitProduction(RuntimeBuildingData building, int productionIndex, GameObject spawnUnitPrefab)

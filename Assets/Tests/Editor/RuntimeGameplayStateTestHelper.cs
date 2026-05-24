@@ -1,4 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System.Text;
 using Unity.Entities;
 
 internal static class RuntimeGameplayStateTestHelper
@@ -14,16 +15,131 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static void SetBuildingPlacement(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
     {
-        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
-        Entity entity = query.CalculateEntityCount() > 0
-            ? query.GetSingletonEntity()
-            : entityManager.CreateEntity();
+        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
 
         if (!entityManager.HasComponent<BuildingPlacementRuntimeComponent>(entity))
             entityManager.AddComponentObject(entity, new BuildingPlacementRuntimeComponent());
 
         BuildingPlacementRuntimeComponent runtime = entityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity);
         runtime.BuildingPlacement = buildingPlacement;
+    }
+
+    public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
+    {
+        GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        buildingPlacement?.Update();
+    }
+
+    public static int CountRuntimeBuildingsForFaction(EntityManager entityManager, byte factionId, string buildingId)
+    {
+        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        if (!entityManager.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(entity))
+            return 0;
+
+        string normalized = NormalizeKey(buildingId);
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> summaries =
+            entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(entity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeOwnedBuildingSummary summary = summaries[i];
+            if (summary.FactionId != factionId)
+                continue;
+            if (NormalizeKey(summary.BuildingId.ToString()) != normalized)
+                continue;
+            return summary.Count;
+        }
+
+        return 0;
+    }
+
+    public static string DescribeOwnedBuildingSummaries(EntityManager entityManager)
+    {
+        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        if (!entityManager.HasBuffer<BuildingRuntimeOwnedBuildingSummary>(entity))
+            return "<no BuildingRuntimeOwnedBuildingSummary buffer>";
+
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> summaries =
+            entityManager.GetBuffer<BuildingRuntimeOwnedBuildingSummary>(entity, true);
+        if (summaries.Length == 0)
+            return "<empty BuildingRuntimeOwnedBuildingSummary buffer>";
+
+        StringBuilder builder = new();
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeOwnedBuildingSummary summary = summaries[i];
+            if (builder.Length > 0)
+                builder.Append(", ");
+            builder.Append("faction=");
+            builder.Append(summary.FactionId);
+            builder.Append(" id=");
+            builder.Append(summary.BuildingId.ToString());
+            builder.Append(" count=");
+            builder.Append(summary.Count);
+        }
+
+        return builder.ToString();
+    }
+
+    public static int CountPendingProductionsForFaction(EntityManager entityManager, byte factionId, string unitId)
+    {
+        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        if (!entityManager.HasBuffer<BuildingRuntimeUnitProductionSummary>(entity))
+            return 0;
+
+        string normalized = NormalizeKey(unitId);
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> summaries =
+            entityManager.GetBuffer<BuildingRuntimeUnitProductionSummary>(entity, true);
+        for (int i = 0; i < summaries.Length; i++)
+        {
+            BuildingRuntimeUnitProductionSummary summary = summaries[i];
+            if (summary.FactionId != factionId)
+                continue;
+            if (NormalizeKey(summary.UnitId.ToString()) != normalized)
+                continue;
+            return summary.QueuedCount;
+        }
+
+        return 0;
+    }
+
+    private static Entity GetOrCreateBuildingRuntimeBoundaryEntity(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
+        Entity entity = query.CalculateEntityCount() > 0
+            ? query.GetSingletonEntity()
+            : entityManager.CreateEntity();
+
+        EnsureBuildingRuntimeBoundaryBuffers(entityManager, entity);
+        return entity;
+    }
+
+    private static void EnsureBuildingRuntimeBoundaryBuffers(EntityManager entityManager, Entity entity)
+    {
+        if (!entityManager.HasComponent<BuildingRuntimeBoundaryTag>(entity))
+            entityManager.AddComponent<BuildingRuntimeBoundaryTag>(entity);
+        EnsureBuffer<BuildingConfiguredSpawnableReadModel>(entityManager, entity);
+        EnsureBuffer<BuildingConfiguredUnitReadModel>(entityManager, entity);
+        EnsureBuffer<BuildingRuntimeFactionSummary>(entityManager, entity);
+        EnsureBuffer<BuildingRuntimeOwnedBuildingSummary>(entityManager, entity);
+        EnsureBuffer<BuildingRuntimeUnitProductionSummary>(entityManager, entity);
+        EnsureBuffer<BuildingFactionProductionSpawnPointReadModel>(entityManager, entity);
+        EnsureBuffer<BuildingFactionUnitProductionRequest>(entityManager, entity);
+        EnsureBuffer<BuildingFactionResourceSellRequest>(entityManager, entity);
+        EnsureBuffer<BuildingRuntimeSpawnRequest>(entityManager, entity);
+    }
+
+    private static void EnsureBuffer<T>(EntityManager entityManager, Entity entity)
+        where T : unmanaged, IBufferElementData
+    {
+        if (!entityManager.HasBuffer<T>(entity))
+            entityManager.AddBuffer<T>(entity);
+    }
+
+    private static string NormalizeKey(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : value.Replace("\0", string.Empty).Trim().ToLowerInvariant();
     }
 
     private static Entity GetOrCreateRuntimeStateEntity(EntityManager entityManager)

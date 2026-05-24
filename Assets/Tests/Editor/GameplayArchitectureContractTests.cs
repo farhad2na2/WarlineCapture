@@ -160,6 +160,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
+        StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
     }
 
     [Test]
@@ -2258,9 +2259,6 @@ public sealed class GameplayArchitectureContractTests
         string runtimeQuery = File.ReadAllText(runtimeQueryFile);
         StringAssert.Contains("BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem", placement);
         StringAssert.Contains("CreateBuildingRuntimeQueryContext", placement);
-        StringAssert.Contains("_buildingRuntimeQuerySystem.CountRuntimeBuildingsForFaction", placement);
-        StringAssert.Contains("_buildingRuntimeQuerySystem.CountRuntimeProducedUnitsForFaction", placement);
-        StringAssert.Contains("_buildingRuntimeQuerySystem.CountPendingProductionsForFaction", placement);
         StringAssert.Contains("_buildingRuntimeQuerySystem.GetRuntimeHouseBuildingIds", placement);
         StringAssert.Contains("_buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole", placement);
         StringAssert.Contains("_buildingRuntimeQuerySystem.TryGetRuntimeBuildingFocusWorldPosition", placement);
@@ -2291,6 +2289,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+int\s+CountRuntimeProducedUnitsForFaction\([\s\S]*?PruneProducedUnits[\s\S]*?public\s+int\s+CountPendingProductionsForFaction"),
             "Produced-unit count pruning and iteration belong in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+int\s+Count(RuntimeBuildings|RuntimeProducedUnits|PendingProductions)ForFaction"),
+            "Faction count compatibility wrappers must not remain on BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+void\s+GetRuntimeHouseBuildingIds\([\s\S]*?foreach\s*\(KeyValuePair<int,\s*RuntimeBuildingData>[\s\S]*?public\s+void\s+GetRuntimeBuildingIdsByRole"),
             "Runtime house id queries belong in BuildingRuntimeQuerySystem, not BuildingPlacementSystem.");
@@ -2670,13 +2671,18 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(resourceFile), "The faction resource slice must live in FactionResourceSystem.");
 
         string placement = File.ReadAllText(placementFile);
+        string resource = File.ReadAllText(resourceFile);
         StringAssert.Contains("FactionResourceSystem _factionResourceSystem", placement);
         StringAssert.Contains("_factionResourceSystem.TryGetPrimaryCapacityInfo", placement);
         StringAssert.Contains("_factionResourceSystem.TryGetFuelCapacityInfo", placement);
         StringAssert.Contains("_factionResourceSystem.GetResourceTotals", placement);
-        StringAssert.Contains("_factionResourceSystem.TryGetFactionResourceEconomy", placement);
-        StringAssert.Contains("_factionResourceSystem.DrainFactionResource", placement);
         StringAssert.Contains("_factionResourceSystem.UpdateResourceProduction", placement);
+        StringAssert.Contains("TryGetFactionResourceEconomy", resource);
+        StringAssert.Contains("DrainFactionResource", resource);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+bool\s+TryGetFactionResourceEconomy") ||
+            Regex.IsMatch(placement, @"public\s+void\s+SellFactionResources"),
+            "Faction resource economy and sell compatibility wrappers must not remain on BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsResourceStorageBuilding\b"),
             "Resource storage classification belongs in FactionResourceSystem, not BuildingPlacementSystem.");
@@ -3042,7 +3048,6 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingProductionRequestSystem.ArmNextProductionFromUi", placement);
         StringAssert.Contains("_buildingProductionRequestSystem.CanCreateUnitFromSelectedBuilding", placement);
         StringAssert.Contains("_buildingProductionRequestSystem.CanQueueUnitFromBuilding", placement);
-        StringAssert.Contains("_buildingProductionRequestSystem.TryQueueFactionUnitProduction", placement);
 
         StringAssert.Contains("TryRequestCampItem", request);
         StringAssert.Contains("GetCampRequestFailure", request);
@@ -3068,6 +3073,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryFindFirstFactionProducerBuilding\b"),
             "Faction producer lookup belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"\b(?:public|internal)\s+bool\s+TryQueueFactionUnitProduction\b"),
+            "Faction production compatibility wrappers must not remain on BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryGetRequiredProducerDisplayName\b"),
             "Required producer display lookup belongs in BuildingProductionRequestSystem, not BuildingPlacementSystem.");

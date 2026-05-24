@@ -124,17 +124,25 @@ public sealed class AIProductionValidationTests
         entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Rifleman") });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 unit=Rifleman cost=10000 result=Requested"));
+        system.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
+        LogAssert.NoUnexpectedReceived();
+
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(40000, economy.Money);
-        Assert.AreEqual(1, _buildingPlacement.CountPendingProductionsForFaction(1, "Rifleman"));
+        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
 
         AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
         Assert.AreEqual(1, plan.NextUnitIndex);

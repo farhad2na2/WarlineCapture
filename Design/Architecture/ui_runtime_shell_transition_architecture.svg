@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120" role="img" aria-labelledby="title desc">
+  <title id="title">WarlineCapture UI Runtime Shell Transition Architecture</title>
+  <desc id="desc">ECS-driven UI flow architecture showing request buffers, ECS flow systems, presentation commands, bridge view, Unity shell regions, motion service, config assets, gameplay producers, and legacy compatibility boundaries.</desc>
+  <defs>
+    <style>
+      .bg { fill: #0b0f12; }
+      .panel { fill: #111820; stroke: #466270; stroke-width: 2; }
+      .panel2 { fill: #141b17; stroke: #5f6c42; stroke-width: 2; }
+      .panel3 { fill: #1a1510; stroke: #856a2d; stroke-width: 2; }
+      .panel4 { fill: #15141d; stroke: #675c89; stroke-width: 2; }
+      .box { fill: #17222b; stroke: #6e92a4; stroke-width: 2; rx: 10; }
+      .box2 { fill: #1b2419; stroke: #8a9d4f; stroke-width: 2; rx: 10; }
+      .box3 { fill: #241a11; stroke: #c49a3e; stroke-width: 2; rx: 10; }
+      .box4 { fill: #211b2b; stroke: #9b83ce; stroke-width: 2; rx: 10; }
+      .legacy { fill: #221616; stroke: #a55d55; stroke-width: 2; stroke-dasharray: 8 7; rx: 10; }
+      .title { fill: #edf4f0; font-family: Arial, Helvetica, sans-serif; font-size: 34px; font-weight: 700; }
+      .subtitle { fill: #9eb4bd; font-family: Arial, Helvetica, sans-serif; font-size: 18px; }
+      .h { fill: #edf4f0; font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; }
+      .t { fill: #d3dedb; font-family: Arial, Helvetica, sans-serif; font-size: 17px; }
+      .small { fill: #aebdb8; font-family: Arial, Helvetica, sans-serif; font-size: 14px; }
+      .note { fill: #e6c168; font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: 700; }
+      .bad { fill: #e08375; font-family: Arial, Helvetica, sans-serif; font-size: 15px; font-weight: 700; }
+      .arrow { stroke: #9bc6d3; stroke-width: 3; fill: none; marker-end: url(#arrowHead); }
+      .arrow2 { stroke: #d0b25a; stroke-width: 3; fill: none; marker-end: url(#arrowHeadGold); }
+      .arrow3 { stroke: #a8bf65; stroke-width: 3; fill: none; marker-end: url(#arrowHeadGreen); }
+      .dash { stroke-dasharray: 8 7; }
+    </style>
+    <marker id="arrowHead" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#9bc6d3"/>
+    </marker>
+    <marker id="arrowHeadGold" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#d0b25a"/>
+    </marker>
+    <marker id="arrowHeadGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M 0 0 L 12 6 L 0 12 z" fill="#a8bf65"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1800" height="1120"/>
+
+  <text class="title" x="72" y="60">WarlineCapture UI Runtime Shell Transition Architecture</text>
+  <text class="subtitle" x="72" y="92">ECS owns flow decisions and command data. Unity views own Canvas references, animation, and prefab placement.</text>
+
+  <rect class="panel" x="58" y="132" width="520" height="800" rx="16"/>
+  <text class="h" x="86" y="172">ECS UI Flow Boundary</text>
+  <text class="small" x="86" y="198">Gameplay-safe data and systems. No Canvas references.</text>
+
+  <rect class="box" x="92" y="230" width="210" height="106"/>
+  <text class="h" x="116" y="262">Request Buffers</text>
+  <text class="t" x="116" y="292">UiShellRouteRequest</text>
+  <text class="t" x="116" y="318">UiShellPopupRequest</text>
+
+  <rect class="box" x="332" y="230" width="210" height="106"/>
+  <text class="h" x="356" y="262">State Components</text>
+  <text class="t" x="356" y="292">UiShellState</text>
+  <text class="t" x="356" y="318">LoadingProgress</text>
+
+  <rect class="box2" x="92" y="382" width="450" height="74"/>
+  <text class="h" x="116" y="414">UiShellBoundarySystem</text>
+  <text class="t" x="116" y="440">Creates shell boundary entity, buffers, and singleton state.</text>
+
+  <rect class="box2" x="92" y="488" width="450" height="96"/>
+  <text class="h" x="116" y="520">UiShellFlowSystem</text>
+  <text class="t" x="116" y="548">Serializes flow: Loading, MainMenu, MatchHud, Popup.</text>
+  <text class="t" x="116" y="572">Writes presentation commands with sequence ids.</text>
+
+  <rect class="box2" x="92" y="616" width="214" height="88"/>
+  <text class="h" x="116" y="648">LoadingSystem</text>
+  <text class="t" x="116" y="676">Progress complete</text>
+  <text class="t" x="116" y="696">minimum timing</text>
+
+  <rect class="box2" x="328" y="616" width="214" height="88"/>
+  <text class="h" x="352" y="648">PopupSystem</text>
+  <text class="t" x="352" y="676">Popup show/hide</text>
+  <text class="t" x="352" y="696">command routing</text>
+
+  <rect class="box2" x="92" y="736" width="450" height="96"/>
+  <text class="h" x="116" y="768">Presentation Command Buffer</text>
+  <text class="t" x="116" y="796">ShowLoading, ExitLoading, EnterMenu, SwapMiddle,</text>
+  <text class="t" x="116" y="820">EnterMatchHud, ShowPopup, HidePopup</text>
+
+  <rect class="panel2" x="636" y="132" width="510" height="800" rx="16"/>
+  <text class="h" x="664" y="172">Unity Shell Edge</text>
+  <text class="small" x="664" y="198">Canvas views execute commands. No gameplay policy.</text>
+
+  <rect class="box3" x="684" y="236" width="414" height="96"/>
+  <text class="h" x="708" y="268">WarlineCaptureShellEcsBridgeView</text>
+  <text class="t" x="708" y="296">Consumes presentation commands.</text>
+  <text class="t" x="708" y="320">Writes command completion and button requests.</text>
+
+  <rect class="box3" x="684" y="376" width="414" height="86"/>
+  <text class="h" x="708" y="408">WarlineCaptureShellView</text>
+  <text class="t" x="708" y="436">Owns region references and visual operations.</text>
+
+  <rect class="box3" x="684" y="506" width="190" height="72"/>
+  <text class="h" x="708" y="538">LoadingLayer</text>
+  <text class="small" x="708" y="562">slide down, scale bg</text>
+
+  <rect class="box3" x="908" y="506" width="190" height="72"/>
+  <text class="h" x="932" y="538">HeaderRegion</text>
+  <text class="small" x="932" y="562">top slide, stable menu</text>
+
+  <rect class="box3" x="684" y="612" width="190" height="72"/>
+  <text class="h" x="708" y="644">LeftRegion</text>
+  <text class="small" x="708" y="668">left slide in/out</text>
+
+  <rect class="box3" x="908" y="612" width="190" height="72"/>
+  <text class="h" x="932" y="644">MiddleRegion</text>
+  <text class="small" x="932" y="668">scale 0 to 1 swap</text>
+
+  <rect class="box3" x="684" y="718" width="190" height="72"/>
+  <text class="h" x="708" y="750">RightRegion</text>
+  <text class="small" x="708" y="774">right slide in/out</text>
+
+  <rect class="box3" x="908" y="718" width="190" height="72"/>
+  <text class="h" x="932" y="750">FooterRegion</text>
+  <text class="small" x="932" y="774">bottom slide HUD</text>
+
+  <rect class="box3" x="684" y="824" width="190" height="72"/>
+  <text class="h" x="708" y="856">PopupLayer</text>
+  <text class="small" x="708" y="880">center scale 0 to 1</text>
+
+  <rect class="box3" x="908" y="824" width="190" height="72"/>
+  <text class="h" x="932" y="856">MotionHostView</text>
+  <text class="small" x="932" y="880">position, scale, alpha</text>
+
+  <rect class="panel3" x="1202" y="132" width="540" height="398" rx="16"/>
+  <text class="h" x="1230" y="172">Config Assets</text>
+  <text class="small" x="1230" y="198">ScriptableObject data. No behavior.</text>
+
+  <rect class="box4" x="1248" y="236" width="448" height="72"/>
+  <text class="h" x="1272" y="268">ShellMotionConfig</text>
+  <text class="t" x="1272" y="294">Durations, easing, offscreen padding, popup overshoot.</text>
+
+  <rect class="box4" x="1248" y="342" width="448" height="72"/>
+  <text class="h" x="1272" y="374">ShellScreenConfig</text>
+  <text class="t" x="1272" y="400">Route to Header/Left/Middle/Right/Footer prefabs.</text>
+
+  <rect class="box4" x="1248" y="448" width="448" height="54"/>
+  <text class="h" x="1272" y="482">PopupConfig: popup kind/state to prefab</text>
+
+  <rect class="panel4" x="1202" y="578" width="540" height="354" rx="16"/>
+  <text class="h" x="1230" y="618">Runtime Producers and Compatibility</text>
+
+  <rect class="box2" x="1248" y="662" width="208" height="72"/>
+  <text class="h" x="1272" y="694">Gameplay Systems</text>
+  <text class="small" x="1272" y="718">write route/popup intent</text>
+
+  <rect class="box2" x="1488" y="662" width="208" height="72"/>
+  <text class="h" x="1512" y="694">UI Buttons</text>
+  <text class="small" x="1512" y="718">write request buffers</text>
+
+  <rect class="legacy" x="1248" y="778" width="448" height="104"/>
+  <text class="h" x="1272" y="810">Legacy Compatibility</text>
+  <text class="t" x="1272" y="838">Router, ScreenController, ModalController, MatchResultFlow</text>
+  <text class="bad" x="1272" y="864">Do not add new shell policy here.</text>
+
+  <path class="arrow3" d="M 1456 698 C 1346 698 1280 286 318 286"/>
+  <path class="arrow3" d="M 1488 698 C 1330 700 1260 290 318 290"/>
+  <path class="arrow" d="M 302 286 L 332 286"/>
+  <path class="arrow" d="M 318 336 L 318 382"/>
+  <path class="arrow" d="M 318 456 L 318 488"/>
+  <path class="arrow" d="M 306 660 L 328 660"/>
+  <path class="arrow" d="M 318 584 L 318 736"/>
+  <path class="arrow" d="M 542 784 C 590 784 616 284 684 284"/>
+  <path class="arrow2" d="M 891 332 L 891 376"/>
+  <path class="arrow2" d="M 891 462 L 891 506"/>
+  <path class="arrow2" d="M 1003 790 L 1003 824"/>
+  <path class="arrow2" d="M 874 860 L 908 860"/>
+  <path class="arrow2" d="M 1248 272 C 1184 272 1160 408 1098 408"/>
+  <path class="arrow2" d="M 1248 378 C 1180 378 1164 438 1098 438"/>
+  <path class="arrow2" d="M 1248 476 C 1176 476 1138 860 874 860"/>
+  <path class="arrow3" d="M 1456 698 C 1326 698 1226 782 1098 284"/>
+
+  <rect class="panel" x="58" y="970" width="1684" height="86" rx="14"/>
+  <text class="note" x="86" y="1006">Contract guardrail:</text>
+  <text class="t" x="242" y="1006">ECS systems decide flow and write commands. Unity views animate only. Bootstrap composes references only.</text>
+  <text class="note" x="86" y="1038">First slice:</text>
+  <text class="t" x="180" y="1038">Loading -> Main Menu -> Match HUD -> Result Popup -> Loading -> Main Menu, then convert remaining screens to region-ready prefabs.</text>
+</svg>

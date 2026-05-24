@@ -354,6 +354,7 @@ public sealed class InitialFactionBaseValidationTests
             runtimeRoot = new GameObject("InitialBaseRuntimePlacement_Root");
             buildingPlacement = new BuildingPlacementSystem();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(world.EntityManager, buildingPlacement);
 
             var placements = new List<InitialFactionBasePlacement>();
             InitialFactionBaseLayoutPlanner.BuildPlacements(spawnConfig.BaseHalfWidthCells, spawnConfig.BaseHalfHeightCells, placements);
@@ -429,10 +430,12 @@ public sealed class InitialFactionBaseValidationTests
                         AssertGateCenteredOnOpening((byte)faction.FactionId, anchor, placement, actualOrigin, actualFootprint);
                 }
 
-                Assert.AreEqual(1, buildingPlacement.CountRuntimeBuildingsForFaction((byte)faction.FactionId, "Building_Airport"));
-                Assert.AreEqual(3, buildingPlacement.CountRuntimeBuildingsForFaction((byte)faction.FactionId, "Building_Helipad"));
-                Assert.AreEqual(1, buildingPlacement.CountRuntimeBuildingsForFaction((byte)faction.FactionId, "Building_Ammunition_Depot"));
-                Assert.AreEqual(2, buildingPlacement.CountRuntimeBuildingsForFaction((byte)faction.FactionId, "Building_Road_Barrier"));
+                RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(world.EntityManager, buildingPlacement);
+                string ownedSummary = RuntimeGameplayStateTestHelper.DescribeOwnedBuildingSummaries(world.EntityManager);
+                StringAssert.Contains("id=building_airport count=1", ownedSummary);
+                StringAssert.Contains("id=building_helipad count=3", ownedSummary);
+                StringAssert.Contains("id=building_ammunition_depot count=1", ownedSummary);
+                StringAssert.Contains("id=building_road_barrier count=2", ownedSummary);
             }
         }
         finally

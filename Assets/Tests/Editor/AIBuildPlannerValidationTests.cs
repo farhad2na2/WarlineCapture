@@ -97,8 +97,15 @@ public sealed class AIBuildPlannerValidationTests
         entries.Add(new AIBuildPlanEntry { BuildingId = new FixedString64Bytes("Tent_Regular") });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
         SystemHandle system = _world.CreateSystem<AIBuildPlannerSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
+
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
+        system.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
+        LogAssert.NoUnexpectedReceived();
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         system.Update(_world.Unmanaged);
@@ -107,7 +114,8 @@ public sealed class AIBuildPlannerValidationTests
 
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(10000, economy.Money);
-        Assert.AreEqual(1, _buildingPlacement.CountRuntimeBuildingsForFaction(1, "Tent_Regular"));
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, (byte)1, "Tent_Regular"));
 
         AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(planEntity);
         Assert.AreEqual(1, plan.NextBuildIndex);

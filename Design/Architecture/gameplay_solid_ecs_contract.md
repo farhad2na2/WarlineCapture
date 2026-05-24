@@ -197,6 +197,7 @@ Allowed direction:
 - Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`.
 - Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem` until UI uses ECS query/request components.
 - AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers. Configured building/unit read models, faction building/resource summaries, produced/queued unit summaries, faction unit-production requests, faction resource-sell requests, and runtime building spawn requests belong in `BuildingRuntimeEcsBoundaryComponents`; `GameBootstrap` only installs the boundary entity/buffers, and temporary boundary publish/consume orchestration belongs in `BuildingRuntimeBoundarySystem` until the facade is retired.
+- `BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers; callers should use `BuildingProductionRequestSystem`, `FactionResourceSystem`, `BuildingRuntimeQuerySystem`, or the `BuildingRuntimeBoundaryTag` ECS buffers directly.
 
 When touching building code, do not add a new responsibility to `BuildingPlacementSystem`; extract or extend the matching `*System` slice.
 

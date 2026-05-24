@@ -97,6 +97,7 @@ public sealed class AIEndToEndValidationTests
         Entity unitD = CreateAttacker(em, 1, new int2(23, 20), new float3(23f, 0f, 20f));
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
         SystemHandle buildSystem = _world.CreateSystem<AIBuildPlannerSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
         SystemHandle productionSystem = _world.CreateSystem<AIProductionSystem>();
@@ -104,17 +105,31 @@ public sealed class AIEndToEndValidationTests
         SystemHandle targetingSystem = _world.CreateSystem<AITargetingSystem>();
         SystemHandle combatSystem = _world.CreateSystem<AICombatOrderSystem>();
 
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Requested"));
+        buildSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
+        LogAssert.NoUnexpectedReceived();
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
-        Assert.AreEqual(1, _buildingPlacement.CountRuntimeBuildingsForFaction(1, "Tent_Regular"));
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, (byte)1, "Tent_Regular"));
+
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 unit=Rifleman cost=10000 result=Requested"));
+        productionSystem.Update(_world.Unmanaged);
+        logFlushSystem.Update(_world.Unmanaged);
+        LogAssert.NoUnexpectedReceived();
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
-        Assert.AreEqual(1, _buildingPlacement.CountPendingProductionsForFaction(1, "Rifleman"));
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=1 squad=1 purpose=Attack units=4 targetFaction=0 targetCell=int2\(50, 50\)"));
         squadSystem.Update(_world.Unmanaged);

@@ -141,6 +141,8 @@ public sealed class BuildingRuntimeBoundarySystem
                 em,
                 now,
                 ref request);
+            if (queued)
+                _forcePublishNextUpdate = true;
             request.Status = queued
                 ? BuildingFactionUnitProductionRequest.Succeeded
                 : BuildingFactionUnitProductionRequest.Failed;
@@ -285,7 +287,7 @@ public sealed class BuildingRuntimeBoundarySystem
         PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
         PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
         PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
-        PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
+        PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
         PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
         PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
     }
@@ -383,14 +385,31 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private void PublishRuntimeOwnedBuildingSummaries(
         BuildingDefinitionSystem definitionSystem,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
-        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         EntityManager em,
         Entity boundaryEntity)
     {
         DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer =
             EnsureBoundaryBuffer<BuildingRuntimeOwnedBuildingSummary>(em, boundaryEntity);
         buffer.Clear();
+
+        if (runtimeBuildings != null)
+        {
+            foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+            {
+                RuntimeBuildingData building = pair.Value;
+                if (building == null ||
+                    building.IsDestroyed ||
+                    !building.HasOwnerFaction ||
+                    building.Definition == null)
+                {
+                    continue;
+                }
+
+                FixedString128Bytes buildingId = ResolveBoundaryId(building.Definition.Prefab, building.Definition.DisplayName);
+                AddOrIncrementOwnedBuildingSummary(buffer, building.OwnerFactionId, buildingId, 1);
+            }
+        }
 
         for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
         {
@@ -405,14 +424,35 @@ public sealed class BuildingRuntimeBoundarySystem
                     continue;
 
                 FixedString128Bytes buildingId = ResolveBoundaryId(entry.Prefab, entry.DisplayName);
-                buffer.Add(new BuildingRuntimeOwnedBuildingSummary
-                {
-                    FactionId = factionId,
-                    BuildingId = buildingId,
-                    Count = runtimeQuerySystem.CountRuntimeBuildingsForFaction(runtimeQueryContext, factionId, buildingId.ToString())
-                });
+                AddOrIncrementOwnedBuildingSummary(buffer, factionId, buildingId, 0);
             }
         }
+    }
+
+    private static void AddOrIncrementOwnedBuildingSummary(
+        DynamicBuffer<BuildingRuntimeOwnedBuildingSummary> buffer,
+        byte factionId,
+        FixedString128Bytes buildingId,
+        int countDelta)
+    {
+        string id = buildingId.ToString();
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            BuildingRuntimeOwnedBuildingSummary summary = buffer[i];
+            if (summary.FactionId != factionId || summary.BuildingId.ToString() != id)
+                continue;
+
+            summary.Count += countDelta;
+            buffer[i] = summary;
+            return;
+        }
+
+        buffer.Add(new BuildingRuntimeOwnedBuildingSummary
+        {
+            FactionId = factionId,
+            BuildingId = buildingId,
+            Count = countDelta
+        });
     }
 
     private void PublishRuntimeUnitProductionSummaries(

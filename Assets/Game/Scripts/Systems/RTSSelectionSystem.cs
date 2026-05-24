@@ -42,32 +42,6 @@ public sealed class RTSSelectionSystem
         ReturningToBase = 3
     }
 
-    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
-    private static readonly int ColorId = Shader.PropertyToID("_Color");
-
-    private struct PreservedOrderState
-    {
-        public Entity Entity;
-        public bool HadEngageTarget;
-        public EngageTarget EngageTarget;
-        public bool HadUnitTarget;
-        public UnitTarget UnitTarget;
-        public bool HadUnitPathRequest;
-        public UnitPathRequest UnitPathRequest;
-        public bool HadUnitPathFollow;
-        public UnitPathFollow UnitPathFollow;
-        public bool HadUnitPathRange;
-        public UnitPathRange UnitPathRange;
-    }
-
-    private struct PendingTransportBoardingOrder
-    {
-        public Entity Passenger;
-        public int2 PassengerCell;
-        public int2 Goal;
-        public bool DirectBoarding;
-    }
-
     private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)
     {
         if (Application.isBatchMode)
@@ -150,15 +124,15 @@ public sealed class RTSSelectionSystem
     private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
     private readonly UnitMoveOrderSystem _unitMoveOrderSystem = new();
     private readonly UnitTargetOrderSystem _unitTargetOrderSystem = new();
+    private readonly AttackOrderCommandSystem _attackOrderCommandSystem = new();
+    private readonly SelectionOrderMarkerSystem _selectionOrderMarkerSystem = new();
     private readonly FocusedUnitCommandSystem _focusedUnitCommandSystem = new();
+    private readonly FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem = new();
+    private readonly SelectedUnitOrderSnapshotSystem _selectedUnitOrderSnapshotSystem = new();
+    private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
+    private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
     private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
     private UnitTransportBoardingSystem _unitTransportBoardingSystem;
-    private Entity _focusedUnit
-    {
-        get => _selectionStateSystem.FocusedUnit;
-        set => _selectionStateSystem.SetFocusedUnit(value);
-    }
-
     private List<Entity> _cachedSelectedMoveEntities => _selectionStateSystem.CachedSelectedMoveEntities;
     private bool _cameraDragging
     {
@@ -272,30 +246,14 @@ public sealed class RTSSelectionSystem
     private RoadBuildSystem _roadBuildController;
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private FactionVisualSettings _factionVisualSettings;
     private BattleHudGameplayBridge _battleHudBridge;
     private World _queryWorld;
     private EntityQuery _selectedMoveQuery;
     private EntityQuery _gridPathingQuery;
-    private EntityQuery _allSelectableQuery;
     private EntityQuery _gridConfigQuery;
-    private EntityQuery _gridBlockerQuery;
     private EntityQuery _selectedTagQuery;
-    private EntityQuery _selectedAttackQuery;
-    private EntityQuery _transportBoardingTargetQuery;
-    private EntityQuery _pathingLiveUnitsQuery;
-    private readonly List<PreservedOrderState> _preservedUiOrders = new();
     private readonly List<SelectionUiQuerySystem.TransportPassengerUiInfo> _selectionUiPassengerScratch = new();
     private readonly List<Entity> _visibleSelectionScratch = new();
-    private readonly List<Entity> _selectedBoardingSourceEntities = new();
-    private GameObject _moveOrderMarker;
-    private Renderer[] _moveOrderMarkerRenderers;
-    private MaterialPropertyBlock _moveOrderMarkerPropertyBlock;
-    private float _moveOrderMarkerHideTime = -1f;
-    private GameObject _attackOrderMarker;
-    private Renderer[] _attackOrderMarkerRenderers;
-    private MaterialPropertyBlock _attackOrderMarkerPropertyBlock;
-    private float _attackOrderMarkerHideTime = -1f;
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
     private float _selectionModeHoldSeconds = 1f;
@@ -315,11 +273,12 @@ public sealed class RTSSelectionSystem
     {
         get
         {
-            if (_focusedUnit == Entity.Null || World.DefaultGameObjectInjectionWorld == null)
+            if (World.DefaultGameObjectInjectionWorld == null)
                 return false;
 
             var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            return _selectionUiQuerySystem.HasFocusedUnit(em, _focusedUnit);
+            return _focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, _selectionStateSystem, out Entity focusedUnit) &&
+                   _selectionUiQuerySystem.HasFocusedUnit(em, focusedUnit);
         }
     }
 
@@ -610,7 +569,7 @@ public sealed class RTSSelectionSystem
         return _selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose(
             em,
             selectedEntities,
-            _focusedUnit,
+            _selectionStateSystem.FocusedUnit,
             out centerWorldPosition,
             out forward,
             out framingRadius);
@@ -686,7 +645,6 @@ public sealed class RTSSelectionSystem
         _roadBuildController = roadBuildController;
         _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-        _factionVisualSettings = factionVisualSettings;
         _battleHudBridge = null;
         ApplyConfigIfAvailable();
 
@@ -715,8 +673,11 @@ public sealed class RTSSelectionSystem
         _pixel.SetPixel(0, 0, Color.white);
         _pixel.Apply();
 
-        CacheMoveOrderMarker();
-        CacheAttackOrderMarker();
+        _selectionOrderMarkerSystem.Initialize(
+            moveOrderMarkerPrefab,
+            attackOrderMarkerPrefab,
+            orderMarkerVisibleSeconds,
+            _runtimeRoot);
     }
 
     public void BindDependencies(
@@ -835,8 +796,7 @@ public sealed class RTSSelectionSystem
     {
         if (_pixel != null)
             Destroy(_pixel);
-        if (_moveOrderMarker != null && moveOrderMarkerPrefab != null)
-            Destroy(_moveOrderMarker);
+        _selectionOrderMarkerSystem.Dispose();
     }
 
     private void EnsureEntityQueries(EntityManager em)
@@ -846,14 +806,26 @@ public sealed class RTSSelectionSystem
         {
             _focusableUnitLookupSystem.EnsureEntityQueries(em);
             _visibleUnitSelectionSystem.EnsureEntityQueries(em);
+            _attackOrderCommandSystem.EnsureEntityQueries(em);
+            _selectionOrderMarkerSystem.EnsureEntityQueries(em);
             _focusedUnitCommandSystem.EnsureEntityQueries(em);
+            _focusedUnitLifecycleSystem.EnsureEntityQueries(em);
+            _selectedUnitOrderSnapshotSystem.EnsureEntityQueries(em);
+            _buildingTargetMoveOrderSystem.EnsureEntityQueries(em);
+            _transportBoardingCommandSystem.EnsureEntityQueries(em);
             return;
         }
 
         _queryWorld = world;
         _focusableUnitLookupSystem.EnsureEntityQueries(em);
         _visibleUnitSelectionSystem.EnsureEntityQueries(em);
+        _attackOrderCommandSystem.EnsureEntityQueries(em);
+        _selectionOrderMarkerSystem.EnsureEntityQueries(em);
         _focusedUnitCommandSystem.EnsureEntityQueries(em);
+        _focusedUnitLifecycleSystem.EnsureEntityQueries(em);
+        _selectedUnitOrderSnapshotSystem.EnsureEntityQueries(em);
+        _buildingTargetMoveOrderSystem.EnsureEntityQueries(em);
+        _transportBoardingCommandSystem.EnsureEntityQueries(em);
         _selectedMoveQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -863,44 +835,16 @@ public sealed class RTSSelectionSystem
             ComponentType.ReadOnly<GridWalkable>(),
             ComponentType.ReadOnly<DynamicBlockerData>(),
             ComponentType.ReadOnly<DynamicOccupancyData>());
-        _allSelectableQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<LocalToWorld>());
         _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        _gridBlockerQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<GridConfig>(),
-            ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>());
         _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        _selectedAttackQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<SelectedUnitTag>(),
-            ComponentType.ReadOnly<UnitMove>(),
-            ComponentType.ReadOnly<UnitCombat>(),
-            ComponentType.ReadOnly<UnitAttack>(),
-            ComponentType.ReadOnly<LocalTransform>());
-        _transportBoardingTargetQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitTransportBoardingTarget>());
-        _pathingLiveUnitsQuery = em.CreateEntityQuery(new EntityQueryDesc
-        {
-            All = new[]
-            {
-                ComponentType.ReadOnly<UnitGrid>(),
-                ComponentType.ReadOnly<UnitFootprint>(),
-            },
-            None = new[]
-            {
-                ComponentType.ReadOnly<StaticGridBlocker>(),
-                ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
-            }
-        });
     }
 
     public void Update()
     {
         ProcessQueuedMoveOrder();
         RefreshFocusedUnit();
-        UpdateMoveOrderMarkerVisibility();
-        UpdateAttackOrderMarkerVisibility();
+        _selectionOrderMarkerSystem.UpdateMoveOrderMarkerVisibility(SetHudWorldMarkersVisible);
+        _selectionOrderMarkerSystem.UpdateAttackOrderMarkerVisibility(SetHudWorldMarkersVisible);
 
         if (!_runtimeGameplayStateSystem.PlayRequested)
         {
@@ -1338,15 +1282,16 @@ public sealed class RTSSelectionSystem
         CacheSelectedMoveEntities(em, _visibleSelectionScratch);
         LogSelectionDiagnostic($"result=SelectRectangle filter={filter} selected={selectedCount} cache={_cachedSelectedMoveEntities.Count}");
 
-        _focusedUnit = selectedCount == 1 ? _visibleSelectionScratch[0] : Entity.Null;
-        if (_focusedUnit != Entity.Null)
+        Entity focusedUnit = _focusedUnitLifecycleSystem.ApplySelectionFocus(
+            em,
+            _selectionStateSystem,
+            _visibleSelectionScratch,
+            selectedCount,
+            ApplyHudSelection,
+            ApplyHudSquadSelection);
+        if (focusedUnit != Entity.Null)
         {
             _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.SelectUnitsInRectangle");
-            ApplyHudSelection(em, _focusedUnit);
-        }
-        else
-        {
-            ApplyHudSquadSelection(selectedCount);
         }
     }
 
@@ -1388,7 +1333,7 @@ public sealed class RTSSelectionSystem
         byte factionId = 0;
         if (em.HasComponent<Faction>(entities[0]))
             factionId = em.GetComponentData<Faction>(entities[0]).Id;
-        ShowMoveOrderMarker(em, goal, clickWorldPoint, factionId);
+        _selectionOrderMarkerSystem.ShowMoveOrderMarker(em, goal, clickWorldPoint, factionId);
         Entity gridEntity = _gridConfigQuery.GetSingletonEntity();
         GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
         var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
@@ -1513,281 +1458,23 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        if (!TryGetClickedOrNearbyBoardableTransport(screenPosition, em, out Entity transport))
+        TransportBoardingCommandSystem.Result result = _transportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
+            em,
+            screenPosition,
+            _unitTransportBoardingSystem,
+            _unitMoveOrderSystem,
+            _selectionStateSystem,
+            TryGetClickedUnitEntity,
+            TryGetClickedCell);
+        if (!result.Accepted)
             return false;
 
-        bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
-        if (!_unitTransportBoardingSystem.IsBoardablePlayerTransport(em, transport))
-        {
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
-            return false;
-        }
-
-        bool airTransport = em.HasComponent<UnitAirMovement>(transport);
-        bool transportLanded = _unitTransportBoardingSystem.IsTransportLandedForBoarding(em, transport);
-        if (!transportLanded && !airTransport)
-        {
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotLanded transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
-            return false;
-        }
-
-        if (!transportLanded && em.HasComponent<UnitTransportRopeDisembarkRequest>(transport))
-        {
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportBusyRopeDisembark transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
-            return false;
-        }
-
-        int capacity = math.max(0, em.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
-        int occupiedSeats = em.GetBuffer<UnitTransportPassengerElement>(transport).Length + CountPendingBoardingOrders(em, transport);
-        int availableSeats = capacity - occupiedSeats;
-        if (availableSeats <= 0)
-        {
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoSeats transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity}");
-            return false;
-        }
-
-        int selectedCount = CollectSelectedBoardingSourceEntities(em, _selectedBoardingSourceEntities, out int selectedTagCount, out int selectedMoveCount, out bool usedCachedSelection);
-        if (selectedCount == 0)
-        {
-            if (shouldLogTransportBoarding)
-            {
-                EnqueueTransportBoardingDiagnostic(
-                    em,
-                    $"[TransportBoard] result=NoSelectedPassengers transport={DescribeTransportBoardingEntity(em, transport)} seats={occupiedSeats}/{capacity} " +
-                    $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} cached={_cachedSelectedMoveEntities.Count}");
-            }
-
-            return false;
-        }
-
-        if (_gridPathingQuery.IsEmptyIgnoreFilter)
-        {
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoGridPathing transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} usedCache={(usedCachedSelection ? 1 : 0)}");
-            return false;
-        }
-
-        Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-        var blocked = blockerData.Blocked;
-        var friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-        int2 transportCell = em.GetComponentData<UnitGrid>(transport).Cell;
-        int2 transportSize = em.GetComponentData<UnitFootprint>(transport).Size;
-        int2 boardingTransportSize = airTransport ? new int2(1, 1) : transportSize;
-        using var liveUnitEntities = _pathingLiveUnitsQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        using var liveUnitGrids = _pathingLiveUnitsQuery.ToComponentDataArray<UnitGrid>(Unity.Collections.Allocator.Temp);
-        using var liveUnitFootprints = _pathingLiveUnitsQuery.ToComponentDataArray<UnitFootprint>(Unity.Collections.Allocator.Temp);
-
-        bool hasPendingAirPickupLanding = false;
-        int2 pendingAirPickupCell = default;
-        if (airTransport && !transportLanded)
-        {
-            if (!_unitTransportBoardingSystem.TryFindAirTransportPickupForBoarding(
-                    em,
-                    transport,
-                    grid,
-                    walkable,
-                    blocked,
-                    friendlyPassFactionIds,
-                    occupied,
-                    transportCell,
-                    transportSize,
-                    _selectedBoardingSourceEntities,
-                    selectedCount,
-                    liveUnitEntities,
-                    liveUnitGrids,
-                    liveUnitFootprints,
-                    out pendingAirPickupCell))
-            {
-                if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoAirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount}");
-                return false;
-            }
-
-            transportCell = pendingAirPickupCell;
-            hasPendingAirPickupLanding = true;
-        }
-
-        var boardingOrders = new List<PendingTransportBoardingOrder>();
-        var reservedBoardingCells = new HashSet<int>();
-        for (int i = 0; i < selectedCount && boardingOrders.Count < availableSeats; i++)
-        {
-            Entity passenger = _selectedBoardingSourceEntities[i];
-            if (passenger == transport)
-            {
-                if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=IsTransport passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
-                continue;
-            }
-
-            if (!_unitTransportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
-            {
-                if (shouldLogTransportBoarding)
-                    EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotSoldierBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
-                continue;
-            }
-
-            int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
-            byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
-            int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
-            int directBoardingCells = _unitTransportBoardingSystem.GetTransportBoardingDirectCells(em, transport);
-            if (!_unitTransportBoardingSystem.TryFindTransportApproachCell(
-                    grid,
-                    walkable,
-                    blocked,
-                    friendlyPassFactionIds,
-                    occupied,
-                    transportCell,
-                    boardingTransportSize,
-                    referenceCell,
-                    passengerFootprint,
-                    passenger,
-                    liveUnitEntities,
-                    liveUnitGrids,
-                    liveUnitFootprints,
-                    transport,
-                    em.GetComponentData<UnitGrid>(transport).Cell,
-                    transportSize,
-                    reservedBoardingCells,
-                    directBoardingCells,
-                    passengerFaction,
-                    out int2 goal))
-            {
-                if (shouldLogTransportBoarding)
-                {
-                    EnqueueTransportBoardingDiagnostic(
-                        em,
-                        $"[TransportBoard] result=NoApproach passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                        $"passengerCell={referenceCell} transportCell={transportCell} transportSize={boardingTransportSize} directCells={directBoardingCells}");
-                }
-
-                continue;
-            }
-
-            boardingOrders.Add(new PendingTransportBoardingOrder
-            {
-                Passenger = passenger,
-                PassengerCell = referenceCell,
-                Goal = goal,
-                DirectBoarding = goal.Equals(referenceCell)
-            });
-            _unitTransportBoardingSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
-        }
-
-        if (boardingOrders.Count <= 0)
-        {
-            if (shouldLogTransportBoarding)
-            {
-                EnqueueTransportBoardingDiagnostic(
-                    em,
-                    $"[TransportBoard] result=NoBoardingOrders transport={DescribeTransportBoardingEntity(em, transport)} selected={selectedCount} " +
-                    $"selectedTag={selectedTagCount} selectedMove={selectedMoveCount} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats}/{capacity} availableSeats={availableSeats}");
-            }
-
-            return false;
-        }
-
-        if (hasPendingAirPickupLanding)
-        {
-            _unitTransportBoardingSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, _unitMoveOrderSystem);
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
-        }
-
-        for (int i = 0; i < boardingOrders.Count; i++)
-        {
-            Entity passenger = boardingOrders[i].Passenger;
-            int2 goal = boardingOrders[i].Goal;
-            if (!em.Exists(passenger) || !_unitTransportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
-                continue;
-
-            _unitMoveOrderSystem.ClearMovementOrderComponents(em, passenger);
-            if (!em.HasBuffer<UnitTransportHiddenVisualScale>(passenger))
-                em.AddBuffer<UnitTransportHiddenVisualScale>(passenger);
-            _unitMoveOrderSystem.IssueImmediateMoveCommand(em, passenger, goal);
-            if (em.HasComponent<UnitTransportBoardingTarget>(passenger))
-                em.SetComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
-            else
-                em.AddComponentData(passenger, new UnitTransportBoardingTarget { Transport = transport, Goal = goal });
-
-            if (shouldLogTransportBoarding)
-            {
-                EnqueueTransportBoardingDiagnostic(
-                    em,
-                    $"[TransportBoard] result=Order passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)} " +
-                    $"from={boardingOrders[i].PassengerCell} goal={goal} direct={(boardingOrders[i].DirectBoarding ? 1 : 0)} usedCache={(usedCachedSelection ? 1 : 0)} seats={occupiedSeats + i}/{capacity}");
-            }
-        }
-
-        ShowMoveOrderMarker(em, transportCell, em.GetComponentData<LocalTransform>(transport).Position, 0);
+        _selectionOrderMarkerSystem.ShowMoveOrderMarker(em, result.MarkerCell, result.MarkerPosition, result.MarkerFactionId);
         MoveOrderScreenMarkerRequested?.Invoke(screenPosition);
         ClearCurrentSelection(em, "BoardTransportOrderIssued");
-        _focusedUnit = Entity.Null;
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
         _cameraDragging = false;
         return true;
-    }
-
-    private int CollectSelectedBoardingSourceEntities(
-        EntityManager em,
-        List<Entity> selectedEntities,
-        out int selectedTagCount,
-        out int selectedMoveCount,
-        out bool usedCachedSelection)
-    {
-        selectedEntities.Clear();
-        selectedTagCount = 0;
-        selectedMoveCount = 0;
-        usedCachedSelection = false;
-
-        EnsureEntityQueries(em);
-        using var selectedMoveEntities = _selectedMoveQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        selectedMoveCount = selectedMoveEntities.Length;
-        if (selectedMoveEntities.Length > 0)
-        {
-            _cachedSelectedMoveEntities.Clear();
-            for (int i = 0; i < selectedMoveEntities.Length; i++)
-            {
-                Entity entity = selectedMoveEntities[i];
-                selectedEntities.Add(entity);
-                if (IsCacheableSelectedMoveEntity(em, entity))
-                    _cachedSelectedMoveEntities.Add(entity);
-            }
-
-            selectedTagCount = selectedMoveCount;
-            return selectedEntities.Count;
-        }
-
-        using var selectedTagEntities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        selectedTagCount = selectedTagEntities.Length;
-        if (selectedTagEntities.Length > 0)
-        {
-            for (int i = 0; i < selectedTagEntities.Length; i++)
-                selectedEntities.Add(selectedTagEntities[i]);
-            return selectedEntities.Count;
-        }
-
-        for (int i = _cachedSelectedMoveEntities.Count - 1; i >= 0; i--)
-        {
-            Entity entity = _cachedSelectedMoveEntities[i];
-            if (!IsCacheableSelectedMoveEntity(em, entity))
-            {
-                _cachedSelectedMoveEntities.RemoveAt(i);
-                continue;
-            }
-
-            selectedEntities.Add(entity);
-        }
-
-        if (selectedEntities.Count > 0)
-            usedCachedSelection = true;
-        return selectedEntities.Count;
     }
 
     public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
@@ -1797,85 +1484,12 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        return TryGetClickedOrNearbyBoardableTransport(screenPosition, em, out _, false);
-    }
-
-    private bool TryGetClickedOrNearbyBoardableTransport(Vector2 screenPosition, EntityManager em, out Entity transport, bool logDiagnostics = true)
-    {
-        transport = Entity.Null;
-        bool shouldLogTransportBoarding = logDiagnostics && ShouldQueueTransportBoardingDiagnostics(em);
-        Entity clickedEntity = Entity.Null;
-        bool hasClickedEntity = TryGetClickedUnitEntity(screenPosition, em, out clickedEntity);
-        if (hasClickedEntity && _unitTransportBoardingSystem.IsBoardablePlayerTransport(em, clickedEntity))
-        {
-            transport = clickedEntity;
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=ClickedTransport transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
-            return true;
-        }
-
-        if (!TryGetClickedCell(screenPosition, em, out int2 clickedCell, out _))
-        {
-            if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoClickedCell clicked={DescribeTransportBoardingEntity(em, clickedEntity)} {DescribeTransportAirState(em, clickedEntity)}");
-            return false;
-        }
-
-        if (TryFindNearbyBoardableTransport(em, clickedCell, out transport))
-        {
-            if (shouldLogTransportBoarding)
-                EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NearbyTransport clickedCell={clickedCell} transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
-            return true;
-        }
-
-        if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
-        {
-            EnqueueTransportBoardingDiagnostic(
-                em,
-                $"[TransportBoard] result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
-                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(_unitTransportBoardingSystem.IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
-        }
-
-        if (hasClickedEntity &&
-            em.Exists(clickedEntity) &&
-            em.HasComponent<UnitMove>(clickedEntity) &&
-            !em.HasComponent<RuntimeBuildingCombatTag>(clickedEntity) &&
-            !em.HasComponent<StaticGridBlocker>(clickedEntity))
-        {
-            return false;
-        }
-
-        return false;
-    }
-
-    private bool TryFindNearbyBoardableTransport(EntityManager em, int2 clickedCell, out Entity transport)
-    {
-        transport = Entity.Null;
-        EnsureEntityQueries(em);
-        using var entities = _allSelectableQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        int bestScore = int.MaxValue;
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity candidate = entities[i];
-            if (!_unitTransportBoardingSystem.IsBoardablePlayerTransport(em, candidate))
-                continue;
-
-            int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
-            int2 footprint = em.GetComponentData<UnitFootprint>(candidate).Size;
-            int clickPaddingCells = _unitTransportBoardingSystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
-            if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, clickPaddingCells))
-                continue;
-
-            int2 delta = clickedCell - cell;
-            int score = math.abs(delta.x) + math.abs(delta.y);
-            if (score >= bestScore)
-                continue;
-
-            bestScore = score;
-            transport = candidate;
-        }
-
-        return transport != Entity.Null;
+        return _transportBoardingCommandSystem.IsBoardablePlayerTransportClick(
+            em,
+            screenPosition,
+            _unitTransportBoardingSystem,
+            TryGetClickedUnitEntity,
+            TryGetClickedCell);
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)
@@ -1891,27 +1505,6 @@ public sealed class RTSSelectionSystem
         }
 
         return em.GetName(entity);
-    }
-
-    private bool IsKnownPersonnelTransport(EntityManager em, Entity entity)
-    {
-        if (!em.Exists(entity))
-            return false;
-
-        if (em.HasComponent<UnitTransportCapacity>(entity) &&
-            math.max(0, em.GetComponentData<UnitTransportCapacity>(entity).SoldierCapacity) > 0)
-        {
-            return true;
-        }
-
-        return _unitTransportBoardingSystem.ResolveTransportCapacity(em, entity) > 0;
-    }
-
-    private static bool IsPlayerFaction(EntityManager em, Entity entity)
-    {
-        return em.Exists(entity) &&
-               em.HasComponent<Faction>(entity) &&
-               em.GetComponentData<Faction>(entity).Id == 0;
     }
 
     private static string DescribeTransportBoardingEntity(EntityManager em, Entity entity)
@@ -1955,25 +1548,6 @@ public sealed class RTSSelectionSystem
         return $"airborne={airState.Airborne} takeoff={airState.TakeoffRolling} landing={airState.LandingRolling} returning={airState.ReturningHome} rope={(em.HasComponent<UnitTransportRopeDisembarkRequest>(entity) ? 1 : 0)}";
     }
 
-    private int CountPendingBoardingOrders(EntityManager em, Entity transport)
-    {
-        EnsureEntityQueries(em);
-        using var entities = _transportBoardingTargetQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        int count = 0;
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (em.Exists(entity) &&
-                em.HasComponent<UnitTransportBoardingTarget>(entity) &&
-                em.GetComponentData<UnitTransportBoardingTarget>(entity).Transport == transport)
-            {
-                count++;
-            }
-        }
-
-        return count;
-    }
-
     private void CacheSelectedMoveEntities(EntityManager em, List<Entity> entities)
     {
         _selectionStateSystem.CacheSelectedMoveEntities(em, entities);
@@ -1984,74 +1558,18 @@ public sealed class RTSSelectionSystem
         _selectionStateSystem.CacheSelectedMoveEntity(em, entity);
     }
 
-    private static bool IsCacheableSelectedMoveEntity(EntityManager em, Entity entity)
-    {
-        return SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
-    }
-
     public bool TryIssueMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
     {
         if (World.DefaultGameObjectInjectionWorld == null)
             return false;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        using var selectedEntities = _selectedMoveQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (selectedEntities.Length == 0)
+        bool issued = _buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(em, originCell, footprintCells);
+        if (!issued)
             return false;
-
-        if (_gridPathingQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        Entity gridEntity = _gridPathingQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        var blocked = em.GetComponentData<DynamicBlockerData>(gridEntity).Blocked;
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-
-        int2 referenceCell = em.GetComponentData<UnitGrid>(selectedEntities[0]).Cell;
-        if (!TryFindBuildingApproachCell(grid, walkable, blocked, occupied, originCell, footprintCells, referenceCell, out int2 goal))
-            return false;
-
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-
-            if (IsAlreadyMovingToGoal(em, entity, goal))
-                continue;
-
-            if (em.HasComponent<EngageTarget>(entity))
-                em.RemoveComponent<EngageTarget>(entity);
-            if (em.HasComponent<UnitPathFollow>(entity))
-                em.RemoveComponent<UnitPathFollow>(entity);
-            if (em.HasComponent<UnitPathRange>(entity))
-                em.RemoveComponent<UnitPathRange>(entity);
-            if (em.HasComponent<AutoWanderMoveTag>(entity))
-                em.RemoveComponent<AutoWanderMoveTag>(entity);
-
-            if (em.HasComponent<UnitTarget>(entity))
-                em.SetComponentData(entity, new UnitTarget { Cell = goal });
-            else
-                em.AddComponentData(entity, new UnitTarget { Cell = goal });
-
-            if (!em.HasComponent<UnitAirMovement>(entity))
-            {
-                if (em.HasComponent<UnitPathRequest>(entity))
-                    em.SetComponentData(entity, new UnitPathRequest { Goal = goal });
-                else
-                    em.AddComponentData(entity, new UnitPathRequest { Goal = goal });
-            }
-            else if (em.HasComponent<UnitPathRequest>(entity))
-            {
-                em.RemoveComponent<UnitPathRequest>(entity);
-            }
-
-            if (!em.HasComponent<ManualMoveOrderTag>(entity))
-                em.AddComponent<ManualMoveOrderTag>(entity);
-        }
 
         ClearCurrentSelection(em, "MoveOrderToBuilding");
-        _focusedUnit = Entity.Null;
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
         if (TryGetPointerPosition(out Vector2 markerScreenPosition))
             MoveOrderScreenMarkerRequested?.Invoke(markerScreenPosition);
         return true;
@@ -2095,173 +1613,6 @@ public sealed class RTSSelectionSystem
         return GridUtils.InBounds(cell, grid.Width, grid.Height);
     }
 
-    private void CacheMoveOrderMarker()
-    {
-        _moveOrderMarkerPropertyBlock = new MaterialPropertyBlock();
-
-        if (moveOrderMarkerPrefab != null)
-        {
-            Object markerInstance = Instantiate((Object)moveOrderMarkerPrefab);
-            _moveOrderMarker = markerInstance as GameObject;
-            if (_moveOrderMarker == null)
-                return;
-            _moveOrderMarker.name = "MoveOrderMarkerRuntime";
-            if (_runtimeRoot != null)
-                _moveOrderMarker.transform.SetParent(_runtimeRoot, false);
-            _moveOrderMarkerRenderers = _moveOrderMarker.GetComponentsInChildren<Renderer>(true);
-            _moveOrderMarker.SetActive(false);
-            return;
-        }
-
-        _moveOrderMarker = null;
-        _moveOrderMarkerRenderers = null;
-
-        _moveOrderMarker = null;
-        _moveOrderMarkerRenderers = null;
-    }
-
-    private void CacheAttackOrderMarker()
-    {
-        _attackOrderMarkerPropertyBlock = new MaterialPropertyBlock();
-
-        if (attackOrderMarkerPrefab != null)
-        {
-            Object markerInstance = Instantiate((Object)attackOrderMarkerPrefab);
-            _attackOrderMarker = markerInstance as GameObject;
-            if (_attackOrderMarker == null)
-                return;
-            _attackOrderMarker.name = "AttackOrderMarkerRuntime";
-            if (_runtimeRoot != null)
-                _attackOrderMarker.transform.SetParent(_runtimeRoot, false);
-            _attackOrderMarkerRenderers = _attackOrderMarker.GetComponentsInChildren<Renderer>(true);
-            _attackOrderMarker.SetActive(false);
-            return;
-        }
-
-        _attackOrderMarker = null;
-        _attackOrderMarkerRenderers = null;
-    }
-
-    private void UpdateMoveOrderMarkerVisibility()
-    {
-        if (_moveOrderMarker == null || _moveOrderMarkerHideTime < 0f)
-            return;
-
-        if (Time.time < _moveOrderMarkerHideTime)
-            return;
-
-        _moveOrderMarker.SetActive(false);
-        _moveOrderMarkerHideTime = -1f;
-        if (_attackOrderMarkerHideTime < 0f)
-            SetHudWorldMarkersVisible(false);
-    }
-
-    private void UpdateAttackOrderMarkerVisibility()
-    {
-        if (_attackOrderMarker == null || _attackOrderMarkerHideTime < 0f)
-            return;
-
-        if (Time.time < _attackOrderMarkerHideTime)
-            return;
-
-        _attackOrderMarker.SetActive(false);
-        _attackOrderMarkerHideTime = -1f;
-        if (_moveOrderMarkerHideTime < 0f)
-            SetHudWorldMarkersVisible(false);
-    }
-
-    private void ShowMoveOrderMarker(EntityManager em, int2 cell, Vector3 worldPoint, byte factionId)
-    {
-        if (_moveOrderMarker == null || _moveOrderMarkerRenderers == null || _moveOrderMarkerRenderers.Length == 0)
-            return;
-
-        EnsureEntityQueries(em);
-        if (_gridBlockerQuery.IsEmptyIgnoreFilter)
-            return;
-
-        Entity gridEntity = _gridBlockerQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        if (!GridUtils.InBounds(cell, grid.Width, grid.Height))
-            return;
-
-        int cellIndex = GridUtils.CellToIndex(cell, grid.Width);
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity);
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-        bool blocked = walkable[cellIndex].Value == 0 || (blockerData.Blocked.IsCreated && blockerData.Blocked.IsSet(cellIndex));
-
-        if (blocked)
-        {
-            _moveOrderMarker.SetActive(false);
-            _moveOrderMarkerHideTime = -1f;
-            return;
-        }
-
-        Vector3 worldPosition = worldPoint;
-        worldPosition.y = grid.Origin.y + 0.05f;
-
-        _moveOrderMarker.transform.position = worldPosition;
-        _moveOrderMarker.transform.rotation = Quaternion.identity;
-        _moveOrderMarker.SetActive(true);
-
-        for (int i = 0; i < _moveOrderMarkerRenderers.Length; i++)
-        {
-            Renderer renderer = _moveOrderMarkerRenderers[i];
-            if (renderer == null)
-                continue;
-
-            _moveOrderMarkerPropertyBlock.Clear();
-            renderer.SetPropertyBlock(_moveOrderMarkerPropertyBlock);
-        }
-
-        _moveOrderMarkerHideTime = Time.time + orderMarkerVisibleSeconds;
-    }
-
-    private void ShowAttackOrderMarker(EntityManager em, Vector3 worldPoint)
-    {
-        if (_attackOrderMarker == null || _attackOrderMarkerRenderers == null || _attackOrderMarkerRenderers.Length == 0)
-            return;
-
-        EnsureEntityQueries(em);
-        if (_gridBlockerQuery.IsEmptyIgnoreFilter)
-            return;
-
-        Entity gridEntity = _gridBlockerQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-
-        Vector3 worldPosition = worldPoint;
-        worldPosition.y = grid.Origin.y + 0.05f;
-
-        _attackOrderMarker.transform.position = worldPosition;
-        _attackOrderMarker.transform.rotation = Quaternion.identity;
-        _attackOrderMarker.SetActive(true);
-
-        for (int i = 0; i < _attackOrderMarkerRenderers.Length; i++)
-        {
-            Renderer renderer = _attackOrderMarkerRenderers[i];
-            if (renderer == null)
-                continue;
-
-            _attackOrderMarkerPropertyBlock.Clear();
-            renderer.SetPropertyBlock(_attackOrderMarkerPropertyBlock);
-        }
-
-        _attackOrderMarkerHideTime = Time.time + orderMarkerVisibleSeconds;
-    }
-
-    private Color ResolveFactionColor(byte factionId)
-    {
-        FactionVisualSettings settings = _factionVisualSettings;
-        if (settings != null)
-            return settings.GetColor(factionId);
-
-        return factionId switch
-        {
-            0 => new Color(0.12f, 0.72f, 1f, 1f),
-            1 => new Color(1f, 0.35f, 0.2f, 1f),
-            _ => new Color(0.82f, 0.82f, 0.82f, 1f)
-        };
-    }
-
     private void UpdateLastKnownPointerPosition(Vector2 pointerPosition)
     {
         _rtsSelectionInputSystem.UpdateLastKnownPointerPosition(pointerPosition);
@@ -2277,77 +1628,6 @@ public sealed class RTSSelectionSystem
         }
 
         return _rtsSelectionInputSystem.TryGetLastKnownPointerPosition(out pointerPosition);
-    }
-
-    private static bool TryFindBuildingApproachCell(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeBitArray occupied,
-        Vector2Int originCell,
-        Vector2Int footprintCells,
-        int2 referenceCell,
-        out int2 goal)
-    {
-        goal = default;
-        int maxRadius = math.max(grid.Width, grid.Height);
-        int bestScore = int.MaxValue;
-        bool found = false;
-
-        for (int extraRadius = 1; extraRadius <= maxRadius; extraRadius++)
-        {
-            int minX = originCell.x - extraRadius;
-            int minY = originCell.y - extraRadius;
-            int maxX = originCell.x + footprintCells.x - 1 + extraRadius;
-            int maxY = originCell.y + footprintCells.y - 1 + extraRadius;
-
-            for (int x = minX; x <= maxX; x++)
-            {
-                TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, referenceCell, x, minY, ref bestScore, ref goal, ref found);
-                if (maxY != minY)
-                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, referenceCell, x, maxY, ref bestScore, ref goal, ref found);
-            }
-
-            for (int y = minY + 1; y < maxY; y++)
-            {
-                TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, referenceCell, minX, y, ref bestScore, ref goal, ref found);
-                if (maxX != minX)
-                    TryScoreBuildingApproachCandidate(grid, walkable, blocked, occupied, referenceCell, maxX, y, ref bestScore, ref goal, ref found);
-            }
-
-            if (found)
-                return true;
-        }
-
-        return false;
-    }
-
-    private static void TryScoreBuildingApproachCandidate(
-        in GridConfig grid,
-        in Unity.Collections.NativeArray<GridWalkable> walkable,
-        in Unity.Collections.NativeBitArray blocked,
-        in Unity.Collections.NativeBitArray occupied,
-        int2 referenceCell,
-        int x,
-        int y,
-        ref int bestScore,
-        ref int2 bestCell,
-        ref bool found)
-    {
-        if ((uint)x >= (uint)grid.Width || (uint)y >= (uint)grid.Height)
-            return;
-
-        int index = GridUtils.CellToIndex(new int2(x, y), grid.Width);
-        if (walkable[index].Value == 0 || blocked.IsSet(index) || occupied.IsSet(index))
-            return;
-
-        int score = math.abs(referenceCell.x - x) + math.abs(referenceCell.y - y);
-        if (!found || score < bestScore)
-        {
-            bestScore = score;
-            bestCell = new int2(x, y);
-            found = true;
-        }
     }
 
     private static bool IsPointerOverUI(Vector2 screenPosition, out string source)
@@ -2660,20 +1940,12 @@ public sealed class RTSSelectionSystem
 
     private void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
     {
-        EnsureEntityQueries(em);
-        using var entities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        int cacheBefore = _cachedSelectedMoveEntities.Count;
-        if (entities.Length > 0 || cacheBefore > 0)
-            LogSelectionDiagnostic($"result=Clear reason={reason} selected={entities.Length} cache={cacheBefore}");
-        _cachedSelectedMoveEntities.Clear();
-        for (int i = 0; i < entities.Length; i++)
-        {
-            var entity = entities[i];
-            if (!em.HasComponent<SelectedUnitTag>(entity))
-                continue;
-            em.RemoveComponent<SelectedUnitTag>(entity);
-        }
-        ClearHudSelection();
+        _focusedUnitLifecycleSystem.ClearCurrentSelection(
+            em,
+            _selectionStateSystem,
+            reason,
+            LogSelectionDiagnostic,
+            ClearHudSelection);
     }
 
     private static Rect GetScreenRect(Vector2 a, Vector2 b)
@@ -2707,7 +1979,7 @@ public sealed class RTSSelectionSystem
 
     public void ClearFocusedUnit()
     {
-        _focusedUnit = Entity.Null;
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
         _explicitAttackTargetModeActive = false;
         ClearHudSelection();
         ClearHudCommandMode();
@@ -2718,7 +1990,7 @@ public sealed class RTSSelectionSystem
     {
         if (World.DefaultGameObjectInjectionWorld == null)
         {
-            _focusedUnit = Entity.Null;
+            _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
             _explicitAttackTargetModeActive = false;
             ClearHudSelection();
             ClearHudCommandMode();
@@ -2728,7 +2000,7 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         ClearCurrentSelection(em, reason);
-        _focusedUnit = Entity.Null;
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
         _explicitAttackTargetModeActive = false;
         ClearHudSelection();
         ClearHudCommandMode();
@@ -2771,24 +2043,26 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        if (!em.Exists(entity) || !em.HasComponent<Faction>(entity))
+        if (!_focusedUnitLifecycleSystem.FocusUnitEntity(
+                em,
+                entity,
+                _selectionStateSystem,
+                _unitTargetOrderSystem,
+                "FocusUnitEntity",
+                "FocusUnitEntity",
+                LogSelectionDiagnostic,
+                DescribeTransportBoardingEntity,
+                ClearHudSelection,
+                ApplyHudSelection))
+        {
             return false;
+        }
 
-        ClearCurrentSelection(em, "FocusUnitEntity");
-        if (em.GetComponentData<Faction>(entity).Id == 0 && !em.HasComponent<SelectedUnitTag>(entity))
-            em.AddComponent<SelectedUnitTag>(entity);
-        CacheSelectedMoveEntity(em, entity);
-        LogSelectionDiagnostic($"result=Focus source=FocusUnitEntity entity={DescribeTransportBoardingEntity(em, entity)} cache={_cachedSelectedMoveEntities.Count}");
-
-        _focusedUnit = entity;
         _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
         _ignoreNextLeftMouseRelease = true;
         _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _cameraDragging = false;
-        if (em.HasComponent<UnitAirMovement>(entity))
-            _unitTargetOrderSystem.ClearAccidentalAirSelectionMove(em, entity);
-        ApplyHudSelection(em, entity);
         return true;
     }
 
@@ -2854,9 +2128,8 @@ public sealed class RTSSelectionSystem
 
         EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        using var selectedEntities = _selectedAttackQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        UnitTargetOrderSystem.AttackOrderIssueResult issueResult =
-            _unitTargetOrderSystem.IssueAttackTarget(em, selectedEntities, targetEntity);
+        AttackOrderCommandSystem.Result issueResult =
+            _attackOrderCommandSystem.IssueAttackTarget(em, targetEntity, _unitTargetOrderSystem);
         TacticalCommandResult result = issueResult.CommandResult;
         if (result.Accepted)
         {
@@ -2895,65 +2168,26 @@ public sealed class RTSSelectionSystem
 
     public void PreserveSelectedUnitOrders()
     {
-        _preservedUiOrders.Clear();
-
         if (World.DefaultGameObjectInjectionWorld == null)
+        {
+            _selectedUnitOrderSnapshotSystem.Clear();
             return;
+        }
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        using var entities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            var state = new PreservedOrderState
-            {
-                Entity = entity,
-                HadEngageTarget = em.HasComponent<EngageTarget>(entity),
-                HadUnitTarget = em.HasComponent<UnitTarget>(entity),
-                HadUnitPathRequest = em.HasComponent<UnitPathRequest>(entity),
-                HadUnitPathFollow = em.HasComponent<UnitPathFollow>(entity),
-                HadUnitPathRange = em.HasComponent<UnitPathRange>(entity)
-            };
-
-            if (state.HadEngageTarget)
-                state.EngageTarget = em.GetComponentData<EngageTarget>(entity);
-            if (state.HadUnitTarget)
-                state.UnitTarget = em.GetComponentData<UnitTarget>(entity);
-            if (state.HadUnitPathRequest)
-                state.UnitPathRequest = em.GetComponentData<UnitPathRequest>(entity);
-            if (state.HadUnitPathFollow)
-                state.UnitPathFollow = em.GetComponentData<UnitPathFollow>(entity);
-            if (state.HadUnitPathRange)
-                state.UnitPathRange = em.GetComponentData<UnitPathRange>(entity);
-
-            _preservedUiOrders.Add(state);
-        }
+        _selectedUnitOrderSnapshotSystem.PreserveSelectedUnitOrders(em);
     }
 
     public void RestorePreservedUnitOrders()
     {
         if (World.DefaultGameObjectInjectionWorld == null)
         {
-            _preservedUiOrders.Clear();
+            _selectedUnitOrderSnapshotSystem.Clear();
             return;
         }
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        for (int i = 0; i < _preservedUiOrders.Count; i++)
-        {
-            PreservedOrderState state = _preservedUiOrders[i];
-            if (!em.Exists(state.Entity))
-                continue;
-
-            RestoreComponent(em, state.Entity, state.HadEngageTarget, state.EngageTarget);
-            RestoreComponent(em, state.Entity, state.HadUnitTarget, state.UnitTarget);
-            RestoreComponent(em, state.Entity, state.HadUnitPathRequest, state.UnitPathRequest);
-            RestoreComponent(em, state.Entity, state.HadUnitPathFollow, state.UnitPathFollow);
-            RestoreComponent(em, state.Entity, state.HadUnitPathRange, state.UnitPathRange);
-        }
-
-        _preservedUiOrders.Clear();
+        _selectedUnitOrderSnapshotSystem.RestorePreservedUnitOrders(em);
     }
 
     public void CaptureUiClickSequence()
@@ -2969,7 +2203,7 @@ public sealed class RTSSelectionSystem
             return;
 
         _focusedUnitCommandSystem.DestroyFocusedUnit(em, entity);
-        _focusedUnit = Entity.Null;
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
     }
 
     public void ReturnFocusedUnitToBase()
@@ -3001,9 +2235,9 @@ public sealed class RTSSelectionSystem
             return false;
         }
 
-        ShowAttackOrderMarker(em, targetPosition);
+        _selectionOrderMarkerSystem.ShowAttackOrderMarker(em, targetPosition);
         ClearCurrentSelection(em, "MissileLauncherRadarAttack");
-        _focusedUnit = launcher;
+        _focusedUnitLifecycleSystem.SetFocusedUnit(_selectionStateSystem, launcher);
         _explicitAttackTargetModeActive = false;
         _cameraDragging = false;
         ApplyHudCommandResult(TacticalCommandResult.Success());
@@ -3084,38 +2318,7 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-
-        if (_focusedUnit != Entity.Null)
-        {
-            if (!em.Exists(_focusedUnit))
-            {
-                _focusedUnit = Entity.Null;
-            }
-            else if (em.HasComponent<Faction>(_focusedUnit) && em.GetComponentData<Faction>(_focusedUnit).Id != 0 && em.HasComponent<SelectedUnitTag>(_focusedUnit))
-            {
-                em.RemoveComponent<SelectedUnitTag>(_focusedUnit);
-            }
-        }
-
-        if (_focusedUnit != Entity.Null)
-        {
-            ApplyHudSelection(em, _focusedUnit);
-            return;
-        }
-
-        using var selectedEntities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (selectedEntities.Length != 1)
-            return;
-
-        Entity selectedEntity = selectedEntities[0];
-        if (!em.Exists(selectedEntity) || !em.HasComponent<Faction>(selectedEntity))
-            return;
-
-        if (em.GetComponentData<Faction>(selectedEntity).Id != 0)
-            return;
-
-        _focusedUnit = selectedEntity;
-        ApplyHudSelection(em, _focusedUnit);
+        _focusedUnitLifecycleSystem.RefreshFocusedUnit(em, _selectionStateSystem, ApplyHudSelection);
     }
 
     private bool TryFocusUnit(Vector2 screenPosition)
@@ -3125,26 +2328,28 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        if (!TryGetClickedUnitEntity(screenPosition, em, out Entity bestEntity))
+        if (!_focusedUnitLifecycleSystem.TryFocusUnit(
+                em,
+                screenPosition,
+                _selectionStateSystem,
+                _unitTargetOrderSystem,
+                TryGetClickedUnitEntity,
+                "TryFocusUnit",
+                "TryFocusUnit",
+                LogSelectionDiagnostic,
+                DescribeTransportBoardingEntity,
+                ClearHudSelection,
+                ApplyHudSelection,
+                out _))
+        {
             return false;
-        if (_unitTargetOrderSystem.IsBuildingEntity(em, bestEntity))
-            return false;
+        }
 
-        ClearCurrentSelection(em, "TryFocusUnit");
-        if (em.GetComponentData<Faction>(bestEntity).Id == 0 && !em.HasComponent<SelectedUnitTag>(bestEntity))
-            em.AddComponent<SelectedUnitTag>(bestEntity);
-        CacheSelectedMoveEntity(em, bestEntity);
-        LogSelectionDiagnostic($"result=Focus source=TryFocusUnit entity={DescribeTransportBoardingEntity(em, bestEntity)} cache={_cachedSelectedMoveEntities.Count}");
-
-        _focusedUnit = bestEntity;
         _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
         _ignoreNextLeftMouseRelease = true;
         _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _cameraDragging = false;
-        if (em.HasComponent<UnitAirMovement>(bestEntity))
-            _unitTargetOrderSystem.ClearAccidentalAirSelectionMove(em, bestEntity);
-        ApplyHudSelection(em, bestEntity);
         return true;
     }
 
@@ -3159,67 +2364,30 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        if (!TryGetClickedUnitEntity(screenPosition, em, out Entity targetEntity))
-        {
-            if (_explicitAttackTargetModeActive)
-                ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
-            return false;
-        }
-
-        TacticalCommandResult targetValidation = _unitTargetOrderSystem.ValidateAttackTarget(em, targetEntity);
-        if (!targetValidation.Accepted)
-        {
-            if (_explicitAttackTargetModeActive)
-                ApplyHudCommandResult(targetValidation);
-            return false;
-        }
-
-        using var selectedEntities = _selectedAttackQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        UnitTargetOrderSystem.AttackOrderIssueResult issueResult = _unitTargetOrderSystem.IssueAttackTarget(
+        AttackOrderCommandSystem.Result issueResult = _attackOrderCommandSystem.TryIssueAttackOrderToClickedUnit(
             em,
-            selectedEntities,
-            targetEntity,
-            TryResolveBaseBreachTargetForAttackOrder);
-        if (!issueResult.CommandResult.Accepted)
+            screenPosition,
+            _unitTargetOrderSystem,
+            TryGetClickedUnitEntity,
+            _buildingPlacementInteractionSystem,
+            _buildingPlacementInteractionContext,
+            _explicitAttackTargetModeActive);
+        if (!issueResult.Issued)
         {
-            ApplyHudCommandResult(issueResult.CommandResult);
+            if (issueResult.HasCommandResult)
+                ApplyHudCommandResult(issueResult.CommandResult);
             return false;
         }
 
-        ShowAttackOrderMarker(em, issueResult.TargetPosition);
+        _selectionOrderMarkerSystem.ShowAttackOrderMarker(em, issueResult.TargetPosition);
         AttackOrderScreenMarkerRequested?.Invoke(screenPosition);
         ClearCurrentSelection(em, "AttackOrderIssued");
-        _focusedUnit = Entity.Null;
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
         _cameraDragging = false;
         ApplyHudCommandResult(TacticalCommandResult.Success());
         ClearHudCommandMode();
         SetHudWorldMarkersVisible(true);
         return true;
-    }
-
-    private bool TryResolveBaseBreachTargetForAttackOrder(
-        byte factionId,
-        Entity targetEntity,
-        int2 targetCell,
-        int2 attackerCell,
-        out Entity breachTarget,
-        out int2 breachCell,
-        out float3 breachPosition)
-    {
-        breachTarget = Entity.Null;
-        breachCell = default;
-        breachPosition = default;
-        return _buildingPlacementInteractionSystem != null &&
-               _buildingPlacementInteractionSystem.TryResolveBaseBreachTarget(
-                   _buildingPlacementInteractionContext,
-                   factionId,
-                   targetEntity,
-                   targetCell,
-                   attackerCell,
-                   out breachTarget,
-                   out breachCell,
-                   out breachPosition,
-                   out _);
     }
 
     private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
@@ -3241,31 +2409,11 @@ public sealed class RTSSelectionSystem
         em = default;
         entity = Entity.Null;
 
-        if (_focusedUnit == Entity.Null || World.DefaultGameObjectInjectionWorld == null)
+        if (World.DefaultGameObjectInjectionWorld == null)
             return false;
 
         em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        if (!em.Exists(_focusedUnit))
-            return false;
-
-        entity = _focusedUnit;
-        return true;
-    }
-
-    private static void RestoreComponent<T>(EntityManager em, Entity entity, bool shouldExist, T value)
-        where T : unmanaged, IComponentData
-    {
-        if (shouldExist)
-        {
-            if (em.HasComponent<T>(entity))
-                em.SetComponentData(entity, value);
-            else
-                em.AddComponentData(entity, value);
-        }
-        else if (em.HasComponent<T>(entity))
-        {
-            em.RemoveComponent<T>(entity);
-        }
+        return _focusedUnitLifecycleSystem.TryGetFocusedUnitEntity(em, _selectionStateSystem, out entity);
     }
 
 }

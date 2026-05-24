@@ -150,6 +150,21 @@ AI log enablement and transport boarding diagnostics must flow through `RuntimeD
 AI domain logs must use ECS diagnostic event buffers such as `AIDiagnosticLogComponent`, flushed by a shell-edge logging system such as `AIDiagnosticLogFlushSystem`. Hot systems must gate diagnostic message construction before formatting strings.
 Transport boarding diagnostics must use ECS diagnostic event buffers such as `TransportBoardingDiagnosticLogComponent`, flushed by `TransportBoardingDiagnosticLogFlushSystem`. Boarding command and boarding execution call sites must gate diagnostic message construction before formatting entity descriptions or pathing details.
 
+## Selection Domain Migration
+
+`RTSSelectionSystem` is a managed input orchestration shell. It may coordinate pointer input, camera mode handoff, command markers, and HUD feedback while compatibility callers migrate, but gameplay query and mutation slices must move into narrow `*System` boundaries.
+
+Allowed direction:
+- clicked-unit focus lookup, focusable-unit cache refresh, padded footprint candidate scoring, and focusable candidate policy belong in `FocusableUnitLookupSystem`.
+- visible player-unit screen selection, select-all filtering, and selected-tag application belong in `VisibleUnitSelectionSystem`.
+- focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`.
+- attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`.
+- move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`.
+- focused-unit command mutations, focused return-to-base lookup, radar target-mode policy, and immediate hold/stop command cleanup belong in `FocusedUnitCommandSystem`.
+- selected-unit order snapshot and restore state belongs in `SelectedUnitOrderSnapshotSystem`.
+- building-target move order approach search and selected-unit movement component writes belong in `BuildingTargetMoveOrderSystem`.
+- selected boarding-source collection, clicked/nearby transport resolution, transport boarding order creation, pending boarding-count checks, and boarding command diagnostics coordination belong in `TransportBoardingCommandSystem`.
+
 ## Refactor Direction
 
 Use narrow migrations. Do not rewrite the entire project at once.

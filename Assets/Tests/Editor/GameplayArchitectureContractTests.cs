@@ -183,6 +183,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`MenuStartupSystem` must receive `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose public building UI read/query or menu/camp command compatibility wrappers", contract);
         StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
+        StringAssert.Contains("focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`", contract);
+        StringAssert.Contains("attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`", contract);
+        StringAssert.Contains("move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`", contract);
+        StringAssert.Contains("selected boarding-source collection, clicked/nearby transport resolution, transport boarding order creation, pending boarding-count checks, and boarding command diagnostics coordination belong in `TransportBoardingCommandSystem`", contract);
         StringAssert.Contains("interaction context construction belongs in `BuildingPlacementInteractionContextSystem`, not `BuildingPlacementSystem`", contract);
         StringAssert.Contains("Runtime building entity-link callbacks must route through `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
@@ -1219,6 +1223,7 @@ public sealed class GameplayArchitectureContractTests
         string[] transportDiagnosticFiles =
         {
             "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
+            "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs",
             "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs"
         };
 
@@ -2185,6 +2190,53 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RtsSelectionSystemMustDelegateSelectedOrderSnapshotSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string snapshotFile = "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotSystem.cs";
+        Assert.IsTrue(File.Exists(snapshotFile), "Selected-unit order snapshot/restore ownership must live in SelectedUnitOrderSnapshotSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string snapshot = File.ReadAllText(snapshotFile);
+        StringAssert.Contains("SelectedUnitOrderSnapshotSystem _selectedUnitOrderSnapshotSystem", selection);
+        StringAssert.Contains("_selectedUnitOrderSnapshotSystem.PreserveSelectedUnitOrders", selection);
+        StringAssert.Contains("_selectedUnitOrderSnapshotSystem.RestorePreservedUnitOrders", selection);
+        StringAssert.Contains("PreservedOrderState", snapshot);
+        StringAssert.Contains("RestoreComponent", snapshot);
+        Assert.IsFalse(
+            selection.Contains("_preservedUiOrders", StringComparison.Ordinal) ||
+            selection.Contains("private struct PreservedOrderState", StringComparison.Ordinal) ||
+            selection.Contains("private static void RestoreComponent", StringComparison.Ordinal),
+            "Selected-unit order snapshot storage and component restore helpers belong in SelectedUnitOrderSnapshotSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateBuildingTargetMoveOrderSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string buildingMoveFile = "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs";
+        Assert.IsTrue(File.Exists(buildingMoveFile), "Building-target move order placement and component writes must live in BuildingTargetMoveOrderSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string buildingMove = File.ReadAllText(buildingMoveFile);
+        StringAssert.Contains("BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem", selection);
+        StringAssert.Contains("_buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding", selection);
+        StringAssert.Contains("TryFindBuildingApproachCell", buildingMove);
+        StringAssert.Contains("TryScoreBuildingApproachCandidate", buildingMove);
+        StringAssert.Contains("em.AddComponent<ManualMoveOrderTag>(entity)", buildingMove);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindBuildingApproachCell\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+static\s+void\s+TryScoreBuildingApproachCandidate\s*\("),
+            "Building approach-cell search belongs in BuildingTargetMoveOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            selection.Contains("em.SetComponentData(entity, new UnitTarget", StringComparison.Ordinal) ||
+            selection.Contains("em.AddComponentData(entity, new UnitTarget", StringComparison.Ordinal) ||
+            selection.Contains("em.SetComponentData(entity, new UnitPathRequest", StringComparison.Ordinal) ||
+            selection.Contains("em.AddComponentData(entity, new UnitPathRequest", StringComparison.Ordinal),
+            "Building-target move order component writes belong in BuildingTargetMoveOrderSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
     public void RtsSelectionSystemMustDelegateSelectionUiQuerySlice()
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
@@ -2238,15 +2290,27 @@ public sealed class GameplayArchitectureContractTests
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string transportFile = "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs";
+        const string transportCommandFile = "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs";
         Assert.IsTrue(File.Exists(transportFile), "Transport boarding rules must live in UnitTransportBoardingSystem.");
+        Assert.IsTrue(File.Exists(transportCommandFile), "Transport boarding click orchestration must live in TransportBoardingCommandSystem.");
 
         string selection = File.ReadAllText(selectionFile);
+        string transportCommand = File.ReadAllText(transportCommandFile);
+        string boardingSlice = selection + Environment.NewLine + transportCommand;
         StringAssert.Contains("UnitTransportBoardingSystem _unitTransportBoardingSystem", selection);
-        StringAssert.Contains("_unitTransportBoardingSystem.IsBoardablePlayerTransport", selection);
+        StringAssert.Contains("TransportBoardingCommandSystem _transportBoardingCommandSystem", selection);
+        StringAssert.Contains("_transportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit", selection);
+        StringAssert.Contains("_transportBoardingCommandSystem.IsBoardablePlayerTransportClick", selection);
+        StringAssert.Contains("PendingTransportBoardingOrder", transportCommand);
+        StringAssert.Contains("CollectSelectedBoardingSourceEntities", transportCommand);
+        StringAssert.Contains("TryGetClickedOrNearbyBoardableTransport", transportCommand);
+        StringAssert.Contains("TryFindNearbyBoardableTransport", transportCommand);
+        StringAssert.Contains("CountPendingBoardingOrders", transportCommand);
+        StringAssert.Contains("UnitTransportBoardingTarget { Transport = transport, Goal = goal }", transportCommand);
+        StringAssert.Contains("transportBoardingSystem.IsBoardablePlayerTransport", boardingSlice);
+        StringAssert.Contains("transportBoardingSystem.TryFindAirTransportPickupForBoarding", boardingSlice);
+        StringAssert.Contains("transportBoardingSystem.TryFindTransportApproachCell", boardingSlice);
         StringAssert.Contains("_unitTransportBoardingSystem.TryEnsureTransportCapacity", selection);
-        StringAssert.Contains("_unitTransportBoardingSystem.IsTransportLandedForBoarding", selection);
-        StringAssert.Contains("_unitTransportBoardingSystem.TryFindAirTransportPickupForBoarding", selection);
-        StringAssert.Contains("_unitTransportBoardingSystem.TryFindTransportApproachCell", selection);
         StringAssert.Contains("_unitTransportBoardingSystem.TryFindTransportDisembarkCell", selection);
         StringAssert.Contains("_unitTransportBoardingSystem.StartRopeDisembarkTransport", selection);
         Assert.IsFalse(
@@ -2267,6 +2331,109 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(selection, @"private\s+void\s+StartRopeDisembarkTransport\s*\("),
             "Rope disembark request setup belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            selection.Contains("private struct PendingTransportBoardingOrder", StringComparison.Ordinal) ||
+            Regex.IsMatch(selection, @"private\s+int\s+CollectSelectedBoardingSourceEntities\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+bool\s+TryGetClickedOrNearbyBoardableTransport\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+bool\s+TryFindNearbyBoardableTransport\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+int\s+CountPendingBoardingOrders\s*\(") ||
+            selection.Contains("UnitTransportBoardingTarget { Transport = transport, Goal = goal }", StringComparison.Ordinal),
+            "Transport boarding command orchestration belongs in TransportBoardingCommandSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateFocusedUnitLifecycleSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string lifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
+        Assert.IsTrue(File.Exists(lifecycleFile), "Focused-unit lifecycle ownership must live in FocusedUnitLifecycleSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string lifecycle = File.ReadAllText(lifecycleFile);
+        StringAssert.Contains("FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem", selection);
+        StringAssert.Contains("_focusedUnitLifecycleSystem.RefreshFocusedUnit", selection);
+        StringAssert.Contains("_focusedUnitLifecycleSystem.FocusUnitEntity", selection);
+        StringAssert.Contains("_focusedUnitLifecycleSystem.TryFocusUnit", selection);
+        StringAssert.Contains("_focusedUnitLifecycleSystem.ClearCurrentSelection", selection);
+        StringAssert.Contains("_focusedUnitLifecycleSystem.TryGetFocusedUnitEntity", selection);
+        StringAssert.Contains("_focusedUnitLifecycleSystem.ApplySelectionFocus", selection);
+        StringAssert.Contains("public bool RefreshFocusedUnit", lifecycle);
+        StringAssert.Contains("public bool FocusUnitEntity", lifecycle);
+        StringAssert.Contains("public bool TryFocusUnit", lifecycle);
+        StringAssert.Contains("public void ClearCurrentSelection", lifecycle);
+        StringAssert.Contains("public Entity ApplySelectionFocus", lifecycle);
+        StringAssert.Contains("selectionStateSystem.SetFocusedUnit", lifecycle);
+        StringAssert.Contains("em.RemoveComponent<SelectedUnitTag>", lifecycle);
+        StringAssert.Contains("em.AddComponent<SelectedUnitTag>", lifecycle);
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+Entity\s+_focusedUnit\b") ||
+            Regex.IsMatch(selection, @"\b_focusedUnit\s*=\s*Entity\.Null\b") ||
+            Regex.IsMatch(selection, @"\b_focusedUnit\s*=\s*[^=]") ||
+            selection.Contains("em.RemoveComponent<SelectedUnitTag>(entity)", StringComparison.Ordinal) ||
+            selection.Contains("em.AddComponent<SelectedUnitTag>(entity)", StringComparison.Ordinal),
+            "Focused-unit state, selected-tag sync, and direct selected-tag mutation belong in FocusedUnitLifecycleSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateAttackOrderCommandSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string attackCommandFile = "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs";
+        Assert.IsTrue(File.Exists(attackCommandFile), "Attack-click command orchestration must live in AttackOrderCommandSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string attackCommand = File.ReadAllText(attackCommandFile);
+        StringAssert.Contains("AttackOrderCommandSystem _attackOrderCommandSystem", selection);
+        StringAssert.Contains("_attackOrderCommandSystem.TryIssueAttackOrderToClickedUnit", selection);
+        StringAssert.Contains("_attackOrderCommandSystem.IssueAttackTarget", selection);
+        StringAssert.Contains("EntityQuery _selectedAttackQuery", attackCommand);
+        StringAssert.Contains("TryIssueAttackOrderToClickedUnit", attackCommand);
+        StringAssert.Contains("TryResolveBaseBreachTargetForAttackOrder", attackCommand);
+        StringAssert.Contains("targetOrderSystem.ValidateAttackTarget", attackCommand);
+        StringAssert.Contains("targetOrderSystem.IssueAttackTarget", attackCommand);
+        StringAssert.Contains("BuildingPlacementInteractionSystem", attackCommand);
+        Assert.IsFalse(
+            selection.Contains("EntityQuery _selectedAttackQuery", StringComparison.Ordinal) ||
+            selection.Contains("_selectedAttackQuery.ToEntityArray", StringComparison.Ordinal) ||
+            selection.Contains("_unitTargetOrderSystem.ValidateAttackTarget", StringComparison.Ordinal) ||
+            Regex.IsMatch(selection, @"private\s+bool\s+TryResolveBaseBreachTargetForAttackOrder\s*\("),
+            "Attack target validation dispatch, selected attacker query, and base-breach bridge belong in AttackOrderCommandSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateOrderMarkerVisualSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string markerFile = "Assets/Game/Scripts/Systems/SelectionOrderMarkerSystem.cs";
+        Assert.IsTrue(File.Exists(markerFile), "Order marker visual runtime must live in SelectionOrderMarkerSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string marker = File.ReadAllText(markerFile);
+        StringAssert.Contains("SelectionOrderMarkerSystem _selectionOrderMarkerSystem", selection);
+        StringAssert.Contains("_selectionOrderMarkerSystem.Initialize", selection);
+        StringAssert.Contains("_selectionOrderMarkerSystem.UpdateMoveOrderMarkerVisibility", selection);
+        StringAssert.Contains("_selectionOrderMarkerSystem.UpdateAttackOrderMarkerVisibility", selection);
+        StringAssert.Contains("_selectionOrderMarkerSystem.ShowMoveOrderMarker", selection);
+        StringAssert.Contains("_selectionOrderMarkerSystem.ShowAttackOrderMarker", selection);
+        StringAssert.Contains("private GameObject _moveOrderMarker", marker);
+        StringAssert.Contains("private GameObject _attackOrderMarker", marker);
+        StringAssert.Contains("MaterialPropertyBlock", marker);
+        StringAssert.Contains("CacheMoveOrderMarker", marker);
+        StringAssert.Contains("CacheAttackOrderMarker", marker);
+        StringAssert.Contains("GridUtils.InBounds", marker);
+        StringAssert.Contains("SetPropertyBlock", marker);
+        Assert.IsFalse(
+            selection.Contains("private GameObject _moveOrderMarker", StringComparison.Ordinal) ||
+            selection.Contains("private GameObject _attackOrderMarker", StringComparison.Ordinal) ||
+            selection.Contains("private Renderer[] _moveOrderMarkerRenderers", StringComparison.Ordinal) ||
+            selection.Contains("private Renderer[] _attackOrderMarkerRenderers", StringComparison.Ordinal) ||
+            Regex.IsMatch(selection, @"private\s+void\s+CacheMoveOrderMarker\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+void\s+CacheAttackOrderMarker\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+void\s+UpdateMoveOrderMarkerVisibility\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+void\s+UpdateAttackOrderMarkerVisibility\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+void\s+ShowMoveOrderMarker\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+void\s+ShowAttackOrderMarker\s*\("),
+            "Order marker GameObject ownership, timers, and visual positioning belong in SelectionOrderMarkerSystem, not RTSSelectionSystem.");
     }
 
     [Test]
@@ -2274,16 +2441,24 @@ public sealed class GameplayArchitectureContractTests
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string targetOrderFile = "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs";
+        const string focusedCommandFile = "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs";
+        const string focusedLifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
+        const string attackCommandFile = "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs";
         Assert.IsTrue(File.Exists(targetOrderFile), "Target-order and target classification helpers must live in UnitTargetOrderSystem.");
 
         string selection = File.ReadAllText(selectionFile);
+        string targetOrderConsumers =
+            selection + Environment.NewLine +
+            File.ReadAllText(focusedCommandFile) + Environment.NewLine +
+            File.ReadAllText(focusedLifecycleFile) + Environment.NewLine +
+            File.ReadAllText(attackCommandFile);
         StringAssert.Contains("UnitTargetOrderSystem _unitTargetOrderSystem", selection);
-        StringAssert.Contains("_unitTargetOrderSystem.TryFindRadarTargetForMissileLauncher", selection);
-        StringAssert.Contains("_unitTargetOrderSystem.IsBuildingEntity", selection);
-        StringAssert.Contains("_unitTargetOrderSystem.ClearAccidentalAirSelectionMove", selection);
-        StringAssert.Contains("_unitTargetOrderSystem.IssueAttackTarget", selection);
-        StringAssert.Contains("_unitTargetOrderSystem.IssueDirectAttackTarget", selection);
-        StringAssert.Contains("_unitTargetOrderSystem.ValidateAttackTarget", selection);
+        StringAssert.Contains("targetOrderSystem.TryFindRadarTargetForMissileLauncher", targetOrderConsumers);
+        StringAssert.Contains("targetOrderSystem.IsBuildingEntity", targetOrderConsumers);
+        StringAssert.Contains("targetOrderSystem.ClearAccidentalAirSelectionMove", targetOrderConsumers);
+        StringAssert.Contains("targetOrderSystem.IssueAttackTarget", targetOrderConsumers);
+        StringAssert.Contains("targetOrderSystem.IssueDirectAttackTarget", targetOrderConsumers);
+        StringAssert.Contains("targetOrderSystem.ValidateAttackTarget", targetOrderConsumers);
         Assert.IsFalse(
             Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindRadarTargetForMissileLauncher\s*\("),
             "Radar target lookup belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");

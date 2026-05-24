@@ -410,6 +410,82 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 
 `RTSSelectionSystem` still owns public UI command entry points and HUD feedback, but it no longer owns the focused-command mutation algorithms.
 
+## Thirtieth Extraction Started
+
+`SelectedUnitOrderSnapshotSystem` now owns selected-unit order snapshot/restore state that was previously inside `RTSSelectionSystem`:
+
+- selected-unit order snapshot storage
+- engage target, unit target, path request, path follow, and path range component capture
+- generic component restore helper
+- snapshot clearing when no gameplay world exists
+
+`RTSSelectionSystem` still exposes the public preserve/restore methods for compatibility, but it no longer owns preserved-order storage or restore algorithms.
+
+## Thirty-First Extraction Started
+
+`BuildingTargetMoveOrderSystem` now owns building-target move order behavior that was previously inside `RTSSelectionSystem`:
+
+- building approach-cell search around the target footprint
+- approach candidate scoring against walkable, blocked, and occupied grid data
+- selected-unit move component writes for building-target movement
+- manual move tag assignment for building-target movement
+- already-moving-to-goal skip policy for building-target movement
+
+`RTSSelectionSystem` still exposes `TryIssueMoveOrderToBuilding` for compatibility and still clears selection / emits the screen marker after a successful command, but it no longer owns the building-target move algorithm.
+
+## Thirty-Second Extraction Started
+
+`TransportBoardingCommandSystem` now owns transport boarding click orchestration that was previously inside `RTSSelectionSystem`:
+
+- selected boarding-source collection and selected move cache fallback
+- clicked or nearby boardable transport resolution
+- pending boarding target counts for seat availability
+- boarding order creation and passenger movement command writes
+- air pickup landing command handoff
+- transport boarding command diagnostics coordination
+
+`RTSSelectionSystem` still owns the pointer entry point, move-order marker emission, selection clearing, and focused-unit reset after a successful boarding command, but it no longer owns the boarding command algorithm.
+
+## Thirty-Third Extraction Started
+
+`FocusedUnitLifecycleSystem` now owns focused-unit lifecycle behavior that was previously inside `RTSSelectionSystem`:
+
+- focused entity existence and validity checks
+- focused-unit refresh from current selected tags
+- enemy selected-tag cleanup for focused enemy entities
+- selected-tag clearing and selected move-cache clearing
+- single-selection focus synchronization
+- direct focus assignment for explicit focus commands
+- clicked focus command routing before RTS input suppression side effects
+
+`RTSSelectionSystem` still owns the input suppression flags, camera drag reset, HUD command mode, and building-selection bridge calls around focus changes, but it no longer owns the focused-unit lifecycle mutation algorithms.
+
+## Thirty-Fourth Extraction Started
+
+`AttackOrderCommandSystem` now owns attack order command orchestration that was previously inside `RTSSelectionSystem`:
+
+- selected attack-capable unit query ownership
+- clicked attack target resolution handoff
+- attack target validation dispatch
+- attack order issue dispatch into `UnitTargetOrderSystem`
+- base-breach target resolution bridge through `BuildingPlacementInteractionSystem`
+- attack command result and target-position return contract
+
+`RTSSelectionSystem` still owns the pointer entry point, attack marker visual emission, HUD result application, command mode cleanup, and focus clearing after a successful attack command, but it no longer owns the attack-click command algorithm.
+
+## Thirty-Fifth Extraction Started
+
+`SelectionOrderMarkerSystem` now owns order marker visual runtime behavior that was previously inside `RTSSelectionSystem`:
+
+- move and attack marker prefab instantiation
+- runtime marker GameObject lifetime
+- marker renderer and material property block ownership
+- move and attack marker show/hide timers
+- grid-blocked validation for move marker placement
+- marker world-position projection to grid origin height
+
+`RTSSelectionSystem` still owns the command entry points and HUD world-marker visibility bridge, but it no longer owns marker GameObjects, marker renderer state, marker query state, or marker timing.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.

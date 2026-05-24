@@ -11,13 +11,16 @@ internal sealed class BuildingGameplayCompositionSystem
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly BuildingRuntimeUpdateSystem RuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext;
+        public readonly BuildingRuntimeCitySpawnSystem RuntimeCitySpawn;
+        public readonly BuildingRuntimeCitySpawnSystem.Context RuntimeCitySpawnContext;
         public readonly BuildingUiCommandSystem UiCommand;
         public readonly BuildingUiCommandSystem.Context UiCommandContext;
         public readonly BuildingUiQuerySystem UiQuery;
         public readonly BuildingUiQuerySystem.Context UiQueryContext;
         public readonly BuildingPlacementInteractionSystem Interaction;
         public readonly BuildingPlacementInteractionSystem.Context InteractionContext;
-        public readonly Action<MainMenuPlayUI> BindMainMenu;
+        public readonly Action<MainMenuPlayUI, RTSSelectionSystem> BindMainMenu;
+        public readonly Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> BindGameplayFeatures;
 
         public Result(
             BuildingPlacementSystem placementFacade,
@@ -25,19 +28,24 @@ internal sealed class BuildingGameplayCompositionSystem
             BuildingSelectionClickSystem.Context selectionClickContext,
             BuildingRuntimeUpdateSystem runtimeUpdate,
             BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
+            BuildingRuntimeCitySpawnSystem runtimeCitySpawn,
+            BuildingRuntimeCitySpawnSystem.Context runtimeCitySpawnContext,
             BuildingUiCommandSystem uiCommand,
             BuildingUiCommandSystem.Context uiCommandContext,
             BuildingUiQuerySystem uiQuery,
             BuildingUiQuerySystem.Context uiQueryContext,
             BuildingPlacementInteractionSystem interaction,
             BuildingPlacementInteractionSystem.Context interactionContext,
-            Action<MainMenuPlayUI> bindMainMenu)
+            Action<MainMenuPlayUI, RTSSelectionSystem> bindMainMenu,
+            Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindGameplayFeatures)
         {
             PlacementFacade = placementFacade;
             SelectionClick = selectionClick;
             SelectionClickContext = selectionClickContext;
             RuntimeUpdate = runtimeUpdate;
             RuntimeUpdateContext = runtimeUpdateContext;
+            RuntimeCitySpawn = runtimeCitySpawn;
+            RuntimeCitySpawnContext = runtimeCitySpawnContext;
             UiCommand = uiCommand;
             UiCommandContext = uiCommandContext;
             UiQuery = uiQuery;
@@ -45,6 +53,7 @@ internal sealed class BuildingGameplayCompositionSystem
             Interaction = interaction;
             InteractionContext = interactionContext;
             BindMainMenu = bindMainMenu;
+            BindGameplayFeatures = bindGameplayFeatures;
         }
     }
 
@@ -66,13 +75,24 @@ internal sealed class BuildingGameplayCompositionSystem
             placementFacade.CreateBuildingSelectionClickContext(),
             runtimeUpdate,
             new BuildingRuntimeUpdateSystem.Context(placementFacade.Update),
+            placementFacade.RuntimeCitySpawnSystem,
+            placementFacade.CreateRuntimeCitySpawnContext(),
             placementFacade.BuildingUiCommandSystem,
             placementFacade.CreateBuildingUiCommandContext(),
             placementFacade.BuildingUiQuerySystem,
             placementFacade.CreateBuildingUiQueryContext(),
             placementFacade.BuildingPlacementInteractionSystem,
             placementFacade.CreateBuildingPlacementInteractionContext(),
-            mainMenu => placementFacade.BindDependencies(roadBuild, mainMenu, dayNight));
+            (mainMenu, selection) => placementFacade.BindDependencies(roadBuild, mainMenu, dayNight, selection),
+            (mainMenu, selection, runtimeGridBlockers, runtimeCitySpawner, citizenPopulation) =>
+                placementFacade.BindDependencies(
+                    roadBuild,
+                    mainMenu,
+                    dayNight,
+                    selection,
+                    runtimeGridBlockers,
+                    runtimeCitySpawner,
+                    citizenPopulation));
     }
 
     public void BindSelection(Result building, RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)

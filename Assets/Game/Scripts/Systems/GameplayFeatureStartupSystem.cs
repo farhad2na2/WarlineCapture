@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public sealed class GameplayFeatureStartupSystem
+internal sealed class GameplayFeatureStartupSystem
 {
     public readonly struct Result
     {
@@ -24,9 +25,12 @@ public sealed class GameplayFeatureStartupSystem
         RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
         RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
         RoadBuildSystem roadBuild,
-        BuildingPlacementSystem buildingPlacement,
+        BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
+        BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
+        BuildingPlacementInteractionSystem buildingPlacementInteraction,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
         MainMenuPlayUI mainMenu,
-        DayNightSystem dayNight,
         RTSSelectionSystem selection,
         CitizenPopulationSystem citizenPopulation,
         Transform runtimeCityRoot,
@@ -39,23 +43,21 @@ public sealed class GameplayFeatureStartupSystem
         runtimeCitySpawner.Init(
             runtimeCitySpawnerConfig,
             roadBuild,
-            buildingPlacement?.RuntimeCitySpawnSystem,
-            buildingPlacement != null ? buildingPlacement.CreateRuntimeCitySpawnContext() : default,
+            buildingRuntimeCitySpawn,
+            buildingRuntimeCitySpawnContext,
             runtimeCityRoot,
             mainMenu);
 
         var runtimeGridBlockers = new RuntimeGridBlockerSystem();
         runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCitySpawner);
         roadBuild?.BindDependencies(
-            buildingPlacement?.BuildingPlacementInteractionSystem,
-            buildingPlacement != null ? buildingPlacement.CreateBuildingPlacementInteractionContext() : default,
+            buildingPlacementInteraction,
+            buildingPlacementInteractionContext,
             mainMenu,
             runtimeGridBlockers);
         sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
-        buildingPlacement?.BindDependencies(
-            roadBuild,
+        bindBuildingGameplayFeatures?.Invoke(
             mainMenu,
-            dayNight,
             selection,
             runtimeGridBlockers,
             runtimeCitySpawner,

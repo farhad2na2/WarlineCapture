@@ -14,13 +14,16 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementSystem BuildingPlacement;
         public readonly BuildingSelectionClickSystem BuildingSelectionClick;
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
+        public readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawn;
+        public readonly BuildingRuntimeCitySpawnSystem.Context BuildingRuntimeCitySpawnContext;
         public readonly BuildingUiCommandSystem BuildingUiCommand;
         public readonly BuildingUiCommandSystem.Context BuildingUiCommandContext;
         public readonly BuildingUiQuerySystem BuildingUiQuery;
         public readonly BuildingUiQuerySystem.Context BuildingUiQueryContext;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
-        public readonly System.Action<MainMenuPlayUI> BindBuildingMainMenu;
+        public readonly System.Action<MainMenuPlayUI, RTSSelectionSystem> BindBuildingMainMenu;
+        public readonly System.Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> BindBuildingGameplayFeatures;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
         public readonly RTSSelectionSystem Selection;
@@ -35,13 +38,16 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementSystem buildingPlacement,
             BuildingSelectionClickSystem buildingSelectionClick,
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
+            BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
+            BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
             BuildingUiCommandSystem buildingUiCommand,
             BuildingUiCommandSystem.Context buildingUiCommandContext,
             BuildingUiQuerySystem buildingUiQuery,
             BuildingUiQuerySystem.Context buildingUiQueryContext,
             BuildingPlacementInteractionSystem buildingPlacementInteraction,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-            System.Action<MainMenuPlayUI> bindBuildingMainMenu,
+            System.Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu,
+            System.Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
             RTSSelectionSystem selection,
@@ -55,6 +61,8 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacement = buildingPlacement;
             BuildingSelectionClick = buildingSelectionClick;
             BuildingSelectionClickContext = buildingSelectionClickContext;
+            BuildingRuntimeCitySpawn = buildingRuntimeCitySpawn;
+            BuildingRuntimeCitySpawnContext = buildingRuntimeCitySpawnContext;
             BuildingUiCommand = buildingUiCommand;
             BuildingUiCommandContext = buildingUiCommandContext;
             BuildingUiQuery = buildingUiQuery;
@@ -62,6 +70,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteraction = buildingPlacementInteraction;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             BindBuildingMainMenu = bindBuildingMainMenu;
+            BindBuildingGameplayFeatures = bindBuildingGameplayFeatures;
             BuildingRuntimeUpdate = buildingRuntimeUpdate;
             BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
             Selection = selection;
@@ -146,6 +155,8 @@ internal sealed class ManagedGameplayStartupSystem
             building.PlacementFacade,
             building.SelectionClick,
             building.SelectionClickContext,
+            building.RuntimeCitySpawn,
+            building.RuntimeCitySpawnContext,
             building.UiCommand,
             building.UiCommandContext,
             building.UiQuery,
@@ -153,6 +164,7 @@ internal sealed class ManagedGameplayStartupSystem
             building.Interaction,
             building.InteractionContext,
             building.BindMainMenu,
+            building.BindGameplayFeatures,
             building.RuntimeUpdate,
             building.RuntimeUpdateContext,
             selection,

@@ -15,7 +15,7 @@ internal sealed class MenuStartupSystem
         BuildingUiQuerySystem.Context buildingUiQueryContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI> bindBuildingMainMenu,
+        Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu,
         RTSSelectionSystem selection,
         DayNightSystem dayNight,
         CitizenPopulationSystem citizenPopulation,
@@ -81,14 +81,14 @@ internal sealed class MenuStartupSystem
         RoadBuildSystem roadBuild,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI> bindBuildingMainMenu,
+        Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu,
         RTSSelectionSystem selection)
     {
         roadBuild?.BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu);
-        bindBuildingMainMenu?.Invoke(mainMenu);
+        bindBuildingMainMenu?.Invoke(mainMenu, selection);
         selection?.BindDependencies(
             mainMenu,
             roadBuild,

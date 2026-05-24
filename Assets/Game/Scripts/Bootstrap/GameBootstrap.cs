@@ -83,11 +83,14 @@ public sealed class GameBootstrap : MonoBehaviour
     public bool GameplayInitialized { get; private set; }
     private BuildingPlacementSystem BuildingPlacement { get; set; }
     public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
+    private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawn;
+    private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
     private BuildingUiCommandSystem.Context _buildingUiCommandContext;
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private Action<MainMenuPlayUI> _bindBuildingMainMenu;
+    private Action<MainMenuPlayUI, RTSSelectionSystem> _bindBuildingMainMenu;
+    private Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
     private bool _gameplayStartPending;
@@ -123,6 +126,8 @@ public sealed class GameBootstrap : MonoBehaviour
         BuildingPlacement = managedSystems.BuildingPlacement;
         BuildingSelectionClick = managedSystems.BuildingSelectionClick;
         BuildingSelectionClickContext = managedSystems.BuildingSelectionClickContext;
+        _buildingRuntimeCitySpawn = managedSystems.BuildingRuntimeCitySpawn;
+        _buildingRuntimeCitySpawnContext = managedSystems.BuildingRuntimeCitySpawnContext;
         BuildingUiCommand = managedSystems.BuildingUiCommand;
         _buildingUiCommandContext = managedSystems.BuildingUiCommandContext;
         BuildingUiQuery = managedSystems.BuildingUiQuery;
@@ -130,6 +135,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingPlacementInteraction = managedSystems.BuildingPlacementInteraction;
         _buildingPlacementInteractionContext = managedSystems.BuildingPlacementInteractionContext;
         _bindBuildingMainMenu = managedSystems.BindBuildingMainMenu;
+        _bindBuildingGameplayFeatures = managedSystems.BindBuildingGameplayFeatures;
         BuildingRuntimeUpdate = managedSystems.BuildingRuntimeUpdate;
         _buildingRuntimeUpdateContext = managedSystems.BuildingRuntimeUpdateContext;
         Selection = managedSystems.Selection;
@@ -275,6 +281,8 @@ public sealed class GameBootstrap : MonoBehaviour
         BuildingPlacement = null;
         BuildingSelectionClick = null;
         BuildingSelectionClickContext = default;
+        _buildingRuntimeCitySpawn = null;
+        _buildingRuntimeCitySpawnContext = default;
         BuildingUiCommand = null;
         _buildingUiCommandContext = default;
         BuildingUiQuery = null;
@@ -282,6 +290,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingPlacementInteraction = null;
         _buildingPlacementInteractionContext = default;
         _bindBuildingMainMenu = null;
+        _bindBuildingGameplayFeatures = null;
         BuildingRuntimeUpdate = null;
         _buildingRuntimeUpdateContext = default;
         RoadBuild = null;
@@ -354,9 +363,12 @@ public sealed class GameBootstrap : MonoBehaviour
             runtimeGridBlockerConfig,
             runtimeDecorationSpawnerConfig,
             RoadBuild,
-            BuildingPlacement,
+            _buildingRuntimeCitySpawn,
+            _buildingRuntimeCitySpawnContext,
+            _buildingPlacementInteraction,
+            _buildingPlacementInteractionContext,
+            _bindBuildingGameplayFeatures,
             MainMenu,
-            DayNight,
             Selection,
             CitizenPopulation,
             _runtimeCityRoot,

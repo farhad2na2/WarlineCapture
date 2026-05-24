@@ -146,6 +146,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("citizen configured prefab/entity resolution belongs in `CitizenPrefabSystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
+        StringAssert.Contains("`GameplayFeatureStartupSystem` must receive `BuildingRuntimeCitySpawnSystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
@@ -804,7 +805,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingUiCommandSystem buildingUiCommand", startup);
         StringAssert.Contains("BuildingUiQuerySystem buildingUiQuery", startup);
         StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", startup);
-        StringAssert.Contains("Action<MainMenuPlayUI> bindBuildingMainMenu", startup);
+        StringAssert.Contains("Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu", startup);
         Assert.IsFalse(
             startup.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
             startup.Contains("buildingPlacement.", StringComparison.Ordinal),
@@ -857,9 +858,15 @@ public sealed class GameplayArchitectureContractTests
         foreach (string token in gameplayStartupDebtTokens)
             StringAssert.Contains(token, startup);
         StringAssert.Contains("roadBuild?.BindDependencies(", startup);
-        StringAssert.Contains("buildingPlacement?.BuildingPlacementInteractionSystem", startup);
-        StringAssert.Contains("buildingPlacement.CreateBuildingPlacementInteractionContext()", startup);
-        StringAssert.Contains("buildingPlacement?.BindDependencies(", startup);
+        StringAssert.Contains("BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn", startup);
+        StringAssert.Contains("BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext", startup);
+        StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", startup);
+        StringAssert.Contains("BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext", startup);
+        StringAssert.Contains("Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures", startup);
+        Assert.IsFalse(
+            startup.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            startup.Contains("buildingPlacement.", StringComparison.Ordinal),
+            "GameplayFeatureStartupSystem must use narrow runtime city/interaction boundaries instead of BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(startup, @"\bstatic\b"),
             "GameplayFeatureStartupSystem owns feature startup state and should stay instance-scoped.");
@@ -1350,7 +1357,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryResolveBaseBreachTargetDelegate", interaction);
         StringAssert.Contains("placementFacade.BuildingPlacementInteractionSystem", buildingComposition);
         StringAssert.Contains("building.Interaction", managedStartup);
-        StringAssert.Contains("buildingPlacement?.BuildingPlacementInteractionSystem", featureStartup);
+        StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", featureStartup);
+        StringAssert.Contains("buildingPlacementInteractionContext", featureStartup);
         StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", menuStartup);
         StringAssert.Contains("buildingPlacementInteractionContext", menuStartup);
         StringAssert.Contains("BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem", runtimeCreation);

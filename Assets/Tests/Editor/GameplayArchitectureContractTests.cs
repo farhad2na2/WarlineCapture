@@ -129,13 +129,13 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("Building runtime updates inside that loop must go through `BuildingRuntimeUpdateSystem`", contract);
         StringAssert.Contains("`BuildingRuntimeUpdateSystem` ownership and context construction belong in managed composition", contract);
-        StringAssert.Contains("it must invoke a narrow building runtime tick callback rather than `BuildingPlacementSystem.Update`", contract);
+        StringAssert.Contains("it must invoke a narrow building runtime tick callback", contract);
         StringAssert.Contains("`GameBootstrap` must not hold a public or private `BuildingPlacementSystem` facade", contract);
         StringAssert.Contains("Managed building gameplay composition is owned by `BuildingGameplayCompositionSystem`", contract);
-        StringAssert.Contains("`BuildingGameplayCompositionSystem` constructs `BuildingGameplaySystem`; the legacy `BuildingPlacementSystem` facade is a temporary editor-harness wrapper only", contract);
+        StringAssert.Contains("`BuildingGameplayCompositionSystem` constructs `BuildingGameplaySystem`; the retired `BuildingPlacementSystem` facade must not exist", contract);
         StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
-        StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
+        StringAssert.Contains("`BuildingPlacementSystem` must not exist", contract);
         StringAssert.Contains("active placement mutable state, active placement cost, and active placement preview handoff belong in `BuildingPlacementLifecycleSystem`", contract);
         StringAssert.Contains("active placement begin/cancel/confirm/exit command flow and selection-preservation state belong in `BuildingPlacementSessionSystem`", contract);
         StringAssert.Contains("placement grid/input/preview/commit context construction belongs in `BuildingPlacementContextSystem`", contract);
@@ -190,7 +190,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`GameBootstrap` must not publish a managed `BuildingPlacementSystem` facade through ECS component objects", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
         StringAssert.Contains("buildingplacement_retirement_audit.md", contract);
-        StringAssert.Contains("The facade file line count and public/internal member declaration count must only decrease", contract);
+        StringAssert.Contains("do not reintroduce `BuildingPlacementSystem`", contract);
     }
 
     [Test]
@@ -570,11 +570,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("System.Action DisposeBuildingGameplay", managedStartup);
         StringAssert.Contains("new BuildingRuntimeUpdateSystem()", buildingComposition);
         StringAssert.Contains("new BuildingRuntimeUpdateSystem.Context(", buildingComposition);
-        StringAssert.Contains("placementFacade.RuntimeTickSystem.Update", buildingComposition);
+        StringAssert.Contains("building.RuntimeTickSystem.Update", buildingComposition);
         StringAssert.Contains("BuildingPlacementRuntimeTickContextSystem _runtimeTickContextSystem", buildingComposition);
-        StringAssert.Contains("_runtimeTickContextSystem.Create(CreateRuntimeTickSource(placementFacade))", buildingComposition);
+        StringAssert.Contains("_runtimeTickContextSystem.Create(CreateRuntimeTickSource(building))", buildingComposition);
         StringAssert.Contains("public readonly Action Dispose", buildingComposition);
-        StringAssert.Contains("placementFacade.Dispose", buildingComposition);
+        StringAssert.Contains("building.Dispose", buildingComposition);
         StringAssert.Contains("building.RuntimeUpdate", managedStartup);
         StringAssert.Contains("building.RuntimeUpdateContext", managedStartup);
         StringAssert.Contains("building.Dispose", managedStartup);
@@ -872,8 +872,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("building.InteractionContext", startup);
         StringAssert.Contains("selection.BindDependencies(", startup);
         StringAssert.Contains("citizenPopulation.Init(", buildingComposition);
-        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
-        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("BuildingRuntimeResourcePrefabContextSystem.Source resourcePrefabSource = Building.CreateRuntimeResourcePrefabContextSource()", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(resourcePrefabSource)", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(resourcePrefabSource)", buildingComposition);
         Assert.IsFalse(
             startup.Contains("BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
             startup.Contains("BuildingPlacementSystem buildingPlacement", StringComparison.Ordinal) ||
@@ -1484,7 +1485,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingPlacementInteractionContextSystem.CreateContext", placement);
         StringAssert.Contains("TryResolveBaseBreachTargetDelegate", interaction);
         StringAssert.Contains("new BuildingPlacementInteractionSystem.Context", interactionContext);
-        StringAssert.Contains("placementFacade.BuildingPlacementInteractionSystem", buildingComposition);
+        StringAssert.Contains("building.BuildingPlacementInteractionSystem", buildingComposition);
         StringAssert.Contains("building.Interaction", managedStartup);
         StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", featureStartup);
         StringAssert.Contains("buildingPlacementInteractionContext", featureStartup);
@@ -1822,8 +1823,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
         StringAssert.Contains("Building.RuntimeQuerySystem", buildingComposition);
         StringAssert.Contains("Building.CreateRuntimeBuildingQueryContext()", buildingComposition);
-        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
-        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("BuildingRuntimeResourcePrefabContextSystem.Source resourcePrefabSource = Building.CreateRuntimeResourcePrefabContextSource()", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(resourcePrefabSource)", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(resourcePrefabSource)", buildingComposition);
         Assert.IsFalse(
             placement.Contains("_resourceDollars", StringComparison.Ordinal) ||
             placement.Contains("CreateCitizenResourceContext", StringComparison.Ordinal) ||
@@ -1874,10 +1876,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingUiCommandSystem.Context buildingUiCommandContext", startup);
         StringAssert.Contains("BuildingUiQuerySystem buildingUiQuery", startup);
         StringAssert.Contains("BuildingUiQuerySystem.Context buildingUiQueryContext", startup);
-        StringAssert.Contains("placementFacade.BuildingUiCommandSystem", buildingComposition);
-        StringAssert.Contains("placementFacade.CreateBuildingUiCommandContext()", buildingComposition);
-        StringAssert.Contains("placementFacade.BuildingUiQuerySystem", buildingComposition);
-        StringAssert.Contains("placementFacade.CreateBuildingUiQueryContext()", buildingComposition);
+        StringAssert.Contains("building.BuildingUiCommandSystem", buildingComposition);
+        StringAssert.Contains("building.CreateBuildingUiCommandContext()", buildingComposition);
+        StringAssert.Contains("building.BuildingUiQuerySystem", buildingComposition);
+        StringAssert.Contains("building.CreateBuildingUiQueryContext()", buildingComposition);
         StringAssert.Contains("TryRequestCampItem", command);
         StringAssert.Contains("GetCampRequestFailure", command);
         StringAssert.Contains("GetFriendlyPendingProductionUiEntries", query);
@@ -2678,15 +2680,15 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("new GameObject(\"RuntimeBuildings\")", startup);
         StringAssert.Contains("previewSystem.Init", startup);
         StringAssert.Contains("context.DefinitionSystem.CreateRuntimeBuildingDefinition", runtimeSpawn);
-        StringAssert.Contains("_buildingDefinitionSystem.TryGetConfiguredSpawnable", placement);
-        StringAssert.Contains("_buildingDefinitionSystem.TryGetConfiguredUnit", placement);
-        StringAssert.Contains("_buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs", placement);
-        StringAssert.Contains("_buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab", placement);
+        StringAssert.Contains("TryGetConfiguredSpawnable", definition);
+        StringAssert.Contains("TryGetConfiguredUnit", definition);
+        StringAssert.Contains("ConfiguredUnitSpawnPrefabs", definition);
+        StringAssert.Contains("TryResolveConfiguredSpawnablePrefab", definition);
         StringAssert.Contains("_buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab", placement);
         StringAssert.Contains("BuildingDefinitionSystem.GetProductionPrefab", placement);
-        StringAssert.Contains("BuildingDefinitionSystem.TryGetPrefabLocalBounds", placement);
+        StringAssert.Contains("TryGetPrefabLocalBounds", definition);
         StringAssert.Contains("BuildingDefinitionSystem.RuntimeBuildingMatchesId", placement);
-        StringAssert.Contains("BuildingDefinitionSystem.UnitPrefabMatchesId", placement);
+        StringAssert.Contains("UnitPrefabMatchesId", definition);
 
         StringAssert.Contains("CachedRuntimeBuildingMetadata", definition);
         StringAssert.Contains("RebuildConfiguredSpawnableDefinitions", definition);
@@ -3129,7 +3131,7 @@ public sealed class GameplayArchitectureContractTests
         string resource = File.ReadAllText(resourceFile);
         string productionRuntimeTick = File.ReadAllText(productionRuntimeTickFile);
         StringAssert.Contains("FactionResourceSystem _factionResourceSystem", placement);
-        StringAssert.Contains("_factionResourceSystem.GetResourceTotals", placement);
+        StringAssert.Contains("GetResourceTotals", resource);
         StringAssert.Contains("context.FactionResourceSystem.UpdateResourceProduction", productionRuntimeTick);
         StringAssert.Contains("TryGetPrimaryCapacityInfo", resource);
         StringAssert.Contains("TryGetFuelCapacityInfo", resource);
@@ -3585,12 +3587,14 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string previewFile = "Assets/Game/Scripts/Systems/BuildingPlacementPreviewSystem.cs";
+        const string startupFile = "Assets/Game/Scripts/Systems/BuildingPlacementStartupSystem.cs";
         Assert.IsTrue(File.Exists(previewFile), "The placement preview slice must live in BuildingPlacementPreviewSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string preview = File.ReadAllText(previewFile);
+        string startup = File.ReadAllText(startupFile);
         StringAssert.Contains("BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem", placement);
-        StringAssert.Contains("_buildingPlacementPreviewSystem.Init", placement);
+        StringAssert.Contains("previewSystem.Init", startup);
         StringAssert.Contains("_buildingPlacementPreviewSystem.UpdateOutline", placement);
         StringAssert.Contains("_buildingPlacementPreviewSystem.UpdateWallOutline", placement);
         StringAssert.Contains("_buildingPlacementPreviewSystem.RebuildWallPreview", placement);
@@ -3978,8 +3982,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingBarrierSystem.TryResolveBaseBreachTarget", placement);
         StringAssert.Contains("_buildingBarrierSystem.GetRuntimeRoadBarrierGateRects", placement);
         StringAssert.Contains("_buildingBarrierSystem.ShouldAlignGateToNearbyWall", placement);
-        StringAssert.Contains("BuildingBarrierSystem.IsWallGateDefinition", placement);
-        StringAssert.Contains("BuildingBarrierSystem.IsLinearWallDefinition", placement);
+        StringAssert.Contains("BuildingBarrierSystem.IsWallGateDefinition", runtimeContext);
+        StringAssert.Contains("IsLinearWallDefinition", barrier);
 
         StringAssert.Contains("RememberOpenBaseBreach", barrier);
         StringAssert.Contains("HasOpenBaseBreach", barrier);
@@ -4100,58 +4104,42 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void BuildingPlacementSystemRetirementAuditMustExistAndSurfaceCannotGrow()
+    public void BuildingPlacementSystemFacadeMustNotExistAndRetirementAuditMustBeClosed()
     {
         const string auditPath = "Design/Architecture/buildingplacement_retirement_audit.md";
-        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
-        Assert.IsTrue(File.Exists(auditPath), $"{auditPath} must inventory the remaining facade surface before deletion continues.");
+        const string facadePath = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string facadeMetaPath = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs.meta";
+        Assert.IsTrue(File.Exists(auditPath), $"{auditPath} must record the completed facade deletion.");
+        Assert.IsFalse(File.Exists(facadePath), $"{facadePath} must stay deleted.");
+        Assert.IsFalse(File.Exists(facadeMetaPath), $"{facadeMetaPath} must stay deleted.");
 
         string audit = File.ReadAllText(auditPath);
-        StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("Building gameplay implementation: 1981 lines", audit);
-        StringAssert.Contains("Legacy facade wrapper: 1 line", audit);
-        StringAssert.Contains("Public/internal implementation declarations: 120", audit);
-        StringAssert.Contains("Allowed Production Facade References", audit);
-        StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
-        StringAssert.Contains("Allowed Test Facade Construction", audit);
-        StringAssert.Contains("Deletion Gates", audit);
-        StringAssert.Contains("Production code must not construct `BuildingPlacementSystem`", audit);
-
-        string[] placementLines = File.ReadAllLines(placementFile);
-        Assert.LessOrEqual(
-            placementLines.Length,
-            1981,
-            "BuildingGameplaySystem.cs is frozen migration debt and must only shrink until deletion.");
-
-        int publicOrInternalDeclarationCount = placementLines.Count(line =>
-            Regex.IsMatch(line, @"^\s*(?:public|internal)\s+") &&
-            !line.Contains("sealed class", StringComparison.Ordinal) &&
-            !line.Contains("class BuildingGameplaySystem", StringComparison.Ordinal));
-        Assert.LessOrEqual(
-            publicOrInternalDeclarationCount,
-            120,
-            "Do not add public/internal BuildingPlacementSystem surface. Move new behavior to the owning narrow *System.");
+        StringAssert.Contains("Current Status", audit);
+        StringAssert.Contains("`BuildingPlacementSystem` is retired and deleted.", audit);
+        StringAssert.Contains("Hard Rule", audit);
+        StringAssert.Contains("`BuildingPlacementSystem` must not exist.", audit);
+        StringAssert.Contains("Allowed related names", audit);
+        StringAssert.Contains("BuildingPlacementSystemConfig", audit);
+        StringAssert.Contains("Closed Deletion Gates", audit);
+        Assert.IsFalse(audit.Contains("Allowed Production Facade References", StringComparison.Ordinal));
+        Assert.IsFalse(audit.Contains("Allowed Test Facade Construction", StringComparison.Ordinal));
+        Assert.IsFalse(audit.Contains("Drift Guard", StringComparison.Ordinal));
+        Assert.IsFalse(audit.Contains("one-line legacy wrapper", StringComparison.Ordinal));
+        Assert.IsFalse(audit.Contains("must remain a one-line", StringComparison.Ordinal));
     }
 
     [Test]
-    public void BuildingPlacementSystemProductionReferencesMustStayFrozen()
+    public void BuildingPlacementSystemProductionReferencesMustNotExist()
     {
-        string[] allowedRuntimeFacadeFiles =
-        {
-            "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs"
-        };
-
-        HashSet<string> allowedRuntimeSet = new(allowedRuntimeFacadeFiles, StringComparer.Ordinal);
         string[] violations = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
-            .Where(path => !allowedRuntimeSet.Contains(path))
             .Where(path => Regex.IsMatch(File.ReadAllText(path), @"\bBuildingPlacementSystem\b(?!Config)"))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
         Assert.IsEmpty(
             violations,
-            "No new production code may reference the BuildingPlacementSystem facade. Use narrow building systems/contexts instead:" +
+            "Production code must not reference the retired BuildingPlacementSystem facade. Use narrow building systems/contexts instead:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
 
@@ -4164,24 +4152,15 @@ public sealed class GameplayArchitectureContractTests
         CollectionAssert.AreEqual(
             Array.Empty<string>(),
             constructionFiles,
-            "Production code must not construct the legacy BuildingPlacementSystem facade.");
+            "Production code must not construct the retired BuildingPlacementSystem facade.");
     }
 
     [Test]
-    public void BuildingPlacementSystemTestConstructionAllowlistCannotGrow()
+    public void BuildingPlacementSystemTestReferencesMustNotExist()
     {
         const string harnessFile = "Assets/Tests/Editor/BuildingGameplayTestHarness.cs";
-        string[] migratedHarnessFiles =
-        {
-            "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
-            "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
-            "Assets/Tests/Editor/AIProductionValidationTests.cs",
-            "Assets/Tests/Editor/BaseBreachValidationTests.cs",
-            "Assets/Tests/Editor/BuildingRuntimeBoundaryValidationTests.cs",
-            "Assets/Tests/Editor/InitialFactionBaseValidationTests.cs"
-        };
 
-        Assert.IsTrue(File.Exists(harnessFile), "Editor building validation tests must use an explicit test-only harness while the legacy facade is retired.");
+        Assert.IsTrue(File.Exists(harnessFile), "Editor building validation tests may use the explicit test-only gameplay harness.");
         string harness = File.ReadAllText(harnessFile);
         StringAssert.Contains("BuildingGameplayTestHarness : BuildingGameplaySystem", harness);
         string[] productionHarnessReferences = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
@@ -4194,15 +4173,6 @@ public sealed class GameplayArchitectureContractTests
             productionHarnessReferences,
             "BuildingGameplayTestHarness is editor-only and must not be referenced by production scripts.");
 
-        foreach (string file in migratedHarnessFiles)
-        {
-            string text = File.ReadAllText(file);
-            Assert.IsFalse(
-                text.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
-                $"{file} must not type against the legacy BuildingPlacementSystem facade.");
-            StringAssert.Contains("BuildingGameplayTestHarness", text);
-        }
-
         string helper = File.ReadAllText("Assets/Tests/Editor/RuntimeGameplayStateTestHelper.cs");
         StringAssert.Contains("BuildingGameplaySystem buildingPlacement", helper);
         Assert.IsFalse(
@@ -4212,13 +4182,13 @@ public sealed class GameplayArchitectureContractTests
         string[] violations = Directory.GetFiles("Assets/Tests/Editor", "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
             .Where(path => !path.EndsWith("GameplayArchitectureContractTests.cs", StringComparison.Ordinal))
-            .Where(path => Regex.IsMatch(File.ReadAllText(path), @"new\s+BuildingPlacementSystem\s*\("))
+            .Where(path => Regex.IsMatch(File.ReadAllText(path), @"\bBuildingPlacementSystem\b(?!Config)"))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
         Assert.IsEmpty(
             violations,
-            "Editor tests must not construct BuildingPlacementSystem. Use BuildingGameplayTestHarness temporarily, then migrate to narrower systems:" +
+            "Editor tests must not reference BuildingPlacementSystem. Use BuildingGameplayTestHarness or narrower systems:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }

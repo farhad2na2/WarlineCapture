@@ -158,7 +158,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement/grid math, footprint center projection, center-screen placement origin resolution, screen-to-grid raycasts, placement footprint rotation, and placement focus bounds belong in `BuildingPlacementGridSystem`", contract);
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
-        StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
+        StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, selected-building UI read models, minimap building read models, live-unit preview read models, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
         StringAssert.Contains("`BuildingUiCommandSystem` must not own read-model query delegates or pending-production UI list retrieval", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
@@ -1581,23 +1581,32 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryRequestCampItem", command);
         StringAssert.Contains("GetCampRequestFailure", command);
         StringAssert.Contains("GetFriendlyPendingProductionUiEntries", query);
-        StringAssert.Contains("HasActiveBuilding", command);
-        StringAssert.Contains("SelectedBuildingDisplayName", command);
+        StringAssert.Contains("HasActiveBuilding", query);
+        StringAssert.Contains("SelectedBuildingDisplayName", query);
         StringAssert.Contains("ConfirmBuildingPlacement", command);
         StringAssert.Contains("DeleteSelectedBuilding", command);
-        StringAssert.Contains("TryGetSelectedBuildingHealth", command);
-        StringAssert.Contains("TryGetSelectedBuildingPreviewPrefab", command);
-        StringAssert.Contains("IsRuntimeBuildingWall", command);
-        StringAssert.Contains("IsRuntimeBuildingCityGenerated", command);
-        StringAssert.Contains("TryGetRuntimeBuildingOwnerFaction", command);
-        StringAssert.Contains("HasVisibleSelectableBuilding", command);
-        StringAssert.Contains("TryResolveLiveUnitPreviewPrefab", command);
+        StringAssert.Contains("TryGetSelectedBuildingHealth", query);
+        StringAssert.Contains("TryGetSelectedBuildingPreviewPrefab", query);
+        StringAssert.Contains("IsRuntimeBuildingWall", query);
+        StringAssert.Contains("IsRuntimeBuildingCityGenerated", query);
+        StringAssert.Contains("TryGetRuntimeBuildingOwnerFaction", query);
+        StringAssert.Contains("HasVisibleSelectableBuilding", query);
+        StringAssert.Contains("TryResolveLiveUnitPreviewPrefab", query);
         StringAssert.Contains("CancelBuildingPlacement", command);
         StringAssert.Contains("FocusLastCampProductionRequest", command);
         StringAssert.Contains("ClearSelectedBuilding", command);
         StringAssert.Contains("ExitBuildMode", command);
         Assert.IsFalse(
-            command.Contains("GetFriendlyPendingProductionUiEntries", StringComparison.Ordinal),
+            command.Contains("GetFriendlyPendingProductionUiEntries", StringComparison.Ordinal) ||
+            command.Contains("HasActiveBuilding", StringComparison.Ordinal) ||
+            command.Contains("SelectedBuildingDisplayName", StringComparison.Ordinal) ||
+            command.Contains("TryGetSelectedBuildingHealth", StringComparison.Ordinal) ||
+            command.Contains("TryGetSelectedBuildingPreviewPrefab", StringComparison.Ordinal) ||
+            command.Contains("IsRuntimeBuildingWall", StringComparison.Ordinal) ||
+            command.Contains("IsRuntimeBuildingCityGenerated", StringComparison.Ordinal) ||
+            command.Contains("TryGetRuntimeBuildingOwnerFaction", StringComparison.Ordinal) ||
+            command.Contains("HasVisibleSelectableBuilding", StringComparison.Ordinal) ||
+            command.Contains("TryResolveLiveUnitPreviewPrefab", StringComparison.Ordinal),
             "BuildingUiCommandSystem must not own building UI read-model queries.");
         Assert.IsFalse(
             menu.Contains("_buildingPlacementSystem", StringComparison.Ordinal) ||
@@ -3357,12 +3366,30 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("GetSelectedBuildingProducedUnits", uiQuery);
         StringAssert.Contains("GetSelectedBuildingProducedUnitEntries", uiQuery);
         StringAssert.Contains("GetFriendlyPendingProductionUiEntries", uiQuery);
+        StringAssert.Contains("HasActiveBuilding", uiQuery);
+        StringAssert.Contains("SelectedBuildingDisplayName", uiQuery);
+        StringAssert.Contains("TryGetSelectedBuildingHealth", uiQuery);
+        StringAssert.Contains("TryGetSelectedBuildingPreviewPrefab", uiQuery);
+        StringAssert.Contains("IsRuntimeBuildingWall", uiQuery);
+        StringAssert.Contains("IsRuntimeBuildingCityGenerated", uiQuery);
+        StringAssert.Contains("TryGetRuntimeBuildingOwnerFaction", uiQuery);
+        StringAssert.Contains("HasVisibleSelectableBuilding", uiQuery);
+        StringAssert.Contains("TryResolveLiveUnitPreviewPrefab", uiQuery);
         StringAssert.Contains("public readonly struct ProducedUnitUiEntry", uiQuery);
         StringAssert.Contains("public readonly struct PendingProductionUiEntry", uiQuery);
         StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", menuView);
         StringAssert.Contains("_buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries", menuView);
         Assert.IsFalse(
-            uiCommand.Contains("GetFriendlyPendingProductionUiEntries", StringComparison.Ordinal),
+            uiCommand.Contains("GetFriendlyPendingProductionUiEntries", StringComparison.Ordinal) ||
+            uiCommand.Contains("HasActiveBuilding", StringComparison.Ordinal) ||
+            uiCommand.Contains("SelectedBuildingDisplayName", StringComparison.Ordinal) ||
+            uiCommand.Contains("TryGetSelectedBuildingHealth", StringComparison.Ordinal) ||
+            uiCommand.Contains("TryGetSelectedBuildingPreviewPrefab", StringComparison.Ordinal) ||
+            uiCommand.Contains("IsRuntimeBuildingWall", StringComparison.Ordinal) ||
+            uiCommand.Contains("IsRuntimeBuildingCityGenerated", StringComparison.Ordinal) ||
+            uiCommand.Contains("TryGetRuntimeBuildingOwnerFaction", StringComparison.Ordinal) ||
+            uiCommand.Contains("HasVisibleSelectableBuilding", StringComparison.Ordinal) ||
+            uiCommand.Contains("TryResolveLiveUnitPreviewPrefab", StringComparison.Ordinal),
             "BuildingUiCommandSystem must not own building UI read-model query delegates.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+readonly\s+struct\s+(ProducedUnitUiEntry|PendingProductionUiEntry)"),

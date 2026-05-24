@@ -845,9 +845,9 @@ namespace Game.Scripts.UI
             if (menuType != MenuType.Game || gameMenuType != GameMenuType.Select)
                 return;
 
-            if (_buildingUiCommandSystem != null && _buildingUiCommandSystem.HasActiveBuilding(_buildingUiCommandContext))
+            if (_buildingUiQuerySystem != null && _buildingUiQuerySystem.HasActiveBuilding(_buildingUiQueryContext))
             {
-                OpenDestroyConfirmPanel(true, _buildingUiCommandSystem.SelectedBuildingDisplayName(_buildingUiCommandContext));
+                OpenDestroyConfirmPanel(true, _buildingUiQuerySystem.SelectedBuildingDisplayName(_buildingUiQueryContext));
                 return;
             }
 
@@ -1916,10 +1916,10 @@ namespace Game.Scripts.UI
 
         private void ResolveBuildingMinimapVisual(EntityManager em, int buildingId, Entity buildingEntity, out RectTransform template, out Sprite sprite, out Color colorOverride)
         {
-            bool isWall = _buildingUiCommandSystem != null &&
-                          _buildingUiCommandSystem.IsRuntimeBuildingWall(_buildingUiCommandContext, buildingId);
-            if (_buildingUiCommandSystem != null &&
-                _buildingUiCommandSystem.IsRuntimeBuildingCityGenerated(_buildingUiCommandContext, buildingId))
+            bool isWall = _buildingUiQuerySystem != null &&
+                _buildingUiQuerySystem.IsRuntimeBuildingWall(_buildingUiQueryContext, buildingId);
+            if (_buildingUiQuerySystem != null &&
+                _buildingUiQuerySystem.IsRuntimeBuildingCityGenerated(_buildingUiQueryContext, buildingId))
             {
                 template = _minimapHomeNeutralTemplate;
                 sprite = _minimapHomeNeutralSprite;
@@ -1927,8 +1927,8 @@ namespace Game.Scripts.UI
                 return;
             }
 
-            if (_buildingUiCommandSystem != null &&
-                _buildingUiCommandSystem.TryGetRuntimeBuildingOwnerFaction(_buildingUiCommandContext, buildingId, out byte ownerFactionId))
+            if (_buildingUiQuerySystem != null &&
+                _buildingUiQuerySystem.TryGetRuntimeBuildingOwnerFaction(_buildingUiQueryContext, buildingId, out byte ownerFactionId))
             {
                 if (ownerFactionId == 0)
                 {
@@ -2643,8 +2643,8 @@ namespace Game.Scripts.UI
         private void SyncGameSelectionPanels()
         {
             bool hasSelectedBuilding = _runtimeGameplayStateSystem.PlayRequested &&
-                                       _buildingUiCommandSystem != null &&
-                                       _buildingUiCommandSystem.HasActiveBuilding(_buildingUiCommandContext);
+                                       _buildingUiQuerySystem != null &&
+                                       _buildingUiQuerySystem.HasActiveBuilding(_buildingUiQueryContext);
 
             int selectedUnitCount = 0;
             bool hasFocusedUnit = false;
@@ -2721,8 +2721,8 @@ namespace Game.Scripts.UI
             bool hasHealth;
             if (singleSelectionType == SingleSelectionType.Building)
             {
-                hasHealth = _buildingUiCommandSystem != null &&
-                            _buildingUiCommandSystem.TryGetSelectedBuildingHealth(_buildingUiCommandContext, out current, out max) &&
+                hasHealth = _buildingUiQuerySystem != null &&
+                            _buildingUiQuerySystem.TryGetSelectedBuildingHealth(_buildingUiQueryContext, out current, out max) &&
                             max > 0;
             }
             else
@@ -2756,8 +2756,8 @@ namespace Game.Scripts.UI
         {
             if (_selectionSystem != null &&
                 _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&
-                _buildingUiCommandSystem != null &&
-                _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, focusedUnit, out GameObject prefab) &&
+                _buildingUiQuerySystem != null &&
+                _buildingUiQuerySystem.TryResolveLiveUnitPreviewPrefab(_buildingUiQueryContext, focusedUnit, out GameObject prefab) &&
                 TryResolveUnitPrefabSelectionType(prefab, out SingleSelectionType prefabSelectionType))
             {
                 return prefabSelectionType;
@@ -2910,8 +2910,8 @@ namespace Game.Scripts.UI
                 if (item.Portrait != null)
                 {
                     Sprite sprite = null;
-                    if (_buildingUiCommandSystem != null &&
-                        _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, passenger.Entity, out GameObject prefab) &&
+                    if (_buildingUiQuerySystem != null &&
+                        _buildingUiQuerySystem.TryResolveLiveUnitPreviewPrefab(_buildingUiQueryContext, passenger.Entity, out GameObject prefab) &&
                         prefab != null)
                     {
                         sprite = GetCampPreviewSprite(prefab);
@@ -3008,8 +3008,8 @@ namespace Game.Scripts.UI
             prefab = null;
             return _selectionSystem != null &&
                    _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&
-                   _buildingUiCommandSystem != null &&
-                   _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, focusedUnit, out prefab) &&
+                   _buildingUiQuerySystem != null &&
+                   _buildingUiQuerySystem.TryResolveLiveUnitPreviewPrefab(_buildingUiQueryContext, focusedUnit, out prefab) &&
                    prefab != null;
         }
 
@@ -3034,14 +3034,14 @@ namespace Game.Scripts.UI
             string displayName = string.Empty;
             if (singleSelectionType == SingleSelectionType.Building)
             {
-                _buildingUiCommandSystem?.TryGetSelectedBuildingPreviewPrefab(_buildingUiCommandContext, out prefab);
-                displayName = _buildingUiCommandSystem != null ? _buildingUiCommandSystem.SelectedBuildingDisplayName(_buildingUiCommandContext) : string.Empty;
+                _buildingUiQuerySystem?.TryGetSelectedBuildingPreviewPrefab(_buildingUiQueryContext, out prefab);
+                displayName = _buildingUiQuerySystem != null ? _buildingUiQuerySystem.SelectedBuildingDisplayName(_buildingUiQueryContext) : string.Empty;
             }
             else if (_selectionSystem != null &&
                      _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&
-                     _buildingUiCommandSystem != null)
+                     _buildingUiQuerySystem != null)
             {
-                _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, focusedUnit, out prefab);
+                _buildingUiQuerySystem.TryResolveLiveUnitPreviewPrefab(_buildingUiQueryContext, focusedUnit, out prefab);
                 displayName = _selectionSystem.FocusedUnitLabel;
             }
 
@@ -3196,8 +3196,8 @@ namespace Game.Scripts.UI
             bool hasVisibleVehicles = !hasAnySelection && _selectionSystem != null && _selectionSystem.HasVisiblePlayerVehicles();
             bool hasVisibleUnits = hasVisibleSoldiers || hasVisibleVehicles || (!hasAnySelection && _selectionSystem != null && _selectionSystem.HasVisiblePlayerUnits());
             bool hasVisibleBuildings = !hasAnySelection &&
-                                       _buildingUiCommandSystem != null &&
-                                       _buildingUiCommandSystem.HasVisibleSelectableBuilding(_buildingUiCommandContext, _worldCamera);
+                                       _buildingUiQuerySystem != null &&
+                                       _buildingUiQuerySystem.HasVisibleSelectableBuilding(_buildingUiQueryContext, _worldCamera);
             bool hasVisibleSelectable = hasVisibleUnits || hasVisibleBuildings;
 
             if (_buttonSelect != null)

@@ -6,6 +6,10 @@ using UnityEngine;
 public sealed class BuildingUiQuerySystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+    public delegate bool TryGetSelectedBuildingHealthDelegate(out int current, out int max);
+    public delegate bool TryGetSelectedBuildingPreviewPrefabDelegate(out GameObject prefab);
+    public delegate bool TryGetRuntimeBuildingOwnerFactionDelegate(int buildingId, out byte ownerFactionId);
+    public delegate bool TryResolveLiveUnitPreviewPrefabDelegate(Entity unitEntity, out GameObject prefab);
 
     internal readonly struct Context
     {
@@ -14,19 +18,46 @@ public sealed class BuildingUiQuerySystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly Func<float> GetNow;
+        public readonly Func<bool> HasActiveBuilding;
+        public readonly Func<string> GetSelectedBuildingDisplayName;
+        public readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
+        public readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
+        public readonly Func<int, bool> IsRuntimeBuildingWall;
+        public readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
+        public readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
+        public readonly Func<Camera, bool> HasVisibleSelectableBuilding;
+        public readonly TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
             Func<int?> getActiveBuildingId,
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingProductionSystem productionSystem,
-            Func<float> getNow)
+            Func<float> getNow,
+            Func<bool> hasActiveBuilding,
+            Func<string> getSelectedBuildingDisplayName,
+            TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
+            TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
+            Func<int, bool> isRuntimeBuildingWall,
+            Func<int, bool> isRuntimeBuildingCityGenerated,
+            TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
+            Func<Camera, bool> hasVisibleSelectableBuilding,
+            TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab)
         {
             RuntimeBuildings = runtimeBuildings;
             GetActiveBuildingId = getActiveBuildingId;
             TryGetEntityManager = tryGetEntityManager;
             ProductionSystem = productionSystem;
             GetNow = getNow;
+            HasActiveBuilding = hasActiveBuilding;
+            GetSelectedBuildingDisplayName = getSelectedBuildingDisplayName;
+            TryGetSelectedBuildingHealth = tryGetSelectedBuildingHealth;
+            TryGetSelectedBuildingPreviewPrefab = tryGetSelectedBuildingPreviewPrefab;
+            IsRuntimeBuildingWall = isRuntimeBuildingWall;
+            IsRuntimeBuildingCityGenerated = isRuntimeBuildingCityGenerated;
+            TryGetRuntimeBuildingOwnerFaction = tryGetRuntimeBuildingOwnerFaction;
+            HasVisibleSelectableBuilding = hasVisibleSelectableBuilding;
+            TryResolveLiveUnitPreviewPrefab = tryResolveLiveUnitPreviewPrefab;
         }
     }
 
@@ -105,6 +136,64 @@ public sealed class BuildingUiQuerySystem
 
         building.ProducedUnits ??= new List<Entity>();
         GetProducedUnits(building.ProducedUnits, em, context.ProductionSystem, results);
+    }
+
+    internal bool HasActiveBuilding(Context context)
+    {
+        return context.HasActiveBuilding != null &&
+               context.HasActiveBuilding();
+    }
+
+    internal string SelectedBuildingDisplayName(Context context)
+    {
+        return context.GetSelectedBuildingDisplayName?.Invoke() ?? string.Empty;
+    }
+
+    internal bool TryGetSelectedBuildingHealth(Context context, out int current, out int max)
+    {
+        current = 0;
+        max = 0;
+        return context.TryGetSelectedBuildingHealth != null &&
+               context.TryGetSelectedBuildingHealth(out current, out max);
+    }
+
+    internal bool TryGetSelectedBuildingPreviewPrefab(Context context, out GameObject prefab)
+    {
+        prefab = null;
+        return context.TryGetSelectedBuildingPreviewPrefab != null &&
+               context.TryGetSelectedBuildingPreviewPrefab(out prefab);
+    }
+
+    internal bool IsRuntimeBuildingWall(Context context, int buildingId)
+    {
+        return context.IsRuntimeBuildingWall != null &&
+               context.IsRuntimeBuildingWall(buildingId);
+    }
+
+    internal bool IsRuntimeBuildingCityGenerated(Context context, int buildingId)
+    {
+        return context.IsRuntimeBuildingCityGenerated != null &&
+               context.IsRuntimeBuildingCityGenerated(buildingId);
+    }
+
+    internal bool TryGetRuntimeBuildingOwnerFaction(Context context, int buildingId, out byte ownerFactionId)
+    {
+        ownerFactionId = 0;
+        return context.TryGetRuntimeBuildingOwnerFaction != null &&
+               context.TryGetRuntimeBuildingOwnerFaction(buildingId, out ownerFactionId);
+    }
+
+    internal bool HasVisibleSelectableBuilding(Context context, Camera camera)
+    {
+        return context.HasVisibleSelectableBuilding != null &&
+               context.HasVisibleSelectableBuilding(camera);
+    }
+
+    internal bool TryResolveLiveUnitPreviewPrefab(Context context, Entity unitEntity, out GameObject prefab)
+    {
+        prefab = null;
+        return context.TryResolveLiveUnitPreviewPrefab != null &&
+               context.TryResolveLiveUnitPreviewPrefab(unitEntity, out prefab);
     }
 
     public void AddProducedUnitEntries(

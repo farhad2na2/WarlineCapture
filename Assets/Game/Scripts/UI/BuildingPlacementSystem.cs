@@ -2308,17 +2308,8 @@ public sealed class BuildingPlacementSystem
             IsConfiguredSpawnablePrefab,
             GetCampRequestFailure,
             TryRequestCampItem,
-            () => HasActiveBuilding,
-            () => SelectedBuildingDisplayName,
             DeleteSelectedBuilding,
             ConfirmBuildingPlacement,
-            TryGetSelectedBuildingHealth,
-            TryGetSelectedBuildingPreviewPrefab,
-            IsRuntimeBuildingWall,
-            IsRuntimeBuildingCityGenerated,
-            TryGetRuntimeBuildingOwnerFaction,
-            HasVisibleSelectableBuilding,
-            TryResolveLiveUnitPreviewPrefab,
             CancelBuildingPlacement,
             FocusLastCampProductionRequest,
             ClearSelectedBuilding,
@@ -2332,7 +2323,16 @@ public sealed class BuildingPlacementSystem
             () => ActiveBuildingId,
             TryGetEntityManager,
             _buildingProductionSystem,
-            () => Time.time);
+            () => Time.time,
+            () => HasActiveBuilding,
+            () => SelectedBuildingDisplayName,
+            TryGetSelectedBuildingHealth,
+            TryGetSelectedBuildingPreviewPrefab,
+            IsRuntimeBuildingWall,
+            IsRuntimeBuildingCityGenerated,
+            TryGetRuntimeBuildingOwnerFaction,
+            HasVisibleSelectableBuilding,
+            TryResolveLiveUnitPreviewPrefab);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

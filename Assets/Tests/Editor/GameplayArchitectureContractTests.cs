@@ -146,6 +146,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`CitizenPopulationSystem` must receive these narrow systems/contexts directly from managed composition and must not accept `BuildingPlacementSystem`", contract);
         StringAssert.Contains("Citizen upkeep spending belongs in `CitizenResourceSystem`", contract);
         StringAssert.Contains("citizen configured prefab/entity resolution belongs in `CitizenPrefabSystem`", contract);
+        StringAssert.Contains("Runtime resource, runtime unit-prefab, citizen resource, citizen prefab, and building spawn-prefab context construction belongs in `BuildingRuntimeResourcePrefabContextSystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
         StringAssert.Contains("`GameplayFeatureStartupSystem` must receive `BuildingRuntimeCitySpawnSystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
@@ -863,9 +864,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("building.InteractionContext", startup);
         StringAssert.Contains("selection.BindDependencies(", startup);
         StringAssert.Contains("citizenPopulation.Init(", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeResourceSystem", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeUnitPrefabSystem", buildingComposition);
-        StringAssert.Contains("PlacementFacade.CreateRuntimeUnitPrefabContext()", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
         Assert.IsFalse(
             startup.Contains("BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
             startup.Contains("BuildingPlacementSystem buildingPlacement", StringComparison.Ordinal) ||
@@ -1792,21 +1792,30 @@ public sealed class GameplayArchitectureContractTests
         string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
         string startup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
         string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
+        string runtimeResourcePrefabContext = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextSystem.cs");
         StringAssert.Contains("CreateRuntimeBuildingQueryContext", placement);
         StringAssert.Contains("RuntimeResourceSystem", placement);
         StringAssert.Contains("RuntimeUnitPrefabSystem", placement);
-        StringAssert.Contains("CreateRuntimeUnitPrefabContext", placement);
+        StringAssert.Contains("BuildingRuntimeResourcePrefabContextSystem _buildingRuntimeResourcePrefabContextSystem", placement);
+        StringAssert.Contains("CreateRuntimeResourcePrefabContextSource", placement);
+        StringAssert.Contains("CreateRuntimeUnitPrefabContext", runtimeResourcePrefabContext);
+        StringAssert.Contains("CreateCitizenResourceContext", runtimeResourcePrefabContext);
+        StringAssert.Contains("CreateCitizenPrefabContext", runtimeResourcePrefabContext);
+        StringAssert.Contains("CreateBuildingSpawnPrefabContext", runtimeResourcePrefabContext);
         StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
         StringAssert.Contains("PlacementFacade.RuntimeQuerySystem", buildingComposition);
         StringAssert.Contains("PlacementFacade.CreateRuntimeBuildingQueryContext()", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeResourceSystem", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeUnitPrefabSystem", buildingComposition);
-        StringAssert.Contains("PlacementFacade.CreateRuntimeUnitPrefabContext()", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
         Assert.IsFalse(
             placement.Contains("_resourceDollars", StringComparison.Ordinal) ||
             placement.Contains("CreateCitizenResourceContext", StringComparison.Ordinal) ||
             placement.Contains("CreateCitizenPrefabContext", StringComparison.Ordinal),
             "BuildingPlacementSystem must not own the citizen dollar backing store or citizen context factories; use RuntimeResourceSystem/RuntimeUnitPrefabSystem.");
+        Assert.IsFalse(
+            placement.Contains("CreateRuntimeUnitPrefabContext", StringComparison.Ordinal) ||
+            placement.Contains("new BuildingSpawnPrefabSystem.Context", StringComparison.Ordinal),
+            "Runtime unit-prefab and building spawn-prefab context construction belongs in BuildingRuntimeResourcePrefabContextSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             text.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
             "CitizenPopulationSystem must receive narrow building/resource/prefab contexts instead of BuildingPlacementSystem.");
@@ -3917,8 +3926,8 @@ public sealed class GameplayArchitectureContractTests
 
         string audit = File.ReadAllText(auditPath);
         StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("2153 lines", audit);
-        StringAssert.Contains("Public/internal facade declarations: 127", audit);
+        StringAssert.Contains("2148 lines", audit);
+        StringAssert.Contains("Public/internal facade declarations: 126", audit);
         StringAssert.Contains("Allowed Production Facade References", audit);
         StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
         StringAssert.Contains("Allowed Test Facade Construction", audit);
@@ -3928,7 +3937,7 @@ public sealed class GameplayArchitectureContractTests
         string[] placementLines = File.ReadAllLines(placementFile);
         Assert.LessOrEqual(
             placementLines.Length,
-            2153,
+            2148,
             "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
 
         int publicOrInternalDeclarationCount = placementLines.Count(line =>
@@ -3936,7 +3945,7 @@ public sealed class GameplayArchitectureContractTests
             !line.Contains("sealed class", StringComparison.Ordinal));
         Assert.LessOrEqual(
             publicOrInternalDeclarationCount,
-            127,
+            126,
             "Do not add public/internal BuildingPlacementSystem surface. Move new behavior to the owning narrow *System.");
     }
 

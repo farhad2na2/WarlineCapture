@@ -74,8 +74,8 @@ internal sealed class BuildingGameplayCompositionSystem
                 PlacementFacade.CreateRuntimeBuildingQueryContext(),
                 dayNight,
                 worldCamera,
-                PlacementFacade.RuntimeResourceSystem.CreateCitizenResourceContext(),
-                PlacementFacade.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeUnitPrefabContext()));
+                PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource()),
+                PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource()));
             return citizenPopulation;
         }
 

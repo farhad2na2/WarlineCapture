@@ -67,6 +67,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementRuntimeTickSystem _buildingPlacementRuntimeTickSystem = new();
     private readonly RuntimeResourceSystem _runtimeResourceSystem = new();
     private readonly RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem = new();
+    private readonly BuildingRuntimeResourcePrefabContextSystem _buildingRuntimeResourcePrefabContextSystem = new();
     private int[] _placementInvalidPrefix;
     private Transform _buildingRoot;
     private BuildingDefinition _soldierBaseDefinition;
@@ -111,8 +112,7 @@ public sealed class BuildingPlacementSystem
     public int? CurrentActiveBuildingId => ActiveBuildingId;
     internal BuildingRuntimeCitySpawnSystem RuntimeCitySpawnSystem => _buildingRuntimeCitySpawnSystem;
     internal BuildingRuntimeQuerySystem RuntimeQuerySystem => _buildingRuntimeQuerySystem;
-    internal RuntimeResourceSystem RuntimeResourceSystem => _runtimeResourceSystem;
-    internal RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem => _runtimeUnitPrefabSystem;
+    internal BuildingRuntimeResourcePrefabContextSystem RuntimeResourcePrefabContextSystem => _buildingRuntimeResourcePrefabContextSystem;
     internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
@@ -334,7 +334,7 @@ public sealed class BuildingPlacementSystem
 
         EnsureEntityQueries(em);
         return _buildingSpawnPrefabSystem.TryGetSpawnUnitPrefabEntity(
-            CreateBuildingSpawnPrefabContext(),
+            _buildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(CreateRuntimeResourcePrefabContextSource()),
             em,
             unitPrefab,
             out prefabEntity);
@@ -400,7 +400,7 @@ public sealed class BuildingPlacementSystem
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
         return _buildingSpawnPrefabSystem.TryResolveSpawnUnitPrefabFromRegistry(
-            CreateBuildingSpawnPrefabContext(),
+            _buildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(CreateRuntimeResourcePrefabContextSource()),
             em,
             prefabEntity,
             out spawnUnitPrefab);
@@ -1831,7 +1831,7 @@ public sealed class BuildingPlacementSystem
             _liveUnitFootprintQuery,
             _buildingProductionSystem,
             _buildingSpawnPrefabSystem,
-            CreateBuildingSpawnPrefabContext(),
+            _buildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(CreateRuntimeResourcePrefabContextSource()),
             _buildingProductionSlotSystem,
             BuildingDefinitionSystem.GetProductionPrefab,
             BuildingDefinitionSystem.RuntimeBuildingMatchesId);
@@ -1883,14 +1883,18 @@ public sealed class BuildingPlacementSystem
         return CreateBuildingRuntimeQueryContext();
     }
 
-    internal RuntimeUnitPrefabSystem.Context CreateRuntimeUnitPrefabContext()
+    internal BuildingRuntimeResourcePrefabContextSystem.Source CreateRuntimeResourcePrefabContextSource()
     {
-        return new RuntimeUnitPrefabSystem.Context(
+        return new BuildingRuntimeResourcePrefabContextSystem.Source(
+            _runtimeResourceSystem,
+            _runtimeUnitPrefabSystem,
             _buildingDefinitionSystem,
             _buildingSpawnPrefabSystem,
             TryGetEntityManager,
             EnsureEntityQueries,
-            CreateBuildingSpawnPrefabContext);
+            _unitPrefabRegistryQuery,
+            _spawnPrefabCandidatesQuery,
+            _livePlayerUnitsQuery);
     }
 
     internal BuildingUiCommandSystem.Context CreateBuildingUiCommandContext()
@@ -1977,15 +1981,6 @@ public sealed class BuildingPlacementSystem
             TryGetGridData,
             EnsureEntityQueries,
             () => _redirectUnitsQuery);
-    }
-
-    private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()
-    {
-        return new BuildingSpawnPrefabSystem.Context(
-            _buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs,
-            _unitPrefabRegistryQuery,
-            _spawnPrefabCandidatesQuery,
-            _livePlayerUnitsQuery);
     }
 
     internal BuildingCombatSystem.Context<RuntimeBuildingData> CreateBuildingCombatContext()

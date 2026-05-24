@@ -40,8 +40,8 @@ public static class WarlineCaptureGameUiSceneBuilder
         new(WarlineCaptureShellRegionId.MiddleRegion, "MiddleRegion", Vector2.zero, new Rect(360f, 140f, 1680f, 820f)),
         new(WarlineCaptureShellRegionId.RightRegion, "RightRegion", new Vector2(1f, 0f), new Rect(2040f, 140f, 360f, 820f)),
         new(WarlineCaptureShellRegionId.FooterRegion, "FooterRegion", new Vector2(0f, -1f), new Rect(0f, 960f, 2400f, 120f)),
-        new(WarlineCaptureShellRegionId.LoadingLayer, "LoadingLayer", new Vector2(0f, -1f), StretchRegion),
-        new(WarlineCaptureShellRegionId.PopupLayer, "PopupLayer", Vector2.zero, StretchRegion)
+        new(WarlineCaptureShellRegionId.PopupLayer, "PopupLayer", Vector2.zero, StretchRegion),
+        new(WarlineCaptureShellRegionId.LoadingLayer, "LoadingLayer", new Vector2(0f, -1f), StretchRegion)
     };
 
     [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 1")]

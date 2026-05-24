@@ -14,6 +14,7 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
     private World cachedWorld;
     private bool hasBoundaryQuery;
     private bool hasStarted;
+    private bool isCompletingLoading;
 
     public bool PlayOnStart => playOnStart;
     public float LoadingDurationSeconds => loadingDurationSeconds;
@@ -38,33 +39,27 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
             return;
 
         hasStarted = true;
-        StartCoroutine(RunSmokeSequence());
+        StartCoroutine(RunLoadingGate());
     }
 
-    private IEnumerator RunSmokeSequence()
+    private IEnumerator RunLoadingGate()
     {
         yield return WaitForBoundary();
-        yield return WaitForTransitionIdleOrPhase(UiShellTransitionPhase.ShowingLoading);
-        yield return AnimateLoadingToComplete();
-        yield return WaitForPhase(UiShellTransitionPhase.MenuReady);
-        yield return Hold();
 
-        EnqueueRoute(UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
-        yield return WaitForPhase(UiShellTransitionPhase.MatchHudReady);
-        yield return Hold();
+        while (isActiveAndEnabled)
+        {
+            if (!isCompletingLoading &&
+                TryGetState(out UiShellStateComponent state) &&
+                state.CurrentMode == UiShellMode.Loading &&
+                state.IsTransitionRunning == 0 &&
+                TryGetLoading(out UiShellLoadingProgressComponent loading) &&
+                loading.IsComplete == 0)
+            {
+                yield return AnimateLoadingToComplete();
+            }
 
-        EnqueuePopup(UiShellPopupIntent.Show);
-        yield return WaitForPhase(UiShellTransitionPhase.PopupVisible);
-        yield return Hold();
-
-        EnqueuePopup(UiShellPopupIntent.Hide);
-        yield return WaitForTransitionIdleOrPhase(UiShellTransitionPhase.Idle);
-        yield return Hold();
-
-        EnqueueRoute(UiShellRouteIntent.ReturnToMainMenu, WarlineCaptureRoute.MainMenu);
-        yield return WaitForPhase(UiShellTransitionPhase.MenuReady);
-
-        Debug.Log("WARLINECAPTURE_GAMEUI_STEP7_SMOKE_COMPLETE");
+            yield return null;
+        }
     }
 
     private IEnumerator AnimateLoadingToComplete()
@@ -74,37 +69,19 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             float progress = Mathf.Clamp01(elapsed / loadingDurationSeconds);
+            isCompletingLoading = true;
             SetLoading(progress, "Loading command shell", progress >= 1f);
             yield return null;
         }
 
         SetLoading(1f, "Command shell ready", true);
+        isCompletingLoading = false;
     }
 
     private IEnumerator WaitForBoundary()
     {
         while (!TryGetBoundary(out _, out _))
             yield return null;
-    }
-
-    private IEnumerator WaitForPhase(UiShellTransitionPhase phase)
-    {
-        while (!TryGetState(out UiShellStateComponent state) || state.Phase != phase || state.IsTransitionRunning != 0)
-            yield return null;
-    }
-
-    private IEnumerator WaitForTransitionIdleOrPhase(UiShellTransitionPhase phase)
-    {
-        while (!TryGetState(out UiShellStateComponent state) || state.IsTransitionRunning != 0 || state.Phase != phase)
-            yield return null;
-    }
-
-    private IEnumerator Hold()
-    {
-        if (stableHoldSeconds <= 0f)
-            yield break;
-
-        yield return new WaitForSecondsRealtime(stableHoldSeconds);
     }
 
     private void SetLoading(float progress01, string status, bool complete)
@@ -155,6 +132,16 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
             return false;
 
         state = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+        return true;
+    }
+
+    private bool TryGetLoading(out UiShellLoadingProgressComponent loading)
+    {
+        loading = default;
+        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+            return false;
+
+        loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
         return true;
     }
 

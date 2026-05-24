@@ -327,6 +327,13 @@ public static class WarlineCaptureGameUiSceneBuilder
                 throw new InvalidOperationException($"{definition.Name} offscreen direction is not configured.");
             if (!seenRegionIds.Add(regionView.RegionId))
                 throw new InvalidOperationException($"Duplicate shell region id {regionView.RegionId}.");
+            if (definition.Id == WarlineCaptureShellRegionId.RightRegion &&
+                (regionRect.anchorMin != new Vector2(1f, 1f) ||
+                 regionRect.anchorMax != new Vector2(1f, 1f) ||
+                 regionRect.pivot != new Vector2(1f, 1f)))
+            {
+                throw new InvalidOperationException("RightRegion must be top-right anchored so it remains visible on 16:9 and wider aspect ratios.");
+            }
 
             Transform contentTransform = regionTransform.Find(ContentRootName);
             if (contentTransform == null)
@@ -550,6 +557,8 @@ public static class WarlineCaptureGameUiSceneBuilder
             RectTransform regionRect = regionObject.GetComponent<RectTransform>();
             if (definition.IsStretch)
                 Stretch(regionRect);
+            else if (definition.Id == WarlineCaptureShellRegionId.RightRegion)
+                ApplyTopRightRect(regionRect, definition.Rect);
             else
                 ApplyTopLeftRect(regionRect, definition.Rect);
 
@@ -642,6 +651,17 @@ public static class WarlineCaptureGameUiSceneBuilder
         rect.localRotation = Quaternion.identity;
     }
 
+    private static void ApplyTopRightRect(RectTransform rect, Rect topLeftRect)
+    {
+        rect.anchorMin = new Vector2(1f, 1f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(1f, 1f);
+        rect.anchoredPosition = new Vector2(topLeftRect.xMax - 2400f, -topLeftRect.y);
+        rect.sizeDelta = new Vector2(topLeftRect.width, topLeftRect.height);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
     private static void ValidateStretchRect(RectTransform rect, string name)
     {
         if (rect.anchorMin != Vector2.zero || rect.anchorMax != Vector2.one)
@@ -700,6 +720,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.MiddleRegion, "MiddleContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
         RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/DeployCommandButton", UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
 
         contentPresenter.PrepareForCommandSequence(new[]
         {
@@ -734,6 +755,26 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"Missing shell region {regionId}.");
         if (region.ContentRoot.childCount != 0)
             throw new InvalidOperationException($"{regionId} must be empty after presenter install.");
+    }
+
+    private static void RequireRouteButton(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellRegionId regionId,
+        string path,
+        UiShellRouteIntent intent,
+        WarlineCaptureRoute route)
+    {
+        WarlineCaptureShellRegionView region = RequireRegion(shellView, regionId);
+        Transform buttonTransform = region.ContentRoot.Find(path);
+        if (buttonTransform == null)
+            throw new InvalidOperationException($"{regionId} must contain route button {path}.");
+
+        if (buttonTransform.GetComponent<Button>() == null)
+            throw new InvalidOperationException($"{path} must contain a Unity Button.");
+
+        WarlineCaptureShellRouteButtonView routeButton = buttonTransform.GetComponent<WarlineCaptureShellRouteButtonView>();
+        if (routeButton == null)
+            throw new InvalidOperationException($"{path} must contain WarlineCaptureShellRouteButtonView.");
     }
 
     private static void ValidateShellRegionLayout(RectTransform canvasRect, WarlineCaptureShellView shellView)

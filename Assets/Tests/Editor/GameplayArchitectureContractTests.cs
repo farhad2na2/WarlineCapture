@@ -149,8 +149,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
         StringAssert.Contains("`GameplayFeatureStartupSystem` must receive `BuildingRuntimeCitySpawnSystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
-        StringAssert.Contains("Building runtime tick orchestration, per-phase timing, runtime boundary publish tick, and placement pointer/click frame flow belong in `BuildingPlacementRuntimeTickSystem`", contract);
+        StringAssert.Contains("Building runtime tick orchestration, per-phase timing, and placement pointer/click frame flow belong in `BuildingPlacementRuntimeTickSystem`", contract);
         StringAssert.Contains("runtime tick context assembly belongs in `BuildingPlacementRuntimeTickContextSystem`, not `BuildingPlacementSystem`", contract);
+        StringAssert.Contains("production progress ticking, resource production ticking, resource hauler ticking, and recent spawn reservation cleanup belong in `BuildingProductionRuntimeTickSystem`", contract);
+        StringAssert.Contains("runtime boundary publish ticking belongs in `BuildingRuntimeBoundaryPublishSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
@@ -179,6 +181,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
         StringAssert.Contains("`GameBootstrap` must not publish a managed `BuildingPlacementSystem` facade through ECS component objects", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
+        StringAssert.Contains("buildingplacement_retirement_audit.md", contract);
+        StringAssert.Contains("The facade file line count and public/internal member declaration count must only decrease", contract);
     }
 
     [Test]
@@ -525,10 +529,14 @@ public sealed class GameplayArchitectureContractTests
         const string buildingRuntimeUpdateFile = "Assets/Game/Scripts/Systems/BuildingRuntimeUpdateSystem.cs";
         const string buildingRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickSystem.cs";
         const string buildingRuntimeTickContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextSystem.cs";
+        const string buildingProductionRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
+        const string buildingRuntimeBoundaryPublishFile = "Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryPublishSystem.cs";
         Assert.IsTrue(File.Exists(runtimeUpdateFile), "Managed runtime update orchestration must live in GameplayRuntimeUpdateSystem.");
         Assert.IsTrue(File.Exists(buildingRuntimeUpdateFile), "Building runtime update must live behind BuildingRuntimeUpdateSystem.");
         Assert.IsTrue(File.Exists(buildingRuntimeTickFile), "Building placement runtime frame tick orchestration must live in BuildingPlacementRuntimeTickSystem.");
         Assert.IsTrue(File.Exists(buildingRuntimeTickContextFile), "Building placement runtime frame tick context assembly must live in BuildingPlacementRuntimeTickContextSystem.");
+        Assert.IsTrue(File.Exists(buildingProductionRuntimeTickFile), "Building production/resource runtime frame ticks must live in BuildingProductionRuntimeTickSystem.");
+        Assert.IsTrue(File.Exists(buildingRuntimeBoundaryPublishFile), "Building runtime boundary publish frame ticks must live in BuildingRuntimeBoundaryPublishSystem.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         string managedStartup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
@@ -536,6 +544,8 @@ public sealed class GameplayArchitectureContractTests
         string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
         string buildingRuntimeTick = File.ReadAllText(buildingRuntimeTickFile);
         string buildingRuntimeTickContext = File.ReadAllText(buildingRuntimeTickContextFile);
+        string buildingProductionRuntimeTick = File.ReadAllText(buildingProductionRuntimeTickFile);
+        string buildingRuntimeBoundaryPublish = File.ReadAllText(buildingRuntimeBoundaryPublishFile);
         StringAssert.Contains("GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem", bootstrap);
         StringAssert.Contains("BuildingRuntimeUpdateSystem BuildingRuntimeUpdate", bootstrap);
         StringAssert.Contains("_buildingRuntimeUpdateContext", bootstrap);
@@ -608,8 +618,18 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Action UpdateBuildingRuntimeTick", buildingRuntimeUpdate);
         StringAssert.Contains("BuildingPlacementRuntimeTickSystem _buildingPlacementRuntimeTickSystem", placement);
         StringAssert.Contains("BuildingPlacementRuntimeTickSystem.Context Create(BuildingPlacementSystem placement)", buildingRuntimeTickContext);
-        StringAssert.Contains("placement.ProcessPendingProductions", buildingRuntimeTickContext);
-        StringAssert.Contains("placement.UpdateBuildingRuntimeBoundary", buildingRuntimeTickContext);
+        StringAssert.Contains("BuildingProductionRuntimeTickSystem _productionRuntimeTickSystem", buildingRuntimeTickContext);
+        StringAssert.Contains("BuildingRuntimeBoundaryPublishSystem _runtimeBoundaryPublishSystem", buildingRuntimeTickContext);
+        StringAssert.Contains("_productionRuntimeTickSystem.ProcessPendingProductions", buildingRuntimeTickContext);
+        StringAssert.Contains("_runtimeBoundaryPublishSystem.Update", buildingRuntimeTickContext);
+        StringAssert.Contains("placement.CreateBuildingProductionUpdateContext()", buildingRuntimeTickContext);
+        StringAssert.Contains("placement.CreateBuildingRuntimeSpawnContext()", buildingRuntimeTickContext);
+        StringAssert.Contains("ProcessPendingProductions", buildingProductionRuntimeTick);
+        StringAssert.Contains("UpdateResourceProduction", buildingProductionRuntimeTick);
+        StringAssert.Contains("UpdateResourceHaulers", buildingProductionRuntimeTick);
+        StringAssert.Contains("CleanupRecentSpawnReservations", buildingProductionRuntimeTick);
+        StringAssert.Contains("BoundarySystem?.Update", buildingRuntimeBoundaryPublish);
+        StringAssert.Contains("GetBoundaryQuery", buildingRuntimeBoundaryPublish);
         StringAssert.Contains("ProcessPendingProductions", buildingRuntimeTick);
         StringAssert.Contains("UpdateBuildingRuntimeBoundary", buildingRuntimeTick);
         StringAssert.Contains("GamePointerInput.TryGetPrimaryPointer", buildingRuntimeTick);
@@ -619,8 +639,12 @@ public sealed class GameplayArchitectureContractTests
             "BuildingRuntimeUpdateSystem must receive a runtime tick boundary callback, not a BuildingPlacementSystem.Update delegate.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+void\s+Update\s*\(") ||
-            placement.Contains("CreateBuildingPlacementRuntimeTickContext", StringComparison.Ordinal),
-            "BuildingPlacementSystem must not keep a runtime Update compatibility wrapper or own runtime tick context assembly.");
+            placement.Contains("CreateBuildingPlacementRuntimeTickContext", StringComparison.Ordinal) ||
+            placement.Contains("_factionResourceSystem.UpdateResourceProduction", StringComparison.Ordinal) ||
+            placement.Contains("_buildingResourceHaulerBridgeSystem.UpdateResourceHaulers", StringComparison.Ordinal) ||
+            Regex.IsMatch(placement, @"\b(?:internal|private)\s+void\s+UpdateBuildingRuntimeBoundary\s*\(") ||
+            Regex.IsMatch(placement, @"\b(?:internal|private)\s+void\s+ProcessPendingProductions\s*\("),
+            "BuildingPlacementSystem must not keep a runtime Update compatibility wrapper, own runtime tick context assembly, or own production/resource/boundary tick phases.");
         Assert.IsFalse(
             runtimeUpdate.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
             runtimeUpdate.Contains("buildingPlacement?.Update", StringComparison.Ordinal),
@@ -1461,6 +1485,8 @@ public sealed class GameplayArchitectureContractTests
         string boundarySystem = File.ReadAllText(boundarySystemFile);
         string bootstrap = File.ReadAllText(bootstrapFile);
         string placement = File.ReadAllText(placementFile);
+        string boundaryPublishSystem = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeBoundaryPublishSystem.cs");
+        string runtimeTickContext = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextSystem.cs");
 
         string[] boundaryContracts =
         {
@@ -1496,8 +1522,9 @@ public sealed class GameplayArchitectureContractTests
             "GameBootstrap must only install BuildingRuntimeBoundaryTag and buffers, not a managed BuildingPlacementSystem component object.");
 
         StringAssert.Contains("BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem", placement);
-        StringAssert.Contains("UpdateBuildingRuntimeBoundary", placement);
-        StringAssert.Contains("_buildingRuntimeBoundarySystem.Update", placement);
+        StringAssert.Contains("BuildingRuntimeBoundaryPublishSystem", boundaryPublishSystem);
+        StringAssert.Contains("BoundarySystem?.Update", boundaryPublishSystem);
+        StringAssert.Contains("placement.RuntimeBoundarySystem", runtimeTickContext);
         StringAssert.Contains("ProcessRequests", boundarySystem);
         StringAssert.Contains("ProcessResourceSellRequests", boundarySystem);
         StringAssert.Contains("FactionResourceSystem", boundarySystem);
@@ -2897,13 +2924,16 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string resourceFile = "Assets/Game/Scripts/Systems/FactionResourceSystem.cs";
+        const string productionRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
         Assert.IsTrue(File.Exists(resourceFile), "The faction resource slice must live in FactionResourceSystem.");
+        Assert.IsTrue(File.Exists(productionRuntimeTickFile), "Resource production runtime ticking must live in BuildingProductionRuntimeTickSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string resource = File.ReadAllText(resourceFile);
+        string productionRuntimeTick = File.ReadAllText(productionRuntimeTickFile);
         StringAssert.Contains("FactionResourceSystem _factionResourceSystem", placement);
         StringAssert.Contains("_factionResourceSystem.GetResourceTotals", placement);
-        StringAssert.Contains("_factionResourceSystem.UpdateResourceProduction", placement);
+        StringAssert.Contains("context.FactionResourceSystem.UpdateResourceProduction", productionRuntimeTick);
         StringAssert.Contains("TryGetPrimaryCapacityInfo", resource);
         StringAssert.Contains("TryGetFuelCapacityInfo", resource);
         StringAssert.Contains("TryGetFactionResourceEconomy", resource);
@@ -2938,15 +2968,18 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string haulerFile = "Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs";
         const string haulerBridgeFile = "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeSystem.cs";
+        const string productionRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
         Assert.IsTrue(File.Exists(haulerFile), "The resource hauler slice must live in ResourceHaulerSystem.");
         Assert.IsTrue(File.Exists(haulerBridgeFile), "The resource hauler building bridge must live in BuildingResourceHaulerBridgeSystem.");
+        Assert.IsTrue(File.Exists(productionRuntimeTickFile), "Resource hauler runtime ticking must live in BuildingProductionRuntimeTickSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string haulerBridge = File.ReadAllText(haulerBridgeFile);
+        string productionRuntimeTick = File.ReadAllText(productionRuntimeTickFile);
         StringAssert.Contains("ResourceHaulerSystem _resourceHaulerSystem", placement);
         StringAssert.Contains("BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem", placement);
         StringAssert.Contains("CreateBuildingResourceHaulerBridgeContext", placement);
-        StringAssert.Contains("_buildingResourceHaulerBridgeSystem.UpdateResourceHaulers", placement);
+        StringAssert.Contains("context.ResourceHaulerBridgeSystem?.UpdateResourceHaulers", productionRuntimeTick);
         StringAssert.Contains("_buildingResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders", placement);
         StringAssert.Contains("_buildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell", placement);
         StringAssert.Contains("_buildingResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell", placement);
@@ -3022,6 +3055,7 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string productionFile = "Assets/Game/Scripts/Systems/BuildingProductionSystem.cs";
         const string productionUpdateFile = "Assets/Game/Scripts/Systems/BuildingProductionUpdateSystem.cs";
+        const string productionRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
         const string productionSlotFile = "Assets/Game/Scripts/Systems/BuildingProductionSlotSystem.cs";
         const string productionTransportFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportSystem.cs";
         const string productionTransportBridgeFile = "Assets/Game/Scripts/Systems/BuildingProductionTransportBridgeSystem.cs";
@@ -3032,6 +3066,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeQueryFile = "Assets/Game/Scripts/Systems/BuildingRuntimeQuerySystem.cs";
         Assert.IsTrue(File.Exists(productionFile), "The building production slice must live in BuildingProductionSystem.");
         Assert.IsTrue(File.Exists(productionUpdateFile), "The pending production runtime update loop must live in BuildingProductionUpdateSystem.");
+        Assert.IsTrue(File.Exists(productionRuntimeTickFile), "The production/resource runtime tick orchestration must live in BuildingProductionRuntimeTickSystem.");
         Assert.IsTrue(File.Exists(productionSlotFile), "The production slot slice must live in BuildingProductionSlotSystem.");
         Assert.IsTrue(File.Exists(productionTransportFile), "The active production transport visual/update slice must live in BuildingProductionTransportSystem.");
         Assert.IsTrue(File.Exists(productionTransportBridgeFile), "The production transport ECS bridge must live in BuildingProductionTransportBridgeSystem.");
@@ -3043,6 +3078,7 @@ public sealed class GameplayArchitectureContractTests
 
         string placement = File.ReadAllText(placementFile);
         string runtimeQuery = File.ReadAllText(runtimeQueryFile);
+        string productionRuntimeTick = File.ReadAllText(productionRuntimeTickFile);
         StringAssert.Contains("BuildingProductionSystem _buildingProductionSystem", placement);
         StringAssert.Contains("BuildingProductionUpdateSystem _buildingProductionUpdateSystem", placement);
         StringAssert.Contains("BuildingProductionSlotSystem _buildingProductionSlotSystem", placement);
@@ -3052,7 +3088,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem", placement);
         StringAssert.Contains("BuildingRunwaySystem _buildingRunwaySystem", placement);
         StringAssert.Contains("_buildingProductionSystem.TryQueuePlayerUnitFromBuilding", placement);
-        StringAssert.Contains("_buildingProductionUpdateSystem.UpdatePendingProductions", placement);
+        StringAssert.Contains("context.ProductionUpdateSystem.UpdatePendingProductions", productionRuntimeTick);
         StringAssert.Contains("context.ProductionSystem?.PruneProducedUnits", runtimeQuery);
 
         string production = File.ReadAllText(productionFile);
@@ -3720,6 +3756,104 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+bool\s+TryResolveNearbyWallVertical\b"),
             "Gate-to-nearby-wall alignment lookup belongs in BuildingBarrierSystem, not BuildingPlacementSystem.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemRetirementAuditMustExistAndSurfaceCannotGrow()
+    {
+        const string auditPath = "Design/Architecture/buildingplacement_retirement_audit.md";
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        Assert.IsTrue(File.Exists(auditPath), $"{auditPath} must inventory the remaining facade surface before deletion continues.");
+
+        string audit = File.ReadAllText(auditPath);
+        StringAssert.Contains("Current measured size", audit);
+        StringAssert.Contains("2348 lines", audit);
+        StringAssert.Contains("Public/internal facade declarations: 135", audit);
+        StringAssert.Contains("Allowed Production Facade References", audit);
+        StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
+        StringAssert.Contains("BuildingPlacementRuntimeTickContextSystem.cs", audit);
+        StringAssert.Contains("Allowed Test Facade Construction", audit);
+        StringAssert.Contains("Deletion Gates", audit);
+        StringAssert.Contains("Production construction must remain isolated to `BuildingGameplayCompositionSystem`", audit);
+
+        string[] placementLines = File.ReadAllLines(placementFile);
+        Assert.LessOrEqual(
+            placementLines.Length,
+            2348,
+            "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
+
+        int publicOrInternalDeclarationCount = placementLines.Count(line =>
+            Regex.IsMatch(line, @"^\s*(?:public|internal)\s+") &&
+            !line.Contains("sealed class", StringComparison.Ordinal));
+        Assert.LessOrEqual(
+            publicOrInternalDeclarationCount,
+            135,
+            "Do not add public/internal BuildingPlacementSystem surface. Move new behavior to the owning narrow *System.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemProductionReferencesMustStayFrozen()
+    {
+        string[] allowedRuntimeFacadeFiles =
+        {
+            "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs",
+            "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs",
+            "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextSystem.cs"
+        };
+
+        HashSet<string> allowedRuntimeSet = new(allowedRuntimeFacadeFiles, StringComparer.Ordinal);
+        string[] violations = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !allowedRuntimeSet.Contains(path))
+            .Where(path => Regex.IsMatch(File.ReadAllText(path), @"\bBuildingPlacementSystem\b(?!Config)"))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "No new production code may reference the BuildingPlacementSystem facade. Use narrow building systems/contexts instead:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+
+        string[] constructionFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => Regex.IsMatch(File.ReadAllText(path), @"new\s+BuildingPlacementSystem\s*\("))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        CollectionAssert.AreEqual(
+            new[] { "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs" },
+            constructionFiles,
+            "Production construction of BuildingPlacementSystem must stay isolated to BuildingGameplayCompositionSystem until final deletion.");
+    }
+
+    [Test]
+    public void BuildingPlacementSystemTestConstructionAllowlistCannotGrow()
+    {
+        string[] allowedTestConstructionFiles =
+        {
+            "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
+            "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
+            "Assets/Tests/Editor/AIProductionValidationTests.cs",
+            "Assets/Tests/Editor/BaseBreachValidationTests.cs",
+            "Assets/Tests/Editor/BuildingRuntimeBoundaryValidationTests.cs",
+            "Assets/Tests/Editor/InitialFactionBaseValidationTests.cs"
+        };
+
+        HashSet<string> allowedTestSet = new(allowedTestConstructionFiles, StringComparer.Ordinal);
+        string[] violations = Directory.GetFiles("Assets/Tests/Editor", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("GameplayArchitectureContractTests.cs", StringComparison.Ordinal))
+            .Where(path => Regex.IsMatch(File.ReadAllText(path), @"new\s+BuildingPlacementSystem\s*\("))
+            .Where(path => !allowedTestSet.Contains(path))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Do not add new editor tests that construct BuildingPlacementSystem. Migrate test setup to narrow systems or an explicit building gameplay harness:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

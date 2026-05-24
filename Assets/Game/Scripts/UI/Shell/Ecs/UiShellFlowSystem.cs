@@ -41,8 +41,10 @@ public partial struct UiShellFlowSystem : ISystem
         {
             BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Splash, UiShellMode.Loading);
             shellState.CurrentMode = UiShellMode.Loading;
-            shellState.ActiveRoute = WarlineCaptureRoute.Splash;
+            shellState.ActiveRoute = WarlineCaptureRoute.MainMenu;
             shellState.Phase = UiShellTransitionPhase.ShowingLoading;
+            ResetLoading(ref loading, "Preparing command interface");
+            state.EntityManager.SetComponentData(boundary, loading);
             state.EntityManager.SetComponentData(boundary, shellState);
             return;
         }
@@ -57,17 +59,33 @@ public partial struct UiShellFlowSystem : ISystem
         if (TryConsumeRouteRequest(routeRequests, out UiShellRouteRequestComponent routeRequest))
         {
             ProcessRouteRequest(ref shellState, commands, routeRequest);
+            if (routeRequest.Intent == UiShellRouteIntent.EnterMatch ||
+                routeRequest.Intent == UiShellRouteIntent.ReturnToMainMenu)
+            {
+                ResetLoading(ref loading, "Loading operation interface");
+                state.EntityManager.SetComponentData(boundary, loading);
+            }
             state.EntityManager.SetComponentData(boundary, shellState);
             return;
         }
 
         if (shellState.CurrentMode == UiShellMode.Loading && loading.IsComplete != 0)
         {
-            BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
-            AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
-            shellState.CurrentMode = UiShellMode.MainMenu;
-            shellState.ActiveRoute = WarlineCaptureRoute.MainMenu;
-            shellState.Phase = UiShellTransitionPhase.EnteringMenu;
+            if (shellState.ActiveRoute == WarlineCaptureRoute.Match)
+            {
+                BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Match, UiShellMode.MatchHud);
+                AppendCommand(commands, shellState, UiShellCommandKind.EnterMatchHud, UiShellRegionId.None, WarlineCaptureRoute.Match, UiShellMode.MatchHud);
+                shellState.CurrentMode = UiShellMode.MatchHud;
+                shellState.Phase = UiShellTransitionPhase.EnteringMatchHud;
+            }
+            else
+            {
+                BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
+                AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
+                shellState.CurrentMode = UiShellMode.MainMenu;
+                shellState.ActiveRoute = WarlineCaptureRoute.MainMenu;
+                shellState.Phase = UiShellTransitionPhase.EnteringMenu;
+            }
             state.EntityManager.SetComponentData(boundary, shellState);
             return;
         }
@@ -85,21 +103,17 @@ public partial struct UiShellFlowSystem : ISystem
             case UiShellRouteIntent.EnterMatch:
                 BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Match, UiShellMode.Loading);
                 AppendCommand(commands, shellState, UiShellCommandKind.ExitMenu, UiShellRegionId.None, WarlineCaptureRoute.Match, UiShellMode.Loading);
-                AppendCommand(commands, shellState, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Match, UiShellMode.MatchHud);
-                AppendCommand(commands, shellState, UiShellCommandKind.EnterMatchHud, UiShellRegionId.None, WarlineCaptureRoute.Match, UiShellMode.MatchHud);
-                shellState.CurrentMode = UiShellMode.MatchHud;
+                shellState.CurrentMode = UiShellMode.Loading;
                 shellState.ActiveRoute = WarlineCaptureRoute.Match;
-                shellState.Phase = UiShellTransitionPhase.EnteringMatchHud;
+                shellState.Phase = UiShellTransitionPhase.ShowingLoading;
                 break;
             case UiShellRouteIntent.ReturnToMainMenu:
                 BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.MainMenu, UiShellMode.Loading);
                 if (shellState.CurrentMode == UiShellMode.MatchHud)
                     AppendCommand(commands, shellState, UiShellCommandKind.ExitMatchHud, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.Loading);
-                AppendCommand(commands, shellState, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
-                AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
-                shellState.CurrentMode = UiShellMode.MainMenu;
+                shellState.CurrentMode = UiShellMode.Loading;
                 shellState.ActiveRoute = WarlineCaptureRoute.MainMenu;
-                shellState.Phase = UiShellTransitionPhase.EnteringMenu;
+                shellState.Phase = UiShellTransitionPhase.ShowingLoading;
                 break;
             default:
                 ProcessMenuRouteRequest(ref shellState, commands, request.Route);
@@ -233,5 +247,12 @@ public partial struct UiShellFlowSystem : ISystem
             UiShellCommandKind.HidePopup => UiShellTransitionPhase.Idle,
             _ => UiShellTransitionPhase.Idle
         };
+    }
+
+    private static void ResetLoading(ref UiShellLoadingProgressComponent loading, string status)
+    {
+        loading.Progress01 = 0f;
+        loading.Status = new Unity.Collections.FixedString64Bytes(status);
+        loading.IsComplete = 0;
     }
 }

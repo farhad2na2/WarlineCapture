@@ -130,6 +130,23 @@ public sealed class BuildingPlacementSystem
     internal int RuntimeBuildingCount => _runtimeBuildings.Count;
     internal bool DiagnosticsEnabled => EnableBuildingPlacementDiagnostics;
     internal double DiagnosticsFreezeLogThresholdSeconds => FreezeLogThresholdSeconds;
+    internal IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings => _runtimeBuildings;
+    internal DayNightSystem DayNightSystem => _dayNightSystem;
+    internal FactionResourceSystem FactionResourceSystem => _factionResourceSystem;
+    internal BuildingProductionUpdateSystem ProductionUpdateSystem => _buildingProductionUpdateSystem;
+    internal BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem => _buildingResourceHaulerBridgeSystem;
+    internal BuildingSpawnSystem BuildingSpawnSystem => _buildingSpawnSystem;
+    internal BuildingRuntimeBoundarySystem RuntimeBoundarySystem => _buildingRuntimeBoundarySystem;
+    internal BuildingDefinitionSystem DefinitionSystem => _buildingDefinitionSystem;
+    internal BuildingRuntimeSpawnSystem RuntimeSpawnSystem => _buildingRuntimeSpawnSystem;
+    internal BuildingProductionRequestSystem ProductionRequestSystem => _buildingProductionRequestSystem;
+    internal EntityQuery RuntimeBoundaryQuery => _buildingRuntimeBoundaryQuery;
+    internal float OilBarrelsPerFuelBarrelRatio => OilBarrelsPerFuelBarrel;
+    internal uint BuildingSpawnRandomState
+    {
+        get => _buildingSpawnRandomState;
+        set => _buildingSpawnRandomState = value;
+    }
     public BuildingSelectionClickSystem BuildingSelectionClickSystem => _buildingSelectionClickSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
@@ -618,7 +635,7 @@ public sealed class BuildingPlacementSystem
             DestroyImmediate(target);
     }
 
-    private void EnsureEntityQueries(EntityManager em)
+    internal void EnsureEntityQueries(EntityManager em)
     {
         World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
@@ -672,25 +689,9 @@ public sealed class BuildingPlacementSystem
         _buildingRuntimeBoundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
     }
 
-    internal void UpdateBuildingRuntimeBoundary()
+    internal bool TryGetEntityManagerForRuntimeTick(out EntityManager entityManager)
     {
-        if (!TryGetEntityManager(out EntityManager em))
-            return;
-
-        EnsureEntityQueries(em);
-        _buildingRuntimeBoundarySystem.Update(
-            _buildingDefinitionSystem,
-            _buildingRuntimeSpawnSystem,
-            CreateBuildingRuntimeSpawnContext(),
-            _buildingProductionRequestSystem,
-            CreateBuildingProductionRequestContext(),
-            _buildingRuntimeQuerySystem,
-            CreateBuildingRuntimeQueryContext(),
-            _factionResourceSystem,
-            em,
-            _buildingRuntimeBoundaryQuery,
-            _runtimeBuildings,
-            Time.time);
+        return TryGetEntityManager(out entityManager);
     }
 
     private BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()
@@ -749,35 +750,6 @@ public sealed class BuildingPlacementSystem
         _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility);
     }
 
-    internal void UpdateResourceProduction()
-    {
-        if (_runtimeBuildings.Count == 0)
-            return;
-
-        float secondsPerDay = _dayNightSystem != null
-            ? Mathf.Max(1f, _dayNightSystem.FullDayDurationMinutes * 60f)
-            : 300f;
-        float deltaTime = Time.deltaTime;
-
-        FactionResourceSystem.ResourceProductionTickResult result = _factionResourceSystem.UpdateResourceProduction(
-            _runtimeBuildings,
-            secondsPerDay,
-            deltaTime,
-            OilBarrelsPerFuelBarrel);
-        if (result.OilExtractedBarrels > 0f)
-            GameRuntimeStats.RecordOilExtracted(result.OilExtractedBarrels);
-        if (result.FuelProducedBarrels > 0f)
-            GameRuntimeStats.RecordFuelProduced(result.FuelProducedBarrels);
-    }
-
-    internal void UpdateResourceHaulers()
-    {
-        _buildingResourceHaulerBridgeSystem.UpdateResourceHaulers(
-            CreateBuildingResourceHaulerBridgeContext(),
-            UnitPathfindingSystem.HasPendingPathJob,
-            Time.time);
-    }
-
     private bool IsHaulerAtBuildingApproach(int2 currentCell, int2 footprintSize, RuntimeBuildingData building, GridConfig grid)
     {
         return _buildingResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell(
@@ -785,11 +757,6 @@ public sealed class BuildingPlacementSystem
             building,
             currentCell,
             footprintSize);
-    }
-
-    internal void CleanupRecentSpawnReservations()
-    {
-        _buildingSpawnSystem.CleanupRecentSpawnReservations(Time.time);
     }
 
     public void BeginSoldierBasePlacement()
@@ -1909,16 +1876,7 @@ public sealed class BuildingPlacementSystem
             worldRotation);
     }
 
-    internal void ProcessPendingProductions()
-    {
-        _buildingProductionUpdateSystem.UpdatePendingProductions(
-            CreateBuildingProductionUpdateContext(),
-            Time.time,
-            Time.deltaTime,
-            ref _buildingSpawnRandomState);
-    }
-
-    private BuildingProductionUpdateSystem.Context CreateBuildingProductionUpdateContext()
+    internal BuildingProductionUpdateSystem.Context CreateBuildingProductionUpdateContext()
     {
         return new BuildingProductionUpdateSystem.Context(
             _runtimeBuildings,
@@ -1949,7 +1907,7 @@ public sealed class BuildingPlacementSystem
             CreateBuildingSpawnContext());
     }
 
-    private BuildingProductionRequestSystem.Context CreateBuildingProductionRequestContext()
+    internal BuildingProductionRequestSystem.Context CreateBuildingProductionRequestContext()
     {
         return new BuildingProductionRequestSystem.Context(
             _runtimeBuildings,
@@ -2027,7 +1985,7 @@ public sealed class BuildingPlacementSystem
             BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
-    private BuildingRuntimeSpawnSystem.Context CreateBuildingRuntimeSpawnContext()
+    internal BuildingRuntimeSpawnSystem.Context CreateBuildingRuntimeSpawnContext()
     {
         return new BuildingRuntimeSpawnSystem.Context(
             _buildingRoot,
@@ -2165,7 +2123,7 @@ public sealed class BuildingPlacementSystem
             () => _redirectUnitsQuery);
     }
 
-    private BuildingResourceHaulerBridgeSystem.Context CreateBuildingResourceHaulerBridgeContext()
+    internal BuildingResourceHaulerBridgeSystem.Context CreateBuildingResourceHaulerBridgeContext()
     {
         return new BuildingResourceHaulerBridgeSystem.Context(
             _runtimeBuildings,
@@ -2226,7 +2184,7 @@ public sealed class BuildingPlacementSystem
             EnableBuildingDestroyDiagnostics);
     }
 
-    private BuildingRuntimeQuerySystem.Context CreateBuildingRuntimeQueryContext()
+    internal BuildingRuntimeQuerySystem.Context CreateBuildingRuntimeQueryContext()
     {
         return new BuildingRuntimeQuerySystem.Context(
             _runtimeBuildings,

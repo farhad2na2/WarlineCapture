@@ -93,6 +93,13 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddSolid(right.transform, "PortraitPlaceholder", new Rect(56f, 112f, 248f, 250f), new Color(0.02f, 0.024f, 0.02f, 1f));
         AddText(right.transform, "CommanderName", "FIELD COMMANDER\nLEVEL 38", new Rect(56f, 390f, 248f, 76f), 24f, TextAlignmentOptions.Center, Accent);
         AddText(right.transform, "Readiness", "READINESS\n||||||||||---", new Rect(56f, 514f, 248f, 82f), 21f, TextAlignmentOptions.Center, Text);
+        AddRouteButton(
+            right.transform,
+            "DeployCommandButton",
+            "DEPLOY COMMAND",
+            new Rect(18f, 722f, 324f, 74f),
+            UiShellRouteIntent.EnterMatch,
+            WarlineCaptureRoute.Match);
 
         return root;
     }
@@ -201,6 +208,33 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         image.color = color;
         image.raycastTarget = false;
         return image;
+    }
+
+    private static void AddRouteButton(
+        Transform parent,
+        string name,
+        string label,
+        Rect rect,
+        UiShellRouteIntent intent,
+        WarlineCaptureRoute route)
+    {
+        GameObject obj = CreateRect(name, parent, rect);
+        Image image = obj.AddComponent<Image>();
+        image.color = new Color(0.69f, 0.45f, 0.08f, 0.96f);
+        image.raycastTarget = true;
+
+        Button button = obj.AddComponent<Button>();
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1f, 0.88f, 0.42f, 1f);
+        colors.pressedColor = new Color(0.88f, 0.56f, 0.12f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        button.colors = colors;
+
+        WarlineCaptureShellRouteButtonView routeButton = obj.AddComponent<WarlineCaptureShellRouteButtonView>();
+        routeButton.Configure(intent, route, false);
+
+        AddText(obj.transform, "Label", label, StretchRect(), 27f, TextAlignmentOptions.Center, Color.black);
     }
 
     private static TMP_Text AddText(Transform parent, string name, string value, Rect rect, float size, TextAlignmentOptions alignment, Color color)

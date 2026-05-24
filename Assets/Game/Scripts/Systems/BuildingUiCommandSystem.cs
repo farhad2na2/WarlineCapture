@@ -12,6 +12,8 @@ public sealed class BuildingUiCommandSystem
     public delegate bool TryGetConfiguredUnitDelegate(int index, out ConfiguredUnitEntry entry);
     public delegate CampRequestFailure GetCampRequestFailureDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName);
     public delegate CampRequestFailure TryRequestCampItemDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);
+    public delegate bool TryGetSelectedBuildingHealthDelegate(out int current, out int max);
+    public delegate bool TryGetSelectedBuildingPreviewPrefabDelegate(out GameObject prefab);
 
     public readonly struct Context
     {
@@ -24,6 +26,12 @@ public sealed class BuildingUiCommandSystem
         public readonly GetCampRequestFailureDelegate GetCampRequestFailure;
         public readonly TryRequestCampItemDelegate TryRequestCampItem;
         public readonly Action<List<PendingProductionUiEntry>> GetFriendlyPendingProductionUiEntries;
+        public readonly Func<bool> HasActiveBuilding;
+        public readonly Func<string> GetSelectedBuildingDisplayName;
+        public readonly Action DeleteSelectedBuilding;
+        public readonly Func<bool> ConfirmBuildingPlacement;
+        public readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
+        public readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
 
         public Context(
             Func<int> getCurrentDollars,
@@ -34,7 +42,13 @@ public sealed class BuildingUiCommandSystem
             Func<GameObject, bool> isConfiguredSpawnablePrefab,
             GetCampRequestFailureDelegate getCampRequestFailure,
             TryRequestCampItemDelegate tryRequestCampItem,
-            Action<List<PendingProductionUiEntry>> getFriendlyPendingProductionUiEntries)
+            Action<List<PendingProductionUiEntry>> getFriendlyPendingProductionUiEntries,
+            Func<bool> hasActiveBuilding,
+            Func<string> getSelectedBuildingDisplayName,
+            Action deleteSelectedBuilding,
+            Func<bool> confirmBuildingPlacement,
+            TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
+            TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab)
         {
             GetCurrentDollars = getCurrentDollars;
             GetConfiguredSpawnableCount = getConfiguredSpawnableCount;
@@ -45,6 +59,12 @@ public sealed class BuildingUiCommandSystem
             GetCampRequestFailure = getCampRequestFailure;
             TryRequestCampItem = tryRequestCampItem;
             GetFriendlyPendingProductionUiEntries = getFriendlyPendingProductionUiEntries;
+            HasActiveBuilding = hasActiveBuilding;
+            GetSelectedBuildingDisplayName = getSelectedBuildingDisplayName;
+            DeleteSelectedBuilding = deleteSelectedBuilding;
+            ConfirmBuildingPlacement = confirmBuildingPlacement;
+            TryGetSelectedBuildingHealth = tryGetSelectedBuildingHealth;
+            TryGetSelectedBuildingPreviewPrefab = tryGetSelectedBuildingPreviewPrefab;
         }
     }
 
@@ -113,5 +133,42 @@ public sealed class BuildingUiCommandSystem
 
         entries.Clear();
         context.GetFriendlyPendingProductionUiEntries?.Invoke(entries);
+    }
+
+    public bool HasActiveBuilding(Context context)
+    {
+        return context.HasActiveBuilding != null &&
+               context.HasActiveBuilding();
+    }
+
+    public string SelectedBuildingDisplayName(Context context)
+    {
+        return context.GetSelectedBuildingDisplayName?.Invoke() ?? string.Empty;
+    }
+
+    public void DeleteSelectedBuilding(Context context)
+    {
+        context.DeleteSelectedBuilding?.Invoke();
+    }
+
+    public bool ConfirmBuildingPlacement(Context context)
+    {
+        return context.ConfirmBuildingPlacement != null &&
+               context.ConfirmBuildingPlacement();
+    }
+
+    public bool TryGetSelectedBuildingHealth(Context context, out int current, out int max)
+    {
+        current = 0;
+        max = 0;
+        return context.TryGetSelectedBuildingHealth != null &&
+               context.TryGetSelectedBuildingHealth(out current, out max);
+    }
+
+    public bool TryGetSelectedBuildingPreviewPrefab(Context context, out GameObject prefab)
+    {
+        prefab = null;
+        return context.TryGetSelectedBuildingPreviewPrefab != null &&
+               context.TryGetSelectedBuildingPreviewPrefab(out prefab);
     }
 }

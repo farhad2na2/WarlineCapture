@@ -838,9 +838,9 @@ namespace Game.Scripts.UI
             if (menuType != MenuType.Game || gameMenuType != GameMenuType.Select)
                 return;
 
-            if (_buildingPlacementSystem != null && _buildingPlacementSystem.HasActiveBuilding)
+            if (_buildingUiCommandSystem != null && _buildingUiCommandSystem.HasActiveBuilding(_buildingUiCommandContext))
             {
-                OpenDestroyConfirmPanel(true, _buildingPlacementSystem.SelectedBuildingDisplayName);
+                OpenDestroyConfirmPanel(true, _buildingUiCommandSystem.SelectedBuildingDisplayName(_buildingUiCommandContext));
                 return;
             }
 
@@ -946,13 +946,13 @@ namespace Game.Scripts.UI
             switch (_confirmMode)
             {
                 case ConfirmMode.DestroyBuilding:
-                    _buildingPlacementSystem?.DeleteSelectedBuilding();
+                    _buildingUiCommandSystem?.DeleteSelectedBuilding(_buildingUiCommandContext);
                     break;
                 case ConfirmMode.DestroyUnit:
                     _selectionSystem?.DestroyFocusedUnit();
                     break;
                 case ConfirmMode.PlaceBuilding:
-                    if (_buildingPlacementSystem == null || !_buildingPlacementSystem.ConfirmBuildingPlacement())
+                    if (_buildingUiCommandSystem == null || !_buildingUiCommandSystem.ConfirmBuildingPlacement(_buildingUiCommandContext))
                         return;
                     UpdateMoneyLabel();
                     break;
@@ -2634,8 +2634,8 @@ namespace Game.Scripts.UI
         private void SyncGameSelectionPanels()
         {
             bool hasSelectedBuilding = _runtimeGameplayStateSystem.PlayRequested &&
-                                       _buildingPlacementSystem != null &&
-                                       _buildingPlacementSystem.HasActiveBuilding;
+                                       _buildingUiCommandSystem != null &&
+                                       _buildingUiCommandSystem.HasActiveBuilding(_buildingUiCommandContext);
 
             int selectedUnitCount = 0;
             bool hasFocusedUnit = false;
@@ -2712,8 +2712,8 @@ namespace Game.Scripts.UI
             bool hasHealth;
             if (singleSelectionType == SingleSelectionType.Building)
             {
-                hasHealth = _buildingPlacementSystem != null &&
-                            _buildingPlacementSystem.TryGetSelectedBuildingHealth(out current, out max) &&
+                hasHealth = _buildingUiCommandSystem != null &&
+                            _buildingUiCommandSystem.TryGetSelectedBuildingHealth(_buildingUiCommandContext, out current, out max) &&
                             max > 0;
             }
             else
@@ -3025,8 +3025,8 @@ namespace Game.Scripts.UI
             string displayName = string.Empty;
             if (singleSelectionType == SingleSelectionType.Building)
             {
-                _buildingPlacementSystem?.TryGetSelectedBuildingPreviewPrefab(out prefab);
-                displayName = _buildingPlacementSystem != null ? _buildingPlacementSystem.SelectedBuildingDisplayName : string.Empty;
+                _buildingUiCommandSystem?.TryGetSelectedBuildingPreviewPrefab(_buildingUiCommandContext, out prefab);
+                displayName = _buildingUiCommandSystem != null ? _buildingUiCommandSystem.SelectedBuildingDisplayName(_buildingUiCommandContext) : string.Empty;
             }
             else if (_selectionSystem != null &&
                      _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&

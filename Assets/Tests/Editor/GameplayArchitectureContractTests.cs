@@ -1535,7 +1535,7 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void MenuViewMustUseBuildingUiCommandBoundaryForCampAndResourceUi()
+    public void MenuViewMustUseBuildingUiCommandBoundaryForBuildingUi()
     {
         const string menuFile = "Assets/Game/Scripts/UI/MenuView.cs";
         const string startupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
@@ -1552,6 +1552,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryRequestCampItem", command);
         StringAssert.Contains("GetCampRequestFailure", command);
         StringAssert.Contains("GetFriendlyPendingProductionUiEntries", command);
+        StringAssert.Contains("HasActiveBuilding", command);
+        StringAssert.Contains("SelectedBuildingDisplayName", command);
+        StringAssert.Contains("ConfirmBuildingPlacement", command);
+        StringAssert.Contains("DeleteSelectedBuilding", command);
+        StringAssert.Contains("TryGetSelectedBuildingHealth", command);
+        StringAssert.Contains("TryGetSelectedBuildingPreviewPrefab", command);
 
         string[] forbiddenMenuFacadeCalls =
         {
@@ -1563,7 +1569,13 @@ public sealed class GameplayArchitectureContractTests
             "_buildingPlacementSystem.TryGetConfiguredUnit",
             "_buildingPlacementSystem.IsConfiguredSpawnablePrefab",
             "_buildingPlacementSystem.GetCampRequestFailure",
-            "_buildingPlacementSystem.TryRequestCampItem"
+            "_buildingPlacementSystem.TryRequestCampItem",
+            "_buildingPlacementSystem.HasActiveBuilding",
+            "_buildingPlacementSystem.SelectedBuildingDisplayName",
+            "_buildingPlacementSystem.ConfirmBuildingPlacement",
+            "_buildingPlacementSystem.DeleteSelectedBuilding",
+            "_buildingPlacementSystem.TryGetSelectedBuildingHealth",
+            "_buildingPlacementSystem.TryGetSelectedBuildingPreviewPrefab"
         };
 
         foreach (string token in forbiddenMenuFacadeCalls)

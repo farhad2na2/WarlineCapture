@@ -2605,7 +2605,13 @@ public sealed class BuildingPlacementSystem
             IsConfiguredSpawnablePrefab,
             GetCampRequestFailure,
             TryRequestCampItem,
-            GetFriendlyPendingProductionUiEntries);
+            GetFriendlyPendingProductionUiEntries,
+            () => HasActiveBuilding,
+            () => SelectedBuildingDisplayName,
+            DeleteSelectedBuilding,
+            ConfirmBuildingPlacement,
+            TryGetSelectedBuildingHealth,
+            TryGetSelectedBuildingPreviewPrefab);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

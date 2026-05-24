@@ -13,19 +13,19 @@ internal static class RuntimeGameplayStateTestHelper
         entityManager.SetComponentData(entity, state);
     }
 
-    public static void SetBuildingPlacement(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
+    public static void SetBuildingPlacement(EntityManager entityManager, BuildingGameplaySystem buildingPlacement)
     {
         GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
         TickBuildingPlacement(buildingPlacement);
     }
 
-    public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
+    public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, BuildingGameplaySystem buildingPlacement)
     {
         GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
         TickBuildingPlacement(buildingPlacement);
     }
 
-    private static void TickBuildingPlacement(BuildingPlacementSystem buildingPlacement)
+    private static void TickBuildingPlacement(BuildingGameplaySystem buildingPlacement)
     {
         if (buildingPlacement == null)
             return;

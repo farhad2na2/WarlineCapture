@@ -225,14 +225,14 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingPlacementSystem buildingPlacement = null;
+        BuildingGameplayTestHarness buildingPlacement = null;
         GameObject runtimeRoot = null;
 
         try
         {
             CreateGrid(world.EntityManager, 160, 120, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
             runtimeRoot = new GameObject("RuntimeHelipadPathBlocker_Root");
-            buildingPlacement = new BuildingPlacementSystem();
+            buildingPlacement = new BuildingGameplayTestHarness();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
 
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(helipad, new Vector2Int(50, 60), out _, out _, out _, ownerFactionId: 0));
@@ -276,7 +276,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingPlacementSystem buildingPlacement = null;
+        BuildingGameplayTestHarness buildingPlacement = null;
         GameObject runtimeRoot = null;
 
         try
@@ -284,7 +284,7 @@ public sealed class InitialFactionBaseValidationTests
             CreateGrid(world.EntityManager, 220, 160, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
             var grid = new GridConfig { Width = 220, Height = 160, CellSize = 1f, Origin = float3.zero };
             runtimeRoot = new GameObject("HelipadSpawnResolver_Root");
-            buildingPlacement = new BuildingPlacementSystem();
+            buildingPlacement = new BuildingGameplayTestHarness();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
 
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(helipad, new Vector2Int(50, 60), out _, out _, out _, ownerFactionId: 0));
@@ -345,14 +345,14 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingPlacementSystem buildingPlacement = null;
+        BuildingGameplayTestHarness buildingPlacement = null;
         GameObject runtimeRoot = null;
 
         try
         {
             CreateGrid(world.EntityManager, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
             runtimeRoot = new GameObject("InitialBaseRuntimePlacement_Root");
-            buildingPlacement = new BuildingPlacementSystem();
+            buildingPlacement = new BuildingGameplayTestHarness();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
             RuntimeGameplayStateTestHelper.SetBuildingPlacement(world.EntityManager, buildingPlacement);
 

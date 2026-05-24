@@ -11,7 +11,7 @@ public sealed class AIBuildPlannerValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingPlacementSystem _buildingPlacement;
+    private BuildingGameplayTestHarness _buildingPlacement;
     private NativeArray<int> _blockerCounts;
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
@@ -71,7 +71,7 @@ public sealed class AIBuildPlannerValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("AIBuildPlanner_RuntimeRoot");
-        _buildingPlacement = new BuildingPlacementSystem();
+        _buildingPlacement = new BuildingGameplayTestHarness();
         _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
 

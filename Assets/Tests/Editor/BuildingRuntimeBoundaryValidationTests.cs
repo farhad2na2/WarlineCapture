@@ -16,7 +16,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private GameObject _runtimeRoot;
     private GameObject _buildingPrefab;
     private BuildingPlacementSystemConfig _buildingConfig;
-    private BuildingPlacementSystem _buildingPlacement;
+    private BuildingGameplayTestHarness _buildingPlacement;
 
     [TearDown]
     public void TearDown()
@@ -60,7 +60,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeBoundary_RuntimeRoot");
-        _buildingPlacement = new BuildingPlacementSystem();
+        _buildingPlacement = new BuildingGameplayTestHarness();
         _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));

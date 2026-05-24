@@ -132,7 +132,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("it must invoke a narrow building runtime tick callback rather than `BuildingPlacementSystem.Update`", contract);
         StringAssert.Contains("`GameBootstrap` must not hold a public or private `BuildingPlacementSystem` facade", contract);
         StringAssert.Contains("Managed building gameplay composition is owned by `BuildingGameplayCompositionSystem`", contract);
-        StringAssert.Contains("Temporary `BuildingPlacementSystem` facade ownership is isolated inside `BuildingGameplayCompositionSystem`", contract);
+        StringAssert.Contains("`BuildingGameplayCompositionSystem` constructs `BuildingGameplaySystem`; the legacy `BuildingPlacementSystem` facade is a temporary editor-harness wrapper only", contract);
         StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
@@ -553,7 +553,7 @@ public sealed class GameplayArchitectureContractTests
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         string managedStartup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
         string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
-        string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
+        string placement = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs");
         string buildingRuntimeTick = File.ReadAllText(buildingRuntimeTickFile);
         string buildingRuntimeTickContext = File.ReadAllText(buildingRuntimeTickContextFile);
         string buildingInputRuntimeTick = File.ReadAllText(buildingInputRuntimeTickFile);
@@ -852,12 +852,15 @@ public sealed class GameplayArchitectureContractTests
         string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
         foreach (string token in managedStartupDebtTokens)
         {
-            if (token == "new BuildingPlacementSystem()" ||
-                token == "new CitizenPopulationSystem()")
+            if (token == "new BuildingPlacementSystem()")
+                Assert.IsFalse(buildingComposition.Contains(token, StringComparison.Ordinal),
+                    "BuildingGameplayCompositionSystem must construct BuildingGameplaySystem, not the legacy BuildingPlacementSystem facade.");
+            else if (token == "new CitizenPopulationSystem()")
                 StringAssert.Contains(token, buildingComposition);
             else
                 StringAssert.Contains(token, startup);
         }
+        StringAssert.Contains("new BuildingGameplaySystem()", buildingComposition);
         StringAssert.Contains("BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem", startup);
         StringAssert.Contains("_buildingGameplayCompositionSystem.Initialize", startup);
         StringAssert.Contains("_buildingGameplayCompositionSystem.BindSelection", startup);
@@ -869,8 +872,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("building.InteractionContext", startup);
         StringAssert.Contains("selection.BindDependencies(", startup);
         StringAssert.Contains("citizenPopulation.Init(", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
         Assert.IsFalse(
             startup.Contains("BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
             startup.Contains("BuildingPlacementSystem buildingPlacement", StringComparison.Ordinal) ||
@@ -1400,7 +1403,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustNotReachThroughRuntimeSingletonDependencies()
     {
-        const string file = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string file = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         string text = File.ReadAllText(file);
         string[] forbiddenRuntimeSingletonReads =
         {
@@ -1448,7 +1451,7 @@ public sealed class GameplayArchitectureContractTests
     {
         const string interactionFile = "Assets/Game/Scripts/Systems/BuildingPlacementInteractionSystem.cs";
         const string interactionContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementInteractionContextSystem.cs";
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string roadFile = "Assets/Game/Scripts/UI/RoadBuildSystem.cs";
         const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
@@ -1541,7 +1544,7 @@ public sealed class GameplayArchitectureContractTests
         const string boundarySystemFile = "Assets/Game/Scripts/Systems/BuildingRuntimeBoundarySystem.cs";
         const string retiredRuntimeComponentFile = "Assets/Game/Scripts/Components/BuildingPlacementRuntimeComponent.cs";
         const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         Assert.IsTrue(File.Exists(boundaryFile), "Building runtime ECS boundary components must be explicit ECS contracts.");
         Assert.IsTrue(File.Exists(boundarySystemFile), "Building runtime boundary publish/consume orchestration must live in BuildingRuntimeBoundarySystem.");
         Assert.IsFalse(File.Exists(retiredRuntimeComponentFile), "BuildingPlacementRuntimeComponent must stay retired; use BuildingRuntimeBoundaryTag buffers.");
@@ -1674,7 +1677,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustNotOwnFactionResourceOrProductionResultContracts()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string factionResourceFile = "Assets/Game/Scripts/Systems/FactionResourceSystem.cs";
         const string productionRequestFile = "Assets/Game/Scripts/Systems/BuildingProductionRequestSystem.cs";
 
@@ -1803,7 +1806,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingRuntimeQuerySystem", text);
         StringAssert.Contains("CitizenResourceSystem", text);
         StringAssert.Contains("CitizenPrefabSystem", text);
-        string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
+        string placement = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs");
         string startup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
         string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
         string runtimeResourcePrefabContext = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextSystem.cs");
@@ -1817,10 +1820,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("CreateCitizenPrefabContext", runtimeResourcePrefabContext);
         StringAssert.Contains("CreateBuildingSpawnPrefabContext", runtimeResourcePrefabContext);
         StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
-        StringAssert.Contains("PlacementFacade.RuntimeQuerySystem", buildingComposition);
-        StringAssert.Contains("PlacementFacade.CreateRuntimeBuildingQueryContext()", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
-        StringAssert.Contains("PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("Building.RuntimeQuerySystem", buildingComposition);
+        StringAssert.Contains("Building.CreateRuntimeBuildingQueryContext()", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
+        StringAssert.Contains("Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(Building.CreateRuntimeResourcePrefabContextSource())", buildingComposition);
         Assert.IsFalse(
             placement.Contains("_resourceDollars", StringComparison.Ordinal) ||
             placement.Contains("CreateCitizenResourceContext", StringComparison.Ordinal) ||
@@ -2253,7 +2256,7 @@ public sealed class GameplayArchitectureContractTests
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
         const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
         const string roadBuildFile = "Assets/Game/Scripts/UI/RoadBuildSystem.cs";
-        const string buildingPlacementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string buildingPlacementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string gameBootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
         const string stateSystemFile = "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs";
         const string stateComponentsFile = "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs";
@@ -2398,7 +2401,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedValidationSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string validationFile = "Assets/Game/Scripts/Systems/BuildingPlacementValidationSystem.cs";
         const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
         Assert.IsTrue(File.Exists(validationFile), "The building validation slice must live in BuildingPlacementValidationSystem.");
@@ -2440,7 +2443,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateRuntimeBuildingRegistrySlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string runtimeBuildingFile = "Assets/Game/Scripts/Systems/RuntimeBuildingSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
@@ -2501,7 +2504,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateRuntimeEntityCreationSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string runtimeEntityFile = "Assets/Game/Scripts/Systems/BuildingRuntimeEntitySystem.cs";
         Assert.IsTrue(File.Exists(runtimeEntityFile), "Runtime blocker/combat entity creation must live in BuildingRuntimeEntitySystem.");
 
@@ -2539,7 +2542,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegatePlacementRedirectSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string redirectFile = "Assets/Game/Scripts/Systems/BuildingPlacementRedirectSystem.cs";
         const string buildingCompositionFile = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
         Assert.IsTrue(File.Exists(redirectFile), "Placement redirect side effects must live in BuildingPlacementRedirectSystem.");
@@ -2594,7 +2597,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedRuntimeQuerySlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string runtimeQueryFile = "Assets/Game/Scripts/Systems/BuildingRuntimeQuerySystem.cs";
         Assert.IsTrue(File.Exists(runtimeQueryFile), "Runtime building read/query behavior must live in BuildingRuntimeQuerySystem.");
 
@@ -2649,7 +2652,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedDefinitionSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string definitionDataFile = "Assets/Game/Scripts/Systems/BuildingDefinition.cs";
         const string runtimeBuildingDataFile = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
         const string definitionFile = "Assets/Game/Scripts/Systems/BuildingDefinitionSystem.cs";
@@ -2767,7 +2770,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedSelectionSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string selectionFile = "Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs";
         const string selectionClickFile = "Assets/Game/Scripts/Systems/BuildingSelectionClickSystem.cs";
         const string inputRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickSystem.cs";
@@ -2824,7 +2827,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedVisualSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string visualFile = "Assets/Game/Scripts/Systems/BuildingVisualSystem.cs";
         const string runtimeVisualFile = "Assets/Game/Scripts/Systems/BuildingRuntimeVisualSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
@@ -2896,7 +2899,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedPlacementVisualSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string placementVisualFile = "Assets/Game/Scripts/Systems/BuildingPlacementVisualSystem.cs";
         Assert.IsTrue(File.Exists(placementVisualFile), "The placement visual slice must live in BuildingPlacementVisualSystem.");
 
@@ -2933,7 +2936,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateRuntimeManualSpawnSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string runtimeSpawnFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnSystem.cs";
         const string runtimeSpawnCommandFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
@@ -3015,7 +3018,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateRuntimeOwnershipSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string runtimeOwnershipFile = "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeOwnershipFile), "Runtime owner-faction assignment must live in BuildingRuntimeOwnershipSystem.");
@@ -3058,7 +3061,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedCombatSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string combatFile = "Assets/Game/Scripts/Systems/BuildingCombatSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         const string buildingCompositionFile = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
@@ -3116,7 +3119,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedResourceSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string resourceFile = "Assets/Game/Scripts/Systems/FactionResourceSystem.cs";
         const string productionRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
         Assert.IsTrue(File.Exists(resourceFile), "The faction resource slice must live in FactionResourceSystem.");
@@ -3159,7 +3162,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedHaulerSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string haulerFile = "Assets/Game/Scripts/Systems/ResourceHaulerSystem.cs";
         const string haulerBridgeFile = "Assets/Game/Scripts/Systems/BuildingResourceHaulerBridgeSystem.cs";
         const string productionContextFile = "Assets/Game/Scripts/Systems/BuildingProductionContextSystem.cs";
@@ -3253,7 +3256,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedProductionSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string productionFile = "Assets/Game/Scripts/Systems/BuildingProductionSystem.cs";
         const string productionUpdateFile = "Assets/Game/Scripts/Systems/BuildingProductionUpdateSystem.cs";
         const string productionRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
@@ -3518,7 +3521,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedProductionRequestSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string requestFile = "Assets/Game/Scripts/Systems/BuildingProductionRequestSystem.cs";
         Assert.IsTrue(File.Exists(requestFile), "The building production request slice must live in BuildingProductionRequestSystem.");
 
@@ -3580,7 +3583,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedPreviewSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string previewFile = "Assets/Game/Scripts/Systems/BuildingPlacementPreviewSystem.cs";
         Assert.IsTrue(File.Exists(previewFile), "The placement preview slice must live in BuildingPlacementPreviewSystem.");
 
@@ -3613,7 +3616,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedCommitSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string commitFile = "Assets/Game/Scripts/Systems/BuildingPlacementCommitSystem.cs";
         const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
         Assert.IsTrue(File.Exists(commitFile), "The placement commit slice must live in BuildingPlacementCommitSystem.");
@@ -3664,7 +3667,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedInputSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string inputFile = "Assets/Game/Scripts/Systems/BuildingPlacementInputSystem.cs";
         const string inputRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickSystem.cs";
         const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
@@ -3720,7 +3723,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateActivePlacementLifecycleSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string lifecycleFile = "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleSystem.cs";
         const string sessionFile = "Assets/Game/Scripts/Systems/BuildingPlacementSessionSystem.cs";
         const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
@@ -3798,7 +3801,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedGridSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string gridFile = "Assets/Game/Scripts/Systems/BuildingPlacementGridSystem.cs";
         Assert.IsTrue(File.Exists(gridFile), "The placement/grid math slice must live in BuildingPlacementGridSystem.");
 
@@ -3841,7 +3844,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedUiQuerySlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string placementQueryFile = "Assets/Game/Scripts/Systems/BuildingPlacementQuerySystem.cs";
         const string uiQueryFile = "Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs";
         const string uiCommandFile = "Assets/Game/Scripts/Systems/BuildingUiCommandSystem.cs";
@@ -3955,7 +3958,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateExtractedBarrierSlice()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string barrierFile = "Assets/Game/Scripts/Systems/BuildingBarrierSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         const string buildingCompositionFile = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
@@ -4061,7 +4064,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void BuildingPlacementSystemMustDelegateRemainingRuntimeContextConstruction()
     {
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeContextFile), "Remaining runtime context construction must live in BuildingRuntimeContextSystem.");
 
@@ -4100,28 +4103,30 @@ public sealed class GameplayArchitectureContractTests
     public void BuildingPlacementSystemRetirementAuditMustExistAndSurfaceCannotGrow()
     {
         const string auditPath = "Design/Architecture/buildingplacement_retirement_audit.md";
-        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         Assert.IsTrue(File.Exists(auditPath), $"{auditPath} must inventory the remaining facade surface before deletion continues.");
 
         string audit = File.ReadAllText(auditPath);
         StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("1982 lines", audit);
-        StringAssert.Contains("Public/internal facade declarations: 120", audit);
+        StringAssert.Contains("Building gameplay implementation: 1981 lines", audit);
+        StringAssert.Contains("Legacy facade wrapper: 1 line", audit);
+        StringAssert.Contains("Public/internal implementation declarations: 120", audit);
         StringAssert.Contains("Allowed Production Facade References", audit);
         StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
         StringAssert.Contains("Allowed Test Facade Construction", audit);
         StringAssert.Contains("Deletion Gates", audit);
-        StringAssert.Contains("Production construction must remain isolated to `BuildingGameplayCompositionSystem`", audit);
+        StringAssert.Contains("Production code must not construct `BuildingPlacementSystem`", audit);
 
         string[] placementLines = File.ReadAllLines(placementFile);
         Assert.LessOrEqual(
             placementLines.Length,
-            1982,
-            "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
+            1981,
+            "BuildingGameplaySystem.cs is frozen migration debt and must only shrink until deletion.");
 
         int publicOrInternalDeclarationCount = placementLines.Count(line =>
             Regex.IsMatch(line, @"^\s*(?:public|internal)\s+") &&
-            !line.Contains("sealed class", StringComparison.Ordinal));
+            !line.Contains("sealed class", StringComparison.Ordinal) &&
+            !line.Contains("class BuildingGameplaySystem", StringComparison.Ordinal));
         Assert.LessOrEqual(
             publicOrInternalDeclarationCount,
             120,
@@ -4133,8 +4138,7 @@ public sealed class GameplayArchitectureContractTests
     {
         string[] allowedRuntimeFacadeFiles =
         {
-            "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs",
-            "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs"
+            "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs"
         };
 
         HashSet<string> allowedRuntimeSet = new(allowedRuntimeFacadeFiles, StringComparer.Ordinal);
@@ -4158,15 +4162,16 @@ public sealed class GameplayArchitectureContractTests
             .ToArray();
 
         CollectionAssert.AreEqual(
-            new[] { "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs" },
+            Array.Empty<string>(),
             constructionFiles,
-            "Production construction of BuildingPlacementSystem must stay isolated to BuildingGameplayCompositionSystem until final deletion.");
+            "Production code must not construct the legacy BuildingPlacementSystem facade.");
     }
 
     [Test]
     public void BuildingPlacementSystemTestConstructionAllowlistCannotGrow()
     {
-        string[] allowedTestConstructionFiles =
+        const string harnessFile = "Assets/Tests/Editor/BuildingGameplayTestHarness.cs";
+        string[] migratedHarnessFiles =
         {
             "Assets/Tests/Editor/AIBuildPlannerValidationTests.cs",
             "Assets/Tests/Editor/AIEndToEndValidationTests.cs",
@@ -4176,18 +4181,44 @@ public sealed class GameplayArchitectureContractTests
             "Assets/Tests/Editor/InitialFactionBaseValidationTests.cs"
         };
 
-        HashSet<string> allowedTestSet = new(allowedTestConstructionFiles, StringComparer.Ordinal);
+        Assert.IsTrue(File.Exists(harnessFile), "Editor building validation tests must use an explicit test-only harness while the legacy facade is retired.");
+        string harness = File.ReadAllText(harnessFile);
+        StringAssert.Contains("BuildingGameplayTestHarness : BuildingGameplaySystem", harness);
+        string[] productionHarnessReferences = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => File.ReadAllText(path).Contains("BuildingGameplayTestHarness", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        CollectionAssert.AreEqual(
+            Array.Empty<string>(),
+            productionHarnessReferences,
+            "BuildingGameplayTestHarness is editor-only and must not be referenced by production scripts.");
+
+        foreach (string file in migratedHarnessFiles)
+        {
+            string text = File.ReadAllText(file);
+            Assert.IsFalse(
+                text.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
+                $"{file} must not type against the legacy BuildingPlacementSystem facade.");
+            StringAssert.Contains("BuildingGameplayTestHarness", text);
+        }
+
+        string helper = File.ReadAllText("Assets/Tests/Editor/RuntimeGameplayStateTestHelper.cs");
+        StringAssert.Contains("BuildingGameplaySystem buildingPlacement", helper);
+        Assert.IsFalse(
+            helper.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
+            "RuntimeGameplayStateTestHelper must accept the implementation boundary or narrower systems, not the legacy facade.");
+
         string[] violations = Directory.GetFiles("Assets/Tests/Editor", "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
             .Where(path => !path.EndsWith("GameplayArchitectureContractTests.cs", StringComparison.Ordinal))
             .Where(path => Regex.IsMatch(File.ReadAllText(path), @"new\s+BuildingPlacementSystem\s*\("))
-            .Where(path => !allowedTestSet.Contains(path))
             .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
         Assert.IsEmpty(
             violations,
-            "Do not add new editor tests that construct BuildingPlacementSystem. Migrate test setup to narrow systems or an explicit building gameplay harness:" +
+            "Editor tests must not construct BuildingPlacementSystem. Use BuildingGameplayTestHarness temporarily, then migrate to narrower systems:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }

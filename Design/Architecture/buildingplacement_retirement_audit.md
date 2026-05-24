@@ -5,20 +5,20 @@ Lane: Gameplay
 
 ## Current Status
 
-`BuildingPlacementSystem` is not deletable yet. It no longer owns the main managed runtime `Update()` entry point, and `GameBootstrap` / `ManagedGameplayStartupSystem` no longer carry it directly. It still exists as a temporary managed composition shell under `BuildingGameplayCompositionSystem`.
+`BuildingPlacementSystem` is now a one-line legacy wrapper around `BuildingGameplaySystem`. It no longer owns the main managed runtime `Update()` entry point, and `GameBootstrap` / `ManagedGameplayStartupSystem` no longer carry it directly. Runtime composition now constructs `BuildingGameplaySystem` under `BuildingGameplayCompositionSystem`.
 
 Current measured size:
-- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 1982 lines.
-- Public/internal facade declarations: 120, excluding the class declaration.
+- Legacy facade wrapper: `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 1 line.
+- Building gameplay implementation: `Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs`: 1981 lines.
+- Public/internal implementation declarations: 120, excluding class declarations.
 
 ## Allowed Production Facade References
 
-These are the only production files allowed to reference the facade during the next retirement steps:
+This is the only production file allowed to reference the facade during the next retirement steps:
 
 - `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`
-- `Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs`
 
-No other production file should construct, store, pass, or call `BuildingPlacementSystem`.
+No production file should construct, store, pass, or call `BuildingPlacementSystem`.
 
 ## Step 17 Blocker Inventory
 
@@ -27,15 +27,15 @@ inventory; remove them in order during Steps 18-25.
 
 ### Production Composition Blockers
 
-`Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs` still owns the production facade dependency:
+`Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs` no longer owns the production facade dependency:
 
-- `Result` stores `private readonly BuildingPlacementSystem PlacementFacade`.
-- `Result` constructor accepts `BuildingPlacementSystem placementFacade`.
-- `Initialize` constructs `new BuildingPlacementSystem()`.
-- `Initialize` calls `placementFacade.Init(...)`.
-- `Result.BindSelection`, `Result.CreateCitizenPopulation`, and `Result.BindCitizenPopulation` reach through `PlacementFacade`.
-- `Initialize` builds narrow runtime/menu/feature outputs from facade properties and context factories.
-- Runtime tick helpers still accept `BuildingPlacementSystem placement`:
+- `Result` stores `private readonly BuildingGameplaySystem Building`.
+- `Result` constructor accepts `BuildingGameplaySystem building`.
+- `Initialize` constructs `new BuildingGameplaySystem()`, not `new BuildingPlacementSystem()`.
+- `Initialize` calls `building.Init(...)`.
+- `Result.BindSelection`, `Result.CreateCitizenPopulation`, and `Result.BindCitizenPopulation` reach through `BuildingGameplaySystem`.
+- `Initialize` builds narrow runtime/menu/feature outputs from `BuildingGameplaySystem` properties and context factories.
+- Runtime tick helpers still accept `BuildingGameplaySystem placement`:
   - `CreateRuntimeTickSource`
   - `CreateInputRuntimeTickContext`
   - `CreateProductionRuntimeTickContext`
@@ -44,7 +44,7 @@ inventory; remove them in order during Steps 18-25.
 
 ### Production Facade Surface Blockers
 
-`Assets/Game/Scripts/UI/BuildingPlacementSystem.cs` still exposes production-facing systems, contexts, state, and wrappers:
+`Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs` still exposes production-facing systems, contexts, state, and wrappers:
 
 - Composition/system accessors: `RuntimeCitySpawnSystem`, `RuntimeQuerySystem`, `RuntimeResourcePrefabContextSystem`, `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `BuildingPlacementInteractionSystem`, `RuntimeTickSystem`, `RuntimeTickDomains`, `RuntimeInputDomains`, `WorldCamera`, `ActivePlacement`, `PlayRequested`, `BuildModeActive`, `RuntimeBuildingRegistry`, `DayNightSystem`, `FactionResourceSystem`, `ProductionUpdateSystem`, `ProductionContextSystem`, `ResourceHaulerBridgeSystem`, `BuildingSpawnSystem`, `RuntimeBoundarySystem`, `DefinitionSystem`, `RuntimeSpawnSystem`, `RuntimeContextSystem`, `ProductionRequestSystem`, `RuntimeBoundaryQuery`, `OilBarrelsPerFuelBarrelRatio`, `BuildingSelectionClickSystem`, config preview properties.
 - Runtime/read wrappers: runtime building ids by role/house, runtime building focus, destroyed/refugee state, combat info, base-breach target, approach-cell checks, spawn-unit prefab lookup, dollar spend/init.
@@ -74,7 +74,7 @@ inventory; remove them in order during Steps 18-25.
 
 ### Config/Startup Blockers
 
-The facade still exposes startup/config wiring that must move before deletion:
+`BuildingGameplaySystem` still exposes startup/config wiring that must move before deletion:
 
 - `Init(...)`, `BindDependencies(...)`, and `Dispose()` remain facade methods until production construction moves out of `BuildingGameplayCompositionSystem`.
 - Runtime dependency references for road build, menu UI, selection, grid blocker, city spawner, citizen population, faction visuals, and day/night.
@@ -88,7 +88,7 @@ The following startup/config ownership has moved out of the facade:
 
 ### Editor Test Blockers
 
-The following editor test harnesses still construct or type against `BuildingPlacementSystem` and must migrate to a narrow building gameplay harness:
+The editor validation harnesses have migrated off direct `BuildingPlacementSystem` construction. They now construct `BuildingGameplayTestHarness`, an editor-only subclass of `BuildingGameplaySystem`, while later steps move those tests to narrower systems.
 
 - `Assets/Tests/Editor/AIProductionValidationTests.cs`
 - `Assets/Tests/Editor/AIBuildPlannerValidationTests.cs`
@@ -96,26 +96,19 @@ The following editor test harnesses still construct or type against `BuildingPla
 - `Assets/Tests/Editor/BaseBreachValidationTests.cs`
 - `Assets/Tests/Editor/BuildingRuntimeBoundaryValidationTests.cs`
 - `Assets/Tests/Editor/InitialFactionBaseValidationTests.cs`
-- `Assets/Tests/Editor/RuntimeGameplayStateTestHelper.cs`
+- `Assets/Tests/Editor/RuntimeGameplayStateTestHelper.cs` accepts `BuildingGameplaySystem` instead of the legacy facade.
 
 `Assets/Tests/Editor/GameplayArchitectureContractTests.cs` intentionally references the facade while enforcing the temporary debt rules; these references must be removed in Step 24 after the facade is deleted.
 
 ## Allowed Test Facade Construction
 
-These editor validation harnesses still construct the facade directly and must migrate before final deletion:
+No editor validation harness may construct `BuildingPlacementSystem`.
 
-- `Assets/Tests/Editor/AIProductionValidationTests.cs`
-- `Assets/Tests/Editor/AIBuildPlannerValidationTests.cs`
-- `Assets/Tests/Editor/AIEndToEndValidationTests.cs`
-- `Assets/Tests/Editor/BaseBreachValidationTests.cs`
-- `Assets/Tests/Editor/BuildingRuntimeBoundaryValidationTests.cs`
-- `Assets/Tests/Editor/InitialFactionBaseValidationTests.cs`
-
-`Assets/Tests/Editor/RuntimeGameplayStateTestHelper.cs` still accepts a `BuildingPlacementSystem` parameter for legacy boundary publication tests.
+Temporary editor runtime validation setup must use `Assets/Tests/Editor/BuildingGameplayTestHarness.cs`; production code must not reference that harness.
 
 ## Remaining Facade Responsibilities
 
-The facade still owns or exposes these migration debts:
+`BuildingGameplaySystem` still owns or exposes these migration debts:
 
 - Managed construction of building domain systems and context factory access.
 - Runtime building registry ownership, count, dictionary, id allocation, and selected/active ids live in `RuntimeBuildingSystem`; managed composition now consumes that registry instead of facade count/dictionary properties.
@@ -134,7 +127,7 @@ The facade still owns or exposes these migration debts:
 - UI command/query context construction now lives in `BuildingUiContextSystem`; the facade still exposes temporary UI context source callbacks.
 - Selection/interaction context construction now lives in `BuildingPlacementInteractionContextSystem`; the facade still exposes temporary interaction context source callbacks.
 - Selection-click context construction now lives in `BuildingSelectionClickSystem`; selection context construction now lives in `BuildingSelectionSystem`; selected-building query context construction now lives in `BuildingPlacementQuerySystem`; the facade still exposes temporary wrapper methods while callers migrate.
-- Placement config application, runtime building root creation, configured definition startup selection, build plane/camera/preview config state, and placement preview initialization now live in `BuildingPlacementStartupSystem`; the facade still exposes temporary `Init(...)`, `BindDependencies(...)`, and `Dispose()` compatibility methods.
+- Placement config application, runtime building root creation, configured definition startup selection, build plane/camera/preview config state, and placement preview initialization now live in `BuildingPlacementStartupSystem`; `BuildingGameplaySystem` still exposes temporary `Init(...)`, `BindDependencies(...)`, and `Dispose()` compatibility methods.
 - Selection, building query, combat/breach, resource, and UI command/query compatibility wrappers.
 - Test-only runtime tick and runtime building validation hooks.
 
@@ -145,7 +138,7 @@ The facade still owns or exposes these migration debts:
 19. Extract selection and query facade wrappers.
 20. Extract config/init ownership into managed composition or narrow startup/config systems.
 21. Replace `BuildingGameplayCompositionSystem` construction so it no longer calls `new BuildingPlacementSystem()`.
-22. Migrate remaining editor validation tests to a narrow building gameplay harness.
+22. Migrate remaining editor validation tests to a narrow building gameplay harness. Complete: direct editor facade construction is blocked by contract tests.
 23. Delete `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs` and its `.meta`.
 24. Remove facade allowlists and update the architecture contract to require zero facade references.
 25. Run the validation gate: architecture tests, building runtime boundary tests, bootstrap/menu playmode smoke, and one focused runtime load validation.
@@ -153,8 +146,9 @@ The facade still owns or exposes these migration debts:
 ## Drift Guard
 
 Until deletion:
-- `BuildingPlacementSystem.cs` must not grow beyond 1982 lines.
-- Public/internal facade declarations must not exceed 120.
-- Production facade references must remain inside the two allowed files above.
-- Production construction must remain isolated to `BuildingGameplayCompositionSystem`.
+- `BuildingPlacementSystem.cs` must remain a one-line legacy wrapper.
+- `BuildingGameplaySystem.cs` must not grow beyond 1981 lines.
+- Public/internal implementation declarations must not exceed 120.
+- Production facade references must remain inside the single allowed wrapper file above.
+- Production code must not construct `BuildingPlacementSystem`.
 - New building behavior must extend an owning `*System` slice, not the facade.

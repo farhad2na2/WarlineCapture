@@ -13,7 +13,7 @@ public sealed class AIEndToEndValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingPlacementSystem _buildingPlacement;
+    private BuildingGameplayTestHarness _buildingPlacement;
     private NativeArray<int> _blockerCounts;
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
@@ -177,7 +177,7 @@ public sealed class AIEndToEndValidationTests
         SetPrivateField(_buildingConfig, "unitPrefabRegistryConfig", _unitRegistryConfig);
 
         _runtimeRoot = new GameObject("AIEndToEnd_RuntimeRoot");
-        _buildingPlacement = new BuildingPlacementSystem();
+        _buildingPlacement = new BuildingGameplayTestHarness();
         _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
     }
 

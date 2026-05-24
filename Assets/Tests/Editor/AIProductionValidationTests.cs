@@ -12,7 +12,7 @@ public sealed class AIProductionValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingPlacementSystem _buildingPlacement;
+    private BuildingGameplayTestHarness _buildingPlacement;
     private NativeArray<int> _blockerCounts;
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
@@ -84,7 +84,7 @@ public sealed class AIProductionValidationTests
         SetPrivateField(_buildingConfig, "unitPrefabRegistryConfig", _unitRegistryConfig);
 
         _runtimeRoot = new GameObject("AIProduction_RuntimeRoot");
-        _buildingPlacement = new BuildingPlacementSystem();
+        _buildingPlacement = new BuildingGameplayTestHarness();
         _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
         RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
 

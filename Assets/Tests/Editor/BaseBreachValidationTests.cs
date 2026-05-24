@@ -677,7 +677,7 @@ public sealed class BaseBreachValidationTests
         NativeList<int2> pathPool = default;
         Entity gridEntity = Entity.Null;
         GameObject runtimeRoot = null;
-        BuildingPlacementSystem buildingPlacement = null;
+        BuildingGameplayTestHarness buildingPlacement = null;
         bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
 
         try
@@ -685,7 +685,7 @@ public sealed class BaseBreachValidationTests
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("InitialBaseFriendlyGatePath_Root");
-            buildingPlacement = new BuildingPlacementSystem();
+            buildingPlacement = new BuildingGameplayTestHarness();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
 
             Vector2Int anchor = new(220, 180);
@@ -796,7 +796,7 @@ public sealed class BaseBreachValidationTests
         NativeList<int2> pathPool = default;
         Entity gridEntity = Entity.Null;
         GameObject runtimeRoot = null;
-        BuildingPlacementSystem buildingPlacement = null;
+        BuildingGameplayTestHarness buildingPlacement = null;
         bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
 
         try
@@ -804,7 +804,7 @@ public sealed class BaseBreachValidationTests
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("InitialBaseAttackGateRoute_Root");
-            buildingPlacement = new BuildingPlacementSystem();
+            buildingPlacement = new BuildingGameplayTestHarness();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
 
             Assert.IsTrue(TryGetFactionSpawnCell(spawnConfig, 0, out Vector2Int playerAnchor));
@@ -923,13 +923,13 @@ public sealed class BaseBreachValidationTests
         });
     }
 
-    private static void SpawnThreeSidedWall(BuildingPlacementSystem buildingPlacement, GameObject wallPrefab, byte ownerFactionId)
+    private static void SpawnThreeSidedWall(BuildingGameplayTestHarness buildingPlacement, GameObject wallPrefab, byte ownerFactionId)
     {
         SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId, 60, 140, 60, 140);
     }
 
     private static void SpawnThreeSidedWall(
-        BuildingPlacementSystem buildingPlacement,
+        BuildingGameplayTestHarness buildingPlacement,
         GameObject wallPrefab,
         byte ownerFactionId,
         int left,
@@ -943,7 +943,7 @@ public sealed class BaseBreachValidationTests
     }
 
     private static int2 SpawnThreeSidedWallWithGate(
-        BuildingPlacementSystem buildingPlacement,
+        BuildingGameplayTestHarness buildingPlacement,
         GameObject wallPrefab,
         GameObject gatePrefab,
         byte ownerFactionId,
@@ -1053,7 +1053,7 @@ public sealed class BaseBreachValidationTests
         return false;
     }
 
-    private static Entity FindEnemyInnerBuildingTarget(BuildingPlacementSystem buildingPlacement, EntityManager em, byte factionId, int2 baseCenter)
+    private static Entity FindEnemyInnerBuildingTarget(BuildingGameplayTestHarness buildingPlacement, EntityManager em, byte factionId, int2 baseCenter)
     {
         Entity best = Entity.Null;
         int bestScore = int.MaxValue;
@@ -1093,7 +1093,7 @@ public sealed class BaseBreachValidationTests
     }
 
     private static void SpawnActualInitialBase(
-        BuildingPlacementSystem buildingPlacement,
+        BuildingGameplayTestHarness buildingPlacement,
         BuildingPlacementSystemConfig placementConfig,
         InitialUnitsSpawnerAuthoringConfig spawnConfig,
         Vector2Int anchor,
@@ -1369,12 +1369,12 @@ public sealed class BaseBreachValidationTests
         return angle;
     }
 
-    private static void WithRuntimeBase(System.Action<BuildingPlacementSystem, GameObject, GameObject> test)
+    private static void WithRuntimeBase(System.Action<BuildingGameplayTestHarness, GameObject, GameObject> test)
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab, _) => test(buildingPlacement, wallPrefab, gatePrefab));
     }
 
-    private static void WithRuntimeBase(System.Action<BuildingPlacementSystem, GameObject, GameObject, GameObject> test)
+    private static void WithRuntimeBase(System.Action<BuildingGameplayTestHarness, GameObject, GameObject, GameObject> test)
     {
         BuildingPlacementSystemConfig placementConfig = AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
         GameObject wallPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WallPrefabPath);
@@ -1391,14 +1391,14 @@ public sealed class BaseBreachValidationTests
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
         NativeList<int2> pathPool = default;
-        BuildingPlacementSystem buildingPlacement = null;
+        BuildingGameplayTestHarness buildingPlacement = null;
         GameObject runtimeRoot = null;
 
         try
         {
             CreateGrid(world.EntityManager, 280, 220, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("BaseBreachRuntime_Root");
-            buildingPlacement = new BuildingPlacementSystem();
+            buildingPlacement = new BuildingGameplayTestHarness();
             buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
             test(buildingPlacement, wallPrefab, gatePrefab, runtimeRoot);
         }

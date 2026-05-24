@@ -8,7 +8,7 @@ internal sealed class BuildingGameplayCompositionSystem
 
     public readonly struct Result
     {
-        private readonly BuildingPlacementSystem PlacementFacade;
+        private readonly BuildingGameplaySystem Building;
         public readonly BuildingSelectionClickSystem SelectionClick;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly BuildingRuntimeUpdateSystem RuntimeUpdate;
@@ -26,7 +26,7 @@ internal sealed class BuildingGameplayCompositionSystem
         public readonly Action Dispose;
 
         public Result(
-            BuildingPlacementSystem placementFacade,
+            BuildingGameplaySystem building,
             BuildingSelectionClickSystem selectionClick,
             BuildingSelectionClickSystem.Context selectionClickContext,
             BuildingRuntimeUpdateSystem runtimeUpdate,
@@ -43,7 +43,7 @@ internal sealed class BuildingGameplayCompositionSystem
             Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindGameplayFeatures,
             Action dispose)
         {
-            PlacementFacade = placementFacade;
+            Building = building;
             SelectionClick = selectionClick;
             SelectionClickContext = selectionClickContext;
             RuntimeUpdate = runtimeUpdate;
@@ -63,19 +63,19 @@ internal sealed class BuildingGameplayCompositionSystem
 
         public void BindSelection(RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)
         {
-            PlacementFacade?.BindDependencies(roadBuild, null, dayNight, selection);
+            Building?.BindDependencies(roadBuild, null, dayNight, selection);
         }
 
         public CitizenPopulationSystem CreateCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)
         {
             var citizenPopulation = new CitizenPopulationSystem();
             citizenPopulation.Init(
-                PlacementFacade.RuntimeQuerySystem,
-                PlacementFacade.CreateRuntimeBuildingQueryContext(),
+                Building.RuntimeQuerySystem,
+                Building.CreateRuntimeBuildingQueryContext(),
                 dayNight,
                 worldCamera,
-                PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource()),
-                PlacementFacade.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeResourcePrefabContextSource()));
+                Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(Building.CreateRuntimeResourcePrefabContextSource()),
+                Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(Building.CreateRuntimeResourcePrefabContextSource()));
             return citizenPopulation;
         }
 
@@ -85,7 +85,7 @@ internal sealed class BuildingGameplayCompositionSystem
             RTSSelectionSystem selection,
             CitizenPopulationSystem citizenPopulation)
         {
-            PlacementFacade?.BindDependencies(
+            Building?.BindDependencies(
                 roadBuild,
                 null,
                 dayNight,
@@ -102,28 +102,28 @@ internal sealed class BuildingGameplayCompositionSystem
         FactionVisualSettings factionVisuals,
         DayNightSystem dayNight)
     {
-        var placementFacade = new BuildingPlacementSystem();
-        placementFacade.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
+        var building = new BuildingGameplaySystem();
+        building.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
 
         var runtimeUpdate = new BuildingRuntimeUpdateSystem();
         return new Result(
-            placementFacade,
-            placementFacade.BuildingSelectionClickSystem,
-            placementFacade.CreateBuildingSelectionClickContext(),
+            building,
+            building.BuildingSelectionClickSystem,
+            building.CreateBuildingSelectionClickContext(),
             runtimeUpdate,
             new BuildingRuntimeUpdateSystem.Context(
-                () => placementFacade.RuntimeTickSystem.Update(_runtimeTickContextSystem.Create(CreateRuntimeTickSource(placementFacade)))),
-            placementFacade.RuntimeCitySpawnSystem,
-            placementFacade.RuntimeContextSystem.CreateCitySpawnContext(placementFacade.CreateBuildingRuntimeContextSource()),
-            placementFacade.BuildingUiCommandSystem,
-            placementFacade.CreateBuildingUiCommandContext(),
-            placementFacade.BuildingUiQuerySystem,
-            placementFacade.CreateBuildingUiQueryContext(),
-            placementFacade.BuildingPlacementInteractionSystem,
-            placementFacade.CreateBuildingPlacementInteractionContext(),
-            (mainMenu, selection) => placementFacade.BindDependencies(roadBuild, mainMenu, dayNight, selection),
+                () => building.RuntimeTickSystem.Update(_runtimeTickContextSystem.Create(CreateRuntimeTickSource(building)))),
+            building.RuntimeCitySpawnSystem,
+            building.RuntimeContextSystem.CreateCitySpawnContext(building.CreateBuildingRuntimeContextSource()),
+            building.BuildingUiCommandSystem,
+            building.CreateBuildingUiCommandContext(),
+            building.BuildingUiQuerySystem,
+            building.CreateBuildingUiQueryContext(),
+            building.BuildingPlacementInteractionSystem,
+            building.CreateBuildingPlacementInteractionContext(),
+            (mainMenu, selection) => building.BindDependencies(roadBuild, mainMenu, dayNight, selection),
             (mainMenu, selection, runtimeGridBlockers, runtimeCitySpawner, citizenPopulation) =>
-                placementFacade.BindDependencies(
+                building.BindDependencies(
                     roadBuild,
                     mainMenu,
                     dayNight,
@@ -131,10 +131,10 @@ internal sealed class BuildingGameplayCompositionSystem
                     runtimeGridBlockers,
                     runtimeCitySpawner,
                     citizenPopulation),
-            placementFacade.Dispose);
+            building.Dispose);
     }
 
-    internal static BuildingPlacementRuntimeTickContextSystem.Source CreateRuntimeTickSource(BuildingPlacementSystem placement)
+    internal static BuildingPlacementRuntimeTickContextSystem.Source CreateRuntimeTickSource(BuildingGameplaySystem placement)
     {
         var tickDomains = placement.RuntimeTickDomains;
         var inputDomains = placement.RuntimeInputDomains;
@@ -160,7 +160,7 @@ internal sealed class BuildingGameplayCompositionSystem
     }
 
     private static BuildingPlacementInputRuntimeTickSystem.Context CreateInputRuntimeTickContext(
-        BuildingPlacementSystem placement,
+        BuildingGameplaySystem placement,
         (BuildingPlacementInputSystem PlacementInput, BuildingPlacementPreviewSystem Preview, RuntimeGameplayStateSystem RuntimeState, Func<MainMenuPlayUI> GetMainMenu, BuildingSelectionClickSystem SelectionClick) inputDomains)
     {
         return new BuildingPlacementInputRuntimeTickSystem.Context(
@@ -178,7 +178,7 @@ internal sealed class BuildingGameplayCompositionSystem
             placement.CreateBuildingSelectionClickContext());
     }
 
-    private static BuildingProductionRuntimeTickSystem.Context CreateProductionRuntimeTickContext(BuildingPlacementSystem placement)
+    private static BuildingProductionRuntimeTickSystem.Context CreateProductionRuntimeTickContext(BuildingGameplaySystem placement)
     {
         RuntimeBuildingSystem<RuntimeBuildingData> registry = placement.RuntimeBuildingRegistry;
         return new BuildingProductionRuntimeTickSystem.Context(
@@ -197,7 +197,7 @@ internal sealed class BuildingGameplayCompositionSystem
             placement.OilBarrelsPerFuelBarrelRatio);
     }
 
-    private static BuildingPlacementRuntimeTickDiagnosticsSystem.Context CreateRuntimeTickDiagnosticsContext(BuildingPlacementSystem placement)
+    private static BuildingPlacementRuntimeTickDiagnosticsSystem.Context CreateRuntimeTickDiagnosticsContext(BuildingGameplaySystem placement)
     {
         RuntimeBuildingSystem<RuntimeBuildingData> registry = placement.RuntimeBuildingRegistry;
         return new BuildingPlacementRuntimeTickDiagnosticsSystem.Context(
@@ -205,7 +205,7 @@ internal sealed class BuildingGameplayCompositionSystem
             Debug.Log);
     }
 
-    private static BuildingRuntimeBoundaryPublishSystem.Context CreateRuntimeBoundaryPublishContext(BuildingPlacementSystem placement)
+    private static BuildingRuntimeBoundaryPublishSystem.Context CreateRuntimeBoundaryPublishContext(BuildingGameplaySystem placement)
     {
         RuntimeBuildingSystem<RuntimeBuildingData> registry = placement.RuntimeBuildingRegistry;
         return new BuildingRuntimeBoundaryPublishSystem.Context(

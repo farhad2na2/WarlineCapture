@@ -618,7 +618,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         shellView.SetContentPresenter(presenter);
 
         WarlineCaptureGameUiSmokeDriverView smokeDriver = shellRoot.AddComponent<WarlineCaptureGameUiSmokeDriverView>();
-        smokeDriver.Configure(true, 0.8f, 0.25f);
+        smokeDriver.Configure(true, 2f, 0.25f);
     }
 
     private static Transform RequireChild(Transform parent, string childName)

@@ -124,6 +124,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
     internal BuildingPlacementRuntimeTickSystem RuntimeTickSystem => _buildingPlacementRuntimeTickSystem;
     internal (BuildingRuntimeVisualSystem RuntimeVisual, BuildingCombatSystem Combat, BuildingBarrierSystem Barrier, BuildingPlacementRedirectSystem Redirect, float DestroyedBuildingLifetime) RuntimeTickDomains => (_buildingRuntimeVisualSystem, _buildingCombatSystem, _buildingBarrierSystem, _buildingPlacementRedirectSystem, DestroyedBuildingLifetimeSeconds);
+    internal (BuildingPlacementInputSystem PlacementInput, BuildingPlacementPreviewSystem Preview, RuntimeGameplayStateSystem RuntimeState, System.Func<MainMenuPlayUI> GetMainMenu, BuildingSelectionClickSystem SelectionClick) RuntimeInputDomains => (_buildingPlacementInputSystem, _buildingPlacementPreviewSystem, _runtimeGameplayStateSystem, () => _mainMenuPlayUi, _buildingSelectionClickSystem);
     internal Camera WorldCamera => worldCamera;
     internal PlacementState ActivePlacement => _buildingPlacementLifecycleSystem.ActivePlacement;
     internal bool PlayRequested => _runtimeGameplayStateSystem.PlayRequested;
@@ -695,7 +696,7 @@ public sealed class BuildingPlacementSystem
         return TryGetEntityManager(out entityManager);
     }
 
-    private BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()
+    internal BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()
     {
         return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
             TryGetGridForPlacementInput,
@@ -711,34 +712,6 @@ public sealed class BuildingPlacementSystem
     {
         bool hasGrid = TryGetGridData(out _, out grid, out _, out _);
         return hasGrid;
-    }
-
-    internal void UpdateActivePlacementPointer(PlacementState placement, GamePointerState pointer)
-    {
-        _buildingPlacementInputSystem.UpdateActivePlacementPointer(
-            placement,
-            pointer,
-            CreateActivePlacementPointerContext());
-    }
-
-    internal void HidePlacementOutline()
-    {
-        _buildingPlacementPreviewSystem.HideOutline();
-    }
-
-    internal bool ShouldIgnoreBuildingSelectionThisFrame()
-    {
-        return _mainMenuPlayUi != null && _mainMenuPlayUi.ShouldIgnoreBuildingSelectionThisFrame();
-    }
-
-    internal void SuppressNextWorldClick()
-    {
-        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-    }
-
-    internal void HandleBuildingSelectionClick(Vector2 pointerPosition)
-    {
-        _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition);
     }
 
     private bool IsHaulerAtBuildingApproach(int2 currentCell, int2 footprintSize, RuntimeBuildingData building, GridConfig grid)
@@ -2307,16 +2280,6 @@ public sealed class BuildingPlacementSystem
     private bool IsPointerOverPlacementUi(Vector2 screenPosition)
     {
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverPlacementUi(screenPosition);
-    }
-
-    internal bool IsPointerOverAnyGameplayUi(Vector2 screenPosition)
-    {
-        return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out _);
-    }
-
-    internal bool IsPointerOverUnitCommandUi(Vector2 screenPosition)
-    {
-        return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverUnitCommandUi(screenPosition, out _);
     }
 
 }

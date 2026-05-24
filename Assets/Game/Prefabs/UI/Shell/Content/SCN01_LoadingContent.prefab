@@ -277,7 +277,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 70%
+  m_text: 0%
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -483,6 +483,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5759882669248290304}
+  - component: {fileID: 3701020659806739508}
   m_Layer: 0
   m_Name: LoadingBody
   m_TagString: Untagged
@@ -517,6 +518,22 @@ RectTransform:
   m_AnchoredPosition: {x: 780, y: -365}
   m_SizeDelta: {x: 840, y: 350}
   m_Pivot: {x: 0, y: 1}
+--- !u!114 &3701020659806739508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4455668270270335996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a61ef1e75393426a89f0f9cb8a516f31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellLoadingProgressView
+  progressFill: {fileID: 8488680734794180174}
+  percentText: {fileID: 5963841622202905766}
+  statusText: {fileID: 5639967239148439612}
+  fillWidth: 648
 --- !u!1 &4636193464484454769
 GameObject:
   m_ObjectHideFlags: 0
@@ -914,7 +931,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 96, y: -206}
-  m_SizeDelta: {x: 454, y: 18}
+  m_SizeDelta: {x: 0, y: 18}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &1065660097657111497
 CanvasRenderer:

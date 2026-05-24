@@ -8,7 +8,7 @@ using UnityEngine.InputSystem;
 public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
 {
     [SerializeField] private bool playOnStart = true;
-    [SerializeField] private float loadingDurationSeconds = 0.8f;
+    [SerializeField] private float loadingDurationSeconds = 2f;
     [SerializeField] private float stableHoldSeconds = 0.25f;
 
     private EntityQuery boundaryQuery;

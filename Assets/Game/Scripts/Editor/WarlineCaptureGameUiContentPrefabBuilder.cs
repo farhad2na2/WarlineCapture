@@ -41,6 +41,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
     public static void ValidateStep6()
     {
         ValidatePrefab(LoadingPrefabPath, "SCN01_LoadingContent", "LoadingBody");
+        ValidateLoadingProgressBinding();
         ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent");
         ValidatePrefab(MatchHudPrefabPath, "SCN08_MatchHudContent", "HeaderContent", "LeftContent", "RightContent", "FooterContent");
         ValidatePrefab(ResultPopupPrefabPath, "POP05_MissionResultPopup", "PopupFrame", "PopupFrame/Actions");
@@ -54,10 +55,12 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         GameObject body = CreateRect("LoadingBody", root.transform, new Rect(780f, 365f, 840f, 350f));
         AddPanel(body.transform, "Frame", StretchRect());
         AddText(body.transform, "TitleText", "WARLINE CAPTURE", new Rect(46f, 42f, 748f, 58f), 48f, TextAlignmentOptions.Center, Text);
-        AddText(body.transform, "StatusText", "Preparing command interface", new Rect(46f, 120f, 748f, 40f), 24f, TextAlignmentOptions.Center, MutedText);
+        TMP_Text statusText = AddText(body.transform, "StatusText", "Preparing command interface", new Rect(46f, 120f, 748f, 40f), 24f, TextAlignmentOptions.Center, MutedText);
         AddSolid(body.transform, "ProgressTrack", new Rect(96f, 206f, 648f, 18f), new Color(0.16f, 0.16f, 0.13f, 1f));
-        AddSolid(body.transform, "ProgressFill", new Rect(96f, 206f, 454f, 18f), Accent);
-        AddText(body.transform, "PercentText", "70%", new Rect(96f, 238f, 648f, 34f), 24f, TextAlignmentOptions.Center, Accent);
+        Image progressFill = AddSolid(body.transform, "ProgressFill", new Rect(96f, 206f, 0f, 18f), Accent);
+        TMP_Text percentText = AddText(body.transform, "PercentText", "0%", new Rect(96f, 238f, 648f, 34f), 24f, TextAlignmentOptions.Center, Accent);
+        WarlineCaptureShellLoadingProgressView loadingProgress = body.AddComponent<WarlineCaptureShellLoadingProgressView>();
+        loadingProgress.Configure(progressFill.rectTransform, percentText, statusText, 648f);
         return root;
     }
 
@@ -323,6 +326,25 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
             if (prefab.transform.Find(childName) == null)
                 throw new InvalidOperationException($"{path} is missing required child {childName}.");
         }
+    }
+
+    private static void ValidateLoadingProgressBinding()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(LoadingPrefabPath);
+        Transform body = prefab.transform.Find("LoadingBody");
+        WarlineCaptureShellLoadingProgressView progressView = body?.GetComponent<WarlineCaptureShellLoadingProgressView>();
+        if (progressView == null)
+            throw new InvalidOperationException("SCN01 loading content must contain WarlineCaptureShellLoadingProgressView on LoadingBody.");
+
+        RectTransform fill = body.Find("ProgressFill") as RectTransform;
+        TMP_Text percent = body.Find("PercentText")?.GetComponent<TMP_Text>();
+        TMP_Text status = body.Find("StatusText")?.GetComponent<TMP_Text>();
+        if (fill == null || percent == null || status == null)
+            throw new InvalidOperationException("SCN01 loading content must contain ProgressFill, PercentText, and StatusText.");
+        if (fill.rect.width > 0.5f)
+            throw new InvalidOperationException("SCN01 loading ProgressFill must start at zero width.");
+        if (percent.text != "0%")
+            throw new InvalidOperationException("SCN01 loading PercentText must start at 0%.");
     }
 
     private static void EnsureFolders()

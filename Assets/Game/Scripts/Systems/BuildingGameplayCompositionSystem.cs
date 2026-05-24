@@ -137,9 +137,12 @@ internal sealed class BuildingGameplayCompositionSystem
     internal static BuildingPlacementRuntimeTickContextSystem.Source CreateRuntimeTickSource(BuildingPlacementSystem placement)
     {
         var tickDomains = placement.RuntimeTickDomains;
+        var inputDomains = placement.RuntimeInputDomains;
         BuildingRuntimeVisualSystem.Context runtimeVisualContext = placement.CreateBuildingRuntimeVisualContext();
         BuildingCombatSystem.Context<RuntimeBuildingData> combatContext = placement.CreateBuildingCombatContext();
         BuildingBarrierSystem.Context barrierContext = placement.CreateBuildingBarrierContext();
+        var inputRuntimeTickSystem = new BuildingPlacementInputRuntimeTickSystem();
+        BuildingPlacementInputRuntimeTickSystem.Context inputContext = CreateInputRuntimeTickContext(placement, inputDomains);
         return new BuildingPlacementRuntimeTickContextSystem.Source(
             CreateProductionRuntimeTickContext(placement),
             CreateRuntimeBoundaryPublishContext(placement),
@@ -152,21 +155,29 @@ internal sealed class BuildingGameplayCompositionSystem
             () => tickDomains.Barrier.UpdateRoadBarrierDoors(barrierContext, Time.deltaTime),
             () => tickDomains.Redirect.FlushPendingMarkerRefresh(
                 () => tickDomains.RuntimeVisual.RefreshBuildingMarkerVisibility(runtimeVisualContext)),
-            () => placement.WorldCamera,
-            () => placement.ActivePlacement,
-            placement.UpdateActivePlacementPointer,
-            () => placement.PlayRequested,
-            () => placement.BuildModeActive,
-            placement.HidePlacementOutline,
-            placement.ShouldIgnoreBuildingSelectionThisFrame,
-            placement.IsPointerOverAnyGameplayUi,
-            () => placement.HasActiveBuilding,
-            placement.IsPointerOverUnitCommandUi,
-            placement.SuppressNextWorldClick,
-            placement.HandleBuildingSelectionClick,
+            () => inputRuntimeTickSystem.Update(inputContext),
             () => placement.RuntimeBuildingCount,
             placement.DiagnosticsEnabled,
             placement.DiagnosticsFreezeLogThresholdSeconds);
+    }
+
+    private static BuildingPlacementInputRuntimeTickSystem.Context CreateInputRuntimeTickContext(
+        BuildingPlacementSystem placement,
+        (BuildingPlacementInputSystem PlacementInput, BuildingPlacementPreviewSystem Preview, RuntimeGameplayStateSystem RuntimeState, Func<MainMenuPlayUI> GetMainMenu, BuildingSelectionClickSystem SelectionClick) inputDomains)
+    {
+        return new BuildingPlacementInputRuntimeTickSystem.Context(
+            () => placement.WorldCamera,
+            () => placement.ActivePlacement,
+            inputDomains.PlacementInput,
+            placement.CreateActivePlacementPointerContext(),
+            () => placement.PlayRequested,
+            () => placement.BuildModeActive,
+            inputDomains.Preview,
+            () => placement.HasActiveBuilding,
+            inputDomains.RuntimeState,
+            inputDomains.GetMainMenu,
+            inputDomains.SelectionClick,
+            placement.CreateBuildingSelectionClickContext());
     }
 
     private static BuildingProductionRuntimeTickSystem.Context CreateProductionRuntimeTickContext(BuildingPlacementSystem placement)

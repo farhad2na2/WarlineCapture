@@ -15,18 +15,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         public readonly Action UpdateRoadBarrierDoors;
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Action UpdateBuildingRuntimeBoundary;
-        public readonly Func<Camera> GetWorldCamera;
-        public readonly Func<BuildingPlacementLifecycleSystem.PlacementState> GetActivePlacement;
-        public readonly Action<BuildingPlacementLifecycleSystem.PlacementState, GamePointerState> UpdateActivePlacementPointer;
-        public readonly Func<bool> IsPlayRequested;
-        public readonly Func<bool> IsBuildModeActive;
-        public readonly Action HidePlacementOutline;
-        public readonly Func<bool> ShouldIgnoreBuildingSelectionThisFrame;
-        public readonly Func<Vector2, bool> IsPointerOverAnyGameplayUi;
-        public readonly Func<bool> HasActiveBuilding;
-        public readonly Func<Vector2, bool> IsPointerOverUnitCommandUi;
-        public readonly Action SuppressNextWorldClick;
-        public readonly Action<Vector2> HandleBuildingSelectionClick;
+        public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
         public readonly Func<int> GetRuntimeBuildingCount;
         public readonly bool DiagnosticsEnabled;
         public readonly double FreezeLogThresholdSeconds;
@@ -43,18 +32,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             Action updateRoadBarrierDoors,
             Action flushPendingMarkerRefresh,
             Action updateBuildingRuntimeBoundary,
-            Func<Camera> getWorldCamera,
-            Func<BuildingPlacementLifecycleSystem.PlacementState> getActivePlacement,
-            Action<BuildingPlacementLifecycleSystem.PlacementState, GamePointerState> updateActivePlacementPointer,
-            Func<bool> isPlayRequested,
-            Func<bool> isBuildModeActive,
-            Action hidePlacementOutline,
-            Func<bool> shouldIgnoreBuildingSelectionThisFrame,
-            Func<Vector2, bool> isPointerOverAnyGameplayUi,
-            Func<bool> hasActiveBuilding,
-            Func<Vector2, bool> isPointerOverUnitCommandUi,
-            Action suppressNextWorldClick,
-            Action<Vector2> handleBuildingSelectionClick,
+            Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
             Func<int> getRuntimeBuildingCount,
             bool diagnosticsEnabled,
             double freezeLogThresholdSeconds,
@@ -70,18 +48,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             UpdateRoadBarrierDoors = updateRoadBarrierDoors;
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
             UpdateBuildingRuntimeBoundary = updateBuildingRuntimeBoundary;
-            GetWorldCamera = getWorldCamera;
-            GetActivePlacement = getActivePlacement;
-            UpdateActivePlacementPointer = updateActivePlacementPointer;
-            IsPlayRequested = isPlayRequested;
-            IsBuildModeActive = isBuildModeActive;
-            HidePlacementOutline = hidePlacementOutline;
-            ShouldIgnoreBuildingSelectionThisFrame = shouldIgnoreBuildingSelectionThisFrame;
-            IsPointerOverAnyGameplayUi = isPointerOverAnyGameplayUi;
-            HasActiveBuilding = hasActiveBuilding;
-            IsPointerOverUnitCommandUi = isPointerOverUnitCommandUi;
-            SuppressNextWorldClick = suppressNextWorldClick;
-            HandleBuildingSelectionClick = handleBuildingSelectionClick;
+            UpdateInput = updateInput;
             GetRuntimeBuildingCount = getRuntimeBuildingCount;
             DiagnosticsEnabled = diagnosticsEnabled;
             FreezeLogThresholdSeconds = freezeLogThresholdSeconds;
@@ -126,69 +93,14 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             afterMarkers = Time.realtimeSinceStartupAsDouble;
             context.UpdateBuildingRuntimeBoundary?.Invoke();
 
-            if (context.GetWorldCamera?.Invoke() == null)
-                return;
-
-            bool hasPointer = GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer);
-            afterInputMouse = Time.realtimeSinceStartupAsDouble;
-            if (!hasPointer)
-                return;
-
-            BuildingPlacementLifecycleSystem.PlacementState activePlacement = context.GetActivePlacement?.Invoke();
-            if (activePlacement != null)
-            {
-                context.UpdateActivePlacementPointer?.Invoke(activePlacement, pointer);
-                afterInput = Time.realtimeSinceStartupAsDouble;
-                afterInputOutline = afterInput;
-                afterInputUi = afterInput;
-                afterInputBuildingClick = afterInput;
-                return;
-            }
-
-            if (context.IsPlayRequested?.Invoke() != true)
-            {
-                context.HidePlacementOutline?.Invoke();
-                afterInputOutline = Time.realtimeSinceStartupAsDouble;
-                afterInput = afterInputOutline;
-                afterInputUi = afterInput;
-                afterInputBuildingClick = afterInput;
-                return;
-            }
-
-            if (context.IsBuildModeActive?.Invoke() != true)
-                context.HidePlacementOutline?.Invoke();
-            afterInputOutline = Time.realtimeSinceStartupAsDouble;
-
-            if (pointer.WasPressedThisFrame)
-            {
-                Vector2 pointerPosition = pointer.Position;
-                bool ignoreBecauseCommandUiPressed = context.ShouldIgnoreBuildingSelectionThisFrame?.Invoke() == true;
-                bool overGameplayUi = context.IsPointerOverAnyGameplayUi?.Invoke(pointerPosition) == true;
-                bool hasActiveBuilding = context.HasActiveBuilding?.Invoke() == true;
-                bool overUnitCommandUi = false;
-                if (!ignoreBecauseCommandUiPressed && !overGameplayUi && hasActiveBuilding)
-                    overUnitCommandUi = context.IsPointerOverUnitCommandUi?.Invoke(pointerPosition) == true;
-                afterInputUi = Time.realtimeSinceStartupAsDouble;
-
-                if (!ignoreBecauseCommandUiPressed && !overGameplayUi && overUnitCommandUi && hasActiveBuilding)
-                {
-                    context.SuppressNextWorldClick?.Invoke();
-                    afterInput = Time.realtimeSinceStartupAsDouble;
-                    afterInputBuildingClick = afterInput;
-                    return;
-                }
-
-                if (!ignoreBecauseCommandUiPressed && !overGameplayUi && !overUnitCommandUi)
-                {
-                    context.HandleBuildingSelectionClick?.Invoke(pointerPosition);
-                    afterInputBuildingClick = Time.realtimeSinceStartupAsDouble;
-                }
-            }
-            afterInput = Time.realtimeSinceStartupAsDouble;
-            if (afterInputUi < afterInputOutline)
-                afterInputUi = afterInputOutline;
-            if (afterInputBuildingClick < afterInputUi)
-                afterInputBuildingClick = afterInputUi;
+            BuildingPlacementInputRuntimeTickSystem.Result input = context.UpdateInput != null
+                ? context.UpdateInput()
+                : default;
+            afterInputOutline = input.AfterOutline;
+            afterInputMouse = input.AfterMouse;
+            afterInputUi = input.AfterUi;
+            afterInputBuildingClick = input.AfterBuildingClick;
+            afterInput = input.AfterInput;
         }
         finally
         {

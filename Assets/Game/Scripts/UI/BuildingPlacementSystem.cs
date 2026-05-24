@@ -46,6 +46,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementQuerySystem _buildingPlacementQuerySystem = new();
     private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
     private readonly BuildingUiCommandSystem _buildingUiCommandSystem = new();
+    private readonly BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem = new();
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
     private readonly BuildingPlacementValidationSystem _buildingPlacementValidationSystem = new();
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
@@ -118,6 +119,7 @@ public sealed class BuildingPlacementSystem
     internal RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem => _runtimeUnitPrefabSystem;
     internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
+    internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -2205,6 +2207,26 @@ public sealed class BuildingPlacementSystem
             TryGetRuntimeBuildingOwnerFaction,
             HasVisibleSelectableBuilding,
             TryResolveLiveUnitPreviewPrefab);
+    }
+
+    internal BuildingPlacementInteractionSystem.Context CreateBuildingPlacementInteractionContext()
+    {
+        return new BuildingPlacementInteractionSystem.Context(
+            () => HasPendingBuildingPlacement,
+            () => CanConfirmBuildingPlacement,
+            () => HasSelectedBuilding,
+            () => HasActiveBuilding,
+            () => IsDraggingPlacementPreview,
+            () => PlacementStatusText,
+            () => SelectedBuildingLabel,
+            BeginSoldierBasePlacement,
+            ConfirmBuildingPlacement,
+            CancelBuildingPlacement,
+            CreateUnitFromSelectedBuilding,
+            DeleteSelectedBuilding,
+            ClearSelectedBuilding,
+            HandleRuntimeBuildingEntityDestroyed,
+            TryResolveBaseBreachTarget);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

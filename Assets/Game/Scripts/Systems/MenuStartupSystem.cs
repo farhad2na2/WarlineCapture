@@ -65,9 +65,16 @@ public sealed class MenuStartupSystem
         RTSSelectionSystem selection,
         DayNightSystem dayNight)
     {
-        roadBuild?.BindDependencies(buildingPlacement, mainMenu);
+        roadBuild?.BindDependencies(
+            buildingPlacement?.BuildingPlacementInteractionSystem,
+            buildingPlacement != null ? buildingPlacement.CreateBuildingPlacementInteractionContext() : default,
+            mainMenu);
         buildingPlacement?.BindDependencies(roadBuild, mainMenu, dayNight, selection);
-        selection?.BindDependencies(mainMenu, roadBuild, buildingPlacement);
+        selection?.BindDependencies(
+            mainMenu,
+            roadBuild,
+            buildingPlacement?.BuildingPlacementInteractionSystem,
+            buildingPlacement != null ? buildingPlacement.CreateBuildingPlacementInteractionContext() : default);
     }
 
     private void BindSceneUi(

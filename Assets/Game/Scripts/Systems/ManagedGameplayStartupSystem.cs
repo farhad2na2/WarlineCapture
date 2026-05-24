@@ -64,11 +64,25 @@ public sealed class ManagedGameplayStartupSystem
         buildingPlacement.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
 
         var selection = new RTSSelectionSystem();
-        selection.Init(rtsSelectionConfig, worldCamera, runtimeUiRoot, null, roadBuild, buildingPlacement, factionVisuals);
+        selection.Init(
+            rtsSelectionConfig,
+            worldCamera,
+            runtimeUiRoot,
+            null,
+            roadBuild,
+            buildingPlacement.BuildingPlacementInteractionSystem,
+            buildingPlacement.CreateBuildingPlacementInteractionContext(),
+            factionVisuals);
 
-        roadBuild.BindDependencies(buildingPlacement);
+        roadBuild.BindDependencies(
+            buildingPlacement.BuildingPlacementInteractionSystem,
+            buildingPlacement.CreateBuildingPlacementInteractionContext());
         buildingPlacement.BindDependencies(roadBuild, null, dayNight, selection);
-        selection.BindDependencies(null, roadBuild, buildingPlacement);
+        selection.BindDependencies(
+            null,
+            roadBuild,
+            buildingPlacement.BuildingPlacementInteractionSystem,
+            buildingPlacement.CreateBuildingPlacementInteractionContext());
 
         var unitAttackTraces = new UnitAttackTraceSystem();
         unitAttackTraces.Init(unitAttackTraceConfig, worldCamera, ownerLayer, factionVisuals);

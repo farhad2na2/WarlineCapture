@@ -46,7 +46,11 @@ public sealed class GameplayFeatureStartupSystem
 
         var runtimeGridBlockers = new RuntimeGridBlockerSystem();
         runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCitySpawner);
-        roadBuild?.BindDependencies(buildingPlacement, mainMenu, runtimeGridBlockers);
+        roadBuild?.BindDependencies(
+            buildingPlacement?.BuildingPlacementInteractionSystem,
+            buildingPlacement != null ? buildingPlacement.CreateBuildingPlacementInteractionContext() : default,
+            mainMenu,
+            runtimeGridBlockers);
         sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
         buildingPlacement?.BindDependencies(
             roadBuild,

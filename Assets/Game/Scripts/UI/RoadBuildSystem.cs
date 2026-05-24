@@ -302,7 +302,8 @@ public sealed class RoadBuildSystem
     private BuildingPlacementState _activeBuildingPlacement;
     private RoadBuildSessionSnapshot _roadBuildSessionSnapshot;
     private int? _selectedBuildingId;
-    private BuildingPlacementSystem _buildingPlacementController;
+    private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
+    private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private MainMenuPlayUI _mainMenuPlayUi;
     private RuntimeGridBlockerSystem _runtimeGridBlockers;
     private World _queryWorld;
@@ -360,13 +361,13 @@ public sealed class RoadBuildSystem
     }
 
     public bool CanConfirmBuildingPlacement =>
-        _buildingPlacementController != null
-            ? _buildingPlacementController.CanConfirmBuildingPlacement
+        _buildingPlacementInteractionSystem != null
+            ? _buildingPlacementInteractionSystem.CanConfirmBuildingPlacement(_buildingPlacementInteractionContext)
             : _activeBuildingPlacement != null && _activeBuildingPlacement.IsValid;
 
     public bool HasSelectedBuilding =>
-        _buildingPlacementController != null
-            ? _buildingPlacementController.HasSelectedBuilding
+        _buildingPlacementInteractionSystem != null
+            ? _buildingPlacementInteractionSystem.HasSelectedBuilding(_buildingPlacementInteractionContext)
             : _selectedBuildingId.HasValue && _runtimeBuildings.ContainsKey(_selectedBuildingId.Value);
 
     public bool IsRoadBuildModeActive => _runtimeGameplayStateSystem.BuildModeActive && _activeBuildTool == BuildToolMode.Road;
@@ -690,8 +691,11 @@ public sealed class RoadBuildSystem
     {
         get
         {
-            if (_buildingPlacementController != null && _buildingPlacementController.HasPendingBuildingPlacement)
-                return _buildingPlacementController.PlacementStatusText;
+            if (_buildingPlacementInteractionSystem != null &&
+                _buildingPlacementInteractionSystem.HasPendingBuildingPlacement(_buildingPlacementInteractionContext))
+            {
+                return _buildingPlacementInteractionSystem.PlacementStatusText(_buildingPlacementInteractionContext);
+            }
 
             if (_activeBuildingPlacement == null)
                 return "Choose a build type.";
@@ -707,8 +711,11 @@ public sealed class RoadBuildSystem
     {
         get
         {
-            if (_buildingPlacementController != null && _buildingPlacementController.HasActiveBuilding)
-                return _buildingPlacementController.SelectedBuildingLabel;
+            if (_buildingPlacementInteractionSystem != null &&
+                _buildingPlacementInteractionSystem.HasActiveBuilding(_buildingPlacementInteractionContext))
+            {
+                return _buildingPlacementInteractionSystem.SelectedBuildingLabel(_buildingPlacementInteractionContext);
+            }
 
             if (!HasSelectedBuilding)
                 return "Building";
@@ -732,12 +739,18 @@ public sealed class RoadBuildSystem
         }
     }
 
-    public void Init(RoadBuildSystemConfig configAsset, Camera sceneWorldCamera, Transform runtimeRoot, BuildingPlacementSystem buildingPlacementController)
+    public void Init(
+        RoadBuildSystemConfig configAsset,
+        Camera sceneWorldCamera,
+        Transform runtimeRoot,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default)
     {
         config = configAsset;
         worldCamera = sceneWorldCamera;
         _runtimeRoot = runtimeRoot;
-        _buildingPlacementController = buildingPlacementController;
+        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
         ApplyConfigIfAvailable();
         _roadRoot = CreateRuntimeChildRoot("RuntimeRoads");
         _specialRoadRoot = CreateRuntimeChildRoot("RuntimeAutobahns");
@@ -751,11 +764,13 @@ public sealed class RoadBuildSystem
     }
 
     public void BindDependencies(
-        BuildingPlacementSystem buildingPlacementController,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
         MainMenuPlayUI mainMenuPlayUi = null,
         RuntimeGridBlockerSystem runtimeGridBlockers = null)
     {
-        _buildingPlacementController = buildingPlacementController;
+        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
         _mainMenuPlayUi = mainMenuPlayUi;
         if (runtimeGridBlockers != null)
             _runtimeGridBlockers = runtimeGridBlockers;
@@ -1040,9 +1055,9 @@ public sealed class RoadBuildSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        if (_buildingPlacementController != null)
+        if (_buildingPlacementInteractionSystem != null)
         {
-            _buildingPlacementController.BeginSoldierBasePlacement();
+            _buildingPlacementInteractionSystem.BeginSoldierBasePlacement(_buildingPlacementInteractionContext);
             return;
         }
 
@@ -1065,9 +1080,9 @@ public sealed class RoadBuildSystem
 
     public void ConfirmBuildingPlacement()
     {
-        if (_buildingPlacementController != null)
+        if (_buildingPlacementInteractionSystem != null)
         {
-            _buildingPlacementController.ConfirmBuildingPlacement();
+            _buildingPlacementInteractionSystem.ConfirmBuildingPlacement(_buildingPlacementInteractionContext);
             return;
         }
 
@@ -1080,9 +1095,9 @@ public sealed class RoadBuildSystem
 
     public void CancelBuildingPlacement()
     {
-        if (_buildingPlacementController != null)
+        if (_buildingPlacementInteractionSystem != null)
         {
-            _buildingPlacementController.CancelBuildingPlacement();
+            _buildingPlacementInteractionSystem.CancelBuildingPlacement(_buildingPlacementInteractionContext);
             return;
         }
 
@@ -1094,9 +1109,9 @@ public sealed class RoadBuildSystem
 
     public void CreateSoldierFromSelectedBuilding()
     {
-        if (_buildingPlacementController != null)
+        if (_buildingPlacementInteractionSystem != null)
         {
-            _buildingPlacementController.CreateUnitFromSelectedBuilding();
+            _buildingPlacementInteractionSystem.CreateUnitFromSelectedBuilding(_buildingPlacementInteractionContext);
             return;
         }
 
@@ -1110,9 +1125,9 @@ public sealed class RoadBuildSystem
 
     public void DeleteSelectedBuilding()
     {
-        if (_buildingPlacementController != null)
+        if (_buildingPlacementInteractionSystem != null)
         {
-            _buildingPlacementController.DeleteSelectedBuilding();
+            _buildingPlacementInteractionSystem.DeleteSelectedBuilding(_buildingPlacementInteractionContext);
             return;
         }
 
@@ -2304,9 +2319,13 @@ public sealed class RoadBuildSystem
 
     public void HandleRuntimeBuildingEntityDestroyed(int buildingId, Entity blockerEntity, GameObject buildingObject)
     {
-        if (_buildingPlacementController != null)
+        if (_buildingPlacementInteractionSystem != null)
         {
-            _buildingPlacementController.HandleRuntimeBuildingEntityDestroyed(buildingId, blockerEntity, buildingObject);
+            _buildingPlacementInteractionSystem.HandleRuntimeBuildingEntityDestroyed(
+                _buildingPlacementInteractionContext,
+                buildingId,
+                blockerEntity,
+                buildingObject);
             return;
         }
 

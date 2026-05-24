@@ -1,5 +1,6 @@
 #if UNITY_EDITOR
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -15,6 +16,20 @@ public static class WarlineCaptureGameUiSceneBuilder
     private const string EventSystemName = "EventSystem";
     private const string CanvasName = "GameUICanvas";
     private const string ShellRootName = "WarlineCaptureRuntimeShell";
+    private const string ContentRootName = "ContentRoot";
+
+    private static readonly Rect StretchRegion = new(0f, 0f, 2400f, 1080f);
+
+    private static readonly ShellRegionDefinition[] RegionDefinitions =
+    {
+        new(WarlineCaptureShellRegionId.LoadingLayer, "LoadingLayer", new Vector2(0f, -1f), StretchRegion),
+        new(WarlineCaptureShellRegionId.HeaderRegion, "HeaderRegion", new Vector2(0f, 1f), new Rect(0f, 0f, 2400f, 140f)),
+        new(WarlineCaptureShellRegionId.LeftRegion, "LeftRegion", new Vector2(-1f, 0f), new Rect(0f, 140f, 360f, 820f)),
+        new(WarlineCaptureShellRegionId.MiddleRegion, "MiddleRegion", Vector2.zero, new Rect(360f, 140f, 1680f, 820f)),
+        new(WarlineCaptureShellRegionId.RightRegion, "RightRegion", new Vector2(1f, 0f), new Rect(2040f, 140f, 360f, 820f)),
+        new(WarlineCaptureShellRegionId.FooterRegion, "FooterRegion", new Vector2(0f, -1f), new Rect(0f, 960f, 2400f, 120f)),
+        new(WarlineCaptureShellRegionId.PopupLayer, "PopupLayer", Vector2.zero, StretchRegion)
+    };
 
     [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 1")]
     public static void BuildStep1()
@@ -33,6 +48,26 @@ public static class WarlineCaptureGameUiSceneBuilder
         AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
         ValidateStep1();
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP1_BUILT scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 2")]
+    public static void BuildStep2()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject root = new(RootName);
+
+        CreateEventSystem(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject shellRoot = CreateShellRoot(canvasObject.transform);
+        CreateShellRegions(shellRoot.transform);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        if (!EditorSceneManager.SaveScene(scene, ScenePath))
+            throw new InvalidOperationException($"Failed to save GameUI scene at {ScenePath}.");
+
+        AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+        ValidateStep2();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP2_BUILT scene={ScenePath}");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
@@ -103,6 +138,58 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP1_VALIDATED scene={ScenePath}");
     }
 
+    [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 2")]
+    public static void ValidateStep2()
+    {
+        ValidateStep1();
+
+        Scene scene = EditorSceneManager.GetActiveScene();
+        Transform shellTransform = scene.GetRootGameObjects()[0].transform.Find($"{CanvasName}/{ShellRootName}");
+        if (shellTransform == null)
+            throw new InvalidOperationException($"{ShellRootName} is missing.");
+
+        if (shellTransform.childCount != RegionDefinitions.Length)
+            throw new InvalidOperationException($"{ShellRootName} must contain exactly {RegionDefinitions.Length} shell regions.");
+
+        HashSet<WarlineCaptureShellRegionId> seenRegionIds = new();
+        for (int index = 0; index < RegionDefinitions.Length; index++)
+        {
+            ShellRegionDefinition definition = RegionDefinitions[index];
+            Transform regionTransform = shellTransform.Find(definition.Name);
+            if (regionTransform == null)
+                throw new InvalidOperationException($"{ShellRootName} is missing region {definition.Name}.");
+            if (regionTransform.GetSiblingIndex() != index)
+                throw new InvalidOperationException($"{definition.Name} must keep sibling index {index} for deterministic draw order.");
+
+            RectTransform regionRect = regionTransform.GetComponent<RectTransform>();
+            CanvasGroup canvasGroup = regionTransform.GetComponent<CanvasGroup>();
+            WarlineCaptureShellRegionView regionView = regionTransform.GetComponent<WarlineCaptureShellRegionView>();
+            if (regionRect == null || canvasGroup == null || regionView == null)
+                throw new InvalidOperationException($"{definition.Name} must contain RectTransform, CanvasGroup, and WarlineCaptureShellRegionView.");
+
+            if (regionView.RegionId != definition.Id)
+                throw new InvalidOperationException($"{definition.Name} has region id {regionView.RegionId} instead of {definition.Id}.");
+            if (regionView.RegionRoot != regionRect)
+                throw new InvalidOperationException($"{definition.Name} region root reference is not self.");
+            if (regionView.CanvasGroup != canvasGroup)
+                throw new InvalidOperationException($"{definition.Name} CanvasGroup reference is not bound.");
+            if (regionView.OffScreenDirection != definition.OffScreenDirection)
+                throw new InvalidOperationException($"{definition.Name} offscreen direction is not configured.");
+            if (!seenRegionIds.Add(regionView.RegionId))
+                throw new InvalidOperationException($"Duplicate shell region id {regionView.RegionId}.");
+
+            Transform contentTransform = regionTransform.Find(ContentRootName);
+            if (contentTransform == null)
+                throw new InvalidOperationException($"{definition.Name} is missing {ContentRootName}.");
+            RectTransform contentRect = contentTransform.GetComponent<RectTransform>();
+            if (regionView.ContentRoot != contentRect)
+                throw new InvalidOperationException($"{definition.Name} content root reference is not bound.");
+            ValidateStretchRect(contentRect, $"{definition.Name}/{ContentRootName}");
+        }
+
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP2_VALIDATED scene={ScenePath} regions={RegionDefinitions.Length}");
+    }
+
     private static void CreateEventSystem(Transform parent)
     {
         GameObject eventSystemObject = new(EventSystemName);
@@ -133,11 +220,41 @@ public static class WarlineCaptureGameUiSceneBuilder
         return canvasObject;
     }
 
-    private static void CreateShellRoot(Transform parent)
+    private static GameObject CreateShellRoot(Transform parent)
     {
         GameObject shellRoot = new(ShellRootName, typeof(RectTransform));
         shellRoot.transform.SetParent(parent, false);
         Stretch(shellRoot.GetComponent<RectTransform>());
+        return shellRoot;
+    }
+
+    private static void CreateShellRegions(Transform shellRoot)
+    {
+        foreach (ShellRegionDefinition definition in RegionDefinitions)
+        {
+            GameObject regionObject = new(definition.Name, typeof(RectTransform), typeof(CanvasGroup), typeof(WarlineCaptureShellRegionView));
+            regionObject.transform.SetParent(shellRoot, false);
+
+            RectTransform regionRect = regionObject.GetComponent<RectTransform>();
+            if (definition.IsStretch)
+                Stretch(regionRect);
+            else
+                ApplyTopLeftRect(regionRect, definition.Rect);
+
+            CanvasGroup canvasGroup = regionObject.GetComponent<CanvasGroup>();
+            canvasGroup.alpha = 1f;
+            canvasGroup.interactable = true;
+            canvasGroup.blocksRaycasts = true;
+
+            GameObject contentObject = new(ContentRootName, typeof(RectTransform));
+            contentObject.transform.SetParent(regionObject.transform, false);
+            RectTransform contentRect = contentObject.GetComponent<RectTransform>();
+            Stretch(contentRect);
+
+            WarlineCaptureShellRegionView view = regionObject.GetComponent<WarlineCaptureShellRegionView>();
+            view.Configure(definition.Id, regionRect, contentRect, canvasGroup, definition.OffScreenDirection);
+            EditorUtility.SetDirty(view);
+        }
     }
 
     private static Transform RequireChild(Transform parent, string childName)
@@ -159,6 +276,17 @@ public static class WarlineCaptureGameUiSceneBuilder
         rect.localRotation = Quaternion.identity;
     }
 
+    private static void ApplyTopLeftRect(RectTransform rect, Rect topLeftRect)
+    {
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(topLeftRect.x, -topLeftRect.y);
+        rect.sizeDelta = new Vector2(topLeftRect.width, topLeftRect.height);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
     private static void ValidateStretchRect(RectTransform rect, string name)
     {
         if (rect.anchorMin != Vector2.zero || rect.anchorMax != Vector2.one)
@@ -167,6 +295,24 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"{name} must have zero offsets.");
         if (rect.localScale != Vector3.one)
             throw new InvalidOperationException($"{name} must have unit scale.");
+    }
+
+    private readonly struct ShellRegionDefinition
+    {
+        public ShellRegionDefinition(WarlineCaptureShellRegionId id, string name, Vector2 offScreenDirection, Rect rect)
+        {
+            Id = id;
+            Name = name;
+            OffScreenDirection = offScreenDirection;
+            Rect = rect;
+            IsStretch = rect == StretchRegion;
+        }
+
+        public WarlineCaptureShellRegionId Id { get; }
+        public string Name { get; }
+        public Vector2 OffScreenDirection { get; }
+        public Rect Rect { get; }
+        public bool IsStretch { get; }
     }
 }
 #endif

@@ -281,7 +281,8 @@ public sealed class RTSSelectionSystem
 
     private MainMenuPlayUI _mainMenuPlayUi;
     private RoadBuildSystem _roadBuildController;
-    private BuildingPlacementSystem _buildingPlacementController;
+    private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
+    private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private FactionVisualSettings _factionVisualSettings;
     private BattleHudGameplayBridge _battleHudBridge;
     private World _queryWorld;
@@ -672,7 +673,28 @@ public sealed class RTSSelectionSystem
         Transform runtimeRoot,
         MainMenuPlayUI mainMenuPlayUi,
         RoadBuildSystem roadBuildController,
-        BuildingPlacementSystem buildingPlacementController,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        FactionVisualSettings factionVisualSettings)
+    {
+        Init(
+            configAsset,
+            sceneWorldCamera,
+            runtimeRoot,
+            mainMenuPlayUi,
+            roadBuildController,
+            buildingPlacementInteractionSystem,
+            default,
+            factionVisualSettings);
+    }
+
+    public void Init(
+        RTSSelectionSystemConfig configAsset,
+        Camera sceneWorldCamera,
+        Transform runtimeRoot,
+        MainMenuPlayUI mainMenuPlayUi,
+        RoadBuildSystem roadBuildController,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         FactionVisualSettings factionVisualSettings)
     {
         config = configAsset;
@@ -680,7 +702,8 @@ public sealed class RTSSelectionSystem
         _runtimeRoot = runtimeRoot;
         _mainMenuPlayUi = mainMenuPlayUi;
         _roadBuildController = roadBuildController;
-        _buildingPlacementController = buildingPlacementController;
+        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
         _factionVisualSettings = factionVisualSettings;
         _battleHudBridge = null;
         ApplyConfigIfAvailable();
@@ -714,11 +737,16 @@ public sealed class RTSSelectionSystem
         CacheAttackOrderMarker();
     }
 
-    public void BindDependencies(MainMenuPlayUI mainMenuPlayUi, RoadBuildSystem roadBuildController, BuildingPlacementSystem buildingPlacementController)
+    public void BindDependencies(
+        MainMenuPlayUI mainMenuPlayUi,
+        RoadBuildSystem roadBuildController,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
     {
         _mainMenuPlayUi = mainMenuPlayUi;
         _roadBuildController = roadBuildController;
-        _buildingPlacementController = buildingPlacementController;
+        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
     }
 
     private void ApplyConfigIfAvailable()
@@ -1251,12 +1279,14 @@ public sealed class RTSSelectionSystem
         UpdateLastKnownPointerPosition(pointerPosition);
         bool pointerOverGameplayUi = IsPointerOverGameplayUi(pointerPosition, out _);
         bool pointerOverBuildToolMenu = _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverBuildToolMenu(pointerPosition);
-        bool hasPendingBuildingPlacement = _buildingPlacementController != null && _buildingPlacementController.HasPendingBuildingPlacement;
+        bool hasPendingBuildingPlacement = _buildingPlacementInteractionSystem != null &&
+                                           _buildingPlacementInteractionSystem.HasPendingBuildingPlacement(_buildingPlacementInteractionContext);
         bool roadToolActive = _roadBuildController != null && _roadBuildController.IsRoadBuildModeActive;
         bool idleBuildMode = !hasPendingBuildingPlacement && !roadToolActive;
         bool interactionActive =
             (_roadBuildController != null && _roadBuildController.IsDraggingBuildInteraction) ||
-            (_buildingPlacementController != null && _buildingPlacementController.IsDraggingPlacementPreview);
+            (_buildingPlacementInteractionSystem != null &&
+             _buildingPlacementInteractionSystem.IsDraggingPlacementPreview(_buildingPlacementInteractionContext));
 
         if (pointerOverGameplayUi)
         {
@@ -1388,7 +1418,7 @@ public sealed class RTSSelectionSystem
         _focusedUnit = selected.Count == 1 ? selected[0] : Entity.Null;
         if (_focusedUnit != Entity.Null)
         {
-            _buildingPlacementController?.ClearSelectedBuilding("RTSSelection.SelectUnitsInRectangle");
+            _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.SelectUnitsInRectangle");
             ApplyHudSelection(em, _focusedUnit);
         }
         else
@@ -2828,7 +2858,7 @@ public sealed class RTSSelectionSystem
         LogSelectionDiagnostic($"result=Focus source=FocusUnitEntity entity={DescribeTransportBoardingEntity(em, entity)} cache={_cachedSelectedMoveEntities.Count}");
 
         _focusedUnit = entity;
-        _buildingPlacementController?.ClearSelectedBuilding("RTSSelection.FocusUnitEntity");
+        _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
         _ignoreNextLeftMouseRelease = true;
         _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
@@ -3256,7 +3286,7 @@ public sealed class RTSSelectionSystem
         LogSelectionDiagnostic($"result=Focus source=TryFocusUnit entity={DescribeTransportBoardingEntity(em, bestEntity)} cache={_cachedSelectedMoveEntities.Count}");
 
         _focusedUnit = bestEntity;
-        _buildingPlacementController?.ClearSelectedBuilding("RTSSelection.TryFocusUnit");
+        _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
         _ignoreNextLeftMouseRelease = true;
         _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
@@ -3328,8 +3358,9 @@ public sealed class RTSSelectionSystem
         breachTarget = Entity.Null;
         breachCell = default;
         breachPosition = default;
-        return _buildingPlacementController != null &&
-               _buildingPlacementController.TryResolveBaseBreachTarget(
+        return _buildingPlacementInteractionSystem != null &&
+               _buildingPlacementInteractionSystem.TryResolveBaseBreachTarget(
+                   _buildingPlacementInteractionContext,
                    factionId,
                    targetEntity,
                    targetCell,

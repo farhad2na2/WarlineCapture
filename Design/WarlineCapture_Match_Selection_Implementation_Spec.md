@@ -1,6 +1,6 @@
 # WarlineCapture Match Selection Implementation Spec
 
-Date: 2026-05-22
+Date: 2026-05-24
 
 This is the canonical implementation contract for selecting units in `SCN-08 RTS Battle HUD`. Use this document when implementing, testing, reviewing, or explaining how a player selects units in a live match.
 
@@ -42,27 +42,29 @@ No gameplay system may update `SelectedEntityPanel/NameText`, command labels, se
 | Tap/click enemy with selected combat unit and no explicit `SELECT` mode | Issue direct attack if target is valid. | Keep current selection. | Attack target marker; command result feedback. | Direct attack is allowed after selection. |
 | Tap/click walkable ground with selected movable unit and no explicit `SELECT` mode | Issue direct move order. | Keep current selection. | Move marker/path feedback; command result feedback. | Direct move is the primary mobile RTS path. |
 | Tap/click empty ground with no selection and no explicit `SELECT` mode | No command. | No selected unit. | Optional low-priority `NoSelection` feedback only if the tap was interpreted as a command attempt. | Must not silently select nothing and then enable commands. |
-| Click/tap `SELECT` HUD button | Enter explicit selection mode. | Clear active command targeting; preserve current selection until a new valid selection replaces it or `Deselect` clears it. | `SELECT` visual active state or selection-mode banner; map accepts tap/drag selection. | See state machine below. |
+| Click/tap `SELECT` HUD button | Enter explicit selection mode. | Clear active command targeting; preserve current selection until a new valid selection replaces it or an explicit clear-selection route clears it. | `SELECT` visual active state or selection-mode banner; map accepts tap/drag selection. | See state machine below. |
 | Drag on battlefield while explicit selection mode is active | Box-select all eligible friendly units inside drag rectangle. | Replace current selection with eligible units in rectangle. | Live rectangle while dragging; selected rings after release; selected panel summarizes count/group. | Drag-select is available only after explicit `SELECT` unless a future gesture spec maps long-press to the same state machine. |
-| Tap/click empty ground while explicit selection mode is active | Exit selection mode. | Preserve previous selection. | Selection-mode banner clears. | Must not issue a move and must not clear selection. Use `Deselect` for clearing. |
-| Tap/click cancel/back while explicit selection mode is active | Exit selection mode. | Preserve existing selection unless the control is specifically `Deselect`. | Selection-mode banner clears. | Must suppress the world click that triggered cancel. |
-| Tap/click `Deselect` or clear-selection affordance | Clear selected units. | No selected unit. | `ClearSelection`; command buttons disable or return to neutral. | Do not issue a world command on the same input. |
+| Tap/click empty ground while explicit selection mode is active | Exit selection mode. | Preserve previous selection. | Selection-mode banner clears. | Must not issue a move and must not clear selection. Use an explicit clear-selection route for clearing. |
+| Tap/click cancel/back while explicit selection mode is active | Exit selection mode. | Preserve existing selection unless the control is specifically a clear-selection route. | Selection-mode banner clears. | Must suppress the world click that triggered cancel. |
+| Tap/click optional clear-selection affordance | Clear selected units. | No selected unit. | `ClearSelection`; command buttons disable or return to neutral. | There is no required dedicated `Deselect` button in the current HUD target. If a future route adds one, it must not issue a world command on the same input. |
 
 ## `SELECT` Button Contract
 
 The `SELECT` button is not an auto-select button. It does not pick the nearest unit and it does not select all units by itself.
 
+The `SELECT` button remains visible and selectable after a unit is selected, unless the current mission, tutorial step, modal, build placement, cutscene, or assistant takeover explicitly disables it. Selecting a unit directly by tapping it does not deactivate `SELECT`; it simply enables selected-unit commands such as `MOVE`, `ATTACK`, `HOLD`, `STOP`, and selected-unit abilities according to capability.
+
 When enabled and clicked:
 
 1. Suppress the current UI click from also becoming a world click.
-2. Clear active command targeting mode: `MOVE`, `ATTACK`, `BUILD`, `SPECIAL`, `HOLD`, or `STOP` feedback must not remain active.
+2. Clear active command targeting mode: `MOVE`, `ATTACK`, `BUILD`, `SCAN`, `SUPPORT`, `SPECIAL`, `HOLD`, or `STOP` feedback must not remain active.
 3. Set `SelectionModeActive = true`.
 4. Show selection-mode feedback using the match HUD state, such as active `SELECT` chrome or a short command banner.
 5. Wait for the next world selection input:
    - tap friendly unit selects that unit/group
    - drag rectangle selects all eligible friendly units in the rectangle
    - cancel/back exits selection mode
-- empty tap exits selection mode without issuing a move or clearing selection
+   - empty tap exits selection mode without issuing a move or clearing selection
 6. After a valid selection or cancel, set `SelectionModeActive = false`.
 
 When disabled:
@@ -85,6 +87,21 @@ M01 required behavior:
 
 M01 must not require the player to click `SELECT` before tapping the first squad.
 
+## Clear Selection Rule
+
+The current match HUD target does not require a dedicated on-screen `Deselect` button.
+
+Default clear-selection rules:
+
+- Tapping another friendly unit/card replaces the selection; it does not clear to no selection.
+- Tapping the already selected squad card focuses the camera or confirms focus; it does not deselect.
+- Tapping empty ground in normal mode does not deselect because selected movable units may treat ground taps as direct move orders.
+- Tapping empty ground while explicit `SELECT` mode is active exits selection mode and preserves the previous selection.
+- Back/cancel clears active command modes first. If no explicit command/selection/build/scan/support mode is active, the route may clear selection if the platform UX requires back-to-neutral behavior.
+- Selection also clears when the selected unit/group is destroyed, becomes uncontrollable, leaves the map, mission ends, or a modal/result route resets match command state.
+
+If a future design adds a visible `Deselect` affordance, it must call `ClearSelection()`, hide the selected panel, remove selection rings, disable selected-unit commands, and suppress the same input from issuing a world command.
+
 ## Selection State Machine
 
 The selection state machine has these states:
@@ -92,16 +109,20 @@ The selection state machine has these states:
 | State | Meaning | Allowed Inputs | Exit |
 |---|---|---|---|
 | `NoSelection` | No controllable unit/group is selected. | Tap friendly unit, tap enabled squad card, tap enabled `SELECT`. | Friendly unit/card selects; `SELECT` enters explicit selection mode. |
-| `Selected` | One or more controllable units/groups are selected. | Direct move, direct attack, command buttons, tap another friendly unit/card, `SELECT`, `Deselect`. | Deselect clears; other friendly selection replaces; commands keep selection. |
+| `Selected` | One or more controllable units/groups are selected. | Direct move, direct attack, command buttons, tap another friendly unit/card, `SELECT`, optional clear-selection route. | Clear-selection route clears; other friendly selection replaces; commands keep selection. |
 | `SelectionModeActive` | HUD is waiting for tap/drag selection. | Tap friendly unit, drag rectangle, cancel/back, empty tap. | Valid select or cancel exits. Empty tap exits without move. |
 | `MoveTargeting` | HUD is waiting for a move target after `MOVE`. | Tap walkable ground, cancel/back, `SELECT`, other command. | Valid target issues move; `SELECT` cancels move and enters selection mode. |
 | `AttackTargeting` | HUD is waiting for attack target after `ATTACK`. | Tap valid enemy, cancel/back, `SELECT`, other command. | Valid target issues attack; `SELECT` cancels attack and enters selection mode. |
+| `ScanTargeting` | HUD is waiting for a scan target after `SCAN`. | Tap valid area, cancel/back, `SELECT`, other command. | Valid target executes scan; `SELECT` cancels scan and enters selection mode. |
+| `SupportTargeting` | HUD is waiting for support target after a support ability is chosen. | Tap valid area/unit, cancel/back, `SELECT`, other command. | Valid target executes support; `SELECT` cancels support and enters selection mode. |
 | `BuildPlacement` | Build placement owns map clicks. | Placement confirm/cancel, `SELECT` only after exiting build. | Build cancel/confirm exits; selection input must not place buildings. |
 
 Invalid mixed states are not allowed:
 
 - `SelectionModeActive` and `MoveTargeting` cannot both be active.
 - `SelectionModeActive` and `AttackTargeting` cannot both be active.
+- `SelectionModeActive` and `ScanTargeting` cannot both be active.
+- `SelectionModeActive` and `SupportTargeting` cannot both be active.
 - UI clicks must never fall through as world move/attack/select actions.
 - A disabled command button must never mutate selection or command state.
 
@@ -151,9 +172,11 @@ After `ApplySelection`, command controls must use real selected-unit capability 
 | `ATTACK` | At least one selected unit has an attack command and mission allows combat. | `NoSelection`, non-combat unit, disarmed, mission restricted. |
 | `STOP` | Selected unit has active or interruptible orders. | `NoSelection`, no stoppable order. |
 | `HOLD` | Selected unit can hold/defend position. | `NoSelection`, command unavailable. |
+| `SCAN` | Mission scan rules allow scanning and required source/cooldown/charge/resource checks pass. Selection is not required by default. | Mission does not allow scan, scan unavailable, cooldown, no charges, insufficient resources, invalid target. |
+| `SUPPORT` | Mission support rules allow support and at least one equipped support ability is available. Selection is not required by default unless the chosen support ability requires a selected unit or target. | Mission does not allow support, support unavailable, locked, cooldown, no charges, insufficient resources, invalid target. |
 | `SPECIAL` | Selected unit/group has at least one available contextual ability. | Locked, cooldown, no charges, mission banned, invalid target requirement. |
 | `BUILD` | Mission and selected context allow build/production. | Mission does not allow build, insufficient resources, no builder/producer, locked. |
-| `SELECT` | Current mode supports explicit tap/drag selection. | Tutorial disabled, modal open, build placement owns input, cutscene/assistant takeover. |
+| `SELECT` | Current mode supports explicit tap/drag selection. Remains enabled after direct unit selection unless blocked by mission/modal state. | Tutorial disabled, modal open, build placement owns input, cutscene/assistant takeover. |
 
 Disabled controls must remain neutral and must not fire hidden gameplay effects.
 
@@ -192,9 +215,13 @@ Required bridge calls:
 | Enter move targeting | `ApplyCommandMode(TacticalCommandMode.Move)` |
 | Enter attack targeting | `ApplyCommandMode(TacticalCommandMode.Attack)` |
 | Enter selection mode | Clear active command mode; selection-mode feedback is owned by the HUD controller. |
+| Enter scan targeting | `ApplyCommandMode(TacticalCommandMode.Scan)` or equivalent typed mode. |
+| Enter support targeting | `ApplyCommandMode(TacticalCommandMode.Support)` or equivalent typed mode. |
 | Invalid command due no selection | `ApplyCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection))` |
 | Invalid enemy target | `ApplyCommandResult(...TargetNotEnemy or TargetNotAttackable)` |
 | Invalid ground target | `ApplyCommandResult(...TargetBlocked, TargetOutOfBounds, or TargetUnreachable)` |
+| Invalid scan target/state | `ApplyCommandResult(...MissionDoesNotAllowScan, ScanUnavailable, TargetOutOfBounds, InsufficientResources, or AbilityOnCooldown)` |
+| Invalid support target/state | `ApplyCommandResult(...MissionDoesNotAllowSupport, SupportUnavailable, TargetOutOfBounds, InsufficientResources, or AbilityOnCooldown)` |
 
 ## Implementation Ownership
 
@@ -202,7 +229,7 @@ Required bridge calls:
 |---|---|
 | Read touch/mouse pointer | `GamePointerInput` |
 | Track pointer press, drag, UI suppression, queued move | `RtsSelectionInputSystem` |
-| Decide world selection, move, attack, hold, stop | `RTSSelectionSystem` and command-specific systems |
+| Decide world selection, move, attack, hold, stop, scan, support targeting | `RTSSelectionSystem` and command-specific systems |
 | Store focused/selected ECS refs | `SelectionStateSystem` |
 | Build selected display name/status/read model | `SelectionUiQuerySystem` |
 | Update match HUD selected panel and command feedback | `BattleHudGameplayBridge` |
@@ -221,9 +248,11 @@ At minimum, implementation or review should prove:
 - Tap enemy with no selection returns `NoSelection` and does not select enemy.
 - Enabled `SELECT` enters `SelectionModeActive`.
 - Disabled `SELECT` does nothing and cannot leak a world command.
-- `SELECT` cancels active `MOVE` or `ATTACK` targeting before entering selection mode.
+- `SELECT` cancels active `MOVE`, `ATTACK`, `SCAN`, or `SUPPORT` targeting before entering selection mode.
 - Drag in selection mode selects all eligible friendly units in the rectangle.
 - Empty drag/tap in selection mode exits without issuing move.
+- Empty tap in selection mode preserves the previous selection and does not deselect.
+- There is no required dedicated `Deselect` HUD button in the current target; any future clear-selection affordance calls `ClearSelection()` and suppresses world input.
 - UI clicks never fall through to world commands.
 - M01 keeps `SELECT` disabled/neutral if the mission scope requires it, while direct squad/world selection remains available.
 
@@ -239,6 +268,18 @@ The `SELECT` HUD button is:
 
 ```text
 Enter explicit selection mode -> next tap/drag on battlefield chooses units -> mode exits.
+```
+
+After direct unit selection:
+
+```text
+SELECT remains visible/selectable unless mission/modal state disables it. It is an optional precision-selection mode, not a prerequisite for normal tapping.
+```
+
+Clear selection:
+
+```text
+No dedicated Deselect button is required in the current HUD. Selection stays until replaced, cleared by back/cancel route, invalidated by gameplay, or reset by mission/modal/result flow.
 ```
 
 In M01:

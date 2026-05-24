@@ -9,7 +9,6 @@ using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntr
 using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
 using FactionResourceEconomySnapshot = FactionResourceSystem.FactionResourceEconomySnapshot;
 using FactionUnitProductionResult = BuildingProductionRequestSystem.FactionUnitProductionResult;
-using FactionUnitProductionResultCode = BuildingProductionRequestSystem.FactionUnitProductionResultCode;
 using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 using ProducedUnitUiEntry = BuildingUiQuerySystem.ProducedUnitUiEntry;
@@ -397,39 +396,11 @@ public sealed class BuildingPlacementSystem
 
     internal bool TryQueueFactionUnitProduction(byte factionId, string unitId, out FactionUnitProductionResult result)
     {
-        result = default;
-        if (!TryGetConfiguredUnit(unitId, out ConfiguredUnitEntry unit) || unit.Prefab == null || !unit.CanRequest)
-        {
-            result = new FactionUnitProductionResult(FactionUnitProductionResultCode.MissingUnitConfig, string.Empty, unitId, 0, 0, 0);
-            return false;
-        }
-
-        if (!TryFindFirstFactionProducerBuilding(factionId, unit.Prefab, out int producerBuildingId, out int productionIndex, out string producerDisplayName))
-        {
-            result = new FactionUnitProductionResult(FactionUnitProductionResultCode.MissingProducerBuilding, string.Empty, unit.DisplayName, unit.Price, 0, CountRuntimeProducedUnitsForFaction(factionId, unitId));
-            return false;
-        }
-
-        if (!_runtimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) || producerBuilding == null)
-        {
-            result = new FactionUnitProductionResult(FactionUnitProductionResultCode.ProducerUnavailable, producerDisplayName, unit.DisplayName, unit.Price, 0, CountRuntimeProducedUnitsForFaction(factionId, unitId));
-            return false;
-        }
-
-        if (!QueuePlayerUnitProduction(producerBuilding, productionIndex, unit.Prefab))
-        {
-            result = new FactionUnitProductionResult(FactionUnitProductionResultCode.ProducerUnavailable, producerDisplayName, unit.DisplayName, unit.Price, CountPendingProductionsForFaction(factionId, unitId), CountRuntimeProducedUnitsForFaction(factionId, unitId));
-            return false;
-        }
-
-        result = new FactionUnitProductionResult(
-            FactionUnitProductionResultCode.Queued,
-            producerDisplayName,
-            unit.DisplayName,
-            unit.Price,
-            CountPendingProductionsForFaction(factionId, unitId),
-            CountRuntimeProducedUnitsForFaction(factionId, unitId));
-        return true;
+        return _buildingProductionRequestSystem.TryQueueFactionUnitProduction(
+            CreateBuildingProductionRequestContext(),
+            factionId,
+            unitId,
+            out result);
     }
 
     public void GetRuntimeHouseBuildingIds(List<int> results)
@@ -2276,42 +2247,6 @@ public sealed class BuildingPlacementSystem
             worldRotation);
     }
 
-    private bool TryFindFirstFactionProducerBuilding(byte factionId, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
-    {
-        buildingId = 0;
-        productionIndex = -1;
-        buildingDisplayName = string.Empty;
-        if (unitPrefab == null)
-            return false;
-
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building?.Definition == null || building.IsDestroyed)
-                continue;
-            if (building.IsCityGenerated)
-                continue;
-            if (!building.HasOwnerFaction || building.OwnerFactionId != factionId)
-                continue;
-
-            int productionCount = BuildingDefinitionSystem.GetProductionCount(building.Definition);
-            for (int i = 0; i < productionCount; i++)
-            {
-                if (BuildingDefinitionSystem.GetProductionPrefab(building.Definition, i) != unitPrefab)
-                    continue;
-                if (!CanQueueUnitFromBuilding(building, unitPrefab, false))
-                    continue;
-
-                buildingId = pair.Key;
-                productionIndex = i;
-                buildingDisplayName = building.Definition.DisplayName ?? string.Empty;
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private void ProcessPendingProductions()
     {
         _buildingProductionUpdateSystem.UpdatePendingProductions(
@@ -2378,7 +2313,9 @@ public sealed class BuildingPlacementSystem
             position => _selectionSystem?.SmoothMoveCameraGroundCenterTo(position),
             ResolveBuildingFocusWorldPosition,
             GameRuntimeStats.RecordUnitOrdered,
-            Debug.LogWarning);
+            Debug.LogWarning,
+            CountPendingProductionsForFaction,
+            CountRuntimeProducedUnitsForFaction);
     }
 
     private bool QueuePlayerUnitProduction(RuntimeBuildingData building, int productionIndex, GameObject spawnUnitPrefab)

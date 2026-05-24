@@ -53,6 +53,7 @@ internal sealed class BuildingProductionRequestSystem
     public delegate Vector3 ResolveBuildingFocusWorldPositionDelegate(RuntimeBuildingData building);
     public delegate void RecordUnitOrderedDelegate(GameObject prefab);
     public delegate void LogWarningDelegate(string message);
+    public delegate int CountFactionUnitsDelegate(byte factionId, string unitId);
 
     public readonly struct Context
     {
@@ -80,6 +81,8 @@ internal sealed class BuildingProductionRequestSystem
         public readonly ResolveBuildingFocusWorldPositionDelegate ResolveBuildingFocusWorldPosition;
         public readonly RecordUnitOrderedDelegate RecordUnitOrdered;
         public readonly LogWarningDelegate LogWarning;
+        public readonly CountFactionUnitsDelegate CountPendingProductionsForFaction;
+        public readonly CountFactionUnitsDelegate CountRuntimeProducedUnitsForFaction;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -105,7 +108,9 @@ internal sealed class BuildingProductionRequestSystem
             CameraFocusAction smoothMoveCameraGroundCenterTo,
             ResolveBuildingFocusWorldPositionDelegate resolveBuildingFocusWorldPosition,
             RecordUnitOrderedDelegate recordUnitOrdered,
-            LogWarningDelegate logWarning)
+            LogWarningDelegate logWarning,
+            CountFactionUnitsDelegate countPendingProductionsForFaction,
+            CountFactionUnitsDelegate countRuntimeProducedUnitsForFaction)
         {
             RuntimeBuildings = runtimeBuildings;
             ConfiguredSpawnableDefinitions = configuredSpawnableDefinitions;
@@ -131,6 +136,8 @@ internal sealed class BuildingProductionRequestSystem
             ResolveBuildingFocusWorldPosition = resolveBuildingFocusWorldPosition;
             RecordUnitOrdered = recordUnitOrdered;
             LogWarning = logWarning;
+            CountPendingProductionsForFaction = countPendingProductionsForFaction;
+            CountRuntimeProducedUnitsForFaction = countRuntimeProducedUnitsForFaction;
         }
     }
 
@@ -345,6 +352,67 @@ internal sealed class BuildingProductionRequestSystem
         return true;
     }
 
+    public bool TryQueueFactionUnitProduction(Context context, byte factionId, string unitId, out FactionUnitProductionResult result)
+    {
+        result = default;
+        if (!TryResolveConfiguredUnit(context, unitId, out GameObject unitPrefab, out string unitDisplayName, out int unitPrice, out bool canRequest) ||
+            unitPrefab == null ||
+            !canRequest)
+        {
+            result = new FactionUnitProductionResult(FactionUnitProductionResultCode.MissingUnitConfig, string.Empty, unitId, 0, 0, 0);
+            return false;
+        }
+
+        int cost = Mathf.Max(0, unitPrice);
+        if (!TryFindFirstFactionProducerBuilding(context, factionId, unitPrefab, out int producerBuildingId, out int productionIndex, out string producerDisplayName))
+        {
+            result = new FactionUnitProductionResult(
+                FactionUnitProductionResultCode.MissingProducerBuilding,
+                string.Empty,
+                unitDisplayName,
+                cost,
+                0,
+                CountRuntimeProducedUnitsForFaction(context, factionId, unitId));
+            return false;
+        }
+
+        if (context.RuntimeBuildings == null ||
+            !context.RuntimeBuildings.TryGetValue(producerBuildingId, out RuntimeBuildingData producerBuilding) ||
+            producerBuilding == null)
+        {
+            result = new FactionUnitProductionResult(
+                FactionUnitProductionResultCode.ProducerUnavailable,
+                producerDisplayName,
+                unitDisplayName,
+                cost,
+                0,
+                CountRuntimeProducedUnitsForFaction(context, factionId, unitId));
+            return false;
+        }
+
+        if (context.TryQueuePlayerUnit == null ||
+            !context.TryQueuePlayerUnit(producerBuilding, productionIndex, unitPrefab))
+        {
+            result = new FactionUnitProductionResult(
+                FactionUnitProductionResultCode.ProducerUnavailable,
+                producerDisplayName,
+                unitDisplayName,
+                cost,
+                CountPendingProductionsForFaction(context, factionId, unitId),
+                CountRuntimeProducedUnitsForFaction(context, factionId, unitId));
+            return false;
+        }
+
+        result = new FactionUnitProductionResult(
+            FactionUnitProductionResultCode.Queued,
+            producerDisplayName,
+            unitDisplayName,
+            cost,
+            CountPendingProductionsForFaction(context, factionId, unitId),
+            CountRuntimeProducedUnitsForFaction(context, factionId, unitId));
+        return true;
+    }
+
     public bool TryFindFirstFriendlyProducerBuilding(Context context, GameObject unitPrefab, out int buildingId, out int productionIndex, out string buildingDisplayName)
     {
         buildingId = 0;
@@ -415,6 +483,20 @@ internal sealed class BuildingProductionRequestSystem
         }
 
         return false;
+    }
+
+    private static int CountPendingProductionsForFaction(Context context, byte factionId, string unitId)
+    {
+        return context.CountPendingProductionsForFaction != null
+            ? context.CountPendingProductionsForFaction(factionId, unitId)
+            : 0;
+    }
+
+    private static int CountRuntimeProducedUnitsForFaction(Context context, byte factionId, string unitId)
+    {
+        return context.CountRuntimeProducedUnitsForFaction != null
+            ? context.CountRuntimeProducedUnitsForFaction(factionId, unitId)
+            : 0;
     }
 
     private static bool TryResolveConfiguredUnit(

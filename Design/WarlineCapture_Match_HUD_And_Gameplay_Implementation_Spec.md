@@ -33,7 +33,7 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 2. Canvas UI may request actions, but gameplay systems own gameplay state.
 3. Gameplay systems must update the HUD through typed bridge/controller calls, not by writing directly to child object paths.
 4. UI clicks must never leak into world clicks.
-5. Disabled visible buttons must not mutate state and must expose a explicit disabled reason when the player can interact with them.
+5. Disabled visible buttons must not mutate state and must expose an explicit disabled reason when the player can interact with them.
 6. Match HUD art must be separated into background/chrome, icons, text, fills, meters, and markers. No gameplay text, progress, lock icon, star, health bar, or state icon may be baked into static panel art.
 7. Production match presentation is full 3D single-map RTS. Do not add 2.5D/isometric-only assumptions to match behavior.
 
@@ -59,7 +59,7 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 | `LoadingMatch` | Match scene/session loading. | Show loading/progress outside SCN-08 or blocked HUD shell. | Runtime ready. |
 | `IntroFTUE` | Tutorial or intro overlay owns attention. | HUD visible only as instructed by FTUE; non-target controls disabled or blocked. | FTUE step complete/cancel. |
 | `NoSelection` | No controllable unit selected. | Selected panel hidden; direct move/attack disabled or reject `NoSelection`; objective/minimap/pause remain available. | Tap friendly unit/card or explicit select mode. |
-| `Selected` | One or more controllable units selected. | Selected panel visible; command buttons enable by capability. | Deselect, new selection, death, mission end. |
+| `Selected` | One or more controllable units selected. | Selected panel visible; command buttons enable by capability. | Clear-selection route, new selection, death, mission end. |
 | `SelectionModeActive` | HUD awaits tap/drag selection. | `SELECT` active feedback; move/attack targeting cleared; world tap/drag selects. | Valid selection, empty tap, cancel. |
 | `MoveTargeting` | HUD awaits valid move target. | Move banner/marker preview visible; attack/build targeting cleared. | Valid target, cancel, another command, `SELECT`. |
 | `AttackTargeting` | HUD awaits valid enemy target. | Attack banner/target highlight visible; move/build targeting cleared. | Valid target, cancel, another command, `SELECT`. |
@@ -119,7 +119,7 @@ Names may be nested for layout, but public ids must remain discoverable through 
 | `WorldCommandMarkerLayer` | Render selection rings, move markers, attack markers, path previews, objective highlights. | selection state, move/attack orders, objective/threat anchors. | No direct UI input unless a marker is explicitly interactive. | Hidden when no markers exist or modal blocks world. | Markers are separate layers, never baked into world art. |
 | `SelectedEntityPanel` | Show selected unit/group details. | selection read model: name, status, health, ability state, order state. | Tap/long-press may open unit detail/command wheel if route supports it. | Hidden in `NoSelection`; visible in `Selected`. | Calls `ApplySelection` / `ClearSelection`. |
 | `CommandModeBanner` | Show active targeting/command mode. | `TacticalCommandMode`. | Tap cancel/back exits mode if a cancel affordance exists. | Visible only during active explicit command/selection/build/scan/support/special modes. | Text must match mode: move, attack, hold, stop, build, scan, support, special, select. |
-| `InvalidCommandToast` | Explain rejected commands. | `TacticalCommandResult` and reason code. | Non-blocking; may auto-dismiss. | Visible only after rejected command or disabled button explanation. | Deterministic reason text; no vague errors. |
+| `InvalidCommandToast` | Explain rejected commands. | `TacticalCommandResult` and reason code. | Non-blocking; may auto-dismiss. | Visible only after rejected command or disabled button explanation. | Canonical reason text; no vague errors. |
 
 ## Squad Tray Four Quick-Select Cards
 

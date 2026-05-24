@@ -40,6 +40,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementQuerySystem _buildingPlacementQuerySystem = new();
     private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
     private readonly BuildingUiCommandSystem _buildingUiCommandSystem = new();
+    private readonly BuildingUiContextSystem _buildingUiContextSystem = new();
     private readonly BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem = new();
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
     private readonly BuildingPlacementValidationSystem _buildingPlacementValidationSystem = new();
@@ -225,12 +226,6 @@ public sealed class BuildingPlacementSystem
     {
         return _runtimeGridBlockerSystem != null &&
             _runtimeGridBlockerSystem.IsRuntimeBlockerCell(x, y, width, height);
-    }
-
-    public void GetResourceTotals(out int dollars, out int oilBarrels, out int fuelBarrels)
-    {
-        dollars = _runtimeResourceSystem.CurrentDollars;
-        _factionResourceSystem.GetResourceTotals(_runtimeBuildingSystem.Buildings, out oilBarrels, out fuelBarrels);
     }
 
     public void GetRuntimeHouseBuildingIds(List<int> results)
@@ -1822,30 +1817,23 @@ public sealed class BuildingPlacementSystem
 
     internal BuildingUiCommandSystem.Context CreateBuildingUiCommandContext()
     {
-        return new BuildingUiCommandSystem.Context(
-            () => _runtimeResourceSystem.CurrentDollars,
-            () => _buildingDefinitionSystem.ConfiguredSpawnableCount,
-            _buildingDefinitionSystem.TryGetConfiguredSpawnable,
-            () => _buildingDefinitionSystem.ConfiguredUnitCount,
-            _buildingDefinitionSystem.TryGetConfiguredUnit,
-            _buildingDefinitionSystem.IsConfiguredSpawnablePrefab,
-            GetCampRequestFailure,
-            TryRequestCampItem,
-            DeleteSelectedBuilding,
-            ConfirmBuildingPlacement,
-            CancelBuildingPlacement,
-            FocusLastCampProductionRequest,
-            ClearSelectedBuilding,
-            ExitBuildMode);
+        return _buildingUiContextSystem.CreateCommandContext(CreateBuildingUiContextSource());
     }
 
     internal BuildingUiQuerySystem.Context CreateBuildingUiQueryContext()
     {
-        return new BuildingUiQuerySystem.Context(
-            _runtimeBuildingSystem.Buildings,
+        return _buildingUiContextSystem.CreateQueryContext(CreateBuildingUiContextSource());
+    }
+
+    private BuildingUiContextSystem.Source CreateBuildingUiContextSource()
+    {
+        return new BuildingUiContextSystem.Source(
+            _runtimeResourceSystem,
+            _buildingDefinitionSystem,
+            _runtimeBuildingSystem,
+            _buildingProductionSystem,
             () => ActiveBuildingId,
             TryGetEntityManager,
-            _buildingProductionSystem,
             () => Time.time,
             () => HasActiveBuilding,
             () => SelectedBuildingDisplayName,
@@ -1855,7 +1843,15 @@ public sealed class BuildingPlacementSystem
             IsRuntimeBuildingCityGenerated,
             TryGetRuntimeBuildingOwnerFaction,
             HasVisibleSelectableBuilding,
-            TryResolveLiveUnitPreviewPrefab);
+            TryResolveLiveUnitPreviewPrefab,
+            GetCampRequestFailure,
+            TryRequestCampItem,
+            DeleteSelectedBuilding,
+            ConfirmBuildingPlacement,
+            CancelBuildingPlacement,
+            FocusLastCampProductionRequest,
+            ClearSelectedBuilding,
+            ExitBuildMode);
     }
 
     internal BuildingPlacementInteractionSystem.Context CreateBuildingPlacementInteractionContext()

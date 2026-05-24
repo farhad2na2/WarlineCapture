@@ -8,8 +8,8 @@ Lane: Gameplay
 `BuildingPlacementSystem` is not deletable yet. It no longer owns the main managed runtime `Update()` entry point, and `GameBootstrap` / `ManagedGameplayStartupSystem` no longer carry it directly. It still exists as a temporary managed composition shell under `BuildingGameplayCompositionSystem`.
 
 Current measured size:
-- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 2071 lines.
-- Public/internal facade declarations: 125, excluding the class declaration.
+- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 2067 lines.
+- Public/internal facade declarations: 124, excluding the class declaration.
 
 ## Allowed Production Facade References
 
@@ -51,6 +51,7 @@ The facade still owns or exposes these migration debts:
 - Active placement begin/cancel/confirm/exit command flow and selection-preservation state now live in `BuildingPlacementSessionSystem`; the facade still exposes temporary compatibility methods and placement session context assembly.
 - Runtime/manual building and wall spawn command translation now lives in `BuildingRuntimeSpawnCommandSystem`; the facade still exposes temporary compatibility methods for legacy tests and callers.
 - Placement lifecycle, input, validation, and commit context construction now lives in `BuildingPlacementContextSystem`; the facade still exposes a temporary placement context source bundle.
+- UI command/query context construction now lives in `BuildingUiContextSystem`; the facade still exposes temporary UI context source callbacks.
 - Selection, building query, combat/breach, resource, and UI command/query compatibility wrappers.
 - Test-only runtime tick and runtime building validation hooks.
 
@@ -58,7 +59,7 @@ The facade still owns or exposes these migration debts:
 
 1. Move remaining internal runtime registry context usage out of the facade as each context factory migrates.
 2. Move remaining config object application out of the facade into managed composition and narrow systems.
-3. Move UI command/query compatibility wrappers out of the facade.
+3. Move remaining UI command/query compatibility wrappers out of the facade.
 4. Move selection and interaction compatibility wrappers out of the facade.
 5. Replace `BuildingGameplayCompositionSystem` construction so it no longer calls `new BuildingPlacementSystem()`.
 6. Migrate remaining editor validation tests to a narrow building gameplay harness.
@@ -68,8 +69,8 @@ The facade still owns or exposes these migration debts:
 ## Drift Guard
 
 Until deletion:
-- `BuildingPlacementSystem.cs` must not grow beyond 2071 lines.
-- Public/internal facade declarations must not exceed 125.
+- `BuildingPlacementSystem.cs` must not grow beyond 2067 lines.
+- Public/internal facade declarations must not exceed 124.
 - Production facade references must remain inside the two allowed files above.
 - Production construction must remain isolated to `BuildingGameplayCompositionSystem`.
 - New building behavior must extend an owning `*System` slice, not the facade.

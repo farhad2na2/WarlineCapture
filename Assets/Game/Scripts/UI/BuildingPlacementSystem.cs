@@ -33,6 +33,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingProductionUpdateSystem _buildingProductionUpdateSystem = new();
     private readonly BuildingProductionTransportSystem _buildingProductionTransportSystem = new();
     private readonly BuildingProductionTransportBridgeSystem _buildingProductionTransportBridgeSystem = new();
+    private readonly BuildingProductionContextSystem _buildingProductionContextSystem = new();
     private readonly BuildingSpawnSystem _buildingSpawnSystem = new();
     private readonly BuildingSpawnPrefabSystem _buildingSpawnPrefabSystem = new();
     private readonly BuildingProductionSlotSystem _buildingProductionSlotSystem = new();
@@ -126,6 +127,7 @@ public sealed class BuildingPlacementSystem
     internal DayNightSystem DayNightSystem => _dayNightSystem;
     internal FactionResourceSystem FactionResourceSystem => _factionResourceSystem;
     internal BuildingProductionUpdateSystem ProductionUpdateSystem => _buildingProductionUpdateSystem;
+    internal BuildingProductionContextSystem ProductionContextSystem => _buildingProductionContextSystem;
     internal BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem => _buildingResourceHaulerBridgeSystem;
     internal BuildingSpawnSystem BuildingSpawnSystem => _buildingSpawnSystem;
     internal BuildingRuntimeBoundarySystem RuntimeBoundarySystem => _buildingRuntimeBoundarySystem;
@@ -700,7 +702,7 @@ public sealed class BuildingPlacementSystem
     private bool IsHaulerAtBuildingApproach(int2 currentCell, int2 footprintSize, RuntimeBuildingData building, GridConfig grid)
     {
         return _buildingResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell(
-            CreateBuildingResourceHaulerBridgeContext(),
+            _buildingProductionContextSystem.CreateResourceHaulerBridgeContext(CreateBuildingProductionContextSource()),
             building,
             currentCell,
             footprintSize);
@@ -831,7 +833,7 @@ public sealed class BuildingPlacementSystem
     public void CreateUnitFromBuilding(int buildingId, int productionIndex)
     {
         _buildingProductionRequestSystem.CreateUnitFromBuilding(
-            CreateBuildingProductionRequestContext(),
+            _buildingProductionContextSystem.CreateProductionRequestContext(CreateBuildingProductionContextSource()),
             buildingId,
             productionIndex,
             Time.frameCount);
@@ -840,7 +842,7 @@ public sealed class BuildingPlacementSystem
     private CampRequestFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
     {
         return _buildingProductionRequestSystem.GetCampRequestFailure(
-            CreateBuildingProductionRequestContext(),
+            _buildingProductionContextSystem.CreateProductionRequestContext(CreateBuildingProductionContextSource()),
             prefab,
             price,
             out requiredBuildingDisplayName);
@@ -849,7 +851,7 @@ public sealed class BuildingPlacementSystem
     private CampRequestFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
     {
         return _buildingProductionRequestSystem.TryRequestCampItem(
-            CreateBuildingProductionRequestContext(),
+            _buildingProductionContextSystem.CreateProductionRequestContext(CreateBuildingProductionContextSource()),
             prefab,
             price,
             focusProducerOnSuccess,
@@ -859,7 +861,7 @@ public sealed class BuildingPlacementSystem
 
     private void FocusLastCampProductionRequest()
     {
-        _buildingProductionRequestSystem.FocusLastCampProductionRequest(CreateBuildingProductionRequestContext());
+        _buildingProductionRequestSystem.FocusLastCampProductionRequest(_buildingProductionContextSystem.CreateProductionRequestContext(CreateBuildingProductionContextSource()));
     }
 
     public void ArmNextProductionFromUi()
@@ -895,7 +897,7 @@ public sealed class BuildingPlacementSystem
     public bool CanCreateUnitFromSelectedBuilding(int productionIndex)
     {
         return _buildingProductionRequestSystem.CanCreateUnitFromSelectedBuilding(
-            CreateBuildingProductionRequestContext(),
+            _buildingProductionContextSystem.CreateProductionRequestContext(CreateBuildingProductionContextSource()),
             ActiveBuildingId,
             productionIndex);
     }
@@ -903,7 +905,7 @@ public sealed class BuildingPlacementSystem
     private bool CanQueueUnitFromBuilding(RuntimeBuildingData building, GameObject spawnUnitPrefab, bool logReason)
     {
         return _buildingProductionRequestSystem.CanQueueUnitFromBuilding(
-            CreateBuildingProductionRequestContext(),
+            _buildingProductionContextSystem.CreateProductionRequestContext(CreateBuildingProductionContextSource()),
             building,
             spawnUnitPrefab,
             logReason);
@@ -1553,7 +1555,7 @@ public sealed class BuildingPlacementSystem
     private bool TryAssignSelectedHaulerOrders(int clickedBuildingId)
     {
         return _buildingResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders(
-            CreateBuildingResourceHaulerBridgeContext(),
+            _buildingProductionContextSystem.CreateResourceHaulerBridgeContext(CreateBuildingProductionContextSource()),
             clickedBuildingId);
     }
 
@@ -1756,51 +1758,22 @@ public sealed class BuildingPlacementSystem
             worldRotation);
     }
 
-    internal BuildingProductionUpdateSystem.Context CreateBuildingProductionUpdateContext()
+    internal BuildingProductionContextSystem.Source CreateBuildingProductionContextSource()
     {
-        return new BuildingProductionUpdateSystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            _buildingProductionSystem,
-            _buildingProductionTransportSystem,
-            CreateProductionTransportContext());
-    }
-
-    private BuildingProductionTransportSystem.Context CreateProductionTransportContext()
-    {
-        return new BuildingProductionTransportSystem.Context(
+        return new BuildingProductionContextSystem.Source(
             _runtimeBuildingSystem.Buildings,
             worldCamera,
+            _buildingDefinitionSystem,
             _buildingProductionSystem,
-            _buildingVisualSystem,
-            _buildingRunwaySystem,
+            _buildingProductionUpdateSystem,
+            _buildingProductionTransportSystem,
             _buildingProductionTransportBridgeSystem,
-            CreateBuildingProductionTransportBridgeContext());
-    }
-
-    private BuildingProductionTransportBridgeSystem.Context CreateBuildingProductionTransportBridgeContext()
-    {
-        return new BuildingProductionTransportBridgeSystem.Context(
-            TryGetEntityManager,
-            TryGetGridData,
-            EnsureEntityQueries,
-            _buildingSpawnSystem,
-            CreateBuildingSpawnContext());
-    }
-
-    internal BuildingProductionRequestSystem.Context CreateBuildingProductionRequestContext()
-    {
-        return new BuildingProductionRequestSystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            _buildingDefinitionSystem.ConfiguredSpawnableDefinitions,
-            _buildingDefinitionSystem.ConfiguredDefinitionsByPrefab,
-            _buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs,
-            _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
-            _runtimeResourceSystem.CurrentDollars,
-            _buildingProductionSystem,
-            CreateBuildingProductionQueueContext(),
+            _buildingProductionSlotSystem,
             _buildingRunwaySystem,
-            BuildingDefinitionSystem.GetProductionPrefab,
-            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
+            _buildingVisualSystem,
+            _buildingSpawnSystem,
+            CreateBuildingSpawnContext(),
+            _runtimeResourceSystem.CurrentDollars,
             BeginPlacementForConfiguredSpawnable,
             TrySpendDollars,
             _runtimeResourceSystem.AddDollars,
@@ -1815,7 +1788,16 @@ public sealed class BuildingPlacementSystem
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning,
             ResolvePendingProductionCountForFaction,
-            ResolveRuntimeProducedUnitCountForFaction);
+            ResolveRuntimeProducedUnitCountForFaction,
+            _resourceHaulerSystem,
+            _factionResourceSystem,
+            TryGetEntityManager,
+            TryGetGridData,
+            EnsureEntityQueries,
+            () => _haulerUnitsQuery,
+            () => _selectedUnitsQuery,
+            TryGetRuntimeBuilding,
+            (building, grid) => GetEffectivePlacementRect(building.Definition, building.OriginCell, grid));
     }
 
     private int ResolvePendingProductionCountForFaction(byte factionId, string unitId)
@@ -1834,22 +1816,12 @@ public sealed class BuildingPlacementSystem
             return false;
 
         return _buildingProductionSystem.TryQueuePlayerUnitFromBuilding(
-            CreateBuildingProductionQueueContext(),
+            _buildingProductionContextSystem.CreateProductionQueueContext(CreateBuildingProductionContextSource()),
             building,
             productionIndex,
             spawnUnitPrefab,
             em,
             Time.time);
-    }
-
-    private BuildingProductionSystem.QueueContext CreateBuildingProductionQueueContext()
-    {
-        return new BuildingProductionSystem.QueueContext(
-            _buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs,
-            _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
-            _buildingProductionSlotSystem,
-            BuildingDefinitionSystem.TryGetPrefabLocalBounds,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
     private BuildingSpawnSystem.Context CreateBuildingSpawnContext()
@@ -2007,22 +1979,6 @@ public sealed class BuildingPlacementSystem
             () => _redirectUnitsQuery);
     }
 
-    internal BuildingResourceHaulerBridgeSystem.Context CreateBuildingResourceHaulerBridgeContext()
-    {
-        return new BuildingResourceHaulerBridgeSystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            _resourceHaulerSystem,
-            _factionResourceSystem,
-            TryGetEntityManager,
-            TryGetGridData,
-            EnsureEntityQueries,
-            () => _haulerUnitsQuery,
-            () => _selectedUnitsQuery,
-            TryGetRuntimeBuilding,
-            ResolveBuildingFocusWorldPosition,
-            (building, grid) => GetEffectivePlacementRect(building.Definition, building.OriginCell, grid));
-    }
-
     private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()
     {
         return new BuildingSpawnPrefabSystem.Context(
@@ -2077,7 +2033,7 @@ public sealed class BuildingPlacementSystem
     private bool TryGetRuntimeBuildingApproachCell(RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal)
     {
         return _buildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell(
-            CreateBuildingResourceHaulerBridgeContext(),
+            _buildingProductionContextSystem.CreateResourceHaulerBridgeContext(CreateBuildingProductionContextSource()),
             building,
             unitFootprint,
             referenceCell,

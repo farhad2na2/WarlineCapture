@@ -8,7 +8,8 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 {
     private static readonly HashSet<RuntimeBuildingEntityLink> ActiveLinks = new();
 
-    private BuildingPlacementSystem _buildingPlacementController;
+    private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
+    private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private RoadBuildSystem _roadBuildController;
     private int _buildingId;
     private Entity _entity;
@@ -34,9 +35,15 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
         ActiveLinks.Remove(this);
     }
 
-    public void Configure(BuildingPlacementSystem controller, int buildingId, Entity entity, Entity blockerEntity)
+    public void Configure(
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        int buildingId,
+        Entity entity,
+        Entity blockerEntity)
     {
-        _buildingPlacementController = controller;
+        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
         _roadBuildController = null;
         _buildingId = buildingId;
         _entity = entity != Entity.Null ? entity : blockerEntity;
@@ -47,7 +54,8 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 
     public void Configure(RoadBuildSystem controller, int buildingId, Entity entity, Entity blockerEntity)
     {
-        _buildingPlacementController = null;
+        _buildingPlacementInteractionSystem = null;
+        _buildingPlacementInteractionContext = default;
         _roadBuildController = controller;
         _buildingId = buildingId;
         _entity = entity != Entity.Null ? entity : blockerEntity;
@@ -68,7 +76,11 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
         var em = world.EntityManager;
         if (!em.Exists(_entity))
         {
-            _buildingPlacementController?.HandleRuntimeBuildingEntityDestroyed(_buildingId, _blockerEntity, gameObject);
+            _buildingPlacementInteractionSystem?.HandleRuntimeBuildingEntityDestroyed(
+                _buildingPlacementInteractionContext,
+                _buildingId,
+                _blockerEntity,
+                gameObject);
             _roadBuildController?.HandleRuntimeBuildingEntityDestroyed(_buildingId, _blockerEntity, gameObject);
             _configured = false;
             return;

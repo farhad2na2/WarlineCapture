@@ -2295,7 +2295,8 @@ public sealed class BuildingPlacementSystem
     {
         return new BuildingRuntimeCreationSystem.Context(
             _runtimeBuildingSystem,
-            this,
+            _buildingPlacementInteractionSystem,
+            CreateBuildingPlacementInteractionContext(),
             _buildingPlacementRedirectSystem.IsDeferringSideEffects,
             TryGetGridForRuntimeCreation,
             (definition, origin, grid) => GetEffectivePlacementRect(definition, origin, grid),

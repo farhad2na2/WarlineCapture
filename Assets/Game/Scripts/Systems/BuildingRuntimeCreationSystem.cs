@@ -18,7 +18,8 @@ internal sealed class BuildingRuntimeCreationSystem
     public readonly struct Context
     {
         public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
-        public readonly BuildingPlacementSystem RuntimeLinkOwner;
+        public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
+        public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
         public readonly bool DeferSideEffects;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly ResolvePlacementRectDelegate ResolvePlacementRect;
@@ -34,7 +35,8 @@ internal sealed class BuildingRuntimeCreationSystem
 
         public Context(
             RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
-            BuildingPlacementSystem runtimeLinkOwner,
+            BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
+            BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
             bool deferSideEffects,
             TryGetGridDelegate tryGetGrid,
             ResolvePlacementRectDelegate resolvePlacementRect,
@@ -49,7 +51,8 @@ internal sealed class BuildingRuntimeCreationSystem
             RuntimeAction refreshMarkers)
         {
             RuntimeBuildingSystem = runtimeBuildingSystem;
-            RuntimeLinkOwner = runtimeLinkOwner;
+            RuntimeLinkInteractionSystem = runtimeLinkInteractionSystem;
+            RuntimeLinkInteractionContext = runtimeLinkInteractionContext;
             DeferSideEffects = deferSideEffects;
             TryGetGrid = tryGetGrid;
             ResolvePlacementRect = resolvePlacementRect;
@@ -126,7 +129,7 @@ internal sealed class BuildingRuntimeCreationSystem
             building.ProducedUnitSlots = new Entity[building.ProductionSpawnLocalPositions.Length];
 
         context.InitializeVisuals?.Invoke(building);
-        AttachRuntimeLink(context.RuntimeLinkOwner, building);
+        AttachRuntimeLink(context.RuntimeLinkInteractionSystem, context.RuntimeLinkInteractionContext, building);
         context.RuntimeBuildingSystem.AddBuilding(building.Id, building);
 
         if (context.DeferSideEffects)
@@ -137,15 +140,18 @@ internal sealed class BuildingRuntimeCreationSystem
         return building;
     }
 
-    private static void AttachRuntimeLink(BuildingPlacementSystem owner, RuntimeBuildingData building)
+    private static void AttachRuntimeLink(
+        BuildingPlacementInteractionSystem interactionSystem,
+        BuildingPlacementInteractionSystem.Context interactionContext,
+        RuntimeBuildingData building)
     {
-        if (owner == null || building?.Instance == null)
+        if (interactionSystem == null || building?.Instance == null)
             return;
 
         RuntimeBuildingEntityLink link = building.Instance.GetComponent<RuntimeBuildingEntityLink>();
         if (link == null)
             link = building.Instance.AddComponent<RuntimeBuildingEntityLink>();
 
-        link.Configure(owner, building.Id, building.CombatEntity, building.BlockerEntity);
+        link.Configure(interactionSystem, interactionContext, building.Id, building.CombatEntity, building.BlockerEntity);
     }
 }

@@ -70,6 +70,27 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP2_BUILT scene={ScenePath}");
     }
 
+    [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 3")]
+    public static void BuildStep3()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject root = new(RootName);
+
+        CreateEventSystem(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject shellRoot = CreateShellRoot(canvasObject.transform);
+        CreateShellRegions(shellRoot.transform);
+        AddMotionHost(shellRoot);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        if (!EditorSceneManager.SaveScene(scene, ScenePath))
+            throw new InvalidOperationException($"Failed to save GameUI scene at {ScenePath}.");
+
+        AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+        ValidateStep3();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP3_BUILT scene={ScenePath}");
+    }
+
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
     public static void ValidateStep1()
     {
@@ -190,6 +211,41 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP2_VALIDATED scene={ScenePath} regions={RegionDefinitions.Length}");
     }
 
+    [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 3")]
+    public static void ValidateStep3()
+    {
+        ValidateStep2();
+
+        Scene scene = EditorSceneManager.GetActiveScene();
+        Transform shellTransform = scene.GetRootGameObjects()[0].transform.Find($"{CanvasName}/{ShellRootName}");
+        if (shellTransform == null)
+            throw new InvalidOperationException($"{ShellRootName} is missing.");
+
+        WarlineCaptureUiMotionHostView motionHost = shellTransform.GetComponent<WarlineCaptureUiMotionHostView>();
+        if (motionHost == null)
+            throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureUiMotionHostView in Step 3.");
+
+        if (shellTransform.GetComponents<WarlineCaptureUiMotionHostView>().Length != 1)
+            throw new InvalidOperationException($"{ShellRootName} must contain exactly one WarlineCaptureUiMotionHostView.");
+
+        if (motionHost.DefaultDurationSeconds <= 0f)
+            throw new InvalidOperationException("Motion host default duration must be positive.");
+        if (motionHost.DefaultEnterEase != WarlineCaptureUiEase.EaseOutCubic)
+            throw new InvalidOperationException("Motion host default enter ease must be EaseOutCubic.");
+        if (motionHost.DefaultExitEase != WarlineCaptureUiEase.EaseInCubic)
+            throw new InvalidOperationException("Motion host default exit ease must be EaseInCubic.");
+        if (motionHost.DefaultSwapEase != WarlineCaptureUiEase.EaseInOutCubic)
+            throw new InvalidOperationException("Motion host default swap ease must be EaseInOutCubic.");
+
+        ValidateEase(WarlineCaptureUiEase.Linear);
+        ValidateEase(WarlineCaptureUiEase.EaseInCubic);
+        ValidateEase(WarlineCaptureUiEase.EaseOutCubic);
+        ValidateEase(WarlineCaptureUiEase.EaseInOutCubic);
+        ValidateEase(WarlineCaptureUiEase.EaseOutBackSubtle);
+
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP3_VALIDATED scene={ScenePath}");
+    }
+
     private static void CreateEventSystem(Transform parent)
     {
         GameObject eventSystemObject = new(EventSystemName);
@@ -257,6 +313,11 @@ public static class WarlineCaptureGameUiSceneBuilder
         }
     }
 
+    private static void AddMotionHost(GameObject shellRoot)
+    {
+        shellRoot.AddComponent<WarlineCaptureUiMotionHostView>();
+    }
+
     private static Transform RequireChild(Transform parent, string childName)
     {
         Transform child = parent.Find(childName);
@@ -295,6 +356,16 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"{name} must have zero offsets.");
         if (rect.localScale != Vector3.one)
             throw new InvalidOperationException($"{name} must have unit scale.");
+    }
+
+    private static void ValidateEase(WarlineCaptureUiEase ease)
+    {
+        float start = WarlineCaptureUiMotionHostView.EvaluateEase(ease, 0f);
+        float end = WarlineCaptureUiMotionHostView.EvaluateEase(ease, 1f);
+        if (Mathf.Abs(start) > 0.001f)
+            throw new InvalidOperationException($"{ease} must evaluate 0 at progress 0.");
+        if (Mathf.Abs(end - 1f) > 0.001f)
+            throw new InvalidOperationException($"{ease} must evaluate 1 at progress 1.");
     }
 
     private readonly struct ShellRegionDefinition

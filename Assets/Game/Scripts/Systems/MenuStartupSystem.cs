@@ -38,7 +38,7 @@ public sealed class MenuStartupSystem
         try
         {
             var mainMenu = new MainMenuPlayUI();
-            mainMenu.Init(roadBuild, buildingPlacement, selection, dayNight);
+            mainMenu.Init(roadBuild, selection, dayNight);
             BindMenuDependencies(mainMenu, roadBuild, buildingPlacement, selection, dayNight);
             BindSceneUi(sceneBindingSystem, chapter01TacticalBinder, world, selection);
             return mainMenu;

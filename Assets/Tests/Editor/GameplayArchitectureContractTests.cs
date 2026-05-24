@@ -162,6 +162,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`BuildingUiCommandSystem` must not own read-model query delegates or pending-production UI list retrieval", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose public building UI read/query or menu/camp command compatibility wrappers", contract);
         StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
+        StringAssert.Contains("Runtime building entity-link callbacks must route through `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
     }
@@ -1254,6 +1255,9 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string roadFile = "Assets/Game/Scripts/UI/RoadBuildSystem.cs";
         const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
+        const string runtimeLinkFile = "Assets/Game/Scripts/UI/RuntimeBuildingEntityLink.cs";
+        const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
         const string managedStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
         const string featureStartupFile = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
         const string menuStartupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
@@ -1263,6 +1267,9 @@ public sealed class GameplayArchitectureContractTests
         string placement = File.ReadAllText(placementFile);
         string road = File.ReadAllText(roadFile);
         string selection = File.ReadAllText(selectionFile);
+        string runtimeCreation = File.ReadAllText(runtimeCreationFile);
+        string runtimeLink = File.ReadAllText(runtimeLinkFile);
+        string mainMenuPlay = File.ReadAllText(mainMenuPlayFile);
         string managedStartup = File.ReadAllText(managedStartupFile);
         string featureStartup = File.ReadAllText(featureStartupFile);
         string menuStartup = File.ReadAllText(menuStartupFile);
@@ -1275,6 +1282,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("buildingPlacement.BuildingPlacementInteractionSystem", managedStartup);
         StringAssert.Contains("buildingPlacement?.BuildingPlacementInteractionSystem", featureStartup);
         StringAssert.Contains("buildingPlacement?.BuildingPlacementInteractionSystem", menuStartup);
+        StringAssert.Contains("BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem", runtimeCreation);
+        StringAssert.Contains("BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem", runtimeLink);
 
         Assert.IsFalse(
             road.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
@@ -1284,6 +1293,14 @@ public sealed class GameplayArchitectureContractTests
             selection.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
             selection.Contains("_buildingPlacementController", StringComparison.Ordinal),
             "RTSSelectionSystem must use BuildingPlacementInteractionSystem instead of holding or calling BuildingPlacementSystem.");
+        Assert.IsFalse(
+            runtimeCreation.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            runtimeLink.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            runtimeLink.Contains("_buildingPlacementController", StringComparison.Ordinal),
+            "Runtime building links must use BuildingPlacementInteractionSystem instead of holding or calling BuildingPlacementSystem.");
+        Assert.IsFalse(
+            mainMenuPlay.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
+            "MainMenuPlayUI must not accept unused BuildingPlacementSystem dependencies.");
     }
 
     [Test]

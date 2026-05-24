@@ -7,7 +7,6 @@ public sealed class MainMenuPlayUI
 
     public void Init(
         RoadBuildSystem roadBuildController,
-        BuildingPlacementSystem buildingPlacementController,
         RTSSelectionSystem selectionController,
         DayNightSystem dayNightSystem)
     {

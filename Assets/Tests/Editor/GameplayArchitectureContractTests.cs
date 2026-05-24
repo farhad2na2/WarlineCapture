@@ -136,7 +136,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
-        StringAssert.Contains("active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`", contract);
+        StringAssert.Contains("active placement mutable state, active placement cost, and active placement preview handoff belong in `BuildingPlacementLifecycleSystem`", contract);
+        StringAssert.Contains("active placement begin/cancel/confirm/exit command flow and selection-preservation state belong in `BuildingPlacementSessionSystem`", contract);
         StringAssert.Contains("wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, count/dictionary read access, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
@@ -3637,19 +3638,24 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string lifecycleFile = "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleSystem.cs";
+        const string sessionFile = "Assets/Game/Scripts/Systems/BuildingPlacementSessionSystem.cs";
         Assert.IsTrue(File.Exists(lifecycleFile), "The active placement lifecycle slice must live in BuildingPlacementLifecycleSystem.");
+        Assert.IsTrue(File.Exists(sessionFile), "The active placement session command slice must live in BuildingPlacementSessionSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string lifecycle = File.ReadAllText(lifecycleFile);
+        string session = File.ReadAllText(sessionFile);
         StringAssert.Contains("BuildingPlacementLifecycleSystem _buildingPlacementLifecycleSystem", placement);
+        StringAssert.Contains("BuildingPlacementSessionSystem _buildingPlacementSessionSystem", placement);
         StringAssert.Contains("_buildingPlacementLifecycleSystem.HasPendingBuildingPlacement", placement);
         StringAssert.Contains("_buildingPlacementLifecycleSystem.CanConfirmBuildingPlacement", placement);
         StringAssert.Contains("_buildingPlacementLifecycleSystem.ActivePlacement", placement);
-        StringAssert.Contains("_buildingPlacementLifecycleSystem.Begin", placement);
-        StringAssert.Contains("_buildingPlacementLifecycleSystem.Confirm", placement);
-        StringAssert.Contains("_buildingPlacementLifecycleSystem.Cancel", placement);
-        StringAssert.Contains("_buildingPlacementLifecycleSystem.NotifyPlacementUiPointerDown", placement);
-        StringAssert.Contains("_buildingPlacementLifecycleSystem.SetActivePlacementCost", placement);
+        StringAssert.Contains("_buildingPlacementSessionSystem.BeginPlacement", placement);
+        StringAssert.Contains("_buildingPlacementSessionSystem.ConfirmBuildingPlacement", placement);
+        StringAssert.Contains("_buildingPlacementSessionSystem.CancelBuildingPlacement", placement);
+        StringAssert.Contains("_buildingPlacementSessionSystem.ExitBuildMode", placement);
+        StringAssert.Contains("_buildingPlacementSessionSystem.NotifyPlacementUiPointerDown", placement);
+        StringAssert.Contains("_buildingPlacementSessionSystem.SetActivePlacementCost", placement);
         StringAssert.Contains("_buildingPlacementLifecycleSystem.ReleasePreviewOwnership", placement);
 
         StringAssert.Contains("PlacementState : BuildingPlacementInputSystem.IPlacementState", lifecycle);
@@ -3663,6 +3669,13 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Confirm(ConfirmContext context)", lifecycle);
         StringAssert.Contains("ReleasePreviewOwnership", lifecycle);
         StringAssert.Contains("Cancel(CancelContext context)", lifecycle);
+        StringAssert.Contains("BeginPlacement(Context context", session);
+        StringAssert.Contains("ConfirmBuildingPlacement(Context context)", session);
+        StringAssert.Contains("CancelBuildingPlacement(Context context)", session);
+        StringAssert.Contains("ExitBuildMode(Context context", session);
+        StringAssert.Contains("NotifyPlacementUiPointerDown(Context context)", session);
+        StringAssert.Contains("SetActivePlacementCost(Context context", session);
+        StringAssert.Contains("_preserveBuildingSelectionOnNextExitBuildMode", session);
 
         Assert.IsFalse(
             placement.Contains("_activePlacement", StringComparison.Ordinal),
@@ -3679,6 +3692,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bDestroy\s*\(\s*(?:_activePlacement|activePlacement|placement)\.PreviewInstance\s*\)"),
             "Active preview cancellation belongs in BuildingPlacementLifecycleSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("_preserveBuildingSelectionOnNextExitBuildMode", StringComparison.Ordinal),
+            "Active placement selection-preservation state belongs in BuildingPlacementSessionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingPlacementLifecycleSystem\.(?:Begin|Confirm|Cancel|NotifyPlacementUiPointerDown|SetActivePlacementCost)\s*\("),
+            "Active placement command wrappers belong in BuildingPlacementSessionSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -3926,8 +3945,8 @@ public sealed class GameplayArchitectureContractTests
 
         string audit = File.ReadAllText(auditPath);
         StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("2148 lines", audit);
-        StringAssert.Contains("Public/internal facade declarations: 126", audit);
+        StringAssert.Contains("2139 lines", audit);
+        StringAssert.Contains("Public/internal facade declarations: 125", audit);
         StringAssert.Contains("Allowed Production Facade References", audit);
         StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
         StringAssert.Contains("Allowed Test Facade Construction", audit);
@@ -3937,7 +3956,7 @@ public sealed class GameplayArchitectureContractTests
         string[] placementLines = File.ReadAllLines(placementFile);
         Assert.LessOrEqual(
             placementLines.Length,
-            2148,
+            2139,
             "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
 
         int publicOrInternalDeclarationCount = placementLines.Count(line =>
@@ -3945,7 +3964,7 @@ public sealed class GameplayArchitectureContractTests
             !line.Contains("sealed class", StringComparison.Ordinal));
         Assert.LessOrEqual(
             publicOrInternalDeclarationCount,
-            126,
+            125,
             "Do not add public/internal BuildingPlacementSystem surface. Move new behavior to the owning narrow *System.");
     }
 

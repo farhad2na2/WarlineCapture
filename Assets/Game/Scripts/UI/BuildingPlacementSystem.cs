@@ -46,6 +46,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
     private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
     private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
+    private readonly BuildingPlacementSessionSystem _buildingPlacementSessionSystem = new();
     private readonly BuildingProductionRequestSystem _buildingProductionRequestSystem = new();
     private readonly BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem = new();
     private readonly BuildingSelectionSystem _buildingSelectionSystem = new();
@@ -100,7 +101,6 @@ public sealed class BuildingPlacementSystem
     private Transform _runtimeRoot;
     private readonly List<BuildingPlacementPreviewSystem.WallPreviewRun> _wallPreviewRuns = new();
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
-    private bool _preserveBuildingSelectionOnNextExitBuildMode;
     private const float OilBarrelsPerFuelBarrel = 2f;
 
     private int? ActiveBuildingId => _runtimeBuildingSystem.CurrentActiveBuildingId;
@@ -764,21 +764,12 @@ public sealed class BuildingPlacementSystem
 
     public bool ConfirmBuildingPlacement()
     {
-        if (!_buildingPlacementLifecycleSystem.Confirm(CreatePlacementConfirmContext()))
-            return false;
-
-        GameRuntimeStats.RecordBuildingBuilt();
-        _mainMenuPlayUi?.NotifyStaticMinimapChanged();
-        _preserveBuildingSelectionOnNextExitBuildMode = true;
-        ExitBuildMode(clearBuildingSelection: false);
-        return true;
+        return _buildingPlacementSessionSystem.ConfirmBuildingPlacement(CreatePlacementSessionContext());
     }
 
     public void CancelBuildingPlacement()
     {
-        CancelActivePlacement();
-        _runtimeGameplayStateSystem.BuildModeActive = false;
-        BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode();
+        _buildingPlacementSessionSystem.CancelBuildingPlacement(CreatePlacementSessionContext());
     }
 
     public void CreateUnitFromSelectedBuilding()
@@ -942,25 +933,17 @@ public sealed class BuildingPlacementSystem
 
     public void ExitBuildMode()
     {
-        ExitBuildMode(true);
+        _buildingPlacementSessionSystem.ExitBuildMode(CreatePlacementSessionContext());
     }
 
     private void ExitBuildMode(bool clearBuildingSelection)
     {
-        bool shouldClearSelection = clearBuildingSelection && !_preserveBuildingSelectionOnNextExitBuildMode;
-        _runtimeGameplayStateSystem.BuildModeActive = false;
-        _buildingPlacementInputSystem.Reset();
-        CancelActivePlacement();
-        if (shouldClearSelection)
-            ClearSelectedBuilding("ExitBuildMode");
-        _preserveBuildingSelectionOnNextExitBuildMode = false;
-        _buildingPlacementPreviewSystem.HideOutline();
-        BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode();
+        _buildingPlacementSessionSystem.ExitBuildMode(CreatePlacementSessionContext(), clearBuildingSelection);
     }
 
     public void NotifyPlacementUiPointerDown()
     {
-        _buildingPlacementLifecycleSystem.NotifyPlacementUiPointerDown(_buildingPlacementInputSystem);
+        _buildingPlacementSessionSystem.NotifyPlacementUiPointerDown(CreatePlacementSessionContext());
     }
 
     public void HandleRuntimeBuildingEntityDestroyed(int buildingId, Entity blockerEntity, GameObject buildingObject)
@@ -972,17 +955,28 @@ public sealed class BuildingPlacementSystem
             buildingObject);
     }
 
-    private void CancelActivePlacement()
-    {
-        _buildingPlacementLifecycleSystem.Cancel(CreatePlacementCancelContext());
-    }
-
     private BuildingPlacementLifecycleSystem.CancelContext CreatePlacementCancelContext()
     {
         return new BuildingPlacementLifecycleSystem.CancelContext(
             _buildingPlacementInputSystem,
             _buildingPlacementPreviewSystem,
             preview => DestroyRuntimeObject(preview));
+    }
+
+    private BuildingPlacementSessionSystem.Context CreatePlacementSessionContext()
+    {
+        return new BuildingPlacementSessionSystem.Context(
+            _runtimeGameplayStateSystem,
+            _buildingPlacementLifecycleSystem,
+            _buildingPlacementInputSystem,
+            _buildingPlacementPreviewSystem,
+            CreatePlacementCancelContext,
+            CreatePlacementBeginContext,
+            CreatePlacementConfirmContext,
+            GameRuntimeStats.RecordBuildingBuilt,
+            () => _mainMenuPlayUi?.NotifyStaticMinimapChanged(),
+            ClearSelectedBuilding,
+            () => BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode());
     }
 
     private BuildingPlacementLifecycleSystem.BeginContext CreatePlacementBeginContext()
@@ -1041,10 +1035,7 @@ public sealed class BuildingPlacementSystem
 
     private void BeginPlacement(BuildingDefinition definition)
     {
-        if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
-            return;
-
-        _buildingPlacementLifecycleSystem.Begin(definition, CreatePlacementBeginContext());
+        _buildingPlacementSessionSystem.BeginPlacement(CreatePlacementSessionContext(), definition);
     }
 
     private void UpdatePlacement(Vector2 screenPosition)
@@ -1777,7 +1768,7 @@ public sealed class BuildingPlacementSystem
             BeginPlacementForConfiguredSpawnable,
             TrySpendDollars,
             _runtimeResourceSystem.AddDollars,
-            _buildingPlacementLifecycleSystem.SetActivePlacementCost,
+            cost => _buildingPlacementSessionSystem.SetActivePlacementCost(CreatePlacementSessionContext(), cost),
             QueuePlayerUnitProduction,
             buildingId => _runtimeBuildingSystem.SelectBuilding(buildingId),
             () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,

@@ -91,6 +91,28 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP3_BUILT scene={ScenePath}");
     }
 
+    [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 5")]
+    public static void BuildStep5()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject root = new(RootName);
+
+        CreateEventSystem(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject shellRoot = CreateShellRoot(canvasObject.transform);
+        CreateShellRegions(shellRoot.transform);
+        AddMotionHost(shellRoot);
+        AddShellViewAndBridge(shellRoot);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        if (!EditorSceneManager.SaveScene(scene, ScenePath))
+            throw new InvalidOperationException($"Failed to save GameUI scene at {ScenePath}.");
+
+        AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+        ValidateStep5();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP5_BUILT scene={ScenePath}");
+    }
+
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
     public static void ValidateStep1()
     {
@@ -246,6 +268,41 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP3_VALIDATED scene={ScenePath}");
     }
 
+    [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 5")]
+    public static void ValidateStep5()
+    {
+        ValidateStep3();
+
+        Scene scene = EditorSceneManager.GetActiveScene();
+        Transform shellTransform = scene.GetRootGameObjects()[0].transform.Find($"{CanvasName}/{ShellRootName}");
+        if (shellTransform == null)
+            throw new InvalidOperationException($"{ShellRootName} is missing.");
+
+        WarlineCaptureShellView shellView = shellTransform.GetComponent<WarlineCaptureShellView>();
+        if (shellView == null)
+            throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureShellView in Step 5.");
+        if (shellTransform.GetComponents<WarlineCaptureShellView>().Length != 1)
+            throw new InvalidOperationException($"{ShellRootName} must contain exactly one WarlineCaptureShellView.");
+        if (shellView.MotionHost == null)
+            throw new InvalidOperationException($"{ShellRootName} ShellView must reference the motion host.");
+        if (shellView.Regions == null || shellView.Regions.Count != RegionDefinitions.Length)
+            throw new InvalidOperationException($"{ShellRootName} ShellView must reference all {RegionDefinitions.Length} regions.");
+
+        for (int i = 0; i < RegionDefinitions.Length; i++)
+        {
+            if (shellView.Regions[i] == null || shellView.Regions[i].RegionId != RegionDefinitions[i].Id)
+                throw new InvalidOperationException($"{ShellRootName} ShellView region index {i} is not bound to {RegionDefinitions[i].Id}.");
+        }
+
+        WarlineCaptureShellEcsBridgeView bridge = shellTransform.GetComponent<WarlineCaptureShellEcsBridgeView>();
+        if (bridge == null)
+            throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureShellEcsBridgeView in Step 5.");
+        if (shellTransform.GetComponents<WarlineCaptureShellEcsBridgeView>().Length != 1)
+            throw new InvalidOperationException($"{ShellRootName} must contain exactly one WarlineCaptureShellEcsBridgeView.");
+
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP5_VALIDATED scene={ScenePath}");
+    }
+
     private static void CreateEventSystem(Transform parent)
     {
         GameObject eventSystemObject = new(EventSystemName);
@@ -316,6 +373,25 @@ public static class WarlineCaptureGameUiSceneBuilder
     private static void AddMotionHost(GameObject shellRoot)
     {
         shellRoot.AddComponent<WarlineCaptureUiMotionHostView>();
+    }
+
+    private static void AddShellViewAndBridge(GameObject shellRoot)
+    {
+        WarlineCaptureUiMotionHostView motionHost = shellRoot.GetComponent<WarlineCaptureUiMotionHostView>();
+        WarlineCaptureShellRegionView[] regionViews = new WarlineCaptureShellRegionView[RegionDefinitions.Length];
+        for (int i = 0; i < RegionDefinitions.Length; i++)
+        {
+            Transform regionTransform = shellRoot.transform.Find(RegionDefinitions[i].Name);
+            if (regionTransform == null)
+                throw new InvalidOperationException($"{ShellRootName} is missing region {RegionDefinitions[i].Name}.");
+            regionViews[i] = regionTransform.GetComponent<WarlineCaptureShellRegionView>();
+        }
+
+        WarlineCaptureShellView shellView = shellRoot.AddComponent<WarlineCaptureShellView>();
+        shellView.Configure(motionHost, regionViews);
+
+        WarlineCaptureShellEcsBridgeView bridge = shellRoot.AddComponent<WarlineCaptureShellEcsBridgeView>();
+        bridge.Configure(shellView);
     }
 
     private static Transform RequireChild(Transform parent, string childName)

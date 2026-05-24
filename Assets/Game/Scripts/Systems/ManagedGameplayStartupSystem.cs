@@ -10,6 +10,8 @@ public sealed class ManagedGameplayStartupSystem
         public readonly FactionVisualSettings FactionVisuals;
         public readonly RoadBuildSystem RoadBuild;
         public readonly BuildingPlacementSystem BuildingPlacement;
+        public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
+        public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
         public readonly RTSSelectionSystem Selection;
         public readonly UnitAttackTraceSystem UnitAttackTraces;
         public readonly UnitImpostorRenderSystem UnitImpostors;
@@ -20,6 +22,8 @@ public sealed class ManagedGameplayStartupSystem
             FactionVisualSettings factionVisuals,
             RoadBuildSystem roadBuild,
             BuildingPlacementSystem buildingPlacement,
+            BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
+            BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
             RTSSelectionSystem selection,
             UnitAttackTraceSystem unitAttackTraces,
             UnitImpostorRenderSystem unitImpostors,
@@ -29,6 +33,8 @@ public sealed class ManagedGameplayStartupSystem
             FactionVisuals = factionVisuals;
             RoadBuild = roadBuild;
             BuildingPlacement = buildingPlacement;
+            BuildingRuntimeUpdate = buildingRuntimeUpdate;
+            BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
             Selection = selection;
             UnitAttackTraces = unitAttackTraces;
             UnitImpostors = unitImpostors;
@@ -62,6 +68,8 @@ public sealed class ManagedGameplayStartupSystem
 
         var buildingPlacement = new BuildingPlacementSystem();
         buildingPlacement.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
+        var buildingRuntimeUpdate = new BuildingRuntimeUpdateSystem();
+        var buildingRuntimeUpdateContext = new BuildingRuntimeUpdateSystem.Context(buildingPlacement.Update);
 
         var selection = new RTSSelectionSystem();
         selection.Init(
@@ -108,6 +116,8 @@ public sealed class ManagedGameplayStartupSystem
             factionVisuals,
             roadBuild,
             buildingPlacement,
+            buildingRuntimeUpdate,
+            buildingRuntimeUpdateContext,
             selection,
             unitAttackTraces,
             unitImpostors,

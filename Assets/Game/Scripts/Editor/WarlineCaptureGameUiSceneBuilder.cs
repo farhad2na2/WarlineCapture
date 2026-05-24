@@ -6,6 +6,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ public static class WarlineCaptureGameUiSceneBuilder
 {
     private const string ScenePath = "Assets/Game/Scenes/GameUI.unity";
     private const string RootName = "GameUIRoot";
+    private const string CameraName = "GameUICamera";
     private const string EventSystemName = "EventSystem";
     private const string CanvasName = "GameUICanvas";
     private const string ShellRootName = "WarlineCaptureRuntimeShell";
@@ -37,8 +39,9 @@ public static class WarlineCaptureGameUiSceneBuilder
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         GameObject root = new(RootName);
 
+        Camera uiCamera = CreateUiCamera(root.transform);
         CreateEventSystem(root.transform);
-        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform, uiCamera);
         CreateShellRoot(canvasObject.transform);
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -56,8 +59,9 @@ public static class WarlineCaptureGameUiSceneBuilder
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         GameObject root = new(RootName);
 
+        Camera uiCamera = CreateUiCamera(root.transform);
         CreateEventSystem(root.transform);
-        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform, uiCamera);
         GameObject shellRoot = CreateShellRoot(canvasObject.transform);
         CreateShellRegions(shellRoot.transform);
 
@@ -76,8 +80,9 @@ public static class WarlineCaptureGameUiSceneBuilder
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         GameObject root = new(RootName);
 
+        Camera uiCamera = CreateUiCamera(root.transform);
         CreateEventSystem(root.transform);
-        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform, uiCamera);
         GameObject shellRoot = CreateShellRoot(canvasObject.transform);
         CreateShellRegions(shellRoot.transform);
         AddMotionHost(shellRoot);
@@ -97,8 +102,9 @@ public static class WarlineCaptureGameUiSceneBuilder
         Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         GameObject root = new(RootName);
 
+        Camera uiCamera = CreateUiCamera(root.transform);
         CreateEventSystem(root.transform);
-        GameObject canvasObject = CreateCanvas(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform, uiCamera);
         GameObject shellRoot = CreateShellRoot(canvasObject.transform);
         CreateShellRegions(shellRoot.transform);
         AddMotionHost(shellRoot);
@@ -122,6 +128,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"GameUI scene must contain exactly one root named {RootName}.");
 
         Transform root = roots[0].transform;
+        Transform cameraTransform = RequireChild(root, CameraName);
         Transform eventSystemTransform = RequireChild(root, EventSystemName);
         Transform canvasTransform = RequireChild(root, CanvasName);
         Transform shellTransform = RequireChild(canvasTransform, ShellRootName);
@@ -130,15 +137,25 @@ public static class WarlineCaptureGameUiSceneBuilder
         if (eventSystem == null)
             throw new InvalidOperationException($"{EventSystemName} must contain an EventSystem component.");
 
-        BaseInputModule inputModule = eventSystemTransform.GetComponent<BaseInputModule>();
+        Camera uiCamera = cameraTransform.GetComponent<Camera>();
+        if (uiCamera == null)
+            throw new InvalidOperationException($"{CameraName} must contain a Camera component.");
+        if (!uiCamera.orthographic)
+            throw new InvalidOperationException($"{CameraName} must be orthographic.");
+
+        InputSystemUIInputModule inputModule = eventSystemTransform.GetComponent<InputSystemUIInputModule>();
         if (inputModule == null)
-            throw new InvalidOperationException($"{EventSystemName} must contain a UI input module.");
+            throw new InvalidOperationException($"{EventSystemName} must contain an InputSystemUIInputModule.");
+        if (eventSystemTransform.GetComponent<StandaloneInputModule>() != null)
+            throw new InvalidOperationException($"{EventSystemName} must not contain StandaloneInputModule because Player Settings use Input System input handling.");
 
         Canvas canvas = canvasTransform.GetComponent<Canvas>();
         if (canvas == null)
             throw new InvalidOperationException($"{CanvasName} must contain a Canvas component.");
-        if (canvas.renderMode != RenderMode.ScreenSpaceOverlay)
-            throw new InvalidOperationException($"{CanvasName} must use ScreenSpaceOverlay for the isolated UI shell scene.");
+        if (canvas.renderMode != RenderMode.ScreenSpaceCamera)
+            throw new InvalidOperationException($"{CanvasName} must use ScreenSpaceCamera for the isolated UI shell scene.");
+        if (canvas.worldCamera != uiCamera)
+            throw new InvalidOperationException($"{CanvasName} must render through {CameraName}.");
 
         CanvasScaler scaler = canvasTransform.GetComponent<CanvasScaler>();
         if (scaler == null)
@@ -161,6 +178,8 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException("GameUI scene must contain exactly one Canvas in Step 1.");
         if (roots[0].GetComponentsInChildren<EventSystem>(true).Length != 1)
             throw new InvalidOperationException("GameUI scene must contain exactly one EventSystem in Step 1.");
+        if (roots[0].GetComponentsInChildren<Camera>(true).Length != 1)
+            throw new InvalidOperationException("GameUI scene must contain exactly one Camera in Step 1.");
 
         string[] forbiddenRoots =
         {
@@ -308,10 +327,31 @@ public static class WarlineCaptureGameUiSceneBuilder
         GameObject eventSystemObject = new(EventSystemName);
         eventSystemObject.transform.SetParent(parent, false);
         eventSystemObject.AddComponent<EventSystem>();
-        eventSystemObject.AddComponent<StandaloneInputModule>();
+        eventSystemObject.AddComponent<InputSystemUIInputModule>();
     }
 
-    private static GameObject CreateCanvas(Transform parent)
+    private static Camera CreateUiCamera(Transform parent)
+    {
+        GameObject cameraObject = new(CameraName, typeof(Camera));
+        cameraObject.transform.SetParent(parent, false);
+        cameraObject.transform.localPosition = new Vector3(0f, 0f, -10f);
+        cameraObject.transform.localRotation = Quaternion.identity;
+        cameraObject.transform.localScale = Vector3.one;
+
+        Camera camera = cameraObject.GetComponent<Camera>();
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = Color.black;
+        camera.orthographic = true;
+        camera.orthographicSize = 540f;
+        camera.nearClipPlane = 0.01f;
+        camera.farClipPlane = 100f;
+        camera.depth = 100f;
+        camera.allowHDR = false;
+        camera.allowMSAA = false;
+        return camera;
+    }
+
+    private static GameObject CreateCanvas(Transform parent, Camera uiCamera)
     {
         GameObject canvasObject = new(CanvasName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         canvasObject.transform.SetParent(parent, false);
@@ -320,7 +360,9 @@ public static class WarlineCaptureGameUiSceneBuilder
         Stretch(rect);
 
         Canvas canvas = canvasObject.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
+        canvas.worldCamera = uiCamera;
+        canvas.planeDistance = 10f;
         canvas.sortingOrder = 100;
 
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();

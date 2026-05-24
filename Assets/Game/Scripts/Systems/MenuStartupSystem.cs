@@ -3,13 +3,19 @@ using Game.Scripts.UI;
 using Unity.Entities;
 using UnityEngine;
 
-public sealed class MenuStartupSystem
+internal sealed class MenuStartupSystem
 {
     public MainMenuPlayUI Initialize(
         MenuView menuView,
         Action gameRequested,
         RoadBuildSystem roadBuild,
-        BuildingPlacementSystem buildingPlacement,
+        BuildingUiCommandSystem buildingUiCommand,
+        BuildingUiCommandSystem.Context buildingUiCommandContext,
+        BuildingUiQuerySystem buildingUiQuery,
+        BuildingUiQuerySystem.Context buildingUiQueryContext,
+        BuildingPlacementInteractionSystem buildingPlacementInteraction,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        Action<MainMenuPlayUI> bindBuildingMainMenu,
         RTSSelectionSystem selection,
         DayNightSystem dayNight,
         CitizenPopulationSystem citizenPopulation,
@@ -27,11 +33,11 @@ public sealed class MenuStartupSystem
                 worldCamera,
                 dayNight,
                 citizenPopulation,
-                buildingPlacement?.BuildingUiCommandSystem,
-                buildingPlacement != null ? buildingPlacement.CreateBuildingUiCommandContext() : default);
+                buildingUiCommand,
+                buildingUiCommandContext);
             menuView.BindBuildingUiQuerySystem(
-                buildingPlacement?.BuildingUiQuerySystem,
-                buildingPlacement != null ? buildingPlacement.CreateBuildingUiQueryContext() : default);
+                buildingUiQuery,
+                buildingUiQueryContext);
             menuView.NotifyBootstrapReady();
         }
 
@@ -39,14 +45,26 @@ public sealed class MenuStartupSystem
         {
             var mainMenu = new MainMenuPlayUI();
             mainMenu.Init(roadBuild, selection, dayNight);
-            BindMenuDependencies(mainMenu, roadBuild, buildingPlacement, selection, dayNight);
+            BindMenuDependencies(
+                mainMenu,
+                roadBuild,
+                buildingPlacementInteraction,
+                buildingPlacementInteractionContext,
+                bindBuildingMainMenu,
+                selection);
             BindSceneUi(sceneBindingSystem, chapter01TacticalBinder, world, selection);
             return mainMenu;
         }
         catch (Exception exception)
         {
             logException?.Invoke(exception);
-            BindMenuDependencies(null, roadBuild, buildingPlacement, selection, dayNight);
+            BindMenuDependencies(
+                null,
+                roadBuild,
+                buildingPlacementInteraction,
+                buildingPlacementInteractionContext,
+                bindBuildingMainMenu,
+                selection);
             BindSceneUi(sceneBindingSystem, chapter01TacticalBinder, world, selection);
             return null;
         }
@@ -61,20 +79,21 @@ public sealed class MenuStartupSystem
     private void BindMenuDependencies(
         MainMenuPlayUI mainMenu,
         RoadBuildSystem roadBuild,
-        BuildingPlacementSystem buildingPlacement,
-        RTSSelectionSystem selection,
-        DayNightSystem dayNight)
+        BuildingPlacementInteractionSystem buildingPlacementInteraction,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        Action<MainMenuPlayUI> bindBuildingMainMenu,
+        RTSSelectionSystem selection)
     {
         roadBuild?.BindDependencies(
-            buildingPlacement?.BuildingPlacementInteractionSystem,
-            buildingPlacement != null ? buildingPlacement.CreateBuildingPlacementInteractionContext() : default,
+            buildingPlacementInteraction,
+            buildingPlacementInteractionContext,
             mainMenu);
-        buildingPlacement?.BindDependencies(roadBuild, mainMenu, dayNight, selection);
+        bindBuildingMainMenu?.Invoke(mainMenu);
         selection?.BindDependencies(
             mainMenu,
             roadBuild,
-            buildingPlacement?.BuildingPlacementInteractionSystem,
-            buildingPlacement != null ? buildingPlacement.CreateBuildingPlacementInteractionContext() : default);
+            buildingPlacementInteraction,
+            buildingPlacementInteractionContext);
     }
 
     private void BindSceneUi(

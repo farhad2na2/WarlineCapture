@@ -2,7 +2,7 @@ using Game.Scripts.UI;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public sealed class ManagedGameplayStartupSystem
+internal sealed class ManagedGameplayStartupSystem
 {
     private readonly BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem = new();
 
@@ -14,6 +14,13 @@ public sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementSystem BuildingPlacement;
         public readonly BuildingSelectionClickSystem BuildingSelectionClick;
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
+        public readonly BuildingUiCommandSystem BuildingUiCommand;
+        public readonly BuildingUiCommandSystem.Context BuildingUiCommandContext;
+        public readonly BuildingUiQuerySystem BuildingUiQuery;
+        public readonly BuildingUiQuerySystem.Context BuildingUiQueryContext;
+        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
+        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly System.Action<MainMenuPlayUI> BindBuildingMainMenu;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
         public readonly RTSSelectionSystem Selection;
@@ -28,6 +35,13 @@ public sealed class ManagedGameplayStartupSystem
             BuildingPlacementSystem buildingPlacement,
             BuildingSelectionClickSystem buildingSelectionClick,
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
+            BuildingUiCommandSystem buildingUiCommand,
+            BuildingUiCommandSystem.Context buildingUiCommandContext,
+            BuildingUiQuerySystem buildingUiQuery,
+            BuildingUiQuerySystem.Context buildingUiQueryContext,
+            BuildingPlacementInteractionSystem buildingPlacementInteraction,
+            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            System.Action<MainMenuPlayUI> bindBuildingMainMenu,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
             RTSSelectionSystem selection,
@@ -41,6 +55,13 @@ public sealed class ManagedGameplayStartupSystem
             BuildingPlacement = buildingPlacement;
             BuildingSelectionClick = buildingSelectionClick;
             BuildingSelectionClickContext = buildingSelectionClickContext;
+            BuildingUiCommand = buildingUiCommand;
+            BuildingUiCommandContext = buildingUiCommandContext;
+            BuildingUiQuery = buildingUiQuery;
+            BuildingUiQueryContext = buildingUiQueryContext;
+            BuildingPlacementInteraction = buildingPlacementInteraction;
+            BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
+            BindBuildingMainMenu = bindBuildingMainMenu;
             BuildingRuntimeUpdate = buildingRuntimeUpdate;
             BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
             Selection = selection;
@@ -125,6 +146,13 @@ public sealed class ManagedGameplayStartupSystem
             building.PlacementFacade,
             building.SelectionClick,
             building.SelectionClickContext,
+            building.UiCommand,
+            building.UiCommandContext,
+            building.UiQuery,
+            building.UiQueryContext,
+            building.Interaction,
+            building.InteractionContext,
+            building.BindMainMenu,
             building.RuntimeUpdate,
             building.RuntimeUpdateContext,
             selection,

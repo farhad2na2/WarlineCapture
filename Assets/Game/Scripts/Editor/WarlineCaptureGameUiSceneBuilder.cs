@@ -384,6 +384,8 @@ public static class WarlineCaptureGameUiSceneBuilder
         if (!smokeDriver.PlayOnStart)
             throw new InvalidOperationException("GameUI smoke driver must autoplay in the isolated Step 7 scene.");
 
+        ValidateContentPresenterInstalls(shellView, contentPresenter);
+
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP7_VALIDATED scene={ScenePath}");
     }
 
@@ -587,6 +589,61 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"Content presenter prefab reference must point to {path}.");
         if (prefab.name != expectedName)
             throw new InvalidOperationException($"{path} must reference prefab root {expectedName}.");
+    }
+
+    private static void ValidateContentPresenterInstalls(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.ShowLoading }
+        });
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.LoadingLayer, "SCN01_LoadingContent");
+
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu }
+        });
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.HeaderRegion, "HeaderContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.MiddleRegion, "MiddleContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
+        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
+
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.HeaderRegion, "HeaderContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.FooterRegion, "FooterContent");
+        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.MiddleRegion);
+
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.ShowPopup }
+        });
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.PopupLayer, "POP05_MissionResultPopup");
+    }
+
+    private static void RequireRegionChild(WarlineCaptureShellView shellView, WarlineCaptureShellRegionId regionId, string childName)
+    {
+        if (!shellView.TryGetRegion(regionId, out WarlineCaptureShellRegionView region) || region.ContentRoot == null)
+            throw new InvalidOperationException($"Missing shell region {regionId}.");
+        if (region.ContentRoot.childCount != 1)
+            throw new InvalidOperationException($"{regionId} must contain exactly one content child after presenter install.");
+        if (region.ContentRoot.GetChild(0).name != childName)
+            throw new InvalidOperationException($"{regionId} must contain {childName} after presenter install.");
+    }
+
+    private static void RequireRegionEmpty(WarlineCaptureShellView shellView, WarlineCaptureShellRegionId regionId)
+    {
+        if (!shellView.TryGetRegion(regionId, out WarlineCaptureShellRegionView region) || region.ContentRoot == null)
+            throw new InvalidOperationException($"Missing shell region {regionId}.");
+        if (region.ContentRoot.childCount != 0)
+            throw new InvalidOperationException($"{regionId} must be empty after presenter install.");
     }
 
     private readonly struct ShellRegionDefinition

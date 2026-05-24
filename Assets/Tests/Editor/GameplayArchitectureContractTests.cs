@@ -167,6 +167,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, selected-building UI read models, minimap building read models, live-unit preview read models, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
         StringAssert.Contains("`BuildingUiCommandSystem` must not own read-model query delegates or pending-production UI list retrieval", contract);
+        StringAssert.Contains("`MenuStartupSystem` must receive `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose public building UI read/query or menu/camp command compatibility wrappers", contract);
         StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("Runtime building entity-link callbacks must route through `BuildingPlacementInteractionSystem`", contract);
@@ -767,10 +768,18 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(menuStartupFile), "Menu and UI startup binding must live in MenuStartupSystem.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string startup = File.ReadAllText(menuStartupFile);
         StringAssert.Contains("MenuStartupSystem _menuStartupSystem", bootstrap);
         StringAssert.Contains("_menuStartupSystem.Initialize", bootstrap);
         StringAssert.Contains("_menuStartupSystem.Shutdown", bootstrap);
         StringAssert.Contains("Debug.LogException", bootstrap);
+        StringAssert.Contains("BuildingUiCommand", bootstrap);
+        StringAssert.Contains("_buildingUiCommandContext", bootstrap);
+        StringAssert.Contains("BuildingUiQuery", bootstrap);
+        StringAssert.Contains("_buildingUiQueryContext", bootstrap);
+        StringAssert.Contains("_buildingPlacementInteraction", bootstrap);
+        StringAssert.Contains("_buildingPlacementInteractionContext", bootstrap);
+        StringAssert.Contains("_bindBuildingMainMenu", bootstrap);
 
         string[] menuStartupDebtTokens =
         {
@@ -790,9 +799,16 @@ public sealed class GameplayArchitectureContractTests
                 $"{token} belongs in MenuStartupSystem, not GameBootstrap.");
         }
 
-        string startup = File.ReadAllText(menuStartupFile);
         foreach (string token in menuStartupDebtTokens)
             StringAssert.Contains(token, startup);
+        StringAssert.Contains("BuildingUiCommandSystem buildingUiCommand", startup);
+        StringAssert.Contains("BuildingUiQuerySystem buildingUiQuery", startup);
+        StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", startup);
+        StringAssert.Contains("Action<MainMenuPlayUI> bindBuildingMainMenu", startup);
+        Assert.IsFalse(
+            startup.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            startup.Contains("buildingPlacement.", StringComparison.Ordinal),
+            "MenuStartupSystem must use narrow building UI/interaction boundaries instead of BuildingPlacementSystem.");
         StringAssert.Contains("logException?.Invoke(exception)", startup);
         Assert.IsFalse(
             startup.Contains("Debug.LogException", StringComparison.Ordinal),
@@ -1335,7 +1351,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("placementFacade.BuildingPlacementInteractionSystem", buildingComposition);
         StringAssert.Contains("building.Interaction", managedStartup);
         StringAssert.Contains("buildingPlacement?.BuildingPlacementInteractionSystem", featureStartup);
-        StringAssert.Contains("buildingPlacement?.BuildingPlacementInteractionSystem", menuStartup);
+        StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", menuStartup);
+        StringAssert.Contains("buildingPlacementInteractionContext", menuStartup);
         StringAssert.Contains("BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem", runtimeCreation);
         StringAssert.Contains("BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem", runtimeLink);
 
@@ -1695,15 +1712,20 @@ public sealed class GameplayArchitectureContractTests
 
         string menu = File.ReadAllText(menuFile);
         string startup = File.ReadAllText(startupFile);
+        string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
         string command = File.ReadAllText(commandFile);
         string query = File.ReadAllText(queryFile);
 
         StringAssert.Contains("BuildingUiCommandSystem _buildingUiCommandSystem", menu);
         StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", menu);
-        StringAssert.Contains("buildingPlacement?.BuildingUiCommandSystem", startup);
-        StringAssert.Contains("buildingPlacement.CreateBuildingUiCommandContext()", startup);
-        StringAssert.Contains("buildingPlacement?.BuildingUiQuerySystem", startup);
-        StringAssert.Contains("buildingPlacement.CreateBuildingUiQueryContext()", startup);
+        StringAssert.Contains("BuildingUiCommandSystem buildingUiCommand", startup);
+        StringAssert.Contains("BuildingUiCommandSystem.Context buildingUiCommandContext", startup);
+        StringAssert.Contains("BuildingUiQuerySystem buildingUiQuery", startup);
+        StringAssert.Contains("BuildingUiQuerySystem.Context buildingUiQueryContext", startup);
+        StringAssert.Contains("placementFacade.BuildingUiCommandSystem", buildingComposition);
+        StringAssert.Contains("placementFacade.CreateBuildingUiCommandContext()", buildingComposition);
+        StringAssert.Contains("placementFacade.BuildingUiQuerySystem", buildingComposition);
+        StringAssert.Contains("placementFacade.CreateBuildingUiQueryContext()", buildingComposition);
         StringAssert.Contains("TryRequestCampItem", command);
         StringAssert.Contains("GetCampRequestFailure", command);
         StringAssert.Contains("GetFriendlyPendingProductionUiEntries", query);

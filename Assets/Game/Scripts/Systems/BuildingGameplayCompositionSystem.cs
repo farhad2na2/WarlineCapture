@@ -1,7 +1,8 @@
+using System;
 using Game.Scripts.UI;
 using UnityEngine;
 
-public sealed class BuildingGameplayCompositionSystem
+internal sealed class BuildingGameplayCompositionSystem
 {
     public readonly struct Result
     {
@@ -10,8 +11,13 @@ public sealed class BuildingGameplayCompositionSystem
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly BuildingRuntimeUpdateSystem RuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context RuntimeUpdateContext;
+        public readonly BuildingUiCommandSystem UiCommand;
+        public readonly BuildingUiCommandSystem.Context UiCommandContext;
+        public readonly BuildingUiQuerySystem UiQuery;
+        public readonly BuildingUiQuerySystem.Context UiQueryContext;
         public readonly BuildingPlacementInteractionSystem Interaction;
         public readonly BuildingPlacementInteractionSystem.Context InteractionContext;
+        public readonly Action<MainMenuPlayUI> BindMainMenu;
 
         public Result(
             BuildingPlacementSystem placementFacade,
@@ -19,16 +25,26 @@ public sealed class BuildingGameplayCompositionSystem
             BuildingSelectionClickSystem.Context selectionClickContext,
             BuildingRuntimeUpdateSystem runtimeUpdate,
             BuildingRuntimeUpdateSystem.Context runtimeUpdateContext,
+            BuildingUiCommandSystem uiCommand,
+            BuildingUiCommandSystem.Context uiCommandContext,
+            BuildingUiQuerySystem uiQuery,
+            BuildingUiQuerySystem.Context uiQueryContext,
             BuildingPlacementInteractionSystem interaction,
-            BuildingPlacementInteractionSystem.Context interactionContext)
+            BuildingPlacementInteractionSystem.Context interactionContext,
+            Action<MainMenuPlayUI> bindMainMenu)
         {
             PlacementFacade = placementFacade;
             SelectionClick = selectionClick;
             SelectionClickContext = selectionClickContext;
             RuntimeUpdate = runtimeUpdate;
             RuntimeUpdateContext = runtimeUpdateContext;
+            UiCommand = uiCommand;
+            UiCommandContext = uiCommandContext;
+            UiQuery = uiQuery;
+            UiQueryContext = uiQueryContext;
             Interaction = interaction;
             InteractionContext = interactionContext;
+            BindMainMenu = bindMainMenu;
         }
     }
 
@@ -50,8 +66,13 @@ public sealed class BuildingGameplayCompositionSystem
             placementFacade.CreateBuildingSelectionClickContext(),
             runtimeUpdate,
             new BuildingRuntimeUpdateSystem.Context(placementFacade.Update),
+            placementFacade.BuildingUiCommandSystem,
+            placementFacade.CreateBuildingUiCommandContext(),
+            placementFacade.BuildingUiQuerySystem,
+            placementFacade.CreateBuildingUiQueryContext(),
             placementFacade.BuildingPlacementInteractionSystem,
-            placementFacade.CreateBuildingPlacementInteractionContext());
+            placementFacade.CreateBuildingPlacementInteractionContext(),
+            mainMenu => placementFacade.BindDependencies(roadBuild, mainMenu, dayNight));
     }
 
     public void BindSelection(Result building, RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)

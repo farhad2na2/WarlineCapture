@@ -7,6 +7,26 @@ public sealed class BuildingSelectionClickSystem
     public delegate bool TryGetGridCellDelegate(Vector2 screenPosition, GridConfig grid, out Vector2Int cell);
     public delegate bool HandleCellSelectionDelegate(Vector2 screenPosition, Vector2Int cell);
 
+    public readonly struct Source
+    {
+        public readonly Func<bool> HasPendingPathJob;
+        public readonly TryGetGridDelegate TryGetGrid;
+        public readonly TryGetGridCellDelegate TryGetGridCell;
+        public readonly HandleCellSelectionDelegate HandleCellSelection;
+
+        public Source(
+            Func<bool> hasPendingPathJob,
+            TryGetGridDelegate tryGetGrid,
+            TryGetGridCellDelegate tryGetGridCell,
+            HandleCellSelectionDelegate handleCellSelection)
+        {
+            HasPendingPathJob = hasPendingPathJob;
+            TryGetGrid = tryGetGrid;
+            TryGetGridCell = tryGetGridCell;
+            HandleCellSelection = handleCellSelection;
+        }
+    }
+
     public readonly struct Context
     {
         public readonly Func<bool> HasPendingPathJob;
@@ -39,5 +59,14 @@ public sealed class BuildingSelectionClickSystem
 
         return context.HandleCellSelection != null &&
                context.HandleCellSelection(screenPosition, cell);
+    }
+
+    public Context CreateContext(Source source)
+    {
+        return new Context(
+            source.HasPendingPathJob,
+            source.TryGetGrid,
+            source.TryGetGridCell,
+            source.HandleCellSelection);
     }
 }

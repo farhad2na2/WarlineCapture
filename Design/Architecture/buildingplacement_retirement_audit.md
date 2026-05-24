@@ -8,7 +8,7 @@ Lane: Gameplay
 `BuildingPlacementSystem` is not deletable yet. It no longer owns the main managed runtime `Update()` entry point, and `GameBootstrap` / `ManagedGameplayStartupSystem` no longer carry it directly. It still exists as a temporary managed composition shell under `BuildingGameplayCompositionSystem`.
 
 Current measured size:
-- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 2038 lines.
+- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 1982 lines.
 - Public/internal facade declarations: 120, excluding the class declaration.
 
 ## Allowed Production Facade References
@@ -63,27 +63,28 @@ inventory; remove them in order during Steps 18-25.
   - `CreateBuildingCombatContext`
   - `CreateBuildingRuntimeQueryContext`
   - `CreateRuntimeBuildingQueryContext`
-  - `CreateBuildingSelectionClickContext`
   - `CreateBuildingBarrierContext`
 - Private context factories still used internally by facade methods:
   - `CreatePlacementContextSource`
   - `CreateRuntimeSpawnCommandContext`
   - `CreateBuildingSpawnContext`
   - `CreateBuildingRuntimeEntityContext`
-  - `CreateBuildingSelectionContext`
-  - `CreateBuildingPlacementQueryContext`
   - `CreateBuildingUiContextSource`
   - `CreateBuildingPlacementInteractionContextSource`
 
 ### Config/Startup Blockers
 
-The facade still owns startup/config wiring that must move before deletion:
+The facade still exposes startup/config wiring that must move before deletion:
 
-- Serialized config fields and runtime camera/build-plane/preview values.
-- `Init(...)`, `BindDependencies(...)`, `ApplyConfigIfAvailable()`, and `Dispose()`.
-- Configured spawnable/unit rebuild and fallback prefab diagnostics.
-- Runtime root/building root creation.
+- `Init(...)`, `BindDependencies(...)`, and `Dispose()` remain facade methods until production construction moves out of `BuildingGameplayCompositionSystem`.
 - Runtime dependency references for road build, menu UI, selection, grid blocker, city spawner, citizen population, faction visuals, and day/night.
+- Runtime building instance/combat/blocker cleanup still runs from facade `Dispose()`.
+
+The following startup/config ownership has moved out of the facade:
+
+- Serialized config fields and runtime camera/build-plane/preview values now live in `BuildingPlacementStartupSystem`.
+- Configured spawnable/unit lookup rebuild and configured definition startup selection now live in `BuildingPlacementStartupSystem`.
+- `RuntimeBuildings` root creation now lives in `BuildingPlacementStartupSystem`.
 
 ### Editor Test Blockers
 
@@ -132,6 +133,8 @@ The facade still owns or exposes these migration debts:
 - Placement lifecycle, input, validation, and commit context construction now lives in `BuildingPlacementContextSystem`; the facade still exposes a temporary placement context source bundle.
 - UI command/query context construction now lives in `BuildingUiContextSystem`; the facade still exposes temporary UI context source callbacks.
 - Selection/interaction context construction now lives in `BuildingPlacementInteractionContextSystem`; the facade still exposes temporary interaction context source callbacks.
+- Selection-click context construction now lives in `BuildingSelectionClickSystem`; selection context construction now lives in `BuildingSelectionSystem`; selected-building query context construction now lives in `BuildingPlacementQuerySystem`; the facade still exposes temporary wrapper methods while callers migrate.
+- Placement config application, runtime building root creation, configured definition startup selection, build plane/camera/preview config state, and placement preview initialization now live in `BuildingPlacementStartupSystem`; the facade still exposes temporary `Init(...)`, `BindDependencies(...)`, and `Dispose()` compatibility methods.
 - Selection, building query, combat/breach, resource, and UI command/query compatibility wrappers.
 - Test-only runtime tick and runtime building validation hooks.
 
@@ -150,7 +153,7 @@ The facade still owns or exposes these migration debts:
 ## Drift Guard
 
 Until deletion:
-- `BuildingPlacementSystem.cs` must not grow beyond 2038 lines.
+- `BuildingPlacementSystem.cs` must not grow beyond 1982 lines.
 - Public/internal facade declarations must not exceed 120.
 - Production facade references must remain inside the two allowed files above.
 - Production construction must remain isolated to `BuildingGameplayCompositionSystem`.

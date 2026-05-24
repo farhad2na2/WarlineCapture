@@ -16,13 +16,6 @@ public sealed class BuildingPlacementSystem
     private static readonly bool EnableBuildingDestroyDiagnostics = false;
     private const float DestroyedBuildingLifetimeSeconds = 5f;
 
-    [SerializeField] private BuildingPlacementSystemConfig config;
-    [SerializeField, HideInInspector] private Camera worldCamera;
-    [SerializeField, HideInInspector] private float buildPlaneY = 0f;
-    [SerializeField, HideInInspector] private float placementOutlineHeight = 0.15f;
-    [SerializeField, HideInInspector] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f);
-    [SerializeField, HideInInspector] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
-
     private readonly RuntimeBuildingSystem<RuntimeBuildingData> _runtimeBuildingSystem = new();
     private readonly BuildingVisualSystem _buildingVisualSystem = new();
     private readonly BuildingRuntimeVisualSystem _buildingRuntimeVisualSystem = new();
@@ -73,11 +66,8 @@ public sealed class BuildingPlacementSystem
     private readonly RuntimeResourceSystem _runtimeResourceSystem = new();
     private readonly RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem = new();
     private readonly BuildingRuntimeResourcePrefabContextSystem _buildingRuntimeResourcePrefabContextSystem = new();
+    private readonly BuildingPlacementStartupSystem _buildingPlacementStartupSystem = new();
     private int[] _placementInvalidPrefix;
-    private Transform _buildingRoot;
-    private BuildingDefinition _soldierBaseDefinition;
-    private BuildingDefinition _soldierTentDefinition;
-    private BuildingDefinition _factoryDefinition;
     private RoadBuildSystem _roadBuildController;
     private MainMenuPlayUI _mainMenuPlayUi;
     private RTSSelectionSystem _selectionSystem;
@@ -102,7 +92,6 @@ public sealed class BuildingPlacementSystem
     private bool _hasPlacementInvalidPrefix;
     private int _placementInvalidPrefixWidth;
     private int _placementInvalidPrefixHeight;
-    private Transform _runtimeRoot;
     private readonly List<BuildingPlacementPreviewSystem.WallPreviewRun> _wallPreviewRuns = new();
     private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
     private const float OilBarrelsPerFuelBarrel = 2f;
@@ -123,7 +112,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingPlacementRuntimeTickSystem RuntimeTickSystem => _buildingPlacementRuntimeTickSystem;
     internal (BuildingRuntimeVisualSystem RuntimeVisual, BuildingCombatSystem Combat, BuildingBarrierSystem Barrier, BuildingPlacementRedirectSystem Redirect, float DestroyedBuildingLifetime) RuntimeTickDomains => (_buildingRuntimeVisualSystem, _buildingCombatSystem, _buildingBarrierSystem, _buildingPlacementRedirectSystem, DestroyedBuildingLifetimeSeconds);
     internal (BuildingPlacementInputSystem PlacementInput, BuildingPlacementPreviewSystem Preview, RuntimeGameplayStateSystem RuntimeState, System.Func<MainMenuPlayUI> GetMainMenu, BuildingSelectionClickSystem SelectionClick) RuntimeInputDomains => (_buildingPlacementInputSystem, _buildingPlacementPreviewSystem, _runtimeGameplayStateSystem, () => _mainMenuPlayUi, _buildingSelectionClickSystem);
-    internal Camera WorldCamera => worldCamera;
+    internal Camera WorldCamera => _buildingPlacementStartupSystem.WorldCamera;
     internal PlacementState ActivePlacement => _buildingPlacementLifecycleSystem.ActivePlacement;
     internal bool PlayRequested => _runtimeGameplayStateSystem.PlayRequested;
     internal bool BuildModeActive => _runtimeGameplayStateSystem.BuildModeActive;
@@ -147,13 +136,13 @@ public sealed class BuildingPlacementSystem
         set => _buildingSpawnRandomState = value;
     }
     public BuildingSelectionClickSystem BuildingSelectionClickSystem => _buildingSelectionClickSystem;
-    public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
-    public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
-    public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
+    public GameObject RoadPreviewPrefab => _buildingPlacementStartupSystem.RoadPreviewPrefab;
+    public float BuildButtonPreviewDistanceMultiplier => _buildingPlacementStartupSystem.BuildButtonPreviewDistanceMultiplier;
+    public float UnitCommandButtonPreviewDistanceMultiplier => _buildingPlacementStartupSystem.UnitCommandButtonPreviewDistanceMultiplier;
 
     private bool HasVisibleSelectableBuilding(Camera camera = null)
     {
-        Camera targetCamera = camera != null ? camera : worldCamera;
+        Camera targetCamera = camera != null ? camera : _buildingPlacementStartupSystem.WorldCamera;
         if (targetCamera == null)
             return false;
 
@@ -468,7 +457,7 @@ public sealed class BuildingPlacementSystem
 
     private void OnValidate()
     {
-        ApplyConfigIfAvailable();
+        _buildingPlacementStartupSystem.ApplyConfigIfAvailable(_buildingDefinitionSystem);
     }
 
     public void Init(
@@ -480,29 +469,19 @@ public sealed class BuildingPlacementSystem
         FactionVisualSettings factionVisualSettings,
         DayNightSystem dayNightSystem)
     {
-        config = configAsset;
-        worldCamera = sceneWorldCamera;
-        _runtimeRoot = runtimeRoot;
         _roadBuildController = roadBuildController;
         _mainMenuPlayUi = mainMenuPlayUi;
         _factionVisualSettings = factionVisualSettings;
         _dayNightSystem = dayNightSystem;
-        ApplyConfigIfAvailable();
-        _markerPropertyBlock = new MaterialPropertyBlock();
-
-        _buildingRoot = new GameObject("RuntimeBuildings").transform;
-        _buildingRoot.SetParent(_runtimeRoot, false);
-        _buildingRoot.localPosition = Vector3.zero;
-        _buildingRoot.localRotation = Quaternion.identity;
-        _buildingRoot.localScale = Vector3.one;
-
-        RebuildConfiguredSpawnableDefinitions();
-        _buildingPlacementPreviewSystem.Init(
-            _runtimeRoot,
-            placementOutlineHeight,
-            placementValidColor,
-            placementInvalidColor,
+        _buildingPlacementStartupSystem.Init(
+            configAsset,
+            sceneWorldCamera,
+            runtimeRoot,
+            _buildingDefinitionSystem,
+            _buildingRunwaySystem,
+            _buildingPlacementPreviewSystem,
             DestroyRuntimeObject);
+        _markerPropertyBlock = new MaterialPropertyBlock();
     }
 
     public void BindDependencies(
@@ -528,34 +507,6 @@ public sealed class BuildingPlacementSystem
             _dayNightSystem = dayNightSystem;
     }
 
-    private void ApplyConfigIfAvailable()
-    {
-        if (config == null)
-            return;
-
-        if (config.WorldCamera != null)
-            worldCamera = config.WorldCamera;
-        IReadOnlyList<GameObject> configuredSpawnables = config.Spawnables ?? new List<GameObject>();
-        UnitPrefabRegistryAuthoringConfig configuredUnitPrefabRegistry = config.UnitPrefabRegistryConfig;
-        IReadOnlyList<GameObject> configuredUnitSpawnPrefabs = configuredUnitPrefabRegistry != null && configuredUnitPrefabRegistry.UnitSpawnPrefabs != null
-            ? configuredUnitPrefabRegistry.UnitSpawnPrefabs
-            : new List<GameObject>();
-        _buildingDefinitionSystem.RebuildSpawnablesLookup(configuredSpawnables, configuredUnitSpawnPrefabs);
-        buildPlaneY = config.BuildPlaneY;
-        placementOutlineHeight = config.PlacementOutlineHeight;
-        placementValidColor = config.PlacementValidColor;
-        placementInvalidColor = config.PlacementInvalidColor;
-    }
-
-    private void RebuildConfiguredSpawnableDefinitions()
-    {
-        _buildingDefinitionSystem.RebuildConfiguredSpawnableDefinitions(_buildingRunwaySystem, DestroyRuntimeObject);
-
-        _soldierBaseDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Soldier Base");
-        _soldierTentDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Soldier Tent");
-        _factoryDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Factory");
-    }
-
     public void Dispose()
     {
         ExitBuildMode();
@@ -576,15 +527,10 @@ public sealed class BuildingPlacementSystem
 
         _runtimeBuildingSystem.Clear();
 
-        _buildingDefinitionSystem.ClearConfiguredSpawnableDefinitions(DestroyRuntimeObject);
-        _buildingDefinitionSystem.ClearConfiguredPrefabLookups();
-        _soldierBaseDefinition = null;
-        _soldierTentDefinition = null;
-        _factoryDefinition = null;
-
-        _buildingPlacementPreviewSystem.Dispose();
-        if (_buildingRoot != null)
-            DestroyRuntimeObject(_buildingRoot.gameObject);
+        _buildingPlacementStartupSystem.Dispose(
+            _buildingDefinitionSystem,
+            _buildingPlacementPreviewSystem,
+            DestroyRuntimeObject);
     }
 
     private static void DestroyRuntimeObject(Object target)
@@ -682,13 +628,13 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        if (_soldierBaseDefinition == null || _soldierBaseDefinition.Prefab == null)
+        if (_buildingPlacementStartupSystem.SoldierBaseDefinition == null || _buildingPlacementStartupSystem.SoldierBaseDefinition.Prefab == null)
         {
             Debug.LogWarning("BuildingPlacementSystem is missing the Soldier Base spawnable prefab reference.");
             return;
         }
 
-        BeginPlacement(_soldierBaseDefinition);
+        BeginPlacement(_buildingPlacementStartupSystem.SoldierBaseDefinition);
     }
 
     public void BeginSoldierTentPlacement()
@@ -696,13 +642,13 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        if (_soldierTentDefinition == null || _soldierTentDefinition.Prefab == null)
+        if (_buildingPlacementStartupSystem.SoldierTentDefinition == null || _buildingPlacementStartupSystem.SoldierTentDefinition.Prefab == null)
         {
             Debug.LogWarning("BuildingPlacementSystem is missing the Soldier Tent spawnable prefab reference.");
             return;
         }
 
-        BeginPlacement(_soldierTentDefinition);
+        BeginPlacement(_buildingPlacementStartupSystem.SoldierTentDefinition);
     }
 
     public void BeginFactoryPlacement()
@@ -710,13 +656,13 @@ public sealed class BuildingPlacementSystem
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return;
 
-        if (_factoryDefinition == null || _factoryDefinition.Prefab == null)
+        if (_buildingPlacementStartupSystem.FactoryDefinition == null || _buildingPlacementStartupSystem.FactoryDefinition.Prefab == null)
         {
             Debug.LogWarning("BuildingPlacementSystem is missing the Factory spawnable prefab reference.");
             return;
         }
 
-        BeginPlacement(_factoryDefinition);
+        BeginPlacement(_buildingPlacementStartupSystem.FactoryDefinition);
     }
 
     private bool BeginPlacementForConfiguredSpawnable(GameObject prefab)
@@ -938,7 +884,7 @@ public sealed class BuildingPlacementSystem
             _buildingPlacementPreviewSystem,
             _buildingPlacementValidationSystem,
             _runtimeBuildingSystem,
-            _buildingRoot,
+            _buildingPlacementStartupSystem.BuildingRoot,
             CreateBuildingVisualInstance,
             preview => DestroyRuntimeObject(preview),
             GetCenterScreenPlacementOrigin,
@@ -1100,7 +1046,7 @@ public sealed class BuildingPlacementSystem
                         allOrigins,
                         grid,
                         wallFootprint,
-                        buildPlaneY));
+                        _buildingPlacementStartupSystem.BuildPlaneY));
             }
             return;
         }
@@ -1136,7 +1082,7 @@ public sealed class BuildingPlacementSystem
                 allOrigins,
                 grid,
                 wallFootprint,
-                buildPlaneY);
+                _buildingPlacementStartupSystem.BuildPlaneY);
         }
 
         bool rotateVertical = ResolvePlacementRotateVertical(placement);
@@ -1492,7 +1438,7 @@ public sealed class BuildingPlacementSystem
             originCell,
             grid,
             rotateVertical,
-            buildPlaneY,
+            _buildingPlacementStartupSystem.BuildPlaneY,
             GetPlacementFootprint);
     }
 
@@ -1574,7 +1520,7 @@ public sealed class BuildingPlacementSystem
 
     private Vector3 GetFootprintCenter(Vector2Int originCell, Vector2Int footprintCells, GridConfig grid)
     {
-        return _buildingPlacementGridSystem.GetFootprintCenter(originCell, footprintCells, grid, buildPlaneY);
+        return _buildingPlacementGridSystem.GetFootprintCenter(originCell, footprintCells, grid, _buildingPlacementStartupSystem.BuildPlaneY);
     }
 
     private Vector2Int GetCenterScreenPlacementOrigin(Vector2Int footprintCells)
@@ -1585,8 +1531,8 @@ public sealed class BuildingPlacementSystem
         return _buildingPlacementGridSystem.GetCenterScreenPlacementOrigin(
             footprintCells,
             grid,
-            worldCamera,
-            buildPlaneY,
+            _buildingPlacementStartupSystem.WorldCamera,
+            _buildingPlacementStartupSystem.BuildPlaneY,
             new Vector2(Screen.width, Screen.height));
     }
 
@@ -1649,7 +1595,7 @@ public sealed class BuildingPlacementSystem
     {
         return new BuildingProductionContextSystem.Source(
             _runtimeBuildingSystem.Buildings,
-            worldCamera,
+            _buildingPlacementStartupSystem.WorldCamera,
             _buildingDefinitionSystem,
             _buildingProductionSystem,
             _buildingProductionUpdateSystem,
@@ -1719,7 +1665,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource()
     {
         return new BuildingRuntimeContextSystem.Source(
-            _buildingRoot,
+            _buildingPlacementStartupSystem.BuildingRoot,
             _buildingDefinitionSystem,
             _buildingRunwaySystem,
             _buildingPlacementValidationSystem,
@@ -1799,9 +1745,9 @@ public sealed class BuildingPlacementSystem
         return new BuildingRuntimeSpawnCommandSystem.Context(
             _buildingRuntimeSpawnSystem,
             _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            _soldierBaseDefinition,
-            _soldierTentDefinition,
-            _factoryDefinition);
+            _buildingPlacementStartupSystem.SoldierBaseDefinition,
+            _buildingPlacementStartupSystem.SoldierTentDefinition,
+            _buildingPlacementStartupSystem.FactoryDefinition);
     }
 
     internal BuildingRuntimeQuerySystem.Context CreateRuntimeBuildingQueryContext()
@@ -1944,7 +1890,7 @@ public sealed class BuildingPlacementSystem
 
     private BuildingSelectionSystem.Context CreateBuildingSelectionContext()
     {
-        return new BuildingSelectionSystem.Context(
+        return _buildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
             _runtimeBuildingSystem,
             _runtimeBuildingSystem.Buildings,
             TryGetGridForSelection,
@@ -1956,31 +1902,29 @@ public sealed class BuildingPlacementSystem
             position => _selectionSystem != null && _selectionSystem.IsBoardablePlayerTransportClick(position),
             TryAssignSelectedHaulerOrders,
             (min, size) => _selectionSystem != null && _selectionSystem.TryIssueMoveOrderToBuilding(min, size),
-            BuildingBarrierSystem.ShouldUseExpandedSelectionArea);
+            BuildingBarrierSystem.ShouldUseExpandedSelectionArea));
     }
 
     public BuildingSelectionClickSystem.Context CreateBuildingSelectionClickContext()
     {
-        return new BuildingSelectionClickSystem.Context(
+        return _buildingSelectionClickSystem.CreateContext(new BuildingSelectionClickSystem.Source(
             () => UnitPathfindingSystem.HasPendingPathJob,
             TryGetGridForSelection,
             TryGetGridCell,
             (screenPosition, cell) => _buildingSelectionSystem.HandleBuildingSelectionClick(
                 CreateBuildingSelectionContext(),
                 screenPosition,
-                cell));
+                cell)));
     }
 
     private BuildingPlacementQuerySystem.Context CreateBuildingPlacementQueryContext()
     {
-        bool hasEntityManager = TryGetEntityManager(out EntityManager em);
-        return new BuildingPlacementQuerySystem.Context(
+        return _buildingPlacementQuerySystem.CreateContext(new BuildingPlacementQuerySystem.Source(
             _runtimeBuildingSystem.Buildings,
-            ActiveBuildingId,
+            () => ActiveBuildingId,
             BuildingDefinitionSystem.GetProductionCount,
             BuildingDefinitionSystem.GetProductionPrefab,
-            hasEntityManager,
-            em);
+            TryGetEntityManager));
     }
 
     internal BuildingBarrierSystem.Context CreateBuildingBarrierContext()
@@ -2027,7 +1971,7 @@ public sealed class BuildingPlacementSystem
 
     private bool TryGetGridCell(Vector2 screenPosition, GridConfig grid, out Vector2Int cell)
     {
-        return _buildingPlacementGridSystem.TryGetGridCell(screenPosition, grid, worldCamera, buildPlaneY, out cell);
+        return _buildingPlacementGridSystem.TryGetGridCell(screenPosition, grid, _buildingPlacementStartupSystem.WorldCamera, _buildingPlacementStartupSystem.BuildPlaneY, out cell);
     }
 
     private bool IsPointerOverPlacementUi(Vector2 screenPosition)

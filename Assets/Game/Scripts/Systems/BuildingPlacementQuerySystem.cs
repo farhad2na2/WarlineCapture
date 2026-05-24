@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
@@ -6,6 +7,30 @@ internal sealed class BuildingPlacementQuerySystem
 {
     public delegate int GetProductionCountDelegate(BuildingDefinition definition);
     public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+
+    public readonly struct Source
+    {
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly Func<int?> GetActiveBuildingId;
+        public readonly GetProductionCountDelegate GetProductionCount;
+        public readonly GetProductionPrefabDelegate GetProductionPrefab;
+        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+
+        public Source(
+            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            Func<int?> getActiveBuildingId,
+            GetProductionCountDelegate getProductionCount,
+            GetProductionPrefabDelegate getProductionPrefab,
+            TryGetEntityManagerDelegate tryGetEntityManager)
+        {
+            RuntimeBuildings = runtimeBuildings;
+            GetActiveBuildingId = getActiveBuildingId;
+            GetProductionCount = getProductionCount;
+            GetProductionPrefab = getProductionPrefab;
+            TryGetEntityManager = tryGetEntityManager;
+        }
+    }
 
     public readonly struct Context
     {
@@ -39,6 +64,20 @@ internal sealed class BuildingPlacementQuerySystem
             return null;
 
         return context.GetProductionPrefab?.Invoke(building.Definition, productionIndex);
+    }
+
+    public Context CreateContext(Source source)
+    {
+        EntityManager entityManager = default;
+        bool hasEntityManager = source.TryGetEntityManager != null &&
+            source.TryGetEntityManager(out entityManager);
+        return new Context(
+            source.RuntimeBuildings,
+            source.GetActiveBuildingId?.Invoke(),
+            source.GetProductionCount,
+            source.GetProductionPrefab,
+            hasEntityManager,
+            entityManager);
     }
 
     public void GetSelectedBuildingProductionPrefabs(Context context, List<GameObject> prefabs)

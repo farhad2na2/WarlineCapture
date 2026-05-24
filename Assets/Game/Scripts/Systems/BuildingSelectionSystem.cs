@@ -12,6 +12,50 @@ internal sealed class BuildingSelectionSystem
     public delegate void RuntimeAction();
     public delegate void CameraFocusAction(Vector3 worldPosition);
 
+    public readonly struct Source
+    {
+        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly TryGetGridDelegate TryGetGrid;
+        public readonly GetFootprintCenterDelegate GetFootprintCenter;
+        public readonly RuntimeAction SuppressNextWorldClick;
+        public readonly RuntimeAction RefreshMarkers;
+        public readonly RuntimeAction ClearFocusedUnit;
+        public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
+        public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
+        public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
+        public readonly BuildingMoveOrderAction TryIssueMoveOrderToBuilding;
+        public readonly BuildingDefinitionPredicate ShouldUseExpandedSelectionArea;
+
+        public Source(
+            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            TryGetGridDelegate tryGetGrid,
+            GetFootprintCenterDelegate getFootprintCenter,
+            RuntimeAction suppressNextWorldClick,
+            RuntimeAction refreshMarkers,
+            RuntimeAction clearFocusedUnit,
+            CameraFocusAction smoothMoveCameraGroundCenterTo,
+            ScreenPositionPredicate isBoardablePlayerTransportClick,
+            BuildingIdAction tryAssignSelectedHaulerOrders,
+            BuildingMoveOrderAction tryIssueMoveOrderToBuilding,
+            BuildingDefinitionPredicate shouldUseExpandedSelectionArea)
+        {
+            RuntimeBuildingSystem = runtimeBuildingSystem;
+            RuntimeBuildings = runtimeBuildings;
+            TryGetGrid = tryGetGrid;
+            GetFootprintCenter = getFootprintCenter;
+            SuppressNextWorldClick = suppressNextWorldClick;
+            RefreshMarkers = refreshMarkers;
+            ClearFocusedUnit = clearFocusedUnit;
+            SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
+            IsBoardablePlayerTransportClick = isBoardablePlayerTransportClick;
+            TryAssignSelectedHaulerOrders = tryAssignSelectedHaulerOrders;
+            TryIssueMoveOrderToBuilding = tryIssueMoveOrderToBuilding;
+            ShouldUseExpandedSelectionArea = shouldUseExpandedSelectionArea;
+        }
+    }
+
     public readonly struct Context
     {
         public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
@@ -60,6 +104,23 @@ internal sealed class BuildingSelectionSystem
     {
         context.RuntimeBuildingSystem?.ClearSelection();
         context.RefreshMarkers?.Invoke();
+    }
+
+    public Context CreateContext(Source source)
+    {
+        return new Context(
+            source.RuntimeBuildingSystem,
+            source.RuntimeBuildings,
+            source.TryGetGrid,
+            source.GetFootprintCenter,
+            source.SuppressNextWorldClick,
+            source.RefreshMarkers,
+            source.ClearFocusedUnit,
+            source.SmoothMoveCameraGroundCenterTo,
+            source.IsBoardablePlayerTransportClick,
+            source.TryAssignSelectedHaulerOrders,
+            source.TryIssueMoveOrderToBuilding,
+            source.ShouldUseExpandedSelectionArea);
     }
 
     public void SelectAndFocusBuilding(Context context, RuntimeBuildingData building)

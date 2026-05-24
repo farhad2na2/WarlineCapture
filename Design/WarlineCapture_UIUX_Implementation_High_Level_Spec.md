@@ -20,10 +20,11 @@ The current game already contains a strong tactical simulation foundation:
 
 - RTS unit selection, movement, attack, transport boarding, air movement, rope disembark, base breach, health bars, minimap, road/build placement, production, resources, day/night, citizens, AI economy, AI production, AI squads, AI targeting, AI combat, radar/satellite threat warning, player auto mode, and Android CI build support.
 
-The current UI is split between two systems:
+The current UI uses the Canvas/TMP shell:
 
-- Legacy Unity Canvas hierarchy under `UI_Canvas / Panel_Main`, controlled mostly by `Assets/Game/Scripts/UI/MenuView.cs`.
-- UI Toolkit runtime HUD panels under `Assets/Game/UI/*.uxml`, controlled by `Assets/Game/Scripts/UI/MainMenuPlayUI.cs`.
+- Unity Canvas hierarchy under `UI_Canvas / Panel_Main`, controlled mostly by `Assets/Game/Scripts/UI/MenuView.cs`.
+- Canvas prefab shell content under `Assets/Game/Prefabs/UI`, with supporting screen, popup, component, and config assets under `Assets/Game/Art/UI`, `Assets/Game/Configs/UI`, and `Assets/Game/Scripts/UI`.
+- New runtime UI must stay on the Canvas/TMP shell path.
 
 The current screens are practical but not yet aligned with the target AAA mobile shell:
 
@@ -278,7 +279,7 @@ Goal: align the existing in-game HUD with `SCN-08`, `SCN-09`, and `SCN-10`.
 Preserve existing tactical systems:
 
 - `RTSSelectionSystem`
-- `BuildingPlacementSystem`
+- building runtime, placement, production, and UI command systems
 - `RoadBuildSystem`
 - `ThreatDetectionWarningSystem`
 - minimap logic

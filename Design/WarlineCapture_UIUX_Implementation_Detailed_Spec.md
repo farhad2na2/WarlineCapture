@@ -72,24 +72,10 @@ Legacy Canvas:
   - minimap/fullscreen map objects
   - runtime log panel toggled from `Panel_FPS`
 
-UI Toolkit:
+Runtime UI technology:
 
-- Main document reference: `GameBootstrap.mainMenuDocument`
-- Controller: `Assets/Game/Scripts/UI/MainMenuPlayUI.cs`
-- UXML/USS:
-  - `Assets/Game/UI/MainMenu.uxml`
-  - `Assets/Game/UI/MainMenu.uss`
-  - `Assets/Game/UI/Panels/BuildModePanel.uxml`
-  - `Assets/Game/UI/Panels/BuildToolMenuPanel.uxml`
-  - `Assets/Game/UI/Panels/DayNightTimePanel.uxml`
-  - `Assets/Game/UI/Panels/FullscreenMapPanel.uxml`
-  - `Assets/Game/UI/Panels/MinimapPanel.uxml`
-  - `Assets/Game/UI/Panels/ResourcesBarPanel.uxml`
-  - `Assets/Game/UI/Panels/SelectionModePanel.uxml`
-  - `Assets/Game/UI/Panels/UnitCommandInfoPanel.uxml`
-  - `Assets/Game/UI/Panels/UnitCommandMenuPanel.uxml`
-  - `Assets/Game/UI/Panels/UnitPortraitPanel.uxml`
-  - `Assets/Game/UI/Panels/ZoomControlsPanel.uxml`
+- Active runtime UI is Canvas/TMP under `Assets/Game/Prefabs/UI`, `Assets/Game/Art/UI`, `Assets/Game/Configs/UI`, and `Assets/Game/Scripts/UI`.
+- New runtime UI must stay on the Canvas/TMP shell path.
 
 ### Current Gameplay Systems Available for UI Binding
 
@@ -100,7 +86,7 @@ UI Toolkit:
 - `ThreatWarningRuntimeState`
 - `GameStrings`
 - `RTSSelectionSystem`
-- `BuildingPlacementSystem`
+- building runtime, placement, production, and UI command systems
 - `RoadBuildSystem`
 - `DayNightSystem`
 - `ThreatDetectionWarningSystem`
@@ -108,16 +94,15 @@ UI Toolkit:
 
 ## Architecture Decision
 
-Use a hybrid approach during migration:
+Use one runtime UI path during migration:
 
 - Keep the existing Canvas UI alive for current gameplay until each tactical surface is replaced.
-- Build the new routed app shell as Canvas prefabs first, because the current screen/popup specs use GameObject hierarchy names and TextMeshPro, and existing tests already inspect the scene YAML.
-- Continue using existing UI Toolkit panels only where they are already working for runtime tactical controls, then either wrap or migrate them phase by phase.
+- Build the new routed app shell as Canvas prefabs, because the current screen/popup specs use GameObject hierarchy names and TextMeshPro, and existing tests already inspect the scene YAML.
+- Keep runtime HUD and tactical controls on the Canvas/TMP path.
 
-Longer term, choose one primary UI technology:
+Primary UI technology:
 
-- Canvas + TMP is recommended for the near-term because the current UI, imported HUD prefabs, runtime log panel, and scene validation tests are already Canvas-based.
-- UI Toolkit can remain for specialized runtime HUD panels until replaced.
+- Canvas + TMP is the runtime UI standard because the current UI, imported HUD prefabs, runtime log panel, and scene validation tests are Canvas-based.
 
 ## Screen-by-Screen Delivery Rule
 
@@ -578,7 +563,7 @@ Initial `QuickGameConfig` maps directly to `AISettingsRuntimeState`.
 
 ### Current Gap
 
-The current tactical HUD is functional but split across Canvas and UI Toolkit. It does not match the final information architecture.
+The current tactical HUD is functional and Canvas-based, but it does not match the final information architecture.
 
 The current 3D operation-map HUD gap is tracked by the 3D single-map direction and M01 production contracts. The first concrete implementation target is `WarlineCapture_M01_FirstContact_Production_Contract.md`. Phase 6 must add the missing selected-entity panel, command mode banner, world command marker layer, invalid command feedback, and minimap camera bridge before the Chapter 1 M01 playable slice depends on expanded 3D operation-map play.
 
@@ -603,11 +588,11 @@ MatchHUDCanvas
 
 ### Existing Systems to Bind
 
-- Resources: `BuildingPlacementSystem` faction resources and citizen stats.
+- Resources: building runtime read models, faction resources, and citizen stats.
 - Selection: `RTSSelectionSystem`.
-- Build/production: `BuildingPlacementSystem`.
+- Build/production: building placement, production, and UI command systems.
 - Road tools: `RoadBuildSystem`.
-- Minimap: existing `MenuView` and `MainMenuPlayUI` minimap logic.
+- Minimap: existing Canvas/minimap logic.
 - Threats: `ThreatWarningRuntimeState`.
 - Runtime log: existing `MenuView` log panel.
 
@@ -766,7 +751,7 @@ Use current systems where possible:
 - Enemy destruction from ECS unit death/combat state.
 - Civilian count from `CitizenPopulationSystem`.
 - Buildings built from `GameRuntimeStats`.
-- Resources from `BuildingPlacementSystem`.
+- Resources from building runtime read models and faction resource state.
 - Unit losses from `GameRuntimeStats`.
 
 ### Result Flow
@@ -1094,7 +1079,7 @@ Add tests as features land:
 ## Known Risks
 
 - `MenuView.cs` is large and owns many unrelated UI responsibilities. Avoid expanding it further; new screens should use smaller controllers.
-- Current UI is split between Canvas and UI Toolkit. New architecture must not duplicate input handling indefinitely.
+- Runtime UI must stay on the Canvas/TMP path and keep one input-handling ownership model.
 - Replacing tactical HUD all at once risks breaking selection, build placement, minimap, and world-click blocking.
 - Campaign and operation modes require data/persistence systems that do not exist yet.
 - Mockups include placeholder text and art; final implementation must use in-project assets and localized string keys.

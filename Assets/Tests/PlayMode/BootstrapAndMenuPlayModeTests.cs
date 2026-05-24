@@ -49,6 +49,7 @@ public sealed class BootstrapAndMenuPlayModeTests
 
         Assert.NotNull(bootstrap.DayNight, "Bootstrap should create core dependencies during Awake.");
         Assert.NotNull(bootstrap.RoadBuild, "Bootstrap should create core dependencies during Awake.");
+        Assert.NotNull(bootstrap.BuildingSelectionClick, "Bootstrap should create building selection click dependencies during Awake.");
         Assert.NotNull(bootstrap.BuildingRuntimeUpdate, "Bootstrap should create building runtime update dependencies during Awake.");
         Assert.NotNull(bootstrap.Selection, "Bootstrap should create core dependencies during Awake.");
         Assert.IsFalse(InitialUnitsRuntimeState.PlayRequested, "PlayRequested must remain false when the scene first starts.");

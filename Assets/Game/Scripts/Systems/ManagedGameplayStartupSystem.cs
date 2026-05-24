@@ -10,6 +10,8 @@ public sealed class ManagedGameplayStartupSystem
         public readonly FactionVisualSettings FactionVisuals;
         public readonly RoadBuildSystem RoadBuild;
         public readonly BuildingPlacementSystem BuildingPlacement;
+        public readonly BuildingSelectionClickSystem BuildingSelectionClick;
+        public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
         public readonly RTSSelectionSystem Selection;
@@ -22,6 +24,8 @@ public sealed class ManagedGameplayStartupSystem
             FactionVisualSettings factionVisuals,
             RoadBuildSystem roadBuild,
             BuildingPlacementSystem buildingPlacement,
+            BuildingSelectionClickSystem buildingSelectionClick,
+            BuildingSelectionClickSystem.Context buildingSelectionClickContext,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
             RTSSelectionSystem selection,
@@ -33,6 +37,8 @@ public sealed class ManagedGameplayStartupSystem
             FactionVisuals = factionVisuals;
             RoadBuild = roadBuild;
             BuildingPlacement = buildingPlacement;
+            BuildingSelectionClick = buildingSelectionClick;
+            BuildingSelectionClickContext = buildingSelectionClickContext;
             BuildingRuntimeUpdate = buildingRuntimeUpdate;
             BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
             Selection = selection;
@@ -68,6 +74,8 @@ public sealed class ManagedGameplayStartupSystem
 
         var buildingPlacement = new BuildingPlacementSystem();
         buildingPlacement.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
+        BuildingSelectionClickSystem buildingSelectionClick = buildingPlacement.BuildingSelectionClickSystem;
+        BuildingSelectionClickSystem.Context buildingSelectionClickContext = buildingPlacement.CreateBuildingSelectionClickContext();
         var buildingRuntimeUpdate = new BuildingRuntimeUpdateSystem();
         var buildingRuntimeUpdateContext = new BuildingRuntimeUpdateSystem.Context(buildingPlacement.Update);
 
@@ -116,6 +124,8 @@ public sealed class ManagedGameplayStartupSystem
             factionVisuals,
             roadBuild,
             buildingPlacement,
+            buildingSelectionClick,
+            buildingSelectionClickContext,
             buildingRuntimeUpdate,
             buildingRuntimeUpdateContext,
             selection,

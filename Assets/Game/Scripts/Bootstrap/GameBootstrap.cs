@@ -69,6 +69,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
     public RuntimeCitySpawnerSystem RuntimeCitySpawner { get; private set; }
     public RoadBuildSystem RoadBuild { get; private set; }
+    public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
     public BuildingRuntimeUpdateSystem BuildingRuntimeUpdate { get; private set; }
     public RTSSelectionSystem Selection { get; private set; }
     public MainMenuPlayUI MainMenu { get; private set; }
@@ -79,6 +80,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public CitizenPopulationSystem CitizenPopulation { get; private set; }
     public bool GameplayInitialized { get; private set; }
     private BuildingPlacementSystem BuildingPlacement { get; set; }
+    public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
     private bool _gameplayStartPending;
@@ -112,6 +114,8 @@ public sealed class GameBootstrap : MonoBehaviour
         FactionVisuals = managedSystems.FactionVisuals;
         RoadBuild = managedSystems.RoadBuild;
         BuildingPlacement = managedSystems.BuildingPlacement;
+        BuildingSelectionClick = managedSystems.BuildingSelectionClick;
+        BuildingSelectionClickContext = managedSystems.BuildingSelectionClickContext;
         BuildingRuntimeUpdate = managedSystems.BuildingRuntimeUpdate;
         _buildingRuntimeUpdateContext = managedSystems.BuildingRuntimeUpdateContext;
         Selection = managedSystems.Selection;
@@ -249,6 +253,8 @@ public sealed class GameBootstrap : MonoBehaviour
         MainMenu = null;
         Selection = null;
         BuildingPlacement = null;
+        BuildingSelectionClick = null;
+        BuildingSelectionClickContext = default;
         BuildingRuntimeUpdate = null;
         _buildingRuntimeUpdateContext = default;
         RoadBuild = null;

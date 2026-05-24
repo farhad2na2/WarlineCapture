@@ -147,7 +147,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
-        StringAssert.Contains("Building selection clearing, select-and-focus behavior, selected-building focus position resolution, and runtime building click hit-test/routing belong in `BuildingSelectionSystem`", contract);
+        StringAssert.Contains("Building selection screen-click guards and screen-to-grid click routing belong in `BuildingSelectionClickSystem`", contract);
+        StringAssert.Contains("runtime building cell hit-test/routing belong in `BuildingSelectionSystem`", contract);
         StringAssert.Contains("Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; runtime building visual initialization, runtime resource animation updates, and runtime marker visibility projection belong in `BuildingRuntimeVisualSystem`", contract);
         StringAssert.Contains("Placement visual instance creation, placement visual positioning, prefab model bounds, and transformed bounds helpers belong in `BuildingPlacementVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
@@ -2518,16 +2519,21 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string selectionFile = "Assets/Game/Scripts/Systems/BuildingSelectionSystem.cs";
+        const string selectionClickFile = "Assets/Game/Scripts/Systems/BuildingSelectionClickSystem.cs";
         Assert.IsTrue(File.Exists(selectionFile), "Building selection behavior must live in BuildingSelectionSystem.");
+        Assert.IsTrue(File.Exists(selectionClickFile), "Building selection screen-click routing must live in BuildingSelectionClickSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string selection = File.ReadAllText(selectionFile);
+        string selectionClick = File.ReadAllText(selectionClickFile);
         StringAssert.Contains("BuildingSelectionSystem _buildingSelectionSystem", placement);
+        StringAssert.Contains("BuildingSelectionClickSystem _buildingSelectionClickSystem", placement);
         StringAssert.Contains("CreateBuildingSelectionContext", placement);
+        StringAssert.Contains("CreateBuildingSelectionClickContext", placement);
         StringAssert.Contains("_buildingSelectionSystem.ClearSelectedBuilding", placement);
         StringAssert.Contains("_buildingSelectionSystem.SelectAndFocusBuilding", placement);
         StringAssert.Contains("_buildingSelectionSystem.ResolveBuildingFocusWorldPosition", placement);
-        StringAssert.Contains("_buildingSelectionSystem.HandleBuildingSelectionClick", placement);
+        StringAssert.Contains("_buildingSelectionClickSystem.HandleBuildingSelectionClick", placement);
 
         StringAssert.Contains("SelectAndFocusBuilding", selection);
         StringAssert.Contains("ResolveBuildingFocusWorldPosition", selection);
@@ -2535,7 +2541,16 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryAssignSelectedHaulerOrders", selection);
         StringAssert.Contains("TryIssueMoveOrderToBuilding", selection);
         StringAssert.Contains("IsBoardablePlayerTransportClick", selection);
+        StringAssert.Contains("HasPendingPathJob", selectionClick);
+        StringAssert.Contains("TryGetGridCell", selectionClick);
+        StringAssert.Contains("HandleCellSelection", selectionClick);
 
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"private\s+void\s+HandleBuildingSelectionClick\s*\("),
+            "Screen-click selection routing belongs in BuildingSelectionClickSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"UnitPathfindingSystem\.HasPendingPathJob\s*\)\s*return"),
+            "Pending path-job click guard belongs in BuildingSelectionClickSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"_runtimeBuildingSystem\.SelectBuilding\(entry\.Key\)"),
             "Building click selection routing belongs in BuildingSelectionSystem, not BuildingPlacementSystem.");

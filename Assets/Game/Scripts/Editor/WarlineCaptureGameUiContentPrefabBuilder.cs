@@ -1,0 +1,293 @@
+#if UNITY_EDITOR
+using System;
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.UI;
+
+public static class WarlineCaptureGameUiContentPrefabBuilder
+{
+    private const string ContentFolder = "Assets/Game/Prefabs/UI/Shell/Content";
+    private const string PopupFolder = "Assets/Game/Prefabs/UI/Shell/Popups";
+    private const string LoadingPrefabPath = ContentFolder + "/SCN01_LoadingContent.prefab";
+    private const string MainMenuPrefabPath = ContentFolder + "/SCN02_MainMenuContent.prefab";
+    private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
+    private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
+
+    private static readonly Color Clear = new(0f, 0f, 0f, 0f);
+    private static readonly Color Panel = new(0.025f, 0.031f, 0.027f, 0.92f);
+    private static readonly Color PanelMuted = new(0.055f, 0.062f, 0.046f, 0.88f);
+    private static readonly Color Stroke = new(0.73f, 0.59f, 0.25f, 0.9f);
+    private static readonly Color Text = new(0.86f, 0.84f, 0.74f, 1f);
+    private static readonly Color MutedText = new(0.62f, 0.61f, 0.54f, 1f);
+    private static readonly Color Accent = new(0.96f, 0.66f, 0.16f, 1f);
+    private static readonly Color Blue = new(0.38f, 0.75f, 0.85f, 1f);
+
+    [MenuItem("WarlineCapture/UI/Build GameUI Content Prefabs Step 6")]
+    public static void BuildStep6()
+    {
+        EnsureFolders();
+        SavePrefab(BuildLoadingContent(), LoadingPrefabPath);
+        SavePrefab(BuildMainMenuContent(), MainMenuPrefabPath);
+        SavePrefab(BuildMatchHudContent(), MatchHudPrefabPath);
+        SavePrefab(BuildResultPopup(), ResultPopupPrefabPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        ValidateStep6();
+        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_BUILT prefabs=4");
+    }
+
+    [MenuItem("WarlineCapture/UI/Validate GameUI Content Prefabs Step 6")]
+    public static void ValidateStep6()
+    {
+        ValidatePrefab(LoadingPrefabPath, "SCN01_LoadingContent", "LoadingBody");
+        ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent");
+        ValidatePrefab(MatchHudPrefabPath, "SCN08_MatchHudContent", "HeaderContent", "LeftContent", "RightContent", "FooterContent");
+        ValidatePrefab(ResultPopupPrefabPath, "POP05_MissionResultPopup", "PopupFrame", "PopupFrame/Actions");
+        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_VALIDATED prefabs=4");
+    }
+
+    private static GameObject BuildLoadingContent()
+    {
+        GameObject root = CreateRoot("SCN01_LoadingContent");
+        AddSolid(root.transform, "LoadingBackdrop", StretchRect(), new Color(0.015f, 0.018f, 0.016f, 0.98f));
+        GameObject body = CreateRect("LoadingBody", root.transform, new Rect(780f, 365f, 840f, 350f));
+        AddPanel(body.transform, "Frame", StretchRect());
+        AddText(body.transform, "TitleText", "WARLINE CAPTURE", new Rect(46f, 42f, 748f, 58f), 48f, TextAlignmentOptions.Center, Text);
+        AddText(body.transform, "StatusText", "Preparing command interface", new Rect(46f, 120f, 748f, 40f), 24f, TextAlignmentOptions.Center, MutedText);
+        AddSolid(body.transform, "ProgressTrack", new Rect(96f, 206f, 648f, 18f), new Color(0.16f, 0.16f, 0.13f, 1f));
+        AddSolid(body.transform, "ProgressFill", new Rect(96f, 206f, 454f, 18f), Accent);
+        AddText(body.transform, "PercentText", "70%", new Rect(96f, 238f, 648f, 34f), 24f, TextAlignmentOptions.Center, Accent);
+        return root;
+    }
+
+    private static GameObject BuildMainMenuContent()
+    {
+        GameObject root = CreateRoot("SCN02_MainMenuContent");
+
+        GameObject header = CreateGroup("HeaderContent", root.transform, new Rect(0f, 0f, 2400f, 140f));
+        AddPanel(header.transform, "HeaderPanel", StretchRect());
+        AddText(header.transform, "LogoText", "WARLINE\nCAPTURE", new Rect(48f, 26f, 290f, 88f), 34f, TextAlignmentOptions.Left, Text);
+        AddHeaderStat(header.transform, 560f, "Credits", "187,540", Accent);
+        AddHeaderStat(header.transform, 940f, "Supplies", "92,860", new Color(0.64f, 0.74f, 0.46f, 1f));
+        AddHeaderStat(header.transform, 1320f, "Command", "2,715", Blue);
+        AddText(header.transform, "MailText", "MAIL", new Rect(2020f, 44f, 130f, 44f), 28f, TextAlignmentOptions.Center, Text);
+        AddText(header.transform, "GearText", "GEAR", new Rect(2190f, 44f, 130f, 44f), 28f, TextAlignmentOptions.Center, Text);
+
+        GameObject left = CreateGroup("LeftContent", root.transform, new Rect(0f, 140f, 360f, 820f));
+        AddNavButton(left.transform, 0f, "Campaign", true);
+        AddNavButton(left.transform, 120f, "Operations", false);
+        AddNavButton(left.transform, 240f, "Skirmish", false);
+        AddNavButton(left.transform, 360f, "Store", false);
+        AddNavButton(left.transform, 480f, "Commander", false);
+        AddNavButton(left.transform, 600f, "Settings", false);
+
+        GameObject middle = CreateGroup("MiddleContent", root.transform, new Rect(360f, 140f, 1680f, 820f));
+        AddModeCard(middle.transform, 80f, "CAMPAIGN", "Story arc readiness");
+        AddModeCard(middle.transform, 600f, "OPERATIONS", "Persistent control");
+        AddModeCard(middle.transform, 1120f, "SKIRMISH", "Custom engagement");
+
+        GameObject right = CreateGroup("RightContent", root.transform, new Rect(2040f, 140f, 360f, 820f));
+        AddPanel(right.transform, "CommanderPanel", new Rect(18f, 20f, 324f, 680f));
+        AddText(right.transform, "CommanderTitle", "COMMANDER", new Rect(44f, 52f, 272f, 36f), 28f, TextAlignmentOptions.Left, Text);
+        AddSolid(right.transform, "PortraitPlaceholder", new Rect(56f, 112f, 248f, 250f), new Color(0.02f, 0.024f, 0.02f, 1f));
+        AddText(right.transform, "CommanderName", "FIELD COMMANDER\nLEVEL 38", new Rect(56f, 390f, 248f, 76f), 24f, TextAlignmentOptions.Center, Accent);
+        AddText(right.transform, "Readiness", "READINESS\n||||||||||---", new Rect(56f, 514f, 248f, 82f), 21f, TextAlignmentOptions.Center, Text);
+
+        return root;
+    }
+
+    private static GameObject BuildMatchHudContent()
+    {
+        GameObject root = CreateRoot("SCN08_MatchHudContent");
+
+        GameObject header = CreateGroup("HeaderContent", root.transform, new Rect(0f, 0f, 2400f, 118f));
+        AddPanel(header.transform, "HudHeader", StretchRect());
+        AddText(header.transform, "HudTitle", "PORT BREACH  |  LIVE OPERATION", new Rect(48f, 32f, 700f, 46f), 30f, TextAlignmentOptions.Left, Text);
+        AddText(header.transform, "HudResources", "CRED 187,540     SUP 92,860     CMD 2,715", new Rect(1040f, 32f, 980f, 46f), 28f, TextAlignmentOptions.Right, Text);
+
+        GameObject left = CreateGroup("LeftContent", root.transform, new Rect(0f, 140f, 360f, 820f));
+        AddPanel(left.transform, "ObjectivesPanel", new Rect(20f, 20f, 320f, 370f));
+        AddText(left.transform, "ObjectiveTitle", "OBJECTIVES", new Rect(48f, 50f, 264f, 34f), 25f, TextAlignmentOptions.Left, Text);
+        AddText(left.transform, "ObjectiveList", "Secure depot\nHold main road\nExtract civilians", new Rect(48f, 108f, 264f, 160f), 22f, TextAlignmentOptions.Left, MutedText);
+        AddPanel(left.transform, "SquadPanel", new Rect(20f, 430f, 320f, 260f));
+        AddText(left.transform, "SquadText", "SQUADS\nRifle 01 Ready\nArmor 02 Moving", new Rect(48f, 462f, 264f, 160f), 22f, TextAlignmentOptions.Left, Text);
+
+        GameObject right = CreateGroup("RightContent", root.transform, new Rect(2040f, 140f, 360f, 820f));
+        AddPanel(right.transform, "CommandPanel", new Rect(20f, 20f, 320f, 520f));
+        AddText(right.transform, "CommandTitle", "COMMANDS", new Rect(48f, 50f, 264f, 34f), 25f, TextAlignmentOptions.Left, Text);
+        AddText(right.transform, "CommandList", "Move\nAttack\nHold\nExtract", new Rect(48f, 116f, 264f, 240f), 28f, TextAlignmentOptions.Left, MutedText);
+
+        GameObject footer = CreateGroup("FooterContent", root.transform, new Rect(0f, 960f, 2400f, 120f));
+        AddPanel(footer.transform, "FooterRail", StretchRect());
+        AddText(footer.transform, "FooterText", "TACTICAL LINK ONLINE     |     UNIT ORDERS QUEUED     |     CAMERA FOLLOW READY", new Rect(80f, 32f, 2240f, 48f), 28f, TextAlignmentOptions.Center, Text);
+
+        return root;
+    }
+
+    private static GameObject BuildResultPopup()
+    {
+        GameObject root = CreateRoot("POP05_MissionResultPopup");
+        GameObject frame = CreateRect("PopupFrame", root.transform, new Rect(0f, 0f, 920f, 560f));
+        AddPanel(frame.transform, "Frame", StretchRect());
+        AddText(frame.transform, "TitleText", "MISSION RESULT", new Rect(64f, 48f, 792f, 58f), 42f, TextAlignmentOptions.Center, Text);
+        AddText(frame.transform, "OutcomeText", "VICTORY COMPLETE", new Rect(64f, 136f, 792f, 52f), 34f, TextAlignmentOptions.Center, Accent);
+        AddText(frame.transform, "SummaryText", "Primary objectives secured.\nDistrict pressure reduced.\nCommander authority increased.", new Rect(96f, 230f, 728f, 150f), 25f, TextAlignmentOptions.Center, MutedText);
+        GameObject actions = CreateRect("Actions", frame.transform, new Rect(160f, 430f, 600f, 72f));
+        AddPanel(actions.transform, "ContinueButton", StretchRect());
+        AddText(actions.transform, "ContinueText", "CONTINUE", StretchRect(), 30f, TextAlignmentOptions.Center, Text);
+        return root;
+    }
+
+    private static void AddHeaderStat(Transform parent, float x, string label, string value, Color valueColor)
+    {
+        AddSolid(parent, $"{label}IconSlot", new Rect(x, 34f, 70f, 70f), new Color(0.11f, 0.11f, 0.09f, 1f));
+        AddText(parent, $"{label}Label", label, new Rect(x + 92f, 28f, 220f, 30f), 20f, TextAlignmentOptions.Left, MutedText);
+        AddText(parent, $"{label}Value", value, new Rect(x + 92f, 60f, 230f, 46f), 32f, TextAlignmentOptions.Left, valueColor);
+    }
+
+    private static void AddNavButton(Transform parent, float y, string label, bool selected)
+    {
+        Color fill = selected ? new Color(0.28f, 0.28f, 0.12f, 0.95f) : Panel;
+        AddSolid(parent, $"{label}_Button", new Rect(16f, y + 18f, 328f, 82f), fill);
+        AddText(parent, $"{label}_Label", label, new Rect(96f, y + 38f, 220f, 42f), 26f, TextAlignmentOptions.Left, Text);
+        AddSolid(parent, $"{label}_Icon", new Rect(42f, y + 42f, 34f, 34f), selected ? Accent : MutedText);
+    }
+
+    private static void AddModeCard(Transform parent, float x, string title, string subtitle)
+    {
+        AddPanel(parent, $"{title}_Card", new Rect(x, 150f, 460f, 520f));
+        AddText(parent, $"{title}_Title", title, new Rect(x + 48f, 188f, 364f, 46f), 32f, TextAlignmentOptions.Left, Text);
+        AddSolid(parent, $"{title}_Art", new Rect(x + 42f, 260f, 376f, 245f), new Color(0.08f, 0.10f, 0.085f, 1f));
+        AddText(parent, $"{title}_Subtitle", subtitle, new Rect(x + 48f, 538f, 364f, 76f), 22f, TextAlignmentOptions.Left, MutedText);
+        AddSolid(parent, $"{title}_Progress", new Rect(x + 48f, 628f, 260f, 18f), Accent);
+    }
+
+    private static GameObject CreateRoot(string name)
+    {
+        GameObject root = new(name, typeof(RectTransform), typeof(CanvasGroup));
+        RectTransform rect = root.GetComponent<RectTransform>();
+        Stretch(rect);
+        root.GetComponent<CanvasGroup>().alpha = 1f;
+        return root;
+    }
+
+    private static GameObject CreateGroup(string name, Transform parent, Rect rect)
+    {
+        GameObject group = CreateRect(name, parent, rect);
+        return group;
+    }
+
+    private static GameObject CreateRect(string name, Transform parent, Rect rect)
+    {
+        GameObject obj = new(name, typeof(RectTransform));
+        obj.transform.SetParent(parent, false);
+        RectTransform rectTransform = obj.GetComponent<RectTransform>();
+        ApplyTopLeftRect(rectTransform, rect);
+        return obj;
+    }
+
+    private static void AddPanel(Transform parent, string name, Rect rect)
+    {
+        AddSolid(parent, name, rect, Panel);
+        AddSolid(parent, $"{name}_TopStroke", new Rect(rect.x, rect.y, rect.width, 2f), Stroke);
+        AddSolid(parent, $"{name}_BottomStroke", new Rect(rect.x, rect.y + rect.height - 2f, rect.width, 2f), Stroke);
+    }
+
+    private static Image AddSolid(Transform parent, string name, Rect rect, Color color)
+    {
+        GameObject obj = CreateRect(name, parent, rect);
+        Image image = obj.AddComponent<Image>();
+        image.color = color;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static TMP_Text AddText(Transform parent, string name, string value, Rect rect, float size, TextAlignmentOptions alignment, Color color)
+    {
+        GameObject obj = CreateRect(name, parent, rect);
+        TextMeshProUGUI text = obj.AddComponent<TextMeshProUGUI>();
+        text.text = value;
+        text.fontSize = size;
+        text.fontStyle = FontStyles.Bold;
+        text.alignment = alignment;
+        text.color = color;
+        text.enableWordWrapping = true;
+        text.overflowMode = TextOverflowModes.Ellipsis;
+        text.raycastTarget = false;
+        return text;
+    }
+
+    private static Rect StretchRect() => new(0f, 0f, 0f, 0f);
+
+    private static void ApplyTopLeftRect(RectTransform rectTransform, Rect rect)
+    {
+        if (rect.width <= 0f && rect.height <= 0f)
+        {
+            Stretch(rectTransform);
+            return;
+        }
+
+        rectTransform.anchorMin = new Vector2(0f, 1f);
+        rectTransform.anchorMax = new Vector2(0f, 1f);
+        rectTransform.pivot = new Vector2(0f, 1f);
+        rectTransform.anchoredPosition = new Vector2(rect.x, -rect.y);
+        rectTransform.sizeDelta = new Vector2(rect.width, rect.height);
+        rectTransform.localScale = Vector3.one;
+    }
+
+    private static void Stretch(RectTransform rectTransform)
+    {
+        rectTransform.anchorMin = Vector2.zero;
+        rectTransform.anchorMax = Vector2.one;
+        rectTransform.offsetMin = Vector2.zero;
+        rectTransform.offsetMax = Vector2.zero;
+        rectTransform.pivot = new Vector2(0.5f, 0.5f);
+        rectTransform.localScale = Vector3.one;
+    }
+
+    private static void SavePrefab(GameObject root, string path)
+    {
+        PrefabUtility.SaveAsPrefabAsset(root, path);
+        UnityEngine.Object.DestroyImmediate(root);
+    }
+
+    private static void ValidatePrefab(string path, string expectedRootName, params string[] requiredChildren)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null)
+            throw new InvalidOperationException($"Missing GameUI content prefab at {path}.");
+        if (prefab.name != expectedRootName)
+            throw new InvalidOperationException($"{path} root must be named {expectedRootName}.");
+        if (prefab.GetComponent<RectTransform>() == null)
+            throw new InvalidOperationException($"{path} root must be a RectTransform.");
+        if (prefab.GetComponent<CanvasGroup>() == null)
+            throw new InvalidOperationException($"{path} root must contain a CanvasGroup.");
+        if (prefab.GetComponentInChildren<Canvas>(true) != null)
+            throw new InvalidOperationException($"{path} must not contain a nested Canvas.");
+
+        foreach (string childName in requiredChildren)
+        {
+            if (prefab.transform.Find(childName) == null)
+                throw new InvalidOperationException($"{path} is missing required child {childName}.");
+        }
+    }
+
+    private static void EnsureFolders()
+    {
+        EnsureFolder("Assets/Game/Prefabs/UI/Shell", "Content");
+        EnsureFolder("Assets/Game/Prefabs/UI/Shell", "Popups");
+    }
+
+    private static void EnsureFolder(string parent, string name)
+    {
+        string fullPath = $"{parent}/{name}";
+        if (AssetDatabase.IsValidFolder(fullPath))
+            return;
+
+        string guid = AssetDatabase.CreateFolder(parent, name);
+        if (string.IsNullOrEmpty(guid))
+            throw new InvalidOperationException($"Failed to create folder {fullPath}.");
+    }
+}
+#endif

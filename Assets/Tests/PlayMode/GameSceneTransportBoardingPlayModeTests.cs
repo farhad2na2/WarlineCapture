@@ -107,9 +107,10 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         Vector3 screen = camera.WorldToScreenPoint(clickWorld);
         Assert.Greater(screen.z, 0f, "Transport helipad click point must be in front of the camera.");
 
-        BuildingPlacementSystem buildingPlacement = GetPrivateBuildingPlacement(bootstrap);
-        Assert.NotNull(buildingPlacement, "Game scene must initialize BuildingPlacementSystem before selection input.");
-        InvokeBuildingSelectionClick(buildingPlacement, new Vector2(screen.x, screen.y));
+        Assert.NotNull(bootstrap.BuildingSelectionClick, "Game scene must initialize the building selection click boundary before selection input.");
+        bootstrap.BuildingSelectionClick.HandleBuildingSelectionClick(
+            bootstrap.BuildingSelectionClickContext,
+            new Vector2(screen.x, screen.y));
         Assert.IsTrue(
             em.HasComponent<SelectedUnitTag>(passenger),
             "Building selection input must not consume selected soldiers when the click belongs to a boardable transport on a helipad.");
@@ -254,20 +255,6 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         Assert.NotNull(mouseDown, "Toolbar mouse capture method should exist.");
         pointerDown.Invoke(mainMenu, new object[] { null });
         mouseDown.Invoke(mainMenu, new object[] { null });
-    }
-
-    private static void InvokeBuildingSelectionClick(BuildingPlacementSystem buildingPlacement, Vector2 screenPosition)
-    {
-        MethodInfo buildingClick = typeof(BuildingPlacementSystem).GetMethod("HandleBuildingSelectionClick", BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.NotNull(buildingClick, "Building selection click method should exist.");
-        buildingClick.Invoke(buildingPlacement, new object[] { screenPosition });
-    }
-
-    private static BuildingPlacementSystem GetPrivateBuildingPlacement(GameBootstrap bootstrap)
-    {
-        PropertyInfo property = typeof(GameBootstrap).GetProperty("BuildingPlacement", BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.NotNull(property, "GameBootstrap should keep BuildingPlacement as private composition state until building selection input is extracted.");
-        return property.GetValue(bootstrap) as BuildingPlacementSystem;
     }
 
     private static bool IsInitialSpawnReady(EntityManager em)

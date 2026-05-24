@@ -55,6 +55,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingProductionRequestSystem _buildingProductionRequestSystem = new();
     private readonly BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem = new();
     private readonly BuildingSelectionSystem _buildingSelectionSystem = new();
+    private readonly BuildingSelectionClickSystem _buildingSelectionClickSystem = new();
     private readonly BuildingBarrierSystem _buildingBarrierSystem = new();
     private readonly BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem = new();
     private readonly BuildingDefinitionSystem _buildingDefinitionSystem = new();
@@ -120,6 +121,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
+    public BuildingSelectionClickSystem BuildingSelectionClickSystem => _buildingSelectionClickSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -755,7 +757,7 @@ public sealed class BuildingPlacementSystem
 
             if (!ignoreBecauseCommandUiPressed && !overGameplayUi && !overUnitCommandUi)
             {
-                HandleBuildingSelectionClick(pointerPosition);
+                _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition);
                 afterInputBuildingClick = Time.realtimeSinceStartupAsDouble;
             }
         }
@@ -1791,19 +1793,6 @@ public sealed class BuildingPlacementSystem
             footprintRect);
     }
 
-    private void HandleBuildingSelectionClick(Vector2 screenPosition)
-    {
-        if (UnitPathfindingSystem.HasPendingPathJob)
-            return;
-
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
-            return;
-        if (!TryGetGridCell(screenPosition, grid, out Vector2Int cell))
-            return;
-
-        _buildingSelectionSystem.HandleBuildingSelectionClick(CreateBuildingSelectionContext(), screenPosition, cell);
-    }
-
     private bool TryAssignSelectedHaulerOrders(int clickedBuildingId)
     {
         return _buildingResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders(
@@ -2393,6 +2382,18 @@ public sealed class BuildingPlacementSystem
             TryAssignSelectedHaulerOrders,
             (min, size) => _selectionSystem != null && _selectionSystem.TryIssueMoveOrderToBuilding(min, size),
             BuildingBarrierSystem.ShouldUseExpandedSelectionArea);
+    }
+
+    public BuildingSelectionClickSystem.Context CreateBuildingSelectionClickContext()
+    {
+        return new BuildingSelectionClickSystem.Context(
+            () => UnitPathfindingSystem.HasPendingPathJob,
+            TryGetGridForSelection,
+            TryGetGridCell,
+            (screenPosition, cell) => _buildingSelectionSystem.HandleBuildingSelectionClick(
+                CreateBuildingSelectionContext(),
+                screenPosition,
+                cell));
     }
 
     private BuildingPlacementQuerySystem.Context CreateBuildingPlacementQueryContext()

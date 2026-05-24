@@ -114,7 +114,7 @@ internal sealed class BuildingGameplayCompositionSystem
             new BuildingRuntimeUpdateSystem.Context(
                 () => placementFacade.RuntimeTickSystem.Update(_runtimeTickContextSystem.Create(CreateRuntimeTickSource(placementFacade)))),
             placementFacade.RuntimeCitySpawnSystem,
-            placementFacade.CreateRuntimeCitySpawnContext(),
+            placementFacade.RuntimeContextSystem.CreateCitySpawnContext(placementFacade.CreateBuildingRuntimeContextSource()),
             placementFacade.BuildingUiCommandSystem,
             placementFacade.CreateBuildingUiCommandContext(),
             placementFacade.BuildingUiQuerySystem,
@@ -214,7 +214,7 @@ internal sealed class BuildingGameplayCompositionSystem
             placement.RuntimeBoundarySystem,
             placement.DefinitionSystem,
             placement.RuntimeSpawnSystem,
-            placement.CreateBuildingRuntimeSpawnContext(),
+            placement.RuntimeContextSystem.CreateSpawnContext(placement.CreateBuildingRuntimeContextSource()),
             placement.ProductionRequestSystem,
             placement.CreateBuildingProductionRequestContext(),
             placement.RuntimeQuerySystem,

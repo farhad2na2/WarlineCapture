@@ -726,10 +726,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/DeployCommandButton", UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
         RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/CommanderPortraitButton", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
 
-        contentPresenter.PrepareForCommandSequence(new[]
-        {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.SwapMenuMiddle, Route = WarlineCaptureRoute.CommanderProfile }
-        });
+        contentPresenter.InstallMenuRouteBody(WarlineCaptureRoute.CommanderProfile);
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.MiddleRegion, "MiddleContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
@@ -839,13 +836,13 @@ public static class WarlineCaptureGameUiSceneBuilder
         RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
 
         Rect headerBefore = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion).RegionRoot);
-        contentPresenter.PrepareForCommandSequence(new[]
-        {
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu },
-            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.SwapMenuMiddle }
-        });
+        contentPresenter.InstallMenuRouteBody(WarlineCaptureRoute.CommanderProfile);
         Rect headerAfter = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion).RegionRoot);
         ValidateRectNear(headerAfter, headerBefore, "Header region after menu middle swap");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MiddleRegion, canvasRect, "MiddleContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent/BackButton", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.MainMenu);
     }
 
     private static void ValidateMatchHudContentLayout(

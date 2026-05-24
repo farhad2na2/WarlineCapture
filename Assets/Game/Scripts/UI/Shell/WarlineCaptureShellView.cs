@@ -93,7 +93,7 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
                 AddExitMenuSteps(transitionId, steps);
                 break;
             case UiShellCommandKind.SwapMenuMiddle:
-                AddMiddleSwapSteps(transitionId, steps);
+                AddMenuBodySwapSteps(command.Route, transitionId, steps);
                 break;
             case UiShellCommandKind.EnterMatchHud:
                 AddEnterMatchHudSteps(transitionId, steps);
@@ -165,15 +165,21 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
             RegionScaleFactory(middle, Vector3.zero, motionHost.DefaultExitEase, transitionId)));
     }
 
-    private void AddMiddleSwapSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)
+    private void AddMenuBodySwapSteps(WarlineCaptureRoute route, int transitionId, List<WarlineCaptureUiMotionStep> steps)
     {
-        if (!TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle))
-            return;
+        TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
+        TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle);
+        TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
 
-        steps.Add(WarlineCaptureUiMotionStep.Single(
-            motionHost.ScaleStep(middle.RegionRoot, Vector3.zero, motionHost.DefaultDurationSeconds, motionHost.DefaultSwapEase, transitionId)));
-        steps.Add(WarlineCaptureUiMotionStep.Single(
-            motionHost.ScaleStep(middle.RegionRoot, Vector3.one, motionHost.DefaultDurationSeconds, motionHost.DefaultSwapEase, transitionId)));
+        steps.Add(WarlineCaptureUiMotionStep.Parallel(
+            RegionExitFactory(left, transitionId),
+            RegionScaleFactory(middle, Vector3.zero, motionHost.DefaultSwapEase, transitionId),
+            RegionExitFactory(right, transitionId)));
+        steps.Add(WarlineCaptureUiMotionStep.Single(() => SwapMenuRouteBodyRoutine(route, left, middle, right)));
+        steps.Add(WarlineCaptureUiMotionStep.Parallel(
+            RegionEnterFactory(left, transitionId),
+            RegionScaleFactory(middle, Vector3.one, motionHost.DefaultSwapEase, transitionId),
+            RegionEnterFactory(right, transitionId)));
     }
 
     private void AddEnterMatchHudSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)
@@ -289,6 +295,38 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
 
         region.ResetVisualState();
         region.RegionRoot.anchoredPosition = OffscreenPosition(region);
+    }
+
+    private System.Collections.IEnumerator SwapMenuRouteBodyRoutine(
+        WarlineCaptureRoute route,
+        WarlineCaptureShellRegionView left,
+        WarlineCaptureShellRegionView middle,
+        WarlineCaptureShellRegionView right)
+    {
+        contentPresenter?.InstallMenuRouteBody(route);
+
+        if (left != null)
+        {
+            left.CanvasGroup.alpha = 1f;
+            left.RegionRoot.anchoredPosition = OffscreenPosition(left);
+            left.RegionRoot.localScale = Vector3.one;
+        }
+
+        if (middle != null)
+        {
+            middle.CanvasGroup.alpha = 1f;
+            middle.RegionRoot.anchoredPosition = middle.OnScreenAnchoredPosition;
+            middle.RegionRoot.localScale = Vector3.zero;
+        }
+
+        if (right != null)
+        {
+            right.CanvasGroup.alpha = 1f;
+            right.RegionRoot.anchoredPosition = OffscreenPosition(right);
+            right.RegionRoot.localScale = Vector3.one;
+        }
+
+        yield break;
     }
 
     private Vector2 OffscreenPosition(WarlineCaptureShellRegionView region)

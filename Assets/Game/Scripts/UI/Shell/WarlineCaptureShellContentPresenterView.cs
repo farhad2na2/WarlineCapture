@@ -49,9 +49,6 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
                 case UiShellCommandKind.EnterMenu:
                     InstallMainMenu();
                     break;
-                case UiShellCommandKind.SwapMenuMiddle:
-                    InstallMenuRoute(commands[i].Route);
-                    break;
                 case UiShellCommandKind.EnterMatchHud:
                     InstallMatchHud();
                     break;
@@ -84,7 +81,7 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
     }
 
-    private void InstallMenuRoute(WarlineCaptureRoute route)
+    public void InstallMenuRouteBody(WarlineCaptureRoute route)
     {
         if (route == WarlineCaptureRoute.CommanderProfile)
         {

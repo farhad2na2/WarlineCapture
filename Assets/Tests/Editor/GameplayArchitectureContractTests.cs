@@ -154,6 +154,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("production progress ticking, resource production ticking, resource hauler ticking, and recent spawn reservation cleanup belong in `BuildingProductionRuntimeTickSystem`", contract);
         StringAssert.Contains("runtime boundary publish ticking belongs in `BuildingRuntimeBoundaryPublishSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
+        StringAssert.Contains("Runtime spawn, runtime creation, runtime ownership, and runtime city-spawn context construction belongs in `BuildingRuntimeContextSystem`", contract);
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable/unit lookup, configured spawnable/unit prefab list/read access, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
         StringAssert.Contains("Building selection screen-click guards and screen-to-grid click routing belong in `BuildingSelectionClickSystem`", contract);
@@ -637,7 +638,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("CreateInputRuntimeTickContext", buildingComposition);
         StringAssert.Contains("CreateRuntimeTickDiagnosticsContext", buildingComposition);
         StringAssert.Contains("placement.CreateBuildingProductionUpdateContext()", buildingComposition);
-        StringAssert.Contains("placement.CreateBuildingRuntimeSpawnContext()", buildingComposition);
+        StringAssert.Contains("placement.RuntimeContextSystem.CreateSpawnContext(placement.CreateBuildingRuntimeContextSource())", buildingComposition);
         Assert.IsFalse(
             buildingRuntimeTickContext.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
             "BuildingPlacementRuntimeTickContextSystem must consume a narrow source and must not depend on the BuildingPlacementSystem facade.");
@@ -2414,15 +2415,18 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string runtimeBuildingFile = "Assets/Game/Scripts/Systems/RuntimeBuildingSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
+        const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         const string combatFile = "Assets/Game/Scripts/Systems/BuildingCombatSystem.cs";
         const string buildingCompositionFile = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
         Assert.IsTrue(File.Exists(runtimeBuildingFile), "The runtime building registry slice must live in RuntimeBuildingSystem.");
         Assert.IsTrue(File.Exists(runtimeCreationFile), "Runtime building creation orchestration must live in BuildingRuntimeCreationSystem.");
+        Assert.IsTrue(File.Exists(runtimeContextFile), "Runtime creation context construction must live in BuildingRuntimeContextSystem.");
         Assert.IsTrue(File.Exists(combatFile), "Runtime building destruction/removal orchestration must live in BuildingCombatSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string buildingComposition = File.ReadAllText(buildingCompositionFile);
         string runtimeCreation = File.ReadAllText(runtimeCreationFile);
+        string runtimeContext = File.ReadAllText(runtimeContextFile);
         string combat = File.ReadAllText(combatFile);
         StringAssert.Contains("RuntimeBuildingSystem<RuntimeBuildingData>", placement);
         StringAssert.Contains("RuntimeBuildingRegistry => _runtimeBuildingSystem", placement);
@@ -2431,7 +2435,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("registry.Count", buildingComposition);
         StringAssert.Contains("BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem", placement);
         StringAssert.Contains("_buildingRuntimeCreationSystem.RegisterRuntimeBuilding", placement);
-        StringAssert.Contains("CreateBuildingRuntimeCreationContext", placement);
+        StringAssert.Contains("BuildingRuntimeContextSystem _buildingRuntimeContextSystem", placement);
+        StringAssert.Contains("_buildingRuntimeContextSystem.CreateCreationContext(CreateBuildingRuntimeContextSource())", placement);
+        StringAssert.Contains("new BuildingRuntimeCreationSystem.Context", runtimeContext);
         StringAssert.Contains("context.RuntimeBuildingSystem.RemoveBuilding", combat);
         StringAssert.Contains("_runtimeBuildingSystem.SelectBuilding", placement);
         StringAssert.Contains("context.RuntimeBuildingSystem.ClearSelection", combat);
@@ -2459,6 +2465,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+void\s+AttachRuntimeLink\b"),
             "Runtime building link attachment belongs in BuildingRuntimeCreationSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("new BuildingRuntimeCreationSystem.Context", StringComparison.Ordinal),
+            "Runtime creation context construction belongs in BuildingRuntimeContextSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -2869,12 +2878,17 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string runtimeSpawnFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnSystem.cs";
+        const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeSpawnFile), "Runtime/manual building spawn orchestration must live in BuildingRuntimeSpawnSystem.");
+        Assert.IsTrue(File.Exists(runtimeContextFile), "Runtime spawn context construction must live in BuildingRuntimeContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string runtimeSpawn = File.ReadAllText(runtimeSpawnFile);
+        string runtimeContext = File.ReadAllText(runtimeContextFile);
         StringAssert.Contains("BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem", placement);
-        StringAssert.Contains("CreateBuildingRuntimeSpawnContext", placement);
+        StringAssert.Contains("CreateBuildingRuntimeContextSource", placement);
+        StringAssert.Contains("_buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource())", placement);
+        StringAssert.Contains("new BuildingRuntimeSpawnSystem.Context", runtimeContext);
         StringAssert.Contains("_buildingRuntimeSpawnSystem.SpawnInitialTestRoster", placement);
         StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeBuilding", placement);
         StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeWallRun", placement);
@@ -2920,6 +2934,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"new\s+Vector2Int\s*\(\s*10\s*,\s*10\s*\)"),
             "Runtime building fallback footprint policy belongs in BuildingRuntimeSpawnSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("new BuildingRuntimeSpawnSystem.Context", StringComparison.Ordinal),
+            "Runtime spawn context construction belongs in BuildingRuntimeContextSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -2927,12 +2944,16 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string runtimeOwnershipFile = "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipSystem.cs";
+        const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeOwnershipFile), "Runtime owner-faction assignment must live in BuildingRuntimeOwnershipSystem.");
+        Assert.IsTrue(File.Exists(runtimeContextFile), "Runtime ownership context construction must live in BuildingRuntimeContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string runtimeOwnership = File.ReadAllText(runtimeOwnershipFile);
+        string runtimeContext = File.ReadAllText(runtimeContextFile);
         StringAssert.Contains("BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem", placement);
-        StringAssert.Contains("CreateBuildingRuntimeOwnershipContext", placement);
+        StringAssert.Contains("_buildingRuntimeContextSystem.CreateOwnershipContext(CreateBuildingRuntimeContextSource())", placement);
+        StringAssert.Contains("new BuildingRuntimeOwnershipSystem.Context", runtimeContext);
         StringAssert.Contains("_buildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction", placement);
         StringAssert.Contains("SetRuntimeBuildingOwnerFaction", runtimeOwnership);
         StringAssert.Contains("UpdateRuntimeGateFriendlyPassFaction", runtimeOwnership);
@@ -2956,6 +2977,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"GetColor\s*\(\s*building\.OwnerFactionId\s*\)"),
             "Runtime owner marker color projection belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("new BuildingRuntimeOwnershipSystem.Context", StringComparison.Ordinal),
+            "Runtime ownership context construction belongs in BuildingRuntimeContextSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -3867,7 +3891,7 @@ public sealed class GameplayArchitectureContractTests
 
         string audit = File.ReadAllText(auditPath);
         StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("2216 lines", audit);
+        StringAssert.Contains("2197 lines", audit);
         StringAssert.Contains("Public/internal facade declarations: 128", audit);
         StringAssert.Contains("Allowed Production Facade References", audit);
         StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
@@ -3878,7 +3902,7 @@ public sealed class GameplayArchitectureContractTests
         string[] placementLines = File.ReadAllLines(placementFile);
         Assert.LessOrEqual(
             placementLines.Length,
-            2216,
+            2197,
             "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
 
         int publicOrInternalDeclarationCount = placementLines.Count(line =>

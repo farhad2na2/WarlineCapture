@@ -56,6 +56,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementGridSystem _buildingPlacementGridSystem = new();
     private readonly BuildingPlacementVisualSystem _buildingPlacementVisualSystem = new();
     private readonly BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem = new();
+    private readonly BuildingRuntimeContextSystem _buildingRuntimeContextSystem = new();
     private readonly BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem = new();
     private readonly BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem = new();
     private readonly BuildingRuntimeEntitySystem _buildingRuntimeEntitySystem = new();
@@ -130,6 +131,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingRuntimeBoundarySystem RuntimeBoundarySystem => _buildingRuntimeBoundarySystem;
     internal BuildingDefinitionSystem DefinitionSystem => _buildingDefinitionSystem;
     internal BuildingRuntimeSpawnSystem RuntimeSpawnSystem => _buildingRuntimeSpawnSystem;
+    internal BuildingRuntimeContextSystem RuntimeContextSystem => _buildingRuntimeContextSystem;
     internal BuildingProductionRequestSystem ProductionRequestSystem => _buildingProductionRequestSystem;
     internal EntityQuery RuntimeBoundaryQuery => _buildingRuntimeBoundaryQuery;
     internal float OilBarrelsPerFuelBarrelRatio => OilBarrelsPerFuelBarrel;
@@ -1222,7 +1224,7 @@ public sealed class BuildingPlacementSystem
     private RuntimeBuildingData RegisterRuntimeBuilding(BuildingDefinition definition, GameObject instance, Vector2Int originCell, bool removeOverlappingBlockers = true)
     {
         return _buildingRuntimeCreationSystem.RegisterRuntimeBuilding(
-            CreateBuildingRuntimeCreationContext(),
+            _buildingRuntimeContextSystem.CreateCreationContext(CreateBuildingRuntimeContextSource()),
             definition,
             instance,
             originCell,
@@ -1242,7 +1244,7 @@ public sealed class BuildingPlacementSystem
     public void SpawnInitialTestRoster(Vector2Int anchorCell)
     {
         _buildingRuntimeSpawnSystem.SpawnInitialTestRoster(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             _soldierBaseDefinition,
             _soldierTentDefinition,
             _factoryDefinition,
@@ -1283,7 +1285,7 @@ public sealed class BuildingPlacementSystem
         byte? ownerFactionId = null)
     {
         return _buildingRuntimeSpawnSystem.TrySpawnRuntimeWallRun(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             prefab,
             startOrigin,
             endOrigin,
@@ -1293,7 +1295,7 @@ public sealed class BuildingPlacementSystem
     public bool TryGetRuntimeWallSegmentFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
     {
         return _buildingRuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             prefab,
             rotateVertical,
             out footprint);
@@ -1307,7 +1309,7 @@ public sealed class BuildingPlacementSystem
         bool allowExistingWallOverlap = false)
     {
         return _buildingRuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             prefab,
             origin,
             rotateVertical,
@@ -1333,7 +1335,7 @@ public sealed class BuildingPlacementSystem
         actualOrigin = default;
         actualFootprint = default;
         if (!_buildingRuntimeSpawnSystem.TrySpawnRuntimeBuilding(
-                CreateBuildingRuntimeSpawnContext(),
+                _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
                 prefab,
                 preferredOrigin,
                 fallbackDisplayName,
@@ -1357,7 +1359,7 @@ public sealed class BuildingPlacementSystem
     public bool TryGetRuntimeBuildingPlacementFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
     {
         return _buildingRuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             prefab,
             rotateVertical,
             out footprint);
@@ -1436,7 +1438,7 @@ public sealed class BuildingPlacementSystem
         out RuntimeBuildingData building)
     {
         return _buildingRuntimeSpawnSystem.TrySpawnInitialBuilding(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             definition,
             preferredOrigin,
             rotateVertical,
@@ -1449,7 +1451,7 @@ public sealed class BuildingPlacementSystem
         out RuntimeBuildingData building)
     {
         return _buildingRuntimeSpawnSystem.TrySpawnInitialBuilding(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             definition,
             preferredOrigin,
             out building);
@@ -1458,7 +1460,7 @@ public sealed class BuildingPlacementSystem
     private bool TryResolveInitialPlacementOrigin(BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin)
     {
         return _buildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin(
-            CreateBuildingRuntimeSpawnContext(),
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
             definition,
             preferredOrigin,
             out resolvedOrigin);
@@ -1490,7 +1492,7 @@ public sealed class BuildingPlacementSystem
     private void SetRuntimeBuildingOwnerFaction(RuntimeBuildingData building, byte? ownerFactionId)
     {
         _buildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction(
-            CreateBuildingRuntimeOwnershipContext(),
+            _buildingRuntimeContextSystem.CreateOwnershipContext(CreateBuildingRuntimeContextSource()),
             building,
             ownerFactionId);
     }
@@ -1863,9 +1865,9 @@ public sealed class BuildingPlacementSystem
             BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
-    internal BuildingRuntimeSpawnSystem.Context CreateBuildingRuntimeSpawnContext()
+    internal BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource()
     {
-        return new BuildingRuntimeSpawnSystem.Context(
+        return new BuildingRuntimeContextSystem.Source(
             _buildingRoot,
             _buildingDefinitionSystem,
             _buildingRunwaySystem,
@@ -1879,13 +1881,26 @@ public sealed class BuildingPlacementSystem
             CreateBuildingVisualInstance,
             PositionBuildingObject,
             RegisterRuntimeBuilding,
-            SetRuntimeBuildingOwnerFaction);
-    }
-
-    internal BuildingRuntimeCitySpawnSystem.Context CreateRuntimeCitySpawnContext()
-    {
-        return new BuildingRuntimeCitySpawnSystem.Context(
-            CreateBuildingRuntimeSpawnContext(),
+            SetRuntimeBuildingOwnerFaction,
+            _runtimeBuildingSystem,
+            _buildingPlacementInteractionSystem,
+            CreateBuildingPlacementInteractionContext(),
+            () => _buildingPlacementRedirectSystem.IsDeferringSideEffects,
+            (out GridConfig grid) => TryGetGridData(out _, out grid, out _, out _),
+            (definition, origin, grid) => GetEffectivePlacementRect(definition, origin, grid),
+            ShouldRuntimeBuildingBlockPathing,
+            (origin, footprint) => _runtimeGridBlockerSystem?.RemoveBlockersOverlappingFootprint(origin, footprint),
+            CreateBlockerEntity,
+            CreateBuildingCombatEntity,
+            RedirectUnitsAroundPlacedBuilding,
+            _buildingPlacementRedirectSystem.AddDeferredRedirectFootprint,
+            _buildingPlacementRedirectSystem.MarkPendingMarkerRefresh,
+            InitializeBuildingVisuals,
+            RefreshBuildingMarkerVisibility,
+            TryGetEntityManager,
+            _buildingVisualSystem,
+            _factionVisualSettings,
+            _markerPropertyBlock,
             DeleteBuildingById,
             BeginDeferredRuntimeBuildingSideEffects,
             EndDeferredRuntimeBuildingSideEffects);
@@ -1964,15 +1979,6 @@ public sealed class BuildingPlacementSystem
             TryResolveBaseBreachTarget);
     }
 
-    private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()
-    {
-        return new BuildingRuntimeOwnershipSystem.Context(
-            TryGetEntityManager,
-            _buildingVisualSystem,
-            _factionVisualSettings,
-            _markerPropertyBlock);
-    }
-
     private BuildingRuntimeEntitySystem.Context CreateBuildingRuntimeEntityContext()
     {
         return new BuildingRuntimeEntitySystem.Context(
@@ -2024,26 +2030,6 @@ public sealed class BuildingPlacementSystem
             _unitPrefabRegistryQuery,
             _spawnPrefabCandidatesQuery,
             _livePlayerUnitsQuery);
-    }
-
-    private BuildingRuntimeCreationSystem.Context CreateBuildingRuntimeCreationContext()
-    {
-        return new BuildingRuntimeCreationSystem.Context(
-            _runtimeBuildingSystem,
-            _buildingPlacementInteractionSystem,
-            CreateBuildingPlacementInteractionContext(),
-            _buildingPlacementRedirectSystem.IsDeferringSideEffects,
-            TryGetGridForRuntimeCreation,
-            (definition, origin, grid) => GetEffectivePlacementRect(definition, origin, grid),
-            ShouldRuntimeBuildingBlockPathing,
-            (origin, footprint) => _runtimeGridBlockerSystem?.RemoveBlockersOverlappingFootprint(origin, footprint),
-            CreateBlockerEntity,
-            CreateBuildingCombatEntity,
-            RedirectUnitsAroundPlacedBuilding,
-            _buildingPlacementRedirectSystem.AddDeferredRedirectFootprint,
-            _buildingPlacementRedirectSystem.MarkPendingMarkerRefresh,
-            InitializeBuildingVisuals,
-            RefreshBuildingMarkerVisibility);
     }
 
     internal BuildingCombatSystem.Context<RuntimeBuildingData> CreateBuildingCombatContext()
@@ -2106,11 +2092,6 @@ public sealed class BuildingPlacementSystem
             return false;
 
         return IsHaulerAtBuildingApproach(currentCell, unitFootprint, building, grid);
-    }
-
-    private bool TryGetGridForRuntimeCreation(out GridConfig grid)
-    {
-        return TryGetGridData(out _, out grid, out _, out _);
     }
 
     private BuildingSelectionSystem.Context CreateBuildingSelectionContext()

@@ -8,7 +8,7 @@ Lane: Gameplay
 `BuildingPlacementSystem` is not deletable yet. It no longer owns the main managed runtime `Update()` entry point, and `GameBootstrap` / `ManagedGameplayStartupSystem` no longer carry it directly. It still exists as a temporary managed composition shell under `BuildingGameplayCompositionSystem`.
 
 Current measured size:
-- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 2216 lines.
+- `Assets/Game/Scripts/UI/BuildingPlacementSystem.cs`: 2197 lines.
 - Public/internal facade declarations: 128, excluding the class declaration.
 
 ## Allowed Production Facade References
@@ -44,6 +44,7 @@ The facade still owns or exposes these migration debts:
 - Runtime visual/resource animation ticks and destroyed-building/combat sync ticks are now wired from managed composition to `BuildingRuntimeVisualSystem` and `BuildingCombatSystem`.
 - Marker-refresh and road barrier door ticks are now wired from managed composition to `BuildingPlacementRedirectSystem` and `BuildingBarrierSystem`.
 - Definition/configured spawnable/unit lookup state and authored spawnable/unit prefab lists now live in `BuildingDefinitionSystem`; the facade still forwards the top-level config object into that boundary.
+- Runtime spawn, runtime creation, runtime ownership, and runtime city-spawn context construction now live in `BuildingRuntimeContextSystem`; the facade still exposes a temporary source bundle and spawn wrapper methods.
 - Runtime boundary context source callbacks for spawn, production request, runtime query, resource, and ECS boundary queries.
 - Production/resource/hauler context source callbacks.
 - Active placement UI/session command wrappers.
@@ -55,10 +56,10 @@ The facade still owns or exposes these migration debts:
 
 1. Move remaining internal runtime registry context usage out of the facade as each context factory migrates.
 2. Move remaining config object application out of the facade into managed composition and narrow systems.
-3. Move runtime spawn/runtime creation/runtime ownership context factories out of the facade.
-4. Move production request, production update, production transport, and hauler context factories out of the facade.
-5. Move runtime resource and unit prefab context wiring out of the facade.
-6. Move active placement lifecycle/session command wrappers out of the facade.
+3. Move production request, production update, production transport, and hauler context factories out of the facade.
+4. Move runtime resource and unit prefab context wiring out of the facade.
+5. Move active placement lifecycle/session command wrappers out of the facade.
+6. Move runtime/manual building and wall spawn wrapper methods out of the facade.
 7. Move placement grid/input/preview/commit context wiring out of the facade.
 8. Move UI command/query compatibility wrappers out of the facade.
 9. Move selection and interaction compatibility wrappers out of the facade.
@@ -70,7 +71,7 @@ The facade still owns or exposes these migration debts:
 ## Drift Guard
 
 Until deletion:
-- `BuildingPlacementSystem.cs` must not grow beyond 2216 lines.
+- `BuildingPlacementSystem.cs` must not grow beyond 2197 lines.
 - Public/internal facade declarations must not exceed 128.
 - Production facade references must remain inside the two allowed files above.
 - Production construction must remain isolated to `BuildingGameplayCompositionSystem`.

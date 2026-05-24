@@ -1,6 +1,3 @@
-using Unity.Collections;
-using Unity.Entities;
-using Unity.Mathematics;
 using UnityEngine;
 
 public enum TacticalMapRuntimePlane
@@ -22,7 +19,6 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
 
     private SpriteRenderer groundRenderer;
     private GridAuthoring gridAuthoring;
-    private Entity terrainSurfaceEntity;
 
     public TacticalMapDefinition Definition => definition;
     public GridAuthoringConfig GridConfig => gridConfig;
@@ -60,7 +56,6 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
 
         EnsureRoot();
         EnsureGround();
-        EnsureTerrainSurfaceEntity();
         EnsureGrid();
 
         if (configureCamera)
@@ -157,64 +152,9 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
         groundRenderer.sortingOrder = 0;
     }
 
-    private void EnsureTerrainSurfaceEntity()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated || definition == null || groundRenderer == null)
-            return;
-
-        EntityManager em = world.EntityManager;
-        if (terrainSurfaceEntity == Entity.Null || !em.Exists(terrainSurfaceEntity))
-            terrainSurfaceEntity = em.CreateEntity();
-
-        string runtimeEntityId = $"terrain.{definition.MapId}";
-        SetComponent(em, terrainSurfaceEntity, new MissionRuntimeEntityId { Value = new FixedString64Bytes(runtimeEntityId) });
-        SetComponent(em, terrainSurfaceEntity, new MissionRuntimeTerrainSurface
-        {
-            RuntimeEntityId = new FixedString64Bytes(runtimeEntityId),
-            MapId = new FixedString64Bytes(definition.MapId),
-            MissionId = new FixedString64Bytes(definition.MissionId),
-            WorldOrigin = definition.WorldOrigin,
-            VisibleWorldSize = definition.VisibleWorldSize,
-            GridSize = new int2(definition.GridWidth, definition.GridHeight),
-            RuntimePlane = (byte)runtimePlane,
-            SpriteUpAlignsPositiveWorldZ = runtimePlane == TacticalMapRuntimePlane.GameplayXZ ? (byte)1 : (byte)0
-        });
-
-        if (em.HasComponent<MissionRuntimeTerrainSurfaceRendererRuntime>(terrainSurfaceEntity))
-        {
-            MissionRuntimeTerrainSurfaceRendererRuntime runtime = em.GetComponentObject<MissionRuntimeTerrainSurfaceRendererRuntime>(terrainSurfaceEntity);
-            runtime.Instance = groundRenderer.gameObject;
-            runtime.Renderer = groundRenderer;
-            runtime.GroundSprite = ResolveRuntimeGroundSprite();
-            runtime.GroundCamera = gameplayCamera != null ? gameplayCamera : Camera.main;
-            runtime.GroundPosition = ResolveRuntimeGroundPosition(runtime.GroundSprite);
-            runtime.GroundScale = ResolveRuntimeGroundScale(runtime.GroundSprite);
-            runtime.GroundFollowsCamera = IsV29RuntimeGroundSprite(runtime.GroundSprite);
-            runtime.ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites();
-        }
-        else
-        {
-            Sprite groundSprite = ResolveRuntimeGroundSprite();
-            em.AddComponentObject(terrainSurfaceEntity, new MissionRuntimeTerrainSurfaceRendererRuntime
-            {
-                Instance = groundRenderer.gameObject,
-                Renderer = groundRenderer,
-                GroundSprite = groundSprite,
-                GroundCamera = gameplayCamera != null ? gameplayCamera : Camera.main,
-                GroundPosition = ResolveRuntimeGroundPosition(groundSprite),
-                GroundScale = ResolveRuntimeGroundScale(groundSprite),
-                GroundFollowsCamera = IsV29RuntimeGroundSprite(groundSprite),
-                ProductionTacticalPlateSprites = ResolveProductionTacticalPlateSprites()
-            });
-        }
-    }
-
     private Sprite ResolveRuntimeGroundSprite()
     {
-        return Chapter01M01SpriteAssetResolver.TryGetM01ProductionTacticalGroundSprite(out Sprite productionSprite)
-            ? productionSprite
-            : definition != null ? definition.GroundSprite : null;
+        return definition != null ? definition.GroundSprite : null;
     }
 
     private Vector3 ResolveRuntimeGroundScale(Sprite groundSprite)
@@ -226,22 +166,6 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
         if (spriteWorldSize.x <= 0.0001f || spriteWorldSize.y <= 0.0001f)
             return Vector3.one;
 
-        if (IsV29RuntimeGroundSprite(groundSprite) && TryResolveCameraWorldSize(out Vector2 cameraWorldSize))
-        {
-            return new Vector3(
-                cameraWorldSize.x / spriteWorldSize.x,
-                cameraWorldSize.y / spriteWorldSize.y,
-                1f);
-        }
-
-        if (IsOverscanRuntimeGroundSprite(groundSprite))
-        {
-            float coverScale = Mathf.Max(
-                definition.VisibleWorldSize.x / spriteWorldSize.x,
-                definition.VisibleWorldSize.y / spriteWorldSize.y);
-            return new Vector3(coverScale, coverScale, 1f);
-        }
-
         return new Vector3(
             definition.VisibleWorldSize.x / spriteWorldSize.x,
             definition.VisibleWorldSize.y / spriteWorldSize.y,
@@ -250,48 +174,7 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
 
     private Vector3 ResolveRuntimeGroundPosition(Sprite groundSprite)
     {
-        if (!IsV29RuntimeGroundSprite(groundSprite))
-            return Vector3.zero;
-
-        Camera camera = gameplayCamera != null ? gameplayCamera : Camera.main;
-        if (camera == null)
-            return Vector3.zero;
-
-        return runtimePlane == TacticalMapRuntimePlane.GameplayXZ
-            ? new Vector3(camera.transform.position.x, 0f, camera.transform.position.z)
-            : new Vector3(camera.transform.position.x, camera.transform.position.y, 0f);
-    }
-
-    private bool TryResolveCameraWorldSize(out Vector2 cameraWorldSize)
-    {
-        cameraWorldSize = default;
-        Camera camera = gameplayCamera != null ? gameplayCamera : Camera.main;
-        if (camera == null || !camera.orthographic || camera.aspect <= 0.0001f)
-            return false;
-
-        cameraWorldSize = new Vector2(camera.orthographicSize * 2f * camera.aspect, camera.orthographicSize * 2f);
-        return cameraWorldSize.x > 0.0001f && cameraWorldSize.y > 0.0001f;
-    }
-
-    private static bool IsV29RuntimeGroundSprite(Sprite groundSprite)
-    {
-        return groundSprite != null &&
-            groundSprite.texture != null &&
-            groundSprite.texture.name.Contains("v29_runtime");
-    }
-
-    private static bool IsOverscanRuntimeGroundSprite(Sprite groundSprite)
-    {
-        return groundSprite != null &&
-            groundSprite.texture != null &&
-            groundSprite.texture.name.Contains("v29_overscan");
-    }
-
-    private static Sprite[] ResolveProductionTacticalPlateSprites()
-    {
-        return Chapter01M01SpriteAssetResolver.TryGetM01ProductionTacticalGroundSprites(out Sprite[] productionSprites)
-            ? productionSprites
-            : System.Array.Empty<Sprite>();
+        return Vector3.zero;
     }
 
     private void EnsureGrid()
@@ -314,14 +197,6 @@ public sealed class TacticalMapRuntimeLoader : MonoBehaviour
 
         if (gridConfig != null)
             gridAuthoring.Configure(gridConfig);
-    }
-
-    private static void SetComponent<T>(EntityManager em, Entity entity, T component) where T : unmanaged, IComponentData
-    {
-        if (em.HasComponent<T>(entity))
-            em.SetComponentData(entity, component);
-        else
-            em.AddComponentData(entity, component);
     }
 
     private void ApplyCamera()

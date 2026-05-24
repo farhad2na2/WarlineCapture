@@ -21,7 +21,6 @@ internal sealed class MenuStartupSystem
         CitizenPopulationSystem citizenPopulation,
         Camera worldCamera,
         GameplaySceneBindingSystem sceneBindingSystem,
-        Chapter01MissionTacticalRuntimeBinder chapter01TacticalBinder,
         World world,
         Action<Exception> logException)
     {
@@ -52,7 +51,7 @@ internal sealed class MenuStartupSystem
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
                 selection);
-            BindSceneUi(sceneBindingSystem, chapter01TacticalBinder, world, selection);
+            BindSceneUi(sceneBindingSystem, world, selection);
             return mainMenu;
         }
         catch (Exception exception)
@@ -65,7 +64,7 @@ internal sealed class MenuStartupSystem
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
                 selection);
-            BindSceneUi(sceneBindingSystem, chapter01TacticalBinder, world, selection);
+            BindSceneUi(sceneBindingSystem, world, selection);
             return null;
         }
     }
@@ -98,12 +97,10 @@ internal sealed class MenuStartupSystem
 
     private void BindSceneUi(
         GameplaySceneBindingSystem sceneBindingSystem,
-        Chapter01MissionTacticalRuntimeBinder chapter01TacticalBinder,
         World world,
         RTSSelectionSystem selection)
     {
         sceneBindingSystem?.BindGameplayUiRuntimeDependencies(
-            chapter01TacticalBinder,
             world,
             selection);
     }

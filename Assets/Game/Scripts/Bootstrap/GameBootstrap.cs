@@ -28,7 +28,6 @@ public sealed class GameBootstrap : MonoBehaviour
     [SerializeField] private Volume globalVolume;
     [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
     [SerializeField] private Transform decorationRoot;
-    [SerializeField] private Chapter01MissionTacticalRuntimeBinder chapter01TacticalBinder;
     [SerializeField] private GameObject[] legacyVisualRootsDisabledForM01 = Array.Empty<GameObject>();
 
     [Header("Configs")]
@@ -51,7 +50,6 @@ public sealed class GameBootstrap : MonoBehaviour
     public Volume GlobalVolume => globalVolume;
     public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
     public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
-    public Chapter01MissionTacticalRuntimeBinder Chapter01TacticalBinder => chapter01TacticalBinder;
 
     public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
     public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
@@ -164,7 +162,6 @@ public sealed class GameBootstrap : MonoBehaviour
             CitizenPopulation,
             worldCamera,
             _gameplaySceneBindingSystem,
-            chapter01TacticalBinder,
             World.DefaultGameObjectInjectionWorld,
             Debug.LogException);
     }
@@ -178,7 +175,6 @@ public sealed class GameBootstrap : MonoBehaviour
         _aiStartupSystem.LogConfigValidation(aiControllerConfigs);
         _missionStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
-            chapter01TacticalBinder,
             worldCamera,
             DayNight,
             legacyVisualRootsDisabledForM01);
@@ -197,14 +193,9 @@ public sealed class GameBootstrap : MonoBehaviour
             World.DefaultGameObjectInjectionWorld,
             Selection,
             worldCamera,
-            GetMapLoader(),
+            null,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
             0);
-    }
-
-    private TacticalMapRuntimeLoader GetMapLoader()
-    {
-        return chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
     }
 
     private void Update()
@@ -215,7 +206,7 @@ public sealed class GameBootstrap : MonoBehaviour
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
             _missionStartupSystem,
-            GetMapLoader(),
+            null,
             RoadBuild,
             BuildingRuntimeUpdate,
             _buildingRuntimeUpdateContext,

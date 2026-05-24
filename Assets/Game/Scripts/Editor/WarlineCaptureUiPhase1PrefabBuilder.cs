@@ -452,7 +452,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private const string MatchHudM01MoveArrowIconPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Icons/move_arrow_icon.png";
     private const string MatchHudM01FriendlyUnitPlaceholderPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Content/friendly_unit_placeholder.png";
     private const string MatchHudM01EnemyUnitPlaceholderPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Content/enemy_unit_placeholder.png";
-    private const string MatchHudM01QaMapPreviewPath = "Assets/Game/Art/Generated/IsometricMaps/TacticalGroundQualityTest_A/tactical_ground_quality_test_wide_a.png";
+    private const string MatchHudM01QaMapPreviewPath = "Assets/Game/Art/UI/Generated/MatchHUD/M01TacticalFeedback/Content/friendly_unit_placeholder.png";
     private const string CommandWheelLayerPackRoot = "Design/VisualLockLayered/SCN-10_UnitCommandWheel";
     private const string CommandWheelContextHintFramePath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/command_wheel_context_hint_frame.png";
     private const string CommandWheelContextHintFillPath = "Assets/Game/Art/UI/Generated/MatchHUD/LayeredOneGo/Frames/command_wheel_context_hint_fill.png";
@@ -971,7 +971,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     [MenuItem("WarlineCapture/UI/Install Phase 1 Bootstrap In Game Scene")]
     public static void InstallBootstrapInGameScene()
     {
-        const string scenePath = "Assets/Game/Scenes/Game2D.unity";
+        const string scenePath = "Assets/Game/Scenes/Game.unity";
         BuildAll();
 
         UnityEngine.SceneManagement.Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -995,7 +995,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     [MenuItem("WarlineCapture/UI/Enable Parallel UI In Game Scene")]
     public static void EnableParallelUiInGameScene()
     {
-        const string scenePath = "Assets/Game/Scenes/Game2D.unity";
+        const string scenePath = "Assets/Game/Scenes/Game.unity";
         BuildAll();
 
         UnityEngine.SceneManagement.Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);

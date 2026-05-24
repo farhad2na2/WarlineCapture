@@ -12,7 +12,7 @@ public static class Chapter01M01PlayableRuntime
     public const string EnemySpawnAnchorId = "enemy_spawn.patrol_start";
     public const string CameraStartAnchorId = "camera.default_start";
     public const string ObjectiveAnchorId = "objective.destroy_patrol_group";
-    public const string DecorCommandPointEntityId = Chapter01M01SpritePresenterCatalog.DecorCommandPointEntityId;
+    public const string DecorCommandPointEntityId = "decor.command_point";
     public const string ObjectiveId = "destroy_patrol";
     public const string PatrolRouteId = "route.enemy_patrol_01";
     private const string PatrolRouteAnchorPrefix = "route.enemy_patrol_01.";
@@ -238,7 +238,6 @@ public static class Chapter01M01PlayableRuntime
 
         ApplyM01TacticalScaleAttackTrace(em, entity);
         ApplyM01InfantryMovementContract(em, entity);
-        BindMissionSpritePresenter(em, entity, entityId);
     }
 
     private static void ApplyM01TacticalScaleAttackTrace(EntityManager em, Entity entity)
@@ -264,7 +263,6 @@ public static class Chapter01M01PlayableRuntime
             SetComponent(em, existingById, LocalTransform.FromPosition(worldPosition));
             if (em.HasComponent<LocalToWorld>(existingById))
                 em.SetComponentData(existingById, new LocalToWorld { Value = float4x4.Translate(worldPosition) });
-            BindMissionSpritePresenter(em, existingById, entityId);
             return existingById;
         }
 
@@ -278,22 +276,7 @@ public static class Chapter01M01PlayableRuntime
         em.SetComponentData(entity, new UnitGrid { Cell = cell });
         em.SetComponentData(entity, new UnitFootprint { Size = new int2(4, 3) });
         em.SetComponentData(entity, LocalTransform.FromPosition(worldPosition));
-        BindMissionSpritePresenter(em, entity, entityId);
         return entity;
-    }
-
-    private static void BindMissionSpritePresenter(EntityManager em, Entity entity, string entityId)
-    {
-        if (!Chapter01M01SpritePresenterCatalog.TryCreatePresenter(entityId, out MissionRuntimeSpritePresenter presenter))
-            return;
-
-        SetComponent(em, entity, presenter);
-        if (!em.HasComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(entity))
-            em.AddComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(entity);
-        if (em.HasComponent<UnitDestroyedVisualReference>(entity))
-            em.RemoveComponent<UnitDestroyedVisualReference>(entity);
-        if (em.HasComponent<UnitDestroyedVisualInitialized>(entity))
-            em.RemoveComponent<UnitDestroyedVisualInitialized>(entity);
     }
 
     private static void ApplyPatrolRoute(EntityManager em, TacticalMapRuntimeLoader loader, Entity enemy)

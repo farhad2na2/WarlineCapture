@@ -41,7 +41,6 @@ public sealed class GameSceneIsolationPlayModeTests
         Assert.IsTrue(defaultScene.isLoaded, "Game scene should remain loaded.");
         Assert.IsNull(FindSceneComponent<WarlineCaptureUiBootstrap>(defaultScene), "Promoted Game scene must not contain the old 2D public UI bootstrap.");
         Assert.IsNull(FindSceneComponent<WarlineCaptureRouter>(defaultScene), "Promoted Game scene must not load the old 2D/isometric app router.");
-        Assert.IsNull(FindSceneComponent<Chapter01MissionTacticalRuntimeBinder>(defaultScene), "Promoted Game scene must not contain the old 2D M01 production tactical binder.");
 
         GameObject defaultCanvas = FindRoot(defaultScene, "UI_Canvas");
         Assert.NotNull(defaultCanvas, "Promoted Game scene must keep the default UI_Canvas root.");
@@ -53,7 +52,6 @@ public sealed class GameSceneIsolationPlayModeTests
 
         GameBootstrap bootstrap = FindSceneComponent<GameBootstrap>(defaultScene);
         Assert.NotNull(bootstrap, "Promoted Game scene must keep the default GameBootstrap.");
-        Assert.IsNull(bootstrap.Chapter01TacticalBinder, "Default GameBootstrap must not reference the M01 production binder.");
         Assert.NotNull(bootstrap.WorldCamera);
         Assert.AreEqual("Main Camera", bootstrap.WorldCamera.name);
         Assert.NotNull(bootstrap.GlobalVolume);

@@ -13,9 +13,7 @@ This brief defines an AI-generative marketing-video direction for WarlineCapture
 - `Design/WarlineCapture_Gameplay_Features_Detailed_Spec.md`
 - `Design/WarlineCapture_Economy_Reward_Design.md`
 - `Design/Monetization/WarlineCapture_Monetization_Strategy.md`
-- `Design/WarlineCapture_2D_Isometric_Production_Direction.md`
-- `Design/WarlineCapture_2D_Isometric_Art_Bible.md`
-- `Design/VisualReferences/2DIsometricProduction`
+- Active 3D Unity scene direction and current `Design/VisualLock` references.
 
 ## Creative Positioning
 

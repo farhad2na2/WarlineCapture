@@ -19,14 +19,11 @@ public sealed class MissionStartupSystem
 
     public Result Initialize(
         World world,
-        Chapter01MissionTacticalRuntimeBinder tacticalBinder,
         Camera worldCamera,
         DayNightSystem dayNight,
         IReadOnlyList<GameObject> legacyVisualRootsDisabledForM01)
     {
-        tacticalBinder?.TryApplyActiveMission(worldCamera);
-        TacticalMapRuntimeLoader loader = tacticalBinder != null ? tacticalBinder.TacticalMapLoader : null;
-        UpdateActiveMission(world, loader);
+        UpdateActiveMission(world, null);
         bool activeFixedTacticalMission = Chapter01M01PlayableRuntime.IsActiveMission();
         ApplyM01ProductionSceneVisibility(legacyVisualRootsDisabledForM01, activeFixedTacticalMission);
         ApplyFixedTacticalMissionGuardrails(dayNight, activeFixedTacticalMission);

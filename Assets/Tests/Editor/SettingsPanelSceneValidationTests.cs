@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public sealed class SettingsPanelSceneValidationTests
 {
-    private const string ScenePath = "Assets/Game/Scenes/Game2D.unity";
+    private const string ScenePath = "Assets/Game/Scenes/Game.unity";
 
     [Test]
     public void GameScene_SettingsButtonPanelAndGameplaySpeedDropdownAreWired()

@@ -45,5 +45,5 @@ OPENAI_API_KEY=... /Users/farhad/.cache/codex-runtimes/codex-primary-runtime/dep
 
 - Marketing claims must stay aligned with `Design/WarlineCapture_Economy_Reward_Design.md`.
 - Store and starter-pack copy must stay aligned with `Design/Monetization/WarlineCapture_Monetization_Strategy.md`.
-- Visual shots must come from, or be validated against, `Design/VisualLock` and `Design/VisualReferences/2DIsometricProduction`.
+- Visual shots must come from, or be validated against, `Design/VisualLock` and the active 3D Unity scene direction.
 - Generated videos must pass QA before human validation.

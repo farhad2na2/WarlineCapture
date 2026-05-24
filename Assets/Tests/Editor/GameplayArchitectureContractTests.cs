@@ -38,7 +38,6 @@ public sealed class GameplayArchitectureContractTests
 
     private static readonly string[] LegacyControllerFiles =
     {
-        "Assets/Game/Scripts/Iso2D/WarlineCaptureIso2DCameraController.cs",
         "Assets/Game/Scripts/TacticalMaps/M01PlayableVisualPrototypeController.cs",
         "Assets/Game/Scripts/UI/Components/BattleHudTacticalFeedbackController.cs",
         "Assets/Game/Scripts/UI/Popups/MissionResultPopupController.cs",

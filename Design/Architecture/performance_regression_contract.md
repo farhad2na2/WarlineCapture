@@ -84,8 +84,6 @@ Examples:
 - `UnitGridMovementSystem`
 - `UnitRenderBudgetSystem`
 - `UnitModelSpawnSystem`
-- `MissionRuntimeSpriteRendererSystem`
-- `MissionRuntimeTerrainSurfaceRendererSystem`
 - `InitialUnitsSpawnSystem`
 - `AIProductionSystem`
 - `AISquadSystem`

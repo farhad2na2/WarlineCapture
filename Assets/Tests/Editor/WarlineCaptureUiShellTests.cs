@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public sealed class WarlineCaptureUiShellTests
 {
-    private const string GameScenePath = "Assets/Game/Scenes/Game2D.unity";
+    private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
     private const string ShellPrefabPath = "Assets/Game/Prefabs/UI/Shell/WarlineCaptureAppCanvas.prefab";
     private const string SplashPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_Splash.prefab";
     private const string MainMenuPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab";
@@ -45,17 +45,13 @@ public sealed class WarlineCaptureUiShellTests
     };
 
     [Test]
-    public void GameScene_ParallelUiBootstrapIsEnabledAndLegacyCanvasIsKeptInactive()
+    public void GameScene_UsesSceneOwnedCanvasWithoutParallelLegacyBootstrap()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(GameScenePath);
-        string bootstrapBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureUiBootstrap");
         string legacyCanvasBlock = scene.FindRequiredBlockContaining("m_Name: UI_Canvas");
 
-        StringAssert.Contains("enableParallelUiOnStart: 1", bootstrapBlock);
-        StringAssert.Contains("startupMode: 1", bootstrapBlock);
-        StringAssert.Contains("parallelStartupRoute: 0", bootstrapBlock);
-        StringAssert.Contains("appCanvasPrefab: {fileID:", bootstrapBlock);
-        StringAssert.Contains("m_IsActive: 0", legacyCanvasBlock);
+        Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureUiBootstrap"));
+        StringAssert.Contains("m_IsActive: 1", legacyCanvasBlock);
     }
 
     [Test]

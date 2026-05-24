@@ -90,12 +90,6 @@ public sealed class Chapter01M01PlayableRuntimeTests
         Assert.IsTrue(em.HasComponent<MissionRuntimeEnemyPatrolTag>(state.EnemyPatrol));
         Assert.IsTrue(em.HasComponent<MissionRuntimePatrolRoute>(state.EnemyPatrol));
         Assert.IsTrue(em.HasComponent<UnitPathRequest>(state.EnemyPatrol));
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenter>(state.PlayerSquad));
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenter>(state.EnemyPatrol));
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenter>(state.CommandPoint));
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(state.PlayerSquad));
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(state.EnemyPatrol));
-        Assert.IsTrue(em.HasComponent<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>(state.CommandPoint));
         Assert.IsFalse(em.HasComponent<UnitDestroyedVisualReference>(state.CommandPoint));
 
         AssertRuntimePosition(state.PlayerSpawnWorld, em.GetComponentData<LocalTransform>(state.PlayerSquad).Position);

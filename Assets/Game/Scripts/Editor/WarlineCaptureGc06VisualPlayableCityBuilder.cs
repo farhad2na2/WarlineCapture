@@ -312,10 +312,6 @@ public static class WarlineCaptureGc06VisualPlayableCityBuilder
 
     private static void BuildDenseStrategicAnchors(GameObject parent)
     {
-        PlacePrefab(parent, "Assets/Game/Prefabs/Generated/IsometricMaps/LargeMapStrategicAreas_A/StrategicTentCamp_A.prefab", new Vector3(-275f, 0f, -160f), 0f, 0.92f, "DenseAnchor_StrategicTentCamp");
-        PlacePrefab(parent, "Assets/Game/Prefabs/Generated/IsometricMaps/LargeMapStrategicAreas_A/StrategicVehicleTankDepot_A.prefab", new Vector3(285f, 0f, -240f), 0f, 0.92f, "DenseAnchor_StrategicVehicleTankDepot");
-        PlacePrefab(parent, "Assets/Game/Prefabs/Generated/IsometricMaps/LargeMapStrategicAreas_A/StrategicAirportHeliArea_A.prefab", new Vector3(530f, 0f, 255f), 0f, 0.82f, "DenseAnchor_StrategicAirportHeliArea");
-        PlacePrefab(parent, "Assets/Game/Prefabs/Generated/IsometricMaps/LargeMapStrategicAreas_A/StrategicOilRefineryFuel_A.prefab", new Vector3(390f, 0f, -535f), 0f, 0.72f, "DenseAnchor_StrategicFuelArea");
     }
 
     private static void BuildPerimeter(GameObject parent)
@@ -483,8 +479,7 @@ public static class WarlineCaptureGc06VisualPlayableCityBuilder
         instance.transform.SetParent(parent.transform, true);
         instance.transform.position = position;
         instance.transform.rotation = Quaternion.Euler(0f, rotationY, 0f);
-        bool generatedStrategicModule = path.Contains("/Generated/IsometricMaps/", StringComparison.Ordinal);
-        float visualScale = path.Contains("/Vehicles/Unit_Veh_Jet_", StringComparison.Ordinal) || generatedStrategicModule ? scale : scale * 3.2f;
+        float visualScale = path.Contains("/Vehicles/Unit_Veh_Jet_", StringComparison.Ordinal) ? scale : scale * 3.2f;
         instance.transform.localScale = Vector3.one * visualScale;
         AlignBottomNearGround(instance);
         StripDebugRingRenderers(instance);

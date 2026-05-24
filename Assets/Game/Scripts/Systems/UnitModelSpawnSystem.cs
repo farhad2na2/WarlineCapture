@@ -86,7 +86,6 @@ public partial struct UnitModelSpawnSystem : ISystem
         foreach (var (modelPrefab, entity) in SystemAPI
                  .Query<RefRO<UnitModelPrefabReference>>()
                  .WithNone<UnitModelInstanceReference>()
-                 .WithNone<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>()
                  .WithEntityAccess())
         {
             if (modelPrefab.ValueRO.Prefab == Entity.Null)
@@ -154,7 +153,6 @@ public partial struct UnitModelSpawnSystem : ISystem
         foreach (var (modelPrefab, entity) in SystemAPI
                  .Query<RefRO<UnitMidLodPrefabReference>>()
                  .WithNone<UnitMidLodInstanceReference>()
-                 .WithNone<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>()
                  .WithEntityAccess())
         {
             if (modelPrefab.ValueRO.Prefab == Entity.Null)
@@ -179,7 +177,6 @@ public partial struct UnitModelSpawnSystem : ISystem
         foreach (var (modelPrefab, entity) in SystemAPI
                  .Query<RefRO<UnitLowLodPrefabReference>>()
                  .WithNone<UnitLowLodInstanceReference>()
-                 .WithNone<MissionRuntimeSpritePresenterSuppressesLegacyModelTag>()
                  .WithEntityAccess())
         {
             if (modelPrefab.ValueRO.Prefab == Entity.Null)

@@ -8,7 +8,7 @@ using UnityEngine;
 
 public sealed class ThreatWarningValidationTests
 {
-    private const string ScenePath = "Assets/Game/Scenes/Game2D.unity";
+    private const string ScenePath = "Assets/Game/Scenes/Game.unity";
     private const string RadarTankConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Radar_Tank.asset";
     private const string SatelliteDishConfigPath = "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset";
     private const string GameStringsConfigPath = "Assets/Game/Configs/Scene/Game_GameStrings_Config.asset";

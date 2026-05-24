@@ -16,12 +16,9 @@ public sealed class GameplaySceneBindingSystem
     }
 
     public void BindGameplayUiRuntimeDependencies(
-        Chapter01MissionTacticalRuntimeBinder chapter01TacticalBinder,
         World world,
         RTSSelectionSystem selection)
     {
-        TacticalMapRuntimeLoader loader = chapter01TacticalBinder != null ? chapter01TacticalBinder.TacticalMapLoader : null;
-
         foreach (MatchOverlayCommandControlsController controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsController>())
         {
             if (IsLoadedSceneObject(controls))
@@ -42,7 +39,7 @@ public sealed class GameplaySceneBindingSystem
 
             binding.BindRuntimeDependencies(
                 world,
-                loader,
+                null,
                 selection,
                 bridge,
                 router,

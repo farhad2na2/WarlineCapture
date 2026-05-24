@@ -58,6 +58,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementGridSystem _buildingPlacementGridSystem = new();
     private readonly BuildingPlacementVisualSystem _buildingPlacementVisualSystem = new();
     private readonly BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem = new();
+    private readonly BuildingRuntimeSpawnCommandSystem _buildingRuntimeSpawnCommandSystem = new();
     private readonly BuildingRuntimeContextSystem _buildingRuntimeContextSystem = new();
     private readonly BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem = new();
     private readonly BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem = new();
@@ -1236,12 +1237,7 @@ public sealed class BuildingPlacementSystem
 
     public void SpawnInitialTestRoster(Vector2Int anchorCell)
     {
-        _buildingRuntimeSpawnSystem.SpawnInitialTestRoster(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            _soldierBaseDefinition,
-            _soldierTentDefinition,
-            _factoryDefinition,
-            anchorCell);
+        _buildingRuntimeSpawnCommandSystem.SpawnInitialTestRoster(CreateRuntimeSpawnCommandContext(), anchorCell);
     }
 
     public bool TrySpawnRuntimeBuilding(
@@ -1256,12 +1252,11 @@ public sealed class BuildingPlacementSystem
         byte? ownerFactionId = null,
         bool rotateVertical = false)
     {
-        return TrySpawnRuntimeBuilding(
+        return _buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeBuilding(
+            CreateRuntimeSpawnCommandContext(),
             prefab,
             preferredOrigin,
             out buildingId,
-            out _,
-            out _,
             fallbackDisplayName,
             fallbackDescription,
             fallbackFootprint,
@@ -1277,21 +1272,12 @@ public sealed class BuildingPlacementSystem
         Vector2Int endOrigin,
         byte? ownerFactionId = null)
     {
-        return _buildingRuntimeSpawnSystem.TrySpawnRuntimeWallRun(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            prefab,
-            startOrigin,
-            endOrigin,
-            ownerFactionId);
+        return _buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeWallRun(CreateRuntimeSpawnCommandContext(), prefab, startOrigin, endOrigin, ownerFactionId);
     }
 
     public bool TryGetRuntimeWallSegmentFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
     {
-        return _buildingRuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            prefab,
-            rotateVertical,
-            out footprint);
+        return _buildingRuntimeSpawnCommandSystem.TryGetRuntimeWallSegmentFootprint(CreateRuntimeSpawnCommandContext(), prefab, rotateVertical, out footprint);
     }
 
     public bool TrySpawnRuntimeWallSegment(
@@ -1301,13 +1287,7 @@ public sealed class BuildingPlacementSystem
         byte? ownerFactionId = null,
         bool allowExistingWallOverlap = false)
     {
-        return _buildingRuntimeSpawnSystem.TrySpawnRuntimeWallSegment(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            prefab,
-            origin,
-            rotateVertical,
-            ownerFactionId,
-            allowExistingWallOverlap);
+        return _buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeWallSegment(CreateRuntimeSpawnCommandContext(), prefab, origin, rotateVertical, ownerFactionId, allowExistingWallOverlap);
     }
 
     public bool TrySpawnRuntimeBuilding(
@@ -1324,38 +1304,25 @@ public sealed class BuildingPlacementSystem
         byte? ownerFactionId = null,
         bool rotateVertical = false)
     {
-        buildingId = 0;
-        actualOrigin = default;
-        actualFootprint = default;
-        if (!_buildingRuntimeSpawnSystem.TrySpawnRuntimeBuilding(
-                _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-                prefab,
-                preferredOrigin,
-                fallbackDisplayName,
-                fallbackDescription,
-                fallbackFootprint,
-                fallbackMaxHealth,
-                isCityGenerated,
-                ownerFactionId,
-                rotateVertical,
-                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
-        {
-            return false;
-        }
-
-        buildingId = result.BuildingId;
-        actualOrigin = result.ActualOrigin;
-        actualFootprint = result.ActualFootprint;
-        return true;
+        return _buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeBuilding(
+            CreateRuntimeSpawnCommandContext(),
+            prefab,
+            preferredOrigin,
+            out buildingId,
+            out actualOrigin,
+            out actualFootprint,
+            fallbackDisplayName,
+            fallbackDescription,
+            fallbackFootprint,
+            fallbackMaxHealth,
+            isCityGenerated,
+            ownerFactionId,
+            rotateVertical);
     }
 
     public bool TryGetRuntimeBuildingPlacementFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
     {
-        return _buildingRuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            prefab,
-            rotateVertical,
-            out footprint);
+        return _buildingRuntimeSpawnCommandSystem.TryGetRuntimeBuildingPlacementFootprint(CreateRuntimeSpawnCommandContext(), prefab, rotateVertical, out footprint);
     }
 
     public bool TryGetFactionProductionSpawnPoint(
@@ -1430,12 +1397,7 @@ public sealed class BuildingPlacementSystem
         bool rotateVertical,
         out RuntimeBuildingData building)
     {
-        return _buildingRuntimeSpawnSystem.TrySpawnInitialBuilding(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            definition,
-            preferredOrigin,
-            rotateVertical,
-            out building);
+        return _buildingRuntimeSpawnCommandSystem.TrySpawnInitialBuilding(CreateRuntimeSpawnCommandContext(), definition, preferredOrigin, rotateVertical, out building);
     }
 
     private bool TrySpawnInitialBuilding(
@@ -1443,20 +1405,12 @@ public sealed class BuildingPlacementSystem
         Vector2Int preferredOrigin,
         out RuntimeBuildingData building)
     {
-        return _buildingRuntimeSpawnSystem.TrySpawnInitialBuilding(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            definition,
-            preferredOrigin,
-            out building);
+        return _buildingRuntimeSpawnCommandSystem.TrySpawnInitialBuilding(CreateRuntimeSpawnCommandContext(), definition, preferredOrigin, out building);
     }
 
     private bool TryResolveInitialPlacementOrigin(BuildingDefinition definition, Vector2Int preferredOrigin, out Vector2Int resolvedOrigin)
     {
-        return _buildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin(
-            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
-            definition,
-            preferredOrigin,
-            out resolvedOrigin);
+        return _buildingRuntimeSpawnCommandSystem.TryResolveInitialPlacementOrigin(CreateRuntimeSpawnCommandContext(), definition, preferredOrigin, out resolvedOrigin);
     }
 
 #if UNITY_EDITOR
@@ -1867,6 +1821,16 @@ public sealed class BuildingPlacementSystem
             DeleteBuildingById,
             BeginDeferredRuntimeBuildingSideEffects,
             EndDeferredRuntimeBuildingSideEffects);
+    }
+
+    private BuildingRuntimeSpawnCommandSystem.Context CreateRuntimeSpawnCommandContext()
+    {
+        return new BuildingRuntimeSpawnCommandSystem.Context(
+            _buildingRuntimeSpawnSystem,
+            _buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource()),
+            _soldierBaseDefinition,
+            _soldierTentDefinition,
+            _factoryDefinition);
     }
 
     internal BuildingRuntimeQuerySystem.Context CreateRuntimeBuildingQueryContext()

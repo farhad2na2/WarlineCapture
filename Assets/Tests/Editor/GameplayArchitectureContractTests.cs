@@ -148,7 +148,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Citizen upkeep spending belongs in `CitizenResourceSystem`", contract);
         StringAssert.Contains("citizen configured prefab/entity resolution belongs in `CitizenPrefabSystem`", contract);
         StringAssert.Contains("Runtime resource, runtime unit-prefab, citizen resource, citizen prefab, and building spawn-prefab context construction belongs in `BuildingRuntimeResourcePrefabContextSystem`", contract);
-        StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
+        StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`; runtime/manual spawn command translation belongs in `BuildingRuntimeSpawnCommandSystem`", contract);
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
         StringAssert.Contains("`GameplayFeatureStartupSystem` must receive `BuildingRuntimeCitySpawnSystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("Building runtime tick orchestration and per-phase timing belong in `BuildingPlacementRuntimeTickSystem`; placement pointer/click frame flow belongs in `BuildingPlacementInputRuntimeTickSystem`; building runtime tick diagnostics threshold, enablement, timing normalization, and log formatting belong in `BuildingPlacementRuntimeTickDiagnosticsSystem`", contract);
@@ -2889,25 +2889,38 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string runtimeSpawnFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnSystem.cs";
+        const string runtimeSpawnCommandFile = "Assets/Game/Scripts/Systems/BuildingRuntimeSpawnCommandSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeSpawnFile), "Runtime/manual building spawn orchestration must live in BuildingRuntimeSpawnSystem.");
+        Assert.IsTrue(File.Exists(runtimeSpawnCommandFile), "Runtime/manual building spawn command translation must live in BuildingRuntimeSpawnCommandSystem.");
         Assert.IsTrue(File.Exists(runtimeContextFile), "Runtime spawn context construction must live in BuildingRuntimeContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string runtimeSpawn = File.ReadAllText(runtimeSpawnFile);
+        string runtimeSpawnCommand = File.ReadAllText(runtimeSpawnCommandFile);
         string runtimeContext = File.ReadAllText(runtimeContextFile);
         StringAssert.Contains("BuildingRuntimeSpawnSystem _buildingRuntimeSpawnSystem", placement);
+        StringAssert.Contains("BuildingRuntimeSpawnCommandSystem _buildingRuntimeSpawnCommandSystem", placement);
         StringAssert.Contains("CreateBuildingRuntimeContextSource", placement);
+        StringAssert.Contains("CreateRuntimeSpawnCommandContext", placement);
         StringAssert.Contains("_buildingRuntimeContextSystem.CreateSpawnContext(CreateBuildingRuntimeContextSource())", placement);
         StringAssert.Contains("new BuildingRuntimeSpawnSystem.Context", runtimeContext);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.SpawnInitialTestRoster", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeBuilding", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeWallRun", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnRuntimeWallSegment", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TrySpawnInitialBuilding", placement);
-        StringAssert.Contains("_buildingRuntimeSpawnSystem.TryResolveInitialPlacementOrigin", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.SpawnInitialTestRoster", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeBuilding", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeWallRun", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TrySpawnRuntimeWallSegment", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TryGetRuntimeWallSegmentFootprint", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TryGetRuntimeBuildingPlacementFootprint", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TrySpawnInitialBuilding", placement);
+        StringAssert.Contains("_buildingRuntimeSpawnCommandSystem.TryResolveInitialPlacementOrigin", placement);
+        StringAssert.Contains("context.RuntimeSpawnSystem?.SpawnInitialTestRoster", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TrySpawnRuntimeBuilding", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TrySpawnRuntimeWallRun", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TrySpawnRuntimeWallSegment", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TryGetRuntimeWallSegmentFootprint", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TryGetRuntimeBuildingPlacementFootprint", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TrySpawnInitialBuilding", runtimeSpawnCommand);
+        StringAssert.Contains("context.RuntimeSpawnSystem.TryResolveInitialPlacementOrigin", runtimeSpawnCommand);
 
         StringAssert.Contains("TrySpawnRuntimeBuilding", runtimeSpawn);
         StringAssert.Contains("TrySpawnRuntimeWallRun", runtimeSpawn);
@@ -2948,6 +2961,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             placement.Contains("new BuildingRuntimeSpawnSystem.Context", StringComparison.Ordinal),
             "Runtime spawn context construction belongs in BuildingRuntimeContextSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"_buildingRuntimeSpawnSystem\.(?:SpawnInitialTestRoster|TrySpawnRuntimeBuilding|TrySpawnRuntimeWallRun|TrySpawnRuntimeWallSegment|TryGetRuntimeWallSegmentFootprint|TryGetRuntimeBuildingPlacementFootprint|TrySpawnInitialBuilding|TryResolveInitialPlacementOrigin)\s*\("),
+            "Runtime/manual spawn command translation belongs in BuildingRuntimeSpawnCommandSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -3945,7 +3961,7 @@ public sealed class GameplayArchitectureContractTests
 
         string audit = File.ReadAllText(auditPath);
         StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("2139 lines", audit);
+        StringAssert.Contains("2103 lines", audit);
         StringAssert.Contains("Public/internal facade declarations: 125", audit);
         StringAssert.Contains("Allowed Production Facade References", audit);
         StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
@@ -3956,7 +3972,7 @@ public sealed class GameplayArchitectureContractTests
         string[] placementLines = File.ReadAllLines(placementFile);
         Assert.LessOrEqual(
             placementLines.Length,
-            2139,
+            2103,
             "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
 
         int publicOrInternalDeclarationCount = placementLines.Count(line =>

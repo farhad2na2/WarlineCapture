@@ -170,6 +170,7 @@ The deletion plan and current facade surface inventory are frozen in `Design/Arc
 
 Allowed direction:
 - `BuildingPlacementSystem` keeps only temporary facade methods during migration; active placement mutable state, active placement cost, and active placement preview handoff belong in `BuildingPlacementLifecycleSystem`; active placement begin/cancel/confirm/exit command flow and selection-preservation state belong in `BuildingPlacementSessionSystem`.
+- Placement grid/input/preview/commit context construction belongs in `BuildingPlacementContextSystem`; `BuildingPlacementSystem` may temporarily expose compatibility methods but must not construct placement lifecycle, input, validation, or commit context structs directly.
 - Footprint, road, blocker, wall-placement validity, wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`.
 - Runtime building registry ownership, count/dictionary read access, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`; managed composition may receive the registry boundary, but `BuildingPlacementSystem` must not expose separate runtime building count or dictionary facade properties.
 - Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`.

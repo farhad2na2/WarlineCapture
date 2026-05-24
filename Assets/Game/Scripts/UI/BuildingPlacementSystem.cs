@@ -46,6 +46,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
     private readonly BuildingPlacementCommitSystem _buildingPlacementCommitSystem = new();
     private readonly BuildingPlacementInputSystem _buildingPlacementInputSystem = new();
+    private readonly BuildingPlacementContextSystem _buildingPlacementContextSystem = new();
     private readonly BuildingPlacementSessionSystem _buildingPlacementSessionSystem = new();
     private readonly BuildingProductionRequestSystem _buildingProductionRequestSystem = new();
     private readonly BuildingRuntimeCreationSystem _buildingRuntimeCreationSystem = new();
@@ -684,14 +685,7 @@ public sealed class BuildingPlacementSystem
 
     internal BuildingPlacementInputSystem.ActivePlacementPointerContext CreateActivePlacementPointerContext()
     {
-        return new BuildingPlacementInputSystem.ActivePlacementPointerContext(
-            TryGetGridForPlacementInput,
-            TryGetGridCell,
-            BuildingPlacementGridSystem.CenterCellToOrigin,
-            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
-            IsPointerOverPlacementUi,
-            BuildingBarrierSystem.IsLinearWallDefinition,
-            UpdatePlacement);
+        return _buildingPlacementContextSystem.CreateActivePlacementPointerContext(CreatePlacementContextSource());
     }
 
     private bool TryGetGridForPlacementInput(out GridConfig grid)
@@ -958,10 +952,42 @@ public sealed class BuildingPlacementSystem
 
     private BuildingPlacementLifecycleSystem.CancelContext CreatePlacementCancelContext()
     {
-        return new BuildingPlacementLifecycleSystem.CancelContext(
+        return _buildingPlacementContextSystem.CreateCancelContext(CreatePlacementContextSource());
+    }
+
+    private BuildingPlacementContextSystem.Source CreatePlacementContextSource()
+    {
+        return new BuildingPlacementContextSystem.Source(
+            _runtimeGameplayStateSystem,
+            _buildingPlacementLifecycleSystem,
             _buildingPlacementInputSystem,
             _buildingPlacementPreviewSystem,
-            preview => DestroyRuntimeObject(preview));
+            _buildingPlacementValidationSystem,
+            _runtimeBuildingSystem,
+            _buildingRoot,
+            CreateBuildingVisualInstance,
+            preview => DestroyRuntimeObject(preview),
+            GetCenterScreenPlacementOrigin,
+            TryResolveInitialPlacementOrigin,
+            UpdatePlacementVisual,
+            FocusActivePlacement,
+            ValidateActivePlacementForConfirm,
+            TrySpendDollars,
+            PlaceBuilding,
+            () => BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build),
+            () => ClearSelectedBuilding("BeginPlacement"),
+            TryGetGridForPlacementInput,
+            TryGetGridCell,
+            IsPointerOverPlacementUi,
+            UpdatePlacement,
+            IsRuntimeBlockerCell,
+            _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : (System.Func<GridConfig, Vector2Int, Vector2Int, bool>)null,
+            CreateBuildingVisualInstance,
+            PositionBuildingObject,
+            RegisterRuntimeBuilding,
+            CloneDefinitionWithFootprint,
+            GetPlacementFootprint,
+            DestroyRuntimeObject);
     }
 
     private BuildingPlacementSessionSystem.Context CreatePlacementSessionContext()
@@ -982,27 +1008,12 @@ public sealed class BuildingPlacementSystem
 
     private BuildingPlacementLifecycleSystem.BeginContext CreatePlacementBeginContext()
     {
-        return new BuildingPlacementLifecycleSystem.BeginContext(
-            _runtimeGameplayStateSystem,
-            _buildingPlacementInputSystem,
-            _buildingPlacementPreviewSystem,
-            _buildingRoot,
-            CreateBuildingVisualInstance,
-            preview => DestroyRuntimeObject(preview),
-            GetCenterScreenPlacementOrigin,
-            TryResolveInitialPlacementOrigin,
-            UpdatePlacementVisual,
-            FocusActivePlacement,
-            () => BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build),
-            () => ClearSelectedBuilding("BeginPlacement"));
+        return _buildingPlacementContextSystem.CreateBeginContext(CreatePlacementContextSource());
     }
 
     private BuildingPlacementLifecycleSystem.ConfirmContext CreatePlacementConfirmContext()
     {
-        return new BuildingPlacementLifecycleSystem.ConfirmContext(
-            ValidateActivePlacementForConfirm,
-            TrySpendDollars,
-            PlaceBuilding);
+        return _buildingPlacementContextSystem.CreateConfirmContext(CreatePlacementContextSource());
     }
 
     private void FocusActivePlacement(PlacementState placement)
@@ -1165,49 +1176,9 @@ public sealed class BuildingPlacementSystem
             return;
 
         bool hasGrid = TryGetGridData(out _, out GridConfig placementGrid, out _, out _);
-        _wallCommitRuns.Clear();
-        if (placement.CommittedWallRuns != null)
-        {
-            for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
-            {
-                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[i];
-                if (run?.Origins == null || run.Origins.Count == 0)
-                    continue;
-
-                _wallCommitRuns.Add(new BuildingPlacementCommitSystem.WallRun(run.Origins, run.Vertical));
-            }
-        }
-
-        List<Vector2Int> currentWallOrigins = null;
-        bool currentWallVertical = false;
-        if (BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition))
-        {
-            currentWallVertical = _buildingPlacementInputSystem.IsWallPlacementVertical(placement);
-            if (!placement.HideCurrentWallPreview)
-                currentWallOrigins = _buildingPlacementInputSystem.BuildWallPlacementOrigins(placement, BuildingPlacementCommitSystem.GetWallSegmentFootprint);
-        }
-
-        var request = new BuildingPlacementCommitSystem.CommitRequest(
-            placement.Definition,
-            placement.PreviewInstance,
-            placement.OriginCell,
-            placement.AutoRotateVertical,
-            BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition),
-            placement.HideCurrentWallPreview,
-            _wallCommitRuns,
-            currentWallOrigins,
-            currentWallVertical);
-        var context = new BuildingPlacementCommitSystem.CommitContext(
-            _buildingRoot,
-            hasGrid,
-            placementGrid,
-            CreateBuildingVisualInstance,
-            PositionBuildingObject,
-            RegisterRuntimeBuilding,
-            CloneDefinitionWithFootprint,
-            GetPlacementFootprint,
-            BuildingPlacementCommitSystem.GetWallSegmentFootprint,
-            DestroyRuntimeObject);
+        BuildingPlacementContextSystem.Source placementContextSource = CreatePlacementContextSource();
+        BuildingPlacementCommitSystem.CommitRequest request = _buildingPlacementContextSystem.CreateCommitRequest(placementContextSource, placement, _wallCommitRuns);
+        BuildingPlacementCommitSystem.CommitContext context = _buildingPlacementContextSystem.CreateCommitContext(placementContextSource, hasGrid, placementGrid);
 
         RuntimeBuildingData building = _buildingPlacementCommitSystem.CommitPlacement(request, context);
         _buildingPlacementLifecycleSystem.ReleasePreviewOwnership(placement);
@@ -1673,10 +1644,7 @@ public sealed class BuildingPlacementSystem
 
     private BuildingPlacementValidationSystem.WallValidationContext CreateWallValidationContext()
     {
-        return new BuildingPlacementValidationSystem.WallValidationContext(
-            _runtimeBuildingSystem.Buildings,
-            IsRuntimeBlockerCell,
-            _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : null);
+        return _buildingPlacementContextSystem.CreateWallValidationContext(CreatePlacementContextSource());
     }
 
     private Entity CreateBlockerEntity(BuildingDefinition definition, Vector2Int originCell, Vector2Int footprintCells)

@@ -138,6 +138,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("active placement mutable state, active placement cost, and active placement preview handoff belong in `BuildingPlacementLifecycleSystem`", contract);
         StringAssert.Contains("active placement begin/cancel/confirm/exit command flow and selection-preservation state belong in `BuildingPlacementSessionSystem`", contract);
+        StringAssert.Contains("placement grid/input/preview/commit context construction belongs in `BuildingPlacementContextSystem`", contract);
         StringAssert.Contains("wall run/origin validation, and wall overlap-cell checks belong in `BuildingPlacementValidationSystem`", contract);
         StringAssert.Contains("registry ownership, count/dictionary read access, id allocation, and active/selected building ids belong in `RuntimeBuildingSystem`", contract);
         StringAssert.Contains("Runtime building data creation, runtime registry insertion, blocker/combat entity hookup, runtime link attachment, initial production collections, produced-unit slot array setup, placement redirect side effects, and marker refresh policy belong in `BuildingRuntimeCreationSystem`", contract);
@@ -2387,15 +2388,19 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string validationFile = "Assets/Game/Scripts/Systems/BuildingPlacementValidationSystem.cs";
+        const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
         Assert.IsTrue(File.Exists(validationFile), "The building validation slice must live in BuildingPlacementValidationSystem.");
+        Assert.IsTrue(File.Exists(placementContextFile), "Placement context construction must live in BuildingPlacementContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string validation = File.ReadAllText(validationFile);
+        string placementContext = File.ReadAllText(placementContextFile);
         StringAssert.Contains("BuildingPlacementValidationSystem.RebuildInvalidPrefix", placement);
         StringAssert.Contains("BuildingPlacementValidationSystem.IsPlacementRectValid", placement);
         StringAssert.Contains("_buildingPlacementValidationSystem.AreAllPendingWallRunsValid", placement);
         StringAssert.Contains("_buildingPlacementValidationSystem.AreWallPlacementOriginsValid", placement);
-        StringAssert.Contains("CreateWallValidationContext", placement);
+        StringAssert.Contains("_buildingPlacementContextSystem.CreateWallValidationContext", placement);
+        StringAssert.Contains("new BuildingPlacementValidationSystem.WallValidationContext", placementContext);
         StringAssert.Contains("IsWallFootprintValid", validation);
         StringAssert.Contains("DoWallSegmentsConflict", validation);
         StringAssert.Contains("AreAllPendingWallRunsValid", validation);
@@ -3564,14 +3569,19 @@ public sealed class GameplayArchitectureContractTests
     {
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string commitFile = "Assets/Game/Scripts/Systems/BuildingPlacementCommitSystem.cs";
+        const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
         Assert.IsTrue(File.Exists(commitFile), "The placement commit slice must live in BuildingPlacementCommitSystem.");
+        Assert.IsTrue(File.Exists(placementContextFile), "Placement commit context construction must live in BuildingPlacementContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string commit = File.ReadAllText(commitFile);
+        string placementContext = File.ReadAllText(placementContextFile);
         StringAssert.Contains("BuildingPlacementCommitSystem _buildingPlacementCommitSystem", placement);
         StringAssert.Contains("_buildingPlacementCommitSystem.CommitPlacement", placement);
-        StringAssert.Contains("BuildingPlacementCommitSystem.CommitRequest", placement);
-        StringAssert.Contains("BuildingPlacementCommitSystem.CommitContext", placement);
+        StringAssert.Contains("_buildingPlacementContextSystem.CreateCommitRequest", placement);
+        StringAssert.Contains("_buildingPlacementContextSystem.CreateCommitContext", placement);
+        StringAssert.Contains("new BuildingPlacementCommitSystem.CommitRequest", placementContext);
+        StringAssert.Contains("new BuildingPlacementCommitSystem.CommitContext", placementContext);
 
         StringAssert.Contains("CommitPlacement", commit);
         StringAssert.Contains("CommitWallPlacement", commit);
@@ -3599,6 +3609,10 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"Destroy\s*\(\s*placement\.PreviewInstance\s*\)"),
             "Committed placement preview consumption belongs in BuildingPlacementCommitSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("new BuildingPlacementCommitSystem.CommitRequest", StringComparison.Ordinal) ||
+            placement.Contains("new BuildingPlacementCommitSystem.CommitContext", StringComparison.Ordinal),
+            "Placement commit request/context construction belongs in BuildingPlacementContextSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -3607,16 +3621,21 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string inputFile = "Assets/Game/Scripts/Systems/BuildingPlacementInputSystem.cs";
         const string inputRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingPlacementInputRuntimeTickSystem.cs";
+        const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
         Assert.IsTrue(File.Exists(inputFile), "The placement input slice must live in BuildingPlacementInputSystem.");
         Assert.IsTrue(File.Exists(inputRuntimeTickFile), "Placement pointer frame orchestration must live in BuildingPlacementInputRuntimeTickSystem.");
+        Assert.IsTrue(File.Exists(placementContextFile), "Placement input context construction must live in BuildingPlacementContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string input = File.ReadAllText(inputFile);
         string inputRuntimeTick = File.ReadAllText(inputRuntimeTickFile);
+        string placementContext = File.ReadAllText(placementContextFile);
         StringAssert.Contains("BuildingPlacementInputSystem _buildingPlacementInputSystem", placement);
         StringAssert.Contains("PlacementInputSystem?.UpdateActivePlacementPointer", inputRuntimeTick);
         StringAssert.Contains("_buildingPlacementInputSystem.ApplyPointerHover", placement);
         StringAssert.Contains("_buildingPlacementInputSystem.BuildWallPlacementOrigins", placement);
+        StringAssert.Contains("_buildingPlacementContextSystem.CreateActivePlacementPointerContext", placement);
+        StringAssert.Contains("new BuildingPlacementInputSystem.ActivePlacementPointerContext", placementContext);
 
         StringAssert.Contains("UpdateActivePlacementPointer", input);
         StringAssert.Contains("ActivePlacementPointerContext", input);
@@ -3647,6 +3666,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"\bprivate\s+(?:static\s+)?bool\s+IsPointerOverActivePlacement\b"),
             "Active-placement hit testing belongs in BuildingPlacementInputSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("new BuildingPlacementInputSystem.ActivePlacementPointerContext", StringComparison.Ordinal),
+            "Placement input context construction belongs in BuildingPlacementContextSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -3655,12 +3677,15 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string lifecycleFile = "Assets/Game/Scripts/Systems/BuildingPlacementLifecycleSystem.cs";
         const string sessionFile = "Assets/Game/Scripts/Systems/BuildingPlacementSessionSystem.cs";
+        const string placementContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementContextSystem.cs";
         Assert.IsTrue(File.Exists(lifecycleFile), "The active placement lifecycle slice must live in BuildingPlacementLifecycleSystem.");
         Assert.IsTrue(File.Exists(sessionFile), "The active placement session command slice must live in BuildingPlacementSessionSystem.");
+        Assert.IsTrue(File.Exists(placementContextFile), "Placement lifecycle context construction must live in BuildingPlacementContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string lifecycle = File.ReadAllText(lifecycleFile);
         string session = File.ReadAllText(sessionFile);
+        string placementContext = File.ReadAllText(placementContextFile);
         StringAssert.Contains("BuildingPlacementLifecycleSystem _buildingPlacementLifecycleSystem", placement);
         StringAssert.Contains("BuildingPlacementSessionSystem _buildingPlacementSessionSystem", placement);
         StringAssert.Contains("_buildingPlacementLifecycleSystem.HasPendingBuildingPlacement", placement);
@@ -3692,6 +3717,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("NotifyPlacementUiPointerDown(Context context)", session);
         StringAssert.Contains("SetActivePlacementCost(Context context", session);
         StringAssert.Contains("_preserveBuildingSelectionOnNextExitBuildMode", session);
+        StringAssert.Contains("new BuildingPlacementLifecycleSystem.CancelContext", placementContext);
+        StringAssert.Contains("new BuildingPlacementLifecycleSystem.BeginContext", placementContext);
+        StringAssert.Contains("new BuildingPlacementLifecycleSystem.ConfirmContext", placementContext);
 
         Assert.IsFalse(
             placement.Contains("_activePlacement", StringComparison.Ordinal),
@@ -3714,6 +3742,11 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"_buildingPlacementLifecycleSystem\.(?:Begin|Confirm|Cancel|NotifyPlacementUiPointerDown|SetActivePlacementCost)\s*\("),
             "Active placement command wrappers belong in BuildingPlacementSessionSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            placement.Contains("new BuildingPlacementLifecycleSystem.CancelContext", StringComparison.Ordinal) ||
+            placement.Contains("new BuildingPlacementLifecycleSystem.BeginContext", StringComparison.Ordinal) ||
+            placement.Contains("new BuildingPlacementLifecycleSystem.ConfirmContext", StringComparison.Ordinal),
+            "Placement lifecycle context construction belongs in BuildingPlacementContextSystem, not BuildingPlacementSystem.");
     }
 
     [Test]
@@ -3961,7 +3994,7 @@ public sealed class GameplayArchitectureContractTests
 
         string audit = File.ReadAllText(auditPath);
         StringAssert.Contains("Current measured size", audit);
-        StringAssert.Contains("2103 lines", audit);
+        StringAssert.Contains("2071 lines", audit);
         StringAssert.Contains("Public/internal facade declarations: 125", audit);
         StringAssert.Contains("Allowed Production Facade References", audit);
         StringAssert.Contains("BuildingGameplayCompositionSystem.cs", audit);
@@ -3972,7 +4005,7 @@ public sealed class GameplayArchitectureContractTests
         string[] placementLines = File.ReadAllLines(placementFile);
         Assert.LessOrEqual(
             placementLines.Length,
-            2103,
+            2071,
             "BuildingPlacementSystem.cs is frozen migration debt and must only shrink until deletion.");
 
         int publicOrInternalDeclarationCount = placementLines.Count(line =>

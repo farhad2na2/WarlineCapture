@@ -43,6 +43,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
     public static void ValidateStep6()
     {
         ValidatePrefab(LoadingPrefabPath, "SCN01_LoadingContent", "LoadingBody");
+        ValidateLoadingBackdropStretch();
         ValidateLoadingProgressBinding();
         ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent");
         ValidatePrefab(CommanderProfilePrefabPath, "SCN03_CommanderProfileContent", "LeftContent", "MiddleContent", "RightContent");
@@ -399,6 +400,21 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
             if (prefab.transform.Find(childName) == null)
                 throw new InvalidOperationException($"{path} is missing required child {childName}.");
         }
+    }
+
+    private static void ValidateLoadingBackdropStretch()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(LoadingPrefabPath);
+        RectTransform backdrop = prefab.transform.Find("LoadingBackdrop") as RectTransform;
+        if (backdrop == null)
+            throw new InvalidOperationException("SCN01 loading content must contain LoadingBackdrop.");
+
+        if (backdrop.anchorMin != Vector2.zero || backdrop.anchorMax != Vector2.one)
+            throw new InvalidOperationException("SCN01 LoadingBackdrop must be stretched to the full loading layer.");
+        if (backdrop.offsetMin != Vector2.zero || backdrop.offsetMax != Vector2.zero)
+            throw new InvalidOperationException("SCN01 LoadingBackdrop must use zero stretch offsets.");
+        if (backdrop.localScale != Vector3.one)
+            throw new InvalidOperationException("SCN01 LoadingBackdrop scale must remain 1.");
     }
 
     private static void ValidateLoadingProgressBinding()

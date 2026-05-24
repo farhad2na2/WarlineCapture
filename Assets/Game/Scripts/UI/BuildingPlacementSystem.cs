@@ -42,6 +42,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingUiCommandSystem _buildingUiCommandSystem = new();
     private readonly BuildingUiContextSystem _buildingUiContextSystem = new();
     private readonly BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem = new();
+    private readonly BuildingPlacementInteractionContextSystem _buildingPlacementInteractionContextSystem = new();
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
     private readonly BuildingPlacementValidationSystem _buildingPlacementValidationSystem = new();
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
@@ -366,26 +367,6 @@ public sealed class BuildingPlacementSystem
                !building.Definition.IsWall;
     }
 
-    public bool TryResolveConfiguredSpawnablePrefab(Entity prefabEntity, out GameObject prefab)
-    {
-        prefab = null;
-        if (prefabEntity == Entity.Null || World.DefaultGameObjectInjectionWorld == null)
-            return false;
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        return _buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab(em.GetName(prefabEntity), out prefab);
-    }
-
-    public bool TryResolveConfiguredSpawnablePrefab(string lookupKey, out GameObject prefab)
-    {
-        return _buildingDefinitionSystem.TryResolveConfiguredSpawnablePrefab(lookupKey, out prefab);
-    }
-
-    public bool TryResolveConfiguredUnitSpawnPrefab(string lookupKey, out GameObject prefab)
-    {
-        return _buildingDefinitionSystem.TryResolveConfiguredUnitSpawnPrefab(lookupKey, out prefab);
-    }
-
     public bool IsDraggingPlacementPreview => _buildingPlacementLifecycleSystem.HasPendingBuildingPlacement && _buildingPlacementInputSystem.IsDraggingPlacement;
 
     public bool TryResolveSpawnUnitPrefab(Entity prefabEntity, out GameObject spawnUnitPrefab)
@@ -484,8 +465,6 @@ public sealed class BuildingPlacementSystem
             out current,
             out max);
     }
-
-    public string DeleteButtonText => "Destroy";
 
     private void OnValidate()
     {
@@ -1734,15 +1713,7 @@ public sealed class BuildingPlacementSystem
 
     private BuildingSpawnSystem.Context CreateBuildingSpawnContext()
     {
-        return new BuildingSpawnSystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            _liveUnitFootprintQuery,
-            _buildingProductionSystem,
-            _buildingSpawnPrefabSystem,
-            _buildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(CreateRuntimeResourcePrefabContextSource()),
-            _buildingProductionSlotSystem,
-            BuildingDefinitionSystem.GetProductionPrefab,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
+        return _buildingRuntimeContextSystem.CreateBuildingSpawnContext(CreateRuntimeContextSystemSource());
     }
 
     internal BuildingRuntimeContextSystem.Source CreateBuildingRuntimeContextSource()
@@ -1784,6 +1755,43 @@ public sealed class BuildingPlacementSystem
             DeleteBuildingById,
             BeginDeferredRuntimeBuildingSideEffects,
             EndDeferredRuntimeBuildingSideEffects);
+    }
+
+    private BuildingRuntimeContextSystem.RuntimeSource CreateRuntimeContextSystemSource()
+    {
+        return new BuildingRuntimeContextSystem.RuntimeSource(
+            _runtimeBuildingSystem,
+            _buildingProductionSystem,
+            _buildingProductionSlotSystem,
+            _buildingSpawnPrefabSystem,
+            _buildingRuntimeResourcePrefabContextSystem.CreateBuildingSpawnPrefabContext(CreateRuntimeResourcePrefabContextSource()),
+            _buildingVisualSystem,
+            _buildingRuntimeVisualSystem,
+            _buildingBarrierSystem,
+            _buildingResourceHaulerBridgeSystem,
+            _buildingProductionContextSystem,
+            CreateBuildingProductionContextSource(),
+            _factionVisualSettings,
+            _markerPropertyBlock,
+            _liveUnitFootprintQuery,
+            _redirectUnitsQuery,
+            _liveFactionUnitsQuery,
+            () => ActiveBuildingId,
+            TryGetEntityManager,
+            TryGetGridData,
+            EnsureEntityQueries,
+            GetFootprintCenter,
+            IsHouseBuilding,
+            TryResolveBuildingFocusWorldPosition,
+            TryGetRuntimeBuildingApproachCell,
+            IsRuntimeBuildingApproachCell,
+            building => _buildingBarrierSystem.RememberOpenBaseBreach(CreateBuildingBarrierContext(), building),
+            buildingId => _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId),
+            DestroyRuntimeObject,
+            RefreshBuildingMarkerVisibility,
+            () => _mainMenuPlayUi?.NotifyStaticMinimapChanged(),
+            message => Debug.Log(message),
+            EnableBuildingDestroyDiagnostics);
     }
 
     private BuildingRuntimeSpawnCommandSystem.Context CreateRuntimeSpawnCommandContext()
@@ -1856,7 +1864,12 @@ public sealed class BuildingPlacementSystem
 
     internal BuildingPlacementInteractionSystem.Context CreateBuildingPlacementInteractionContext()
     {
-        return new BuildingPlacementInteractionSystem.Context(
+        return _buildingPlacementInteractionContextSystem.CreateContext(CreateBuildingPlacementInteractionContextSource());
+    }
+
+    private BuildingPlacementInteractionContextSystem.Source CreateBuildingPlacementInteractionContextSource()
+    {
+        return new BuildingPlacementInteractionContextSystem.Source(
             () => HasPendingBuildingPlacement,
             () => CanConfirmBuildingPlacement,
             () => HasSelectedBuilding,
@@ -1876,62 +1889,27 @@ public sealed class BuildingPlacementSystem
 
     private BuildingRuntimeEntitySystem.Context CreateBuildingRuntimeEntityContext()
     {
-        return new BuildingRuntimeEntitySystem.Context(
-            TryGetEntityManager,
-            TryGetGridData,
-            GetFootprintCenter);
+        return _buildingRuntimeContextSystem.CreateRuntimeEntityContext(CreateRuntimeContextSystemSource());
     }
 
     internal BuildingRuntimeVisualSystem.Context CreateBuildingRuntimeVisualContext()
     {
-        return new BuildingRuntimeVisualSystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            _buildingVisualSystem,
-            _buildingBarrierSystem,
-            _factionVisualSettings,
-            _markerPropertyBlock,
-            () => ActiveBuildingId);
+        return _buildingRuntimeContextSystem.CreateRuntimeVisualContext(CreateRuntimeContextSystemSource());
     }
 
     internal BuildingPlacementRedirectSystem.Context CreateBuildingPlacementRedirectContext()
     {
-        return new BuildingPlacementRedirectSystem.Context(
-            TryGetEntityManager,
-            TryGetGridData,
-            EnsureEntityQueries,
-            () => _redirectUnitsQuery);
+        return _buildingRuntimeContextSystem.CreateRedirectContext(CreateRuntimeContextSystemSource());
     }
 
     internal BuildingCombatSystem.Context<RuntimeBuildingData> CreateBuildingCombatContext()
     {
-        return new BuildingCombatSystem.Context<RuntimeBuildingData>(
-            _runtimeBuildingSystem,
-            _runtimeBuildingSystem.Buildings,
-            TryGetEntityManager,
-            building => _buildingBarrierSystem.RememberOpenBaseBreach(CreateBuildingBarrierContext(), building),
-            buildingId => _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId),
-            _buildingVisualSystem.SetTransformVisible,
-            DestroyRuntimeObject,
-            RefreshBuildingMarkerVisibility,
-            () => _mainMenuPlayUi?.NotifyStaticMinimapChanged(),
-            message => Debug.Log(message),
-            EnableBuildingDestroyDiagnostics);
+        return _buildingRuntimeContextSystem.CreateCombatContext(CreateRuntimeContextSystemSource());
     }
 
     internal BuildingRuntimeQuerySystem.Context CreateBuildingRuntimeQueryContext()
     {
-        return new BuildingRuntimeQuerySystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            TryGetEntityManager,
-            _buildingProductionSystem,
-            BuildingDefinitionSystem.NormalizeSpawnableKey,
-            IsHouseBuilding,
-            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
-            BuildingDefinitionSystem.UnitPrefabMatchesId,
-            TryResolveBuildingFocusWorldPosition,
-            TryGetRuntimeBuildingApproachCell,
-            IsRuntimeBuildingApproachCell,
-            BuildingBarrierSystem.IsWallGateDefinition);
+        return _buildingRuntimeContextSystem.CreateRuntimeQueryContext(CreateRuntimeContextSystemSource());
     }
 
     private bool TryResolveBuildingFocusWorldPosition(RuntimeBuildingData building, out Vector3 worldPosition)
@@ -2007,14 +1985,7 @@ public sealed class BuildingPlacementSystem
 
     internal BuildingBarrierSystem.Context CreateBuildingBarrierContext()
     {
-        return new BuildingBarrierSystem.Context(
-            _runtimeBuildingSystem.Buildings,
-            TryGetEntityManager,
-            TryGetGridData,
-            EnsureEntityQueries,
-            () => _liveFactionUnitsQuery,
-            BuildingBarrierSystem.IsWallGateDefinition,
-            TryGetRuntimeBuildingApproachCell);
+        return _buildingRuntimeContextSystem.CreateBarrierContext(CreateRuntimeContextSystemSource());
     }
 
     private bool TryGetGridForSelection(out GridConfig grid)

@@ -1,8 +1,114 @@
 using System;
+using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 internal sealed class BuildingRuntimeContextSystem
 {
+    public readonly struct RuntimeSource
+    {
+        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
+        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionSlotSystem ProductionSlotSystem;
+        public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
+        public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
+        public readonly BuildingVisualSystem BuildingVisualSystem;
+        public readonly BuildingRuntimeVisualSystem RuntimeVisualSystem;
+        public readonly BuildingBarrierSystem BarrierSystem;
+        public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
+        public readonly BuildingProductionContextSystem ProductionContextSystem;
+        public readonly BuildingProductionContextSystem.Source ProductionContextSource;
+        public readonly FactionVisualSettings FactionVisualSettings;
+        public readonly MaterialPropertyBlock MarkerPropertyBlock;
+        public readonly EntityQuery LiveUnitFootprintQuery;
+        public readonly EntityQuery RedirectUnitsQuery;
+        public readonly EntityQuery LiveFactionUnitsQuery;
+        public readonly Func<int?> GetActiveBuildingId;
+        public readonly BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingRuntimeEntitySystem.TryGetGridDataDelegate TryGetGridData;
+        public readonly Action<EntityManager> EnsureEntityQueries;
+        public readonly BuildingRuntimeEntitySystem.GetFootprintCenterDelegate GetFootprintCenter;
+        public readonly BuildingRuntimeQuerySystem.BuildingPredicate IsHouseBuilding;
+        public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
+        public readonly BuildingRuntimeQuerySystem.TryGetBuildingApproachCellDelegate TryGetBuildingApproachCell;
+        public readonly BuildingRuntimeQuerySystem.IsBuildingApproachCellDelegate IsBuildingApproachCell;
+        public readonly BuildingCombatSystem.BuildingAction<RuntimeBuildingData> RememberOpenBaseBreach;
+        public readonly BuildingCombatSystem.BuildingIdAction NotifyHomeBuildingDestroyed;
+        public readonly BuildingCombatSystem.ObjectAction DestroyObject;
+        public readonly Action RefreshBuildingMarkerVisibility;
+        public readonly Action NotifyStaticMinimapChanged;
+        public readonly BuildingCombatSystem.LogAction Log;
+        public readonly bool EnableDestroyDiagnostics;
+
+        public RuntimeSource(
+            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+            BuildingProductionSystem productionSystem,
+            BuildingProductionSlotSystem productionSlotSystem,
+            BuildingSpawnPrefabSystem spawnPrefabSystem,
+            BuildingSpawnPrefabSystem.Context spawnPrefabContext,
+            BuildingVisualSystem buildingVisualSystem,
+            BuildingRuntimeVisualSystem runtimeVisualSystem,
+            BuildingBarrierSystem barrierSystem,
+            BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
+            BuildingProductionContextSystem productionContextSystem,
+            BuildingProductionContextSystem.Source productionContextSource,
+            FactionVisualSettings factionVisualSettings,
+            MaterialPropertyBlock markerPropertyBlock,
+            EntityQuery liveUnitFootprintQuery,
+            EntityQuery redirectUnitsQuery,
+            EntityQuery liveFactionUnitsQuery,
+            Func<int?> getActiveBuildingId,
+            BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingRuntimeEntitySystem.TryGetGridDataDelegate tryGetGridData,
+            Action<EntityManager> ensureEntityQueries,
+            BuildingRuntimeEntitySystem.GetFootprintCenterDelegate getFootprintCenter,
+            BuildingRuntimeQuerySystem.BuildingPredicate isHouseBuilding,
+            BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
+            BuildingRuntimeQuerySystem.TryGetBuildingApproachCellDelegate tryGetBuildingApproachCell,
+            BuildingRuntimeQuerySystem.IsBuildingApproachCellDelegate isBuildingApproachCell,
+            BuildingCombatSystem.BuildingAction<RuntimeBuildingData> rememberOpenBaseBreach,
+            BuildingCombatSystem.BuildingIdAction notifyHomeBuildingDestroyed,
+            BuildingCombatSystem.ObjectAction destroyObject,
+            Action refreshBuildingMarkerVisibility,
+            Action notifyStaticMinimapChanged,
+            BuildingCombatSystem.LogAction log,
+            bool enableDestroyDiagnostics)
+        {
+            RuntimeBuildingSystem = runtimeBuildingSystem;
+            ProductionSystem = productionSystem;
+            ProductionSlotSystem = productionSlotSystem;
+            SpawnPrefabSystem = spawnPrefabSystem;
+            SpawnPrefabContext = spawnPrefabContext;
+            BuildingVisualSystem = buildingVisualSystem;
+            RuntimeVisualSystem = runtimeVisualSystem;
+            BarrierSystem = barrierSystem;
+            ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
+            ProductionContextSystem = productionContextSystem;
+            ProductionContextSource = productionContextSource;
+            FactionVisualSettings = factionVisualSettings;
+            MarkerPropertyBlock = markerPropertyBlock;
+            LiveUnitFootprintQuery = liveUnitFootprintQuery;
+            RedirectUnitsQuery = redirectUnitsQuery;
+            LiveFactionUnitsQuery = liveFactionUnitsQuery;
+            GetActiveBuildingId = getActiveBuildingId;
+            TryGetEntityManager = tryGetEntityManager;
+            TryGetGridData = tryGetGridData;
+            EnsureEntityQueries = ensureEntityQueries;
+            GetFootprintCenter = getFootprintCenter;
+            IsHouseBuilding = isHouseBuilding;
+            TryResolveBuildingFocusWorldPosition = tryResolveBuildingFocusWorldPosition;
+            TryGetBuildingApproachCell = tryGetBuildingApproachCell;
+            IsBuildingApproachCell = isBuildingApproachCell;
+            RememberOpenBaseBreach = rememberOpenBaseBreach;
+            NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
+            DestroyObject = destroyObject;
+            RefreshBuildingMarkerVisibility = refreshBuildingMarkerVisibility;
+            NotifyStaticMinimapChanged = notifyStaticMinimapChanged;
+            Log = log;
+            EnableDestroyDiagnostics = enableDestroyDiagnostics;
+        }
+    }
+
     public readonly struct Source
     {
         public readonly Transform BuildingRoot;
@@ -174,5 +280,93 @@ internal sealed class BuildingRuntimeContextSystem
             source.DeleteBuildingById,
             source.BeginDeferredRuntimeBuildingSideEffects,
             source.EndDeferredRuntimeBuildingSideEffects);
+    }
+
+    public BuildingSpawnSystem.Context CreateBuildingSpawnContext(RuntimeSource source)
+    {
+        return new BuildingSpawnSystem.Context(
+            source.RuntimeBuildingSystem.Buildings,
+            source.LiveUnitFootprintQuery,
+            source.ProductionSystem,
+            source.SpawnPrefabSystem,
+            source.SpawnPrefabContext,
+            source.ProductionSlotSystem,
+            BuildingDefinitionSystem.GetProductionPrefab,
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId);
+    }
+
+    public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(RuntimeSource source)
+    {
+        return new BuildingRuntimeEntitySystem.Context(
+            source.TryGetEntityManager,
+            source.TryGetGridData,
+            source.GetFootprintCenter);
+    }
+
+    public BuildingRuntimeVisualSystem.Context CreateRuntimeVisualContext(RuntimeSource source)
+    {
+        return new BuildingRuntimeVisualSystem.Context(
+            source.RuntimeBuildingSystem.Buildings,
+            source.BuildingVisualSystem,
+            source.BarrierSystem,
+            source.FactionVisualSettings,
+            source.MarkerPropertyBlock,
+            source.GetActiveBuildingId);
+    }
+
+    public BuildingPlacementRedirectSystem.Context CreateRedirectContext(RuntimeSource source)
+    {
+        return new BuildingPlacementRedirectSystem.Context(
+            (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
+            entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
+            () => source.RedirectUnitsQuery);
+    }
+
+    public BuildingCombatSystem.Context<RuntimeBuildingData> CreateCombatContext(RuntimeSource source)
+    {
+        return new BuildingCombatSystem.Context<RuntimeBuildingData>(
+            source.RuntimeBuildingSystem,
+            source.RuntimeBuildingSystem.Buildings,
+            (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            source.RememberOpenBaseBreach,
+            source.NotifyHomeBuildingDestroyed,
+            source.BuildingVisualSystem.SetTransformVisible,
+            source.DestroyObject,
+            source.RefreshBuildingMarkerVisibility,
+            source.NotifyStaticMinimapChanged,
+            source.Log,
+            source.EnableDestroyDiagnostics);
+    }
+
+    public BuildingRuntimeQuerySystem.Context CreateRuntimeQueryContext(RuntimeSource source)
+    {
+        return new BuildingRuntimeQuerySystem.Context(
+            source.RuntimeBuildingSystem.Buildings,
+            (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            source.ProductionSystem,
+            BuildingDefinitionSystem.NormalizeSpawnableKey,
+            source.IsHouseBuilding,
+            BuildingDefinitionSystem.RuntimeBuildingMatchesId,
+            BuildingDefinitionSystem.UnitPrefabMatchesId,
+            source.TryResolveBuildingFocusWorldPosition,
+            source.TryGetBuildingApproachCell,
+            source.IsBuildingApproachCell,
+            BuildingBarrierSystem.IsWallGateDefinition);
+    }
+
+    public BuildingBarrierSystem.Context CreateBarrierContext(RuntimeSource source)
+    {
+        return new BuildingBarrierSystem.Context(
+            source.RuntimeBuildingSystem.Buildings,
+            (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
+            entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
+            () => source.LiveFactionUnitsQuery,
+            BuildingBarrierSystem.IsWallGateDefinition,
+            (RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
+                source.TryGetBuildingApproachCell(building, unitFootprint, referenceCell, out goal));
     }
 }

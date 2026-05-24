@@ -150,6 +150,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
         StringAssert.Contains("`GameplayFeatureStartupSystem` must receive `BuildingRuntimeCitySpawnSystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("Building runtime tick orchestration, per-phase timing, runtime boundary publish tick, and placement pointer/click frame flow belong in `BuildingPlacementRuntimeTickSystem`", contract);
+        StringAssert.Contains("runtime tick context assembly belongs in `BuildingPlacementRuntimeTickContextSystem`, not `BuildingPlacementSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
         StringAssert.Contains("Placement redirect side-effect deferral, deferred redirect footprints, pending marker-refresh deferral, placed-building unit redirect scans, perimeter redirect-goal search, and redirect movement component mutation belong in `BuildingPlacementRedirectSystem`", contract);
         StringAssert.Contains("Building definition/configured spawnable lookup, spawnable/unit prefab lookup aliases, runtime building prefab metadata cache, prefab bounds/visual-footprint discovery, production spawn point metadata, production-slot read helpers, and runtime/configured building definition construction belong in `BuildingDefinitionSystem`", contract);
@@ -523,15 +524,18 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
         const string buildingRuntimeUpdateFile = "Assets/Game/Scripts/Systems/BuildingRuntimeUpdateSystem.cs";
         const string buildingRuntimeTickFile = "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickSystem.cs";
+        const string buildingRuntimeTickContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementRuntimeTickContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeUpdateFile), "Managed runtime update orchestration must live in GameplayRuntimeUpdateSystem.");
         Assert.IsTrue(File.Exists(buildingRuntimeUpdateFile), "Building runtime update must live behind BuildingRuntimeUpdateSystem.");
         Assert.IsTrue(File.Exists(buildingRuntimeTickFile), "Building placement runtime frame tick orchestration must live in BuildingPlacementRuntimeTickSystem.");
+        Assert.IsTrue(File.Exists(buildingRuntimeTickContextFile), "Building placement runtime frame tick context assembly must live in BuildingPlacementRuntimeTickContextSystem.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         string managedStartup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
         string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
         string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
         string buildingRuntimeTick = File.ReadAllText(buildingRuntimeTickFile);
+        string buildingRuntimeTickContext = File.ReadAllText(buildingRuntimeTickContextFile);
         StringAssert.Contains("GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem", bootstrap);
         StringAssert.Contains("BuildingRuntimeUpdateSystem BuildingRuntimeUpdate", bootstrap);
         StringAssert.Contains("_buildingRuntimeUpdateContext", bootstrap);
@@ -543,7 +547,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("new BuildingRuntimeUpdateSystem()", buildingComposition);
         StringAssert.Contains("new BuildingRuntimeUpdateSystem.Context(", buildingComposition);
         StringAssert.Contains("placementFacade.RuntimeTickSystem.Update", buildingComposition);
-        StringAssert.Contains("placementFacade.CreateBuildingPlacementRuntimeTickContext()", buildingComposition);
+        StringAssert.Contains("BuildingPlacementRuntimeTickContextSystem _runtimeTickContextSystem", buildingComposition);
+        StringAssert.Contains("_runtimeTickContextSystem.Create(placementFacade)", buildingComposition);
         StringAssert.Contains("public readonly Action Dispose", buildingComposition);
         StringAssert.Contains("placementFacade.Dispose", buildingComposition);
         StringAssert.Contains("building.RuntimeUpdate", managedStartup);
@@ -602,7 +607,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("buildingRuntimeUpdate?.Update", runtimeUpdate);
         StringAssert.Contains("Action UpdateBuildingRuntimeTick", buildingRuntimeUpdate);
         StringAssert.Contains("BuildingPlacementRuntimeTickSystem _buildingPlacementRuntimeTickSystem", placement);
-        StringAssert.Contains("CreateBuildingPlacementRuntimeTickContext", placement);
+        StringAssert.Contains("BuildingPlacementRuntimeTickSystem.Context Create(BuildingPlacementSystem placement)", buildingRuntimeTickContext);
+        StringAssert.Contains("placement.ProcessPendingProductions", buildingRuntimeTickContext);
+        StringAssert.Contains("placement.UpdateBuildingRuntimeBoundary", buildingRuntimeTickContext);
         StringAssert.Contains("ProcessPendingProductions", buildingRuntimeTick);
         StringAssert.Contains("UpdateBuildingRuntimeBoundary", buildingRuntimeTick);
         StringAssert.Contains("GamePointerInput.TryGetPrimaryPointer", buildingRuntimeTick);
@@ -610,6 +617,10 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             buildingComposition.Contains("placementFacade.Update", StringComparison.Ordinal),
             "BuildingRuntimeUpdateSystem must receive a runtime tick boundary callback, not a BuildingPlacementSystem.Update delegate.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+void\s+Update\s*\(") ||
+            placement.Contains("CreateBuildingPlacementRuntimeTickContext", StringComparison.Ordinal),
+            "BuildingPlacementSystem must not keep a runtime Update compatibility wrapper or own runtime tick context assembly.");
         Assert.IsFalse(
             runtimeUpdate.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
             runtimeUpdate.Contains("buildingPlacement?.Update", StringComparison.Ordinal),

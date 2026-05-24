@@ -123,6 +123,13 @@ public sealed class BuildingPlacementSystem
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
     internal BuildingPlacementRuntimeTickSystem RuntimeTickSystem => _buildingPlacementRuntimeTickSystem;
+    internal Camera WorldCamera => worldCamera;
+    internal PlacementState ActivePlacement => _buildingPlacementLifecycleSystem.ActivePlacement;
+    internal bool PlayRequested => _runtimeGameplayStateSystem.PlayRequested;
+    internal bool BuildModeActive => _runtimeGameplayStateSystem.BuildModeActive;
+    internal int RuntimeBuildingCount => _runtimeBuildings.Count;
+    internal bool DiagnosticsEnabled => EnableBuildingPlacementDiagnostics;
+    internal double DiagnosticsFreezeLogThresholdSeconds => FreezeLogThresholdSeconds;
     public BuildingSelectionClickSystem BuildingSelectionClickSystem => _buildingSelectionClickSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
@@ -665,46 +672,7 @@ public sealed class BuildingPlacementSystem
         _buildingRuntimeBoundaryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
     }
 
-    public void Update()
-    {
-        _buildingPlacementRuntimeTickSystem.Update(CreateBuildingPlacementRuntimeTickContext());
-    }
-
-    internal BuildingPlacementRuntimeTickSystem.Context CreateBuildingPlacementRuntimeTickContext()
-    {
-        return new BuildingPlacementRuntimeTickSystem.Context(
-            ProcessPendingProductions,
-            UpdateResourceProduction,
-            UpdateResourceHaulers,
-            UpdateBuildingResourceVisuals,
-            CleanupRecentSpawnReservations,
-            SyncDestroyedRuntimeBuildingCombatEntities,
-            UpdateDestroyedBuildings,
-            () => _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), Time.deltaTime),
-            () => _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility),
-            UpdateBuildingRuntimeBoundary,
-            () => worldCamera,
-            () => _buildingPlacementLifecycleSystem.ActivePlacement,
-            (placement, pointer) => _buildingPlacementInputSystem.UpdateActivePlacementPointer(
-                placement,
-                pointer,
-                CreateActivePlacementPointerContext()),
-            () => _runtimeGameplayStateSystem.PlayRequested,
-            () => _runtimeGameplayStateSystem.BuildModeActive,
-            _buildingPlacementPreviewSystem.HideOutline,
-            () => _mainMenuPlayUi != null && _mainMenuPlayUi.ShouldIgnoreBuildingSelectionThisFrame(),
-            IsPointerOverAnyGameplayUi,
-            () => HasActiveBuilding,
-            IsPointerOverUnitCommandUi,
-            () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
-            pointerPosition => _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition),
-            () => _runtimeBuildings.Count,
-            EnableBuildingPlacementDiagnostics,
-            FreezeLogThresholdSeconds,
-            Debug.Log);
-    }
-
-    private void UpdateBuildingRuntimeBoundary()
+    internal void UpdateBuildingRuntimeBoundary()
     {
         if (!TryGetEntityManager(out EntityManager em))
             return;
@@ -743,7 +711,45 @@ public sealed class BuildingPlacementSystem
         return hasGrid;
     }
 
-    private void UpdateResourceProduction()
+    internal void UpdateActivePlacementPointer(PlacementState placement, GamePointerState pointer)
+    {
+        _buildingPlacementInputSystem.UpdateActivePlacementPointer(
+            placement,
+            pointer,
+            CreateActivePlacementPointerContext());
+    }
+
+    internal void HidePlacementOutline()
+    {
+        _buildingPlacementPreviewSystem.HideOutline();
+    }
+
+    internal bool ShouldIgnoreBuildingSelectionThisFrame()
+    {
+        return _mainMenuPlayUi != null && _mainMenuPlayUi.ShouldIgnoreBuildingSelectionThisFrame();
+    }
+
+    internal void SuppressNextWorldClick()
+    {
+        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+    }
+
+    internal void HandleBuildingSelectionClick(Vector2 pointerPosition)
+    {
+        _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition);
+    }
+
+    internal void UpdateRoadBarrierDoors()
+    {
+        _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), Time.deltaTime);
+    }
+
+    internal void FlushPendingMarkerRefresh()
+    {
+        _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility);
+    }
+
+    internal void UpdateResourceProduction()
     {
         if (_runtimeBuildings.Count == 0)
             return;
@@ -764,7 +770,7 @@ public sealed class BuildingPlacementSystem
             GameRuntimeStats.RecordFuelProduced(result.FuelProducedBarrels);
     }
 
-    private void UpdateResourceHaulers()
+    internal void UpdateResourceHaulers()
     {
         _buildingResourceHaulerBridgeSystem.UpdateResourceHaulers(
             CreateBuildingResourceHaulerBridgeContext(),
@@ -781,7 +787,7 @@ public sealed class BuildingPlacementSystem
             footprintSize);
     }
 
-    private void CleanupRecentSpawnReservations()
+    internal void CleanupRecentSpawnReservations()
     {
         _buildingSpawnSystem.CleanupRecentSpawnReservations(Time.time);
     }
@@ -1596,12 +1602,12 @@ public sealed class BuildingPlacementSystem
             out resolvedOrigin);
     }
 
-    private void UpdateDestroyedBuildings()
+    internal void UpdateDestroyedBuildings()
     {
         _buildingCombatSystem.UpdateDestroyedBuildings(CreateBuildingCombatContext(), Time.time);
     }
 
-    private void SyncDestroyedRuntimeBuildingCombatEntities()
+    internal void SyncDestroyedRuntimeBuildingCombatEntities()
     {
         _buildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities(
             CreateBuildingCombatContext(),
@@ -1613,6 +1619,12 @@ public sealed class BuildingPlacementSystem
     public void SyncDestroyedRuntimeBuildingCombatEntitiesForTests()
     {
         SyncDestroyedRuntimeBuildingCombatEntities();
+    }
+
+    public void TickRuntimeForTests()
+    {
+        var contextSystem = new BuildingPlacementRuntimeTickContextSystem();
+        _buildingPlacementRuntimeTickSystem.Update(contextSystem.Create(this));
     }
 #endif
 
@@ -1631,7 +1643,7 @@ public sealed class BuildingPlacementSystem
             ownerFactionId);
     }
 
-    private void UpdateBuildingResourceVisuals()
+    internal void UpdateBuildingResourceVisuals()
     {
         _buildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(
             CreateBuildingRuntimeVisualContext(),
@@ -1897,7 +1909,7 @@ public sealed class BuildingPlacementSystem
             worldRotation);
     }
 
-    private void ProcessPendingProductions()
+    internal void ProcessPendingProductions()
     {
         _buildingProductionUpdateSystem.UpdatePendingProductions(
             CreateBuildingProductionUpdateContext(),
@@ -2365,12 +2377,12 @@ public sealed class BuildingPlacementSystem
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverPlacementUi(screenPosition);
     }
 
-    private bool IsPointerOverAnyGameplayUi(Vector2 screenPosition)
+    internal bool IsPointerOverAnyGameplayUi(Vector2 screenPosition)
     {
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out _);
     }
 
-    private bool IsPointerOverUnitCommandUi(Vector2 screenPosition)
+    internal bool IsPointerOverUnitCommandUi(Vector2 screenPosition)
     {
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverUnitCommandUi(screenPosition, out _);
     }

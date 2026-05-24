@@ -4,6 +4,8 @@ using UnityEngine;
 
 internal sealed class BuildingGameplayCompositionSystem
 {
+    private readonly BuildingPlacementRuntimeTickContextSystem _runtimeTickContextSystem = new();
+
     public readonly struct Result
     {
         private readonly BuildingPlacementSystem PlacementFacade;
@@ -110,7 +112,7 @@ internal sealed class BuildingGameplayCompositionSystem
             placementFacade.CreateBuildingSelectionClickContext(),
             runtimeUpdate,
             new BuildingRuntimeUpdateSystem.Context(
-                () => placementFacade.RuntimeTickSystem.Update(placementFacade.CreateBuildingPlacementRuntimeTickContext())),
+                () => placementFacade.RuntimeTickSystem.Update(_runtimeTickContextSystem.Create(placementFacade))),
             placementFacade.RuntimeCitySpawnSystem,
             placementFacade.CreateRuntimeCitySpawnContext(),
             placementFacade.BuildingUiCommandSystem,

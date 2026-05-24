@@ -74,7 +74,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             Status = BuildingRuntimeSpawnRequest.Pending
         });
 
-        Assert.DoesNotThrow(() => _buildingPlacement.Update());
+        Assert.DoesNotThrow(() => _buildingPlacement.TickRuntimeForTests());
 
         requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, requests[0].Status);

@@ -16,13 +16,21 @@ internal static class RuntimeGameplayStateTestHelper
     public static void SetBuildingPlacement(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
     {
         GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
-        buildingPlacement?.Update();
+        TickBuildingPlacement(buildingPlacement);
     }
 
     public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
     {
         GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
-        buildingPlacement?.Update();
+        TickBuildingPlacement(buildingPlacement);
+    }
+
+    private static void TickBuildingPlacement(BuildingPlacementSystem buildingPlacement)
+    {
+        if (buildingPlacement == null)
+            return;
+
+        buildingPlacement.TickRuntimeForTests();
     }
 
     public static int CountRuntimeBuildingsForFaction(EntityManager entityManager, byte factionId, string buildingId)

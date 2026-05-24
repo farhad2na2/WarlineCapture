@@ -121,10 +121,8 @@ public sealed class BuildingPlacementSystem
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
-    public int ConfiguredSpawnableCount => _buildingDefinitionSystem.ConfiguredSpawnableCount;
-    public int ConfiguredUnitCount => unitSpawnPrefabs != null ? unitSpawnPrefabs.Count : 0;
 
-    public bool HasVisibleSelectableBuilding(Camera camera = null)
+    private bool HasVisibleSelectableBuilding(Camera camera = null)
     {
         Camera targetCamera = camera != null ? camera : worldCamera;
         if (targetCamera == null)
@@ -201,95 +199,11 @@ public sealed class BuildingPlacementSystem
         return _runtimeGridBlockerSystem != null &&
             _runtimeGridBlockerSystem.IsRuntimeBlockerCell(x, y, width, height);
     }
-    public GameObject SelectedBuildingPrimarySpawnUnitPrefab => TryGetSelectedBuildingProductionPrefab(CreateSlot.Primary);
-    public GameObject SelectedBuildingSecondarySpawnUnitPrefab => TryGetSelectedBuildingProductionPrefab(CreateSlot.Secondary);
-    public GameObject SelectedBuildingTertiarySpawnUnitPrefab => TryGetSelectedBuildingProductionPrefab(CreateSlot.Tertiary);
-    public GameObject SelectedBuildingQuaternarySpawnUnitPrefab => TryGetSelectedBuildingProductionPrefab(CreateSlot.Quaternary);
-
-    public void GetSelectedBuildingProductionPrefabs(List<GameObject> prefabs)
-    {
-        _buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefabs(
-            CreateBuildingPlacementQueryContext(),
-            prefabs);
-    }
-
-    public void GetSelectedBuildingProducedUnits(List<Entity> units)
-    {
-        _buildingUiQuerySystem.GetSelectedBuildingProducedUnits(CreateBuildingUiQueryContext(), units);
-    }
-
-    public void GetSelectedBuildingProducedUnitEntries(List<ProducedUnitUiEntry> entries)
-    {
-        _buildingUiQuerySystem.GetSelectedBuildingProducedUnitEntries(CreateBuildingUiQueryContext(), entries);
-    }
-
-    public bool TryGetSelectedBuildingCapacityInfo(out int current, out int max, out float progress01)
-    {
-        current = 0;
-        max = 0;
-        progress01 = 0f;
-
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue)
-            return false;
-
-        if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) || building?.Definition == null)
-            return false;
-
-        return _factionResourceSystem.TryGetPrimaryCapacityInfo(building, OilBarrelsPerFuelBarrel, out current, out max, out progress01);
-    }
-
-    public void GetFriendlyPendingProductionUiEntries(List<PendingProductionUiEntry> entries)
-    {
-        _buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries(CreateBuildingUiQueryContext(), entries);
-    }
-
-    public bool TryGetSelectedBuildingCapacity2Info(out int current, out int max, out float progress01)
-    {
-        current = 0;
-        max = 0;
-        progress01 = 0f;
-
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue)
-            return false;
-
-        if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) || building?.Definition == null)
-            return false;
-
-        return _factionResourceSystem.TryGetFuelCapacityInfo(building, out current, out max, out progress01);
-    }
 
     public void GetResourceTotals(out int dollars, out int oilBarrels, out int fuelBarrels)
     {
         dollars = _runtimeResourceSystem.CurrentDollars;
         _factionResourceSystem.GetResourceTotals(_runtimeBuildings, out oilBarrels, out fuelBarrels);
-    }
-
-    public int CurrentDollars => _runtimeResourceSystem.CurrentDollars;
-
-    public bool TryGetConfiguredUnit(string unitId, out ConfiguredUnitEntry entry)
-    {
-        string normalized = BuildingDefinitionSystem.NormalizeSpawnableKey(unitId);
-        if (string.IsNullOrEmpty(normalized))
-        {
-            entry = default;
-            return false;
-        }
-
-        for (int i = 0; i < ConfiguredUnitCount; i++)
-        {
-            if (!TryGetConfiguredUnit(i, out ConfiguredUnitEntry candidate))
-                continue;
-            if (!BuildingDefinitionSystem.UnitPrefabMatchesId(candidate.Prefab, normalized))
-                continue;
-
-            entry = candidate;
-            return true;
-        }
-
-        entry = default;
-        return false;
     }
 
     public void GetRuntimeHouseBuildingIds(List<int> results)
@@ -321,17 +235,17 @@ public sealed class BuildingPlacementSystem
             out upkeepPerCitizenPerDay);
     }
 
-    public bool IsRuntimeBuildingCityGenerated(int buildingId)
+    private bool IsRuntimeBuildingCityGenerated(int buildingId)
     {
         return _buildingRuntimeQuerySystem.IsRuntimeBuildingCityGenerated(CreateBuildingRuntimeQueryContext(), buildingId);
     }
 
-    public bool IsRuntimeBuildingWall(int buildingId)
+    private bool IsRuntimeBuildingWall(int buildingId)
     {
         return _buildingRuntimeQuerySystem.IsRuntimeBuildingWall(CreateBuildingRuntimeQueryContext(), buildingId);
     }
 
-    public bool TryGetRuntimeBuildingOwnerFaction(int buildingId, out byte factionId)
+    private bool TryGetRuntimeBuildingOwnerFaction(int buildingId, out byte factionId)
     {
         return _buildingRuntimeQuerySystem.TryGetRuntimeBuildingOwnerFaction(CreateBuildingRuntimeQueryContext(), buildingId, out factionId);
     }
@@ -467,7 +381,7 @@ public sealed class BuildingPlacementSystem
             out spawnUnitPrefab);
     }
 
-    public bool TryResolveLiveUnitPreviewPrefab(Entity unitEntity, out GameObject prefab)
+    private bool TryResolveLiveUnitPreviewPrefab(Entity unitEntity, out GameObject prefab)
     {
         prefab = null;
         if (unitEntity == Entity.Null || !TryGetEntityManager(out EntityManager em) || !em.Exists(unitEntity))
@@ -502,18 +416,6 @@ public sealed class BuildingPlacementSystem
         return false;
     }
 
-    private GameObject TryGetSelectedBuildingProductionPrefab(CreateSlot slot)
-    {
-        return TryGetSelectedBuildingProductionPrefab((int)slot);
-    }
-
-    public GameObject TryGetSelectedBuildingProductionPrefab(int productionIndex)
-    {
-        return _buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefab(
-            CreateBuildingPlacementQueryContext(),
-            productionIndex);
-    }
-
     public string PlacementStatusText
     {
         get
@@ -530,7 +432,7 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    public string SelectedBuildingDisplayName
+    private string SelectedBuildingDisplayName
     {
         get
         {
@@ -546,14 +448,14 @@ public sealed class BuildingPlacementSystem
         }
     }
 
-    public bool TryGetSelectedBuildingPreviewPrefab(out GameObject prefab)
+    private bool TryGetSelectedBuildingPreviewPrefab(out GameObject prefab)
     {
         return _buildingPlacementQuerySystem.TryGetSelectedBuildingPreviewPrefab(
             CreateBuildingPlacementQueryContext(),
             out prefab);
     }
 
-    public bool TryGetSelectedBuildingHealth(out int current, out int max)
+    private bool TryGetSelectedBuildingHealth(out int current, out int max)
     {
         return _buildingPlacementQuerySystem.TryGetSelectedBuildingHealth(
             CreateBuildingPlacementQueryContext(),
@@ -1024,17 +926,12 @@ public sealed class BuildingPlacementSystem
         BeginPlacement(_factoryDefinition);
     }
 
-    public bool TryGetConfiguredSpawnable(int index, out ConfiguredSpawnableEntry entry)
+    private bool TryGetConfiguredSpawnable(int index, out ConfiguredSpawnableEntry entry)
     {
         return _buildingDefinitionSystem.TryGetConfiguredSpawnable(index, out entry);
     }
 
-    public bool TryGetConfiguredSpawnable(string buildingId, out ConfiguredSpawnableEntry entry)
-    {
-        return _buildingDefinitionSystem.TryGetConfiguredSpawnable(buildingId, out entry);
-    }
-
-    public bool TryGetConfiguredUnit(int index, out ConfiguredUnitEntry entry)
+    private bool TryGetConfiguredUnit(int index, out ConfiguredUnitEntry entry)
     {
         if (unitSpawnPrefabs != null && index >= 0 && index < unitSpawnPrefabs.Count)
         {
@@ -1074,19 +971,7 @@ public sealed class BuildingPlacementSystem
         return authoring.ConfiguredDisplayName;
     }
 
-    public bool BeginPlacementForConfiguredSpawnable(int index)
-    {
-        if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
-            return false;
-
-        if (!_buildingDefinitionSystem.TryGetConfiguredDefinition(index, out BuildingDefinition definition) || definition.Prefab == null)
-            return false;
-
-        BeginPlacement(definition);
-        return true;
-    }
-
-    public bool BeginPlacementForConfiguredSpawnable(GameObject prefab)
+    private bool BeginPlacementForConfiguredSpawnable(GameObject prefab)
     {
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
             return false;
@@ -1098,7 +983,7 @@ public sealed class BuildingPlacementSystem
         return true;
     }
 
-    public bool IsConfiguredSpawnablePrefab(GameObject prefab)
+    private bool IsConfiguredSpawnablePrefab(GameObject prefab)
     {
         return _buildingDefinitionSystem.IsConfiguredSpawnablePrefab(prefab);
     }
@@ -1162,14 +1047,6 @@ public sealed class BuildingPlacementSystem
         CreateUnitFromBuilding(buildingId, 3);
     }
 
-    private enum CreateSlot
-    {
-        Primary,
-        Secondary,
-        Tertiary,
-        Quaternary
-    }
-
     public void CreateUnitFromSelectedBuilding(int productionIndex)
     {
         int? buildingId = ActiveBuildingId;
@@ -1188,7 +1065,7 @@ public sealed class BuildingPlacementSystem
             Time.frameCount);
     }
 
-    public CampRequestFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
+    private CampRequestFailure GetCampRequestFailure(GameObject prefab, int price, out string requiredBuildingDisplayName)
     {
         return _buildingProductionRequestSystem.GetCampRequestFailure(
             CreateBuildingProductionRequestContext(),
@@ -1197,12 +1074,7 @@ public sealed class BuildingPlacementSystem
             out requiredBuildingDisplayName);
     }
 
-    public CampRequestFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName)
-    {
-        return TryRequestCampItem(prefab, price, out requiredBuildingDisplayName, true);
-    }
-
-    public CampRequestFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
+    private CampRequestFailure TryRequestCampItem(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess)
     {
         return _buildingProductionRequestSystem.TryRequestCampItem(
             CreateBuildingProductionRequestContext(),
@@ -1213,7 +1085,7 @@ public sealed class BuildingPlacementSystem
             out requiredBuildingDisplayName);
     }
 
-    public void FocusLastCampProductionRequest()
+    private void FocusLastCampProductionRequest()
     {
         _buildingProductionRequestSystem.FocusLastCampProductionRequest(CreateBuildingProductionRequestContext());
     }
@@ -2303,7 +2175,7 @@ public sealed class BuildingPlacementSystem
             () => _runtimeResourceSystem.CurrentDollars,
             () => _buildingDefinitionSystem.ConfiguredSpawnableCount,
             TryGetConfiguredSpawnable,
-            () => ConfiguredUnitCount,
+            () => _buildingDefinitionSystem.ConfiguredUnitCount,
             TryGetConfiguredUnit,
             IsConfiguredSpawnablePrefab,
             GetCampRequestFailure,

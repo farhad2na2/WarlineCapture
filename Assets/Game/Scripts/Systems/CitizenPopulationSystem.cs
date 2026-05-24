@@ -122,15 +122,12 @@ public sealed class CitizenPopulationSystem
         public int TargetBuildingId;
     }
 
-    private BuildingPlacementSystem _buildingPlacementSystem;
     private BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem;
     private BuildingRuntimeQuerySystem.Context _buildingRuntimeQueryContext;
     private readonly CitizenResourceSystem _citizenResourceSystem = new();
     private CitizenResourceSystem.Context _citizenResourceContext;
     private readonly CitizenPrefabSystem _citizenPrefabSystem = new();
     private CitizenPrefabSystem.Context _citizenPrefabContext;
-    private RuntimeResourceSystem _runtimeResourceSystem;
-    private RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem;
     private DayNightSystem _dayNightSystem;
     private Camera _worldCamera;
     private World _ecsWorld;
@@ -166,26 +163,17 @@ public sealed class CitizenPopulationSystem
     public CitizenPopulationTotals Totals => _totals;
 
     internal void Init(
-        BuildingPlacementSystem buildingPlacementSystem,
+        BuildingRuntimeQuerySystem buildingRuntimeQuerySystem,
+        BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext,
         DayNightSystem dayNightSystem,
         Camera worldCamera,
-        RuntimeResourceSystem runtimeResourceSystem = null,
-        RuntimeUnitPrefabSystem runtimeUnitPrefabSystem = null,
-        RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext = default)
+        CitizenResourceSystem.Context citizenResourceContext = default,
+        CitizenPrefabSystem.Context citizenPrefabContext = default)
     {
-        _buildingPlacementSystem = buildingPlacementSystem;
-        _buildingRuntimeQuerySystem = buildingPlacementSystem?.RuntimeQuerySystem;
-        _buildingRuntimeQueryContext = buildingPlacementSystem != null
-            ? buildingPlacementSystem.CreateRuntimeBuildingQueryContext()
-            : default;
-        _runtimeResourceSystem = runtimeResourceSystem;
-        _runtimeUnitPrefabSystem = runtimeUnitPrefabSystem;
-        _citizenResourceContext = _runtimeResourceSystem != null
-            ? _runtimeResourceSystem.CreateCitizenResourceContext()
-            : default;
-        _citizenPrefabContext = _runtimeUnitPrefabSystem != null
-            ? _runtimeUnitPrefabSystem.CreateCitizenPrefabContext(runtimeUnitPrefabContext)
-            : default;
+        _buildingRuntimeQuerySystem = buildingRuntimeQuerySystem;
+        _buildingRuntimeQueryContext = buildingRuntimeQueryContext;
+        _citizenResourceContext = citizenResourceContext;
+        _citizenPrefabContext = citizenPrefabContext;
         _dayNightSystem = dayNightSystem;
         _worldCamera = worldCamera;
         ResolveEntityManager();

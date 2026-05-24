@@ -1,9 +1,35 @@
+using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
 
 public sealed class BuildingUiQuerySystem
 {
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+
+    internal readonly struct Context
+    {
+        public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly Func<int?> GetActiveBuildingId;
+        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly BuildingProductionSystem ProductionSystem;
+        public readonly Func<float> GetNow;
+
+        public Context(
+            IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            Func<int?> getActiveBuildingId,
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            BuildingProductionSystem productionSystem,
+            Func<float> getNow)
+        {
+            RuntimeBuildings = runtimeBuildings;
+            GetActiveBuildingId = getActiveBuildingId;
+            TryGetEntityManager = tryGetEntityManager;
+            ProductionSystem = productionSystem;
+            GetNow = getNow;
+        }
+    }
+
     public readonly struct ProducedUnitUiEntry
     {
         public readonly Entity Unit;
@@ -57,6 +83,30 @@ public sealed class BuildingUiQuerySystem
             results.Add(producedUnits[i]);
     }
 
+    internal void GetSelectedBuildingProducedUnits(Context context, List<Entity> results)
+    {
+        results?.Clear();
+        if (results == null ||
+            context.RuntimeBuildings == null ||
+            context.GetActiveBuildingId == null ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return;
+        }
+
+        int? buildingId = context.GetActiveBuildingId();
+        if (!buildingId.HasValue ||
+            !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) ||
+            building == null)
+        {
+            return;
+        }
+
+        building.ProducedUnits ??= new List<Entity>();
+        GetProducedUnits(building.ProducedUnits, em, context.ProductionSystem, results);
+    }
+
     public void AddProducedUnitEntries(
         List<Entity> producedUnits,
         Dictionary<Entity, GameObject> producedUnitPrefabs,
@@ -103,6 +153,38 @@ public sealed class BuildingUiQuerySystem
         }
     }
 
+    internal void GetSelectedBuildingProducedUnitEntries(Context context, List<ProducedUnitUiEntry> entries)
+    {
+        entries?.Clear();
+        if (entries == null ||
+            context.RuntimeBuildings == null ||
+            context.GetActiveBuildingId == null ||
+            context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager em))
+        {
+            return;
+        }
+
+        int? buildingId = context.GetActiveBuildingId();
+        if (!buildingId.HasValue ||
+            !context.RuntimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) ||
+            building == null)
+        {
+            return;
+        }
+
+        building.ProducedUnits ??= new List<Entity>();
+        building.ProducedUnitPrefabs ??= new Dictionary<Entity, GameObject>();
+        AddProducedUnitEntries(
+            building.ProducedUnits,
+            building.ProducedUnitPrefabs,
+            building.PendingProductions,
+            em,
+            context.ProductionSystem,
+            context.GetNow != null ? context.GetNow() : Time.time,
+            entries);
+    }
+
     public void AddPendingProductionUiEntries(
         int buildingId,
         IEnumerable<BuildingProductionSystem.IPendingProduction> pendingProductions,
@@ -127,6 +209,41 @@ public sealed class BuildingUiQuerySystem
                 progress.Progress01,
                 pending.StartedAt,
                 pending.ReadyAt));
+        }
+    }
+
+    internal void GetFriendlyPendingProductionUiEntries(Context context, List<PendingProductionUiEntry> entries)
+    {
+        if (entries == null)
+            return;
+
+        entries.Clear();
+        if (context.RuntimeBuildings == null)
+            return;
+
+        float now = context.GetNow != null ? context.GetNow() : Time.time;
+        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = pair.Value;
+            if (building == null ||
+                building.IsDestroyed ||
+                building.PendingProductions == null ||
+                building.PendingProductions.Count == 0)
+            {
+                continue;
+            }
+
+            if (building.IsCityGenerated)
+                continue;
+            if (building.HasOwnerFaction && building.OwnerFactionId != 0)
+                continue;
+
+            AddPendingProductionUiEntries(
+                pair.Key,
+                building.PendingProductions,
+                context.ProductionSystem,
+                now,
+                entries);
         }
     }
 }

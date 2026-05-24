@@ -2,15 +2,20 @@
 
 ## Purpose
 
-Define the new runtime UI shell system that controls loading, main menu, match HUD, screen switching, and popup transitions from one central director.
+Define the new runtime UI shell system that controls loading, main menu, match HUD, screen switching, and popup transitions from one central ECS-driven shell flow.
 
-This plan replaces ad hoc per-screen transition behavior with a reusable shell controller. Screens provide content; the shell decides how regions enter, exit, swap, and animate.
+This plan replaces ad hoc per-screen transition behavior with a reusable shell. Screens provide content; ECS shell flow decides what should happen, and Unity shell views execute the animation.
 
 ## Recommendation
 
-Build a persistent `WarlineCaptureAppShell` with a `WarlineCaptureShellDirector` that owns all runtime UI transitions.
+Build a persistent `WarlineCaptureRuntimeShell` prefab with:
 
-Do not put transition logic inside individual screens. Each screen should expose region content and routing metadata. The shell director should decide the motion sequence.
+- `UiShellFlowSystem` for flow decisions and command sequencing.
+- `WarlineCaptureShellEcsBridgeView` for ECS-to-Canvas command execution.
+- `WarlineCaptureShellView` for serialized region references.
+- `WarlineCaptureUiMotionHostView` for tween execution.
+
+Do not put transition logic inside individual screens. Each screen should expose region content and routing metadata. The shell flow should decide the motion sequence.
 
 Do not add a tween package unless a later implementation step proves it is needed. The project already has Unity UI, `CanvasGroup`, shell routing, and screen controllers. A small in-project tween runner is enough for this first implementation and avoids a dependency/approval cycle.
 
@@ -105,9 +110,9 @@ Expected runtime flow:
 
 ## Proposed Runtime Types
 
-### `WarlineCaptureShellDirector`
+### `UiShellFlowSystem`
 
-Owns shell state, transition sequencing, cancellation, and route-to-shell-mode mapping.
+ECS system that owns shell state, transition sequencing, and route-to-shell-mode mapping.
 
 Responsibilities:
 
@@ -119,10 +124,11 @@ Responsibilities:
 - Show/hide popups.
 - Prevent overlapping transitions.
 - Expose hooks for gameplay loading/progress.
+- Write presentation commands for Unity views to execute.
 
-### `WarlineCaptureShellRegion`
+### `WarlineCaptureShellRegionView`
 
-Wrapper for one shell region.
+Serialized Unity view wrapper for one shell region.
 
 Responsibilities:
 
@@ -132,7 +138,7 @@ Responsibilities:
 - Provide `SetContent`, `ClearContent`, `SetVisible`, and `ResetTransform`.
 - Own `CanvasGroup` for fade/interactability.
 
-### `WarlineCaptureUiTweenRunner`
+### `WarlineCaptureUiMotionHostView`
 
 Small internal tween utility.
 
@@ -152,9 +158,9 @@ Required easing:
 - Ease in-out cubic for screen swaps.
 - Optional overshoot for popup scale-in, kept subtle.
 
-### `WarlineCaptureShellScreenDefinition`
+### `WarlineCaptureShellScreenConfig`
 
-Data object or component describing which content prefab belongs in each shell region.
+Config asset describing which content prefab belongs in each shell region.
 
 Fields:
 
@@ -166,9 +172,9 @@ Fields:
 - Footer content prefab, optional.
 - Region behavior flags.
 
-### `WarlineCapturePopupPresenter`
+### `WarlineCapturePopupLayerView`
 
-Central popup animation presenter.
+Serialized Unity view for popup instantiation and centered scale animation.
 
 Responsibilities:
 

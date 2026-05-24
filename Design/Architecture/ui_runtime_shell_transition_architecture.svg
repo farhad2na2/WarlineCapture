@@ -65,14 +65,14 @@
   <text class="t" x="116" y="572">Writes presentation commands with sequence ids.</text>
 
   <rect class="box2" x="92" y="616" width="214" height="88"/>
-  <text class="h" x="116" y="648">LoadingSystem</text>
-  <text class="t" x="116" y="676">Progress complete</text>
-  <text class="t" x="116" y="696">minimum timing</text>
+  <text class="h" x="116" y="648">Completion Buffer</text>
+  <text class="t" x="116" y="676">command done</text>
+  <text class="t" x="116" y="696">sequence unlock</text>
 
   <rect class="box2" x="328" y="616" width="214" height="88"/>
-  <text class="h" x="352" y="648">PopupSystem</text>
-  <text class="t" x="352" y="676">Popup show/hide</text>
-  <text class="t" x="352" y="696">command routing</text>
+  <text class="h" x="352" y="648">Later Splits</text>
+  <text class="t" x="352" y="676">Loading / Popup /</text>
+  <text class="t" x="352" y="696">Result systems if needed</text>
 
   <rect class="box2" x="92" y="736" width="450" height="96"/>
   <text class="h" x="116" y="768">Presentation Command Buffer</text>
@@ -174,7 +174,7 @@
 
   <rect class="panel" x="58" y="970" width="1684" height="86" rx="14"/>
   <text class="note" x="86" y="1006">Contract guardrail:</text>
-  <text class="t" x="242" y="1006">ECS systems decide flow and write commands. Unity views animate only. Bootstrap composes references only.</text>
+  <text class="t" x="242" y="1006">One ECS flow system decides shell flow and writes commands. Unity views animate only. Bootstrap composes references only.</text>
   <text class="note" x="86" y="1038">First slice:</text>
-  <text class="t" x="180" y="1038">Loading -> Main Menu -> Match HUD -> Result Popup -> Loading -> Main Menu, then convert remaining screens to region-ready prefabs.</text>
+  <text class="t" x="180" y="1038">Keep it lean: boundary entity, flow system, bridge view, shell regions, motion host, then one vertical sequence capture.</text>
 </svg>

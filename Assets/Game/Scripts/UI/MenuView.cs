@@ -221,6 +221,8 @@ namespace Game.Scripts.UI
         private RTSSelectionSystem _selectionSystem;
         private BuildingUiCommandSystem _buildingUiCommandSystem;
         private BuildingUiCommandSystem.Context _buildingUiCommandContext;
+        private BuildingUiQuerySystem _buildingUiQuerySystem;
+        private BuildingUiQuerySystem.Context _buildingUiQueryContext;
         private Camera _worldCamera;
         private DayNightSystem _dayNightSystem;
         private CitizenPopulationSystem _citizenPopulationSystem;
@@ -570,6 +572,14 @@ namespace Game.Scripts.UI
             if (campPreviewNextButton != null)
                 campPreviewNextButton.onClick.AddListener(ButtonCampPreviewNextClicked);
             ResolveCampPanels();
+        }
+
+        internal void BindBuildingUiQuerySystem(
+            BuildingUiQuerySystem buildingUiQuerySystem,
+            BuildingUiQuerySystem.Context buildingUiQueryContext)
+        {
+            _buildingUiQuerySystem = buildingUiQuerySystem;
+            _buildingUiQueryContext = buildingUiQueryContext;
         }
 
         private void Awake()
@@ -4719,14 +4729,14 @@ namespace Game.Scripts.UI
             if (_requestPanelRoot == null || _requestCountdownTemplate == null)
                 return;
 
-            bool shouldShow = (menuType == MenuType.Game || (menuType == MenuType.Camp && _campOpenedFromGame)) && _buildingUiCommandSystem != null;
+            bool shouldShow = (menuType == MenuType.Game || (menuType == MenuType.Camp && _campOpenedFromGame)) && _buildingUiQuerySystem != null;
             if (!shouldShow)
             {
                 _requestPanelRoot.gameObject.SetActive(false);
                 return;
             }
 
-            _buildingUiCommandSystem.GetFriendlyPendingProductionUiEntries(_buildingUiCommandContext, _pendingProductionEntries);
+            _buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries(_buildingUiQueryContext, _pendingProductionEntries);
             bool hasEntries = _pendingProductionEntries.Count > 0;
             _requestPanelRoot.gameObject.SetActive(hasEntries);
             if (!hasEntries)

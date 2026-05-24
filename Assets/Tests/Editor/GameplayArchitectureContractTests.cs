@@ -159,6 +159,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Placement status text, selected-building labels/descriptions, selected-building preview prefab lookup, selected-building health lookup, and selected-building production prefab read models belong in `BuildingPlacementQuerySystem`", contract);
         StringAssert.Contains("Road barrier gate classification, gate-to-nearby-wall alignment, base-breach memory, enemy wall/gate perimeter lookup, breach-target resolution, breach-building target selection, breach approach-cell search, barrier door proximity checks, and barrier door visual open-state updates belong in `BuildingBarrierSystem`", contract);
         StringAssert.Contains("Produced-unit UI lists, pending-production UI entries, UI progress shaping, and temporary building UI list read models belong in `BuildingUiQuerySystem`", contract);
+        StringAssert.Contains("`BuildingUiCommandSystem` must not own read-model query delegates or pending-production UI list retrieval", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
     }
@@ -1562,18 +1563,24 @@ public sealed class GameplayArchitectureContractTests
         const string menuFile = "Assets/Game/Scripts/UI/MenuView.cs";
         const string startupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
         const string commandFile = "Assets/Game/Scripts/Systems/BuildingUiCommandSystem.cs";
+        const string queryFile = "Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs";
         Assert.IsTrue(File.Exists(commandFile), "Menu/camp resource UI commands must live behind BuildingUiCommandSystem.");
+        Assert.IsTrue(File.Exists(queryFile), "Menu/camp resource UI read models must live behind BuildingUiQuerySystem.");
 
         string menu = File.ReadAllText(menuFile);
         string startup = File.ReadAllText(startupFile);
         string command = File.ReadAllText(commandFile);
+        string query = File.ReadAllText(queryFile);
 
         StringAssert.Contains("BuildingUiCommandSystem _buildingUiCommandSystem", menu);
+        StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", menu);
         StringAssert.Contains("buildingPlacement?.BuildingUiCommandSystem", startup);
         StringAssert.Contains("buildingPlacement.CreateBuildingUiCommandContext()", startup);
+        StringAssert.Contains("buildingPlacement?.BuildingUiQuerySystem", startup);
+        StringAssert.Contains("buildingPlacement.CreateBuildingUiQueryContext()", startup);
         StringAssert.Contains("TryRequestCampItem", command);
         StringAssert.Contains("GetCampRequestFailure", command);
-        StringAssert.Contains("GetFriendlyPendingProductionUiEntries", command);
+        StringAssert.Contains("GetFriendlyPendingProductionUiEntries", query);
         StringAssert.Contains("HasActiveBuilding", command);
         StringAssert.Contains("SelectedBuildingDisplayName", command);
         StringAssert.Contains("ConfirmBuildingPlacement", command);
@@ -1589,6 +1596,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("FocusLastCampProductionRequest", command);
         StringAssert.Contains("ClearSelectedBuilding", command);
         StringAssert.Contains("ExitBuildMode", command);
+        Assert.IsFalse(
+            command.Contains("GetFriendlyPendingProductionUiEntries", StringComparison.Ordinal),
+            "BuildingUiCommandSystem must not own building UI read-model queries.");
         Assert.IsFalse(
             menu.Contains("_buildingPlacementSystem", StringComparison.Ordinal) ||
             menu.Contains("BuildingPlacementSystem buildingPlacementSystem", StringComparison.Ordinal),
@@ -3311,12 +3321,17 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         const string placementQueryFile = "Assets/Game/Scripts/Systems/BuildingPlacementQuerySystem.cs";
         const string uiQueryFile = "Assets/Game/Scripts/Systems/BuildingUiQuerySystem.cs";
+        const string uiCommandFile = "Assets/Game/Scripts/Systems/BuildingUiCommandSystem.cs";
+        const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
         Assert.IsTrue(File.Exists(placementQueryFile), "The selected-building scalar query slice must live in BuildingPlacementQuerySystem.");
         Assert.IsTrue(File.Exists(uiQueryFile), "The temporary building UI read model slice must live in BuildingUiQuerySystem.");
+        Assert.IsTrue(File.Exists(uiCommandFile), "The building UI command slice must live in BuildingUiCommandSystem.");
 
         string placement = File.ReadAllText(placementFile);
         string placementQuery = File.ReadAllText(placementQueryFile);
         string uiQuery = File.ReadAllText(uiQueryFile);
+        string uiCommand = File.ReadAllText(uiCommandFile);
+        string menuView = File.ReadAllText(menuViewFile);
         StringAssert.Contains("BuildingPlacementQuerySystem _buildingPlacementQuerySystem", placement);
         StringAssert.Contains("CreateBuildingPlacementQueryContext", placement);
         StringAssert.Contains("_buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefab", placement);
@@ -3335,11 +3350,20 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryGetSelectedBuildingHealth", placementQuery);
 
         StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", placement);
-        StringAssert.Contains("_buildingUiQuerySystem.GetProducedUnits", placement);
-        StringAssert.Contains("_buildingUiQuerySystem.AddProducedUnitEntries", placement);
-        StringAssert.Contains("_buildingUiQuerySystem.AddPendingProductionUiEntries", placement);
+        StringAssert.Contains("CreateBuildingUiQueryContext", placement);
+        StringAssert.Contains("_buildingUiQuerySystem.GetSelectedBuildingProducedUnits", placement);
+        StringAssert.Contains("_buildingUiQuerySystem.GetSelectedBuildingProducedUnitEntries", placement);
+        StringAssert.Contains("_buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries", placement);
+        StringAssert.Contains("GetSelectedBuildingProducedUnits", uiQuery);
+        StringAssert.Contains("GetSelectedBuildingProducedUnitEntries", uiQuery);
+        StringAssert.Contains("GetFriendlyPendingProductionUiEntries", uiQuery);
         StringAssert.Contains("public readonly struct ProducedUnitUiEntry", uiQuery);
         StringAssert.Contains("public readonly struct PendingProductionUiEntry", uiQuery);
+        StringAssert.Contains("BuildingUiQuerySystem _buildingUiQuerySystem", menuView);
+        StringAssert.Contains("_buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries", menuView);
+        Assert.IsFalse(
+            uiCommand.Contains("GetFriendlyPendingProductionUiEntries", StringComparison.Ordinal),
+            "BuildingUiCommandSystem must not own building UI read-model query delegates.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+readonly\s+struct\s+(ProducedUnitUiEntry|PendingProductionUiEntry)"),
             "Building UI read-model entries belong in BuildingUiQuerySystem, not BuildingPlacementSystem.");
@@ -3364,6 +3388,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"public\s+void\s+GetSelectedBuildingProducedUnitEntries\([\s\S]*?ProducedUnitPrefabs\.Remove\(unit\)[\s\S]*?public\s+bool\s+TryGetSelectedBuildingCapacityInfo"),
             "Selected-building produced-unit prefab UI pruning belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+void\s+GetFriendlyPendingProductionUiEntries\([\s\S]*?entries\)\s*\{\s*foreach\s*\(KeyValuePair<int,\s*RuntimeBuildingData>"),
+            "Friendly pending-production UI iteration belongs in BuildingUiQuerySystem, not BuildingPlacementSystem.");
     }
 
     [Test]

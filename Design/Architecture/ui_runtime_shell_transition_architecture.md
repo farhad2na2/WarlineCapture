@@ -6,6 +6,21 @@ Define the technical implementation plan for the new WarlineCapture runtime UI s
 
 This document turns the high-level UI shell motion plan into concrete runtime classes, ECS data boundaries, interconnections, and migration rules.
 
+## Audit Outcome
+
+GO, with simplification.
+
+The architecture is aligned with the ECS contract because gameplay decisions stay in ECS/gameplay systems and Unity UI code remains an edge that animates Canvas views. The original version was slightly over-split for the first implementation, so the first slice should use a leaner shape:
+
+- One ECS shell boundary entity.
+- One `UiShellFlowSystem` for shell flow commands.
+- One presentation command buffer.
+- One Unity bridge view that consumes commands and reports completion.
+- One shell view with named regions.
+- One motion host/service for tweens.
+
+Do not create separate loading, popup, or result-flow ECS systems in the first slice unless the single flow system becomes hard to test. Those are valid later extraction points, not first-pass requirements.
+
 ## Architecture Position
 
 The UI shell is application-edge code. It may animate Canvas objects and instantiate UI prefabs, but it must not own gameplay policy.
@@ -14,7 +29,7 @@ Gameplay and mission state must flow through ECS request/read components and ECS
 
 ## Core Rule
 
-Use ECS for UI flow state and requests. Use Unity MonoBehaviours named `*View` only for serialized references, visual transforms, CanvasGroups, prefabs, and UnityEvents.
+Use ECS for UI flow state, requests, presentation commands, and transition completion events. Use Unity MonoBehaviours named `*View` only for serialized references, visual transforms, CanvasGroups, prefabs, UnityEvents, and motion execution.
 
 Do not expand the legacy `WarlineCaptureRouter`, `WarlineCaptureScreenController`, `WarlineCaptureModalController`, or `WarlineCaptureMatchResultFlow` with new shell policy. Treat them as compatibility surfaces while the new shell is introduced.
 
@@ -79,6 +94,8 @@ This is UI flow state, not gameplay state. It should be stored in an ECS singlet
 All ECS runtime data types should live under:
 
 `Assets/Game/Scripts/UI/Shell/Ecs/`
+
+First-slice components should be limited to the types below. Add more only when a real runtime caller needs them.
 
 ### `UiShellStateComponent`
 
@@ -222,11 +239,30 @@ Command kinds:
 - `ShowPopup`
 - `HidePopup`
 
+### `UiShellTransitionCompleteComponent`
+
+Buffer element component written by `WarlineCaptureShellEcsBridgeView` after a command animation completes.
+
+Responsibility:
+
+- Let ECS unlock the next command sequence without polling Unity objects.
+- Reject stale completion events by sequence id.
+
+Fields:
+
+```csharp
+public UiShellCommandKind Kind;
+public UiShellRegionId Region;
+public int SequenceId;
+```
+
 ## ECS Systems
 
 All ECS shell systems should live under:
 
 `Assets/Game/Scripts/UI/Shell/Ecs/`
+
+First-slice systems should be limited to `UiShellBoundarySystem` and `UiShellFlowSystem`.
 
 ### `UiShellBoundarySystem`
 
@@ -270,7 +306,7 @@ It does not:
 - Grant rewards.
 - Read building/unit/AI runtime directly.
 
-### `UiShellLoadingSystem`
+### Later Split: `UiShellLoadingSystem`
 
 Responsibility:
 
@@ -283,7 +319,11 @@ It does not:
 - Load scenes itself.
 - Own fake-loading UI logic.
 
-### `UiShellPopupSystem`
+First-slice recommendation:
+
+- Keep this logic inside `UiShellFlowSystem` until real loading flow becomes complex enough to split.
+
+### Later Split: `UiShellPopupSystem`
 
 Responsibility:
 
@@ -296,7 +336,11 @@ It does not:
 - Instantiate popup prefabs.
 - Bind Canvas controls directly.
 
-### `UiShellResultFlowSystem`
+First-slice recommendation:
+
+- Keep popup command selection inside `UiShellFlowSystem`.
+
+### Later Split: `UiShellResultFlowSystem`
 
 Responsibility:
 
@@ -310,6 +354,11 @@ It does not:
 - Persist mission history.
 
 Those gameplay concerns must remain in gameplay systems/services or existing compatibility boundaries until migrated.
+
+First-slice recommendation:
+
+- Use a simple `UiShellPopupRequestComponent` for POP-05 result variants.
+- Add this system only when gameplay result data is migrated to ECS presentation payloads.
 
 ## Unity View Classes
 
@@ -418,6 +467,7 @@ Responsibilities:
 - Execute corresponding shell view animations.
 - Write command completion back to ECS with sequence id.
 - Write UI button requests into ECS request buffers.
+- Never issue a second animation while a command with the same sequence id is already running.
 
 Not allowed:
 
@@ -438,6 +488,17 @@ Responsibilities:
 - Expose methods for position, scale, and alpha tweens.
 
 It does not decide which tween to run; it only executes commands from the bridge/shell view.
+
+### `WarlineCaptureShellButtonRequestView`
+
+Small serialized view for buttons that should request a shell route or popup.
+
+Responsibilities:
+
+- Hold a route/popup request enum.
+- On click, call `WarlineCaptureShellEcsBridgeView` to append a request component.
+
+This prevents new button scripts from calling `WarlineCaptureRouter.GoTo` directly.
 
 ## Non-Mono Services
 
@@ -504,6 +565,12 @@ public UiShellRegionSwapPolicy LeftSwapPolicy;
 public UiShellRegionSwapPolicy RightSwapPolicy;
 ```
 
+First-slice optimization:
+
+- A single config asset is enough.
+- Do not create per-screen custom transition classes.
+- Do not add animated screen-specific logic to content prefabs.
+
 ### `WarlineCapturePopupConfig`
 
 ScriptableObject.
@@ -548,7 +615,7 @@ On awake/start:
 3. Configure `WarlineCaptureShellEcsBridgeView` with ECS world/boundary entity reference.
 4. Add initial `UiShellRouteRequestComponent` or startup request into ECS.
 
-The actual flow is then handled by `UiShellFlowSystem`.
+The actual flow is then handled by `UiShellFlowSystem`. Bootstrap should not call the legacy router for the new shell path.
 
 ## Interconnection Diagram
 
@@ -559,8 +626,7 @@ flowchart TD
     RouteBuffer["UiShellRouteRequestComponent Buffer"]
     PopupBuffer["UiShellPopupRequestComponent Buffer"]
     FlowSystem["UiShellFlowSystem"]
-    LoadingSystem["UiShellLoadingSystem"]
-    PopupSystem["UiShellPopupSystem"]
+    CompleteBuffer["UiShellTransitionComplete Buffer"]
     CommandBuffer["UiShellPresentationCommandComponent Buffer"]
     ShellView["WarlineCaptureShellView"]
     Regions["ShellRegionViews"]
@@ -575,10 +641,10 @@ flowchart TD
     GameplaySystems --> ResultComponent
     ResultComponent --> PopupBuffer
     RouteBuffer --> FlowSystem
-    PopupBuffer --> PopupSystem
-    LoadingSystem --> FlowSystem
+    PopupBuffer --> FlowSystem
+    CompleteBuffer --> FlowSystem
     FlowSystem --> CommandBuffer
-    PopupSystem --> CommandBuffer
+    ShellBridge --> CompleteBuffer
     CommandBuffer --> ShellBridge
     ShellBridge --> ShellView
     ShellView --> Regions
@@ -593,8 +659,8 @@ flowchart TD
 2. Bootstrap adds startup request: `UiShellRouteRequestComponent(Route=Splash, Intent=OpenMenuRoute)`.
 3. `UiShellFlowSystem` writes `ShowLoading`.
 4. `WarlineCaptureShellEcsBridgeView` executes loading show through `WarlineCaptureShellView`.
-5. `UiShellLoadingSystem` updates progress.
-6. At 100%, `UiShellFlowSystem` writes:
+5. Loading progress is updated through `UiShellLoadingProgressComponent`.
+6. At 100%, after minimum timing, `UiShellFlowSystem` writes:
    - `ExitLoading`
    - `EnterMenu`
 7. Bridge executes:
@@ -634,8 +700,8 @@ flowchart TD
 ### Mission Result
 
 1. Gameplay result systems produce result data and selected UI result state.
-2. `UiShellResultFlowSystem` writes `UiShellPopupRequestComponent(PopupKind=MissionResult)`.
-3. `UiShellPopupSystem` writes `ShowPopup`.
+2. A UI result request is appended as `UiShellPopupRequestComponent(PopupKind=MissionResult)`.
+3. `UiShellFlowSystem` writes `ShowPopup`.
 4. Bridge instantiates popup under `PopupLayer`.
 5. Popup scales 0 to 1 from center.
 6. Continue/retry button writes route request.
@@ -677,7 +743,7 @@ Do not expand.
 
 Migration direction:
 
-- Popup show/hide goes through `WarlineCapturePopupLayerView` and `UiShellPopupSystem`.
+- Popup show/hide goes through `WarlineCapturePopupLayerView` and first-slice `UiShellFlowSystem`.
 
 ### `WarlineCaptureMatchResultFlow`
 
@@ -699,17 +765,16 @@ New planned files:
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellPopupRequestComponent.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellMissionResultComponent.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellPresentationCommandComponent.cs`
+- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellTransitionCompleteComponent.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellBoundarySystem.cs`
 - `Assets/Game/Scripts/UI/Shell/Ecs/UiShellFlowSystem.cs`
-- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellLoadingSystem.cs`
-- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellPopupSystem.cs`
-- `Assets/Game/Scripts/UI/Shell/Ecs/UiShellResultFlowSystem.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRegionView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellContentView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureLoadingView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCapturePopupLayerView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellEcsBridgeView.cs`
+- `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellButtonRequestView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionHostView.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureUiMotionService.cs`
 - `Assets/Game/Scripts/UI/Shell/WarlineCaptureShellMotionConfig.cs`
@@ -734,6 +799,7 @@ Create tests for:
 - Header is not commanded during main-menu middle swaps.
 - Popup request creates `ShowPopup`.
 - Transition sequence id increments and rejects stale completion.
+- Completion events unlock the next queued command.
 
 ### Play/Runtime Smoke
 
@@ -781,3 +847,16 @@ Build:
 7. Unity capture smoke.
 
 Only after this slice is visually proven should the existing target-lock screens be converted into full region-ready prefabs.
+
+## Deferred Until Needed
+
+Do not implement these in the first pass:
+
+- `UiShellLoadingSystem`
+- `UiShellPopupSystem`
+- `UiShellResultFlowSystem`
+- Per-screen transition classes.
+- A third-party tween package.
+- Full migration of existing `WarlineCaptureRouter` users.
+
+Add them only when the lean shell path has a working vertical slice and a concrete complexity point appears.

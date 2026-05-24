@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 
 public sealed class BuildingUiCommandSystem
 {
@@ -71,7 +70,6 @@ public sealed class BuildingUiCommandSystem
         public readonly Func<GameObject, bool> IsConfiguredSpawnablePrefab;
         public readonly GetCampRequestFailureDelegate GetCampRequestFailure;
         public readonly TryRequestCampItemDelegate TryRequestCampItem;
-        public readonly Action<List<PendingProductionUiEntry>> GetFriendlyPendingProductionUiEntries;
         public readonly Func<bool> HasActiveBuilding;
         public readonly Func<string> GetSelectedBuildingDisplayName;
         public readonly Action DeleteSelectedBuilding;
@@ -97,7 +95,6 @@ public sealed class BuildingUiCommandSystem
             Func<GameObject, bool> isConfiguredSpawnablePrefab,
             GetCampRequestFailureDelegate getCampRequestFailure,
             TryRequestCampItemDelegate tryRequestCampItem,
-            Action<List<PendingProductionUiEntry>> getFriendlyPendingProductionUiEntries,
             Func<bool> hasActiveBuilding,
             Func<string> getSelectedBuildingDisplayName,
             Action deleteSelectedBuilding,
@@ -122,7 +119,6 @@ public sealed class BuildingUiCommandSystem
             IsConfiguredSpawnablePrefab = isConfiguredSpawnablePrefab;
             GetCampRequestFailure = getCampRequestFailure;
             TryRequestCampItem = tryRequestCampItem;
-            GetFriendlyPendingProductionUiEntries = getFriendlyPendingProductionUiEntries;
             HasActiveBuilding = hasActiveBuilding;
             GetSelectedBuildingDisplayName = getSelectedBuildingDisplayName;
             DeleteSelectedBuilding = deleteSelectedBuilding;
@@ -197,15 +193,6 @@ public sealed class BuildingUiCommandSystem
             return CampRequestFailure.InvalidSelection;
 
         return context.TryRequestCampItem(prefab, price, out requiredBuildingDisplayName, focusProducerOnSuccess);
-    }
-
-    public void GetFriendlyPendingProductionUiEntries(Context context, List<PendingProductionUiEntry> entries)
-    {
-        if (entries == null)
-            return;
-
-        entries.Clear();
-        context.GetFriendlyPendingProductionUiEntries?.Invoke(entries);
     }
 
     public bool HasActiveBuilding(Context context)

@@ -29,6 +29,9 @@ public sealed class MenuStartupSystem
                 citizenPopulation,
                 buildingPlacement?.BuildingUiCommandSystem,
                 buildingPlacement != null ? buildingPlacement.CreateBuildingUiCommandContext() : default);
+            menuView.BindBuildingUiQuerySystem(
+                buildingPlacement?.BuildingUiQuerySystem,
+                buildingPlacement != null ? buildingPlacement.CreateBuildingUiQueryContext() : default);
             menuView.NotifyBootstrapReady();
         }
 

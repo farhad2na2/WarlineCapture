@@ -117,6 +117,7 @@ public sealed class BuildingPlacementSystem
     internal RuntimeResourceSystem RuntimeResourceSystem => _runtimeResourceSystem;
     internal RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem => _runtimeUnitPrefabSystem;
     internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
+    internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -214,42 +215,12 @@ public sealed class BuildingPlacementSystem
 
     public void GetSelectedBuildingProducedUnits(List<Entity> units)
     {
-        units?.Clear();
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue || units == null)
-            return;
-
-        if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building) ||
-            !TryGetEntityManager(out EntityManager em))
-            return;
-
-        building.ProducedUnits ??= new List<Entity>();
-        _buildingUiQuerySystem.GetProducedUnits(building.ProducedUnits, em, _buildingProductionSystem, units);
+        _buildingUiQuerySystem.GetSelectedBuildingProducedUnits(CreateBuildingUiQueryContext(), units);
     }
 
     public void GetSelectedBuildingProducedUnitEntries(List<ProducedUnitUiEntry> entries)
     {
-        entries?.Clear();
-        int? buildingId = ActiveBuildingId;
-        if (!buildingId.HasValue || entries == null)
-            return;
-
-        if (!_runtimeBuildings.TryGetValue(buildingId.Value, out RuntimeBuildingData building))
-            return;
-
-        if (!TryGetEntityManager(out EntityManager em))
-            return;
-
-        building.ProducedUnits ??= new List<Entity>();
-        building.ProducedUnitPrefabs ??= new Dictionary<Entity, GameObject>();
-        _buildingUiQuerySystem.AddProducedUnitEntries(
-            building.ProducedUnits,
-            building.ProducedUnitPrefabs,
-            building.PendingProductions,
-            em,
-            _buildingProductionSystem,
-            Time.time,
-            entries);
+        _buildingUiQuerySystem.GetSelectedBuildingProducedUnitEntries(CreateBuildingUiQueryContext(), entries);
     }
 
     public bool TryGetSelectedBuildingCapacityInfo(out int current, out int max, out float progress01)
@@ -270,29 +241,7 @@ public sealed class BuildingPlacementSystem
 
     public void GetFriendlyPendingProductionUiEntries(List<PendingProductionUiEntry> entries)
     {
-        if (entries == null)
-            return;
-
-        entries.Clear();
-        float now = Time.time;
-
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
-        {
-            RuntimeBuildingData building = pair.Value;
-            if (building == null || building.IsDestroyed || building.PendingProductions == null || building.PendingProductions.Count == 0)
-                continue;
-            if (building.IsCityGenerated)
-                continue;
-            if (building.HasOwnerFaction && building.OwnerFactionId != 0)
-                continue;
-
-            _buildingUiQuerySystem.AddPendingProductionUiEntries(
-                pair.Key,
-                building.PendingProductions,
-                _buildingProductionSystem,
-                now,
-                entries);
-        }
+        _buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries(CreateBuildingUiQueryContext(), entries);
     }
 
     public bool TryGetSelectedBuildingCapacity2Info(out int current, out int max, out float progress01)
@@ -2359,7 +2308,6 @@ public sealed class BuildingPlacementSystem
             IsConfiguredSpawnablePrefab,
             GetCampRequestFailure,
             TryRequestCampItem,
-            GetFriendlyPendingProductionUiEntries,
             () => HasActiveBuilding,
             () => SelectedBuildingDisplayName,
             DeleteSelectedBuilding,
@@ -2375,6 +2323,16 @@ public sealed class BuildingPlacementSystem
             FocusLastCampProductionRequest,
             ClearSelectedBuilding,
             ExitBuildMode);
+    }
+
+    internal BuildingUiQuerySystem.Context CreateBuildingUiQueryContext()
+    {
+        return new BuildingUiQuerySystem.Context(
+            _runtimeBuildings,
+            () => ActiveBuildingId,
+            TryGetEntityManager,
+            _buildingProductionSystem,
+            () => Time.time);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

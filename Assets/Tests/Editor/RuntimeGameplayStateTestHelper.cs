@@ -15,13 +15,8 @@ internal static class RuntimeGameplayStateTestHelper
 
     public static void SetBuildingPlacement(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)
     {
-        Entity entity = GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
-
-        if (!entityManager.HasComponent<BuildingPlacementRuntimeComponent>(entity))
-            entityManager.AddComponentObject(entity, new BuildingPlacementRuntimeComponent());
-
-        BuildingPlacementRuntimeComponent runtime = entityManager.GetComponentObject<BuildingPlacementRuntimeComponent>(entity);
-        runtime.BuildingPlacement = buildingPlacement;
+        GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
+        buildingPlacement?.Update();
     }
 
     public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, BuildingPlacementSystem buildingPlacement)

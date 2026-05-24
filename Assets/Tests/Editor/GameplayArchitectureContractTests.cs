@@ -164,6 +164,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("Runtime building entity-link callbacks must route through `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
+        StringAssert.Contains("`GameBootstrap` must not publish a managed `BuildingPlacementSystem` facade through ECS component objects", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
     }
 
@@ -668,7 +669,7 @@ public sealed class GameplayArchitectureContractTests
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("ManagedGameplayStartupSystem _managedGameplayStartupSystem", bootstrap);
         StringAssert.Contains("_managedGameplayStartupSystem.Initialize", bootstrap);
-        StringAssert.Contains("EnsureBuildingPlacementRuntimeComponent", bootstrap);
+        StringAssert.Contains("EnsureBuildingRuntimeBoundaryEntity", bootstrap);
         StringAssert.Contains("_runtimeCameraReferenceSystem.SetWorldCamera", bootstrap);
 
         string[] managedStartupDebtTokens =
@@ -1321,7 +1322,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             violations,
-            "AI systems must read BuildingPlacementRuntimeComponent from ECS runtime data instead of BuildingPlacementSystem.Instance:" +
+            "AI systems must read BuildingRuntimeBoundaryTag ECS buffers instead of BuildingPlacementSystem.Instance:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }
@@ -1331,10 +1332,12 @@ public sealed class GameplayArchitectureContractTests
     {
         const string boundaryFile = "Assets/Game/Scripts/Components/BuildingRuntimeEcsBoundaryComponents.cs";
         const string boundarySystemFile = "Assets/Game/Scripts/Systems/BuildingRuntimeBoundarySystem.cs";
+        const string retiredRuntimeComponentFile = "Assets/Game/Scripts/Components/BuildingPlacementRuntimeComponent.cs";
         const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
         const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
         Assert.IsTrue(File.Exists(boundaryFile), "Building runtime ECS boundary components must be explicit ECS contracts.");
         Assert.IsTrue(File.Exists(boundarySystemFile), "Building runtime boundary publish/consume orchestration must live in BuildingRuntimeBoundarySystem.");
+        Assert.IsFalse(File.Exists(retiredRuntimeComponentFile), "BuildingPlacementRuntimeComponent must stay retired; use BuildingRuntimeBoundaryTag buffers.");
 
         string boundary = File.ReadAllText(boundaryFile);
         string boundarySystem = File.ReadAllText(boundarySystemFile);
@@ -1367,6 +1370,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("EnsureBuffer<BuildingFactionUnitProductionRequest>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingFactionResourceSellRequest>", bootstrap);
         StringAssert.Contains("EnsureBuffer<BuildingRuntimeSpawnRequest>", bootstrap);
+        StringAssert.Contains("EnsureBuildingRuntimeBoundaryEntity", bootstrap);
+        Assert.IsFalse(
+            bootstrap.Contains("AddComponentObject", StringComparison.Ordinal) ||
+            bootstrap.Contains("BuildingPlacementRuntimeComponent", StringComparison.Ordinal) ||
+            bootstrap.Contains("GetComponentObject<", StringComparison.Ordinal),
+            "GameBootstrap must only install BuildingRuntimeBoundaryTag and buffers, not a managed BuildingPlacementSystem component object.");
 
         StringAssert.Contains("BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem", placement);
         StringAssert.Contains("UpdateBuildingRuntimeBoundary", placement);
@@ -1725,7 +1734,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsEmpty(
             violations,
-            "Do not read BuildingPlacementSystem.Instance. Use bootstrap composition or BuildingPlacementRuntimeComponent:" +
+            "Do not read BuildingPlacementSystem.Instance. Use bootstrap composition or BuildingRuntimeBoundaryTag buffers:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }

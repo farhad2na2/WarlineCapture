@@ -78,7 +78,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public UnitImpostorRenderSystem UnitImpostors { get; private set; }
     public CitizenPopulationSystem CitizenPopulation { get; private set; }
     public bool GameplayInitialized { get; private set; }
-    private Entity _buildingPlacementRuntimeEntity;
+    private Entity _buildingRuntimeBoundaryEntity;
     private bool _gameplayStartPending;
     private Transform _runtimeBlockerRoot;
     private Transform _runtimeCityRoot;
@@ -114,7 +114,7 @@ public sealed class GameBootstrap : MonoBehaviour
         UnitAttackTraces = managedSystems.UnitAttackTraces;
         UnitImpostors = managedSystems.UnitImpostors;
         CitizenPopulation = managedSystems.CitizenPopulation;
-        EnsureBuildingPlacementRuntimeComponent();
+        EnsureBuildingRuntimeBoundaryEntity();
         _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
     }
 
@@ -230,7 +230,6 @@ public sealed class GameBootstrap : MonoBehaviour
     {
         _menuStartupSystem.Shutdown(menuView, BeginGameplay);
 
-        ClearBuildingPlacementRuntimeComponent();
         MainMenu?.Dispose();
         Selection?.Dispose();
         BuildingPlacement?.Dispose();
@@ -259,31 +258,28 @@ public sealed class GameBootstrap : MonoBehaviour
         SharedPrefabPreviewCache.ReleaseAll();
     }
 
-    private void EnsureBuildingPlacementRuntimeComponent()
+    private void EnsureBuildingRuntimeBoundaryEntity()
     {
         World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated || BuildingPlacement == null)
+        if (world == null || !world.IsCreated)
             return;
 
         EntityManager em = world.EntityManager;
-        if (_buildingPlacementRuntimeEntity == Entity.Null || !em.Exists(_buildingPlacementRuntimeEntity))
+        if (_buildingRuntimeBoundaryEntity == Entity.Null || !em.Exists(_buildingRuntimeBoundaryEntity))
         {
-            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingPlacementRuntimeComponent>());
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>());
             if (!query.IsEmptyIgnoreFilter)
             {
-                _buildingPlacementRuntimeEntity = query.GetSingletonEntity();
+                _buildingRuntimeBoundaryEntity = query.GetSingletonEntity();
             }
             else
             {
-                _buildingPlacementRuntimeEntity = em.CreateEntity();
-                em.SetName(_buildingPlacementRuntimeEntity, "BuildingPlacementRuntimeEntity");
-                em.AddComponentObject(_buildingPlacementRuntimeEntity, new BuildingPlacementRuntimeComponent());
+                _buildingRuntimeBoundaryEntity = em.CreateEntity();
+                em.SetName(_buildingRuntimeBoundaryEntity, "BuildingRuntimeBoundaryEntity");
             }
         }
 
-        EnsureBuildingRuntimeBoundaryBuffers(em, _buildingPlacementRuntimeEntity);
-        BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
-        component.BuildingPlacement = BuildingPlacement;
+        EnsureBuildingRuntimeBoundaryBuffers(em, _buildingRuntimeBoundaryEntity);
     }
 
     private static void EnsureBuildingRuntimeBoundaryBuffers(EntityManager em, Entity entity)
@@ -306,20 +302,6 @@ public sealed class GameBootstrap : MonoBehaviour
     {
         if (!em.HasBuffer<T>(entity))
             em.AddBuffer<T>(entity);
-    }
-
-    private void ClearBuildingPlacementRuntimeComponent()
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated || _buildingPlacementRuntimeEntity == Entity.Null)
-            return;
-
-        EntityManager em = world.EntityManager;
-        if (!em.Exists(_buildingPlacementRuntimeEntity) || !em.HasComponent<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity))
-            return;
-
-        BuildingPlacementRuntimeComponent component = em.GetComponentObject<BuildingPlacementRuntimeComponent>(_buildingPlacementRuntimeEntity);
-        component.BuildingPlacement = null;
     }
 
     private void InitializeGameplaySystemsIfNeeded()

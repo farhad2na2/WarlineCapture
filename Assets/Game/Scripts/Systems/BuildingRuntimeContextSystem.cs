@@ -17,7 +17,6 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly BuildingProductionContextSystem ProductionContextSystem;
-        public readonly BuildingProductionContextSystem.Source ProductionContextSource;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
         public readonly EntityQuery LiveUnitFootprintQuery;
@@ -51,7 +50,6 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingBarrierSystem barrierSystem,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             BuildingProductionContextSystem productionContextSystem,
-            BuildingProductionContextSystem.Source productionContextSource,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
             EntityQuery liveUnitFootprintQuery,
@@ -84,7 +82,6 @@ internal sealed class BuildingRuntimeContextSystem
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
             ProductionContextSystem = productionContextSystem;
-            ProductionContextSource = productionContextSource;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
             LiveUnitFootprintQuery = liveUnitFootprintQuery;

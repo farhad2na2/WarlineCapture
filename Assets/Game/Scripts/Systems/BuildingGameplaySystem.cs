@@ -1715,7 +1715,6 @@ public class BuildingGameplaySystem
             _buildingBarrierSystem,
             _buildingResourceHaulerBridgeSystem,
             _buildingProductionContextSystem,
-            CreateBuildingProductionContextSource(),
             _factionVisualSettings,
             _markerPropertyBlock,
             _liveUnitFootprintQuery,
@@ -1978,4 +1977,3 @@ public class BuildingGameplaySystem
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverPlacementUi(screenPosition);
     }
 }
-

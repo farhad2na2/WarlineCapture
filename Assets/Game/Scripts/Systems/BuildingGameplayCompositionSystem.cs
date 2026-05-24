@@ -69,13 +69,17 @@ internal sealed class BuildingGameplayCompositionSystem
         public CitizenPopulationSystem CreateCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)
         {
             var citizenPopulation = new CitizenPopulationSystem();
+            BuildingRuntimeQuerySystem.Context runtimeQueryContext = Building.CreateRuntimeBuildingQueryContext();
+            BuildingRuntimeResourcePrefabContextSystem.Source resourcePrefabSource = Building.CreateRuntimeResourcePrefabContextSource();
+            CitizenResourceSystem.Context resourceContext = Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(resourcePrefabSource);
+            CitizenPrefabSystem.Context prefabContext = Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(resourcePrefabSource);
             citizenPopulation.Init(
                 Building.RuntimeQuerySystem,
-                Building.CreateRuntimeBuildingQueryContext(),
+                runtimeQueryContext,
                 dayNight,
                 worldCamera,
-                Building.RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(Building.CreateRuntimeResourcePrefabContextSource()),
-                Building.RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(Building.CreateRuntimeResourcePrefabContextSource()));
+                resourceContext,
+                prefabContext);
             return citizenPopulation;
         }
 

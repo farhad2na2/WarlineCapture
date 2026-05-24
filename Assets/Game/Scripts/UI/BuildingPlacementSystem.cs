@@ -247,6 +247,7 @@ public sealed class BuildingPlacementSystem
     public bool HasActiveBuilding => ActiveBuildingId.HasValue;
     public int? CurrentActiveBuildingId => ActiveBuildingId;
     internal BuildingRuntimeCitySpawnSystem RuntimeCitySpawnSystem => _buildingRuntimeCitySpawnSystem;
+    internal BuildingRuntimeQuerySystem RuntimeQuerySystem => _buildingRuntimeQuerySystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -2578,6 +2579,11 @@ public sealed class BuildingPlacementSystem
             DeleteBuildingById,
             BeginDeferredRuntimeBuildingSideEffects,
             EndDeferredRuntimeBuildingSideEffects);
+    }
+
+    internal BuildingRuntimeQuerySystem.Context CreateRuntimeBuildingQueryContext()
+    {
+        return CreateBuildingRuntimeQueryContext();
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

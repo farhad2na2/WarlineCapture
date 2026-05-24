@@ -123,6 +123,8 @@ public sealed class CitizenPopulationSystem
     }
 
     private BuildingPlacementSystem _buildingPlacementSystem;
+    private BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem;
+    private BuildingRuntimeQuerySystem.Context _buildingRuntimeQueryContext;
     private DayNightSystem _dayNightSystem;
     private Camera _worldCamera;
     private World _ecsWorld;
@@ -160,6 +162,10 @@ public sealed class CitizenPopulationSystem
     public void Init(BuildingPlacementSystem buildingPlacementSystem, DayNightSystem dayNightSystem, Camera worldCamera)
     {
         _buildingPlacementSystem = buildingPlacementSystem;
+        _buildingRuntimeQuerySystem = buildingPlacementSystem?.RuntimeQuerySystem;
+        _buildingRuntimeQueryContext = buildingPlacementSystem != null
+            ? buildingPlacementSystem.CreateRuntimeBuildingQueryContext()
+            : default;
         _dayNightSystem = dayNightSystem;
         _worldCamera = worldCamera;
         ResolveEntityManager();
@@ -193,7 +199,7 @@ public sealed class CitizenPopulationSystem
         bool skippedForPathfinding = false;
         try
         {
-        if (_buildingPlacementSystem == null)
+        if (!HasRuntimeBuildingQuery())
             return;
 
         RefreshRuntimeBuildingLists();
@@ -257,18 +263,77 @@ public sealed class CitizenPopulationSystem
     private void RefreshRuntimeBuildingLists()
     {
         _runtimeHouseBuildingIds.Clear();
-        _buildingPlacementSystem.GetRuntimeHouseBuildingIds(_runtimeHouseBuildingIds);
+        _buildingRuntimeQuerySystem.GetRuntimeHouseBuildingIds(_buildingRuntimeQueryContext, _runtimeHouseBuildingIds);
         _runtimeShopBuildingIds.Clear();
-        _buildingPlacementSystem.GetRuntimeBuildingIdsByRole(BuildingRole.Shop, _runtimeShopBuildingIds);
+        _buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole(_buildingRuntimeQueryContext, BuildingRole.Shop, _runtimeShopBuildingIds);
         _runtimeCityHallBuildingIds.Clear();
-        _buildingPlacementSystem.GetRuntimeBuildingIdsByRole(BuildingRole.CityHall, _runtimeCityHallBuildingIds);
+        _buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole(_buildingRuntimeQueryContext, BuildingRole.CityHall, _runtimeCityHallBuildingIds);
         _runtimeRefugeeTentBuildingIds.Clear();
-        _buildingPlacementSystem.GetRuntimeBuildingIdsByRole(BuildingRole.TentRefugee, _runtimeRefugeeTentBuildingIds);
+        _buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole(_buildingRuntimeQueryContext, BuildingRole.TentRefugee, _runtimeRefugeeTentBuildingIds);
         _runtimeMilitaryCampBuildingIds.Clear();
-        _buildingPlacementSystem.GetRuntimeBuildingIdsByRole(BuildingRole.MilitaryCamp, _runtimeMilitaryCampBuildingIds);
+        _buildingRuntimeQuerySystem.GetRuntimeBuildingIdsByRole(_buildingRuntimeQueryContext, BuildingRole.MilitaryCamp, _runtimeMilitaryCampBuildingIds);
         _runtimeHouseBuildingIdSet.Clear();
         for (int i = 0; i < _runtimeHouseBuildingIds.Count; i++)
             _runtimeHouseBuildingIdSet.Add(_runtimeHouseBuildingIds[i]);
+    }
+
+    private bool HasRuntimeBuildingQuery()
+    {
+        return _buildingRuntimeQuerySystem != null;
+    }
+
+    private bool TryGetRuntimeBuildingFocusWorldPosition(int buildingId, out Vector3 worldPosition)
+    {
+        worldPosition = Vector3.zero;
+        return HasRuntimeBuildingQuery() &&
+               _buildingRuntimeQuerySystem.TryGetRuntimeBuildingFocusWorldPosition(
+                   _buildingRuntimeQueryContext,
+                   buildingId,
+                   out worldPosition);
+    }
+
+    private bool TryGetRuntimeBuildingDestroyedState(int buildingId, out bool isDestroyed)
+    {
+        isDestroyed = false;
+        return HasRuntimeBuildingQuery() &&
+               _buildingRuntimeQuerySystem.TryGetRuntimeBuildingDestroyedState(
+                   _buildingRuntimeQueryContext,
+                   buildingId,
+                   out isDestroyed);
+    }
+
+    private bool TryGetRuntimeBuildingRefugeeSettings(int buildingId, out int refugeeCapacity, out int upkeepPerCitizenPerDay)
+    {
+        refugeeCapacity = 0;
+        upkeepPerCitizenPerDay = 0;
+        return HasRuntimeBuildingQuery() &&
+               _buildingRuntimeQuerySystem.TryGetRuntimeBuildingRefugeeSettings(
+                   _buildingRuntimeQueryContext,
+                   buildingId,
+                   out refugeeCapacity,
+                   out upkeepPerCitizenPerDay);
+    }
+
+    private bool TryGetRuntimeBuildingApproachCell(int buildingId, int2 unitFootprint, int2 referenceCell, out int2 goal)
+    {
+        goal = default;
+        return HasRuntimeBuildingQuery() &&
+               _buildingRuntimeQuerySystem.TryGetRuntimeBuildingApproachCell(
+                   _buildingRuntimeQueryContext,
+                   buildingId,
+                   unitFootprint,
+                   referenceCell,
+                   out goal);
+    }
+
+    private bool IsRuntimeBuildingApproachCell(int buildingId, int2 currentCell, int2 unitFootprint)
+    {
+        return HasRuntimeBuildingQuery() &&
+               _buildingRuntimeQuerySystem.IsRuntimeBuildingApproachCell(
+                   _buildingRuntimeQueryContext,
+                   buildingId,
+                   currentCell,
+                   unitFootprint);
     }
 
     public void GetTotals(out int households, out int totalCitizens, out int housedCitizens, out int refugeeCitizens, out int deadCitizens)
@@ -897,7 +962,7 @@ public sealed class CitizenPopulationSystem
 
     private void UpdateRefugeeTentState()
     {
-        if (!HasHouseholdData() || _buildingPlacementSystem == null)
+        if (!HasHouseholdData() || !HasRuntimeBuildingQuery())
             return;
 
         PopulateHouseholdIdsFromEcs();
@@ -909,7 +974,7 @@ public sealed class CitizenPopulationSystem
             if (household.RefugeeTentBuildingId == 0)
                 continue;
 
-            bool tentExists = _buildingPlacementSystem.TryGetRuntimeBuildingDestroyedState(household.RefugeeTentBuildingId, out bool isDestroyed);
+            bool tentExists = TryGetRuntimeBuildingDestroyedState(household.RefugeeTentBuildingId, out bool isDestroyed);
             if (tentExists && !isDestroyed)
                 continue;
 
@@ -957,7 +1022,7 @@ public sealed class CitizenPopulationSystem
 
     private void UpdateRefugeeUpkeep()
     {
-        if (_dayNightSystem == null || _buildingPlacementSystem == null)
+        if (_dayNightSystem == null || _buildingPlacementSystem == null || !HasRuntimeBuildingQuery())
             return;
 
         int currentDay = Mathf.Max(1, _dayNightSystem.DayCount);
@@ -976,7 +1041,7 @@ public sealed class CitizenPopulationSystem
             if (household.RefugeeTentBuildingId == 0)
                 continue;
 
-            if (!_buildingPlacementSystem.TryGetRuntimeBuildingRefugeeSettings(household.RefugeeTentBuildingId, out _, out int upkeepPerCitizenPerDay))
+            if (!TryGetRuntimeBuildingRefugeeSettings(household.RefugeeTentBuildingId, out _, out int upkeepPerCitizenPerDay))
                 continue;
 
             int householdRefugees = CountLivingHouseholdRefugees(household);
@@ -1052,7 +1117,7 @@ public sealed class CitizenPopulationSystem
                     ? _entityManager.GetComponentData<UnitGrid>(visibleCitizen.UnitEntity).Cell
                     : default;
 
-                if (_buildingPlacementSystem.IsRuntimeBuildingApproachCell(citizen.CurrentTargetBuildingId, currentCell, new int2(1, 1)))
+                if (IsRuntimeBuildingApproachCell(citizen.CurrentTargetBuildingId, currentCell, new int2(1, 1)))
                 {
                     ResolveCitizenArrival(citizenId);
                     continue;
@@ -1098,9 +1163,9 @@ public sealed class CitizenPopulationSystem
 
                 if (currentCell.Equals(visibleCitizen.GoalCell))
                 {
-                    if (!_buildingPlacementSystem.IsRuntimeBuildingApproachCell(citizen.CurrentTargetBuildingId, currentCell, new int2(1, 1)))
+                    if (!IsRuntimeBuildingApproachCell(citizen.CurrentTargetBuildingId, currentCell, new int2(1, 1)))
                     {
-                        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 finalTargetPosition))
+                        if (!TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 finalTargetPosition))
                         {
                             ResolveCitizenArrival(citizenId);
                         }
@@ -1170,9 +1235,9 @@ public sealed class CitizenPopulationSystem
 
     private int FindNearestBuilding(int originBuildingId, List<int> candidateBuildingIds, int excludeBuildingId = 0)
     {
-        if (_buildingPlacementSystem == null || candidateBuildingIds == null || candidateBuildingIds.Count == 0)
+        if (!HasRuntimeBuildingQuery() || candidateBuildingIds == null || candidateBuildingIds.Count == 0)
             return 0;
-        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
+        if (!TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
             return 0;
 
         return FindNearestBuilding(originPosition, candidateBuildingIds, excludeBuildingId);
@@ -1180,7 +1245,7 @@ public sealed class CitizenPopulationSystem
 
     private int FindNearestBuilding(Vector3 originPosition, List<int> candidateBuildingIds, int excludeBuildingId = 0)
     {
-        if (_buildingPlacementSystem == null || candidateBuildingIds == null || candidateBuildingIds.Count == 0)
+        if (!HasRuntimeBuildingQuery() || candidateBuildingIds == null || candidateBuildingIds.Count == 0)
             return 0;
 
         int bestBuildingId = 0;
@@ -1190,7 +1255,7 @@ public sealed class CitizenPopulationSystem
             int candidateBuildingId = candidateBuildingIds[i];
             if (excludeBuildingId != 0 && candidateBuildingId == excludeBuildingId)
                 continue;
-            if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(candidateBuildingId, out Vector3 candidatePosition))
+            if (!TryGetRuntimeBuildingFocusWorldPosition(candidateBuildingId, out Vector3 candidatePosition))
                 continue;
 
             float distanceSq = (candidatePosition - originPosition).sqrMagnitude;
@@ -1206,7 +1271,7 @@ public sealed class CitizenPopulationSystem
 
     private int FindNearestAvailableRefugeeTent(HouseholdRecord household)
     {
-        if (_buildingPlacementSystem == null || _runtimeRefugeeTentBuildingIds.Count == 0)
+        if (!HasRuntimeBuildingQuery() || _runtimeRefugeeTentBuildingIds.Count == 0)
             return 0;
 
         if (!TryGetHouseholdReferenceWorldPosition(household, out Vector3 originPosition))
@@ -1218,7 +1283,7 @@ public sealed class CitizenPopulationSystem
         for (int i = 0; i < _runtimeRefugeeTentBuildingIds.Count; i++)
         {
             int candidateBuildingId = _runtimeRefugeeTentBuildingIds[i];
-            if (!_buildingPlacementSystem.TryGetRuntimeBuildingRefugeeSettings(candidateBuildingId, out int refugeeCapacity, out _))
+            if (!TryGetRuntimeBuildingRefugeeSettings(candidateBuildingId, out int refugeeCapacity, out _))
                 continue;
             if (refugeeCapacity <= 0)
                 continue;
@@ -1226,7 +1291,7 @@ public sealed class CitizenPopulationSystem
             int occupiedSlots = GetAssignedRefugeeOccupancy(candidateBuildingId);
             if (occupiedSlots + requiredSlots > refugeeCapacity)
                 continue;
-            if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(candidateBuildingId, out Vector3 candidatePosition))
+            if (!TryGetRuntimeBuildingFocusWorldPosition(candidateBuildingId, out Vector3 candidatePosition))
                 continue;
 
             float distanceSq = (candidatePosition - originPosition).sqrMagnitude;
@@ -1243,9 +1308,9 @@ public sealed class CitizenPopulationSystem
     private bool TryGetHouseholdReferenceWorldPosition(HouseholdRecord household, out Vector3 worldPosition)
     {
         worldPosition = Vector3.zero;
-        if (_buildingPlacementSystem == null)
+        if (!HasRuntimeBuildingQuery())
             return false;
-        if (_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(household.HomeBuildingId, out worldPosition))
+        if (TryGetRuntimeBuildingFocusWorldPosition(household.HomeBuildingId, out worldPosition))
             return true;
 
         if (TryGetCitizenReferenceWorldPosition(household.MaleCitizenId, out worldPosition))
@@ -1259,13 +1324,13 @@ public sealed class CitizenPopulationSystem
     private bool TryGetCitizenReferenceWorldPosition(int citizenId, out Vector3 worldPosition)
     {
         worldPosition = Vector3.zero;
-        if (_buildingPlacementSystem == null)
+        if (!HasRuntimeBuildingQuery())
             return false;
         if (!TryGetCitizenRecord(citizenId, out CitizenRecord citizen))
             return false;
 
         int preferredBuildingId = citizen.CurrentTargetBuildingId != 0 ? citizen.CurrentTargetBuildingId : citizen.HomeBuildingId;
-        return _buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(preferredBuildingId, out worldPosition);
+        return TryGetRuntimeBuildingFocusWorldPosition(preferredBuildingId, out worldPosition);
     }
 
     private int CountLivingHouseholdMembers(HouseholdRecord household)
@@ -1345,7 +1410,7 @@ public sealed class CitizenPopulationSystem
     private bool ShouldCitizenBeVisible(CitizenRecord citizen, float maxDistance, out Vector3 worldPosition)
     {
         worldPosition = Vector3.zero;
-        if (_worldCamera == null || _buildingPlacementSystem == null)
+        if (_worldCamera == null || !HasRuntimeBuildingQuery())
             return false;
         if (citizen.LifeState == CitizenLifeState.Dead)
             return false;
@@ -1412,7 +1477,7 @@ public sealed class CitizenPopulationSystem
         if (TryGetCitizenBuildingApproachWorldPosition(anchorBuildingId, citizen, out worldPosition))
             return true;
 
-        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(anchorBuildingId, out Vector3 anchorPosition))
+        if (!TryGetRuntimeBuildingFocusWorldPosition(anchorBuildingId, out Vector3 anchorPosition))
             return false;
 
         worldPosition = ResolveCitizenWorldPosition(citizen, anchorPosition);
@@ -1434,7 +1499,7 @@ public sealed class CitizenPopulationSystem
     private bool TryGetCitizenMoveGoal(CitizenRecord citizen, Vector3 currentPosition, out int2 goalCell)
     {
         goalCell = default;
-        if (_buildingPlacementSystem == null)
+        if (!HasRuntimeBuildingQuery())
             return false;
         if (!TryGetCitizenSegmentGoalCell(citizen, currentPosition, out goalCell))
             return false;
@@ -1445,7 +1510,7 @@ public sealed class CitizenPopulationSystem
     private bool TryGetCitizenSegmentGoalCell(CitizenRecord citizen, Vector3 currentPosition, out int2 goalCell)
     {
         goalCell = default;
-        if (_buildingPlacementSystem == null)
+        if (!HasRuntimeBuildingQuery())
             return false;
 
         int2 currentCell;
@@ -1455,7 +1520,7 @@ public sealed class CitizenPopulationSystem
         int2 targetCell;
         if (!TryGetCitizenBuildingApproachCell(citizen.CurrentTargetBuildingId, citizen, currentCell, out targetCell))
         {
-            if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 targetPosition))
+            if (!TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 targetPosition))
                 return false;
 
             Vector3 desiredWorld = ResolveCitizenWorldPosition(citizen, targetPosition);
@@ -1477,7 +1542,7 @@ public sealed class CitizenPopulationSystem
 
     private float EstimateTravelSeconds(CitizenRecord citizen, int targetBuildingId)
     {
-        if (_buildingPlacementSystem == null)
+        if (!HasRuntimeBuildingQuery())
             return 0f;
         if (targetBuildingId == 0)
             return 0f;
@@ -1487,9 +1552,9 @@ public sealed class CitizenPopulationSystem
             originBuildingId = GetTravelOriginBuildingId(citizen);
         if (originBuildingId == 0)
             return 0f;
-        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
+        if (!TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
             return 0f;
-        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(targetBuildingId, out Vector3 targetPosition))
+        if (!TryGetRuntimeBuildingFocusWorldPosition(targetBuildingId, out Vector3 targetPosition))
             return 0f;
 
         float distanceCells = Vector3.Distance(originPosition, targetPosition);
@@ -1499,8 +1564,8 @@ public sealed class CitizenPopulationSystem
     private bool TryGetCitizenBuildingApproachCell(int buildingId, CitizenRecord citizen, int2 referenceCell, out int2 goalCell)
     {
         goalCell = default;
-        return _buildingPlacementSystem != null &&
-               _buildingPlacementSystem.TryGetRuntimeBuildingApproachCell(buildingId, new int2(1, 1), referenceCell, out goalCell);
+        return HasRuntimeBuildingQuery() &&
+               TryGetRuntimeBuildingApproachCell(buildingId, new int2(1, 1), referenceCell, out goalCell);
     }
 
     private bool TryGetCitizenBuildingApproachWorldPosition(int buildingId, CitizenRecord citizen, out Vector3 worldPosition)
@@ -1749,7 +1814,7 @@ public sealed class CitizenPopulationSystem
 
     private void UpdateHouseholdDisplacementState()
     {
-        if (!HasHouseholdData() || _buildingPlacementSystem == null)
+        if (!HasHouseholdData() || !HasRuntimeBuildingQuery())
             return;
 
         PopulateHouseholdIdsFromEcs();
@@ -1762,7 +1827,7 @@ public sealed class CitizenPopulationSystem
             if (household.IsDisplaced != 0)
                 continue;
 
-            bool homeExists = _buildingPlacementSystem.TryGetRuntimeBuildingDestroyedState(household.HomeBuildingId, out bool isDestroyed);
+            bool homeExists = TryGetRuntimeBuildingDestroyedState(household.HomeBuildingId, out bool isDestroyed);
             if (homeExists && !isDestroyed)
                 continue;
 
@@ -1875,9 +1940,9 @@ public sealed class CitizenPopulationSystem
     private bool TryGetDangerFleeTarget(CitizenRecord citizen, out int fleeTargetBuildingId)
     {
         fleeTargetBuildingId = 0;
-        if (_dangerWorldPositions.Count == 0 || _buildingPlacementSystem == null)
+        if (_dangerWorldPositions.Count == 0 || !HasRuntimeBuildingQuery())
             return false;
-        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 citizenPosition))
+        if (!TryGetRuntimeBuildingFocusWorldPosition(citizen.CurrentTargetBuildingId, out Vector3 citizenPosition))
             return false;
 
         float detectRadiusSq = DangerDetectRadius * DangerDetectRadius;
@@ -1907,7 +1972,7 @@ public sealed class CitizenPopulationSystem
 
     private bool IsBuildingSafeFromDanger(int buildingId)
     {
-        if (_buildingPlacementSystem == null || !_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(buildingId, out Vector3 buildingPosition))
+        if (!HasRuntimeBuildingQuery() || !TryGetRuntimeBuildingFocusWorldPosition(buildingId, out Vector3 buildingPosition))
             return false;
 
         float detectRadiusSq = DangerDetectRadius * DangerDetectRadius;
@@ -1944,7 +2009,7 @@ public sealed class CitizenPopulationSystem
 
         int bestId = 0;
         float bestDistanceSq = float.MaxValue;
-        if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
+        if (!TryGetRuntimeBuildingFocusWorldPosition(originBuildingId, out Vector3 originPosition))
             return 0;
 
         for (int i = 0; i < candidates.Count; i++)
@@ -1954,7 +2019,7 @@ public sealed class CitizenPopulationSystem
                 continue;
             if (!IsBuildingSafeFromDanger(candidateId))
                 continue;
-            if (!_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition(candidateId, out Vector3 candidatePosition))
+            if (!TryGetRuntimeBuildingFocusWorldPosition(candidateId, out Vector3 candidatePosition))
                 continue;
 
             float distanceSq = (candidatePosition - originPosition).sqrMagnitude;

@@ -1535,6 +1535,46 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void MenuViewMustUseBuildingUiCommandBoundaryForCampAndResourceUi()
+    {
+        const string menuFile = "Assets/Game/Scripts/UI/MenuView.cs";
+        const string startupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
+        const string commandFile = "Assets/Game/Scripts/Systems/BuildingUiCommandSystem.cs";
+        Assert.IsTrue(File.Exists(commandFile), "Menu/camp resource UI commands must live behind BuildingUiCommandSystem.");
+
+        string menu = File.ReadAllText(menuFile);
+        string startup = File.ReadAllText(startupFile);
+        string command = File.ReadAllText(commandFile);
+
+        StringAssert.Contains("BuildingUiCommandSystem _buildingUiCommandSystem", menu);
+        StringAssert.Contains("buildingPlacement?.BuildingUiCommandSystem", startup);
+        StringAssert.Contains("buildingPlacement.CreateBuildingUiCommandContext()", startup);
+        StringAssert.Contains("TryRequestCampItem", command);
+        StringAssert.Contains("GetCampRequestFailure", command);
+        StringAssert.Contains("GetFriendlyPendingProductionUiEntries", command);
+
+        string[] forbiddenMenuFacadeCalls =
+        {
+            "_buildingPlacementSystem.CurrentDollars",
+            "_buildingPlacementSystem.GetFriendlyPendingProductionUiEntries",
+            "_buildingPlacementSystem.ConfiguredSpawnableCount",
+            "_buildingPlacementSystem.TryGetConfiguredSpawnable",
+            "_buildingPlacementSystem.ConfiguredUnitCount",
+            "_buildingPlacementSystem.TryGetConfiguredUnit",
+            "_buildingPlacementSystem.IsConfiguredSpawnablePrefab",
+            "_buildingPlacementSystem.GetCampRequestFailure",
+            "_buildingPlacementSystem.TryRequestCampItem"
+        };
+
+        foreach (string token in forbiddenMenuFacadeCalls)
+        {
+            Assert.IsFalse(
+                menu.Contains(token, StringComparison.Ordinal),
+                $"MenuView must use BuildingUiCommandSystem instead of {token}.");
+        }
+    }
+
+    [Test]
     public void CodebaseMustNotReadBuildingPlacementSingleton()
     {
         string[] violations = Directory.GetFiles("Assets", "*.cs", SearchOption.AllDirectories)

@@ -220,6 +220,8 @@ namespace Game.Scripts.UI
 
         private RTSSelectionSystem _selectionSystem;
         private BuildingPlacementSystem _buildingPlacementSystem;
+        private BuildingUiCommandSystem _buildingUiCommandSystem;
+        private BuildingUiCommandSystem.Context _buildingUiCommandContext;
         private Camera _worldCamera;
         private DayNightSystem _dayNightSystem;
         private CitizenPopulationSystem _citizenPopulationSystem;
@@ -502,7 +504,9 @@ namespace Game.Scripts.UI
             BuildingPlacementSystem buildingPlacementSystem,
             Camera worldCamera,
             DayNightSystem dayNightSystem = null,
-            CitizenPopulationSystem citizenPopulationSystem = null)
+            CitizenPopulationSystem citizenPopulationSystem = null,
+            BuildingUiCommandSystem buildingUiCommandSystem = null,
+            BuildingUiCommandSystem.Context buildingUiCommandContext = default)
         {
             if (_initialized)
                 return;
@@ -510,6 +514,8 @@ namespace Game.Scripts.UI
             _initialized = true;
             _selectionSystem = selectionSystem;
             _buildingPlacementSystem = buildingPlacementSystem;
+            _buildingUiCommandSystem = buildingUiCommandSystem;
+            _buildingUiCommandContext = buildingUiCommandContext;
             _worldCamera = worldCamera;
             _dayNightSystem = dayNightSystem;
             _citizenPopulationSystem = citizenPopulationSystem;
@@ -3436,12 +3442,13 @@ namespace Game.Scripts.UI
 
         private void PopulateCampBuildings()
         {
-            if (_buildingPlacementSystem == null)
+            if (_buildingUiCommandSystem == null)
                 return;
 
-            for (int i = 0; i < _buildingPlacementSystem.ConfiguredSpawnableCount; i++)
+            int count = _buildingUiCommandSystem.ConfiguredSpawnableCount(_buildingUiCommandContext);
+            for (int i = 0; i < count; i++)
             {
-                if (!_buildingPlacementSystem.TryGetConfiguredSpawnable(i, out var entry) || entry.Prefab == null || !entry.CanRequest)
+                if (!_buildingUiCommandSystem.TryGetConfiguredSpawnable(_buildingUiCommandContext, i, out var entry) || entry.Prefab == null || !entry.CanRequest)
                     continue;
 
                 _campEntries.Add(new CampCatalogEntry(entry.DisplayName, entry.Description, entry.Prefab, entry.Price));
@@ -3450,12 +3457,13 @@ namespace Game.Scripts.UI
 
         private void PopulateCampUnits(bool vehicles)
         {
-            if (_buildingPlacementSystem == null)
+            if (_buildingUiCommandSystem == null)
                 return;
 
-            for (int i = 0; i < _buildingPlacementSystem.ConfiguredUnitCount; i++)
+            int count = _buildingUiCommandSystem.ConfiguredUnitCount(_buildingUiCommandContext);
+            for (int i = 0; i < count; i++)
             {
-                if (!_buildingPlacementSystem.TryGetConfiguredUnit(i, out var entry) || entry.Prefab == null || !entry.CanRequest || entry.IsVehicle != vehicles)
+                if (!_buildingUiCommandSystem.TryGetConfiguredUnit(_buildingUiCommandContext, i, out var entry) || entry.Prefab == null || !entry.CanRequest || entry.IsVehicle != vehicles)
                     continue;
 
                 _campEntries.Add(new CampCatalogEntry(entry.DisplayName, entry.Description, entry.Prefab, entry.Price));
@@ -3504,12 +3512,12 @@ namespace Game.Scripts.UI
             if (menuType != MenuType.Camp || _campSelectedIndex < 0 || _campSelectedIndex >= _campEntries.Count)
                 return;
 
-            if (_buildingPlacementSystem == null)
+            if (_buildingUiCommandSystem == null)
                 return;
 
             CampCatalogEntry entry = _campEntries[_campSelectedIndex];
-            bool isBuildingRequest = _buildingPlacementSystem.IsConfiguredSpawnablePrefab(entry.Prefab);
-            BuildingPlacementSystem.CampRequestFailure failure = _buildingPlacementSystem.TryRequestCampItem(entry.Prefab, entry.Price, out string requiredBuildingName, isBuildingRequest);
+            bool isBuildingRequest = _buildingUiCommandSystem.IsConfiguredSpawnablePrefab(_buildingUiCommandContext, entry.Prefab);
+            BuildingPlacementSystem.CampRequestFailure failure = _buildingUiCommandSystem.TryRequestCampItem(_buildingUiCommandContext, entry.Prefab, entry.Price, out string requiredBuildingName, isBuildingRequest);
             switch (failure)
             {
                 case BuildingPlacementSystem.CampRequestFailure.None:
@@ -4421,10 +4429,10 @@ namespace Game.Scripts.UI
             _campRequestFailure = BuildingPlacementSystem.CampRequestFailure.InvalidSelection;
             _campRequestFailureBuildingName = string.Empty;
             bool canRequest = false;
-            if (_buildingPlacementSystem != null && _campSelectedIndex >= 0 && _campSelectedIndex < _campEntries.Count)
+            if (_buildingUiCommandSystem != null && _campSelectedIndex >= 0 && _campSelectedIndex < _campEntries.Count)
             {
                 CampCatalogEntry selectedEntry = _campEntries[_campSelectedIndex];
-                _campRequestFailure = _buildingPlacementSystem.GetCampRequestFailure(selectedEntry.Prefab, selectedEntry.Price, out _campRequestFailureBuildingName);
+                _campRequestFailure = _buildingUiCommandSystem.GetCampRequestFailure(_buildingUiCommandContext, selectedEntry.Prefab, selectedEntry.Price, out _campRequestFailureBuildingName);
                 canRequest = _campRequestFailure == BuildingPlacementSystem.CampRequestFailure.None;
             }
 
@@ -4688,7 +4696,7 @@ namespace Game.Scripts.UI
             if (moneyAmountText == null)
                 return;
 
-            int dollars = _buildingPlacementSystem != null ? _buildingPlacementSystem.CurrentDollars : 0;
+            int dollars = _buildingUiCommandSystem != null ? _buildingUiCommandSystem.CurrentDollars(_buildingUiCommandContext) : 0;
             moneyAmountText.text = dollars.ToString();
         }
 
@@ -4710,14 +4718,14 @@ namespace Game.Scripts.UI
             if (_requestPanelRoot == null || _requestCountdownTemplate == null)
                 return;
 
-            bool shouldShow = (menuType == MenuType.Game || (menuType == MenuType.Camp && _campOpenedFromGame)) && _buildingPlacementSystem != null;
+            bool shouldShow = (menuType == MenuType.Game || (menuType == MenuType.Camp && _campOpenedFromGame)) && _buildingUiCommandSystem != null;
             if (!shouldShow)
             {
                 _requestPanelRoot.gameObject.SetActive(false);
                 return;
             }
 
-            _buildingPlacementSystem.GetFriendlyPendingProductionUiEntries(_pendingProductionEntries);
+            _buildingUiCommandSystem.GetFriendlyPendingProductionUiEntries(_buildingUiCommandContext, _pendingProductionEntries);
             bool hasEntries = _pendingProductionEntries.Count > 0;
             _requestPanelRoot.gameObject.SetActive(hasEntries);
             if (!hasEntries)

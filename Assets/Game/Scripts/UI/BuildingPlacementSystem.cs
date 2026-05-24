@@ -181,6 +181,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingProductionSlotSystem _buildingProductionSlotSystem = new();
     private readonly BuildingPlacementQuerySystem _buildingPlacementQuerySystem = new();
     private readonly BuildingUiQuerySystem _buildingUiQuerySystem = new();
+    private readonly BuildingUiCommandSystem _buildingUiCommandSystem = new();
     private readonly BuildingRunwaySystem _buildingRunwaySystem = new();
     private readonly BuildingPlacementValidationSystem _buildingPlacementValidationSystem = new();
     private readonly BuildingPlacementPreviewSystem _buildingPlacementPreviewSystem = new();
@@ -251,6 +252,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingRuntimeQuerySystem RuntimeQuerySystem => _buildingRuntimeQuerySystem;
     internal RuntimeResourceSystem RuntimeResourceSystem => _runtimeResourceSystem;
     internal RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem => _runtimeUnitPrefabSystem;
+    internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -2590,6 +2592,20 @@ public sealed class BuildingPlacementSystem
             TryGetEntityManager,
             EnsureEntityQueries,
             CreateBuildingSpawnPrefabContext);
+    }
+
+    internal BuildingUiCommandSystem.Context CreateBuildingUiCommandContext()
+    {
+        return new BuildingUiCommandSystem.Context(
+            () => _runtimeResourceSystem.CurrentDollars,
+            () => _buildingDefinitionSystem.ConfiguredSpawnableCount,
+            TryGetConfiguredSpawnable,
+            () => ConfiguredUnitCount,
+            TryGetConfiguredUnit,
+            IsConfiguredSpawnablePrefab,
+            GetCampRequestFailure,
+            TryRequestCampItem,
+            GetFriendlyPendingProductionUiEntries);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

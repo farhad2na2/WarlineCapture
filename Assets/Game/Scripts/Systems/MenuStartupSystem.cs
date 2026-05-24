@@ -22,7 +22,14 @@ public sealed class MenuStartupSystem
         if (menuView != null)
         {
             menuView.GameRequested += gameRequested;
-            menuView.Init(selection, buildingPlacement, worldCamera, dayNight, citizenPopulation);
+            menuView.Init(
+                selection,
+                buildingPlacement,
+                worldCamera,
+                dayNight,
+                citizenPopulation,
+                buildingPlacement?.BuildingUiCommandSystem,
+                buildingPlacement != null ? buildingPlacement.CreateBuildingUiCommandContext() : default);
             menuView.NotifyBootstrapReady();
         }
 

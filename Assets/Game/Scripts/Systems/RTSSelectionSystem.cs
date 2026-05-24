@@ -9,11 +9,6 @@ using static UnityEngine.Object;
 
 public sealed class RTSSelectionSystem
 {
-    private const bool EnableMoveOrderDiagnostics = false;
-    private static readonly bool EnableGroupMoveValidationLog = false;
-    private const int GroupMoveStaggerMinGroundUnits = 12;
-    private const int GroupMoveImmediatePathRequests = 8;
-    private const int GroupMovePathRequestsPerFrame = 8;
     public event System.Action<Vector2> MoveOrderScreenMarkerRequested;
     public event System.Action<Vector2> AttackOrderScreenMarkerRequested;
     public event System.Action OrderScreenMarkersHideRequested;
@@ -123,9 +118,11 @@ public sealed class RTSSelectionSystem
     private readonly SelectionUiQuerySystem _selectionUiQuerySystem = new();
     private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
     private readonly UnitMoveOrderSystem _unitMoveOrderSystem = new();
+    private readonly SelectedMoveOrderCommandSystem _selectedMoveOrderCommandSystem = new();
     private readonly UnitTargetOrderSystem _unitTargetOrderSystem = new();
     private readonly AttackOrderCommandSystem _attackOrderCommandSystem = new();
     private readonly SelectionOrderMarkerSystem _selectionOrderMarkerSystem = new();
+    private readonly SelectionHudFeedbackSystem _selectionHudFeedbackSystem = new();
     private readonly FocusedUnitCommandSystem _focusedUnitCommandSystem = new();
     private readonly FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem = new();
     private readonly SelectedUnitOrderSnapshotSystem _selectedUnitOrderSnapshotSystem = new();
@@ -168,12 +165,6 @@ public sealed class RTSSelectionSystem
     {
         get => _rtsCameraSystem.FullscreenIsoTargetOrthographicSize;
         set => _rtsCameraSystem.FullscreenIsoTargetOrthographicSize = value;
-    }
-
-    private bool _normalIsoModeActive
-    {
-        get => _rtsCameraSystem.NormalIsoModeActive;
-        set => _rtsCameraSystem.NormalIsoModeActive = value;
     }
 
     private Vector2 _dragStart
@@ -246,7 +237,6 @@ public sealed class RTSSelectionSystem
     private RoadBuildSystem _roadBuildController;
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private BattleHudGameplayBridge _battleHudBridge;
     private World _queryWorld;
     private EntityQuery _selectedMoveQuery;
     private EntityQuery _gridPathingQuery;
@@ -645,7 +635,7 @@ public sealed class RTSSelectionSystem
         _roadBuildController = roadBuildController;
         _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-        _battleHudBridge = null;
+        _selectionHudFeedbackSystem.ResetBridgeCache();
         ApplyConfigIfAvailable();
 
         if (panSensitivity <= 0f)
@@ -725,71 +715,39 @@ public sealed class RTSSelectionSystem
         zoomTransitionSmoothTime = config.ZoomTransitionSmoothTime;
     }
 
-    private BattleHudGameplayBridge ResolveBattleHudBridge()
-    {
-        if (_battleHudBridge != null)
-            return _battleHudBridge;
-
-        _battleHudBridge = BattleHudGameplayBridge.ResolveActive();
-        return _battleHudBridge;
-    }
-
     private void ApplyHudSelection(EntityManager em, Entity entity)
     {
-        if (entity == Entity.Null || !em.Exists(entity))
-        {
-            ClearHudSelection();
-            return;
-        }
-
-        BattleHudGameplayBridge bridge = ResolveBattleHudBridge();
-        if (bridge == null)
-            return;
-
-        bridge.ApplySelection(
-            _selectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
-            _selectionUiQuerySystem.ResolveHudSelectionStatus(em, entity));
+        _selectionHudFeedbackSystem.ApplySelection(em, entity, _selectionUiQuerySystem);
     }
 
     private void ApplyHudSquadSelection(int selectedCount)
     {
-        BattleHudGameplayBridge bridge = ResolveBattleHudBridge();
-        if (bridge == null)
-            return;
-
-        if (selectedCount <= 0)
-        {
-            bridge.ClearSelection();
-            return;
-        }
-
-        string unitLabel = selectedCount == 1 ? "UNIT" : "UNITS";
-        bridge.ApplySelection($"{selectedCount} {unitLabel}", "SQUAD SELECTED");
+        _selectionHudFeedbackSystem.ApplySquadSelection(selectedCount);
     }
 
     private void ClearHudSelection()
     {
-        ResolveBattleHudBridge()?.ClearSelection();
+        _selectionHudFeedbackSystem.ClearSelection();
     }
 
     private void ApplyHudCommandMode(TacticalCommandMode mode)
     {
-        ResolveBattleHudBridge()?.ApplyCommandMode(mode);
+        _selectionHudFeedbackSystem.ApplyCommandMode(mode);
     }
 
     private void ClearHudCommandMode()
     {
-        ResolveBattleHudBridge()?.ClearCommandMode();
+        _selectionHudFeedbackSystem.ClearCommandMode();
     }
 
     private void ApplyHudCommandResult(TacticalCommandResult result)
     {
-        ResolveBattleHudBridge()?.ApplyCommandResult(result);
+        _selectionHudFeedbackSystem.ApplyCommandResult(result);
     }
 
     private void SetHudWorldMarkersVisible(bool visible)
     {
-        ResolveBattleHudBridge()?.SetWorldMarkersVisible(visible);
+        _selectionHudFeedbackSystem.SetWorldMarkersVisible(visible);
     }
 
     public void Dispose()
@@ -862,7 +820,7 @@ public sealed class RTSSelectionSystem
                 return;
 
             UpdateFullscreenIsoZoom();
-            UpdateFullscreenIsoCameraMode(_fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
+            _rtsCameraSystem.UpdateFullscreenIsoCameraMode(worldCamera, _fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw, zoomTransitionSmoothTime);
             HandleFullscreenIsoCameraPan();
             return;
         }
@@ -872,7 +830,7 @@ public sealed class RTSSelectionSystem
 
         if (_runtimeGameplayStateSystem.BuildModeActive)
         {
-            if (_normalIsoModeActive)
+            if (_rtsCameraSystem.NormalIsoModeActive)
                 ExitNormalIsoMode();
             UpdateBuildModeCameraTransition();
             UpdateSmoothCameraFocus();
@@ -883,10 +841,10 @@ public sealed class RTSSelectionSystem
         if (worldCamera == null)
             return;
 
-        if (_normalIsoModeActive)
+        if (_rtsCameraSystem.NormalIsoModeActive)
         {
             UpdateFullscreenIsoZoom();
-            UpdateFullscreenIsoCameraMode(_fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
+            _rtsCameraSystem.UpdateFullscreenIsoCameraMode(worldCamera, _fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw, zoomTransitionSmoothTime);
         }
         else
         {
@@ -1309,146 +1267,23 @@ public sealed class RTSSelectionSystem
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        if (TryGetClickedUnitEntity(screenPosition, em, out _))
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
-            ClearHudCommandMode();
-            return;
-        }
-        using var entities = _selectedMoveQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (entities.Length == 0)
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            ClearHudCommandMode();
-            return;
-        }
+        SelectedMoveOrderCommandSystem.Result result = _selectedMoveOrderCommandSystem.TryIssueMoveOrder(
+            em,
+            screenPosition,
+            _selectedMoveQuery,
+            _gridConfigQuery,
+            _unitMoveOrderSystem,
+            _selectionOrderMarkerSystem,
+            TryGetClickedUnitEntity,
+            TryGetClickedCell,
+            Time.frameCount);
 
-        if (!TryGetClickedCell(screenPosition, em, out var goal, out var clickWorldPoint))
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable));
-            ClearHudCommandMode();
-            return;
-        }
-
-        byte factionId = 0;
-        if (em.HasComponent<Faction>(entities[0]))
-            factionId = em.GetComponentData<Faction>(entities[0]).Id;
-        _selectionOrderMarkerSystem.ShowMoveOrderMarker(em, goal, clickWorldPoint, factionId);
-        Entity gridEntity = _gridConfigQuery.GetSingletonEntity();
-        GridConfig grid = em.GetComponentData<GridConfig>(gridEntity);
-        var walkable = em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray();
-        DynamicBlockerData blockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
-        var blocked = blockerData.Blocked;
-        var friendlyPassFactionIds = blockerData.FriendlyPassFactionIds;
-        var occupied = em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied;
-        var reservedGoalCells = new HashSet<int>();
-        var selectedCurrentCells = _unitMoveOrderSystem.BuildSelectedCurrentFootprintCells(em, grid, entities);
-        var issuedGoals = new int2[entities.Length];
-        var skipIssue = new bool[entities.Length];
-        bool issuedMoveOrder = false;
-        int pathRequestCount = 0;
-        int staggeredPathRequestCount = 0;
-        int maxStaggerDelayFrames = 0;
-        int skippedAlreadyMovingCount = 0;
-        int airUnitCount = 0;
-        int structuralAdds = 0;
-        int structuralRemoves = 0;
-        int uniqueGoalCount = 0;
-        int groundPathCandidateCount = 0;
-        for (int i = 0; i < entities.Length; i++)
-        {
-            var entity = entities[i];
-            int2 issuedGoal = _unitMoveOrderSystem.FindManualMoveGoal(
-                em,
-                grid,
-                walkable,
-                blocked,
-                friendlyPassFactionIds,
-                occupied,
-                reservedGoalCells,
-                selectedCurrentCells,
-                entity,
-                goal,
-                i);
-            issuedGoals[i] = issuedGoal;
-
-            if (IsAlreadyMovingToGoal(em, entity, issuedGoal))
-            {
-                skipIssue[i] = true;
-                skippedAlreadyMovingCount++;
-            }
-            else if (!em.HasComponent<UnitAirMovement>(entity))
-            {
-                groundPathCandidateCount++;
-            }
-        }
-
-        bool staggerGroundPathRequests = groundPathCandidateCount >= GroupMoveStaggerMinGroundUnits;
-        int immediateGroundPathRequests = 0;
-        int currentFrame = Time.frameCount;
-        for (int i = 0; i < entities.Length; i++)
-        {
-            if (skipIssue[i])
-                continue;
-
-            var entity = entities[i];
-            int2 issuedGoal = issuedGoals[i];
-
-            bool groundUnit = !em.HasComponent<UnitAirMovement>(entity);
-            bool issuePathNow = groundUnit &&
-                                (!staggerGroundPathRequests ||
-                                 immediateGroundPathRequests < GroupMoveImmediatePathRequests);
-            int resumeFrame = groundUnit && !issuePathNow
-                ? currentFrame + 1 + (staggeredPathRequestCount / GroupMovePathRequestsPerFrame)
-                : 0;
-
-            UnitMoveOrderSystem.MoveOrderCommandResult commandResult = _unitMoveOrderSystem.IssueGroupedManualMoveOrder(
-                em,
-                entity,
-                issuedGoal,
-                issuePathNow,
-                groundUnit && !issuePathNow,
-                resumeFrame,
-                currentFrame);
-
-            structuralAdds += commandResult.StructuralAdds;
-            structuralRemoves += commandResult.StructuralRemoves;
-            pathRequestCount += commandResult.PathRequests;
-            staggeredPathRequestCount += commandResult.StaggeredPathRequests;
-            maxStaggerDelayFrames = math.max(maxStaggerDelayFrames, commandResult.MaxStaggerDelayFrames);
-            airUnitCount += commandResult.AirUnits;
-            if (commandResult.PathRequests > 0)
-                immediateGroundPathRequests += commandResult.PathRequests;
-
-            issuedMoveOrder = true;
-            uniqueGoalCount++;
-        }
-
-        if (issuedMoveOrder)
-        {
-            if (EnableGroupMoveValidationLog && entities.Length > 1)
-            {
-                Debug.Log(
-                    $"[GroupMoveValidate] selected={entities.Length} ground={groundPathCandidateCount} immediate={pathRequestCount} " +
-                    $"staggered={staggeredPathRequestCount} perFrame={GroupMovePathRequestsPerFrame} maxDelayFrames={maxStaggerDelayFrames} " +
-                    $"uniqueGoals={uniqueGoalCount} skippedSameGoal={skippedAlreadyMovingCount} air={airUnitCount} goal={goal}");
-            }
-
-            if (EnableMoveOrderDiagnostics && entities.Length > 1)
-                Debug.Log(
-                    $"[MoveOrderDiag] frame={Time.frameCount} selected={entities.Length} pathRequests={pathRequestCount} " +
-                    $"airUnits={airUnitCount} skippedSameGoal={skippedAlreadyMovingCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves} " +
-                    $"uniqueGoals={uniqueGoalCount} staggeredPathRequests={staggeredPathRequestCount} goal={goal}");
+        ApplyHudCommandResult(result.CommandResult);
+        ClearHudCommandMode();
+        if (result.EmitScreenMarker)
             MoveOrderScreenMarkerRequested?.Invoke(screenPosition);
-            ApplyHudCommandResult(TacticalCommandResult.Success());
-            ClearHudCommandMode();
+        if (result.ShowWorldMarkers)
             SetHudWorldMarkersVisible(true);
-        }
-        else
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetBlocked));
-            ClearHudCommandMode();
-        }
     }
 
     private bool TryIssueBoardTransportOrderToClickedUnit(Vector2 screenPosition)
@@ -1575,24 +1410,6 @@ public sealed class RTSSelectionSystem
         return true;
     }
 
-    private static bool IsAlreadyMovingToGoal(EntityManager em, Entity entity, int2 goal)
-    {
-        if (!em.Exists(entity))
-            return false;
-
-        bool sameTarget =
-            em.HasComponent<UnitTarget>(entity) &&
-            em.GetComponentData<UnitTarget>(entity).Cell.Equals(goal);
-        bool samePendingRequest =
-            em.HasComponent<UnitPathRequest>(entity) &&
-            em.GetComponentData<UnitPathRequest>(entity).Goal.Equals(goal);
-        bool hasActiveMovement =
-            em.HasComponent<UnitPathFollow>(entity) ||
-            em.HasComponent<UnitPathRequest>(entity);
-
-        return sameTarget && (samePendingRequest || hasActiveMovement);
-    }
-
     private bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
         cell = default;
@@ -1687,7 +1504,7 @@ public sealed class RTSSelectionSystem
             float targetYaw = _wasBuildModeActive ? buildModeYaw : normalModeYaw;
             float targetFieldOfView = _wasBuildModeActive ? buildModeFieldOfView : normalModeFieldOfView;
 
-            if (UpdatePerspectiveCameraMode(targetHeight, targetPitch, targetYaw, targetFieldOfView))
+            if (_rtsCameraSystem.UpdatePerspectiveCameraMode(worldCamera, targetHeight, targetPitch, targetYaw, targetFieldOfView, zoomTransitionSmoothTime))
                 _rtsCameraSystem.CompleteZoomTransition();
 
             return;
@@ -1723,7 +1540,7 @@ public sealed class RTSSelectionSystem
 
         SyncCameraZoomModeState();
 
-        UpdatePerspectiveCameraMode(buildModeZoomHeight, buildModePitch, buildModeYaw, buildModeFieldOfView);
+        _rtsCameraSystem.UpdatePerspectiveCameraMode(worldCamera, buildModeZoomHeight, buildModePitch, buildModeYaw, buildModeFieldOfView, zoomTransitionSmoothTime);
     }
 
     private void SyncCameraZoomModeState()
@@ -1738,10 +1555,10 @@ public sealed class RTSSelectionSystem
 
         if (!_wasPlayRequested && _runtimeGameplayStateSystem.PlayRequested)
         {
-            Vector3 focusWorldPosition = worldCamera != null ? GetCameraGroundCenterWorld() : Vector3.zero;
-            ApplyPerspectiveCameraModeInstant(normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
+            Vector3 focusWorldPosition = worldCamera != null ? _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera) : Vector3.zero;
+            _rtsCameraSystem.ApplyPerspectiveCameraModeInstant(worldCamera, normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
             if (worldCamera != null)
-                MoveCameraGroundCenterTo(focusWorldPosition);
+                _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, focusWorldPosition);
             _wasPlayRequested = true;
             _wasBuildModeActive = _runtimeGameplayStateSystem.BuildModeActive;
             _isZoomTransitionActive = _runtimeGameplayStateSystem.BuildModeActive;
@@ -1762,7 +1579,7 @@ public sealed class RTSSelectionSystem
         if (!_runtimeGameplayStateSystem.InitialCameraFocusRequested || worldCamera == null)
             return;
 
-        MoveCameraGroundCenterTo(_runtimeGameplayStateSystem.InitialCameraFocusWorld);
+        _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, _runtimeGameplayStateSystem.InitialCameraFocusWorld);
         _runtimeGameplayStateSystem.InitialCameraFocusRequested = false;
         _rtsCameraSystem.ClearSmoothFocusTarget();
     }
@@ -1772,19 +1589,9 @@ public sealed class RTSSelectionSystem
         if (!_rtsCameraSystem.HasSmoothFocusTarget || worldCamera == null)
             return;
 
-        Vector3 currentGroundCenter = GetCameraGroundCenterWorld();
+        Vector3 currentGroundCenter = _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera);
         Vector3 smoothedCenter = _rtsCameraSystem.UpdateSmoothFocus(currentGroundCenter, zoomTransitionSmoothTime);
-        MoveCameraGroundCenterTo(smoothedCenter);
-    }
-
-    private void ApplyPerspectiveCameraModeInstant(float height, float pitch, float yaw, float fieldOfView)
-    {
-        _rtsCameraSystem.ApplyPerspectiveCameraModeInstant(worldCamera, height, pitch, yaw, fieldOfView);
-    }
-
-    private void ApplyFullscreenIsoCameraModeInstant(float height, float orthographicSize, float pitch, float yaw)
-    {
-        _rtsCameraSystem.ApplyFullscreenIsoCameraModeInstant(worldCamera, height, orthographicSize, pitch, yaw);
+        _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, smoothedCenter);
     }
 
     public void EnterFullscreenMapIsoMode(Vector3 focusWorldPosition)
@@ -1794,8 +1601,8 @@ public sealed class RTSSelectionSystem
 
         _fullscreenIsoTargetHeight = Mathf.Clamp(fullscreenIsoZoomHeight, minZoomHeight, maxZoomHeight);
         _fullscreenIsoTargetOrthographicSize = Mathf.Clamp(fullscreenIsoOrthographicSize, 8f, 48f);
-        MoveCameraGroundCenterTo(focusWorldPosition);
-        ApplyFullscreenIsoCameraModeInstant(_fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
+        _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, focusWorldPosition);
+        _rtsCameraSystem.ApplyFullscreenIsoCameraModeInstant(worldCamera, _fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
         _runtimeGameplayStateSystem.FullscreenMapIsoMode = true;
         _runtimeGameplayStateSystem.FullscreenMapOpen = true;
         _cameraDragging = false;
@@ -1804,17 +1611,17 @@ public sealed class RTSSelectionSystem
     public void ExitFullscreenMapIsoMode()
     {
         if (worldCamera != null)
-            ApplyPerspectiveCameraModeInstant(normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
+            _rtsCameraSystem.ApplyPerspectiveCameraModeInstant(worldCamera, normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
 
         _runtimeGameplayStateSystem.FullscreenMapIsoMode = false;
         _cameraDragging = false;
     }
 
-    public bool IsNormalIsoModeActive => _normalIsoModeActive;
+    public bool IsNormalIsoModeActive => _rtsCameraSystem.NormalIsoModeActive;
 
     public void ToggleNormalIsoMode()
     {
-        if (_normalIsoModeActive)
+        if (_rtsCameraSystem.NormalIsoModeActive)
             ExitNormalIsoMode();
         else
             EnterNormalIsoMode();
@@ -1825,32 +1632,46 @@ public sealed class RTSSelectionSystem
         if (worldCamera == null)
             return;
 
-        Vector3 focusWorldPosition = GetCameraGroundCenterWorld();
-        float currentGroundSpan = GetVisibleGroundVerticalSpan();
+        Vector3 focusWorldPosition = _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera);
+        float currentGroundSpan = _rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera);
         float currentHeight = Mathf.Clamp(worldCamera.transform.position.y, minZoomHeight, maxZoomHeight);
         _fullscreenIsoTargetHeight = currentHeight;
         _fullscreenIsoTargetOrthographicSize = Mathf.Clamp(
-            CalculateOrthographicSizeForGroundSpan(currentGroundSpan, _fullscreenIsoTargetHeight, fullscreenIsoPitch, fullscreenIsoYaw),
+            _rtsCameraSystem.CalculateOrthographicSizeForGroundSpan(
+                worldCamera,
+                currentGroundSpan,
+                _fullscreenIsoTargetHeight,
+                fullscreenIsoPitch,
+                fullscreenIsoYaw,
+                fullscreenIsoOrthographicSize),
             8f,
             48f);
-        ApplyFullscreenIsoCameraModeInstant(_fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
-        MoveCameraGroundCenterTo(focusWorldPosition);
-        _normalIsoModeActive = true;
+        _rtsCameraSystem.ApplyFullscreenIsoCameraModeInstant(worldCamera, _fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
+        _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, focusWorldPosition);
+        _rtsCameraSystem.NormalIsoModeActive = true;
         _cameraDragging = false;
     }
 
     public void ExitNormalIsoMode()
     {
-        Vector3 focusWorldPosition = worldCamera != null ? GetCameraGroundCenterWorld() : Vector3.zero;
+        Vector3 focusWorldPosition = worldCamera != null ? _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera) : Vector3.zero;
         if (worldCamera != null)
         {
-            float currentGroundSpan = GetVisibleGroundVerticalSpan();
-            float targetHeight = CalculatePerspectiveHeightForGroundSpan(currentGroundSpan, normalModePitch, normalModeYaw, normalModeFieldOfView);
-            ApplyPerspectiveCameraModeInstant(targetHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
-            MoveCameraGroundCenterTo(focusWorldPosition);
+            float currentGroundSpan = _rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera);
+            float targetHeight = _rtsCameraSystem.CalculatePerspectiveHeightForGroundSpan(
+                worldCamera,
+                currentGroundSpan,
+                normalModePitch,
+                normalModeYaw,
+                normalModeFieldOfView,
+                minZoomHeight,
+                maxZoomHeight,
+                normalModeZoomHeight);
+            _rtsCameraSystem.ApplyPerspectiveCameraModeInstant(worldCamera, targetHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
+            _rtsCameraSystem.MoveCameraGroundCenterTo(worldCamera, focusWorldPosition);
         }
 
-        _normalIsoModeActive = false;
+        _rtsCameraSystem.NormalIsoModeActive = false;
         _cameraDragging = false;
     }
 
@@ -1875,67 +1696,6 @@ public sealed class RTSSelectionSystem
 
         _rtsCameraSystem.SetSmoothFocusTarget(focusWorldPosition, resetVelocity: false);
         _rtsCameraSystem.ClearDragging();
-    }
-
-    private Vector3 GetCameraGroundCenterWorld()
-    {
-        return _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera);
-    }
-
-    private float GetVisibleGroundVerticalSpan()
-    {
-        return _rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera);
-    }
-
-    private bool TryGetGroundPointFromViewport(Vector2 viewport, out Vector3 point)
-    {
-        return _rtsCameraSystem.TryGetGroundPointFromViewport(worldCamera, viewport, out point);
-    }
-
-    private float CalculateOrthographicSizeForGroundSpan(float targetGroundSpan, float height, float pitch, float yaw)
-    {
-        return _rtsCameraSystem.CalculateOrthographicSizeForGroundSpan(
-            worldCamera,
-            targetGroundSpan,
-            height,
-            pitch,
-            yaw,
-            fullscreenIsoOrthographicSize);
-    }
-
-    private float CalculatePerspectiveHeightForGroundSpan(float targetGroundSpan, float pitch, float yaw, float fieldOfView)
-    {
-        return _rtsCameraSystem.CalculatePerspectiveHeightForGroundSpan(
-            worldCamera,
-            targetGroundSpan,
-            pitch,
-            yaw,
-            fieldOfView,
-            minZoomHeight,
-            maxZoomHeight,
-            normalModeZoomHeight);
-    }
-
-    private bool UpdatePerspectiveCameraMode(float targetHeight, float targetPitch, float targetYaw, float targetFieldOfView)
-    {
-        return _rtsCameraSystem.UpdatePerspectiveCameraMode(
-            worldCamera,
-            targetHeight,
-            targetPitch,
-            targetYaw,
-            targetFieldOfView,
-            zoomTransitionSmoothTime);
-    }
-
-    private bool UpdateFullscreenIsoCameraMode(float targetHeight, float targetOrthographicSize, float targetPitch, float targetYaw)
-    {
-        return _rtsCameraSystem.UpdateFullscreenIsoCameraMode(
-            worldCamera,
-            targetHeight,
-            targetOrthographicSize,
-            targetPitch,
-            targetYaw,
-            zoomTransitionSmoothTime);
     }
 
     private void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")

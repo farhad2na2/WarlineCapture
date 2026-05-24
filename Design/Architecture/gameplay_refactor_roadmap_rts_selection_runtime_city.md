@@ -43,17 +43,17 @@ Goal: reduce `RTSSelectionSystem` from a gameplay facade into a small input orch
 10. Complete: Extract order marker visual runtime
     - Move move/attack marker prefab instantiation, material property blocks, show/hide timers, and marker positioning into `SelectionOrderMarkerSystem`.
 
-11. Pending: Extract HUD command/selection feedback
+11. Complete: Extract HUD command/selection feedback
     - Move `BattleHudGameplayBridge` selection text, command mode, command result, and world marker visibility calls into a HUD feedback boundary.
 
-12. Pending: Collapse camera-facing wrappers
+12. Complete: Collapse camera-facing wrappers
     - Review remaining camera public methods.
     - Move direct callers to `RtsCameraSystem` where practical or keep only thin compatibility wrappers.
 
-13. Pending: Final facade pass
+13. Complete: Final facade pass
     - Confirm `RTSSelectionSystem` owns no gameplay state, ECS mutation policy, visual marker lifecycle, transport/attack/building command logic, or HUD behavior.
     - Add/remove architecture guards.
-    - Decide whether to keep a tiny input orchestration shell or retire/rename it.
+    - Decision: keep `RTSSelectionSystem` temporarily as the input/UI compatibility shell. It still owns public UI-facing query/command entry points and focused transport disembark compatibility; do not retire/rename it until those surfaces move behind narrower systems.
 
 ## RuntimeCitySpawnerSystem 13-Step Plan
 

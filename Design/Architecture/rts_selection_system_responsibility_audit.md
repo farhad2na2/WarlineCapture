@@ -486,7 +486,57 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 
 `RTSSelectionSystem` still owns the command entry points and HUD world-marker visibility bridge, but it no longer owns marker GameObjects, marker renderer state, marker query state, or marker timing.
 
+## Thirty-Sixth Extraction Started
+
+`SelectionHudFeedbackSystem` now owns HUD command and selection feedback behavior that was previously inside `RTSSelectionSystem`:
+
+- `BattleHudGameplayBridge` lookup/cache ownership
+- focused-unit HUD display text and status application
+- squad-selection HUD labels
+- command mode feedback
+- command result feedback
+- HUD world-marker visibility forwarding
+
+`RTSSelectionSystem` still owns the gameplay command branches that decide which HUD feedback to request, but it no longer owns the `BattleHudGameplayBridge` dependency or direct HUD bridge calls.
+
+## Thirty-Seventh Extraction Completed
+
+`RtsCameraSystem` now receives direct calls for:
+
+- Perspective and fullscreen iso camera mode application.
+- Perspective and fullscreen iso camera mode interpolation.
+- Camera ground-center lookup and movement.
+- Visible ground-span lookup.
+- Orthographic and perspective fit calculations.
+
+`RTSSelectionSystem` keeps the public camera command methods as compatibility entry points while callers migrate, but it no longer keeps private one-line wrappers around camera math and mutation APIs.
+
+## Thirty-Eighth Extraction Completed
+
+`SelectedMoveOrderCommandSystem` now owns selected move-order command orchestration that was previously inside `RTSSelectionSystem`:
+
+- clicked-unit rejection for move commands
+- selected move-query consumption
+- clicked cell validation handoff
+- selected manual move goal assignment orchestration
+- group path-request staggering
+- move-order diagnostic formatting
+- move-order command result reporting
+
+`RTSSelectionSystem` still owns the pointer command entry point, HUD command mode/result forwarding, screen-marker event emission, and world-marker visibility request.
+
+## Final Facade Decision
+
+`RTSSelectionSystem` is not ready to delete or rename. It should remain as the temporary input/UI compatibility shell until these remaining surfaces are migrated:
+
+- focused transport passenger disembark mutation
+- public UI-facing focused-unit and selected-unit read/query methods
+- public assistant/tutorial command entry points
+- remaining pointer/camera/build-mode orchestration branches
+
 ## Recommended Next Slices
 
-1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.
-2. Continue migrating remaining direct `Debug.Log*` gameplay diagnostics into ECS diagnostic event buffers or shell-injected logging services by domain slice.
+1. Extract focused transport disembark mutation into `TransportDisembarkCommandSystem`.
+2. Move public UI-facing focused-unit and selected-unit read/query methods behind `SelectionUiQuerySystem` or a narrow `SelectionUiFacadeSystem`.
+3. Move assistant/tutorial public command entry points behind request/result systems.
+4. Move remaining pointer/camera/build-mode orchestration branches into dedicated input orchestration systems once public callers migrate.

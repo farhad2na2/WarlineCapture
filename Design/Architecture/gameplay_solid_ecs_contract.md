@@ -160,6 +160,9 @@ Allowed direction:
 - focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`.
 - attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`.
 - move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`.
+- HUD selection feedback, squad-selection labels, command mode feedback, command result feedback, world-marker visibility forwarding, and `BattleHudGameplayBridge` lookup/cache ownership belong in `SelectionHudFeedbackSystem`.
+- camera drag state, smooth focus state, zoom transition state, camera mode math, camera ground projection, camera pan/zoom mutation, and camera mode interpolation belong in `RtsCameraSystem`; `RTSSelectionSystem` may keep public compatibility commands while callers migrate, but it must not reintroduce private one-line camera wrappers or camera math.
+- selected move-order click rejection, selected move-query consumption, manual move goal assignment orchestration, group path-request staggering, selected move-order diagnostics, and move-order command results belong in `SelectedMoveOrderCommandSystem`.
 - focused-unit command mutations, focused return-to-base lookup, radar target-mode policy, and immediate hold/stop command cleanup belong in `FocusedUnitCommandSystem`.
 - selected-unit order snapshot and restore state belongs in `SelectedUnitOrderSnapshotSystem`.
 - building-target move order approach search and selected-unit movement component writes belong in `BuildingTargetMoveOrderSystem`.

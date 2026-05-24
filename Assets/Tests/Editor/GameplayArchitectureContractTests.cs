@@ -186,6 +186,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`", contract);
         StringAssert.Contains("attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`", contract);
         StringAssert.Contains("move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`", contract);
+        StringAssert.Contains("HUD selection feedback, squad-selection labels, command mode feedback, command result feedback, world-marker visibility forwarding, and `BattleHudGameplayBridge` lookup/cache ownership belong in `SelectionHudFeedbackSystem`", contract);
+        StringAssert.Contains("camera drag state, smooth focus state, zoom transition state, camera mode math, camera ground projection, camera pan/zoom mutation, and camera mode interpolation belong in `RtsCameraSystem`", contract);
+        StringAssert.Contains("selected move-order click rejection, selected move-query consumption, manual move goal assignment orchestration, group path-request staggering, selected move-order diagnostics, and move-order command results belong in `SelectedMoveOrderCommandSystem`", contract);
         StringAssert.Contains("selected boarding-source collection, clicked/nearby transport resolution, transport boarding order creation, pending boarding-count checks, and boarding command diagnostics coordination belong in `TransportBoardingCommandSystem`", contract);
         StringAssert.Contains("interaction context construction belongs in `BuildingPlacementInteractionContextSystem`, not `BuildingPlacementSystem`", contract);
         StringAssert.Contains("Runtime building entity-link callbacks must route through `BuildingPlacementInteractionSystem`", contract);
@@ -2262,13 +2265,20 @@ public sealed class GameplayArchitectureContractTests
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string moveOrderFile = "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs";
+        const string moveCommandFile = "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs";
         Assert.IsTrue(File.Exists(moveOrderFile), "Manual move-order goal and footprint rules must live in UnitMoveOrderSystem.");
+        Assert.IsTrue(File.Exists(moveCommandFile), "Selected move-order command orchestration must live in SelectedMoveOrderCommandSystem.");
 
         string selection = File.ReadAllText(selectionFile);
+        string moveCommand = File.ReadAllText(moveCommandFile);
         StringAssert.Contains("UnitMoveOrderSystem _unitMoveOrderSystem", selection);
-        StringAssert.Contains("_unitMoveOrderSystem.BuildSelectedCurrentFootprintCells", selection);
-        StringAssert.Contains("_unitMoveOrderSystem.FindManualMoveGoal", selection);
-        StringAssert.Contains("_unitMoveOrderSystem.IssueGroupedManualMoveOrder", selection);
+        StringAssert.Contains("SelectedMoveOrderCommandSystem _selectedMoveOrderCommandSystem", selection);
+        StringAssert.Contains("_selectedMoveOrderCommandSystem.TryIssueMoveOrder", selection);
+        StringAssert.Contains("moveOrderSystem.BuildSelectedCurrentFootprintCells", moveCommand);
+        StringAssert.Contains("moveOrderSystem.FindManualMoveGoal", moveCommand);
+        StringAssert.Contains("moveOrderSystem.IssueGroupedManualMoveOrder", moveCommand);
+        StringAssert.Contains("GroupMoveStaggerMinGroundUnits", moveCommand);
+        StringAssert.Contains("IsAlreadyMovingToGoal", moveCommand);
         StringAssert.Contains("_unitMoveOrderSystem.IssueImmediateMoveCommand", selection);
         StringAssert.Contains("_unitMoveOrderSystem.ClearMovementOrderComponents", selection);
         Assert.IsFalse(
@@ -2283,6 +2293,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(selection, @"private\s+static\s+void\s+ClearMovementOrderComponents\s*\("),
             "Movement command cleanup belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            selection.Contains("GroupMoveStaggerMinGroundUnits", StringComparison.Ordinal) ||
+            selection.Contains("GroupMovePathRequestsPerFrame", StringComparison.Ordinal) ||
+            selection.Contains("UnitMoveOrderSystem.MoveOrderCommandResult", StringComparison.Ordinal) ||
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsAlreadyMovingToGoal\s*\("),
+            "Selected move-order orchestration and group path staggering belong in SelectedMoveOrderCommandSystem, not RTSSelectionSystem.");
     }
 
     [Test]
@@ -2437,6 +2453,38 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RtsSelectionSystemMustDelegateHudFeedbackSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string hudFeedbackFile = "Assets/Game/Scripts/Systems/SelectionHudFeedbackSystem.cs";
+        Assert.IsTrue(File.Exists(hudFeedbackFile), "HUD command and selection feedback must live in SelectionHudFeedbackSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string hudFeedback = File.ReadAllText(hudFeedbackFile);
+        StringAssert.Contains("SelectionHudFeedbackSystem _selectionHudFeedbackSystem", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.ApplySelection", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.ApplySquadSelection", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.ClearSelection", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.ApplyCommandMode", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.ClearCommandMode", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.ApplyCommandResult", selection);
+        StringAssert.Contains("_selectionHudFeedbackSystem.SetWorldMarkersVisible", selection);
+        StringAssert.Contains("BattleHudGameplayBridge _battleHudBridge", hudFeedback);
+        StringAssert.Contains("BattleHudGameplayBridge.ResolveActive", hudFeedback);
+        StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitName", hudFeedback);
+        StringAssert.Contains("selectionUiQuerySystem.ResolveHudSelectionStatus", hudFeedback);
+        StringAssert.Contains("ApplySquadSelection", hudFeedback);
+        StringAssert.Contains("ApplyCommandMode", hudFeedback);
+        StringAssert.Contains("ApplyCommandResult", hudFeedback);
+        StringAssert.Contains("SetWorldMarkersVisible", hudFeedback);
+        Assert.IsFalse(
+            selection.Contains("BattleHudGameplayBridge", StringComparison.Ordinal) ||
+            selection.Contains("ResolveBattleHudBridge", StringComparison.Ordinal) ||
+            Regex.IsMatch(selection, @"\bbridge\.(?:ApplySelection|ClearSelection|ApplyCommandMode|ClearCommandMode|ApplyCommandResult|SetWorldMarkersVisible)\s*\("),
+            "BattleHudGameplayBridge lookup and direct HUD bridge calls belong in SelectionHudFeedbackSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
     public void RtsSelectionSystemMustDelegateTargetOrderSlice()
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
@@ -2490,8 +2538,13 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_rtsCameraSystem.UpdatePerspectiveZoom", selection);
         StringAssert.Contains("_rtsCameraSystem.UpdateFullscreenIsoZoom", selection);
         StringAssert.Contains("_rtsCameraSystem.ApplyPerspectiveCameraModeInstant", selection);
+        StringAssert.Contains("_rtsCameraSystem.ApplyFullscreenIsoCameraModeInstant", selection);
         StringAssert.Contains("_rtsCameraSystem.UpdatePerspectiveCameraMode", selection);
         StringAssert.Contains("_rtsCameraSystem.UpdateFullscreenIsoCameraMode", selection);
+        StringAssert.Contains("_rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera)", selection);
+        StringAssert.Contains("_rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera)", selection);
+        StringAssert.Contains("_rtsCameraSystem.CalculateOrthographicSizeForGroundSpan", selection);
+        StringAssert.Contains("_rtsCameraSystem.CalculatePerspectiveHeightForGroundSpan", selection);
         Assert.IsFalse(
             Regex.IsMatch(selection, @"\bprivate\s+bool\s+_cameraDragging\s*;"),
             "Camera drag state belongs in RtsCameraSystem, not RTSSelectionSystem.");
@@ -2516,6 +2569,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             selection.Contains("worldCamera.ViewportPointToRay", StringComparison.Ordinal),
             "Ground-plane camera ray queries belong in RtsCameraSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+void\s+Apply(Perspective|FullscreenIso)CameraModeInstant\s*\("),
+            "RTSSelectionSystem must not keep private one-line camera mode wrappers around RtsCameraSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+(Vector3|float|bool)\s+(GetCameraGroundCenterWorld|GetVisibleGroundVerticalSpan|TryGetGroundPointFromViewport|CalculateOrthographicSizeForGroundSpan|CalculatePerspectiveHeightForGroundSpan|UpdatePerspectiveCameraMode|UpdateFullscreenIsoCameraMode)\s*\("),
+            "Camera math/query/interpolation wrappers belong in RtsCameraSystem, not RTSSelectionSystem.");
     }
 
     [Test]

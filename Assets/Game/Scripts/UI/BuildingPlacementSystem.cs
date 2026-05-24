@@ -2586,6 +2586,23 @@ public sealed class BuildingPlacementSystem
         return CreateBuildingRuntimeQueryContext();
     }
 
+    internal CitizenResourceSystem.Context CreateCitizenResourceContext()
+    {
+        return new CitizenResourceSystem.Context(
+            () => _resourceDollars,
+            value => _resourceDollars = Mathf.Max(0, value));
+    }
+
+    internal CitizenPrefabSystem.Context CreateCitizenPrefabContext()
+    {
+        return new CitizenPrefabSystem.Context(
+            _buildingDefinitionSystem,
+            _buildingSpawnPrefabSystem,
+            TryGetEntityManager,
+            EnsureEntityQueries,
+            CreateBuildingSpawnPrefabContext);
+    }
+
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()
     {
         return new BuildingRuntimeOwnershipSystem.Context(

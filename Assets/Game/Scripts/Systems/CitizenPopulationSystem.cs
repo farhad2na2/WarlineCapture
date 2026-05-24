@@ -125,6 +125,10 @@ public sealed class CitizenPopulationSystem
     private BuildingPlacementSystem _buildingPlacementSystem;
     private BuildingRuntimeQuerySystem _buildingRuntimeQuerySystem;
     private BuildingRuntimeQuerySystem.Context _buildingRuntimeQueryContext;
+    private readonly CitizenResourceSystem _citizenResourceSystem = new();
+    private CitizenResourceSystem.Context _citizenResourceContext;
+    private readonly CitizenPrefabSystem _citizenPrefabSystem = new();
+    private CitizenPrefabSystem.Context _citizenPrefabContext;
     private DayNightSystem _dayNightSystem;
     private Camera _worldCamera;
     private World _ecsWorld;
@@ -166,6 +170,12 @@ public sealed class CitizenPopulationSystem
         _buildingRuntimeQueryContext = buildingPlacementSystem != null
             ? buildingPlacementSystem.CreateRuntimeBuildingQueryContext()
             : default;
+        _citizenResourceContext = buildingPlacementSystem != null
+            ? buildingPlacementSystem.CreateCitizenResourceContext()
+            : default;
+        _citizenPrefabContext = buildingPlacementSystem != null
+            ? buildingPlacementSystem.CreateCitizenPrefabContext()
+            : default;
         _dayNightSystem = dayNightSystem;
         _worldCamera = worldCamera;
         ResolveEntityManager();
@@ -182,8 +192,8 @@ public sealed class CitizenPopulationSystem
         _totals = default;
         _nextLogicalCitizenUpdateAt = 0f;
         _lastRefugeeUpkeepChargedDay = 0;
-        _maleCitizenPrefabs = LoadCitizenPrefabs(CitizenGender.Male, _buildingPlacementSystem);
-        _femaleCitizenPrefabs = LoadCitizenPrefabs(CitizenGender.Female, _buildingPlacementSystem);
+        _maleCitizenPrefabs = LoadCitizenPrefabs(CitizenGender.Male, _citizenPrefabSystem, _citizenPrefabContext);
+        _femaleCitizenPrefabs = LoadCitizenPrefabs(CitizenGender.Female, _citizenPrefabSystem, _citizenPrefabContext);
         EnsurePopulationSummaryEntity();
     }
 
@@ -280,6 +290,11 @@ public sealed class CitizenPopulationSystem
     private bool HasRuntimeBuildingQuery()
     {
         return _buildingRuntimeQuerySystem != null;
+    }
+
+    private bool HasCitizenResourceAccess()
+    {
+        return _citizenResourceSystem.IsConfigured(_citizenResourceContext);
     }
 
     private bool TryGetRuntimeBuildingFocusWorldPosition(int buildingId, out Vector3 worldPosition)
@@ -1022,7 +1037,7 @@ public sealed class CitizenPopulationSystem
 
     private void UpdateRefugeeUpkeep()
     {
-        if (_dayNightSystem == null || _buildingPlacementSystem == null || !HasRuntimeBuildingQuery())
+        if (_dayNightSystem == null || !HasCitizenResourceAccess() || !HasRuntimeBuildingQuery())
             return;
 
         int currentDay = Mathf.Max(1, _dayNightSystem.DayCount);
@@ -1055,7 +1070,7 @@ public sealed class CitizenPopulationSystem
         if (refugeeCitizens <= 0 || totalCost <= 0)
             return;
 
-        if (_buildingPlacementSystem.TrySpendDollars(totalCost))
+        if (_citizenResourceSystem.TrySpendDollars(_citizenResourceContext, totalCost))
             return;
 
         PopulateHouseholdIdsFromEcs();
@@ -1605,7 +1620,7 @@ public sealed class CitizenPopulationSystem
         GameObject prefab = GetCitizenPrefab(citizen);
         if (prefab == null || _ecsWorld == null || !_ecsWorld.IsCreated)
             return;
-        if (!_buildingPlacementSystem.TryResolveConfiguredUnitPrefabEntity(prefab, out Entity prefabEntity) || prefabEntity == Entity.Null)
+        if (!_citizenPrefabSystem.TryResolveConfiguredUnitPrefabEntity(_citizenPrefabContext, prefab, out Entity prefabEntity) || prefabEntity == Entity.Null)
             return;
         if (!TryWorldToCell(worldPosition, out int2 spawnCell))
             return;
@@ -1716,7 +1731,10 @@ public sealed class CitizenPopulationSystem
             _entityManager.AddComponent<ManualMoveOrderTag>(entity);
     }
 
-    private static GameObject[] LoadCitizenPrefabs(CitizenGender gender, BuildingPlacementSystem buildingPlacementSystem)
+    private static GameObject[] LoadCitizenPrefabs(
+        CitizenGender gender,
+        CitizenPrefabSystem citizenPrefabSystem,
+        CitizenPrefabSystem.Context citizenPrefabContext)
     {
         string[] unitNames = gender == CitizenGender.Male
             ? new[]
@@ -1731,19 +1749,10 @@ public sealed class CitizenPopulationSystem
             };
 
         List<GameObject> prefabs = new();
-        if (buildingPlacementSystem == null)
+        if (citizenPrefabSystem == null)
             return prefabs.ToArray();
 
-        for (int i = 0; i < unitNames.Length; i++)
-        {
-            GameObject prefab;
-            if (!buildingPlacementSystem.TryResolveConfiguredUnitSpawnPrefab(unitNames[i], out prefab))
-                continue;
-
-            if (prefab != null)
-                prefabs.Add(prefab);
-        }
-
+        citizenPrefabSystem.LoadConfiguredUnitSpawnPrefabs(citizenPrefabContext, unitNames, prefabs);
         return prefabs.ToArray();
     }
 

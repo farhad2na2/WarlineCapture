@@ -136,6 +136,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime building blocker entity creation, runtime building combat entity creation, path-blocking policy for runtime buildings, and runtime building combat component setup belong in `BuildingRuntimeEntitySystem`", contract);
         StringAssert.Contains("Runtime building read/query facades, faction building/unit/production counts, building role/id lists, owner/destroyed/city/refugee flags, combat entity info, focus-position queries, and building approach-cell query routing belong in `BuildingRuntimeQuerySystem`", contract);
         StringAssert.Contains("Citizen population building read paths must use `BuildingRuntimeQuerySystem`", contract);
+        StringAssert.Contains("Citizen upkeep spending belongs in `CitizenResourceSystem`", contract);
+        StringAssert.Contains("citizen configured prefab/entity resolution belongs in `CitizenPrefabSystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`", contract);
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
         StringAssert.Contains("Runtime building owner-faction assignment, combat `Faction` component projection, owner marker color projection, and gate friendly-pass blocker updates belong in `BuildingRuntimeOwnershipSystem`", contract);
@@ -1492,7 +1494,12 @@ public sealed class GameplayArchitectureContractTests
         string text = File.ReadAllText(file);
 
         StringAssert.Contains("BuildingRuntimeQuerySystem", text);
-        StringAssert.Contains("CreateRuntimeBuildingQueryContext", File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs"));
+        StringAssert.Contains("CitizenResourceSystem", text);
+        StringAssert.Contains("CitizenPrefabSystem", text);
+        string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
+        StringAssert.Contains("CreateRuntimeBuildingQueryContext", placement);
+        StringAssert.Contains("CreateCitizenResourceContext", placement);
+        StringAssert.Contains("CreateCitizenPrefabContext", placement);
         Assert.IsFalse(
             text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
             "CitizenPopulationSystem must use the BuildingPlacementSystem supplied by bootstrap composition instead of BuildingPlacementSystem.Instance.");
@@ -1505,6 +1512,11 @@ public sealed class GameplayArchitectureContractTests
             text.Contains("_buildingPlacementSystem.TryGetRuntimeBuildingApproachCell", StringComparison.Ordinal) ||
             text.Contains("_buildingPlacementSystem.IsRuntimeBuildingApproachCell", StringComparison.Ordinal),
             "CitizenPopulationSystem building read paths must use BuildingRuntimeQuerySystem instead of BuildingPlacementSystem facade read methods.");
+        Assert.IsFalse(
+            text.Contains("_buildingPlacementSystem.TrySpendDollars", StringComparison.Ordinal) ||
+            text.Contains("_buildingPlacementSystem.TryResolveConfiguredUnitPrefabEntity", StringComparison.Ordinal) ||
+            text.Contains("_buildingPlacementSystem.TryResolveConfiguredUnitSpawnPrefab", StringComparison.Ordinal),
+            "CitizenPopulationSystem resource and prefab paths must use CitizenResourceSystem/CitizenPrefabSystem instead of BuildingPlacementSystem facade methods.");
     }
 
     [Test]

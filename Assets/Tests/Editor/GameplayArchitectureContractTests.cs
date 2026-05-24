@@ -127,6 +127,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Broad scene lookup and UI runtime binding are owned by `GameplaySceneBindingSystem`", contract);
         StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
+        StringAssert.Contains("Building runtime updates inside that loop must go through `BuildingRuntimeUpdateSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`", contract);
@@ -510,10 +511,14 @@ public sealed class GameplayArchitectureContractTests
     public void GameBootstrapMustDelegateManagedRuntimeUpdateLoop()
     {
         const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
+        const string buildingRuntimeUpdateFile = "Assets/Game/Scripts/Systems/BuildingRuntimeUpdateSystem.cs";
         Assert.IsTrue(File.Exists(runtimeUpdateFile), "Managed runtime update orchestration must live in GameplayRuntimeUpdateSystem.");
+        Assert.IsTrue(File.Exists(buildingRuntimeUpdateFile), "Building runtime update must live behind BuildingRuntimeUpdateSystem.");
 
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem", bootstrap);
+        StringAssert.Contains("BuildingPlacement?.BuildingRuntimeUpdateSystem", bootstrap);
+        StringAssert.Contains("BuildingPlacement.CreateBuildingRuntimeUpdateContext()", bootstrap);
         StringAssert.Contains("_gameplayRuntimeUpdateSystem.Update", bootstrap);
         StringAssert.Contains("_gameplayRuntimeUpdateSystem.LateUpdate", bootstrap);
         StringAssert.Contains("_gameplayRuntimeUpdateSystem.OnGui", bootstrap);
@@ -543,6 +548,7 @@ public sealed class GameplayArchitectureContractTests
         }
 
         string runtimeUpdate = File.ReadAllText(runtimeUpdateFile);
+        string buildingRuntimeUpdate = File.ReadAllText(buildingRuntimeUpdateFile);
         string[] runtimeUpdateRequiredTokens =
         {
             "GameRuntimeStats.RecordMissionElapsed",
@@ -561,6 +567,14 @@ public sealed class GameplayArchitectureContractTests
 
         foreach (string token in runtimeUpdateRequiredTokens)
             StringAssert.Contains(token, runtimeUpdate);
+
+        StringAssert.Contains("BuildingRuntimeUpdateSystem", runtimeUpdate);
+        StringAssert.Contains("buildingRuntimeUpdate?.Update", runtimeUpdate);
+        StringAssert.Contains("Action UpdateBuildingRuntime", buildingRuntimeUpdate);
+        Assert.IsFalse(
+            runtimeUpdate.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            runtimeUpdate.Contains("buildingPlacement?.Update", StringComparison.Ordinal),
+            "GameplayRuntimeUpdateSystem must call BuildingRuntimeUpdateSystem instead of the BuildingPlacementSystem facade.");
 
         string[] orderedStepLabels =
         {

@@ -68,6 +68,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
     private readonly BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem = new();
     private readonly BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem = new();
+    private readonly BuildingRuntimeUpdateSystem _buildingRuntimeUpdateSystem = new();
     private readonly RuntimeResourceSystem _runtimeResourceSystem = new();
     private readonly RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem = new();
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
@@ -120,6 +121,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
+    internal BuildingRuntimeUpdateSystem BuildingRuntimeUpdateSystem => _buildingRuntimeUpdateSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -2169,6 +2171,11 @@ public sealed class BuildingPlacementSystem
             TryGetEntityManager,
             EnsureEntityQueries,
             CreateBuildingSpawnPrefabContext);
+    }
+
+    internal BuildingRuntimeUpdateSystem.Context CreateBuildingRuntimeUpdateContext()
+    {
+        return new BuildingRuntimeUpdateSystem.Context(Update);
     }
 
     internal BuildingUiCommandSystem.Context CreateBuildingUiCommandContext()

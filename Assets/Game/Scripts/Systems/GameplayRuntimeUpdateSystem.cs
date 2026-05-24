@@ -12,7 +12,8 @@ public sealed class GameplayRuntimeUpdateSystem
         MissionStartupSystem missionStartupSystem,
         TacticalMapRuntimeLoader mapLoader,
         RoadBuildSystem roadBuild,
-        BuildingPlacementSystem buildingPlacement,
+        BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
+        BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
         RTSSelectionSystem selection,
         Camera worldCamera,
         RuntimeCitySpawnerSystem runtimeCitySpawner,
@@ -44,7 +45,7 @@ public sealed class GameplayRuntimeUpdateSystem
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            buildingPlacement?.Update();
+            buildingRuntimeUpdate?.Update(buildingRuntimeUpdateContext);
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();

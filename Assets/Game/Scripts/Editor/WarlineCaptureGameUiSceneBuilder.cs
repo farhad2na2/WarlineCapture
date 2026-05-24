@@ -19,6 +19,12 @@ public static class WarlineCaptureGameUiSceneBuilder
     private const string CanvasName = "GameUICanvas";
     private const string ShellRootName = "WarlineCaptureRuntimeShell";
     private const string ContentRootName = "ContentRoot";
+    private const string ContentFolder = "Assets/Game/Prefabs/UI/Shell/Content";
+    private const string PopupFolder = "Assets/Game/Prefabs/UI/Shell/Popups";
+    private const string LoadingPrefabPath = ContentFolder + "/SCN01_LoadingContent.prefab";
+    private const string MainMenuPrefabPath = ContentFolder + "/SCN02_MainMenuContent.prefab";
+    private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
+    private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
 
     private static readonly Rect StretchRegion = new(0f, 0f, 2400f, 1080f);
 
@@ -117,6 +123,30 @@ public static class WarlineCaptureGameUiSceneBuilder
         AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
         ValidateStep5();
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP5_BUILT scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 7")]
+    public static void BuildStep7()
+    {
+        Scene scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        GameObject root = new(RootName);
+
+        Camera uiCamera = CreateUiCamera(root.transform);
+        CreateEventSystem(root.transform);
+        GameObject canvasObject = CreateCanvas(root.transform, uiCamera);
+        GameObject shellRoot = CreateShellRoot(canvasObject.transform);
+        CreateShellRegions(shellRoot.transform);
+        AddMotionHost(shellRoot);
+        AddShellViewAndBridge(shellRoot);
+        AddContentPresenterAndSmoke(shellRoot);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        if (!EditorSceneManager.SaveScene(scene, ScenePath))
+            throw new InvalidOperationException($"Failed to save GameUI scene at {ScenePath}.");
+
+        AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+        ValidateStep7();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP7_BUILT scene={ScenePath}");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
@@ -322,6 +352,41 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP5_VALIDATED scene={ScenePath}");
     }
 
+    [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 7")]
+    public static void ValidateStep7()
+    {
+        ValidateStep5();
+
+        Scene scene = EditorSceneManager.GetActiveScene();
+        Transform shellTransform = scene.GetRootGameObjects()[0].transform.Find($"{CanvasName}/{ShellRootName}");
+        if (shellTransform == null)
+            throw new InvalidOperationException($"{ShellRootName} is missing.");
+
+        WarlineCaptureShellView shellView = shellTransform.GetComponent<WarlineCaptureShellView>();
+        WarlineCaptureShellContentPresenterView contentPresenter = shellTransform.GetComponent<WarlineCaptureShellContentPresenterView>();
+        if (contentPresenter == null)
+            throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureShellContentPresenterView in Step 7.");
+        if (shellTransform.GetComponents<WarlineCaptureShellContentPresenterView>().Length != 1)
+            throw new InvalidOperationException($"{ShellRootName} must contain exactly one WarlineCaptureShellContentPresenterView.");
+        if (contentPresenter.ShellView != shellView)
+            throw new InvalidOperationException("Content presenter must reference the shell view.");
+        if (shellView.ContentPresenter != contentPresenter)
+            throw new InvalidOperationException("Shell view must reference the content presenter.");
+
+        ValidatePresenterPrefab(contentPresenter.LoadingContentPrefab, LoadingPrefabPath, "SCN01_LoadingContent");
+        ValidatePresenterPrefab(contentPresenter.MainMenuContentPrefab, MainMenuPrefabPath, "SCN02_MainMenuContent");
+        ValidatePresenterPrefab(contentPresenter.MatchHudContentPrefab, MatchHudPrefabPath, "SCN08_MatchHudContent");
+        ValidatePresenterPrefab(contentPresenter.ResultPopupPrefab, ResultPopupPrefabPath, "POP05_MissionResultPopup");
+
+        WarlineCaptureGameUiSmokeDriverView smokeDriver = shellTransform.GetComponent<WarlineCaptureGameUiSmokeDriverView>();
+        if (smokeDriver == null)
+            throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureGameUiSmokeDriverView in Step 7.");
+        if (!smokeDriver.PlayOnStart)
+            throw new InvalidOperationException("GameUI smoke driver must autoplay in the isolated Step 7 scene.");
+
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP7_VALIDATED scene={ScenePath}");
+    }
+
     private static void CreateEventSystem(Transform parent)
     {
         GameObject eventSystemObject = new(EventSystemName);
@@ -436,6 +501,25 @@ public static class WarlineCaptureGameUiSceneBuilder
         bridge.Configure(shellView);
     }
 
+    private static void AddContentPresenterAndSmoke(GameObject shellRoot)
+    {
+        WarlineCaptureShellView shellView = shellRoot.GetComponent<WarlineCaptureShellView>();
+        if (shellView == null)
+            throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureShellView before Step 7 content wiring.");
+
+        WarlineCaptureShellContentPresenterView presenter = shellRoot.AddComponent<WarlineCaptureShellContentPresenterView>();
+        presenter.Configure(
+            shellView,
+            RequirePrefab(LoadingPrefabPath),
+            RequirePrefab(MainMenuPrefabPath),
+            RequirePrefab(MatchHudPrefabPath),
+            RequirePrefab(ResultPopupPrefabPath));
+        shellView.SetContentPresenter(presenter);
+
+        WarlineCaptureGameUiSmokeDriverView smokeDriver = shellRoot.AddComponent<WarlineCaptureGameUiSmokeDriverView>();
+        smokeDriver.Configure(true, 0.8f, 0.25f);
+    }
+
     private static Transform RequireChild(Transform parent, string childName)
     {
         Transform child = parent.Find(childName);
@@ -484,6 +568,25 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"{ease} must evaluate 0 at progress 0.");
         if (Mathf.Abs(end - 1f) > 0.001f)
             throw new InvalidOperationException($"{ease} must evaluate 1 at progress 1.");
+    }
+
+    private static GameObject RequirePrefab(string path)
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab == null)
+            throw new InvalidOperationException($"Missing GameUI prefab at {path}.");
+
+        return prefab;
+    }
+
+    private static void ValidatePresenterPrefab(GameObject prefab, string path, string expectedName)
+    {
+        if (prefab == null)
+            throw new InvalidOperationException($"Content presenter is missing prefab reference {path}.");
+        if (prefab != AssetDatabase.LoadAssetAtPath<GameObject>(path))
+            throw new InvalidOperationException($"Content presenter prefab reference must point to {path}.");
+        if (prefab.name != expectedName)
+            throw new InvalidOperationException($"{path} must reference prefab root {expectedName}.");
     }
 
     private readonly struct ShellRegionDefinition

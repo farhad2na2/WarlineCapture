@@ -85,6 +85,7 @@ public partial struct UiShellFlowSystem : ISystem
             case UiShellRouteIntent.EnterMatch:
                 BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Match, UiShellMode.Loading);
                 AppendCommand(commands, shellState, UiShellCommandKind.ExitMenu, UiShellRegionId.None, WarlineCaptureRoute.Match, UiShellMode.Loading);
+                AppendCommand(commands, shellState, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Match, UiShellMode.MatchHud);
                 AppendCommand(commands, shellState, UiShellCommandKind.EnterMatchHud, UiShellRegionId.None, WarlineCaptureRoute.Match, UiShellMode.MatchHud);
                 shellState.CurrentMode = UiShellMode.MatchHud;
                 shellState.ActiveRoute = WarlineCaptureRoute.Match;
@@ -92,6 +93,9 @@ public partial struct UiShellFlowSystem : ISystem
                 break;
             case UiShellRouteIntent.ReturnToMainMenu:
                 BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.MainMenu, UiShellMode.Loading);
+                if (shellState.CurrentMode == UiShellMode.MatchHud)
+                    AppendCommand(commands, shellState, UiShellCommandKind.ExitMatchHud, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.Loading);
+                AppendCommand(commands, shellState, UiShellCommandKind.ExitLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
                 AppendCommand(commands, shellState, UiShellCommandKind.EnterMenu, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
                 shellState.CurrentMode = UiShellMode.MainMenu;
                 shellState.ActiveRoute = WarlineCaptureRoute.MainMenu;

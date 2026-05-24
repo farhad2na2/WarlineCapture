@@ -7,14 +7,18 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
 {
     [SerializeField] private WarlineCaptureUiMotionHostView motionHost;
     [SerializeField] private WarlineCaptureShellRegionView[] regions;
+    [SerializeField] private WarlineCaptureShellContentPresenterView contentPresenter;
 
     private readonly Dictionary<WarlineCaptureShellRegionId, WarlineCaptureShellRegionView> regionById = new();
 
     public WarlineCaptureUiMotionHostView MotionHost => motionHost;
     public IReadOnlyList<WarlineCaptureShellRegionView> Regions => regions;
+    public WarlineCaptureShellContentPresenterView ContentPresenter => contentPresenter;
 
     private void Awake()
     {
+        if (contentPresenter == null)
+            contentPresenter = GetComponent<WarlineCaptureShellContentPresenterView>();
         RebuildRegionLookup();
     }
 
@@ -23,6 +27,20 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         motionHost = host;
         regions = shellRegions;
         RebuildRegionLookup();
+    }
+
+    public void Configure(
+        WarlineCaptureUiMotionHostView host,
+        WarlineCaptureShellRegionView[] shellRegions,
+        WarlineCaptureShellContentPresenterView presenter)
+    {
+        Configure(host, shellRegions);
+        contentPresenter = presenter;
+    }
+
+    public void SetContentPresenter(WarlineCaptureShellContentPresenterView presenter)
+    {
+        contentPresenter = presenter;
     }
 
     public bool TryGetRegion(WarlineCaptureShellRegionId id, out WarlineCaptureShellRegionView region)
@@ -41,6 +59,8 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
             completed?.Invoke(sequenceId);
             return;
         }
+
+        contentPresenter?.PrepareForCommandSequence(commands);
 
         int transitionId = motionHost.BeginTransition();
         List<WarlineCaptureUiMotionStep> steps = new();

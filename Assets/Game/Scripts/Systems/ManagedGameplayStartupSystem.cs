@@ -4,6 +4,8 @@ using UnityEngine.Rendering;
 
 public sealed class ManagedGameplayStartupSystem
 {
+    private readonly BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem = new();
+
     public readonly struct Result
     {
         public readonly DayNightSystem DayNight;
@@ -72,12 +74,13 @@ public sealed class ManagedGameplayStartupSystem
         var roadBuild = new RoadBuildSystem();
         roadBuild.Init(roadBuildConfig, worldCamera, runtimeUiRoot, null);
 
-        var buildingPlacement = new BuildingPlacementSystem();
-        buildingPlacement.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
-        BuildingSelectionClickSystem buildingSelectionClick = buildingPlacement.BuildingSelectionClickSystem;
-        BuildingSelectionClickSystem.Context buildingSelectionClickContext = buildingPlacement.CreateBuildingSelectionClickContext();
-        var buildingRuntimeUpdate = new BuildingRuntimeUpdateSystem();
-        var buildingRuntimeUpdateContext = new BuildingRuntimeUpdateSystem.Context(buildingPlacement.Update);
+        BuildingGameplayCompositionSystem.Result building = _buildingGameplayCompositionSystem.Initialize(
+            buildingPlacementConfig,
+            worldCamera,
+            runtimeUiRoot,
+            roadBuild,
+            factionVisuals,
+            dayNight);
 
         var selection = new RTSSelectionSystem();
         selection.Init(
@@ -86,19 +89,19 @@ public sealed class ManagedGameplayStartupSystem
             runtimeUiRoot,
             null,
             roadBuild,
-            buildingPlacement.BuildingPlacementInteractionSystem,
-            buildingPlacement.CreateBuildingPlacementInteractionContext(),
+            building.Interaction,
+            building.InteractionContext,
             factionVisuals);
 
         roadBuild.BindDependencies(
-            buildingPlacement.BuildingPlacementInteractionSystem,
-            buildingPlacement.CreateBuildingPlacementInteractionContext());
-        buildingPlacement.BindDependencies(roadBuild, null, dayNight, selection);
+            building.Interaction,
+            building.InteractionContext);
+        _buildingGameplayCompositionSystem.BindSelection(building, roadBuild, dayNight, selection);
         selection.BindDependencies(
             null,
             roadBuild,
-            buildingPlacement.BuildingPlacementInteractionSystem,
-            buildingPlacement.CreateBuildingPlacementInteractionContext());
+            building.Interaction,
+            building.InteractionContext);
 
         var unitAttackTraces = new UnitAttackTraceSystem();
         unitAttackTraces.Init(unitAttackTraceConfig, worldCamera, ownerLayer, factionVisuals);
@@ -106,15 +109,11 @@ public sealed class ManagedGameplayStartupSystem
         var unitImpostors = new UnitImpostorRenderSystem();
         unitImpostors.Init(worldCamera, ownerLayer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
 
-        var citizenPopulation = new CitizenPopulationSystem();
-        citizenPopulation.Init(
-            buildingPlacement.RuntimeQuerySystem,
-            buildingPlacement.CreateRuntimeBuildingQueryContext(),
+        CitizenPopulationSystem citizenPopulation = _buildingGameplayCompositionSystem.CreateCitizenPopulation(
+            building,
             dayNight,
-            worldCamera,
-            buildingPlacement.RuntimeResourceSystem.CreateCitizenResourceContext(),
-            buildingPlacement.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(buildingPlacement.CreateRuntimeUnitPrefabContext()));
-        buildingPlacement.BindDependencies(roadBuild, null, dayNight, selection, citizenPopulationSystem: citizenPopulation);
+            worldCamera);
+        _buildingGameplayCompositionSystem.BindCitizenPopulation(building, roadBuild, dayNight, selection, citizenPopulation);
 
         GameStrings.Init(gameStringsConfig);
         SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
@@ -123,11 +122,11 @@ public sealed class ManagedGameplayStartupSystem
             dayNight,
             factionVisuals,
             roadBuild,
-            buildingPlacement,
-            buildingSelectionClick,
-            buildingSelectionClickContext,
-            buildingRuntimeUpdate,
-            buildingRuntimeUpdateContext,
+            building.PlacementFacade,
+            building.SelectionClick,
+            building.SelectionClickContext,
+            building.RuntimeUpdate,
+            building.RuntimeUpdateContext,
             selection,
             unitAttackTraces,
             unitImpostors,

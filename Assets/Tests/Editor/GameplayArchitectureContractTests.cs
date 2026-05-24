@@ -1571,6 +1571,9 @@ public sealed class GameplayArchitectureContractTests
             menu.Contains("_buildingPlacementSystem", StringComparison.Ordinal) ||
             menu.Contains("BuildingPlacementSystem buildingPlacementSystem", StringComparison.Ordinal),
             "MenuView must receive narrow UI command/query boundaries instead of a BuildingPlacementSystem facade instance.");
+        Assert.IsFalse(
+            menu.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
+            "MenuView must not reference BuildingPlacementSystem nested UI/data contracts.");
 
         string[] forbiddenMenuFacadeCalls =
         {
@@ -3278,6 +3281,7 @@ public sealed class GameplayArchitectureContractTests
 
         string placement = File.ReadAllText(placementFile);
         string placementQuery = File.ReadAllText(placementQueryFile);
+        string uiQuery = File.ReadAllText(uiQueryFile);
         StringAssert.Contains("BuildingPlacementQuerySystem _buildingPlacementQuerySystem", placement);
         StringAssert.Contains("CreateBuildingPlacementQueryContext", placement);
         StringAssert.Contains("_buildingPlacementQuerySystem.GetSelectedBuildingProductionPrefab", placement);
@@ -3299,6 +3303,14 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingUiQuerySystem.GetProducedUnits", placement);
         StringAssert.Contains("_buildingUiQuerySystem.AddProducedUnitEntries", placement);
         StringAssert.Contains("_buildingUiQuerySystem.AddPendingProductionUiEntries", placement);
+        StringAssert.Contains("public readonly struct ProducedUnitUiEntry", uiQuery);
+        StringAssert.Contains("public readonly struct PendingProductionUiEntry", uiQuery);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+readonly\s+struct\s+(ProducedUnitUiEntry|PendingProductionUiEntry)"),
+            "Building UI read-model entries belong in BuildingUiQuerySystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+(readonly\s+struct\s+(ConfiguredSpawnableEntry|ConfiguredUnitEntry)|enum\s+CampRequestFailure)"),
+            "Building UI command/config contracts belong in BuildingUiCommandSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             placement.Contains("return $\"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})\";", StringComparison.Ordinal),
             "Selected-building label formatting belongs in BuildingPlacementQuerySystem, not BuildingPlacementSystem.");

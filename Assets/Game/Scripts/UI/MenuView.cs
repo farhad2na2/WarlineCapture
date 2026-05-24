@@ -304,11 +304,11 @@ namespace Game.Scripts.UI
         private GameObject _singleStatusReturningIcon;
         private RectTransform _requestPanelRoot;
         private GameObject _requestCountdownTemplate;
-        private readonly List<BuildingPlacementSystem.PendingProductionUiEntry> _pendingProductionEntries = new();
+        private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> _pendingProductionEntries = new();
         private readonly Dictionary<string, RequestCountdownView> _requestCountdownViews = new();
         private Transform _statsLayoutRoot;
         private readonly Dictionary<string, TMP_Text> _statsAmountTexts = new();
-        private BuildingPlacementSystem.CampRequestFailure _campRequestFailure;
+        private BuildingUiCommandSystem.CampRequestFailure _campRequestFailure;
         private string _campRequestFailureBuildingName;
         private readonly List<GameObject> _campRequestGreens = new();
         private readonly List<GameObject> _campRequestReds = new();
@@ -3518,10 +3518,10 @@ namespace Game.Scripts.UI
 
             CampCatalogEntry entry = _campEntries[_campSelectedIndex];
             bool isBuildingRequest = _buildingUiCommandSystem.IsConfiguredSpawnablePrefab(_buildingUiCommandContext, entry.Prefab);
-            BuildingPlacementSystem.CampRequestFailure failure = _buildingUiCommandSystem.TryRequestCampItem(_buildingUiCommandContext, entry.Prefab, entry.Price, out string requiredBuildingName, isBuildingRequest);
+            BuildingUiCommandSystem.CampRequestFailure failure = _buildingUiCommandSystem.TryRequestCampItem(_buildingUiCommandContext, entry.Prefab, entry.Price, out string requiredBuildingName, isBuildingRequest);
             switch (failure)
             {
-                case BuildingPlacementSystem.CampRequestFailure.None:
+                case BuildingUiCommandSystem.CampRequestFailure.None:
                     UpdateMoneyLabel();
                     if (isBuildingRequest)
                     {
@@ -3536,10 +3536,10 @@ namespace Game.Scripts.UI
                         UpdateCampPriceState();
                     }
                     break;
-                case BuildingPlacementSystem.CampRequestFailure.NotEnoughMoney:
+                case BuildingUiCommandSystem.CampRequestFailure.NotEnoughMoney:
                     OpenGenericWarningPanel("not_enough_money");
                     break;
-                case BuildingPlacementSystem.CampRequestFailure.MissingProducerBuilding:
+                case BuildingUiCommandSystem.CampRequestFailure.MissingProducerBuilding:
                     OpenGenericWarningPanel("create_first", string.IsNullOrWhiteSpace(requiredBuildingName) ? "Building" : requiredBuildingName);
                     break;
             }
@@ -4405,7 +4405,7 @@ namespace Game.Scripts.UI
                 _campDescriptionText.text = string.Empty;
             UpdateCampSelectedSoldierOnlyPanels();
             UpdateCampSelectedModelPreview(null);
-            _campRequestFailure = BuildingPlacementSystem.CampRequestFailure.InvalidSelection;
+            _campRequestFailure = BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
             _campRequestFailureBuildingName = string.Empty;
             UpdateCampPriceState();
             for (int i = 0; i < _campItemViews.Count; i++)
@@ -4427,14 +4427,14 @@ namespace Game.Scripts.UI
             if (_campPriceLabel != null)
                 _campPriceLabel.text = price.ToString();
 
-            _campRequestFailure = BuildingPlacementSystem.CampRequestFailure.InvalidSelection;
+            _campRequestFailure = BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
             _campRequestFailureBuildingName = string.Empty;
             bool canRequest = false;
             if (_buildingUiCommandSystem != null && _campSelectedIndex >= 0 && _campSelectedIndex < _campEntries.Count)
             {
                 CampCatalogEntry selectedEntry = _campEntries[_campSelectedIndex];
                 _campRequestFailure = _buildingUiCommandSystem.GetCampRequestFailure(_buildingUiCommandContext, selectedEntry.Prefab, selectedEntry.Price, out _campRequestFailureBuildingName);
-                canRequest = _campRequestFailure == BuildingPlacementSystem.CampRequestFailure.None;
+                canRequest = _campRequestFailure == BuildingUiCommandSystem.CampRequestFailure.None;
             }
 
             for (int i = 0; i < _campRequestGreens.Count; i++)
@@ -4738,7 +4738,7 @@ namespace Game.Scripts.UI
             var activeKeys = new HashSet<string>();
             for (int i = 0; i < _pendingProductionEntries.Count; i++)
             {
-                BuildingPlacementSystem.PendingProductionUiEntry entry = _pendingProductionEntries[i];
+                BuildingUiQuerySystem.PendingProductionUiEntry entry = _pendingProductionEntries[i];
                 string key = BuildPendingProductionKey(entry);
                 activeKeys.Add(key);
                 if (!_requestCountdownViews.TryGetValue(key, out RequestCountdownView view) || view == null || view.Root == null)
@@ -5421,7 +5421,7 @@ namespace Game.Scripts.UI
             return view;
         }
 
-        private void BindRequestCountdownView(RequestCountdownView view, BuildingPlacementSystem.PendingProductionUiEntry entry)
+        private void BindRequestCountdownView(RequestCountdownView view, BuildingUiQuerySystem.PendingProductionUiEntry entry)
         {
             if (view == null || view.Root == null)
                 return;
@@ -5509,7 +5509,7 @@ namespace Game.Scripts.UI
                 _requestCountdownViews.Remove(keysToRemove[i]);
         }
 
-        private static string BuildPendingProductionKey(BuildingPlacementSystem.PendingProductionUiEntry entry)
+        private static string BuildPendingProductionKey(BuildingUiQuerySystem.PendingProductionUiEntry entry)
         {
             string prefabKey = entry.Prefab != null ? entry.Prefab.name : "null";
             return $"{entry.BuildingId}:{prefabKey}:{entry.StartedAt:F3}:{entry.ReadyAt:F3}";

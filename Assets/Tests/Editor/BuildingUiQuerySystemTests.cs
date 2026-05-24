@@ -21,7 +21,7 @@ public sealed class BuildingUiQuerySystemTests
             };
             try
             {
-                var entries = new List<BuildingPlacementSystem.ProducedUnitUiEntry>();
+                var entries = new List<BuildingUiQuerySystem.ProducedUnitUiEntry>();
 
                 var uiQuery = new BuildingUiQuerySystem();
                 uiQuery.AddPendingProducedUnitEntries(
@@ -59,7 +59,7 @@ public sealed class BuildingUiQuerySystemTests
                 StartedAt = 5f,
                 ReadyAt = 15f
             };
-            var entries = new List<BuildingPlacementSystem.PendingProductionUiEntry>();
+            var entries = new List<BuildingUiQuerySystem.PendingProductionUiEntry>();
 
             var uiQuery = new BuildingUiQuerySystem();
             uiQuery.AddPendingProductionUiEntries(

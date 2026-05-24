@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using SnivelerCode.GpuAnimation.Scripts.Authoring;
 using UnityEngine;
-using ConfiguredSpawnableEntry = BuildingPlacementSystem.ConfiguredSpawnableEntry;
+using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
 
 internal sealed class BuildingDefinitionSystem
 {

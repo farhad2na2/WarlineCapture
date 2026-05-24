@@ -2,13 +2,56 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
-using CampRequestFailure = BuildingPlacementSystem.CampRequestFailure;
-using ConfiguredSpawnableEntry = BuildingPlacementSystem.ConfiguredSpawnableEntry;
-using ConfiguredUnitEntry = BuildingPlacementSystem.ConfiguredUnitEntry;
-using PendingProductionUiEntry = BuildingPlacementSystem.PendingProductionUiEntry;
+using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 
 public sealed class BuildingUiCommandSystem
 {
+    public readonly struct ConfiguredSpawnableEntry
+    {
+        public readonly string DisplayName;
+        public readonly string Description;
+        public readonly GameObject Prefab;
+        public readonly bool CanRequest;
+        public readonly int Price;
+
+        public ConfiguredSpawnableEntry(string displayName, string description, GameObject prefab, bool canRequest, int price)
+        {
+            DisplayName = displayName;
+            Description = description;
+            Prefab = prefab;
+            CanRequest = canRequest;
+            Price = price;
+        }
+    }
+
+    public readonly struct ConfiguredUnitEntry
+    {
+        public readonly string DisplayName;
+        public readonly string Description;
+        public readonly GameObject Prefab;
+        public readonly bool IsVehicle;
+        public readonly bool CanRequest;
+        public readonly int Price;
+
+        public ConfiguredUnitEntry(string displayName, string description, GameObject prefab, bool isVehicle, bool canRequest, int price)
+        {
+            DisplayName = displayName;
+            Description = description;
+            Prefab = prefab;
+            IsVehicle = isVehicle;
+            CanRequest = canRequest;
+            Price = price;
+        }
+    }
+
+    public enum CampRequestFailure
+    {
+        None = 0,
+        NotEnoughMoney = 1,
+        MissingProducerBuilding = 2,
+        InvalidSelection = 3
+    }
+
     public delegate bool TryGetConfiguredSpawnableDelegate(int index, out ConfiguredSpawnableEntry entry);
     public delegate bool TryGetConfiguredUnitDelegate(int index, out ConfiguredUnitEntry entry);
     public delegate CampRequestFailure GetCampRequestFailureDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName);

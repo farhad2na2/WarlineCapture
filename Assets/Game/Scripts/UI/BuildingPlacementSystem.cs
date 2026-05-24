@@ -4,87 +4,16 @@ using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
+using CampRequestFailure = BuildingUiCommandSystem.CampRequestFailure;
+using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
+using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
+using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
+using ProducedUnitUiEntry = BuildingUiQuerySystem.ProducedUnitUiEntry;
 
 public sealed class BuildingPlacementSystem
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-
-    public readonly struct ProducedUnitUiEntry
-    {
-        public readonly Entity Unit;
-        public readonly GameObject Prefab;
-        public readonly bool IsReady;
-        public readonly float Progress01;
-
-        public ProducedUnitUiEntry(Entity unit, GameObject prefab, bool isReady, float progress01)
-        {
-            Unit = unit;
-            Prefab = prefab;
-            IsReady = isReady;
-            Progress01 = progress01;
-        }
-    }
-
-    public readonly struct PendingProductionUiEntry
-    {
-        public readonly int BuildingId;
-        public readonly GameObject Prefab;
-        public readonly float RemainingSeconds;
-        public readonly float DurationSeconds;
-        public readonly float Progress01;
-        public readonly float StartedAt;
-        public readonly float ReadyAt;
-
-        public PendingProductionUiEntry(int buildingId, GameObject prefab, float remainingSeconds, float durationSeconds, float progress01, float startedAt, float readyAt)
-        {
-            BuildingId = buildingId;
-            Prefab = prefab;
-            RemainingSeconds = remainingSeconds;
-            DurationSeconds = durationSeconds;
-            Progress01 = progress01;
-            StartedAt = startedAt;
-            ReadyAt = readyAt;
-        }
-    }
-
-    public readonly struct ConfiguredSpawnableEntry
-    {
-        public readonly string DisplayName;
-        public readonly string Description;
-        public readonly GameObject Prefab;
-        public readonly bool CanRequest;
-        public readonly int Price;
-
-        public ConfiguredSpawnableEntry(string displayName, string description, GameObject prefab, bool canRequest, int price)
-        {
-            DisplayName = displayName;
-            Description = description;
-            Prefab = prefab;
-            CanRequest = canRequest;
-            Price = price;
-        }
-    }
-
-    public readonly struct ConfiguredUnitEntry
-    {
-        public readonly string DisplayName;
-        public readonly string Description;
-        public readonly GameObject Prefab;
-        public readonly bool IsVehicle;
-        public readonly bool CanRequest;
-        public readonly int Price;
-
-        public ConfiguredUnitEntry(string displayName, string description, GameObject prefab, bool isVehicle, bool canRequest, int price)
-        {
-            DisplayName = displayName;
-            Description = description;
-            Prefab = prefab;
-            IsVehicle = isVehicle;
-            CanRequest = canRequest;
-            Price = price;
-        }
-    }
 
     public readonly struct FactionResourceEconomySnapshot
     {
@@ -107,14 +36,6 @@ public sealed class BuildingPlacementSystem
             FuelBarrelsPerDay = fuelBarrelsPerDay;
             ResourceBuildingCount = resourceBuildingCount;
         }
-    }
-
-    public enum CampRequestFailure
-    {
-        None = 0,
-        NotEnoughMoney = 1,
-        MissingProducerBuilding = 2,
-        InvalidSelection = 3
     }
 
     public enum FactionUnitProductionResultCode

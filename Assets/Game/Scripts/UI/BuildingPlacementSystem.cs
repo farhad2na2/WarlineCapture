@@ -69,6 +69,7 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
     private readonly BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem = new();
     private readonly BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem = new();
+    private readonly BuildingPlacementRuntimeTickSystem _buildingPlacementRuntimeTickSystem = new();
     private readonly RuntimeResourceSystem _runtimeResourceSystem = new();
     private readonly RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem = new();
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
@@ -121,6 +122,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingUiCommandSystem BuildingUiCommandSystem => _buildingUiCommandSystem;
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
+    internal BuildingPlacementRuntimeTickSystem RuntimeTickSystem => _buildingPlacementRuntimeTickSystem;
     public BuildingSelectionClickSystem BuildingSelectionClickSystem => _buildingSelectionClickSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
@@ -665,145 +667,41 @@ public sealed class BuildingPlacementSystem
 
     public void Update()
     {
-        double startTime = Time.realtimeSinceStartupAsDouble;
-        double afterProductions = startTime;
-        double afterResources = startTime;
-        double afterHaulers = startTime;
-        double afterResourceVisuals = startTime;
-        double afterReservations = startTime;
-        double afterDestroyed = startTime;
-        double afterDoors = startTime;
-        double afterMarkers = startTime;
-        double afterInputOutline = startTime;
-        double afterInputMouse = startTime;
-        double afterInputUi = startTime;
-        double afterInputBuildingClick = startTime;
-        double afterInput = startTime;
-        try
-        {
-        ProcessPendingProductions();
-        afterProductions = Time.realtimeSinceStartupAsDouble;
-        UpdateResourceProduction();
-        afterResources = Time.realtimeSinceStartupAsDouble;
-        UpdateResourceHaulers();
-        afterHaulers = Time.realtimeSinceStartupAsDouble;
-        UpdateBuildingResourceVisuals();
-        afterResourceVisuals = Time.realtimeSinceStartupAsDouble;
-        CleanupRecentSpawnReservations();
-        afterReservations = Time.realtimeSinceStartupAsDouble;
-        SyncDestroyedRuntimeBuildingCombatEntities();
-        UpdateDestroyedBuildings();
-        afterDestroyed = Time.realtimeSinceStartupAsDouble;
-        _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), Time.deltaTime);
-        afterDoors = Time.realtimeSinceStartupAsDouble;
-        _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility);
-        afterMarkers = Time.realtimeSinceStartupAsDouble;
-        UpdateBuildingRuntimeBoundary();
+        _buildingPlacementRuntimeTickSystem.Update(CreateBuildingPlacementRuntimeTickContext());
+    }
 
-        if (worldCamera == null)
-            return;
-
-        bool hasPointer = GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer);
-        afterInputMouse = Time.realtimeSinceStartupAsDouble;
-        if (!hasPointer)
-            return;
-
-        PlacementState activePlacement = _buildingPlacementLifecycleSystem.ActivePlacement;
-        if (activePlacement != null)
-        {
-            _buildingPlacementInputSystem.UpdateActivePlacementPointer(
-                activePlacement,
+    internal BuildingPlacementRuntimeTickSystem.Context CreateBuildingPlacementRuntimeTickContext()
+    {
+        return new BuildingPlacementRuntimeTickSystem.Context(
+            ProcessPendingProductions,
+            UpdateResourceProduction,
+            UpdateResourceHaulers,
+            UpdateBuildingResourceVisuals,
+            CleanupRecentSpawnReservations,
+            SyncDestroyedRuntimeBuildingCombatEntities,
+            UpdateDestroyedBuildings,
+            () => _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), Time.deltaTime),
+            () => _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility),
+            UpdateBuildingRuntimeBoundary,
+            () => worldCamera,
+            () => _buildingPlacementLifecycleSystem.ActivePlacement,
+            (placement, pointer) => _buildingPlacementInputSystem.UpdateActivePlacementPointer(
+                placement,
                 pointer,
-                CreateActivePlacementPointerContext());
-            afterInput = Time.realtimeSinceStartupAsDouble;
-            afterInputOutline = afterInput;
-            afterInputUi = afterInput;
-            afterInputBuildingClick = afterInput;
-            return;
-        }
-
-        if (!_runtimeGameplayStateSystem.PlayRequested)
-        {
-            _buildingPlacementPreviewSystem.HideOutline();
-            afterInputOutline = Time.realtimeSinceStartupAsDouble;
-            afterInput = afterInputOutline;
-            afterInputUi = afterInput;
-            afterInputBuildingClick = afterInput;
-            return;
-        }
-
-        if (!_runtimeGameplayStateSystem.BuildModeActive)
-            _buildingPlacementPreviewSystem.HideOutline();
-        afterInputOutline = Time.realtimeSinceStartupAsDouble;
-
-        if (pointer.WasPressedThisFrame)
-        {
-            Vector2 pointerPosition = pointer.Position;
-            bool ignoreBecauseCommandUiPressed = _mainMenuPlayUi != null && _mainMenuPlayUi.ShouldIgnoreBuildingSelectionThisFrame();
-            bool overGameplayUi = IsPointerOverAnyGameplayUi(pointerPosition);
-            bool overUnitCommandUi = false;
-            string unitCommandSource = null;
-            if (!ignoreBecauseCommandUiPressed && !overGameplayUi && HasActiveBuilding && _mainMenuPlayUi != null)
-                overUnitCommandUi = _mainMenuPlayUi.IsPointerOverUnitCommandUi(pointerPosition, out unitCommandSource);
-            afterInputUi = Time.realtimeSinceStartupAsDouble;
-
-            if (!ignoreBecauseCommandUiPressed && !overGameplayUi && overUnitCommandUi && HasActiveBuilding)
-            {
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                afterInput = Time.realtimeSinceStartupAsDouble;
-                afterInputBuildingClick = afterInput;
-                return;
-            }
-
-            if (!ignoreBecauseCommandUiPressed && !overGameplayUi && !overUnitCommandUi)
-            {
-                _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition);
-                afterInputBuildingClick = Time.realtimeSinceStartupAsDouble;
-            }
-        }
-        afterInput = Time.realtimeSinceStartupAsDouble;
-        if (afterInputUi < afterInputOutline)
-            afterInputUi = afterInputOutline;
-        if (afterInputBuildingClick < afterInputUi)
-            afterInputBuildingClick = afterInputUi;
-        }
-        finally
-        {
-            double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
-            if (EnableBuildingPlacementDiagnostics && elapsed >= FreezeLogThresholdSeconds)
-            {
-                if (afterProductions < startTime) afterProductions = startTime;
-                if (afterResources < afterProductions) afterResources = afterProductions;
-                if (afterHaulers < afterResources) afterHaulers = afterResources;
-                if (afterResourceVisuals < afterHaulers) afterResourceVisuals = afterHaulers;
-                if (afterReservations < afterResourceVisuals) afterReservations = afterResourceVisuals;
-                if (afterDestroyed < afterReservations) afterDestroyed = afterReservations;
-                if (afterDoors < afterDestroyed) afterDoors = afterDestroyed;
-                if (afterMarkers < afterDoors) afterMarkers = afterDoors;
-                if (afterInputOutline < afterMarkers) afterInputOutline = afterMarkers;
-                if (afterInputMouse < afterInputOutline) afterInputMouse = afterInputOutline;
-                if (afterInputUi < afterInputMouse) afterInputUi = afterInputMouse;
-                if (afterInputBuildingClick < afterInputUi) afterInputBuildingClick = afterInputUi;
-                if (afterInput < afterInputBuildingClick) afterInput = afterInputBuildingClick;
-
-                Debug.Log(
-                    $"[BuildingPlacementDiag] frame={Time.frameCount} total={elapsed * 1000d:F1}ms " +
-                    $"productions={(afterProductions - startTime) * 1000d:F1}ms " +
-                    $"resources={(afterResources - afterProductions) * 1000d:F1}ms " +
-                    $"haulers={(afterHaulers - afterResources) * 1000d:F1}ms " +
-                    $"resourceVisuals={(afterResourceVisuals - afterHaulers) * 1000d:F1}ms " +
-                    $"reservations={(afterReservations - afterResourceVisuals) * 1000d:F1}ms " +
-                    $"destroyed={(afterDestroyed - afterReservations) * 1000d:F1}ms " +
-                    $"doors={(afterDoors - afterDestroyed) * 1000d:F1}ms " +
-                    $"markers={(afterMarkers - afterDoors) * 1000d:F1}ms " +
-                    $"input={(afterInput - afterMarkers) * 1000d:F1}ms " +
-                    $"inputOutline={(afterInputOutline - afterMarkers) * 1000d:F1}ms " +
-                    $"inputMouse={(afterInputMouse - afterInputOutline) * 1000d:F1}ms " +
-                    $"inputUi={(afterInputUi - afterInputMouse) * 1000d:F1}ms " +
-                    $"inputBuilding={(afterInputBuildingClick - afterInputUi) * 1000d:F1}ms " +
-                    $"buildings={_runtimeBuildings.Count}");
-            }
-        }
+                CreateActivePlacementPointerContext()),
+            () => _runtimeGameplayStateSystem.PlayRequested,
+            () => _runtimeGameplayStateSystem.BuildModeActive,
+            _buildingPlacementPreviewSystem.HideOutline,
+            () => _mainMenuPlayUi != null && _mainMenuPlayUi.ShouldIgnoreBuildingSelectionThisFrame(),
+            IsPointerOverAnyGameplayUi,
+            () => HasActiveBuilding,
+            IsPointerOverUnitCommandUi,
+            () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
+            pointerPosition => _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition),
+            () => _runtimeBuildings.Count,
+            EnableBuildingPlacementDiagnostics,
+            FreezeLogThresholdSeconds,
+            Debug.Log);
     }
 
     private void UpdateBuildingRuntimeBoundary()
@@ -2470,6 +2368,11 @@ public sealed class BuildingPlacementSystem
     private bool IsPointerOverAnyGameplayUi(Vector2 screenPosition)
     {
         return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverAnyGameplayUi(screenPosition, out _);
+    }
+
+    private bool IsPointerOverUnitCommandUi(Vector2 screenPosition)
+    {
+        return _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverUnitCommandUi(screenPosition, out _);
     }
 
 }

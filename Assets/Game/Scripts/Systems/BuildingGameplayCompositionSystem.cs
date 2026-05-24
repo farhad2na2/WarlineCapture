@@ -109,7 +109,8 @@ internal sealed class BuildingGameplayCompositionSystem
             placementFacade.BuildingSelectionClickSystem,
             placementFacade.CreateBuildingSelectionClickContext(),
             runtimeUpdate,
-            new BuildingRuntimeUpdateSystem.Context(placementFacade.Update),
+            new BuildingRuntimeUpdateSystem.Context(
+                () => placementFacade.RuntimeTickSystem.Update(placementFacade.CreateBuildingPlacementRuntimeTickContext())),
             placementFacade.RuntimeCitySpawnSystem,
             placementFacade.CreateRuntimeCitySpawnContext(),
             placementFacade.BuildingUiCommandSystem,

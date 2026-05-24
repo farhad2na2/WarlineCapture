@@ -4,16 +4,16 @@ public sealed class BuildingRuntimeUpdateSystem
 {
     public readonly struct Context
     {
-        public readonly Action UpdateBuildingRuntime;
+        public readonly Action UpdateBuildingRuntimeTick;
 
-        public Context(Action updateBuildingRuntime)
+        public Context(Action updateBuildingRuntimeTick)
         {
-            UpdateBuildingRuntime = updateBuildingRuntime;
+            UpdateBuildingRuntimeTick = updateBuildingRuntimeTick;
         }
     }
 
     public void Update(Context context)
     {
-        context.UpdateBuildingRuntime?.Invoke();
+        context.UpdateBuildingRuntimeTick?.Invoke();
     }
 }

@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -25,6 +26,9 @@ public static class WarlineCaptureGameUiSceneBuilder
     private const string MainMenuPrefabPath = ContentFolder + "/SCN02_MainMenuContent.prefab";
     private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
     private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
+    private const string CaptureFolder = "Design/AgentReports/Captures/GameUI";
+    private const int CaptureWidth = 2400;
+    private const int CaptureHeight = 1080;
 
     private static readonly Rect StretchRegion = new(0f, 0f, 2400f, 1080f);
 
@@ -155,6 +159,52 @@ public static class WarlineCaptureGameUiSceneBuilder
         BuildStep7();
         ValidateStep8();
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP8_BUILT scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Capture GameUI Scene Step 9")]
+    public static void CaptureStep9()
+    {
+        ValidateStep8();
+
+        Scene scene = EditorSceneManager.GetActiveScene();
+        Transform root = scene.GetRootGameObjects()[0].transform;
+        Camera camera = root.Find(CameraName)?.GetComponent<Camera>();
+        Transform canvasTransform = root.Find(CanvasName);
+        Transform shellTransform = canvasTransform?.Find(ShellRootName);
+        WarlineCaptureShellView shellView = shellTransform?.GetComponent<WarlineCaptureShellView>();
+        WarlineCaptureShellContentPresenterView contentPresenter = shellTransform?.GetComponent<WarlineCaptureShellContentPresenterView>();
+
+        if (camera == null || shellView == null || contentPresenter == null)
+            throw new InvalidOperationException("GameUI Step 9 capture requires camera, shell view, and content presenter.");
+
+        Directory.CreateDirectory(CaptureFolder);
+
+        PrepareLoadingStable(shellView, contentPresenter);
+        CaptureCamera(camera, $"{CaptureFolder}/GameUI_Loading_Stable.png");
+
+        PrepareMainMenuStable(shellView, contentPresenter);
+        CaptureCamera(camera, $"{CaptureFolder}/GameUI_MainMenu_Stable.png");
+
+        PrepareMatchHudStable(shellView, contentPresenter);
+        CaptureCamera(camera, $"{CaptureFolder}/GameUI_MatchHud_Stable.png");
+
+        PrepareResultPopupStable(shellView, contentPresenter);
+        CaptureCamera(camera, $"{CaptureFolder}/GameUI_ResultPopup_Stable.png");
+
+        PrepareMainMenuStable(shellView, contentPresenter);
+        CaptureCamera(camera, $"{CaptureFolder}/GameUI_ReturnedMainMenu_Stable.png");
+
+        AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
+        ValidateStep9Captures();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP9_CAPTURED folder={CaptureFolder}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 9")]
+    public static void BuildStep9()
+    {
+        BuildStep8();
+        CaptureStep9();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP9_BUILT scene={ScenePath}");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
@@ -416,6 +466,17 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidatePopupLayout(canvasRect, shellView, contentPresenter);
 
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP8_VALIDATED scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Validate GameUI Captures Step 9")]
+    public static void ValidateStep9Captures()
+    {
+        ValidateCaptureFile("GameUI_Loading_Stable.png");
+        ValidateCaptureFile("GameUI_MainMenu_Stable.png");
+        ValidateCaptureFile("GameUI_MatchHud_Stable.png");
+        ValidateCaptureFile("GameUI_ResultPopup_Stable.png");
+        ValidateCaptureFile("GameUI_ReturnedMainMenu_Stable.png");
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP9_VALIDATED captures=5 folder={CaptureFolder}");
     }
 
     private static void CreateEventSystem(Transform parent)
@@ -773,6 +834,156 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException("PopupFrame must be centered in PopupLayer.");
     }
 
+    private static void PrepareLoadingStable(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        ClearAllRegionContent(shellView);
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.ShowLoading }
+        });
+        ShowRegion(shellView, WarlineCaptureShellRegionId.LoadingLayer);
+        HideRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.RightRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.FooterRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private static void PrepareMainMenuStable(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        ClearAllRegionContent(shellView);
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu }
+        });
+        HideRegion(shellView, WarlineCaptureShellRegionId.LoadingLayer);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.RightRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.FooterRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private static void PrepareMatchHudStable(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        ClearAllRegionContent(shellView);
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+        HideRegion(shellView, WarlineCaptureShellRegionId.LoadingLayer);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.RightRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.FooterRegion);
+        HideRegion(shellView, WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private static void PrepareResultPopupStable(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        PrepareMatchHudStable(shellView, contentPresenter);
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.ShowPopup }
+        });
+        ShowRegion(shellView, WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private static void ClearAllRegionContent(WarlineCaptureShellView shellView)
+    {
+        foreach (ShellRegionDefinition definition in RegionDefinitions)
+        {
+            if (!shellView.TryGetRegion(definition.Id, out WarlineCaptureShellRegionView region) || region.ContentRoot == null)
+                continue;
+
+            ClearChildren(region.ContentRoot);
+        }
+    }
+
+    private static void ShowRegion(WarlineCaptureShellView shellView, WarlineCaptureShellRegionId regionId)
+    {
+        WarlineCaptureShellRegionView region = RequireRegion(shellView, regionId);
+        region.ResetVisualState();
+        region.CanvasGroup.alpha = 1f;
+        region.RegionRoot.localScale = Vector3.one;
+    }
+
+    private static void HideRegion(WarlineCaptureShellView shellView, WarlineCaptureShellRegionId regionId)
+    {
+        WarlineCaptureShellRegionView region = RequireRegion(shellView, regionId);
+        region.ResetVisualState();
+        region.CanvasGroup.alpha = 0f;
+        region.CanvasGroup.interactable = false;
+        region.CanvasGroup.blocksRaycasts = false;
+    }
+
+    private static void CaptureCamera(Camera camera, string relativePath)
+    {
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
+
+        RenderTexture renderTexture = null;
+        Texture2D texture = null;
+        RenderTexture previousActive = RenderTexture.active;
+        RenderTexture previousTarget = camera.targetTexture;
+        float previousAspect = camera.aspect;
+
+        try
+        {
+            renderTexture = new RenderTexture(CaptureWidth, CaptureHeight, 24, RenderTextureFormat.ARGB32)
+            {
+                antiAliasing = 1
+            };
+            renderTexture.Create();
+
+            camera.targetTexture = renderTexture;
+            camera.aspect = CaptureWidth / (float)CaptureHeight;
+            RenderTexture.active = renderTexture;
+            GL.Clear(true, true, camera.backgroundColor);
+            Canvas.ForceUpdateCanvases();
+            camera.Render();
+
+            texture = new Texture2D(CaptureWidth, CaptureHeight, TextureFormat.RGBA32, false);
+            texture.ReadPixels(new Rect(0, 0, CaptureWidth, CaptureHeight), 0, 0);
+            texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
+            File.WriteAllBytes(fullPath, texture.EncodeToPNG());
+            Debug.Log($"WARLINECAPTURE_GAMEUI_STEP9_CAPTURE path={relativePath}");
+        }
+        finally
+        {
+            camera.targetTexture = previousTarget;
+            camera.aspect = previousAspect;
+            RenderTexture.active = previousActive;
+            if (texture != null)
+                UnityEngine.Object.DestroyImmediate(texture);
+            if (renderTexture != null)
+                UnityEngine.Object.DestroyImmediate(renderTexture);
+        }
+    }
+
+    private static void ValidateCaptureFile(string fileName)
+    {
+        string relativePath = $"{CaptureFolder}/{fileName}";
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
+        if (!File.Exists(fullPath))
+            throw new InvalidOperationException($"Missing GameUI Step 9 capture {relativePath}.");
+
+        FileInfo info = new(fullPath);
+        if (info.Length <= 1024)
+            throw new InvalidOperationException($"GameUI Step 9 capture is unexpectedly small: {relativePath} bytes={info.Length}.");
+    }
+
     private static void ValidateRegionContent(
         WarlineCaptureShellView shellView,
         WarlineCaptureShellRegionId regionId,
@@ -788,6 +999,12 @@ public static class WarlineCaptureGameUiSceneBuilder
 
         ValidateRectInside(regionRect, canvasBounds, $"{regionId} region", 0.5f);
         ValidateRectInside(contentRect, regionRect, $"{regionId}/{expectedChildName}", 1f);
+    }
+
+    private static void ClearChildren(Transform parent)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+            UnityEngine.Object.DestroyImmediate(parent.GetChild(i).gameObject);
     }
 
     private static WarlineCaptureShellRegionView RequireRegion(WarlineCaptureShellView shellView, WarlineCaptureShellRegionId regionId)

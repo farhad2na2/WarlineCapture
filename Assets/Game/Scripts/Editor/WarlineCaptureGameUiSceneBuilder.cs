@@ -149,6 +149,14 @@ public static class WarlineCaptureGameUiSceneBuilder
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP7_BUILT scene={ScenePath}");
     }
 
+    [MenuItem("WarlineCapture/UI/Build GameUI Scene Step 8")]
+    public static void BuildStep8()
+    {
+        BuildStep7();
+        ValidateStep8();
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP8_BUILT scene={ScenePath}");
+    }
+
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
     public static void ValidateStep1()
     {
@@ -387,6 +395,27 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidateContentPresenterInstalls(shellView, contentPresenter);
 
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP7_VALIDATED scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 8")]
+    public static void ValidateStep8()
+    {
+        ValidateStep7();
+
+        Scene scene = EditorSceneManager.GetActiveScene();
+        Transform root = scene.GetRootGameObjects()[0].transform;
+        Transform canvasTransform = root.Find(CanvasName);
+        Transform shellTransform = canvasTransform.Find(ShellRootName);
+        RectTransform canvasRect = canvasTransform.GetComponent<RectTransform>();
+        WarlineCaptureShellView shellView = shellTransform.GetComponent<WarlineCaptureShellView>();
+        WarlineCaptureShellContentPresenterView contentPresenter = shellTransform.GetComponent<WarlineCaptureShellContentPresenterView>();
+
+        ValidateShellRegionLayout(canvasRect, shellView);
+        ValidateMenuContentLayout(canvasRect, shellView, contentPresenter);
+        ValidateMatchHudContentLayout(canvasRect, shellView, contentPresenter);
+        ValidatePopupLayout(canvasRect, shellView, contentPresenter);
+
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP8_VALIDATED scene={ScenePath}");
     }
 
     private static void CreateEventSystem(Transform parent)
@@ -644,6 +673,197 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"Missing shell region {regionId}.");
         if (region.ContentRoot.childCount != 0)
             throw new InvalidOperationException($"{regionId} must be empty after presenter install.");
+    }
+
+    private static void ValidateShellRegionLayout(RectTransform canvasRect, WarlineCaptureShellView shellView)
+    {
+        Rect canvasBounds = DesignCanvasBounds();
+        List<(WarlineCaptureShellRegionId Id, Rect Rect)> majorRegions = new();
+
+        foreach (ShellRegionDefinition definition in RegionDefinitions)
+        {
+            if (!shellView.TryGetRegion(definition.Id, out WarlineCaptureShellRegionView region) || region.RegionRoot == null)
+                throw new InvalidOperationException($"Missing shell region {definition.Id} for Step 8 layout validation.");
+
+            Rect actual = GetReferenceTopLeftRect(region.RegionRoot);
+            Rect expected = definition.IsStretch ? canvasBounds : definition.Rect;
+            ValidateRectNear(actual, expected, $"{definition.Name} rect");
+            ValidateRectInside(actual, canvasBounds, $"{definition.Name} rect", 0.5f);
+
+            if (!definition.IsStretch)
+                majorRegions.Add((definition.Id, actual));
+        }
+
+        for (int i = 0; i < majorRegions.Count; i++)
+        {
+            for (int j = i + 1; j < majorRegions.Count; j++)
+            {
+                Rect overlap = RectIntersection(majorRegions[i].Rect, majorRegions[j].Rect);
+                if (overlap.width > 0.5f && overlap.height > 0.5f)
+                    throw new InvalidOperationException($"{majorRegions[i].Id} overlaps {majorRegions[j].Id} by {overlap.width:0.##}x{overlap.height:0.##}.");
+            }
+        }
+    }
+
+    private static void ValidateMenuContentLayout(
+        RectTransform canvasRect,
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu }
+        });
+
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.HeaderRegion, canvasRect, "HeaderContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MiddleRegion, canvasRect, "MiddleContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
+        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
+
+        Rect headerBefore = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion).RegionRoot);
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu },
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.SwapMenuMiddle }
+        });
+        Rect headerAfter = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion).RegionRoot);
+        ValidateRectNear(headerAfter, headerBefore, "Header region after menu middle swap");
+    }
+
+    private static void ValidateMatchHudContentLayout(
+        RectTransform canvasRect,
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
+        });
+
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.HeaderRegion, canvasRect, "HeaderContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.FooterRegion, canvasRect, "FooterContent");
+        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.MiddleRegion);
+    }
+
+    private static void ValidatePopupLayout(
+        RectTransform canvasRect,
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.ShowPopup }
+        });
+
+        WarlineCaptureShellRegionView popupRegion = RequireRegion(shellView, WarlineCaptureShellRegionId.PopupLayer);
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.PopupLayer, canvasRect, "POP05_MissionResultPopup");
+
+        RectTransform popupRoot = popupRegion.ContentRoot.GetChild(0).GetComponent<RectTransform>();
+        RectTransform popupFrame = popupRoot.Find("PopupFrame") as RectTransform;
+        if (popupFrame == null)
+            throw new InvalidOperationException("Mission result popup must contain PopupFrame.");
+        if (popupFrame.anchorMin != new Vector2(0.5f, 0.5f) || popupFrame.anchorMax != new Vector2(0.5f, 0.5f))
+            throw new InvalidOperationException("PopupFrame must be center-anchored.");
+        if (popupFrame.pivot != new Vector2(0.5f, 0.5f))
+            throw new InvalidOperationException("PopupFrame pivot must be centered for scale-in popup motion.");
+        if (popupFrame.anchoredPosition.sqrMagnitude > 0.25f)
+            throw new InvalidOperationException("PopupFrame must be centered in PopupLayer.");
+    }
+
+    private static void ValidateRegionContent(
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellRegionId regionId,
+        RectTransform canvasRect,
+        string expectedChildName)
+    {
+        WarlineCaptureShellRegionView region = RequireRegion(shellView, regionId);
+        RequireRegionChild(shellView, regionId, expectedChildName);
+
+        Rect regionRect = GetReferenceTopLeftRect(region.RegionRoot);
+        Rect contentRect = GetReferenceTopLeftRect(region.ContentRoot.GetChild(0).GetComponent<RectTransform>());
+        Rect canvasBounds = DesignCanvasBounds();
+
+        ValidateRectInside(regionRect, canvasBounds, $"{regionId} region", 0.5f);
+        ValidateRectInside(contentRect, regionRect, $"{regionId}/{expectedChildName}", 1f);
+    }
+
+    private static WarlineCaptureShellRegionView RequireRegion(WarlineCaptureShellView shellView, WarlineCaptureShellRegionId regionId)
+    {
+        if (!shellView.TryGetRegion(regionId, out WarlineCaptureShellRegionView region) || region == null)
+            throw new InvalidOperationException($"Missing shell region {regionId}.");
+        return region;
+    }
+
+    private static Rect GetReferenceTopLeftRect(RectTransform rect)
+    {
+        if (rect == null)
+            return Rect.zero;
+        if (rect.name == CanvasName)
+            return DesignCanvasBounds();
+
+        RectTransform parent = rect.parent as RectTransform;
+        Rect parentRect = parent == null ? DesignCanvasBounds() : GetReferenceTopLeftRect(parent);
+
+        float width;
+        float height;
+        float x;
+        float y;
+
+        if (rect.anchorMin == Vector2.zero && rect.anchorMax == Vector2.one)
+        {
+            x = parentRect.x + rect.offsetMin.x;
+            y = parentRect.y - rect.offsetMax.y;
+            width = parentRect.width - rect.offsetMin.x + rect.offsetMax.x;
+            height = parentRect.height - rect.offsetMin.y + rect.offsetMax.y;
+            return new Rect(x, y, width, height);
+        }
+
+        width = rect.rect.width;
+        height = rect.rect.height;
+        float anchorX = parentRect.x + parentRect.width * rect.anchorMin.x;
+        float anchorY = parentRect.y + parentRect.height * (1f - rect.anchorMax.y);
+        x = anchorX + rect.anchoredPosition.x - rect.pivot.x * width;
+        y = anchorY - rect.anchoredPosition.y - (1f - rect.pivot.y) * height;
+        return new Rect(x, y, width, height);
+    }
+
+    private static Rect DesignCanvasBounds() => new(0f, 0f, 2400f, 1080f);
+
+    private static void ValidateRectInside(Rect inner, Rect outer, string name, float tolerance)
+    {
+        if (inner.xMin < outer.xMin - tolerance ||
+            inner.yMin < outer.yMin - tolerance ||
+            inner.xMax > outer.xMax + tolerance ||
+            inner.yMax > outer.yMax + tolerance)
+        {
+            throw new InvalidOperationException($"{name} must stay inside bounds. inner={inner} outer={outer}");
+        }
+    }
+
+    private static void ValidateRectNear(Rect actual, Rect expected, string name)
+    {
+        const float tolerance = 0.5f;
+        if (Mathf.Abs(actual.x - expected.x) > tolerance ||
+            Mathf.Abs(actual.y - expected.y) > tolerance ||
+            Mathf.Abs(actual.width - expected.width) > tolerance ||
+            Mathf.Abs(actual.height - expected.height) > tolerance)
+        {
+            throw new InvalidOperationException($"{name} changed unexpectedly. actual={actual} expected={expected}");
+        }
+    }
+
+    private static Rect RectIntersection(Rect a, Rect b)
+    {
+        float xMin = Mathf.Max(a.xMin, b.xMin);
+        float yMin = Mathf.Max(a.yMin, b.yMin);
+        float xMax = Mathf.Min(a.xMax, b.xMax);
+        float yMax = Mathf.Min(a.yMax, b.yMax);
+        if (xMax <= xMin || yMax <= yMin)
+            return Rect.zero;
+        return Rect.MinMaxRect(xMin, yMin, xMax, yMax);
     }
 
     private readonly struct ShellRegionDefinition

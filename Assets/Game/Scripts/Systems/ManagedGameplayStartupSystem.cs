@@ -11,7 +11,6 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly DayNightSystem DayNight;
         public readonly FactionVisualSettings FactionVisuals;
         public readonly RoadBuildSystem RoadBuild;
-        public readonly BuildingPlacementSystem BuildingPlacement;
         public readonly BuildingSelectionClickSystem BuildingSelectionClick;
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawn;
@@ -24,6 +23,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly System.Action<MainMenuPlayUI, RTSSelectionSystem> BindBuildingMainMenu;
         public readonly System.Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> BindBuildingGameplayFeatures;
+        public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
         public readonly RTSSelectionSystem Selection;
@@ -35,7 +35,6 @@ internal sealed class ManagedGameplayStartupSystem
             DayNightSystem dayNight,
             FactionVisualSettings factionVisuals,
             RoadBuildSystem roadBuild,
-            BuildingPlacementSystem buildingPlacement,
             BuildingSelectionClickSystem buildingSelectionClick,
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
@@ -48,6 +47,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             System.Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu,
             System.Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
+            System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
             RTSSelectionSystem selection,
@@ -58,7 +58,6 @@ internal sealed class ManagedGameplayStartupSystem
             DayNight = dayNight;
             FactionVisuals = factionVisuals;
             RoadBuild = roadBuild;
-            BuildingPlacement = buildingPlacement;
             BuildingSelectionClick = buildingSelectionClick;
             BuildingSelectionClickContext = buildingSelectionClickContext;
             BuildingRuntimeCitySpawn = buildingRuntimeCitySpawn;
@@ -71,6 +70,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             BindBuildingMainMenu = bindBuildingMainMenu;
             BindBuildingGameplayFeatures = bindBuildingGameplayFeatures;
+            DisposeBuildingGameplay = disposeBuildingGameplay;
             BuildingRuntimeUpdate = buildingRuntimeUpdate;
             BuildingRuntimeUpdateContext = buildingRuntimeUpdateContext;
             Selection = selection;
@@ -152,7 +152,6 @@ internal sealed class ManagedGameplayStartupSystem
             dayNight,
             factionVisuals,
             roadBuild,
-            building.PlacementFacade,
             building.SelectionClick,
             building.SelectionClickContext,
             building.RuntimeCitySpawn,
@@ -165,6 +164,7 @@ internal sealed class ManagedGameplayStartupSystem
             building.InteractionContext,
             building.BindMainMenu,
             building.BindGameplayFeatures,
+            building.Dispose,
             building.RuntimeUpdate,
             building.RuntimeUpdateContext,
             selection,

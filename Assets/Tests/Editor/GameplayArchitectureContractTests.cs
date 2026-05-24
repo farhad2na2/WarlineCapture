@@ -129,9 +129,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("Building runtime updates inside that loop must go through `BuildingRuntimeUpdateSystem`", contract);
         StringAssert.Contains("`BuildingRuntimeUpdateSystem` ownership and context construction belong in managed composition", contract);
-        StringAssert.Contains("`GameBootstrap` must not expose a public `BuildingPlacementSystem` facade property", contract);
+        StringAssert.Contains("`GameBootstrap` must not hold a public or private `BuildingPlacementSystem` facade", contract);
         StringAssert.Contains("Managed building gameplay composition is owned by `BuildingGameplayCompositionSystem`", contract);
-        StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not reach through `BuildingPlacementSystem`", contract);
+        StringAssert.Contains("Temporary `BuildingPlacementSystem` facade ownership is isolated inside `BuildingGameplayCompositionSystem`", contract);
+        StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`", contract);
@@ -529,12 +530,18 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem", bootstrap);
         StringAssert.Contains("BuildingRuntimeUpdateSystem BuildingRuntimeUpdate", bootstrap);
         StringAssert.Contains("_buildingRuntimeUpdateContext", bootstrap);
+        StringAssert.Contains("_disposeBuildingGameplay", bootstrap);
         StringAssert.Contains("BuildingRuntimeUpdate = managedSystems.BuildingRuntimeUpdate", bootstrap);
+        StringAssert.Contains("_disposeBuildingGameplay = managedSystems.DisposeBuildingGameplay", bootstrap);
         StringAssert.Contains("BuildingRuntimeUpdateSystem BuildingRuntimeUpdate", managedStartup);
+        StringAssert.Contains("System.Action DisposeBuildingGameplay", managedStartup);
         StringAssert.Contains("new BuildingRuntimeUpdateSystem()", buildingComposition);
         StringAssert.Contains("new BuildingRuntimeUpdateSystem.Context(placementFacade.Update)", buildingComposition);
+        StringAssert.Contains("public readonly Action Dispose", buildingComposition);
+        StringAssert.Contains("placementFacade.Dispose", buildingComposition);
         StringAssert.Contains("building.RuntimeUpdate", managedStartup);
         StringAssert.Contains("building.RuntimeUpdateContext", managedStartup);
+        StringAssert.Contains("building.Dispose", managedStartup);
         StringAssert.Contains("_gameplayRuntimeUpdateSystem.Update", bootstrap);
         StringAssert.Contains("_gameplayRuntimeUpdateSystem.LateUpdate", bootstrap);
         StringAssert.Contains("_gameplayRuntimeUpdateSystem.OnGui", bootstrap);
@@ -595,6 +602,8 @@ public sealed class GameplayArchitectureContractTests
             bootstrap.Contains("BuildingPlacement?.BuildingRuntimeUpdateSystem", StringComparison.Ordinal) ||
             bootstrap.Contains("CreateBuildingRuntimeUpdateContext", StringComparison.Ordinal) ||
             bootstrap.Contains("public BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
+            bootstrap.Contains("private BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
+            bootstrap.Contains("BuildingPlacement = managedSystems.BuildingPlacement", StringComparison.Ordinal) ||
             placement.Contains("BuildingRuntimeUpdateSystem", StringComparison.Ordinal) ||
             placement.Contains("CreateBuildingRuntimeUpdateContext", StringComparison.Ordinal),
             "BuildingRuntimeUpdateSystem ownership/context construction belongs in managed composition, not BuildingPlacementSystem.");
@@ -746,15 +755,19 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_buildingGameplayCompositionSystem.BindSelection", startup);
         StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
         StringAssert.Contains("_buildingGameplayCompositionSystem.BindCitizenPopulation", startup);
+        StringAssert.Contains("DisposeBuildingGameplay", startup);
         StringAssert.Contains("roadBuild.BindDependencies(", startup);
         StringAssert.Contains("building.Interaction", startup);
         StringAssert.Contains("building.InteractionContext", startup);
         StringAssert.Contains("selection.BindDependencies(", startup);
         StringAssert.Contains("citizenPopulation.Init(", buildingComposition);
-        StringAssert.Contains("placementFacade.RuntimeResourceSystem", buildingComposition);
-        StringAssert.Contains("placementFacade.RuntimeUnitPrefabSystem", buildingComposition);
-        StringAssert.Contains("placementFacade.CreateRuntimeUnitPrefabContext()", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeResourceSystem", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeUnitPrefabSystem", buildingComposition);
+        StringAssert.Contains("PlacementFacade.CreateRuntimeUnitPrefabContext()", buildingComposition);
         Assert.IsFalse(
+            startup.Contains("BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
+            startup.Contains("BuildingPlacementSystem buildingPlacement", StringComparison.Ordinal) ||
+            startup.Contains("building.PlacementFacade", StringComparison.Ordinal) ||
             startup.Contains("buildingPlacement.", StringComparison.Ordinal),
             "ManagedGameplayStartupSystem must consume BuildingGameplayCompositionSystem.Result instead of reaching through BuildingPlacementSystem.");
         Assert.IsFalse(
@@ -1679,11 +1692,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("RuntimeUnitPrefabSystem", placement);
         StringAssert.Contains("CreateRuntimeUnitPrefabContext", placement);
         StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
-        StringAssert.Contains("placementFacade.RuntimeQuerySystem", buildingComposition);
-        StringAssert.Contains("placementFacade.CreateRuntimeBuildingQueryContext()", buildingComposition);
-        StringAssert.Contains("placementFacade.RuntimeResourceSystem", buildingComposition);
-        StringAssert.Contains("placementFacade.RuntimeUnitPrefabSystem", buildingComposition);
-        StringAssert.Contains("placementFacade.CreateRuntimeUnitPrefabContext()", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeQuerySystem", buildingComposition);
+        StringAssert.Contains("PlacementFacade.CreateRuntimeBuildingQueryContext()", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeResourceSystem", buildingComposition);
+        StringAssert.Contains("PlacementFacade.RuntimeUnitPrefabSystem", buildingComposition);
+        StringAssert.Contains("PlacementFacade.CreateRuntimeUnitPrefabContext()", buildingComposition);
         Assert.IsFalse(
             placement.Contains("_resourceDollars", StringComparison.Ordinal) ||
             placement.Contains("CreateCitizenResourceContext", StringComparison.Ordinal) ||

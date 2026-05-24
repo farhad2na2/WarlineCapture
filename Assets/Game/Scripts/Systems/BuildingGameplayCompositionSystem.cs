@@ -6,7 +6,7 @@ internal sealed class BuildingGameplayCompositionSystem
 {
     public readonly struct Result
     {
-        public readonly BuildingPlacementSystem PlacementFacade;
+        private readonly BuildingPlacementSystem PlacementFacade;
         public readonly BuildingSelectionClickSystem SelectionClick;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
         public readonly BuildingRuntimeUpdateSystem RuntimeUpdate;
@@ -21,6 +21,7 @@ internal sealed class BuildingGameplayCompositionSystem
         public readonly BuildingPlacementInteractionSystem.Context InteractionContext;
         public readonly Action<MainMenuPlayUI, RTSSelectionSystem> BindMainMenu;
         public readonly Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> BindGameplayFeatures;
+        public readonly Action Dispose;
 
         public Result(
             BuildingPlacementSystem placementFacade,
@@ -37,7 +38,8 @@ internal sealed class BuildingGameplayCompositionSystem
             BuildingPlacementInteractionSystem interaction,
             BuildingPlacementInteractionSystem.Context interactionContext,
             Action<MainMenuPlayUI, RTSSelectionSystem> bindMainMenu,
-            Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindGameplayFeatures)
+            Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindGameplayFeatures,
+            Action dispose)
         {
             PlacementFacade = placementFacade;
             SelectionClick = selectionClick;
@@ -54,6 +56,39 @@ internal sealed class BuildingGameplayCompositionSystem
             InteractionContext = interactionContext;
             BindMainMenu = bindMainMenu;
             BindGameplayFeatures = bindGameplayFeatures;
+            Dispose = dispose;
+        }
+
+        public void BindSelection(RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)
+        {
+            PlacementFacade?.BindDependencies(roadBuild, null, dayNight, selection);
+        }
+
+        public CitizenPopulationSystem CreateCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)
+        {
+            var citizenPopulation = new CitizenPopulationSystem();
+            citizenPopulation.Init(
+                PlacementFacade.RuntimeQuerySystem,
+                PlacementFacade.CreateRuntimeBuildingQueryContext(),
+                dayNight,
+                worldCamera,
+                PlacementFacade.RuntimeResourceSystem.CreateCitizenResourceContext(),
+                PlacementFacade.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(PlacementFacade.CreateRuntimeUnitPrefabContext()));
+            return citizenPopulation;
+        }
+
+        public void BindCitizenPopulation(
+            RoadBuildSystem roadBuild,
+            DayNightSystem dayNight,
+            RTSSelectionSystem selection,
+            CitizenPopulationSystem citizenPopulation)
+        {
+            PlacementFacade?.BindDependencies(
+                roadBuild,
+                null,
+                dayNight,
+                selection,
+                citizenPopulationSystem: citizenPopulation);
         }
     }
 
@@ -92,26 +127,18 @@ internal sealed class BuildingGameplayCompositionSystem
                     selection,
                     runtimeGridBlockers,
                     runtimeCitySpawner,
-                    citizenPopulation));
+                    citizenPopulation),
+            placementFacade.Dispose);
     }
 
     public void BindSelection(Result building, RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)
     {
-        building.PlacementFacade?.BindDependencies(roadBuild, null, dayNight, selection);
+        building.BindSelection(roadBuild, dayNight, selection);
     }
 
     public CitizenPopulationSystem CreateCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)
     {
-        var citizenPopulation = new CitizenPopulationSystem();
-        BuildingPlacementSystem placementFacade = building.PlacementFacade;
-        citizenPopulation.Init(
-            placementFacade.RuntimeQuerySystem,
-            placementFacade.CreateRuntimeBuildingQueryContext(),
-            dayNight,
-            worldCamera,
-            placementFacade.RuntimeResourceSystem.CreateCitizenResourceContext(),
-            placementFacade.RuntimeUnitPrefabSystem.CreateCitizenPrefabContext(placementFacade.CreateRuntimeUnitPrefabContext()));
-        return citizenPopulation;
+        return building.CreateCitizenPopulation(dayNight, worldCamera);
     }
 
     public void BindCitizenPopulation(
@@ -121,11 +148,6 @@ internal sealed class BuildingGameplayCompositionSystem
         RTSSelectionSystem selection,
         CitizenPopulationSystem citizenPopulation)
     {
-        building.PlacementFacade?.BindDependencies(
-            roadBuild,
-            null,
-            dayNight,
-            selection,
-            citizenPopulationSystem: citizenPopulation);
+        building.BindCitizenPopulation(roadBuild, dayNight, selection, citizenPopulation);
     }
 }

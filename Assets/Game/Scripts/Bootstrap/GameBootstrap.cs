@@ -81,7 +81,6 @@ public sealed class GameBootstrap : MonoBehaviour
     public UnitImpostorRenderSystem UnitImpostors { get; private set; }
     public CitizenPopulationSystem CitizenPopulation { get; private set; }
     public bool GameplayInitialized { get; private set; }
-    private BuildingPlacementSystem BuildingPlacement { get; set; }
     public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
     private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawn;
     private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext;
@@ -91,6 +90,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private Action<MainMenuPlayUI, RTSSelectionSystem> _bindBuildingMainMenu;
     private Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
+    private Action _disposeBuildingGameplay;
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
     private bool _gameplayStartPending;
@@ -123,7 +123,6 @@ public sealed class GameBootstrap : MonoBehaviour
         DayNight = managedSystems.DayNight;
         FactionVisuals = managedSystems.FactionVisuals;
         RoadBuild = managedSystems.RoadBuild;
-        BuildingPlacement = managedSystems.BuildingPlacement;
         BuildingSelectionClick = managedSystems.BuildingSelectionClick;
         BuildingSelectionClickContext = managedSystems.BuildingSelectionClickContext;
         _buildingRuntimeCitySpawn = managedSystems.BuildingRuntimeCitySpawn;
@@ -136,6 +135,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingPlacementInteractionContext = managedSystems.BuildingPlacementInteractionContext;
         _bindBuildingMainMenu = managedSystems.BindBuildingMainMenu;
         _bindBuildingGameplayFeatures = managedSystems.BindBuildingGameplayFeatures;
+        _disposeBuildingGameplay = managedSystems.DisposeBuildingGameplay;
         BuildingRuntimeUpdate = managedSystems.BuildingRuntimeUpdate;
         _buildingRuntimeUpdateContext = managedSystems.BuildingRuntimeUpdateContext;
         Selection = managedSystems.Selection;
@@ -267,7 +267,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
         MainMenu?.Dispose();
         Selection?.Dispose();
-        BuildingPlacement?.Dispose();
+        _disposeBuildingGameplay?.Invoke();
         RoadBuild?.Dispose();
         UnitAttackTraces?.Dispose();
         UnitImpostors?.Dispose();
@@ -278,7 +278,6 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeCitySpawner?.Dispose();
         MainMenu = null;
         Selection = null;
-        BuildingPlacement = null;
         BuildingSelectionClick = null;
         BuildingSelectionClickContext = default;
         _buildingRuntimeCitySpawn = null;
@@ -291,6 +290,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingPlacementInteractionContext = default;
         _bindBuildingMainMenu = null;
         _bindBuildingGameplayFeatures = null;
+        _disposeBuildingGameplay = null;
         BuildingRuntimeUpdate = null;
         _buildingRuntimeUpdateContext = default;
         RoadBuild = null;

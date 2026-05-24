@@ -873,6 +873,14 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException("PopupFrame pivot must be centered for scale-in popup motion.");
         if (popupFrame.anchoredPosition.sqrMagnitude > 0.25f)
             throw new InvalidOperationException("PopupFrame must be centered in PopupLayer.");
+
+        Transform continueButton = popupFrame.Find("Actions/ContinueButton");
+        if (continueButton == null)
+            throw new InvalidOperationException("Mission result popup must contain Actions/ContinueButton.");
+        if (continueButton.GetComponent<Button>() == null)
+            throw new InvalidOperationException("Mission result ContinueButton must contain a Unity Button.");
+        if (continueButton.GetComponent<WarlineCaptureShellResultConfirmButtonView>() == null)
+            throw new InvalidOperationException("Mission result ContinueButton must contain WarlineCaptureShellResultConfirmButtonView.");
     }
 
     private static void PrepareLoadingStable(

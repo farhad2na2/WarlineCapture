@@ -2,6 +2,7 @@ using System.Collections;
 using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [DisallowMultipleComponent]
 public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
@@ -31,6 +32,25 @@ public sealed class WarlineCaptureGameUiSmokeDriverView : MonoBehaviour
     {
         if (playOnStart)
             Play();
+    }
+
+    private void Update()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard == null || !keyboard.escapeKey.wasPressedThisFrame)
+            return;
+
+        if (!TryGetState(out UiShellStateComponent state))
+            return;
+
+        if (state.CurrentMode != UiShellMode.MatchHud ||
+            state.Phase != UiShellTransitionPhase.MatchHudReady ||
+            state.IsTransitionRunning != 0)
+        {
+            return;
+        }
+
+        EnqueuePopup(UiShellPopupIntent.Show);
     }
 
     public void Play()

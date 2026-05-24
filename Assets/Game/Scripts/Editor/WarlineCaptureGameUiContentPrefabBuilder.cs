@@ -141,8 +141,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddText(frame.transform, "OutcomeText", "VICTORY COMPLETE", new Rect(64f, 136f, 792f, 52f), 34f, TextAlignmentOptions.Center, Accent);
         AddText(frame.transform, "SummaryText", "Primary objectives secured.\nDistrict pressure reduced.\nCommander authority increased.", new Rect(96f, 230f, 728f, 150f), 25f, TextAlignmentOptions.Center, MutedText);
         GameObject actions = CreateRect("Actions", frame.transform, new Rect(160f, 430f, 600f, 72f));
-        AddPanel(actions.transform, "ContinueButton", StretchRect());
-        AddText(actions.transform, "ContinueText", "CONTINUE", StretchRect(), 30f, TextAlignmentOptions.Center, Text);
+        AddResultConfirmButton(actions.transform, "ContinueButton", "CONTINUE", StretchRect());
         return root;
     }
 
@@ -235,6 +234,25 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         routeButton.Configure(intent, route, false);
 
         AddText(obj.transform, "Label", label, StretchRect(), 27f, TextAlignmentOptions.Center, Color.black);
+    }
+
+    private static void AddResultConfirmButton(Transform parent, string name, string label, Rect rect)
+    {
+        GameObject obj = CreateRect(name, parent, rect);
+        Image image = obj.AddComponent<Image>();
+        image.color = PanelMuted;
+        image.raycastTarget = true;
+
+        Button button = obj.AddComponent<Button>();
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(0.95f, 0.75f, 0.32f, 1f);
+        colors.pressedColor = new Color(0.74f, 0.50f, 0.16f, 1f);
+        colors.selectedColor = colors.highlightedColor;
+        button.colors = colors;
+
+        obj.AddComponent<WarlineCaptureShellResultConfirmButtonView>();
+        AddText(obj.transform, "Label", label, StretchRect(), 30f, TextAlignmentOptions.Center, Text);
     }
 
     private static TMP_Text AddText(Transform parent, string name, string value, Rect rect, float size, TextAlignmentOptions alignment, Color color)

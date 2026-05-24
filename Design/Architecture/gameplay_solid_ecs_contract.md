@@ -166,7 +166,7 @@ Use narrow migrations. Do not rewrite the entire project at once.
 
 `BuildingPlacementSystem` is legacy facade debt. It must shrink by domain slice instead of gaining new behavior.
 
-The deletion plan and current facade surface inventory are frozen in `Design/Architecture/buildingplacement_retirement_audit.md`. Until the facade is deleted, no new production code may construct or reference `BuildingPlacementSystem` outside the temporary managed composition/tick-context debt files named in that audit. The facade file line count and public/internal member declaration count must only decrease; editor test construction is allowed only for the existing legacy validation harnesses while those tests migrate to narrower systems.
+The deletion plan and current facade surface inventory are frozen in `Design/Architecture/buildingplacement_retirement_audit.md`. Until the facade is deleted, no new production code may construct or reference `BuildingPlacementSystem` outside the temporary managed composition debt file named in that audit. The facade file line count and public/internal member declaration count must only decrease; editor test construction is allowed only for the existing legacy validation harnesses while those tests migrate to narrower systems.
 
 Allowed direction:
 - `BuildingPlacementSystem` keeps only temporary facade methods during migration; active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`.

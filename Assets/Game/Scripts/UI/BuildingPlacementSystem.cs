@@ -123,6 +123,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingUiQuerySystem BuildingUiQuerySystem => _buildingUiQuerySystem;
     internal BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem => _buildingPlacementInteractionSystem;
     internal BuildingPlacementRuntimeTickSystem RuntimeTickSystem => _buildingPlacementRuntimeTickSystem;
+    internal (BuildingRuntimeVisualSystem RuntimeVisual, BuildingCombatSystem Combat, BuildingBarrierSystem Barrier, BuildingPlacementRedirectSystem Redirect, float DestroyedBuildingLifetime) RuntimeTickDomains => (_buildingRuntimeVisualSystem, _buildingCombatSystem, _buildingBarrierSystem, _buildingPlacementRedirectSystem, DestroyedBuildingLifetimeSeconds);
     internal Camera WorldCamera => worldCamera;
     internal PlacementState ActivePlacement => _buildingPlacementLifecycleSystem.ActivePlacement;
     internal bool PlayRequested => _runtimeGameplayStateSystem.PlayRequested;
@@ -738,16 +739,6 @@ public sealed class BuildingPlacementSystem
     internal void HandleBuildingSelectionClick(Vector2 pointerPosition)
     {
         _buildingSelectionClickSystem.HandleBuildingSelectionClick(CreateBuildingSelectionClickContext(), pointerPosition);
-    }
-
-    internal void UpdateRoadBarrierDoors()
-    {
-        _buildingBarrierSystem.UpdateRoadBarrierDoors(CreateBuildingBarrierContext(), Time.deltaTime);
-    }
-
-    internal void FlushPendingMarkerRefresh()
-    {
-        _buildingPlacementRedirectSystem.FlushPendingMarkerRefresh(RefreshBuildingMarkerVisibility);
     }
 
     private bool IsHaulerAtBuildingApproach(int2 currentCell, int2 footprintSize, RuntimeBuildingData building, GridConfig grid)
@@ -1569,12 +1560,8 @@ public sealed class BuildingPlacementSystem
             out resolvedOrigin);
     }
 
-    internal void UpdateDestroyedBuildings()
-    {
-        _buildingCombatSystem.UpdateDestroyedBuildings(CreateBuildingCombatContext(), Time.time);
-    }
-
-    internal void SyncDestroyedRuntimeBuildingCombatEntities()
+#if UNITY_EDITOR
+    public void SyncDestroyedRuntimeBuildingCombatEntitiesForTests()
     {
         _buildingCombatSystem.SyncDestroyedRuntimeBuildingCombatEntities(
             CreateBuildingCombatContext(),
@@ -1582,16 +1569,10 @@ public sealed class BuildingPlacementSystem
             DestroyedBuildingLifetimeSeconds);
     }
 
-#if UNITY_EDITOR
-    public void SyncDestroyedRuntimeBuildingCombatEntitiesForTests()
-    {
-        SyncDestroyedRuntimeBuildingCombatEntities();
-    }
-
     public void TickRuntimeForTests()
     {
         var contextSystem = new BuildingPlacementRuntimeTickContextSystem();
-        _buildingPlacementRuntimeTickSystem.Update(contextSystem.Create(this));
+        _buildingPlacementRuntimeTickSystem.Update(contextSystem.Create(BuildingGameplayCompositionSystem.CreateRuntimeTickSource(this)));
     }
 #endif
 
@@ -1608,13 +1589,6 @@ public sealed class BuildingPlacementSystem
             CreateBuildingRuntimeOwnershipContext(),
             building,
             ownerFactionId);
-    }
-
-    internal void UpdateBuildingResourceVisuals()
-    {
-        _buildingRuntimeVisualSystem.UpdateBuildingResourceVisuals(
-            CreateBuildingRuntimeVisualContext(),
-            Time.time);
     }
 
     private void RefreshBuildingMarkerVisibility()
@@ -2103,7 +2077,7 @@ public sealed class BuildingPlacementSystem
             GetFootprintCenter);
     }
 
-    private BuildingRuntimeVisualSystem.Context CreateBuildingRuntimeVisualContext()
+    internal BuildingRuntimeVisualSystem.Context CreateBuildingRuntimeVisualContext()
     {
         return new BuildingRuntimeVisualSystem.Context(
             _runtimeBuildings,
@@ -2114,7 +2088,7 @@ public sealed class BuildingPlacementSystem
             () => ActiveBuildingId);
     }
 
-    private BuildingPlacementRedirectSystem.Context CreateBuildingPlacementRedirectContext()
+    internal BuildingPlacementRedirectSystem.Context CreateBuildingPlacementRedirectContext()
     {
         return new BuildingPlacementRedirectSystem.Context(
             TryGetEntityManager,
@@ -2168,7 +2142,7 @@ public sealed class BuildingPlacementSystem
             RefreshBuildingMarkerVisibility);
     }
 
-    private BuildingCombatSystem.Context<RuntimeBuildingData> CreateBuildingCombatContext()
+    internal BuildingCombatSystem.Context<RuntimeBuildingData> CreateBuildingCombatContext()
     {
         return new BuildingCombatSystem.Context<RuntimeBuildingData>(
             _runtimeBuildingSystem,
@@ -2276,7 +2250,7 @@ public sealed class BuildingPlacementSystem
             em);
     }
 
-    private BuildingBarrierSystem.Context CreateBuildingBarrierContext()
+    internal BuildingBarrierSystem.Context CreateBuildingBarrierContext()
     {
         return new BuildingBarrierSystem.Context(
             _runtimeBuildings,

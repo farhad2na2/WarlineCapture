@@ -1,76 +1,113 @@
+using System;
 using UnityEngine;
 
 internal sealed class BuildingPlacementRuntimeTickContextSystem
 {
+    public readonly struct Source
+    {
+        public readonly BuildingProductionRuntimeTickSystem.Context ProductionContext;
+        public readonly BuildingRuntimeBoundaryPublishSystem.Context BoundaryContext;
+        public readonly Action UpdateBuildingResourceVisuals;
+        public readonly Action SyncDestroyedRuntimeBuildingCombatEntities;
+        public readonly Action UpdateDestroyedBuildings;
+        public readonly Action UpdateRoadBarrierDoors;
+        public readonly Action FlushPendingMarkerRefresh;
+        public readonly Func<Camera> GetWorldCamera;
+        public readonly Func<BuildingPlacementLifecycleSystem.PlacementState> GetActivePlacement;
+        public readonly Action<BuildingPlacementLifecycleSystem.PlacementState, GamePointerState> UpdateActivePlacementPointer;
+        public readonly Func<bool> IsPlayRequested;
+        public readonly Func<bool> IsBuildModeActive;
+        public readonly Action HidePlacementOutline;
+        public readonly Func<bool> ShouldIgnoreBuildingSelectionThisFrame;
+        public readonly Func<Vector2, bool> IsPointerOverAnyGameplayUi;
+        public readonly Func<bool> HasActiveBuilding;
+        public readonly Func<Vector2, bool> IsPointerOverUnitCommandUi;
+        public readonly Action SuppressNextWorldClick;
+        public readonly Action<Vector2> HandleBuildingSelectionClick;
+        public readonly Func<int> GetRuntimeBuildingCount;
+        public readonly bool DiagnosticsEnabled;
+        public readonly double DiagnosticsFreezeLogThresholdSeconds;
+
+        public Source(
+            BuildingProductionRuntimeTickSystem.Context productionContext,
+            BuildingRuntimeBoundaryPublishSystem.Context boundaryContext,
+            Action updateBuildingResourceVisuals,
+            Action syncDestroyedRuntimeBuildingCombatEntities,
+            Action updateDestroyedBuildings,
+            Action updateRoadBarrierDoors,
+            Action flushPendingMarkerRefresh,
+            Func<Camera> getWorldCamera,
+            Func<BuildingPlacementLifecycleSystem.PlacementState> getActivePlacement,
+            Action<BuildingPlacementLifecycleSystem.PlacementState, GamePointerState> updateActivePlacementPointer,
+            Func<bool> isPlayRequested,
+            Func<bool> isBuildModeActive,
+            Action hidePlacementOutline,
+            Func<bool> shouldIgnoreBuildingSelectionThisFrame,
+            Func<Vector2, bool> isPointerOverAnyGameplayUi,
+            Func<bool> hasActiveBuilding,
+            Func<Vector2, bool> isPointerOverUnitCommandUi,
+            Action suppressNextWorldClick,
+            Action<Vector2> handleBuildingSelectionClick,
+            Func<int> getRuntimeBuildingCount,
+            bool diagnosticsEnabled,
+            double diagnosticsFreezeLogThresholdSeconds)
+        {
+            ProductionContext = productionContext;
+            BoundaryContext = boundaryContext;
+            UpdateBuildingResourceVisuals = updateBuildingResourceVisuals;
+            SyncDestroyedRuntimeBuildingCombatEntities = syncDestroyedRuntimeBuildingCombatEntities;
+            UpdateDestroyedBuildings = updateDestroyedBuildings;
+            UpdateRoadBarrierDoors = updateRoadBarrierDoors;
+            FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
+            GetWorldCamera = getWorldCamera;
+            GetActivePlacement = getActivePlacement;
+            UpdateActivePlacementPointer = updateActivePlacementPointer;
+            IsPlayRequested = isPlayRequested;
+            IsBuildModeActive = isBuildModeActive;
+            HidePlacementOutline = hidePlacementOutline;
+            ShouldIgnoreBuildingSelectionThisFrame = shouldIgnoreBuildingSelectionThisFrame;
+            IsPointerOverAnyGameplayUi = isPointerOverAnyGameplayUi;
+            HasActiveBuilding = hasActiveBuilding;
+            IsPointerOverUnitCommandUi = isPointerOverUnitCommandUi;
+            SuppressNextWorldClick = suppressNextWorldClick;
+            HandleBuildingSelectionClick = handleBuildingSelectionClick;
+            GetRuntimeBuildingCount = getRuntimeBuildingCount;
+            DiagnosticsEnabled = diagnosticsEnabled;
+            DiagnosticsFreezeLogThresholdSeconds = diagnosticsFreezeLogThresholdSeconds;
+        }
+    }
+
     private readonly BuildingProductionRuntimeTickSystem _productionRuntimeTickSystem = new();
     private readonly BuildingRuntimeBoundaryPublishSystem _runtimeBoundaryPublishSystem = new();
 
-    public BuildingPlacementRuntimeTickSystem.Context Create(BuildingPlacementSystem placement)
+    public BuildingPlacementRuntimeTickSystem.Context Create(Source source)
     {
-        BuildingProductionRuntimeTickSystem.Context productionContext = CreateProductionContext(placement);
-        BuildingRuntimeBoundaryPublishSystem.Context boundaryContext = CreateBoundaryContext(placement);
         return new BuildingPlacementRuntimeTickSystem.Context(
-            () => _productionRuntimeTickSystem.ProcessPendingProductions(productionContext),
-            () => _productionRuntimeTickSystem.UpdateResourceProduction(productionContext),
-            () => _productionRuntimeTickSystem.UpdateResourceHaulers(productionContext),
-            placement.UpdateBuildingResourceVisuals,
-            () => _productionRuntimeTickSystem.CleanupRecentSpawnReservations(productionContext),
-            placement.SyncDestroyedRuntimeBuildingCombatEntities,
-            placement.UpdateDestroyedBuildings,
-            placement.UpdateRoadBarrierDoors,
-            placement.FlushPendingMarkerRefresh,
-            () => _runtimeBoundaryPublishSystem.Update(boundaryContext),
-            () => placement.WorldCamera,
-            () => placement.ActivePlacement,
-            placement.UpdateActivePlacementPointer,
-            () => placement.PlayRequested,
-            () => placement.BuildModeActive,
-            placement.HidePlacementOutline,
-            placement.ShouldIgnoreBuildingSelectionThisFrame,
-            placement.IsPointerOverAnyGameplayUi,
-            () => placement.HasActiveBuilding,
-            placement.IsPointerOverUnitCommandUi,
-            placement.SuppressNextWorldClick,
-            placement.HandleBuildingSelectionClick,
-            () => placement.RuntimeBuildingCount,
-            placement.DiagnosticsEnabled,
-            placement.DiagnosticsFreezeLogThresholdSeconds,
+            () => _productionRuntimeTickSystem.ProcessPendingProductions(source.ProductionContext),
+            () => _productionRuntimeTickSystem.UpdateResourceProduction(source.ProductionContext),
+            () => _productionRuntimeTickSystem.UpdateResourceHaulers(source.ProductionContext),
+            source.UpdateBuildingResourceVisuals,
+            () => _productionRuntimeTickSystem.CleanupRecentSpawnReservations(source.ProductionContext),
+            source.SyncDestroyedRuntimeBuildingCombatEntities,
+            source.UpdateDestroyedBuildings,
+            source.UpdateRoadBarrierDoors,
+            source.FlushPendingMarkerRefresh,
+            () => _runtimeBoundaryPublishSystem.Update(source.BoundaryContext),
+            source.GetWorldCamera,
+            source.GetActivePlacement,
+            source.UpdateActivePlacementPointer,
+            source.IsPlayRequested,
+            source.IsBuildModeActive,
+            source.HidePlacementOutline,
+            source.ShouldIgnoreBuildingSelectionThisFrame,
+            source.IsPointerOverAnyGameplayUi,
+            source.HasActiveBuilding,
+            source.IsPointerOverUnitCommandUi,
+            source.SuppressNextWorldClick,
+            source.HandleBuildingSelectionClick,
+            source.GetRuntimeBuildingCount,
+            source.DiagnosticsEnabled,
+            source.DiagnosticsFreezeLogThresholdSeconds,
             Debug.Log);
-    }
-
-    private static BuildingProductionRuntimeTickSystem.Context CreateProductionContext(BuildingPlacementSystem placement)
-    {
-        return new BuildingProductionRuntimeTickSystem.Context(
-            placement.RuntimeBuildings,
-            placement.DayNightSystem,
-            placement.FactionResourceSystem,
-            placement.ProductionUpdateSystem,
-            placement.CreateBuildingProductionUpdateContext(),
-            placement.ResourceHaulerBridgeSystem,
-            placement.CreateBuildingResourceHaulerBridgeContext(),
-            placement.BuildingSpawnSystem,
-            () => placement.BuildingSpawnRandomState,
-            value => placement.BuildingSpawnRandomState = value,
-            GameRuntimeStats.RecordOilExtracted,
-            GameRuntimeStats.RecordFuelProduced,
-            placement.OilBarrelsPerFuelBarrelRatio);
-    }
-
-    private static BuildingRuntimeBoundaryPublishSystem.Context CreateBoundaryContext(BuildingPlacementSystem placement)
-    {
-        return new BuildingRuntimeBoundaryPublishSystem.Context(
-            placement.TryGetEntityManagerForRuntimeTick,
-            placement.EnsureEntityQueries,
-            placement.RuntimeBoundarySystem,
-            placement.DefinitionSystem,
-            placement.RuntimeSpawnSystem,
-            placement.CreateBuildingRuntimeSpawnContext(),
-            placement.ProductionRequestSystem,
-            placement.CreateBuildingProductionRequestContext(),
-            placement.RuntimeQuerySystem,
-            placement.CreateBuildingRuntimeQueryContext(),
-            placement.FactionResourceSystem,
-            () => placement.RuntimeBoundaryQuery,
-            placement.RuntimeBuildings);
     }
 }

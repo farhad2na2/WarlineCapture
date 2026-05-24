@@ -112,7 +112,7 @@ internal sealed class BuildingGameplayCompositionSystem
             placementFacade.CreateBuildingSelectionClickContext(),
             runtimeUpdate,
             new BuildingRuntimeUpdateSystem.Context(
-                () => placementFacade.RuntimeTickSystem.Update(_runtimeTickContextSystem.Create(placementFacade))),
+                () => placementFacade.RuntimeTickSystem.Update(_runtimeTickContextSystem.Create(CreateRuntimeTickSource(placementFacade)))),
             placementFacade.RuntimeCitySpawnSystem,
             placementFacade.CreateRuntimeCitySpawnContext(),
             placementFacade.BuildingUiCommandSystem,
@@ -132,6 +132,77 @@ internal sealed class BuildingGameplayCompositionSystem
                     runtimeCitySpawner,
                     citizenPopulation),
             placementFacade.Dispose);
+    }
+
+    internal static BuildingPlacementRuntimeTickContextSystem.Source CreateRuntimeTickSource(BuildingPlacementSystem placement)
+    {
+        var tickDomains = placement.RuntimeTickDomains;
+        BuildingRuntimeVisualSystem.Context runtimeVisualContext = placement.CreateBuildingRuntimeVisualContext();
+        BuildingCombatSystem.Context<RuntimeBuildingData> combatContext = placement.CreateBuildingCombatContext();
+        BuildingBarrierSystem.Context barrierContext = placement.CreateBuildingBarrierContext();
+        return new BuildingPlacementRuntimeTickContextSystem.Source(
+            CreateProductionRuntimeTickContext(placement),
+            CreateRuntimeBoundaryPublishContext(placement),
+            () => tickDomains.RuntimeVisual.UpdateBuildingResourceVisuals(runtimeVisualContext, Time.time),
+            () => tickDomains.Combat.SyncDestroyedRuntimeBuildingCombatEntities(
+                combatContext,
+                Time.time,
+                tickDomains.DestroyedBuildingLifetime),
+            () => tickDomains.Combat.UpdateDestroyedBuildings(combatContext, Time.time),
+            () => tickDomains.Barrier.UpdateRoadBarrierDoors(barrierContext, Time.deltaTime),
+            () => tickDomains.Redirect.FlushPendingMarkerRefresh(
+                () => tickDomains.RuntimeVisual.RefreshBuildingMarkerVisibility(runtimeVisualContext)),
+            () => placement.WorldCamera,
+            () => placement.ActivePlacement,
+            placement.UpdateActivePlacementPointer,
+            () => placement.PlayRequested,
+            () => placement.BuildModeActive,
+            placement.HidePlacementOutline,
+            placement.ShouldIgnoreBuildingSelectionThisFrame,
+            placement.IsPointerOverAnyGameplayUi,
+            () => placement.HasActiveBuilding,
+            placement.IsPointerOverUnitCommandUi,
+            placement.SuppressNextWorldClick,
+            placement.HandleBuildingSelectionClick,
+            () => placement.RuntimeBuildingCount,
+            placement.DiagnosticsEnabled,
+            placement.DiagnosticsFreezeLogThresholdSeconds);
+    }
+
+    private static BuildingProductionRuntimeTickSystem.Context CreateProductionRuntimeTickContext(BuildingPlacementSystem placement)
+    {
+        return new BuildingProductionRuntimeTickSystem.Context(
+            placement.RuntimeBuildings,
+            placement.DayNightSystem,
+            placement.FactionResourceSystem,
+            placement.ProductionUpdateSystem,
+            placement.CreateBuildingProductionUpdateContext(),
+            placement.ResourceHaulerBridgeSystem,
+            placement.CreateBuildingResourceHaulerBridgeContext(),
+            placement.BuildingSpawnSystem,
+            () => placement.BuildingSpawnRandomState,
+            value => placement.BuildingSpawnRandomState = value,
+            GameRuntimeStats.RecordOilExtracted,
+            GameRuntimeStats.RecordFuelProduced,
+            placement.OilBarrelsPerFuelBarrelRatio);
+    }
+
+    private static BuildingRuntimeBoundaryPublishSystem.Context CreateRuntimeBoundaryPublishContext(BuildingPlacementSystem placement)
+    {
+        return new BuildingRuntimeBoundaryPublishSystem.Context(
+            placement.TryGetEntityManagerForRuntimeTick,
+            placement.EnsureEntityQueries,
+            placement.RuntimeBoundarySystem,
+            placement.DefinitionSystem,
+            placement.RuntimeSpawnSystem,
+            placement.CreateBuildingRuntimeSpawnContext(),
+            placement.ProductionRequestSystem,
+            placement.CreateBuildingProductionRequestContext(),
+            placement.RuntimeQuerySystem,
+            placement.CreateBuildingRuntimeQueryContext(),
+            placement.FactionResourceSystem,
+            () => placement.RuntimeBoundaryQuery,
+            placement.RuntimeBuildings);
     }
 
     public void BindSelection(Result building, RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)

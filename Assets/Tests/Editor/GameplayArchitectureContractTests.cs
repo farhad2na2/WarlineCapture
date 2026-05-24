@@ -1558,6 +1558,19 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("DeleteSelectedBuilding", command);
         StringAssert.Contains("TryGetSelectedBuildingHealth", command);
         StringAssert.Contains("TryGetSelectedBuildingPreviewPrefab", command);
+        StringAssert.Contains("IsRuntimeBuildingWall", command);
+        StringAssert.Contains("IsRuntimeBuildingCityGenerated", command);
+        StringAssert.Contains("TryGetRuntimeBuildingOwnerFaction", command);
+        StringAssert.Contains("HasVisibleSelectableBuilding", command);
+        StringAssert.Contains("TryResolveLiveUnitPreviewPrefab", command);
+        StringAssert.Contains("CancelBuildingPlacement", command);
+        StringAssert.Contains("FocusLastCampProductionRequest", command);
+        StringAssert.Contains("ClearSelectedBuilding", command);
+        StringAssert.Contains("ExitBuildMode", command);
+        Assert.IsFalse(
+            menu.Contains("_buildingPlacementSystem", StringComparison.Ordinal) ||
+            menu.Contains("BuildingPlacementSystem buildingPlacementSystem", StringComparison.Ordinal),
+            "MenuView must receive narrow UI command/query boundaries instead of a BuildingPlacementSystem facade instance.");
 
         string[] forbiddenMenuFacadeCalls =
         {
@@ -1575,7 +1588,16 @@ public sealed class GameplayArchitectureContractTests
             "_buildingPlacementSystem.ConfirmBuildingPlacement",
             "_buildingPlacementSystem.DeleteSelectedBuilding",
             "_buildingPlacementSystem.TryGetSelectedBuildingHealth",
-            "_buildingPlacementSystem.TryGetSelectedBuildingPreviewPrefab"
+            "_buildingPlacementSystem.TryGetSelectedBuildingPreviewPrefab",
+            "_buildingPlacementSystem.IsRuntimeBuildingWall",
+            "_buildingPlacementSystem.IsRuntimeBuildingCityGenerated",
+            "_buildingPlacementSystem.TryGetRuntimeBuildingOwnerFaction",
+            "_buildingPlacementSystem.HasVisibleSelectableBuilding",
+            "_buildingPlacementSystem.TryResolveLiveUnitPreviewPrefab",
+            "_buildingPlacementSystem.CancelBuildingPlacement",
+            "_buildingPlacementSystem.FocusLastCampProductionRequest",
+            "_buildingPlacementSystem.ClearSelectedBuilding",
+            "_buildingPlacementSystem.ExitBuildMode"
         };
 
         foreach (string token in forbiddenMenuFacadeCalls)

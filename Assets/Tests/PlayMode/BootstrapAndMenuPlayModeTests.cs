@@ -65,7 +65,7 @@ public sealed class BootstrapAndMenuPlayModeTests
         bool gameRequested = false;
         menu.GameRequested += () => gameRequested = true;
 
-        menu.Init(null, null, Camera.main);
+        menu.Init(null, Camera.main);
         menu.NotifyBootstrapReady();
 
         Assert.IsTrue(menu.panelMenu.gameObject.activeSelf);
@@ -120,7 +120,7 @@ public sealed class BootstrapAndMenuPlayModeTests
     {
         MenuView menu = CreateMenuView();
 
-        menu.Init(null, null, Camera.main);
+        menu.Init(null, Camera.main);
 
         GameObject autoModeObject = FindDescendantByName(menu.transform, "Button_AutoMode")?.gameObject;
         Assert.NotNull(autoModeObject, "MenuView should resolve the scene-owned UI_Canvas auto/manual control.");
@@ -147,7 +147,7 @@ public sealed class BootstrapAndMenuPlayModeTests
     {
         MenuView menu = CreateMenuView();
 
-        menu.Init(null, null, Camera.main);
+        menu.Init(null, Camera.main);
 
         GameObject settingsPanel = menu.panelSettings;
         Button settingsButton = menu.buttonSettings;
@@ -194,7 +194,7 @@ public sealed class BootstrapAndMenuPlayModeTests
             selection.Init(null, camera, null, null, null, null, null);
             MenuView menu = CreateMenuView();
             Button soldiersButton = CreateButton("Button_Select_All_Soldiers", menu.gamePanelFree.transform);
-            menu.Init(selection, null, camera);
+            menu.Init(selection, camera);
 
             InitialUnitsRuntimeState.PlayRequested = true;
             menu.NotifyGameplayReady();
@@ -288,7 +288,7 @@ public sealed class BootstrapAndMenuPlayModeTests
             controls.Add(new FactionControlEntry { FactionId = 1, AIControlled = 1 });
 
             MenuView menu = CreateMenuView();
-            menu.Init(null, null, Camera.main);
+            menu.Init(null, Camera.main);
 
             AssertAISettingsDropdownOptions(menu);
 

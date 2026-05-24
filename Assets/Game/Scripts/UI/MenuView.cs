@@ -219,7 +219,6 @@ namespace Game.Scripts.UI
         public Vector3 campRankBadgeContentScale = new(0.5f, 0.5f, 1f);
 
         private RTSSelectionSystem _selectionSystem;
-        private BuildingPlacementSystem _buildingPlacementSystem;
         private BuildingUiCommandSystem _buildingUiCommandSystem;
         private BuildingUiCommandSystem.Context _buildingUiCommandContext;
         private Camera _worldCamera;
@@ -501,7 +500,6 @@ namespace Game.Scripts.UI
 
         public void Init(
             RTSSelectionSystem selectionSystem,
-            BuildingPlacementSystem buildingPlacementSystem,
             Camera worldCamera,
             DayNightSystem dayNightSystem = null,
             CitizenPopulationSystem citizenPopulationSystem = null,
@@ -513,7 +511,6 @@ namespace Game.Scripts.UI
 
             _initialized = true;
             _selectionSystem = selectionSystem;
-            _buildingPlacementSystem = buildingPlacementSystem;
             _buildingUiCommandSystem = buildingUiCommandSystem;
             _buildingUiCommandContext = buildingUiCommandContext;
             _worldCamera = worldCamera;
@@ -794,7 +791,7 @@ namespace Game.Scripts.UI
             if (_confirmOpen)
             {
                 if (_confirmMode == ConfirmMode.PlaceBuilding)
-                    _buildingPlacementSystem?.CancelBuildingPlacement();
+                    _buildingUiCommandSystem?.CancelBuildingPlacement(_buildingUiCommandContext);
                 CloseConfirmPanel();
                 return;
             }
@@ -803,7 +800,7 @@ namespace Game.Scripts.UI
             {
                 if (_campOpenedFromGame && _campHasDeferredProductionFocus)
                 {
-                    _buildingPlacementSystem?.FocusLastCampProductionRequest();
+                    _buildingUiCommandSystem?.FocusLastCampProductionRequest(_buildingUiCommandContext);
                     _campHasDeferredProductionFocus = false;
                 }
                 menuType = _campOpenedFromGame ? MenuType.Game : MenuType.Menu;
@@ -966,7 +963,7 @@ namespace Game.Scripts.UI
         {
             SuppressNextWorldClick();
             _selectionSystem?.CaptureUiClickSequence();
-            _buildingPlacementSystem?.ClearSelectedBuilding("MenuView.ButtonSelectAllClicked");
+            _buildingUiCommandSystem?.ClearSelectedBuilding(_buildingUiCommandContext, "MenuView.ButtonSelectAllClicked");
             _selectionSystem?.SelectAllVisiblePlayerUnits();
             SyncRuntimeState();
         }
@@ -975,7 +972,7 @@ namespace Game.Scripts.UI
         {
             SuppressNextWorldClick();
             _selectionSystem?.CaptureUiClickSequence();
-            _buildingPlacementSystem?.ClearSelectedBuilding("MenuView.ButtonSelectAllSoldiersClicked");
+            _buildingUiCommandSystem?.ClearSelectedBuilding(_buildingUiCommandContext, "MenuView.ButtonSelectAllSoldiersClicked");
             _selectionSystem?.SelectAllVisiblePlayerSoldiers();
             SyncRuntimeState();
         }
@@ -984,7 +981,7 @@ namespace Game.Scripts.UI
         {
             SuppressNextWorldClick();
             _selectionSystem?.CaptureUiClickSequence();
-            _buildingPlacementSystem?.ClearSelectedBuilding("MenuView.ButtonSelectAllVehiclesClicked");
+            _buildingUiCommandSystem?.ClearSelectedBuilding(_buildingUiCommandContext, "MenuView.ButtonSelectAllVehiclesClicked");
             _selectionSystem?.SelectAllVisiblePlayerVehicles();
             SyncRuntimeState();
         }
@@ -1001,7 +998,7 @@ namespace Game.Scripts.UI
             SuppressNextWorldClick();
             _selectionSystem?.CaptureUiClickSequence();
             _selectionSystem?.DeselectAllUnits("MenuView.ButtonSelectClicked");
-            _buildingPlacementSystem?.ExitBuildMode();
+            _buildingUiCommandSystem?.ExitBuildMode(_buildingUiCommandContext);
             _runtimeGameplayStateSystem.SelectionModeActive = true;
             if (_buttonSelect != null)
                 _buttonSelect.gameObject.SetActive(false);
@@ -1909,8 +1906,10 @@ namespace Game.Scripts.UI
 
         private void ResolveBuildingMinimapVisual(EntityManager em, int buildingId, Entity buildingEntity, out RectTransform template, out Sprite sprite, out Color colorOverride)
         {
-            bool isWall = _buildingPlacementSystem != null && _buildingPlacementSystem.IsRuntimeBuildingWall(buildingId);
-            if (_buildingPlacementSystem != null && _buildingPlacementSystem.IsRuntimeBuildingCityGenerated(buildingId))
+            bool isWall = _buildingUiCommandSystem != null &&
+                          _buildingUiCommandSystem.IsRuntimeBuildingWall(_buildingUiCommandContext, buildingId);
+            if (_buildingUiCommandSystem != null &&
+                _buildingUiCommandSystem.IsRuntimeBuildingCityGenerated(_buildingUiCommandContext, buildingId))
             {
                 template = _minimapHomeNeutralTemplate;
                 sprite = _minimapHomeNeutralSprite;
@@ -1918,8 +1917,8 @@ namespace Game.Scripts.UI
                 return;
             }
 
-            if (_buildingPlacementSystem != null &&
-                _buildingPlacementSystem.TryGetRuntimeBuildingOwnerFaction(buildingId, out byte ownerFactionId))
+            if (_buildingUiCommandSystem != null &&
+                _buildingUiCommandSystem.TryGetRuntimeBuildingOwnerFaction(_buildingUiCommandContext, buildingId, out byte ownerFactionId))
             {
                 if (ownerFactionId == 0)
                 {
@@ -2747,8 +2746,8 @@ namespace Game.Scripts.UI
         {
             if (_selectionSystem != null &&
                 _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&
-                _buildingPlacementSystem != null &&
-                _buildingPlacementSystem.TryResolveLiveUnitPreviewPrefab(focusedUnit, out GameObject prefab) &&
+                _buildingUiCommandSystem != null &&
+                _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, focusedUnit, out GameObject prefab) &&
                 TryResolveUnitPrefabSelectionType(prefab, out SingleSelectionType prefabSelectionType))
             {
                 return prefabSelectionType;
@@ -2901,8 +2900,8 @@ namespace Game.Scripts.UI
                 if (item.Portrait != null)
                 {
                     Sprite sprite = null;
-                    if (_buildingPlacementSystem != null &&
-                        _buildingPlacementSystem.TryResolveLiveUnitPreviewPrefab(passenger.Entity, out GameObject prefab) &&
+                    if (_buildingUiCommandSystem != null &&
+                        _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, passenger.Entity, out GameObject prefab) &&
                         prefab != null)
                     {
                         sprite = GetCampPreviewSprite(prefab);
@@ -2999,8 +2998,8 @@ namespace Game.Scripts.UI
             prefab = null;
             return _selectionSystem != null &&
                    _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&
-                   _buildingPlacementSystem != null &&
-                   _buildingPlacementSystem.TryResolveLiveUnitPreviewPrefab(focusedUnit, out prefab) &&
+                   _buildingUiCommandSystem != null &&
+                   _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, focusedUnit, out prefab) &&
                    prefab != null;
         }
 
@@ -3030,9 +3029,9 @@ namespace Game.Scripts.UI
             }
             else if (_selectionSystem != null &&
                      _selectionSystem.TryGetFocusedUnitEntityForUi(out Entity focusedUnit) &&
-                     _buildingPlacementSystem != null)
+                     _buildingUiCommandSystem != null)
             {
-                _buildingPlacementSystem.TryResolveLiveUnitPreviewPrefab(focusedUnit, out prefab);
+                _buildingUiCommandSystem.TryResolveLiveUnitPreviewPrefab(_buildingUiCommandContext, focusedUnit, out prefab);
                 displayName = _selectionSystem.FocusedUnitLabel;
             }
 
@@ -3186,7 +3185,9 @@ namespace Game.Scripts.UI
             bool hasVisibleSoldiers = !hasAnySelection && _selectionSystem != null && _selectionSystem.HasVisiblePlayerSoldiers();
             bool hasVisibleVehicles = !hasAnySelection && _selectionSystem != null && _selectionSystem.HasVisiblePlayerVehicles();
             bool hasVisibleUnits = hasVisibleSoldiers || hasVisibleVehicles || (!hasAnySelection && _selectionSystem != null && _selectionSystem.HasVisiblePlayerUnits());
-            bool hasVisibleBuildings = !hasAnySelection && _buildingPlacementSystem != null && _buildingPlacementSystem.HasVisibleSelectableBuilding(_worldCamera);
+            bool hasVisibleBuildings = !hasAnySelection &&
+                                       _buildingUiCommandSystem != null &&
+                                       _buildingUiCommandSystem.HasVisibleSelectableBuilding(_buildingUiCommandContext, _worldCamera);
             bool hasVisibleSelectable = hasVisibleUnits || hasVisibleBuildings;
 
             if (_buttonSelect != null)
@@ -3208,7 +3209,7 @@ namespace Game.Scripts.UI
         private void ClearGameplaySelection()
         {
             _selectionSystem?.DeselectAllUnits("MenuView.ClearGameplaySelection");
-            _buildingPlacementSystem?.ClearSelectedBuilding("MenuView.ButtonBackClicked");
+            _buildingUiCommandSystem?.ClearSelectedBuilding(_buildingUiCommandContext, "MenuView.ButtonBackClicked");
         }
 
         private void ResolveCampPanels()

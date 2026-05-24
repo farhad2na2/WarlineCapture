@@ -24,7 +24,6 @@ public sealed class MenuStartupSystem
             menuView.GameRequested += gameRequested;
             menuView.Init(
                 selection,
-                buildingPlacement,
                 worldCamera,
                 dayNight,
                 citizenPopulation,

@@ -2611,7 +2611,16 @@ public sealed class BuildingPlacementSystem
             DeleteSelectedBuilding,
             ConfirmBuildingPlacement,
             TryGetSelectedBuildingHealth,
-            TryGetSelectedBuildingPreviewPrefab);
+            TryGetSelectedBuildingPreviewPrefab,
+            IsRuntimeBuildingWall,
+            IsRuntimeBuildingCityGenerated,
+            TryGetRuntimeBuildingOwnerFaction,
+            HasVisibleSelectableBuilding,
+            TryResolveLiveUnitPreviewPrefab,
+            CancelBuildingPlacement,
+            FocusLastCampProductionRequest,
+            ClearSelectedBuilding,
+            ExitBuildMode);
     }
 
     private BuildingRuntimeOwnershipSystem.Context CreateBuildingRuntimeOwnershipContext()

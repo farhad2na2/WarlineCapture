@@ -15,6 +15,10 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
     private World cachedWorld;
     private bool hasBoundaryQuery;
 
+    public UiShellRouteIntent Intent => intent;
+    public WarlineCaptureRoute Route => route;
+    public bool PushHistory => pushHistory;
+
     public void Configure(UiShellRouteIntent routeIntent, WarlineCaptureRoute targetRoute, bool shouldPushHistory)
     {
         intent = routeIntent;

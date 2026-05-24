@@ -7,12 +7,14 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
     [SerializeField] private WarlineCaptureShellView shellView;
     [SerializeField] private GameObject loadingContentPrefab;
     [SerializeField] private GameObject mainMenuContentPrefab;
+    [SerializeField] private GameObject commanderProfileContentPrefab;
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject resultPopupPrefab;
 
     public WarlineCaptureShellView ShellView => shellView;
     public GameObject LoadingContentPrefab => loadingContentPrefab;
     public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
+    public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
     public GameObject ResultPopupPrefab => resultPopupPrefab;
 
@@ -20,12 +22,14 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         WarlineCaptureShellView view,
         GameObject loadingPrefab,
         GameObject mainMenuPrefab,
+        GameObject commanderProfilePrefab,
         GameObject matchHudPrefab,
         GameObject popupPrefab)
     {
         shellView = view;
         loadingContentPrefab = loadingPrefab;
         mainMenuContentPrefab = mainMenuPrefab;
+        commanderProfileContentPrefab = commanderProfilePrefab;
         matchHudContentPrefab = matchHudPrefab;
         resultPopupPrefab = popupPrefab;
     }
@@ -45,6 +49,9 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
                 case UiShellCommandKind.EnterMenu:
                     InstallMainMenu();
                     break;
+                case UiShellCommandKind.SwapMenuMiddle:
+                    InstallMenuRoute(commands[i].Route);
+                    break;
                 case UiShellCommandKind.EnterMatchHud:
                     InstallMatchHud();
                     break;
@@ -63,9 +70,36 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
     private void InstallMainMenu()
     {
         InstallSection(mainMenuContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
+        InstallMainMenuBody();
+        ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
+        ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private void InstallMainMenuBody()
+    {
         InstallSection(mainMenuContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
         InstallSection(mainMenuContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
         InstallSection(mainMenuContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
+        ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
+        ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private void InstallMenuRoute(WarlineCaptureRoute route)
+    {
+        if (route == WarlineCaptureRoute.CommanderProfile)
+        {
+            InstallCommanderProfileBody();
+            return;
+        }
+
+        InstallMainMenuBody();
+    }
+
+    private void InstallCommanderProfileBody()
+    {
+        InstallSection(commanderProfileContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
+        InstallSection(commanderProfileContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
+        InstallSection(commanderProfileContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
         ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
         ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
     }

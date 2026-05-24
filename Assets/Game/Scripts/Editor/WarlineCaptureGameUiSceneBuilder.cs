@@ -24,6 +24,7 @@ public static class WarlineCaptureGameUiSceneBuilder
     private const string PopupFolder = "Assets/Game/Prefabs/UI/Shell/Popups";
     private const string LoadingPrefabPath = ContentFolder + "/SCN01_LoadingContent.prefab";
     private const string MainMenuPrefabPath = ContentFolder + "/SCN02_MainMenuContent.prefab";
+    private const string CommanderProfilePrefabPath = ContentFolder + "/SCN03_CommanderProfileContent.prefab";
     private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
     private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
     private const string CaptureFolder = "Design/AgentReports/Captures/GameUI";
@@ -440,6 +441,7 @@ public static class WarlineCaptureGameUiSceneBuilder
 
         ValidatePresenterPrefab(contentPresenter.LoadingContentPrefab, LoadingPrefabPath, "SCN01_LoadingContent");
         ValidatePresenterPrefab(contentPresenter.MainMenuContentPrefab, MainMenuPrefabPath, "SCN02_MainMenuContent");
+        ValidatePresenterPrefab(contentPresenter.CommanderProfileContentPrefab, CommanderProfilePrefabPath, "SCN03_CommanderProfileContent");
         ValidatePresenterPrefab(contentPresenter.MatchHudContentPrefab, MatchHudPrefabPath, "SCN08_MatchHudContent");
         ValidatePresenterPrefab(contentPresenter.ResultPopupPrefab, ResultPopupPrefabPath, "POP05_MissionResultPopup");
 
@@ -613,6 +615,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             shellView,
             RequirePrefab(LoadingPrefabPath),
             RequirePrefab(MainMenuPrefabPath),
+            RequirePrefab(CommanderProfilePrefabPath),
             RequirePrefab(MatchHudPrefabPath),
             RequirePrefab(ResultPopupPrefabPath));
         shellView.SetContentPresenter(presenter);
@@ -721,6 +724,16 @@ public static class WarlineCaptureGameUiSceneBuilder
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
         RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
         RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/DeployCommandButton", UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/CommanderPortraitButton", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
+
+        contentPresenter.PrepareForCommandSequence(new[]
+        {
+            new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.SwapMenuMiddle, Route = WarlineCaptureRoute.CommanderProfile }
+        });
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.MiddleRegion, "MiddleContent");
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent/BackButton", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.MainMenu);
 
         contentPresenter.PrepareForCommandSequence(new[]
         {
@@ -775,6 +788,8 @@ public static class WarlineCaptureGameUiSceneBuilder
         WarlineCaptureShellRouteButtonView routeButton = buttonTransform.GetComponent<WarlineCaptureShellRouteButtonView>();
         if (routeButton == null)
             throw new InvalidOperationException($"{path} must contain WarlineCaptureShellRouteButtonView.");
+        if (routeButton.Intent != intent || routeButton.Route != route)
+            throw new InvalidOperationException($"{path} must route to {intent}/{route}.");
     }
 
     private static void ValidateShellRegionLayout(RectTransform canvasRect, WarlineCaptureShellView shellView)

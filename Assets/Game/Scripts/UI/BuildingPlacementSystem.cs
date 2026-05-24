@@ -5,8 +5,6 @@ using Unity.Transforms;
 using UnityEngine;
 using static UnityEngine.Object;
 using CampRequestFailure = BuildingUiCommandSystem.CampRequestFailure;
-using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
-using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
 using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 using ProducedUnitUiEntry = BuildingUiQuerySystem.ProducedUnitUiEntry;
@@ -15,16 +13,11 @@ public sealed class BuildingPlacementSystem
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
-    private static readonly bool EnableBuildingPlacementDiagnostics = false;
     private static readonly bool EnableBuildingDestroyDiagnostics = false;
-    private const double FreezeLogThresholdSeconds = 0.05d;
     private const float DestroyedBuildingLifetimeSeconds = 5f;
 
     [SerializeField] private BuildingPlacementSystemConfig config;
     [SerializeField, HideInInspector] private Camera worldCamera;
-    [SerializeField, HideInInspector] private List<GameObject> spawnables = new();
-    [SerializeField, HideInInspector] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig;
-    [SerializeField, HideInInspector] private List<GameObject> unitSpawnPrefabs = new();
     [SerializeField, HideInInspector] private float buildPlaneY = 0f;
     [SerializeField, HideInInspector] private float placementOutlineHeight = 0.15f;
     [SerializeField, HideInInspector] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f);
@@ -72,7 +65,6 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementRuntimeTickSystem _buildingPlacementRuntimeTickSystem = new();
     private readonly RuntimeResourceSystem _runtimeResourceSystem = new();
     private readonly RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem = new();
-    private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
     private int[] _placementInvalidPrefix;
     private Transform _buildingRoot;
     private BuildingDefinition _soldierBaseDefinition;
@@ -129,10 +121,7 @@ public sealed class BuildingPlacementSystem
     internal PlacementState ActivePlacement => _buildingPlacementLifecycleSystem.ActivePlacement;
     internal bool PlayRequested => _runtimeGameplayStateSystem.PlayRequested;
     internal bool BuildModeActive => _runtimeGameplayStateSystem.BuildModeActive;
-    internal int RuntimeBuildingCount => _runtimeBuildings.Count;
-    internal bool DiagnosticsEnabled => EnableBuildingPlacementDiagnostics;
-    internal double DiagnosticsFreezeLogThresholdSeconds => FreezeLogThresholdSeconds;
-    internal IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings => _runtimeBuildings;
+    internal RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingRegistry => _runtimeBuildingSystem;
     internal DayNightSystem DayNightSystem => _dayNightSystem;
     internal FactionResourceSystem FactionResourceSystem => _factionResourceSystem;
     internal BuildingProductionUpdateSystem ProductionUpdateSystem => _buildingProductionUpdateSystem;
@@ -161,7 +150,7 @@ public sealed class BuildingPlacementSystem
             return false;
 
         Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
-        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingData> pair in _runtimeBuildingSystem.Buildings)
         {
             RuntimeBuildingData building = pair.Value;
             if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
@@ -235,7 +224,7 @@ public sealed class BuildingPlacementSystem
     public void GetResourceTotals(out int dollars, out int oilBarrels, out int fuelBarrels)
     {
         dollars = _runtimeResourceSystem.CurrentDollars;
-        _factionResourceSystem.GetResourceTotals(_runtimeBuildings, out oilBarrels, out fuelBarrels);
+        _factionResourceSystem.GetResourceTotals(_runtimeBuildingSystem.Buildings, out oilBarrels, out fuelBarrels);
     }
 
     public void GetRuntimeHouseBuildingIds(List<int> results)
@@ -426,7 +415,7 @@ public sealed class BuildingPlacementSystem
                 return true;
         }
 
-        foreach (var pair in _runtimeBuildings)
+        foreach (var pair in _runtimeBuildingSystem.Buildings)
         {
             RuntimeBuildingData building = pair.Value;
             if (building?.ProducedUnitPrefabs == null)
@@ -566,29 +555,21 @@ public sealed class BuildingPlacementSystem
 
         if (config.WorldCamera != null)
             worldCamera = config.WorldCamera;
-        spawnables = config.Spawnables ?? new List<GameObject>();
-        unitPrefabRegistryConfig = config.UnitPrefabRegistryConfig;
-        unitSpawnPrefabs = unitPrefabRegistryConfig != null && unitPrefabRegistryConfig.UnitSpawnPrefabs != null
-            ? unitPrefabRegistryConfig.UnitSpawnPrefabs
+        IReadOnlyList<GameObject> configuredSpawnables = config.Spawnables ?? new List<GameObject>();
+        UnitPrefabRegistryAuthoringConfig configuredUnitPrefabRegistry = config.UnitPrefabRegistryConfig;
+        IReadOnlyList<GameObject> configuredUnitSpawnPrefabs = configuredUnitPrefabRegistry != null && configuredUnitPrefabRegistry.UnitSpawnPrefabs != null
+            ? configuredUnitPrefabRegistry.UnitSpawnPrefabs
             : new List<GameObject>();
-        RebuildSpawnablesLookup();
+        _buildingDefinitionSystem.RebuildSpawnablesLookup(configuredSpawnables, configuredUnitSpawnPrefabs);
         buildPlaneY = config.BuildPlaneY;
         placementOutlineHeight = config.PlacementOutlineHeight;
         placementValidColor = config.PlacementValidColor;
         placementInvalidColor = config.PlacementInvalidColor;
     }
 
-    private void RebuildSpawnablesLookup()
-    {
-        if (spawnables == null)
-            spawnables = new List<GameObject>();
-
-        _buildingDefinitionSystem.RebuildSpawnablesLookup(spawnables, unitSpawnPrefabs);
-    }
-
     private void RebuildConfiguredSpawnableDefinitions()
     {
-        _buildingDefinitionSystem.RebuildConfiguredSpawnableDefinitions(spawnables, _buildingRunwaySystem, DestroyRuntimeObject);
+        _buildingDefinitionSystem.RebuildConfiguredSpawnableDefinitions(_buildingRunwaySystem, DestroyRuntimeObject);
 
         _soldierBaseDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Soldier Base");
         _soldierTentDefinition = _buildingDefinitionSystem.FindConfiguredDefinition("Soldier Tent");
@@ -599,7 +580,7 @@ public sealed class BuildingPlacementSystem
     {
         ExitBuildMode();
 
-        foreach (var building in _runtimeBuildings.Values)
+        foreach (var building in _runtimeBuildingSystem.Buildings.Values)
         {
             if (building.Instance != null)
                 DestroyRuntimeObject(building.Instance);
@@ -616,7 +597,7 @@ public sealed class BuildingPlacementSystem
         _runtimeBuildingSystem.Clear();
 
         _buildingDefinitionSystem.ClearConfiguredSpawnableDefinitions(DestroyRuntimeObject);
-        _buildingDefinitionSystem.ClearUnitLookup();
+        _buildingDefinitionSystem.ClearConfiguredPrefabLookups();
         _soldierBaseDefinition = null;
         _soldierTentDefinition = null;
         _factoryDefinition = null;
@@ -765,51 +746,6 @@ public sealed class BuildingPlacementSystem
         BeginPlacement(_factoryDefinition);
     }
 
-    private bool TryGetConfiguredSpawnable(int index, out ConfiguredSpawnableEntry entry)
-    {
-        return _buildingDefinitionSystem.TryGetConfiguredSpawnable(index, out entry);
-    }
-
-    private bool TryGetConfiguredUnit(int index, out ConfiguredUnitEntry entry)
-    {
-        if (unitSpawnPrefabs != null && index >= 0 && index < unitSpawnPrefabs.Count)
-        {
-            GameObject prefab = unitSpawnPrefabs[index];
-            if (prefab != null)
-            {
-                UnitGridAuthoring authoring = prefab.GetComponent<UnitGridAuthoring>();
-                string displayName = prefab.name;
-                string description = string.Empty;
-                bool isVehicle = false;
-                if (authoring != null)
-                {
-                    displayName = ResolveConfiguredUnitDisplayName(prefab, authoring);
-                    description = authoring.ConfiguredDescription;
-                    Vector2Int footprint = authoring.GetConfiguredFootprintCells();
-                    isVehicle = footprint.x > 1 || footprint.y > 1 || prefab.name.IndexOf("Veh", System.StringComparison.OrdinalIgnoreCase) >= 0;
-                }
-
-                int price = authoring != null ? authoring.Price : (isVehicle ? 15000 : 10000);
-                entry = new ConfiguredUnitEntry(displayName, description, prefab, isVehicle, authoring == null || authoring.CanRequest, price);
-                return true;
-            }
-        }
-
-        entry = default;
-        return false;
-    }
-
-    private static string ResolveConfiguredUnitDisplayName(GameObject prefab, UnitGridAuthoring authoring)
-    {
-        if (prefab == null)
-            return "Unit";
-
-        if (authoring == null)
-            return prefab.name;
-
-        return authoring.ConfiguredDisplayName;
-    }
-
     private bool BeginPlacementForConfiguredSpawnable(GameObject prefab)
     {
         if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
@@ -820,11 +756,6 @@ public sealed class BuildingPlacementSystem
 
         BeginPlacement(definition);
         return true;
-    }
-
-    private bool IsConfiguredSpawnablePrefab(GameObject prefab)
-    {
-        return _buildingDefinitionSystem.IsConfiguredSpawnablePrefab(prefab);
     }
 
     public bool ConfirmBuildingPlacement()
@@ -1447,7 +1378,7 @@ public sealed class BuildingPlacementSystem
 
         int remainingSlotIndex = Mathf.Max(0, flattenedSlotIndex);
         string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
-        foreach (KeyValuePair<int, RuntimeBuildingData> entry in _runtimeBuildings)
+        foreach (KeyValuePair<int, RuntimeBuildingData> entry in _runtimeBuildingSystem.Buildings)
         {
             RuntimeBuildingData building = entry.Value;
             if (building == null ||
@@ -1578,7 +1509,7 @@ public sealed class BuildingPlacementSystem
     public bool TryGetRuntimeBuildingDoorOpen01ForTests(int buildingId, out float open01)
     {
         open01 = 0f;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null)
+        if (!_runtimeBuildingSystem.Buildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null)
             return false;
 
         open01 = building.DoorOpen01;
@@ -1589,7 +1520,7 @@ public sealed class BuildingPlacementSystem
     {
         combatEntity = Entity.Null;
         blockerEntity = Entity.Null;
-        if (!_runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null)
+        if (!_runtimeBuildingSystem.Buildings.TryGetValue(buildingId, out RuntimeBuildingData building) || building == null)
             return false;
 
         combatEntity = building.CombatEntity;
@@ -1599,7 +1530,7 @@ public sealed class BuildingPlacementSystem
 
     public bool IsRuntimeBuildingDestroyedForTests(int buildingId)
     {
-        return _runtimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building) &&
+        return _runtimeBuildingSystem.Buildings.TryGetValue(buildingId, out RuntimeBuildingData building) &&
                building != null &&
                building.IsDestroyed;
     }
@@ -1673,12 +1604,12 @@ public sealed class BuildingPlacementSystem
 
     private bool OverlapsAnyRuntimeBuilding(RectInt candidateRect)
     {
-        if (_runtimeBuildings == null || _runtimeBuildings.Count == 0)
+        if (_runtimeBuildingSystem.Buildings == null || _runtimeBuildingSystem.Buildings.Count == 0)
             return false;
         if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
             return false;
 
-        foreach (var entry in _runtimeBuildings)
+        foreach (var entry in _runtimeBuildingSystem.Buildings)
         {
             RuntimeBuildingData building = entry.Value;
             if (building?.Definition == null || building.IsDestroyed)
@@ -1794,7 +1725,7 @@ public sealed class BuildingPlacementSystem
     private BuildingPlacementValidationSystem.WallValidationContext CreateWallValidationContext()
     {
         return new BuildingPlacementValidationSystem.WallValidationContext(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             IsRuntimeBlockerCell,
             _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : null);
     }
@@ -1826,7 +1757,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingProductionUpdateSystem.Context CreateBuildingProductionUpdateContext()
     {
         return new BuildingProductionUpdateSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             _buildingProductionSystem,
             _buildingProductionTransportSystem,
             CreateProductionTransportContext());
@@ -1835,7 +1766,7 @@ public sealed class BuildingPlacementSystem
     private BuildingProductionTransportSystem.Context CreateProductionTransportContext()
     {
         return new BuildingProductionTransportSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             worldCamera,
             _buildingProductionSystem,
             _buildingVisualSystem,
@@ -1857,10 +1788,10 @@ public sealed class BuildingPlacementSystem
     internal BuildingProductionRequestSystem.Context CreateBuildingProductionRequestContext()
     {
         return new BuildingProductionRequestSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             _buildingDefinitionSystem.ConfiguredSpawnableDefinitions,
             _buildingDefinitionSystem.ConfiguredDefinitionsByPrefab,
-            unitSpawnPrefabs,
+            _buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs,
             _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
             _runtimeResourceSystem.CurrentDollars,
             _buildingProductionSystem,
@@ -1912,7 +1843,7 @@ public sealed class BuildingPlacementSystem
     private BuildingProductionSystem.QueueContext CreateBuildingProductionQueueContext()
     {
         return new BuildingProductionSystem.QueueContext(
-            unitSpawnPrefabs,
+            _buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs,
             _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
             _buildingProductionSlotSystem,
             BuildingDefinitionSystem.TryGetPrefabLocalBounds,
@@ -1922,7 +1853,7 @@ public sealed class BuildingPlacementSystem
     private BuildingSpawnSystem.Context CreateBuildingSpawnContext()
     {
         return new BuildingSpawnSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             _liveUnitFootprintQuery,
             _buildingProductionSystem,
             _buildingSpawnPrefabSystem,
@@ -1980,10 +1911,10 @@ public sealed class BuildingPlacementSystem
         return new BuildingUiCommandSystem.Context(
             () => _runtimeResourceSystem.CurrentDollars,
             () => _buildingDefinitionSystem.ConfiguredSpawnableCount,
-            TryGetConfiguredSpawnable,
+            _buildingDefinitionSystem.TryGetConfiguredSpawnable,
             () => _buildingDefinitionSystem.ConfiguredUnitCount,
-            TryGetConfiguredUnit,
-            IsConfiguredSpawnablePrefab,
+            _buildingDefinitionSystem.TryGetConfiguredUnit,
+            _buildingDefinitionSystem.IsConfiguredSpawnablePrefab,
             GetCampRequestFailure,
             TryRequestCampItem,
             DeleteSelectedBuilding,
@@ -1997,7 +1928,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingUiQuerySystem.Context CreateBuildingUiQueryContext()
     {
         return new BuildingUiQuerySystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             () => ActiveBuildingId,
             TryGetEntityManager,
             _buildingProductionSystem,
@@ -2053,7 +1984,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingRuntimeVisualSystem.Context CreateBuildingRuntimeVisualContext()
     {
         return new BuildingRuntimeVisualSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             _buildingVisualSystem,
             _buildingBarrierSystem,
             _factionVisualSettings,
@@ -2073,7 +2004,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingResourceHaulerBridgeSystem.Context CreateBuildingResourceHaulerBridgeContext()
     {
         return new BuildingResourceHaulerBridgeSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             _resourceHaulerSystem,
             _factionResourceSystem,
             TryGetEntityManager,
@@ -2089,7 +2020,7 @@ public sealed class BuildingPlacementSystem
     private BuildingSpawnPrefabSystem.Context CreateBuildingSpawnPrefabContext()
     {
         return new BuildingSpawnPrefabSystem.Context(
-            unitSpawnPrefabs,
+            _buildingDefinitionSystem.ConfiguredUnitSpawnPrefabs,
             _unitPrefabRegistryQuery,
             _spawnPrefabCandidatesQuery,
             _livePlayerUnitsQuery);
@@ -2119,7 +2050,7 @@ public sealed class BuildingPlacementSystem
     {
         return new BuildingCombatSystem.Context<RuntimeBuildingData>(
             _runtimeBuildingSystem,
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             TryGetEntityManager,
             building => _buildingBarrierSystem.RememberOpenBaseBreach(CreateBuildingBarrierContext(), building),
             buildingId => _citizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId),
@@ -2134,7 +2065,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingRuntimeQuerySystem.Context CreateBuildingRuntimeQueryContext()
     {
         return new BuildingRuntimeQuerySystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             TryGetEntityManager,
             _buildingProductionSystem,
             BuildingDefinitionSystem.NormalizeSpawnableKey,
@@ -2186,7 +2117,7 @@ public sealed class BuildingPlacementSystem
     {
         return new BuildingSelectionSystem.Context(
             _runtimeBuildingSystem,
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             TryGetGridForSelection,
             GetFootprintCenter,
             () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
@@ -2215,7 +2146,7 @@ public sealed class BuildingPlacementSystem
     {
         bool hasEntityManager = TryGetEntityManager(out EntityManager em);
         return new BuildingPlacementQuerySystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             ActiveBuildingId,
             BuildingDefinitionSystem.GetProductionCount,
             BuildingDefinitionSystem.GetProductionPrefab,
@@ -2226,7 +2157,7 @@ public sealed class BuildingPlacementSystem
     internal BuildingBarrierSystem.Context CreateBuildingBarrierContext()
     {
         return new BuildingBarrierSystem.Context(
-            _runtimeBuildings,
+            _runtimeBuildingSystem.Buildings,
             TryGetEntityManager,
             TryGetGridData,
             EnsureEntityQueries,

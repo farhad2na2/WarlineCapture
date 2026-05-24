@@ -17,6 +17,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - Match selection implementation: `WarlineCapture_Match_Selection_Implementation_Spec.md` is the active contract for unit selection, the `SELECT` HUD button, squad-card selection, drag selection, input suppression, M01 exceptions, and HUD bridge calls.
 - Mission result states: `WarlineCapture_Mission_Result_State_Spec.md` is the active contract for `POP-05` victory, partial success, defeat, withdrawal, operation-resolved states, result data, CTA order, rewards, consequences, and routes.
 - Map contract: the active map contract is one large 3D operation map with planning, briefing, minimap, deployment, threat, and battle views as overlays/camera states on the same world.
+- Operation map texture/mask workflow: `WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md` defines how gameplay/editor tooling consumes 2024x2024 base visuals, blocker masks, tree/rock density masks, and height masks to generate 3D operation-map metadata.
 - FTUE and assistant: `WarlineCapture_FTUE_And_Command_Assistant_Design.md` defines the reusable ARIA command assistant, Chapter 1 FTUE flow, contextual recommendations, and safe assistant control takeover model. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md` is the current support/UI/gameplay handoff for `PREFAB-05_AssistantPanel` and M01 ARIA recommendation states.
 - Agent coordination: `WarlineCapture_Agent_Coordination_Workflow.md` defines PM handoff, validation, cross-lane sync, tracking workflow, lane ownership, and commit/push rules for agents.
 - Gameplay architecture: `Architecture/gameplay_solid_ecs_contract.md` defines the SOLID/ECS runtime contract, bootstrap responsibility boundaries, service/logging rules, and no-new-drift guardrails.
@@ -43,31 +44,32 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 8. `WarlineCapture_AAA_Mobile_Game_Design_Document_v0_1.md`
 9. `WarlineCapture_LargeScale_Grid_Movement_Design.md`
 10. `WarlineCapture_AAA_Mobile_Technical_Targets.md`
-11. `WarlineCapture_Level_And_Mission_Content_Plan.md`
-12. `WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
-13. `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
-14. `WarlineCapture_Match_Selection_Implementation_Spec.md`
-15. `WarlineCapture_Mission_Result_State_Spec.md`
-16. `WarlineCapture_M01_FirstContact_Production_Contract.md`
-17. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
-18. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
-19. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
-20. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
-21. `WarlineCapture_Agent_Coordination_Workflow.md`
-22. `Architecture/gameplay_solid_ecs_contract.md`
-23. `Architecture/performance_regression_contract.md`
-24. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
-25. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
-26. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
-27. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
-28. `WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
-29. `WarlineCapture_Economy_Reward_Design.md`
-30. `WarlineCapture_Balancing_Automated_Test_Plan.md`
-31. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
-32. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
-33. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
-34. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
-35. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
+11. `WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md`
+12. `WarlineCapture_Level_And_Mission_Content_Plan.md`
+13. `WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
+14. `WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
+15. `WarlineCapture_Match_Selection_Implementation_Spec.md`
+16. `WarlineCapture_Mission_Result_State_Spec.md`
+17. `WarlineCapture_M01_FirstContact_Production_Contract.md`
+18. `WarlineCapture_FTUE_And_Command_Assistant_Design.md`
+19. `WarlineCapture_AssistantPanel_M01_Implementation_Contract.md`
+20. `WarlineCapture_AssistantRuntime_M01_Wiring_Plan.md`
+21. `WarlineCapture_Designer_Role_And_Documentation_Workflow.md`
+22. `WarlineCapture_Agent_Coordination_Workflow.md`
+23. `Architecture/gameplay_solid_ecs_contract.md`
+24. `Architecture/performance_regression_contract.md`
+25. `WarlineCapture_Gameplay_Features_High_Level_Spec.md`
+26. `WarlineCapture_Gameplay_Features_Detailed_Spec.md`
+27. `WarlineCapture_UIUX_Implementation_High_Level_Spec.md`
+28. `WarlineCapture_UIUX_Implementation_Detailed_Spec.md`
+29. `WarlineCapture_Field_Logistics_Oil_Fuel_Design.md`
+30. `WarlineCapture_Economy_Reward_Design.md`
+31. `WarlineCapture_Balancing_Automated_Test_Plan.md`
+32. `WarlineCapture_UIUX_Gameplay_Element_Alignment.md`
+33. `WarlineCapture_Visual_Feedback_VFX_Recommendations.md`
+34. `WarlineCapture_UIUX_MainMenu_Visual_Contract.md`
+35. `WarlineCapture_UIUX_Mockup_To_Canvas_Conversion_Plan.md`
+36. `WarlineCapture_UIUX_Target_To_Canvas_Workflow_Guide.md`
 
 ## Core Product And Gameplay
 
@@ -83,6 +85,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md` - gameplay north star, content grammar, mission archetypes, threat families, Chapter 1 teaching arc, Operation week rhythm, balance target bands, and mission acceptance checklist.
 - `WarlineCapture_Command_Offensive_Premise_Alignment.md` - proactive command-operation framing aligned to the 3D single-map direction.
 - `WarlineCapture_LargeScale_Grid_Movement_Design.md` - AAA mobile movement design for staged large-scale grid movement, squad-scale command, metadata-backed 3D operation maps, UI feedback, mission patterns, and validation gates.
+- `WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md` - workflow for consuming 2024x2024 base terrain visuals, blocker masks, tree/rock density masks, and height masks into 3D operation-map metadata and editor-generated placement.
 - `WarlineCapture_AAA_Mobile_Technical_Targets.md` - concrete device-tier, frame, scale, marker, readability, and validation targets for the AAA mobile promise.
 - `WarlineCapture_M01_Metric_Scale_Readability_Contract.md` - M01 tactical metric scale and readability contract for soldier/building anchors, selection treatment, movement animation, and ECS/atlas-backed public unit presentation.
 - `WarlineCapture_Level_And_Mission_Content_Plan.md` - required mission spec template, high-level Campaign chapter set, Operations mission hooks, Skirmish probe mapping, balance targets, and mission acceptance gate.
@@ -122,6 +125,7 @@ This folder is the source of truth for WarlineCapture product design, gameplay p
 - `WarlineCapture_UIUX_MainMenu_Visual_Contract.md` - active Main Menu visual contract.
 - `WarlineCapture_UIUX_Runtime_Optimization_Plan.md` - UI runtime optimization and validation direction.
 - `VisualTargets/UIFlowNavigationTree.svg` - visual UI navigation tree showing Splash, Main Menu branches, game-mode paths, overlays, and safe returns.
+- `VisualTargets/Gameplay/MapPacks/README.md` - active 3D operation-map texture/mask packs, including `SyntyHighlands_01`.
 Historical immediate UI phase plans have been archived under `Archive/LegacyUI_2026-05-21/ImmediateImplementationPlans/`. They are implementation history only; use the active UI/UX specs and visual-lock workflow above for new 3D-aligned work.
 
 ## Visual Direction And Production Art

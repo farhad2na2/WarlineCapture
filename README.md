@@ -56,6 +56,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
 - `Design/WarlineCapture_Gameplay_North_Star_And_Content_Grammar.md`
 - `Design/WarlineCapture_3D_SingleMap_Gameplay_Direction.md`
 - `Design/WarlineCapture_LargeScale_Grid_Movement_Design.md`
+- `Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md`
 - `Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md`
 - `Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md`
 - `Design/WarlineCapture_Match_Selection_Implementation_Spec.md`
@@ -78,6 +79,7 @@ Core design reading order starts in `Design/README.md`. The current high-priorit
     - [AAA Mobile Technical Targets](Design/WarlineCapture_AAA_Mobile_Technical_Targets.md)
   - Product Gameplay
     - [Large-Scale Grid Movement Design](Design/WarlineCapture_LargeScale_Grid_Movement_Design.md)
+    - [3D Operation Map Texture/Mask Workflow](Design/WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md)
     - [Skirmish Mode Implementation Spec](Design/WarlineCapture_Skirmish_Mode_Implementation_Spec.md)
     - [Match HUD And Gameplay Implementation Spec](Design/WarlineCapture_Match_HUD_And_Gameplay_Implementation_Spec.md)
     - [Match Selection Implementation Spec](Design/WarlineCapture_Match_Selection_Implementation_Spec.md)

@@ -156,9 +156,7 @@ internal sealed class BuildingGameplayCompositionSystem
             () => tickDomains.Redirect.FlushPendingMarkerRefresh(
                 () => tickDomains.RuntimeVisual.RefreshBuildingMarkerVisibility(runtimeVisualContext)),
             () => inputRuntimeTickSystem.Update(inputContext),
-            () => placement.RuntimeBuildingCount,
-            placement.DiagnosticsEnabled,
-            placement.DiagnosticsFreezeLogThresholdSeconds);
+            CreateRuntimeTickDiagnosticsContext(placement));
     }
 
     private static BuildingPlacementInputRuntimeTickSystem.Context CreateInputRuntimeTickContext(
@@ -182,8 +180,9 @@ internal sealed class BuildingGameplayCompositionSystem
 
     private static BuildingProductionRuntimeTickSystem.Context CreateProductionRuntimeTickContext(BuildingPlacementSystem placement)
     {
+        RuntimeBuildingSystem<RuntimeBuildingData> registry = placement.RuntimeBuildingRegistry;
         return new BuildingProductionRuntimeTickSystem.Context(
-            placement.RuntimeBuildings,
+            registry.Buildings,
             placement.DayNightSystem,
             placement.FactionResourceSystem,
             placement.ProductionUpdateSystem,
@@ -198,8 +197,17 @@ internal sealed class BuildingGameplayCompositionSystem
             placement.OilBarrelsPerFuelBarrelRatio);
     }
 
+    private static BuildingPlacementRuntimeTickDiagnosticsSystem.Context CreateRuntimeTickDiagnosticsContext(BuildingPlacementSystem placement)
+    {
+        RuntimeBuildingSystem<RuntimeBuildingData> registry = placement.RuntimeBuildingRegistry;
+        return new BuildingPlacementRuntimeTickDiagnosticsSystem.Context(
+            () => registry.Count,
+            Debug.Log);
+    }
+
     private static BuildingRuntimeBoundaryPublishSystem.Context CreateRuntimeBoundaryPublishContext(BuildingPlacementSystem placement)
     {
+        RuntimeBuildingSystem<RuntimeBuildingData> registry = placement.RuntimeBuildingRegistry;
         return new BuildingRuntimeBoundaryPublishSystem.Context(
             placement.TryGetEntityManagerForRuntimeTick,
             placement.EnsureEntityQueries,
@@ -213,7 +221,7 @@ internal sealed class BuildingGameplayCompositionSystem
             placement.CreateBuildingRuntimeQueryContext(),
             placement.FactionResourceSystem,
             () => placement.RuntimeBoundaryQuery,
-            placement.RuntimeBuildings);
+            registry.Buildings);
     }
 
     public void BindSelection(Result building, RoadBuildSystem roadBuild, DayNightSystem dayNight, RTSSelectionSystem selection)

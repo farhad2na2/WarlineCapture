@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 internal sealed class BuildingPlacementRuntimeTickContextSystem
 {
@@ -13,9 +12,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
         public readonly Action UpdateRoadBarrierDoors;
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
-        public readonly Func<int> GetRuntimeBuildingCount;
-        public readonly bool DiagnosticsEnabled;
-        public readonly double DiagnosticsFreezeLogThresholdSeconds;
+        public readonly BuildingPlacementRuntimeTickDiagnosticsSystem.Context DiagnosticsContext;
 
         public Source(
             BuildingProductionRuntimeTickSystem.Context productionContext,
@@ -26,9 +23,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             Action updateRoadBarrierDoors,
             Action flushPendingMarkerRefresh,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
-            Func<int> getRuntimeBuildingCount,
-            bool diagnosticsEnabled,
-            double diagnosticsFreezeLogThresholdSeconds)
+            BuildingPlacementRuntimeTickDiagnosticsSystem.Context diagnosticsContext)
         {
             ProductionContext = productionContext;
             BoundaryContext = boundaryContext;
@@ -38,14 +33,13 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             UpdateRoadBarrierDoors = updateRoadBarrierDoors;
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
             UpdateInput = updateInput;
-            GetRuntimeBuildingCount = getRuntimeBuildingCount;
-            DiagnosticsEnabled = diagnosticsEnabled;
-            DiagnosticsFreezeLogThresholdSeconds = diagnosticsFreezeLogThresholdSeconds;
+            DiagnosticsContext = diagnosticsContext;
         }
     }
 
     private readonly BuildingProductionRuntimeTickSystem _productionRuntimeTickSystem = new();
     private readonly BuildingRuntimeBoundaryPublishSystem _runtimeBoundaryPublishSystem = new();
+    private readonly BuildingPlacementRuntimeTickDiagnosticsSystem _diagnosticsSystem = new();
 
     public BuildingPlacementRuntimeTickSystem.Context Create(Source source)
     {
@@ -61,9 +55,7 @@ internal sealed class BuildingPlacementRuntimeTickContextSystem
             source.FlushPendingMarkerRefresh,
             () => _runtimeBoundaryPublishSystem.Update(source.BoundaryContext),
             source.UpdateInput,
-            source.GetRuntimeBuildingCount,
-            source.DiagnosticsEnabled,
-            source.DiagnosticsFreezeLogThresholdSeconds,
-            Debug.Log);
+            _diagnosticsSystem,
+            source.DiagnosticsContext);
     }
 }

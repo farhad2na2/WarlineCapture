@@ -1,0 +1,50 @@
+{
+  "mapPackId": "SyntyHighlands_01",
+  "status": "candidate_v1",
+  "createdDate": "2026-05-24",
+  "gridSize": {
+    "width": 2024,
+    "height": 2024
+  },
+  "artDirection": "Synty/POLYGON military-compatible stylized low-poly dry highland terrain",
+  "files": {
+    "baseVisual": "base_visual.png",
+    "blockerMask": "blocker_mask.png",
+    "treeDensityMask": "tree_density_mask.png",
+    "rockDensityMask": "rock_density_mask.png",
+    "heightMask": "height_mask.png"
+  },
+  "reservedZones": [
+    {
+      "id": "city_reserve",
+      "intent": "large open flat city/town area for future Middle East town prefabs",
+      "approximateLocation": "center/center-left"
+    },
+    {
+      "id": "northwest_base_reserve",
+      "intent": "military camp/base reserve for command, tents, vehicles, helipad, and barricades",
+      "approximateLocation": "northwest quadrant"
+    },
+    {
+      "id": "southeast_base_reserve",
+      "intent": "second military camp/base reserve far from northwest base",
+      "approximateLocation": "southeast quadrant"
+    }
+  ],
+  "maskConventions": {
+    "blockerMask": {
+      "black": "walkable",
+      "white": "blocked",
+      "recommendedBlockedThresholdInclusive": 160
+    },
+    "densityMasks": {
+      "black": "none",
+      "white": "dense"
+    },
+    "heightMask": {
+      "black": "low_flat",
+      "white": "high_mountain_or_cliff"
+    }
+  },
+  "workflowDoc": "../../../../WarlineCapture_3D_Operation_Map_Texture_Mask_Workflow.md"
+}

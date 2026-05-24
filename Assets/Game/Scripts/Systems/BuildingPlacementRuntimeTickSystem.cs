@@ -16,10 +16,8 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         public readonly Action FlushPendingMarkerRefresh;
         public readonly Action UpdateBuildingRuntimeBoundary;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
-        public readonly Func<int> GetRuntimeBuildingCount;
-        public readonly bool DiagnosticsEnabled;
-        public readonly double FreezeLogThresholdSeconds;
-        public readonly Action<string> Log;
+        public readonly BuildingPlacementRuntimeTickDiagnosticsSystem DiagnosticsSystem;
+        public readonly BuildingPlacementRuntimeTickDiagnosticsSystem.Context DiagnosticsContext;
 
         public Context(
             Action processPendingProductions,
@@ -33,10 +31,8 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             Action flushPendingMarkerRefresh,
             Action updateBuildingRuntimeBoundary,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
-            Func<int> getRuntimeBuildingCount,
-            bool diagnosticsEnabled,
-            double freezeLogThresholdSeconds,
-            Action<string> log)
+            BuildingPlacementRuntimeTickDiagnosticsSystem diagnosticsSystem,
+            BuildingPlacementRuntimeTickDiagnosticsSystem.Context diagnosticsContext)
         {
             ProcessPendingProductions = processPendingProductions;
             UpdateResourceProduction = updateResourceProduction;
@@ -49,10 +45,8 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
             UpdateBuildingRuntimeBoundary = updateBuildingRuntimeBoundary;
             UpdateInput = updateInput;
-            GetRuntimeBuildingCount = getRuntimeBuildingCount;
-            DiagnosticsEnabled = diagnosticsEnabled;
-            FreezeLogThresholdSeconds = freezeLogThresholdSeconds;
-            Log = log;
+            DiagnosticsSystem = diagnosticsSystem;
+            DiagnosticsContext = diagnosticsContext;
         }
     }
 
@@ -104,40 +98,23 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         }
         finally
         {
-            double elapsed = Time.realtimeSinceStartupAsDouble - startTime;
-            if (context.DiagnosticsEnabled && elapsed >= context.FreezeLogThresholdSeconds)
-            {
-                if (afterProductions < startTime) afterProductions = startTime;
-                if (afterResources < afterProductions) afterResources = afterProductions;
-                if (afterHaulers < afterResources) afterHaulers = afterResources;
-                if (afterResourceVisuals < afterHaulers) afterResourceVisuals = afterHaulers;
-                if (afterReservations < afterResourceVisuals) afterReservations = afterResourceVisuals;
-                if (afterDestroyed < afterReservations) afterDestroyed = afterReservations;
-                if (afterDoors < afterDestroyed) afterDoors = afterDestroyed;
-                if (afterMarkers < afterDoors) afterMarkers = afterDoors;
-                if (afterInputOutline < afterMarkers) afterInputOutline = afterMarkers;
-                if (afterInputMouse < afterInputOutline) afterInputMouse = afterInputOutline;
-                if (afterInputUi < afterInputMouse) afterInputUi = afterInputMouse;
-                if (afterInputBuildingClick < afterInputUi) afterInputBuildingClick = afterInputUi;
-                if (afterInput < afterInputBuildingClick) afterInput = afterInputBuildingClick;
-
-                context.Log?.Invoke(
-                    $"[BuildingPlacementDiag] frame={Time.frameCount} total={elapsed * 1000d:F1}ms " +
-                    $"productions={(afterProductions - startTime) * 1000d:F1}ms " +
-                    $"resources={(afterResources - afterProductions) * 1000d:F1}ms " +
-                    $"haulers={(afterHaulers - afterResources) * 1000d:F1}ms " +
-                    $"resourceVisuals={(afterResourceVisuals - afterHaulers) * 1000d:F1}ms " +
-                    $"reservations={(afterReservations - afterResourceVisuals) * 1000d:F1}ms " +
-                    $"destroyed={(afterDestroyed - afterReservations) * 1000d:F1}ms " +
-                    $"doors={(afterDoors - afterDestroyed) * 1000d:F1}ms " +
-                    $"markers={(afterMarkers - afterDoors) * 1000d:F1}ms " +
-                    $"input={(afterInput - afterMarkers) * 1000d:F1}ms " +
-                    $"inputOutline={(afterInputOutline - afterMarkers) * 1000d:F1}ms " +
-                    $"inputMouse={(afterInputMouse - afterInputOutline) * 1000d:F1}ms " +
-                    $"inputUi={(afterInputUi - afterInputMouse) * 1000d:F1}ms " +
-                    $"inputBuilding={(afterInputBuildingClick - afterInputUi) * 1000d:F1}ms " +
-                    $"buildings={context.GetRuntimeBuildingCount?.Invoke() ?? 0}");
-            }
+            context.DiagnosticsSystem?.LogIfSlow(
+                context.DiagnosticsContext,
+                new BuildingPlacementRuntimeTickDiagnosticsSystem.Timing(
+                    startTime,
+                    afterProductions,
+                    afterResources,
+                    afterHaulers,
+                    afterResourceVisuals,
+                    afterReservations,
+                    afterDestroyed,
+                    afterDoors,
+                    afterMarkers,
+                    afterInputOutline,
+                    afterInputMouse,
+                    afterInputUi,
+                    afterInputBuildingClick,
+                    afterInput));
         }
     }
 }

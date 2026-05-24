@@ -11,6 +11,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
     private const string PopupFolder = "Assets/Game/Prefabs/UI/Shell/Popups";
     private const string LoadingPrefabPath = ContentFolder + "/SCN01_LoadingContent.prefab";
     private const string MainMenuPrefabPath = ContentFolder + "/SCN02_MainMenuContent.prefab";
+    private const string CommanderProfilePrefabPath = ContentFolder + "/SCN03_CommanderProfileContent.prefab";
     private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
     private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
 
@@ -29,12 +30,13 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         EnsureFolders();
         SavePrefab(BuildLoadingContent(), LoadingPrefabPath);
         SavePrefab(BuildMainMenuContent(), MainMenuPrefabPath);
+        SavePrefab(BuildCommanderProfileContent(), CommanderProfilePrefabPath);
         SavePrefab(BuildMatchHudContent(), MatchHudPrefabPath);
         SavePrefab(BuildResultPopup(), ResultPopupPrefabPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         ValidateStep6();
-        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_BUILT prefabs=4");
+        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_BUILT prefabs=5");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Content Prefabs Step 6")]
@@ -43,9 +45,10 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         ValidatePrefab(LoadingPrefabPath, "SCN01_LoadingContent", "LoadingBody");
         ValidateLoadingProgressBinding();
         ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent");
+        ValidatePrefab(CommanderProfilePrefabPath, "SCN03_CommanderProfileContent", "LeftContent", "MiddleContent", "RightContent");
         ValidatePrefab(MatchHudPrefabPath, "SCN08_MatchHudContent", "HeaderContent", "LeftContent", "RightContent", "FooterContent");
         ValidatePrefab(ResultPopupPrefabPath, "POP05_MissionResultPopup", "PopupFrame", "PopupFrame/Actions");
-        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_VALIDATED prefabs=4");
+        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_VALIDATED prefabs=5");
     }
 
     private static GameObject BuildLoadingContent()
@@ -94,6 +97,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddPanel(right.transform, "CommanderPanel", new Rect(18f, 20f, 324f, 680f));
         AddText(right.transform, "CommanderTitle", "COMMANDER", new Rect(44f, 52f, 272f, 36f), 28f, TextAlignmentOptions.Left, Text);
         AddSolid(right.transform, "PortraitPlaceholder", new Rect(56f, 112f, 248f, 250f), new Color(0.02f, 0.024f, 0.02f, 1f));
+        AddRouteHotspot(right.transform, "CommanderPortraitButton", new Rect(56f, 112f, 248f, 250f), WarlineCaptureRoute.CommanderProfile);
         AddText(right.transform, "CommanderName", "FIELD COMMANDER\nLEVEL 38", new Rect(56f, 390f, 248f, 76f), 24f, TextAlignmentOptions.Center, Accent);
         AddText(right.transform, "Readiness", "READINESS\n||||||||||---", new Rect(56f, 514f, 248f, 82f), 21f, TextAlignmentOptions.Center, Text);
         AddRouteButton(
@@ -103,6 +107,43 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
             new Rect(18f, 722f, 324f, 74f),
             UiShellRouteIntent.EnterMatch,
             WarlineCaptureRoute.Match);
+
+        return root;
+    }
+
+    private static GameObject BuildCommanderProfileContent()
+    {
+        GameObject root = CreateRoot("SCN03_CommanderProfileContent");
+
+        GameObject left = CreateGroup("LeftContent", root.transform, new Rect(0f, 140f, 360f, 820f));
+        AddRouteButton(left.transform, "BackButton", "<  BACK", new Rect(16f, 18f, 328f, 76f), UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.MainMenu);
+        AddPanel(left.transform, "CommanderNavPanel", new Rect(16f, 118f, 328f, 630f));
+        AddText(left.transform, "CommanderNavTitle", "COMMANDER", new Rect(44f, 148f, 272f, 38f), 28f, TextAlignmentOptions.Left, Text);
+        AddProfileTab(left.transform, 212f, "Overview", true);
+        AddProfileTab(left.transform, 300f, "Progression", false);
+        AddProfileTab(left.transform, 388f, "Service Record", false);
+        AddProfileTab(left.transform, 476f, "Loadout", false);
+        AddProfileTab(left.transform, 564f, "Cosmetics", false);
+
+        GameObject middle = CreateGroup("MiddleContent", root.transform, new Rect(360f, 140f, 1680f, 820f));
+        AddPanel(middle.transform, "ProfileMainPanel", new Rect(70f, 42f, 1540f, 700f));
+        AddText(middle.transform, "ProfileTitle", "COMMANDER PROFILE", new Rect(118f, 82f, 700f, 54f), 40f, TextAlignmentOptions.Left, Text);
+        AddText(middle.transform, "ProfileSubtitle", "Field Commander  |  Level 38  |  First Contact Ready", new Rect(118f, 142f, 900f, 36f), 23f, TextAlignmentOptions.Left, Accent);
+        AddSolid(middle.transform, "PortraitLarge", new Rect(118f, 220f, 370f, 420f), new Color(0.018f, 0.022f, 0.018f, 1f));
+        AddText(middle.transform, "PortraitSilhouette", "COMMANDER\nSILHOUETTE", new Rect(156f, 370f, 294f, 88f), 24f, TextAlignmentOptions.Center, MutedText);
+        AddText(middle.transform, "ProfileBio", "Decorated operations leader assigned to rapid district stabilization.\n\nCurrent doctrine favors mobile armor, district control, and precision extraction under pressure.", new Rect(560f, 222f, 920f, 180f), 28f, TextAlignmentOptions.Left, Text);
+        AddMetricCard(middle.transform, 560f, 456f, "MISSIONS", "42");
+        AddMetricCard(middle.transform, 820f, 456f, "VICTORIES", "31");
+        AddMetricCard(middle.transform, 1080f, 456f, "AUTHORITY", "2,715");
+        AddMetricCard(middle.transform, 1340f, 456f, "RANK", "III");
+
+        GameObject right = CreateGroup("RightContent", root.transform, new Rect(2040f, 140f, 360f, 820f));
+        AddPanel(right.transform, "ProfileStatsPanel", new Rect(18f, 20f, 324f, 720f));
+        AddText(right.transform, "StatsTitle", "READINESS", new Rect(48f, 54f, 264f, 36f), 28f, TextAlignmentOptions.Left, Text);
+        AddText(right.transform, "StatsBars", "TACTICS     ||||||||||--\nARMOR       |||||||||---\nLOGISTICS   ||||||||----\nINTEL       |||||||-----", new Rect(48f, 124f, 264f, 180f), 22f, TextAlignmentOptions.Left, MutedText);
+        AddText(right.transform, "UnlockTitle", "ACTIVE PERKS", new Rect(48f, 342f, 264f, 34f), 25f, TextAlignmentOptions.Left, Text);
+        AddText(right.transform, "UnlockList", "Rapid Deployment\nSupply Efficiency\nDistrict Resolve", new Rect(48f, 394f, 264f, 150f), 22f, TextAlignmentOptions.Left, Accent);
+        AddText(right.transform, "ProfileHint", "Header remains active.\nBody regions are swapped by shell route.", new Rect(48f, 604f, 264f, 86f), 18f, TextAlignmentOptions.Center, MutedText);
 
         return root;
     }
@@ -172,6 +213,19 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddSolid(parent, $"{title}_Progress", new Rect(x + 48f, 628f, 260f, 18f), Accent);
     }
 
+    private static void AddProfileTab(Transform parent, float y, string label, bool selected)
+    {
+        AddSolid(parent, $"{label}_Tab", new Rect(42f, y, 276f, 58f), selected ? new Color(0.30f, 0.29f, 0.12f, 0.95f) : PanelMuted);
+        AddText(parent, $"{label}_Label", label, new Rect(64f, y + 12f, 232f, 32f), 20f, TextAlignmentOptions.Left, selected ? Accent : Text);
+    }
+
+    private static void AddMetricCard(Transform parent, float x, float y, string label, string value)
+    {
+        AddPanel(parent, $"{label}_Metric", new Rect(x, y, 210f, 118f));
+        AddText(parent, $"{label}_MetricLabel", label, new Rect(x + 22f, y + 22f, 166f, 28f), 18f, TextAlignmentOptions.Center, MutedText);
+        AddText(parent, $"{label}_MetricValue", value, new Rect(x + 22f, y + 56f, 166f, 42f), 28f, TextAlignmentOptions.Center, Accent);
+    }
+
     private static GameObject CreateRoot(string name)
     {
         GameObject root = new(name, typeof(RectTransform), typeof(CanvasGroup));
@@ -237,6 +291,25 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         routeButton.Configure(intent, route, false);
 
         AddText(obj.transform, "Label", label, StretchRect(), 27f, TextAlignmentOptions.Center, Color.black);
+    }
+
+    private static void AddRouteHotspot(Transform parent, string name, Rect rect, WarlineCaptureRoute route)
+    {
+        GameObject obj = CreateRect(name, parent, rect);
+        Image image = obj.AddComponent<Image>();
+        image.color = Clear;
+        image.raycastTarget = true;
+
+        Button button = obj.AddComponent<Button>();
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1f, 1f, 1f, 0.12f);
+        colors.pressedColor = new Color(1f, 0.82f, 0.3f, 0.18f);
+        colors.selectedColor = colors.highlightedColor;
+        button.colors = colors;
+
+        WarlineCaptureShellRouteButtonView routeButton = obj.AddComponent<WarlineCaptureShellRouteButtonView>();
+        routeButton.Configure(UiShellRouteIntent.OpenMenuRoute, route, false);
     }
 
     private static void AddResultConfirmButton(Transform parent, string name, string label, Rect rect)

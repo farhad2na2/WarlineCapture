@@ -1,0 +1,158 @@
+using Unity.Collections;
+using Unity.Entities;
+using Unity.Mathematics;
+
+public sealed class FocusedUnitCommandSystem
+{
+    public enum MissileLauncherTargetMode
+    {
+        None,
+        Ground,
+        Air
+    }
+
+    private World _queryWorld;
+    private EntityQuery _respawnQueueQuery;
+    private EntityQuery _selectedMoveQuery;
+
+    public void EnsureEntityQueries(EntityManager em)
+    {
+        World world = em.World;
+        if (_queryWorld == world && world != null && world.IsCreated)
+            return;
+
+        _queryWorld = world;
+        _respawnQueueQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<RespawnQueueTag>(),
+            ComponentType.ReadOnly<RespawnQueueState>());
+        _selectedMoveQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>());
+    }
+
+    public void DestroyFocusedUnit(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<SelectedUnitTag>(entity))
+            em.RemoveComponent<SelectedUnitTag>(entity);
+
+        if (em.HasComponent<UnitHealth>(entity))
+        {
+            UnitHealth health = em.GetComponentData<UnitHealth>(entity);
+            health.Current = 0;
+            em.SetComponentData(entity, health);
+        }
+        else
+        {
+            em.DestroyEntity(entity);
+        }
+    }
+
+    public bool ReturnFocusedUnitToBase(EntityManager em, Entity entity, UnitMoveOrderSystem moveOrderSystem)
+    {
+        EnsureEntityQueries(em);
+        if (_respawnQueueQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity queueEntity = _respawnQueueQuery.GetSingletonEntity();
+        byte factionId = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+        int2 goal = default;
+        if (em.HasBuffer<RespawnFactionSpawnPoint>(queueEntity))
+        {
+            DynamicBuffer<RespawnFactionSpawnPoint> points = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
+            for (int i = 0; i < points.Length; i++)
+            {
+                if (points[i].FactionId != factionId)
+                    continue;
+
+                goal = points[i].SpawnCell;
+                break;
+            }
+        }
+
+        moveOrderSystem.IssueImmediateMoveCommand(em, entity, goal);
+        return true;
+    }
+
+    public void EnableFocusedUnitAutoAttack(EntityManager em, Entity entity, UnitTargetOrderSystem targetOrderSystem)
+    {
+        targetOrderSystem.ClearCommandedAttackOrderComponents(em, entity);
+    }
+
+    public bool TryIssueFocusedMissileLauncherRadarAttack(
+        EntityManager em,
+        Entity launcher,
+        UnitTargetOrderSystem targetOrderSystem,
+        out float3 targetPosition)
+    {
+        targetPosition = default;
+        if (!em.HasComponent<UnitCombat>(launcher) || em.GetComponentData<UnitCombat>(launcher).CanAttack == 0)
+            return false;
+
+        MissileLauncherTargetMode mode = ResolveMissileLauncherTargetMode(em, launcher);
+        if (mode == MissileLauncherTargetMode.None)
+            return false;
+
+        byte factionId = em.GetComponentData<Faction>(launcher).Id;
+        if (!targetOrderSystem.TryFindRadarTargetForMissileLauncher(
+                em,
+                factionId,
+                mode == MissileLauncherTargetMode.Air,
+                launcher,
+                out Entity target,
+                out int2 targetCell,
+                out targetPosition))
+        {
+            return false;
+        }
+
+        targetOrderSystem.IssueDirectAttackTarget(em, launcher, target, targetCell, targetPosition);
+        return true;
+    }
+
+    public bool IssueImmediateSelectedUnitOrder(
+        EntityManager em,
+        bool clearEngageTarget,
+        UnitMoveOrderSystem moveOrderSystem)
+    {
+        EnsureEntityQueries(em);
+        using var selectedEntities = _selectedMoveQuery.ToEntityArray(Allocator.Temp);
+        if (selectedEntities.Length == 0)
+            return false;
+
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            Entity entity = selectedEntities[i];
+            if (!em.Exists(entity))
+                continue;
+
+            moveOrderSystem.RemoveComponentIfPresent<UnitTarget>(em, entity);
+            moveOrderSystem.RemoveComponentIfPresent<UnitPathRequest>(em, entity);
+            moveOrderSystem.RemoveComponentIfPresent<UnitPathFollow>(em, entity);
+            moveOrderSystem.RemoveComponentIfPresent<UnitPathRange>(em, entity);
+            moveOrderSystem.RemoveComponentIfPresent<UnitPathRetryCooldown>(em, entity);
+            moveOrderSystem.RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
+            moveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
+            if (clearEngageTarget)
+                moveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, entity);
+            if (!em.HasComponent<ManualMoveOrderTag>(entity))
+                em.AddComponent<ManualMoveOrderTag>(entity);
+        }
+
+        return true;
+    }
+
+    private static MissileLauncherTargetMode ResolveMissileLauncherTargetMode(EntityManager em, Entity launcher)
+    {
+        if (!em.HasComponent<UnitSourcePrefabKey>(launcher))
+            return MissileLauncherTargetMode.None;
+
+        string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(launcher).Value.ToString();
+        if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Air", System.StringComparison.OrdinalIgnoreCase))
+            return MissileLauncherTargetMode.Air;
+        if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Ground", System.StringComparison.OrdinalIgnoreCase))
+            return MissileLauncherTargetMode.Ground;
+
+        return MissileLauncherTargetMode.None;
+    }
+}

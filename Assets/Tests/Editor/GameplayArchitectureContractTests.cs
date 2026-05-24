@@ -1219,7 +1219,7 @@ public sealed class GameplayArchitectureContractTests
         string[] transportDiagnosticFiles =
         {
             "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
-            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+            "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs"
         };
 
         foreach (string file in transportDiagnosticFiles)
@@ -1431,8 +1431,8 @@ public sealed class GameplayArchitectureContractTests
     {
         string[] files =
         {
-            "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
-            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+            "Assets/Game/Scripts/Systems/RoadBuildSystem.cs",
+            "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs"
         };
 
         string[] violations = files
@@ -1447,13 +1447,44 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RtsSelectionAndRoadBuildSystemsMustLiveOutsideUiOwnership()
+    {
+        string[] runtimeSystemFiles =
+        {
+            "Assets/Game/Scripts/Systems/RoadBuildSystem.cs",
+            "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs"
+        };
+
+        string[] legacyUiFiles =
+        {
+            "Assets/Game/Scripts/UI/RoadBuildSystem.cs",
+            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs"
+        };
+
+        foreach (string file in runtimeSystemFiles)
+        {
+            Assert.IsTrue(File.Exists(file), $"{file} must live under runtime Systems ownership, not UI.");
+        }
+
+        string[] violations = legacyUiFiles
+            .Where(File.Exists)
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "RTS selection and road build are gameplay systems and must not be reintroduced under the UI folder:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
     public void UiPeerSystemsMustUseBuildingPlacementInteractionBoundary()
     {
         const string interactionFile = "Assets/Game/Scripts/Systems/BuildingPlacementInteractionSystem.cs";
         const string interactionContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementInteractionContextSystem.cs";
         const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
-        const string roadFile = "Assets/Game/Scripts/UI/RoadBuildSystem.cs";
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string roadFile = "Assets/Game/Scripts/Systems/RoadBuildSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
         const string runtimeLinkFile = "Assets/Game/Scripts/UI/RuntimeBuildingEntityLink.cs";
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
@@ -1990,7 +2021,7 @@ public sealed class GameplayArchitectureContractTests
     {
         string[] files =
         {
-            "Assets/Game/Scripts/UI/RTSSelectionSystem.cs",
+            "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs",
             "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs"
         };
 
@@ -2056,7 +2087,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateSelectionStateSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string stateFile = "Assets/Game/Scripts/Systems/SelectionStateSystem.cs";
         Assert.IsTrue(File.Exists(stateFile), "The RTS selection state slice must live in SelectionStateSystem.");
 
@@ -2073,9 +2104,90 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RtsSelectionSystemMustDelegateFocusableUnitLookupSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string lookupFile = "Assets/Game/Scripts/Systems/FocusableUnitLookupSystem.cs";
+        Assert.IsTrue(File.Exists(lookupFile), "Clicked-unit focus lookup and cache ownership must live in FocusableUnitLookupSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string lookup = File.ReadAllText(lookupFile);
+        StringAssert.Contains("FocusableUnitLookupSystem _focusableUnitLookupSystem", selection);
+        StringAssert.Contains("_focusableUnitLookupSystem.TryGetClickedUnitEntity", selection);
+        StringAssert.Contains("Dictionary<int, List<Entity>> _focusableUnitsByCell", lookup);
+        StringAssert.Contains("SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>())", lookup);
+        StringAssert.Contains("SetChangedVersionFilter(ComponentType.ReadOnly<UnitFootprint>())", lookup);
+        Assert.IsFalse(
+            selection.Contains("_focusableUnitsByCell", StringComparison.Ordinal) ||
+            selection.Contains("_focusableUnitCoverage", StringComparison.Ordinal) ||
+            selection.Contains("_focusableUnitsQuery", StringComparison.Ordinal),
+            "Focusable unit lookup cache and queries belong in FocusableUnitLookupSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"private\s+void\s+RefreshFocusableUnitLookup\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+void\s+RebuildFocusableUnitLookup\s*\(") ||
+            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsFocusableUnitCandidate\s*\("),
+            "Focusable lookup refresh and candidate policy belong in FocusableUnitLookupSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateVisibleSelectionSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string visibleSelectionFile = "Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs";
+        Assert.IsTrue(File.Exists(visibleSelectionFile), "Visible screen selection query/filter ownership must live in VisibleUnitSelectionSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string visibleSelection = File.ReadAllText(visibleSelectionFile);
+        StringAssert.Contains("VisibleUnitSelectionSystem _visibleUnitSelectionSystem", selection);
+        StringAssert.Contains("_visibleUnitSelectionSystem.HasVisiblePlayerUnits", selection);
+        StringAssert.Contains("_visibleUnitSelectionSystem.CollectVisiblePlayerUnits", selection);
+        StringAssert.Contains("_visibleUnitSelectionSystem.ApplySelectedUnitTags", selection);
+        StringAssert.Contains("EntityQuery _visiblePlayerUnitQuery", visibleSelection);
+        StringAssert.Contains("IsVisiblePlayerUnit", visibleSelection);
+        Assert.IsFalse(
+            selection.Contains("_selectRectangleQuery", StringComparison.Ordinal) ||
+            selection.Contains("IsVehicleForVisibleSelection(em, entity)", StringComparison.Ordinal),
+            "Visible screen selection queries and vehicle/soldier filter policy belong in VisibleUnitSelectionSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            Regex.IsMatch(selection, @"using\s+var\s+entities\s*=\s+_selectRectangleQuery\.ToEntityArray") ||
+            Regex.IsMatch(selection, @"private\s+enum\s+VisibleUnitSelectionFilter"),
+            "RTSSelectionSystem must not own visible selection entity iteration or filter declarations.");
+    }
+
+    [Test]
+    public void RtsSelectionSystemMustDelegateFocusedUnitCommandSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string commandFile = "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs";
+        Assert.IsTrue(File.Exists(commandFile), "Focused-unit command component mutations must live in FocusedUnitCommandSystem.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string command = File.ReadAllText(commandFile);
+        StringAssert.Contains("FocusedUnitCommandSystem _focusedUnitCommandSystem", selection);
+        StringAssert.Contains("_focusedUnitCommandSystem.DestroyFocusedUnit", selection);
+        StringAssert.Contains("_focusedUnitCommandSystem.ReturnFocusedUnitToBase", selection);
+        StringAssert.Contains("_focusedUnitCommandSystem.EnableFocusedUnitAutoAttack", selection);
+        StringAssert.Contains("_focusedUnitCommandSystem.TryIssueFocusedMissileLauncherRadarAttack", selection);
+        StringAssert.Contains("_focusedUnitCommandSystem.IssueImmediateSelectedUnitOrder", selection);
+        StringAssert.Contains("EntityQuery _respawnQueueQuery", command);
+        StringAssert.Contains("ResolveMissileLauncherTargetMode", command);
+        Assert.IsFalse(
+            selection.Contains("_respawnQueueQuery", StringComparison.Ordinal) ||
+            selection.Contains("ResolveMissileLauncherTargetMode", StringComparison.Ordinal) ||
+            selection.Contains("MissileLauncherTargetMode", StringComparison.Ordinal),
+            "Focused-unit respawn lookup and missile launcher target-mode policy belong in FocusedUnitCommandSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(
+            selection.Contains("em.DestroyEntity(entity)", StringComparison.Ordinal) ||
+            selection.Contains("health.Current = 0", StringComparison.Ordinal) ||
+            selection.Contains("ClearCommandedAttackOrderComponents(em, entity)", StringComparison.Ordinal) ||
+            Regex.IsMatch(selection, @"RemoveComponentIfPresent<[^>]+>\(em,\s*entity\)"),
+            "Focused-unit command component mutations belong in FocusedUnitCommandSystem, not RTSSelectionSystem.");
+    }
+
+    [Test]
     public void RtsSelectionSystemMustDelegateSelectionUiQuerySlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string uiQueryFile = "Assets/Game/Scripts/Systems/SelectionUiQuerySystem.cs";
         Assert.IsTrue(File.Exists(uiQueryFile), "Focused and selected UI read models must live in SelectionUiQuerySystem.");
 
@@ -2096,7 +2208,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateMoveOrderSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string moveOrderFile = "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs";
         Assert.IsTrue(File.Exists(moveOrderFile), "Manual move-order goal and footprint rules must live in UnitMoveOrderSystem.");
 
@@ -2124,7 +2236,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateTransportBoardingSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string transportFile = "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs";
         Assert.IsTrue(File.Exists(transportFile), "Transport boarding rules must live in UnitTransportBoardingSystem.");
 
@@ -2160,7 +2272,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateTargetOrderSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string targetOrderFile = "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs";
         Assert.IsTrue(File.Exists(targetOrderFile), "Target-order and target classification helpers must live in UnitTargetOrderSystem.");
 
@@ -2189,7 +2301,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateCameraStateSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string cameraFile = "Assets/Game/Scripts/Systems/RtsCameraSystem.cs";
         Assert.IsTrue(File.Exists(cameraFile), "RTS camera drag and smooth-focus state must live in RtsCameraSystem.");
 
@@ -2234,7 +2346,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateInputStateSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
         Assert.IsTrue(File.Exists(inputFile), "RTS pointer, drag, suppression, and queued move input state must live in RtsSelectionInputSystem.");
 
@@ -2253,10 +2365,10 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustUseRuntimeGameplayStateBoundary()
     {
-        const string selectionFile = "Assets/Game/Scripts/UI/RTSSelectionSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
         const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
-        const string roadBuildFile = "Assets/Game/Scripts/UI/RoadBuildSystem.cs";
+        const string roadBuildFile = "Assets/Game/Scripts/Systems/RoadBuildSystem.cs";
         const string buildingPlacementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string gameBootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
         const string stateSystemFile = "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs";

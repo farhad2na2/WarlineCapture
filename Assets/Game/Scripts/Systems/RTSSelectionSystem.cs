@@ -42,13 +42,6 @@ public sealed class RTSSelectionSystem
         ReturningToBase = 3
     }
 
-    private enum VisibleUnitSelectionFilter
-    {
-        All,
-        Soldiers,
-        Vehicles
-    }
-
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorId = Shader.PropertyToID("_Color");
 
@@ -65,13 +58,6 @@ public sealed class RTSSelectionSystem
         public UnitPathFollow UnitPathFollow;
         public bool HadUnitPathRange;
         public UnitPathRange UnitPathRange;
-    }
-
-    private struct FocusableUnitCoverage
-    {
-        public int2 Cell;
-        public int2 Size;
-        public int Padding;
     }
 
     private struct PendingTransportBoardingOrder
@@ -161,8 +147,11 @@ public sealed class RTSSelectionSystem
     private readonly RtsCameraSystem _rtsCameraSystem = new();
     private readonly SelectionStateSystem _selectionStateSystem = new();
     private readonly SelectionUiQuerySystem _selectionUiQuerySystem = new();
+    private readonly VisibleUnitSelectionSystem _visibleUnitSelectionSystem = new();
     private readonly UnitMoveOrderSystem _unitMoveOrderSystem = new();
     private readonly UnitTargetOrderSystem _unitTargetOrderSystem = new();
+    private readonly FocusedUnitCommandSystem _focusedUnitCommandSystem = new();
+    private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
     private UnitTransportBoardingSystem _unitTransportBoardingSystem;
     private Entity _focusedUnit
     {
@@ -286,24 +275,18 @@ public sealed class RTSSelectionSystem
     private FactionVisualSettings _factionVisualSettings;
     private BattleHudGameplayBridge _battleHudBridge;
     private World _queryWorld;
-    private EntityQuery _selectRectangleQuery;
     private EntityQuery _selectedMoveQuery;
     private EntityQuery _gridPathingQuery;
     private EntityQuery _allSelectableQuery;
     private EntityQuery _gridConfigQuery;
     private EntityQuery _gridBlockerQuery;
     private EntityQuery _selectedTagQuery;
-    private EntityQuery _respawnQueueQuery;
-    private EntityQuery _focusableUnitsQuery;
     private EntityQuery _selectedAttackQuery;
     private EntityQuery _transportBoardingTargetQuery;
     private EntityQuery _pathingLiveUnitsQuery;
-    private EntityQuery _changedFocusableGridQuery;
-    private EntityQuery _changedFocusableFootprintQuery;
     private readonly List<PreservedOrderState> _preservedUiOrders = new();
-    private readonly Dictionary<int, List<Entity>> _focusableUnitsByCell = new();
-    private readonly Dictionary<Entity, FocusableUnitCoverage> _focusableUnitCoverage = new();
     private readonly List<SelectionUiQuerySystem.TransportPassengerUiInfo> _selectionUiPassengerScratch = new();
+    private readonly List<Entity> _visibleSelectionScratch = new();
     private readonly List<Entity> _selectedBoardingSourceEntities = new();
     private GameObject _moveOrderMarker;
     private Renderer[] _moveOrderMarkerRenderers;
@@ -313,7 +296,6 @@ public sealed class RTSSelectionSystem
     private Renderer[] _attackOrderMarkerRenderers;
     private MaterialPropertyBlock _attackOrderMarkerPropertyBlock;
     private float _attackOrderMarkerHideTime = -1f;
-    private int _lastFocusableUnitCount = -1;
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
     private float _selectionModeHoldSeconds = 1f;
@@ -861,16 +843,17 @@ public sealed class RTSSelectionSystem
     {
         World world = em.World;
         if (_queryWorld == world && world != null && world.IsCreated)
+        {
+            _focusableUnitLookupSystem.EnsureEntityQueries(em);
+            _visibleUnitSelectionSystem.EnsureEntityQueries(em);
+            _focusedUnitCommandSystem.EnsureEntityQueries(em);
             return;
+        }
 
         _queryWorld = world;
-        _focusableUnitsByCell.Clear();
-        _focusableUnitCoverage.Clear();
-        _lastFocusableUnitCount = -1;
-        _selectRectangleQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<LocalToWorld>(),
-            ComponentType.ReadOnly<UnitGrid>());
+        _focusableUnitLookupSystem.EnsureEntityQueries(em);
+        _visibleUnitSelectionSystem.EnsureEntityQueries(em);
+        _focusedUnitCommandSystem.EnsureEntityQueries(em);
         _selectedMoveQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitGrid>(),
@@ -890,14 +873,6 @@ public sealed class RTSSelectionSystem
             ComponentType.ReadOnly<GridWalkable>(),
             ComponentType.ReadOnly<DynamicBlockerData>());
         _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
-        _respawnQueueQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<RespawnQueueTag>(),
-            ComponentType.ReadOnly<RespawnQueueState>());
-        _focusableUnitsQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitFootprint>(),
-            ComponentType.ReadOnly<LocalToWorld>());
         _selectedAttackQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<SelectedUnitTag>(),
             ComponentType.ReadOnly<UnitMove>(),
@@ -918,18 +893,6 @@ public sealed class RTSSelectionSystem
                 ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
             }
         });
-        _changedFocusableGridQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitFootprint>(),
-            ComponentType.ReadOnly<LocalToWorld>());
-        _changedFocusableGridQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>());
-        _changedFocusableFootprintQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<Faction>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitFootprint>(),
-            ComponentType.ReadOnly<LocalToWorld>());
-        _changedFocusableFootprintQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitFootprint>());
     }
 
     public void Update()
@@ -1321,101 +1284,61 @@ public sealed class RTSSelectionSystem
 
     private void SelectUnitsInRectangle(Rect screenRect)
     {
-        SelectUnitsInRectangle(screenRect, VisibleUnitSelectionFilter.All);
+        SelectUnitsInRectangle(screenRect, VisibleUnitSelectionSystem.Filter.All);
     }
 
     public bool HasVisiblePlayerUnits()
     {
-        return HasVisiblePlayerUnits(VisibleUnitSelectionFilter.All);
+        return HasVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter.All);
     }
 
     public bool HasVisiblePlayerSoldiers()
     {
-        return HasVisiblePlayerUnits(VisibleUnitSelectionFilter.Soldiers);
+        return HasVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter.Soldiers);
     }
 
     public bool HasVisiblePlayerVehicles()
     {
-        return HasVisiblePlayerUnits(VisibleUnitSelectionFilter.Vehicles);
+        return HasVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter.Vehicles);
     }
 
-    private bool HasVisiblePlayerUnits(VisibleUnitSelectionFilter filter)
+    private bool HasVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter filter)
     {
         if (worldCamera == null || World.DefaultGameObjectInjectionWorld == null)
             return false;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        using var entities = _selectRectangleQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-
         Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (em.HasComponent<Prefab>(entity) || em.HasComponent<StaticGridBlocker>(entity))
-                continue;
-
-            if (em.GetComponentData<Faction>(entity).Id != 0)
-                continue;
-
-            bool isVehicle = _selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
-            if (filter == VisibleUnitSelectionFilter.Soldiers && isVehicle)
-                continue;
-            if (filter == VisibleUnitSelectionFilter.Vehicles && !isVehicle)
-                continue;
-
-            Vector3 screen = worldCamera.WorldToScreenPoint(em.GetComponentData<LocalToWorld>(entity).Position);
-            if (screen.z > 0f && screenRect.Contains(new Vector2(screen.x, screen.y)))
-                return true;
-        }
-
-        return false;
+        return _visibleUnitSelectionSystem.HasVisiblePlayerUnits(
+            em,
+            worldCamera,
+            _selectionUiQuerySystem,
+            screenRect,
+            filter);
     }
 
-    private void SelectUnitsInRectangle(Rect screenRect, VisibleUnitSelectionFilter filter)
+    private void SelectUnitsInRectangle(Rect screenRect, VisibleUnitSelectionSystem.Filter filter)
     {
         if (World.DefaultGameObjectInjectionWorld == null)
             return;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
         EnsureEntityQueries(em);
-        using var entities = _selectRectangleQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-
-        var selected = new List<Entity>();
-        for (int i = 0; i < entities.Length; i++)
-        {
-            var entity = entities[i];
-            if (em.HasComponent<Prefab>(entity) || em.HasComponent<StaticGridBlocker>(entity))
-                continue;
-
-            if (em.GetComponentData<Faction>(entity).Id != 0)
-                continue;
-
-            bool isVehicle = _selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
-            if (filter == VisibleUnitSelectionFilter.Soldiers && isVehicle)
-                continue;
-            if (filter == VisibleUnitSelectionFilter.Vehicles && !isVehicle)
-                continue;
-
-            float3 pos = em.GetComponentData<LocalToWorld>(entity).Position;
-            Vector3 screen = worldCamera.WorldToScreenPoint(pos);
-            if (screen.z <= 0f)
-                continue;
-
-            if (screenRect.Contains(new Vector2(screen.x, screen.y)))
-                selected.Add(entity);
-        }
+        int selectedCount = _visibleUnitSelectionSystem.CollectVisiblePlayerUnits(
+            em,
+            worldCamera,
+            _selectionUiQuerySystem,
+            screenRect,
+            filter,
+            _visibleSelectionScratch);
 
         ClearCurrentSelection(em, "SelectUnitsInRectangle");
-        for (int i = 0; i < selected.Count; i++)
-        {
-            if (!em.HasComponent<SelectedUnitTag>(selected[i]))
-                em.AddComponent<SelectedUnitTag>(selected[i]);
-        }
-        CacheSelectedMoveEntities(em, selected);
-        LogSelectionDiagnostic($"result=SelectRectangle filter={filter} selected={selected.Count} cache={_cachedSelectedMoveEntities.Count}");
+        _visibleUnitSelectionSystem.ApplySelectedUnitTags(em, _visibleSelectionScratch);
+        CacheSelectedMoveEntities(em, _visibleSelectionScratch);
+        LogSelectionDiagnostic($"result=SelectRectangle filter={filter} selected={selectedCount} cache={_cachedSelectedMoveEntities.Count}");
 
-        _focusedUnit = selected.Count == 1 ? selected[0] : Entity.Null;
+        _focusedUnit = selectedCount == 1 ? _visibleSelectionScratch[0] : Entity.Null;
         if (_focusedUnit != Entity.Null)
         {
             _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.SelectUnitsInRectangle");
@@ -1423,7 +1346,7 @@ public sealed class RTSSelectionSystem
         }
         else
         {
-            ApplyHudSquadSelection(selected.Count);
+            ApplyHudSquadSelection(selectedCount);
         }
     }
 
@@ -2814,20 +2737,20 @@ public sealed class RTSSelectionSystem
 
     public void SelectAllVisiblePlayerUnits()
     {
-        SelectAllVisiblePlayerUnits(VisibleUnitSelectionFilter.All);
+        SelectAllVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter.All);
     }
 
     public void SelectAllVisiblePlayerSoldiers()
     {
-        SelectAllVisiblePlayerUnits(VisibleUnitSelectionFilter.Soldiers);
+        SelectAllVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter.Soldiers);
     }
 
     public void SelectAllVisiblePlayerVehicles()
     {
-        SelectAllVisiblePlayerUnits(VisibleUnitSelectionFilter.Vehicles);
+        SelectAllVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter.Vehicles);
     }
 
-    private void SelectAllVisiblePlayerUnits(VisibleUnitSelectionFilter filter)
+    private void SelectAllVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter filter)
     {
         if (worldCamera == null)
         {
@@ -3045,18 +2968,7 @@ public sealed class RTSSelectionSystem
         if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !FocusedUnitOwnedByPlayer)
             return;
 
-        if (em.HasComponent<SelectedUnitTag>(entity))
-            em.RemoveComponent<SelectedUnitTag>(entity);
-        if (em.HasComponent<UnitHealth>(entity))
-        {
-            UnitHealth health = em.GetComponentData<UnitHealth>(entity);
-            health.Current = 0;
-            em.SetComponentData(entity, health);
-        }
-        else
-        {
-            em.DestroyEntity(entity);
-        }
+        _focusedUnitCommandSystem.DestroyFocusedUnit(em, entity);
         _focusedUnit = Entity.Null;
     }
 
@@ -3065,26 +2977,7 @@ public sealed class RTSSelectionSystem
         if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !FocusedUnitOwnedByPlayer)
             return;
 
-        EnsureEntityQueries(em);
-        if (_respawnQueueQuery.IsEmptyIgnoreFilter)
-            return;
-
-        Entity queueEntity = _respawnQueueQuery.GetSingletonEntity();
-        byte factionId = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
-        int2 goal = default;
-        if (em.HasBuffer<RespawnFactionSpawnPoint>(queueEntity))
-        {
-            DynamicBuffer<RespawnFactionSpawnPoint> points = em.GetBuffer<RespawnFactionSpawnPoint>(queueEntity);
-            for (int i = 0; i < points.Length; i++)
-            {
-                if (points[i].FactionId != factionId)
-                    continue;
-
-                goal = points[i].SpawnCell;
-                break;
-            }
-        }
-        _unitMoveOrderSystem.IssueImmediateMoveCommand(em, entity, goal);
+        _focusedUnitCommandSystem.ReturnFocusedUnitToBase(em, entity, _unitMoveOrderSystem);
     }
 
     public void EnableFocusedUnitAutoAttack()
@@ -3092,25 +2985,21 @@ public sealed class RTSSelectionSystem
         if (!TryGetFocusedUnitEntity(out var em, out Entity entity) || !FocusedUnitOwnedByPlayer)
             return;
 
-        _unitTargetOrderSystem.ClearCommandedAttackOrderComponents(em, entity);
+        _focusedUnitCommandSystem.EnableFocusedUnitAutoAttack(em, entity, _unitTargetOrderSystem);
     }
 
     public bool IssueFocusedMissileLauncherRadarAttack()
     {
         if (!TryGetFocusedUnitEntity(out var em, out Entity launcher) || !FocusedUnitOwnedByPlayer)
             return false;
-        if (!em.HasComponent<UnitCombat>(launcher) || em.GetComponentData<UnitCombat>(launcher).CanAttack == 0)
+        if (!_focusedUnitCommandSystem.TryIssueFocusedMissileLauncherRadarAttack(
+                em,
+                launcher,
+                _unitTargetOrderSystem,
+                out float3 targetPosition))
+        {
             return false;
-
-        MissileLauncherTargetMode mode = ResolveMissileLauncherTargetMode(em, launcher);
-        if (mode == MissileLauncherTargetMode.None)
-            return false;
-
-        byte factionId = em.GetComponentData<Faction>(launcher).Id;
-        if (!_unitTargetOrderSystem.TryFindRadarTargetForMissileLauncher(em, factionId, mode == MissileLauncherTargetMode.Air, launcher, out Entity target, out int2 targetCell, out float3 targetPosition))
-            return false;
-
-        _unitTargetOrderSystem.IssueDirectAttackTarget(em, launcher, target, targetCell, targetPosition);
+        }
 
         ShowAttackOrderMarker(em, targetPosition);
         ClearCurrentSelection(em, "MissileLauncherRadarAttack");
@@ -3171,31 +3060,14 @@ public sealed class RTSSelectionSystem
         }
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        using var selectedEntities = _selectedMoveQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        if (selectedEntities.Length == 0)
+        bool issued = _focusedUnitCommandSystem.IssueImmediateSelectedUnitOrder(
+            em,
+            clearEngageTarget,
+            _unitMoveOrderSystem);
+        if (!issued)
         {
             ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return false;
-        }
-
-        for (int i = 0; i < selectedEntities.Length; i++)
-        {
-            Entity entity = selectedEntities[i];
-            if (!em.Exists(entity))
-                continue;
-
-            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitTarget>(em, entity);
-            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathRequest>(em, entity);
-            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathFollow>(em, entity);
-            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathRange>(em, entity);
-            _unitMoveOrderSystem.RemoveComponentIfPresent<UnitPathRetryCooldown>(em, entity);
-            _unitMoveOrderSystem.RemoveComponentIfPresent<AutoWanderMoveTag>(em, entity);
-            _unitMoveOrderSystem.RemoveComponentIfPresent<BaseBreachOrder>(em, entity);
-            if (clearEngageTarget)
-                _unitMoveOrderSystem.RemoveComponentIfPresent<EngageTarget>(em, entity);
-            if (!em.HasComponent<ManualMoveOrderTag>(entity))
-                em.AddComponent<ManualMoveOrderTag>(entity);
         }
 
         _explicitAttackTargetModeActive = false;
@@ -3244,27 +3116,6 @@ public sealed class RTSSelectionSystem
 
         _focusedUnit = selectedEntity;
         ApplyHudSelection(em, _focusedUnit);
-    }
-
-    private enum MissileLauncherTargetMode
-    {
-        None,
-        Ground,
-        Air
-    }
-
-    private static MissileLauncherTargetMode ResolveMissileLauncherTargetMode(EntityManager em, Entity launcher)
-    {
-        if (!em.HasComponent<UnitSourcePrefabKey>(launcher))
-            return MissileLauncherTargetMode.None;
-
-        string sourceKey = em.GetComponentData<UnitSourcePrefabKey>(launcher).Value.ToString();
-        if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Air", System.StringComparison.OrdinalIgnoreCase))
-            return MissileLauncherTargetMode.Air;
-        if (string.Equals(sourceKey, "Unit_Veh_Missle_Launcher_Ground", System.StringComparison.OrdinalIgnoreCase))
-            return MissileLauncherTargetMode.Ground;
-
-        return MissileLauncherTargetMode.None;
     }
 
     private bool TryFocusUnit(Vector2 screenPosition)
@@ -3377,223 +3228,12 @@ public sealed class RTSSelectionSystem
         if (!TryGetClickedCell(screenPosition, em, out var clickedCell, out _))
             return false;
 
-        EnsureEntityQueries(em);
-        RefreshFocusableUnitLookup(em);
-        if (_gridConfigQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        int cellIndex = GridUtils.CellToIndex(clickedCell, grid.Width);
-        if (!_focusableUnitsByCell.TryGetValue(cellIndex, out List<Entity> candidates) || candidates == null || candidates.Count == 0)
-            return false;
-
-        float bestDistanceSq = float.MaxValue;
-        for (int i = candidates.Count - 1; i >= 0; i--)
-        {
-            Entity entity = candidates[i];
-            if (!IsFocusableUnitCandidate(em, entity))
-            {
-                candidates.RemoveAt(i);
-                _focusableUnitCoverage.Remove(entity);
-                continue;
-            }
-
-            int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
-            int2 footprint = em.GetComponentData<UnitFootprint>(entity).Size;
-            int padding = GetFocusablePadding(em, entity);
-            if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, padding))
-            {
-                RefreshFocusableUnitLookupEntry(em, grid, entity);
-                continue;
-            }
-
-            Vector3 screen = worldCamera.WorldToScreenPoint(em.GetComponentData<LocalToWorld>(entity).Position);
-            float distanceSq = (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
-            if (distanceSq < bestDistanceSq)
-            {
-                bestDistanceSq = distanceSq;
-                bestEntity = entity;
-            }
-        }
-
-        if (candidates.Count == 0)
-            _focusableUnitsByCell.Remove(cellIndex);
-
-        return bestEntity != Entity.Null;
-    }
-
-    private void RefreshFocusableUnitLookup(EntityManager em)
-    {
-        EnsureEntityQueries(em);
-        if (_gridConfigQuery.IsEmptyIgnoreFilter)
-            return;
-
-        GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        int focusableUnitCount = _focusableUnitsQuery.CalculateEntityCount();
-        if (_lastFocusableUnitCount < 0 || focusableUnitCount != _lastFocusableUnitCount)
-        {
-            RebuildFocusableUnitLookup(em, grid, focusableUnitCount);
-            return;
-        }
-
-        bool gridChanged = !_changedFocusableGridQuery.IsEmptyIgnoreFilter;
-        bool footprintChanged = !_changedFocusableFootprintQuery.IsEmptyIgnoreFilter;
-        if (!gridChanged && !footprintChanged)
-            return;
-
-        var changedEntities = new HashSet<Entity>();
-        if (gridChanged)
-        {
-            using var changedGridEntities = _changedFocusableGridQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-            for (int i = 0; i < changedGridEntities.Length; i++)
-                changedEntities.Add(changedGridEntities[i]);
-        }
-
-        if (footprintChanged)
-        {
-            using var changedFootprintEntities = _changedFocusableFootprintQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-            for (int i = 0; i < changedFootprintEntities.Length; i++)
-                changedEntities.Add(changedFootprintEntities[i]);
-        }
-
-        foreach (Entity entity in changedEntities)
-            RefreshFocusableUnitLookupEntry(em, grid, entity);
-    }
-
-    private void RebuildFocusableUnitLookup(EntityManager em, GridConfig grid, int focusableUnitCount)
-    {
-        _focusableUnitsByCell.Clear();
-        _focusableUnitCoverage.Clear();
-
-        using var entities = _focusableUnitsQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (!IsFocusableUnitCandidate(em, entity))
-                continue;
-
-            int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
-            int2 size = em.GetComponentData<UnitFootprint>(entity).Size;
-            AddFocusableUnitLookupEntry(em, grid, entity, cell, size);
-        }
-
-        _lastFocusableUnitCount = focusableUnitCount;
-    }
-
-    private void RefreshFocusableUnitLookupEntry(EntityManager em, GridConfig grid, Entity entity)
-    {
-        if (_focusableUnitCoverage.TryGetValue(entity, out FocusableUnitCoverage previousCoverage))
-        {
-            RemoveFocusableUnitLookupEntry(grid, entity, previousCoverage.Cell, previousCoverage.Size, previousCoverage.Padding);
-            _focusableUnitCoverage.Remove(entity);
-        }
-
-        if (!IsFocusableUnitCandidate(em, entity))
-            return;
-
-        int2 cell = em.GetComponentData<UnitGrid>(entity).Cell;
-        int2 size = em.GetComponentData<UnitFootprint>(entity).Size;
-        AddFocusableUnitLookupEntry(em, grid, entity, cell, size);
-    }
-
-    private static bool IsFocusableUnitCandidate(EntityManager em, Entity entity)
-    {
-        bool hasTransitTag = em.HasComponent<UnitSpawnTransitTag>(entity);
-        if (hasTransitTag)
-        {
-            bool groundedIdleAirUnit =
-                em.HasComponent<UnitAirState>(entity) &&
-                !em.HasComponent<UnitTarget>(entity) &&
-                !em.HasComponent<EngageTarget>(entity) &&
-                em.GetComponentData<UnitAirState>(entity).Airborne == 0 &&
-                em.GetComponentData<UnitAirState>(entity).ReturningHome == 0 &&
-                em.GetComponentData<UnitAirState>(entity).TakeoffRolling == 0 &&
-                em.GetComponentData<UnitAirState>(entity).LandingRolling == 0;
-
-            if (!groundedIdleAirUnit)
-                return false;
-        }
-
-        return em.Exists(entity) &&
-            !em.HasComponent<Prefab>(entity) &&
-            !em.HasComponent<StaticGridBlocker>(entity) &&
-            em.HasComponent<Faction>(entity) &&
-            em.HasComponent<UnitGrid>(entity) &&
-            em.HasComponent<UnitFootprint>(entity) &&
-            em.HasComponent<LocalToWorld>(entity);
-    }
-
-    private void AddFocusableUnitLookupEntry(EntityManager em, GridConfig grid, Entity entity, int2 cell, int2 size)
-    {
-        int2 min;
-        int2 max;
-        int padding = GetFocusablePadding(em, entity);
-        GetPaddedFocusableBounds(grid, cell, size, padding, out min, out max);
-
-        for (int y = min.y; y < max.y; y++)
-        {
-            int rowStart = y * grid.Width;
-            for (int x = min.x; x < max.x; x++)
-            {
-                int index = rowStart + x;
-                if (!_focusableUnitsByCell.TryGetValue(index, out List<Entity> entities))
-                {
-                    entities = new List<Entity>();
-                    _focusableUnitsByCell.Add(index, entities);
-                }
-
-                entities.Add(entity);
-            }
-        }
-
-        _focusableUnitCoverage[entity] = new FocusableUnitCoverage
-        {
-            Cell = cell,
-            Size = size,
-            Padding = padding
-        };
-    }
-
-    private void RemoveFocusableUnitLookupEntry(GridConfig grid, Entity entity, int2 cell, int2 size, int padding)
-    {
-        int2 min;
-        int2 max;
-        GetPaddedFocusableBounds(grid, cell, size, padding, out min, out max);
-
-        for (int y = min.y; y < max.y; y++)
-        {
-            int rowStart = y * grid.Width;
-            for (int x = min.x; x < max.x; x++)
-            {
-                int index = rowStart + x;
-                if (!_focusableUnitsByCell.TryGetValue(index, out List<Entity> entities))
-                    continue;
-
-                entities.Remove(entity);
-                if (entities.Count == 0)
-                    _focusableUnitsByCell.Remove(index);
-            }
-        }
-    }
-
-    private static void GetPaddedFocusableBounds(GridConfig grid, int2 centerCell, int2 size, out int2 min, out int2 max)
-    {
-        GetPaddedFocusableBounds(grid, centerCell, size, 1, out min, out max);
-    }
-
-    private static void GetPaddedFocusableBounds(GridConfig grid, int2 centerCell, int2 size, int paddingAmount, out int2 min, out int2 max)
-    {
-        int2 clampedSize = UnitFootprintUtility.ClampSize(size);
-        int2 padding = new int2(paddingAmount, paddingAmount);
-        int2 paddedMin = UnitFootprintUtility.GetMinCell(centerCell, clampedSize) - padding;
-        int2 paddedMax = paddedMin + clampedSize + (padding * 2);
-        min = new int2(math.clamp(paddedMin.x, 0, grid.Width), math.clamp(paddedMin.y, 0, grid.Height));
-        max = new int2(math.clamp(paddedMax.x, 0, grid.Width), math.clamp(paddedMax.y, 0, grid.Height));
-    }
-
-    private static int GetFocusablePadding(EntityManager em, Entity entity)
-    {
-        return em.HasComponent<UnitAirMovement>(entity) ? 4 : 1;
+        return _focusableUnitLookupSystem.TryGetClickedUnitEntity(
+            em,
+            worldCamera,
+            clickedCell,
+            screenPosition,
+            out bestEntity);
     }
 
     private bool TryGetFocusedUnitEntity(out EntityManager em, out Entity entity)

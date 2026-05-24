@@ -376,6 +376,40 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 
 `RTSSelectionSystem` and `UnitTransportBoardingSystem` now gate transport diagnostic message construction before formatting entity/pathing details, queue `TransportBoardingDiagnosticLogComponent` entries, and let the flush system write Unity logs at the shell/logging boundary.
 
+## Twenty-Seventh Extraction Started
+
+`FocusableUnitLookupSystem` now owns the clicked-unit focus lookup cache that was previously inside `RTSSelectionSystem`:
+
+- focusable unit cell coverage cache
+- focusable unit changed-grid and changed-footprint queries
+- focusable candidate policy for transient/grounded air units
+- padded footprint lookup and closest screen-space candidate selection
+
+`RTSSelectionSystem` still owns the input-to-command flow for focus and attack clicks, but it no longer owns the focusable lookup cache or its refresh algorithms.
+
+## Twenty-Eighth Extraction Started
+
+`VisibleUnitSelectionSystem` now owns the visible screen-selection query/filter slice that was previously inside `RTSSelectionSystem`:
+
+- screen-rectangle player unit collection
+- select-all soldiers/vehicles/all filter policy
+- visible player unit existence checks
+- selected-unit tag application for visible selection results
+
+`RTSSelectionSystem` still owns the public select-all entry points and HUD feedback, but it no longer owns the visible-unit entity query or soldiers/vehicles filter iteration.
+
+## Twenty-Ninth Extraction Started
+
+`FocusedUnitCommandSystem` now owns focused-unit command component mutations that were previously inside `RTSSelectionSystem`:
+
+- focused unit destroy/health-zero mutation
+- focused return-to-base respawn spawn-point lookup
+- focused auto-attack command cleanup
+- missile launcher radar target-mode policy and direct radar attack write
+- hold/stop selected-unit movement component cleanup
+
+`RTSSelectionSystem` still owns public UI command entry points and HUD feedback, but it no longer owns the focused-command mutation algorithms.
+
 ## Recommended Next Slices
 
 1. Move `RTSSelectionSystem` input orchestration branches into `RtsSelectionInputSystem` or ECS request components once command side effects have narrower interfaces.

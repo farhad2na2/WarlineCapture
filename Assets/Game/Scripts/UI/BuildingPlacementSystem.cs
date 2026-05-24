@@ -202,9 +202,10 @@ public sealed class BuildingPlacementSystem
     private readonly BuildingPlacementRedirectSystem _buildingPlacementRedirectSystem = new();
     private readonly BuildingResourceHaulerBridgeSystem _buildingResourceHaulerBridgeSystem = new();
     private readonly BuildingRuntimeBoundarySystem _buildingRuntimeBoundarySystem = new();
+    private readonly RuntimeResourceSystem _runtimeResourceSystem = new();
+    private readonly RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem = new();
     private IReadOnlyDictionary<int, RuntimeBuildingData> _runtimeBuildings => _runtimeBuildingSystem.Buildings;
     private int[] _placementInvalidPrefix;
-    private int _resourceDollars;
     private Transform _buildingRoot;
     private BuildingDefinition _soldierBaseDefinition;
     private BuildingDefinition _soldierTentDefinition;
@@ -248,6 +249,8 @@ public sealed class BuildingPlacementSystem
     public int? CurrentActiveBuildingId => ActiveBuildingId;
     internal BuildingRuntimeCitySpawnSystem RuntimeCitySpawnSystem => _buildingRuntimeCitySpawnSystem;
     internal BuildingRuntimeQuerySystem RuntimeQuerySystem => _buildingRuntimeQuerySystem;
+    internal RuntimeResourceSystem RuntimeResourceSystem => _runtimeResourceSystem;
+    internal RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem => _runtimeUnitPrefabSystem;
     public GameObject RoadPreviewPrefab => config != null ? config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => config != null ? config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => config != null ? config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
@@ -444,11 +447,11 @@ public sealed class BuildingPlacementSystem
 
     public void GetResourceTotals(out int dollars, out int oilBarrels, out int fuelBarrels)
     {
-        dollars = _resourceDollars;
+        dollars = _runtimeResourceSystem.CurrentDollars;
         _factionResourceSystem.GetResourceTotals(_runtimeBuildings, out oilBarrels, out fuelBarrels);
     }
 
-    public int CurrentDollars => _resourceDollars;
+    public int CurrentDollars => _runtimeResourceSystem.CurrentDollars;
 
     public bool TryGetFactionResourceEconomy(byte factionId, out FactionResourceEconomySnapshot snapshot)
     {
@@ -671,19 +674,12 @@ public sealed class BuildingPlacementSystem
 
     public bool TrySpendDollars(int amount)
     {
-        amount = Mathf.Max(0, amount);
-        if (amount <= 0)
-            return true;
-        if (_resourceDollars < amount)
-            return false;
-
-        _resourceDollars -= amount;
-        return true;
+        return _runtimeResourceSystem.TrySpendDollars(amount);
     }
 
     public void SetInitialResourceTotals(int dollars, int oilBarrels, int fuelBarrels)
     {
-        _resourceDollars = Mathf.Max(0, dollars);
+        _runtimeResourceSystem.SetInitialDollars(dollars);
     }
 
     private bool IsHouseBuilding(RuntimeBuildingData building)
@@ -2495,7 +2491,7 @@ public sealed class BuildingPlacementSystem
             _buildingDefinitionSystem.ConfiguredDefinitionsByPrefab,
             unitSpawnPrefabs,
             _buildingDefinitionSystem.UnitSpawnPrefabsByKey,
-            _resourceDollars,
+            _runtimeResourceSystem.CurrentDollars,
             _buildingProductionSystem,
             CreateBuildingProductionQueueContext(),
             _buildingRunwaySystem,
@@ -2503,7 +2499,7 @@ public sealed class BuildingPlacementSystem
             BuildingDefinitionSystem.TryGetPrefabLocalBounds,
             BeginPlacementForConfiguredSpawnable,
             TrySpendDollars,
-            amount => _resourceDollars += Mathf.Max(0, amount),
+            _runtimeResourceSystem.AddDollars,
             _buildingPlacementLifecycleSystem.SetActivePlacementCost,
             QueuePlayerUnitProduction,
             buildingId => _runtimeBuildingSystem.SelectBuilding(buildingId),
@@ -2586,16 +2582,9 @@ public sealed class BuildingPlacementSystem
         return CreateBuildingRuntimeQueryContext();
     }
 
-    internal CitizenResourceSystem.Context CreateCitizenResourceContext()
+    internal RuntimeUnitPrefabSystem.Context CreateRuntimeUnitPrefabContext()
     {
-        return new CitizenResourceSystem.Context(
-            () => _resourceDollars,
-            value => _resourceDollars = Mathf.Max(0, value));
-    }
-
-    internal CitizenPrefabSystem.Context CreateCitizenPrefabContext()
-    {
-        return new CitizenPrefabSystem.Context(
+        return new RuntimeUnitPrefabSystem.Context(
             _buildingDefinitionSystem,
             _buildingSpawnPrefabSystem,
             TryGetEntityManager,

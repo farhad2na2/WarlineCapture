@@ -77,7 +77,13 @@ public sealed class ManagedGameplayStartupSystem
         unitImpostors.Init(worldCamera, ownerLayer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
 
         var citizenPopulation = new CitizenPopulationSystem();
-        citizenPopulation.Init(buildingPlacement, dayNight, worldCamera);
+        citizenPopulation.Init(
+            buildingPlacement,
+            dayNight,
+            worldCamera,
+            buildingPlacement.RuntimeResourceSystem,
+            buildingPlacement.RuntimeUnitPrefabSystem,
+            buildingPlacement.CreateRuntimeUnitPrefabContext());
         buildingPlacement.BindDependencies(roadBuild, null, dayNight, selection, citizenPopulationSystem: citizenPopulation);
 
         GameStrings.Init(gameStringsConfig);

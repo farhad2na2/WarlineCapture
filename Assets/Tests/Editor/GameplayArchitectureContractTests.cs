@@ -692,7 +692,10 @@ public sealed class GameplayArchitectureContractTests
             StringAssert.Contains(token, startup);
         StringAssert.Contains("roadBuild.BindDependencies(buildingPlacement)", startup);
         StringAssert.Contains("selection.BindDependencies(null, roadBuild, buildingPlacement)", startup);
-        StringAssert.Contains("citizenPopulation.Init(buildingPlacement, dayNight, worldCamera)", startup);
+        StringAssert.Contains("citizenPopulation.Init(", startup);
+        StringAssert.Contains("buildingPlacement.RuntimeResourceSystem", startup);
+        StringAssert.Contains("buildingPlacement.RuntimeUnitPrefabSystem", startup);
+        StringAssert.Contains("buildingPlacement.CreateRuntimeUnitPrefabContext()", startup);
         Assert.IsFalse(
             Regex.IsMatch(startup, @"\bstatic\b"),
             "ManagedGameplayStartupSystem owns managed startup state and should stay instance-scoped.");
@@ -1496,10 +1499,22 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingRuntimeQuerySystem", text);
         StringAssert.Contains("CitizenResourceSystem", text);
         StringAssert.Contains("CitizenPrefabSystem", text);
+        StringAssert.Contains("RuntimeResourceSystem", text);
+        StringAssert.Contains("RuntimeUnitPrefabSystem", text);
         string placement = File.ReadAllText("Assets/Game/Scripts/UI/BuildingPlacementSystem.cs");
+        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
         StringAssert.Contains("CreateRuntimeBuildingQueryContext", placement);
-        StringAssert.Contains("CreateCitizenResourceContext", placement);
-        StringAssert.Contains("CreateCitizenPrefabContext", placement);
+        StringAssert.Contains("RuntimeResourceSystem", placement);
+        StringAssert.Contains("RuntimeUnitPrefabSystem", placement);
+        StringAssert.Contains("CreateRuntimeUnitPrefabContext", placement);
+        StringAssert.Contains("buildingPlacement.RuntimeResourceSystem", startup);
+        StringAssert.Contains("buildingPlacement.RuntimeUnitPrefabSystem", startup);
+        StringAssert.Contains("buildingPlacement.CreateRuntimeUnitPrefabContext()", startup);
+        Assert.IsFalse(
+            placement.Contains("_resourceDollars", StringComparison.Ordinal) ||
+            placement.Contains("CreateCitizenResourceContext", StringComparison.Ordinal) ||
+            placement.Contains("CreateCitizenPrefabContext", StringComparison.Ordinal),
+            "BuildingPlacementSystem must not own the citizen dollar backing store or citizen context factories; use RuntimeResourceSystem/RuntimeUnitPrefabSystem.");
         Assert.IsFalse(
             text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal),
             "CitizenPopulationSystem must use the BuildingPlacementSystem supplied by bootstrap composition instead of BuildingPlacementSystem.Instance.");

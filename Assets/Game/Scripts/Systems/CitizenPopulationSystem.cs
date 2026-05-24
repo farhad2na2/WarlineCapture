@@ -129,6 +129,8 @@ public sealed class CitizenPopulationSystem
     private CitizenResourceSystem.Context _citizenResourceContext;
     private readonly CitizenPrefabSystem _citizenPrefabSystem = new();
     private CitizenPrefabSystem.Context _citizenPrefabContext;
+    private RuntimeResourceSystem _runtimeResourceSystem;
+    private RuntimeUnitPrefabSystem _runtimeUnitPrefabSystem;
     private DayNightSystem _dayNightSystem;
     private Camera _worldCamera;
     private World _ecsWorld;
@@ -163,18 +165,26 @@ public sealed class CitizenPopulationSystem
 
     public CitizenPopulationTotals Totals => _totals;
 
-    public void Init(BuildingPlacementSystem buildingPlacementSystem, DayNightSystem dayNightSystem, Camera worldCamera)
+    internal void Init(
+        BuildingPlacementSystem buildingPlacementSystem,
+        DayNightSystem dayNightSystem,
+        Camera worldCamera,
+        RuntimeResourceSystem runtimeResourceSystem = null,
+        RuntimeUnitPrefabSystem runtimeUnitPrefabSystem = null,
+        RuntimeUnitPrefabSystem.Context runtimeUnitPrefabContext = default)
     {
         _buildingPlacementSystem = buildingPlacementSystem;
         _buildingRuntimeQuerySystem = buildingPlacementSystem?.RuntimeQuerySystem;
         _buildingRuntimeQueryContext = buildingPlacementSystem != null
             ? buildingPlacementSystem.CreateRuntimeBuildingQueryContext()
             : default;
-        _citizenResourceContext = buildingPlacementSystem != null
-            ? buildingPlacementSystem.CreateCitizenResourceContext()
+        _runtimeResourceSystem = runtimeResourceSystem;
+        _runtimeUnitPrefabSystem = runtimeUnitPrefabSystem;
+        _citizenResourceContext = _runtimeResourceSystem != null
+            ? _runtimeResourceSystem.CreateCitizenResourceContext()
             : default;
-        _citizenPrefabContext = buildingPlacementSystem != null
-            ? buildingPlacementSystem.CreateCitizenPrefabContext()
+        _citizenPrefabContext = _runtimeUnitPrefabSystem != null
+            ? _runtimeUnitPrefabSystem.CreateCitizenPrefabContext(runtimeUnitPrefabContext)
             : default;
         _dayNightSystem = dayNightSystem;
         _worldCamera = worldCamera;

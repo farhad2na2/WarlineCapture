@@ -32,6 +32,29 @@ public sealed class FactionResourceSystem
         }
     }
 
+    public readonly struct FactionResourceEconomySnapshot
+    {
+        public readonly float StoredOilBarrels;
+        public readonly float StoredFuelBarrels;
+        public readonly float OilBarrelsPerDay;
+        public readonly float FuelBarrelsPerDay;
+        public readonly int ResourceBuildingCount;
+
+        public FactionResourceEconomySnapshot(
+            float storedOilBarrels,
+            float storedFuelBarrels,
+            float oilBarrelsPerDay,
+            float fuelBarrelsPerDay,
+            int resourceBuildingCount)
+        {
+            StoredOilBarrels = storedOilBarrels;
+            StoredFuelBarrels = storedFuelBarrels;
+            OilBarrelsPerDay = oilBarrelsPerDay;
+            FuelBarrelsPerDay = fuelBarrelsPerDay;
+            ResourceBuildingCount = resourceBuildingCount;
+        }
+    }
+
     public readonly struct ResourceProductionTickResult
     {
         public readonly float OilExtractedBarrels;

@@ -7,6 +7,9 @@ using static UnityEngine.Object;
 using CampRequestFailure = BuildingUiCommandSystem.CampRequestFailure;
 using ConfiguredSpawnableEntry = BuildingUiCommandSystem.ConfiguredSpawnableEntry;
 using ConfiguredUnitEntry = BuildingUiCommandSystem.ConfiguredUnitEntry;
+using FactionResourceEconomySnapshot = FactionResourceSystem.FactionResourceEconomySnapshot;
+using FactionUnitProductionResult = BuildingProductionRequestSystem.FactionUnitProductionResult;
+using FactionUnitProductionResultCode = BuildingProductionRequestSystem.FactionUnitProductionResultCode;
 using PendingProductionUiEntry = BuildingUiQuerySystem.PendingProductionUiEntry;
 using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 using ProducedUnitUiEntry = BuildingUiQuerySystem.ProducedUnitUiEntry;
@@ -14,63 +17,6 @@ using ProducedUnitUiEntry = BuildingUiQuerySystem.ProducedUnitUiEntry;
 public sealed class BuildingPlacementSystem
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-
-    public readonly struct FactionResourceEconomySnapshot
-    {
-        public readonly float StoredOilBarrels;
-        public readonly float StoredFuelBarrels;
-        public readonly float OilBarrelsPerDay;
-        public readonly float FuelBarrelsPerDay;
-        public readonly int ResourceBuildingCount;
-
-        public FactionResourceEconomySnapshot(
-            float storedOilBarrels,
-            float storedFuelBarrels,
-            float oilBarrelsPerDay,
-            float fuelBarrelsPerDay,
-            int resourceBuildingCount)
-        {
-            StoredOilBarrels = storedOilBarrels;
-            StoredFuelBarrels = storedFuelBarrels;
-            OilBarrelsPerDay = oilBarrelsPerDay;
-            FuelBarrelsPerDay = fuelBarrelsPerDay;
-            ResourceBuildingCount = resourceBuildingCount;
-        }
-    }
-
-    public enum FactionUnitProductionResultCode
-    {
-        Queued = 0,
-        MissingUnitConfig = 1,
-        MissingProducerBuilding = 2,
-        ProducerUnavailable = 3
-    }
-
-    public readonly struct FactionUnitProductionResult
-    {
-        public readonly FactionUnitProductionResultCode Code;
-        public readonly string ProducerDisplayName;
-        public readonly string UnitDisplayName;
-        public readonly int Cost;
-        public readonly int QueueCount;
-        public readonly int ProducedCount;
-
-        public FactionUnitProductionResult(
-            FactionUnitProductionResultCode code,
-            string producerDisplayName,
-            string unitDisplayName,
-            int cost,
-            int queueCount,
-            int producedCount)
-        {
-            Code = code;
-            ProducerDisplayName = producerDisplayName;
-            UnitDisplayName = unitDisplayName;
-            Cost = cost;
-            QueueCount = queueCount;
-            ProducedCount = producedCount;
-        }
-    }
 
     private static readonly bool EnableBuildingPlacementDiagnostics = false;
     private static readonly bool EnableBuildingDestroyDiagnostics = false;
@@ -449,7 +395,7 @@ public sealed class BuildingPlacementSystem
         return false;
     }
 
-    public bool TryQueueFactionUnitProduction(byte factionId, string unitId, out FactionUnitProductionResult result)
+    internal bool TryQueueFactionUnitProduction(byte factionId, string unitId, out FactionUnitProductionResult result)
     {
         result = default;
         if (!TryGetConfiguredUnit(unitId, out ConfiguredUnitEntry unit) || unit.Prefab == null || !unit.CanRequest)

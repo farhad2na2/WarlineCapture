@@ -7,6 +7,40 @@ using ProductionTransportMode = BuildingProductionSystem.ProductionTransportMode
 
 internal sealed class BuildingProductionRequestSystem
 {
+    public enum FactionUnitProductionResultCode
+    {
+        Queued = 0,
+        MissingUnitConfig = 1,
+        MissingProducerBuilding = 2,
+        ProducerUnavailable = 3
+    }
+
+    public readonly struct FactionUnitProductionResult
+    {
+        public readonly FactionUnitProductionResultCode Code;
+        public readonly string ProducerDisplayName;
+        public readonly string UnitDisplayName;
+        public readonly int Cost;
+        public readonly int QueueCount;
+        public readonly int ProducedCount;
+
+        public FactionUnitProductionResult(
+            FactionUnitProductionResultCode code,
+            string producerDisplayName,
+            string unitDisplayName,
+            int cost,
+            int queueCount,
+            int producedCount)
+        {
+            Code = code;
+            ProducerDisplayName = producerDisplayName;
+            UnitDisplayName = unitDisplayName;
+            Cost = cost;
+            QueueCount = queueCount;
+            ProducedCount = producedCount;
+        }
+    }
+
     public delegate GameObject GetProductionPrefabDelegate(BuildingDefinition definition, int index);
     public delegate bool BeginPlacementForConfiguredSpawnableDelegate(GameObject prefab);
     public delegate bool TrySpendDollarsDelegate(int amount);

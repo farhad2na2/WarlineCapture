@@ -1389,6 +1389,27 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void BuildingPlacementSystemMustNotOwnFactionResourceOrProductionResultContracts()
+    {
+        const string placementFile = "Assets/Game/Scripts/UI/BuildingPlacementSystem.cs";
+        const string factionResourceFile = "Assets/Game/Scripts/Systems/FactionResourceSystem.cs";
+        const string productionRequestFile = "Assets/Game/Scripts/Systems/BuildingProductionRequestSystem.cs";
+
+        string placement = File.ReadAllText(placementFile);
+        string factionResource = File.ReadAllText(factionResourceFile);
+        string productionRequest = File.ReadAllText(productionRequestFile);
+
+        StringAssert.Contains("public readonly struct FactionResourceEconomySnapshot", factionResource);
+        StringAssert.Contains("public enum FactionUnitProductionResultCode", productionRequest);
+        StringAssert.Contains("public readonly struct FactionUnitProductionResult", productionRequest);
+        Assert.IsFalse(
+            Regex.IsMatch(placement, @"public\s+readonly\s+struct\s+FactionResourceEconomySnapshot") ||
+            Regex.IsMatch(placement, @"public\s+enum\s+FactionUnitProductionResultCode") ||
+            Regex.IsMatch(placement, @"public\s+readonly\s+struct\s+FactionUnitProductionResult"),
+            "Faction/resource read and production result contracts belong to their owning systems, not BuildingPlacementSystem.");
+    }
+
+    [Test]
     public void AiProductionMustUseBuildingRuntimeBoundaryRequests()
     {
         const string productionFile = "Assets/Game/Scripts/Systems/AIProductionSystem.cs";

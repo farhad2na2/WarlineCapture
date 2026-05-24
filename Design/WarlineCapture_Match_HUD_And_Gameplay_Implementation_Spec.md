@@ -1,6 +1,6 @@
 # WarlineCapture Match HUD And Gameplay Implementation Spec
 
-Date: 2026-05-22
+Date: 2026-05-24
 
 This is the canonical implementation contract for the live match screen: `SCN-08 RTS Battle HUD` and its match-owned overlays. It covers player controls, panels, warnings, HUD state, command feedback, build/production drawer, command wheel, minimap/camera jumps, assistant hooks, pause/result routing, and the gameplay data each visible element must use.
 
@@ -44,6 +44,7 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 | Pointer/touch input | `GamePointerInput`, `RtsSelectionInputSystem` | HUD buttons capture/suppress UI clicks | Touch and mouse use the same command semantics. |
 | Selection | `RTSSelectionSystem`, `SelectionStateSystem`, `SelectionUiQuerySystem` | `BattleHudGameplayBridge`, selected panel, squad tray | See child selection spec. |
 | Move/attack/hold/stop | `RTSSelectionSystem`, command-specific systems | Command bar, command wheel, command banner, world markers | Commands produce typed success/reject feedback. |
+| Scan/support | intel, ability, support-call, cooldown/charge, and resource systems | Command bar, support/scan targeting overlay, command banner, world markers | `SCAN` reveals/updates battlefield intel; `SUPPORT` calls off-map or support abilities. |
 | Build/production | `BuildingPlacementSystem`, `RuntimeBuildingSystem`, production services | Build button, build drawer, placement popup/panel | M01 disables build with reason. |
 | Camera/minimap | camera system, minimap bridge/controller | minimap panel, objective/threat jump affordances | Jumps clamp to 3D map bounds. |
 | Objectives/results | objective runtime, `WarlineCaptureMatchResultFlow` | objective panel, result popup | Match completion routes to `POP-05`. |
@@ -62,6 +63,9 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 | `SelectionModeActive` | HUD awaits tap/drag selection. | `SELECT` active feedback; move/attack targeting cleared; world tap/drag selects. | Valid selection, empty tap, cancel. |
 | `MoveTargeting` | HUD awaits valid move target. | Move banner/marker preview visible; attack/build targeting cleared. | Valid target, cancel, another command, `SELECT`. |
 | `AttackTargeting` | HUD awaits valid enemy target. | Attack banner/target highlight visible; move/build targeting cleared. | Valid target, cancel, another command, `SELECT`. |
+| `ScanTargeting` | HUD awaits a valid scan area. | Scan radius/preview visible; move/attack/build targeting cleared. | Valid scan target, cancel, another command, `SELECT`. |
+| `SupportMenuOpen` | Player is choosing a support ability. | Support choices own input; world clicks blocked until an ability enters targeting or menu closes. | Ability chosen, close, cancel, pause/result. |
+| `SupportTargeting` | HUD awaits a valid support target. | Support radius/target preview visible; command targeting cleared. | Valid support target, cancel, another command, `SELECT`. |
 | `BuildDrawerOpen` | Build/production drawer is open. | Drawer blocks world clicks; command targeting paused/cleared. | Close, build item chosen, pause/result. |
 | `BuildPlacement` | Player is placing a building/structure. | Placement ghost/validity overlay owns map clicks; command selection cannot place. | Confirm, cancel, invalid reject. |
 | `CommandWheelOpen` | Radial command wheel owns command selection. | Wheel blocks world clicks except its defined command target flow. | Segment chosen, close, cancel. |
@@ -70,7 +74,7 @@ This spec does not own Main Menu, Campaign Map, Operations Dashboard, Store, Com
 
 Invalid mixed states:
 
-- `SelectionModeActive`, `MoveTargeting`, `AttackTargeting`, and `BuildPlacement` cannot be active at the same time.
+- `SelectionModeActive`, `MoveTargeting`, `AttackTargeting`, `ScanTargeting`, `SupportTargeting`, and `BuildPlacement` cannot be active at the same time.
 - A modal popup and active world targeting cannot both accept input.
 - A UI click can never also produce a world command on the same press/release.
 
@@ -114,7 +118,7 @@ Names may be nested for layout, but public ids must remain discoverable through 
 | `MiniMapPanel` | Show tactical map overview and camera viewport. | minimap projection, operation-map bounds, camera state, known threats/objectives. | Tap/click map jumps camera; zoom buttons adjust minimap/camera if supported. | Visible once minimap data exists; viewport rect hidden only if unavailable. | Ripple/focus marker; reject `CameraJumpUnavailable` on missing data. |
 | `WorldCommandMarkerLayer` | Render selection rings, move markers, attack markers, path previews, objective highlights. | selection state, move/attack orders, objective/threat anchors. | No direct UI input unless a marker is explicitly interactive. | Hidden when no markers exist or modal blocks world. | Markers are separate layers, never baked into world art. |
 | `SelectedEntityPanel` | Show selected unit/group details. | selection read model: name, status, health, ability state, order state. | Tap/long-press may open unit detail/command wheel if route supports it. | Hidden in `NoSelection`; visible in `Selected`. | Calls `ApplySelection` / `ClearSelection`. |
-| `CommandModeBanner` | Show active targeting/command mode. | `TacticalCommandMode`. | Tap cancel/back exits mode if a cancel affordance exists. | Visible only during active explicit command/selection/build/special modes. | Text must match mode: move, attack, hold, stop, build, special, select. |
+| `CommandModeBanner` | Show active targeting/command mode. | `TacticalCommandMode`. | Tap cancel/back exits mode if a cancel affordance exists. | Visible only during active explicit command/selection/build/scan/support/special modes. | Text must match mode: move, attack, hold, stop, build, scan, support, special, select. |
 | `InvalidCommandToast` | Explain rejected commands. | `TacticalCommandResult` and reason code. | Non-blocking; may auto-dismiss. | Visible only after rejected command or disabled button explanation. | Deterministic reason text; no vague errors. |
 
 ## Squad Tray Four Quick-Select Cards
@@ -191,17 +195,34 @@ M01 tutorial rule:
 
 ## Command Bar Buttons
 
+Default visibility and clickability:
+
+- The command bar remains visible during normal match play for layout stability and learnability.
+- With no selected unit, `SELECT` remains visible and enabled when the current match allows explicit selection mode.
+- With no selected unit, `MOVE`, `ATTACK`, `HOLD`, `STOP`, and selected-unit `SPECIAL` commands remain visible but disabled. If the disabled surface is tap-interactive, it must explain `NoSelection` with player-facing text such as `Select a squad first.`
+- `BUILD`, `SCAN`, and `SUPPORT` may be enabled without a selected unit when the mission, resources, cooldown, charges, and target rules allow them. They are not unit-selection commands.
+- Disabled visible buttons must not mutate command, selection, scan, support, or build state.
+
 | Button | Click Result | Requires Selection | Enabled When | Disabled / Reject Reason | Required Feedback |
 |---|---|---|---|---|---|
 | `SELECT` | Enter explicit selection mode. | No | Match accepts explicit selection input. | Tutorial disabled, modal open, build placement owns input. | Active select state; current UI click suppressed. |
 | `MOVE` | Enter move targeting; next valid ground tap issues move. | Yes | At least one selected unit can move. | `NoSelection`, immobilized, mission restricted, invalid state. | `ApplyCommandMode(Move)`, move banner/path preview. |
 | `ATTACK` | Enter attack targeting; next valid enemy tap issues attack. | Yes | Selected unit has valid attack capability. | `NoSelection`, `TargetNotEnemy`, `TargetNotAttackable`, non-combat. | `ApplyCommandMode(Attack)`, target highlight. |
-| `STOP` | Stop selected unit/group active orders. | Yes | Selection has active/interruption-capable order. | `NoSelection`, no stoppable order, command unavailable. | `ApplyCommandMode(Stop)` or immediate stop result; clear targeting. |
-| `HOLD` | Toggle/issue hold position. | Yes | Selected unit can hold/defend. | `NoSelection`, command unavailable. | `ApplyCommandMode(Hold)` or immediate hold result. |
+| `STOP` | Cancel the selected unit/group's current interruptible order immediately. Moving units stop where they are; attacking units stop attacking if the order can be interrupted; patrol/queued orders are cleared if stoppable. | Yes | Selection has active/interruption-capable order. | `NoSelection`, no stoppable order, command unavailable. | Immediate stop result or `ApplyCommandMode(Stop)` if the implementation requires confirmation; clear active targeting and update order/status text. |
+| `HOLD` | Issue/toggle hold-position behavior for the selected unit/group. The unit stays near its current position and defends instead of chasing enemies far away. | Yes | Selected unit can hold/defend. | `NoSelection`, command unavailable, unit cannot hold. | Immediate hold result or `ApplyCommandMode(Hold)` if confirmation/targeting is required; show hold state on selected panel/card. |
+| `SCAN` | Enter scan targeting or execute a mission-authored scan. The next valid map tap reveals/updates intel in that area: hidden enemies, suspect buildings, traps, patrol hints, objective clues, civilian risk, or minimap markers. | No by default | Mission allows scan and scan source/cooldown/charges/resources are valid. | `MissionDoesNotAllowScan`, `ScanUnavailable`, insufficient resources, cooldown, charges empty, target invalid/out of bounds. | `ApplyCommandMode(Scan)`, scan radius/preview, intel reveal marker/feed row, resource/cooldown update. |
+| `SUPPORT` | Open support ability choices or enter support targeting for a selected support action. Examples: airstrike, smoke, med drone, supply drop, repair drone, evacuation, artillery, recon drone. | No by default; ability may require a selected target/unit | Mission allows support and at least one support ability is equipped/available. | `MissionDoesNotAllowSupport`, `SupportUnavailable`, locked, cooldown, no charges, insufficient resources, invalid target. | Open support menu or `ApplyCommandMode(Support)`, show support target preview, spend resources/charge only on accepted execution. |
 | `SPECIAL` | Use selected contextual ability or open command wheel/detail. | Usually | Selected unit has available special ability. | Locked, cooldown, no charges, mission banned, invalid target. | Opens `SCN-10` or starts special targeting with reason text. |
 | `BUILD` / build toggle | Open build drawer or build placement. | No, unless builder-selected mission requires it. | Mission allows build and catalog/context valid. | `MissionDoesNotAllowBuild`, insufficient resources, locked, no producer. | Open `BuildDrawerCanvas` or show disabled reason. |
 
 M01 exception: `SELECT` may be visible but disabled/neutral; `SPECIAL` and `BUILD` are disabled/hidden according to M01 scope. M01 selection happens through direct world/squad-card selection.
+
+`SCAN`, `SUPPORT`, and `SPECIAL` separation:
+
+- `SCAN` is for information. It asks: what is hidden or uncertain in this area?
+- `SUPPORT` is for off-map or auxiliary help. It asks: what external help do I want to call into this area?
+- `SPECIAL` is for the selected unit/group's own contextual ability. It usually depends on the selected unit.
+- Temporary one-shot support abilities should not appear as squad-tray quick-select cards unless they represent persistent controllable units.
 
 ## Direct World Commands
 
@@ -211,6 +232,8 @@ M01 exception: `SELECT` may be visible but disabled/neutral; `SPECIAL` and `BUIL
 | Selected unit + tap walkable ground | Issue direct move if no explicit selection/build/modal state owns input. |
 | Selected combat unit + tap valid enemy | Issue direct attack if no explicit selection/build/modal state owns input. |
 | No selection + tap ground/enemy | Reject with `NoSelection`; do not issue hidden command. |
+| Scan targeting + tap valid area | Execute scan, spend scan cost/charge if accepted, reveal/update intel, then exit scan targeting unless the scan mode explicitly supports repeat use. |
+| Support targeting + tap valid area/unit | Execute selected support action, spend cost/charge if accepted, show support marker/effect, then exit support targeting unless repeat use is explicitly allowed. |
 | Tap UI while over HUD/popup | UI handles input; no world command. |
 
 Detailed selection behavior is owned by `WarlineCapture_Match_Selection_Implementation_Spec.md`.
@@ -327,6 +350,10 @@ M01 FTUE target ids are owned by `WarlineCapture_M01_FirstContact_Production_Con
 | `TargetNotAttackable` | Target cannot be attacked by selected unit. | Target cannot be attacked. |
 | `CommandUnavailable` | Capability/order not available. | Command unavailable for this unit. |
 | `MissionDoesNotAllowBuild` | Build pressed in a no-build mission. | Building unlocks in a later mission or this mission does not allow building. |
+| `MissionDoesNotAllowScan` | Scan pressed in a no-scan mission. | Scanning is not available in this mission. |
+| `MissionDoesNotAllowSupport` | Support pressed in a no-support mission. | Support is not available in this mission. |
+| `ScanUnavailable` | Scan source, charge, cooldown, or target is invalid. | Scan unavailable. |
+| `SupportUnavailable` | Support ability, charge, cooldown, source, or target is invalid. | Support unavailable. |
 | `CameraJumpUnavailable` | Objective/minimap/threat focus anchor missing or invalid. | No valid map focus. |
 | `InsufficientResources` | Resource/currency/capacity shortfall. | Name missing resource and amount if known. |
 | `AbilityOnCooldown` | Special ability cooldown active. | Show cooldown remaining. |
@@ -347,6 +374,8 @@ M01 is a tutorial-scoped match and intentionally does not expose all match HUD f
 | `MOVE` | Disabled until rifle squad selected; then usable/direct move taught. |
 | `ATTACK` | Disabled until rifle squad selected; then usable/direct or explicit attack taught. |
 | `STOP` / `HOLD` | Visible according to target; enabled only when selection/order state supports them. |
+| `SCAN` | Hidden or disabled unless the M01 tutorial explicitly teaches scanning. |
+| `SUPPORT` | Hidden or disabled unless the M01 tutorial explicitly teaches a support ability. |
 | `SPECIAL` | Hidden or disabled; no M01 special command. |
 | `BUILD` | Hidden or disabled; reason `MissionDoesNotAllowBuild`. |
 | Build drawer | Not entered from M01. |
@@ -366,6 +395,8 @@ Focused match implementation must prove:
 - Command buttons obey selected-unit capability and disabled reasons.
 - Direct move/attack and explicit move/attack share validation and feedback.
 - `SELECT` behavior follows `WarlineCapture_Match_Selection_Implementation_Spec.md`.
+- `SCAN` enters scan targeting only when mission, resource, cooldown, charge, and target rules allow it; otherwise it returns typed disabled/reject feedback.
+- `SUPPORT` opens support choices or support targeting only when mission, equipped support ability, resource, cooldown, charge, and target rules allow it; otherwise it returns typed disabled/reject feedback.
 - Build button opens build drawer only when mission/build context allows it.
 - Build drawer controls bind catalog/queue/capacity data and block world input.
 - Command wheel segments share the same capability/reason-code model as command bar.

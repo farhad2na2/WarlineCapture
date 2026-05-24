@@ -129,6 +129,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("Building runtime updates inside that loop must go through `BuildingRuntimeUpdateSystem`", contract);
         StringAssert.Contains("`BuildingRuntimeUpdateSystem` ownership and context construction belong in managed composition", contract);
+        StringAssert.Contains("`GameBootstrap` must not expose a public `BuildingPlacementSystem` facade property", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` is legacy facade debt", contract);
         StringAssert.Contains("active placement session state, begin/cancel/confirm flow, active placement cost, active placement preview handoff, and active placement facade queries belong in `BuildingPlacementLifecycleSystem`", contract);
@@ -585,6 +586,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             bootstrap.Contains("BuildingPlacement?.BuildingRuntimeUpdateSystem", StringComparison.Ordinal) ||
             bootstrap.Contains("CreateBuildingRuntimeUpdateContext", StringComparison.Ordinal) ||
+            bootstrap.Contains("public BuildingPlacementSystem BuildingPlacement", StringComparison.Ordinal) ||
             placement.Contains("BuildingRuntimeUpdateSystem", StringComparison.Ordinal) ||
             placement.Contains("CreateBuildingRuntimeUpdateContext", StringComparison.Ordinal),
             "BuildingRuntimeUpdateSystem ownership/context construction belongs in managed composition, not BuildingPlacementSystem.");

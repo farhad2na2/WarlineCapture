@@ -69,7 +69,6 @@ public sealed class GameBootstrap : MonoBehaviour
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
     public RuntimeCitySpawnerSystem RuntimeCitySpawner { get; private set; }
     public RoadBuildSystem RoadBuild { get; private set; }
-    public BuildingPlacementSystem BuildingPlacement { get; private set; }
     public BuildingRuntimeUpdateSystem BuildingRuntimeUpdate { get; private set; }
     public RTSSelectionSystem Selection { get; private set; }
     public MainMenuPlayUI MainMenu { get; private set; }
@@ -79,6 +78,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public UnitImpostorRenderSystem UnitImpostors { get; private set; }
     public CitizenPopulationSystem CitizenPopulation { get; private set; }
     public bool GameplayInitialized { get; private set; }
+    private BuildingPlacementSystem BuildingPlacement { get; set; }
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
     private bool _gameplayStartPending;

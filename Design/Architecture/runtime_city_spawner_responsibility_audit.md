@@ -1,35 +1,24 @@
 # RuntimeCitySpawnerSystem Responsibility Audit
 
-Status: Step 12 complete; Step 13 validation blocked by Game-scene runtime city config. This audit tracks the runtime city refactor baseline and the responsibilities already extracted.
+Status: Step 12 complete; Step 21 complete; Step 22 complete; Step 23 complete; Step 24 complete; Step 25 complete; Step 26 complete; Step 27 complete; Step 28 complete; Step 29 complete. This audit tracks the runtime city refactor baseline and the responsibilities already extracted.
 
-Source file: `Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs`
+Deleted source file: `Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs`
 
-Current size: 861 lines.
+Current runtime-city composition size: 215 lines.
 
 ## Current Responsibilities
 
-- Config snapshot consumption: receives `RuntimeCitySpawnerSystemConfig`, delegates projection/defaults to `RuntimeCityConfigSystem`, and consumes the resulting snapshot through read-only accessors.
-- Generation lifecycle: owns `Init`, `InitForRoadOnly`, `Update`, `TryAutoSpawn`, `GenerateCity`, `GenerateCityRoutine`, coroutine yielding, and `_spawned` state.
-- ECS/grid access: owns `EntityQuery` setup and `TryGetGridData` for grid, road, and blocker buffers.
-- Base exclusion planning: collects initial base exclusion road rects before city planning.
-- City layout planning consumption: delegates town radius, city-center planning, road-grid bounds, base exclusion checks, and city-center spacing to `RuntimeCityLayoutSystem`; still owns city chain travel, connection cells, ingress corridor pruning, and city road stroke creation until later steps.
-- Road layout planning consumption: delegates town road strokes, straight road paths, city-to-city autobahn paths, autobahn anchor selection, and stroke segment helpers to `RuntimeCityRoadLayoutSystem`; commits planned roads through `RuntimeCityRoadBuildBridgeSystem`.
-- Road build bridge consumption: delegates road cell-size queries, deferred road ECS sync, road/autobahn stroke commit, and temporary standalone straight-chain connector handoff to `RuntimeCityRoadBuildBridgeSystem`.
-- Plot planning consumption: delegates plot candidate data, roadside/entry/corridor/scatter plot planning, adjacent decoration origin planning, scatter plot selection, plot spacing checks, and plot-to-origin centering to `RuntimeCityBuildingPlotSystem`.
-- Walkability and occupancy consumption: delegates reserved footprint data, entrance-corridor reservation, reserved-footprint spacing checks, road-overlap checks, yard-fit validation, rectangle expansion, and adjacency/touch validation to `RuntimeCityWalkabilitySystem`.
-- Building/decor spawn sequencing consumption: delegates city hall/landmark placement, corridor entrance building placement, bulk roadside/rural building placement, yard wall visuals, and decoration building sequencing to `RuntimeCityBuildingSpawnSystem`.
-- Prefab selection consumption: delegates configured-prefab checks, random prefab selection, list shuffling, cached footprint estimation, major/minor footprint helpers, and renderer-bounds based footprint sizing to `RuntimeCityPrefabSelectionSystem`.
-- Visual realization consumption: delegates runtime city visual root creation, visual-only prefab instantiation, transform placement, local-bounds centering, and child visibility toggles to `RuntimeCityVisualSystem`.
-- Building runtime spawn bridge consumption: delegates city building spawn/delete calls and deferred side-effect begin/end handoff to `RuntimeCitySpawnBridgeSystem`, which wraps the existing `BuildingRuntimeCitySpawnSystem`.
-- Walkability and occupancy side effects: consumes `RuntimeCityWalkabilitySystem`; later ECS obstruction publication can extend that boundary without returning reservation logic to the spawner.
-- Diagnostics and validation: owns runtime city diagnostics toggles, pending initial-unit checks, fallback logging, and defensive validation.
+- Runtime city composition: `RuntimeCityCompositionSystem` owns config projection consumption, lifecycle tick/completion wiring, startup gate evaluation, readiness query wiring, generation context creation, chain/road/ingress context creation, minimap event flushing, visual root handoff, bridge configuration, child-system disposal, and the public runtime city entry points previously exposed by the deleted shell.
+- Peer city state reads: `RuntimeCityReadModelSystem` owns the narrow published city state used by peer systems that only need `SpawnOnStartEnabled`, `HasSpawned`, and `IsGenerating`.
 
 ## Current Allowed Debt
 
-- `RuntimeCitySpawnerSystem` remains the temporary city-generation orchestrator while steps 5-10 extract responsibilities.
-- It may receive `BuildingRuntimeCitySpawnSystem` and context at startup only so `RuntimeCitySpawnBridgeSystem` can be configured.
-- It may receive `RoadBuildSystem` at startup only so `RuntimeCityRoadBuildBridgeSystem` can be configured.
-- It may own remaining city-chain and road sequencing methods only until their matching roadmap steps are completed.
+- `RuntimeCitySpawnerSystem.cs` must not be restored.
+- Serialized config names `RuntimeCitySpawnerSystemConfig`, `RuntimeCitySpawnerSystemSceneConfigAsset`, and `Game_RuntimeCitySpawner_Config.asset` are allowed data compatibility debt until a separate asset migration plan exists.
+- Runtime city child system fields, context factories, and update orchestration belong in `RuntimeCityCompositionSystem`.
+- It must not be stored or called by `RuntimeGridBlockerSystem`, `RuntimeDecorationSpawnerSystem`, or future peer systems that only need city lifecycle state; those systems must depend on `RuntimeCityReadModelSystem` or a narrower explicit result boundary.
+- `RuntimeCityCompositionSystem` may receive `BuildingRuntimeCitySpawnSystem` and context at startup only so `RuntimeCitySpawnBridgeSystem` can be configured.
+- `RuntimeCityCompositionSystem` may receive `RoadBuildSystem` at startup only so `RuntimeCityRoadBuildBridgeSystem` can be configured.
 - It must not reintroduce copied `RuntimeCitySpawnerSystemConfig` field assignment; config projection belongs in `RuntimeCityConfigSystem`.
 - It must not reintroduce town radius, city-center planning, road-grid bounds, base exclusion checks, or city-center spacing helpers; those belong in `RuntimeCityLayoutSystem`.
 - It must not reintroduce town road stroke generation, straight path generation, autobahn anchor selection, or low-level stroke segment helpers; those belong in `RuntimeCityRoadLayoutSystem`.
@@ -38,9 +27,19 @@ Current size: 861 lines.
 - It must not reintroduce reserved footprint data, entrance-corridor reservation, reserved-footprint spacing checks, road-overlap checks, yard-fit validation, rectangle expansion, or adjacency/touch validation into `RuntimeCityBuildingPlotSystem` or `RuntimeCitySpawnerSystem`; those belong in `RuntimeCityWalkabilitySystem`.
 - It must not reintroduce random prefab selection, list shuffle, configured-prefab membership loops, prefab footprint cache state, renderer-bounds footprint estimation, or major/minor footprint helpers; those belong in `RuntimeCityPrefabSelectionSystem`.
 - It must not reintroduce runtime city visual root ownership, visual-only prefab instantiation, footprint-center positioning, local-bounds centering, descendant visibility toggles, or visual wrapper transform setup; those belong in `RuntimeCityVisualSystem`.
+- It must not store `_runtimeRoot`, assign `_runtimeRoot = runtimeRoot`, or clear `_runtimeRoot`; runtime root creation belongs in `RuntimeRootSystem`, and runtime city visual root parenting belongs in `RuntimeCityVisualSystem`.
 - It must not reintroduce stored `BuildingRuntimeCitySpawnSystem` state, stored city-spawn context, private city spawn/delete wrappers, or direct deferred side-effect calls; those belong in `RuntimeCitySpawnBridgeSystem`.
 - It must not call `BuildingPlacementSystem`, `BuildingPlacementSystem.Instance`, or `_buildingPlacement`.
 - It must not reintroduce city hall/landmark placement, corridor entrance building placement, bulk roadside/rural building placement, yard wall visual algorithms, or decoration building sequencing; those belong in `RuntimeCityBuildingSpawnSystem`.
+- It must not reintroduce `_spawned`, `_generationRoutine`, `_generationStartedFrame`, `_generationMoveNextCount`, `_nextGenerationDiagnosticFrame`, or direct `IEnumerator.MoveNext()` ownership; those belong in `RuntimeCityLifecycleSystem`.
+- It must not reintroduce spawn-on-start branching, play-request checks, M01 mission exclusion branching, initial-unit wait branching, road/spawn-system availability branching, required prefab readiness branching, or initial-unit wait diagnostic cadence; those belong in `RuntimeCityStartupSystem`.
+- It must not reintroduce `World`, `EntityQuery`, `EntityManager`, `Allocator`, `TryGetGridData`, `HasPendingInitialUnitsSpawn`, or initial base exclusion road-rect collection; those belong in `RuntimeCityReadinessQuerySystem`.
+- It must not reintroduce `GenerateCityRoutine`, deferred road sync begin/end ordering, deferred spawn side-effect begin/end ordering, city-list lifetime, RNG lifetime, bulk-building routine stepping, or direct generation completion into `RuntimeCitySpawnerSystem`; those belong in `RuntimeCityGenerationSystem`.
+- It must not reintroduce `TryPlanNextCity`, cardinal direction state, travel-direction reversal avoidance, target-center candidate policy, city spacing checks, autobahn length policy, source/target connection-cell resolution, city exit validation, or autobahn path validation into `RuntimeCitySpawnerSystem`; those belong in `RuntimeCityChainSystem`.
+- It must not reintroduce `CommitCityRoadNetwork`, `PopulateCityRoadCells`, source-exit road commit loops, autobahn commit loops, standalone connector handoff, or occupied-road-cell mutation into `RuntimeCitySpawnerSystem` or `RuntimeCityGenerationSystem`; those belong in `RuntimeCityRoadCommitSystem`.
+- It must not reintroduce `CreateCityLayout`, incoming-anchor stroke wiring, `BuildTownRoadStrokes` calls, `GetCityInnerConnectionCell`, `GetCityConnectionOffset`, or `PruneIngressCorridorStrokes` into `RuntimeCitySpawnerSystem`; those belong in `RuntimeCityIngressSystem`.
+- It must not reintroduce direct `Debug.Log*`, `[RuntimeCityState]` formatting, city generation failure warning formatting, road commit failure warning formatting, hall-placement failure warning formatting, or initial-unit wait diagnostic formatting into runtime city gameplay systems; those belong in `RuntimeCityDiagnosticSystem`.
+- It must not reintroduce `_mainMenuPlayUi`, direct `NotifyStaticMinimapChanged` callbacks, or minimap UI notification delegates into `RuntimeCitySpawnerSystem` or `RuntimeCityGenerationSystem`; static minimap change events belong in `RuntimeCityMinimapEventSystem`.
 - New city gameplay must not add new responsibilities to `RuntimeCitySpawnerSystem`; add a new ECS boundary system or extend the planned owner below.
 
 ## Target Boundaries
@@ -50,20 +49,31 @@ Current size: 861 lines.
 - `RuntimeCityRoadLayoutSystem`: town road strokes, straight road paths, city-to-city autobahn paths, autobahn anchor selection, and low-level stroke segment helpers. Extracted in step 4.
 - `RuntimeCityBuildingPlotSystem`: plot candidate data, plot scoring, roadside/entry/corridor/scatter plot planning, adjacent origin planning, plot spacing, and plot-to-origin centering. Extracted in step 5.
 - `RuntimeCityPrefabSelectionSystem`: configured-prefab membership checks, random prefab selection, list shuffling, footprint estimation/cache, and major/minor footprint helpers. Extracted in step 6.
-- `RuntimeCityVisualSystem`: GameObject instantiation, parent/root assignment, rotation, scale, child visibility, and decoration visuals. Extracted in step 7.
+- `RuntimeCityVisualSystem`: runtime city visual root ownership, GameObject instantiation, parent/root assignment, rotation, scale, child visibility, and decoration visuals. Extracted in step 7; root ownership tightened in step 24.
 - `RuntimeCitySpawnBridgeSystem`: runtime city generation spawn/delete/deferred-side-effect bridge over `BuildingRuntimeCitySpawnSystem`. Extracted in step 8.
 - `BuildingRuntimeCitySpawnSystem`: low-level city building runtime/ECS spawn and delete handoff.
 - `RuntimeCityRoadBuildBridgeSystem`: calls into `RoadBuildSystem`, road cell-size queries, deferred road ECS sync, road/autobahn stroke commit, and temporary standalone straight-chain connector handoff. Extracted in step 9.
 - `RuntimeCityWalkabilitySystem`: reserved footprint data, entrance-corridor reservation, reserved-footprint spacing checks, road-overlap checks, yard-fit validation, rectangle expansion, and adjacency/touch validation. Extracted in step 10.
 - `RuntimeCityBuildingSpawnSystem`: city hall/landmark placement, corridor entrance building placement, bulk roadside/rural building placement, yard wall visuals, and decoration building sequencing. Extracted in step 11.
+- `RuntimeCityLifecycleSystem`: spawned/generating state, generation routine ownership, generation frame/step counters, generation diagnostic cadence, and generation yield cadence. Extracted in step 15.
+- `RuntimeCityStartupSystem`: spawn-on-start readiness, play-request checks, mission exclusion policy, dependency availability checks, required prefab readiness, initial-unit readiness gating, initial-unit wait diagnostic cadence, and startup/manual generation result shaping. Extracted in step 16.
+- `RuntimeCityReadinessQuerySystem`: grid-data query caching, grid config lookup, initial-unit readiness checks, and initial base exclusion road-rect collection. Extracted in step 17.
+- `RuntimeCityGenerationSystem`: generation begin flow, `GenerateCityRoutine`, deferred road sync begin/end ordering, deferred spawn side-effect begin/end ordering, city-list lifetime, RNG lifetime, bulk-building routine stepping, minimap notification handoff, and generation completion. Extracted in step 18.
+- `RuntimeCityChainSystem`: city-chain next-city planning, travel-direction selection, reverse-direction avoidance, target-center candidate policy, city spacing checks, autobahn length policy, source/target connection-cell resolution, city exit validation, and autobahn path validation. Extracted in step 19.
+- `RuntimeCityRoadCommitSystem`: city road network commit, road-cell population, source-exit road commit, autobahn commit, standalone connector handoff, occupied-road-cell mutation, and road commit failure result shaping. Extracted in step 20.
+- `RuntimeCityIngressSystem`: city layout creation, town road stroke request handoff, incoming-anchor stroke wiring, inner connection-cell math, city connection offset math, and ingress-corridor pruning. Extracted in step 21.
+- `RuntimeCityDiagnosticSystem`: runtime city state diagnostics, generation wait diagnostics, warning formatting, and generation/road/building failure diagnostics. Extracted in step 22.
+- `RuntimeCityMinimapEventSystem`: static-minimap-changed publication, queued event state, and UI-facing minimap invalidation flush. Extracted in step 23.
+- `RuntimeCityCompositionSystem`: runtime city child-system graph creation, startup wiring, bridge/visual/minimap configuration, context factory creation, update orchestration, and disposal. Extracted in step 25.
+- `RuntimeCityReadModelSystem`: narrow city state publication for peer systems that only need spawn/generation status. Extracted in step 26.
 
 ## Method Group Baseline
 
-- Lifecycle: `Init`, `InitForRoadOnly`, `Update`, `Dispose`, `TryAutoSpawn`, `GenerateCity`, `GenerateCityRoutine`, `ShouldYield`.
-- Config and ECS access: `ApplyConfigIfAvailable` delegates to `RuntimeCityConfigSystem`; `EnsureEntityQueries`, `TryGetGridData`, `HasPendingInitialUnitsSpawn`, and `CollectInitialBaseExclusionRoadRects` remain in `RuntimeCitySpawnerSystem`.
-- Layout and roads: `CreateCityLayout`, `TryPlanNextCity`, `ConnectCitiesWithAutobahn`, and `CommitCityRoadNetwork` remain; town radius, city-center planning, road-grid bounds, and base exclusion checks are delegated to `RuntimeCityLayoutSystem`; road stroke/path planning is delegated to `RuntimeCityRoadLayoutSystem`.
-- Road method handoff: `RuntimeCitySpawnerSystem` calls `RuntimeCityRoadLayoutSystem.BuildTownRoadStrokes`, `BuildStraightRoadPath`, `BuildCityToCityAutobahnPath`, and `AddStroke`; the implementations must stay out of the spawner.
-- Road build handoff: `RuntimeCitySpawnerSystem` calls `RuntimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells`, `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, `CreateRoadStrokeFromRoadCells`, `CreateAutobahnStrokeFromRoadCells`, `CreateStandaloneStraightRoadChainFromConnector`, and `TryGetStandaloneStraightChainEndRoadCell`.
+- Lifecycle/startup/generation/chain/road commit/ingress/minimap/diagnostics: `Configure`, `Update`, `Dispose`, and public/manual `GenerateCity` entry points live in `RuntimeCityCompositionSystem`; `ShouldYield`, generation tick/cancel, spawned/generating state, and generation routine state are delegated to `RuntimeCityLifecycleSystem`; startup/manual generation readiness is delegated to `RuntimeCityStartupSystem`; generation begin flow and coroutine sequencing are delegated to `RuntimeCityGenerationSystem`; city-chain planning is delegated to `RuntimeCityChainSystem`; city road commit sequencing is delegated to `RuntimeCityRoadCommitSystem`; city layout creation and ingress connector policy are delegated to `RuntimeCityIngressSystem`; static minimap notification is delegated to `RuntimeCityMinimapEventSystem`; runtime city diagnostic formatting and direct log emission are delegated to `RuntimeCityDiagnosticSystem`.
+- Config and ECS access: `ApplyConfigIfAvailable` delegates to `RuntimeCityConfigSystem`; grid readiness and initial-unit readiness queries are delegated to `RuntimeCityReadinessQuerySystem`.
+- Layout and roads: town radius, city-center planning, road-grid bounds, and base exclusion checks are delegated to `RuntimeCityLayoutSystem`; road stroke/path planning is delegated to `RuntimeCityRoadLayoutSystem`; next-city planning and connection path validation are delegated to `RuntimeCityChainSystem`; city road commit and road-cell population are delegated to `RuntimeCityRoadCommitSystem`; city layout creation and incoming road anchor wiring are delegated to `RuntimeCityIngressSystem`.
+- Road method handoff: `RuntimeCityIngressSystem` calls `RuntimeCityRoadLayoutSystem.BuildTownRoadStrokes` and `AddStroke`; `RuntimeCityChainSystem` calls `BuildStraightRoadPath`; `RuntimeCityRoadCommitSystem` commits planned strokes through `RuntimeCityRoadBuildBridgeSystem`; the implementations must stay out of the spawner.
+- Road build handoff: `RuntimeCityCompositionSystem` calls `RuntimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells`; `RuntimeCityRoadCommitSystem` calls road stroke, autobahn, and standalone connector commit methods; `RuntimeCityGenerationSystem` owns deferred road ECS sync begin/end ordering.
 - Building placement and plots: city hall/landmark placement, corridor entrance building placement, bulk roadside/rural building placement, yard wall visuals, and decoration building sequencing are delegated to `RuntimeCityBuildingSpawnSystem`; plot data, roadside/entry/corridor/scatter planning, adjacent origin planning, and plot spacing helpers are delegated to `RuntimeCityBuildingPlotSystem`; reserved footprint, road-overlap, yard-fit, and touch helpers are delegated to `RuntimeCityWalkabilitySystem`.
 - Prefabs and visuals: `RuntimeCityPrefabSelectionSystem.GetRandomPrefab`, `Shuffle`, `GetCachedFootprintCells`, `GetMajorFootprint`, and `GetMinorFootprint`; runtime city visual root creation and visual-only prefab instantiation are delegated to `RuntimeCityVisualSystem`.
 - Runtime building bridge: `RuntimeCitySpawnBridgeSystem.TrySpawnCityBuilding`, `DeleteCityBuilding`, `BeginDeferredSideEffects`, and `EndDeferredSideEffects`.
@@ -84,5 +94,28 @@ Current size: 861 lines.
 - `GameplayArchitectureContractTests.RuntimeCityRoadBuildCouplingMustLiveInRuntimeCityRoadBuildBridgeSystem` prevents road build controller state and direct road build calls from returning to `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RuntimeCityBuildingSpawnSequencingMustLiveInRuntimeCityBuildingSpawnSystem` prevents city building/decor spawn sequencing from returning to `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RuntimeCitySpawnerFinalArchitectureGuardMustStayAlgorithmLight` is the final runtime-city guard for step 12. It verifies that `RuntimeCitySpawnerSystem` delegates to the extracted runtime city boundaries and does not reintroduce prefab random selection logic, road stroke generation, direct building runtime spawn writes, visual instantiation, building/decor spawn sequencing, or large plot/footprint algorithms.
+- `GameplayArchitectureContractTests.RuntimeCityLifecycleMustLiveInRuntimeCityLifecycleSystem` prevents generation lifecycle state and `IEnumerator.MoveNext()` ownership from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityStartupGateMustLiveInRuntimeCityStartupSystem` prevents auto-start policy, dependency readiness branching, required-prefab branching, mission exclusion branching, initial-unit wait branching, and initial-unit wait diagnostic cadence from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityReadinessQueriesMustLiveInRuntimeCityReadinessQuerySystem` prevents ECS readiness query ownership, `World`, `EntityQuery`, `EntityManager`, `Allocator`, grid query setup, and initial-unit/base-exclusion query helpers from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityGenerationSequenceMustLiveInRuntimeCityGenerationSystem` prevents generation coroutine ownership, deferred road/spawn side-effect ordering, RNG/city-list lifetime, bulk-building routine stepping, and direct generation completion from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityChainConnectionPolicyMustLiveInRuntimeCityChainSystem` prevents city-chain next-city planning, cardinal direction state, reverse-direction avoidance, target-center candidate policy, city spacing checks, autobahn length policy, connection-cell resolution, city exit validation, and autobahn path validation from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityRoadCommitSequenceMustLiveInRuntimeCityRoadCommitSystem` prevents city road network commit, road-cell population, source-exit commit, autobahn commit, standalone connector handoff, occupied-road-cell mutation, and direct road-build commit calls from returning to `RuntimeCitySpawnerSystem` or `RuntimeCityGenerationSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityIngressPolicyMustLiveInRuntimeCityIngressSystem` prevents city layout creation, incoming-anchor stroke wiring, connection offset math, inner connection-cell math, and ingress corridor pruning from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityDiagnosticsMustLiveInRuntimeCityDiagnosticSystem` prevents direct `Debug.Log*`, `[RuntimeCityState]` formatting, and runtime city warning formatting from returning to runtime city gameplay systems outside `RuntimeCityDiagnosticSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityMinimapNotificationMustLiveInRuntimeCityMinimapEventSystem` prevents direct minimap UI notification callbacks from returning to `RuntimeCitySpawnerSystem` or `RuntimeCityGenerationSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityRuntimeRootOwnershipMustStayInVisualSystem` prevents `_runtimeRoot` storage and runtime visual root creation from returning to `RuntimeCitySpawnerSystem`.
+- `GameplayArchitectureContractTests.RuntimeCityCompositionMustOwnRuntimeCitySystemGraph` prevents the runtime city child-system graph and context factories from returning to `RuntimeCitySpawnerSystem`.
 - `GameplayArchitectureContractTests.RunRuntimeCityArchitectureBatchValidation` is the deterministic batch entry point used for step 13 architecture validation when Unity TestRunner does not emit result XML.
-- `RuntimeCitySpawnerStep13Validation.RunGameSceneSmokeValidation` loads `Game` and validates runtime city, road, building-spawn, and blocker wiring. It currently reports the focused validation blocker: `Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset` has `cityCount: 0`, so runtime city generation is disabled and spawned city output cannot be verified in `Game`.
+- `RuntimeCitySpawnerStep13Validation.RunGameSceneSmokeValidation` loads `Game` and validates runtime city, road, building-spawn, and blocker wiring. Step 14 unblocked this path by creating an in-memory validation copy of the scene runtime-city config that forces runtime city generation on without dirtying or saving `Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset`.
+- `RuntimeCitySpawnerStep13Validation.RunGameSceneCityDisabledValidation` loads `Game`, clones the scene runtime-city config in memory, sets `cityCount=0`, and validates that the composition/read-model path can mark runtime city complete without dirtying the production asset.
+- `GameplayArchitectureContractTests.RuntimeCityPeerSystemsMustUseRuntimeCityReadModelSystem` prevents peer systems from storing or calling `RuntimeCitySpawnerSystem` when they only need city state.
+- `GameplayArchitectureContractTests.RuntimeCitySpawnerSystemShellMustStayDeleted` prevents production code from recreating or calling the deleted spawner shell.
+- `GameplayArchitectureContractTests.RuntimeCityFinalContractMustTrackDeletedSpawnerShell` prevents old shell-owned contract wording from returning and documents the serialized config-name exception.
+
+## Step 29 Validation Evidence
+
+- Architecture: `GameplayArchitectureContractTests.RunRuntimeCityArchitectureBatchValidation` passed with 28 runtime-city guards.
+- Runtime city enabled smoke: `RuntimeCitySpawnerStep13Validation.RunGameSceneSmokeValidation` passed with `productionCityCount=1`, `validationCityCount=1`, `cityPrefabs=36`, `buildingSpawnables=32`, and `blockerPrefabs=63`.
+- Runtime city disabled smoke: `RuntimeCitySpawnerStep13Validation.RunGameSceneCityDisabledValidation` passed with `productionCityCount=1`, `validationCityCount=0`.
+- Bootstrap/menu runtime smoke: `RuntimeFpsPlayButtonProbe.Run` completed, clicked the Game button without fallback, sampled 6896 frames, and reported `avgFps=158.83`.
+- Validation caveat: Unity TestRunner playmode filtering exited without writing result XML, so the runtime play-button probe is the recorded bootstrap/menu smoke path. The only exception captured in that probe was UnityEditor QuickSearch indexing during editor startup, not gameplay/runtime-city code.

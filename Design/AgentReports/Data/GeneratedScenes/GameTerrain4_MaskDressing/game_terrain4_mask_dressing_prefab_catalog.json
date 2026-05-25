@@ -1,0 +1,289 @@
+{
+  "catalogId": "GameTerrain4_MaskDressingPrefabCatalog",
+  "sourceScene": "Assets/Game/Scenes/Game_Terrain3.unity",
+  "sourceIslandRoot": "Island",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
+  "uniquePrefabAssets": 19,
+  "groups": [
+    {
+      "group": "Mountains",
+      "sourceExampleInstances": 12,
+      "uniquePrefabAssets": 3,
+      "prefabs": [
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Mountains_Grass_01.prefab",
+          "sampleCount": 4,
+          "minLocalScale": [3.234, 3.234, 3.234],
+          "maxLocalScale": [5.632, 4.445, 4.445],
+          "sourceNames": [
+            "SM_Generic_Mountains_Grass_01 (2)",
+            "SM_Generic_Mountains_Grass_01 (1)",
+            "SM_Generic_Mountains_Grass_01",
+            "SM_Generic_Mountains_Grass_01 (4)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Mountains_Grass_02.prefab",
+          "sampleCount": 5,
+          "minLocalScale": [1, 0.192, 1],
+          "maxLocalScale": [6.752, 6.752, 6.752],
+          "sourceNames": [
+            "SM_Generic_Mountains_Grass_02 (2)",
+            "SM_Generic_Mountains_Grass_02 (1)",
+            "SM_Generic_Mountains_Grass_02",
+            "SM_Generic_Mountains_Grass_02 (3)",
+            "SM_Generic_Mountains_Grass_02 (4)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Mountains_Soft_01.prefab",
+          "sampleCount": 3,
+          "minLocalScale": [0.712, 0.293, 0.91],
+          "maxLocalScale": [2.362, 3.131, 2.362],
+          "sourceNames": [
+            "SM_Generic_Mountains_Soft_01 (2)",
+            "SM_Generic_Mountains_Soft_01 (1)",
+            "SM_Generic_Mountains_Soft_01"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Trees",
+      "sourceExampleInstances": 26,
+      "uniquePrefabAssets": 6,
+      "prefabs": [
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_TreeDead_01.prefab",
+          "sampleCount": 4,
+          "minLocalScale": [0.659, 0.659, 0.659],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Generic_TreeDead_01 (3)",
+            "SM_Generic_TreeDead_01 (1)",
+            "SM_Generic_TreeDead_01",
+            "SM_Generic_TreeDead_01 (2)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_TreeStump_01.prefab",
+          "sampleCount": 2,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Generic_TreeStump_01 (1)",
+            "SM_Generic_TreeStump_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_01.prefab",
+          "sampleCount": 6,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [2, 2, 2],
+          "sourceNames": [
+            "SM_Generic_Tree_01 (5)",
+            "SM_Generic_Tree_01 (1)",
+            "SM_Generic_Tree_01",
+            "SM_Generic_Tree_01 (2)",
+            "SM_Generic_Tree_01 (3)",
+            "SM_Generic_Tree_01 (4)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_02.prefab",
+          "sampleCount": 2,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1.254, 1.254, 1.254],
+          "sourceNames": [
+            "SM_Generic_Tree_02 (1)",
+            "SM_Generic_Tree_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_03.prefab",
+          "sampleCount": 5,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1.675, 1.675, 1.675],
+          "sourceNames": [
+            "SM_Generic_Tree_03 (4)",
+            "SM_Generic_Tree_03 (3)",
+            "SM_Generic_Tree_03 (2)",
+            "SM_Generic_Tree_03 (1)",
+            "SM_Generic_Tree_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Tree_04.prefab",
+          "sampleCount": 7,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1.285, 1.285, 1.285],
+          "sourceNames": [
+            "SM_Generic_Tree_04 (7)",
+            "SM_Generic_Tree_04 (6)",
+            "SM_Generic_Tree_04 (1)",
+            "SM_Generic_Tree_04",
+            "SM_Generic_Tree_04 (3)",
+            "SM_Generic_Tree_04 (4)",
+            "SM_Generic_Tree_04 (5)"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Bushes",
+      "sourceExampleInstances": 41,
+      "uniquePrefabAssets": 4,
+      "prefabs": [
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_01.prefab",
+          "sampleCount": 4,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_01 (3)",
+            "SM_Env_Bush_01 (2)",
+            "SM_Env_Bush_01 (1)",
+            "SM_Env_Bush_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_02.prefab",
+          "sampleCount": 7,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_02 (6)",
+            "SM_Env_Bush_02 (5)",
+            "SM_Env_Bush_02 (4)",
+            "SM_Env_Bush_02 (3)",
+            "SM_Env_Bush_02 (2)",
+            "SM_Env_Bush_02 (1)",
+            "SM_Env_Bush_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_03.prefab",
+          "sampleCount": 23,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_03 (22)",
+            "SM_Env_Bush_03 (21)",
+            "SM_Env_Bush_03 (20)",
+            "SM_Env_Bush_03 (19)",
+            "SM_Env_Bush_03 (18)",
+            "SM_Env_Bush_03 (17)",
+            "SM_Env_Bush_03 (16)",
+            "SM_Env_Bush_03 (15)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_04.prefab",
+          "sampleCount": 7,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_04 (6)",
+            "SM_Env_Bush_04 (5)",
+            "SM_Env_Bush_04 (4)",
+            "SM_Env_Bush_04 (3)",
+            "SM_Env_Bush_04 (2)",
+            "SM_Env_Bush_04 (1)",
+            "SM_Env_Bush_04"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Rocks",
+      "sourceExampleInstances": 155,
+      "uniquePrefabAssets": 6,
+      "prefabs": [
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rock_01.prefab",
+          "sampleCount": 20,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [9.739, 9.739, 9.145],
+          "sourceNames": [
+            "SM_Env_Rock_01 (19)",
+            "SM_Env_Rock_01 (18)",
+            "SM_Env_Rock_01 (17)",
+            "SM_Env_Rock_01 (7)",
+            "SM_Env_Rock_01 (16)",
+            "SM_Env_Rock_01 (15)",
+            "SM_Env_Rock_01 (14)",
+            "SM_Env_Rock_01 (13)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rock_02.prefab",
+          "sampleCount": 52,
+          "minLocalScale": [0.434, 0.228, 0.385],
+          "maxLocalScale": [3.476, 2.432, 3.166],
+          "sourceNames": [
+            "SM_Env_Rock_02 (51)",
+            "SM_Env_Rock_02 (50)",
+            "SM_Env_Rock_02 (28)",
+            "SM_Env_Rock_02 (49)",
+            "SM_Env_Rock_02 (48)",
+            "SM_Env_Rock_02 (47)",
+            "SM_Env_Rock_02 (46)",
+            "SM_Env_Rock_02 (45)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Pebbles_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rubble_Pebbles_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rubble_Pebbles_03.prefab",
+          "sampleCount": 2,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rubble_Pebbles_03 (1)",
+            "SM_Env_Rubble_Pebbles_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Small_Rocks_01.prefab",
+          "sampleCount": 46,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Generic_Small_Rocks_01 (44)",
+            "SM_Generic_Small_Rocks_01 (43)",
+            "SM_Generic_Small_Rocks_01 (42)",
+            "SM_Generic_Small_Rocks_01 (41)",
+            "SM_Generic_Small_Rocks_01 (40)",
+            "SM_Generic_Small_Rocks_01 (39)",
+            "SM_Generic_Small_Rocks_01 (38)",
+            "SM_Generic_Small_Rocks_01 (37)"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Small_Rocks_02.prefab",
+          "sampleCount": 34,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Generic_Small_Rocks_02 (33)",
+            "SM_Generic_Small_Rocks_02 (32)",
+            "SM_Generic_Small_Rocks_02 (31)",
+            "SM_Generic_Small_Rocks_02 (30)",
+            "SM_Generic_Small_Rocks_02 (29)",
+            "SM_Generic_Small_Rocks_02 (28)",
+            "SM_Generic_Small_Rocks_02 (27)",
+            "SM_Generic_Small_Rocks_02 (26)"
+          ]
+        }
+      ]
+    }
+  ]
+}

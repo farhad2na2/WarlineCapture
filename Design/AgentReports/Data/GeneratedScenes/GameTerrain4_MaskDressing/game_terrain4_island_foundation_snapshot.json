@@ -1,0 +1,20 @@
+{
+  "snapshotId": "GameTerrain4_IslandFoundationSnapshot",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "islandRoot": "Island",
+  "foundationChild": "ExpandedIsland_SourceGameTerrain3PrefabsOnly",
+  "foundationPath": "Island/ExpandedIsland_SourceGameTerrain3PrefabsOnly",
+  "preservationRule": "Generated dressing must be added as sibling child groups under Island and must not modify, delete, rename, reparent, or rescale this foundation child.",
+  "activeSelf": true,
+  "activeInHierarchy": true,
+  "localPosition": [0, 0, 0],
+  "localRotationEuler": [0, 0, 0],
+  "localScale": [1, 1, 1],
+  "childIndex": 0,
+  "transformCount": 17031,
+  "rendererCount": 17027,
+  "meshFilterCount": 17027,
+  "colliderCount": 16829,
+  "worldBoundsCenter": [11.409, -2.635, -3.164],
+  "worldBoundsSize": [2358.803, 7.829, 2386.351]
+}

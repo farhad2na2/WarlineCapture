@@ -1,0 +1,74 @@
+{
+  "manifestId": "GameTerrain4_GeneratedGroupManifest",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "islandRoot": "Island",
+  "foundationChild": "ExpandedIsland_SourceGameTerrain3PrefabsOnly",
+  "rule": "All generated dressing content belongs in these direct Island children. The foundation child remains a sibling and must stay untouched.",
+  "groups": [
+    {
+      "name": "Generated_Mountains",
+      "purpose": "Mask-placed mountain and cliff blocker dressing.",
+      "exists": true,
+      "path": "Island/Generated_Mountains",
+      "activeSelf": true,
+      "activeInHierarchy": true,
+      "childIndex": 1,
+      "childCount": 238,
+      "localPosition": [0, 0, 0],
+      "localRotationEuler": [0, 0, 0],
+      "localScale": [1, 1, 1]
+    },
+    {
+      "name": "Generated_Trees",
+      "purpose": "Mask-placed tree dressing.",
+      "exists": true,
+      "path": "Island/Generated_Trees",
+      "activeSelf": true,
+      "activeInHierarchy": true,
+      "childIndex": 2,
+      "childCount": 976,
+      "localPosition": [0, 0, 0],
+      "localRotationEuler": [0, 0, 0],
+      "localScale": [1, 1, 1]
+    },
+    {
+      "name": "Generated_Bushes",
+      "purpose": "Mask-placed bush and scrub dressing.",
+      "exists": true,
+      "path": "Island/Generated_Bushes",
+      "activeSelf": true,
+      "activeInHierarchy": true,
+      "childIndex": 3,
+      "childCount": 1473,
+      "localPosition": [0, 0, 0],
+      "localRotationEuler": [0, 0, 0],
+      "localScale": [1, 1, 1]
+    },
+    {
+      "name": "Generated_Rocks",
+      "purpose": "Mask-placed rock and rubble dressing.",
+      "exists": true,
+      "path": "Island/Generated_Rocks",
+      "activeSelf": true,
+      "activeInHierarchy": true,
+      "childIndex": 4,
+      "childCount": 695,
+      "localPosition": [0, 0, 0],
+      "localRotationEuler": [0, 0, 0],
+      "localScale": [1, 1, 1]
+    },
+    {
+      "name": "Generated_BlockerDebug",
+      "purpose": "Generated blocker/pathing proof markers and debug output.",
+      "exists": true,
+      "path": "Island/Generated_BlockerDebug",
+      "activeSelf": true,
+      "activeInHierarchy": true,
+      "childIndex": 5,
+      "childCount": 0,
+      "localPosition": [0, 0, 0],
+      "localRotationEuler": [0, 0, 0],
+      "localScale": [1, 1, 1]
+    }
+  ]
+}

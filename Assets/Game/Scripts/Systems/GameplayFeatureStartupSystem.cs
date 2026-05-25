@@ -5,16 +5,16 @@ internal sealed class GameplayFeatureStartupSystem
 {
     public readonly struct Result
     {
-        public readonly RuntimeCitySpawnerSystem RuntimeCitySpawner;
+        public readonly RuntimeCityCompositionSystem RuntimeCity;
         public readonly RuntimeGridBlockerSystem RuntimeGridBlockers;
         public readonly RuntimeDecorationSpawnerSystem RuntimeDecorations;
 
         public Result(
-            RuntimeCitySpawnerSystem runtimeCitySpawner,
+            RuntimeCityCompositionSystem runtimeCity,
             RuntimeGridBlockerSystem runtimeGridBlockers,
             RuntimeDecorationSpawnerSystem runtimeDecorations)
         {
-            RuntimeCitySpawner = runtimeCitySpawner;
+            RuntimeCity = runtimeCity;
             RuntimeGridBlockers = runtimeGridBlockers;
             RuntimeDecorations = runtimeDecorations;
         }
@@ -29,7 +29,7 @@ internal sealed class GameplayFeatureStartupSystem
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
+        Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
         MainMenuPlayUI mainMenu,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
@@ -40,8 +40,8 @@ internal sealed class GameplayFeatureStartupSystem
         CombinedMeshBaker decorationCombinedMeshBaker,
         GameplaySceneBindingSystem sceneBindingSystem)
     {
-        var runtimeCitySpawner = new RuntimeCitySpawnerSystem();
-        runtimeCitySpawner.Init(
+        var runtimeCity = new RuntimeCityCompositionSystem();
+        runtimeCity.Configure(
             runtimeCitySpawnerConfig,
             roadBuild,
             buildingRuntimeCitySpawn,
@@ -50,7 +50,7 @@ internal sealed class GameplayFeatureStartupSystem
             mainMenu);
 
         var runtimeGridBlockers = new RuntimeGridBlockerSystem();
-        runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCitySpawner);
+        runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCity.ReadModel);
         roadBuild?.BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
@@ -62,7 +62,7 @@ internal sealed class GameplayFeatureStartupSystem
             selectionUiCameraSystem,
             selectionBuildingInteractionSystem,
             runtimeGridBlockers,
-            runtimeCitySpawner,
+            runtimeCity,
             citizenPopulation);
 
         var runtimeDecorations = new RuntimeDecorationSpawnerSystem();
@@ -70,9 +70,9 @@ internal sealed class GameplayFeatureStartupSystem
             runtimeDecorationSpawnerConfig,
             decorationRoot,
             decorationCombinedMeshBaker,
-            runtimeCitySpawner,
+            runtimeCity.ReadModel,
             runtimeGridBlockers);
 
-        return new Result(runtimeCitySpawner, runtimeGridBlockers, runtimeDecorations);
+        return new Result(runtimeCity, runtimeGridBlockers, runtimeDecorations);
     }
 }

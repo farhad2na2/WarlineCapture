@@ -34,18 +34,18 @@ public sealed class RuntimeDecorationSpawnerSystem
     private List<GameObject> _prefabs = new();
     private Transform _rootTransform;
     private CombinedMeshBaker _combinedMeshBaker;
-    private RuntimeCitySpawnerSystem _citySpawner;
+    private RuntimeCityReadModelSystem _cityReadModel;
     private RuntimeGridBlockerSystem _gridBlockers;
     private bool _combinePending;
     private bool _spawned;
     private int _combineAfterFrames = -1;
     public bool HasSpawned => _spawned || !_spawnOnStart || _prefabs == null || _prefabs.Count == 0 || _decorationCount <= 0;
 
-    public void Init(RuntimeDecorationSpawnerSystemConfig config, Transform rootTransform, CombinedMeshBaker combinedMeshBaker, RuntimeCitySpawnerSystem citySpawner, RuntimeGridBlockerSystem gridBlockers)
+    public void Init(RuntimeDecorationSpawnerSystemConfig config, Transform rootTransform, CombinedMeshBaker combinedMeshBaker, RuntimeCityReadModelSystem cityReadModel, RuntimeGridBlockerSystem gridBlockers)
     {
         _rootTransform = rootTransform;
         _combinedMeshBaker = combinedMeshBaker;
-        _citySpawner = citySpawner;
+        _cityReadModel = cityReadModel;
         _gridBlockers = gridBlockers;
         ApplyConfig(config);
     }
@@ -68,7 +68,7 @@ public sealed class RuntimeDecorationSpawnerSystem
         ClearSpawnedDecorations();
         _rootTransform = null;
         _combinedMeshBaker = null;
-        _citySpawner = null;
+        _cityReadModel = null;
         _gridBlockers = null;
     }
 
@@ -210,8 +210,8 @@ public sealed class RuntimeDecorationSpawnerSystem
 
     private bool HasPendingCityGeneration()
     {
-        RuntimeCitySpawnerSystem citySpawner = _citySpawner;
-        return citySpawner != null && citySpawner.SpawnOnStartEnabled && !citySpawner.HasSpawned;
+        RuntimeCityReadModelSystem cityReadModel = _cityReadModel;
+        return cityReadModel != null && cityReadModel.SpawnOnStartEnabled && !cityReadModel.HasSpawned;
     }
 
     private static bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData)

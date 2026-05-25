@@ -23,8 +23,13 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const string GrassDarkMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_03_A.mat";
     private const float MapSize = 2048f;
     private const float HalfMapSize = MapSize * 0.5f;
-    private const float IslandRadiusX = 880f;
-    private const float IslandRadiusZ = 820f;
+    private const float GameplayMapExtent = 2023f;
+    private const float HalfGameplayMapExtent = GameplayMapExtent * 0.5f;
+    private const float GreenPlayableHalfExtentX = 1110f;
+    private const float GreenPlayableHalfExtentZ = 1110f;
+    private const float DetailGrassHalfExtent = 1060f;
+    private const float IslandRadiusX = 1275f;
+    private const float IslandRadiusZ = 1250f;
     private const float GroundFillSpacing = 18f;
     private const float ShoreGroundSpacing = 30f;
     private const float DetailGrassSpacing = 78f;
@@ -374,7 +379,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         top.transform.position = new Vector3(0f, 1850f, 0f);
         top.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
         top.orthographic = true;
-        top.orthographicSize = 1100f;
+        top.orthographicSize = 1400f;
         top.nearClipPlane = 0.1f;
         top.farClipPlane = 3000f;
         top.clearFlags = CameraClearFlags.SolidColor;
@@ -406,11 +411,11 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private static void PlaceGroundFill(Transform parent)
     {
         int index = 0;
-        for (float z = -900f; z <= 900f; z += GroundFillSpacing)
+        for (float z = -GreenPlayableHalfExtentZ; z <= GreenPlayableHalfExtentZ; z += GroundFillSpacing)
         {
-            int row = Mathf.RoundToInt((z + 900f) / GroundFillSpacing);
+            int row = Mathf.RoundToInt((z + GreenPlayableHalfExtentZ) / GroundFillSpacing);
             float rowOffset = row % 2 == 0 ? 0f : GroundFillSpacing * 0.5f;
-            for (float x = -930f + rowOffset; x <= 930f; x += GroundFillSpacing)
+            for (float x = -GreenPlayableHalfExtentX + rowOffset; x <= GreenPlayableHalfExtentX; x += GroundFillSpacing)
             {
                 int cellIndex = index++;
                 float jx = (Hash01(cellIndex, row, 17) - 0.5f) * 5f;
@@ -430,7 +435,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
     private static void PlaceShoreGroundOverlap(Transform parent)
     {
-        const int ringCount = 360;
+        const int ringCount = 520;
         for (int i = 0; i < ringCount; i++)
         {
             float angle = (i / (float)ringCount) * Mathf.PI * 2f + (Hash01(i, 0, 211) - 0.5f) * 0.025f;
@@ -450,7 +455,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
     private static void PlaceCoastalBeaches(Transform parent)
     {
-        const int ringCount = 900;
+        const int ringCount = 1260;
         for (int i = 0; i < ringCount; i++)
         {
             float t = i / (float)ringCount;
@@ -488,11 +493,11 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             return;
 
         int index = 0;
-        for (float z = -830f; z <= 830f; z += DetailGrassSpacing)
+        for (float z = -DetailGrassHalfExtent; z <= DetailGrassHalfExtent; z += DetailGrassSpacing)
         {
-            int row = Mathf.RoundToInt((z + 830f) / DetailGrassSpacing);
+            int row = Mathf.RoundToInt((z + DetailGrassHalfExtent) / DetailGrassSpacing);
             float rowOffset = row % 2 == 0 ? 0f : DetailGrassSpacing * 0.5f;
-            for (float x = -860f + rowOffset; x <= 860f; x += DetailGrassSpacing)
+            for (float x = -DetailGrassHalfExtent + rowOffset; x <= DetailGrassHalfExtent; x += DetailGrassSpacing)
             {
                 if (Hash01(index, row, 307) < 0.46f)
                 {
@@ -842,6 +847,12 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         json.AppendLine("  \"targetScene\": \"" + TargetScenePath + "\",");
         json.AppendLine("  \"generationRule\": \"Source-prefab-only expansion. No generated terrain meshes and no substitute prefabs.\",");
         json.AppendLine("  \"mapSize\": 2048,");
+        json.AppendLine("  \"gameplayMapExtent\": " + GameplayMapExtent.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"playableGreenLandRule\": \"Green/dirt source-prefab terrain must fully cover the 2024 gameplay map footprint before beach/coast prefabs are placed outside it.\",");
+        json.AppendLine("  \"greenPlayableHalfExtentX\": " + GreenPlayableHalfExtentX.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"greenPlayableHalfExtentZ\": " + GreenPlayableHalfExtentZ.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"islandRadiusX\": " + IslandRadiusX.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"islandRadiusZ\": " + IslandRadiusZ.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"sourceBeachPrefabInstances\": " + BeachPieces.Count.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"sourceGroundPrefabInstances\": " + GroundPieces.Count.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"sourceDetailGrassPrefabInstances\": " + DetailGrassPieces.Count.ToString(CultureInfo.InvariantCulture) + ",");
@@ -884,6 +895,8 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine();
         report.AppendLine("Task: Expand the small `Game_Terrain3` island into a 2048x2048 island using the same prefab assets and more placements, without scaling the original island up.");
         report.AppendLine();
+        report.AppendLine("Step 2 update: the island foundation now targets a larger green/dirt playable interior. The 2024 gameplay map footprint is `2023x2023` world units, and the builder fills green/dirt terrain across `2220x2220` before placing the beach ring outside the playable area.");
+        report.AppendLine();
         report.AppendLine("Outputs:");
         report.AppendLine("- `" + TargetScenePath + "` under root GameObject `Island`");
         report.AppendLine("- `" + LayoutJsonPath + "`");
@@ -898,6 +911,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine("- `SM_Generic_Grass_Patch_*` prefabs are classified as decoration/detail grass, not terrain fill; `SM_Generic_Grass_Patch_01` is preferred on green and darker grass areas.");
         report.AppendLine("- Ground fill places every valid interior cell with jittered rows; it no longer randomly skips coverage cells.");
         report.AppendLine("- Beach placement uses a denser two-band rim to reduce shoreline gaps.");
+        report.AppendLine("- Green/dirt terrain is intentionally larger than the 2024 gameplay map target; beach/coast content is pushed to the outer island border.");
         report.AppendLine("- Detail grass is a separate sparse decoration pass on top of the ground, never the primary floor.");
         report.AppendLine("- Prefab Y scale is copied from source instances; X/Z scale is expanded per role so neighboring pieces touch instead of leaving holes.");
         report.AppendLine();
@@ -912,6 +926,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine("- Dark grass material placements: " + CountMaterialRole(SurfaceMaterialRole.GrassDark).ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Beach material placements: " + CountMaterialRole(SurfaceMaterialRole.BeachSand).ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Ground fill spacing: " + GroundFillSpacing.ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Gameplay map target extent: " + GameplayMapExtent.ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Green playable half extent X/Z: " + GreenPlayableHalfExtentX.ToString(CultureInfo.InvariantCulture) + " / " + GreenPlayableHalfExtentZ.ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Island radius X/Z: " + IslandRadiusX.ToString(CultureInfo.InvariantCulture) + " / " + IslandRadiusZ.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Shore ground spacing: " + ShoreGroundSpacing.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Detail grass spacing: " + DetailGrassSpacing.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Ground X/Z scale multiplier: " + GroundSurfaceScaleXZ.ToString(CultureInfo.InvariantCulture));

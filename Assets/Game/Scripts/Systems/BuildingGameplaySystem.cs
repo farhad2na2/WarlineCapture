@@ -72,7 +72,7 @@ public class BuildingGameplaySystem
     private SelectionUiCameraSystem _selectionUiCameraSystem;
     private SelectionBuildingInteractionSystem _selectionBuildingInteractionSystem;
     private RuntimeGridBlockerSystem _runtimeGridBlockerSystem;
-    private RuntimeCitySpawnerSystem _runtimeCitySpawnerSystem;
+    private RuntimeCityCompositionSystem _runtimeCitySystem;
     private CitizenPopulationSystem _citizenPopulationSystem;
     private FactionVisualSettings _factionVisualSettings;
     private DayNightSystem _dayNightSystem;
@@ -349,8 +349,8 @@ public class BuildingGameplaySystem
             return false;
 
         string prefabName = building.Definition.Prefab != null ? building.Definition.Prefab.name : string.Empty;
-        if (_runtimeCitySpawnerSystem != null && building.Definition.Prefab != null)
-            return _runtimeCitySpawnerSystem.IsConfiguredHousePrefab(building.Definition.Prefab);
+        if (_runtimeCitySystem != null && building.Definition.Prefab != null)
+            return _runtimeCitySystem.IsConfiguredHousePrefab(building.Definition.Prefab);
 
         return prefabName.IndexOf("house", System.StringComparison.OrdinalIgnoreCase) >= 0 &&
                !building.Definition.IsWall;
@@ -491,7 +491,7 @@ public class BuildingGameplaySystem
         SelectionUiCameraSystem selectionUiCameraSystem = null,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerSystem runtimeGridBlockerSystem = null,
-        RuntimeCitySpawnerSystem runtimeCitySpawnerSystem = null,
+        RuntimeCityCompositionSystem runtimeCitySystem = null,
         CitizenPopulationSystem citizenPopulationSystem = null)
     {
         _roadBuildController = roadBuildController;
@@ -502,8 +502,8 @@ public class BuildingGameplaySystem
             _selectionBuildingInteractionSystem = selectionBuildingInteractionSystem;
         if (runtimeGridBlockerSystem != null)
             _runtimeGridBlockerSystem = runtimeGridBlockerSystem;
-        if (runtimeCitySpawnerSystem != null)
-            _runtimeCitySpawnerSystem = runtimeCitySpawnerSystem;
+        if (runtimeCitySystem != null)
+            _runtimeCitySystem = runtimeCitySystem;
         if (citizenPopulationSystem != null)
             _citizenPopulationSystem = citizenPopulationSystem;
         if (dayNightSystem != null)

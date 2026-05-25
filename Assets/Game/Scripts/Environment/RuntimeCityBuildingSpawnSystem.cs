@@ -22,6 +22,7 @@ internal sealed class RuntimeCityBuildingSpawnSystem
     private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;
     private RuntimeCityVisualSystem _runtimeCityVisualSystem;
     private RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem;
+    private RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem;
 
     private int gasStationCount => _config.GasStationCount;
     private int shopCount => _config.ShopCount;
@@ -57,7 +58,8 @@ internal sealed class RuntimeCityBuildingSpawnSystem
         RuntimeCityWalkabilitySystem walkabilitySystem,
         RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
         RuntimeCityVisualSystem visualSystem,
-        RuntimeCitySpawnBridgeSystem spawnBridgeSystem)
+        RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
+        RuntimeCityDiagnosticSystem diagnosticSystem)
     {
         _config = config;
         _runtimeCityBuildingPlotSystem = buildingPlotSystem;
@@ -65,6 +67,7 @@ internal sealed class RuntimeCityBuildingSpawnSystem
         _runtimeCityPrefabSelectionSystem = prefabSelectionSystem;
         _runtimeCityVisualSystem = visualSystem;
         _runtimeCitySpawnBridgeSystem = spawnBridgeSystem;
+        _runtimeCityDiagnosticSystem = diagnosticSystem;
     }
 
     public void SpawnCityImportantBuildings(CityLayoutData city, int roadCellSizeInGridCells, ref Unity.Mathematics.Random rng)
@@ -83,7 +86,7 @@ internal sealed class RuntimeCityBuildingSpawnSystem
 
         city.HallPlaced = TrySpawnHall(city.CenterRoadCell, roadCellSizeInGridCells, ref rng, city.ReservedFootprints);
         if (!city.HallPlaced)
-            Debug.LogWarning($"[RuntimeCitySpawnerSystem] Hall could not be placed for city at {city.CenterRoadCell}.");
+            _runtimeCityDiagnosticSystem?.LogHallPlacementFailed(city.CenterRoadCell);
     }
 
     public sealed class GenerationRandomState

@@ -65,7 +65,7 @@ public sealed class GameBootstrap : MonoBehaviour
 
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
-    public RuntimeCitySpawnerSystem RuntimeCitySpawner { get; private set; }
+    public RuntimeCityCompositionSystem RuntimeCity { get; private set; }
     public RoadBuildSystem RoadBuild { get; private set; }
     public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
     public BuildingUiCommandSystem BuildingUiCommand { get; private set; }
@@ -92,7 +92,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
     private Action<MainMenuPlayUI> _bindBuildingMainMenu;
-    private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
+    private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
     private Action<MainMenuPlayUI> _bindSelectionMainMenu;
     private Action _selectionRuntimeUpdate;
     private Action _disposeSelection;
@@ -232,7 +232,7 @@ public sealed class GameBootstrap : MonoBehaviour
             _buildingRuntimeUpdateContext,
             _selectionRuntimeUpdate,
             worldCamera,
-            RuntimeCitySpawner,
+            RuntimeCity,
             RuntimeGridBlockers,
             RuntimeDecorations,
             DayNight,
@@ -286,7 +286,7 @@ public sealed class GameBootstrap : MonoBehaviour
         DayNight?.Dispose();
         RuntimeDecorations?.Dispose();
         RuntimeGridBlockers?.Dispose();
-        RuntimeCitySpawner?.Dispose();
+        RuntimeCity?.Dispose();
         MainMenu = null;
         SelectionUiCommand = null;
         SelectionUiReadModel = null;
@@ -320,7 +320,7 @@ public sealed class GameBootstrap : MonoBehaviour
         DayNight = null;
         RuntimeDecorations = null;
         RuntimeGridBlockers = null;
-        RuntimeCitySpawner = null;
+        RuntimeCity = null;
         _runtimeCameraReferenceSystem.ClearWorldCamera();
         _performanceDiagnosticsSystem.Dispose();
         SharedPrefabPreviewCache.ReleaseAll();
@@ -397,7 +397,7 @@ public sealed class GameBootstrap : MonoBehaviour
             decorationCombinedMeshBaker,
             _gameplaySceneBindingSystem);
 
-        RuntimeCitySpawner = gameplaySystems.RuntimeCitySpawner;
+        RuntimeCity = gameplaySystems.RuntimeCity;
         RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers;
         RuntimeDecorations = gameplaySystems.RuntimeDecorations;
         GameplayInitialized = true;

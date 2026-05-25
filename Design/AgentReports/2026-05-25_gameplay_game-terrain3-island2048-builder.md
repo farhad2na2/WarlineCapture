@@ -4,6 +4,8 @@ Date: 2026-05-25
 
 Task: Expand the small `Game_Terrain3` island into a 2048x2048 island using the same prefab assets and more placements, without scaling the original island up.
 
+Step 2 update: the island foundation now targets a larger green/dirt playable interior. The 2024 gameplay map footprint is `2023x2023` world units, and the builder fills green/dirt terrain across `2220x2220` before placing the beach ring outside the playable area.
+
 Outputs:
 - `Assets/Game/Scenes/Game_Terrain4.unity` under root GameObject `Island`
 - `Design/AgentReports/Data/GeneratedScenes/GameTerrain3_Island2048/game_terrain3_island2048_layout.json`
@@ -18,6 +20,7 @@ Rules enforced:
 - `SM_Generic_Grass_Patch_*` prefabs are classified as decoration/detail grass, not terrain fill; `SM_Generic_Grass_Patch_01` is preferred on green and darker grass areas.
 - Ground fill places every valid interior cell with jittered rows; it no longer randomly skips coverage cells.
 - Beach placement uses a denser two-band rim to reduce shoreline gaps.
+- Green/dirt terrain is intentionally larger than the 2024 gameplay map target; beach/coast content is pushed to the outer island border.
 - Detail grass is a separate sparse decoration pass on top of the ground, never the primary floor.
 - Prefab Y scale is copied from source instances; X/Z scale is expanded per role so neighboring pieces touch instead of leaving holes.
 
@@ -26,12 +29,15 @@ Counts:
 - Source ground prefab instances: 46
 - Source detail grass prefab instances: 135
 - Unique source prefab assets: 8
-- Placed prefab instances: 9105
-- Green material placements: 4676
-- Dirt material placements: 895
-- Dark grass material placements: 834
-- Beach material placements: 2700
+- Placed prefab instances: 17027
+- Green material placements: 9072
+- Dirt material placements: 1938
+- Dark grass material placements: 2237
+- Beach material placements: 3780
 - Ground fill spacing: 18
+- Gameplay map target extent: 2023
+- Green playable half extent X/Z: 1110 / 1110
+- Island radius X/Z: 1275 / 1250
 - Shore ground spacing: 30
 - Detail grass spacing: 78
 - Ground X/Z scale multiplier: 2.15

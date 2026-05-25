@@ -17,7 +17,7 @@ public sealed class GameplayRuntimeUpdateSystem
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
         Action selectionRuntimeUpdate,
         Camera worldCamera,
-        RuntimeCitySpawnerSystem runtimeCitySpawner,
+        RuntimeCityCompositionSystem runtimeCity,
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeDecorationSpawnerSystem runtimeDecorations,
         DayNightSystem dayNight,
@@ -58,8 +58,8 @@ public sealed class GameplayRuntimeUpdateSystem
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MissionCamera", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            runtimeCitySpawner?.Update();
-            hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeCitySpawner", stepStart);
+            runtimeCity?.Update(Time.frameCount);
+            hadSlowStep |= performanceDiagnosticsSystem.EndStep("RuntimeCity", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
             runtimeGridBlockers?.Update();
@@ -89,7 +89,7 @@ public sealed class GameplayRuntimeUpdateSystem
         if (gameplayStartPending && IsGameplayStartComplete(
                 gameplayInitialized,
                 runtimeGameplayStateSystem,
-                runtimeCitySpawner,
+                runtimeCity,
                 runtimeGridBlockers,
                 runtimeDecorations))
         {
@@ -144,13 +144,13 @@ public sealed class GameplayRuntimeUpdateSystem
     private bool IsGameplayStartComplete(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
-        RuntimeCitySpawnerSystem runtimeCitySpawner,
+        RuntimeCityCompositionSystem runtimeCity,
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeDecorationSpawnerSystem runtimeDecorations)
     {
         if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
             return false;
-        if (runtimeCitySpawner != null && !runtimeCitySpawner.HasSpawned)
+        if (runtimeCity != null && !runtimeCity.HasSpawned)
             return false;
         if (runtimeGridBlockers != null && !runtimeGridBlockers.HasSpawned)
             return false;

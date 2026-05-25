@@ -57,7 +57,7 @@ public sealed class BootstrapAndMenuPlayModeTests
         Assert.NotNull(bootstrap.SelectionScreenMarkers, "Bootstrap should create selection marker dependencies during Awake.");
         Assert.IsFalse(InitialUnitsRuntimeState.PlayRequested, "PlayRequested must remain false when the scene first starts.");
         Assert.IsFalse(bootstrap.GameplayInitialized, "Gameplay systems must not initialize before the menu play request.");
-        Assert.IsNull(bootstrap.RuntimeCitySpawner, "Runtime city spawning must not be created before gameplay starts.");
+        Assert.IsNull(bootstrap.RuntimeCity, "Runtime city must not be created before gameplay starts.");
         Assert.IsNull(bootstrap.RuntimeGridBlockers, "Runtime grid blockers must not be created before gameplay starts.");
         Assert.IsNull(bootstrap.RuntimeDecorations, "Runtime decorations must not be created before gameplay starts.");
     }

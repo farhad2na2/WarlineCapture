@@ -11,12 +11,18 @@ public sealed class GameplayArchitectureContractTests
     private const string ContractPath = "Design/Architecture/gameplay_solid_ecs_contract.md";
     private const string GameBootstrapAuditPath = "Design/Architecture/gamebootstrap_responsibility_audit.md";
     private const string GameBootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+    private const string RuntimeCityCompositionPath = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs";
     private const string ScriptsRoot = "Assets/Game/Scripts";
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
     private const int LegacyGameBootstrapDirectLogCallCount = 7;
 
     private static readonly string[] LegacyAILogCallFiles = Array.Empty<string>();
+
+    private static string ReadRuntimeCitySpawnerArchitectureSurface(string citySpawnerPath)
+    {
+        return File.ReadAllText(RuntimeCityCompositionPath);
+    }
 
     public static void RunRuntimeCityArchitectureBatchValidation()
     {
@@ -35,7 +41,21 @@ public sealed class GameplayArchitectureContractTests
             nameof(RuntimeCityPrefabSelectionMustLiveInRuntimeCityPrefabSelectionSystem),
             nameof(RuntimeCityVisualRealizationMustLiveInRuntimeCityVisualSystem),
             nameof(RuntimeCitySpawnBridgeMustLiveInRuntimeCitySpawnBridgeSystem),
-            nameof(RuntimeCityRoadBuildCouplingMustLiveInRuntimeCityRoadBuildBridgeSystem)
+            nameof(RuntimeCityRoadBuildCouplingMustLiveInRuntimeCityRoadBuildBridgeSystem),
+            nameof(RuntimeCityLifecycleMustLiveInRuntimeCityLifecycleSystem),
+            nameof(RuntimeCityStartupGateMustLiveInRuntimeCityStartupSystem),
+            nameof(RuntimeCityReadinessQueriesMustLiveInRuntimeCityReadinessQuerySystem),
+            nameof(RuntimeCityGenerationSequenceMustLiveInRuntimeCityGenerationSystem),
+            nameof(RuntimeCityChainConnectionPolicyMustLiveInRuntimeCityChainSystem),
+            nameof(RuntimeCityRoadCommitSequenceMustLiveInRuntimeCityRoadCommitSystem),
+            nameof(RuntimeCityIngressPolicyMustLiveInRuntimeCityIngressSystem),
+            nameof(RuntimeCityDiagnosticsMustLiveInRuntimeCityDiagnosticSystem),
+            nameof(RuntimeCityMinimapNotificationMustLiveInRuntimeCityMinimapEventSystem),
+            nameof(RuntimeCityRuntimeRootOwnershipMustStayInVisualSystem),
+            nameof(RuntimeCityCompositionMustOwnRuntimeCitySystemGraph),
+            nameof(RuntimeCityPeerSystemsMustUseRuntimeCityReadModelSystem),
+            nameof(RuntimeCitySpawnerSystemShellMustStayDeleted),
+            nameof(RuntimeCityFinalContractMustTrackDeletedSpawnerShell)
         };
 
         try
@@ -195,6 +215,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Runtime resource, runtime unit-prefab, citizen resource, citizen prefab, and building spawn-prefab context construction belongs in `BuildingRuntimeResourcePrefabContextSystem`", contract);
         StringAssert.Contains("Runtime/manual building spawn orchestration, initial test roster spawn requests, runtime wall-run/segment spawn orchestration, runtime placement footprint queries, runtime wall footprint queries, initial building origin search, and building-definition footprint cloning belong in `BuildingRuntimeSpawnSystem`; runtime/manual spawn command translation belongs in `BuildingRuntimeSpawnCommandSystem`", contract);
         StringAssert.Contains("Runtime city generated building spawn/delete/deferred-side-effect bridging belongs in `BuildingRuntimeCitySpawnSystem`", contract);
+        StringAssert.Contains("Runtime city generation lifecycle state, spawned/generating flags, generation routine ownership, generation frame counters, and generation yield cadence belong in `RuntimeCityLifecycleSystem`", contract);
+        StringAssert.Contains("Runtime city startup gating, spawn-on-start readiness, play-request checks, mission exclusion policy, dependency availability checks, required prefab readiness, initial-unit readiness gating, and startup gate result shaping belong in `RuntimeCityStartupSystem`", contract);
+        StringAssert.Contains("Runtime city ECS readiness query ownership, grid-data query caching, grid config lookup, initial-unit readiness checks, and initial base exclusion road-rect collection belong in `RuntimeCityReadinessQuerySystem`", contract);
         StringAssert.Contains("`GameplayFeatureStartupSystem` must receive `BuildingRuntimeCitySpawnSystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("Building runtime tick orchestration and per-phase timing belong in `BuildingPlacementRuntimeTickSystem`; placement pointer/click frame flow belongs in `BuildingPlacementInputRuntimeTickSystem`; building runtime tick diagnostics threshold, enablement, timing normalization, and log formatting belong in `BuildingPlacementRuntimeTickDiagnosticsSystem`", contract);
         StringAssert.Contains("runtime tick context assembly belongs in `BuildingPlacementRuntimeTickContextSystem`, not `BuildingPlacementSystem`", contract);
@@ -664,7 +687,7 @@ public sealed class GameplayArchitectureContractTests
             "GameRuntimeStats.RecordMissionElapsed",
             "_missionStartupSystem.UpdateActiveMission",
             "_missionStartupSystem.ApplyM01ProductionCameraPoseIfActive",
-            "RuntimeCitySpawner?.Update",
+            "RuntimeCity?.Update",
             "RuntimeGridBlockers?.Update",
             "RuntimeDecorations?.Update",
             "WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene",
@@ -688,7 +711,7 @@ public sealed class GameplayArchitectureContractTests
             "GameRuntimeStats.RecordMissionElapsed",
             "missionStartupSystem.UpdateActiveMission",
             "missionStartupSystem.ApplyM01ProductionCameraPoseIfActive",
-            "runtimeCitySpawner?.Update",
+            "runtimeCity?.Update",
             "runtimeGridBlockers?.Update",
             "runtimeDecorations?.Update",
             "WarlineCaptureMatchResultFlow.TryCompleteActiveMissionFromLoadedScene",
@@ -799,7 +822,7 @@ public sealed class GameplayArchitectureContractTests
             "\"BuildingPlacement\"",
             "\"Selection\"",
             "\"MissionCamera\"",
-            "\"RuntimeCitySpawner\"",
+            "\"RuntimeCity\"",
             "\"RuntimeGridBlockers\"",
             "\"RuntimeDecorations\"",
             "\"DayNight\"",
@@ -1030,7 +1053,7 @@ public sealed class GameplayArchitectureContractTests
         string bootstrap = File.ReadAllText(GameBootstrapPath);
         StringAssert.Contains("GameplayFeatureStartupSystem _gameplayFeatureStartupSystem", bootstrap);
         StringAssert.Contains("_gameplayFeatureStartupSystem.Initialize", bootstrap);
-        StringAssert.Contains("RuntimeCitySpawner = gameplaySystems.RuntimeCitySpawner", bootstrap);
+        StringAssert.Contains("RuntimeCity = gameplaySystems.RuntimeCity", bootstrap);
         StringAssert.Contains("RuntimeGridBlockers = gameplaySystems.RuntimeGridBlockers", bootstrap);
         StringAssert.Contains("RuntimeDecorations = gameplaySystems.RuntimeDecorations", bootstrap);
         StringAssert.Contains("GameplayInitialized = true", bootstrap);
@@ -1040,8 +1063,8 @@ public sealed class GameplayArchitectureContractTests
 
         string[] gameplayStartupDebtTokens =
         {
-            "new RuntimeCitySpawnerSystem()",
-            "runtimeCitySpawner.Init",
+            "new RuntimeCityCompositionSystem()",
+            "runtimeCity.Configure",
             "new RuntimeGridBlockerSystem()",
             "runtimeGridBlockers.Init",
             "BindRuntimeGridBlockerDebugViews(runtimeGridBlockers)",
@@ -1064,7 +1087,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext", startup);
         StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteraction", startup);
         StringAssert.Contains("BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext", startup);
-        StringAssert.Contains("Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures", startup);
+        StringAssert.Contains("Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures", startup);
         Assert.IsFalse(
             startup.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
             startup.Contains("buildingPlacement.", StringComparison.Ordinal),
@@ -1901,7 +1924,7 @@ public sealed class GameplayArchitectureContractTests
     public void RuntimeCitySpawnerSystemMustUseRuntimeCitySpawnBoundary()
     {
         const string file = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
-        string text = File.ReadAllText(file);
+        string text = ReadRuntimeCitySpawnerArchitectureSurface(file);
 
         StringAssert.Contains("BuildingRuntimeCitySpawnSystem", text);
         Assert.IsFalse(
@@ -1938,7 +1961,18 @@ public sealed class GameplayArchitectureContractTests
             "BuildingRuntimeCitySpawnSystem",
             "RuntimeCityRoadBuildBridgeSystem",
             "RuntimeCityWalkabilitySystem",
-            "RuntimeCityBuildingSpawnSystem"
+            "RuntimeCityBuildingSpawnSystem",
+            "RuntimeCityLifecycleSystem",
+            "RuntimeCityStartupSystem",
+            "RuntimeCityReadinessQuerySystem",
+            "RuntimeCityGenerationSystem",
+            "RuntimeCityChainSystem",
+            "RuntimeCityRoadCommitSystem",
+            "RuntimeCityIngressSystem",
+            "RuntimeCityMinimapEventSystem",
+            "RuntimeCityDiagnosticSystem",
+            "RuntimeCityCompositionSystem",
+            "RuntimeCityReadModelSystem"
         };
 
         foreach (string targetSystem in targetSystems)
@@ -1954,17 +1988,16 @@ public sealed class GameplayArchitectureContractTests
         const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string audit = File.ReadAllText(auditPath);
 
         string[] currentResponsibilityTokens =
         {
-            "ApplyConfigIfAvailable",
-            "GenerateCityRoutine",
-            "CreateCityLayout",
-            "BuildTownRoadStrokes",
+            "RuntimeCityCompositionSystem",
+            "RuntimeCityGenerationSystem",
+            "RuntimeCityIngressSystem",
             "RuntimeCityBuildingSpawnSystem",
-            "TryGetGridData"
+            "RuntimeCityReadinessQuerySystem"
         };
 
         foreach (string token in currentResponsibilityTokens)
@@ -1973,8 +2006,8 @@ public sealed class GameplayArchitectureContractTests
             StringAssert.Contains(token, audit);
         }
 
-        StringAssert.Contains("temporary city-generation orchestrator", audit);
-        StringAssert.Contains("remaining city-chain and road sequencing", audit);
+        StringAssert.Contains("Deleted source file", audit);
+        StringAssert.Contains("RuntimeCitySpawnerSystem.cs` must not be restored", audit);
     }
 
     [Test]
@@ -1988,13 +2021,13 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(configSystemPath), "Runtime city config projection must live in RuntimeCityConfigSystem.");
 
         string configSystem = File.ReadAllText(configSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
         StringAssert.Contains("2. Complete: Extract city config read model", roadmap);
         StringAssert.Contains("RuntimeCityConfigSystem.Snapshot", citySpawner);
-        StringAssert.Contains("_runtimeCityConfigSystem.Apply(config)", citySpawner);
+        StringAssert.Contains("_runtimeCityConfigSystem.Apply(_config)", citySpawner);
         StringAssert.Contains("public readonly struct Snapshot", configSystem);
         StringAssert.Contains("public Snapshot Apply(RuntimeCitySpawnerSystemConfig config)", configSystem);
         StringAssert.Contains("Default(List<GameObject> emptyPrefabs)", configSystem);
@@ -2033,13 +2066,12 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(layoutSystemPath), "Runtime city layout planning must live in RuntimeCityLayoutSystem.");
 
         string layoutSystem = File.ReadAllText(layoutSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
         StringAssert.Contains("3. Complete: Extract city layout planning", roadmap);
         StringAssert.Contains("private readonly RuntimeCityLayoutSystem _runtimeCityLayoutSystem = new()", citySpawner);
-        StringAssert.Contains("using CityLayoutData = RuntimeCityLayoutSystem.CityLayoutData;", citySpawner);
         StringAssert.Contains("internal sealed class RuntimeCityLayoutSystem", layoutSystem);
         StringAssert.Contains("public sealed class CityLayoutData", layoutSystem);
         StringAssert.Contains("using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;", layoutSystem);
@@ -2084,7 +2116,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(roadLayoutSystemPath), "Runtime city road layout planning must live in RuntimeCityRoadLayoutSystem.");
 
         string roadLayoutSystem = File.ReadAllText(roadLayoutSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -2133,7 +2165,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(plotSystemPath), "Runtime city building plot planning must live in RuntimeCityBuildingPlotSystem.");
 
         string plotSystem = File.ReadAllText(plotSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -2201,8 +2233,9 @@ public sealed class GameplayArchitectureContractTests
 
         string walkabilitySystem = File.ReadAllText(walkabilitySystemPath);
         string plotSystem = File.ReadAllText(plotSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
         string layoutSystem = File.ReadAllText(layoutSystemPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
@@ -2211,7 +2244,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new()", citySpawner);
         StringAssert.Contains("using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;", buildingSpawnSystem);
         StringAssert.Contains("using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;", layoutSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.ReserveStandaloneEntranceCorridor", citySpawner);
+        StringAssert.Contains("context.WalkabilitySystem.ReserveStandaloneEntranceCorridor", generationSystem);
         StringAssert.Contains("_runtimeCityWalkabilitySystem.ReserveFootprint", buildingSpawnSystem);
         StringAssert.Contains("_runtimeCityWalkabilitySystem.WouldBeTooCloseToReserved", buildingSpawnSystem);
         StringAssert.Contains("_runtimeCityWalkabilitySystem.DoesRectOverlapRoadCells", buildingSpawnSystem);
@@ -2279,17 +2312,18 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(buildingSpawnSystemPath), "Runtime city building/decor spawn sequencing must live in RuntimeCityBuildingSpawnSystem.");
 
         string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
         StringAssert.Contains("11. Complete: Reduce RuntimeCitySpawnerSystem to orchestrator", roadmap);
         StringAssert.Contains("private readonly RuntimeCityBuildingSpawnSystem _runtimeCityBuildingSpawnSystem = new()", citySpawner);
         StringAssert.Contains("_runtimeCityBuildingSpawnSystem.Configure", citySpawner);
-        StringAssert.Contains("_runtimeCityBuildingSpawnSystem.EnsureCityHall", citySpawner);
-        StringAssert.Contains("_runtimeCityBuildingSpawnSystem.SpawnCityImportantBuildings", citySpawner);
-        StringAssert.Contains("_runtimeCityBuildingSpawnSystem.SpawnCorridorEntranceBuildings", citySpawner);
-        StringAssert.Contains("_runtimeCityBuildingSpawnSystem.SpawnCityBulkBuildingsRoutine", citySpawner);
+        StringAssert.Contains("context.BuildingSpawnSystem.EnsureCityHall", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystem.SpawnCityImportantBuildings", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystem.SpawnCorridorEntranceBuildings", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystem.SpawnCityBulkBuildingsRoutine", generationSystem);
         StringAssert.Contains("internal sealed class RuntimeCityBuildingSpawnSystem", buildingSpawnSystem);
         StringAssert.Contains("public void Configure", buildingSpawnSystem);
         StringAssert.Contains("public void SpawnCityImportantBuildings", buildingSpawnSystem);
@@ -2333,7 +2367,7 @@ public sealed class GameplayArchitectureContractTests
         const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -2349,6 +2383,14 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_runtimeCityVisualSystem", citySpawner);
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem", citySpawner);
         StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityLifecycleSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityStartupSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityReadinessQuerySystem", citySpawner);
+        StringAssert.Contains("_runtimeCityGenerationSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityChainSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityRoadCommitSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityIngressSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityDiagnosticSystem", citySpawner);
 
         string[] retiredAlgorithmTokens =
         {
@@ -2394,6 +2436,562 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RuntimeCityLifecycleMustLiveInRuntimeCityLifecycleSystem()
+    {
+        const string lifecycleSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityLifecycleSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(lifecycleSystemPath), "Runtime city lifecycle state must live in RuntimeCityLifecycleSystem.");
+
+        string lifecycleSystem = File.ReadAllText(lifecycleSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("15. Complete: Extract city lifecycle state", roadmap);
+        StringAssert.Contains("RuntimeCityLifecycleSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem = new()", citySpawner);
+        StringAssert.Contains("_runtimeCityLifecycleSystem.Tick(CreateLifecycleContext(frameCount))", citySpawner);
+        StringAssert.Contains("context.LifecycleSystem.TryBeginGeneration", generationSystem);
+        StringAssert.Contains("context.LifecycleSystem.CompleteGeneration", generationSystem);
+        StringAssert.Contains("_runtimeCityLifecycleSystem.CancelGeneration", citySpawner);
+        StringAssert.Contains("_runtimeCityLifecycleSystem.ShouldYield", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityLifecycleSystem", lifecycleSystem);
+        StringAssert.Contains("private IEnumerator _generationRoutine", lifecycleSystem);
+        StringAssert.Contains("private int _generationStartedFrame", lifecycleSystem);
+        StringAssert.Contains("private int _generationMoveNextCount", lifecycleSystem);
+        StringAssert.Contains("private int _nextGenerationDiagnosticFrame", lifecycleSystem);
+        StringAssert.Contains("private bool _spawned", lifecycleSystem);
+        StringAssert.Contains("public bool TryBeginGeneration", lifecycleSystem);
+        StringAssert.Contains("public void Tick", lifecycleSystem);
+        StringAssert.Contains("public void CompleteGeneration", lifecycleSystem);
+        StringAssert.Contains("public bool ShouldYield", lifecycleSystem);
+
+        string[] retiredSpawnerLifecycleTokens =
+        {
+            "private IEnumerator _generationRoutine",
+            "private int _generationStartedFrame",
+            "private int _generationMoveNextCount",
+            "private int _nextGenerationDiagnosticFrame",
+            "private bool _spawned",
+            "_generationRoutine.MoveNext()",
+            "if (_generationRoutine != null)"
+        };
+
+        foreach (string token in retiredSpawnerLifecycleTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityLifecycleSystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityStartupGateMustLiveInRuntimeCityStartupSystem()
+    {
+        const string startupSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityStartupSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(startupSystemPath), "Runtime city startup gate policy must live in RuntimeCityStartupSystem.");
+
+        string startupSystem = File.ReadAllText(startupSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("16. Complete: Extract runtime city startup gate", roadmap);
+        StringAssert.Contains("RuntimeCityStartupSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityStartupSystem _runtimeCityStartupSystem = new()", citySpawner);
+        StringAssert.Contains("_runtimeCityStartupSystem.Evaluate(CreateStartupContext(frameCount))", citySpawner);
+        StringAssert.Contains("_runtimeCityStartupSystem.EvaluateManualGeneration(CreateStartupContext(frameCount))", citySpawner);
+        StringAssert.Contains("private RuntimeCityStartupSystem.Context CreateStartupContext(int frameCount)", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityStartupSystem", startupSystem);
+        StringAssert.Contains("public Result Evaluate(Context context)", startupSystem);
+        StringAssert.Contains("public Result EvaluateManualGeneration(Context context)", startupSystem);
+        StringAssert.Contains("private static Result TryCreateGenerateResult", startupSystem);
+        StringAssert.Contains("private void LogInitialSpawnWait", startupSystem);
+        StringAssert.Contains("private static bool HasRequiredPrefabs", startupSystem);
+        StringAssert.Contains("public enum ResultKind", startupSystem);
+        StringAssert.Contains("MarkSpawned", startupSystem);
+        StringAssert.Contains("Generate", startupSystem);
+
+        string[] retiredSpawnerStartupTokens =
+        {
+            "if (!spawnOnStart || _runtimeCityLifecycleSystem.IsSpawned)",
+            "if (!_runtimeGameplayStateSystem.PlayRequested)",
+            "if (Chapter01M01PlayableRuntime.IsActiveMission())\n        {",
+            "if (HasPendingInitialUnitsSpawn(out int initialSpawnConfigs",
+            "_nextInitialSpawnWaitDiagnosticFrame",
+            "reason=waiting-initial-units",
+            "if (!_runtimeCityRoadBuildBridgeSystem.HasRoadBuildSystem)",
+            "if (generateBuildings && !_runtimeCitySpawnBridgeSystem.HasSpawnSystem)",
+            "hallPrefabs == null || hallPrefabs.Count == 0",
+            "shopPrefabs == null || shopPrefabs.Count == 0",
+            "housePrefabs == null || housePrefabs.Count == 0"
+        };
+
+        foreach (string token in retiredSpawnerStartupTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityStartupSystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityReadinessQueriesMustLiveInRuntimeCityReadinessQuerySystem()
+    {
+        const string readinessSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityReadinessQuerySystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(readinessSystemPath), "Runtime city ECS readiness queries must live in RuntimeCityReadinessQuerySystem.");
+
+        string readinessSystem = File.ReadAllText(readinessSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("17. Complete: Extract ECS query/readiness ownership", roadmap);
+        StringAssert.Contains("RuntimeCityReadinessQuerySystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem = new()", citySpawner);
+        StringAssert.Contains("_runtimeCityReadinessQuerySystem.Clear()", citySpawner);
+        StringAssert.Contains("_runtimeCityReadinessQuerySystem.CollectInitialBaseExclusionRoadRects", citySpawner);
+        StringAssert.Contains("_runtimeCityReadinessQuerySystem.HasPendingInitialUnitsSpawn", citySpawner);
+        StringAssert.Contains("_runtimeCityReadinessQuerySystem.TryGetGridConfig", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityReadinessQuerySystem", readinessSystem);
+        StringAssert.Contains("private World _queryWorld", readinessSystem);
+        StringAssert.Contains("private EntityQuery _gridDataQuery", readinessSystem);
+        StringAssert.Contains("public bool TryGetGridConfig", readinessSystem);
+        StringAssert.Contains("public bool TryGetGridData", readinessSystem);
+        StringAssert.Contains("public bool HasPendingInitialUnitsSpawn", readinessSystem);
+        StringAssert.Contains("public List<RectInt> CollectInitialBaseExclusionRoadRects", readinessSystem);
+        StringAssert.Contains("private void EnsureGridDataQuery", readinessSystem);
+        StringAssert.Contains("public void Clear()", readinessSystem);
+
+        string[] retiredSpawnerReadinessTokens =
+        {
+            "using Unity.Collections;",
+            "using Unity.Entities;",
+            "private World _queryWorld",
+            "private EntityQuery _gridDataQuery",
+            "private void EnsureEntityQueries(",
+            "private bool TryGetGridData(",
+            "private bool TryGetGridConfig(",
+            "private static bool HasPendingInitialUnitsSpawn(",
+            "private static List<RectInt> CollectInitialBaseExclusionRoadRects(",
+            "World.DefaultGameObjectInjectionWorld",
+            "EntityManager em =",
+            "ComponentType.ReadOnly<GridConfig>()",
+            "Allocator.Temp",
+            "DynamicBuffer<"
+        };
+
+        foreach (string token in retiredSpawnerReadinessTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityReadinessQuerySystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityGenerationSequenceMustLiveInRuntimeCityGenerationSystem()
+    {
+        const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(generationSystemPath), "Runtime city generation sequence must live in RuntimeCityGenerationSystem.");
+
+        string generationSystem = File.ReadAllText(generationSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("18. Complete: Extract city generation sequence", roadmap);
+        StringAssert.Contains("RuntimeCityGenerationSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityGenerationSystem _runtimeCityGenerationSystem = new()", citySpawner);
+        StringAssert.Contains("_runtimeCityGenerationSystem.TryBegin(CreateGenerationContext(grid, roadCellSizeInGridCells, frameCount))", citySpawner);
+        StringAssert.Contains("private RuntimeCityGenerationSystem.Context CreateGenerationContext", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityGenerationSystem", generationSystem);
+        StringAssert.Contains("public bool TryBegin(Context context)", generationSystem);
+        StringAssert.Contains("private IEnumerator GenerateCityRoutine", generationSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.BeginDeferredRoadEcsSync()", generationSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.EndDeferredRoadEcsSync()", generationSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.BeginDeferredSideEffects()", generationSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.EndDeferredSideEffects()", generationSystem);
+        StringAssert.Contains("new Unity.Mathematics.Random(generationSeed)", generationSystem);
+        StringAssert.Contains("var cities = new List<CityLayoutData>", generationSystem);
+        StringAssert.Contains("SpawnCityBulkBuildingsRoutine", generationSystem);
+        StringAssert.Contains("context.LifecycleSystem.CompleteGeneration", generationSystem);
+        StringAssert.Contains("context.MinimapEvents?.PublishStaticMinimapChanged()", generationSystem);
+        StringAssert.Contains("context.ChainSystem.TryPlanNextCity", generationSystem);
+        StringAssert.Contains("context.RoadCommitSystem.CommitCityRoadNetwork", generationSystem);
+
+        string[] retiredSpawnerGenerationTokens =
+        {
+            "private IEnumerator GenerateCityRoutine",
+            "_runtimeCityRoadBuildBridgeSystem.BeginDeferredRoadEcsSync(",
+            "_runtimeCityRoadBuildBridgeSystem.EndDeferredRoadEcsSync(",
+            "_runtimeCitySpawnBridgeSystem.BeginDeferredSideEffects(",
+            "_runtimeCitySpawnBridgeSystem.EndDeferredSideEffects(",
+            "new Unity.Mathematics.Random(generationSeed)",
+            "var cities = new List<CityLayoutData>",
+            "_runtimeCityBuildingSpawnSystem.SpawnCityBulkBuildingsRoutine",
+            "_runtimeCityLifecycleSystem.TryBeginGeneration",
+            "_runtimeCityLifecycleSystem.CompleteGeneration"
+        };
+
+        foreach (string token in retiredSpawnerGenerationTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityGenerationSystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityChainConnectionPolicyMustLiveInRuntimeCityChainSystem()
+    {
+        const string chainSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityChainSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(chainSystemPath), "Runtime city chain planning policy must live in RuntimeCityChainSystem.");
+
+        string chainSystem = File.ReadAllText(chainSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText(generationSystemPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("19. Complete: Extract city-chain connection policy", roadmap);
+        StringAssert.Contains("RuntimeCityChainSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityChainSystem _runtimeCityChainSystem = new()", citySpawner);
+        StringAssert.Contains("private RuntimeCityChainSystem.Context CreateChainContext()", citySpawner);
+        StringAssert.Contains("context.ChainSystem.TryPlanNextCity", generationSystem);
+        StringAssert.Contains("internal sealed class RuntimeCityChainSystem", chainSystem);
+        StringAssert.Contains("public bool TryPlanNextCity", chainSystem);
+        StringAssert.Contains("private static readonly Vector2Int[] CardinalDirections", chainSystem);
+        StringAssert.Contains("previousTravelDirection", chainSystem);
+        StringAssert.Contains("aIsReverse ? 1 : -1", chainSystem);
+        StringAssert.Contains("int autobahnLength = Mathf.Max", chainSystem);
+        StringAssert.Contains("IsCityCenterFarEnough", chainSystem);
+        StringAssert.Contains("BuildStraightRoadPath", chainSystem);
+        StringAssert.Contains("context.RoadCommitSystem.PopulateCityRoadCells", chainSystem);
+        StringAssert.Contains("private static bool IsCityExitPathValid", chainSystem);
+        StringAssert.Contains("private static bool IsAutobahnPathValid", chainSystem);
+        StringAssert.Contains("private static bool TryGetCityConnectionCell", chainSystem);
+        StringAssert.Contains("context.IngressSystem.GetCityInnerConnectionCell", chainSystem);
+        StringAssert.Contains("context.IngressSystem.GetCityConnectionOffset", chainSystem);
+        StringAssert.Contains("context.IngressSystem.CreateCityLayout", chainSystem);
+
+        string[] retiredSpawnerChainTokens =
+        {
+            "private bool TryPlanNextCity(",
+            "private bool IsCityExitPathValid(",
+            "private bool IsAutobahnPathValid(",
+            "private static bool TryGetCityConnectionCell(",
+            "private static readonly Vector2Int[] CardinalDirections",
+            "private static readonly Vector2Int North",
+            "private static readonly Vector2Int East",
+            "private static readonly Vector2Int South",
+            "private static readonly Vector2Int West",
+            "private Vector2Int GetCityInnerConnectionCell(",
+            "private int GetCityConnectionOffset(",
+            "private CityLayoutData CreateCityLayout(",
+            "ConnectCitiesWithAutobahn("
+        };
+
+        foreach (string token in retiredSpawnerChainTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityChainSystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityIngressPolicyMustLiveInRuntimeCityIngressSystem()
+    {
+        const string ingressSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityIngressSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
+        const string chainSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityChainSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(ingressSystemPath), "Runtime city incoming connector and ingress policy must live in RuntimeCityIngressSystem.");
+
+        string ingressSystem = File.ReadAllText(ingressSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText(generationSystemPath);
+        string chainSystem = File.ReadAllText(chainSystemPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("21. Complete: Extract incoming connector/ingress helpers", roadmap);
+        StringAssert.Contains("RuntimeCityIngressSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityIngressSystem _runtimeCityIngressSystem = new()", citySpawner);
+        StringAssert.Contains("private RuntimeCityIngressSystem.Context CreateIngressContext()", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityIngressSystem", ingressSystem);
+        StringAssert.Contains("public CityLayoutData CreateCityLayout", ingressSystem);
+        StringAssert.Contains("BuildTownRoadStrokes", ingressSystem);
+        StringAssert.Contains("AddStroke", ingressSystem);
+        StringAssert.Contains("public Vector2Int GetCityInnerConnectionCell", ingressSystem);
+        StringAssert.Contains("public int GetCityConnectionOffset", ingressSystem);
+        StringAssert.Contains("public void PruneIngressCorridorStrokes", ingressSystem);
+        StringAssert.Contains("context.IngressSystem.CreateCityLayout", generationSystem);
+        StringAssert.Contains("context.IngressSystem.CreateCityLayout", chainSystem);
+        StringAssert.Contains("context.IngressSystem.GetCityInnerConnectionCell", chainSystem);
+        StringAssert.Contains("context.IngressSystem.GetCityConnectionOffset", chainSystem);
+
+        string[] retiredSpawnerIngressTokens =
+        {
+            "private CityLayoutData CreateCityLayout(",
+            "private static void PruneIngressCorridorStrokes(",
+            "_runtimeCityRoadLayoutSystem.BuildTownRoadStrokes(",
+            "_runtimeCityRoadLayoutSystem.AddStroke(",
+            "_runtimeCityChainSystem.GetCityInnerConnectionCell("
+        };
+
+        foreach (string token in retiredSpawnerIngressTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityIngressSystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityRoadCommitSequenceMustLiveInRuntimeCityRoadCommitSystem()
+    {
+        const string roadCommitSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
+        const string chainSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityChainSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(roadCommitSystemPath), "Runtime city road commit sequence must live in RuntimeCityRoadCommitSystem.");
+
+        string roadCommitSystem = File.ReadAllText(roadCommitSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText(generationSystemPath);
+        string chainSystem = File.ReadAllText(chainSystemPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("20. Complete: Extract city road commit sequence", roadmap);
+        StringAssert.Contains("RuntimeCityRoadCommitSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem = new()", citySpawner);
+        StringAssert.Contains("private RuntimeCityRoadCommitSystem.Context CreateRoadCommitContext()", citySpawner);
+        StringAssert.Contains("context.RoadCommitSystem.CommitCityRoadNetwork", generationSystem);
+        StringAssert.Contains("context.RoadCommitSystem.TryCommitSourceExitRoad", generationSystem);
+        StringAssert.Contains("context.RoadCommitSystem.TryCommitAutobahn", generationSystem);
+        StringAssert.Contains("context.RoadCommitSystem.TryCreateStandaloneConnector", generationSystem);
+        StringAssert.Contains("context.RoadCommitSystem.PopulateCityRoadCells", chainSystem);
+        StringAssert.Contains("internal sealed class RuntimeCityRoadCommitSystem", roadCommitSystem);
+        StringAssert.Contains("public void CommitCityRoadNetwork", roadCommitSystem);
+        StringAssert.Contains("public void PopulateCityRoadCells", roadCommitSystem);
+        StringAssert.Contains("public bool TryCommitSourceExitRoad", roadCommitSystem);
+        StringAssert.Contains("public bool TryCommitAutobahn", roadCommitSystem);
+        StringAssert.Contains("public bool TryCreateStandaloneConnector", roadCommitSystem);
+        StringAssert.Contains("CreateRoadStrokeFromRoadCells", roadCommitSystem);
+        StringAssert.Contains("CreateAutobahnStrokeFromRoadCells", roadCommitSystem);
+        StringAssert.Contains("CreateStandaloneStraightRoadChainFromConnector", roadCommitSystem);
+        StringAssert.Contains("TryGetStandaloneStraightChainEndRoadCell", roadCommitSystem);
+
+        string[] retiredSpawnerRoadCommitTokens =
+        {
+            "private void CommitCityRoadNetwork(",
+            "private static void PopulateCityRoadCells(",
+            "_runtimeCityRoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells",
+            "_runtimeCityRoadBuildBridgeSystem.CreateAutobahnStrokeFromRoadCells",
+            "_runtimeCityRoadBuildBridgeSystem.CreateStandaloneStraightRoadChainFromConnector",
+            "_runtimeCityRoadBuildBridgeSystem.TryGetStandaloneStraightChainEndRoadCell"
+        };
+
+        foreach (string token in retiredSpawnerRoadCommitTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityRoadCommitSystem, not RuntimeCitySpawnerSystem.");
+        }
+
+        string[] retiredGenerationRoadCommitTokens =
+        {
+            "CreateRoadStrokeFromRoadCells(sourceExitRoad)",
+            "CreateAutobahnStrokeFromRoadCells(extendedAutobahnPath",
+            "CreateStandaloneStraightRoadChainFromConnector(",
+            "TryGetStandaloneStraightChainEndRoadCell(",
+            "extendedAutobahnPath.Add",
+            "for (int exitIndex = 0; exitIndex < sourceExitRoad.Count",
+            "for (int pathIndex = 0; pathIndex < extendedAutobahnPath.Count"
+        };
+
+        foreach (string token in retiredGenerationRoadCommitTokens)
+        {
+            Assert.IsFalse(
+                generationSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityRoadCommitSystem, not RuntimeCityGenerationSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityDiagnosticsMustLiveInRuntimeCityDiagnosticSystem()
+    {
+        const string diagnosticSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityDiagnosticSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string lifecycleSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityLifecycleSystem.cs";
+        const string startupSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityStartupSystem.cs";
+        const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
+        const string roadCommitSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs";
+        const string buildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(diagnosticSystemPath), "Runtime city diagnostics must live in RuntimeCityDiagnosticSystem.");
+
+        string diagnosticSystem = File.ReadAllText(diagnosticSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string lifecycleSystem = File.ReadAllText(lifecycleSystemPath);
+        string startupSystem = File.ReadAllText(startupSystemPath);
+        string generationSystem = File.ReadAllText(generationSystemPath);
+        string roadCommitSystem = File.ReadAllText(roadCommitSystemPath);
+        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("22. Complete: Extract diagnostics/events", roadmap);
+        StringAssert.Contains("RuntimeCityDiagnosticSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem = new()", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityDiagnosticSystem", diagnosticSystem);
+        StringAssert.Contains("public void LogLifecycleStart", diagnosticSystem);
+        StringAssert.Contains("public void LogLifecycleGenerating", diagnosticSystem);
+        StringAssert.Contains("public void LogLifecycleEnded", diagnosticSystem);
+        StringAssert.Contains("public void LogLifecycleCompleted", diagnosticSystem);
+        StringAssert.Contains("public void LogInitialSpawnWait", diagnosticSystem);
+        StringAssert.Contains("public void LogCityPlanningFailed", diagnosticSystem);
+        StringAssert.Contains("public void LogSourceExitRoadFailed", diagnosticSystem);
+        StringAssert.Contains("public void LogAutobahnFailed", diagnosticSystem);
+        StringAssert.Contains("public void LogHallPlacementFailed", diagnosticSystem);
+        StringAssert.Contains("Debug.Log(", diagnosticSystem);
+        StringAssert.Contains("Debug.LogWarning", diagnosticSystem);
+        StringAssert.Contains("[RuntimeCityState]", diagnosticSystem);
+        StringAssert.Contains("context.Diagnostics?.LogLifecycleStart", lifecycleSystem);
+        StringAssert.Contains("context.Diagnostics?.LogLifecycleGenerating", lifecycleSystem);
+        StringAssert.Contains("context.Diagnostics?.LogLifecycleEnded", lifecycleSystem);
+        StringAssert.Contains("context.Diagnostics?.LogLifecycleCompleted", lifecycleSystem);
+        StringAssert.Contains("context.Diagnostics?.LogInitialSpawnWait", startupSystem);
+        StringAssert.Contains("context.Diagnostics?.LogCityPlanningFailed", generationSystem);
+        StringAssert.Contains("context.Diagnostics?.LogSourceExitRoadFailed", roadCommitSystem);
+        StringAssert.Contains("context.Diagnostics?.LogAutobahnFailed", roadCommitSystem);
+        StringAssert.Contains("_runtimeCityDiagnosticSystem?.LogHallPlacementFailed", buildingSpawnSystem);
+
+        string[] runtimeCityFiles =
+        {
+            RuntimeCityCompositionPath,
+            lifecycleSystemPath,
+            startupSystemPath,
+            generationSystemPath,
+            roadCommitSystemPath,
+            buildingSpawnSystemPath
+        };
+
+        string[] retiredDiagnosticTokens =
+        {
+            "Debug.Log(",
+            "Debug.LogWarning(",
+            "[RuntimeCityState]",
+            "Failed to plan city",
+            "Failed to create source exit road",
+            "Failed to create autobahn",
+            "Hall could not be placed"
+        };
+
+        foreach (string runtimeCityFile in runtimeCityFiles)
+        {
+            string text = File.ReadAllText(runtimeCityFile);
+            foreach (string token in retiredDiagnosticTokens)
+            {
+                Assert.IsFalse(
+                    text.Contains(token, StringComparison.Ordinal),
+                    $"{token} belongs in RuntimeCityDiagnosticSystem, not {runtimeCityFile}.");
+            }
+        }
+    }
+
+    [Test]
+    public void RuntimeCityMinimapNotificationMustLiveInRuntimeCityMinimapEventSystem()
+    {
+        const string minimapEventSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityMinimapEventSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(minimapEventSystemPath), "Runtime city minimap notification must live in RuntimeCityMinimapEventSystem.");
+
+        string minimapEventSystem = File.ReadAllText(minimapEventSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText(generationSystemPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("23. Complete: Move minimap notification to result/event boundary", roadmap);
+        StringAssert.Contains("RuntimeCityMinimapEventSystem", audit);
+        StringAssert.Contains("private readonly RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem = new()", citySpawner);
+        StringAssert.Contains("_runtimeCityMinimapEventSystem.Configure(mainMenuPlayUi)", citySpawner);
+        StringAssert.Contains("_runtimeCityMinimapEventSystem.Flush()", citySpawner);
+        StringAssert.Contains("_runtimeCityMinimapEventSystem.Clear()", citySpawner);
+        StringAssert.Contains("internal sealed class RuntimeCityMinimapEventSystem", minimapEventSystem);
+        StringAssert.Contains("public void PublishStaticMinimapChanged", minimapEventSystem);
+        StringAssert.Contains("public void Flush", minimapEventSystem);
+        StringAssert.Contains("_mainMenuPlayUi?.NotifyStaticMinimapChanged()", minimapEventSystem);
+        StringAssert.Contains("context.MinimapEvents?.PublishStaticMinimapChanged()", generationSystem);
+
+        string[] retiredSpawnerMinimapTokens =
+        {
+            "private MainMenuPlayUI _mainMenuPlayUi",
+            "private void NotifyStaticMinimapChanged(",
+            "_mainMenuPlayUi?.NotifyStaticMinimapChanged()"
+        };
+
+        foreach (string token in retiredSpawnerMinimapTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityMinimapEventSystem, not RuntimeCitySpawnerSystem.");
+        }
+
+        string[] retiredGenerationMinimapTokens =
+        {
+            "public readonly Action NotifyStaticMinimapChanged",
+            "Action notifyStaticMinimapChanged",
+            "NotifyStaticMinimapChanged = notifyStaticMinimapChanged",
+            "context.NotifyStaticMinimapChanged?.Invoke()"
+        };
+
+        foreach (string token in retiredGenerationMinimapTokens)
+        {
+            Assert.IsFalse(
+                generationSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityMinimapEventSystem, not RuntimeCityGenerationSystem.");
+        }
+    }
+
+    [Test]
     public void RuntimeCityPrefabSelectionMustLiveInRuntimeCityPrefabSelectionSystem()
     {
         const string prefabSelectionSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionSystem.cs";
@@ -2405,7 +3003,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(prefabSelectionSystemPath), "Runtime city prefab selection must live in RuntimeCityPrefabSelectionSystem.");
 
         string prefabSelectionSystem = File.ReadAllText(prefabSelectionSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
@@ -2461,7 +3059,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(visualSystemPath), "Runtime city visual realization must live in RuntimeCityVisualSystem.");
 
         string visualSystem = File.ReadAllText(visualSystemPath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
@@ -2485,6 +3083,9 @@ public sealed class GameplayArchitectureContractTests
 
         string[] retiredSpawnerVisualTokens =
         {
+            "private Transform _runtimeRoot",
+            "_runtimeRoot = runtimeRoot",
+            "_runtimeRoot = null",
             "private Transform _cityVisualRoot",
             "private void EnsureCityVisualRoot(",
             "private GameObject SpawnVisualOnlyPrefab(",
@@ -2503,6 +3104,222 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RuntimeCityRuntimeRootOwnershipMustStayInVisualSystem()
+    {
+        const string visualSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityVisualSystem.cs";
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        string visualSystem = File.ReadAllText(visualSystemPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("24. Complete: Remove runtime root ownership from the spawner", roadmap);
+        StringAssert.Contains("RuntimeCityVisualSystem", audit);
+        StringAssert.Contains("_runtimeCityVisualSystem.SetRuntimeRoot(runtimeRoot)", citySpawner);
+        StringAssert.Contains("private Transform _runtimeRoot", visualSystem);
+        StringAssert.Contains("public void SetRuntimeRoot", visualSystem);
+        StringAssert.Contains("_cityVisualRoot.SetParent(_runtimeRoot, false)", visualSystem);
+
+        string[] retiredSpawnerRuntimeRootTokens =
+        {
+            "private Transform _runtimeRoot",
+            "_runtimeRoot = runtimeRoot",
+            "_runtimeRoot = null",
+            "new GameObject(\"RuntimeCityVisuals\")",
+            ".SetParent(runtimeRoot"
+        };
+
+        foreach (string token in retiredSpawnerRuntimeRootTokens)
+        {
+            Assert.IsFalse(
+                citySpawner.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityVisualSystem or RuntimeRootSystem, not RuntimeCitySpawnerSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityCompositionMustOwnRuntimeCitySystemGraph()
+    {
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(RuntimeCityCompositionPath), "Runtime city system graph composition must live in RuntimeCityCompositionSystem.");
+        Assert.IsFalse(File.Exists(citySpawnerPath), "RuntimeCitySpawnerSystem shell must stay deleted after step 27.");
+
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("25. Complete: Move composition out of the spawner constructor path", roadmap);
+        StringAssert.Contains("RuntimeCityCompositionSystem", audit);
+        StringAssert.Contains("public sealed class RuntimeCityCompositionSystem", composition);
+
+        string[] composedSystemTokens =
+        {
+            "private readonly RuntimeCityConfigSystem _runtimeCityConfigSystem = new()",
+            "private readonly RuntimeCityLayoutSystem _runtimeCityLayoutSystem = new()",
+            "private readonly RuntimeCityRoadLayoutSystem _runtimeCityRoadLayoutSystem = new()",
+            "private readonly RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem = new()",
+            "private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new()",
+            "private readonly RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem = new()",
+            "private readonly RuntimeCityBuildingSpawnSystem _runtimeCityBuildingSpawnSystem = new()",
+            "private readonly RuntimeCityVisualSystem _runtimeCityVisualSystem = new()",
+            "private readonly RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem = new()",
+            "private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new()",
+            "private readonly RuntimeCityLifecycleSystem _runtimeCityLifecycleSystem = new()",
+            "private readonly RuntimeCityStartupSystem _runtimeCityStartupSystem = new()",
+            "private readonly RuntimeCityReadinessQuerySystem _runtimeCityReadinessQuerySystem = new()",
+            "private readonly RuntimeCityGenerationSystem _runtimeCityGenerationSystem = new()",
+            "private readonly RuntimeCityChainSystem _runtimeCityChainSystem = new()",
+            "private readonly RuntimeCityRoadCommitSystem _runtimeCityRoadCommitSystem = new()",
+            "private readonly RuntimeCityIngressSystem _runtimeCityIngressSystem = new()",
+            "private readonly RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem = new()",
+            "private readonly RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem = new()",
+            "private RuntimeCityGenerationSystem.Context CreateGenerationContext",
+            "private RuntimeCityStartupSystem.Context CreateStartupContext",
+            "private RuntimeCityChainSystem.Context CreateChainContext",
+            "private RuntimeCityRoadCommitSystem.Context CreateRoadCommitContext",
+            "private RuntimeCityIngressSystem.Context CreateIngressContext"
+        };
+
+        foreach (string token in composedSystemTokens)
+        {
+            StringAssert.Contains(token, composition);
+        }
+    }
+
+    [Test]
+    public void RuntimeCityPeerSystemsMustUseRuntimeCityReadModelSystem()
+    {
+        const string readModelPath = "Assets/Game/Scripts/Environment/RuntimeCityReadModelSystem.cs";
+        const string gridBlockerPath = "Assets/Game/Scripts/Environment/RuntimeGridBlockerSystem.cs";
+        const string decorationPath = "Assets/Game/Scripts/Environment/RuntimeDecorationSpawnerSystem.cs";
+        const string startupPath = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsTrue(File.Exists(readModelPath), "Runtime city peer systems must consume a narrow read model.");
+
+        string readModel = File.ReadAllText(readModelPath);
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string gridBlockers = File.ReadAllText(gridBlockerPath);
+        string decorations = File.ReadAllText(decorationPath);
+        string startup = File.ReadAllText(startupPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("26. Complete: Migrate peer dependencies off `RuntimeCitySpawnerSystem`", roadmap);
+        StringAssert.Contains("RuntimeCityReadModelSystem", audit);
+        StringAssert.Contains("public sealed class RuntimeCityReadModelSystem", readModel);
+        StringAssert.Contains("public bool SpawnOnStartEnabled", readModel);
+        StringAssert.Contains("public bool HasSpawned", readModel);
+        StringAssert.Contains("public bool IsGenerating", readModel);
+        StringAssert.Contains("public void Publish(bool spawnOnStartEnabled, bool hasSpawned, bool isGenerating)", readModel);
+        StringAssert.Contains("private readonly RuntimeCityReadModelSystem _runtimeCityReadModelSystem = new()", composition);
+        StringAssert.Contains("public RuntimeCityReadModelSystem ReadModel => _runtimeCityReadModelSystem", composition);
+        StringAssert.Contains("_runtimeCityReadModelSystem.Publish(SpawnOnStartEnabled, HasSpawned, IsGenerating)", composition);
+        StringAssert.Contains("public RuntimeCityReadModelSystem ReadModel => _runtimeCityReadModelSystem", composition);
+        StringAssert.Contains("runtimeCity.ReadModel", startup);
+
+        string[] peerSources = { gridBlockers, decorations };
+        foreach (string peerSource in peerSources)
+        {
+            StringAssert.Contains("RuntimeCityReadModelSystem", peerSource);
+            Assert.IsFalse(peerSource.Contains("RuntimeCitySpawnerSystem", StringComparison.Ordinal));
+            Assert.IsFalse(peerSource.Contains("_citySpawner", StringComparison.Ordinal));
+            Assert.IsFalse(peerSource.Contains("citySpawner", StringComparison.Ordinal));
+        }
+    }
+
+    [Test]
+    public void RuntimeCitySpawnerSystemShellMustStayDeleted()
+    {
+        const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        Assert.IsFalse(File.Exists(citySpawnerPath), "RuntimeCitySpawnerSystem.cs must not be restored.");
+        StringAssert.Contains("27. Complete: Delete the spawner shell", File.ReadAllText(roadmapPath));
+        StringAssert.Contains("Deleted source file: `Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs`", File.ReadAllText(auditPath));
+
+        string[] sourceFiles = Directory.GetFiles("Assets/Game/Scripts", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Configs/", StringComparison.Ordinal))
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .ToArray();
+
+        string[] forbiddenTokens =
+        {
+            "new RuntimeCitySpawnerSystem(",
+            "RuntimeCitySpawnerSystem runtimeCity",
+            "RuntimeCitySpawnerSystem RuntimeCity",
+            "RuntimeCitySpawner { get",
+            "runtimeCitySpawner?.Update",
+            "runtimeCitySpawner.ReadModel"
+        };
+
+        var violations = new List<string>();
+        foreach (string file in sourceFiles)
+        {
+            string text = File.ReadAllText(file);
+            foreach (string token in forbiddenTokens)
+            {
+                if (text.Contains(token, StringComparison.Ordinal))
+                    violations.Add($"{file}: {token}");
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "Runtime city production code must depend on RuntimeCityCompositionSystem or narrower boundaries, not the deleted RuntimeCitySpawnerSystem shell:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RuntimeCityFinalContractMustTrackDeletedSpawnerShell()
+    {
+        const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
+        const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
+
+        string contract = File.ReadAllText(ContractPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string audit = File.ReadAllText(auditPath);
+
+        StringAssert.Contains("28. Complete: Architecture contract and guards", roadmap);
+        StringAssert.Contains("Step 28 complete", audit);
+        StringAssert.Contains("RuntimeCityCompositionSystem` must not own `World`, `EntityQuery`, `EntityManager`, `Allocator`", contract);
+        StringAssert.Contains("RuntimeCityCompositionSystem` must not own `GenerateCityRoutine`", contract);
+        StringAssert.Contains("RuntimeCityCompositionSystem` and `RuntimeCityGenerationSystem` must not own road commit loops", contract);
+        StringAssert.Contains("RuntimeCitySpawnerSystem.cs` must not be restored as a public compatibility shell", contract);
+        StringAssert.Contains("Serialized runtime-city config names", contract);
+        StringAssert.Contains("RuntimeCitySpawnerSystemConfig", contract);
+        StringAssert.Contains("RuntimeCitySpawnerSystemSceneConfigAsset", contract);
+        StringAssert.Contains("Game_RuntimeCitySpawner_Config.asset", contract);
+        StringAssert.Contains("serialized data/config naming, not runtime orchestration code", contract);
+
+        string[] retiredShellOwnershipTokens =
+        {
+            "`RuntimeCitySpawnerSystem` must not call",
+            "`RuntimeCitySpawnerSystem` must not own",
+            "`RuntimeCitySpawnerSystem` and `RuntimeCityGenerationSystem`",
+            "`RuntimeCitySpawnerSystem` may pass",
+            "`RuntimeCitySpawnerSystem` may remain"
+        };
+
+        foreach (string token in retiredShellOwnershipTokens)
+        {
+            Assert.IsFalse(
+                contract.Contains(token, StringComparison.Ordinal),
+                $"Final contract must not describe runtime ownership through the deleted shell: {token}");
+        }
+    }
+
+    [Test]
     public void RuntimeCitySpawnBridgeMustLiveInRuntimeCitySpawnBridgeSystem()
     {
         const string spawnBridgePath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnBridgeSystem.cs";
@@ -2514,8 +3331,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(spawnBridgePath), "Runtime city generated building spawn bridge must live in RuntimeCitySpawnBridgeSystem.");
 
         string spawnBridge = File.ReadAllText(spawnBridgePath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -2524,8 +3342,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext)", citySpawner);
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem.Clear()", citySpawner);
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem.HasSpawnSystem", citySpawner);
-        StringAssert.Contains("_runtimeCitySpawnBridgeSystem.BeginDeferredSideEffects()", citySpawner);
-        StringAssert.Contains("_runtimeCitySpawnBridgeSystem.EndDeferredSideEffects()", citySpawner);
+        StringAssert.Contains("context.SpawnBridgeSystem.BeginDeferredSideEffects()", generationSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.EndDeferredSideEffects()", generationSystem);
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem.TrySpawnCityBuilding", buildingSpawnSystem);
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem.DeleteCityBuilding", buildingSpawnSystem);
         StringAssert.Contains("internal sealed class RuntimeCitySpawnBridgeSystem", spawnBridge);
@@ -2548,6 +3366,8 @@ public sealed class GameplayArchitectureContractTests
             "private bool DeleteCityBuilding(",
             "_buildingRuntimeCitySpawnSystem?.BeginDeferredSideEffects",
             "_buildingRuntimeCitySpawnSystem?.EndDeferredSideEffects",
+            "_runtimeCitySpawnBridgeSystem.BeginDeferredSideEffects(",
+            "_runtimeCitySpawnBridgeSystem.EndDeferredSideEffects(",
             "_buildingRuntimeCitySpawnSystem.TrySpawnRuntimeBuilding",
             "_buildingRuntimeCitySpawnSystem.DeleteBuildingById"
         };
@@ -2571,7 +3391,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(roadBuildBridgePath), "Runtime city road build coupling must live in RuntimeCityRoadBuildBridgeSystem.");
 
         string roadBuildBridge = File.ReadAllText(roadBuildBridgePath);
-        string citySpawner = File.ReadAllText(citySpawnerPath);
+        string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+        string roadCommitSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -2581,12 +3403,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.Clear()", citySpawner);
         StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.HasRoadBuildSystem", citySpawner);
         StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.TryGetRoadCellSizeInGridCells", citySpawner);
-        StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.BeginDeferredRoadEcsSync()", citySpawner);
-        StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.EndDeferredRoadEcsSync()", citySpawner);
-        StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells", citySpawner);
-        StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.CreateAutobahnStrokeFromRoadCells", citySpawner);
-        StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.CreateStandaloneStraightRoadChainFromConnector", citySpawner);
-        StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem.TryGetStandaloneStraightChainEndRoadCell", citySpawner);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.BeginDeferredRoadEcsSync()", generationSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.EndDeferredRoadEcsSync()", generationSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.CreateRoadStrokeFromRoadCells", roadCommitSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.CreateAutobahnStrokeFromRoadCells", roadCommitSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.CreateStandaloneStraightRoadChainFromConnector", roadCommitSystem);
+        StringAssert.Contains("context.RoadBuildBridgeSystem.TryGetStandaloneStraightChainEndRoadCell", roadCommitSystem);
         StringAssert.Contains("internal sealed class RuntimeCityRoadBuildBridgeSystem", roadBuildBridge);
         StringAssert.Contains("private RoadBuildSystem _roadBuildSystem", roadBuildBridge);
         StringAssert.Contains("public bool HasRoadBuildSystem", roadBuildBridge);
@@ -2607,6 +3429,8 @@ public sealed class GameplayArchitectureContractTests
             "_roadBuildController == null",
             "_roadBuildController?.BeginDeferredRoadEcsSync",
             "_roadBuildController?.EndDeferredRoadEcsSync",
+            "_runtimeCityRoadBuildBridgeSystem.BeginDeferredRoadEcsSync(",
+            "_runtimeCityRoadBuildBridgeSystem.EndDeferredRoadEcsSync(",
             "_roadBuildController.TryGetRoadCellSizeInGridCells",
             "_roadBuildController.CreateRoadStrokeFromRoadCells",
             "_roadBuildController.CreateAutobahnStrokeFromRoadCells",
@@ -2818,7 +3642,7 @@ public sealed class GameplayArchitectureContractTests
         string[] files =
         {
             "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs",
-            "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs"
+            RuntimeCityCompositionPath
         };
 
         string[] violations = files

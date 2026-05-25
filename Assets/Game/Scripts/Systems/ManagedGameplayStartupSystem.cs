@@ -23,7 +23,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly System.Action<MainMenuPlayUI> BindBuildingMainMenu;
-        public readonly System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> BindBuildingGameplayFeatures;
+        public readonly System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
@@ -55,7 +55,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteractionSystem buildingPlacementInteraction,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             System.Action<MainMenuPlayUI> bindBuildingMainMenu,
-            System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
+            System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,

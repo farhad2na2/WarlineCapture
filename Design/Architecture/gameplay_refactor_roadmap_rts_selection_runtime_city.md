@@ -300,4 +300,4 @@ Goal: delete the remaining selection context-construction boundary without repla
     - Architecture tests passed: `GameplayArchitectureContractTests` (`95/95`).
     - Focused selection command tests passed: `RtsSelectionInputSystemTests` (`5/5`) and `BattleHudGameplayBridgeConnectionTests` (`7/7`).
     - Bootstrap/menu playmode smoke passed: `BootstrapAndMenuPlayModeTests` (`7/7`).
-    - Additional transport scene smoke was investigated separately: `GameSceneTransportBoardingPlayModeTests` currently fails because the loaded `Game` scene does not spawn the expected `Unit_Veh_Helicopter_Transport`; this is transport/base-spawn scene debt, not a `SelectionRuntimeContextSystem` deletion failure.
+    - Additional transport scene smoke was investigated and fixed: `GameSceneTransportBoardingPlayModeTests` now passes (`2/2`) after repairing the `GameSubScene_InitialUnitsSpawner_Config` roster to include `Unit_Veh_Helicopter_Transport`.

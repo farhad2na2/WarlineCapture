@@ -47,7 +47,7 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         FactionVisualSettings factionVisuals)
     {
-        var selection = new SelectionRuntimeUpdateSystem();
+        var selection = new SelectionRuntimeContextSystem();
         var selectionUiCommand = new SelectionUiCommandSystem();
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var rtsCamera = new RtsCameraSystem();
@@ -77,7 +77,7 @@ internal sealed class SelectionGameplayStartupSystem
                 roadBuild,
                 buildingInteraction,
                 buildingInteractionContext),
-            selection.Update,
+            () => UpdateSelectionRuntimePhases(selection),
             selection.Dispose,
             selectionUiCommand,
             selectionUiReadModel,
@@ -85,6 +85,18 @@ internal sealed class SelectionGameplayStartupSystem
             selectionBuildingInteraction,
             selectionScreenMarkers,
             EnsureSelectionRectangleView(runtimeUiRoot, rtsSelectionConfig));
+    }
+
+    private static void UpdateSelectionRuntimePhases(SelectionRuntimeContextSystem selection)
+    {
+        selection.ProcessQueuedTransportCommands();
+        selection.ProcessExternalSelectionCommands();
+        selection.ProcessQueuedMoveOrder();
+        selection.RefreshFocusedSelectionReadModels();
+        selection.UpdateOrderMarkerVisibility();
+
+        if (selection.UpdateRuntimeCameraTick())
+            selection.UpdateNormalPointerInput();
     }
 
     private static SelectionRectangleView EnsureSelectionRectangleView(

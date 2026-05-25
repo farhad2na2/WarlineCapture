@@ -858,7 +858,7 @@ public sealed class GameplayArchitectureContractTests
             "new FactionVisualSettings()",
             "new RoadBuildSystem()",
             "new BuildingPlacementSystem()",
-            "new SelectionRuntimeUpdateSystem()",
+            "new SelectionRuntimeContextSystem()",
             "new UnitAttackTraceSystem()",
             "new UnitImpostorRenderSystem()",
             "new CitizenPopulationSystem()",
@@ -880,7 +880,7 @@ public sealed class GameplayArchitectureContractTests
             if (token == "new BuildingPlacementSystem()")
                 Assert.IsFalse(buildingComposition.Contains(token, StringComparison.Ordinal),
                     "BuildingGameplayCompositionSystem must construct BuildingGameplaySystem, not the legacy BuildingPlacementSystem facade.");
-            else if (token == "new SelectionRuntimeUpdateSystem()")
+            else if (token == "new SelectionRuntimeContextSystem()")
                 Assert.IsFalse(startup.Contains(token, StringComparison.Ordinal),
                     "ManagedGameplayStartupSystem must delegate temporary selection runtime construction to SelectionGameplayStartupSystem.");
             else if (token == "new CitizenPopulationSystem()")
@@ -1251,7 +1251,7 @@ public sealed class GameplayArchitectureContractTests
         {
             "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
             "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs"
+            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"
         };
 
         foreach (string file in transportDiagnosticFiles)
@@ -1464,7 +1464,7 @@ public sealed class GameplayArchitectureContractTests
         string[] files =
         {
             "Assets/Game/Scripts/Systems/RoadBuildSystem.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs"
+            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"
         };
 
         string[] violations = files
@@ -1484,7 +1484,7 @@ public sealed class GameplayArchitectureContractTests
         string[] runtimeSystemFiles =
         {
             "Assets/Game/Scripts/Systems/RoadBuildSystem.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs"
+            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"
         };
 
         string[] legacyUiFiles =
@@ -1516,7 +1516,7 @@ public sealed class GameplayArchitectureContractTests
         const string interactionContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementInteractionContextSystem.cs";
         const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string roadFile = "Assets/Game/Scripts/Systems/RoadBuildSystem.cs";
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
         const string runtimeLinkFile = "Assets/Game/Scripts/UI/RuntimeBuildingEntityLink.cs";
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
@@ -2053,7 +2053,7 @@ public sealed class GameplayArchitectureContractTests
     {
         string[] files =
         {
-            "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs",
+            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs",
             "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs"
         };
 
@@ -2119,7 +2119,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateSelectionStateSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string stateFile = "Assets/Game/Scripts/Systems/SelectionStateSystem.cs";
         Assert.IsTrue(File.Exists(stateFile), "The RTS selection state slice must live in SelectionStateSystem.");
 
@@ -2178,7 +2178,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateFocusableUnitLookupSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
         const string lookupFile = "Assets/Game/Scripts/Systems/FocusableUnitLookupSystem.cs";
         Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer target command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
@@ -2208,7 +2208,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateVisibleSelectionSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string visibleSelectionFile = "Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs";
         Assert.IsTrue(File.Exists(visibleSelectionFile), "Visible screen selection query/filter ownership must live in VisibleUnitSelectionSystem.");
 
@@ -2233,7 +2233,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateSelectionRectangleRequestSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string rectangleFile = "Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs";
         const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
         const string selectionRectangleViewFile = "Assets/Game/Scripts/UI/Components/SelectionRectangleView.cs";
@@ -2421,7 +2421,8 @@ public sealed class GameplayArchitectureContractTests
         const string managedStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
         const string selectionStartupFile = "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs";
         const string retiredSelectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
-        const string selectionRuntimeUpdateFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string retiredSelectionRuntimeUpdateFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionRuntimeContextFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
 
         string contract = File.ReadAllText(ContractPath);
         string bootstrap = File.ReadAllText(bootstrapFile);
@@ -2429,18 +2430,21 @@ public sealed class GameplayArchitectureContractTests
         string runtimeUpdate = File.ReadAllText(runtimeUpdateFile);
         string managedStartup = File.ReadAllText(managedStartupFile);
         string selectionStartup = File.ReadAllText(selectionStartupFile);
-        string selectionRuntimeUpdate = File.ReadAllText(selectionRuntimeUpdateFile);
+        string selectionRuntimeContext = File.ReadAllText(selectionRuntimeContextFile);
 
         Assert.IsFalse(File.Exists(retiredSelectionFile), "The retired RTSSelectionSystem source artifact must not be restored.");
+        Assert.IsFalse(File.Exists(retiredSelectionRuntimeUpdateFile), "SelectionRuntimeUpdateSystem.cs must stay deleted; runtime selection phases must not return to a monolithic Update shell.");
         StringAssert.Contains("The retired `RTSSelectionSystem` source/type must not be reintroduced", contract);
         Assert.IsFalse(contract.Contains("`RTSSelectionSystem` is temporary compatibility debt", StringComparison.Ordinal), "RTSSelectionSystem is retired debt, not an allowed temporary shell.");
-        StringAssert.Contains("`SelectionRuntimeUpdateSystem` is the remaining temporary runtime-loop debt", contract);
+        StringAssert.Contains("`SelectionRuntimeContextSystem` is the remaining temporary context-construction debt", contract);
         StringAssert.Contains("SelectionGameplayStartupSystem _selectionGameplayStartupSystem", managedStartup);
         StringAssert.Contains("BindSelectionMainMenu", managedStartup);
         StringAssert.Contains("SelectionRuntimeUpdate", managedStartup);
         StringAssert.Contains("DisposeSelection", managedStartup);
-        StringAssert.Contains("new SelectionRuntimeUpdateSystem()", selectionStartup);
-        Assert.IsFalse(selectionRuntimeUpdate.Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal), "The retired RTSSelectionSystem type must not be restored.");
+        StringAssert.Contains("new SelectionRuntimeContextSystem()", selectionStartup);
+        StringAssert.Contains("UpdateSelectionRuntimePhases", selectionStartup);
+        Assert.IsFalse(selectionRuntimeContext.Contains("public void Update(", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not become another managed runtime Update shell.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal), "The retired RTSSelectionSystem type must not be restored.");
         StringAssert.Contains("Action<MainMenuPlayUI> bindSelectionMainMenu", menuStartup);
         StringAssert.Contains("Action selectionRuntimeUpdate", runtimeUpdate);
         Assert.IsFalse(bootstrap.Contains("RTSSelectionSystem Selection", StringComparison.Ordinal), "GameBootstrap must not expose the selection shell.");
@@ -2454,7 +2458,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateFocusedUnitCommandSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string commandFile = "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs";
         Assert.IsTrue(File.Exists(commandFile), "Focused-unit command component mutations must live in FocusedUnitCommandSystem.");
 
@@ -2484,7 +2488,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateSelectedOrderSnapshotSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string snapshotFile = "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotSystem.cs";
         Assert.IsTrue(File.Exists(snapshotFile), "Selected-unit order snapshot/restore ownership must live in SelectedUnitOrderSnapshotSystem.");
 
@@ -2505,7 +2509,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateBuildingTargetMoveOrderSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
         const string buildingMoveFile = "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs";
         Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer building-target command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
@@ -2535,7 +2539,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateSelectionUiQuerySlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string uiQueryFile = "Assets/Game/Scripts/Systems/SelectionUiQuerySystem.cs";
         const string focusedReadModelFile = "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelSystem.cs";
         const string focusedReadModelComponentsFile = "Assets/Game/Scripts/Components/SelectionUiReadModelComponents.cs";
@@ -2578,7 +2582,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateMoveOrderSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string moveOrderFile = "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs";
         const string moveCommandFile = "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs";
         const string moveRequestFile = "Assets/Game/Scripts/Systems/SelectionMoveCommandRequestSystem.cs";
@@ -2641,7 +2645,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateTransportBoardingSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string transportFile = "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs";
         const string transportCommandFile = "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs";
         const string transportRequestFile = "Assets/Game/Scripts/Systems/SelectionTransportCommandRequestSystem.cs";
@@ -2722,7 +2726,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateFocusedUnitLifecycleSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string lifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
         const string focusCommandFile = "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs";
         const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
@@ -2775,7 +2779,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateAttackOrderCommandSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string attackCommandFile = "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs";
         const string attackRequestFile = "Assets/Game/Scripts/Systems/SelectionAttackCommandRequestSystem.cs";
         const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
@@ -2821,7 +2825,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateOrderMarkerVisualSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string markerFile = "Assets/Game/Scripts/Systems/SelectionOrderMarkerSystem.cs";
         const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
         Assert.IsTrue(File.Exists(markerFile), "Order marker visual runtime must live in SelectionOrderMarkerSystem.");
@@ -2863,7 +2867,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateHudFeedbackSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string hudFeedbackFile = "Assets/Game/Scripts/Systems/SelectionHudFeedbackSystem.cs";
         const string hudFeedbackComponentsFile = "Assets/Game/Scripts/Components/SelectionHudFeedbackComponents.cs";
         const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
@@ -2915,7 +2919,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateTargetOrderSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string targetOrderFile = "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs";
         const string focusedCommandFile = "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs";
         const string focusedLifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
@@ -2952,7 +2956,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateCameraStateSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string cameraFile = "Assets/Game/Scripts/Systems/RtsCameraSystem.cs";
         const string cameraRequestFile = "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs";
         const string runtimeCameraFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystem.cs";
@@ -3111,7 +3115,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateInputStateSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
         const string inputStateFile = "Assets/Game/Scripts/Systems/RtsSelectionInputStateSystem.cs";
         const string inputComponentsFile = "Assets/Game/Scripts/Components/SelectionInputRequestComponents.cs";
@@ -3143,7 +3147,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustDelegateRuntimeInputTickSlice()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string runtimeInputFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs";
         Assert.IsTrue(File.Exists(runtimeInputFile), "RTS runtime pointer input orchestration must live in RtsSelectionRuntimeInputSystem during shell retirement.");
 
@@ -3182,7 +3186,7 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void RtsSelectionSystemMustUseRuntimeGameplayStateBoundary()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
+        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
         const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
         const string roadBuildFile = "Assets/Game/Scripts/Systems/RoadBuildSystem.cs";

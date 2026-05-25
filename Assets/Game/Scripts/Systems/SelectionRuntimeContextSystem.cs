@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class SelectionRuntimeUpdateSystem
+public sealed class SelectionRuntimeContextSystem
 {
 
     public readonly struct TransportPassengerUiInfo
@@ -696,21 +696,40 @@ public sealed class SelectionRuntimeUpdateSystem
         _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
     }
 
-    public void Update()
+    public void ProcessQueuedTransportCommands()
     {
         ProcessTransportCommandRequests();
+    }
+
+    public void ProcessExternalSelectionCommands()
+    {
         _rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
-        RtsSelectionRuntimeInputSystem.Context inputContext = CreateRuntimeInputContext();
-        RtsSelectionRuntimeCameraSystem.Context cameraContext = CreateRuntimeCameraContext();
-        _rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
+    }
+
+    public void ProcessQueuedMoveOrder()
+    {
+        _rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(CreateRuntimeInputContext());
+    }
+
+    public void RefreshFocusedSelectionReadModels()
+    {
         RefreshFocusedUnit();
         PublishFocusedUnitUiReadModel();
+    }
+
+    public void UpdateOrderMarkerVisibility()
+    {
         _rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CreateCommandResultFlushContext());
+    }
 
-        if (!_rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
-            return;
+    public bool UpdateRuntimeCameraTick()
+    {
+        return _rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(CreateRuntimeCameraContext());
+    }
 
-        _rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
+    public void UpdateNormalPointerInput()
+    {
+        _rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(CreateRuntimeInputContext());
     }
 
     private RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext()

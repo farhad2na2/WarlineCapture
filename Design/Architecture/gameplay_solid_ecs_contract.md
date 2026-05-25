@@ -152,7 +152,7 @@ Transport boarding diagnostics must use ECS diagnostic event buffers such as `Tr
 
 ## Selection Domain Migration
 
-The retired `RTSSelectionSystem` source/type must not be reintroduced. The target architecture is no managed selection orchestration shell: UI and shell code write ECS request buffers, ECS systems process gameplay decisions/mutations, and UI views read ECS read models/results. `SelectionRuntimeUpdateSystem` is the remaining temporary runtime-loop debt and must continue shrinking into the narrower systems below until it can be deleted.
+The retired `RTSSelectionSystem` source/type must not be reintroduced. `SelectionRuntimeUpdateSystem.cs` must stay deleted; runtime selection phases must not return to a monolithic managed `Update()` shell. The target architecture is no managed selection orchestration shell: UI and shell code write ECS request buffers, ECS systems process gameplay decisions/mutations, and UI views read ECS read models/results. `SelectionRuntimeContextSystem` is the remaining temporary context-construction debt and must continue shrinking into the narrower systems below until it can be deleted.
 
 Allowed direction:
 - clicked-unit focus lookup, focusable-unit cache refresh, padded footprint candidate scoring, and focusable candidate policy belong in `FocusableUnitLookupSystem`.
@@ -185,7 +185,7 @@ Allowed direction:
 - Mission and building camera focus delegates must flow through `SelectionUiCameraSystem`; `MissionCameraSystem`, `MissionStartupSystem`, and `BuildingGameplaySystem` must not use `RTSSelectionSystem` for camera focus.
 - Building-side selection clearing, transport boarding click tests, and building-target move-order compatibility must flow through `SelectionBuildingInteractionSystem`; `BuildingGameplaySystem` and `BuildingGameplayCompositionSystem` must not depend on `RTSSelectionSystem`.
 - Bootstrap, menu startup, and runtime update must receive selection behavior through narrow delegates and ECS/UI selection boundaries; `GameBootstrap`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` must not depend on `RTSSelectionSystem`.
-- Production startup must not construct, store, or call the retired `RTSSelectionSystem` type. Until `SelectionRuntimeUpdateSystem` is deleted, selection startup may only expose narrow menu-bind/runtime-update/dispose delegates and concrete ECS/UI selection boundaries.
+- Production startup must not construct, store, or call the retired `RTSSelectionSystem` type. Until `SelectionRuntimeContextSystem` is deleted, selection startup may only expose narrow menu-bind/runtime-update/dispose delegates and concrete ECS/UI selection boundaries.
 - M01 assistant/tutorial gameplay commands must use ECS request/result data such as `M01AssistantCommandRequestElement` and `M01AssistantCommandResultElement`, processed by `M01AssistantCommandRequestSystem`; `M01AssistantCommandRuntime`, `CommandIntentExecutor`, and `AssistantContextProvider` must not depend on `RTSSelectionSystem` or direct HUD bridge calls for assistant command execution.
 
 ## Refactor Direction

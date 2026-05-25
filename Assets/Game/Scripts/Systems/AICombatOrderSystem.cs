@@ -88,68 +88,115 @@ public partial struct AICombatOrderSystem : ISystem
             ? SystemAPI.GetSingletonBuffer<FactionControlEntry>(true).ToNativeArray(Allocator.Temp)
             : default;
         bool shouldLog = ShouldQueueDiagnostics(ref state);
-        using NativeArray<Entity> runtimeBuildingEntities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
-        using NativeArray<RuntimeBuildingCombatInfo> runtimeBuildingInfos = _runtimeBuildingCombatQuery.ToComponentDataArray<RuntimeBuildingCombatInfo>(Allocator.Temp);
-        using NativeArray<UnitHealth> runtimeBuildingHealths = _runtimeBuildingCombatQuery.ToComponentDataArray<UnitHealth>(Allocator.Temp);
-        using NativeArray<LocalTransform> runtimeBuildingTransforms = _runtimeBuildingCombatQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-        RuntimeBuildingCombatData runtimeBuildings = new(
-            runtimeBuildingEntities,
-            runtimeBuildingInfos,
-            runtimeBuildingHealths,
-            runtimeBuildingTransforms);
-        GridBreachContext gridBreachContext = TryGetGridBreachContext(ref state, out GridBreachContext foundGridContext)
-            ? foundGridContext
-            : default;
+        NativeArray<Entity> runtimeBuildingEntities = default;
+        NativeArray<RuntimeBuildingCombatInfo> runtimeBuildingInfos = default;
+        NativeArray<UnitHealth> runtimeBuildingHealths = default;
+        NativeArray<LocalTransform> runtimeBuildingTransforms = default;
+        RuntimeBuildingCombatData runtimeBuildings = default;
+        GridBreachContext gridBreachContext = default;
+        bool breachContextCreated = false;
 
         EntityQuery squadQuery = em.CreateEntityQuery(ComponentType.ReadWrite<AISquad>(), ComponentType.ReadOnly<AISquadUnit>());
         using NativeArray<Entity> squadEntities = squadQuery.ToEntityArray(Allocator.Temp);
         squadQuery.Dispose();
 
-        for (int i = 0; i < squadEntities.Length; i++)
+        try
         {
-            Entity squadEntity = squadEntities[i];
-            AISquad squad = em.GetComponentData<AISquad>(squadEntity);
-            if (!IsFactionAIControlled(squad.FactionId, hasControls, controls))
-                continue;
-
-            if (squad.TargetEntity == Entity.Null ||
-                !em.Exists(squad.TargetEntity) ||
-                !em.HasComponent<UnitHealth>(squad.TargetEntity) ||
-                em.GetComponentData<UnitHealth>(squad.TargetEntity).Current <= 0)
+            for (int i = 0; i < squadEntities.Length; i++)
             {
-                continue;
-            }
-
-            if (now - squad.LastOrderTime < OrderRefreshSeconds && CountMembersNeedingOrder(em, squadEntity, squad) == 0)
-                continue;
-
-            float3 targetPosition = ResolveTargetPosition(em, squad.TargetEntity, squad.TargetCell);
-            DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squadEntity);
-            int issued = 0;
-            for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
-            {
-                Entity unit = members[memberIndex].Unit;
-                if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
+                Entity squadEntity = squadEntities[i];
+                AISquad squad = em.GetComponentData<AISquad>(squadEntity);
+                if (!IsFactionAIControlled(squad.FactionId, hasControls, controls))
                     continue;
 
-                IssueEngageOrder(em, ecb, runtimeBuildings, gridBreachContext, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
-                issued++;
+                if (squad.TargetEntity == Entity.Null ||
+                    !em.Exists(squad.TargetEntity) ||
+                    !em.HasComponent<UnitHealth>(squad.TargetEntity) ||
+                    em.GetComponentData<UnitHealth>(squad.TargetEntity).Current <= 0)
+                {
+                    continue;
+                }
+
+                if (now - squad.LastOrderTime < OrderRefreshSeconds && CountMembersNeedingOrder(em, squadEntity, squad) == 0)
+                    continue;
+
+                EnsureBreachContext(
+                    ref state,
+                    ref runtimeBuildingEntities,
+                    ref runtimeBuildingInfos,
+                    ref runtimeBuildingHealths,
+                    ref runtimeBuildingTransforms,
+                    ref runtimeBuildings,
+                    ref gridBreachContext,
+                    ref breachContextCreated);
+
+                float3 targetPosition = ResolveTargetPosition(em, squad.TargetEntity, squad.TargetCell);
+                DynamicBuffer<AISquadUnit> members = em.GetBuffer<AISquadUnit>(squadEntity);
+                int issued = 0;
+                for (int memberIndex = 0; memberIndex < members.Length; memberIndex++)
+                {
+                    Entity unit = members[memberIndex].Unit;
+                    if (!CanReceiveCombatOrder(em, unit, squad.FactionId))
+                        continue;
+
+                    IssueEngageOrder(em, ecb, runtimeBuildings, gridBreachContext, unit, squad.TargetEntity, squad.TargetCell, targetPosition);
+                    issued++;
+                }
+
+                if (issued <= 0)
+                    continue;
+
+                squad.LastOrderTime = now;
+                squad.LastLogTime = now;
+                em.SetComponentData(squadEntity, squad);
+                if (shouldLog)
+                    EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
             }
-
-            if (issued <= 0)
-                continue;
-
-            squad.LastOrderTime = now;
-            squad.LastLogTime = now;
-            em.SetComponentData(squadEntity, squad);
-            if (shouldLog)
-                EnqueueDiagnostic(ref state, $"[AICombat] faction={squad.FactionId} squad={squad.SquadId} order=Attack target={squad.TargetEntity} units={issued}");
+        }
+        finally
+        {
+            if (runtimeBuildingEntities.IsCreated)
+                runtimeBuildingEntities.Dispose();
+            if (runtimeBuildingInfos.IsCreated)
+                runtimeBuildingInfos.Dispose();
+            if (runtimeBuildingHealths.IsCreated)
+                runtimeBuildingHealths.Dispose();
+            if (runtimeBuildingTransforms.IsCreated)
+                runtimeBuildingTransforms.Dispose();
         }
 
         if (controls.IsCreated)
             controls.Dispose();
         ecb.Playback(em);
         ecb.Dispose();
+    }
+
+    private void EnsureBreachContext(
+        ref SystemState state,
+        ref NativeArray<Entity> runtimeBuildingEntities,
+        ref NativeArray<RuntimeBuildingCombatInfo> runtimeBuildingInfos,
+        ref NativeArray<UnitHealth> runtimeBuildingHealths,
+        ref NativeArray<LocalTransform> runtimeBuildingTransforms,
+        ref RuntimeBuildingCombatData runtimeBuildings,
+        ref GridBreachContext gridBreachContext,
+        ref bool breachContextCreated)
+    {
+        if (breachContextCreated)
+            return;
+
+        runtimeBuildingEntities = _runtimeBuildingCombatQuery.ToEntityArray(Allocator.Temp);
+        runtimeBuildingInfos = _runtimeBuildingCombatQuery.ToComponentDataArray<RuntimeBuildingCombatInfo>(Allocator.Temp);
+        runtimeBuildingHealths = _runtimeBuildingCombatQuery.ToComponentDataArray<UnitHealth>(Allocator.Temp);
+        runtimeBuildingTransforms = _runtimeBuildingCombatQuery.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+        runtimeBuildings = new RuntimeBuildingCombatData(
+            runtimeBuildingEntities,
+            runtimeBuildingInfos,
+            runtimeBuildingHealths,
+            runtimeBuildingTransforms);
+        gridBreachContext = TryGetGridBreachContext(ref state, out GridBreachContext foundGridContext)
+            ? foundGridContext
+            : default;
+        breachContextCreated = true;
     }
 
     private static int CountMembersNeedingOrder(EntityManager em, Entity squadEntity, AISquad squad)
@@ -395,11 +442,16 @@ public partial struct AICombatOrderSystem : ISystem
         bool hasPerimeter = false;
         int bestArea = int.MaxValue;
 
+        FixedList128Bytes<byte> processedFactions = default;
         for (int i = 0; i < runtimeBuildings.Length; i++)
         {
             RuntimeBuildingCombatInfo info = runtimeBuildings.Infos[i];
             if (!IsActiveWallOrGate(runtimeBuildings, i) || info.OwnerFactionId == attackerFactionId)
                 continue;
+            if (ContainsFaction(processedFactions, info.OwnerFactionId))
+                continue;
+
+            processedFactions.Add(info.OwnerFactionId);
 
             RectInt perimeter = BuildFactionPerimeter(runtimeBuildings, info.OwnerFactionId);
             if (!ContainsCell(perimeter, targetCell))
@@ -416,6 +468,17 @@ public partial struct AICombatOrderSystem : ISystem
         }
 
         return hasPerimeter;
+    }
+
+    private static bool ContainsFaction(FixedList128Bytes<byte> factions, byte factionId)
+    {
+        for (int i = 0; i < factions.Length; i++)
+        {
+            if (factions[i] == factionId)
+                return true;
+        }
+
+        return false;
     }
 
     private static RectInt BuildFactionPerimeter(RuntimeBuildingCombatData runtimeBuildings, byte factionId)

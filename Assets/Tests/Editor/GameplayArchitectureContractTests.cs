@@ -2480,6 +2480,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private static bool TryGetLocalBounds", visualSystem);
         StringAssert.Contains("private static void SetChildVisibleByName", visualSystem);
         StringAssert.Contains("private static Transform FindDescendantByName", visualSystem);
+        StringAssert.Contains("FindDescendantByName(prefab.transform, \"CombinedMesh\")", visualSystem);
         StringAssert.Contains("RuntimeCityVisualSystem", audit);
 
         string[] retiredSpawnerVisualTokens =
@@ -3602,6 +3603,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("TryGetPrefabModelBounds", placementVisual);
         StringAssert.Contains("TransformBounds", placementVisual);
         StringAssert.Contains("CombinedMesh", placementVisual);
+        StringAssert.Contains("FindDescendantByName(visual.transform, \"CombinedMesh\")", placementVisual);
+        StringAssert.Contains("DisableSourceRenderersOutsideCombinedMesh", placementVisual);
+        StringAssert.Contains("private static Transform FindDescendantByName", placementVisual);
         StringAssert.Contains("SetPositionAndRotation", placementVisual);
 
         Assert.IsFalse(

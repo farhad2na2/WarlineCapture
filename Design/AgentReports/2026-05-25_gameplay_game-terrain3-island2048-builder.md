@@ -24,11 +24,11 @@ Counts:
 - Source ground prefab instances: 46
 - Source detail grass prefab instances: 135
 - Unique source prefab assets: 8
-- Placed prefab instances: 6110
-- Ground fill spacing: 24
+- Placed prefab instances: 9135
+- Ground fill spacing: 18
 - Shore ground spacing: 30
 - Detail grass spacing: 78
-- Ground X/Z scale multiplier: 1.55
+- Ground X/Z scale multiplier: 2.15
 - Shore ground X/Z scale multiplier: 1.12
 - Detail grass X/Z scale multiplier: 0.95
 - Beach X/Z scale multiplier: 2.35

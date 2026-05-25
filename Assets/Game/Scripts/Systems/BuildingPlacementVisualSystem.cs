@@ -20,10 +20,10 @@ internal sealed class BuildingPlacementVisualSystem
         GameObject visual = null;
         if (definition.Prefab != null)
         {
-            Transform combinedMesh = definition.Prefab.transform.Find("CombinedMesh");
-            visual = combinedMesh != null
-                ? Object.Instantiate(combinedMesh.gameObject, wrapper.transform)
-                : Object.Instantiate(definition.Prefab, wrapper.transform);
+            visual = Object.Instantiate(definition.Prefab, wrapper.transform);
+            Transform combinedMesh = FindDescendantByName(visual.transform, "CombinedMesh");
+            if (combinedMesh != null)
+                DisableSourceRenderersOutsideCombinedMesh(visual.transform, combinedMesh);
         }
 
         if (visual != null)
@@ -136,5 +136,74 @@ internal sealed class BuildingPlacementVisualSystem
         Bounds transformedBounds = new();
         transformedBounds.SetMinMax(min, max);
         return transformedBounds;
+    }
+
+    private static Transform FindDescendantByName(Transform root, string targetName)
+    {
+        if (root == null || string.IsNullOrEmpty(targetName))
+            return null;
+        if (root.name == targetName)
+            return root;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform found = FindDescendantByName(root.GetChild(i), targetName);
+            if (found != null)
+                return found;
+        }
+
+        return null;
+    }
+
+    private static void DisableSourceRenderersOutsideCombinedMesh(Transform root, Transform combinedMesh)
+    {
+        Transform sourceRoot = combinedMesh.parent != null ? combinedMesh.parent : root;
+        Renderer[] renderers = sourceRoot.GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null ||
+                IsSelfOrDescendantOf(renderer.transform, combinedMesh) ||
+                ShouldKeepRuntimeRenderer(renderer.transform))
+            {
+                continue;
+            }
+
+            renderer.enabled = false;
+        }
+    }
+
+    private static bool ShouldKeepRuntimeRenderer(Transform rendererTransform)
+    {
+        Transform current = rendererTransform;
+        while (current != null)
+        {
+            string name = current.name;
+            if (name == "Destroyed" ||
+                name == "FactionMarker" ||
+                name == "SelectionMarker" ||
+                name == "Door_Z")
+            {
+                return true;
+            }
+
+            current = current.parent;
+        }
+
+        return false;
+    }
+
+    private static bool IsSelfOrDescendantOf(Transform candidate, Transform root)
+    {
+        Transform current = candidate;
+        while (current != null)
+        {
+            if (current == root)
+                return true;
+
+            current = current.parent;
+        }
+
+        return false;
     }
 }

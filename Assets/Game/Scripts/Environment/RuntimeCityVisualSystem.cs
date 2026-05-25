@@ -48,7 +48,7 @@ internal sealed class RuntimeCityVisualSystem
         wrapper.transform.localScale = Vector3.one;
 
         GameObject visual;
-        Transform combinedMesh = prefab.transform.Find("CombinedMesh");
+        Transform combinedMesh = FindDescendantByName(prefab.transform, "CombinedMesh");
         if (combinedMesh != null)
             visual = UnityEngine.Object.Instantiate(combinedMesh.gameObject, wrapper.transform);
         else

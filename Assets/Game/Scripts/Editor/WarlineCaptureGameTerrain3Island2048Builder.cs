@@ -21,10 +21,10 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const float HalfMapSize = MapSize * 0.5f;
     private const float IslandRadiusX = 880f;
     private const float IslandRadiusZ = 820f;
-    private const float GroundFillSpacing = 24f;
+    private const float GroundFillSpacing = 18f;
     private const float ShoreGroundSpacing = 30f;
     private const float DetailGrassSpacing = 78f;
-    private const float GroundSurfaceScaleXZ = 1.55f;
+    private const float GroundSurfaceScaleXZ = 2.15f;
     private const float ShoreGroundScaleXZ = 1.12f;
     private const float DetailGrassScaleXZ = 0.95f;
     private const float BeachSurfaceScaleXZ = 2.35f;
@@ -365,7 +365,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
                 Vector2 p = new(x + jx, z + jz);
                 if (!EvaluateIsland(p, out float depth, out _))
                     continue;
-                if (depth < 0.14f)
+                if (depth < 0.08f)
                     continue;
 
                 SourcePiece source = Pick(GroundPieces, cellIndex, row, 53);

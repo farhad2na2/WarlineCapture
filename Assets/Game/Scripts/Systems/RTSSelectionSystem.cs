@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using Unity.Transforms;
 using UnityEngine;
 
-public sealed class RTSSelectionSystem
+public sealed class SelectionRuntimeUpdateSystem
 {
 
     public readonly struct TransportPassengerUiInfo
@@ -107,6 +107,10 @@ public sealed class RTSSelectionSystem
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RtsSelectionInputSystem _rtsSelectionInputSystem = new();
     private readonly RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem = new();
+    private readonly RtsSelectionRuntimeCameraSystem _rtsSelectionRuntimeCameraSystem = new();
+    private readonly RtsSelectionCommandResultFlushSystem _rtsSelectionCommandResultFlushSystem = new();
+    private readonly RtsSelectionFocusCommandSystem _rtsSelectionFocusCommandSystem = new();
+    private readonly RtsSelectionPointerTargetCommandSystem _rtsSelectionPointerTargetCommandSystem = new();
     private RtsCameraSystem _rtsCameraSystem = new();
     private RtsCameraRequestSystem _rtsCameraRequestSystem = new();
     private SelectionScreenMarkerSystem _selectionScreenMarkerSystem;
@@ -132,42 +136,6 @@ public sealed class RTSSelectionSystem
     private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
     private UnitTransportBoardingSystem _unitTransportBoardingSystem;
     private List<Entity> _cachedSelectedMoveEntities => _selectionStateSystem.CachedSelectedMoveEntities;
-    private bool _cameraDragging
-    {
-        get => _rtsCameraSystem.IsDragging;
-        set => SetCameraDragging(value);
-    }
-
-    private bool _wasPlayRequested
-    {
-        get => _rtsCameraSystem.WasPlayRequested;
-        set => SetCameraWasPlayRequested(value);
-    }
-
-    private bool _wasBuildModeActive
-    {
-        get => _rtsCameraSystem.WasBuildModeActive;
-        set => SetCameraWasBuildModeActive(value);
-    }
-
-    private bool _isZoomTransitionActive
-    {
-        get => _rtsCameraSystem.IsZoomTransitionActive;
-        set => SetCameraZoomTransitionActive(value);
-    }
-
-    private float _fullscreenIsoTargetHeight
-    {
-        get => _rtsCameraSystem.FullscreenIsoTargetHeight;
-        set => SetFullscreenIsoTargets(value, _rtsCameraSystem.FullscreenIsoTargetOrthographicSize);
-    }
-
-    private float _fullscreenIsoTargetOrthographicSize
-    {
-        get => _rtsCameraSystem.FullscreenIsoTargetOrthographicSize;
-        set => SetFullscreenIsoTargets(_rtsCameraSystem.FullscreenIsoTargetHeight, value);
-    }
-
     private MainMenuPlayUI _mainMenuPlayUi;
     private RoadBuildSystem _roadBuildController;
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
@@ -178,10 +146,6 @@ public sealed class RTSSelectionSystem
     private EntityQuery _gridConfigQuery;
     private EntityQuery _selectedTagQuery;
     private readonly List<Entity> _visibleSelectionScratch = new();
-    private readonly List<RtsSelectionCommandIntentKind> _externalSelectionCommandScratch = new();
-    private readonly List<RtsSelectionCommandResultElement> _moveCommandResultScratch = new();
-    private readonly List<RtsSelectionCommandResultElement> _attackCommandResultScratch = new();
-    private readonly List<RtsSelectionCommandResultElement> _transportCommandResultScratch = new();
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
     private float _selectionModeHoldSeconds = 1f;
@@ -672,11 +636,6 @@ public sealed class RTSSelectionSystem
         return true;
     }
 
-    private void ProcessCameraRequests(EntityManager em)
-    {
-        _rtsCameraRequestSystem.ProcessPendingRequests(em, _rtsCameraSystem, worldCamera, HideOrderScreenMarkers);
-    }
-
     private void HideOrderScreenMarkers()
     {
         _selectionScreenMarkerSystem?.RequestHideOrderMarkers();
@@ -690,97 +649,6 @@ public sealed class RTSSelectionSystem
     private void RequestAttackOrderScreenMarker(Vector2 screenPosition)
     {
         _selectionScreenMarkerSystem?.RequestAttackOrderMarker(screenPosition);
-    }
-
-    private void SetCameraDragging(bool isDragging)
-    {
-        if (_rtsCameraSystem.IsDragging == isDragging)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetDragging(em, isDragging);
-        ProcessCameraRequests(em);
-    }
-
-    private void SetCameraWasPlayRequested(bool wasPlayRequested)
-    {
-        if (_rtsCameraSystem.WasPlayRequested == wasPlayRequested)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetWasPlayRequested(em, wasPlayRequested);
-        ProcessCameraRequests(em);
-    }
-
-    private void SetCameraWasBuildModeActive(bool wasBuildModeActive)
-    {
-        if (_rtsCameraSystem.WasBuildModeActive == wasBuildModeActive)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetWasBuildModeActive(em, wasBuildModeActive);
-        ProcessCameraRequests(em);
-    }
-
-    private void SetCameraZoomTransitionActive(bool isActive)
-    {
-        if (_rtsCameraSystem.IsZoomTransitionActive == isActive)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetZoomTransitionActive(em, isActive);
-        ProcessCameraRequests(em);
-    }
-
-    private void SetCameraNormalIsoModeActive(bool isActive)
-    {
-        if (_rtsCameraSystem.NormalIsoModeActive == isActive)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetNormalIsoModeActive(em, isActive);
-        ProcessCameraRequests(em);
-    }
-
-    private void SetFullscreenIsoTargets(float height, float orthographicSize)
-    {
-        if (Mathf.Approximately(_rtsCameraSystem.FullscreenIsoTargetHeight, height) &&
-            Mathf.Approximately(_rtsCameraSystem.FullscreenIsoTargetOrthographicSize, orthographicSize))
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetFullscreenIsoTargets(em, height, orthographicSize);
-        ProcessCameraRequests(em);
-    }
-
-    private void ResetCameraSession()
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueResetSession(em);
-        ProcessCameraRequests(em);
-    }
-
-    private void ResetCameraModeSession()
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueResetCameraModeSession(em);
-        ProcessCameraRequests(em);
     }
 
     public void Dispose()
@@ -831,64 +699,16 @@ public sealed class RTSSelectionSystem
     public void Update()
     {
         ProcessTransportCommandRequests();
-        ProcessExternalSelectionCommandRequests();
+        _rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
         RtsSelectionRuntimeInputSystem.Context inputContext = CreateRuntimeInputContext();
+        RtsSelectionRuntimeCameraSystem.Context cameraContext = CreateRuntimeCameraContext();
         _rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
         RefreshFocusedUnit();
         PublishFocusedUnitUiReadModel();
-        _selectionOrderMarkerSystem.UpdateMoveOrderMarkerVisibility(SetHudWorldMarkersVisible);
-        _selectionOrderMarkerSystem.UpdateAttackOrderMarkerVisibility(SetHudWorldMarkersVisible);
+        _rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CreateCommandResultFlushContext());
 
-        if (!_runtimeGameplayStateSystem.PlayRequested)
-        {
-            ResetCameraSession();
-            ResetCameraModeSession();
-            _runtimeGameplayStateSystem.FullscreenMapOpen = false;
-            _runtimeGameplayStateSystem.FullscreenMapIsoMode = false;
-            _runtimeGameplayStateSystem.InitialCameraFocusRequested = false;
+        if (!_rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(cameraContext))
             return;
-        }
-
-        if (_runtimeGameplayStateSystem.FullscreenMapIsoMode)
-        {
-            if (worldCamera == null)
-                return;
-
-            UpdateFullscreenIsoZoom();
-            UpdateFullscreenIsoCameraMode();
-            HandleFullscreenIsoCameraPan();
-            return;
-        }
-
-        if (_runtimeGameplayStateSystem.FullscreenMapOpen)
-            return;
-
-        if (_runtimeGameplayStateSystem.BuildModeActive)
-        {
-            if (_rtsCameraSystem.NormalIsoModeActive)
-                ExitNormalIsoMode();
-            UpdateBuildModeCameraTransition();
-            UpdateSmoothCameraFocus();
-            HandleBuildModeCameraPan();
-            return;
-        }
-
-        if (worldCamera == null)
-            return;
-
-        if (_rtsCameraSystem.NormalIsoModeActive)
-        {
-            UpdateFullscreenIsoZoom();
-            UpdateFullscreenIsoCameraMode();
-        }
-        else
-        {
-            SyncCameraZoomModeState();
-            ConsumeInitialCameraFocusRequest();
-            UpdateZoom();
-        }
-
-        UpdateSmoothCameraFocus();
 
         _rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
     }
@@ -903,68 +723,156 @@ public sealed class RTSSelectionSystem
             _selectionModeHoldSeconds,
             () => _explicitAttackTargetModeActive,
             value => _explicitAttackTargetModeActive = value,
-            () => _cameraDragging,
-            value => _cameraDragging = value,
+            () => _rtsCameraSystem.IsDragging,
+            value => _rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), value),
             pointerPosition => IsPointerOverUI(pointerPosition, out _),
             pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
             TryIssueAttackOrderToClickedUnit,
             TryIssueBoardTransportOrderToClickedUnit,
             TryFocusUnit,
-            PanCamera,
+            screenDelta => _rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
             IssueMoveOrder,
             ProcessSelectionRectangleRequests);
     }
 
-    private void HandleBuildModeCameraPan()
+    private RtsSelectionRuntimeCameraSystem.Context CreateRuntimeCameraContext()
     {
-        if (worldCamera == null)
-            return;
+        return new RtsSelectionRuntimeCameraSystem.Context(
+            _runtimeGameplayStateSystem,
+            _rtsSelectionInputSystem,
+            _rtsCameraSystem,
+            _rtsCameraRequestSystem,
+            worldCamera,
+            _mainMenuPlayUi,
+            _roadBuildController,
+            _buildingPlacementInteractionSystem,
+            _buildingPlacementInteractionContext,
+            TryGetDefaultEntityManager,
+            IsPointerOverGameplayUi,
+            UpdateLastKnownPointerPosition,
+            HideOrderScreenMarkers,
+            panSensitivity,
+            zoomSpeed,
+            minZoomHeight,
+            maxZoomHeight,
+            normalModeZoomHeight,
+            buildModeZoomHeight,
+            normalModePitch,
+            buildModePitch,
+            normalModeYaw,
+            buildModeYaw,
+            normalModeFieldOfView,
+            buildModeFieldOfView,
+            fullscreenIsoZoomHeight,
+            fullscreenIsoPitch,
+            fullscreenIsoYaw,
+            fullscreenIsoOrthographicSize,
+            zoomTransitionSmoothTime);
+    }
 
-        if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
-            return;
+    private RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
+    {
+        return new RtsSelectionCommandResultFlushSystem.Context(
+            _rtsSelectionInputSystem,
+            _selectionHudFeedbackSystem,
+            _selectionOrderMarkerSystem,
+            _selectionMoveCommandRequestSystem,
+            _selectionAttackCommandRequestSystem,
+            _selectionTransportCommandRequestSystem,
+            _selectedMoveOrderCommandSystem,
+            _attackOrderCommandSystem,
+            _transportBoardingCommandSystem,
+            _unitMoveOrderSystem,
+            _unitTargetOrderSystem,
+            _unitTransportBoardingSystem,
+            _selectionStateSystem,
+            _buildingPlacementInteractionSystem,
+            _buildingPlacementInteractionContext,
+            _selectedMoveQuery,
+            _gridConfigQuery,
+            TryGetDefaultEntityManager,
+            EnsureEntityQueries,
+            ClearCurrentSelection,
+            ApplyHudCommandResult,
+            ClearHudCommandMode,
+            SetHudWorldMarkersVisible,
+            RequestMoveOrderScreenMarker,
+            RequestAttackOrderScreenMarker,
+            SetCameraDragging,
+            _focusedUnitLifecycleSystem.ClearFocusedUnit,
+            TryGetClickedUnitEntity,
+            TryGetClickedCell,
+            TryGetClickedUnitEntity,
+            TryGetClickedUnitEntity,
+            TryGetClickedCell);
+    }
 
-        Vector2 pointerPosition = pointer.Position;
-        UpdateLastKnownPointerPosition(pointerPosition);
-        bool pointerOverGameplayUi = IsPointerOverGameplayUi(pointerPosition, out _);
-        bool pointerOverBuildToolMenu = _mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverBuildToolMenu(pointerPosition);
-        bool hasPendingBuildingPlacement = _buildingPlacementInteractionSystem != null &&
-                                           _buildingPlacementInteractionSystem.HasPendingBuildingPlacement(_buildingPlacementInteractionContext);
-        bool roadToolActive = _roadBuildController != null && _roadBuildController.IsRoadBuildModeActive;
-        bool idleBuildMode = !hasPendingBuildingPlacement && !roadToolActive;
-        bool interactionActive =
-            (_roadBuildController != null && _roadBuildController.IsDraggingBuildInteraction) ||
-            (_buildingPlacementInteractionSystem != null &&
-             _buildingPlacementInteractionSystem.IsDraggingPlacementPreview(_buildingPlacementInteractionContext));
+    private RtsSelectionFocusCommandSystem.Context CreateFocusCommandContext()
+    {
+        return new RtsSelectionFocusCommandSystem.Context(
+            _runtimeGameplayStateSystem,
+            _rtsSelectionInputSystem,
+            _selectionStateSystem,
+            _focusedUnitLifecycleSystem,
+            _unitTargetOrderSystem,
+            _buildingPlacementInteractionSystem,
+            _buildingPlacementInteractionContext,
+            worldCamera,
+            TryGetDefaultEntityManager,
+            EnsureEntityQueries,
+            ClearCurrentSelection,
+            QueueSelectionRectangleRequest,
+            ProcessSelectionRectangleRequests,
+            ApplyHudSelection,
+            ApplyHudCommandResult,
+            ClearHudSelection,
+            ClearHudCommandMode,
+            SetHudWorldMarkersVisible,
+            SetCameraDragging,
+            value => _explicitAttackTargetModeActive = value,
+            LogSelectionDiagnostic,
+            DescribeTransportBoardingEntity,
+            ValidateControllableEntity,
+            () => IssueHoldPositionOrder(),
+            () => IssueStopOrder(),
+            DestroyFocusedUnit,
+            IssueFocusedMissileLauncherRadarAttack,
+            ArmFocusedAttackTargetMode,
+            CancelExplicitAttackTargetMode);
+    }
 
-        if (pointerOverGameplayUi)
-        {
-            _cameraDragging = false;
-            _rtsSelectionInputSystem.IsDraggingSelection = false;
-            return;
-        }
-
-        bool panPressed = idleBuildMode && pointer.WasPressedThisFrame;
-        bool panHeld = idleBuildMode && pointer.IsPressed;
-        bool panReleased = idleBuildMode && pointer.WasReleasedThisFrame;
-
-        if (panPressed)
-        {
-            _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
-            _cameraDragging = !interactionActive && !pointerOverBuildToolMenu;
-        }
-
-        if (panHeld && _cameraDragging)
-        {
-            Vector2 frameDelta = pointerPosition - _rtsSelectionInputSystem.LastPointerPosition;
-            if (frameDelta.sqrMagnitude > 0f)
-                PanCamera(frameDelta);
-            _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
-        }
-
-        if (panReleased || !panHeld)
-            _cameraDragging = false;
-
-        _rtsSelectionInputSystem.IsDraggingSelection = false;
+    private RtsSelectionPointerTargetCommandSystem.Context CreatePointerTargetCommandContext()
+    {
+        return new RtsSelectionPointerTargetCommandSystem.Context(
+            _runtimeGameplayStateSystem,
+            _rtsSelectionInputSystem,
+            _selectionStateSystem,
+            _focusedUnitLifecycleSystem,
+            _unitTargetOrderSystem,
+            _focusableUnitLookupSystem,
+            _transportBoardingCommandSystem,
+            _unitTransportBoardingSystem,
+            _buildingTargetMoveOrderSystem,
+            _buildingPlacementInteractionSystem,
+            _buildingPlacementInteractionContext,
+            worldCamera,
+            TryGetDefaultEntityManager,
+            TryGetPointerPosition,
+            () => _explicitAttackTargetModeActive,
+            value => _explicitAttackTargetModeActive = value,
+            ApplyHudCommandMode,
+            ApplyHudCommandResult,
+            ClearHudSelection,
+            ClearHudCommandMode,
+            ApplyHudSelection,
+            ClearCurrentSelection,
+            RequestMoveOrderScreenMarker,
+            SetCameraDragging,
+            ProcessAttackCommandRequests,
+            ProcessTransportCommandRequests,
+            ProcessMoveCommandRequests,
+            LogSelectionDiagnostic,
+            DescribeTransportBoardingEntity);
     }
 
     public bool HasVisiblePlayerUnits()
@@ -1039,331 +947,34 @@ public sealed class RTSSelectionSystem
 
     private void IssueMoveOrder(Vector2 screenPosition)
     {
-        _explicitAttackTargetModeActive = false;
-        ApplyHudCommandMode(TacticalCommandMode.Move);
-
-        if (!_rtsSelectionInputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount))
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            ClearHudCommandMode();
-            return;
-        }
-
-        ProcessMoveCommandRequests();
+        _rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(CreatePointerTargetCommandContext(), screenPosition);
     }
 
     private void ProcessMoveCommandRequests()
     {
-        if (TryGetDefaultEntityManager(out EntityManager defaultEntityManager))
-            _selectionHudFeedbackSystem.EnsureFeedbackQueue(defaultEntityManager);
-
-        if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
-                out EntityManager em,
-                out Entity commandEntity,
-                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            ClearHudCommandMode();
-            return;
-        }
-
-        EnsureEntityQueries(em);
-        _selectionMoveCommandRequestSystem.ProcessPendingRequests(
-            em,
-            commandEntity,
-            commandRequests,
-            commandResults,
-            _selectedMoveQuery,
-            _gridConfigQuery,
-            _unitMoveOrderSystem,
-            _selectionOrderMarkerSystem,
-            _selectedMoveOrderCommandSystem,
-            TryGetClickedUnitEntity,
-            TryGetClickedCell);
-
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-        _moveCommandResultScratch.Clear();
-        for (int i = 0; i < commandResults.Length;)
-        {
-            RtsSelectionCommandResultElement result = commandResults[i];
-            if (result.Kind != RtsSelectionCommandIntentKind.Move)
-            {
-                i++;
-                continue;
-            }
-
-            commandResults.RemoveAt(i);
-            _moveCommandResultScratch.Add(result);
-        }
-
-        bool handled = false;
-        for (int i = 0; i < _moveCommandResultScratch.Count; i++)
-        {
-            RtsSelectionCommandResultElement result = _moveCommandResultScratch[i];
-            ApplyHudCommandResult(ToTacticalCommandResult(result));
-            ClearHudCommandMode();
-            if (result.EmitScreenMarker != 0)
-                RequestMoveOrderScreenMarker(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
-            if (result.ShowWorldMarkers != 0)
-                SetHudWorldMarkersVisible(true);
-            handled = true;
-        }
-
-        if (!handled)
-        {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            ClearHudCommandMode();
-        }
-    }
-
-    private static TacticalCommandResult ToTacticalCommandResult(RtsSelectionCommandResultElement result)
-    {
-        return result.Accepted != 0
-            ? TacticalCommandResult.Success()
-            : TacticalCommandResult.Rejected((TacticalCommandReasonCode)result.ReasonCode);
+        _rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(CreateCommandResultFlushContext());
     }
 
     private bool ProcessAttackCommandRequests()
     {
-        if (TryGetDefaultEntityManager(out EntityManager defaultEntityManager))
-            _selectionHudFeedbackSystem.EnsureFeedbackQueue(defaultEntityManager);
-
-        if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
-                out EntityManager em,
-                out Entity commandEntity,
-                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
-        {
-            if (_explicitAttackTargetModeActive)
-                ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            return false;
-        }
-
-        EnsureEntityQueries(em);
-        _selectionAttackCommandRequestSystem.ProcessPendingRequests(
-            em,
-            commandEntity,
-            commandRequests,
-            commandResults,
-            _attackOrderCommandSystem,
-            _unitTargetOrderSystem,
-            TryGetClickedUnitEntity,
-            _buildingPlacementInteractionSystem,
-            _buildingPlacementInteractionContext);
-
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-        _attackCommandResultScratch.Clear();
-        for (int i = 0; i < commandResults.Length;)
-        {
-            RtsSelectionCommandResultElement result = commandResults[i];
-            if (result.Kind != RtsSelectionCommandIntentKind.Attack)
-            {
-                i++;
-                continue;
-            }
-
-            commandResults.RemoveAt(i);
-            _attackCommandResultScratch.Add(result);
-        }
-
-        bool issued = false;
-        for (int i = 0; i < _attackCommandResultScratch.Count; i++)
-        {
-            RtsSelectionCommandResultElement result = _attackCommandResultScratch[i];
-            if (result.HasCommandResult != 0)
-            {
-                ApplyHudCommandResult(ToTacticalCommandResult(result));
-            }
-
-            if (result.Accepted == 0)
-                continue;
-
-            if (result.HasWorldPosition != 0)
-                _selectionOrderMarkerSystem.ShowAttackOrderMarker(em, result.WorldPosition);
-            if (result.EmitScreenMarker != 0)
-                RequestAttackOrderScreenMarker(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
-            ClearCurrentSelection(em, "AttackOrderIssued");
-            _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
-            _cameraDragging = false;
-            ClearHudCommandMode();
-            if (result.ShowWorldMarkers != 0)
-                SetHudWorldMarkersVisible(true);
-            issued = true;
-        }
-
-        return issued;
+        return _rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
+            CreateCommandResultFlushContext(),
+            _explicitAttackTargetModeActive);
     }
 
     private bool TryIssueBoardTransportOrderToClickedUnit(Vector2 screenPosition)
     {
-        if (!_rtsSelectionInputSystem.QueueBoardTransportCommandRequest(screenPosition, Time.frameCount))
-            return false;
-
-        return ProcessTransportCommandRequests();
+        return _rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
     }
 
     private bool ProcessTransportCommandRequests()
     {
-        if (TryGetDefaultEntityManager(out EntityManager defaultEntityManager))
-            _selectionHudFeedbackSystem.EnsureFeedbackQueue(defaultEntityManager);
-
-        if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
-                out EntityManager em,
-                out Entity commandEntity,
-                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
-        {
-            return false;
-        }
-
-        EnsureEntityQueries(em);
-        _selectionTransportCommandRequestSystem.ProcessPendingRequests(
-            em,
-            commandEntity,
-            commandRequests,
-            commandResults,
-            _transportBoardingCommandSystem,
-            _unitTransportBoardingSystem,
-            _unitMoveOrderSystem,
-            _selectionStateSystem,
-            TryGetClickedUnitEntity,
-            TryGetClickedCell);
-
-        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
-        _transportCommandResultScratch.Clear();
-        for (int i = 0; i < commandResults.Length;)
-        {
-            RtsSelectionCommandResultElement result = commandResults[i];
-            if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport &&
-                result.Kind != RtsSelectionCommandIntentKind.DisembarkTransport)
-            {
-                i++;
-                continue;
-            }
-
-            commandResults.RemoveAt(i);
-            _transportCommandResultScratch.Add(result);
-        }
-
-        bool accepted = false;
-        for (int i = 0; i < _transportCommandResultScratch.Count; i++)
-        {
-            RtsSelectionCommandResultElement result = _transportCommandResultScratch[i];
-            if (result.Accepted == 0)
-                continue;
-
-            accepted = true;
-            if (result.Kind != RtsSelectionCommandIntentKind.BoardTransport)
-                continue;
-
-            if (result.HasTargetCell != 0 && result.HasWorldPosition != 0)
-            {
-                _selectionOrderMarkerSystem.ShowMoveOrderMarker(
-                    em,
-                    result.TargetCell,
-                    result.WorldPosition,
-                    result.MarkerFactionId);
-            }
-            if (result.EmitScreenMarker != 0)
-                RequestMoveOrderScreenMarker(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
-            ClearCurrentSelection(em, "BoardTransportOrderIssued");
-            _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
-            _cameraDragging = false;
-        }
-
-        return accepted;
-    }
-
-    private void ProcessExternalSelectionCommandRequests()
-    {
-        if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
-                out _,
-                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
-                out DynamicBuffer<RtsSelectionCommandResultElement> _))
-        {
-            return;
-        }
-
-        _externalSelectionCommandScratch.Clear();
-        for (int i = 0; i < commandRequests.Length;)
-        {
-            RtsSelectionCommandIntentRequestElement request = commandRequests[i];
-            if (!IsExternalSelectionCommand(request.Kind))
-            {
-                i++;
-                continue;
-            }
-
-            commandRequests.RemoveAt(i);
-            _externalSelectionCommandScratch.Add(request.Kind);
-        }
-
-        for (int i = 0; i < _externalSelectionCommandScratch.Count; i++)
-            ProcessExternalSelectionCommand(_externalSelectionCommandScratch[i]);
-    }
-
-    private static bool IsExternalSelectionCommand(RtsSelectionCommandIntentKind kind)
-    {
-        return kind == RtsSelectionCommandIntentKind.SelectAll ||
-               kind == RtsSelectionCommandIntentKind.SelectAllSoldiers ||
-               kind == RtsSelectionCommandIntentKind.SelectAllVehicles ||
-               kind == RtsSelectionCommandIntentKind.DeselectAll ||
-               kind == RtsSelectionCommandIntentKind.HoldPosition ||
-               kind == RtsSelectionCommandIntentKind.Stop ||
-               kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
-               kind == RtsSelectionCommandIntentKind.ToggleAttackTargetMode ||
-               kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
-    }
-
-    private void ProcessExternalSelectionCommand(RtsSelectionCommandIntentKind kind)
-    {
-        switch (kind)
-        {
-            case RtsSelectionCommandIntentKind.SelectAll:
-                SelectAllVisiblePlayerUnits();
-                break;
-            case RtsSelectionCommandIntentKind.SelectAllSoldiers:
-                SelectAllVisiblePlayerSoldiers();
-                break;
-            case RtsSelectionCommandIntentKind.SelectAllVehicles:
-                SelectAllVisiblePlayerVehicles();
-                break;
-            case RtsSelectionCommandIntentKind.DeselectAll:
-                DeselectAllUnits("SelectionUiCommandSystem");
-                break;
-            case RtsSelectionCommandIntentKind.HoldPosition:
-                IssueHoldPositionOrder();
-                break;
-            case RtsSelectionCommandIntentKind.Stop:
-                IssueStopOrder();
-                break;
-            case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
-                DestroyFocusedUnit();
-                break;
-            case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
-                if (!IssueFocusedMissileLauncherRadarAttack())
-                    ArmFocusedAttackTargetMode();
-                break;
-            case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
-                CancelExplicitAttackTargetMode();
-                break;
-        }
+        return _rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(CreateCommandResultFlushContext());
     }
 
     public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
     {
-        if (World.DefaultGameObjectInjectionWorld == null)
-            return false;
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        return _transportBoardingCommandSystem.IsBoardablePlayerTransportClick(
-            em,
-            screenPosition,
-            _unitTransportBoardingSystem,
-            TryGetClickedUnitEntity,
-            TryGetClickedCell);
+        return _rtsSelectionPointerTargetCommandSystem.IsBoardablePlayerTransportClick(CreatePointerTargetCommandContext(), screenPosition);
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)
@@ -1434,39 +1045,20 @@ public sealed class RTSSelectionSystem
 
     public bool TryIssueMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
     {
-        if (World.DefaultGameObjectInjectionWorld == null)
-            return false;
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        bool issued = _buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(em, originCell, footprintCells);
-        if (!issued)
-            return false;
-
-        ClearCurrentSelection(em, "MoveOrderToBuilding");
-        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
-        if (TryGetPointerPosition(out Vector2 markerScreenPosition))
-            RequestMoveOrderScreenMarker(markerScreenPosition);
-        return true;
+        return _rtsSelectionPointerTargetCommandSystem.TryIssueMoveOrderToBuilding(
+            CreatePointerTargetCommandContext(),
+            originCell,
+            footprintCells);
     }
 
     private bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
-        cell = default;
-        worldPoint = default;
-
-        EnsureEntityQueries(em);
-        if (_gridConfigQuery.IsEmptyIgnoreFilter)
-            return false;
-
-        var grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        Ray ray = worldCamera.ScreenPointToRay(screenPosition);
-        Plane plane = new(Vector3.up, new Vector3(0f, grid.Origin.y, 0f));
-        if (!plane.Raycast(ray, out float distance))
-            return false;
-
-        worldPoint = ray.GetPoint(distance);
-        cell = GridUtils.WorldToCell(grid, worldPoint);
-        return GridUtils.InBounds(cell, grid.Width, grid.Height);
+        return _rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
+            CreatePointerTargetCommandContext(),
+            screenPosition,
+            em,
+            out cell,
+            out worldPoint);
     }
 
     private void UpdateLastKnownPointerPosition(Vector2 pointerPosition)
@@ -1500,341 +1092,51 @@ public sealed class RTSSelectionSystem
         return IsPointerOverUI(screenPosition, out source);
     }
 
-    private void PanCamera(Vector2 screenDelta)
+    private void SetCameraDragging(bool isDragging)
     {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueuePan(em, screenDelta, panSensitivity);
-        ProcessCameraRequests(em);
-    }
-
-    private void HandleFullscreenIsoCameraPan()
-    {
-        if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
-            return;
-
-        Vector2 pointerPosition = pointer.Position;
-        UpdateLastKnownPointerPosition(pointerPosition);
-        bool pointerOverGameplayUi = IsPointerOverGameplayUi(pointerPosition, out _);
-
-        if (pointer.WasPressedThisFrame)
-        {
-            _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
-            _cameraDragging = !pointerOverGameplayUi;
-        }
-
-        if (pointer.IsPressed && _cameraDragging && !pointerOverGameplayUi)
-        {
-            Vector2 frameDelta = pointerPosition - _rtsSelectionInputSystem.LastPointerPosition;
-            if (frameDelta.sqrMagnitude > 0f)
-                PanCamera(frameDelta);
-        }
-
-        _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
-
-        if (pointer.WasReleasedThisFrame || !pointer.IsPressed)
-            _cameraDragging = false;
-    }
-
-    private void UpdateZoom()
-    {
-        if (_isZoomTransitionActive)
-        {
-            float targetHeight = _wasBuildModeActive ? buildModeZoomHeight : normalModeZoomHeight;
-            float targetPitch = _wasBuildModeActive ? buildModePitch : normalModePitch;
-            float targetYaw = _wasBuildModeActive ? buildModeYaw : normalModeYaw;
-            float targetFieldOfView = _wasBuildModeActive ? buildModeFieldOfView : normalModeFieldOfView;
-
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            _rtsCameraRequestSystem.QueueUpdatePerspectiveMode(
-                em,
-                targetHeight,
-                targetPitch,
-                targetYaw,
-                targetFieldOfView,
-                zoomTransitionSmoothTime,
-                completeTransitionOnArrive: true);
-            ProcessCameraRequests(em);
-
-            return;
-        }
-
-        float zoomDirection = 0f;
-        if (_runtimeGameplayStateSystem.ZoomInHeld)
-            zoomDirection += 1f;
-        if (_runtimeGameplayStateSystem.ZoomOutHeld)
-            zoomDirection -= 1f;
-
-        if (Mathf.Approximately(zoomDirection, 0f))
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager defaultEntityManager))
-            return;
-
-        _rtsCameraRequestSystem.QueuePerspectiveZoom(defaultEntityManager, zoomDirection, zoomSpeed, Time.deltaTime, minZoomHeight, maxZoomHeight);
-        ProcessCameraRequests(defaultEntityManager);
-    }
-
-    private void UpdateFullscreenIsoZoom()
-    {
-        if (worldCamera == null)
-            return;
-
-        float zoomDirection = 0f;
-        if (_runtimeGameplayStateSystem.ZoomInHeld)
-            zoomDirection += 1f;
-        if (_runtimeGameplayStateSystem.ZoomOutHeld)
-            zoomDirection -= 1f;
-
-        if (Mathf.Approximately(zoomDirection, 0f))
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueFullscreenIsoZoom(em, zoomDirection, zoomSpeed, Time.deltaTime, minZoomHeight, maxZoomHeight);
-        ProcessCameraRequests(em);
-    }
-
-    private void UpdateFullscreenIsoCameraMode()
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueUpdateFullscreenIsoMode(
-            em,
-            _fullscreenIsoTargetHeight,
-            _fullscreenIsoTargetOrthographicSize,
-            fullscreenIsoPitch,
-            fullscreenIsoYaw,
-            zoomTransitionSmoothTime);
-        ProcessCameraRequests(em);
-    }
-
-    private void UpdateBuildModeCameraTransition()
-    {
-        if (worldCamera == null)
-            return;
-
-        SyncCameraZoomModeState();
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueUpdatePerspectiveMode(
-            em,
-            buildModeZoomHeight,
-            buildModePitch,
-            buildModeYaw,
-            buildModeFieldOfView,
-            zoomTransitionSmoothTime,
-            completeTransitionOnArrive: false);
-        ProcessCameraRequests(em);
-    }
-
-    private void SyncCameraZoomModeState()
-    {
-        if (Chapter01M01PlayableRuntime.IsActiveMission())
-        {
-            _wasPlayRequested = _runtimeGameplayStateSystem.PlayRequested;
-            _wasBuildModeActive = _runtimeGameplayStateSystem.BuildModeActive;
-            _isZoomTransitionActive = false;
-            return;
-        }
-
-        if (!_wasPlayRequested && _runtimeGameplayStateSystem.PlayRequested)
-        {
-            Vector3 focusWorldPosition = worldCamera != null ? _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera) : Vector3.zero;
-            if (TryGetDefaultEntityManager(out EntityManager em))
-            {
-                _rtsCameraRequestSystem.QueueApplyPerspectiveModeInstant(em, normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
-                if (worldCamera != null)
-                    _rtsCameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
-                _rtsCameraRequestSystem.QueueResetTransitionVelocities(em);
-                ProcessCameraRequests(em);
-            }
-
-            _wasPlayRequested = true;
-            _wasBuildModeActive = _runtimeGameplayStateSystem.BuildModeActive;
-            _isZoomTransitionActive = _runtimeGameplayStateSystem.BuildModeActive;
-            return;
-        }
-
-        _wasPlayRequested = _runtimeGameplayStateSystem.PlayRequested;
-
-        if (_wasBuildModeActive != _runtimeGameplayStateSystem.BuildModeActive)
-        {
-            if (!TryGetDefaultEntityManager(out EntityManager em))
-                return;
-
-            _rtsCameraRequestSystem.QueueBeginZoomTransition(em, _runtimeGameplayStateSystem.BuildModeActive);
-            ProcessCameraRequests(em);
-        }
-    }
-
-    private void ConsumeInitialCameraFocusRequest()
-    {
-        if (!_runtimeGameplayStateSystem.InitialCameraFocusRequested || worldCamera == null)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueMoveGroundCenterTo(em, _runtimeGameplayStateSystem.InitialCameraFocusWorld);
-        _rtsCameraRequestSystem.QueueClearSmoothFocusTarget(em);
-        ProcessCameraRequests(em);
-        _runtimeGameplayStateSystem.InitialCameraFocusRequested = false;
-    }
-
-    private void UpdateSmoothCameraFocus()
-    {
-        if (!_rtsCameraSystem.HasSmoothFocusTarget || worldCamera == null)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueUpdateSmoothFocus(em, zoomTransitionSmoothTime);
-        ProcessCameraRequests(em);
+        _rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), isDragging);
     }
 
     public void EnterFullscreenMapIsoMode(Vector3 focusWorldPosition)
     {
-        if (worldCamera == null)
-            return;
-
-        _fullscreenIsoTargetHeight = Mathf.Clamp(fullscreenIsoZoomHeight, minZoomHeight, maxZoomHeight);
-        _fullscreenIsoTargetOrthographicSize = Mathf.Clamp(fullscreenIsoOrthographicSize, 8f, 48f);
-        if (TryGetDefaultEntityManager(out EntityManager em))
-        {
-            _rtsCameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
-            _rtsCameraRequestSystem.QueueApplyFullscreenIsoModeInstant(em, _fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
-            ProcessCameraRequests(em);
-        }
-
-        _runtimeGameplayStateSystem.FullscreenMapIsoMode = true;
-        _runtimeGameplayStateSystem.FullscreenMapOpen = true;
-        _cameraDragging = false;
+        _rtsSelectionRuntimeCameraSystem.EnterFullscreenMapIsoMode(CreateRuntimeCameraContext(), focusWorldPosition);
     }
 
     public void ExitFullscreenMapIsoMode()
     {
-        if (worldCamera != null)
-        {
-            if (TryGetDefaultEntityManager(out EntityManager em))
-            {
-                _rtsCameraRequestSystem.QueueApplyPerspectiveModeInstant(em, normalModeZoomHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
-                ProcessCameraRequests(em);
-            }
-        }
-
-        _runtimeGameplayStateSystem.FullscreenMapIsoMode = false;
-        _cameraDragging = false;
+        _rtsSelectionRuntimeCameraSystem.ExitFullscreenMapIsoMode(CreateRuntimeCameraContext());
     }
 
     public bool IsNormalIsoModeActive => _rtsCameraSystem.NormalIsoModeActive;
 
     public void ToggleNormalIsoMode()
     {
-        if (_rtsCameraSystem.NormalIsoModeActive)
-            ExitNormalIsoMode();
-        else
-            EnterNormalIsoMode();
+        _rtsSelectionRuntimeCameraSystem.ToggleNormalIsoMode(CreateRuntimeCameraContext());
     }
 
     public void EnterNormalIsoMode()
     {
-        if (worldCamera == null)
-            return;
-
-        Vector3 focusWorldPosition = _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera);
-        float currentGroundSpan = _rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera);
-        float currentHeight = Mathf.Clamp(worldCamera.transform.position.y, minZoomHeight, maxZoomHeight);
-        _fullscreenIsoTargetHeight = currentHeight;
-        _fullscreenIsoTargetOrthographicSize = Mathf.Clamp(
-            _rtsCameraSystem.CalculateOrthographicSizeForGroundSpan(
-                worldCamera,
-                currentGroundSpan,
-                _fullscreenIsoTargetHeight,
-                fullscreenIsoPitch,
-                fullscreenIsoYaw,
-                fullscreenIsoOrthographicSize),
-            8f,
-            48f);
-        if (TryGetDefaultEntityManager(out EntityManager em))
-        {
-            _rtsCameraRequestSystem.QueueApplyFullscreenIsoModeInstant(em, _fullscreenIsoTargetHeight, _fullscreenIsoTargetOrthographicSize, fullscreenIsoPitch, fullscreenIsoYaw);
-            _rtsCameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
-            _rtsCameraRequestSystem.QueueSetNormalIsoModeActive(em, true);
-            ProcessCameraRequests(em);
-        }
-
-        _cameraDragging = false;
+        _rtsSelectionRuntimeCameraSystem.EnterNormalIsoMode(CreateRuntimeCameraContext());
     }
 
     public void ExitNormalIsoMode()
     {
-        Vector3 focusWorldPosition = worldCamera != null ? _rtsCameraSystem.GetCameraGroundCenterWorld(worldCamera) : Vector3.zero;
-        if (worldCamera != null)
-        {
-            float currentGroundSpan = _rtsCameraSystem.GetVisibleGroundVerticalSpan(worldCamera);
-            float targetHeight = _rtsCameraSystem.CalculatePerspectiveHeightForGroundSpan(
-                worldCamera,
-                currentGroundSpan,
-                normalModePitch,
-                normalModeYaw,
-                normalModeFieldOfView,
-                minZoomHeight,
-                maxZoomHeight,
-                normalModeZoomHeight);
-            if (TryGetDefaultEntityManager(out EntityManager em))
-            {
-                _rtsCameraRequestSystem.QueueApplyPerspectiveModeInstant(em, targetHeight, normalModePitch, normalModeYaw, normalModeFieldOfView);
-                _rtsCameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
-                ProcessCameraRequests(em);
-            }
-        }
-
-        SetCameraNormalIsoModeActive(false);
-        _cameraDragging = false;
+        _rtsSelectionRuntimeCameraSystem.ExitNormalIsoMode(CreateRuntimeCameraContext());
     }
 
     public void MoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
-        ProcessCameraRequests(em);
+        _rtsSelectionRuntimeCameraSystem.MoveCameraGroundCenterTo(CreateRuntimeCameraContext(), focusWorldPosition);
     }
 
     public void SmoothMoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (worldCamera == null)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetSmoothFocusTarget(em, focusWorldPosition, resetVelocity: true);
-        _rtsCameraRequestSystem.QueueClearDragging(em);
-        ProcessCameraRequests(em);
+        _rtsSelectionRuntimeCameraSystem.SmoothMoveCameraGroundCenterTo(CreateRuntimeCameraContext(), focusWorldPosition);
     }
 
     public void FollowCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        if (worldCamera == null)
-            return;
-
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _rtsCameraRequestSystem.QueueSetSmoothFocusTarget(em, focusWorldPosition, resetVelocity: false);
-        _rtsCameraRequestSystem.QueueClearDragging(em);
-        ProcessCameraRequests(em);
+        _rtsSelectionRuntimeCameraSystem.FollowCameraGroundCenterTo(CreateRuntimeCameraContext(), focusWorldPosition);
     }
 
     private void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
@@ -1849,32 +1151,12 @@ public sealed class RTSSelectionSystem
 
     public void ClearFocusedUnit()
     {
-        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
-        _explicitAttackTargetModeActive = false;
-        ClearHudSelection();
-        ClearHudCommandMode();
-        SetHudWorldMarkersVisible(false);
+        _rtsSelectionFocusCommandSystem.ClearFocusedUnit(CreateFocusCommandContext());
     }
 
     public void DeselectAllUnits(string reason = "DeselectAllUnits")
     {
-        if (World.DefaultGameObjectInjectionWorld == null)
-        {
-            _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
-            _explicitAttackTargetModeActive = false;
-            ClearHudSelection();
-            ClearHudCommandMode();
-            SetHudWorldMarkersVisible(false);
-            return;
-        }
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        ClearCurrentSelection(em, reason);
-        _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
-        _explicitAttackTargetModeActive = false;
-        ClearHudSelection();
-        ClearHudCommandMode();
-        SetHudWorldMarkersVisible(false);
+        _rtsSelectionFocusCommandSystem.DeselectAllUnits(CreateFocusCommandContext(), reason);
     }
 
     public void SelectAllVisiblePlayerUnits()
@@ -1894,66 +1176,17 @@ public sealed class RTSSelectionSystem
 
     private void SelectAllVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter filter)
     {
-        if (worldCamera == null)
-        {
-            LogSelectionDiagnostic($"result=SelectAllSkipped reason=NoCamera filter={filter}");
-            return;
-        }
-
-        QueueSelectionRectangleRequest(
-            new Rect(0f, 0f, Screen.width, Screen.height),
-            RtsSelectionPointerRequestKind.SelectionRectCommitted,
-            filter);
-        ProcessSelectionRectangleRequests();
-        _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = false;
-        _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = false;
-        _cameraDragging = false;
+        _rtsSelectionFocusCommandSystem.SelectAllVisiblePlayerUnits(CreateFocusCommandContext(), filter);
     }
 
     public bool FocusUnitEntity(Entity entity)
     {
-        if (entity == Entity.Null || World.DefaultGameObjectInjectionWorld == null)
-            return false;
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        if (!_focusedUnitLifecycleSystem.FocusUnitEntity(
-                em,
-                entity,
-                _selectionStateSystem,
-                _unitTargetOrderSystem,
-                "FocusUnitEntity",
-                "FocusUnitEntity",
-                LogSelectionDiagnostic,
-                DescribeTransportBoardingEntity,
-                ClearHudSelection,
-                ApplyHudSelection))
-        {
-            return false;
-        }
-
-        _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
-        _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = true;
-        _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-        _cameraDragging = false;
-        return true;
+        return _rtsSelectionFocusCommandSystem.FocusUnitEntity(CreateFocusCommandContext(), entity);
     }
 
     public TacticalCommandResult TrySelectRuntimeEntity(Entity entity)
     {
-        TacticalCommandResult result = ValidateControllableEntity(entity);
-        if (!result.Accepted)
-        {
-            ApplyHudCommandResult(result);
-            return result;
-        }
-
-        result = FocusUnitEntity(entity)
-            ? TacticalCommandResult.Success()
-            : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-        ApplyHudCommandResult(result);
-        return result;
+        return _rtsSelectionFocusCommandSystem.TrySelectRuntimeEntity(CreateFocusCommandContext(), entity);
     }
 
     public TacticalCommandResult TryIssueMoveToCell(int2 goal)
@@ -2008,7 +1241,7 @@ public sealed class RTSSelectionSystem
         if (result.Accepted)
         {
             _explicitAttackTargetModeActive = false;
-            _cameraDragging = false;
+            SetCameraDragging(false);
             SetHudWorldMarkersVisible(true);
             ClearHudCommandMode();
         }
@@ -2068,7 +1301,7 @@ public sealed class RTSSelectionSystem
     {
         LogSelectionDiagnostic("result=CaptureUiClickSequence");
         _rtsSelectionInputSystem.CaptureUiClickSequence();
-        _cameraDragging = false;
+        SetCameraDragging(false);
     }
 
     public void DestroyFocusedUnit()
@@ -2113,7 +1346,7 @@ public sealed class RTSSelectionSystem
         ClearCurrentSelection(em, "MissileLauncherRadarAttack");
         _focusedUnitLifecycleSystem.SetFocusedUnit(_selectionStateSystem, launcher);
         _explicitAttackTargetModeActive = false;
-        _cameraDragging = false;
+        SetCameraDragging(false);
         ApplyHudCommandResult(TacticalCommandResult.Success());
         ClearHudCommandMode();
         SetHudWorldMarkersVisible(true);
@@ -2136,7 +1369,7 @@ public sealed class RTSSelectionSystem
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _rtsSelectionInputSystem.IsDraggingSelection = false;
-        _cameraDragging = false;
+        SetCameraDragging(false);
         _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = true;
         return true;
     }
@@ -2179,7 +1412,7 @@ public sealed class RTSSelectionSystem
         }
 
         _explicitAttackTargetModeActive = false;
-        _cameraDragging = false;
+        SetCameraDragging(false);
         SetHudWorldMarkersVisible(false);
         ApplyHudCommandResult(TacticalCommandResult.Success());
         return true;
@@ -2197,62 +1430,20 @@ public sealed class RTSSelectionSystem
 
     private bool TryFocusUnit(Vector2 screenPosition)
     {
-        if (World.DefaultGameObjectInjectionWorld == null)
-            return false;
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        if (!_focusedUnitLifecycleSystem.TryFocusUnit(
-                em,
-                screenPosition,
-                _selectionStateSystem,
-                _unitTargetOrderSystem,
-                TryGetClickedUnitEntity,
-                "TryFocusUnit",
-                "TryFocusUnit",
-                LogSelectionDiagnostic,
-                DescribeTransportBoardingEntity,
-                ClearHudSelection,
-                ApplyHudSelection,
-                out _))
-        {
-            return false;
-        }
-
-        _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
-        _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = true;
-        _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-        _cameraDragging = false;
-        return true;
+        return _rtsSelectionPointerTargetCommandSystem.TryFocusUnit(CreatePointerTargetCommandContext(), screenPosition);
     }
 
     private bool TryIssueAttackOrderToClickedUnit(Vector2 screenPosition)
     {
-        if (!_rtsSelectionInputSystem.QueueAttackCommandRequest(
-                screenPosition,
-                _explicitAttackTargetModeActive,
-                Time.frameCount))
-        {
-            if (_explicitAttackTargetModeActive)
-                ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
-            return false;
-        }
-
-        return ProcessAttackCommandRequests();
+        return _rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
     }
 
     private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
-        bestEntity = Entity.Null;
-        if (!TryGetClickedCell(screenPosition, em, out var clickedCell, out _))
-            return false;
-
-        return _focusableUnitLookupSystem.TryGetClickedUnitEntity(
-            em,
-            worldCamera,
-            clickedCell,
+        return _rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
+            CreatePointerTargetCommandContext(),
             screenPosition,
+            em,
             out bestEntity);
     }
 

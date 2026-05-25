@@ -1,0 +1,252 @@
+using System;
+using Unity.Entities;
+using Unity.Mathematics;
+using UnityEngine;
+
+public sealed class RtsSelectionPointerTargetCommandSystem
+{
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
+    public delegate bool TryGetPointerPositionDelegate(out Vector2 pointerPosition);
+
+    public readonly struct Context
+    {
+        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public readonly RtsSelectionInputSystem InputSystem;
+        public readonly SelectionStateSystem SelectionStateSystem;
+        public readonly FocusedUnitLifecycleSystem FocusedUnitLifecycleSystem;
+        public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
+        public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
+        public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
+        public readonly UnitTransportBoardingSystem UnitTransportBoardingSystem;
+        public readonly BuildingTargetMoveOrderSystem BuildingTargetMoveOrderSystem;
+        public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
+        public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
+        public readonly Camera WorldCamera;
+        public readonly TryGetEntityManagerDelegate TryGetEntityManager;
+        public readonly TryGetPointerPositionDelegate TryGetPointerPosition;
+        public readonly Func<bool> GetExplicitAttackTargetModeActive;
+        public readonly Action<bool> SetExplicitAttackTargetModeActive;
+        public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
+        public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
+        public readonly Action ClearHudSelection;
+        public readonly Action ClearHudCommandMode;
+        public readonly Action<EntityManager, Entity> ApplyHudSelection;
+        public readonly Action<EntityManager, string> ClearCurrentSelection;
+        public readonly Action<Vector2> RequestMoveOrderScreenMarker;
+        public readonly Action<bool> SetCameraDragging;
+        public readonly Func<bool> ProcessAttackCommandRequests;
+        public readonly Func<bool> ProcessTransportCommandRequests;
+        public readonly Action ProcessMoveCommandRequests;
+        public readonly Action<string> LogSelectionDiagnostic;
+        public readonly FocusedUnitLifecycleSystem.DescribeEntityDelegate DescribeEntity;
+
+        public Context(
+            RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+            RtsSelectionInputSystem inputSystem,
+            SelectionStateSystem selectionStateSystem,
+            FocusedUnitLifecycleSystem focusedUnitLifecycleSystem,
+            UnitTargetOrderSystem unitTargetOrderSystem,
+            FocusableUnitLookupSystem focusableUnitLookupSystem,
+            TransportBoardingCommandSystem transportBoardingCommandSystem,
+            UnitTransportBoardingSystem unitTransportBoardingSystem,
+            BuildingTargetMoveOrderSystem buildingTargetMoveOrderSystem,
+            BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+            BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+            Camera worldCamera,
+            TryGetEntityManagerDelegate tryGetEntityManager,
+            TryGetPointerPositionDelegate tryGetPointerPosition,
+            Func<bool> getExplicitAttackTargetModeActive,
+            Action<bool> setExplicitAttackTargetModeActive,
+            Action<TacticalCommandMode> applyHudCommandMode,
+            Action<TacticalCommandResult> applyHudCommandResult,
+            Action clearHudSelection,
+            Action clearHudCommandMode,
+            Action<EntityManager, Entity> applyHudSelection,
+            Action<EntityManager, string> clearCurrentSelection,
+            Action<Vector2> requestMoveOrderScreenMarker,
+            Action<bool> setCameraDragging,
+            Func<bool> processAttackCommandRequests,
+            Func<bool> processTransportCommandRequests,
+            Action processMoveCommandRequests,
+            Action<string> logSelectionDiagnostic,
+            FocusedUnitLifecycleSystem.DescribeEntityDelegate describeEntity)
+        {
+            RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
+            InputSystem = inputSystem;
+            SelectionStateSystem = selectionStateSystem;
+            FocusedUnitLifecycleSystem = focusedUnitLifecycleSystem;
+            UnitTargetOrderSystem = unitTargetOrderSystem;
+            FocusableUnitLookupSystem = focusableUnitLookupSystem;
+            TransportBoardingCommandSystem = transportBoardingCommandSystem;
+            UnitTransportBoardingSystem = unitTransportBoardingSystem;
+            BuildingTargetMoveOrderSystem = buildingTargetMoveOrderSystem;
+            BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
+            BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
+            WorldCamera = worldCamera;
+            TryGetEntityManager = tryGetEntityManager;
+            TryGetPointerPosition = tryGetPointerPosition;
+            GetExplicitAttackTargetModeActive = getExplicitAttackTargetModeActive;
+            SetExplicitAttackTargetModeActive = setExplicitAttackTargetModeActive;
+            ApplyHudCommandMode = applyHudCommandMode;
+            ApplyHudCommandResult = applyHudCommandResult;
+            ClearHudSelection = clearHudSelection;
+            ClearHudCommandMode = clearHudCommandMode;
+            ApplyHudSelection = applyHudSelection;
+            ClearCurrentSelection = clearCurrentSelection;
+            RequestMoveOrderScreenMarker = requestMoveOrderScreenMarker;
+            SetCameraDragging = setCameraDragging;
+            ProcessAttackCommandRequests = processAttackCommandRequests;
+            ProcessTransportCommandRequests = processTransportCommandRequests;
+            ProcessMoveCommandRequests = processMoveCommandRequests;
+            LogSelectionDiagnostic = logSelectionDiagnostic;
+            DescribeEntity = describeEntity;
+        }
+    }
+
+    private World _queryWorld;
+    private EntityQuery _gridConfigQuery;
+
+    public void IssueMoveOrder(Context context, Vector2 screenPosition)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
+
+        if (!context.InputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount))
+        {
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            context.ClearHudCommandMode?.Invoke();
+            return;
+        }
+
+        context.ProcessMoveCommandRequests?.Invoke();
+    }
+
+    public bool TryIssueAttackOrderToClickedUnit(Context context, Vector2 screenPosition)
+    {
+        bool explicitAttackTargetModeActive = context.GetExplicitAttackTargetModeActive?.Invoke() == true;
+        if (!context.InputSystem.QueueAttackCommandRequest(
+                screenPosition,
+                explicitAttackTargetModeActive,
+                Time.frameCount))
+        {
+            if (explicitAttackTargetModeActive)
+                context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            return false;
+        }
+
+        return context.ProcessAttackCommandRequests?.Invoke() == true;
+    }
+
+    public bool TryIssueBoardTransportOrderToClickedUnit(Context context, Vector2 screenPosition)
+    {
+        if (!context.InputSystem.QueueBoardTransportCommandRequest(screenPosition, Time.frameCount))
+            return false;
+
+        return context.ProcessTransportCommandRequests?.Invoke() == true;
+    }
+
+    public bool IsBoardablePlayerTransportClick(Context context, Vector2 screenPosition)
+    {
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        return context.TransportBoardingCommandSystem.IsBoardablePlayerTransportClick(
+            em,
+            screenPosition,
+            context.UnitTransportBoardingSystem,
+            (Vector2 position, EntityManager entityManager, out Entity entity) => TryGetClickedUnitEntity(context, position, entityManager, out entity),
+            (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => TryGetClickedCell(context, position, entityManager, out cell, out worldPoint));
+    }
+
+    public bool TryIssueMoveOrderToBuilding(Context context, Vector2Int originCell, Vector2Int footprintCells)
+    {
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        bool issued = context.BuildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding(em, originCell, footprintCells);
+        if (!issued)
+            return false;
+
+        context.ClearCurrentSelection?.Invoke(em, "MoveOrderToBuilding");
+        context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
+        if (context.TryGetPointerPosition(out Vector2 markerScreenPosition))
+            context.RequestMoveOrderScreenMarker?.Invoke(markerScreenPosition);
+        return true;
+    }
+
+    public bool TryFocusUnit(Context context, Vector2 screenPosition)
+    {
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        if (!context.FocusedUnitLifecycleSystem.TryFocusUnit(
+                em,
+                screenPosition,
+                context.SelectionStateSystem,
+                context.UnitTargetOrderSystem,
+                (Vector2 position, EntityManager entityManager, out Entity entity) => TryGetClickedUnitEntity(context, position, entityManager, out entity),
+                "TryFocusUnit",
+                "TryFocusUnit",
+                context.LogSelectionDiagnostic,
+                context.DescribeEntity,
+                context.ClearHudSelection,
+                context.ApplyHudSelection,
+                out _))
+        {
+            return false;
+        }
+
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetCameraDragging?.Invoke(false);
+        return true;
+    }
+
+    public bool TryGetClickedUnitEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
+    {
+        bestEntity = Entity.Null;
+        if (!TryGetClickedCell(context, screenPosition, em, out int2 clickedCell, out _))
+            return false;
+
+        return context.FocusableUnitLookupSystem.TryGetClickedUnitEntity(
+            em,
+            context.WorldCamera,
+            clickedCell,
+            screenPosition,
+            out bestEntity);
+    }
+
+    public bool TryGetClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        cell = default;
+        worldPoint = default;
+        if (context.WorldCamera == null)
+            return false;
+
+        EnsureEntityQueries(em);
+        if (_gridConfigQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
+        Ray ray = context.WorldCamera.ScreenPointToRay(screenPosition);
+        Plane plane = new(Vector3.up, new Vector3(0f, grid.Origin.y, 0f));
+        if (!plane.Raycast(ray, out float distance))
+            return false;
+
+        worldPoint = ray.GetPoint(distance);
+        cell = GridUtils.WorldToCell(grid, worldPoint);
+        return GridUtils.InBounds(cell, grid.Width, grid.Height);
+    }
+
+    private void EnsureEntityQueries(EntityManager em)
+    {
+        World world = em.World;
+        if (_queryWorld == world && world != null && world.IsCreated)
+            return;
+
+        _queryWorld = world;
+        _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+    }
+}

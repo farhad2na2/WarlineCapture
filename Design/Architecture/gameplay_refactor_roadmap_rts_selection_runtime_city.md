@@ -201,23 +201,23 @@ Goal: finish deleting `RTSSelectionSystem.cs` without replacing it with another 
    - Move queued move-order consumption, normal pointer press/hold/release branching, UI click suppression, selection-hold triggering, live rectangle diffing, and rectangle request queueing into `RtsSelectionRuntimeInputSystem`.
    - Keep `RTSSelectionSystem` as a temporary context builder/delegate only for this input slice.
 
-3. Pending: Extract camera runtime tick
+3. Complete: Extract camera runtime tick
    - Move remaining camera update branches, build/fullscreen pan handling, smooth focus updates, pointer-driven camera drag state, and camera request flushing out of `RTSSelectionSystem`.
    - Keep camera mutations routed through ECS camera request/state systems, not direct shell methods.
 
-4. Pending: Extract command result and marker flush tick
+4. Complete: Extract command result and marker flush tick
    - Move move/attack/transport command result draining, HUD feedback forwarding, screen-marker emission, and world-marker visibility forwarding out of `RTSSelectionSystem`.
    - Result consumers must use ECS buffers/read models and narrow shell-edge systems.
 
-5. Pending: Extract remaining focus and selection compatibility commands
+5. Complete: Extract remaining focus and selection compatibility commands
    - Move public focus/clear/select-all/select-filter command entry points to ECS command/request systems or existing selection boundaries.
    - `RTSSelectionSystem` must stop owning selected/focused command branching.
 
-6. Pending: Extract remaining pointer target command dispatch
+6. Complete: Extract remaining pointer target command dispatch
    - Move clicked attack, clicked transport boarding, clicked focus, and clicked building/target command dispatch into ECS request processors or existing narrow command systems.
    - Pointer systems may enqueue intent data, but gameplay command decisions must not live in the shell.
 
-7. Pending: Migrate remaining production callers and startup wiring
+7. Complete: Migrate remaining production callers and startup wiring
    - Remove any production code that constructs, stores, or calls `RTSSelectionSystem`.
    - `ManagedGameplayStartupSystem`, `SelectionGameplayStartupSystem`, `GameBootstrap`, `GameplayRuntimeUpdateSystem`, and menu bindings must use ECS boundaries/delegates that do not expose the shell type.
 

@@ -47,7 +47,7 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         FactionVisualSettings factionVisuals)
     {
-        var selection = new RTSSelectionSystem();
+        var selection = new SelectionRuntimeUpdateSystem();
         var selectionUiCommand = new SelectionUiCommandSystem();
         var selectionUiReadModel = new SelectionUiReadModelSystem();
         var rtsCamera = new RtsCameraSystem();

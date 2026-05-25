@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
 using TMPro;
@@ -345,10 +346,14 @@ public sealed class BattleHudGameplayBridgeConnectionTests
             return;
         }
 
-        for (int i = 0; i < requests.Length;)
+        var pendingKinds = new List<RtsSelectionCommandIntentKind>(requests.Length);
+        for (int i = 0; i < requests.Length; i++)
+            pendingKinds.Add(requests[i].Kind);
+
+        requests.Clear();
+
+        foreach (RtsSelectionCommandIntentKind kind in pendingKinds)
         {
-            RtsSelectionCommandIntentKind kind = requests[i].Kind;
-            requests.RemoveAt(i);
             if (kind == RtsSelectionCommandIntentKind.HoldPosition)
                 IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Hold);
             else if (kind == RtsSelectionCommandIntentKind.Stop)

@@ -222,14 +222,14 @@ Goal: finish deleting the legacy `RTSSelectionSystem` source/type without replac
    - `ManagedGameplayStartupSystem`, `SelectionGameplayStartupSystem`, `GameBootstrap`, `GameplayRuntimeUpdateSystem`, and menu bindings must use ECS boundaries/delegates that do not expose the shell type.
 
 8. Complete: Migrate tests and architecture audit references
-   - Moved architecture/test reads off the deleted `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` artifact and onto the owning ECS systems/read models or the temporary `SelectionRuntimeContextSystem` runtime shell where that debt still exists.
+   - Moved architecture/test reads off the deleted `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` artifact and onto the owning ECS systems/read models.
    - Added a contract guard that the retired source artifact and `public sealed class RTSSelectionSystem` type must not be restored.
 
 9. Complete: Delete the shell and remove debt allowances
    - Removed the architecture allowance that described `RTSSelectionSystem` as temporary compatibility debt; it is now a hard retired source/type that must not be restored.
    - Deleted `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs` and replaced the hidden monolithic `Update()` shell with explicit startup-composed runtime phases.
-   - `SelectionRuntimeContextSystem` remains as temporary context-construction debt only; it must not expose `Update()` or become another managed orchestration shell.
-   - Next substep: continue moving context construction from `SelectionRuntimeContextSystem` into the owning narrow systems, then delete `SelectionRuntimeContextSystem.cs` and its `.meta`.
+   - `SelectionRuntimeContextSystem` has been retired and must not be reintroduced.
+   - Next substep: keep selection startup composed from owning narrow systems and remove any remaining test/contract allowances that referred to the old context shell.
 
 10. Pending: Final validation gate
     - Run architecture tests, focused selection/command tests, menu/bootstrap smoke, and a focused runtime load/play validation.
@@ -285,13 +285,19 @@ Goal: delete the remaining selection context-construction boundary without repla
     - Focused-unit labels, health/capacity/status, transport passenger rows, selected-unit read lists, and visible-unit read helpers now stay behind `SelectionUiReadModelSystem` and ECS read-model data.
     - Remaining production dependency on `SelectionRuntimeContextSystem` is runtime context construction/update composition only; that is the deletion target for step 12.
 
-12. Pending: Delete context file
-    - Delete `Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs` and `.meta`.
-    - `SelectionGameplayStartupSystem` must no longer construct `SelectionRuntimeContextSystem`.
+12. Complete: Delete context file
+    - Deleted `Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs` and `.meta`.
+    - `SelectionGameplayStartupSystem` now composes the runtime selection phases directly from the narrow ECS/UI boundary systems instead of constructing `SelectionRuntimeContextSystem`.
 
-13. Pending: Remove debt allowances
-    - Replace “temporary context-construction debt” wording with a hard rule: `SelectionRuntimeContextSystem` must not exist.
-    - Remove tests that inspect the context file and replace them with tests on owning systems.
+13. Complete: Remove debt allowances
+    - Replaced old allowance wording with a hard rule: `SelectionRuntimeContextSystem` must not exist.
+    - Removed tests that inspected the deleted context file and replaced them with deletion guards plus owning-system checks.
 
-14. Pending: Validation gate
-    - Run architecture tests, focused selection command tests, Unity compile/domain reload, and a runtime load/play smoke covering selection, camera, building click, and unit commands.
+14. Complete: Validation gate
+    - Local static validation passed: `git diff --check` is clean.
+    - Local deletion validation passed: `SelectionRuntimeContextSystem` only appears in architecture docs/tests as a hard deletion rule.
+    - Unity compile/domain reload passed: `/Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture -logFile /private/tmp/warlinecapture-step14-main-compile.log`.
+    - Architecture tests passed: `GameplayArchitectureContractTests` (`95/95`).
+    - Focused selection command tests passed: `RtsSelectionInputSystemTests` (`5/5`) and `BattleHudGameplayBridgeConnectionTests` (`7/7`).
+    - Bootstrap/menu playmode smoke passed: `BootstrapAndMenuPlayModeTests` (`7/7`).
+    - Additional transport scene smoke was investigated separately: `GameSceneTransportBoardingPlayModeTests` currently fails because the loaded `Game` scene does not spawn the expected `Unit_Veh_Helicopter_Transport`; this is transport/base-spawn scene debt, not a `SelectionRuntimeContextSystem` deletion failure.

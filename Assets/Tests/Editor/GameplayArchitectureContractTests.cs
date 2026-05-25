@@ -182,7 +182,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`BuildingUiCommandSystem` must not own read-model query delegates, query context construction, or pending-production UI list retrieval", contract);
         StringAssert.Contains("`MenuStartupSystem` must receive `BuildingUiCommandSystem`, `BuildingUiQuerySystem`, `BuildingPlacementInteractionSystem`, and their contexts from managed composition", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose public building UI read/query or menu/camp command compatibility wrappers", contract);
-        StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
+        StringAssert.Contains("RoadBuildSystem and selection gameplay startup/building peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`", contract);
         StringAssert.Contains("focus command context construction belongs in `RtsSelectionFocusCommandContextSystem`", contract);
         StringAssert.Contains("pointer-target context construction belongs in `RtsSelectionPointerTargetCommandContextSystem`", contract);
@@ -863,7 +863,6 @@ public sealed class GameplayArchitectureContractTests
             "new FactionVisualSettings()",
             "new RoadBuildSystem()",
             "new BuildingPlacementSystem()",
-            "new SelectionRuntimeContextSystem()",
             "new UnitAttackTraceSystem()",
             "new UnitImpostorRenderSystem()",
             "new CitizenPopulationSystem()",
@@ -885,14 +884,13 @@ public sealed class GameplayArchitectureContractTests
             if (token == "new BuildingPlacementSystem()")
                 Assert.IsFalse(buildingComposition.Contains(token, StringComparison.Ordinal),
                     "BuildingGameplayCompositionSystem must construct BuildingGameplaySystem, not the legacy BuildingPlacementSystem facade.");
-            else if (token == "new SelectionRuntimeContextSystem()")
-                Assert.IsFalse(startup.Contains(token, StringComparison.Ordinal),
-                    "ManagedGameplayStartupSystem must delegate temporary selection runtime construction to SelectionGameplayStartupSystem.");
             else if (token == "new CitizenPopulationSystem()")
                 StringAssert.Contains(token, buildingComposition);
             else
                 StringAssert.Contains(token, startup);
         }
+        Assert.IsFalse(startup.Contains("SelectionRuntimeContextSystem", StringComparison.Ordinal),
+            "ManagedGameplayStartupSystem must not construct or reference the retired selection context.");
         StringAssert.Contains("new BuildingGameplaySystem()", buildingComposition);
         StringAssert.Contains("BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem", startup);
         StringAssert.Contains("_buildingGameplayCompositionSystem.Initialize", startup);
@@ -1271,15 +1269,8 @@ public sealed class GameplayArchitectureContractTests
             StringAssert.Contains("TransportBoardingDiagnosticLogComponent", code);
             StringAssert.Contains("EnqueueTransportBoardingDiagnostic", code);
         }
-
-        string selectionRuntimeContext = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs");
-        StringAssert.Contains("SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem", selectionRuntimeContext);
-        StringAssert.Contains("_selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic", selectionRuntimeContext);
-        Assert.IsFalse(
-            selectionRuntimeContext.Contains("RuntimeDiagnosticsStateComponent", StringComparison.Ordinal) ||
-            selectionRuntimeContext.Contains("TransportBoardingDiagnosticLogComponent", StringComparison.Ordinal) ||
-            selectionRuntimeContext.Contains("EnqueueTransportBoardingDiagnostic", StringComparison.Ordinal),
-            "SelectionRuntimeContextSystem must delegate diagnostic state/queue ownership to SelectionRuntimeDiagnosticsSystem.");
+        Assert.IsFalse(File.Exists("Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"),
+            "SelectionRuntimeContextSystem is retired and must not be reintroduced for diagnostics.");
     }
 
     [Test]
@@ -1478,7 +1469,7 @@ public sealed class GameplayArchitectureContractTests
         string[] files =
         {
             "Assets/Game/Scripts/Systems/RoadBuildSystem.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"
+            "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
         };
 
         string[] violations = files
@@ -1498,7 +1489,7 @@ public sealed class GameplayArchitectureContractTests
         string[] runtimeSystemFiles =
         {
             "Assets/Game/Scripts/Systems/RoadBuildSystem.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"
+            "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs"
         };
 
         string[] legacyUiFiles =
@@ -1530,7 +1521,7 @@ public sealed class GameplayArchitectureContractTests
         const string interactionContextFile = "Assets/Game/Scripts/Systems/BuildingPlacementInteractionContextSystem.cs";
         const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string roadFile = "Assets/Game/Scripts/Systems/RoadBuildSystem.cs";
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
+        const string selectionStartupFile = "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs";
         const string runtimeCreationFile = "Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs";
         const string runtimeLinkFile = "Assets/Game/Scripts/UI/RuntimeBuildingEntityLink.cs";
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
@@ -1544,7 +1535,7 @@ public sealed class GameplayArchitectureContractTests
         string interactionContext = File.ReadAllText(interactionContextFile);
         string placement = File.ReadAllText(placementFile);
         string road = File.ReadAllText(roadFile);
-        string selection = File.ReadAllText(selectionFile);
+        string selectionStartup = File.ReadAllText(selectionStartupFile);
         string runtimeCreation = File.ReadAllText(runtimeCreationFile);
         string runtimeLink = File.ReadAllText(runtimeLinkFile);
         string mainMenuPlay = File.ReadAllText(mainMenuPlayFile);
@@ -1554,7 +1545,7 @@ public sealed class GameplayArchitectureContractTests
         string menuStartup = File.ReadAllText(menuStartupFile);
 
         StringAssert.Contains("BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem", road);
-        StringAssert.Contains("BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem", selection);
+        StringAssert.Contains("BuildingPlacementInteractionSystem buildingPlacementInteractionSystem", selectionStartup);
         StringAssert.Contains("BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem", placement);
         StringAssert.Contains("BuildingPlacementInteractionContextSystem _buildingPlacementInteractionContextSystem", placement);
         StringAssert.Contains("CreateBuildingPlacementInteractionContext", placement);
@@ -1575,9 +1566,9 @@ public sealed class GameplayArchitectureContractTests
             road.Contains("_buildingPlacementController", StringComparison.Ordinal),
             "RoadBuildSystem must use BuildingPlacementInteractionSystem instead of holding or calling BuildingPlacementSystem.");
         Assert.IsFalse(
-            selection.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
-            selection.Contains("_buildingPlacementController", StringComparison.Ordinal),
-            "RTSSelectionSystem must use BuildingPlacementInteractionSystem instead of holding or calling BuildingPlacementSystem.");
+            selectionStartup.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            selectionStartup.Contains("_buildingPlacementController", StringComparison.Ordinal),
+            "Selection gameplay startup must use BuildingPlacementInteractionSystem instead of holding or calling BuildingPlacementSystem.");
         Assert.IsFalse(
             runtimeCreation.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
             runtimeLink.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
@@ -2067,7 +2058,7 @@ public sealed class GameplayArchitectureContractTests
     {
         string[] files =
         {
-            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs",
+            "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs",
             "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs"
         };
 
@@ -2131,1063 +2122,84 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void RtsSelectionSystemMustDelegateSelectionStateSlice()
+    public void SelectionRuntimeContextSystemMustStayDeleted()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string stateFile = "Assets/Game/Scripts/Systems/SelectionStateSystem.cs";
-        Assert.IsTrue(File.Exists(stateFile), "The RTS selection state slice must live in SelectionStateSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        StringAssert.Contains("SelectionStateSystem _selectionStateSystem", selection);
-        StringAssert.Contains("_selectionStateSystem.CacheSelectedMoveEntities", selection);
-        StringAssert.Contains("_selectionStateSystem.CacheSelectedMoveEntity", selection);
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"readonly\s+List<Entity>\s+_cachedSelectedMoveEntities\s*=\s*new\s*\("),
-            "Selected move cache ownership belongs in SelectionStateSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bEntity\s+_focusedUnit\s*;"),
-            "Focused unit state ownership belongs in SelectionStateSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionInputRequestsMustBeEcsDataComponents()
-    {
-        const string requestFile = "Assets/Game/Scripts/Components/SelectionInputRequestComponents.cs";
-        Assert.IsTrue(File.Exists(requestFile), "No-shell selection migration must start with ECS request components.");
-
-        string requestComponents = File.ReadAllText(requestFile);
-        StringAssert.Contains("RtsSelectionInputRequestQueueComponent : IComponentData", requestComponents);
-        StringAssert.Contains("RtsSelectionPointerRequestElement : IBufferElementData", requestComponents);
-        StringAssert.Contains("RtsSelectionCommandIntentRequestElement : IBufferElementData", requestComponents);
-        StringAssert.Contains("RtsSelectionCommandResultElement : IBufferElementData", requestComponents);
-        StringAssert.Contains("RtsSelectionInputStateComponent : IComponentData", requestComponents);
-        StringAssert.Contains("SelectionFilter", requestComponents);
-        StringAssert.Contains("ExplicitAttackTargetMode", requestComponents);
-        StringAssert.Contains("HasCommandResult", requestComponents);
-        StringAssert.Contains("HasWorldPosition", requestComponents);
-        StringAssert.Contains("MarkerFactionId", requestComponents);
-        StringAssert.Contains("HasTargetCell", requestComponents);
-        StringAssert.Contains("RtsSelectionPointerRequestKind", requestComponents);
-        StringAssert.Contains("Pressed", requestComponents);
-        StringAssert.Contains("Released", requestComponents);
-        StringAssert.Contains("Clicked", requestComponents);
-        StringAssert.Contains("DragUpdated", requestComponents);
-        StringAssert.Contains("CameraDragDelta", requestComponents);
-        StringAssert.Contains("SelectionRectUpdated", requestComponents);
-        StringAssert.Contains("SelectionRectCommitted", requestComponents);
-        StringAssert.Contains("RtsSelectionCommandIntentKind", requestComponents);
-        StringAssert.Contains("Move", requestComponents);
-        StringAssert.Contains("Attack", requestComponents);
-        StringAssert.Contains("BoardTransport", requestComponents);
-        StringAssert.Contains("DisembarkTransport", requestComponents);
-        StringAssert.Contains("DeselectAll", requestComponents);
-        Assert.IsFalse(
-            Regex.IsMatch(requestComponents, @"\bclass\s+RtsSelection") ||
-            requestComponents.Contains("GameObject", StringComparison.Ordinal) ||
-            requestComponents.Contains("MonoBehaviour", StringComparison.Ordinal) ||
-            requestComponents.Contains("UnityEngine.UI", StringComparison.Ordinal),
-            "Selection input requests must stay data-only ECS components/buffers.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateFocusableUnitLookupSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
-        const string pointerTargetContextFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandContextSystem.cs";
-        const string lookupFile = "Assets/Game/Scripts/Systems/FocusableUnitLookupSystem.cs";
-        Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer target command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
-        Assert.IsTrue(File.Exists(pointerTargetContextFile), "Pointer-target command context construction must live outside SelectionRuntimeContextSystem.");
-        Assert.IsTrue(File.Exists(lookupFile), "Clicked-unit focus lookup and cache ownership must live in FocusableUnitLookupSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string pointerTarget = File.ReadAllText(pointerTargetFile);
-        string pointerTargetContext = File.ReadAllText(pointerTargetContextFile);
-        string lookup = File.ReadAllText(lookupFile);
-        StringAssert.Contains("FocusableUnitLookupSystem _focusableUnitLookupSystem", selection);
-        StringAssert.Contains("RtsSelectionPointerTargetCommandContextSystem _rtsSelectionPointerTargetCommandContextSystem", selection);
-        StringAssert.Contains("PointerTargetCommandContext", selection);
-        StringAssert.Contains("new RtsSelectionPointerTargetCommandSystem.Context", pointerTargetContext);
-        StringAssert.Contains("FocusableUnitLookupSystem.TryGetClickedUnitEntity", pointerTarget);
-        StringAssert.Contains("Dictionary<int, List<Entity>> _focusableUnitsByCell", lookup);
-        StringAssert.Contains("SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>())", lookup);
-        StringAssert.Contains("SetChangedVersionFilter(ComponentType.ReadOnly<UnitFootprint>())", lookup);
-        Assert.IsFalse(
-            selection.Contains("_focusableUnitLookupSystem.TryGetClickedUnitEntity", StringComparison.Ordinal) ||
-            selection.Contains("_focusableUnitsByCell", StringComparison.Ordinal) ||
-            selection.Contains("_focusableUnitCoverage", StringComparison.Ordinal) ||
-            selection.Contains("_focusableUnitsQuery", StringComparison.Ordinal),
-            "Focusable unit lookup cache, clicked-unit dispatch, and queries belong in RtsSelectionPointerTargetCommandSystem/FocusableUnitLookupSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+void\s+RefreshFocusableUnitLookup\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+void\s+RebuildFocusableUnitLookup\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsFocusableUnitCandidate\s*\("),
-            "Focusable lookup refresh and candidate policy belong in FocusableUnitLookupSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(selection.Contains("CreatePointerTargetCommandContext", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own pointer-target context construction.");
-        Assert.IsFalse(selection.Contains("new RtsSelectionPointerTargetCommandSystem.Context", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not construct pointer-target contexts directly.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateVisibleSelectionSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string visibleSelectionFile = "Assets/Game/Scripts/Systems/VisibleUnitSelectionSystem.cs";
-        Assert.IsTrue(File.Exists(visibleSelectionFile), "Visible screen selection query/filter ownership must live in VisibleUnitSelectionSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string visibleSelection = File.ReadAllText(visibleSelectionFile);
-        StringAssert.Contains("VisibleUnitSelectionSystem _visibleUnitSelectionSystem", selection);
-        StringAssert.Contains("_visibleUnitSelectionSystem.HasVisiblePlayerUnits", selection);
-        StringAssert.Contains("CollectVisiblePlayerUnits", visibleSelection);
-        StringAssert.Contains("ApplySelectedUnitTags", visibleSelection);
-        StringAssert.Contains("EntityQuery _visiblePlayerUnitQuery", visibleSelection);
-        StringAssert.Contains("IsVisiblePlayerUnit", visibleSelection);
-        Assert.IsFalse(
-            selection.Contains("_selectRectangleQuery", StringComparison.Ordinal) ||
-            selection.Contains("IsVehicleForVisibleSelection(em, entity)", StringComparison.Ordinal),
-            "Visible screen selection queries and vehicle/soldier filter policy belong in VisibleUnitSelectionSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"using\s+var\s+entities\s*=\s+_selectRectangleQuery\.ToEntityArray") ||
-            Regex.IsMatch(selection, @"private\s+enum\s+VisibleUnitSelectionFilter"),
-            "RTSSelectionSystem must not own visible selection entity iteration or filter declarations.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateSelectionRectangleRequestSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string rectangleFile = "Assets/Game/Scripts/Systems/SelectionRectangleRequestSystem.cs";
-        const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
-        const string selectionRectangleViewFile = "Assets/Game/Scripts/UI/Components/SelectionRectangleView.cs";
-        Assert.IsTrue(File.Exists(rectangleFile), "Selection rectangle request processing must live in SelectionRectangleRequestSystem.");
-        Assert.IsTrue(File.Exists(selectionRectangleViewFile), "Selection rectangle GUI drawing must live in SelectionRectangleView.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string rectangle = File.ReadAllText(rectangleFile);
-        string input = File.ReadAllText(inputFile);
-        string selectionRectangleView = File.ReadAllText(selectionRectangleViewFile);
-        StringAssert.Contains("SelectionRectangleRequestSystem _selectionRectangleRequestSystem", selection);
-        StringAssert.Contains("QueueSelectionRectangleRequest", selection);
-        StringAssert.Contains("ProcessSelectionRectangleRequests", selection);
-        StringAssert.Contains("_rtsSelectionInputSystem.QueueSelectionRectangleRequest", selection);
-        StringAssert.Contains("TryGetPointerRequests", selection);
-        StringAssert.Contains("RtsSelectionPointerRequestKind.SelectionRectUpdated", selection);
-        StringAssert.Contains("RtsSelectionPointerRequestKind.SelectionRectCommitted", selection);
-        StringAssert.Contains("SelectionFilter = (byte)filter", input);
-        StringAssert.Contains("CollectVisiblePlayerUnits", rectangle);
-        StringAssert.Contains("ApplySelectedUnitTags", rectangle);
-        StringAssert.Contains("ApplySelectionFocus", rectangle);
-        StringAssert.Contains("result=SelectRectangle", rectangle);
-        StringAssert.Contains("RtsSelectionInputStateSystem _inputStateSystem", selectionRectangleView);
-        StringAssert.Contains("state.HasLiveSelectionRect", selectionRectangleView);
-        StringAssert.Contains("state.LastLiveSelectionRect", selectionRectangleView);
-        StringAssert.Contains("GUI.DrawTexture", selectionRectangleView);
-        Assert.IsFalse(
-            selection.Contains("_visibleUnitSelectionSystem.CollectVisiblePlayerUnits", StringComparison.Ordinal) ||
-            selection.Contains("_visibleUnitSelectionSystem.ApplySelectedUnitTags", StringComparison.Ordinal) ||
-            selection.Contains("result=SelectRectangle", StringComparison.Ordinal),
-            "Rectangle selection mutation belongs in SelectionRectangleRequestSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+void\s+SelectUnitsInRectangle\s*\("),
-            "RTSSelectionSystem must enqueue rectangle selection requests instead of owning SelectUnitsInRectangle.");
-        Assert.IsFalse(
-            selection.Contains("GUI.DrawTexture", StringComparison.Ordinal) ||
-            selection.Contains("selectionFill", StringComparison.Ordinal) ||
-            selection.Contains("selectionBorder", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"\b(public|private)\s+void\s+(OnGui|DrawRect|DrawBorder)\s*\(") ||
-            Regex.IsMatch(selection, @"\bprivate\s+static\s+Rect\s+GetGuiRect\s*\("),
-            "Selection rectangle GUI drawing belongs in SelectionRectangleView, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void SelectionUiCommandButtonsMustUseEcsCommandBoundary()
-    {
-        const string selectionUiCommandFile = "Assets/Game/Scripts/Systems/SelectionUiCommandSystem.cs";
-        const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
-        const string matchControlsFile = "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsController.cs";
-        const string assistantBindingFile = "Assets/Game/Scripts/UI/Screens/AssistantRuntimeBinding.cs";
-        Assert.IsTrue(File.Exists(selectionUiCommandFile), "UI selection command publication must live in SelectionUiCommandSystem.");
-
-        string selectionUiCommand = File.ReadAllText(selectionUiCommandFile);
-        string mainMenuPlay = File.ReadAllText(mainMenuPlayFile);
-        string matchControls = File.ReadAllText(matchControlsFile);
-        string assistantBinding = File.ReadAllText(assistantBindingFile);
-        StringAssert.Contains("RtsSelectionInputSystem _inputSystem", selectionUiCommand);
-        StringAssert.Contains("QueueCommandIntentRequest", selectionUiCommand);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.DeselectAll", selectionUiCommand);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.HoldPosition", selectionUiCommand);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.Stop", selectionUiCommand);
-        StringAssert.Contains("QueueDisembarkTransportCommandRequest", selectionUiCommand);
-        StringAssert.Contains("SelectionUiCommandSystem _selectionUiCommandSystem", mainMenuPlay);
-        StringAssert.Contains("SelectionUiCommandSystem _selectionUiCommandSystem", matchControls);
-        Assert.IsFalse(mainMenuPlay.Contains("RTSSelectionSystem", StringComparison.Ordinal), "MainMenuPlayUI must use SelectionUiCommandSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(matchControls.Contains("RTSSelectionSystem", StringComparison.Ordinal), "MatchOverlayCommandControlsController must use SelectionUiCommandSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(assistantBinding.Contains("RTSSelectionSystem", StringComparison.Ordinal), "AssistantRuntimeBinding must not depend on RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void MenuViewSelectionReadsMustUseEcsReadModelBoundary()
-    {
-        const string selectionUiReadModelFile = "Assets/Game/Scripts/Systems/SelectionUiReadModelSystem.cs";
-        const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
-        Assert.IsTrue(File.Exists(selectionUiReadModelFile), "UI selection read publication must live in SelectionUiReadModelSystem.");
-
-        string selectionUiReadModel = File.ReadAllText(selectionUiReadModelFile);
-        string menuView = File.ReadAllText(menuViewFile);
-        StringAssert.Contains("FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem", selectionUiReadModel);
-        StringAssert.Contains("VisibleUnitSelectionSystem _visibleUnitSelectionSystem", selectionUiReadModel);
-        StringAssert.Contains("EntityQuery _selectedTagQuery", selectionUiReadModel);
-        StringAssert.Contains("SelectionUiReadModelSystem _selectionUiReadModelSystem", menuView);
-        Assert.IsFalse(menuView.Contains("RTSSelectionSystem", StringComparison.Ordinal), "MenuView must use ECS UI command/read/camera/marker boundaries, not RTSSelectionSystem.");
-        Assert.IsFalse(menuView.Contains("RTSSelectionSystem.TransportPassengerUiInfo", StringComparison.Ordinal), "MenuView focused transport passenger rows must use SelectionUiReadModelSystem.");
-        Assert.IsFalse(menuView.Contains("RTSSelectionSystem.FocusedUnitUiStatus", StringComparison.Ordinal), "MenuView focused status icons must use SelectionUiReadModelSystem.");
-        Assert.IsFalse(
-            menuView.Contains("_selectionSystem.CanDestroyFocusedUnit", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.FocusedUnitLabel", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.HasFocusedUnit", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.FocusedUnitIsVehicle", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.HasAnySelectedUnits", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.GetSelectedUnitEntities", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.TryGetFocusedUnitHealth", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.GetFocusedUnitUiStatus", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.TryGetFocusedUnitEntityForUi", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.CanDisembarkFocusedTransport", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.GetFocusedTransportPassengers", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.FocusedUnitCanAttack", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.HasVisiblePlayer", StringComparison.Ordinal),
-            "MenuView selection read-model calls must use SelectionUiReadModelSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void MenuViewCameraAndMarkersMustUseUiBoundaries()
-    {
-        const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
-        const string uiCameraFile = "Assets/Game/Scripts/Systems/SelectionUiCameraSystem.cs";
-        const string screenMarkerFile = "Assets/Game/Scripts/Systems/SelectionScreenMarkerSystem.cs";
-        Assert.IsTrue(File.Exists(uiCameraFile), "Menu camera commands must live in SelectionUiCameraSystem.");
-        Assert.IsTrue(File.Exists(screenMarkerFile), "Selection screen marker events must live in SelectionScreenMarkerSystem.");
-
-        string menuView = File.ReadAllText(menuViewFile);
-        string uiCamera = File.ReadAllText(uiCameraFile);
-        string screenMarker = File.ReadAllText(screenMarkerFile);
-        StringAssert.Contains("SelectionUiCameraSystem _selectionUiCameraSystem", menuView);
-        StringAssert.Contains("SelectionScreenMarkerSystem _selectionScreenMarkerSystem", menuView);
-        StringAssert.Contains("ToggleNormalIsoMode", uiCamera);
-        StringAssert.Contains("QueueMoveGroundCenterTo", uiCamera);
-        StringAssert.Contains("RtsCameraRequestSystem _cameraRequestSystem", uiCamera);
-        StringAssert.Contains("MoveOrderScreenMarkerRequested", screenMarker);
-        StringAssert.Contains("AttackOrderScreenMarkerRequested", screenMarker);
-        StringAssert.Contains("OrderScreenMarkersHideRequested", screenMarker);
-        Assert.IsFalse(menuView.Contains("RTSSelectionSystem", StringComparison.Ordinal), "MenuView must not hold, accept, subscribe to, or call RTSSelectionSystem.");
-        Assert.IsFalse(
-            menuView.Contains("_selectionSystem.ToggleNormalIsoMode", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.MoveCameraGroundCenterTo", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.IsNormalIsoModeActive", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.MoveOrderScreenMarkerRequested", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.AttackOrderScreenMarkerRequested", StringComparison.Ordinal) ||
-            menuView.Contains("_selectionSystem.OrderScreenMarkersHideRequested", StringComparison.Ordinal),
-            "MenuView camera and marker dependencies must use SelectionUiCameraSystem and SelectionScreenMarkerSystem.");
-    }
-
-    [Test]
-    public void MissionAndBuildingCameraFocusMustUseSelectionUiCameraBoundary()
-    {
-        const string missionCameraFile = "Assets/Game/Scripts/Systems/MissionCameraSystem.cs";
-        const string missionStartupFile = "Assets/Game/Scripts/Systems/MissionStartupSystem.cs";
-        const string buildingGameplayFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
-
-        string missionCamera = File.ReadAllText(missionCameraFile);
-        string missionStartup = File.ReadAllText(missionStartupFile);
-        string buildingGameplay = File.ReadAllText(buildingGameplayFile);
-        StringAssert.Contains("SelectionUiCameraSystem selectionUiCameraSystem", missionCamera);
-        StringAssert.Contains("SelectionUiCameraSystem selectionUiCameraSystem", missionStartup);
-        StringAssert.Contains("SelectionUiCameraSystem _selectionUiCameraSystem", buildingGameplay);
-        Assert.IsFalse(missionCamera.Contains("RTSSelectionSystem", StringComparison.Ordinal), "MissionCameraSystem must focus through SelectionUiCameraSystem.");
-        Assert.IsFalse(missionStartup.Contains("RTSSelectionSystem selection", StringComparison.Ordinal), "MissionStartupSystem must focus through SelectionUiCameraSystem.");
-        Assert.IsFalse(
-            buildingGameplay.Contains("_selectionSystem?.SmoothMoveCameraGroundCenterTo", StringComparison.Ordinal) ||
-            buildingGameplay.Contains("_selectionSystem?.FollowCameraGroundCenterTo", StringComparison.Ordinal) ||
-            buildingGameplay.Contains("selectionSystem?.FollowCameraGroundCenterTo", StringComparison.Ordinal) ||
-            buildingGameplay.Contains("selectionSystem?.SmoothMoveCameraGroundCenterTo", StringComparison.Ordinal),
-            "BuildingGameplaySystem camera focus delegates must use SelectionUiCameraSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void BuildingGameplaySelectionTransportCompatibilityMustUseSelectionBuildingInteractionBoundary()
-    {
-        const string buildingGameplayFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
-        const string buildingCompositionFile = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
-        const string interactionFile = "Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs";
-
-        Assert.IsTrue(File.Exists(interactionFile), "Building-side selection/transport compatibility must live in SelectionBuildingInteractionSystem.");
-        string buildingGameplay = File.ReadAllText(buildingGameplayFile);
-        string buildingComposition = File.ReadAllText(buildingCompositionFile);
-        string interaction = File.ReadAllText(interactionFile);
-
-        StringAssert.Contains("SelectionBuildingInteractionSystem _selectionBuildingInteractionSystem", buildingGameplay);
-        StringAssert.Contains("SelectionBuildingInteractionSystem selectionBuildingInteractionSystem", buildingComposition);
-        StringAssert.Contains("IsBoardablePlayerTransportClick", interaction);
-        StringAssert.Contains("TryIssueMoveOrderToBuilding", interaction);
-        StringAssert.Contains("ClearFocusedUnit", interaction);
-        Assert.IsFalse(buildingGameplay.Contains("RTSSelectionSystem", StringComparison.Ordinal), "BuildingGameplaySystem must not depend on RTSSelectionSystem.");
-        Assert.IsFalse(buildingGameplay.Contains("_selectionSystem", StringComparison.Ordinal), "BuildingGameplaySystem must not keep an RTS selection shell field.");
-        Assert.IsFalse(buildingComposition.Contains("RTSSelectionSystem", StringComparison.Ordinal), "BuildingGameplayCompositionSystem must not route building callbacks through RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void BootstrapMenuAndRuntimeUpdateMustUseSelectionDelegatesInsteadOfSelectionShell()
-    {
-        const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
-        const string menuStartupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
-        const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
-        const string managedStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string retiredContextFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
+        const string retiredContextMetaFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs.meta";
         const string selectionStartupFile = "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs";
-        const string retiredSelectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
-        const string retiredSelectionRuntimeUpdateFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
-        const string selectionRuntimeContextFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string selectionRuntimeConfigFile = "Assets/Game/Scripts/Systems/SelectionRuntimeConfigSystem.cs";
-        const string selectionRuntimeQueryFile = "Assets/Game/Scripts/Systems/SelectionRuntimeQuerySystem.cs";
+        const string managedStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
 
-        string contract = File.ReadAllText(ContractPath);
-        string bootstrap = File.ReadAllText(bootstrapFile);
-        string menuStartup = File.ReadAllText(menuStartupFile);
-        string runtimeUpdate = File.ReadAllText(runtimeUpdateFile);
-        string managedStartup = File.ReadAllText(managedStartupFile);
         string selectionStartup = File.ReadAllText(selectionStartupFile);
-        string selectionRuntimeContext = File.ReadAllText(selectionRuntimeContextFile);
-        string selectionRuntimeConfig = File.ReadAllText(selectionRuntimeConfigFile);
-        string selectionRuntimeQuery = File.ReadAllText(selectionRuntimeQueryFile);
-        string[] runtimeSourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
-            .Select(NormalizePath)
-            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
-            .ToArray();
+        string managedStartup = File.ReadAllText(managedStartupFile);
+        string runtimeUpdate = File.ReadAllText(runtimeUpdateFile);
 
-        Assert.IsFalse(File.Exists(retiredSelectionFile), "The retired RTSSelectionSystem source artifact must not be restored.");
-        Assert.IsFalse(File.Exists(retiredSelectionRuntimeUpdateFile), "SelectionRuntimeUpdateSystem.cs must stay deleted; runtime selection phases must not return to a monolithic Update shell.");
-        Assert.IsEmpty(
-            runtimeSourceFiles.Where(path => path.EndsWith("/RTSSelectionSystem.cs", StringComparison.Ordinal)).ToArray(),
-            "The retired RTSSelectionSystem.cs source artifact must not be restored.");
-        Assert.IsEmpty(
-            runtimeSourceFiles
-                .Where(path => File.ReadAllText(path).Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal) ||
-                               File.ReadAllText(path).Contains("public sealed class SelectionRuntimeUpdateSystem", StringComparison.Ordinal))
-                .ToArray(),
-            "Retired RTS selection shell types must not be restored.");
-        StringAssert.Contains("The retired `RTSSelectionSystem` source/type must not be reintroduced", contract);
-        Assert.IsFalse(contract.Contains("`RTSSelectionSystem` is temporary compatibility debt", StringComparison.Ordinal), "RTSSelectionSystem is retired debt, not an allowed temporary shell.");
-        StringAssert.Contains("`SelectionRuntimeContextSystem` is the remaining temporary context-construction debt", contract);
-        StringAssert.Contains("SelectionGameplayStartupSystem _selectionGameplayStartupSystem", managedStartup);
-        StringAssert.Contains("BindSelectionMainMenu", managedStartup);
-        StringAssert.Contains("SelectionRuntimeUpdate", managedStartup);
-        StringAssert.Contains("DisposeSelection", managedStartup);
-        StringAssert.Contains("new SelectionRuntimeContextSystem()", selectionStartup);
-        StringAssert.Contains("UpdateSelectionRuntimePhases", selectionStartup);
-        StringAssert.Contains("public sealed class SelectionRuntimeConfigSystem", selectionRuntimeConfig);
-        StringAssert.Contains("CreateState", selectionRuntimeConfig);
-        StringAssert.Contains("Normalize", selectionRuntimeConfig);
-        StringAssert.Contains("public sealed class SelectionRuntimeQuerySystem", selectionRuntimeQuery);
-        StringAssert.Contains("SelectedMoveQuery", selectionRuntimeQuery);
-        StringAssert.Contains("GridConfigQuery", selectionRuntimeQuery);
-        StringAssert.Contains("SelectedTagQuery", selectionRuntimeQuery);
-        StringAssert.Contains("CreateEntityQuery", selectionRuntimeQuery);
-        StringAssert.Contains("SelectionRuntimeConfigSystem _selectionRuntimeConfigSystem", selectionRuntimeContext);
-        StringAssert.Contains("SelectionRuntimeConfigSystem.State _runtimeConfig", selectionRuntimeContext);
-        StringAssert.Contains("SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem", selectionRuntimeContext);
-        StringAssert.Contains("SelectionRuntimeQuerySystem _selectionRuntimeQuerySystem", selectionRuntimeContext);
-        Assert.IsFalse(selectionRuntimeContext.Contains("DefaultPanSensitivity", StringComparison.Ordinal), "Selection runtime config defaults belong in SelectionRuntimeConfigSystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("ApplyConfigIfAvailable", StringComparison.Ordinal), "Selection runtime config application belongs in SelectionRuntimeConfigSystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("RuntimeDiagnosticsStateComponent", StringComparison.Ordinal), "Selection runtime diagnostics state reads belong in SelectionRuntimeDiagnosticsSystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _selectedMoveQuery", StringComparison.Ordinal), "Selection runtime query handles belong in SelectionRuntimeQuerySystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _gridConfigQuery", StringComparison.Ordinal), "Selection runtime query handles belong in SelectionRuntimeQuerySystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _selectedTagQuery", StringComparison.Ordinal), "Selection runtime query handles belong in SelectionRuntimeQuerySystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _gridPathingQuery", StringComparison.Ordinal), "Unused selection runtime query handles must not return to SelectionRuntimeContextSystem.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("private void EnsureEntityQueries", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own cached EntityQuery refresh policy.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("CreateEntityQuery", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own cached EntityQuery construction.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("public void Update(", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not become another managed runtime Update shell.");
-        Assert.IsFalse(selectionRuntimeContext.Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal), "The retired RTSSelectionSystem type must not be restored.");
-        StringAssert.Contains("Action<MainMenuPlayUI> bindSelectionMainMenu", menuStartup);
-        StringAssert.Contains("Action selectionRuntimeUpdate", runtimeUpdate);
-        Assert.IsFalse(bootstrap.Contains("RTSSelectionSystem Selection", StringComparison.Ordinal), "GameBootstrap must not expose the selection shell.");
-        Assert.IsFalse(bootstrap.Contains("Selection?.", StringComparison.Ordinal), "GameBootstrap must not call the selection shell directly.");
-        Assert.IsFalse(selectionStartup.Contains("new RTSSelectionSystem()", StringComparison.Ordinal), "SelectionGameplayStartupSystem must not construct the retired RTSSelectionSystem type.");
-        Assert.IsFalse(managedStartup.Contains("new RTSSelectionSystem()", StringComparison.Ordinal), "ManagedGameplayStartupSystem must delegate temporary selection shell construction to SelectionGameplayStartupSystem.");
-        Assert.IsFalse(menuStartup.Contains("RTSSelectionSystem selection", StringComparison.Ordinal), "MenuStartupSystem must bind selection through a narrow delegate.");
-        Assert.IsFalse(runtimeUpdate.Contains("RTSSelectionSystem", StringComparison.Ordinal), "GameplayRuntimeUpdateSystem must tick selection through a narrow delegate.");
+        Assert.IsFalse(File.Exists(retiredContextFile), "SelectionRuntimeContextSystem.cs must stay deleted.");
+        Assert.IsFalse(File.Exists(retiredContextMetaFile), "SelectionRuntimeContextSystem.cs.meta must stay deleted.");
+        Assert.IsFalse(selectionStartup.Contains("SelectionRuntimeContextSystem", StringComparison.Ordinal), "SelectionGameplayStartupSystem must not construct the retired selection context.");
+        Assert.IsFalse(managedStartup.Contains("SelectionRuntimeContextSystem", StringComparison.Ordinal), "ManagedGameplayStartupSystem must not reference the retired selection context.");
+        Assert.IsFalse(runtimeUpdate.Contains("SelectionRuntimeContextSystem", StringComparison.Ordinal), "GameplayRuntimeUpdateSystem must not tick the retired selection context.");
     }
 
     [Test]
-    public void RtsSelectionSystemMustDelegateFocusedUnitCommandSlice()
+    public void SelectionGameplayStartupMustComposeNarrowSelectionBoundaries()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string commandFile = "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs";
-        Assert.IsTrue(File.Exists(commandFile), "Focused-unit command component mutations must live in FocusedUnitCommandSystem.");
+        const string selectionStartupFile = "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs";
+        string selectionStartup = File.ReadAllText(selectionStartupFile);
 
-        string selection = File.ReadAllText(selectionFile);
-        string command = File.ReadAllText(commandFile);
-        StringAssert.Contains("FocusedUnitCommandSystem _focusedUnitCommandSystem", selection);
-        StringAssert.Contains("_focusedUnitCommandSystem.DestroyFocusedUnit", selection);
-        StringAssert.Contains("_focusedUnitCommandSystem.ReturnFocusedUnitToBase", selection);
-        StringAssert.Contains("_focusedUnitCommandSystem.EnableFocusedUnitAutoAttack", selection);
-        StringAssert.Contains("_focusedUnitCommandSystem.TryIssueFocusedMissileLauncherRadarAttack", selection);
-        StringAssert.Contains("_focusedUnitCommandSystem.IssueImmediateSelectedUnitOrder", selection);
-        StringAssert.Contains("EntityQuery _respawnQueueQuery", command);
-        StringAssert.Contains("ResolveMissileLauncherTargetMode", command);
-        Assert.IsFalse(
-            selection.Contains("_respawnQueueQuery", StringComparison.Ordinal) ||
-            selection.Contains("ResolveMissileLauncherTargetMode", StringComparison.Ordinal) ||
-            selection.Contains("MissileLauncherTargetMode", StringComparison.Ordinal),
-            "Focused-unit respawn lookup and missile launcher target-mode policy belong in FocusedUnitCommandSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            selection.Contains("em.DestroyEntity(entity)", StringComparison.Ordinal) ||
-            selection.Contains("health.Current = 0", StringComparison.Ordinal) ||
-            selection.Contains("ClearCommandedAttackOrderComponents(em, entity)", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"RemoveComponentIfPresent<[^>]+>\(em,\s*entity\)"),
-            "Focused-unit command component mutations belong in FocusedUnitCommandSystem, not RTSSelectionSystem.");
+        foreach (string token in new[]
+        {
+            "new SelectionRuntimeDiagnosticsSystem()",
+            "new SelectionRuntimeConfigSystem()",
+            "new SelectionRuntimeQuerySystem()",
+            "new RtsSelectionRuntimeInputSystem()",
+            "new RtsSelectionRuntimeCameraSystem()",
+            "new RtsSelectionCommandResultFlushSystem()",
+            "new RtsSelectionFocusCommandSystem()",
+            "new RtsSelectionPointerTargetCommandSystem()",
+            "new SelectionUiReadModelSystem()",
+            "new SelectionUiCommandSystem()",
+            "new SelectionBuildingInteractionSystem()"
+        })
+        {
+            StringAssert.Contains(token, selectionStartup);
+        }
+
+        StringAssert.Contains("void UpdateSelectionRuntimePhases()", selectionStartup);
+        StringAssert.Contains("ProcessExternalSelectionCommandRequests", selectionStartup);
+        StringAssert.Contains("ProcessQueuedMoveOrder", selectionStartup);
+        StringAssert.Contains("UpdateRuntimeCameraTick", selectionStartup);
+        StringAssert.Contains("UpdateNormalPointerInput", selectionStartup);
+        Assert.IsFalse(selectionStartup.Contains("public void Update(", StringComparison.Ordinal), "Selection gameplay startup must not become a managed Update shell.");
     }
 
     [Test]
-    public void RtsSelectionSystemMustDelegateSelectedOrderSnapshotSlice()
+    public void SelectionRuntimeOwnerSystemsMustOwnFormerContextSlices()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string snapshotFile = "Assets/Game/Scripts/Systems/SelectedUnitOrderSnapshotSystem.cs";
-        Assert.IsTrue(File.Exists(snapshotFile), "Selected-unit order snapshot/restore ownership must live in SelectedUnitOrderSnapshotSystem.");
+        string state = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionStateSystem.cs");
+        string input = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs");
+        string pointerTarget = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs");
+        string focusCommand = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs");
+        string commandResultFlush = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs");
+        string runtimeCamera = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystem.cs");
+        string runtimeInput = File.ReadAllText("Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs");
+        string uiReadModel = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionUiReadModelSystem.cs");
+        string hudFeedback = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionHudFeedbackSystem.cs");
+        string buildingInteraction = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs");
 
-        string selection = File.ReadAllText(selectionFile);
-        string snapshot = File.ReadAllText(snapshotFile);
-        StringAssert.Contains("SelectedUnitOrderSnapshotSystem _selectedUnitOrderSnapshotSystem", selection);
-        StringAssert.Contains("_selectedUnitOrderSnapshotSystem.PreserveSelectedUnitOrders", selection);
-        StringAssert.Contains("_selectedUnitOrderSnapshotSystem.RestorePreservedUnitOrders", selection);
-        StringAssert.Contains("PreservedOrderState", snapshot);
-        StringAssert.Contains("RestoreComponent", snapshot);
-        Assert.IsFalse(
-            selection.Contains("_preservedUiOrders", StringComparison.Ordinal) ||
-            selection.Contains("private struct PreservedOrderState", StringComparison.Ordinal) ||
-            selection.Contains("private static void RestoreComponent", StringComparison.Ordinal),
-            "Selected-unit order snapshot storage and component restore helpers belong in SelectedUnitOrderSnapshotSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateBuildingTargetMoveOrderSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
-        const string buildingMoveFile = "Assets/Game/Scripts/Systems/BuildingTargetMoveOrderSystem.cs";
-        Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer building-target command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
-        Assert.IsTrue(File.Exists(buildingMoveFile), "Building-target move order placement and component writes must live in BuildingTargetMoveOrderSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string pointerTarget = File.ReadAllText(pointerTargetFile);
-        string buildingMove = File.ReadAllText(buildingMoveFile);
-        StringAssert.Contains("BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem", selection);
-        StringAssert.Contains("BuildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding", pointerTarget);
-        StringAssert.Contains("TryFindBuildingApproachCell", buildingMove);
-        StringAssert.Contains("TryScoreBuildingApproachCandidate", buildingMove);
-        StringAssert.Contains("em.AddComponent<ManualMoveOrderTag>(entity)", buildingMove);
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindBuildingApproachCell\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+static\s+void\s+TryScoreBuildingApproachCandidate\s*\("),
-            "Building approach-cell search belongs in BuildingTargetMoveOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            selection.Contains("_buildingTargetMoveOrderSystem.TryIssueMoveOrderToBuilding", StringComparison.Ordinal) ||
-            selection.Contains("em.SetComponentData(entity, new UnitTarget", StringComparison.Ordinal) ||
-            selection.Contains("em.AddComponentData(entity, new UnitTarget", StringComparison.Ordinal) ||
-            selection.Contains("em.SetComponentData(entity, new UnitPathRequest", StringComparison.Ordinal) ||
-            selection.Contains("em.AddComponentData(entity, new UnitPathRequest", StringComparison.Ordinal),
-            "Building-target move order dispatch and component writes belong in RtsSelectionPointerTargetCommandSystem/BuildingTargetMoveOrderSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateSelectionUiQuerySlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string uiQueryFile = "Assets/Game/Scripts/Systems/SelectionUiQuerySystem.cs";
-        const string uiReadModelFile = "Assets/Game/Scripts/Systems/SelectionUiReadModelSystem.cs";
-        const string focusedReadModelFile = "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelSystem.cs";
-        const string focusedReadModelComponentsFile = "Assets/Game/Scripts/Components/SelectionUiReadModelComponents.cs";
-        Assert.IsTrue(File.Exists(uiQueryFile), "Focused and selected UI read models must live in SelectionUiQuerySystem.");
-        Assert.IsTrue(File.Exists(uiReadModelFile), "UI read compatibility must live in SelectionUiReadModelSystem.");
-        Assert.IsTrue(File.Exists(focusedReadModelFile), "Focused UI read-model publication must live in FocusedUnitUiReadModelSystem.");
-        Assert.IsTrue(File.Exists(focusedReadModelComponentsFile), "Focused UI read models must be ECS data components/buffers.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string uiReadModel = File.ReadAllText(uiReadModelFile);
-        string focusedReadModel = File.ReadAllText(focusedReadModelFile);
-        string focusedReadModelComponents = File.ReadAllText(focusedReadModelComponentsFile);
-        StringAssert.Contains("SelectionUiQuerySystem _selectionUiQuerySystem", selection);
-        StringAssert.Contains("FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem", uiReadModel);
-        StringAssert.Contains("public bool HasFocusedUnit", uiReadModel);
-        StringAssert.Contains("public void GetFocusedTransportPassengers", uiReadModel);
-        StringAssert.Contains("public void GetSelectedUnitEntities", uiReadModel);
-        StringAssert.Contains("FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem", selection);
-        StringAssert.Contains("_focusedUnitUiReadModelSystem.Publish", selection);
-        StringAssert.Contains("_focusedUnitUiReadModelSystem.TryRead", uiReadModel);
-        StringAssert.Contains("FocusedUnitUiReadModelComponent", focusedReadModelComponents);
-        StringAssert.Contains("FocusedUnitPassengerUiReadModelElement", focusedReadModelComponents);
-        StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitName", focusedReadModel);
-        StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitDescription", focusedReadModel);
-        StringAssert.Contains("selectionUiQuerySystem.GetFocusedUnitUiStatus", focusedReadModel);
-        StringAssert.Contains("selectionUiQuerySystem.GetTransportPassengers", focusedReadModel);
-        Assert.IsFalse(
-            selection.Contains("_selectionUiQuerySystem.ResolveFocusedUnitName", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.ResolveFocusedUnitDescription", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.ResolveFocusedUnitHealthText", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.TryGetFocusedUnitHealth", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.TryGetFocusedUnitCapacityInfo", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.GetFocusedUnitUiStatus", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.GetTransportPassengerCount", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.GetTransportPassengers", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.TryGetFocusedUnitWorldPosition", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.TryGetFocusedUnitPortraitPose", StringComparison.Ordinal) ||
-            selection.Contains("_selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose", StringComparison.Ordinal) ||
-            selection.Contains("public bool HasFocusedUnit", StringComparison.Ordinal) ||
-            selection.Contains("public string FocusedUnitLabel", StringComparison.Ordinal) ||
-            selection.Contains("public bool TryGetFocusedUnitHealth", StringComparison.Ordinal) ||
-            selection.Contains("public void GetFocusedTransportPassengers", StringComparison.Ordinal) ||
-            selection.Contains("public void GetSelectedUnitEntities", StringComparison.Ordinal) ||
-            selection.Contains("public bool TryGetSelectedUnitsPortraitPose", StringComparison.Ordinal) ||
-            selection.Contains("public FocusedUnitUiStatus GetFocusedUnitUiStatus", StringComparison.Ordinal) ||
-            selection.Contains("public readonly struct TransportPassengerUiInfo", StringComparison.Ordinal) ||
-            selection.Contains("public enum FocusedUnitUiStatus", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"private\s+static\s+string\s+ResolveFocusedUnitName\s*\("),
-            "Focused unit UI read compatibility belongs in SelectionUiReadModelSystem/FocusedUnitUiReadModelSystem ECS read-model data, not SelectionRuntimeContextSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+string\s+ResolveHudSelectionStatus\s*\("),
-            "HUD selection status read models belong in SelectionUiQuerySystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateMoveOrderSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string moveOrderFile = "Assets/Game/Scripts/Systems/UnitMoveOrderSystem.cs";
-        const string moveCommandFile = "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs";
-        const string moveRequestFile = "Assets/Game/Scripts/Systems/SelectionMoveCommandRequestSystem.cs";
-        const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
-        const string commandResultContextFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultContextSystem.cs";
-        const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
-        const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
-        Assert.IsTrue(File.Exists(moveOrderFile), "Manual move-order goal and footprint rules must live in UnitMoveOrderSystem.");
-        Assert.IsTrue(File.Exists(moveCommandFile), "Selected move-order command orchestration must live in SelectedMoveOrderCommandSystem.");
-        Assert.IsTrue(File.Exists(moveRequestFile), "Selected move command request processing must live in SelectionMoveCommandRequestSystem.");
-        Assert.IsTrue(File.Exists(commandResultFlushFile), "RTS command result draining and marker/HUD flush ownership must live in RtsSelectionCommandResultFlushSystem.");
-        Assert.IsTrue(File.Exists(commandResultContextFile), "RTS command result context construction must live outside SelectionRuntimeContextSystem.");
-        Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer move command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string moveCommand = File.ReadAllText(moveCommandFile);
-        string moveRequest = File.ReadAllText(moveRequestFile);
-        string commandResultFlush = File.ReadAllText(commandResultFlushFile);
-        string commandResultContext = File.ReadAllText(commandResultContextFile);
-        string pointerTarget = File.ReadAllText(pointerTargetFile);
-        string input = File.ReadAllText(inputFile);
-        StringAssert.Contains("UnitMoveOrderSystem _unitMoveOrderSystem", selection);
-        StringAssert.Contains("SelectedMoveOrderCommandSystem _selectedMoveOrderCommandSystem", selection);
-        StringAssert.Contains("SelectionMoveCommandRequestSystem _selectionMoveCommandRequestSystem", selection);
-        StringAssert.Contains("RtsSelectionCommandResultFlushSystem _rtsSelectionCommandResultFlushSystem", selection);
-        StringAssert.Contains("RtsSelectionCommandResultContextSystem _rtsSelectionCommandResultContextSystem", selection);
-        StringAssert.Contains("CommandResultFlushContext", selection);
-        StringAssert.Contains("new RtsSelectionCommandResultFlushSystem.Context", commandResultContext);
-        StringAssert.Contains("InputSystem.QueueMoveCommandRequest", pointerTarget);
-        StringAssert.Contains("MoveCommandRequestSystem.ProcessPendingRequests", commandResultFlush);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.Move", input);
-        StringAssert.Contains("QueueMoveCommandRequest", input);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.Move", input);
-        StringAssert.Contains("RtsSelectionCommandResultElement", moveRequest);
-        StringAssert.Contains("selectedMoveOrderCommandSystem.TryIssueMoveOrder", moveRequest);
-        StringAssert.Contains("moveOrderSystem.BuildSelectedCurrentFootprintCells", moveCommand);
-        StringAssert.Contains("moveOrderSystem.FindManualMoveGoal", moveCommand);
-        StringAssert.Contains("moveOrderSystem.IssueGroupedManualMoveOrder", moveCommand);
-        StringAssert.Contains("GroupMoveStaggerMinGroundUnits", moveCommand);
-        StringAssert.Contains("IsAlreadyMovingToGoal", moveCommand);
-        StringAssert.Contains("_unitMoveOrderSystem.IssueImmediateMoveCommand", selection);
-        StringAssert.Contains("_unitMoveOrderSystem.ClearMovementOrderComponents", selection);
-        Assert.IsFalse(selection.Contains("CreateCommandResultFlushContext", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own command-result flush context construction.");
-        Assert.IsFalse(selection.Contains("new RtsSelectionCommandResultFlushSystem.Context", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not construct command-result flush contexts directly.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+int2\s+FindManualMoveGoal\s*\("),
-            "Manual move-goal selection belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+HashSet<int>\s+BuildSelectedCurrentFootprintCells\s*\("),
-            "Selected footprint collection belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+void\s+IssueMoveCommand\s*\("),
-            "Movement command component writes belong in UnitMoveOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+void\s+ClearMovementOrderComponents\s*\("),
-            "Movement command cleanup belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            selection.Contains("GroupMoveStaggerMinGroundUnits", StringComparison.Ordinal) ||
-            selection.Contains("GroupMovePathRequestsPerFrame", StringComparison.Ordinal) ||
-            selection.Contains("UnitMoveOrderSystem.MoveOrderCommandResult", StringComparison.Ordinal) ||
-            selection.Contains("_rtsSelectionInputSystem.QueueMoveCommandRequest", StringComparison.Ordinal) ||
-            selection.Contains("_selectionMoveCommandRequestSystem.ProcessPendingRequests", StringComparison.Ordinal) ||
-            selection.Contains("_selectedMoveOrderCommandSystem.TryIssueMoveOrder", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsAlreadyMovingToGoal\s*\("),
-            "Selected move-order pointer dispatch, orchestration, request processing, and group path staggering belong in pointer/move command systems, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateTransportBoardingSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string transportFile = "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs";
-        const string transportCommandFile = "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs";
-        const string transportRequestFile = "Assets/Game/Scripts/Systems/SelectionTransportCommandRequestSystem.cs";
-        const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
-        const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
-        const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
-        Assert.IsTrue(File.Exists(transportFile), "Transport boarding rules must live in UnitTransportBoardingSystem.");
-        Assert.IsTrue(File.Exists(transportCommandFile), "Transport boarding click orchestration must live in TransportBoardingCommandSystem.");
-        Assert.IsTrue(File.Exists(transportRequestFile), "Transport command request processing must live in SelectionTransportCommandRequestSystem.");
-        Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer transport command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string transportCommand = File.ReadAllText(transportCommandFile);
-        string transportRequest = File.ReadAllText(transportRequestFile);
-        string commandResultFlush = File.ReadAllText(commandResultFlushFile);
-        string pointerTarget = File.ReadAllText(pointerTargetFile);
-        string input = File.ReadAllText(inputFile);
-        string boardingSlice = transportRequest + Environment.NewLine + transportCommand;
-        StringAssert.Contains("UnitTransportBoardingSystem _unitTransportBoardingSystem", selection);
-        StringAssert.Contains("TransportBoardingCommandSystem _transportBoardingCommandSystem", selection);
-        StringAssert.Contains("SelectionTransportCommandRequestSystem _selectionTransportCommandRequestSystem", selection);
-        StringAssert.Contains("InputSystem.QueueBoardTransportCommandRequest", pointerTarget);
-        StringAssert.Contains("_rtsSelectionInputSystem.QueueDisembarkTransportCommandRequest", selection);
-        StringAssert.Contains("TransportCommandRequestSystem.ProcessPendingRequests", commandResultFlush);
-        StringAssert.Contains("TransportBoardingCommandSystem.IsBoardablePlayerTransportClick", pointerTarget);
-        StringAssert.Contains("QueueBoardTransportCommandRequest", input);
-        StringAssert.Contains("QueueDisembarkTransportCommandRequest", input);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.BoardTransport", input);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.DisembarkTransport", input);
-        StringAssert.Contains("transportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit", transportRequest);
-        StringAssert.Contains("TryDisembarkTransport", transportRequest);
-        StringAssert.Contains("PendingTransportBoardingOrder", transportCommand);
-        StringAssert.Contains("CollectSelectedBoardingSourceEntities", transportCommand);
-        StringAssert.Contains("TryGetClickedOrNearbyBoardableTransport", transportCommand);
-        StringAssert.Contains("TryFindNearbyBoardableTransport", transportCommand);
-        StringAssert.Contains("CountPendingBoardingOrders", transportCommand);
-        StringAssert.Contains("UnitTransportBoardingTarget { Transport = transport, Goal = goal }", transportCommand);
-        StringAssert.Contains("transportBoardingSystem.IsBoardablePlayerTransport", boardingSlice);
-        StringAssert.Contains("transportBoardingSystem.TryFindAirTransportPickupForBoarding", boardingSlice);
-        StringAssert.Contains("transportBoardingSystem.TryFindTransportApproachCell", boardingSlice);
-        StringAssert.Contains("transportBoardingSystem.TryEnsureTransportCapacity", transportRequest);
-        StringAssert.Contains("transportBoardingSystem.TryFindTransportDisembarkCell", transportRequest);
-        StringAssert.Contains("transportBoardingSystem.StartRopeDisembarkTransport", transportRequest);
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsBoardablePlayerTransport\s*\("),
-            "Boardable transport rules belong in UnitTransportBoardingSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryEnsureTransportCapacity\s*\("),
-            "Transport capacity normalization belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindAirTransportPickupForBoarding\s*\("),
-            "Air transport pickup-cell selection belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindTransportApproachCell\s*\("),
-            "Transport boarding approach-cell selection belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindTransportDisembarkCell\s*\("),
-            "Transport disembark-cell selection belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+void\s+StartRopeDisembarkTransport\s*\("),
-            "Rope disembark request setup belongs in UnitTransportBoardingSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            selection.Contains("private struct PendingTransportBoardingOrder", StringComparison.Ordinal) ||
-            selection.Contains("_rtsSelectionInputSystem.QueueBoardTransportCommandRequest", StringComparison.Ordinal) ||
-            selection.Contains("_transportBoardingCommandSystem.IsBoardablePlayerTransportClick", StringComparison.Ordinal) ||
-            selection.Contains("_transportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit", StringComparison.Ordinal) ||
-            selection.Contains("_selectionTransportCommandRequestSystem.ProcessPendingRequests", StringComparison.Ordinal) ||
-            selection.Contains("_unitTransportBoardingSystem.TryFindTransportDisembarkCell", StringComparison.Ordinal) ||
-            selection.Contains("_unitTransportBoardingSystem.StartRopeDisembarkTransport", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"private\s+int\s+CollectSelectedBoardingSourceEntities\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+bool\s+TryGetClickedOrNearbyBoardableTransport\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+bool\s+TryFindNearbyBoardableTransport\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+int\s+CountPendingBoardingOrders\s*\(") ||
-            selection.Contains("UnitTransportBoardingTarget { Transport = transport, Goal = goal }", StringComparison.Ordinal),
-            "Transport boarding command orchestration belongs in TransportBoardingCommandSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateFocusedUnitLifecycleSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string lifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
-        const string focusCommandFile = "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs";
-        const string focusCommandContextFile = "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandContextSystem.cs";
-        const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
-        Assert.IsTrue(File.Exists(lifecycleFile), "Focused-unit lifecycle ownership must live in FocusedUnitLifecycleSystem.");
-        Assert.IsTrue(File.Exists(focusCommandFile), "Focus/selection compatibility commands must live in RtsSelectionFocusCommandSystem.");
-        Assert.IsTrue(File.Exists(focusCommandContextFile), "Focus command context construction must live outside SelectionRuntimeContextSystem.");
-        Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer focus command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string lifecycle = File.ReadAllText(lifecycleFile);
-        string focusCommand = File.ReadAllText(focusCommandFile);
-        string focusCommandContext = File.ReadAllText(focusCommandContextFile);
-        string pointerTarget = File.ReadAllText(pointerTargetFile);
-        StringAssert.Contains("FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem", selection);
-        StringAssert.Contains("RtsSelectionFocusCommandSystem _rtsSelectionFocusCommandSystem", selection);
-        StringAssert.Contains("RtsSelectionFocusCommandContextSystem _rtsSelectionFocusCommandContextSystem", selection);
-        StringAssert.Contains("FocusCommandContext", selection);
-        StringAssert.Contains("new RtsSelectionFocusCommandSystem.Context", focusCommandContext);
-        StringAssert.Contains("_focusedUnitLifecycleSystem.RefreshFocusedUnit", selection);
-        StringAssert.Contains("_focusedUnitLifecycleSystem.ClearCurrentSelection", selection);
-        StringAssert.Contains("_focusedUnitLifecycleSystem.TryGetFocusedUnitEntity", selection);
-        StringAssert.Contains("_focusedUnitLifecycleSystem.ApplySelectionFocus", selection);
+        StringAssert.Contains("CacheSelectedMoveEntities", state);
+        StringAssert.Contains("RtsSelectionInputStateComponent", input);
+        StringAssert.Contains("TryIssueAttackOrderToClickedUnit", pointerTarget);
+        StringAssert.Contains("TryIssueMoveOrderToBuilding", pointerTarget);
         StringAssert.Contains("ProcessExternalSelectionCommandRequests", focusCommand);
-        StringAssert.Contains("public void ClearFocusedUnit", focusCommand);
-        StringAssert.Contains("public void DeselectAllUnits", focusCommand);
-        StringAssert.Contains("public void SelectAllVisiblePlayerUnits", focusCommand);
-        StringAssert.Contains("public bool FocusUnitEntity", focusCommand);
-        StringAssert.Contains("public TacticalCommandResult TrySelectRuntimeEntity", focusCommand);
-        StringAssert.Contains("FocusedUnitLifecycleSystem.FocusUnitEntity", focusCommand);
-        StringAssert.Contains("QueueSelectionRectangleRequest", focusCommand);
-        StringAssert.Contains("FocusedUnitLifecycleSystem.TryFocusUnit", pointerTarget);
-        StringAssert.Contains("public bool RefreshFocusedUnit", lifecycle);
-        StringAssert.Contains("public bool FocusUnitEntity", lifecycle);
-        StringAssert.Contains("public bool TryFocusUnit", lifecycle);
-        StringAssert.Contains("public void ClearCurrentSelection", lifecycle);
-        StringAssert.Contains("public Entity ApplySelectionFocus", lifecycle);
-        StringAssert.Contains("selectionStateSystem.SetFocusedUnit", lifecycle);
-        StringAssert.Contains("em.RemoveComponent<SelectedUnitTag>", lifecycle);
-        StringAssert.Contains("em.AddComponent<SelectedUnitTag>", lifecycle);
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+Entity\s+_focusedUnit\b") ||
-            Regex.IsMatch(selection, @"\b_focusedUnit\s*=\s*Entity\.Null\b") ||
-            Regex.IsMatch(selection, @"\b_focusedUnit\s*=\s*[^=]") ||
-            selection.Contains("result=SelectAllSkipped", StringComparison.Ordinal) ||
-            selection.Contains("RTSSelection.FocusUnitEntity", StringComparison.Ordinal) ||
-            selection.Contains("RTSSelection.TryFocusUnit", StringComparison.Ordinal) ||
-            selection.Contains("_focusedUnitLifecycleSystem.TryFocusUnit", StringComparison.Ordinal) ||
-            selection.Contains("ProcessExternalSelectionCommand(", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsExternalSelectionCommand\s*\(") ||
-            selection.Contains("em.RemoveComponent<SelectedUnitTag>(entity)", StringComparison.Ordinal) ||
-            selection.Contains("em.AddComponent<SelectedUnitTag>(entity)", StringComparison.Ordinal),
-            "Focused-unit state, selected-tag sync, focus/select-all command branching, and direct selected-tag mutation belong in FocusedUnitLifecycleSystem/RtsSelectionFocusCommandSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(selection.Contains("CreateFocusCommandContext", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own focus command context construction.");
-        Assert.IsFalse(selection.Contains("new RtsSelectionFocusCommandSystem.Context", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not construct focus command contexts directly.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateAttackOrderCommandSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string attackCommandFile = "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs";
-        const string attackRequestFile = "Assets/Game/Scripts/Systems/SelectionAttackCommandRequestSystem.cs";
-        const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
-        const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
-        const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
-        Assert.IsTrue(File.Exists(attackCommandFile), "Attack-click command orchestration must live in AttackOrderCommandSystem.");
-        Assert.IsTrue(File.Exists(attackRequestFile), "Selected attack command request processing must live in SelectionAttackCommandRequestSystem.");
-        Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer attack command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string attackCommand = File.ReadAllText(attackCommandFile);
-        string attackRequest = File.ReadAllText(attackRequestFile);
-        string commandResultFlush = File.ReadAllText(commandResultFlushFile);
-        string pointerTarget = File.ReadAllText(pointerTargetFile);
-        string input = File.ReadAllText(inputFile);
-        StringAssert.Contains("AttackOrderCommandSystem _attackOrderCommandSystem", selection);
-        StringAssert.Contains("SelectionAttackCommandRequestSystem _selectionAttackCommandRequestSystem", selection);
-        StringAssert.Contains("InputSystem.QueueAttackCommandRequest", pointerTarget);
-        StringAssert.Contains("AttackCommandRequestSystem.ProcessPendingRequests", commandResultFlush);
-        StringAssert.Contains("_attackOrderCommandSystem.IssueAttackTarget", selection);
-        StringAssert.Contains("QueueAttackCommandRequest", input);
-        StringAssert.Contains("RtsSelectionCommandIntentKind.Attack", input);
-        StringAssert.Contains("EntityQuery _selectedAttackQuery", attackCommand);
-        StringAssert.Contains("TryIssueAttackOrderToClickedUnit", attackCommand);
-        StringAssert.Contains("attackOrderCommandSystem.TryIssueAttackOrderToClickedUnit", attackRequest);
-        StringAssert.Contains("ExplicitAttackTargetMode", attackRequest);
-        StringAssert.Contains("RtsSelectionCommandResultElement", attackRequest);
-        StringAssert.Contains("TryResolveBaseBreachTargetForAttackOrder", attackCommand);
-        StringAssert.Contains("targetOrderSystem.ValidateAttackTarget", attackCommand);
-        StringAssert.Contains("targetOrderSystem.IssueAttackTarget", attackCommand);
-        StringAssert.Contains("BuildingPlacementInteractionSystem", attackCommand);
-        Assert.IsFalse(
-            selection.Contains("EntityQuery _selectedAttackQuery", StringComparison.Ordinal) ||
-            selection.Contains("_selectedAttackQuery.ToEntityArray", StringComparison.Ordinal) ||
-            selection.Contains("_rtsSelectionInputSystem.QueueAttackCommandRequest", StringComparison.Ordinal) ||
-            selection.Contains("_attackOrderCommandSystem.TryIssueAttackOrderToClickedUnit", StringComparison.Ordinal) ||
-            selection.Contains("_selectionAttackCommandRequestSystem.ProcessPendingRequests", StringComparison.Ordinal) ||
-            selection.Contains("_unitTargetOrderSystem.ValidateAttackTarget", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"private\s+bool\s+TryResolveBaseBreachTargetForAttackOrder\s*\("),
-            "Attack target validation dispatch, selected attacker query, and base-breach bridge belong in AttackOrderCommandSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateOrderMarkerVisualSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string markerFile = "Assets/Game/Scripts/Systems/SelectionOrderMarkerSystem.cs";
-        const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
-        Assert.IsTrue(File.Exists(markerFile), "Order marker visual runtime must live in SelectionOrderMarkerSystem.");
-        Assert.IsTrue(File.Exists(commandResultFlushFile), "Order marker command-result flushing must live in RtsSelectionCommandResultFlushSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string marker = File.ReadAllText(markerFile);
-        string commandResultFlush = File.ReadAllText(commandResultFlushFile);
-        StringAssert.Contains("SelectionOrderMarkerSystem _selectionOrderMarkerSystem", selection);
-        StringAssert.Contains("_selectionOrderMarkerSystem.Initialize", selection);
-        StringAssert.Contains("OrderMarkerSystem.UpdateMoveOrderMarkerVisibility", commandResultFlush);
-        StringAssert.Contains("OrderMarkerSystem.UpdateAttackOrderMarkerVisibility", commandResultFlush);
-        StringAssert.Contains("OrderMarkerSystem.ShowMoveOrderMarker", commandResultFlush);
-        StringAssert.Contains("OrderMarkerSystem.ShowAttackOrderMarker", commandResultFlush);
-        StringAssert.Contains("private GameObject _moveOrderMarker", marker);
-        StringAssert.Contains("private GameObject _attackOrderMarker", marker);
-        StringAssert.Contains("MaterialPropertyBlock", marker);
-        StringAssert.Contains("CacheMoveOrderMarker", marker);
-        StringAssert.Contains("CacheAttackOrderMarker", marker);
-        StringAssert.Contains("GridUtils.InBounds", marker);
-        StringAssert.Contains("SetPropertyBlock", marker);
-        Assert.IsFalse(
-            selection.Contains("private GameObject _moveOrderMarker", StringComparison.Ordinal) ||
-            selection.Contains("private GameObject _attackOrderMarker", StringComparison.Ordinal) ||
-            selection.Contains("private Renderer[] _moveOrderMarkerRenderers", StringComparison.Ordinal) ||
-            selection.Contains("private Renderer[] _attackOrderMarkerRenderers", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"private\s+void\s+CacheMoveOrderMarker\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+void\s+CacheAttackOrderMarker\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+void\s+UpdateMoveOrderMarkerVisibility\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+void\s+UpdateAttackOrderMarkerVisibility\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+void\s+ShowMoveOrderMarker\s*\(") ||
-            Regex.IsMatch(selection, @"private\s+void\s+ShowAttackOrderMarker\s*\(") ||
-            selection.Contains("_selectionOrderMarkerSystem.UpdateMoveOrderMarkerVisibility", StringComparison.Ordinal) ||
-            selection.Contains("_selectionOrderMarkerSystem.UpdateAttackOrderMarkerVisibility", StringComparison.Ordinal) ||
-            selection.Contains("_selectionOrderMarkerSystem.ShowMoveOrderMarker", StringComparison.Ordinal),
-            "Order marker GameObject ownership, timers, and visual positioning belong in SelectionOrderMarkerSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateHudFeedbackSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string hudFeedbackFile = "Assets/Game/Scripts/Systems/SelectionHudFeedbackSystem.cs";
-        const string hudFeedbackComponentsFile = "Assets/Game/Scripts/Components/SelectionHudFeedbackComponents.cs";
-        const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
-        Assert.IsTrue(File.Exists(hudFeedbackFile), "HUD command and selection feedback must live in SelectionHudFeedbackSystem.");
-        Assert.IsTrue(File.Exists(hudFeedbackComponentsFile), "HUD feedback must flow through ECS feedback data.");
-        Assert.IsTrue(File.Exists(commandResultFlushFile), "Command-result HUD feedback flushing must live in RtsSelectionCommandResultFlushSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string hudFeedback = File.ReadAllText(hudFeedbackFile);
-        string hudFeedbackComponents = File.ReadAllText(hudFeedbackComponentsFile);
-        string commandResultFlush = File.ReadAllText(commandResultFlushFile);
-        StringAssert.Contains("SelectionHudFeedbackSystem _selectionHudFeedbackSystem", selection);
-        StringAssert.Contains("CreateHudFeedbackContext", selection);
-        StringAssert.Contains("SelectionHudFeedbackQueueComponent", hudFeedbackComponents);
-        StringAssert.Contains("SelectionHudFeedbackElement", hudFeedbackComponents);
-        StringAssert.Contains("public readonly struct Context", hudFeedback);
-        StringAssert.Contains("TryGetEntityManagerDelegate", hudFeedback);
-        StringAssert.Contains("ApplySelection(Context", hudFeedback);
-        StringAssert.Contains("ApplySquadSelection(Context", hudFeedback);
-        StringAssert.Contains("ClearSelection(Context", hudFeedback);
-        StringAssert.Contains("ApplyCommandMode(Context", hudFeedback);
-        StringAssert.Contains("ClearCommandMode(Context", hudFeedback);
-        StringAssert.Contains("ApplyCommandResult(Context", hudFeedback);
-        StringAssert.Contains("SetWorldMarkersVisible(Context", hudFeedback);
-        StringAssert.Contains("BattleHudGameplayBridge _battleHudBridge", hudFeedback);
-        StringAssert.Contains("BattleHudGameplayBridge.ResolveActive", hudFeedback);
-        StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitName", hudFeedback);
-        StringAssert.Contains("selectionUiQuerySystem.ResolveHudSelectionStatus", hudFeedback);
-        StringAssert.Contains("QueueSquadSelection", hudFeedback);
-        StringAssert.Contains("QueueCommandMode", hudFeedback);
-        StringAssert.Contains("QueueCommandResult", hudFeedback);
-        StringAssert.Contains("QueueWorldMarkersVisible", hudFeedback);
-        StringAssert.Contains("ProcessPendingFeedback", hudFeedback);
-        StringAssert.Contains("ApplyHudCommandResult", commandResultFlush);
-        StringAssert.Contains("ClearHudCommandMode", commandResultFlush);
-        StringAssert.Contains("SetHudWorldMarkersVisible", commandResultFlush);
-        StringAssert.Contains("RequestMoveOrderScreenMarker", commandResultFlush);
-        StringAssert.Contains("RequestAttackOrderScreenMarker", commandResultFlush);
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueSelection", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueSquadSelection", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueClearSelection", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueCommandMode", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueClearCommandMode", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueCommandResult", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueWorldMarkersVisible", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
-        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.ProcessPendingFeedback", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback flush details.");
-        Assert.IsFalse(Regex.IsMatch(selection, @"private\s+void\s+(?:ApplyHud|ClearHud|SetHudWorldMarkersVisible)"), "SelectionRuntimeContextSystem must not keep HUD feedback helper wrappers.");
-        Assert.IsFalse(
-            selection.Contains("BattleHudGameplayBridge", StringComparison.Ordinal) ||
-            selection.Contains("ResolveBattleHudBridge", StringComparison.Ordinal) ||
-            Regex.IsMatch(selection, @"\bbridge\.(?:ApplySelection|ClearSelection|ApplyCommandMode|ClearCommandMode|ApplyCommandResult|SetWorldMarkersVisible)\s*\("),
-            "BattleHudGameplayBridge lookup, direct HUD bridge calls, and bridge-style HUD calls belong behind SelectionHudFeedbackSystem ECS feedback events, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateTargetOrderSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string targetOrderFile = "Assets/Game/Scripts/Systems/UnitTargetOrderSystem.cs";
-        const string focusedCommandFile = "Assets/Game/Scripts/Systems/FocusedUnitCommandSystem.cs";
-        const string focusedLifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
-        const string attackCommandFile = "Assets/Game/Scripts/Systems/AttackOrderCommandSystem.cs";
-        Assert.IsTrue(File.Exists(targetOrderFile), "Target-order and target classification helpers must live in UnitTargetOrderSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string targetOrderConsumers =
-            selection + Environment.NewLine +
-            File.ReadAllText(focusedCommandFile) + Environment.NewLine +
-            File.ReadAllText(focusedLifecycleFile) + Environment.NewLine +
-            File.ReadAllText(attackCommandFile);
-        StringAssert.Contains("UnitTargetOrderSystem _unitTargetOrderSystem", selection);
-        StringAssert.Contains("targetOrderSystem.TryFindRadarTargetForMissileLauncher", targetOrderConsumers);
-        StringAssert.Contains("targetOrderSystem.IsBuildingEntity", targetOrderConsumers);
-        StringAssert.Contains("targetOrderSystem.ClearAccidentalAirSelectionMove", targetOrderConsumers);
-        StringAssert.Contains("targetOrderSystem.IssueAttackTarget", targetOrderConsumers);
-        StringAssert.Contains("targetOrderSystem.IssueDirectAttackTarget", targetOrderConsumers);
-        StringAssert.Contains("targetOrderSystem.ValidateAttackTarget", targetOrderConsumers);
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+TryFindRadarTargetForMissileLauncher\s*\("),
-            "Radar target lookup belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsBuildingEntity\s*\("),
-            "Target classification belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+static\s+TacticalCommandResult\s+ValidateAttackTarget\s*\("),
-            "Attack target validation belongs in UnitTargetOrderSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"new\s+EngageTarget\s*\{"),
-            "Attack order component writes belong in UnitTargetOrderSystem, not RTSSelectionSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateCameraStateSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string cameraFile = "Assets/Game/Scripts/Systems/RtsCameraSystem.cs";
-        const string cameraRequestFile = "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs";
-        const string runtimeCameraFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystem.cs";
-        const string runtimeCameraContextFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraContextSystem.cs";
-        const string cameraComponentsFile = "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs";
-        Assert.IsTrue(File.Exists(cameraFile), "RTS camera drag and smooth-focus state must live in RtsCameraSystem.");
-        Assert.IsTrue(File.Exists(cameraRequestFile), "RTS camera control must be processed through an ECS request boundary.");
-        Assert.IsTrue(File.Exists(runtimeCameraFile), "RTS camera runtime tick ownership must live in RtsSelectionRuntimeCameraSystem during shell retirement.");
-        Assert.IsTrue(File.Exists(runtimeCameraContextFile), "RTS camera context construction must live outside SelectionRuntimeContextSystem.");
-        Assert.IsTrue(File.Exists(cameraComponentsFile), "RTS camera request/state data must live in ECS components.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string runtimeCamera = File.ReadAllText(runtimeCameraFile);
-        string runtimeCameraContext = File.ReadAllText(runtimeCameraContextFile);
-        string cameraRequests = File.ReadAllText(cameraRequestFile);
-        string cameraComponents = File.ReadAllText(cameraComponentsFile);
-        StringAssert.Contains("RtsCameraSystem _rtsCameraSystem", selection);
-        StringAssert.Contains("RtsCameraRequestSystem _rtsCameraRequestSystem", selection);
-        StringAssert.Contains("RtsSelectionRuntimeCameraSystem _rtsSelectionRuntimeCameraSystem", selection);
-        StringAssert.Contains("RtsSelectionRuntimeCameraContextSystem _rtsSelectionRuntimeCameraContextSystem", selection);
-        StringAssert.Contains("RuntimeCameraContext", selection);
-        StringAssert.Contains("new RtsSelectionRuntimeCameraSystem.Context", runtimeCameraContext);
-        StringAssert.Contains("SelectionRuntimeConfigSystem.State runtimeConfig", runtimeCameraContext);
+        StringAssert.Contains("ProcessMoveCommandRequests", commandResultFlush);
+        StringAssert.Contains("ProcessAttackCommandRequests", commandResultFlush);
+        StringAssert.Contains("ProcessTransportCommandRequests", commandResultFlush);
         StringAssert.Contains("UpdateRuntimeCameraTick", runtimeCamera);
-        StringAssert.Contains("HandleBuildModeCameraPan", runtimeCamera);
-        StringAssert.Contains("HandleFullscreenIsoCameraPan", runtimeCamera);
-        StringAssert.Contains("UpdateZoom", runtimeCamera);
-        StringAssert.Contains("UpdateFullscreenIsoZoom", runtimeCamera);
-        StringAssert.Contains("UpdateBuildModeCameraTransition", runtimeCamera);
-        StringAssert.Contains("SyncCameraZoomModeState", runtimeCamera);
-        StringAssert.Contains("ConsumeInitialCameraFocusRequest", runtimeCamera);
-        StringAssert.Contains("UpdateSmoothCameraFocus", runtimeCamera);
-        StringAssert.Contains("QueueResetSession", runtimeCamera);
-        StringAssert.Contains("QueueSetSmoothFocusTarget", runtimeCamera);
-        StringAssert.Contains("QueueUpdateSmoothFocus", runtimeCamera);
-        StringAssert.Contains("QueuePerspectiveZoom", runtimeCamera);
-        StringAssert.Contains("QueueFullscreenIsoZoom", runtimeCamera);
-        StringAssert.Contains("QueueUpdatePerspectiveMode", runtimeCamera);
-        StringAssert.Contains("QueueUpdateFullscreenIsoMode", runtimeCamera);
-        StringAssert.Contains("QueueApplyPerspectiveModeInstant", runtimeCamera);
-        StringAssert.Contains("QueueApplyFullscreenIsoModeInstant", runtimeCamera);
-        StringAssert.Contains("QueueMoveGroundCenterTo", runtimeCamera);
-        StringAssert.Contains("ProcessPendingRequests", runtimeCamera);
-        StringAssert.Contains("RtsCameraRequestElement : IBufferElementData", cameraComponents);
-        StringAssert.Contains("RtsCameraStateComponent : IComponentData", cameraComponents);
-        StringAssert.Contains("ProcessRequest", cameraRequests);
-        StringAssert.Contains("camera.GetCameraGroundCenterWorld(worldCamera)", runtimeCamera);
-        StringAssert.Contains("camera.GetVisibleGroundVerticalSpan(worldCamera)", runtimeCamera);
-        StringAssert.Contains("camera.CalculateOrthographicSizeForGroundSpan", runtimeCamera);
-        StringAssert.Contains("camera.CalculatePerspectiveHeightForGroundSpan", runtimeCamera);
-        foreach (string forbiddenSelectionToken in new[]
-        {
-            "_rtsCameraRequestSystem.Queue",
-            "_rtsCameraRequestSystem.ProcessPendingRequests",
-            "_rtsCameraSystem.GetCameraGroundCenterWorld",
-            "_rtsCameraSystem.GetVisibleGroundVerticalSpan",
-            "_rtsCameraSystem.CalculateOrthographicSizeForGroundSpan",
-            "_rtsCameraSystem.CalculatePerspectiveHeightForGroundSpan",
-            "private void PanCamera",
-            "private void HandleFullscreenIsoCameraPan",
-            "private void UpdateZoom",
-            "private void UpdateFullscreenIsoZoom",
-            "private void UpdateFullscreenIsoCameraMode",
-            "private void UpdateBuildModeCameraTransition",
-            "private void SyncCameraZoomModeState",
-            "private void ConsumeInitialCameraFocusRequest",
-            "private void UpdateSmoothCameraFocus",
-            "CreateRuntimeCameraContext",
-            "new RtsSelectionRuntimeCameraSystem.Context"
-        })
-        {
-            Assert.IsFalse(
-                selection.Contains(forbiddenSelectionToken, StringComparison.Ordinal),
-                $"{forbiddenSelectionToken} belongs in RtsSelectionRuntimeCameraSystem, not RTSSelectionSystem.");
-        }
-
-        foreach (string forbiddenCall in new[]
-        {
-            "_rtsCameraSystem.ResetSession",
-            "_rtsCameraSystem.ClearSmoothFocusTarget",
-            "_rtsCameraSystem.UpdateSmoothFocus",
-            "_rtsCameraSystem.SetSmoothFocusTarget",
-            "_rtsCameraSystem.ResetCameraModeSession",
-            "_rtsCameraSystem.UpdatePerspectiveZoom",
-            "_rtsCameraSystem.UpdateFullscreenIsoZoom",
-            "_rtsCameraSystem.ApplyPerspectiveCameraModeInstant",
-            "_rtsCameraSystem.ApplyFullscreenIsoCameraModeInstant",
-            "_rtsCameraSystem.UpdatePerspectiveCameraMode",
-            "_rtsCameraSystem.UpdateFullscreenIsoCameraMode",
-            "_rtsCameraSystem.PanCamera",
-            "_rtsCameraSystem.MoveCameraGroundCenterTo",
-            "_rtsCameraSystem.BeginZoomTransition",
-            "_rtsCameraSystem.CompleteZoomTransition",
-            "_rtsCameraSystem.ResetTransitionVelocities",
-            "_rtsCameraSystem.ClearDragging",
-            "_rtsCameraSystem.SetDragging"
-        })
-        {
-            Assert.IsFalse(
-                selection.Contains(forbiddenCall, StringComparison.Ordinal),
-                $"{forbiddenCall} must be queued through RtsCameraRequestSystem, not called from RTSSelectionSystem.");
-        }
-
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bprivate\s+bool\s+_cameraDragging\s*;"),
-            "Camera drag state belongs in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bprivate\s+bool\s+_hasSmoothCameraFocusTarget\s*;"),
-            "Smooth camera focus ownership belongs in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bprivate\s+Vector3\s+_smoothCameraFocus(Target|Velocity)\s*;"),
-            "Smooth camera focus vectors belong in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bprivate\s+bool\s+_(wasPlayRequested|wasBuildModeActive|isZoomTransitionActive|normalIsoModeActive)\s*;"),
-            "Camera mode transition booleans belong in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bprivate\s+float\s+_(zoomTransitionVelocity|pitchTransitionVelocity|yawTransitionVelocity|fieldOfViewTransitionVelocity|orthographicSizeTransitionVelocity|fullscreenIsoTargetHeight|fullscreenIsoTargetOrthographicSize)\s*;"),
-            "Camera transition numeric state belongs in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"worldCamera\.transform\.(position|rotation)\s*="),
-            "Camera transform writes belong in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"worldCamera\.(orthographic|fieldOfView|orthographicSize)\s*="),
-            "Camera mode writes belong in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            selection.Contains("worldCamera.ViewportPointToRay", StringComparison.Ordinal),
-            "Ground-plane camera ray queries belong in RtsCameraSystem, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+void\s+Apply(Perspective|FullscreenIso)CameraModeInstant\s*\("),
-            "RTSSelectionSystem must not keep private one-line camera mode wrappers around RtsCameraSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"private\s+(Vector3|float|bool)\s+(GetCameraGroundCenterWorld|GetVisibleGroundVerticalSpan|TryGetGroundPointFromViewport|CalculateOrthographicSizeForGroundSpan|CalculatePerspectiveHeightForGroundSpan|UpdatePerspectiveCameraMode|UpdateFullscreenIsoCameraMode)\s*\("),
-            "Camera math/query/interpolation wrappers belong in RtsCameraSystem, not RTSSelectionSystem.");
+        StringAssert.Contains("UpdateNormalPointerInput", runtimeInput);
+        StringAssert.Contains("FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem", uiReadModel);
+        StringAssert.Contains("SelectionHudFeedbackQueueComponent", hudFeedback);
+        StringAssert.Contains("IsBoardablePlayerTransportClick", buildingInteraction);
     }
 
     [Test]
@@ -3219,88 +2231,8 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void RtsSelectionSystemMustDelegateInputStateSlice()
+    public void RuntimeGameplayStateBoundaryMustNotUseRetiredSelectionContext()
     {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
-        const string inputStateFile = "Assets/Game/Scripts/Systems/RtsSelectionInputStateSystem.cs";
-        const string inputComponentsFile = "Assets/Game/Scripts/Components/SelectionInputRequestComponents.cs";
-        Assert.IsTrue(File.Exists(inputFile), "RTS input compatibility accessor must exist until callers migrate to ECS requests.");
-        Assert.IsTrue(File.Exists(inputStateFile), "RTS pointer/session state singleton ownership must live in RtsSelectionInputStateSystem.");
-        Assert.IsTrue(File.Exists(inputComponentsFile), "RTS pointer/session state must be ECS component data.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string input = File.ReadAllText(inputFile);
-        string inputState = File.ReadAllText(inputStateFile);
-        string inputComponents = File.ReadAllText(inputComponentsFile);
-        StringAssert.Contains("RtsSelectionInputSystem _rtsSelectionInputSystem", selection);
-        StringAssert.Contains("RtsSelectionInputStateSystem _inputStateSystem", input);
-        StringAssert.Contains("RtsSelectionInputStateComponent : IComponentData", inputComponents);
-        StringAssert.Contains("RtsSelectionInputStateComponent", inputState);
-        StringAssert.Contains("_rtsSelectionInputSystem.BeginPointerPress", selection);
-        StringAssert.Contains("_rtsSelectionInputSystem.QueueMoveOrder", selection);
-        StringAssert.Contains("_rtsSelectionInputSystem.TryConsumeQueuedMoveOrder", selection);
-        StringAssert.Contains("_rtsSelectionInputSystem.UpdateLastKnownPointerPosition", selection);
-        StringAssert.Contains("_rtsSelectionInputSystem.CaptureUiClickSequence", selection);
-        Assert.IsFalse(
-            Regex.IsMatch(selection, @"\bprivate\s+(Vector2|bool|int|float|uint|Rect)\s+_(dragStart|dragCurrent|lastPointerPosition|pointerPressedOverUi|dragging|ignoreNextLeftMouseRelease|skipNextWorldReleaseAfterSelection|ignoreWorldCommandsUntilFrame|ignoreUiClickUntilRelease|selectionModeHoldArmed|selectionModeHoldStartTime|queuedMoveOrderToken|hasQueuedMoveOrder|queuedMoveOrderScreenPosition|queuedMoveOrderFrame|lastLiveSelectionRect|hasLiveSelectionRect|lastKnownPointerPosition|hasLastKnownPointerPosition)\s*(=|;)"),
-            "RTS input/session state belongs in ECS input state components, not RTSSelectionSystem.");
-        Assert.IsFalse(
-            Regex.IsMatch(input, @"\bprivate\s+(Vector2|bool|int|float|uint|Rect)\s+_(dragStart|dragCurrent|lastPointerPosition|pointerPressedOverUi|isDraggingSelection|ignoreNextLeftMouseRelease|skipNextWorldReleaseAfterSelection|ignoreWorldCommandsUntilFrame|ignoreUiClickUntilRelease|selectionModeHoldArmed|selectionModeHoldStartTime|queuedMoveOrderToken|hasQueuedMoveOrder|queuedMoveOrderScreenPosition|queuedMoveOrderFrame|lastLiveSelectionRect|hasLiveSelectionRect|lastKnownPointerPosition|hasLastKnownPointerPosition)\s*(=|;)"),
-            "RTS input/session state must live in RtsSelectionInputStateComponent, not managed fields on RtsSelectionInputSystem.");
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustDelegateRuntimeInputTickSlice()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
-        const string runtimeInputFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs";
-        const string runtimeInputContextFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputContextSystem.cs";
-        Assert.IsTrue(File.Exists(runtimeInputFile), "RTS runtime pointer input orchestration must live in RtsSelectionRuntimeInputSystem during shell retirement.");
-        Assert.IsTrue(File.Exists(runtimeInputContextFile), "RTS runtime input context construction must live outside SelectionRuntimeContextSystem.");
-
-        string selection = File.ReadAllText(selectionFile);
-        string runtimeInput = File.ReadAllText(runtimeInputFile);
-        string runtimeInputContext = File.ReadAllText(runtimeInputContextFile);
-        StringAssert.Contains("RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem", selection);
-        StringAssert.Contains("RtsSelectionRuntimeInputContextSystem _rtsSelectionRuntimeInputContextSystem", selection);
-        StringAssert.Contains("RuntimeInputContext", selection);
-        StringAssert.Contains("new RtsSelectionRuntimeInputSystem.Context", runtimeInputContext);
-        StringAssert.Contains("SelectionRuntimeConfigSystem.State runtimeConfig", runtimeInputContext);
-        StringAssert.Contains("ProcessQueuedMoveOrder", runtimeInput);
-        StringAssert.Contains("UpdateNormalPointerInput", runtimeInput);
-        StringAssert.Contains("QueueSelectionRectangleRequest", runtimeInput);
-        StringAssert.Contains("TriggerSelectionModeFromHold", runtimeInput);
-        StringAssert.Contains("GamePointerInput.TryGetPrimaryPointer", runtimeInput);
-
-        string[] forbiddenSelectionTokens =
-        {
-            "private void ProcessQueuedMoveOrder",
-            "private static void UpdateSelectionModeHold",
-            "private void UpdateSelectionModeHold",
-            "private void QueueMoveOrder",
-            "private void ArmSelectionModeHold",
-            "private static bool ApproximatelyEqualRect",
-            "private static Rect GetScreenRect",
-            "_selectionModeHoldArmed",
-            "_ignoreUiClickUntilRelease",
-            "_hasLiveSelectionRect",
-            "CreateRuntimeInputContext",
-            "new RtsSelectionRuntimeInputSystem.Context"
-        };
-
-        foreach (string token in forbiddenSelectionTokens)
-        {
-            Assert.IsFalse(
-                selection.Contains(token, StringComparison.Ordinal),
-                $"{token} belongs in RtsSelectionRuntimeInputSystem/RtsSelectionInputStateSystem, not RTSSelectionSystem.");
-        }
-    }
-
-    [Test]
-    public void RtsSelectionSystemMustUseRuntimeGameplayStateBoundary()
-    {
-        const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string mainMenuPlayFile = "Assets/Game/Scripts/UI/MainMenuPlayUI.cs";
         const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
         const string roadBuildFile = "Assets/Game/Scripts/Systems/RoadBuildSystem.cs";
@@ -3311,82 +2243,32 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(stateSystemFile), "Runtime gameplay state access must go through RuntimeGameplayStateSystem.");
         Assert.IsTrue(File.Exists(stateComponentsFile), "Runtime gameplay state must have ECS singleton components.");
 
-        string selection = File.ReadAllText(selectionFile);
-        string mainMenuPlay = File.ReadAllText(mainMenuPlayFile);
-        string menuView = File.ReadAllText(menuViewFile);
-        string roadBuild = File.ReadAllText(roadBuildFile);
-        string buildingPlacement = File.ReadAllText(buildingPlacementFile);
-        string gameBootstrap = File.ReadAllText(gameBootstrapFile);
+        string[] files =
+        {
+            mainMenuPlayFile,
+            menuViewFile,
+            roadBuildFile,
+            buildingPlacementFile,
+            gameBootstrapFile
+        };
+
+        foreach (string file in files)
+        {
+            string code = File.ReadAllText(file);
+            Assert.IsFalse(
+                code.Contains("SelectionRuntimeContextSystem", StringComparison.Ordinal),
+                $"{file} must not reference the retired selection context.");
+            Assert.IsFalse(
+                code.Contains("InitialUnitsRuntimeState.PlayRequested", StringComparison.Ordinal),
+                $"{file} must use RuntimeGameplayStateSystem for PlayRequested.");
+        }
+
         string stateSystem = File.ReadAllText(stateSystemFile);
         string components = File.ReadAllText(stateComponentsFile);
-        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", selection);
-        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", mainMenuPlay);
-        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", menuView);
-        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", roadBuild);
-        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", buildingPlacement);
-        StringAssert.Contains("RuntimeGameplayStateSystem _runtimeGameplayStateSystem", gameBootstrap);
         StringAssert.Contains("ResetForGameplayStart", stateSystem);
-        StringAssert.Contains("_runtimeGameplayStateSystem.ResetForGameplayStart", gameBootstrap);
         StringAssert.Contains("RuntimeGameplayStateComponent : IComponentData", components);
         StringAssert.Contains("RuntimeCameraInputComponent : IComponentData", components);
         StringAssert.Contains("RuntimeCameraFocusRequestComponent : IComponentData", components);
-
-        string[] migratedFields =
-        {
-            "PlayRequested",
-            "InitialCameraFocusRequested",
-            "InitialCameraFocusWorld",
-            "SelectionModeActive",
-            "BuildModeActive",
-            "FullscreenMapOpen",
-            "FullscreenMapIsoMode",
-            "ZoomInHeld",
-            "ZoomOutHeld",
-            "SuppressNextWorldClick",
-            "PlayerAutoModeEnabled"
-        };
-
-        foreach (string field in migratedFields)
-        {
-            Assert.IsFalse(
-                selection.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
-                $"RTSSelectionSystem must use RuntimeGameplayStateSystem for {field}.");
-            Assert.IsFalse(
-                mainMenuPlay.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
-                $"MainMenuPlayUI must use RuntimeGameplayStateSystem for {field}.");
-            Assert.IsFalse(
-                menuView.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
-                $"MenuView must use RuntimeGameplayStateSystem for {field}.");
-            Assert.IsFalse(
-                roadBuild.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
-                $"RoadBuildSystem must use RuntimeGameplayStateSystem for {field}.");
-            Assert.IsFalse(
-                buildingPlacement.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
-                $"BuildingPlacementSystem must use RuntimeGameplayStateSystem for {field}.");
-            Assert.IsFalse(
-                gameBootstrap.Contains($"InitialUnitsRuntimeState.{field}", StringComparison.Ordinal),
-                $"GameBootstrap must use RuntimeGameplayStateSystem for {field}.");
-        }
-
-        string[] bootstrapStartResetAssignments =
-        {
-            "PlayRequested = true",
-            "SelectionModeActive = false",
-            "BuildModeActive = false",
-            "FullscreenMapOpen = false",
-            "FullscreenMapIsoMode = false",
-            "ZoomInHeld = false",
-            "ZoomOutHeld = false",
-            "SuppressNextWorldClick = true",
-            "InitialCameraFocusRequested = false"
-        };
-
-        foreach (string assignment in bootstrapStartResetAssignments)
-        {
-            Assert.IsFalse(
-                gameBootstrap.Contains($"_runtimeGameplayStateSystem.{assignment}", StringComparison.Ordinal),
-                $"Gameplay start state reset belongs in RuntimeGameplayStateSystem.ResetForGameplayStart, not GameBootstrap.");
-        }
     }
 
     [Test]

@@ -1,9 +1,32 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using NUnit.Framework;
+using Unity.Entities;
 using UnityEngine;
 
 public sealed class RtsSelectionInputSystemTests
 {
+    private World _previousWorld;
+    private World _testWorld;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _previousWorld = World.DefaultGameObjectInjectionWorld;
+        _testWorld = new World("RtsSelectionInputSystemTests");
+        World.DefaultGameObjectInjectionWorld = _testWorld;
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        if (_testWorld != null && _testWorld.IsCreated)
+            _testWorld.Dispose();
+
+        World.DefaultGameObjectInjectionWorld = _previousWorld;
+        _testWorld = null;
+        _previousWorld = null;
+    }
+
     [Test]
     public void BeginPointerPress_SetsDragOriginAndClearsSelectionDrag()
     {

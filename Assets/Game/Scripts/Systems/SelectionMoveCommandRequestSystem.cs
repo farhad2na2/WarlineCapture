@@ -4,8 +4,11 @@ using UnityEngine;
 
 public sealed class SelectionMoveCommandRequestSystem
 {
+    private readonly System.Collections.Generic.List<RtsSelectionCommandIntentRequestElement> _pendingMoveRequests = new();
+
     public bool ProcessPendingRequests(
         EntityManager em,
+        Entity commandEntity,
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         EntityQuery selectedMoveQuery,
@@ -16,7 +19,7 @@ public sealed class SelectionMoveCommandRequestSystem
         SelectedMoveOrderCommandSystem.ClickedUnitResolver tryGetClickedUnit,
         SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetClickedCell)
     {
-        bool processed = false;
+        _pendingMoveRequests.Clear();
         for (int i = 0; i < commandRequests.Length;)
         {
             RtsSelectionCommandIntentRequestElement request = commandRequests[i];
@@ -27,6 +30,12 @@ public sealed class SelectionMoveCommandRequestSystem
             }
 
             commandRequests.RemoveAt(i);
+            _pendingMoveRequests.Add(request);
+        }
+
+        for (int i = 0; i < _pendingMoveRequests.Count; i++)
+        {
+            RtsSelectionCommandIntentRequestElement request = _pendingMoveRequests[i];
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
             SelectedMoveOrderCommandSystem.Result result = selectedMoveOrderCommandSystem.TryIssueMoveOrder(
                 em,
@@ -39,11 +48,25 @@ public sealed class SelectionMoveCommandRequestSystem
                 tryGetClickedCell,
                 request.Frame);
 
-            commandResults.Add(ToResultElement(request, result));
-            processed = true;
+            AddCommandResult(em, commandEntity, commandResults, ToResultElement(request, result));
         }
 
-        return processed;
+        return _pendingMoveRequests.Count > 0;
+    }
+
+    private static void AddCommandResult(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
+        RtsSelectionCommandResultElement result)
+    {
+        if (commandEntity != Entity.Null && em.Exists(commandEntity) && em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(result);
+            return;
+        }
+
+        fallbackResults.Add(result);
     }
 
     private static RtsSelectionCommandResultElement ToResultElement(

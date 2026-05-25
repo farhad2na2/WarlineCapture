@@ -321,6 +321,15 @@ public sealed class RtsSelectionInputSystem
         return _inputStateSystem.TryGetCommandBuffers(out em, out commandRequests, out commandResults);
     }
 
+    public bool TryGetCommandBuffers(
+        out EntityManager em,
+        out Entity entity,
+        out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        out DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+    {
+        return _inputStateSystem.TryGetCommandBuffers(out em, out entity, out commandRequests, out commandResults);
+    }
+
     public bool TryConsumeQueuedMoveOrder(int currentFrame, out Vector2 screenPosition)
     {
         screenPosition = default;

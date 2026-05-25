@@ -244,6 +244,9 @@ public sealed class RTSSelectionSystem
     private EntityQuery _selectedTagQuery;
     private readonly List<Entity> _visibleSelectionScratch = new();
     private readonly List<RtsSelectionCommandIntentKind> _externalSelectionCommandScratch = new();
+    private readonly List<RtsSelectionCommandResultElement> _moveCommandResultScratch = new();
+    private readonly List<RtsSelectionCommandResultElement> _attackCommandResultScratch = new();
+    private readonly List<RtsSelectionCommandResultElement> _transportCommandResultScratch = new();
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
     private float _selectionModeHoldSeconds = 1f;
@@ -1377,6 +1380,7 @@ public sealed class RTSSelectionSystem
 
         if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
                 out EntityManager em,
+                out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
@@ -1388,6 +1392,7 @@ public sealed class RTSSelectionSystem
         EnsureEntityQueries(em);
         _selectionMoveCommandRequestSystem.ProcessPendingRequests(
             em,
+            commandEntity,
             commandRequests,
             commandResults,
             _selectedMoveQuery,
@@ -1398,7 +1403,8 @@ public sealed class RTSSelectionSystem
             TryGetClickedUnitEntity,
             TryGetClickedCell);
 
-        bool handled = false;
+        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        _moveCommandResultScratch.Clear();
         for (int i = 0; i < commandResults.Length;)
         {
             RtsSelectionCommandResultElement result = commandResults[i];
@@ -1409,6 +1415,13 @@ public sealed class RTSSelectionSystem
             }
 
             commandResults.RemoveAt(i);
+            _moveCommandResultScratch.Add(result);
+        }
+
+        bool handled = false;
+        for (int i = 0; i < _moveCommandResultScratch.Count; i++)
+        {
+            RtsSelectionCommandResultElement result = _moveCommandResultScratch[i];
             ApplyHudCommandResult(ToTacticalCommandResult(result));
             ClearHudCommandMode();
             if (result.EmitScreenMarker != 0)
@@ -1439,6 +1452,7 @@ public sealed class RTSSelectionSystem
 
         if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
                 out EntityManager em,
+                out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
@@ -1450,6 +1464,7 @@ public sealed class RTSSelectionSystem
         EnsureEntityQueries(em);
         _selectionAttackCommandRequestSystem.ProcessPendingRequests(
             em,
+            commandEntity,
             commandRequests,
             commandResults,
             _attackOrderCommandSystem,
@@ -1458,7 +1473,8 @@ public sealed class RTSSelectionSystem
             _buildingPlacementInteractionSystem,
             _buildingPlacementInteractionContext);
 
-        bool issued = false;
+        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        _attackCommandResultScratch.Clear();
         for (int i = 0; i < commandResults.Length;)
         {
             RtsSelectionCommandResultElement result = commandResults[i];
@@ -1469,6 +1485,13 @@ public sealed class RTSSelectionSystem
             }
 
             commandResults.RemoveAt(i);
+            _attackCommandResultScratch.Add(result);
+        }
+
+        bool issued = false;
+        for (int i = 0; i < _attackCommandResultScratch.Count; i++)
+        {
+            RtsSelectionCommandResultElement result = _attackCommandResultScratch[i];
             if (result.HasCommandResult != 0)
             {
                 ApplyHudCommandResult(ToTacticalCommandResult(result));
@@ -1508,6 +1531,7 @@ public sealed class RTSSelectionSystem
 
         if (!_rtsSelectionInputSystem.TryGetCommandBuffers(
                 out EntityManager em,
+                out Entity commandEntity,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
@@ -1517,6 +1541,7 @@ public sealed class RTSSelectionSystem
         EnsureEntityQueries(em);
         _selectionTransportCommandRequestSystem.ProcessPendingRequests(
             em,
+            commandEntity,
             commandRequests,
             commandResults,
             _transportBoardingCommandSystem,
@@ -1526,7 +1551,8 @@ public sealed class RTSSelectionSystem
             TryGetClickedUnitEntity,
             TryGetClickedCell);
 
-        bool accepted = false;
+        commandResults = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
+        _transportCommandResultScratch.Clear();
         for (int i = 0; i < commandResults.Length;)
         {
             RtsSelectionCommandResultElement result = commandResults[i];
@@ -1538,6 +1564,13 @@ public sealed class RTSSelectionSystem
             }
 
             commandResults.RemoveAt(i);
+            _transportCommandResultScratch.Add(result);
+        }
+
+        bool accepted = false;
+        for (int i = 0; i < _transportCommandResultScratch.Count; i++)
+        {
+            RtsSelectionCommandResultElement result = _transportCommandResultScratch[i];
             if (result.Accepted == 0)
                 continue;
 

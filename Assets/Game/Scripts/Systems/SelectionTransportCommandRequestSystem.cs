@@ -13,10 +13,12 @@ public sealed class SelectionTransportCommandRequestSystem
     private readonly List<Entity> _remainingPassengers = new();
     private readonly List<Entity> _disembarkingPassengers = new();
     private readonly List<int2> _disembarkCells = new();
+    private readonly List<RtsSelectionCommandIntentRequestElement> _pendingTransportRequests = new();
     private readonly HashSet<int> _reservedCells = new();
 
     public bool ProcessPendingRequests(
         EntityManager em,
+        Entity commandEntity,
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         TransportBoardingCommandSystem transportBoardingCommandSystem,
@@ -26,7 +28,7 @@ public sealed class SelectionTransportCommandRequestSystem
         TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetClickedCell)
     {
-        bool processed = false;
+        _pendingTransportRequests.Clear();
         EnsureEntityQueries(em);
         for (int i = 0; i < commandRequests.Length;)
         {
@@ -39,6 +41,12 @@ public sealed class SelectionTransportCommandRequestSystem
             }
 
             commandRequests.RemoveAt(i);
+            _pendingTransportRequests.Add(request);
+        }
+
+        for (int i = 0; i < _pendingTransportRequests.Count; i++)
+        {
+            RtsSelectionCommandIntentRequestElement request = _pendingTransportRequests[i];
             RtsSelectionCommandResultElement result = request.Kind == RtsSelectionCommandIntentKind.BoardTransport
                 ? ProcessBoardTransportRequest(
                     em,
@@ -50,11 +58,25 @@ public sealed class SelectionTransportCommandRequestSystem
                     tryGetClickedUnitEntity,
                     tryGetClickedCell)
                 : ProcessDisembarkTransportRequest(em, request, transportBoardingSystem, moveOrderSystem);
-            commandResults.Add(result);
-            processed = true;
+            AddCommandResult(em, commandEntity, commandResults, result);
         }
 
-        return processed;
+        return _pendingTransportRequests.Count > 0;
+    }
+
+    private static void AddCommandResult(
+        EntityManager em,
+        Entity commandEntity,
+        DynamicBuffer<RtsSelectionCommandResultElement> fallbackResults,
+        RtsSelectionCommandResultElement result)
+    {
+        if (commandEntity != Entity.Null && em.Exists(commandEntity) && em.HasBuffer<RtsSelectionCommandResultElement>(commandEntity))
+        {
+            em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity).Add(result);
+            return;
+        }
+
+        fallbackResults.Add(result);
     }
 
     private void EnsureEntityQueries(EntityManager em)

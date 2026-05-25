@@ -12,6 +12,8 @@ public sealed class SelectionRectangleRequestSystem
     public delegate void ApplyHudSquadSelectionAction(int selectedCount);
     public delegate void LogSelectionAction(string message);
 
+    private readonly List<RtsSelectionPointerRequestElement> _pendingRectangleRequests = new();
+
     public bool ProcessPendingRequests(
         EntityManager em,
         DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests,
@@ -28,7 +30,7 @@ public sealed class SelectionRectangleRequestSystem
         LogSelectionAction logSelectionDiagnostic,
         Action clearSelectedBuilding)
     {
-        bool processed = false;
+        _pendingRectangleRequests.Clear();
         for (int i = 0; i < pointerRequests.Length;)
         {
             RtsSelectionPointerRequestElement request = pointerRequests[i];
@@ -39,12 +41,16 @@ public sealed class SelectionRectangleRequestSystem
             }
 
             pointerRequests.RemoveAt(i);
-            Rect screenRect = GetScreenRect(request.DragStart, request.DragCurrent);
-            VisibleUnitSelectionSystem.Filter filter = ResolveFilter(request.SelectionFilter);
+            _pendingRectangleRequests.Add(request);
+        }
+
+        for (int i = 0; i < _pendingRectangleRequests.Count; i++)
+        {
+            RtsSelectionPointerRequestElement request = _pendingRectangleRequests[i];
             ApplySelectionRectangle(
                 em,
-                screenRect,
-                filter,
+                GetScreenRect(request.DragStart, request.DragCurrent),
+                ResolveFilter(request.SelectionFilter),
                 worldCamera,
                 selectionUiQuerySystem,
                 visibleUnitSelectionSystem,
@@ -57,10 +63,9 @@ public sealed class SelectionRectangleRequestSystem
                 applyHudSquadSelection,
                 logSelectionDiagnostic,
                 clearSelectedBuilding);
-            processed = true;
         }
 
-        return processed;
+        return _pendingRectangleRequests.Count > 0;
     }
 
     private static bool IsSelectionRectangleRequest(RtsSelectionPointerRequestKind kind)

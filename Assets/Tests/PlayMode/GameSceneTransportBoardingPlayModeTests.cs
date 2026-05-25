@@ -307,15 +307,17 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         var inputSystem = new RtsSelectionInputSystem();
         if (!inputSystem.QueueDisembarkTransportCommandRequest(transport, Time.frameCount) ||
             !inputSystem.TryGetCommandBuffers(
-                out _,
-                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
-                out DynamicBuffer<RtsSelectionCommandResultElement> results))
+            out _,
+            out Entity commandEntity,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out DynamicBuffer<RtsSelectionCommandResultElement> results))
         {
             return false;
         }
 
         bool processed = new SelectionTransportCommandRequestSystem().ProcessPendingRequests(
             em,
+            commandEntity,
             requests,
             results,
             new TransportBoardingCommandSystem(),
@@ -325,6 +327,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             TryGetNoClickedUnit,
             TryGetNoClickedCell);
 
+        results = em.GetBuffer<RtsSelectionCommandResultElement>(commandEntity);
         return processed && results.Length > 0 && results[results.Length - 1].Accepted != 0;
     }
 

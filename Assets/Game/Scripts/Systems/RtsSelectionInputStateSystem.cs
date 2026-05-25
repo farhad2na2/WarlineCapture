@@ -39,9 +39,18 @@ public sealed class RtsSelectionInputStateSystem
         out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         out DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
     {
+        return TryGetCommandBuffers(out em, out _, out commandRequests, out commandResults);
+    }
+
+    public bool TryGetCommandBuffers(
+        out EntityManager em,
+        out Entity entity,
+        out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+        out DynamicBuffer<RtsSelectionCommandResultElement> commandResults)
+    {
         commandRequests = default;
         commandResults = default;
-        if (!TryResolve(out em, out Entity entity))
+        if (!TryResolve(out em, out entity))
             return false;
 
         commandRequests = em.GetBuffer<RtsSelectionCommandIntentRequestElement>(entity);

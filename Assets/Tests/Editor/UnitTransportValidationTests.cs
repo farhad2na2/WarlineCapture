@@ -607,6 +607,7 @@ public sealed class UnitTransportValidationTests
             var transportRequestSystem = new SelectionTransportCommandRequestSystem();
             transportRequestSystem.ProcessPendingRequests(
                 em,
+                queue,
                 requests,
                 results,
                 new TransportBoardingCommandSystem(),

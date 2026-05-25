@@ -161,8 +161,8 @@ public static class WarlineCaptureDemoClusterCityBuilder
 
     private static List<GameObject> CollectSourceRoots(ClusterSpec cluster)
     {
-        Dictionary<int, GameObject> roots = new();
-        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        Dictionary<GameObject, GameObject> roots = new();
+        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude))
         {
             if (transform == null || transform.gameObject.scene.path != DemoScenePath)
                 continue;
@@ -199,7 +199,7 @@ public static class WarlineCaptureDemoClusterCityBuilder
                 continue;
             }
 
-            roots[root.GetInstanceID()] = root;
+            roots[root] = root;
         }
 
         List<GameObject> result = roots.Values
@@ -212,12 +212,12 @@ public static class WarlineCaptureDemoClusterCityBuilder
         return result;
     }
 
-    private static bool HasSelectedAncestor(Transform transform, Dictionary<int, GameObject> selected)
+    private static bool HasSelectedAncestor(Transform transform, Dictionary<GameObject, GameObject> selected)
     {
         Transform parent = transform.parent;
         while (parent != null)
         {
-            if (selected.ContainsKey(parent.gameObject.GetInstanceID()))
+            if (selected.ContainsKey(parent.gameObject))
                 return true;
             parent = parent.parent;
         }
@@ -386,7 +386,7 @@ public static class WarlineCaptureDemoClusterCityBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC02_Overview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc02_overview_2048_map_1920x1080.png"), 1920, 1080);

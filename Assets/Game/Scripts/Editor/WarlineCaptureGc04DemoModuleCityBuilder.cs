@@ -332,8 +332,8 @@ public static class WarlineCaptureGc04DemoModuleCityBuilder
 
     private static List<GameObject> CollectSourceRoots(ModuleSpec module)
     {
-        Dictionary<int, GameObject> roots = new();
-        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        Dictionary<GameObject, GameObject> roots = new();
+        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude))
         {
             if (transform == null || transform.gameObject.scene.path != DemoScenePath)
                 continue;
@@ -368,7 +368,7 @@ public static class WarlineCaptureGc04DemoModuleCityBuilder
                 continue;
             }
 
-            roots[root.GetInstanceID()] = root;
+            roots[root] = root;
         }
 
         List<GameObject> result = roots.Values
@@ -381,12 +381,12 @@ public static class WarlineCaptureGc04DemoModuleCityBuilder
         return result;
     }
 
-    private static bool HasSelectedAncestor(Transform transform, Dictionary<int, GameObject> selected)
+    private static bool HasSelectedAncestor(Transform transform, Dictionary<GameObject, GameObject> selected)
     {
         Transform parent = transform.parent;
         while (parent != null)
         {
-            if (selected.ContainsKey(parent.gameObject.GetInstanceID()))
+            if (selected.ContainsKey(parent.gameObject))
                 return true;
             parent = parent.parent;
         }
@@ -562,7 +562,7 @@ public static class WarlineCaptureGc04DemoModuleCityBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC04_TopDownModulesWalkability")
                 Render(camera, ProjectPath(CaptureRoot + "/gc04_topdown_modules_walkability_1920x1080.png"), 1920, 1080);

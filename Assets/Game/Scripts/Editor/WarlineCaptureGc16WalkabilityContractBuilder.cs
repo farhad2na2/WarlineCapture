@@ -325,7 +325,7 @@ public static class WarlineCaptureGc16WalkabilityContractBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC16_TopDownWalkabilityProof")
                 Render(camera, ProjectPath(CaptureRoot + "/gc16_topdown_walkability_contract_2048x2048.png"), 2048, 2048);

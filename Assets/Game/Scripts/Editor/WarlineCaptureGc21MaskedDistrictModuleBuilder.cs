@@ -791,7 +791,7 @@ public static class WarlineCaptureGc21MaskedDistrictModuleBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC21_RtsOverview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc21_rts_overview_1920x1080.png"), 1920, 1080);

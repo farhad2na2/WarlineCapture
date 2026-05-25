@@ -1,0 +1,26 @@
+{
+  "mapId": "Game_Terrain3_Island2048",
+  "sourceSceneReference": "Assets/Game/Scenes/Game_Terrain3.unity",
+  "generationRule": "Source-prefab-only expansion. No generated terrain meshes and no substitute prefabs.",
+  "mapSize": 2048,
+  "sourceBeachPrefabInstances": 31,
+  "sourceGrassPrefabInstances": 181,
+  "placedPrefabInstances": 3103,
+  "placedBeachPrefabInstances": 480,
+  "placedGrassPrefabInstances": 2623,
+  "interiorGrassSpacing": 24.5,
+  "grassSurfaceScaleXZ": 1.32,
+  "shoreGrassScaleXZ": 1.2,
+  "beachSurfaceScaleXZ": 1.42,
+  "uniqueSourcePrefabAssets": [
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Grass_Patch_01.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Generic_Grass_Patch_02.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Grass_Circle_01.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Grass_Circle_02.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Grass_Square_01.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Beach_01.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Beach_Staight_01.prefab",
+    "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Beach_Staight_02.prefab"
+  ],
+  "pathfindingRule": "Use the same island boundary function from the editor builder for water/edge blocking until a runtime island builder extracts this placement algorithm."
+}

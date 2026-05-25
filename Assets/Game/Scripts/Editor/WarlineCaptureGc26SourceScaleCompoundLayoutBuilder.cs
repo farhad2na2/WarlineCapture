@@ -1191,7 +1191,7 @@ public static class WarlineCaptureGc26SourceScaleCompoundLayoutBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC26_RtsOverview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc26_rts_overview_1920x1080.png"), 1920, 1080);

@@ -708,7 +708,7 @@ public static class WarlineCaptureGc03PlayableCityBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC03_TopDownWalkability")
                 Render(camera, ProjectPath(CaptureRoot + "/gc03_topdown_walkability_1920x1080.png"), 1920, 1080);

@@ -327,7 +327,7 @@ public static class WarlineCaptureGc11ExpandedRtsSceneBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC11_TopdownLayoutProof")
                 Render(camera, ProjectPath(CaptureRoot + "/gc11_topdown_layout_proof_1920x1080.png"));

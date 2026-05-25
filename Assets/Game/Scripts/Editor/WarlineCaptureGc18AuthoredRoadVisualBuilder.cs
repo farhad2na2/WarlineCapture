@@ -465,7 +465,7 @@ public static class WarlineCaptureGc18AuthoredRoadVisualBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC18_RtsOverview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc18_rts_overview_1920x1080.png"), 1920, 1080);

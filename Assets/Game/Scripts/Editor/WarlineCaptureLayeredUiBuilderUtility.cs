@@ -174,7 +174,7 @@ public static class WarlineCaptureLayeredUiBuilderUtility
         text.alignment = alignment;
         text.color = color;
         text.raycastTarget = false;
-        text.enableWordWrapping = wordWrap;
+        text.textWrappingMode = wordWrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
         text.overflowMode = TextOverflowModes.Ellipsis;
         return text;
     }

@@ -341,7 +341,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         text.fontStyle = FontStyles.Bold;
         text.alignment = alignment;
         text.color = color;
-        text.enableWordWrapping = true;
+        text.textWrappingMode = TextWrappingModes.Normal;
         text.overflowMode = TextOverflowModes.Ellipsis;
         text.raycastTarget = false;
         return text;

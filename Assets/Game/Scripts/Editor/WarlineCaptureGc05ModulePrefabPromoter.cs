@@ -88,7 +88,7 @@ public static class WarlineCaptureGc05ModulePrefabPromoter
         Directory.CreateDirectory(ProjectPath(Path.GetDirectoryName(PreviewScenePath)));
 
         Scene sourceScene = EditorSceneManager.OpenScene(SourceScenePath, OpenSceneMode.Single);
-        Transform modulesRoot = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+        Transform modulesRoot = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include)
             .FirstOrDefault(t => t.name == "DemoAuthoredPlayableModules");
 
         if (modulesRoot == null)
@@ -363,7 +363,7 @@ public static class WarlineCaptureGc05ModulePrefabPromoter
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC05_TopDownPrefabPreview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc05_topdown_prefab_preview_1920x1080.png"), 1920, 1080);

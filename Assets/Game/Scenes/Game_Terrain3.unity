@@ -10605,6 +10605,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Env_Grass_Square_01 (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 1309008091646278, guid: f7dc8d1971098534588afce7d1a72784, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4090057083578430, guid: f7dc8d1971098534588afce7d1a72784, type: 3}
       propertyPath: m_RootOrder
       value: 1159

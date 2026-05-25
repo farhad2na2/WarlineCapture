@@ -673,7 +673,7 @@ public static class WarlineCaptureGc20ProceduralAuthoringBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC20_RtsOverview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc20_rts_overview_1920x1080.png"), 1920, 1080);

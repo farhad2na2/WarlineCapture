@@ -593,7 +593,7 @@ public static class WarlineCaptureMainMenuAltSceneBuilder
         text.alignment = alignment;
         text.color = color;
         text.raycastTarget = false;
-        text.enableWordWrapping = false;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
         text.overflowMode = TextOverflowModes.Ellipsis;
         RegisterDiagnostic($"{name}_TextRect", new RectInt(rect[0], rect[1], rect[2], rect[3]), DiagnosticKind.Text);
         return text;
@@ -896,7 +896,7 @@ public static class WarlineCaptureMainMenuAltSceneBuilder
         camera.farClipPlane = 100f;
         cameraObject.transform.position = new Vector3(0f, 0f, -10f);
 
-        Canvas canvas = UnityEngine.Object.FindFirstObjectByType<Canvas>();
+        Canvas canvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
         if (canvas != null)
         {
             canvas.renderMode = RenderMode.WorldSpace;

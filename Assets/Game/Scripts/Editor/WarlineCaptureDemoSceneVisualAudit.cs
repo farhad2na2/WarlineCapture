@@ -19,7 +19,7 @@ public static class WarlineCaptureDemoSceneVisualAudit
         Directory.CreateDirectory(OutputRoot);
         EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
 
-        Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Renderer[] renderers = UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include);
         Bounds contentBounds = CalculateContentBounds(renderers);
         CaptureTopDown(contentBounds);
         CapturePerspective(contentBounds);
@@ -46,9 +46,9 @@ public static class WarlineCaptureDemoSceneVisualAudit
 
     private static void CapturePerspective(Bounds bounds)
     {
-        Camera source = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+        Camera source = UnityEngine.Object.FindObjectsByType<Camera>(FindObjectsInactive.Include)
             .FirstOrDefault(c => c.name == "Main Camera") ??
-            UnityEngine.Object.FindFirstObjectByType<Camera>();
+            UnityEngine.Object.FindAnyObjectByType<Camera>();
         if (source != null)
             Render(source, Path.Combine(OutputRoot, "demo_existing_camera_1920x1080.png"), 1920, 1080);
 
@@ -89,7 +89,7 @@ public static class WarlineCaptureDemoSceneVisualAudit
     {
         Dictionary<string, int> roleCounts = new(StringComparer.Ordinal);
         List<InstanceInfo> instances = new();
-        foreach (Transform transform in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Transform transform in UnityEngine.Object.FindObjectsByType<Transform>(FindObjectsInactive.Include))
         {
             GameObject source = PrefabUtility.GetCorrespondingObjectFromSource(transform.gameObject);
             if (source == null)

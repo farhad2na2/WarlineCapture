@@ -8260,7 +8260,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         TMP_Text text = CreateText("LabelText", badge.transform, "Designed\nUnavailable", 10f, TextAlignmentOptions.Center);
         text.color = new Color(1f, 0.78f, 0.32f, 1f);
-        text.enableWordWrapping = true;
+        text.textWrappingMode = TextWrappingModes.Normal;
         text.enableAutoSizing = true;
         text.fontSizeMin = 6f;
         text.fontSizeMax = 10f;

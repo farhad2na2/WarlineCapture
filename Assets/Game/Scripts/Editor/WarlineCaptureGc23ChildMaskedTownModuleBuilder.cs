@@ -1132,7 +1132,7 @@ public static class WarlineCaptureGc23ChildMaskedTownModuleBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC23_RtsOverview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc23_rts_overview_1920x1080.png"), 1920, 1080);

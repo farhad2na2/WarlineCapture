@@ -48,7 +48,7 @@ public static class WarlineCaptureDemoSceneCameraSweep
 
     private static Camera FindOrCreateCamera()
     {
-        Camera camera = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None)
+        Camera camera = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include)
             .FirstOrDefault(c => c.name == "Main Camera");
         if (camera != null)
             return camera;
@@ -122,7 +122,7 @@ public static class WarlineCaptureDemoSceneCameraSweep
 
     private static Bounds CalculatePrefabDenseBounds()
     {
-        Transform[] transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Transform[] transforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Include);
         bool hasBounds = false;
         Bounds bounds = default;
         foreach (Transform transform in transforms)

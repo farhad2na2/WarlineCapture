@@ -91,8 +91,8 @@ public static class WarlineCaptureGc08PlannedMilitaryRtsSceneBuilder
 
     private static List<GameObject> CollectSourceRoots(Bounds sourceBounds)
     {
-        Dictionary<int, GameObject> roots = new();
-        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude, FindObjectsSortMode.None))
+        Dictionary<GameObject, GameObject> roots = new();
+        foreach (Transform transform in Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude))
         {
             if (transform == null || transform.gameObject.scene.path != DemoScenePath)
                 continue;
@@ -119,7 +119,7 @@ public static class WarlineCaptureGc08PlannedMilitaryRtsSceneBuilder
             if (!sourceBounds.Intersects(rootBounds) || IsHugeBackground(root.name, rootBounds) || IsTerrainOrHillSource(root.name, rootBounds))
                 continue;
 
-            roots[root.GetInstanceID()] = root;
+            roots[root] = root;
         }
 
         return roots.Values
@@ -251,7 +251,7 @@ public static class WarlineCaptureGc08PlannedMilitaryRtsSceneBuilder
 
     private static void CaptureScene()
     {
-        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Camera camera in Object.FindObjectsByType<Camera>(FindObjectsInactive.Include))
         {
             if (camera.name == "Camera_GC08_TargetStyleOverview")
                 Render(camera, ProjectPath(CaptureRoot + "/gc08_target_style_overview_1920x1080.png"));
@@ -297,12 +297,12 @@ public static class WarlineCaptureGc08PlannedMilitaryRtsSceneBuilder
         File.WriteAllText(ProjectPath(ReportPath), report.ToString(), Encoding.UTF8);
     }
 
-    private static bool HasSelectedAncestor(Transform transform, Dictionary<int, GameObject> selected)
+    private static bool HasSelectedAncestor(Transform transform, Dictionary<GameObject, GameObject> selected)
     {
         Transform parent = transform.parent;
         while (parent != null)
         {
-            if (selected.ContainsKey(parent.gameObject.GetInstanceID()))
+            if (selected.ContainsKey(parent.gameObject))
                 return true;
             parent = parent.parent;
         }

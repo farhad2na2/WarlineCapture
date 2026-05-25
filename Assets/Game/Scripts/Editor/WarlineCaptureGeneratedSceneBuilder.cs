@@ -280,7 +280,7 @@ public static class WarlineCaptureGeneratedSceneBuilder
 
     private static void CaptureScene()
     {
-        Camera[] cameras = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        Camera[] cameras = Object.FindObjectsByType<Camera>(FindObjectsInactive.Include);
         foreach (Camera camera in cameras)
         {
             if (camera.name == "Camera_TopDown")

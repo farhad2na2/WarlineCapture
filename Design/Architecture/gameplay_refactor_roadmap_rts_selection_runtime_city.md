@@ -1,6 +1,8 @@
-# Gameplay Refactor Roadmap: RTS Selection And Runtime City
+# Gameplay Refactor Roadmap: RTS Selection
 
-This document preserves the two active architecture refactor roadmaps so the work does not drift between implementation passes.
+This document preserves the active RTS selection architecture refactor roadmap so the work does not drift between implementation passes.
+
+Runtime city generation has moved to `Design/Architecture/runtime_city_spawner_refactor_roadmap.md`.
 
 ## RTSSelectionSystem 13-Step Plan
 
@@ -54,75 +56,6 @@ Goal: reduce `RTSSelectionSystem` from a gameplay facade into a small input orch
     - Confirm `RTSSelectionSystem` owns no gameplay state, ECS mutation policy, visual marker lifecycle, transport/attack/building command logic, or HUD behavior.
     - Add/remove architecture guards.
     - Decision: keep `RTSSelectionSystem` temporarily as the input/UI compatibility shell. It still owns public UI-facing query/command entry points and focused transport disembark compatibility; do not retire/rename it until those surfaces move behind narrower systems.
-
-## RuntimeCitySpawnerSystem 13-Step Plan
-
-Target file: `Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs`
-
-Goal: split runtime city generation before adding more map/city gameplay, so layout, road planning, prefab selection, visual realization, ECS spawn bridging, and walkability publication are separate responsibilities.
-
-1. Pending: Audit current responsibilities
-   - Inventory fields and methods into config, layout, road network, plot reservation, building selection, visual spawn, ECS/runtime spawn requests, decoration, validation/debug.
-   - Write or update an architecture report before edits.
-
-2. Pending: Extract city config read model
-   - Create `RuntimeCityConfigSystem`.
-   - Own derived config values, seed/default handling, bounds, density, and counts.
-   - `RuntimeCitySpawnerSystem` should only request a config snapshot.
-
-3. Pending: Extract city layout planning
-   - Create `RuntimeCityLayoutSystem`.
-   - Own district/city area planning, block layout, plot candidate generation, and reserved footprints.
-   - Output plain data: roads, plots, blocked areas, and city zones.
-
-4. Pending: Extract road layout planning
-   - Create `RuntimeCityRoadLayoutSystem`.
-   - Own procedural road strokes, intersections, and road reservations.
-   - No prefab spawning in this system.
-
-5. Pending: Extract building plot selection
-   - Create `RuntimeCityBuildingPlotSystem`.
-   - Own building footprint fit, plot scoring, valid placement filtering, and plot reservation.
-   - No GameObject instantiation.
-
-6. Pending: Extract prefab selection
-   - Create `RuntimeCityPrefabSelectionSystem`.
-   - Own weighted/random prefab choice, faction/city/military category choice, and fallback prefab policy.
-   - No placement logic.
-
-7. Pending: Extract visual realization
-   - Create `RuntimeCityVisualSystem`.
-   - Own GameObject instantiation, parent/root assignment, rotation, scale, and decoration visual placement.
-   - Consume authored placement data only.
-
-8. Pending: Extract ECS spawn request bridge
-   - Create or reuse `BuildingRuntimeCitySpawnSystem`.
-   - Own city building runtime/ECS spawn requests and building-registration handoff.
-   - `RuntimeCitySpawnerSystem` must not write building runtime data directly.
-
-9. Pending: Extract RoadBuild coupling
-   - Create `RuntimeCityRoadBuildBridgeSystem`.
-   - Own calls into `RoadBuildSystem`, road tile commit, and road/blocker sync.
-   - Prevent city generation from knowing RoadBuild internals.
-
-10. Pending: Extract occupancy/walkability publication
-    - Create `RuntimeCityWalkabilitySystem`.
-    - Own blocked cells, walkable reservations, and city obstruction publication.
-    - Required before deeper unit movement/city gameplay.
-
-11. Pending: Reduce RuntimeCitySpawnerSystem to orchestrator
-    - Keep only sequence orchestration: read config, plan layout, publish roads/walkability, choose prefabs, spawn visuals/buildings.
-    - No algorithm-heavy methods should remain.
-
-12. Pending: Architecture tests
-    - Guard that `RuntimeCitySpawnerSystem` does not contain prefab random selection logic, road stroke generation, direct building runtime spawn writes, or large plot/footprint algorithms.
-    - Guard new systems exist and are called.
-
-13. Pending: Focused validation
-    - Run architecture tests.
-    - Run runtime city generation smoke validation.
-    - Load `Game` scene and verify city, roads, buildings, and blockers still appear.
-    - If Unity is locked, use `WarlineCapture-CodexUnity1`, `WarlineCapture-CodexUnity2`, or `WarlineCapture-CodexUnity3` for batch validation.
 
 ## RTSSelectionSystem No-Managed-Shell Deletion Plan
 

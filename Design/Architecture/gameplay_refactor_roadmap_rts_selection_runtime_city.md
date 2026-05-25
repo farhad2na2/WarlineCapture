@@ -4,7 +4,7 @@ This document preserves the two active architecture refactor roadmaps so the wor
 
 ## RTSSelectionSystem 13-Step Plan
 
-Target file: `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs`
+Target file: `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs`
 
 Goal: reduce `RTSSelectionSystem` from a gameplay facade into a small input orchestration shell, with gameplay state, query, command, visual marker, HUD, and transport behavior owned by narrow systems.
 
@@ -126,9 +126,9 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
 
 ## RTSSelectionSystem No-Managed-Shell Deletion Plan
 
-Target file: `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs`
+Target file: `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs`
 
-Goal: delete `RTSSelectionSystem.cs` without replacing it with another managed orchestration shell. UI and shell code may write/read ECS requests, results, and read models; gameplay decisions and mutations must run through ECS data plus ECS systems.
+Goal: delete the legacy `RTSSelectionSystem` source/type without replacing it with another managed orchestration shell. UI and shell code may write/read ECS requests, results, and read models; gameplay decisions and mutations must run through ECS data plus ECS systems.
 
 1. Complete: Create ECS selection input request components
    - Add data-only ECS request components/buffers for pointer press/release, drag, click, camera drag, selection rectangle, and command intent requests.
@@ -178,9 +178,9 @@ Goal: delete `RTSSelectionSystem.cs` without replacing it with another managed o
     - Bootstrap, runtime update, menu UI, assistant/tutorial, building interaction, and tests reference ECS boundaries or views only.
     - Current slices moved match-overlay/main-menu UI command calls, assistant runtime binding, all `MenuView` command/read/camera/marker calls, mission/building camera focus delegates, and building selection/transport/order compatibility delegates off direct `RTSSelectionSystem`.
     - Current slices also moved `GameBootstrap`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` to narrow selection delegates, and migrated functional battle HUD, missile launcher, and transport editor tests to narrower systems.
-    - Remaining work is moving the last shell implementation out of managed startup and retiring architecture audit tests that still read `RTSSelectionSystem.cs`.
+    - Remaining work is moving the last shell implementation out of managed startup and retiring architecture audit tests that still read the temporary runtime shell directly.
 
-13. Pending: Delete `RTSSelectionSystem.cs` and `.meta`
+13. Pending: Delete the temporary runtime shell file and `.meta`
     - Remove the file and all temporary architecture allowances.
     - No production or test references to `RTSSelectionSystem` remain.
 
@@ -189,9 +189,9 @@ Goal: delete `RTSSelectionSystem.cs` without replacing it with another managed o
 
 ## RTSSelectionSystem Final 10-Step Deletion Plan
 
-Target file: `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs`
+Target file: `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs`
 
-Goal: finish deleting `RTSSelectionSystem.cs` without replacing it with another managed orchestration shell. Each step must reduce shell ownership and keep gameplay decisions in ECS request/result/read-model boundaries.
+Goal: finish deleting the legacy `RTSSelectionSystem` source/type without replacing it with another managed orchestration shell. Each step must reduce shell ownership and keep gameplay decisions in ECS request/result/read-model boundaries.
 
 1. Complete: Architecture and runtime stabilization gate
    - Fix invalidated ECS buffer-handle paths caused by request processors mutating entities while reading dynamic buffers.
@@ -221,12 +221,12 @@ Goal: finish deleting `RTSSelectionSystem.cs` without replacing it with another 
    - Remove any production code that constructs, stores, or calls `RTSSelectionSystem`.
    - `ManagedGameplayStartupSystem`, `SelectionGameplayStartupSystem`, `GameBootstrap`, `GameplayRuntimeUpdateSystem`, and menu bindings must use ECS boundaries/delegates that do not expose the shell type.
 
-8. Pending: Migrate tests and architecture audit references
-   - Move tests that construct or inspect `RTSSelectionSystem` to the owning ECS systems/read models.
-   - Keep only temporary source-audit tests until their covered responsibility has moved, then delete those audit references.
+8. Complete: Migrate tests and architecture audit references
+   - Moved architecture/test reads off the deleted `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` artifact and onto the owning ECS systems/read models or the temporary `SelectionRuntimeUpdateSystem` runtime shell where that debt still exists.
+   - Added a contract guard that the retired source artifact and `public sealed class RTSSelectionSystem` type must not be restored.
 
 9. Pending: Delete the shell and remove debt allowances
-   - Delete `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` and its `.meta` once no production or test references remain.
+   - Delete `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs` and its `.meta` once no production or test references remain.
    - Remove contract wording, allowlists, and audit entries that permit `RTSSelectionSystem` as temporary compatibility debt; replace them with a hard rule that the shell must not exist.
 
 10. Pending: Final validation gate

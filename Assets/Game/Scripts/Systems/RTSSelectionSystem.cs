@@ -106,6 +106,7 @@ public sealed class RTSSelectionSystem
 
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RtsSelectionInputSystem _rtsSelectionInputSystem = new();
+    private readonly RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem = new();
     private RtsCameraSystem _rtsCameraSystem = new();
     private RtsCameraRequestSystem _rtsCameraRequestSystem = new();
     private SelectionScreenMarkerSystem _selectionScreenMarkerSystem;
@@ -167,72 +168,6 @@ public sealed class RTSSelectionSystem
         set => SetFullscreenIsoTargets(_rtsCameraSystem.FullscreenIsoTargetHeight, value);
     }
 
-    private Vector2 _dragStart
-    {
-        get => _rtsSelectionInputSystem.DragStart;
-        set => _rtsSelectionInputSystem.DragStart = value;
-    }
-
-    private Vector2 _dragCurrent
-    {
-        get => _rtsSelectionInputSystem.DragCurrent;
-        set => _rtsSelectionInputSystem.DragCurrent = value;
-    }
-
-    private Vector2 _lastPointerPosition
-    {
-        get => _rtsSelectionInputSystem.LastPointerPosition;
-        set => _rtsSelectionInputSystem.LastPointerPosition = value;
-    }
-
-    private bool _pointerPressedOverUi
-    {
-        get => _rtsSelectionInputSystem.PointerPressedOverUi;
-        set => _rtsSelectionInputSystem.PointerPressedOverUi = value;
-    }
-
-    private bool _dragging
-    {
-        get => _rtsSelectionInputSystem.IsDraggingSelection;
-        set => _rtsSelectionInputSystem.IsDraggingSelection = value;
-    }
-
-    private bool _ignoreNextLeftMouseRelease
-    {
-        get => _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease;
-        set => _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = value;
-    }
-
-    private bool _skipNextWorldReleaseAfterSelection
-    {
-        get => _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection;
-        set => _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = value;
-    }
-
-    private int _ignoreWorldCommandsUntilFrame
-    {
-        get => _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame;
-        set => _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame = value;
-    }
-
-    private bool _ignoreUiClickUntilRelease
-    {
-        get => _rtsSelectionInputSystem.IgnoreUiClickUntilRelease;
-        set => _rtsSelectionInputSystem.IgnoreUiClickUntilRelease = value;
-    }
-
-    private bool _selectionModeHoldArmed
-    {
-        get => _rtsSelectionInputSystem.SelectionModeHoldArmed;
-        set => _rtsSelectionInputSystem.SelectionModeHoldArmed = value;
-    }
-
-    private float _selectionModeHoldStartTime
-    {
-        get => _rtsSelectionInputSystem.SelectionModeHoldStartTime;
-        set => _rtsSelectionInputSystem.SelectionModeHoldStartTime = value;
-    }
-
     private MainMenuPlayUI _mainMenuPlayUi;
     private RoadBuildSystem _roadBuildController;
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
@@ -250,17 +185,6 @@ public sealed class RTSSelectionSystem
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
     private float _selectionModeHoldSeconds = 1f;
-    private Rect _lastLiveSelectionRect
-    {
-        get => _rtsSelectionInputSystem.LastLiveSelectionRect;
-        set => _rtsSelectionInputSystem.LastLiveSelectionRect = value;
-    }
-
-    private bool _hasLiveSelectionRect
-    {
-        get => _rtsSelectionInputSystem.HasLiveSelectionRect;
-        set => _rtsSelectionInputSystem.HasLiveSelectionRect = value;
-    }
 
     public bool HasFocusedUnit
     {
@@ -908,7 +832,8 @@ public sealed class RTSSelectionSystem
     {
         ProcessTransportCommandRequests();
         ProcessExternalSelectionCommandRequests();
-        ProcessQueuedMoveOrder();
+        RtsSelectionRuntimeInputSystem.Context inputContext = CreateRuntimeInputContext();
+        _rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(inputContext);
         RefreshFocusedUnit();
         PublishFocusedUnitUiReadModel();
         _selectionOrderMarkerSystem.UpdateMoveOrderMarkerVisibility(SetHudWorldMarkersVisible);
@@ -965,275 +890,29 @@ public sealed class RTSSelectionSystem
 
         UpdateSmoothCameraFocus();
 
-        if (!GamePointerInput.TryGetPrimaryPointer(out GamePointerState pointer))
-            return;
-
-        if (_ignoreUiClickUntilRelease)
-        {
-            if (pointer.WasReleasedThisFrame || !pointer.IsPressed)
-            {
-                _ignoreUiClickUntilRelease = false;
-                _ignoreNextLeftMouseRelease = false;
-                _skipNextWorldReleaseAfterSelection = false;
-            }
-            return;
-        }
-
-        if (Time.frameCount <= _ignoreWorldCommandsUntilFrame)
-            return;
-
-        Vector2 pointerPosition = pointer.Position;
-        UpdateLastKnownPointerPosition(pointerPosition);
-        UpdateSelectionModeHold(pointer.IsPressed, pointerPosition);
-
-        if (pointer.WasReleasedThisFrame && _ignoreNextLeftMouseRelease)
-        {
-            _ignoreNextLeftMouseRelease = false;
-            _skipNextWorldReleaseAfterSelection = false;
-            _runtimeGameplayStateSystem.SuppressNextWorldClick = false;
-            if (_runtimeGameplayStateSystem.SelectionModeActive && (_dragging || _hasLiveSelectionRect))
-                _runtimeGameplayStateSystem.SelectionModeActive = false;
-            _dragging = false;
-            _cameraDragging = false;
-            _selectionModeHoldArmed = false;
-            _lastPointerPosition = pointerPosition;
-            return;
-        }
-
-        if (pointer.WasPressedThisFrame)
-        {
-            if (_mainMenuPlayUi != null && _mainMenuPlayUi.IsPointerOverSelectionCancelUi(pointerPosition))
-            {
-                _mainMenuPlayUi.TriggerSelectionCancel();
-                _pointerPressedOverUi = true;
-                _dragging = false;
-                _cameraDragging = false;
-                _lastPointerPosition = pointerPosition;
-                return;
-            }
-
-            bool pointerOverAnyUi = IsPointerOverUI(pointerPosition, out string anyUiSource);
-            bool pointerOverGameplayUi = IsPointerOverGameplayUi(pointerPosition, out string gameplayUiSource);
-            bool pointerOverBlockingUi = _runtimeGameplayStateSystem.PlayRequested ? pointerOverGameplayUi : (pointerOverAnyUi || pointerOverGameplayUi);
-            _rtsSelectionInputSystem.BeginPointerPress(pointerPosition, !_runtimeGameplayStateSystem.PlayRequested && pointerOverBlockingUi);
-            _cameraDragging = false;
-
-            if (_explicitAttackTargetModeActive && !_pointerPressedOverUi)
-            {
-                if (TryIssueAttackOrderToClickedUnit(pointerPosition))
-                    _explicitAttackTargetModeActive = false;
-
-                _skipNextWorldReleaseAfterSelection = true;
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                _lastPointerPosition = pointerPosition;
-                return;
-            }
-
-            if (!_runtimeGameplayStateSystem.SelectionModeActive)
-            {
-                if (!_pointerPressedOverUi)
-                {
-                    if (TryIssueAttackOrderToClickedUnit(pointerPosition))
-                    {
-                        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                    }
-                    else if (TryIssueBoardTransportOrderToClickedUnit(pointerPosition))
-                    {
-                        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                    }
-                    else if (TryFocusUnit(pointerPosition))
-                    {
-                        _skipNextWorldReleaseAfterSelection = true;
-                        _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-                    }
-                    else
-                    {
-                        _cameraDragging = true;
-                        ArmSelectionModeHold();
-                    }
-                }
-                else
-                {
-                    _cameraDragging = true;
-                }
-            }
-        }
-
-        if (pointer.IsPressed)
-        {
-            Vector2 frameDelta = pointerPosition - _lastPointerPosition;
-            _dragCurrent = pointerPosition;
-            float dragDistance = Vector2.Distance(_dragStart, _dragCurrent);
-
-            if (_runtimeGameplayStateSystem.SelectionModeActive)
-            {
-                if (!_dragging && dragDistance >= dragThresholdPixels)
-                    _dragging = true;
-
-                if (_dragging)
-                {
-                    Rect liveRect = GetScreenRect(_dragStart, _dragCurrent);
-                    if (!_hasLiveSelectionRect || !ApproximatelyEqualRect(_lastLiveSelectionRect, liveRect))
-                    {
-                        QueueSelectionRectangleRequest(liveRect, RtsSelectionPointerRequestKind.SelectionRectUpdated);
-                        ProcessSelectionRectangleRequests();
-                        _lastLiveSelectionRect = liveRect;
-                        _hasLiveSelectionRect = true;
-                    }
-                }
-            }
-            else if (_cameraDragging && frameDelta.sqrMagnitude > 0f)
-            {
-                PanCamera(frameDelta);
-            }
-
-            if (dragDistance >= dragThresholdPixels)
-                _selectionModeHoldArmed = false;
-
-            _lastPointerPosition = pointerPosition;
-        }
-
-        if (pointer.WasReleasedThisFrame)
-        {
-            bool releasePointerOverAnyUi = IsPointerOverUI(pointerPosition, out string releaseAnyUiSource);
-            bool releasePointerOverGameplayUi = IsPointerOverGameplayUi(pointerPosition, out string releaseGameplayUiSource);
-            bool releasePointerOverBlockingUi = _runtimeGameplayStateSystem.PlayRequested ? releasePointerOverGameplayUi : (releasePointerOverAnyUi || releasePointerOverGameplayUi);
-
-            if (_pointerPressedOverUi || releasePointerOverBlockingUi)
-            {
-                _pointerPressedOverUi = false;
-                _dragging = false;
-                _cameraDragging = false;
-                _selectionModeHoldArmed = false;
-                _hasLiveSelectionRect = false;
-                return;
-            }
-
-            if (_skipNextWorldReleaseAfterSelection)
-            {
-                _skipNextWorldReleaseAfterSelection = false;
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = false;
-                _dragging = false;
-                _cameraDragging = false;
-                _selectionModeHoldArmed = false;
-                _hasLiveSelectionRect = false;
-                return;
-            }
-
-            if (_runtimeGameplayStateSystem.SelectionModeActive)
-            {
-                if (_dragging)
-                {
-                    if (!_hasLiveSelectionRect)
-                    {
-                        QueueSelectionRectangleRequest(GetScreenRect(_dragStart, _dragCurrent), RtsSelectionPointerRequestKind.SelectionRectCommitted);
-                        ProcessSelectionRectangleRequests();
-                    }
-                }
-                else if (!releasePointerOverBlockingUi)
-                {
-                    TryFocusUnit(pointerPosition);
-                }
-
-                _runtimeGameplayStateSystem.SelectionModeActive = false;
-                _runtimeGameplayStateSystem.SuppressNextWorldClick = false;
-            }
-            else if (Vector2.Distance(_dragStart, _dragCurrent) < dragThresholdPixels)
-            {
-                if (_runtimeGameplayStateSystem.SuppressNextWorldClick)
-                {
-                    _runtimeGameplayStateSystem.SuppressNextWorldClick = false;
-                }
-                else if (!releasePointerOverBlockingUi)
-                {
-                    QueueMoveOrder(pointerPosition);
-                }
-            }
-
-            _dragging = false;
-            _cameraDragging = false;
-            _pointerPressedOverUi = false;
-            _selectionModeHoldArmed = false;
-            _hasLiveSelectionRect = false;
-        }
+        _rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(inputContext);
     }
 
-    private static bool ApproximatelyEqualRect(Rect a, Rect b)
+    private RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext()
     {
-        return Mathf.Abs(a.x - b.x) < 0.5f &&
-               Mathf.Abs(a.y - b.y) < 0.5f &&
-               Mathf.Abs(a.width - b.width) < 0.5f &&
-               Mathf.Abs(a.height - b.height) < 0.5f;
-    }
-
-    private void QueueMoveOrder(Vector2 screenPosition)
-    {
-        _rtsSelectionInputSystem.QueueMoveOrder(screenPosition, Time.frameCount + 1);
-    }
-
-    private void ArmSelectionModeHold()
-    {
-        _rtsSelectionInputSystem.ArmSelectionModeHold(Time.unscaledTime);
-    }
-
-    private void UpdateSelectionModeHold(bool pointerPressed, Vector2 pointerPosition)
-    {
-        if (!_selectionModeHoldArmed)
-            return;
-
-        if (!pointerPressed)
-        {
-            _selectionModeHoldArmed = false;
-            return;
-        }
-
-        if (_runtimeGameplayStateSystem.SelectionModeActive)
-        {
-            _selectionModeHoldArmed = false;
-            return;
-        }
-
-        if (_mainMenuPlayUi == null || !_mainMenuPlayUi.CanTriggerSelectionModeFromHold())
-        {
-            _selectionModeHoldArmed = false;
-            return;
-        }
-
-        if (_mainMenuPlayUi.IsPointerOverZoomControls(pointerPosition))
-        {
-            _selectionModeHoldArmed = false;
-            return;
-        }
-
-        if (Vector2.Distance(_dragStart, pointerPosition) >= dragThresholdPixels)
-        {
-            _selectionModeHoldArmed = false;
-            return;
-        }
-
-        if (Time.unscaledTime - _selectionModeHoldStartTime < _selectionModeHoldSeconds)
-            return;
-
-        _selectionModeHoldArmed = false;
-        _pointerPressedOverUi = false;
-        _dragging = false;
-        _cameraDragging = false;
-        _ignoreNextLeftMouseRelease = true;
-        _mainMenuPlayUi.TriggerSelectionModeFromHold();
-    }
-
-    private void ProcessQueuedMoveOrder()
-    {
-        if (!_rtsSelectionInputSystem.TryConsumeQueuedMoveOrder(Time.frameCount, out Vector2 screenPosition))
-            return;
-
-        if (!_runtimeGameplayStateSystem.PlayRequested || _runtimeGameplayStateSystem.BuildModeActive)
-            return;
-
-        if (_runtimeGameplayStateSystem.SuppressNextWorldClick)
-            return;
-
-        IssueMoveOrder(screenPosition);
+        return new RtsSelectionRuntimeInputSystem.Context(
+            _runtimeGameplayStateSystem,
+            _rtsSelectionInputSystem,
+            _mainMenuPlayUi,
+            dragThresholdPixels,
+            _selectionModeHoldSeconds,
+            () => _explicitAttackTargetModeActive,
+            value => _explicitAttackTargetModeActive = value,
+            () => _cameraDragging,
+            value => _cameraDragging = value,
+            pointerPosition => IsPointerOverUI(pointerPosition, out _),
+            pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
+            TryIssueAttackOrderToClickedUnit,
+            TryIssueBoardTransportOrderToClickedUnit,
+            TryFocusUnit,
+            PanCamera,
+            IssueMoveOrder,
+            ProcessSelectionRectangleRequests);
     }
 
     private void HandleBuildModeCameraPan()
@@ -1260,7 +939,7 @@ public sealed class RTSSelectionSystem
         if (pointerOverGameplayUi)
         {
             _cameraDragging = false;
-            _dragging = false;
+            _rtsSelectionInputSystem.IsDraggingSelection = false;
             return;
         }
 
@@ -1270,22 +949,22 @@ public sealed class RTSSelectionSystem
 
         if (panPressed)
         {
-            _lastPointerPosition = pointerPosition;
+            _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
             _cameraDragging = !interactionActive && !pointerOverBuildToolMenu;
         }
 
         if (panHeld && _cameraDragging)
         {
-            Vector2 frameDelta = pointerPosition - _lastPointerPosition;
+            Vector2 frameDelta = pointerPosition - _rtsSelectionInputSystem.LastPointerPosition;
             if (frameDelta.sqrMagnitude > 0f)
                 PanCamera(frameDelta);
-            _lastPointerPosition = pointerPosition;
+            _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
         }
 
         if (panReleased || !panHeld)
             _cameraDragging = false;
 
-        _dragging = false;
+        _rtsSelectionInputSystem.IsDraggingSelection = false;
     }
 
     public bool HasVisiblePlayerUnits()
@@ -1841,18 +1520,18 @@ public sealed class RTSSelectionSystem
 
         if (pointer.WasPressedThisFrame)
         {
-            _lastPointerPosition = pointerPosition;
+            _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
             _cameraDragging = !pointerOverGameplayUi;
         }
 
         if (pointer.IsPressed && _cameraDragging && !pointerOverGameplayUi)
         {
-            Vector2 frameDelta = pointerPosition - _lastPointerPosition;
+            Vector2 frameDelta = pointerPosition - _rtsSelectionInputSystem.LastPointerPosition;
             if (frameDelta.sqrMagnitude > 0f)
                 PanCamera(frameDelta);
         }
 
-        _lastPointerPosition = pointerPosition;
+        _rtsSelectionInputSystem.LastPointerPosition = pointerPosition;
 
         if (pointer.WasReleasedThisFrame || !pointer.IsPressed)
             _cameraDragging = false;
@@ -2168,13 +1847,6 @@ public sealed class RTSSelectionSystem
             ClearHudSelection);
     }
 
-    private static Rect GetScreenRect(Vector2 a, Vector2 b)
-    {
-        Vector2 min = Vector2.Min(a, b);
-        Vector2 max = Vector2.Max(a, b);
-        return Rect.MinMaxRect(min.x, min.y, max.x, max.y);
-    }
-
     public void ClearFocusedUnit()
     {
         _focusedUnitLifecycleSystem.ClearFocusedUnit(_selectionStateSystem);
@@ -2233,8 +1905,8 @@ public sealed class RTSSelectionSystem
             RtsSelectionPointerRequestKind.SelectionRectCommitted,
             filter);
         ProcessSelectionRectangleRequests();
-        _ignoreNextLeftMouseRelease = false;
-        _skipNextWorldReleaseAfterSelection = false;
+        _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = false;
+        _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = false;
         _cameraDragging = false;
     }
 
@@ -2261,8 +1933,8 @@ public sealed class RTSSelectionSystem
         }
 
         _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
-        _ignoreNextLeftMouseRelease = true;
-        _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = true;
+        _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _cameraDragging = false;
         return true;
@@ -2463,9 +2135,9 @@ public sealed class RTSSelectionSystem
         SetHudWorldMarkersVisible(true);
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-        _dragging = false;
+        _rtsSelectionInputSystem.IsDraggingSelection = false;
         _cameraDragging = false;
-        _skipNextWorldReleaseAfterSelection = true;
+        _rtsSelectionInputSystem.SkipNextWorldReleaseAfterSelection = true;
         return true;
     }
 
@@ -2548,8 +2220,8 @@ public sealed class RTSSelectionSystem
         }
 
         _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
-        _ignoreNextLeftMouseRelease = true;
-        _ignoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        _rtsSelectionInputSystem.IgnoreNextLeftMouseRelease = true;
+        _rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _cameraDragging = false;
         return true;

@@ -3023,6 +3023,45 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RtsSelectionSystemMustDelegateRuntimeInputTickSlice()
+    {
+        const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
+        const string runtimeInputFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs";
+        Assert.IsTrue(File.Exists(runtimeInputFile), "RTS runtime pointer input orchestration must live in RtsSelectionRuntimeInputSystem during shell retirement.");
+
+        string selection = File.ReadAllText(selectionFile);
+        string runtimeInput = File.ReadAllText(runtimeInputFile);
+        StringAssert.Contains("RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem", selection);
+        StringAssert.Contains("CreateRuntimeInputContext", selection);
+        StringAssert.Contains("ProcessQueuedMoveOrder", runtimeInput);
+        StringAssert.Contains("UpdateNormalPointerInput", runtimeInput);
+        StringAssert.Contains("QueueSelectionRectangleRequest", runtimeInput);
+        StringAssert.Contains("TriggerSelectionModeFromHold", runtimeInput);
+        StringAssert.Contains("GamePointerInput.TryGetPrimaryPointer", runtimeInput);
+
+        string[] forbiddenSelectionTokens =
+        {
+            "private void ProcessQueuedMoveOrder",
+            "private static void UpdateSelectionModeHold",
+            "private void UpdateSelectionModeHold",
+            "private void QueueMoveOrder",
+            "private void ArmSelectionModeHold",
+            "private static bool ApproximatelyEqualRect",
+            "private static Rect GetScreenRect",
+            "_selectionModeHoldArmed",
+            "_ignoreUiClickUntilRelease",
+            "_hasLiveSelectionRect"
+        };
+
+        foreach (string token in forbiddenSelectionTokens)
+        {
+            Assert.IsFalse(
+                selection.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RtsSelectionRuntimeInputSystem/RtsSelectionInputStateSystem, not RTSSelectionSystem.");
+        }
+    }
+
+    [Test]
     public void RtsSelectionSystemMustUseRuntimeGameplayStateBoundary()
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";

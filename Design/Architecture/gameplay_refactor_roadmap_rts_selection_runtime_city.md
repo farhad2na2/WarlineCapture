@@ -186,3 +186,49 @@ Goal: delete `RTSSelectionSystem.cs` without replacing it with another managed o
 
 14. Pending: Full validation gate
     - Run architecture tests, focused selection/command tests, menu/bootstrap smoke, and runtime load/play validation.
+
+## RTSSelectionSystem Final 10-Step Deletion Plan
+
+Target file: `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs`
+
+Goal: finish deleting `RTSSelectionSystem.cs` without replacing it with another managed orchestration shell. Each step must reduce shell ownership and keep gameplay decisions in ECS request/result/read-model boundaries.
+
+1. Complete: Architecture and runtime stabilization gate
+   - Fix invalidated ECS buffer-handle paths caused by request processors mutating entities while reading dynamic buffers.
+   - Confirm no new compile errors or runtime `ObjectDisposedException` regressions before extraction continues.
+
+2. Complete: Extract runtime input tick
+   - Move queued move-order consumption, normal pointer press/hold/release branching, UI click suppression, selection-hold triggering, live rectangle diffing, and rectangle request queueing into `RtsSelectionRuntimeInputSystem`.
+   - Keep `RTSSelectionSystem` as a temporary context builder/delegate only for this input slice.
+
+3. Pending: Extract camera runtime tick
+   - Move remaining camera update branches, build/fullscreen pan handling, smooth focus updates, pointer-driven camera drag state, and camera request flushing out of `RTSSelectionSystem`.
+   - Keep camera mutations routed through ECS camera request/state systems, not direct shell methods.
+
+4. Pending: Extract command result and marker flush tick
+   - Move move/attack/transport command result draining, HUD feedback forwarding, screen-marker emission, and world-marker visibility forwarding out of `RTSSelectionSystem`.
+   - Result consumers must use ECS buffers/read models and narrow shell-edge systems.
+
+5. Pending: Extract remaining focus and selection compatibility commands
+   - Move public focus/clear/select-all/select-filter command entry points to ECS command/request systems or existing selection boundaries.
+   - `RTSSelectionSystem` must stop owning selected/focused command branching.
+
+6. Pending: Extract remaining pointer target command dispatch
+   - Move clicked attack, clicked transport boarding, clicked focus, and clicked building/target command dispatch into ECS request processors or existing narrow command systems.
+   - Pointer systems may enqueue intent data, but gameplay command decisions must not live in the shell.
+
+7. Pending: Migrate remaining production callers and startup wiring
+   - Remove any production code that constructs, stores, or calls `RTSSelectionSystem`.
+   - `ManagedGameplayStartupSystem`, `SelectionGameplayStartupSystem`, `GameBootstrap`, `GameplayRuntimeUpdateSystem`, and menu bindings must use ECS boundaries/delegates that do not expose the shell type.
+
+8. Pending: Migrate tests and architecture audit references
+   - Move tests that construct or inspect `RTSSelectionSystem` to the owning ECS systems/read models.
+   - Keep only temporary source-audit tests until their covered responsibility has moved, then delete those audit references.
+
+9. Pending: Delete the shell and remove debt allowances
+   - Delete `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` and its `.meta` once no production or test references remain.
+   - Remove contract wording, allowlists, and audit entries that permit `RTSSelectionSystem` as temporary compatibility debt; replace them with a hard rule that the shell must not exist.
+
+10. Pending: Final validation gate
+    - Run architecture tests, focused selection/command tests, menu/bootstrap smoke, and a focused runtime load/play validation.
+    - Expected result: compile-clean, no `RTSSelectionSystem` source file or references, no architecture allowlist debt, and runtime selection/camera/building/unit flows still load and play.

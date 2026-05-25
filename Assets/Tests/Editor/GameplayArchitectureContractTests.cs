@@ -1251,7 +1251,7 @@ public sealed class GameplayArchitectureContractTests
         {
             "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs",
             "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs",
-            "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"
+            "Assets/Game/Scripts/Systems/SelectionRuntimeDiagnosticsSystem.cs"
         };
 
         foreach (string file in transportDiagnosticFiles)
@@ -1266,6 +1266,15 @@ public sealed class GameplayArchitectureContractTests
             StringAssert.Contains("TransportBoardingDiagnosticLogComponent", code);
             StringAssert.Contains("EnqueueTransportBoardingDiagnostic", code);
         }
+
+        string selectionRuntimeContext = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs");
+        StringAssert.Contains("SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem", selectionRuntimeContext);
+        StringAssert.Contains("_selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic", selectionRuntimeContext);
+        Assert.IsFalse(
+            selectionRuntimeContext.Contains("RuntimeDiagnosticsStateComponent", StringComparison.Ordinal) ||
+            selectionRuntimeContext.Contains("TransportBoardingDiagnosticLogComponent", StringComparison.Ordinal) ||
+            selectionRuntimeContext.Contains("EnqueueTransportBoardingDiagnostic", StringComparison.Ordinal),
+            "SelectionRuntimeContextSystem must delegate diagnostic state/queue ownership to SelectionRuntimeDiagnosticsSystem.");
     }
 
     [Test]
@@ -2423,6 +2432,7 @@ public sealed class GameplayArchitectureContractTests
         const string retiredSelectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string retiredSelectionRuntimeUpdateFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
         const string selectionRuntimeContextFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
+        const string selectionRuntimeConfigFile = "Assets/Game/Scripts/Systems/SelectionRuntimeConfigSystem.cs";
 
         string contract = File.ReadAllText(ContractPath);
         string bootstrap = File.ReadAllText(bootstrapFile);
@@ -2431,9 +2441,23 @@ public sealed class GameplayArchitectureContractTests
         string managedStartup = File.ReadAllText(managedStartupFile);
         string selectionStartup = File.ReadAllText(selectionStartupFile);
         string selectionRuntimeContext = File.ReadAllText(selectionRuntimeContextFile);
+        string selectionRuntimeConfig = File.ReadAllText(selectionRuntimeConfigFile);
+        string[] runtimeSourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .ToArray();
 
         Assert.IsFalse(File.Exists(retiredSelectionFile), "The retired RTSSelectionSystem source artifact must not be restored.");
         Assert.IsFalse(File.Exists(retiredSelectionRuntimeUpdateFile), "SelectionRuntimeUpdateSystem.cs must stay deleted; runtime selection phases must not return to a monolithic Update shell.");
+        Assert.IsEmpty(
+            runtimeSourceFiles.Where(path => path.EndsWith("/RTSSelectionSystem.cs", StringComparison.Ordinal)).ToArray(),
+            "The retired RTSSelectionSystem.cs source artifact must not be restored.");
+        Assert.IsEmpty(
+            runtimeSourceFiles
+                .Where(path => File.ReadAllText(path).Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal) ||
+                               File.ReadAllText(path).Contains("public sealed class SelectionRuntimeUpdateSystem", StringComparison.Ordinal))
+                .ToArray(),
+            "Retired RTS selection shell types must not be restored.");
         StringAssert.Contains("The retired `RTSSelectionSystem` source/type must not be reintroduced", contract);
         Assert.IsFalse(contract.Contains("`RTSSelectionSystem` is temporary compatibility debt", StringComparison.Ordinal), "RTSSelectionSystem is retired debt, not an allowed temporary shell.");
         StringAssert.Contains("`SelectionRuntimeContextSystem` is the remaining temporary context-construction debt", contract);
@@ -2443,6 +2467,15 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("DisposeSelection", managedStartup);
         StringAssert.Contains("new SelectionRuntimeContextSystem()", selectionStartup);
         StringAssert.Contains("UpdateSelectionRuntimePhases", selectionStartup);
+        StringAssert.Contains("public sealed class SelectionRuntimeConfigSystem", selectionRuntimeConfig);
+        StringAssert.Contains("CreateState", selectionRuntimeConfig);
+        StringAssert.Contains("Normalize", selectionRuntimeConfig);
+        StringAssert.Contains("SelectionRuntimeConfigSystem _selectionRuntimeConfigSystem", selectionRuntimeContext);
+        StringAssert.Contains("SelectionRuntimeConfigSystem.State _runtimeConfig", selectionRuntimeContext);
+        StringAssert.Contains("SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem", selectionRuntimeContext);
+        Assert.IsFalse(selectionRuntimeContext.Contains("DefaultPanSensitivity", StringComparison.Ordinal), "Selection runtime config defaults belong in SelectionRuntimeConfigSystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("ApplyConfigIfAvailable", StringComparison.Ordinal), "Selection runtime config application belongs in SelectionRuntimeConfigSystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("RuntimeDiagnosticsStateComponent", StringComparison.Ordinal), "Selection runtime diagnostics state reads belong in SelectionRuntimeDiagnosticsSystem.");
         Assert.IsFalse(selectionRuntimeContext.Contains("public void Update(", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not become another managed runtime Update shell.");
         Assert.IsFalse(selectionRuntimeContext.Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal), "The retired RTSSelectionSystem type must not be restored.");
         StringAssert.Contains("Action<MainMenuPlayUI> bindSelectionMainMenu", menuStartup);

@@ -234,3 +234,63 @@ Goal: finish deleting the legacy `RTSSelectionSystem` source/type without replac
 10. Pending: Final validation gate
     - Run architecture tests, focused selection/command tests, menu/bootstrap smoke, and a focused runtime load/play validation.
     - Expected result: compile-clean, no `RTSSelectionSystem` source file or references, no architecture allowlist debt, and runtime selection/camera/building/unit flows still load and play.
+
+## SelectionRuntimeContextSystem Deletion Plan
+
+Target file: `Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs`
+
+Goal: delete the remaining selection context-construction boundary without replacing it with another managed orchestration shell. Runtime selection must remain explicit startup-composed phases, and gameplay decisions must stay in ECS request/result/read-model systems.
+
+1. Complete: Stabilize contract
+   - Add/keep architecture guards that `SelectionRuntimeContextSystem` has no `Update()` method.
+   - Add/keep guards that `SelectionRuntimeUpdateSystem.cs`, `RTSSelectionSystem.cs`, and the retired `RTSSelectionSystem` type must not be restored.
+
+2. Complete: Extract config state
+   - Move config/default value application out of `SelectionRuntimeContextSystem` into `SelectionRuntimeConfigSystem` or an existing config boundary.
+   - Keep config data read-only after initialization.
+
+3. Complete: Extract diagnostics helpers
+   - Move selection and transport diagnostic queue helpers to the existing ECS diagnostics/logging boundary.
+   - Runtime selection code must enqueue diagnostics without owning diagnostic entity creation/formatting policy.
+
+4. Pending: Extract query ownership
+   - Move `EnsureEntityQueries` and cached `EntityQuery` fields into the systems that use them.
+   - Prioritize rectangle, focus, move, attack, transport, and marker systems.
+
+5. Pending: Extract HUD feedback context
+   - Move HUD helper methods for selection, squad selection, command mode, command result, clear selection, and world marker visibility into `SelectionHudFeedbackSystem` or a narrow feedback context boundary.
+
+6. Pending: Extract camera context builder
+   - Move `CreateRuntimeCameraContext` into `RtsSelectionRuntimeCameraSystem` or a narrow ECS-style context builder.
+   - Startup should pass concrete camera/request/runtime dependencies, not a broad selection context object.
+
+7. Pending: Extract input context builder
+   - Move `CreateRuntimeInputContext` into `RtsSelectionRuntimeInputSystem` or a narrow ECS-style context builder.
+   - Pointer input should depend on input state, runtime state, camera delegates, and command request systems only.
+
+8. Pending: Extract command-result context builder
+   - Move `CreateCommandResultFlushContext` into `RtsSelectionCommandResultFlushSystem` or a narrow context builder.
+   - Command result flushing must own its ECS buffer/read dependencies directly.
+
+9. Pending: Extract focus command context builder
+   - Move `CreateFocusCommandContext` into `RtsSelectionFocusCommandSystem` or a narrow context builder.
+   - Focus/select-all/clear command flow must not require `SelectionRuntimeContextSystem`.
+
+10. Pending: Extract pointer-target context builder
+    - Move `CreatePointerTargetCommandContext` into `RtsSelectionPointerTargetCommandSystem` or a narrow context builder.
+    - Clicked move, attack, transport, focus, and building-target command flow must not require `SelectionRuntimeContextSystem`.
+
+11. Pending: Move remaining compatibility methods
+    - Move any remaining direct command/read wrappers to existing UI command, UI read-model, camera, building interaction, focused command, or selection state systems.
+    - Production callers must not depend on `SelectionRuntimeContextSystem`.
+
+12. Pending: Delete context file
+    - Delete `Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs` and `.meta`.
+    - `SelectionGameplayStartupSystem` must no longer construct `SelectionRuntimeContextSystem`.
+
+13. Pending: Remove debt allowances
+    - Replace “temporary context-construction debt” wording with a hard rule: `SelectionRuntimeContextSystem` must not exist.
+    - Remove tests that inspect the context file and replace them with tests on owning systems.
+
+14. Pending: Validation gate
+    - Run architecture tests, focused selection command tests, Unity compile/domain reload, and a runtime load/play smoke covering selection, camera, building click, and unit commands.

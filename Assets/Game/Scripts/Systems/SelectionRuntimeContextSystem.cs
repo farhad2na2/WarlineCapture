@@ -33,77 +33,9 @@ public sealed class SelectionRuntimeContextSystem
         ReturningToBase = 3
     }
 
-    private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)
-    {
-        if (Application.isBatchMode)
-            return true;
-
-        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<RuntimeDiagnosticsStateComponent>());
-        return !query.IsEmptyIgnoreFilter &&
-            em.GetComponentData<RuntimeDiagnosticsStateComponent>(query.GetSingletonEntity()).TransportBoardingDiagnostics != 0;
-    }
-
-    private static Entity EnsureTransportBoardingDiagnosticQueue(EntityManager em)
-    {
-        using EntityQuery query = em.CreateEntityQuery(
-            ComponentType.ReadOnly<TransportBoardingDiagnosticLogQueueComponent>(),
-            ComponentType.ReadWrite<TransportBoardingDiagnosticLogComponent>());
-        if (!query.IsEmptyIgnoreFilter)
-            return query.GetSingletonEntity();
-
-        Entity queueEntity = em.CreateEntity(typeof(TransportBoardingDiagnosticLogQueueComponent));
-        em.SetName(queueEntity, "TransportBoardingDiagnosticLogQueue");
-        em.AddBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
-        return queueEntity;
-    }
-
-    private static void EnqueueTransportBoardingDiagnostic(EntityManager em, FixedString512Bytes message)
-    {
-        Entity queueEntity = EnsureTransportBoardingDiagnosticQueue(em);
-        DynamicBuffer<TransportBoardingDiagnosticLogComponent> logs = em.GetBuffer<TransportBoardingDiagnosticLogComponent>(queueEntity);
-        logs.Add(new TransportBoardingDiagnosticLogComponent { Message = message });
-    }
-
-    private static void LogSelectionDiagnostic(string message)
-    {
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return;
-
-        EntityManager em = world.EntityManager;
-        if (ShouldQueueTransportBoardingDiagnostics(em))
-            EnqueueTransportBoardingDiagnostic(em, $"[Selection] {message}");
-    }
-
-    private const float DefaultPanSensitivity = 0.03f;
-    private const float DefaultZoomSpeed = 20f;
-    private const float DefaultMinZoomHeight = 10f;
-    private const float DefaultMaxZoomHeight = 45f;
-
-    [SerializeField] private RTSSelectionSystemConfig config;
-    [SerializeField, HideInInspector] private Camera worldCamera;
-    [SerializeField, HideInInspector] private GameObject moveOrderMarkerPrefab;
-    [SerializeField, HideInInspector] private float orderMarkerVisibleSeconds = 1.25f;
-    [SerializeField, HideInInspector] private GameObject attackOrderMarkerPrefab;
-    [SerializeField, HideInInspector] private float dragThresholdPixels = 8f;
-    [SerializeField, HideInInspector] private float panSensitivity = DefaultPanSensitivity;
-    [SerializeField, HideInInspector] private float zoomSpeed = DefaultZoomSpeed;
-    [SerializeField, HideInInspector] private float minZoomHeight = DefaultMinZoomHeight;
-    [SerializeField, HideInInspector] private float maxZoomHeight = DefaultMaxZoomHeight;
-    [SerializeField, HideInInspector] private float normalModeZoomHeight = 24f;
-    [SerializeField, HideInInspector] private float buildModeZoomHeight = 100f;
-    [SerializeField, HideInInspector] private float normalModePitch = 58f;
-    [SerializeField, HideInInspector] private float buildModePitch = 64f;
-    [SerializeField, HideInInspector] private float normalModeYaw = 10f;
-    [SerializeField, HideInInspector] private float buildModeYaw = 10f;
-    [SerializeField, HideInInspector] private float normalModeFieldOfView = 36f;
-    [SerializeField, HideInInspector] private float buildModeFieldOfView = 32f;
-    [SerializeField, HideInInspector] private float fullscreenIsoZoomHeight = 40f;
-    [SerializeField, HideInInspector] private float fullscreenIsoPitch = 82f;
-    [SerializeField, HideInInspector] private float fullscreenIsoYaw = 10f;
-    [SerializeField, HideInInspector] private float fullscreenIsoOrthographicSize = 24f;
-    [SerializeField, HideInInspector] private float zoomTransitionSmoothTime = 0.25f;
-
+    private readonly SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem = new();
+    private readonly SelectionRuntimeConfigSystem _selectionRuntimeConfigSystem = new();
+    private SelectionRuntimeConfigSystem.State _runtimeConfig;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RtsSelectionInputSystem _rtsSelectionInputSystem = new();
     private readonly RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem = new();
@@ -148,7 +80,11 @@ public sealed class SelectionRuntimeContextSystem
     private readonly List<Entity> _visibleSelectionScratch = new();
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
-    private float _selectionModeHoldSeconds = 1f;
+
+    public SelectionRuntimeContextSystem()
+    {
+        _runtimeConfig = _selectionRuntimeConfigSystem.CreateState(null, null);
+    }
 
     public bool HasFocusedUnit
     {
@@ -434,11 +370,6 @@ public sealed class SelectionRuntimeContextSystem
         };
     }
 
-    private void OnValidate()
-    {
-        ApplyConfigIfAvailable();
-    }
-
     public void BindCameraBoundary(
         RtsCameraSystem cameraSystem,
         RtsCameraRequestSystem cameraRequestSystem,
@@ -484,41 +415,18 @@ public sealed class SelectionRuntimeContextSystem
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         FactionVisualSettings factionVisualSettings)
     {
-        config = configAsset;
-        worldCamera = sceneWorldCamera;
+        _runtimeConfig = _selectionRuntimeConfigSystem.CreateState(configAsset, sceneWorldCamera);
         _runtimeRoot = runtimeRoot;
         _mainMenuPlayUi = mainMenuPlayUi;
         _roadBuildController = roadBuildController;
         _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
         _selectionHudFeedbackSystem.ResetBridgeCache();
-        ApplyConfigIfAvailable();
-
-        if (panSensitivity <= 0f)
-            panSensitivity = DefaultPanSensitivity;
-        if (zoomSpeed <= 0f)
-            zoomSpeed = DefaultZoomSpeed;
-        if (minZoomHeight <= 0f)
-            minZoomHeight = DefaultMinZoomHeight;
-        if (maxZoomHeight <= minZoomHeight)
-            maxZoomHeight = Mathf.Max(DefaultMaxZoomHeight, minZoomHeight + 1f);
-        if (normalModeZoomHeight <= 0f)
-            normalModeZoomHeight = 24f;
-        normalModeZoomHeight = Mathf.Min(normalModeZoomHeight, maxZoomHeight);
-        if (buildModeZoomHeight < normalModeZoomHeight)
-            buildModeZoomHeight = normalModeZoomHeight;
-        buildModeZoomHeight = Mathf.Min(buildModeZoomHeight, maxZoomHeight);
-        if (normalModeFieldOfView <= 1f)
-            normalModeFieldOfView = 36f;
-        if (buildModeFieldOfView <= 1f)
-            buildModeFieldOfView = normalModeFieldOfView;
-        if (zoomTransitionSmoothTime <= 0f)
-            zoomTransitionSmoothTime = 0.25f;
 
         _selectionOrderMarkerSystem.Initialize(
-            moveOrderMarkerPrefab,
-            attackOrderMarkerPrefab,
-            orderMarkerVisibleSeconds,
+            _runtimeConfig.MoveOrderMarkerPrefab,
+            _runtimeConfig.AttackOrderMarkerPrefab,
+            _runtimeConfig.OrderMarkerVisibleSeconds,
             _runtimeRoot);
     }
 
@@ -532,37 +440,6 @@ public sealed class SelectionRuntimeContextSystem
         _roadBuildController = roadBuildController;
         _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-    }
-
-    private void ApplyConfigIfAvailable()
-    {
-        if (config == null)
-            return;
-
-        if (config.WorldCamera != null)
-            worldCamera = config.WorldCamera;
-        moveOrderMarkerPrefab = config.MoveOrderMarkerPrefab;
-        orderMarkerVisibleSeconds = Mathf.Max(0.01f, config.OrderMarkerVisibleSeconds);
-        attackOrderMarkerPrefab = config.AttackOrderMarkerPrefab;
-        dragThresholdPixels = config.DragThresholdPixels;
-        _selectionModeHoldSeconds = Mathf.Max(0.1f, config.SelectionModeHoldSeconds);
-        panSensitivity = config.PanSensitivity;
-        zoomSpeed = config.ZoomSpeed;
-        minZoomHeight = config.MinZoomHeight;
-        maxZoomHeight = config.MaxZoomHeight;
-        normalModeZoomHeight = config.NormalModeZoomHeight;
-        buildModeZoomHeight = config.BuildModeZoomHeight;
-        normalModePitch = config.NormalModePitch;
-        buildModePitch = config.BuildModePitch;
-        normalModeYaw = config.NormalModeYaw;
-        buildModeYaw = config.BuildModeYaw;
-        normalModeFieldOfView = config.NormalModeFieldOfView;
-        buildModeFieldOfView = config.BuildModeFieldOfView;
-        fullscreenIsoZoomHeight = config.FullscreenIsoZoomHeight;
-        fullscreenIsoPitch = config.FullscreenIsoPitch;
-        fullscreenIsoYaw = config.FullscreenIsoYaw;
-        fullscreenIsoOrthographicSize = config.FullscreenIsoOrthographicSize;
-        zoomTransitionSmoothTime = config.ZoomTransitionSmoothTime;
     }
 
     private void ApplyHudSelection(EntityManager em, Entity entity)
@@ -738,8 +615,8 @@ public sealed class SelectionRuntimeContextSystem
             _runtimeGameplayStateSystem,
             _rtsSelectionInputSystem,
             _mainMenuPlayUi,
-            dragThresholdPixels,
-            _selectionModeHoldSeconds,
+            _runtimeConfig.DragThresholdPixels,
+            _runtimeConfig.SelectionModeHoldSeconds,
             () => _explicitAttackTargetModeActive,
             value => _explicitAttackTargetModeActive = value,
             () => _rtsCameraSystem.IsDragging,
@@ -761,7 +638,7 @@ public sealed class SelectionRuntimeContextSystem
             _rtsSelectionInputSystem,
             _rtsCameraSystem,
             _rtsCameraRequestSystem,
-            worldCamera,
+            _runtimeConfig.WorldCamera,
             _mainMenuPlayUi,
             _roadBuildController,
             _buildingPlacementInteractionSystem,
@@ -770,23 +647,23 @@ public sealed class SelectionRuntimeContextSystem
             IsPointerOverGameplayUi,
             UpdateLastKnownPointerPosition,
             HideOrderScreenMarkers,
-            panSensitivity,
-            zoomSpeed,
-            minZoomHeight,
-            maxZoomHeight,
-            normalModeZoomHeight,
-            buildModeZoomHeight,
-            normalModePitch,
-            buildModePitch,
-            normalModeYaw,
-            buildModeYaw,
-            normalModeFieldOfView,
-            buildModeFieldOfView,
-            fullscreenIsoZoomHeight,
-            fullscreenIsoPitch,
-            fullscreenIsoYaw,
-            fullscreenIsoOrthographicSize,
-            zoomTransitionSmoothTime);
+            _runtimeConfig.PanSensitivity,
+            _runtimeConfig.ZoomSpeed,
+            _runtimeConfig.MinZoomHeight,
+            _runtimeConfig.MaxZoomHeight,
+            _runtimeConfig.NormalModeZoomHeight,
+            _runtimeConfig.BuildModeZoomHeight,
+            _runtimeConfig.NormalModePitch,
+            _runtimeConfig.BuildModePitch,
+            _runtimeConfig.NormalModeYaw,
+            _runtimeConfig.BuildModeYaw,
+            _runtimeConfig.NormalModeFieldOfView,
+            _runtimeConfig.BuildModeFieldOfView,
+            _runtimeConfig.FullscreenIsoZoomHeight,
+            _runtimeConfig.FullscreenIsoPitch,
+            _runtimeConfig.FullscreenIsoYaw,
+            _runtimeConfig.FullscreenIsoOrthographicSize,
+            _runtimeConfig.ZoomTransitionSmoothTime);
     }
 
     private RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
@@ -836,7 +713,7 @@ public sealed class SelectionRuntimeContextSystem
             _unitTargetOrderSystem,
             _buildingPlacementInteractionSystem,
             _buildingPlacementInteractionContext,
-            worldCamera,
+            _runtimeConfig.WorldCamera,
             TryGetDefaultEntityManager,
             EnsureEntityQueries,
             ClearCurrentSelection,
@@ -849,7 +726,7 @@ public sealed class SelectionRuntimeContextSystem
             SetHudWorldMarkersVisible,
             SetCameraDragging,
             value => _explicitAttackTargetModeActive = value,
-            LogSelectionDiagnostic,
+            _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
             DescribeTransportBoardingEntity,
             ValidateControllableEntity,
             () => IssueHoldPositionOrder(),
@@ -874,7 +751,7 @@ public sealed class SelectionRuntimeContextSystem
             _buildingTargetMoveOrderSystem,
             _buildingPlacementInteractionSystem,
             _buildingPlacementInteractionContext,
-            worldCamera,
+            _runtimeConfig.WorldCamera,
             TryGetDefaultEntityManager,
             TryGetPointerPosition,
             () => _explicitAttackTargetModeActive,
@@ -890,7 +767,7 @@ public sealed class SelectionRuntimeContextSystem
             ProcessAttackCommandRequests,
             ProcessTransportCommandRequests,
             ProcessMoveCommandRequests,
-            LogSelectionDiagnostic,
+            _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
             DescribeTransportBoardingEntity);
     }
 
@@ -911,7 +788,7 @@ public sealed class SelectionRuntimeContextSystem
 
     private bool HasVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter filter)
     {
-        if (worldCamera == null || World.DefaultGameObjectInjectionWorld == null)
+        if (_runtimeConfig.WorldCamera == null || World.DefaultGameObjectInjectionWorld == null)
             return false;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
@@ -919,7 +796,7 @@ public sealed class SelectionRuntimeContextSystem
         Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
         return _visibleUnitSelectionSystem.HasVisiblePlayerUnits(
             em,
-            worldCamera,
+            _runtimeConfig.WorldCamera,
             _selectionUiQuerySystem,
             screenRect,
             filter);
@@ -945,7 +822,7 @@ public sealed class SelectionRuntimeContextSystem
         _selectionRectangleRequestSystem.ProcessPendingRequests(
             em,
             pointerRequests,
-            worldCamera,
+            _runtimeConfig.WorldCamera,
             _selectionUiQuerySystem,
             _visibleUnitSelectionSystem,
             _selectionStateSystem,
@@ -955,7 +832,7 @@ public sealed class SelectionRuntimeContextSystem
             CacheSelectedMoveEntities,
             ApplyHudSelection,
             ApplyHudSquadSelection,
-            LogSelectionDiagnostic,
+            _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
             ClearSelectedBuildingAfterRectangleSelection);
     }
 
@@ -1164,7 +1041,7 @@ public sealed class SelectionRuntimeContextSystem
             em,
             _selectionStateSystem,
             reason,
-            LogSelectionDiagnostic,
+            _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
             ClearHudSelection);
     }
 
@@ -1318,7 +1195,7 @@ public sealed class SelectionRuntimeContextSystem
 
     public void CaptureUiClickSequence()
     {
-        LogSelectionDiagnostic("result=CaptureUiClickSequence");
+        _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic("result=CaptureUiClickSequence");
         _rtsSelectionInputSystem.CaptureUiClickSequence();
         SetCameraDragging(false);
     }

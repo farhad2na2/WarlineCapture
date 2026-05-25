@@ -1,6 +1,7 @@
 {
   "mapId": "Game_Terrain3_Island2048",
   "sourceSceneReference": "Assets/Game/Scenes/Game_Terrain3.unity",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
   "generationRule": "Source-prefab-only expansion. No generated terrain meshes and no substitute prefabs.",
   "mapSize": 2048,
   "sourceBeachPrefabInstances": 31,

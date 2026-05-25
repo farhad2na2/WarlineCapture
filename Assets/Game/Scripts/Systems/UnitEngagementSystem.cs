@@ -10,8 +10,10 @@ using Unity.Transforms;
 [UpdateBefore(typeof(UnitPathfindingSystem))]
 public partial struct UnitEngagementSystem : ISystem
 {
+    private const double TargetAcquisitionIntervalSeconds = 0.12d;
     private EntityQuery _unitsQuery;
     private EntityQuery _acquisitionQuery;
+    private double _nextTargetAcquisitionTime;
 
     public void OnCreate(ref SystemState state)
     {
@@ -60,6 +62,12 @@ public partial struct UnitEngagementSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        double now = SystemAPI.Time.ElapsedTime;
+        if (now < _nextTargetAcquisitionTime)
+            return;
+
+        _nextTargetAcquisitionTime = now + TargetAcquisitionIntervalSeconds;
+
         var grid = SystemAPI.GetSingleton<GridConfig>();
         int unitCount = _unitsQuery.CalculateEntityCount();
         if (unitCount == 0)

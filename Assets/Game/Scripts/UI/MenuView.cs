@@ -316,6 +316,9 @@ namespace Game.Scripts.UI
         private GameObject _requestCountdownTemplate;
         private readonly List<BuildingUiQuerySystem.PendingProductionUiEntry> _pendingProductionEntries = new();
         private readonly Dictionary<string, RequestCountdownView> _requestCountdownViews = new();
+        private readonly HashSet<string> _requestCountdownActiveKeys = new();
+        private readonly List<string> _requestCountdownKeysToRemove = new();
+        private float _nextRequestPanelRefreshTime;
         private Transform _statsLayoutRoot;
         private readonly Dictionary<string, TMP_Text> _statsAmountTexts = new();
         private BuildingUiCommandSystem.CampRequestFailure _campRequestFailure;
@@ -403,6 +406,7 @@ namespace Game.Scripts.UI
         private const int MinimapMaxSelectedArrowIcons = 32;
         private const float MinimapDynamicRefreshInterval = 0.35f;
         private const float FullscreenMapDynamicRefreshInterval = 0.2f;
+        private const float RequestPanelRefreshInterval = 0.2f;
         private const float SelectionToggleRefreshInterval = 0.25f;
         private const float MinimapStaticRebuildThresholdWorld = 1.5f;
         private static readonly bool EnableMenuCanvasDiagnostics = false;
@@ -4773,21 +4777,26 @@ namespace Game.Scripts.UI
                 return;
             }
 
+            if (Time.unscaledTime < _nextRequestPanelRefreshTime)
+                return;
+
+            _nextRequestPanelRefreshTime = Time.unscaledTime + RequestPanelRefreshInterval;
             _buildingUiQuerySystem.GetFriendlyPendingProductionUiEntries(_buildingUiQueryContext, _pendingProductionEntries);
             bool hasEntries = _pendingProductionEntries.Count > 0;
             _requestPanelRoot.gameObject.SetActive(hasEntries);
             if (!hasEntries)
             {
-                ClearObsoleteRequestCountdownViews(new HashSet<string>());
+                _requestCountdownActiveKeys.Clear();
+                ClearObsoleteRequestCountdownViews(_requestCountdownActiveKeys);
                 return;
             }
 
-            var activeKeys = new HashSet<string>();
+            _requestCountdownActiveKeys.Clear();
             for (int i = 0; i < _pendingProductionEntries.Count; i++)
             {
                 BuildingUiQuerySystem.PendingProductionUiEntry entry = _pendingProductionEntries[i];
                 string key = BuildPendingProductionKey(entry);
-                activeKeys.Add(key);
+                _requestCountdownActiveKeys.Add(key);
                 if (!_requestCountdownViews.TryGetValue(key, out RequestCountdownView view) || view == null || view.Root == null)
                 {
                     view = CreateRequestCountdownView();
@@ -4799,7 +4808,7 @@ namespace Game.Scripts.UI
                 BindRequestCountdownView(view, entry);
             }
 
-            ClearObsoleteRequestCountdownViews(activeKeys);
+            ClearObsoleteRequestCountdownViews(_requestCountdownActiveKeys);
         }
 
         private void UpdateStatsPanel()
@@ -5545,7 +5554,7 @@ namespace Game.Scripts.UI
 
         private void ClearObsoleteRequestCountdownViews(HashSet<string> activeKeys)
         {
-            List<string> keysToRemove = null;
+            _requestCountdownKeysToRemove.Clear();
             foreach (KeyValuePair<string, RequestCountdownView> pair in _requestCountdownViews)
             {
                 if (activeKeys.Contains(pair.Key))
@@ -5553,15 +5562,11 @@ namespace Game.Scripts.UI
 
                 if (pair.Value?.Root != null)
                     Object.Destroy(pair.Value.Root);
-                keysToRemove ??= new List<string>();
-                keysToRemove.Add(pair.Key);
+                _requestCountdownKeysToRemove.Add(pair.Key);
             }
 
-            if (keysToRemove == null)
-                return;
-
-            for (int i = 0; i < keysToRemove.Count; i++)
-                _requestCountdownViews.Remove(keysToRemove[i]);
+            for (int i = 0; i < _requestCountdownKeysToRemove.Count; i++)
+                _requestCountdownViews.Remove(_requestCountdownKeysToRemove[i]);
         }
 
         private static string BuildPendingProductionKey(BuildingUiQuerySystem.PendingProductionUiEntry entry)

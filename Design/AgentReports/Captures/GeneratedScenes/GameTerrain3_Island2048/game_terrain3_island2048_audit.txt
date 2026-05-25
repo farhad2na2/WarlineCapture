@@ -12,5 +12,5 @@ Coverage samples:
 - Shore samples touched by ground bounds: 396
 Island renderer material counts:
 - PolygonBattleRoyale_01_A: 4676
-- PolygonBattleRoyale_03_A: 3534
 - PolygonBattleRoyale_02_A: 895
+- PolygonBattleRoyale_03_A: 3534

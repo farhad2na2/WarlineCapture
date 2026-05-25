@@ -12,7 +12,8 @@ using UnityEngine.SceneManagement;
 public static class WarlineCaptureGameTerrain3Island2048Builder
 {
     private const string SourceScenePath = "Assets/Game/Scenes/Game_Terrain3.unity";
-    private const string ScenePath = "Assets/Game/Scenes/Generated/Game_Terrain3_Island2048.unity";
+    private const string TargetScenePath = "Assets/Game/Scenes/Game_Terrain4.unity";
+    private const string OldGeneratedScenePath = "Assets/Game/Scenes/Generated/Game_Terrain3_Island2048.unity";
     private const string DataRoot = "Design/AgentReports/Data/GeneratedScenes/GameTerrain3_Island2048";
     private const string CaptureRoot = "Design/AgentReports/Captures/GeneratedScenes/GameTerrain3_Island2048";
     private const string LayoutJsonPath = DataRoot + "/game_terrain3_island2048_layout.json";
@@ -95,7 +96,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         }
     }
 
-    [MenuItem("WarlineCapture/Design/Build Game Terrain3 Island 2048")]
+    [MenuItem("WarlineCapture/Design/Build Game Terrain4 Island 2048")]
     public static void BuildScene()
     {
         BeachPieces.Clear();
@@ -104,7 +105,6 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         PlacedPieces.Clear();
         UniquePrefabPaths.Clear();
 
-        Directory.CreateDirectory(ProjectPath(Path.GetDirectoryName(ScenePath)));
         Directory.CreateDirectory(ProjectPath(DataRoot));
         Directory.CreateDirectory(ProjectPath(Path.GetDirectoryName(ReportPath)));
 
@@ -113,29 +113,38 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         if (BeachPieces.Count == 0 || GroundPieces.Count == 0)
             throw new InvalidOperationException("Game_Terrain3 island source pieces were not found. Expected beach and ground prefab instances in " + SourceScenePath);
 
-        Scene generatedScene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
-        EditorSceneManager.SetActiveScene(generatedScene);
+        Scene targetScene = EditorSceneManager.OpenScene(TargetScenePath, OpenSceneMode.Single);
+        if (!targetScene.IsValid())
+            throw new InvalidOperationException("Unable to open target scene: " + TargetScenePath);
 
-        GameObject root = new("Game_Terrain3_Island2048_Root");
-        BuildLightingAndCamera(root);
-        BuildPrefabOnlyIsland(root);
+        GameObject islandRoot = FindRootGameObject(targetScene, "Island");
+        if (islandRoot == null)
+            throw new InvalidOperationException("Target scene does not contain a root GameObject named Island: " + TargetScenePath);
 
-        EditorSceneManager.SaveScene(generatedScene, ScenePath);
+        islandRoot.SetActive(true);
+        islandRoot.transform.localPosition = Vector3.zero;
+        islandRoot.transform.localRotation = Quaternion.identity;
+        islandRoot.transform.localScale = Vector3.one;
+        ClearChildren(islandRoot.transform);
+        BuildPrefabOnlyIsland(islandRoot);
+
+        EditorSceneManager.SaveScene(targetScene, TargetScenePath);
         WriteLayoutJson();
         WriteReport();
         AssetDatabase.Refresh();
 
-        Debug.Log($"WARLINECAPTURE_GAME_TERRAIN3_ISLAND2048_PREFAB_ONLY_BUILT beachSource={BeachPieces.Count} groundSource={GroundPieces.Count} detailGrassSource={DetailGrassPieces.Count} placed={PlacedPieces.Count} scene={ScenePath}");
+        Debug.Log($"WARLINECAPTURE_GAME_TERRAIN4_ISLAND2048_PREFAB_ONLY_BUILT beachSource={BeachPieces.Count} groundSource={GroundPieces.Count} detailGrassSource={DetailGrassPieces.Count} placed={PlacedPieces.Count} scene={TargetScenePath}");
     }
 
     [MenuItem("WarlineCapture/Design/Capture Game Terrain3 Island 2048")]
     public static void CaptureCurrentScene()
     {
         Directory.CreateDirectory(ProjectPath(CaptureRoot));
-        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        Scene scene = EditorSceneManager.OpenScene(TargetScenePath, OpenSceneMode.Single);
         if (!scene.IsValid())
-            throw new InvalidOperationException("Unable to open generated island scene: " + ScenePath);
+            throw new InvalidOperationException("Unable to open island target scene: " + TargetScenePath);
 
+        EnsureCaptureCameras();
         CaptureCamera("Camera_TopDown_2048Proof", 2048, 2048, CaptureRoot + "/game_terrain3_island2048_topdown_2048.png");
         CaptureCamera("Camera_Playable_Angled", 1920, 1080, CaptureRoot + "/game_terrain3_island2048_playable_angle_1920x1080.png");
         Debug.Log($"WARLINECAPTURE_GAME_TERRAIN3_ISLAND2048_CAPTURED root={CaptureRoot}");
@@ -145,14 +154,14 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     public static void AuditCurrentScene()
     {
         Directory.CreateDirectory(ProjectPath(CaptureRoot));
-        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        Scene scene = EditorSceneManager.OpenScene(TargetScenePath, OpenSceneMode.Single);
         if (!scene.IsValid())
-            throw new InvalidOperationException("Unable to open generated island scene: " + ScenePath);
+            throw new InvalidOperationException("Unable to open island target scene: " + TargetScenePath);
 
         List<Bounds> grassBounds = new();
         List<Bounds> beachBounds = new();
         Dictionary<string, int> materialRendererCounts = new(StringComparer.Ordinal);
-        foreach (Renderer renderer in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Exclude))
+        foreach (Renderer renderer in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
         {
             string rootName = FindIslandInstanceName(renderer.transform);
             if (rootName.StartsWith("Ground", StringComparison.Ordinal))
@@ -710,6 +719,32 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         return child;
     }
 
+    private static GameObject FindRootGameObject(Scene scene, string name)
+    {
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            if (root.name == name)
+                return root;
+        }
+
+        return null;
+    }
+
+    private static void ClearChildren(Transform parent)
+    {
+        for (int i = parent.childCount - 1; i >= 0; i--)
+            UnityEngine.Object.DestroyImmediate(parent.GetChild(i).gameObject);
+    }
+
+    private static void EnsureCaptureCameras()
+    {
+        if (GameObject.Find("Camera_TopDown_2048Proof") != null && GameObject.Find("Camera_Playable_Angled") != null)
+            return;
+
+        GameObject root = new("Game_Terrain4_Island2048_CaptureOnly");
+        BuildLightingAndCamera(root);
+    }
+
     private static void CaptureCamera(string cameraName, int width, int height, string outputPath)
     {
         Camera camera = GameObject.Find(cameraName)?.GetComponent<Camera>();
@@ -750,7 +785,10 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
                 || name.StartsWith("BeachCoast_", StringComparison.Ordinal)
                 || name.StartsWith("BeachBlend_", StringComparison.Ordinal)
                 || name.StartsWith("BeachInner_", StringComparison.Ordinal)
-                || name.StartsWith("BeachLandEdge_", StringComparison.Ordinal))
+                || name.StartsWith("BeachLandEdge_", StringComparison.Ordinal)
+                || name == "GroundFill_FromGameTerrain3Prefabs"
+                || name == "Beaches_FromGameTerrain3Prefabs"
+                || name == "DetailGrass_FromGameTerrain3Prefabs")
                 return name;
             current = current.parent;
         }
@@ -801,6 +839,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         json.AppendLine("{");
         json.AppendLine("  \"mapId\": \"Game_Terrain3_Island2048\",");
         json.AppendLine("  \"sourceSceneReference\": \"" + SourceScenePath + "\",");
+        json.AppendLine("  \"targetScene\": \"" + TargetScenePath + "\",");
         json.AppendLine("  \"generationRule\": \"Source-prefab-only expansion. No generated terrain meshes and no substitute prefabs.\",");
         json.AppendLine("  \"mapSize\": 2048,");
         json.AppendLine("  \"sourceBeachPrefabInstances\": " + BeachPieces.Count.ToString(CultureInfo.InvariantCulture) + ",");
@@ -846,8 +885,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine("Task: Expand the small `Game_Terrain3` island into a 2048x2048 island using the same prefab assets and more placements, without scaling the original island up.");
         report.AppendLine();
         report.AppendLine("Outputs:");
-        report.AppendLine("- `" + ScenePath + "`");
+        report.AppendLine("- `" + TargetScenePath + "` under root GameObject `Island`");
         report.AppendLine("- `" + LayoutJsonPath + "`");
+        report.AppendLine("- Removed standalone generated-scene target: `" + OldGeneratedScenePath + "`");
         report.AppendLine();
         report.AppendLine("Rules enforced:");
         report.AppendLine("- No generated island underlay mesh.");

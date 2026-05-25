@@ -15,7 +15,22 @@ public sealed class PerformanceDiagnosticsSystem
     private const double FpsUiUpdateIntervalSeconds = 0.25d;
     private const double SlowFrameDiagThresholdSeconds = 0.025d;
     private const double SlowFrameDiagCooldownSeconds = 0.5d;
-    private const int MaxAutoProfilerMarkerRecorders = 32;
+    private const int MaxAutoProfilerMarkerRecorders = 80;
+    private static readonly string[] PriorityProfilerMarkerNameFragments =
+    {
+        "UnitEngagementSystem",
+        "UnitPathfindingSystem",
+        "DynamicOccupancyRebuildSystem",
+        "UnitAnimationIndexSystem",
+        "UnitMove",
+        "AITargetingSystem",
+        "AICombatOrderSystem",
+        "AISquadSystem",
+        "AIBuildPlannerSystem",
+        "AIProductionSystem",
+        "AIEconomySystem",
+        "AIFactionControlSystem"
+    };
 
     private readonly bool _enableFrameRateDiagnostics = true;
     private readonly bool _enableSlowFrameDiagnostics = true;
@@ -217,6 +232,7 @@ public sealed class PerformanceDiagnosticsSystem
         AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "BehaviourUpdate");
         AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "LateBehaviourUpdate");
         AddProfilerMarkerRecorder(ProfilerCategory.Scripts, "Canvas.SendWillRenderCanvases");
+        AddPriorityPlayerLoopMarkerRecorders();
         AddAvailablePlayerLoopMarkerRecorders();
     }
 
@@ -281,6 +297,37 @@ public sealed class PerformanceDiagnosticsSystem
         }
     }
 
+    private void AddPriorityPlayerLoopMarkerRecorders()
+    {
+        try
+        {
+            List<ProfilerRecorderHandle> handles = new();
+            ProfilerRecorderHandle.GetAvailable(handles);
+            for (int i = 0; i < handles.Count; i++)
+            {
+                ProfilerRecorderHandle handle = handles[i];
+                ProfilerRecorderDescription description = ProfilerRecorderHandle.GetDescription(handle);
+                string name = description.Name.ToString();
+                if (!ShouldTrackPriorityProfilerMarker(name) || HasProfilerMarkerRecorder(name))
+                    continue;
+
+                ProfilerRecorder recorder = StartProfilerRecorder(description.Category, name);
+                if (!recorder.Valid)
+                    continue;
+
+                _markerRecorders.Add(new NamedProfilerRecorder
+                {
+                    Name = name,
+                    Recorder = recorder
+                });
+            }
+        }
+        catch
+        {
+            // Priority marker enumeration is diagnostic-only and can vary by Unity/editor platform.
+        }
+    }
+
     private bool HasProfilerMarkerRecorder(string statName)
     {
         for (int i = 0; i < _markerRecorders.Count; i++)
@@ -310,6 +357,20 @@ public sealed class PerformanceDiagnosticsSystem
             name.Contains("Wait", StringComparison.OrdinalIgnoreCase) ||
             name.Contains("Present", StringComparison.OrdinalIgnoreCase) ||
             name.Contains("Gfx", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private bool ShouldTrackPriorityProfilerMarker(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return false;
+
+        for (int i = 0; i < PriorityProfilerMarkerNameFragments.Length; i++)
+        {
+            if (name.Contains(PriorityProfilerMarkerNameFragments[i], StringComparison.OrdinalIgnoreCase))
+                return true;
+        }
+
+        return false;
     }
 
     private void DisposeProfilerRecorders()

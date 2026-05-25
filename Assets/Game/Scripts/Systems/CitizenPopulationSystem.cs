@@ -14,7 +14,10 @@ public sealed class CitizenPopulationSystem
     private const float VisibleCitizenArriveDistance = 0.35f;
     private const float DangerDetectRadius = 35f;
     private const float DangerScanIntervalSeconds = 1f;
+    private const float RuntimeBuildingListRefreshIntervalSeconds = 0.25f;
     private const float LogicalCitizenUpdateIntervalSeconds = 0.2f;
+    private const float VisibleCitizenSyncIntervalSeconds = 0.12f;
+    private const float TotalsRefreshIntervalSeconds = 0.25f;
     private const float WeekdayWorkStartHour = 8f;
     private const float WeekdayWorkEndHour = 17f;
     private const float WeekdayShoppingStartHour = 11f;
@@ -155,7 +158,10 @@ public sealed class CitizenPopulationSystem
     private int _nextCitizenId = 1;
     private CitizenPopulationTotals _totals;
     private float _nextDangerScanAt;
+    private float _nextRuntimeBuildingListRefreshAt;
     private float _nextLogicalCitizenUpdateAt;
+    private float _nextVisibleCitizenSyncAt;
+    private float _nextTotalsRefreshAt;
     private int _lastRefugeeUpkeepChargedDay;
     private GameObject[] _maleCitizenPrefabs;
     private GameObject[] _femaleCitizenPrefabs;
@@ -188,7 +194,10 @@ public sealed class CitizenPopulationSystem
         _nextHouseholdId = 1;
         _nextCitizenId = 1;
         _totals = default;
+        _nextRuntimeBuildingListRefreshAt = 0f;
         _nextLogicalCitizenUpdateAt = 0f;
+        _nextVisibleCitizenSyncAt = 0f;
+        _nextTotalsRefreshAt = 0f;
         _lastRefugeeUpkeepChargedDay = 0;
         _maleCitizenPrefabs = LoadCitizenPrefabs(CitizenGender.Male, _citizenPrefabSystem, _citizenPrefabContext);
         _femaleCitizenPrefabs = LoadCitizenPrefabs(CitizenGender.Female, _citizenPrefabSystem, _citizenPrefabContext);
@@ -207,41 +216,47 @@ public sealed class CitizenPopulationSystem
         bool skippedForPathfinding = false;
         try
         {
-        if (!HasRuntimeBuildingQuery())
-            return;
+            if (!HasRuntimeBuildingQuery())
+                return;
 
-        RefreshRuntimeBuildingLists();
-        afterBuildings = Time.realtimeSinceStartupAsDouble;
+            bool refreshedBuildings = RefreshRuntimeBuildingListsIfDue();
+            afterBuildings = Time.realtimeSinceStartupAsDouble;
 
-        if (UnitPathfindingSystem.HasPendingPathJob)
-        {
-            skippedForPathfinding = true;
-            RecalculateTotalsFromRecords(syncSummaryEntity: false);
+            if (UnitPathfindingSystem.HasPendingPathJob)
+            {
+                skippedForPathfinding = true;
+                RecalculateTotalsIfDue(syncSummaryEntity: false);
+                afterTotals = Time.realtimeSinceStartupAsDouble;
+                return;
+            }
+
+            ResolveEntityManager();
+            EnsurePopulationSummaryEntity();
+            afterResolve = Time.realtimeSinceStartupAsDouble;
+
+            RefreshDangerSourcesIfNeeded();
+            afterDanger = Time.realtimeSinceStartupAsDouble;
+            if (Time.time >= _nextLogicalCitizenUpdateAt)
+            {
+                _nextLogicalCitizenUpdateAt = Time.time + LogicalCitizenUpdateIntervalSeconds;
+                if (!refreshedBuildings)
+                    RefreshRuntimeBuildingLists(force: true);
+                SyncRemovedHouses();
+                RegisterNewHouses();
+                UpdateRefugeeTentState();
+                UpdateDeferredCitizenTravel();
+                UpdateCitizenSchedules();
+                UpdateRefugeeUpkeep();
+            }
+            afterLogical = Time.realtimeSinceStartupAsDouble;
+            if (Time.time >= _nextVisibleCitizenSyncAt)
+            {
+                _nextVisibleCitizenSyncAt = Time.time + VisibleCitizenSyncIntervalSeconds;
+                SyncVisibleCitizens();
+            }
+            afterVisible = Time.realtimeSinceStartupAsDouble;
+            RecalculateTotalsIfDue(syncSummaryEntity: true);
             afterTotals = Time.realtimeSinceStartupAsDouble;
-            return;
-        }
-
-        ResolveEntityManager();
-        EnsurePopulationSummaryEntity();
-        afterResolve = Time.realtimeSinceStartupAsDouble;
-
-        RefreshDangerSourcesIfNeeded();
-        afterDanger = Time.realtimeSinceStartupAsDouble;
-        if (Time.time >= _nextLogicalCitizenUpdateAt)
-        {
-            _nextLogicalCitizenUpdateAt = Time.time + LogicalCitizenUpdateIntervalSeconds;
-            SyncRemovedHouses();
-            RegisterNewHouses();
-            UpdateRefugeeTentState();
-            UpdateDeferredCitizenTravel();
-            UpdateCitizenSchedules();
-            UpdateRefugeeUpkeep();
-        }
-        afterLogical = Time.realtimeSinceStartupAsDouble;
-        SyncVisibleCitizens();
-        afterVisible = Time.realtimeSinceStartupAsDouble;
-        RecalculateTotals();
-        afterTotals = Time.realtimeSinceStartupAsDouble;
         }
         finally
         {
@@ -270,6 +285,24 @@ public sealed class CitizenPopulationSystem
 
     private void RefreshRuntimeBuildingLists()
     {
+        RefreshRuntimeBuildingLists(force: true);
+    }
+
+    private bool RefreshRuntimeBuildingListsIfDue()
+    {
+        if (Time.time < _nextRuntimeBuildingListRefreshAt)
+            return false;
+
+        RefreshRuntimeBuildingLists(force: true);
+        return true;
+    }
+
+    private void RefreshRuntimeBuildingLists(bool force)
+    {
+        if (!force && Time.time < _nextRuntimeBuildingListRefreshAt)
+            return;
+
+        _nextRuntimeBuildingListRefreshAt = Time.time + RuntimeBuildingListRefreshIntervalSeconds;
         _runtimeHouseBuildingIds.Clear();
         _buildingRuntimeQuerySystem.GetRuntimeHouseBuildingIds(_buildingRuntimeQueryContext, _runtimeHouseBuildingIds);
         _runtimeShopBuildingIds.Clear();
@@ -283,6 +316,18 @@ public sealed class CitizenPopulationSystem
         _runtimeHouseBuildingIdSet.Clear();
         for (int i = 0; i < _runtimeHouseBuildingIds.Count; i++)
             _runtimeHouseBuildingIdSet.Add(_runtimeHouseBuildingIds[i]);
+    }
+
+    private void RecalculateTotalsIfDue(bool syncSummaryEntity)
+    {
+        if (Time.time < _nextTotalsRefreshAt)
+            return;
+
+        _nextTotalsRefreshAt = Time.time + TotalsRefreshIntervalSeconds;
+        if (syncSummaryEntity)
+            RecalculateTotals();
+        else
+            RecalculateTotalsFromRecords(syncSummaryEntity: false);
     }
 
     private bool HasRuntimeBuildingQuery()

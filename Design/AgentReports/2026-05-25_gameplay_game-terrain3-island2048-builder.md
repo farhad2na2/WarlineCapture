@@ -5,8 +5,9 @@ Date: 2026-05-25
 Task: Expand the small `Game_Terrain3` island into a 2048x2048 island using the same prefab assets and more placements, without scaling the original island up.
 
 Outputs:
-- `Assets/Game/Scenes/Generated/Game_Terrain3_Island2048.unity`
+- `Assets/Game/Scenes/Game_Terrain4.unity` under root GameObject `Island`
 - `Design/AgentReports/Data/GeneratedScenes/GameTerrain3_Island2048/game_terrain3_island2048_layout.json`
+- Removed standalone generated-scene target: `Assets/Game/Scenes/Generated/Game_Terrain3_Island2048.unity`
 
 Rules enforced:
 - No generated island underlay mesh.

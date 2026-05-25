@@ -638,8 +638,10 @@ Step 12 started caller migration off the selection shell:
 - Final deletion Step 5 moved focus and selection compatibility commands into `RtsSelectionFocusCommandSystem`: external selection command request branching, clear focus, deselect all, select-all/select-filter request routing, direct focus entity compatibility, and select-runtime-entity compatibility are no longer implemented directly in `RTSSelectionSystem`.
 - Final deletion Step 6 moved pointer target command dispatch into `RtsSelectionPointerTargetCommandSystem`: clicked move intent queueing, clicked attack intent queueing, clicked board-transport intent queueing, clicked focus dispatch, clicked unit/cell resolution, boardable-transport click tests, and building-target move compatibility are no longer implemented directly in `RTSSelectionSystem`.
 - Final deletion Step 7 moved production startup wiring off the retired `RTSSelectionSystem` type: `SelectionGameplayStartupSystem` now constructs the temporary `SelectionRuntimeUpdateSystem` runtime boundary and production code no longer constructs, stores, or calls `RTSSelectionSystem`.
+- Final deletion Step 8 moved architecture/test reads off the deleted `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` artifact and added a contract guard that the retired source/type must not be restored.
+- Final deletion Step 9 removed the architecture allowance that described `RTSSelectionSystem` as temporary compatibility debt. The remaining deletion blocker is `SelectionRuntimeUpdateSystem`, which still owns live runtime-loop/context construction and must be retired without replacing it with another managed orchestration shell.
 
 ## Recommended Next Slices
 
-1. Retire architecture tests that read `RTSSelectionSystem.cs` as an extraction audit artifact.
-2. Delete `RTSSelectionSystem.cs` once no production or test references remain.
+1. Move the remaining runtime-loop/context ownership out of `SelectionRuntimeUpdateSystem`.
+2. Delete `SelectionRuntimeUpdateSystem.cs` once no production or test references remain.

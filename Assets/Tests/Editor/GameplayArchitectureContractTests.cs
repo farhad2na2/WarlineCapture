@@ -2423,6 +2423,7 @@ public sealed class GameplayArchitectureContractTests
         const string retiredSelectionFile = "Assets/Game/Scripts/Systems/RTSSelectionSystem.cs";
         const string selectionRuntimeUpdateFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
 
+        string contract = File.ReadAllText(ContractPath);
         string bootstrap = File.ReadAllText(bootstrapFile);
         string menuStartup = File.ReadAllText(menuStartupFile);
         string runtimeUpdate = File.ReadAllText(runtimeUpdateFile);
@@ -2431,6 +2432,9 @@ public sealed class GameplayArchitectureContractTests
         string selectionRuntimeUpdate = File.ReadAllText(selectionRuntimeUpdateFile);
 
         Assert.IsFalse(File.Exists(retiredSelectionFile), "The retired RTSSelectionSystem source artifact must not be restored.");
+        StringAssert.Contains("The retired `RTSSelectionSystem` source/type must not be reintroduced", contract);
+        Assert.IsFalse(contract.Contains("`RTSSelectionSystem` is temporary compatibility debt", StringComparison.Ordinal), "RTSSelectionSystem is retired debt, not an allowed temporary shell.");
+        StringAssert.Contains("`SelectionRuntimeUpdateSystem` is the remaining temporary runtime-loop debt", contract);
         StringAssert.Contains("SelectionGameplayStartupSystem _selectionGameplayStartupSystem", managedStartup);
         StringAssert.Contains("BindSelectionMainMenu", managedStartup);
         StringAssert.Contains("SelectionRuntimeUpdate", managedStartup);

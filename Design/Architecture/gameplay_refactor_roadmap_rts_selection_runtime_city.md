@@ -225,9 +225,10 @@ Goal: finish deleting the legacy `RTSSelectionSystem` source/type without replac
    - Moved architecture/test reads off the deleted `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs` artifact and onto the owning ECS systems/read models or the temporary `SelectionRuntimeUpdateSystem` runtime shell where that debt still exists.
    - Added a contract guard that the retired source artifact and `public sealed class RTSSelectionSystem` type must not be restored.
 
-9. Pending: Delete the shell and remove debt allowances
-   - Delete `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs` and its `.meta` once no production or test references remain.
-   - Remove contract wording, allowlists, and audit entries that permit `RTSSelectionSystem` as temporary compatibility debt; replace them with a hard rule that the shell must not exist.
+9. In progress: Delete the shell and remove debt allowances
+   - Removed the architecture allowance that described `RTSSelectionSystem` as temporary compatibility debt; it is now a hard retired source/type that must not be restored.
+   - Current deletion blocker: `Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs` still owns the live selection runtime loop/context construction and is still constructed by `SelectionGameplayStartupSystem`.
+   - Next substep: move the remaining runtime-loop/context ownership out of `SelectionRuntimeUpdateSystem` without replacing it with another managed orchestration shell, then delete `SelectionRuntimeUpdateSystem.cs` and its `.meta`.
 
 10. Pending: Final validation gate
     - Run architecture tests, focused selection/command tests, menu/bootstrap smoke, and a focused runtime load/play validation.

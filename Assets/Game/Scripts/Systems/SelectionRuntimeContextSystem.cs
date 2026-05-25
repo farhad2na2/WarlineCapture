@@ -8,31 +8,6 @@ using UnityEngine;
 
 public sealed class SelectionRuntimeContextSystem
 {
-
-    public readonly struct TransportPassengerUiInfo
-    {
-        public readonly Entity Entity;
-        public readonly string DisplayName;
-        public readonly int HealthCurrent;
-        public readonly int HealthMax;
-
-        public TransportPassengerUiInfo(Entity entity, string displayName, int healthCurrent, int healthMax)
-        {
-            Entity = entity;
-            DisplayName = displayName;
-            HealthCurrent = healthCurrent;
-            HealthMax = healthMax;
-        }
-    }
-
-    public enum FocusedUnitUiStatus
-    {
-        Idle = 0,
-        Moving = 1,
-        Engaged = 2,
-        ReturningToBase = 3
-    }
-
     private readonly SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem = new();
     private readonly SelectionRuntimeConfigSystem _selectionRuntimeConfigSystem = new();
     private readonly SelectionRuntimeQuerySystem _selectionRuntimeQuerySystem = new();
@@ -48,6 +23,7 @@ public sealed class SelectionRuntimeContextSystem
     private readonly RtsSelectionFocusCommandSystem _rtsSelectionFocusCommandSystem = new();
     private readonly RtsSelectionFocusCommandContextSystem _rtsSelectionFocusCommandContextSystem = new();
     private readonly RtsSelectionPointerTargetCommandSystem _rtsSelectionPointerTargetCommandSystem = new();
+    private readonly RtsSelectionPointerTargetCommandContextSystem _rtsSelectionPointerTargetCommandContextSystem = new();
     private RtsCameraSystem _rtsCameraSystem = new();
     private RtsCameraRequestSystem _rtsCameraRequestSystem = new();
     private SelectionScreenMarkerSystem _selectionScreenMarkerSystem;
@@ -86,156 +62,7 @@ public sealed class SelectionRuntimeContextSystem
         _runtimeConfig = _selectionRuntimeConfigSystem.CreateState(null, null);
     }
 
-    public bool HasFocusedUnit
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
-                   model.HasFocusedUnit != 0;
-        }
-    }
-
-    public bool HasAnySelectedUnits
-    {
-        get
-        {
-            if (World.DefaultGameObjectInjectionWorld == null)
-                return false;
-
-            var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            EnsureRuntimeSelectionDependencies(em);
-            return _selectionUiQuerySystem.HasAnySelectedUnits(_selectionRuntimeQuerySystem.SelectedTagQuery);
-        }
-    }
-
-    public string FocusedUnitLabel
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
-                ? model.Label.ToString()
-                : "Unit";
-        }
-    }
-
-    public string FocusedUnitDescription
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
-                ? model.Description.ToString()
-                : "Select a unit to inspect it.";
-        }
-    }
-
-    public string FocusedUnitHealthText
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
-                ? model.HealthText.ToString()
-                : "Health: -";
-        }
-    }
-
-    public bool TryGetFocusedUnitHealth(out int current, out int max)
-    {
-        current = 0;
-        max = 0;
-
-        if (!TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) || model.HasHealth == 0)
-            return false;
-
-        current = model.HealthCurrent;
-        max = model.HealthMax;
-        return true;
-    }
-
-    public bool TryGetFocusedUnitCapacityInfo(out int current, out int max, out float progress01)
-    {
-        current = 0;
-        max = 0;
-        progress01 = 0f;
-
-        if (!TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) || model.HasCapacity == 0)
-            return false;
-
-        current = model.CapacityCurrent;
-        max = model.CapacityMax;
-        progress01 = model.CapacityProgress01;
-        return true;
-    }
-
-    public bool FocusedUnitOwnedByPlayer
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
-                   model.OwnedByPlayer != 0;
-        }
-    }
-
-    public bool CanDestroyFocusedUnit => FocusedUnitOwnedByPlayer;
-
-    public bool CanCommandFocusedUnit => HasFocusedUnit && FocusedUnitOwnedByPlayer;
-
-    public bool FocusedUnitIsVehicle
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
-                   model.IsVehicle != 0;
-        }
-    }
-
-    public bool CanReturnFocusedUnitToBase => CanCommandFocusedUnit && !FocusedUnitIsVehicle;
-
-    public bool CanFocusedUnitUseAutoAttack => CanCommandFocusedUnit && !FocusedUnitIsVehicle;
-
-    public bool FocusedUnitCanAttack
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) &&
-                   model.CanAttack != 0;
-        }
-    }
-
     public bool ExplicitAttackTargetModeActive => _explicitAttackTargetModeActive;
-
-    public int FocusedTransportPassengerCount
-    {
-        get
-        {
-            return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
-                ? model.PassengerCount
-                : 0;
-        }
-    }
-
-    public bool CanDisembarkFocusedTransport => FocusedTransportPassengerCount > 0;
-
-    public void GetFocusedTransportPassengers(List<TransportPassengerUiInfo> results)
-    {
-        if (results == null)
-            return;
-
-        results.Clear();
-        if (TryReadFocusedUnitUiModel(
-                out _,
-                out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers))
-        {
-            for (int i = 0; i < passengers.Length; i++)
-            {
-                FocusedUnitPassengerUiReadModelElement passenger = passengers[i];
-                results.Add(new TransportPassengerUiInfo(
-                    passenger.Passenger,
-                    passenger.DisplayName.ToString(),
-                    passenger.HealthCurrent,
-                    passenger.HealthMax));
-            }
-        }
-    }
 
     public void DisembarkFocusedTransport()
     {
@@ -245,89 +72,6 @@ public sealed class SelectionRuntimeContextSystem
             return;
 
         ProcessTransportCommandRequests();
-    }
-
-    public bool TryGetFocusedUnitWorldPosition(out Vector3 worldPosition)
-    {
-        worldPosition = default;
-        if (!TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) || model.HasWorldPosition == 0)
-            return false;
-
-        worldPosition = new Vector3(model.WorldPosition.x, model.WorldPosition.y, model.WorldPosition.z);
-        return true;
-    }
-
-    public bool TryGetFocusedUnitEntityForUi(out Entity entity)
-    {
-        entity = Entity.Null;
-        if (!TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) || model.HasFocusedUnit == 0)
-            return false;
-
-        entity = model.FocusedUnit;
-        return true;
-    }
-
-    public FocusedUnitUiStatus GetFocusedUnitUiStatus()
-    {
-        return TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
-            ? ToFocusedUnitUiStatus(model.Status)
-            : FocusedUnitUiStatus.Idle;
-    }
-
-    public bool TryGetFocusedUnitPortraitPose(out Vector3 worldPosition, out Vector3 forward)
-    {
-        worldPosition = default;
-        forward = Vector3.forward;
-
-        if (!TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model) || model.HasPortraitPose == 0)
-            return false;
-
-        worldPosition = new Vector3(model.PortraitWorldPosition.x, model.PortraitWorldPosition.y, model.PortraitWorldPosition.z);
-        forward = new Vector3(model.PortraitForward.x, model.PortraitForward.y, model.PortraitForward.z);
-        return true;
-    }
-
-    public bool TryGetSelectedUnitsPortraitPose(out Vector3 centerWorldPosition, out Vector3 forward, out float framingRadius)
-    {
-        centerWorldPosition = default;
-        forward = Vector3.forward;
-        framingRadius = 1f;
-
-        if (World.DefaultGameObjectInjectionWorld == null)
-            return false;
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureRuntimeSelectionDependencies(em);
-        using var selectedEntities = _selectionRuntimeQuerySystem.SelectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        return _selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose(
-            em,
-            selectedEntities,
-            _selectionStateSystem.FocusedUnit,
-            out centerWorldPosition,
-            out forward,
-            out framingRadius);
-    }
-
-    public void GetSelectedUnitEntities(List<Entity> entities)
-    {
-        if (entities == null)
-            return;
-
-        if (World.DefaultGameObjectInjectionWorld == null)
-        {
-            entities.Clear();
-            return;
-        }
-
-        var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureRuntimeSelectionDependencies(em);
-        using var selectedEntities = _selectionRuntimeQuerySystem.SelectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
-        _selectionUiQuerySystem.GetSelectedUnitEntities(em, selectedEntities, entities);
-    }
-
-    private bool TryReadFocusedUnitUiModel(out FocusedUnitUiReadModelComponent model)
-    {
-        return TryReadFocusedUnitUiModel(out model, out _);
     }
 
     private void PublishFocusedUnitUiReadModel()
@@ -344,30 +88,22 @@ public sealed class SelectionRuntimeContextSystem
             Time.time);
     }
 
-    private bool TryReadFocusedUnitUiModel(
-        out FocusedUnitUiReadModelComponent model,
-        out DynamicBuffer<FocusedUnitPassengerUiReadModelElement> passengers)
+    private bool FocusedUnitOwnedByPlayer
     {
-        model = default;
-        passengers = default;
-        World world = World.DefaultGameObjectInjectionWorld;
-        if (world == null || !world.IsCreated)
-            return false;
-
-        EntityManager em = world.EntityManager;
-        PublishFocusedUnitUiReadModel();
-        return _focusedUnitUiReadModelSystem.TryRead(em, out model, out passengers);
+        get
+        {
+            return TryGetFocusedUnitEntity(out EntityManager em, out Entity entity) &&
+                   _selectionUiQuerySystem.IsOwnedByPlayer(em, entity);
+        }
     }
 
-    private static FocusedUnitUiStatus ToFocusedUnitUiStatus(int status)
+    private bool FocusedUnitCanAttack
     {
-        return (SelectionUiQuerySystem.FocusedUnitUiStatus)status switch
+        get
         {
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Moving => FocusedUnitUiStatus.Moving,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.Engaged => FocusedUnitUiStatus.Engaged,
-            SelectionUiQuerySystem.FocusedUnitUiStatus.ReturningToBase => FocusedUnitUiStatus.ReturningToBase,
-            _ => FocusedUnitUiStatus.Idle
-        };
+            return TryGetFocusedUnitEntity(out EntityManager em, out Entity entity) &&
+                   _selectionUiQuerySystem.CanAttack(em, entity);
+        }
     }
 
     public void BindCameraBoundary(
@@ -624,9 +360,8 @@ public sealed class SelectionRuntimeContextSystem
             ArmFocusedAttackTargetMode,
             CancelExplicitAttackTargetMode);
 
-    private RtsSelectionPointerTargetCommandSystem.Context CreatePointerTargetCommandContext()
-    {
-        return new RtsSelectionPointerTargetCommandSystem.Context(
+    private RtsSelectionPointerTargetCommandSystem.Context PointerTargetCommandContext =>
+        _rtsSelectionPointerTargetCommandContextSystem.Create(
             _runtimeGameplayStateSystem,
             _rtsSelectionInputSystem,
             _selectionStateSystem,
@@ -643,11 +378,8 @@ public sealed class SelectionRuntimeContextSystem
             TryGetPointerPosition,
             () => _explicitAttackTargetModeActive,
             value => _explicitAttackTargetModeActive = value,
-            mode => _selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), mode),
-            result => _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), result),
-            () => _selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext()),
-            () => _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext()),
-            (em, entity) => _selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), em, entity),
+            _selectionHudFeedbackSystem,
+            CreateHudFeedbackContext(),
             ClearCurrentSelection,
             RequestMoveOrderScreenMarker,
             SetCameraDragging,
@@ -656,7 +388,6 @@ public sealed class SelectionRuntimeContextSystem
             ProcessMoveCommandRequests,
             _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
             DescribeTransportBoardingEntity);
-    }
 
     public bool HasVisiblePlayerUnits()
     {
@@ -730,7 +461,7 @@ public sealed class SelectionRuntimeContextSystem
 
     private void IssueMoveOrder(Vector2 screenPosition)
     {
-        _rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(CreatePointerTargetCommandContext(), screenPosition);
+        _rtsSelectionPointerTargetCommandSystem.IssueMoveOrder(PointerTargetCommandContext, screenPosition);
     }
 
     private void ProcessMoveCommandRequests()
@@ -747,7 +478,7 @@ public sealed class SelectionRuntimeContextSystem
 
     private bool TryIssueBoardTransportOrderToClickedUnit(Vector2 screenPosition)
     {
-        return _rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
+        return _rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(PointerTargetCommandContext, screenPosition);
     }
 
     private bool ProcessTransportCommandRequests()
@@ -757,7 +488,7 @@ public sealed class SelectionRuntimeContextSystem
 
     public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
     {
-        return _rtsSelectionPointerTargetCommandSystem.IsBoardablePlayerTransportClick(CreatePointerTargetCommandContext(), screenPosition);
+        return _rtsSelectionPointerTargetCommandSystem.IsBoardablePlayerTransportClick(PointerTargetCommandContext, screenPosition);
     }
 
     private static string ResolveUnitSourceName(EntityManager em, Entity entity)
@@ -829,7 +560,7 @@ public sealed class SelectionRuntimeContextSystem
     public bool TryIssueMoveOrderToBuilding(Vector2Int originCell, Vector2Int footprintCells)
     {
         return _rtsSelectionPointerTargetCommandSystem.TryIssueMoveOrderToBuilding(
-            CreatePointerTargetCommandContext(),
+            PointerTargetCommandContext,
             originCell,
             footprintCells);
     }
@@ -837,7 +568,7 @@ public sealed class SelectionRuntimeContextSystem
     private bool TryGetClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
     {
         return _rtsSelectionPointerTargetCommandSystem.TryGetClickedCell(
-            CreatePointerTargetCommandContext(),
+            PointerTargetCommandContext,
             screenPosition,
             em,
             out cell,
@@ -1139,10 +870,11 @@ public sealed class SelectionRuntimeContextSystem
 
     public bool ArmFocusedAttackTargetMode()
     {
-        if (!CanCommandFocusedUnit || !FocusedUnitCanAttack)
+        bool hasFocusedUnit = TryGetFocusedUnitEntity(out _, out _);
+        if (!hasFocusedUnit || !FocusedUnitOwnedByPlayer || !FocusedUnitCanAttack)
         {
             _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(
-                HasFocusedUnit ? TacticalCommandReasonCode.TargetNotAttackable : TacticalCommandReasonCode.NoSelection));
+                hasFocusedUnit ? TacticalCommandReasonCode.TargetNotAttackable : TacticalCommandReasonCode.NoSelection));
             return false;
         }
 
@@ -1216,18 +948,18 @@ public sealed class SelectionRuntimeContextSystem
 
     private bool TryFocusUnit(Vector2 screenPosition)
     {
-        return _rtsSelectionPointerTargetCommandSystem.TryFocusUnit(CreatePointerTargetCommandContext(), screenPosition);
+        return _rtsSelectionPointerTargetCommandSystem.TryFocusUnit(PointerTargetCommandContext, screenPosition);
     }
 
     private bool TryIssueAttackOrderToClickedUnit(Vector2 screenPosition)
     {
-        return _rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
+        return _rtsSelectionPointerTargetCommandSystem.TryIssueAttackOrderToClickedUnit(PointerTargetCommandContext, screenPosition);
     }
 
     private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
         return _rtsSelectionPointerTargetCommandSystem.TryGetClickedUnitEntity(
-            CreatePointerTargetCommandContext(),
+            PointerTargetCommandContext,
             screenPosition,
             em,
             out bestEntity);

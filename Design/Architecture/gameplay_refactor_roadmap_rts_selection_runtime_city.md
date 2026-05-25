@@ -276,13 +276,14 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Move `CreateFocusCommandContext` into `RtsSelectionFocusCommandSystem` or a narrow context builder.
    - Focus/select-all/clear command flow must not require `SelectionRuntimeContextSystem`.
 
-10. Pending: Extract pointer-target context builder
+10. Complete: Extract pointer-target context builder
     - Move `CreatePointerTargetCommandContext` into `RtsSelectionPointerTargetCommandSystem` or a narrow context builder.
     - Clicked move, attack, transport, focus, and building-target command flow must not require `SelectionRuntimeContextSystem`.
 
-11. Pending: Move remaining compatibility methods
-    - Move any remaining direct command/read wrappers to existing UI command, UI read-model, camera, building interaction, focused command, or selection state systems.
-    - Production callers must not depend on `SelectionRuntimeContextSystem`.
+11. Complete: Move remaining compatibility methods
+    - Removed the obsolete focused-unit/selected-unit UI read compatibility surface from `SelectionRuntimeContextSystem`.
+    - Focused-unit labels, health/capacity/status, transport passenger rows, selected-unit read lists, and visible-unit read helpers now stay behind `SelectionUiReadModelSystem` and ECS read-model data.
+    - Remaining production dependency on `SelectionRuntimeContextSystem` is runtime context construction/update composition only; that is the deletion target for step 12.
 
 12. Pending: Delete context file
     - Delete `Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs` and `.meta`.

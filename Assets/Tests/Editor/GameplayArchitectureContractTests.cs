@@ -185,6 +185,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`", contract);
         StringAssert.Contains("focus command context construction belongs in `RtsSelectionFocusCommandContextSystem`", contract);
+        StringAssert.Contains("pointer-target context construction belongs in `RtsSelectionPointerTargetCommandContextSystem`", contract);
         StringAssert.Contains("focused-unit UI read-model publication, focused labels/descriptions, health/capacity/status projection, focused transport passenger row projection, world-position projection, and portrait pose projection belong in `FocusedUnitUiReadModelSystem`", contract);
         StringAssert.Contains("attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`", contract);
         StringAssert.Contains("move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`", contract);
@@ -2193,14 +2194,20 @@ public sealed class GameplayArchitectureContractTests
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
+        const string pointerTargetContextFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandContextSystem.cs";
         const string lookupFile = "Assets/Game/Scripts/Systems/FocusableUnitLookupSystem.cs";
         Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer target command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
+        Assert.IsTrue(File.Exists(pointerTargetContextFile), "Pointer-target command context construction must live outside SelectionRuntimeContextSystem.");
         Assert.IsTrue(File.Exists(lookupFile), "Clicked-unit focus lookup and cache ownership must live in FocusableUnitLookupSystem.");
 
         string selection = File.ReadAllText(selectionFile);
         string pointerTarget = File.ReadAllText(pointerTargetFile);
+        string pointerTargetContext = File.ReadAllText(pointerTargetContextFile);
         string lookup = File.ReadAllText(lookupFile);
         StringAssert.Contains("FocusableUnitLookupSystem _focusableUnitLookupSystem", selection);
+        StringAssert.Contains("RtsSelectionPointerTargetCommandContextSystem _rtsSelectionPointerTargetCommandContextSystem", selection);
+        StringAssert.Contains("PointerTargetCommandContext", selection);
+        StringAssert.Contains("new RtsSelectionPointerTargetCommandSystem.Context", pointerTargetContext);
         StringAssert.Contains("FocusableUnitLookupSystem.TryGetClickedUnitEntity", pointerTarget);
         StringAssert.Contains("Dictionary<int, List<Entity>> _focusableUnitsByCell", lookup);
         StringAssert.Contains("SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>())", lookup);
@@ -2216,6 +2223,8 @@ public sealed class GameplayArchitectureContractTests
             Regex.IsMatch(selection, @"private\s+void\s+RebuildFocusableUnitLookup\s*\(") ||
             Regex.IsMatch(selection, @"private\s+static\s+bool\s+IsFocusableUnitCandidate\s*\("),
             "Focusable lookup refresh and candidate policy belong in FocusableUnitLookupSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(selection.Contains("CreatePointerTargetCommandContext", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own pointer-target context construction.");
+        Assert.IsFalse(selection.Contains("new RtsSelectionPointerTargetCommandSystem.Context", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not construct pointer-target contexts directly.");
     }
 
     [Test]
@@ -2592,26 +2601,32 @@ public sealed class GameplayArchitectureContractTests
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string uiQueryFile = "Assets/Game/Scripts/Systems/SelectionUiQuerySystem.cs";
+        const string uiReadModelFile = "Assets/Game/Scripts/Systems/SelectionUiReadModelSystem.cs";
         const string focusedReadModelFile = "Assets/Game/Scripts/Systems/FocusedUnitUiReadModelSystem.cs";
         const string focusedReadModelComponentsFile = "Assets/Game/Scripts/Components/SelectionUiReadModelComponents.cs";
         Assert.IsTrue(File.Exists(uiQueryFile), "Focused and selected UI read models must live in SelectionUiQuerySystem.");
+        Assert.IsTrue(File.Exists(uiReadModelFile), "UI read compatibility must live in SelectionUiReadModelSystem.");
         Assert.IsTrue(File.Exists(focusedReadModelFile), "Focused UI read-model publication must live in FocusedUnitUiReadModelSystem.");
         Assert.IsTrue(File.Exists(focusedReadModelComponentsFile), "Focused UI read models must be ECS data components/buffers.");
 
         string selection = File.ReadAllText(selectionFile);
+        string uiReadModel = File.ReadAllText(uiReadModelFile);
         string focusedReadModel = File.ReadAllText(focusedReadModelFile);
         string focusedReadModelComponents = File.ReadAllText(focusedReadModelComponentsFile);
         StringAssert.Contains("SelectionUiQuerySystem _selectionUiQuerySystem", selection);
+        StringAssert.Contains("FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem", uiReadModel);
+        StringAssert.Contains("public bool HasFocusedUnit", uiReadModel);
+        StringAssert.Contains("public void GetFocusedTransportPassengers", uiReadModel);
+        StringAssert.Contains("public void GetSelectedUnitEntities", uiReadModel);
         StringAssert.Contains("FocusedUnitUiReadModelSystem _focusedUnitUiReadModelSystem", selection);
         StringAssert.Contains("_focusedUnitUiReadModelSystem.Publish", selection);
-        StringAssert.Contains("_focusedUnitUiReadModelSystem.TryRead", selection);
+        StringAssert.Contains("_focusedUnitUiReadModelSystem.TryRead", uiReadModel);
         StringAssert.Contains("FocusedUnitUiReadModelComponent", focusedReadModelComponents);
         StringAssert.Contains("FocusedUnitPassengerUiReadModelElement", focusedReadModelComponents);
         StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitName", focusedReadModel);
         StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitDescription", focusedReadModel);
         StringAssert.Contains("selectionUiQuerySystem.GetFocusedUnitUiStatus", focusedReadModel);
         StringAssert.Contains("selectionUiQuerySystem.GetTransportPassengers", focusedReadModel);
-        StringAssert.Contains("_selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose", selection);
         Assert.IsFalse(
             selection.Contains("_selectionUiQuerySystem.ResolveFocusedUnitName", StringComparison.Ordinal) ||
             selection.Contains("_selectionUiQuerySystem.ResolveFocusedUnitDescription", StringComparison.Ordinal) ||
@@ -2623,8 +2638,18 @@ public sealed class GameplayArchitectureContractTests
             selection.Contains("_selectionUiQuerySystem.GetTransportPassengers", StringComparison.Ordinal) ||
             selection.Contains("_selectionUiQuerySystem.TryGetFocusedUnitWorldPosition", StringComparison.Ordinal) ||
             selection.Contains("_selectionUiQuerySystem.TryGetFocusedUnitPortraitPose", StringComparison.Ordinal) ||
+            selection.Contains("_selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose", StringComparison.Ordinal) ||
+            selection.Contains("public bool HasFocusedUnit", StringComparison.Ordinal) ||
+            selection.Contains("public string FocusedUnitLabel", StringComparison.Ordinal) ||
+            selection.Contains("public bool TryGetFocusedUnitHealth", StringComparison.Ordinal) ||
+            selection.Contains("public void GetFocusedTransportPassengers", StringComparison.Ordinal) ||
+            selection.Contains("public void GetSelectedUnitEntities", StringComparison.Ordinal) ||
+            selection.Contains("public bool TryGetSelectedUnitsPortraitPose", StringComparison.Ordinal) ||
+            selection.Contains("public FocusedUnitUiStatus GetFocusedUnitUiStatus", StringComparison.Ordinal) ||
+            selection.Contains("public readonly struct TransportPassengerUiInfo", StringComparison.Ordinal) ||
+            selection.Contains("public enum FocusedUnitUiStatus", StringComparison.Ordinal) ||
             Regex.IsMatch(selection, @"private\s+static\s+string\s+ResolveFocusedUnitName\s*\("),
-            "Focused unit UI read models belong in FocusedUnitUiReadModelSystem/ECS read-model data, not RTSSelectionSystem.");
+            "Focused unit UI read compatibility belongs in SelectionUiReadModelSystem/FocusedUnitUiReadModelSystem ECS read-model data, not SelectionRuntimeContextSystem.");
         Assert.IsFalse(
             Regex.IsMatch(selection, @"private\s+static\s+string\s+ResolveHudSelectionStatus\s*\("),
             "HUD selection status read models belong in SelectionUiQuerySystem, not RTSSelectionSystem.");

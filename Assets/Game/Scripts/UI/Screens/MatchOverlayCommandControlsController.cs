@@ -7,7 +7,7 @@ public sealed class MatchOverlayCommandControlsController : MonoBehaviour
     [SerializeField] private Button stopButton;
     [SerializeField] private Button commandWheelStopButton;
     [SerializeField] private CommandWheelPanelController commandWheelPanel;
-    private RTSSelectionSystem _selectionSystem;
+    private SelectionUiCommandSystem _selectionUiCommandSystem;
 
     public Button HoldButton => holdButton;
     public Button StopButton => stopButton;
@@ -37,26 +37,24 @@ public sealed class MatchOverlayCommandControlsController : MonoBehaviour
             commandWheelStopButton.onClick.RemoveListener(IssueCommandWheelStopCommand);
     }
 
-    public void SetSelectionSystemForTests(RTSSelectionSystem selectionSystem)
+    public void SetSelectionUiCommandSystemForTests(SelectionUiCommandSystem selectionUiCommandSystem)
     {
-        BindDependencies(selectionSystem);
+        BindDependencies(selectionUiCommandSystem);
     }
 
-    public void BindDependencies(RTSSelectionSystem selectionSystem)
+    public void BindDependencies(SelectionUiCommandSystem selectionUiCommandSystem)
     {
-        _selectionSystem = selectionSystem;
+        _selectionUiCommandSystem = selectionUiCommandSystem;
     }
 
     public bool IssueHoldCommand()
     {
-        RTSSelectionSystem selectionSystem = ResolveSelectionSystem();
-        return selectionSystem != null && selectionSystem.IssueHoldPositionOrder();
+        return _selectionUiCommandSystem != null && _selectionUiCommandSystem.RequestHoldPosition();
     }
 
     public bool IssueStopCommand()
     {
-        RTSSelectionSystem selectionSystem = ResolveSelectionSystem();
-        return selectionSystem != null && selectionSystem.IssueStopOrder();
+        return _selectionUiCommandSystem != null && _selectionUiCommandSystem.RequestStop();
     }
 
     private void OnHoldButtonClicked()
@@ -77,8 +75,4 @@ public sealed class MatchOverlayCommandControlsController : MonoBehaviour
         IssueStopCommand();
     }
 
-    private RTSSelectionSystem ResolveSelectionSystem()
-    {
-        return _selectionSystem;
-    }
 }

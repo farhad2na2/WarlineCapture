@@ -15,8 +15,12 @@ internal sealed class MenuStartupSystem
         BuildingUiQuerySystem.Context buildingUiQueryContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu,
-        RTSSelectionSystem selection,
+        Action<MainMenuPlayUI> bindBuildingMainMenu,
+        Action<MainMenuPlayUI> bindSelectionMainMenu,
+        SelectionUiCommandSystem selectionUiCommandSystem,
+        SelectionUiReadModelSystem selectionUiReadModelSystem,
+        SelectionUiCameraSystem selectionUiCameraSystem,
+        SelectionScreenMarkerSystem selectionScreenMarkerSystem,
         DayNightSystem dayNight,
         CitizenPopulationSystem citizenPopulation,
         Camera worldCamera,
@@ -28,7 +32,10 @@ internal sealed class MenuStartupSystem
         {
             menuView.GameRequested += gameRequested;
             menuView.Init(
-                selection,
+                selectionUiCommandSystem,
+                selectionUiReadModelSystem,
+                selectionUiCameraSystem,
+                selectionScreenMarkerSystem,
                 worldCamera,
                 dayNight,
                 citizenPopulation,
@@ -43,15 +50,15 @@ internal sealed class MenuStartupSystem
         try
         {
             var mainMenu = new MainMenuPlayUI();
-            mainMenu.Init(roadBuild, selection, dayNight);
+            mainMenu.Init(roadBuild, selectionUiCommandSystem, dayNight);
             BindMenuDependencies(
                 mainMenu,
                 roadBuild,
                 buildingPlacementInteraction,
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
-                selection);
-            BindSceneUi(sceneBindingSystem, world, selection);
+                bindSelectionMainMenu);
+            BindSceneUi(sceneBindingSystem, world, selectionUiCommandSystem);
             return mainMenu;
         }
         catch (Exception exception)
@@ -63,8 +70,8 @@ internal sealed class MenuStartupSystem
                 buildingPlacementInteraction,
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
-                selection);
-            BindSceneUi(sceneBindingSystem, world, selection);
+                bindSelectionMainMenu);
+            BindSceneUi(sceneBindingSystem, world, selectionUiCommandSystem);
             return null;
         }
     }
@@ -80,28 +87,24 @@ internal sealed class MenuStartupSystem
         RoadBuildSystem roadBuild,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI, RTSSelectionSystem> bindBuildingMainMenu,
-        RTSSelectionSystem selection)
+        Action<MainMenuPlayUI> bindBuildingMainMenu,
+        Action<MainMenuPlayUI> bindSelectionMainMenu)
     {
         roadBuild?.BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu);
-        bindBuildingMainMenu?.Invoke(mainMenu, selection);
-        selection?.BindDependencies(
-            mainMenu,
-            roadBuild,
-            buildingPlacementInteraction,
-            buildingPlacementInteractionContext);
+        bindBuildingMainMenu?.Invoke(mainMenu);
+        bindSelectionMainMenu?.Invoke(mainMenu);
     }
 
     private void BindSceneUi(
         GameplaySceneBindingSystem sceneBindingSystem,
         World world,
-        RTSSelectionSystem selection)
+        SelectionUiCommandSystem selectionUiCommandSystem)
     {
         sceneBindingSystem?.BindGameplayUiRuntimeDependencies(
             world,
-            selection);
+            selectionUiCommandSystem);
     }
 }

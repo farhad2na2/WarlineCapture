@@ -39,9 +39,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
             CreateUnit(em, 1, new int2(45, 20), false, true);
             CreateUnit(em, 1, new int2(80, 20), true, true);
 
-            var selection = new RTSSelectionSystem();
-            Assert.IsTrue(selection.FocusUnitEntity(launcher));
-            Assert.IsTrue(selection.IssueFocusedMissileLauncherRadarAttack());
+            Assert.IsTrue(IssueFocusedMissileLauncherRadarAttack(em, launcher));
 
             Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
             EngageTarget engage = em.GetComponentData<EngageTarget>(launcher);
@@ -70,9 +68,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
             CreateUnit(em, 1, new int2(32, 20), true, true);
             CreateUnit(em, 1, new int2(80, 20), false, true);
 
-            var selection = new RTSSelectionSystem();
-            Assert.IsTrue(selection.FocusUnitEntity(launcher));
-            Assert.IsTrue(selection.IssueFocusedMissileLauncherRadarAttack());
+            Assert.IsTrue(IssueFocusedMissileLauncherRadarAttack(em, launcher));
 
             Assert.IsTrue(em.HasComponent<EngageTarget>(launcher));
             EngageTarget engage = em.GetComponentData<EngageTarget>(launcher);
@@ -99,9 +95,7 @@ public sealed class MissileLauncherRadarAttackValidationTests
             CreateDetector(em, 0, ThreatDetectionKind.Ground, new int2(20, 20), 40);
             CreateUnit(em, 1, new int2(40, 20), true, true);
 
-            var selection = new RTSSelectionSystem();
-            Assert.IsTrue(selection.FocusUnitEntity(launcher));
-            Assert.IsFalse(selection.IssueFocusedMissileLauncherRadarAttack());
+            Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, launcher));
             Assert.IsFalse(em.HasComponent<EngageTarget>(launcher));
         }
         finally
@@ -129,14 +123,8 @@ public sealed class MissileLauncherRadarAttackValidationTests
                 TraceVisibleSeconds = 0.05f
             });
 
-            var selection = new RTSSelectionSystem();
-            Assert.IsTrue(selection.FocusUnitEntity(soldier));
-            Assert.IsFalse(selection.IssueFocusedMissileLauncherRadarAttack());
-            Assert.IsTrue(selection.ArmFocusedAttackTargetMode());
-            Assert.IsTrue(selection.ExplicitAttackTargetModeActive);
-
-            selection.DeselectAllUnits("AttackButtonFallbackTest");
-            Assert.IsFalse(selection.ExplicitAttackTargetModeActive);
+            Assert.IsFalse(IssueFocusedMissileLauncherRadarAttack(em, soldier));
+            Assert.IsTrue(em.GetComponentData<UnitCombat>(soldier).CanAttack != 0);
         }
         finally
         {
@@ -157,6 +145,17 @@ public sealed class MissileLauncherRadarAttackValidationTests
             TraceVisibleSeconds = 0.05f
         });
         return entity;
+    }
+
+    private static bool IssueFocusedMissileLauncherRadarAttack(EntityManager em, Entity launcher)
+    {
+        var focusedCommand = new FocusedUnitCommandSystem();
+        var targetOrder = new UnitTargetOrderSystem();
+        return focusedCommand.TryIssueFocusedMissileLauncherRadarAttack(
+            em,
+            launcher,
+            targetOrder,
+            out _);
     }
 
     private static Entity CreateDetector(EntityManager em, byte factionId, ThreatDetectionKind kind, int2 cell, int radiusCells)

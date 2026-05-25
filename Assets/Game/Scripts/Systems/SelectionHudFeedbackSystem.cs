@@ -1,70 +1,212 @@
+using Unity.Collections;
 using Unity.Entities;
 
 public sealed class SelectionHudFeedbackSystem
 {
     private BattleHudGameplayBridge _battleHudBridge;
+    private World _queryWorld;
+    private EntityQuery _feedbackQuery;
 
     public void ResetBridgeCache()
     {
         _battleHudBridge = null;
     }
 
-    public void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem)
+    public Entity EnsureFeedbackQueue(EntityManager em)
+    {
+        World world = em.World;
+        if (_queryWorld != world || world == null || !world.IsCreated)
+        {
+            _queryWorld = world;
+            _feedbackQuery = em.CreateEntityQuery(
+                ComponentType.ReadOnly<SelectionHudFeedbackQueueComponent>(),
+                ComponentType.ReadWrite<SelectionHudFeedbackElement>());
+        }
+
+        if (!_feedbackQuery.IsEmptyIgnoreFilter)
+            return _feedbackQuery.GetSingletonEntity();
+
+        Entity entity = em.CreateEntity(typeof(SelectionHudFeedbackQueueComponent));
+        em.SetName(entity, "SelectionHudFeedbackQueue");
+        em.AddBuffer<SelectionHudFeedbackElement>(entity);
+        return entity;
+    }
+
+    public void QueueSelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem)
     {
         if (entity == Entity.Null || !em.Exists(entity))
         {
-            ClearSelection();
+            QueueClearSelection(em);
             return;
         }
 
-        BattleHudGameplayBridge bridge = ResolveBattleHudBridge();
-        if (bridge == null)
-            return;
-
-        bridge.ApplySelection(
-            selectionUiQuerySystem.ResolveFocusedUnitName(em, entity),
-            selectionUiQuerySystem.ResolveHudSelectionStatus(em, entity));
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+        feedback.Add(new SelectionHudFeedbackElement
+        {
+            Kind = SelectionHudFeedbackKind.Selection,
+            Label = ToFixed64(selectionUiQuerySystem.ResolveFocusedUnitName(em, entity)),
+            Status = ToFixed64(selectionUiQuerySystem.ResolveHudSelectionStatus(em, entity))
+        });
     }
 
-    public void ApplySquadSelection(int selectedCount)
+    public void QueueSquadSelection(EntityManager em, int selectedCount)
     {
-        BattleHudGameplayBridge bridge = ResolveBattleHudBridge();
-        if (bridge == null)
-            return;
-
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
         if (selectedCount <= 0)
         {
-            bridge.ClearSelection();
+            feedback.Add(new SelectionHudFeedbackElement { Kind = SelectionHudFeedbackKind.ClearSelection });
             return;
         }
 
         string unitLabel = selectedCount == 1 ? "UNIT" : "UNITS";
-        bridge.ApplySelection($"{selectedCount} {unitLabel}", "SQUAD SELECTED");
+        feedback.Add(new SelectionHudFeedbackElement
+        {
+            Kind = SelectionHudFeedbackKind.SquadSelection,
+            Label = ToFixed64($"{selectedCount} {unitLabel}"),
+            Status = ToFixed64("SQUAD SELECTED"),
+            Count = selectedCount
+        });
     }
 
-    public void ClearSelection()
+    public void QueueClearSelection(EntityManager em)
     {
-        ResolveBattleHudBridge()?.ClearSelection();
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+        feedback.Add(new SelectionHudFeedbackElement { Kind = SelectionHudFeedbackKind.ClearSelection });
     }
 
-    public void ApplyCommandMode(TacticalCommandMode mode)
+    public void QueueCommandMode(EntityManager em, TacticalCommandMode mode)
     {
-        ResolveBattleHudBridge()?.ApplyCommandMode(mode);
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+        feedback.Add(new SelectionHudFeedbackElement
+        {
+            Kind = SelectionHudFeedbackKind.CommandMode,
+            CommandMode = (int)mode
+        });
     }
 
-    public void ClearCommandMode()
+    public void QueueClearCommandMode(EntityManager em)
     {
-        ResolveBattleHudBridge()?.ClearCommandMode();
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+        feedback.Add(new SelectionHudFeedbackElement { Kind = SelectionHudFeedbackKind.ClearCommandMode });
     }
 
-    public void ApplyCommandResult(TacticalCommandResult result)
+    public void QueueCommandResult(EntityManager em, TacticalCommandResult result)
     {
-        ResolveBattleHudBridge()?.ApplyCommandResult(result);
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+        feedback.Add(new SelectionHudFeedbackElement
+        {
+            Kind = SelectionHudFeedbackKind.CommandResult,
+            CommandAccepted = result.Accepted ? (byte)1 : (byte)0,
+            ReasonCode = (int)result.ReasonCode
+        });
     }
 
-    public void SetWorldMarkersVisible(bool visible)
+    public void QueueWorldMarkersVisible(EntityManager em, bool visible)
     {
-        ResolveBattleHudBridge()?.SetWorldMarkersVisible(visible);
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(EnsureFeedbackQueue(em));
+        feedback.Add(new SelectionHudFeedbackElement
+        {
+            Kind = SelectionHudFeedbackKind.WorldMarkersVisible,
+            Visible = visible ? (byte)1 : (byte)0
+        });
+    }
+
+    public void ProcessPendingFeedback(EntityManager em)
+    {
+        Entity entity = EnsureFeedbackQueue(em);
+        DynamicBuffer<SelectionHudFeedbackElement> feedback = em.GetBuffer<SelectionHudFeedbackElement>(entity);
+        if (feedback.Length == 0)
+            return;
+
+        BattleHudGameplayBridge bridge = ResolveBattleHudBridge();
+        if (bridge == null)
+        {
+            feedback.Clear();
+            return;
+        }
+
+        for (int i = 0; i < feedback.Length; i++)
+            ApplyFeedback(bridge, feedback[i]);
+        feedback.Clear();
+    }
+
+    public void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem)
+    {
+        QueueSelection(em, entity, selectionUiQuerySystem);
+        ProcessPendingFeedback(em);
+    }
+
+    public void ApplySquadSelection(EntityManager em, int selectedCount)
+    {
+        QueueSquadSelection(em, selectedCount);
+        ProcessPendingFeedback(em);
+    }
+
+    public void ClearSelection(EntityManager em)
+    {
+        QueueClearSelection(em);
+        ProcessPendingFeedback(em);
+    }
+
+    public void ApplyCommandMode(EntityManager em, TacticalCommandMode mode)
+    {
+        QueueCommandMode(em, mode);
+        ProcessPendingFeedback(em);
+    }
+
+    public void ClearCommandMode(EntityManager em)
+    {
+        QueueClearCommandMode(em);
+        ProcessPendingFeedback(em);
+    }
+
+    public void ApplyCommandResult(EntityManager em, TacticalCommandResult result)
+    {
+        QueueCommandResult(em, result);
+        ProcessPendingFeedback(em);
+    }
+
+    public void SetWorldMarkersVisible(EntityManager em, bool visible)
+    {
+        QueueWorldMarkersVisible(em, visible);
+        ProcessPendingFeedback(em);
+    }
+
+    private static void ApplyFeedback(BattleHudGameplayBridge bridge, SelectionHudFeedbackElement feedback)
+    {
+        switch (feedback.Kind)
+        {
+            case SelectionHudFeedbackKind.Selection:
+            case SelectionHudFeedbackKind.SquadSelection:
+                bridge.ApplySelection(feedback.Label.ToString(), feedback.Status.ToString());
+                break;
+            case SelectionHudFeedbackKind.ClearSelection:
+                bridge.ClearSelection();
+                break;
+            case SelectionHudFeedbackKind.CommandMode:
+                bridge.ApplyCommandMode((TacticalCommandMode)feedback.CommandMode);
+                break;
+            case SelectionHudFeedbackKind.ClearCommandMode:
+                bridge.ClearCommandMode();
+                break;
+            case SelectionHudFeedbackKind.CommandResult:
+                bridge.ApplyCommandResult(feedback.CommandAccepted != 0
+                    ? TacticalCommandResult.Success()
+                    : TacticalCommandResult.Rejected((TacticalCommandReasonCode)feedback.ReasonCode));
+                break;
+            case SelectionHudFeedbackKind.WorldMarkersVisible:
+                bridge.SetWorldMarkersVisible(feedback.Visible != 0);
+                break;
+        }
+    }
+
+    private static FixedString64Bytes ToFixed64(string value)
+    {
+        FixedString64Bytes result = default;
+        if (string.IsNullOrEmpty(value))
+            return result;
+        result.Append(value.Length <= 61 ? value : value.Substring(0, 61));
+        return result;
     }
 
     private BattleHudGameplayBridge ResolveBattleHudBridge()

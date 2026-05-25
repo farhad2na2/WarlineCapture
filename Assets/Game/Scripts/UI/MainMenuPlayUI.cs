@@ -3,14 +3,14 @@ using UnityEngine;
 public sealed class MainMenuPlayUI
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-    private RTSSelectionSystem _selectionController;
+    private SelectionUiCommandSystem _selectionUiCommandSystem;
 
     public void Init(
         RoadBuildSystem roadBuildController,
-        RTSSelectionSystem selectionController,
+        SelectionUiCommandSystem selectionUiCommandSystem,
         DayNightSystem dayNightSystem)
     {
-        _selectionController = selectionController;
+        _selectionUiCommandSystem = selectionUiCommandSystem;
         _runtimeGameplayStateSystem.PlayRequested = false;
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.BuildModeActive = false;
@@ -21,7 +21,7 @@ public sealed class MainMenuPlayUI
 
     public void Dispose()
     {
-        _selectionController = null;
+        _selectionUiCommandSystem = null;
     }
 
     public void Update()
@@ -82,7 +82,7 @@ public sealed class MainMenuPlayUI
 
     public void TriggerSelectionCancel()
     {
-        _selectionController?.DeselectAllUnits("MainMenuPlayUI.TriggerSelectionCancel");
+        _selectionUiCommandSystem?.RequestDeselectAll();
     }
 
     private void OnToolbarUiPointerDown(object evt)

@@ -123,3 +123,66 @@ Goal: split runtime city generation before adding more map/city gameplay, so lay
     - Run runtime city generation smoke validation.
     - Load `Game` scene and verify city, roads, buildings, and blockers still appear.
     - If Unity is locked, use `WarlineCapture-CodexUnity1`, `WarlineCapture-CodexUnity2`, or `WarlineCapture-CodexUnity3` for batch validation.
+
+## RTSSelectionSystem No-Managed-Shell Deletion Plan
+
+Target file: `Assets/Game/Scripts/Systems/RTSSelectionSystem.cs`
+
+Goal: delete `RTSSelectionSystem.cs` without replacing it with another managed orchestration shell. UI and shell code may write/read ECS requests, results, and read models; gameplay decisions and mutations must run through ECS data plus ECS systems.
+
+1. Complete: Create ECS selection input request components
+   - Add data-only ECS request components/buffers for pointer press/release, drag, click, camera drag, selection rectangle, and command intent requests.
+   - No behavior migration in this step.
+
+2. Complete: Move pointer state into ECS
+   - Replace managed pointer/session fields with ECS singleton/state components.
+   - Pointer sources write request buffers; ECS systems own session state.
+
+3. Complete: Move selection rectangle selection into ECS
+   - Selection rectangle becomes an ECS request processed by selection systems.
+   - Selected-tag mutation remains in ECS systems.
+
+4. Complete: Move move command flow into ECS requests
+   - Screen/world click produces selected move-order requests and command results.
+   - Selection command systems resolve clicked cells/targets and execute move orders.
+
+5. Complete: Move attack command flow into ECS requests
+   - Attack target mode and clicked attack commands become request/result buffers.
+   - Attack systems own validation, issue results, and marker result data.
+
+6. Complete: Move transport boarding/disembark into ECS requests
+   - Boarding and disembark commands become ECS command buffers/results.
+   - Transport mutation leaves `RTSSelectionSystem`.
+
+7. Complete: Move focused-unit UI read model into ECS
+   - Publish focused/selected unit UI data into ECS read-model components/buffers.
+   - UI views read data only.
+
+8. Complete: Move HUD feedback into ECS results
+   - HUD consumes command result/read-model events instead of direct method calls.
+   - `SelectionHudFeedbackSystem` becomes a result consumer or is deleted.
+
+9. Complete: Move camera input/control into ECS requests
+   - Zoom, pan, smooth focus, fullscreen iso, and normal iso mode become ECS camera request components.
+   - Camera systems process request data.
+
+10. Complete: Move assistant/tutorial commands to ECS request/result buffers
+    - Assistant APIs write command requests and read command results.
+    - No direct `RTSSelectionSystem` calls remain.
+
+11. Complete: Move selection GUI rectangle to UI View only
+    - View reads ECS rectangle state and draws.
+    - No gameplay logic in the view.
+
+12. In progress: Migrate all callers off `RTSSelectionSystem`
+    - Bootstrap, runtime update, menu UI, assistant/tutorial, building interaction, and tests reference ECS boundaries or views only.
+    - Current slices moved match-overlay/main-menu UI command calls, assistant runtime binding, all `MenuView` command/read/camera/marker calls, mission/building camera focus delegates, and building selection/transport/order compatibility delegates off direct `RTSSelectionSystem`.
+    - Current slices also moved `GameBootstrap`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` to narrow selection delegates, and migrated functional battle HUD, missile launcher, and transport editor tests to narrower systems.
+    - Remaining work is moving the last shell implementation out of managed startup and retiring architecture audit tests that still read `RTSSelectionSystem.cs`.
+
+13. Pending: Delete `RTSSelectionSystem.cs` and `.meta`
+    - Remove the file and all temporary architecture allowances.
+    - No production or test references to `RTSSelectionSystem` remain.
+
+14. Pending: Full validation gate
+    - Run architecture tests, focused selection/command tests, menu/bootstrap smoke, and runtime load/play validation.

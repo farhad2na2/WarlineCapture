@@ -52,7 +52,9 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         }
 
         Assert.NotNull(bootstrap, "Game scene must contain GameBootstrap.");
-        Assert.NotNull(bootstrap.Selection, "GameBootstrap must initialize RTSSelectionSystem.");
+        Assert.NotNull(bootstrap.SelectionUiCommand, "GameBootstrap must initialize selection command dependencies.");
+        Assert.NotNull(bootstrap.SelectionUiReadModel, "GameBootstrap must initialize selection read-model dependencies.");
+        Assert.NotNull(bootstrap.SelectionUiCamera, "GameBootstrap must initialize selection camera dependencies.");
 
         bootstrap.BeginGameplay();
 
@@ -93,7 +95,8 @@ public sealed class GameSceneTransportBoardingPlayModeTests
             IsWithinImmediateBoardingRange(em, transport, passenger),
             $"The staged soldier should start near the helicopter but outside instant boarding range so this validates the walk-to-board path. passenger={DescribeUnit(em, passenger)} transport={DescribeUnit(em, transport)}");
 
-        Assert.IsTrue(bootstrap.Selection.FocusUnitEntity(passenger), "Test setup should cache the clicked soldier selection through the real selection controller.");
+        var selectionState = new SelectionStateSystem();
+        Assert.IsTrue(FocusUnitForTest(em, passenger, selectionState), "Test setup should cache the clicked soldier selection through the focused-unit lifecycle boundary.");
         Assert.NotNull(bootstrap.MainMenu, "Game scene must initialize the main menu controller used by toolbar pointer capture.");
         InvokeToolbarPointerCapture(bootstrap.MainMenu);
 
@@ -121,14 +124,11 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         RemoveIfPresent<SelectedUnitTag>(em, passenger);
         await NextFrame();
 
-        MethodInfo issueBoardMethod = typeof(RTSSelectionSystem).GetMethod(
-            "TryIssueBoardTransportOrderToClickedUnit",
-            BindingFlags.Instance | BindingFlags.NonPublic);
-        Assert.NotNull(issueBoardMethod, "RTSSelectionSystem should expose the internal boarding click path for regression validation.");
-
-        bool issuedBoardOrder = (bool)issueBoardMethod.Invoke(
-            bootstrap.Selection,
-            new object[] { new Vector2(screen.x, screen.y) });
+        bool issuedBoardOrder = TryIssueBoardTransportForTest(
+            em,
+            selectionState,
+            new Vector2(screen.x, screen.y),
+            clickWorld);
 
         Assert.IsTrue(
             issuedBoardOrder,
@@ -174,7 +174,9 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         }
 
         Assert.NotNull(bootstrap, "Game scene must contain GameBootstrap.");
-        Assert.NotNull(bootstrap.Selection, "GameBootstrap must initialize RTSSelectionSystem.");
+        Assert.NotNull(bootstrap.SelectionUiCommand, "GameBootstrap must initialize selection command dependencies.");
+        Assert.NotNull(bootstrap.SelectionUiReadModel, "GameBootstrap must initialize selection read-model dependencies.");
+        Assert.NotNull(bootstrap.SelectionUiCamera, "GameBootstrap must initialize selection camera dependencies.");
 
         bootstrap.BeginGameplay();
 
@@ -209,8 +211,7 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
         Assert.AreEqual(2, passengers.Length);
 
-        Assert.IsTrue(bootstrap.Selection.FocusUnitEntity(transport), "Test setup should focus the real transport helicopter.");
-        bootstrap.Selection.DisembarkFocusedTransport();
+        Assert.IsTrue(RequestDisembarkTransportForTest(em, transport), "Test setup should queue and process a transport disembark command.");
         Assert.IsTrue(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport), "Exit should start the rope disembark request in the real Game scene.");
 
         for (int frame = 0; frame < 2400; frame++)
@@ -255,6 +256,89 @@ public sealed class GameSceneTransportBoardingPlayModeTests
         Assert.NotNull(mouseDown, "Toolbar mouse capture method should exist.");
         pointerDown.Invoke(mainMenu, new object[] { null });
         mouseDown.Invoke(mainMenu, new object[] { null });
+    }
+
+    private static bool FocusUnitForTest(EntityManager em, Entity entity, SelectionStateSystem selectionState)
+    {
+        return new FocusedUnitLifecycleSystem().FocusUnitEntity(
+            em,
+            entity,
+            selectionState,
+            new UnitTargetOrderSystem(),
+            "TransportBoardingPlayModeTest",
+            "TransportBoardingPlayModeTest",
+            null,
+            null,
+            null,
+            null);
+    }
+
+    private static bool TryIssueBoardTransportForTest(
+        EntityManager em,
+        SelectionStateSystem selectionState,
+        Vector2 screenPosition,
+        Vector3 clickWorld)
+    {
+        TransportBoardingCommandSystem.Result result = new TransportBoardingCommandSystem().TryIssueBoardTransportOrderToClickedUnit(
+            em,
+            screenPosition,
+            new UnitTransportBoardingSystem(),
+            new UnitMoveOrderSystem(),
+            selectionState,
+            TryGetNoClickedUnit,
+            (Vector2 _, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) =>
+            {
+                worldPoint = clickWorld;
+                if (!TryGetGrid(entityManager, out GridConfig grid))
+                {
+                    cell = default;
+                    return false;
+                }
+
+                cell = GridUtils.WorldToCell(grid, clickWorld);
+                return true;
+            });
+
+        return result.Accepted;
+    }
+
+    private static bool RequestDisembarkTransportForTest(EntityManager em, Entity transport)
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        if (!inputSystem.QueueDisembarkTransportCommandRequest(transport, Time.frameCount) ||
+            !inputSystem.TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results))
+        {
+            return false;
+        }
+
+        bool processed = new SelectionTransportCommandRequestSystem().ProcessPendingRequests(
+            em,
+            requests,
+            results,
+            new TransportBoardingCommandSystem(),
+            new UnitTransportBoardingSystem(),
+            new UnitMoveOrderSystem(),
+            new SelectionStateSystem(),
+            TryGetNoClickedUnit,
+            TryGetNoClickedCell);
+
+        return processed && results.Length > 0 && results[results.Length - 1].Accepted != 0;
+    }
+
+    private static bool TryGetNoClickedUnit(Vector2 screenPosition, EntityManager em, out Entity entity)
+    {
+        entity = Entity.Null;
+        return false;
+    }
+
+    private static bool TryGetNoClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        cell = default;
+        worldPoint = default;
+        return false;
     }
 
     private static bool IsInitialSpawnReady(EntityManager em)

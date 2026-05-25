@@ -14,7 +14,6 @@ public sealed class M01AssistantCommandRuntimeTests
     private GameObject _loaderRoot;
     private GameObject _cameraObject;
     private TacticalMapRuntimeLoader _loader;
-    private RTSSelectionSystem _selection;
     private Chapter01M01PlayableRuntime.RuntimeState _runtimeState;
 
     [SetUp]
@@ -25,7 +24,6 @@ public sealed class M01AssistantCommandRuntimeTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("M01AssistantCommandRuntimeTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        _selection = new RTSSelectionSystem();
         _loader = CreateLoadedRuntimeLoader();
         Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, _loader, out _runtimeState));
     }
@@ -33,7 +31,6 @@ public sealed class M01AssistantCommandRuntimeTests
     [TearDown]
     public void TearDown()
     {
-        _selection?.Dispose();
         if (_loaderRoot != null)
             Object.DestroyImmediate(_loaderRoot);
         if (_cameraObject != null)
@@ -50,7 +47,6 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         TacticalCommandResult result = M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.PlayerSquadEntityId);
 
         Assert.IsTrue(result.Accepted);
@@ -62,7 +58,6 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         TacticalCommandResult result = M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             "unit.player.unknown");
 
         AssertRejected(result, TacticalCommandReasonCode.TargetNotAttackable);
@@ -74,7 +69,6 @@ public sealed class M01AssistantCommandRuntimeTests
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueMoveToAnchor(
             _world,
             _loader,
-            _selection,
             M01AssistantCommandRuntime.MoveToCoverAnchorId);
 
         AssertRejected(result, TacticalCommandReasonCode.NoSelection);
@@ -85,14 +79,12 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.PlayerSquadEntityId).Accepted);
         Assert.IsTrue(_loader.TryGetAnchorCell(M01AssistantCommandRuntime.MoveToCoverAnchorId, out Vector2Int coverCell));
 
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueMoveToAnchor(
             _world,
             _loader,
-            _selection,
             M01AssistantCommandRuntime.MoveToCoverAnchorId);
 
         EntityManager em = _world.EntityManager;
@@ -106,13 +98,11 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.PlayerSquadEntityId).Accepted);
 
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueMoveToAnchor(
             _world,
             _loader,
-            _selection,
             "tutorial.move_target.missing");
 
         AssertRejected(result, TacticalCommandReasonCode.TargetNotAttackable);
@@ -128,7 +118,6 @@ public sealed class M01AssistantCommandRuntimeTests
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueMoveToAnchor(
             _world,
             _loader,
-            _selection,
             M01AssistantCommandRuntime.MoveToCoverAnchorId);
 
         AssertRejected(result, TacticalCommandReasonCode.TargetNotAttackable);
@@ -139,12 +128,10 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.PlayerSquadEntityId).Accepted);
 
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueAttackTarget(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.EnemyPatrolEntityId);
 
         EntityManager em = _world.EntityManager;
@@ -159,12 +146,10 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.PlayerSquadEntityId).Accepted);
 
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueAttackTarget(
             _world,
-            _selection,
             "unit.enemy.unknown");
 
         AssertRejected(result, TacticalCommandReasonCode.TargetNotAttackable);
@@ -175,13 +160,11 @@ public sealed class M01AssistantCommandRuntimeTests
     {
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.PlayerSquadEntityId).Accepted);
         _world.EntityManager.SetComponentData(_runtimeState.EnemyPatrol, new UnitHealth { Current = 0, Max = 100 });
 
         TacticalCommandResult result = M01AssistantCommandRuntime.TryIssueAttackTarget(
             _world,
-            _selection,
             Chapter01M01PlayableRuntime.EnemyPatrolEntityId);
 
         AssertRejected(result, TacticalCommandReasonCode.TargetNotAttackable);

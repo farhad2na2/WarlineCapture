@@ -9,78 +9,62 @@ public static class M01AssistantCommandRuntime
 
     public static TacticalCommandResult TrySelectRuntimeEntity(string runtimeEntityId)
     {
-        return TrySelectRuntimeEntity(World.DefaultGameObjectInjectionWorld, null, runtimeEntityId);
+        return TrySelectRuntimeEntity(World.DefaultGameObjectInjectionWorld, runtimeEntityId);
     }
 
     public static TacticalCommandResult TryIssueMoveToAnchor(TacticalMapRuntimeLoader loader, string anchorId)
     {
-        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, loader, null, anchorId);
+        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, loader, anchorId);
     }
 
     public static TacticalCommandResult TryIssueMoveToAnchor(string anchorId)
     {
-        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, ResolveActiveLoader(), null, anchorId);
+        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, ResolveActiveLoader(), anchorId);
     }
 
     public static TacticalCommandResult TryIssueAttackTarget(string runtimeEntityId)
     {
-        return TryIssueAttackTarget(World.DefaultGameObjectInjectionWorld, null, runtimeEntityId);
+        return TryIssueAttackTarget(World.DefaultGameObjectInjectionWorld, runtimeEntityId);
     }
 
     public static TacticalCommandResult TrySelectRuntimeEntity(
         World world,
-        RTSSelectionSystem selectionSystem,
         string runtimeEntityId)
     {
-        if (!IsM01CommandAllowed() || runtimeEntityId != Chapter01M01PlayableRuntime.PlayerSquadEntityId)
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        if (!TryResolveRuntimeEntity(world, runtimeEntityId, out Entity entity))
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        if (selectionSystem == null)
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-
-        return selectionSystem.TrySelectRuntimeEntity(entity);
+        return ExecuteAssistantCommand(world, new M01AssistantCommandRequestElement
+        {
+            Kind = M01AssistantCommandKind.SelectRuntimeEntity,
+            RuntimeEntityId = ToFixed128(runtimeEntityId)
+        });
     }
 
     public static TacticalCommandResult TryIssueMoveToAnchor(
         World world,
         TacticalMapRuntimeLoader loader,
-        RTSSelectionSystem selectionSystem,
         string anchorId)
     {
         if (!IsM01CommandAllowed())
             return Reject(TacticalCommandReasonCode.TargetNotAttackable);
         if (anchorId != MoveToCoverAnchorId || loader == null || !loader.TryGetAnchorCell(anchorId, out Vector2Int cell))
             return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        if (selectionSystem == null)
-            return Reject(TacticalCommandReasonCode.NoSelection);
-        if (!TryResolveRuntimeEntity(world, Chapter01M01PlayableRuntime.PlayerSquadEntityId, out Entity squad) ||
-            !IsAlive(world.EntityManager, squad))
-        {
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        }
 
-        return selectionSystem.TryIssueMoveToCell(new int2(cell.x, cell.y));
+        return ExecuteAssistantCommand(world, new M01AssistantCommandRequestElement
+        {
+            Kind = M01AssistantCommandKind.MoveSelectedUnitsToCell,
+            TargetCell = new int2(cell.x, cell.y),
+            HasTargetCell = 1
+        });
     }
 
     public static TacticalCommandResult TryIssueAttackTarget(
         World world,
-        RTSSelectionSystem selectionSystem,
         string runtimeEntityId)
     {
-        if (!IsM01CommandAllowed() || runtimeEntityId != Chapter01M01PlayableRuntime.EnemyPatrolEntityId)
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        if (!TryResolveRuntimeEntity(world, Chapter01M01PlayableRuntime.PlayerSquadEntityId, out Entity squad) ||
-            !IsAlive(world.EntityManager, squad))
+        return ExecuteAssistantCommand(world, new M01AssistantCommandRequestElement
         {
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        }
-        if (!TryResolveRuntimeEntity(world, runtimeEntityId, out Entity target) || !IsAlive(world.EntityManager, target))
-            return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        if (selectionSystem == null)
-            return Reject(TacticalCommandReasonCode.NoSelection);
-
-        return selectionSystem.TryIssueAttackTarget(target);
+            Kind = M01AssistantCommandKind.AttackRuntimeEntity,
+            RuntimeEntityId = ToFixed128(runtimeEntityId)
+        });
     }
 
     public static TacticalCommandResult GetBuildCommandResult()
@@ -98,13 +82,30 @@ public static class M01AssistantCommandRuntime
         return Chapter01M01PlayableRuntime.IsActiveMission();
     }
 
-    private static bool TryResolveRuntimeEntity(World world, string runtimeEntityId, out Entity entity)
+    public static bool HasTypedCommandHooks(World world, TacticalMapRuntimeLoader loader)
     {
-        entity = Entity.Null;
-        if (world == null || !world.IsCreated || string.IsNullOrWhiteSpace(runtimeEntityId))
+        if (!IsM01CommandAllowed() || world == null || !world.IsCreated)
             return false;
 
-        EntityManager em = world.EntityManager;
+        return loader != null &&
+            loader.TryGetAnchorCell(MoveToCoverAnchorId, out _) &&
+            TryResolveRuntimeEntity(world.EntityManager, Chapter01M01PlayableRuntime.PlayerSquadEntityId, out Entity squad) &&
+            IsAlive(world.EntityManager, squad) &&
+            TryResolveRuntimeEntity(world.EntityManager, Chapter01M01PlayableRuntime.EnemyPatrolEntityId, out Entity patrol) &&
+            world.EntityManager.Exists(patrol);
+    }
+
+    private static TacticalCommandResult ExecuteAssistantCommand(World world, M01AssistantCommandRequestElement request)
+    {
+        return new M01AssistantCommandRequestSystem().Execute(world, request);
+    }
+
+    private static bool TryResolveRuntimeEntity(EntityManager em, string runtimeEntityId, out Entity entity)
+    {
+        entity = Entity.Null;
+        if (string.IsNullOrWhiteSpace(runtimeEntityId))
+            return false;
+
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<MissionRuntimeEntityId>());
         using NativeArray<Entity> entities = query.ToEntityArray(Unity.Collections.Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
@@ -148,8 +149,14 @@ public static class M01AssistantCommandRuntime
 
     private static TacticalCommandResult Reject(TacticalCommandReasonCode reasonCode)
     {
-        TacticalCommandResult result = TacticalCommandResult.Rejected(reasonCode);
-        BattleHudGameplayBridge.ResolveActive()?.ApplyCommandResult(result);
+        return TacticalCommandResult.Rejected(reasonCode);
+    }
+
+    private static FixedString128Bytes ToFixed128(string value)
+    {
+        FixedString128Bytes result = default;
+        if (!string.IsNullOrEmpty(value))
+            result.Append(value.Length <= 124 ? value : value.Substring(0, 124));
         return result;
     }
 }

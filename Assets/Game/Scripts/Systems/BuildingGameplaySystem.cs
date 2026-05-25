@@ -69,7 +69,8 @@ public class BuildingGameplaySystem
     private int[] _placementInvalidPrefix;
     private RoadBuildSystem _roadBuildController;
     private MainMenuPlayUI _mainMenuPlayUi;
-    private RTSSelectionSystem _selectionSystem;
+    private SelectionUiCameraSystem _selectionUiCameraSystem;
+    private SelectionBuildingInteractionSystem _selectionBuildingInteractionSystem;
     private RuntimeGridBlockerSystem _runtimeGridBlockerSystem;
     private RuntimeCitySpawnerSystem _runtimeCitySpawnerSystem;
     private CitizenPopulationSystem _citizenPopulationSystem;
@@ -487,15 +488,18 @@ public class BuildingGameplaySystem
         RoadBuildSystem roadBuildController,
         MainMenuPlayUI mainMenuPlayUi,
         DayNightSystem dayNightSystem = null,
-        RTSSelectionSystem selectionSystem = null,
+        SelectionUiCameraSystem selectionUiCameraSystem = null,
+        SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerSystem runtimeGridBlockerSystem = null,
         RuntimeCitySpawnerSystem runtimeCitySpawnerSystem = null,
         CitizenPopulationSystem citizenPopulationSystem = null)
     {
         _roadBuildController = roadBuildController;
         _mainMenuPlayUi = mainMenuPlayUi;
-        if (selectionSystem != null)
-            _selectionSystem = selectionSystem;
+        if (selectionUiCameraSystem != null)
+            _selectionUiCameraSystem = selectionUiCameraSystem;
+        if (selectionBuildingInteractionSystem != null)
+            _selectionBuildingInteractionSystem = selectionBuildingInteractionSystem;
         if (runtimeGridBlockerSystem != null)
             _runtimeGridBlockerSystem = runtimeGridBlockerSystem;
         if (runtimeCitySpawnerSystem != null)
@@ -940,7 +944,7 @@ public class BuildingGameplaySystem
         if (placement != null &&
             TryGetGridData(out _, out GridConfig grid, out _, out _))
         {
-            _selectionSystem?.SmoothMoveCameraGroundCenterTo(
+            _selectionUiCameraSystem?.SmoothMoveCameraGroundCenterTo(
                 ResolveCurrentPlacementFocusWorldPosition(placement, grid));
         }
     }
@@ -990,8 +994,6 @@ public class BuildingGameplaySystem
             return;
         }
 
-        RTSSelectionSystem selectionSystem = _selectionSystem;
-
         bool shouldFollowCamera = _buildingPlacementInputSystem.ApplyPointerHover(
             placement,
             updateCellFromPointer,
@@ -1039,7 +1041,7 @@ public class BuildingGameplaySystem
             if (shouldFollowCamera)
             {
                 IReadOnlyList<Vector2Int> allOrigins = _buildingPlacementInputSystem.GetAllWallPlacementOrigins(placement, wallOrigins);
-                selectionSystem?.FollowCameraGroundCenterTo(
+                _selectionUiCameraSystem?.FollowCameraGroundCenterTo(
                     _buildingPlacementGridSystem.ResolvePlacementFocusWorldPosition(
                         placement,
                         allOrigins,
@@ -1062,7 +1064,7 @@ public class BuildingGameplaySystem
             placement.IsValid,
             GetFootprintCenter);
         if (shouldFollowCamera)
-            selectionSystem?.FollowCameraGroundCenterTo(GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
+            _selectionUiCameraSystem?.FollowCameraGroundCenterTo(GetFootprintCenter(placement.OriginCell, placementFootprint, grid));
     }
 
     private Vector3 ResolveCurrentPlacementFocusWorldPosition(PlacementState placement, GridConfig grid)
@@ -1614,8 +1616,8 @@ public class BuildingGameplaySystem
             buildingId => _runtimeBuildingSystem.SelectBuilding(buildingId),
             () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
             RefreshBuildingMarkerVisibility,
-            () => _selectionSystem?.ClearFocusedUnit(),
-            position => _selectionSystem?.SmoothMoveCameraGroundCenterTo(position),
+            () => _selectionBuildingInteractionSystem?.ClearFocusedUnit(),
+            position => _selectionUiCameraSystem?.SmoothMoveCameraGroundCenterTo(position),
             ResolveBuildingFocusWorldPosition,
             GameRuntimeStats.RecordUnitOrdered,
             Debug.LogWarning,
@@ -1895,11 +1897,11 @@ public class BuildingGameplaySystem
             GetFootprintCenter,
             () => _runtimeGameplayStateSystem.SuppressNextWorldClick = true,
             RefreshBuildingMarkerVisibility,
-            () => _selectionSystem?.ClearFocusedUnit(),
-            position => _selectionSystem?.SmoothMoveCameraGroundCenterTo(position),
-            position => _selectionSystem != null && _selectionSystem.IsBoardablePlayerTransportClick(position),
+            () => _selectionBuildingInteractionSystem?.ClearFocusedUnit(),
+            position => _selectionUiCameraSystem?.SmoothMoveCameraGroundCenterTo(position),
+            position => _selectionBuildingInteractionSystem != null && _selectionBuildingInteractionSystem.IsBoardablePlayerTransportClick(position),
             TryAssignSelectedHaulerOrders,
-            (min, size) => _selectionSystem != null && _selectionSystem.TryIssueMoveOrderToBuilding(min, size),
+            (min, size) => _selectionBuildingInteractionSystem != null && _selectionBuildingInteractionSystem.TryIssueMoveOrderToBuilding(min, size),
             BuildingBarrierSystem.ShouldUseExpandedSelectionArea));
     }
 

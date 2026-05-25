@@ -71,7 +71,12 @@ public sealed class GameBootstrap : MonoBehaviour
     public BuildingUiCommandSystem BuildingUiCommand { get; private set; }
     public BuildingUiQuerySystem BuildingUiQuery { get; private set; }
     public BuildingRuntimeUpdateSystem BuildingRuntimeUpdate { get; private set; }
-    public RTSSelectionSystem Selection { get; private set; }
+    public SelectionUiCommandSystem SelectionUiCommand { get; private set; }
+    public SelectionUiReadModelSystem SelectionUiReadModel { get; private set; }
+    public SelectionUiCameraSystem SelectionUiCamera { get; private set; }
+    public SelectionBuildingInteractionSystem SelectionBuildingInteraction { get; private set; }
+    public SelectionScreenMarkerSystem SelectionScreenMarkers { get; private set; }
+    public SelectionRectangleView SelectionRectangle { get; private set; }
     public MainMenuPlayUI MainMenu { get; private set; }
     public DayNightSystem DayNight { get; private set; }
     public FactionVisualSettings FactionVisuals { get; private set; }
@@ -86,8 +91,11 @@ public sealed class GameBootstrap : MonoBehaviour
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private Action<MainMenuPlayUI, RTSSelectionSystem> _bindBuildingMainMenu;
-    private Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
+    private Action<MainMenuPlayUI> _bindBuildingMainMenu;
+    private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
+    private Action<MainMenuPlayUI> _bindSelectionMainMenu;
+    private Action _selectionRuntimeUpdate;
+    private Action _disposeSelection;
     private Action _disposeBuildingGameplay;
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
@@ -133,10 +141,18 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingPlacementInteractionContext = managedSystems.BuildingPlacementInteractionContext;
         _bindBuildingMainMenu = managedSystems.BindBuildingMainMenu;
         _bindBuildingGameplayFeatures = managedSystems.BindBuildingGameplayFeatures;
+        _bindSelectionMainMenu = managedSystems.BindSelectionMainMenu;
+        _selectionRuntimeUpdate = managedSystems.SelectionRuntimeUpdate;
+        _disposeSelection = managedSystems.DisposeSelection;
         _disposeBuildingGameplay = managedSystems.DisposeBuildingGameplay;
         BuildingRuntimeUpdate = managedSystems.BuildingRuntimeUpdate;
         _buildingRuntimeUpdateContext = managedSystems.BuildingRuntimeUpdateContext;
-        Selection = managedSystems.Selection;
+        SelectionUiCommand = managedSystems.SelectionUiCommand;
+        SelectionUiReadModel = managedSystems.SelectionUiReadModel;
+        SelectionUiCamera = managedSystems.SelectionUiCamera;
+        SelectionBuildingInteraction = managedSystems.SelectionBuildingInteraction;
+        SelectionScreenMarkers = managedSystems.SelectionScreenMarkers;
+        SelectionRectangle = managedSystems.SelectionRectangleView;
         UnitAttackTraces = managedSystems.UnitAttackTraces;
         UnitImpostors = managedSystems.UnitImpostors;
         CitizenPopulation = managedSystems.CitizenPopulation;
@@ -157,7 +173,11 @@ public sealed class GameBootstrap : MonoBehaviour
             _buildingPlacementInteraction,
             _buildingPlacementInteractionContext,
             _bindBuildingMainMenu,
-            Selection,
+            _bindSelectionMainMenu,
+            SelectionUiCommand,
+            SelectionUiReadModel,
+            SelectionUiCamera,
+            SelectionScreenMarkers,
             DayNight,
             CitizenPopulation,
             worldCamera,
@@ -191,7 +211,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _runtimeGameplayStateSystem.ResetForGameplayStart();
         _missionStartupSystem.FocusInitialCamera(
             World.DefaultGameObjectInjectionWorld,
-            Selection,
+            SelectionUiCamera,
             worldCamera,
             null,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
@@ -210,7 +230,7 @@ public sealed class GameBootstrap : MonoBehaviour
             RoadBuild,
             BuildingRuntimeUpdate,
             _buildingRuntimeUpdateContext,
-            Selection,
+            _selectionRuntimeUpdate,
             worldCamera,
             RuntimeCitySpawner,
             RuntimeGridBlockers,
@@ -249,7 +269,7 @@ public sealed class GameBootstrap : MonoBehaviour
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
             RoadBuild,
-            Selection);
+            SelectionRectangle);
     }
 
     private void OnDestroy()
@@ -257,7 +277,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _menuStartupSystem.Shutdown(menuView, BeginGameplay);
 
         MainMenu?.Dispose();
-        Selection?.Dispose();
+        _disposeSelection?.Invoke();
         _disposeBuildingGameplay?.Invoke();
         RoadBuild?.Dispose();
         UnitAttackTraces?.Dispose();
@@ -268,7 +288,12 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeGridBlockers?.Dispose();
         RuntimeCitySpawner?.Dispose();
         MainMenu = null;
-        Selection = null;
+        SelectionUiCommand = null;
+        SelectionUiReadModel = null;
+        SelectionUiCamera = null;
+        SelectionBuildingInteraction = null;
+        SelectionScreenMarkers = null;
+        SelectionRectangle = null;
         BuildingSelectionClick = null;
         BuildingSelectionClickContext = default;
         _buildingRuntimeCitySpawn = null;
@@ -281,6 +306,9 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingPlacementInteractionContext = default;
         _bindBuildingMainMenu = null;
         _bindBuildingGameplayFeatures = null;
+        _bindSelectionMainMenu = null;
+        _selectionRuntimeUpdate = null;
+        _disposeSelection = null;
         _disposeBuildingGameplay = null;
         BuildingRuntimeUpdate = null;
         _buildingRuntimeUpdateContext = default;
@@ -360,7 +388,8 @@ public sealed class GameBootstrap : MonoBehaviour
             _buildingPlacementInteractionContext,
             _bindBuildingGameplayFeatures,
             MainMenu,
-            Selection,
+            SelectionUiCamera,
+            SelectionBuildingInteraction,
             CitizenPopulation,
             _runtimeCityRoot,
             _runtimeBlockerRoot,

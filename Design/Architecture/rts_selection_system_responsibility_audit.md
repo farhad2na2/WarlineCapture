@@ -534,9 +534,106 @@ Transport boarding diagnostics now flow through an ECS diagnostic event path:
 - public assistant/tutorial command entry points
 - remaining pointer/camera/build-mode orchestration branches
 
+## No-Managed-Shell Deletion Started
+
+The deletion direction is now stricter: do not replace `RTSSelectionSystem` with another managed orchestration shell. Selection input and command flow must migrate to ECS request/result data.
+
+Step 1 added data-only request components:
+
+- `RtsSelectionInputRequestQueueComponent`
+- `RtsSelectionPointerRequestElement`
+- `RtsSelectionCommandIntentRequestElement`
+- `RtsSelectionPointerRequestKind`
+- `RtsSelectionCommandIntentKind`
+
+No behavior migrated in this step. Runtime behavior should remain unchanged until pointer writers and ECS request processors are introduced.
+
+Step 2 moved pointer/session state into ECS:
+
+- `RtsSelectionInputStateComponent` stores drag origin/current positions, pointer UI suppression flags, pending release suppression, selection-hold state, queued move-order click state, live selection rectangle state, and last-known pointer position.
+- `RtsSelectionInputStateSystem` owns singleton creation/cache and ensures request buffers exist on the same entity.
+- `RtsSelectionInputSystem` remains a temporary compatibility accessor, but it no longer owns those values as managed fields.
+
+Step 3 moved selection rectangle selection into ECS request processing:
+
+- Live drag and committed rectangle selection now enqueue `RtsSelectionPointerRequestElement` with `SelectionRectUpdated` or `SelectionRectCommitted`.
+- `RtsSelectionPointerRequestElement.SelectionFilter` carries all/soldiers/vehicles selection filters.
+- `SelectionRectangleRequestSystem` consumes rectangle requests, collects visible units, applies selected tags, updates selected move cache, applies focused/squad HUD handoff, and clears selected buildings when a unit selection is made.
+- `RTSSelectionSystem` still triggers request processing synchronously during the compatibility phase, but it no longer owns the rectangle selection mutation algorithm.
+
+Step 4 moved move command flow into ECS request/result processing:
+
+- Move clicks now enqueue `RtsSelectionCommandIntentRequestElement` with `RtsSelectionCommandIntentKind.Move`.
+- `RtsSelectionCommandResultElement` carries accepted/rejected command results, screen marker emission, and world marker visibility data.
+- `SelectionMoveCommandRequestSystem` consumes move command requests, dispatches selected move execution through `SelectedMoveOrderCommandSystem`, and publishes command results.
+- `RTSSelectionSystem` still applies HUD feedback and marker events during the compatibility phase, but it no longer directly calls selected move-order execution.
+
+Step 5 moved attack command flow into ECS request/result processing:
+
+- Attack clicks now enqueue `RtsSelectionCommandIntentRequestElement` with `RtsSelectionCommandIntentKind.Attack`.
+- `RtsSelectionCommandIntentRequestElement.ExplicitAttackTargetMode` carries attack-target-mode context into the request processor.
+- `RtsSelectionCommandResultElement` carries attack command result state plus attack marker world/screen payloads.
+- `SelectionAttackCommandRequestSystem` consumes attack command requests, dispatches clicked attack execution through `AttackOrderCommandSystem`, and publishes command results.
+- `RTSSelectionSystem` still applies HUD feedback and marker events during the compatibility phase, but it no longer directly calls clicked attack-order execution.
+
+Step 6 moved transport boarding/disembark command flow into ECS request/result processing:
+
+- Board-transport clicks now enqueue `RtsSelectionCommandIntentRequestElement` with `RtsSelectionCommandIntentKind.BoardTransport`.
+- Focused transport exit commands now enqueue `RtsSelectionCommandIntentRequestElement` with `RtsSelectionCommandIntentKind.DisembarkTransport`.
+- `RtsSelectionCommandResultElement` carries boarding marker cell/world/faction payloads for result consumers.
+- `SelectionTransportCommandRequestSystem` consumes board/disembark requests, dispatches boarding through `TransportBoardingCommandSystem`, owns focused transport disembark mutation, and publishes command results.
+- `RTSSelectionSystem` still applies marker events during the compatibility phase, but it no longer directly calls clicked boarding command execution or owns focused disembark mutation.
+
+Step 7 moved focused-unit UI read models into ECS data:
+
+- `FocusedUnitUiReadModelComponent` stores focused entity, label, description, health, capacity, ownership, vehicle, attack, status, world position, and portrait pose read-model data.
+- `FocusedUnitPassengerUiReadModelElement` stores focused transport passenger rows.
+- `FocusedUnitUiReadModelSystem` publishes the focused read model from selection state and `SelectionUiQuerySystem` into an ECS singleton plus passenger buffer.
+- `RTSSelectionSystem` compatibility getters now read focused UI data from that ECS read model instead of directly resolving labels, status, health, passenger rows, world position, or portrait pose.
+
+Step 8 moved HUD feedback into ECS result data:
+
+- `SelectionHudFeedbackElement` stores HUD selection, squad-selection, command-mode, command-result, and world-marker visibility feedback events.
+- `SelectionHudFeedbackSystem` now publishes/consumes a `SelectionHudFeedbackQueueComponent` singleton buffer and flushes those events to `BattleHudGameplayBridge` at the shell edge.
+- `RTSSelectionSystem` compatibility wrappers now enqueue HUD feedback events and flush them through `SelectionHudFeedbackSystem` instead of directly calling bridge-style feedback methods.
+- Hot command request/result loops pre-create the feedback queue before reading command buffers so feedback publication does not introduce structural changes while command buffers are being consumed.
+
+Step 9 moved camera input/control into ECS request data:
+
+- `RtsCameraRequestElement` stores camera control requests for drag, pan, perspective zoom, fullscreen iso zoom, smooth focus, mode transitions, instant mode application, ground-center movement, and camera state flags.
+- `RtsCameraStateComponent` mirrors camera state after request processing so later UI/shell callers can migrate away from direct managed state reads.
+- `RtsCameraRequestSystem` owns request singleton creation, camera request processing, state mirroring, and shell-edge marker-hide callbacks for pan.
+- `RTSSelectionSystem` still keeps public camera compatibility entry points and read-only camera geometry queries, but camera mutations now enqueue and flush ECS camera requests instead of calling `RtsCameraSystem` mutation APIs directly.
+
+Step 10 moved M01 assistant/tutorial commands into ECS request/result processing:
+
+- `M01AssistantCommandRequestElement` stores assistant select-runtime-entity, move-selected-to-cell, and attack-runtime-entity commands.
+- `M01AssistantCommandResultElement` stores accepted/rejected assistant command results.
+- `M01AssistantCommandRequestSystem` consumes assistant commands, applies selected tags, issues immediate move commands, dispatches attack orders through `AttackOrderCommandSystem`, and forwards command results through `SelectionHudFeedbackSystem`.
+- `M01AssistantCommandRuntime` and `CommandIntentExecutor` now write requests and read results instead of calling `RTSSelectionSystem`; `AssistantContextProvider` now resolves typed command readiness from ECS world/loader state instead of requiring the selection shell.
+
+Step 11 moved selection rectangle GUI drawing to the UI view boundary:
+
+- `SelectionRectangleView` reads `RtsSelectionInputStateComponent` through `RtsSelectionInputStateSystem` and draws only the current live rectangle.
+- `RTSSelectionSystem` no longer owns selection rectangle GUI colors, the 1x1 GUI texture, `OnGui`, or GUI draw helpers.
+- `GameplayRuntimeUpdateSystem.OnGui` now routes selection rectangle rendering through the view while keeping road-build GUI drawing on its existing path.
+
+Step 12 started caller migration off the selection shell:
+
+- `SelectionUiCommandSystem` now owns UI-facing selection command intent publication for select all, select soldiers, select vehicles, deselect all, hold, stop, attack/target-mode, and focused transport disembark requests.
+- `MatchOverlayCommandControlsController` and `MainMenuPlayUI` no longer hold or call `RTSSelectionSystem`; they enqueue command intents through `SelectionUiCommandSystem`.
+- `SelectionUiReadModelSystem` now owns UI-facing focused-unit, focused transport passenger, selected-unit list, and visible player-unit read calls.
+- `SelectionUiCameraSystem` now owns `MenuView` camera toggle state and fullscreen map camera focus commands through the ECS camera request boundary.
+- `SelectionScreenMarkerSystem` now owns UI-facing move/attack/hide screen-marker events.
+- `MenuView` command buttons now use `SelectionUiCommandSystem`, its focused/selected read-model calls use `SelectionUiReadModelSystem`, its camera calls use `SelectionUiCameraSystem`, and its marker hooks use `SelectionScreenMarkerSystem`; it no longer holds or calls `RTSSelectionSystem`.
+- `AssistantRuntimeBinding` no longer receives or forwards `RTSSelectionSystem`.
+- `MissionCameraSystem` and `MissionStartupSystem` now focus the camera through `SelectionUiCameraSystem` instead of `RTSSelectionSystem`.
+- `BuildingGameplaySystem` now routes active-placement, production-focus, and building-selection camera focus callbacks through `SelectionUiCameraSystem`.
+- `SelectionBuildingInteractionSystem` now owns building-side selection clearing, transport boarding click checks, and building-target move-order compatibility. `BuildingGameplaySystem` and `BuildingGameplayCompositionSystem` no longer depend on `RTSSelectionSystem`.
+- `GameBootstrap`, `MenuStartupSystem`, and `GameplayRuntimeUpdateSystem` no longer accept or call `RTSSelectionSystem`; managed startup exposes narrow menu-bind, runtime-update, and dispose delegates while the remaining shell implementation is retired.
+- Functional editor tests for battle HUD command feedback, missile launcher radar attack, and transport disembark/nearby boarding now exercise focused command, HUD feedback, selection input request, and transport command systems directly instead of constructing `RTSSelectionSystem`.
+
 ## Recommended Next Slices
 
-1. Extract focused transport disembark mutation into `TransportDisembarkCommandSystem`.
-2. Move public UI-facing focused-unit and selected-unit read/query methods behind `SelectionUiQuerySystem` or a narrow `SelectionUiFacadeSystem`.
-3. Move assistant/tutorial public command entry points behind request/result systems.
-4. Move remaining pointer/camera/build-mode orchestration branches into dedicated input orchestration systems once public callers migrate.
+1. Move the remaining selection shell implementation out of `ManagedGameplayStartupSystem` and retire architecture tests that read `RTSSelectionSystem.cs` as an extraction audit artifact.
+2. Delete `RTSSelectionSystem.cs` once no production or test references remain.

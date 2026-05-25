@@ -17,12 +17,12 @@ public sealed class GameplaySceneBindingSystem
 
     public void BindGameplayUiRuntimeDependencies(
         World world,
-        RTSSelectionSystem selection)
+        SelectionUiCommandSystem selectionUiCommandSystem)
     {
         foreach (MatchOverlayCommandControlsController controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsController>())
         {
             if (IsLoadedSceneObject(controls))
-                controls.BindDependencies(selection);
+                controls.BindDependencies(selectionUiCommandSystem);
         }
 
         foreach (AssistantRuntimeBinding binding in Resources.FindObjectsOfTypeAll<AssistantRuntimeBinding>())
@@ -40,7 +40,6 @@ public sealed class GameplaySceneBindingSystem
             binding.BindRuntimeDependencies(
                 world,
                 null,
-                selection,
                 bridge,
                 router,
                 resultFlow,

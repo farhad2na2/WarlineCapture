@@ -1,4 +1,5 @@
 using Game.Scripts.UI;
+using System;
 using Unity.Entities;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ public sealed class GameplayRuntimeUpdateSystem
         RoadBuildSystem roadBuild,
         BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
-        RTSSelectionSystem selection,
+        Action selectionRuntimeUpdate,
         Camera worldCamera,
         RuntimeCitySpawnerSystem runtimeCitySpawner,
         RuntimeGridBlockerSystem runtimeGridBlockers,
@@ -49,7 +50,7 @@ public sealed class GameplayRuntimeUpdateSystem
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("BuildingPlacement", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            selection?.Update();
+            selectionRuntimeUpdate?.Invoke();
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
@@ -129,14 +130,14 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
         RoadBuildSystem roadBuild,
-        RTSSelectionSystem selection)
+        SelectionRectangleView selectionRectangleView)
     {
         if (!(gameplayInitialized && runtimeGameplayStateSystem.PlayRequested))
             return;
 
         double start = performanceDiagnosticsSystem.BeginTimedSection();
         roadBuild?.OnGui();
-        selection?.OnGui();
+        selectionRectangleView?.Draw();
         performanceDiagnosticsSystem.EndOnGui(start);
     }
 

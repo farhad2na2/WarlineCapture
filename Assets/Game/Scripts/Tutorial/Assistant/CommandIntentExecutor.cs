@@ -5,7 +5,6 @@ public sealed class CommandIntentExecutor
     private readonly TutorialSessionState _sessionState;
     private readonly World _world;
     private readonly TacticalMapRuntimeLoader _loader;
-    private readonly RTSSelectionSystem _selectionSystem;
 
     public CommandIntentExecutor()
         : this(null)
@@ -20,13 +19,11 @@ public sealed class CommandIntentExecutor
     public CommandIntentExecutor(
         TutorialSessionState sessionState,
         World world,
-        TacticalMapRuntimeLoader loader,
-        RTSSelectionSystem selectionSystem)
+        TacticalMapRuntimeLoader loader)
     {
         _sessionState = sessionState;
         _world = world;
         _loader = loader;
-        _selectionSystem = selectionSystem;
     }
 
     public TacticalCommandResult ExecuteDoIt(AssistantRecommendation recommendation)
@@ -85,8 +82,8 @@ public sealed class CommandIntentExecutor
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (_world != null || _selectionSystem != null)
-            return M01AssistantCommandRuntime.TrySelectRuntimeEntity(_world, _selectionSystem, intent.TargetId);
+        if (_world != null)
+            return M01AssistantCommandRuntime.TrySelectRuntimeEntity(_world, intent.TargetId);
 
         return M01AssistantCommandRuntime.TrySelectRuntimeEntity(intent.TargetId);
     }
@@ -99,8 +96,8 @@ public sealed class CommandIntentExecutor
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (_world != null || _loader != null || _selectionSystem != null)
-            return M01AssistantCommandRuntime.TryIssueMoveToAnchor(_world, _loader, _selectionSystem, intent.TargetId);
+        if (_world != null || _loader != null)
+            return M01AssistantCommandRuntime.TryIssueMoveToAnchor(_world, _loader, intent.TargetId);
 
         return M01AssistantCommandRuntime.TryIssueMoveToAnchor(intent.TargetId);
     }
@@ -113,8 +110,8 @@ public sealed class CommandIntentExecutor
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (_world != null || _selectionSystem != null)
-            return M01AssistantCommandRuntime.TryIssueAttackTarget(_world, _selectionSystem, intent.TargetId);
+        if (_world != null)
+            return M01AssistantCommandRuntime.TryIssueAttackTarget(_world, intent.TargetId);
 
         return M01AssistantCommandRuntime.TryIssueAttackTarget(intent.TargetId);
     }

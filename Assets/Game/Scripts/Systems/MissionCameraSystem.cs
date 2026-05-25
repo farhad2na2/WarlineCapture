@@ -11,14 +11,14 @@ public sealed class MissionCameraSystem
 
     public bool FocusInitialCamera(
         World world,
-        RTSSelectionSystem selection,
+        SelectionUiCameraSystem selectionUiCameraSystem,
         Camera worldCamera,
         TacticalMapRuntimeLoader loader,
         TryResolveFactionSpawnCell resolveFactionSpawnCell,
         byte fallbackFactionId)
     {
-        return FocusCameraOnM01CameraStart(selection, worldCamera, loader) ||
-            FocusCameraOnConfiguredFactionBase(world, selection, fallbackFactionId, resolveFactionSpawnCell);
+        return FocusCameraOnM01CameraStart(selectionUiCameraSystem, worldCamera, loader) ||
+            FocusCameraOnConfiguredFactionBase(world, selectionUiCameraSystem, fallbackFactionId, resolveFactionSpawnCell);
     }
 
     public bool ApplyM01ProductionCameraPoseForCurrentAspect(Camera worldCamera, TacticalMapRuntimeLoader loader)
@@ -40,11 +40,11 @@ public sealed class MissionCameraSystem
 
     private bool FocusCameraOnConfiguredFactionBase(
         World world,
-        RTSSelectionSystem selection,
+        SelectionUiCameraSystem selectionUiCameraSystem,
         byte factionId,
         TryResolveFactionSpawnCell resolveFactionSpawnCell)
     {
-        if (selection == null ||
+        if (selectionUiCameraSystem == null ||
             resolveFactionSpawnCell == null ||
             !resolveFactionSpawnCell(factionId, out int2 spawnCell))
         {
@@ -64,24 +64,24 @@ public sealed class MissionCameraSystem
             }
         }
 
-        selection.FollowCameraGroundCenterTo(focusWorldPosition);
+        selectionUiCameraSystem.FollowCameraGroundCenterTo(focusWorldPosition);
         return true;
     }
 
     private bool FocusCameraOnM01CameraStart(
-        RTSSelectionSystem selection,
+        SelectionUiCameraSystem selectionUiCameraSystem,
         Camera worldCamera,
         TacticalMapRuntimeLoader loader)
     {
-        if (selection == null ||
+        if (selectionUiCameraSystem == null ||
             !Chapter01M01PlayableRuntime.TryGetCameraStartWorld(loader, out Vector3 cameraStartWorld))
         {
             return false;
         }
 
         ApplyM01ProductionCameraPose(worldCamera, loader, cameraStartWorld);
-        selection.FollowCameraGroundCenterTo(cameraStartWorld);
-        selection.MoveCameraGroundCenterTo(cameraStartWorld);
+        selectionUiCameraSystem.FollowCameraGroundCenterTo(cameraStartWorld);
+        selectionUiCameraSystem.MoveCameraGroundCenterTo(cameraStartWorld);
         ApplyM01ProductionCameraPose(worldCamera, loader, cameraStartWorld);
         return true;
     }

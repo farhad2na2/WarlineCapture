@@ -75,7 +75,6 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
     public void BindRuntimeDependencies(
         World world,
         TacticalMapRuntimeLoader loader,
-        RTSSelectionSystem selectionSystem,
         BattleHudGameplayBridge gameplayBridge,
         WarlineCaptureRouter router = null,
         WarlineCaptureMatchResultFlow resultFlow = null,
@@ -86,7 +85,6 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
         _contextProvider = new AssistantContextProvider(
             world,
             loader,
-            selectionSystem,
             gameplayBridge,
             router,
             resultFlow,
@@ -94,8 +92,7 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
         _commandExecutor = new CommandIntentExecutor(
             _assistantService.SessionState,
             world,
-            loader,
-            selectionSystem);
+            loader);
     }
 
     public AssistantPanelPresentationData RefreshNow()

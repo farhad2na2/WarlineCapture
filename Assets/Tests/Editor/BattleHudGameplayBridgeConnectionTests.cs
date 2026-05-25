@@ -46,49 +46,51 @@ public sealed class BattleHudGameplayBridgeConnectionTests
     }
 
     [Test]
-    public void SelectionSystem_FocusAndDeselectPublishSelectionStateToBattleHud()
+    public void SelectionSystems_FocusAndDeselectPublishSelectionStateToBattleHud()
     {
-        Entity unit = CreatePlayerUnit(_world.EntityManager, "Alpha Squad", new int2(4, 6), 87);
-        var selection = new RTSSelectionSystem();
+        EntityManager em = _world.EntityManager;
+        Entity unit = CreatePlayerUnit(em, "Alpha Squad", new int2(4, 6), 87);
+        var state = new SelectionStateSystem();
 
-        Assert.IsTrue(selection.FocusUnitEntity(unit));
+        Assert.IsTrue(FocusUnit(em, unit, state));
         Assert.IsTrue(_overlay.transform.Find("SelectedEntityPanel").gameObject.activeSelf);
         AssertText("SelectedEntityPanel/NameText", "Alpha Squad");
         StringAssert.Contains("HP 87/100", TextAt("SelectedEntityPanel/StatusText"));
 
-        UnitHealth health = _world.EntityManager.GetComponentData<UnitHealth>(unit);
+        UnitHealth health = em.GetComponentData<UnitHealth>(unit);
         health.Current = 42;
-        _world.EntityManager.SetComponentData(unit, health);
-        selection.Update();
+        em.SetComponentData(unit, health);
+        ApplyHudSelection(em, unit);
         StringAssert.Contains("HP 42/100", TextAt("SelectedEntityPanel/StatusText"));
 
-        selection.DeselectAllUnits("BridgeSelectionTest");
+        ClearSelection(em, state, "BridgeSelectionTest");
         Assert.IsFalse(_overlay.transform.Find("SelectedEntityPanel").gameObject.activeSelf);
     }
 
     [Test]
-    public void SelectionSystem_AttackTargetingPublishesCommandModeAndRejectedNoSelection()
+    public void SelectionSystems_AttackTargetingPublishesCommandModeAndRejectedNoSelection()
     {
-        Entity unit = CreatePlayerUnit(_world.EntityManager, "Rifle Squad", new int2(2, 3), 100);
-        _world.EntityManager.AddComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
-        _world.EntityManager.AddComponentData(unit, new UnitAttack
+        EntityManager em = _world.EntityManager;
+        Entity unit = CreatePlayerUnit(em, "Rifle Squad", new int2(2, 3), 100);
+        em.AddComponentData(unit, new UnitCombat { CanAttack = 1, AutoEngage = 1 });
+        em.AddComponentData(unit, new UnitAttack
         {
             Range = 4f,
             CooldownSeconds = 1f,
             Damage = 10,
             TraceVisibleSeconds = 0.05f
         });
+        var state = new SelectionStateSystem();
 
-        var selection = new RTSSelectionSystem();
-        Assert.IsTrue(selection.FocusUnitEntity(unit));
-        Assert.IsTrue(selection.ArmFocusedAttackTargetMode());
+        Assert.IsTrue(FocusUnit(em, unit, state));
+        Assert.IsTrue(ArmFocusedAttackTargetMode(em, state));
         Assert.IsTrue(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
         AssertText("CommandModeBanner/ModeText", "ATTACK ORDER");
 
-        selection.DeselectAllUnits("BridgeCommandModeTest");
+        ClearSelection(em, state, "BridgeCommandModeTest");
         Assert.IsFalse(_overlay.transform.Find("CommandModeBanner").gameObject.activeSelf);
 
-        Assert.IsFalse(selection.ArmFocusedAttackTargetMode());
+        Assert.IsFalse(ArmFocusedAttackTargetMode(em, state));
         Assert.IsTrue(_overlay.transform.Find("InvalidCommandToast").gameObject.activeSelf);
         AssertText("InvalidCommandToast/MessageText", "Select a squad first.");
     }
@@ -109,15 +111,15 @@ public sealed class BattleHudGameplayBridgeConnectionTests
     }
 
     [Test]
-    public void SelectionSystem_HoldAndStopPublishCommandModesAndClearOrders()
+    public void SelectionSystems_HoldAndStopPublishCommandModesAndClearOrders()
     {
         EntityManager em = _world.EntityManager;
         Entity unit = CreatePlayerUnit(em, "Bravo Squad", new int2(7, 8), 100);
         AddActiveOrderComponents(em, unit);
+        var state = new SelectionStateSystem();
 
-        var selection = new RTSSelectionSystem();
-        Assert.IsTrue(selection.FocusUnitEntity(unit));
-        Assert.IsTrue(selection.IssueHoldPositionOrder());
+        Assert.IsTrue(FocusUnit(em, unit, state));
+        Assert.IsTrue(IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Hold));
         AssertText("CommandModeBanner/ModeText", "HOLD POSITION");
         Assert.IsFalse(_overlay.transform.Find("InvalidCommandToast").gameObject.activeSelf);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
@@ -128,7 +130,7 @@ public sealed class BattleHudGameplayBridgeConnectionTests
         Assert.IsTrue(em.HasComponent<ManualMoveOrderTag>(unit));
 
         AddActiveOrderComponents(em, unit);
-        Assert.IsTrue(selection.IssueStopOrder());
+        Assert.IsTrue(IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Stop));
         AssertText("CommandModeBanner/ModeText", "STOP ORDER");
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
@@ -142,13 +144,13 @@ public sealed class BattleHudGameplayBridgeConnectionTests
         EntityManager em = _world.EntityManager;
         Entity unit = CreatePlayerUnit(em, "Charlie Squad", new int2(5, 6), 100);
         AddActiveOrderComponents(em, unit);
+        var state = new SelectionStateSystem();
 
-        var selection = new RTSSelectionSystem();
-        Assert.IsTrue(selection.FocusUnitEntity(unit));
+        Assert.IsTrue(FocusUnit(em, unit, state));
 
         MatchOverlayCommandControlsController controls = _overlay.GetComponent<MatchOverlayCommandControlsController>();
         Assert.NotNull(controls);
-        controls.SetSelectionSystemForTests(selection);
+        controls.SetSelectionUiCommandSystemForTests(new SelectionUiCommandSystem());
         InvokeAwake(controls);
 
         Button holdButton = _overlay.transform.Find("CommandBar/HoldButton").GetComponent<Button>();
@@ -157,6 +159,7 @@ public sealed class BattleHudGameplayBridgeConnectionTests
         Assert.NotNull(stopButton);
 
         holdButton.onClick.Invoke();
+        ProcessSelectionUiCommandRequests(em);
         AssertText("CommandModeBanner/ModeText", "HOLD POSITION");
         Assert.IsFalse(_overlay.transform.Find("InvalidCommandToast").gameObject.activeSelf);
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
@@ -168,6 +171,7 @@ public sealed class BattleHudGameplayBridgeConnectionTests
 
         AddActiveOrderComponents(em, unit);
         stopButton.onClick.Invoke();
+        ProcessSelectionUiCommandRequests(em);
         AssertText("CommandModeBanner/ModeText", "STOP ORDER");
         Assert.IsFalse(em.HasComponent<UnitTarget>(unit));
         Assert.IsFalse(em.HasComponent<UnitPathRequest>(unit));
@@ -183,21 +187,22 @@ public sealed class BattleHudGameplayBridgeConnectionTests
         EntityManager em = _world.EntityManager;
         Entity unit = CreatePlayerUnit(em, "Delta Squad", new int2(3, 4), 100);
         AddActiveOrderComponents(em, unit);
+        var state = new SelectionStateSystem();
 
-        var selection = new RTSSelectionSystem();
-        Assert.IsTrue(selection.FocusUnitEntity(unit));
+        Assert.IsTrue(FocusUnit(em, unit, state));
 
         MatchOverlayCommandControlsController controls = _overlay.GetComponent<MatchOverlayCommandControlsController>();
         CommandWheelPanelController wheel = _overlay.GetComponent<CommandWheelPanelController>();
         Assert.NotNull(controls);
         Assert.NotNull(wheel);
-        controls.SetSelectionSystemForTests(selection);
+        controls.SetSelectionUiCommandSystemForTests(new SelectionUiCommandSystem());
         InvokeAwake(wheel);
         InvokeAwake(controls);
 
         wheel.Open();
         Assert.IsTrue(wheel.IsOpen);
         controls.CommandWheelStopButton.onClick.Invoke();
+        ProcessSelectionUiCommandRequests(em);
 
         AssertText("CommandModeBanner/ModeText", "STOP ORDER");
         Assert.IsFalse(wheel.IsOpen);
@@ -269,6 +274,111 @@ public sealed class BattleHudGameplayBridgeConnectionTests
         });
         if (!em.HasComponent<AutoWanderMoveTag>(entity))
             em.AddComponent<AutoWanderMoveTag>(entity);
+    }
+
+    private static bool FocusUnit(EntityManager em, Entity entity, SelectionStateSystem state)
+    {
+        var lifecycle = new FocusedUnitLifecycleSystem();
+        return lifecycle.FocusUnitEntity(
+            em,
+            entity,
+            state,
+            new UnitTargetOrderSystem(),
+            "BattleHudGameplayBridgeConnectionTests",
+            "BattleHudGameplayBridgeConnectionTests",
+            null,
+            null,
+            () => ClearHudSelection(em),
+            (entityManager, focusedEntity) => ApplyHudSelection(entityManager, focusedEntity));
+    }
+
+    private static void ClearSelection(EntityManager em, SelectionStateSystem state, string reason)
+    {
+        var lifecycle = new FocusedUnitLifecycleSystem();
+        lifecycle.ClearCurrentSelection(
+            em,
+            state,
+            reason,
+            null,
+            () => ClearHudSelection(em));
+        lifecycle.ClearFocusedUnit(state);
+        ClearHudCommandMode(em);
+    }
+
+    private static bool ArmFocusedAttackTargetMode(EntityManager em, SelectionStateSystem state)
+    {
+        Entity focused = state.FocusedUnit;
+        if (focused == Entity.Null ||
+            !em.Exists(focused) ||
+            !em.HasComponent<UnitCombat>(focused) ||
+            em.GetComponentData<UnitCombat>(focused).CanAttack == 0)
+        {
+            ApplyHudCommandResult(em, TacticalCommandResult.Rejected(
+                focused == Entity.Null ? TacticalCommandReasonCode.NoSelection : TacticalCommandReasonCode.TargetNotAttackable));
+            return false;
+        }
+
+        ApplyHudCommandMode(em, TacticalCommandMode.Attack);
+        return true;
+    }
+
+    private static bool IssueImmediateSelectedUnitOrder(EntityManager em, TacticalCommandMode mode)
+    {
+        bool clearEngageTarget = mode == TacticalCommandMode.Stop || mode == TacticalCommandMode.Hold;
+        bool issued = new FocusedUnitCommandSystem().IssueImmediateSelectedUnitOrder(
+            em,
+            clearEngageTarget,
+            new UnitMoveOrderSystem());
+        if (issued)
+            ApplyHudCommandMode(em, mode);
+        return issued;
+    }
+
+    private static void ProcessSelectionUiCommandRequests(EntityManager em)
+    {
+        var input = new RtsSelectionInputSystem();
+        if (!input.TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out DynamicBuffer<RtsSelectionCommandResultElement> results))
+        {
+            return;
+        }
+
+        for (int i = 0; i < requests.Length;)
+        {
+            RtsSelectionCommandIntentKind kind = requests[i].Kind;
+            requests.RemoveAt(i);
+            if (kind == RtsSelectionCommandIntentKind.HoldPosition)
+                IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Hold);
+            else if (kind == RtsSelectionCommandIntentKind.Stop)
+                IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Stop);
+        }
+    }
+
+    private static void ApplyHudSelection(EntityManager em, Entity entity)
+    {
+        new SelectionHudFeedbackSystem().ApplySelection(em, entity, new SelectionUiQuerySystem());
+    }
+
+    private static void ClearHudSelection(EntityManager em)
+    {
+        new SelectionHudFeedbackSystem().ClearSelection(em);
+    }
+
+    private static void ApplyHudCommandMode(EntityManager em, TacticalCommandMode mode)
+    {
+        new SelectionHudFeedbackSystem().ApplyCommandMode(em, mode);
+    }
+
+    private static void ClearHudCommandMode(EntityManager em)
+    {
+        new SelectionHudFeedbackSystem().ClearCommandMode(em);
+    }
+
+    private static void ApplyHudCommandResult(EntityManager em, TacticalCommandResult result)
+    {
+        new SelectionHudFeedbackSystem().ApplyCommandResult(em, result);
     }
 
     private static void SetComponent<T>(EntityManager em, Entity entity, T component)

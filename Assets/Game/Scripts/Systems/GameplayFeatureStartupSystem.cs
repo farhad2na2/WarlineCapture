@@ -29,9 +29,10 @@ internal sealed class GameplayFeatureStartupSystem
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI, RTSSelectionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
+        Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCitySpawnerSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
         MainMenuPlayUI mainMenu,
-        RTSSelectionSystem selection,
+        SelectionUiCameraSystem selectionUiCameraSystem,
+        SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
         CitizenPopulationSystem citizenPopulation,
         Transform runtimeCityRoot,
         Transform runtimeBlockerRoot,
@@ -58,7 +59,8 @@ internal sealed class GameplayFeatureStartupSystem
         sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
         bindBuildingGameplayFeatures?.Invoke(
             mainMenu,
-            selection,
+            selectionUiCameraSystem,
+            selectionBuildingInteractionSystem,
             runtimeGridBlockers,
             runtimeCitySpawner,
             citizenPopulation);

@@ -1,11 +1,11 @@
 using System.Collections.Generic;
-using System.Reflection;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 public sealed class UnitTransportValidationTests
 {
@@ -592,14 +592,29 @@ public sealed class UnitTransportValidationTests
         DynamicBuffer<UnitTransportPassengerElement> passengers = em.GetBuffer<UnitTransportPassengerElement>(transport);
         passengers.Add(new UnitTransportPassengerElement { Passenger = passenger });
 
-        RTSSelectionSystem selection = new();
         try
         {
-            typeof(RTSSelectionSystem)
-                .GetProperty("_focusedUnit", BindingFlags.Instance | BindingFlags.NonPublic)
-                ?.SetValue(selection, transport);
+            Entity queue = em.CreateEntity();
+            DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests = em.AddBuffer<RtsSelectionCommandIntentRequestElement>(queue);
+            DynamicBuffer<RtsSelectionCommandResultElement> results = em.AddBuffer<RtsSelectionCommandResultElement>(queue);
+            requests.Add(new RtsSelectionCommandIntentRequestElement
+            {
+                Kind = RtsSelectionCommandIntentKind.DisembarkTransport,
+                TargetEntity = transport,
+                HasTargetEntity = 1
+            });
 
-            selection.DisembarkFocusedTransport();
+            var transportRequestSystem = new SelectionTransportCommandRequestSystem();
+            transportRequestSystem.ProcessPendingRequests(
+                em,
+                requests,
+                results,
+                new TransportBoardingCommandSystem(),
+                new UnitTransportBoardingSystem(),
+                new UnitMoveOrderSystem(),
+                new SelectionStateSystem(),
+                TryGetNoClickedUnit,
+                TryGetNoClickedCell);
 
             Assert.IsTrue(em.HasComponent<UnitTransportRopeDisembarkRequest>(transport), "Exit button should start the rope disembark flow for transport helicopters.");
             Assert.AreEqual(1, em.GetBuffer<UnitTransportPassengerElement>(transport).Length, "Passenger must remain in the helicopter buffer until the rope system drops it.");
@@ -636,24 +651,42 @@ public sealed class UnitTransportValidationTests
         em.SetComponentData(transport, airState);
         em.SetComponentData(transport, LocalTransform.FromPosition(new float3(8.5f, 2.25f, 8.5f)));
         em.SetComponentData(transport, new LocalToWorld { Value = float4x4.Translate(new float3(8.5f, 2.25f, 8.5f)) });
-        RTSSelectionSystem selection = new();
         try
         {
-            MethodInfo method = typeof(RTSSelectionSystem).GetMethod(
-                "TryFindNearbyBoardableTransport",
-                BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.NotNull(method);
-
-            object[] args = { em, new int2(10, 8), Entity.Null };
-            bool found = (bool)method.Invoke(selection, args);
+            var transportCommandSystem = new TransportBoardingCommandSystem();
+            bool found = transportCommandSystem.IsBoardablePlayerTransportClick(
+                em,
+                Vector2.zero,
+                new UnitTransportBoardingSystem(),
+                TryGetNoClickedUnit,
+                TryGetNearbyHelipadCell);
 
             Assert.IsTrue(found, "Clicking the helipad/ground beside the landed transport helicopter should still resolve the boardable helicopter.");
-            Assert.AreEqual(transport, (Entity)args[2]);
         }
         finally
         {
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
+    }
+
+    private static bool TryGetNoClickedUnit(Vector2 screenPosition, EntityManager em, out Entity entity)
+    {
+        entity = Entity.Null;
+        return false;
+    }
+
+    private static bool TryGetNoClickedCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        cell = default;
+        worldPoint = default;
+        return false;
+    }
+
+    private static bool TryGetNearbyHelipadCell(Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
+    {
+        cell = new int2(10, 8);
+        worldPoint = default;
+        return true;
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

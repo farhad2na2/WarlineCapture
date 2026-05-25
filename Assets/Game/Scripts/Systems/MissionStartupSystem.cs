@@ -38,7 +38,7 @@ public sealed class MissionStartupSystem
 
     public bool FocusInitialCamera(
         World world,
-        RTSSelectionSystem selection,
+        SelectionUiCameraSystem selectionUiCameraSystem,
         Camera worldCamera,
         TacticalMapRuntimeLoader loader,
         MissionCameraSystem.TryResolveFactionSpawnCell resolveFactionSpawnCell,
@@ -46,7 +46,7 @@ public sealed class MissionStartupSystem
     {
         return _missionCameraSystem.FocusInitialCamera(
             world,
-            selection,
+            selectionUiCameraSystem,
             worldCamera,
             loader,
             resolveFactionSpawnCell,

@@ -8,7 +8,6 @@ public sealed class AssistantContextProvider
 {
     private readonly World _world;
     private readonly TacticalMapRuntimeLoader _loader;
-    private readonly RTSSelectionSystem _selectionSystem;
     private readonly BattleHudGameplayBridge _gameplayBridge;
     private readonly WarlineCaptureRouter _router;
     private readonly WarlineCaptureMatchResultFlow _resultFlow;
@@ -22,7 +21,6 @@ public sealed class AssistantContextProvider
     public AssistantContextProvider(
         World world,
         TacticalMapRuntimeLoader loader,
-        RTSSelectionSystem selectionSystem,
         BattleHudGameplayBridge gameplayBridge,
         WarlineCaptureRouter router = null,
         WarlineCaptureMatchResultFlow resultFlow = null,
@@ -30,7 +28,6 @@ public sealed class AssistantContextProvider
     {
         _world = world;
         _loader = loader;
-        _selectionSystem = selectionSystem;
         _gameplayBridge = gameplayBridge;
         _router = router;
         _resultFlow = resultFlow;
@@ -41,7 +38,6 @@ public sealed class AssistantContextProvider
     {
         World world = ResolveWorld();
         TacticalMapRuntimeLoader loader = ResolveLoader();
-        RTSSelectionSystem selectionSystem = _selectionSystem;
         BattleHudGameplayBridge bridge = _gameplayBridge ?? BattleHudGameplayBridge.ResolveActive();
         WarlineCaptureRouter router = _router ?? ResolveActiveRouter();
         WarlineCaptureMatchResultFlow resultFlow = _resultFlow ?? ResolveResultFlow();
@@ -65,7 +61,7 @@ public sealed class AssistantContextProvider
             CurrentControlOwnerState = ResolveControlOwnerState(sessionState)
         };
 
-        ApplyRuntimeEntityState(context, sessionState, world, loader, selectionSystem);
+        ApplyRuntimeEntityState(context, sessionState, world, loader);
         ApplyLatestCommandResult(context, sessionState, bridge);
         return context;
     }
@@ -74,8 +70,7 @@ public sealed class AssistantContextProvider
         AssistantContext context,
         TutorialSessionState sessionState,
         World world,
-        TacticalMapRuntimeLoader loader,
-        RTSSelectionSystem selectionSystem)
+        TacticalMapRuntimeLoader loader)
     {
         bool hasWorld = world != null && world.IsCreated;
         bool hasLoader = loader != null && loader.Definition != null;
@@ -116,7 +111,7 @@ public sealed class AssistantContextProvider
             IsAttackCommandAccepted(em, playerSquad, enemyPatrol);
         context.M01ResultExplained = sessionState != null && sessionState.M01ResultExplained;
         context.TypedCommandHooksAvailable = activeM01 &&
-            selectionSystem != null &&
+            M01AssistantCommandRuntime.HasTypedCommandHooks(world, loader) &&
             squadCommandable &&
             context.MoveTargetAvailable &&
             patrolSpawned;

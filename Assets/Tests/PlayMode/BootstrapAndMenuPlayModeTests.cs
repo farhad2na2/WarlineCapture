@@ -51,7 +51,10 @@ public sealed class BootstrapAndMenuPlayModeTests
         Assert.NotNull(bootstrap.RoadBuild, "Bootstrap should create core dependencies during Awake.");
         Assert.NotNull(bootstrap.BuildingSelectionClick, "Bootstrap should create building selection click dependencies during Awake.");
         Assert.NotNull(bootstrap.BuildingRuntimeUpdate, "Bootstrap should create building runtime update dependencies during Awake.");
-        Assert.NotNull(bootstrap.Selection, "Bootstrap should create core dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionUiCommand, "Bootstrap should create selection command dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionUiReadModel, "Bootstrap should create selection read-model dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionUiCamera, "Bootstrap should create selection camera dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionScreenMarkers, "Bootstrap should create selection marker dependencies during Awake.");
         Assert.IsFalse(InitialUnitsRuntimeState.PlayRequested, "PlayRequested must remain false when the scene first starts.");
         Assert.IsFalse(bootstrap.GameplayInitialized, "Gameplay systems must not initialize before the menu play request.");
         Assert.IsNull(bootstrap.RuntimeCitySpawner, "Runtime city spawning must not be created before gameplay starts.");
@@ -66,7 +69,7 @@ public sealed class BootstrapAndMenuPlayModeTests
         bool gameRequested = false;
         menu.GameRequested += () => gameRequested = true;
 
-        menu.Init(null, Camera.main);
+        InitMenu(menu, Camera.main);
         menu.NotifyBootstrapReady();
 
         Assert.IsTrue(menu.panelMenu.gameObject.activeSelf);
@@ -121,7 +124,7 @@ public sealed class BootstrapAndMenuPlayModeTests
     {
         MenuView menu = CreateMenuView();
 
-        menu.Init(null, Camera.main);
+        InitMenu(menu, Camera.main);
 
         GameObject autoModeObject = FindDescendantByName(menu.transform, "Button_AutoMode")?.gameObject;
         Assert.NotNull(autoModeObject, "MenuView should resolve the scene-owned UI_Canvas auto/manual control.");
@@ -148,7 +151,7 @@ public sealed class BootstrapAndMenuPlayModeTests
     {
         MenuView menu = CreateMenuView();
 
-        menu.Init(null, Camera.main);
+        InitMenu(menu, Camera.main);
 
         GameObject settingsPanel = menu.panelSettings;
         Button settingsButton = menu.buttonSettings;
@@ -179,7 +182,6 @@ public sealed class BootstrapAndMenuPlayModeTests
         using World world = new("MenuView_SelectAllSoldiersButton");
         World.DefaultGameObjectInjectionWorld = world;
 
-        RTSSelectionSystem selection = new();
         try
         {
             Camera camera = Track(new GameObject("Selection Camera")).AddComponent<Camera>();
@@ -189,28 +191,26 @@ public sealed class BootstrapAndMenuPlayModeTests
             camera.transform.rotation = Quaternion.Euler(45f, 0f, 0f);
 
             EntityManager em = world.EntityManager;
-            Entity soldier = CreateSelectableUnit(em, "Unit_Chr_Test", new float3(0f, 0f, 0f));
-            Entity vehicle = CreateSelectableUnit(em, "Unit_Veh_Test", new float3(4f, 0f, 0f));
+            CreateSelectableUnit(em, "Unit_Chr_Test", new float3(0f, 0f, 0f));
+            CreateSelectableUnit(em, "Unit_Veh_Test", new float3(4f, 0f, 0f));
 
-            selection.Init(null, camera, null, null, null, null, null);
             MenuView menu = CreateMenuView();
             Button soldiersButton = CreateButton("Button_Select_All_Soldiers", menu.gamePanelFree.transform);
-            menu.Init(selection, camera);
+            InitMenu(menu, camera);
 
             InitialUnitsRuntimeState.PlayRequested = true;
             menu.NotifyGameplayReady();
             soldiersButton.onClick.Invoke();
 
-            Assert.IsTrue(em.HasComponent<SelectedUnitTag>(soldier), "The UI select-all-soldiers button should select visible player soldiers.");
-            Assert.IsFalse(em.HasComponent<SelectedUnitTag>(vehicle), "The soldier-only button must not select vehicles.");
-
-            FieldInfo ignoreUiField = typeof(RTSSelectionSystem).GetField("_ignoreUiClickUntilRelease", BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.NotNull(ignoreUiField);
-            Assert.IsTrue((bool)ignoreUiField.GetValue(selection), "The button must capture the UI click so the same release cannot become a world move/deselect click.");
+            Assert.IsTrue(
+                TryFindSelectionCommand(RtsSelectionCommandIntentKind.SelectAllSoldiers),
+                "The UI select-all-soldiers button should enqueue a soldier-only selection command.");
+            Assert.IsTrue(TryReadSelectionInputState(out RtsSelectionInputStateComponent state));
+            Assert.AreEqual(1, state.IgnoreUiClickUntilRelease, "The button must capture the UI click so the same release cannot become a world move/deselect click.");
+            Assert.AreEqual(1, state.IgnoreNextLeftMouseRelease, "The selection command must suppress the matching mouse release.");
         }
         finally
         {
-            selection.Dispose();
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
     }
@@ -222,18 +222,14 @@ public sealed class BootstrapAndMenuPlayModeTests
         using World world = new("MainMenuPlayUI_ToolbarPointerDown");
         World.DefaultGameObjectInjectionWorld = world;
 
-        RTSSelectionSystem selection = new();
         try
         {
             EntityManager em = world.EntityManager;
             Entity soldier = CreateSelectableUnit(em, "Unit_Chr_Test", new float3(0f, 0f, 0f));
             em.AddComponent<SelectedUnitTag>(soldier);
 
-            selection.Init(null, null, null, null, null, null, null);
             MainMenuPlayUI mainMenu = new();
-            FieldInfo selectionField = typeof(MainMenuPlayUI).GetField("_selectionController", BindingFlags.Instance | BindingFlags.NonPublic);
-            Assert.NotNull(selectionField);
-            selectionField.SetValue(mainMenu, selection);
+            mainMenu.Init(null, new SelectionUiCommandSystem(), null);
 
             MethodInfo pointerDown = typeof(MainMenuPlayUI).GetMethod("OnToolbarUiPointerDown", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(pointerDown);
@@ -248,7 +244,6 @@ public sealed class BootstrapAndMenuPlayModeTests
         }
         finally
         {
-            selection.Dispose();
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
     }
@@ -289,7 +284,7 @@ public sealed class BootstrapAndMenuPlayModeTests
             controls.Add(new FactionControlEntry { FactionId = 1, AIControlled = 1 });
 
             MenuView menu = CreateMenuView();
-            menu.Init(null, Camera.main);
+            InitMenu(menu, Camera.main);
 
             AssertAISettingsDropdownOptions(menu);
 
@@ -396,6 +391,45 @@ public sealed class BootstrapAndMenuPlayModeTests
         menu.panelWarning.gameObject.SetActive(false);
 
         return menu;
+    }
+
+    private static void InitMenu(MenuView menu, Camera camera)
+    {
+        var rtsCamera = new RtsCameraSystem();
+        var rtsCameraRequests = new RtsCameraRequestSystem();
+        var selectionUiCamera = new SelectionUiCameraSystem(rtsCamera, rtsCameraRequests);
+        selectionUiCamera.Init(null, camera);
+        menu.Init(
+            new SelectionUiCommandSystem(),
+            new SelectionUiReadModelSystem(),
+            selectionUiCamera,
+            new SelectionScreenMarkerSystem(),
+            camera);
+    }
+
+    private static bool TryFindSelectionCommand(RtsSelectionCommandIntentKind kind)
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        if (!inputSystem.TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out _))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < requests.Length; i++)
+        {
+            if (requests[i].Kind == kind)
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryReadSelectionInputState(out RtsSelectionInputStateComponent state)
+    {
+        return new RtsSelectionInputStateSystem().TryRead(out _, out state);
     }
 
     private static void AssertAISettingsDropdownOptions(MenuView menu)

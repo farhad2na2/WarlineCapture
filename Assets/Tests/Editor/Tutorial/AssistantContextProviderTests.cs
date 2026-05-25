@@ -16,7 +16,6 @@ public sealed class AssistantContextProviderTests
     private GameObject _bridgeObject;
     private GameObject _objectivePanelObject;
     private TacticalMapRuntimeLoader _loader;
-    private RTSSelectionSystem _selection;
     private BattleHudGameplayBridge _bridge;
     private Chapter01M01PlayableRuntime.RuntimeState _runtimeState;
 
@@ -30,7 +29,6 @@ public sealed class AssistantContextProviderTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AssistantContextProviderTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        _selection = new RTSSelectionSystem();
         _loader = CreateLoadedRuntimeLoader();
         Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, _loader, out _runtimeState));
         _bridgeObject = new GameObject("AssistantContextProviderBridge");
@@ -42,7 +40,6 @@ public sealed class AssistantContextProviderTests
     [TearDown]
     public void TearDown()
     {
-        _selection?.Dispose();
         if (_objectivePanelObject != null)
             Object.DestroyImmediate(_objectivePanelObject);
         if (_bridgeObject != null)
@@ -88,12 +85,10 @@ public sealed class AssistantContextProviderTests
         var session = new TutorialSessionState();
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             M01AssistantIds.PlayerSquadEntityId).Accepted);
         Assert.IsTrue(M01AssistantCommandRuntime.TryIssueMoveToAnchor(
             _world,
             _loader,
-            _selection,
             M01AssistantIds.MoveTargetAnchorId).Accepted);
 
         AssistantContext context = CreateProvider().BuildContext(session);
@@ -110,11 +105,9 @@ public sealed class AssistantContextProviderTests
         var session = new TutorialSessionState();
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             M01AssistantIds.PlayerSquadEntityId).Accepted);
         Assert.IsTrue(M01AssistantCommandRuntime.TryIssueAttackTarget(
             _world,
-            _selection,
             M01AssistantIds.EnemyPatrolEntityId).Accepted);
 
         AssistantContext attackContext = CreateProvider().BuildContext(session);
@@ -169,7 +162,6 @@ public sealed class AssistantContextProviderTests
 
         Assert.IsTrue(M01AssistantCommandRuntime.TrySelectRuntimeEntity(
             _world,
-            _selection,
             M01AssistantIds.PlayerSquadEntityId).Accepted);
         AssistantRecommendation move = service.Evaluate(CreateProvider().BuildContext(session));
 
@@ -197,7 +189,6 @@ public sealed class AssistantContextProviderTests
         return new AssistantContextProvider(
             _world,
             _loader,
-            _selection,
             _bridge,
             router: null,
             resultFlow: null,

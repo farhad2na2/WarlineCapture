@@ -14,16 +14,19 @@ public partial struct UnitRenderBudgetSystem : ISystem
     private static readonly bool EnableRenderBudgetDiagnostics = false;
     private static readonly bool EnableRenderBudgetFreezeLogs = false;
     private const double FreezeLogThresholdSeconds = 0.05d;
-    private const int MaxDetailedUnits = 80;
-    private const int MaxMidLodUnits = 900;
-    private const int MaxLowLodUnits = 900;
+    private const int MaxDetailedUnits = 12;
+    private const int MaxMidLodUnits = 36;
+    private const int MaxLowLodUnits = 48;
     private const int MaxUpdatesPerFrame = 4096;
     private const int UpdateIntervalFrames = 10;
     private const int DiagnosticIntervalFrames = 120;
-    private const float AlwaysDetailedDistanceSq = 38f * 38f;
-    private const float VisibleCharacterLowDistanceSq = float.MaxValue;
-    private const float VisibleCharacterImpostorNearDistance = 75f;
-    private const float VisibleCharacterImpostorFarDistance = 145f;
+    private const float AlwaysDetailedDistanceSq = 18f * 18f;
+    private const float VisibleCharacterLowDistanceSq = 32f * 32f;
+    private const float VisibleCharacterImpostorNearDistance = 48f;
+    private const float VisibleCharacterImpostorFarDistance = 48f;
+    private const float EnemyAlwaysDetailedDistanceSq = 14f * 14f;
+    private const float EnemyLowLodDistanceSq = 20f * 20f;
+    private const float EnemyImpostorDistanceSq = 28f * 28f;
     private const int CameraSettleFrames = 8;
     private const float CameraMoveThresholdSq = 0.0004f;
     private const float CameraRotateThresholdDegrees = 0.03f;
@@ -256,6 +259,17 @@ public partial struct UnitRenderBudgetSystem : ISystem
             Entity unit = distances[i].Unit;
             bool shouldShowDetail = detailedUnits.Contains(unit);
             bool isCharacter = IsCharacterUnit(em, unit);
+            byte factionId = em.GetComponentData<Faction>(unit).Id;
+            bool isEnemyUnit = factionId != 0;
+            bool isSelectedUnit = em.HasComponent<SelectedUnitTag>(unit);
+            bool enemyShouldUseImpostor =
+                isEnemyUnit &&
+                !isSelectedUnit &&
+                distances[i].DistanceSq >= EnemyImpostorDistanceSq;
+            bool enemyLowEnoughForSafeLow =
+                isEnemyUnit &&
+                !isSelectedUnit &&
+                distances[i].DistanceSq >= EnemyLowLodDistanceSq;
             bool hasMidLodPrefab = em.HasComponent<UnitMidLodPrefabReference>(unit);
             bool hasMidLodInstance = em.HasComponent<UnitMidLodInstanceReference>(unit);
             Entity midRoot = hasMidLodInstance
@@ -292,7 +306,10 @@ public partial struct UnitRenderBudgetSystem : ISystem
             bool forceImmediateDetailVisual = false;
             if (isProtectedVisibleCharacter)
             {
-                bool forceDetailNearVisible = distances[i].DistanceSq <= AlwaysDetailedDistanceSq;
+                float alwaysDetailedDistanceSq = isEnemyUnit && !isSelectedUnit
+                    ? EnemyAlwaysDetailedDistanceSq
+                    : AlwaysDetailedDistanceSq;
+                bool forceDetailNearVisible = distances[i].DistanceSq <= alwaysDetailedDistanceSq;
                 if (hasMidLodInstance)
                     visibleCharacterMidInstances++;
                 if (hasLowLodInstance)
@@ -305,12 +322,18 @@ public partial struct UnitRenderBudgetSystem : ISystem
                     visibleCharacterSafeLowInstances++;
 
                 // Visible soldiers must never disappear during camera motion or LOD settling.
-                // Keep billboard impostors and the aggressive low LOD out of the visible-character
-                // path; safe mesh mid LOD is allowed and is the intended high-count rendering path.
-                bool canUseFarImpostor = false;
-                bool canUseSafeLow = false;
-                bool forceDetailByBudget = shouldShowDetail && !cameraMotionActive;
-                bool canUseSafeMid = !forceDetailNearVisible && !forceDetailByBudget && hasSafeMid;
+                // Use detail only near the camera, safe mesh LODs in the mid range, and billboard
+                // impostors for distant visible characters so large RTS armies stay renderable.
+                bool farEnoughForImpostor =
+                    enemyShouldUseImpostor ||
+                    distances[i].DistanceSq >= VisibleCharacterImpostorFarDistance * VisibleCharacterImpostorFarDistance;
+                bool lowEnoughForSafeLow =
+                    enemyLowEnoughForSafeLow ||
+                    distances[i].DistanceSq >= VisibleCharacterLowDistanceSq;
+                bool canUseFarImpostor = farEnoughForImpostor;
+                bool canUseSafeLow = !canUseFarImpostor && lowEnoughForSafeLow && hasSafeLow;
+                bool forceDetailByBudget = shouldShowDetail && !cameraMotionActive && !farEnoughForImpostor && !lowEnoughForSafeLow;
+                bool canUseSafeMid = !forceDetailNearVisible && !forceDetailByBudget && !canUseFarImpostor && !canUseSafeLow && hasSafeMid;
                 bool mustShowDetailForSafety = !forceDetailNearVisible && !canUseFarImpostor && !canUseSafeMid && !canUseSafeLow && !forceDetailByBudget;
                 shouldShowDetail = forceDetailNearVisible || forceDetailByBudget || mustShowDetailForSafety;
                 shouldShowMid = !canUseFarImpostor && canUseSafeMid;
@@ -332,7 +355,10 @@ public partial struct UnitRenderBudgetSystem : ISystem
                     visibleCharacterForcedDetailByUnsafeMid++;
                 visibleCharacterSafeGate++;
             }
-            else if (isCharacter && shouldShowFar)
+            else if (isCharacter &&
+                     shouldShowFar &&
+                     distances[i].Visible != 0 &&
+                     distances[i].DistanceSq <= VisibleCharacterImpostorNearDistance * VisibleCharacterImpostorNearDistance)
             {
                 // Characters should not vanish into the far impostor path while they are near the
                 // camera frustum. Prefer a mesh LOD, then detail as the last safe fallback.
@@ -344,9 +370,17 @@ public partial struct UnitRenderBudgetSystem : ISystem
                 else
                     shouldShowDetail = true;
             }
+            if (enemyShouldUseImpostor)
+            {
+                shouldShowDetail = false;
+                shouldShowMid = false;
+                shouldShowLow = false;
+                shouldShowFar = true;
+                forceImmediateDetailVisual = false;
+            }
             bool hasAnyMeshLodPrefab = hasMidLodPrefab || hasLowLodPrefab;
             bool hasAnyMeshLodInstance = hasMidLodInstance || hasLowLodInstance;
-            bool keepDetailVisibleUntilReady = !shouldShowDetail && hasAnyMeshLodPrefab && !hasAnyMeshLodInstance;
+            bool keepDetailVisibleUntilReady = !shouldShowFar && !shouldShowDetail && hasAnyMeshLodPrefab && !hasAnyMeshLodInstance;
             if (keepDetailVisibleUntilReady)
             {
                 shouldShowDetail = true;

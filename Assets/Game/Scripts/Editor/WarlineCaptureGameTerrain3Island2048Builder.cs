@@ -17,6 +17,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const string CaptureRoot = "Design/AgentReports/Captures/GeneratedScenes/GameTerrain3_Island2048";
     private const string LayoutJsonPath = DataRoot + "/game_terrain3_island2048_layout.json";
     private const string ReportPath = "Design/AgentReports/2026-05-25_gameplay_game-terrain3-island2048-builder.md";
+    private const string GrassGreenMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_01_A.mat";
+    private const string DirtMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_02_A.mat";
+    private const string GrassDarkMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_03_A.mat";
     private const float MapSize = 2048f;
     private const float HalfMapSize = MapSize * 0.5f;
     private const float IslandRadiusX = 880f;
@@ -34,12 +37,24 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private static readonly List<SourcePiece> DetailGrassPieces = new();
     private static readonly List<PlacedPiece> PlacedPieces = new();
     private static readonly HashSet<string> UniquePrefabPaths = new(StringComparer.Ordinal);
+    private static Material GrassGreenMaterial;
+    private static Material DirtMaterial;
+    private static Material GrassDarkMaterial;
 
     private enum SourcePieceRole
     {
         Beach,
         Ground,
         DetailGrass
+    }
+
+    private enum SurfaceMaterialRole
+    {
+        SourceDefault,
+        GrassGreen,
+        Dirt,
+        GrassDark,
+        BeachSand
     }
 
     private readonly struct SourcePiece
@@ -68,13 +83,15 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         public readonly string Kind;
         public readonly Vector3 Position;
         public readonly float Yaw;
+        public readonly SurfaceMaterialRole MaterialRole;
 
-        public PlacedPiece(string prefabPath, string kind, Vector3 position, float yaw)
+        public PlacedPiece(string prefabPath, string kind, Vector3 position, float yaw, SurfaceMaterialRole materialRole)
         {
             PrefabPath = prefabPath;
             Kind = kind;
             Position = position;
             Yaw = yaw;
+            MaterialRole = materialRole;
         }
     }
 
@@ -92,6 +109,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         Directory.CreateDirectory(ProjectPath(Path.GetDirectoryName(ReportPath)));
 
         CollectSourcePieces();
+        LoadSurfaceMaterials();
         if (BeachPieces.Count == 0 || GroundPieces.Count == 0)
             throw new InvalidOperationException("Game_Terrain3 island source pieces were not found. Expected beach and ground prefab instances in " + SourceScenePath);
 
@@ -133,6 +151,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
         List<Bounds> grassBounds = new();
         List<Bounds> beachBounds = new();
+        Dictionary<string, int> materialRendererCounts = new(StringComparer.Ordinal);
         foreach (Renderer renderer in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Exclude))
         {
             string rootName = FindIslandInstanceName(renderer.transform);
@@ -140,6 +159,14 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
                 grassBounds.Add(renderer.bounds);
             else if (rootName.StartsWith("Beach", StringComparison.Ordinal))
                 beachBounds.Add(renderer.bounds);
+
+            if (!string.IsNullOrEmpty(rootName))
+            {
+                string materialName = renderer.sharedMaterial != null ? renderer.sharedMaterial.name : "None";
+                if (!materialRendererCounts.ContainsKey(materialName))
+                    materialRendererCounts[materialName] = 0;
+                materialRendererCounts[materialName]++;
+            }
         }
 
         int interiorSamples = 0;
@@ -189,6 +216,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine("- Shore covered by beach bounds: " + shoreBeachCovered.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Shore missing beach samples: " + (shoreSamples - shoreBeachCovered).ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Shore samples touched by ground bounds: " + shoreGroundIntrusions.ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("Island renderer material counts:");
+        foreach (KeyValuePair<string, int> entry in materialRendererCounts)
+            report.AppendLine("- " + entry.Key + ": " + entry.Value.ToString(CultureInfo.InvariantCulture));
         File.WriteAllText(ProjectPath(reportPath), report.ToString());
         Debug.Log(report.ToString());
     }
@@ -271,6 +301,20 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             DetailGrassPieces.Add(piece);
 
         UniquePrefabPaths.Add(prefabPath);
+    }
+
+    private static void LoadSurfaceMaterials()
+    {
+        GrassGreenMaterial = AssetDatabase.LoadAssetAtPath<Material>(GrassGreenMaterialPath);
+        DirtMaterial = AssetDatabase.LoadAssetAtPath<Material>(DirtMaterialPath);
+        GrassDarkMaterial = AssetDatabase.LoadAssetAtPath<Material>(GrassDarkMaterialPath);
+
+        if (GrassGreenMaterial == null)
+            throw new FileNotFoundException("Missing Game_Terrain3 green grass material", GrassGreenMaterialPath);
+        if (DirtMaterial == null)
+            throw new FileNotFoundException("Missing Game_Terrain3 dirt material", DirtMaterialPath);
+        if (GrassDarkMaterial == null)
+            throw new FileNotFoundException("Missing Game_Terrain3 dark grass/beach material", GrassDarkMaterialPath);
     }
 
     private static bool IsIslandSurfacePrefab(string prefabPath, string objectName, out SourcePieceRole role)
@@ -456,7 +500,14 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
                     continue;
                 }
 
-                SourcePiece source = Pick(DetailGrassPieces, index, row, 317);
+                SurfaceMaterialRole groundMaterial = ChooseGroundMaterial(new Vector3(p.x, 0f, p.y), "GroundFill");
+                if (groundMaterial == SurfaceMaterialRole.Dirt)
+                {
+                    index++;
+                    continue;
+                }
+
+                SourcePiece source = PickDetailGrass(index, row, 317);
                 float yaw = SourceYaw(source) + Hash01(index, row, 331) * 360f;
                 InstantiateSource(parent, source, new Vector3(p.x, source.Position.y, p.y), yaw, "GrassDetail");
                 index++;
@@ -476,7 +527,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         instance.transform.position = position;
         instance.transform.rotation = Quaternion.Euler(0f, yaw, 0f);
         instance.transform.localScale = ScaledSourceScale(source, prefix);
-        PlacedPieces.Add(new PlacedPiece(source.PrefabPath, prefix, position, yaw));
+        SurfaceMaterialRole materialRole = ResolveMaterialRole(source, position, prefix);
+        ApplySurfaceMaterial(instance, materialRole);
+        PlacedPieces.Add(new PlacedPiece(source.PrefabPath, prefix, position, yaw, materialRole));
     }
 
     private static Vector3 ScaledSourceScale(SourcePiece source, string prefix)
@@ -500,6 +553,84 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     {
         int index = Mathf.FloorToInt(Hash01(a, b, salt) * pieces.Count);
         return pieces[Mathf.Clamp(index, 0, pieces.Count - 1)];
+    }
+
+    private static SourcePiece PickDetailGrass(int a, int b, int salt)
+    {
+        if (Hash01(a, b, salt + 7) < 0.78f)
+        {
+            List<SourcePiece> patch01 = new();
+            foreach (SourcePiece piece in DetailGrassPieces)
+            {
+                if (piece.PrefabPath.IndexOf("SM_Generic_Grass_Patch_01", StringComparison.OrdinalIgnoreCase) >= 0
+                    || piece.PrefabPath.IndexOf("SM_Gerneric_Grass_Patch_01", StringComparison.OrdinalIgnoreCase) >= 0)
+                    patch01.Add(piece);
+            }
+
+            if (patch01.Count > 0)
+                return Pick(patch01, a, b, salt + 11);
+        }
+
+        return Pick(DetailGrassPieces, a, b, salt);
+    }
+
+    private static SurfaceMaterialRole ResolveMaterialRole(SourcePiece source, Vector3 position, string prefix)
+    {
+        return source.Role switch
+        {
+            SourcePieceRole.Beach => SurfaceMaterialRole.BeachSand,
+            SourcePieceRole.DetailGrass => SurfaceMaterialRole.GrassGreen,
+            SourcePieceRole.Ground => ChooseGroundMaterial(position, prefix),
+            _ => SurfaceMaterialRole.SourceDefault
+        };
+    }
+
+    private static SurfaceMaterialRole ChooseGroundMaterial(Vector3 position, string prefix)
+    {
+        Vector2 p = new(position.x, position.z);
+        if (!EvaluateIsland(p, out float depth, out _))
+            return SurfaceMaterialRole.GrassGreen;
+
+        if (prefix.StartsWith("GroundShore", StringComparison.Ordinal) || depth < 0.16f)
+            return SurfaceMaterialRole.GrassGreen;
+
+        float dirtNoise = ValueNoise01(p, 210f, 701);
+        float darkGrassNoise = ValueNoise01(p + new Vector2(83f, -57f), 165f, 709);
+        float smallBreakup = ValueNoise01(p + new Vector2(-41f, 119f), 92f, 719);
+
+        if (depth > 0.24f && dirtNoise > 0.64f && smallBreakup > 0.42f)
+            return SurfaceMaterialRole.Dirt;
+        if (depth > 0.18f && darkGrassNoise > 0.61f)
+            return SurfaceMaterialRole.GrassDark;
+
+        return SurfaceMaterialRole.GrassGreen;
+    }
+
+    private static void ApplySurfaceMaterial(GameObject instance, SurfaceMaterialRole materialRole)
+    {
+        Material material = materialRole switch
+        {
+            SurfaceMaterialRole.GrassGreen => GrassGreenMaterial,
+            SurfaceMaterialRole.Dirt => DirtMaterial,
+            SurfaceMaterialRole.GrassDark => GrassDarkMaterial,
+            SurfaceMaterialRole.BeachSand => GrassDarkMaterial,
+            _ => null
+        };
+
+        if (material == null)
+            return;
+
+        foreach (Renderer renderer in instance.GetComponentsInChildren<Renderer>(true))
+        {
+            Material[] materials = renderer.sharedMaterials;
+            if (materials == null || materials.Length == 0)
+                continue;
+
+            for (int i = 0; i < materials.Length; i++)
+                materials[i] = material;
+            renderer.sharedMaterials = materials;
+            EditorUtility.SetDirty(renderer);
+        }
     }
 
     private static bool EvaluateIsland(Vector2 p, out float depth, out float edgeNoise)
@@ -551,6 +682,27 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         }
     }
 
+    private static float ValueNoise01(Vector2 p, float cellSize, int seed)
+    {
+        float gx = (p.x + HalfMapSize) / cellSize;
+        float gz = (p.y + HalfMapSize) / cellSize;
+        int x0 = Mathf.FloorToInt(gx);
+        int z0 = Mathf.FloorToInt(gz);
+        float tx = Smooth01(gx - x0);
+        float tz = Smooth01(gz - z0);
+
+        float a = Hash01(x0, z0, seed);
+        float b = Hash01(x0 + 1, z0, seed);
+        float c = Hash01(x0, z0 + 1, seed);
+        float d = Hash01(x0 + 1, z0 + 1, seed);
+        return Mathf.Lerp(Mathf.Lerp(a, b, tx), Mathf.Lerp(c, d, tx), tz);
+    }
+
+    private static float Smooth01(float t)
+    {
+        return t * t * (3f - 2f * t);
+    }
+
     private static GameObject Child(GameObject parent, string name)
     {
         GameObject child = new(name);
@@ -596,7 +748,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
                 || name.StartsWith("GroundShore_", StringComparison.Ordinal)
                 || name.StartsWith("GrassDetail_", StringComparison.Ordinal)
                 || name.StartsWith("BeachCoast_", StringComparison.Ordinal)
-                || name.StartsWith("BeachBlend_", StringComparison.Ordinal))
+                || name.StartsWith("BeachBlend_", StringComparison.Ordinal)
+                || name.StartsWith("BeachInner_", StringComparison.Ordinal)
+                || name.StartsWith("BeachLandEdge_", StringComparison.Ordinal))
                 return name;
             current = current.parent;
         }
@@ -620,6 +774,10 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         int beachPlaced = 0;
         int groundPlaced = 0;
         int detailGrassPlaced = 0;
+        int grassGreenPlaced = 0;
+        int dirtPlaced = 0;
+        int grassDarkPlaced = 0;
+        int beachSandPlaced = 0;
         foreach (PlacedPiece piece in PlacedPieces)
         {
             if (piece.Kind.StartsWith("Beach", StringComparison.Ordinal))
@@ -628,6 +786,15 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
                 detailGrassPlaced++;
             else
                 groundPlaced++;
+
+            if (piece.MaterialRole == SurfaceMaterialRole.GrassGreen)
+                grassGreenPlaced++;
+            else if (piece.MaterialRole == SurfaceMaterialRole.Dirt)
+                dirtPlaced++;
+            else if (piece.MaterialRole == SurfaceMaterialRole.GrassDark)
+                grassDarkPlaced++;
+            else if (piece.MaterialRole == SurfaceMaterialRole.BeachSand)
+                beachSandPlaced++;
         }
 
         StringBuilder json = new();
@@ -643,6 +810,11 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         json.AppendLine("  \"placedBeachPrefabInstances\": " + beachPlaced.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"placedGroundPrefabInstances\": " + groundPlaced.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"placedDetailGrassPrefabInstances\": " + detailGrassPlaced.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"materialRule\": \"Source-like material override pass: PolygonBattleRoyale_01_A green grass, PolygonBattleRoyale_02_A dirt patches, PolygonBattleRoyale_03_A darker grass and beaches.\",");
+        json.AppendLine("  \"placedGrassGreenMaterialInstances\": " + grassGreenPlaced.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"placedDirtMaterialInstances\": " + dirtPlaced.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"placedGrassDarkMaterialInstances\": " + grassDarkPlaced.ToString(CultureInfo.InvariantCulture) + ",");
+        json.AppendLine("  \"placedBeachSandMaterialInstances\": " + beachSandPlaced.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"groundFillSpacing\": " + GroundFillSpacing.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"shoreGroundSpacing\": " + ShoreGroundSpacing.ToString(CultureInfo.InvariantCulture) + ",");
         json.AppendLine("  \"detailGrassSpacing\": " + DetailGrassSpacing.ToString(CultureInfo.InvariantCulture) + ",");
@@ -681,8 +853,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine("- No generated island underlay mesh.");
         report.AppendLine("- No substitute terrain prefab set.");
         report.AppendLine("- Uses only beach/ground/detail grass prefab assets discovered in `Game_Terrain3`.");
+        report.AppendLine("- Applies the same material-override pattern seen in `Game_Terrain3`: green grass uses `PolygonBattleRoyale_01_A`, dirt patches use `PolygonBattleRoyale_02_A`, and darker grass/beach areas use `PolygonBattleRoyale_03_A`.");
         report.AppendLine("- `SM_Env_Grass_*` prefabs are classified as terrain ground/fill.");
-        report.AppendLine("- `SM_Generic_Grass_Patch_*` prefabs are classified as decoration/detail grass, not terrain fill.");
+        report.AppendLine("- `SM_Generic_Grass_Patch_*` prefabs are classified as decoration/detail grass, not terrain fill; `SM_Generic_Grass_Patch_01` is preferred on green and darker grass areas.");
         report.AppendLine("- Ground fill places every valid interior cell with jittered rows; it no longer randomly skips coverage cells.");
         report.AppendLine("- Beach placement uses a denser two-band rim to reduce shoreline gaps.");
         report.AppendLine("- Detail grass is a separate sparse decoration pass on top of the ground, never the primary floor.");
@@ -694,6 +867,10 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine("- Source detail grass prefab instances: " + DetailGrassPieces.Count.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Unique source prefab assets: " + UniquePrefabPaths.Count.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Placed prefab instances: " + PlacedPieces.Count.ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Green material placements: " + CountMaterialRole(SurfaceMaterialRole.GrassGreen).ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Dirt material placements: " + CountMaterialRole(SurfaceMaterialRole.Dirt).ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Dark grass material placements: " + CountMaterialRole(SurfaceMaterialRole.GrassDark).ToString(CultureInfo.InvariantCulture));
+        report.AppendLine("- Beach material placements: " + CountMaterialRole(SurfaceMaterialRole.BeachSand).ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Ground fill spacing: " + GroundFillSpacing.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Shore ground spacing: " + ShoreGroundSpacing.ToString(CultureInfo.InvariantCulture));
         report.AppendLine("- Detail grass spacing: " + DetailGrassSpacing.ToString(CultureInfo.InvariantCulture));
@@ -704,6 +881,17 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine();
         report.AppendLine("Runtime transfer note: move the source-prefab collection into a prefab catalog, port `EvaluateIsland`, `BoundaryPoint`, and the placement loops to runtime, and instantiate pooled versions of the same source prefab ids.");
         File.WriteAllText(ProjectPath(ReportPath), report.ToString());
+    }
+
+    private static int CountMaterialRole(SurfaceMaterialRole role)
+    {
+        int count = 0;
+        foreach (PlacedPiece piece in PlacedPieces)
+        {
+            if (piece.MaterialRole == role)
+                count++;
+        }
+        return count;
     }
 
     private static string ProjectPath(string relativePath)

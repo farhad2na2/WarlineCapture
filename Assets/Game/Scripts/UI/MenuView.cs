@@ -189,6 +189,11 @@ namespace Game.Scripts.UI
         private RectTransform _logTextRect;
         private bool _runtimeLogSubscribed;
         private bool _runtimeLogBufferReplayed;
+        private float _nextSelectionToggleRefreshTime;
+        private bool _cachedSelectionToggleHasVisibleSoldiers;
+        private bool _cachedSelectionToggleHasVisibleVehicles;
+        private bool _cachedSelectionToggleHasVisibleUnits;
+        private bool _cachedSelectionToggleHasVisibleBuildings;
 
         [Header("Camp Selected References")]
         public Button campPreviewPreviousButton;
@@ -396,8 +401,9 @@ namespace Game.Scripts.UI
         private const int MinimapResolution = 192;
         private const int FullscreenMapResolution = 512;
         private const int MinimapMaxSelectedArrowIcons = 32;
-        private const float MinimapDynamicRefreshInterval = 0.2f;
+        private const float MinimapDynamicRefreshInterval = 0.35f;
         private const float FullscreenMapDynamicRefreshInterval = 0.2f;
+        private const float SelectionToggleRefreshInterval = 0.25f;
         private const float MinimapStaticRebuildThresholdWorld = 1.5f;
         private static readonly bool EnableMenuCanvasDiagnostics = false;
         private const double MenuCanvasDiagThresholdSeconds = 0.05d;
@@ -707,7 +713,7 @@ namespace Game.Scripts.UI
             if (fpsText == null)
                 return;
 
-            fpsText.text = Mathf.Max(0, fps).ToString();
+            SetTextIfChanged(fpsText, Mathf.Max(0, fps).ToString());
         }
 
         public void NotifyBootstrapReady()
@@ -3118,8 +3124,14 @@ namespace Game.Scripts.UI
 
         private static void SetActiveIfNotNull(GameObject target, bool active)
         {
-            if (target != null)
+            if (target != null && target.activeSelf != active)
                 target.SetActive(active);
+        }
+
+        private static void SetTextIfChanged(TMP_Text target, string value)
+        {
+            if (target != null && target.text != value)
+                target.text = value;
         }
 
         private void ResolveSingleSelectionUnitTypePanels()
@@ -3200,28 +3212,45 @@ namespace Game.Scripts.UI
 
         private void UpdateSelectionToggleButtons(bool hasAnySelection)
         {
-            bool hasVisibleSoldiers = !hasAnySelection && _selectionUiReadModelSystem != null && _selectionUiReadModelSystem.HasVisiblePlayerSoldiers(_worldCamera);
-            bool hasVisibleVehicles = !hasAnySelection && _selectionUiReadModelSystem != null && _selectionUiReadModelSystem.HasVisiblePlayerVehicles(_worldCamera);
-            bool hasVisibleUnits = hasVisibleSoldiers || hasVisibleVehicles || (!hasAnySelection && _selectionUiReadModelSystem != null && _selectionUiReadModelSystem.HasVisiblePlayerUnits(_worldCamera));
-            bool hasVisibleBuildings = !hasAnySelection &&
-                                       _buildingUiQuerySystem != null &&
-                                       _buildingUiQuerySystem.HasVisibleSelectableBuilding(_buildingUiQueryContext, _worldCamera);
+            if (hasAnySelection)
+            {
+                _cachedSelectionToggleHasVisibleSoldiers = false;
+                _cachedSelectionToggleHasVisibleVehicles = false;
+                _cachedSelectionToggleHasVisibleUnits = false;
+                _cachedSelectionToggleHasVisibleBuildings = false;
+            }
+            else if (Time.unscaledTime >= _nextSelectionToggleRefreshTime)
+            {
+                _nextSelectionToggleRefreshTime = Time.unscaledTime + SelectionToggleRefreshInterval;
+                _cachedSelectionToggleHasVisibleSoldiers =
+                    _selectionUiReadModelSystem != null &&
+                    _selectionUiReadModelSystem.HasVisiblePlayerSoldiers(_worldCamera);
+                _cachedSelectionToggleHasVisibleVehicles =
+                    _selectionUiReadModelSystem != null &&
+                    _selectionUiReadModelSystem.HasVisiblePlayerVehicles(_worldCamera);
+                _cachedSelectionToggleHasVisibleUnits =
+                    _cachedSelectionToggleHasVisibleSoldiers ||
+                    _cachedSelectionToggleHasVisibleVehicles ||
+                    (_selectionUiReadModelSystem != null &&
+                     _selectionUiReadModelSystem.HasVisiblePlayerUnits(_worldCamera));
+                _cachedSelectionToggleHasVisibleBuildings =
+                    _buildingUiQuerySystem != null &&
+                    _buildingUiQuerySystem.HasVisibleSelectableBuilding(_buildingUiQueryContext, _worldCamera);
+            }
+
+            bool hasVisibleSoldiers = _cachedSelectionToggleHasVisibleSoldiers;
+            bool hasVisibleVehicles = _cachedSelectionToggleHasVisibleVehicles;
+            bool hasVisibleUnits = _cachedSelectionToggleHasVisibleUnits;
+            bool hasVisibleBuildings = _cachedSelectionToggleHasVisibleBuildings;
             bool hasVisibleSelectable = hasVisibleUnits || hasVisibleBuildings;
 
-            if (_buttonSelect != null)
-                _buttonSelect.gameObject.SetActive(hasVisibleSelectable && !_runtimeGameplayStateSystem.SelectionModeActive);
-            if (_buttonSelectAll != null)
-                _buttonSelectAll.gameObject.SetActive(hasVisibleUnits);
-            if (_buttonSelectAllSoldiers != null)
-                _buttonSelectAllSoldiers.gameObject.SetActive(hasVisibleSoldiers);
-            if (_buttonSelectAllSoldiersAlias != null)
-                _buttonSelectAllSoldiersAlias.gameObject.SetActive(hasVisibleSoldiers);
-            if (_buttonSelectAllVehicles != null)
-                _buttonSelectAllVehicles.gameObject.SetActive(hasVisibleVehicles);
-            if (_buttonSelectAllVehiclesAlias != null)
-                _buttonSelectAllVehiclesAlias.gameObject.SetActive(hasVisibleVehicles);
-            if (_buttonDeselectAll != null)
-                _buttonDeselectAll.gameObject.SetActive(hasAnySelection);
+            SetActiveIfNotNull(_buttonSelect != null ? _buttonSelect.gameObject : null, hasVisibleSelectable && !_runtimeGameplayStateSystem.SelectionModeActive);
+            SetActiveIfNotNull(_buttonSelectAll != null ? _buttonSelectAll.gameObject : null, hasVisibleUnits);
+            SetActiveIfNotNull(_buttonSelectAllSoldiers != null ? _buttonSelectAllSoldiers.gameObject : null, hasVisibleSoldiers);
+            SetActiveIfNotNull(_buttonSelectAllSoldiersAlias != null ? _buttonSelectAllSoldiersAlias.gameObject : null, hasVisibleSoldiers);
+            SetActiveIfNotNull(_buttonSelectAllVehicles != null ? _buttonSelectAllVehicles.gameObject : null, hasVisibleVehicles);
+            SetActiveIfNotNull(_buttonSelectAllVehiclesAlias != null ? _buttonSelectAllVehiclesAlias.gameObject : null, hasVisibleVehicles);
+            SetActiveIfNotNull(_buttonDeselectAll != null ? _buttonDeselectAll.gameObject : null, hasAnySelection);
         }
 
         private void ClearGameplaySelection()
@@ -4716,7 +4745,7 @@ namespace Game.Scripts.UI
                 return;
 
             int dollars = _buildingUiCommandSystem != null ? _buildingUiCommandSystem.CurrentDollars(_buildingUiCommandContext) : 0;
-            moneyAmountText.text = dollars.ToString();
+            SetTextIfChanged(moneyAmountText, dollars.ToString());
         }
 
         private void UpdateTimePanel()
@@ -4725,10 +4754,10 @@ namespace Game.Scripts.UI
                 ResolveTimePanel();
 
             if (dateText != null)
-                dateText.text = _dayNightSystem != null ? _dayNightSystem.DayCount.ToString() : "-";
+                SetTextIfChanged(dateText, _dayNightSystem != null ? _dayNightSystem.DayCount.ToString() : "-");
 
             if (timeText != null)
-                timeText.text = _dayNightSystem != null ? $"{_dayNightSystem.Hour24:00}:{_dayNightSystem.Minute:00}" : "--:--";
+                SetTextIfChanged(timeText, _dayNightSystem != null ? $"{_dayNightSystem.Hour24:00}:{_dayNightSystem.Minute:00}" : "--:--");
         }
 
         private void UpdateRequestPanel()
@@ -4828,11 +4857,11 @@ namespace Game.Scripts.UI
                 return;
 
             bool isVisible = _runtimeGameplayStateSystem.PlayRequested && menuType == MenuType.Game;
-            _buttonAutoMode.gameObject.SetActive(isVisible);
+            SetActiveIfNotNull(_buttonAutoMode.gameObject, isVisible);
             if (_autoModeLabel == null)
                 _autoModeLabel = _buttonAutoMode.GetComponentInChildren<TMP_Text>(true);
             if (_autoModeLabel != null)
-                _autoModeLabel.text = _runtimeGameplayStateSystem.PlayerAutoModeEnabled ? "Auto" : "Manual";
+                SetTextIfChanged(_autoModeLabel, _runtimeGameplayStateSystem.PlayerAutoModeEnabled ? "Auto" : "Manual");
         }
 
         private void BindGameplaySpeedDropdownVisuals()
@@ -5112,7 +5141,8 @@ namespace Game.Scripts.UI
             if (snapshot == null || snapshot.Count == 0)
                 return;
 
-            bool shouldScrollToBottom = IsRuntimeLogScrolledToBottom();
+            bool logPanelVisible = IsRuntimeLogPanelVisible();
+            bool shouldScrollToBottom = logPanelVisible && IsRuntimeLogScrolledToBottom();
             foreach (RuntimeLogBuffer.Entry entry in snapshot)
             {
                 if (entry.Type == LogType.Log && string.IsNullOrWhiteSpace(entry.Condition))
@@ -5121,7 +5151,8 @@ namespace Game.Scripts.UI
                 AddRuntimeLogEntry(BuildRuntimeLogMessage(entry.Condition, entry.StackTrace, entry.Type), entry.Type, false);
             }
 
-            RefreshRuntimeLogLabel(shouldScrollToBottom);
+            if (logPanelVisible)
+                RefreshRuntimeLogLabel(shouldScrollToBottom);
         }
 
         private void AddRuntimeLogEntry(string message, LogType type, bool refresh)
@@ -5129,10 +5160,16 @@ namespace Game.Scripts.UI
             if (_runtimeLogEntries.Count >= MaxVisibleLogEntries)
                 _runtimeLogEntries.Dequeue();
 
-            bool shouldScrollToBottom = refresh && IsRuntimeLogScrolledToBottom();
+            bool logPanelVisible = IsRuntimeLogPanelVisible();
+            bool shouldScrollToBottom = refresh && logPanelVisible && IsRuntimeLogScrolledToBottom();
             _runtimeLogEntries.Enqueue(new RuntimeLogEntry(message ?? string.Empty, type));
-            if (refresh)
+            if (refresh && logPanelVisible)
                 RefreshRuntimeLogLabel(shouldScrollToBottom);
+        }
+
+        private bool IsRuntimeLogPanelVisible()
+        {
+            return panelLog != null && panelLog.activeInHierarchy;
         }
 
         private static string BuildRuntimeLogMessage(string condition, string stackTrace, LogType type)

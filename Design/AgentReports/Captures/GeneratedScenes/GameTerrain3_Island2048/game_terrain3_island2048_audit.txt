@@ -1,12 +1,16 @@
 Game_Terrain3_Island2048 audit
 Renderer counts:
 - Ground renderers: 6316
-- Beach renderers: 1800
+- Beach renderers: 2700
 Coverage samples:
 - Interior samples: 1356
 - Interior covered by grass bounds: 1356
 - Interior uncovered samples: 0
 - Shore samples: 496
-- Shore covered by beach bounds: 492
-- Shore missing beach samples: 4
+- Shore covered by beach bounds: 496
+- Shore missing beach samples: 0
 - Shore samples touched by ground bounds: 396
+Island renderer material counts:
+- PolygonBattleRoyale_01_A: 4676
+- PolygonBattleRoyale_03_A: 3534
+- PolygonBattleRoyale_02_A: 895

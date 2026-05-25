@@ -1766,7 +1766,8 @@ public class BuildingGameplaySystem
             EnsureEntityQueries,
             _unitPrefabRegistryQuery,
             _spawnPrefabCandidatesQuery,
-            _livePlayerUnitsQuery);
+            _livePlayerUnitsQuery,
+            CreateRuntimeResourcePrefabContextSource);
     }
 
     internal BuildingUiCommandSystem.Context CreateBuildingUiCommandContext()

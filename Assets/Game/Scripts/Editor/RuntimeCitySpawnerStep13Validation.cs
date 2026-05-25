@@ -42,8 +42,7 @@ public static class RuntimeCitySpawnerStep13Validation
     private static GameBootstrap FindSingleBootstrap()
     {
         GameBootstrap[] bootstraps = UnityEngine.Object.FindObjectsByType<GameBootstrap>(
-            FindObjectsInactive.Include,
-            FindObjectsSortMode.None);
+            FindObjectsInactive.Include);
         AssertCondition(bootstraps.Length == 1, $"Expected exactly one GameBootstrap in {GameScenePath}, found {bootstraps.Length}.");
         return bootstraps[0];
     }

@@ -25,9 +25,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const float ShoreGroundSpacing = 30f;
     private const float DetailGrassSpacing = 78f;
     private const float GroundSurfaceScaleXZ = 1.55f;
-    private const float ShoreGroundScaleXZ = 1.38f;
+    private const float ShoreGroundScaleXZ = 1.12f;
     private const float DetailGrassScaleXZ = 0.95f;
-    private const float BeachSurfaceScaleXZ = 1.55f;
+    private const float BeachSurfaceScaleXZ = 2.35f;
 
     private static readonly List<SourcePiece> BeachPieces = new();
     private static readonly List<SourcePiece> GroundPieces = new();
@@ -384,7 +384,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             Vector2 boundary = BoundaryPoint(angle);
             Vector2 inward = -new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
             Vector2 tangent = new(-inward.y, inward.x);
-            Vector2 position = boundary + inward * (44f + Hash01(i, 0, 223) * 46f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing);
+            Vector2 position = boundary + inward * (104f + Hash01(i, 0, 223) * 38f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing);
 
             if (!EvaluateIsland(position, out float depth, out _) || depth < 0.08f)
                 continue;
@@ -397,7 +397,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
     private static void PlaceCoastalBeaches(Transform parent)
     {
-        const int ringCount = 540;
+        const int ringCount = 900;
         for (int i = 0; i < ringCount; i++)
         {
             float t = i / (float)ringCount;
@@ -406,17 +406,25 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             Vector2 inward = -new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
             float lateralNoise = (Hash01(i, 0, 101) - 0.5f) * 8f;
             Vector2 tangent = new(-inward.y, inward.x);
-            Vector2 position = boundary + inward * (2f + Hash01(i, 0, 113) * 18f) + tangent * lateralNoise;
+            Vector2 position = boundary + inward * (2f + Hash01(i, 0, 113) * 14f) + tangent * lateralNoise;
 
             SourcePiece source = Pick(BeachPieces, i, 0, 127);
             float yaw = angle * Mathf.Rad2Deg + 90f + Mathf.Round((Hash01(i, 0, 139) - 0.5f) * 2f) * 12f;
             InstantiateSource(parent, source, new Vector3(position.x, source.Position.y, position.y), yaw, "BeachCoast");
 
+            SourcePiece secondary = Pick(BeachPieces, i, 1, 151);
+            Vector2 p2 = boundary + inward * (24f + Hash01(i, 1, 163) * 24f) - tangent * lateralNoise * 0.45f;
+            InstantiateSource(parent, secondary, new Vector3(p2.x, secondary.Position.y, p2.y), yaw + 180f, "BeachBlend");
+
             if (i % 2 == 0)
             {
-                SourcePiece secondary = Pick(BeachPieces, i, 1, 151);
-                Vector2 p2 = boundary + inward * (22f + Hash01(i, 1, 163) * 28f) - tangent * lateralNoise * 0.45f;
-                InstantiateSource(parent, secondary, new Vector3(p2.x, secondary.Position.y, p2.y), yaw + 180f, "BeachBlend");
+                SourcePiece inner = Pick(BeachPieces, i, 2, 167);
+                Vector2 p3 = boundary + inward * (50f + Hash01(i, 2, 173) * 30f) + tangent * lateralNoise * 0.25f;
+                InstantiateSource(parent, inner, new Vector3(p3.x, inner.Position.y, p3.y), yaw + 90f, "BeachInner");
+
+                SourcePiece landEdge = Pick(BeachPieces, i, 3, 181);
+                Vector2 p4 = boundary + inward * (76f + Hash01(i, 3, 191) * 30f) - tangent * lateralNoise * 0.2f;
+                InstantiateSource(parent, landEdge, new Vector3(p4.x, landEdge.Position.y, p4.y), yaw - 90f, "BeachLandEdge");
             }
         }
     }

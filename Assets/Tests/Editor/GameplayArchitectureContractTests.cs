@@ -2643,6 +2643,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("CreateCitizenResourceContext", runtimeResourcePrefabContext);
         StringAssert.Contains("CreateCitizenPrefabContext", runtimeResourcePrefabContext);
         StringAssert.Contains("CreateBuildingSpawnPrefabContext", runtimeResourcePrefabContext);
+        StringAssert.Contains("Func<Source> CreateCurrentSource", runtimeResourcePrefabContext);
+        StringAssert.Contains("source.CreateCurrentSource != null ? source.CreateCurrentSource() : source", runtimeResourcePrefabContext);
         StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
         StringAssert.Contains("Building.RuntimeQuerySystem", buildingComposition);
         StringAssert.Contains("Building.CreateRuntimeBuildingQueryContext()", buildingComposition);

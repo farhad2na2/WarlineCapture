@@ -11,19 +11,26 @@ Outputs:
 Rules enforced:
 - No generated island underlay mesh.
 - No substitute terrain prefab set.
-- Uses only beach/grass prefab assets discovered in `Game_Terrain3`.
-- Prefab Y scale is copied from source instances; X/Z scale is expanded per placement so neighboring pieces touch instead of leaving holes.
-- Grass is kept behind a shoreline buffer and shore grass uses a smaller X/Z multiplier so it only slightly overlaps the beach.
-- Placement uses jittered rows and irregular coastline sampling to avoid a constant visible pattern.
+- Uses only beach/ground/detail grass prefab assets discovered in `Game_Terrain3`.
+- `SM_Env_Grass_*` prefabs are classified as terrain ground/fill.
+- `SM_Generic_Grass_Patch_*` prefabs are classified as decoration/detail grass, not terrain fill.
+- Ground fill places every valid interior cell with jittered rows; it no longer randomly skips coverage cells.
+- Beach placement uses a denser two-band rim to reduce shoreline gaps.
+- Detail grass is a separate sparse decoration pass on top of the ground, never the primary floor.
+- Prefab Y scale is copied from source instances; X/Z scale is expanded per role so neighboring pieces touch instead of leaving holes.
 
 Counts:
 - Source beach prefab instances: 31
-- Source grass prefab instances: 181
+- Source ground prefab instances: 46
+- Source detail grass prefab instances: 135
 - Unique source prefab assets: 8
-- Placed prefab instances: 3103
-- Interior grass spacing: 24.5
-- Grass X/Z scale multiplier: 1.32
-- Shore grass X/Z scale multiplier: 1.2
-- Beach X/Z scale multiplier: 1.42
+- Placed prefab instances: 6110
+- Ground fill spacing: 24
+- Shore ground spacing: 30
+- Detail grass spacing: 78
+- Ground X/Z scale multiplier: 1.55
+- Shore ground X/Z scale multiplier: 1.12
+- Detail grass X/Z scale multiplier: 0.95
+- Beach X/Z scale multiplier: 2.35
 
 Runtime transfer note: move the source-prefab collection into a prefab catalog, port `EvaluateIsland`, `BoundaryPoint`, and the placement loops to runtime, and instantiate pooled versions of the same source prefab ids.

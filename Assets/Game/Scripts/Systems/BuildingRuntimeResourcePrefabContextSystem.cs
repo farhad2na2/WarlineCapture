@@ -14,6 +14,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
         public readonly EntityQuery UnitPrefabRegistryQuery;
         public readonly EntityQuery SpawnPrefabCandidatesQuery;
         public readonly EntityQuery LivePlayerUnitsQuery;
+        public readonly Func<Source> CreateCurrentSource;
 
         public Source(
             RuntimeResourceSystem runtimeResourceSystem,
@@ -24,7 +25,8 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             Action<EntityManager> ensureEntityQueries,
             EntityQuery unitPrefabRegistryQuery,
             EntityQuery spawnPrefabCandidatesQuery,
-            EntityQuery livePlayerUnitsQuery)
+            EntityQuery livePlayerUnitsQuery,
+            Func<Source> createCurrentSource = null)
         {
             RuntimeResourceSystem = runtimeResourceSystem;
             RuntimeUnitPrefabSystem = runtimeUnitPrefabSystem;
@@ -35,6 +37,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             UnitPrefabRegistryQuery = unitPrefabRegistryQuery;
             SpawnPrefabCandidatesQuery = spawnPrefabCandidatesQuery;
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
+            CreateCurrentSource = createCurrentSource;
         }
     }
 
@@ -50,7 +53,8 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             source.SpawnPrefabSystem,
             source.TryGetEntityManager,
             source.EnsureEntityQueries,
-            () => CreateBuildingSpawnPrefabContext(source));
+            () => CreateBuildingSpawnPrefabContext(
+                source.CreateCurrentSource != null ? source.CreateCurrentSource() : source));
     }
 
     public CitizenPrefabSystem.Context CreateCitizenPrefabContext(Source source)

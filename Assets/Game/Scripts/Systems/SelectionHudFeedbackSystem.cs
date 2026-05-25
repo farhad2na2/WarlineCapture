@@ -3,6 +3,22 @@ using Unity.Entities;
 
 public sealed class SelectionHudFeedbackSystem
 {
+    public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
+
+    public readonly struct Context
+    {
+        public readonly SelectionUiQuerySystem SelectionUiQuerySystem;
+        public readonly TryGetEntityManagerDelegate TryGetDefaultEntityManager;
+
+        public Context(
+            SelectionUiQuerySystem selectionUiQuerySystem,
+            TryGetEntityManagerDelegate tryGetDefaultEntityManager)
+        {
+            SelectionUiQuerySystem = selectionUiQuerySystem;
+            TryGetDefaultEntityManager = tryGetDefaultEntityManager;
+        }
+    }
+
     private BattleHudGameplayBridge _battleHudBridge;
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
@@ -136,10 +152,23 @@ public sealed class SelectionHudFeedbackSystem
         ProcessPendingFeedback(em);
     }
 
+    public void ApplySelection(Context context, EntityManager em, Entity entity)
+    {
+        ApplySelection(em, entity, context.SelectionUiQuerySystem);
+    }
+
     public void ApplySquadSelection(EntityManager em, int selectedCount)
     {
         QueueSquadSelection(em, selectedCount);
         ProcessPendingFeedback(em);
+    }
+
+    public void ApplySquadSelection(Context context, int selectedCount)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        ApplySquadSelection(em, selectedCount);
     }
 
     public void ClearSelection(EntityManager em)
@@ -148,10 +177,26 @@ public sealed class SelectionHudFeedbackSystem
         ProcessPendingFeedback(em);
     }
 
+    public void ClearSelection(Context context)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        ClearSelection(em);
+    }
+
     public void ApplyCommandMode(EntityManager em, TacticalCommandMode mode)
     {
         QueueCommandMode(em, mode);
         ProcessPendingFeedback(em);
+    }
+
+    public void ApplyCommandMode(Context context, TacticalCommandMode mode)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        ApplyCommandMode(em, mode);
     }
 
     public void ClearCommandMode(EntityManager em)
@@ -160,16 +205,47 @@ public sealed class SelectionHudFeedbackSystem
         ProcessPendingFeedback(em);
     }
 
+    public void ClearCommandMode(Context context)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        ClearCommandMode(em);
+    }
+
     public void ApplyCommandResult(EntityManager em, TacticalCommandResult result)
     {
         QueueCommandResult(em, result);
         ProcessPendingFeedback(em);
     }
 
+    public void ApplyCommandResult(Context context, TacticalCommandResult result)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        ApplyCommandResult(em, result);
+    }
+
     public void SetWorldMarkersVisible(EntityManager em, bool visible)
     {
         QueueWorldMarkersVisible(em, visible);
         ProcessPendingFeedback(em);
+    }
+
+    public void SetWorldMarkersVisible(Context context, bool visible)
+    {
+        if (!TryGetDefaultEntityManager(context, out EntityManager em))
+            return;
+
+        SetWorldMarkersVisible(em, visible);
+    }
+
+    private static bool TryGetDefaultEntityManager(Context context, out EntityManager em)
+    {
+        em = default;
+        return context.TryGetDefaultEntityManager != null &&
+               context.TryGetDefaultEntityManager(out em);
     }
 
     private static void ApplyFeedback(BattleHudGameplayBridge bridge, SelectionHudFeedbackElement feedback)

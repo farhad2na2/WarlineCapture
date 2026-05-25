@@ -35,13 +35,18 @@ public sealed class SelectionRuntimeContextSystem
 
     private readonly SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem = new();
     private readonly SelectionRuntimeConfigSystem _selectionRuntimeConfigSystem = new();
+    private readonly SelectionRuntimeQuerySystem _selectionRuntimeQuerySystem = new();
     private SelectionRuntimeConfigSystem.State _runtimeConfig;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RtsSelectionInputSystem _rtsSelectionInputSystem = new();
     private readonly RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem = new();
+    private readonly RtsSelectionRuntimeInputContextSystem _rtsSelectionRuntimeInputContextSystem = new();
     private readonly RtsSelectionRuntimeCameraSystem _rtsSelectionRuntimeCameraSystem = new();
+    private readonly RtsSelectionRuntimeCameraContextSystem _rtsSelectionRuntimeCameraContextSystem = new();
     private readonly RtsSelectionCommandResultFlushSystem _rtsSelectionCommandResultFlushSystem = new();
+    private readonly RtsSelectionCommandResultContextSystem _rtsSelectionCommandResultContextSystem = new();
     private readonly RtsSelectionFocusCommandSystem _rtsSelectionFocusCommandSystem = new();
+    private readonly RtsSelectionFocusCommandContextSystem _rtsSelectionFocusCommandContextSystem = new();
     private readonly RtsSelectionPointerTargetCommandSystem _rtsSelectionPointerTargetCommandSystem = new();
     private RtsCameraSystem _rtsCameraSystem = new();
     private RtsCameraRequestSystem _rtsCameraRequestSystem = new();
@@ -72,11 +77,6 @@ public sealed class SelectionRuntimeContextSystem
     private RoadBuildSystem _roadBuildController;
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private World _queryWorld;
-    private EntityQuery _selectedMoveQuery;
-    private EntityQuery _gridPathingQuery;
-    private EntityQuery _gridConfigQuery;
-    private EntityQuery _selectedTagQuery;
     private readonly List<Entity> _visibleSelectionScratch = new();
     private Transform _runtimeRoot;
     private bool _explicitAttackTargetModeActive;
@@ -103,8 +103,8 @@ public sealed class SelectionRuntimeContextSystem
                 return false;
 
             var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            EnsureEntityQueries(em);
-            return _selectionUiQuerySystem.HasAnySelectedUnits(_selectedTagQuery);
+            EnsureRuntimeSelectionDependencies(em);
+            return _selectionUiQuerySystem.HasAnySelectedUnits(_selectionRuntimeQuerySystem.SelectedTagQuery);
         }
     }
 
@@ -297,8 +297,8 @@ public sealed class SelectionRuntimeContextSystem
             return false;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        using var selectedEntities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
+        EnsureRuntimeSelectionDependencies(em);
+        using var selectedEntities = _selectionRuntimeQuerySystem.SelectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
         return _selectionUiQuerySystem.TryGetSelectedUnitsPortraitPose(
             em,
             selectedEntities,
@@ -320,8 +320,8 @@ public sealed class SelectionRuntimeContextSystem
         }
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        using var selectedEntities = _selectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
+        EnsureRuntimeSelectionDependencies(em);
+        using var selectedEntities = _selectionRuntimeQuerySystem.SelectedTagQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
         _selectionUiQuerySystem.GetSelectedUnitEntities(em, selectedEntities, entities);
     }
 
@@ -442,64 +442,9 @@ public sealed class SelectionRuntimeContextSystem
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
     }
 
-    private void ApplyHudSelection(EntityManager em, Entity entity)
+    private SelectionHudFeedbackSystem.Context CreateHudFeedbackContext()
     {
-        _selectionHudFeedbackSystem.QueueSelection(em, entity, _selectionUiQuerySystem);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
-
-    private void ApplyHudSquadSelection(int selectedCount)
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _selectionHudFeedbackSystem.QueueSquadSelection(em, selectedCount);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
-
-    private void ClearHudSelection()
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _selectionHudFeedbackSystem.QueueClearSelection(em);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
-
-    private void ApplyHudCommandMode(TacticalCommandMode mode)
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _selectionHudFeedbackSystem.QueueCommandMode(em, mode);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
-
-    private void ClearHudCommandMode()
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _selectionHudFeedbackSystem.QueueClearCommandMode(em);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
-
-    private void ApplyHudCommandResult(TacticalCommandResult result)
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _selectionHudFeedbackSystem.QueueCommandResult(em, result);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
-    }
-
-    private void SetHudWorldMarkersVisible(bool visible)
-    {
-        if (!TryGetDefaultEntityManager(out EntityManager em))
-            return;
-
-        _selectionHudFeedbackSystem.QueueWorldMarkersVisible(em, visible);
-        _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
+        return new SelectionHudFeedbackSystem.Context(_selectionUiQuerySystem, TryGetDefaultEntityManager);
     }
 
     private bool TryGetDefaultEntityManager(out EntityManager em)
@@ -533,24 +478,9 @@ public sealed class SelectionRuntimeContextSystem
         _selectionOrderMarkerSystem.Dispose();
     }
 
-    private void EnsureEntityQueries(EntityManager em)
+    private void EnsureRuntimeSelectionDependencies(EntityManager em)
     {
-        World world = em.World;
-        if (_queryWorld == world && world != null && world.IsCreated)
-        {
-            _focusableUnitLookupSystem.EnsureEntityQueries(em);
-            _visibleUnitSelectionSystem.EnsureEntityQueries(em);
-            _attackOrderCommandSystem.EnsureEntityQueries(em);
-            _selectionOrderMarkerSystem.EnsureEntityQueries(em);
-            _focusedUnitCommandSystem.EnsureEntityQueries(em);
-            _focusedUnitLifecycleSystem.EnsureEntityQueries(em);
-            _selectedUnitOrderSnapshotSystem.EnsureEntityQueries(em);
-            _buildingTargetMoveOrderSystem.EnsureEntityQueries(em);
-            _transportBoardingCommandSystem.EnsureEntityQueries(em);
-            return;
-        }
-
-        _queryWorld = world;
+        _selectionRuntimeQuerySystem.EnsureEntityQueries(em);
         _focusableUnitLookupSystem.EnsureEntityQueries(em);
         _visibleUnitSelectionSystem.EnsureEntityQueries(em);
         _attackOrderCommandSystem.EnsureEntityQueries(em);
@@ -560,17 +490,6 @@ public sealed class SelectionRuntimeContextSystem
         _selectedUnitOrderSnapshotSystem.EnsureEntityQueries(em);
         _buildingTargetMoveOrderSystem.EnsureEntityQueries(em);
         _transportBoardingCommandSystem.EnsureEntityQueries(em);
-        _selectedMoveQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<SelectedUnitTag>(),
-            ComponentType.ReadOnly<UnitGrid>(),
-            ComponentType.ReadOnly<UnitMove>());
-        _gridPathingQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<GridConfig>(),
-            ComponentType.ReadOnly<GridWalkable>(),
-            ComponentType.ReadOnly<DynamicBlockerData>(),
-            ComponentType.ReadOnly<DynamicOccupancyData>());
-        _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        _selectedTagQuery = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
     }
 
     public void ProcessQueuedTransportCommands()
@@ -580,12 +499,12 @@ public sealed class SelectionRuntimeContextSystem
 
     public void ProcessExternalSelectionCommands()
     {
-        _rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
+        _rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(FocusCommandContext);
     }
 
     public void ProcessQueuedMoveOrder()
     {
-        _rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(CreateRuntimeInputContext());
+        _rtsSelectionRuntimeInputSystem.ProcessQueuedMoveOrder(RuntimeInputContext);
     }
 
     public void RefreshFocusedSelectionReadModels()
@@ -596,49 +515,45 @@ public sealed class SelectionRuntimeContextSystem
 
     public void UpdateOrderMarkerVisibility()
     {
-        _rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CreateCommandResultFlushContext());
+        _rtsSelectionCommandResultFlushSystem.UpdateOrderMarkerVisibility(CommandResultFlushContext);
     }
 
     public bool UpdateRuntimeCameraTick()
     {
-        return _rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(CreateRuntimeCameraContext());
+        return _rtsSelectionRuntimeCameraSystem.UpdateRuntimeCameraTick(RuntimeCameraContext);
     }
 
     public void UpdateNormalPointerInput()
     {
-        _rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(CreateRuntimeInputContext());
+        _rtsSelectionRuntimeInputSystem.UpdateNormalPointerInput(RuntimeInputContext);
     }
 
-    private RtsSelectionRuntimeInputSystem.Context CreateRuntimeInputContext()
-    {
-        return new RtsSelectionRuntimeInputSystem.Context(
+    private RtsSelectionRuntimeInputSystem.Context RuntimeInputContext =>
+        _rtsSelectionRuntimeInputContextSystem.Create(
             _runtimeGameplayStateSystem,
             _rtsSelectionInputSystem,
             _mainMenuPlayUi,
-            _runtimeConfig.DragThresholdPixels,
-            _runtimeConfig.SelectionModeHoldSeconds,
+            _runtimeConfig,
             () => _explicitAttackTargetModeActive,
             value => _explicitAttackTargetModeActive = value,
             () => _rtsCameraSystem.IsDragging,
-            value => _rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), value),
+            value => _rtsSelectionRuntimeCameraSystem.SetCameraDragging(RuntimeCameraContext, value),
             pointerPosition => IsPointerOverUI(pointerPosition, out _),
             pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
             TryIssueAttackOrderToClickedUnit,
             TryIssueBoardTransportOrderToClickedUnit,
             TryFocusUnit,
-            screenDelta => _rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
+            screenDelta => _rtsSelectionRuntimeCameraSystem.PanCamera(RuntimeCameraContext, screenDelta),
             IssueMoveOrder,
             ProcessSelectionRectangleRequests);
-    }
 
-    private RtsSelectionRuntimeCameraSystem.Context CreateRuntimeCameraContext()
-    {
-        return new RtsSelectionRuntimeCameraSystem.Context(
+    private RtsSelectionRuntimeCameraSystem.Context RuntimeCameraContext =>
+        _rtsSelectionRuntimeCameraContextSystem.Create(
             _runtimeGameplayStateSystem,
             _rtsSelectionInputSystem,
             _rtsCameraSystem,
             _rtsCameraRequestSystem,
-            _runtimeConfig.WorldCamera,
+            _runtimeConfig,
             _mainMenuPlayUi,
             _roadBuildController,
             _buildingPlacementInteractionSystem,
@@ -646,31 +561,13 @@ public sealed class SelectionRuntimeContextSystem
             TryGetDefaultEntityManager,
             IsPointerOverGameplayUi,
             UpdateLastKnownPointerPosition,
-            HideOrderScreenMarkers,
-            _runtimeConfig.PanSensitivity,
-            _runtimeConfig.ZoomSpeed,
-            _runtimeConfig.MinZoomHeight,
-            _runtimeConfig.MaxZoomHeight,
-            _runtimeConfig.NormalModeZoomHeight,
-            _runtimeConfig.BuildModeZoomHeight,
-            _runtimeConfig.NormalModePitch,
-            _runtimeConfig.BuildModePitch,
-            _runtimeConfig.NormalModeYaw,
-            _runtimeConfig.BuildModeYaw,
-            _runtimeConfig.NormalModeFieldOfView,
-            _runtimeConfig.BuildModeFieldOfView,
-            _runtimeConfig.FullscreenIsoZoomHeight,
-            _runtimeConfig.FullscreenIsoPitch,
-            _runtimeConfig.FullscreenIsoYaw,
-            _runtimeConfig.FullscreenIsoOrthographicSize,
-            _runtimeConfig.ZoomTransitionSmoothTime);
-    }
+            HideOrderScreenMarkers);
 
-    private RtsSelectionCommandResultFlushSystem.Context CreateCommandResultFlushContext()
-    {
-        return new RtsSelectionCommandResultFlushSystem.Context(
+    private RtsSelectionCommandResultFlushSystem.Context CommandResultFlushContext =>
+        _rtsSelectionCommandResultContextSystem.Create(
             _rtsSelectionInputSystem,
             _selectionHudFeedbackSystem,
+            CreateHudFeedbackContext(),
             _selectionOrderMarkerSystem,
             _selectionMoveCommandRequestSystem,
             _selectionAttackCommandRequestSystem,
@@ -684,14 +581,10 @@ public sealed class SelectionRuntimeContextSystem
             _selectionStateSystem,
             _buildingPlacementInteractionSystem,
             _buildingPlacementInteractionContext,
-            _selectedMoveQuery,
-            _gridConfigQuery,
+            _selectionRuntimeQuerySystem,
             TryGetDefaultEntityManager,
-            EnsureEntityQueries,
+            EnsureRuntimeSelectionDependencies,
             ClearCurrentSelection,
-            ApplyHudCommandResult,
-            ClearHudCommandMode,
-            SetHudWorldMarkersVisible,
             RequestMoveOrderScreenMarker,
             RequestAttackOrderScreenMarker,
             SetCameraDragging,
@@ -701,11 +594,9 @@ public sealed class SelectionRuntimeContextSystem
             TryGetClickedUnitEntity,
             TryGetClickedUnitEntity,
             TryGetClickedCell);
-    }
 
-    private RtsSelectionFocusCommandSystem.Context CreateFocusCommandContext()
-    {
-        return new RtsSelectionFocusCommandSystem.Context(
+    private RtsSelectionFocusCommandSystem.Context FocusCommandContext =>
+        _rtsSelectionFocusCommandContextSystem.Create(
             _runtimeGameplayStateSystem,
             _rtsSelectionInputSystem,
             _selectionStateSystem,
@@ -715,15 +606,12 @@ public sealed class SelectionRuntimeContextSystem
             _buildingPlacementInteractionContext,
             _runtimeConfig.WorldCamera,
             TryGetDefaultEntityManager,
-            EnsureEntityQueries,
+            EnsureRuntimeSelectionDependencies,
             ClearCurrentSelection,
             QueueSelectionRectangleRequest,
             ProcessSelectionRectangleRequests,
-            ApplyHudSelection,
-            ApplyHudCommandResult,
-            ClearHudSelection,
-            ClearHudCommandMode,
-            SetHudWorldMarkersVisible,
+            _selectionHudFeedbackSystem,
+            CreateHudFeedbackContext(),
             SetCameraDragging,
             value => _explicitAttackTargetModeActive = value,
             _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
@@ -735,7 +623,6 @@ public sealed class SelectionRuntimeContextSystem
             IssueFocusedMissileLauncherRadarAttack,
             ArmFocusedAttackTargetMode,
             CancelExplicitAttackTargetMode);
-    }
 
     private RtsSelectionPointerTargetCommandSystem.Context CreatePointerTargetCommandContext()
     {
@@ -756,11 +643,11 @@ public sealed class SelectionRuntimeContextSystem
             TryGetPointerPosition,
             () => _explicitAttackTargetModeActive,
             value => _explicitAttackTargetModeActive = value,
-            ApplyHudCommandMode,
-            ApplyHudCommandResult,
-            ClearHudSelection,
-            ClearHudCommandMode,
-            ApplyHudSelection,
+            mode => _selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), mode),
+            result => _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), result),
+            () => _selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext()),
+            () => _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext()),
+            (em, entity) => _selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), em, entity),
             ClearCurrentSelection,
             RequestMoveOrderScreenMarker,
             SetCameraDragging,
@@ -792,7 +679,7 @@ public sealed class SelectionRuntimeContextSystem
             return false;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
+        EnsureRuntimeSelectionDependencies(em);
         Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
         return _visibleUnitSelectionSystem.HasVisiblePlayerUnits(
             em,
@@ -818,7 +705,7 @@ public sealed class SelectionRuntimeContextSystem
         if (!_rtsSelectionInputSystem.TryGetPointerRequests(out EntityManager em, out DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests))
             return;
 
-        EnsureEntityQueries(em);
+        EnsureRuntimeSelectionDependencies(em);
         _selectionRectangleRequestSystem.ProcessPendingRequests(
             em,
             pointerRequests,
@@ -830,8 +717,8 @@ public sealed class SelectionRuntimeContextSystem
             _visibleSelectionScratch,
             ClearCurrentSelection,
             CacheSelectedMoveEntities,
-            ApplyHudSelection,
-            ApplyHudSquadSelection,
+            (entityManager, entity) => _selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity),
+            selectedCount => _selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount),
             _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
             ClearSelectedBuildingAfterRectangleSelection);
     }
@@ -848,13 +735,13 @@ public sealed class SelectionRuntimeContextSystem
 
     private void ProcessMoveCommandRequests()
     {
-        _rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(CreateCommandResultFlushContext());
+        _rtsSelectionCommandResultFlushSystem.ProcessMoveCommandRequests(CommandResultFlushContext);
     }
 
     private bool ProcessAttackCommandRequests()
     {
         return _rtsSelectionCommandResultFlushSystem.ProcessAttackCommandRequests(
-            CreateCommandResultFlushContext(),
+            CommandResultFlushContext,
             _explicitAttackTargetModeActive);
     }
 
@@ -865,7 +752,7 @@ public sealed class SelectionRuntimeContextSystem
 
     private bool ProcessTransportCommandRequests()
     {
-        return _rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(CreateCommandResultFlushContext());
+        return _rtsSelectionCommandResultFlushSystem.ProcessTransportCommandRequests(CommandResultFlushContext);
     }
 
     public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
@@ -990,49 +877,49 @@ public sealed class SelectionRuntimeContextSystem
 
     private void SetCameraDragging(bool isDragging)
     {
-        _rtsSelectionRuntimeCameraSystem.SetCameraDragging(CreateRuntimeCameraContext(), isDragging);
+        _rtsSelectionRuntimeCameraSystem.SetCameraDragging(RuntimeCameraContext, isDragging);
     }
 
     public void EnterFullscreenMapIsoMode(Vector3 focusWorldPosition)
     {
-        _rtsSelectionRuntimeCameraSystem.EnterFullscreenMapIsoMode(CreateRuntimeCameraContext(), focusWorldPosition);
+        _rtsSelectionRuntimeCameraSystem.EnterFullscreenMapIsoMode(RuntimeCameraContext, focusWorldPosition);
     }
 
     public void ExitFullscreenMapIsoMode()
     {
-        _rtsSelectionRuntimeCameraSystem.ExitFullscreenMapIsoMode(CreateRuntimeCameraContext());
+        _rtsSelectionRuntimeCameraSystem.ExitFullscreenMapIsoMode(RuntimeCameraContext);
     }
 
     public bool IsNormalIsoModeActive => _rtsCameraSystem.NormalIsoModeActive;
 
     public void ToggleNormalIsoMode()
     {
-        _rtsSelectionRuntimeCameraSystem.ToggleNormalIsoMode(CreateRuntimeCameraContext());
+        _rtsSelectionRuntimeCameraSystem.ToggleNormalIsoMode(RuntimeCameraContext);
     }
 
     public void EnterNormalIsoMode()
     {
-        _rtsSelectionRuntimeCameraSystem.EnterNormalIsoMode(CreateRuntimeCameraContext());
+        _rtsSelectionRuntimeCameraSystem.EnterNormalIsoMode(RuntimeCameraContext);
     }
 
     public void ExitNormalIsoMode()
     {
-        _rtsSelectionRuntimeCameraSystem.ExitNormalIsoMode(CreateRuntimeCameraContext());
+        _rtsSelectionRuntimeCameraSystem.ExitNormalIsoMode(RuntimeCameraContext);
     }
 
     public void MoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        _rtsSelectionRuntimeCameraSystem.MoveCameraGroundCenterTo(CreateRuntimeCameraContext(), focusWorldPosition);
+        _rtsSelectionRuntimeCameraSystem.MoveCameraGroundCenterTo(RuntimeCameraContext, focusWorldPosition);
     }
 
     public void SmoothMoveCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        _rtsSelectionRuntimeCameraSystem.SmoothMoveCameraGroundCenterTo(CreateRuntimeCameraContext(), focusWorldPosition);
+        _rtsSelectionRuntimeCameraSystem.SmoothMoveCameraGroundCenterTo(RuntimeCameraContext, focusWorldPosition);
     }
 
     public void FollowCameraGroundCenterTo(Vector3 focusWorldPosition)
     {
-        _rtsSelectionRuntimeCameraSystem.FollowCameraGroundCenterTo(CreateRuntimeCameraContext(), focusWorldPosition);
+        _rtsSelectionRuntimeCameraSystem.FollowCameraGroundCenterTo(RuntimeCameraContext, focusWorldPosition);
     }
 
     private void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")
@@ -1042,17 +929,17 @@ public sealed class SelectionRuntimeContextSystem
             _selectionStateSystem,
             reason,
             _selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
-            ClearHudSelection);
+            () => _selectionHudFeedbackSystem.ClearSelection(CreateHudFeedbackContext()));
     }
 
     public void ClearFocusedUnit()
     {
-        _rtsSelectionFocusCommandSystem.ClearFocusedUnit(CreateFocusCommandContext());
+        _rtsSelectionFocusCommandSystem.ClearFocusedUnit(FocusCommandContext);
     }
 
     public void DeselectAllUnits(string reason = "DeselectAllUnits")
     {
-        _rtsSelectionFocusCommandSystem.DeselectAllUnits(CreateFocusCommandContext(), reason);
+        _rtsSelectionFocusCommandSystem.DeselectAllUnits(FocusCommandContext, reason);
     }
 
     public void SelectAllVisiblePlayerUnits()
@@ -1072,29 +959,29 @@ public sealed class SelectionRuntimeContextSystem
 
     private void SelectAllVisiblePlayerUnits(VisibleUnitSelectionSystem.Filter filter)
     {
-        _rtsSelectionFocusCommandSystem.SelectAllVisiblePlayerUnits(CreateFocusCommandContext(), filter);
+        _rtsSelectionFocusCommandSystem.SelectAllVisiblePlayerUnits(FocusCommandContext, filter);
     }
 
     public bool FocusUnitEntity(Entity entity)
     {
-        return _rtsSelectionFocusCommandSystem.FocusUnitEntity(CreateFocusCommandContext(), entity);
+        return _rtsSelectionFocusCommandSystem.FocusUnitEntity(FocusCommandContext, entity);
     }
 
     public TacticalCommandResult TrySelectRuntimeEntity(Entity entity)
     {
-        return _rtsSelectionFocusCommandSystem.TrySelectRuntimeEntity(CreateFocusCommandContext(), entity);
+        return _rtsSelectionFocusCommandSystem.TrySelectRuntimeEntity(FocusCommandContext, entity);
     }
 
     public TacticalCommandResult TryIssueMoveToCell(int2 goal)
     {
-        ApplyHudCommandMode(TacticalCommandMode.Move);
+        _selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Move);
 
         if (World.DefaultGameObjectInjectionWorld == null)
             return ApplyAndReturn(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
 
         EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        using var selectedEntities = _selectedMoveQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
+        EnsureRuntimeSelectionDependencies(em);
+        using var selectedEntities = _selectionRuntimeQuerySystem.SelectedMoveQuery.ToEntityArray(Unity.Collections.Allocator.Temp);
         if (selectedEntities.Length == 0)
             return ApplyAndReturn(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
 
@@ -1115,8 +1002,8 @@ public sealed class SelectionRuntimeContextSystem
             : TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         if (result.Accepted)
         {
-            SetHudWorldMarkersVisible(true);
-            ClearHudCommandMode();
+            _selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
+            _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
         }
 
         return ApplyAndReturn(result);
@@ -1124,13 +1011,13 @@ public sealed class SelectionRuntimeContextSystem
 
     public TacticalCommandResult TryIssueAttackTarget(Entity targetEntity)
     {
-        ApplyHudCommandMode(TacticalCommandMode.Attack);
+        _selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Attack);
 
         if (World.DefaultGameObjectInjectionWorld == null)
             return ApplyAndReturn(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
 
         EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
+        EnsureRuntimeSelectionDependencies(em);
         AttackOrderCommandSystem.Result issueResult =
             _attackOrderCommandSystem.IssueAttackTarget(em, targetEntity, _unitTargetOrderSystem);
         TacticalCommandResult result = issueResult.CommandResult;
@@ -1138,8 +1025,8 @@ public sealed class SelectionRuntimeContextSystem
         {
             _explicitAttackTargetModeActive = false;
             SetCameraDragging(false);
-            SetHudWorldMarkersVisible(true);
-            ClearHudCommandMode();
+            _selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
+            _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
         }
 
         return ApplyAndReturn(result);
@@ -1147,9 +1034,9 @@ public sealed class SelectionRuntimeContextSystem
 
     private TacticalCommandResult ApplyAndReturn(TacticalCommandResult result)
     {
-        ApplyHudCommandResult(result);
+        _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), result);
         if (!result.Accepted)
-            ClearHudCommandMode();
+            _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
         return result;
     }
 
@@ -1243,10 +1130,10 @@ public sealed class SelectionRuntimeContextSystem
         _focusedUnitLifecycleSystem.SetFocusedUnit(_selectionStateSystem, launcher);
         _explicitAttackTargetModeActive = false;
         SetCameraDragging(false);
-        ApplyHudCommandResult(TacticalCommandResult.Success());
-        ClearHudCommandMode();
-        SetHudWorldMarkersVisible(true);
-        ApplyHudSelection(em, launcher);
+        _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
+        _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+        _selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
+        _selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), em, launcher);
         return true;
     }
 
@@ -1254,14 +1141,14 @@ public sealed class SelectionRuntimeContextSystem
     {
         if (!CanCommandFocusedUnit || !FocusedUnitCanAttack)
         {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(
+            _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(
                 HasFocusedUnit ? TacticalCommandReasonCode.TargetNotAttackable : TacticalCommandReasonCode.NoSelection));
             return false;
         }
 
         _explicitAttackTargetModeActive = true;
-        ApplyHudCommandMode(TacticalCommandMode.Attack);
-        SetHudWorldMarkersVisible(true);
+        _selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), TacticalCommandMode.Attack);
+        _selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), true);
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
         _rtsSelectionInputSystem.IsDraggingSelection = false;
@@ -1273,7 +1160,7 @@ public sealed class SelectionRuntimeContextSystem
     public void CancelExplicitAttackTargetMode()
     {
         _explicitAttackTargetModeActive = false;
-        ClearHudCommandMode();
+        _selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
     }
 
     public bool IssueHoldPositionOrder()
@@ -1288,11 +1175,11 @@ public sealed class SelectionRuntimeContextSystem
 
     private bool IssueImmediateSelectedUnitOrder(TacticalCommandMode mode, bool clearEngageTarget)
     {
-        ApplyHudCommandMode(mode);
+        _selectionHudFeedbackSystem.ApplyCommandMode(CreateHudFeedbackContext(), mode);
 
         if (World.DefaultGameObjectInjectionWorld == null)
         {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return false;
         }
 
@@ -1303,14 +1190,14 @@ public sealed class SelectionRuntimeContextSystem
             _unitMoveOrderSystem);
         if (!issued)
         {
-            ApplyHudCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return false;
         }
 
         _explicitAttackTargetModeActive = false;
         SetCameraDragging(false);
-        SetHudWorldMarkersVisible(false);
-        ApplyHudCommandResult(TacticalCommandResult.Success());
+        _selectionHudFeedbackSystem.SetWorldMarkersVisible(CreateHudFeedbackContext(), false);
+        _selectionHudFeedbackSystem.ApplyCommandResult(CreateHudFeedbackContext(), TacticalCommandResult.Success());
         return true;
     }
 
@@ -1320,8 +1207,11 @@ public sealed class SelectionRuntimeContextSystem
             return;
 
         var em = World.DefaultGameObjectInjectionWorld.EntityManager;
-        EnsureEntityQueries(em);
-        _focusedUnitLifecycleSystem.RefreshFocusedUnit(em, _selectionStateSystem, ApplyHudSelection);
+        EnsureRuntimeSelectionDependencies(em);
+        _focusedUnitLifecycleSystem.RefreshFocusedUnit(
+            em,
+            _selectionStateSystem,
+            (entityManager, entity) => _selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity));
     }
 
     private bool TryFocusUnit(Vector2 screenPosition)

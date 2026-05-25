@@ -184,19 +184,23 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`BuildingPlacementSystem` must not expose public building UI read/query or menu/camp command compatibility wrappers", contract);
         StringAssert.Contains("RoadBuildSystem and RTSSelectionSystem building-placement peer interactions belong behind `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("focused-unit lifecycle, focused entity validity checks, selected tag/focus synchronization, clear-selection selected-tag mutation, direct focus assignment, and clicked focus command routing belong in `FocusedUnitLifecycleSystem`", contract);
+        StringAssert.Contains("focus command context construction belongs in `RtsSelectionFocusCommandContextSystem`", contract);
         StringAssert.Contains("focused-unit UI read-model publication, focused labels/descriptions, health/capacity/status projection, focused transport passenger row projection, world-position projection, and portrait pose projection belong in `FocusedUnitUiReadModelSystem`", contract);
         StringAssert.Contains("attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`", contract);
         StringAssert.Contains("move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`", contract);
-        StringAssert.Contains("HUD selection feedback, squad-selection labels, command mode feedback, command result feedback, world-marker visibility forwarding, ECS feedback queue publication/consumption, and `BattleHudGameplayBridge` lookup/cache ownership belong in `SelectionHudFeedbackSystem`", contract);
+        StringAssert.Contains("HUD selection feedback, squad-selection labels, command mode feedback, command result feedback, world-marker visibility forwarding, the HUD feedback context contract, ECS feedback queue publication/consumption, and `BattleHudGameplayBridge` lookup/cache ownership belong in `SelectionHudFeedbackSystem`", contract);
         StringAssert.Contains("camera drag state, smooth focus state, zoom transition state, camera mode math, camera ground projection, camera pan/zoom mutation, and camera mode interpolation belong in `RtsCameraSystem`", contract);
+        StringAssert.Contains("runtime camera context construction belongs in `RtsSelectionRuntimeCameraContextSystem`", contract);
         StringAssert.Contains("selected move-order click rejection, selected move-query consumption, manual move goal assignment orchestration, group path-request staggering, selected move-order diagnostics, and move-order command results belong in `SelectedMoveOrderCommandSystem`", contract);
+        StringAssert.Contains("selection runtime cached query construction, selected-move query handles, selected-tag query handles, and grid-config query handles belong in `SelectionRuntimeQuerySystem`", contract);
         StringAssert.Contains("selected move command request consumption, selected move command execution dispatch, and ECS command result publication belong in `SelectionMoveCommandRequestSystem`", contract);
         StringAssert.Contains("selected attack command request consumption, clicked attack dispatch, ECS attack command result publication, and attack marker result payloads belong in `SelectionAttackCommandRequestSystem`", contract);
-        StringAssert.Contains("move/attack/transport command result draining, command-result HUD feedback forwarding, command-mode cleanup, command-result screen marker emission, command-result order marker projection, command-result world-marker visibility forwarding, and order marker visibility ticking during the temporary compatibility phase belong in `RtsSelectionCommandResultFlushSystem`", contract);
+        StringAssert.Contains("command-result flush context construction belongs in `RtsSelectionCommandResultContextSystem`", contract);
         StringAssert.Contains("selected boarding-source collection, clicked/nearby transport resolution, transport boarding order creation, pending boarding-count checks, and boarding command diagnostics coordination belong in `TransportBoardingCommandSystem`", contract);
         StringAssert.Contains("transport boarding/disembark request consumption, boarding result marker payloads, focused transport disembark mutation, and transport command ECS result publication belong in `SelectionTransportCommandRequestSystem`", contract);
         StringAssert.Contains("The target architecture is no managed selection orchestration shell", contract);
         StringAssert.Contains("pointer press/release, drag, click, camera drag, selection rectangle, and command intent requests must use ECS data-only request components/buffers", contract);
+        StringAssert.Contains("runtime input context construction belongs in `RtsSelectionRuntimeInputContextSystem`", contract);
         StringAssert.Contains("selection rectangle request consumption, visible unit collection for rectangle requests, selected-tag application, selected move cache update, selection focus handoff, and rectangle selection diagnostics belong in `SelectionRectangleRequestSystem`", contract);
         StringAssert.Contains("selection rectangle GUI rendering belongs in `SelectionRectangleView`, which reads `RtsSelectionInputStateComponent` through `RtsSelectionInputStateSystem` and must not own gameplay selection mutation", contract);
         StringAssert.Contains("UI command buttons must enqueue ECS selection command intents through `SelectionUiCommandSystem`", contract);
@@ -2433,6 +2437,7 @@ public sealed class GameplayArchitectureContractTests
         const string retiredSelectionRuntimeUpdateFile = "Assets/Game/Scripts/Systems/SelectionRuntimeUpdateSystem.cs";
         const string selectionRuntimeContextFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string selectionRuntimeConfigFile = "Assets/Game/Scripts/Systems/SelectionRuntimeConfigSystem.cs";
+        const string selectionRuntimeQueryFile = "Assets/Game/Scripts/Systems/SelectionRuntimeQuerySystem.cs";
 
         string contract = File.ReadAllText(ContractPath);
         string bootstrap = File.ReadAllText(bootstrapFile);
@@ -2442,6 +2447,7 @@ public sealed class GameplayArchitectureContractTests
         string selectionStartup = File.ReadAllText(selectionStartupFile);
         string selectionRuntimeContext = File.ReadAllText(selectionRuntimeContextFile);
         string selectionRuntimeConfig = File.ReadAllText(selectionRuntimeConfigFile);
+        string selectionRuntimeQuery = File.ReadAllText(selectionRuntimeQueryFile);
         string[] runtimeSourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
             .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
@@ -2470,12 +2476,24 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public sealed class SelectionRuntimeConfigSystem", selectionRuntimeConfig);
         StringAssert.Contains("CreateState", selectionRuntimeConfig);
         StringAssert.Contains("Normalize", selectionRuntimeConfig);
+        StringAssert.Contains("public sealed class SelectionRuntimeQuerySystem", selectionRuntimeQuery);
+        StringAssert.Contains("SelectedMoveQuery", selectionRuntimeQuery);
+        StringAssert.Contains("GridConfigQuery", selectionRuntimeQuery);
+        StringAssert.Contains("SelectedTagQuery", selectionRuntimeQuery);
+        StringAssert.Contains("CreateEntityQuery", selectionRuntimeQuery);
         StringAssert.Contains("SelectionRuntimeConfigSystem _selectionRuntimeConfigSystem", selectionRuntimeContext);
         StringAssert.Contains("SelectionRuntimeConfigSystem.State _runtimeConfig", selectionRuntimeContext);
         StringAssert.Contains("SelectionRuntimeDiagnosticsSystem _selectionRuntimeDiagnosticsSystem", selectionRuntimeContext);
+        StringAssert.Contains("SelectionRuntimeQuerySystem _selectionRuntimeQuerySystem", selectionRuntimeContext);
         Assert.IsFalse(selectionRuntimeContext.Contains("DefaultPanSensitivity", StringComparison.Ordinal), "Selection runtime config defaults belong in SelectionRuntimeConfigSystem.");
         Assert.IsFalse(selectionRuntimeContext.Contains("ApplyConfigIfAvailable", StringComparison.Ordinal), "Selection runtime config application belongs in SelectionRuntimeConfigSystem.");
         Assert.IsFalse(selectionRuntimeContext.Contains("RuntimeDiagnosticsStateComponent", StringComparison.Ordinal), "Selection runtime diagnostics state reads belong in SelectionRuntimeDiagnosticsSystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _selectedMoveQuery", StringComparison.Ordinal), "Selection runtime query handles belong in SelectionRuntimeQuerySystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _gridConfigQuery", StringComparison.Ordinal), "Selection runtime query handles belong in SelectionRuntimeQuerySystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _selectedTagQuery", StringComparison.Ordinal), "Selection runtime query handles belong in SelectionRuntimeQuerySystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("EntityQuery _gridPathingQuery", StringComparison.Ordinal), "Unused selection runtime query handles must not return to SelectionRuntimeContextSystem.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("private void EnsureEntityQueries", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own cached EntityQuery refresh policy.");
+        Assert.IsFalse(selectionRuntimeContext.Contains("CreateEntityQuery", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own cached EntityQuery construction.");
         Assert.IsFalse(selectionRuntimeContext.Contains("public void Update(", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not become another managed runtime Update shell.");
         Assert.IsFalse(selectionRuntimeContext.Contains("public sealed class RTSSelectionSystem", StringComparison.Ordinal), "The retired RTSSelectionSystem type must not be restored.");
         StringAssert.Contains("Action<MainMenuPlayUI> bindSelectionMainMenu", menuStartup);
@@ -2620,24 +2638,30 @@ public sealed class GameplayArchitectureContractTests
         const string moveCommandFile = "Assets/Game/Scripts/Systems/SelectedMoveOrderCommandSystem.cs";
         const string moveRequestFile = "Assets/Game/Scripts/Systems/SelectionMoveCommandRequestSystem.cs";
         const string commandResultFlushFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
+        const string commandResultContextFile = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultContextSystem.cs";
         const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
         const string inputFile = "Assets/Game/Scripts/Systems/RtsSelectionInputSystem.cs";
         Assert.IsTrue(File.Exists(moveOrderFile), "Manual move-order goal and footprint rules must live in UnitMoveOrderSystem.");
         Assert.IsTrue(File.Exists(moveCommandFile), "Selected move-order command orchestration must live in SelectedMoveOrderCommandSystem.");
         Assert.IsTrue(File.Exists(moveRequestFile), "Selected move command request processing must live in SelectionMoveCommandRequestSystem.");
         Assert.IsTrue(File.Exists(commandResultFlushFile), "RTS command result draining and marker/HUD flush ownership must live in RtsSelectionCommandResultFlushSystem.");
+        Assert.IsTrue(File.Exists(commandResultContextFile), "RTS command result context construction must live outside SelectionRuntimeContextSystem.");
         Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer move command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
 
         string selection = File.ReadAllText(selectionFile);
         string moveCommand = File.ReadAllText(moveCommandFile);
         string moveRequest = File.ReadAllText(moveRequestFile);
         string commandResultFlush = File.ReadAllText(commandResultFlushFile);
+        string commandResultContext = File.ReadAllText(commandResultContextFile);
         string pointerTarget = File.ReadAllText(pointerTargetFile);
         string input = File.ReadAllText(inputFile);
         StringAssert.Contains("UnitMoveOrderSystem _unitMoveOrderSystem", selection);
         StringAssert.Contains("SelectedMoveOrderCommandSystem _selectedMoveOrderCommandSystem", selection);
         StringAssert.Contains("SelectionMoveCommandRequestSystem _selectionMoveCommandRequestSystem", selection);
         StringAssert.Contains("RtsSelectionCommandResultFlushSystem _rtsSelectionCommandResultFlushSystem", selection);
+        StringAssert.Contains("RtsSelectionCommandResultContextSystem _rtsSelectionCommandResultContextSystem", selection);
+        StringAssert.Contains("CommandResultFlushContext", selection);
+        StringAssert.Contains("new RtsSelectionCommandResultFlushSystem.Context", commandResultContext);
         StringAssert.Contains("InputSystem.QueueMoveCommandRequest", pointerTarget);
         StringAssert.Contains("MoveCommandRequestSystem.ProcessPendingRequests", commandResultFlush);
         StringAssert.Contains("RtsSelectionCommandIntentKind.Move", input);
@@ -2652,6 +2676,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("IsAlreadyMovingToGoal", moveCommand);
         StringAssert.Contains("_unitMoveOrderSystem.IssueImmediateMoveCommand", selection);
         StringAssert.Contains("_unitMoveOrderSystem.ClearMovementOrderComponents", selection);
+        Assert.IsFalse(selection.Contains("CreateCommandResultFlushContext", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own command-result flush context construction.");
+        Assert.IsFalse(selection.Contains("new RtsSelectionCommandResultFlushSystem.Context", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not construct command-result flush contexts directly.");
         Assert.IsFalse(
             Regex.IsMatch(selection, @"private\s+static\s+int2\s+FindManualMoveGoal\s*\("),
             "Manual move-goal selection belongs in UnitMoveOrderSystem, not RTSSelectionSystem.");
@@ -2762,17 +2788,23 @@ public sealed class GameplayArchitectureContractTests
         const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string lifecycleFile = "Assets/Game/Scripts/Systems/FocusedUnitLifecycleSystem.cs";
         const string focusCommandFile = "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandSystem.cs";
+        const string focusCommandContextFile = "Assets/Game/Scripts/Systems/RtsSelectionFocusCommandContextSystem.cs";
         const string pointerTargetFile = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
         Assert.IsTrue(File.Exists(lifecycleFile), "Focused-unit lifecycle ownership must live in FocusedUnitLifecycleSystem.");
         Assert.IsTrue(File.Exists(focusCommandFile), "Focus/selection compatibility commands must live in RtsSelectionFocusCommandSystem.");
+        Assert.IsTrue(File.Exists(focusCommandContextFile), "Focus command context construction must live outside SelectionRuntimeContextSystem.");
         Assert.IsTrue(File.Exists(pointerTargetFile), "Pointer focus command dispatch must live in RtsSelectionPointerTargetCommandSystem.");
 
         string selection = File.ReadAllText(selectionFile);
         string lifecycle = File.ReadAllText(lifecycleFile);
         string focusCommand = File.ReadAllText(focusCommandFile);
+        string focusCommandContext = File.ReadAllText(focusCommandContextFile);
         string pointerTarget = File.ReadAllText(pointerTargetFile);
         StringAssert.Contains("FocusedUnitLifecycleSystem _focusedUnitLifecycleSystem", selection);
         StringAssert.Contains("RtsSelectionFocusCommandSystem _rtsSelectionFocusCommandSystem", selection);
+        StringAssert.Contains("RtsSelectionFocusCommandContextSystem _rtsSelectionFocusCommandContextSystem", selection);
+        StringAssert.Contains("FocusCommandContext", selection);
+        StringAssert.Contains("new RtsSelectionFocusCommandSystem.Context", focusCommandContext);
         StringAssert.Contains("_focusedUnitLifecycleSystem.RefreshFocusedUnit", selection);
         StringAssert.Contains("_focusedUnitLifecycleSystem.ClearCurrentSelection", selection);
         StringAssert.Contains("_focusedUnitLifecycleSystem.TryGetFocusedUnitEntity", selection);
@@ -2807,6 +2839,8 @@ public sealed class GameplayArchitectureContractTests
             selection.Contains("em.RemoveComponent<SelectedUnitTag>(entity)", StringComparison.Ordinal) ||
             selection.Contains("em.AddComponent<SelectedUnitTag>(entity)", StringComparison.Ordinal),
             "Focused-unit state, selected-tag sync, focus/select-all command branching, and direct selected-tag mutation belong in FocusedUnitLifecycleSystem/RtsSelectionFocusCommandSystem, not RTSSelectionSystem.");
+        Assert.IsFalse(selection.Contains("CreateFocusCommandContext", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own focus command context construction.");
+        Assert.IsFalse(selection.Contains("new RtsSelectionFocusCommandSystem.Context", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not construct focus command contexts directly.");
     }
 
     [Test]
@@ -2913,16 +2947,18 @@ public sealed class GameplayArchitectureContractTests
         string hudFeedbackComponents = File.ReadAllText(hudFeedbackComponentsFile);
         string commandResultFlush = File.ReadAllText(commandResultFlushFile);
         StringAssert.Contains("SelectionHudFeedbackSystem _selectionHudFeedbackSystem", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueSelection", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueSquadSelection", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueClearSelection", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueCommandMode", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueClearCommandMode", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueCommandResult", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.QueueWorldMarkersVisible", selection);
-        StringAssert.Contains("_selectionHudFeedbackSystem.ProcessPendingFeedback", selection);
+        StringAssert.Contains("CreateHudFeedbackContext", selection);
         StringAssert.Contains("SelectionHudFeedbackQueueComponent", hudFeedbackComponents);
         StringAssert.Contains("SelectionHudFeedbackElement", hudFeedbackComponents);
+        StringAssert.Contains("public readonly struct Context", hudFeedback);
+        StringAssert.Contains("TryGetEntityManagerDelegate", hudFeedback);
+        StringAssert.Contains("ApplySelection(Context", hudFeedback);
+        StringAssert.Contains("ApplySquadSelection(Context", hudFeedback);
+        StringAssert.Contains("ClearSelection(Context", hudFeedback);
+        StringAssert.Contains("ApplyCommandMode(Context", hudFeedback);
+        StringAssert.Contains("ClearCommandMode(Context", hudFeedback);
+        StringAssert.Contains("ApplyCommandResult(Context", hudFeedback);
+        StringAssert.Contains("SetWorldMarkersVisible(Context", hudFeedback);
         StringAssert.Contains("BattleHudGameplayBridge _battleHudBridge", hudFeedback);
         StringAssert.Contains("BattleHudGameplayBridge.ResolveActive", hudFeedback);
         StringAssert.Contains("selectionUiQuerySystem.ResolveFocusedUnitName", hudFeedback);
@@ -2937,14 +2973,18 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("SetHudWorldMarkersVisible", commandResultFlush);
         StringAssert.Contains("RequestMoveOrderScreenMarker", commandResultFlush);
         StringAssert.Contains("RequestAttackOrderScreenMarker", commandResultFlush);
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueSelection", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueSquadSelection", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueClearSelection", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueCommandMode", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueClearCommandMode", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueCommandResult", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.QueueWorldMarkersVisible", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback queue details.");
+        Assert.IsFalse(selection.Contains("_selectionHudFeedbackSystem.ProcessPendingFeedback", StringComparison.Ordinal), "SelectionRuntimeContextSystem must not own HUD feedback flush details.");
+        Assert.IsFalse(Regex.IsMatch(selection, @"private\s+void\s+(?:ApplyHud|ClearHud|SetHudWorldMarkersVisible)"), "SelectionRuntimeContextSystem must not keep HUD feedback helper wrappers.");
         Assert.IsFalse(
             selection.Contains("BattleHudGameplayBridge", StringComparison.Ordinal) ||
             selection.Contains("ResolveBattleHudBridge", StringComparison.Ordinal) ||
-            selection.Contains("_selectionHudFeedbackSystem.ApplySelection", StringComparison.Ordinal) ||
-            selection.Contains("_selectionHudFeedbackSystem.ApplySquadSelection", StringComparison.Ordinal) ||
-            selection.Contains("_selectionHudFeedbackSystem.ApplyCommandMode", StringComparison.Ordinal) ||
-            selection.Contains("_selectionHudFeedbackSystem.ApplyCommandResult", StringComparison.Ordinal) ||
-            selection.Contains("_selectionHudFeedbackSystem.SetWorldMarkersVisible", StringComparison.Ordinal) ||
             Regex.IsMatch(selection, @"\bbridge\.(?:ApplySelection|ClearSelection|ApplyCommandMode|ClearCommandMode|ApplyCommandResult|SetWorldMarkersVisible)\s*\("),
             "BattleHudGameplayBridge lookup, direct HUD bridge calls, and bridge-style HUD calls belong behind SelectionHudFeedbackSystem ECS feedback events, not RTSSelectionSystem.");
     }
@@ -2993,20 +3033,26 @@ public sealed class GameplayArchitectureContractTests
         const string cameraFile = "Assets/Game/Scripts/Systems/RtsCameraSystem.cs";
         const string cameraRequestFile = "Assets/Game/Scripts/Systems/RtsCameraRequestSystem.cs";
         const string runtimeCameraFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystem.cs";
+        const string runtimeCameraContextFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraContextSystem.cs";
         const string cameraComponentsFile = "Assets/Game/Scripts/Components/RtsCameraRequestComponents.cs";
         Assert.IsTrue(File.Exists(cameraFile), "RTS camera drag and smooth-focus state must live in RtsCameraSystem.");
         Assert.IsTrue(File.Exists(cameraRequestFile), "RTS camera control must be processed through an ECS request boundary.");
         Assert.IsTrue(File.Exists(runtimeCameraFile), "RTS camera runtime tick ownership must live in RtsSelectionRuntimeCameraSystem during shell retirement.");
+        Assert.IsTrue(File.Exists(runtimeCameraContextFile), "RTS camera context construction must live outside SelectionRuntimeContextSystem.");
         Assert.IsTrue(File.Exists(cameraComponentsFile), "RTS camera request/state data must live in ECS components.");
 
         string selection = File.ReadAllText(selectionFile);
         string runtimeCamera = File.ReadAllText(runtimeCameraFile);
+        string runtimeCameraContext = File.ReadAllText(runtimeCameraContextFile);
         string cameraRequests = File.ReadAllText(cameraRequestFile);
         string cameraComponents = File.ReadAllText(cameraComponentsFile);
         StringAssert.Contains("RtsCameraSystem _rtsCameraSystem", selection);
         StringAssert.Contains("RtsCameraRequestSystem _rtsCameraRequestSystem", selection);
         StringAssert.Contains("RtsSelectionRuntimeCameraSystem _rtsSelectionRuntimeCameraSystem", selection);
-        StringAssert.Contains("CreateRuntimeCameraContext", selection);
+        StringAssert.Contains("RtsSelectionRuntimeCameraContextSystem _rtsSelectionRuntimeCameraContextSystem", selection);
+        StringAssert.Contains("RuntimeCameraContext", selection);
+        StringAssert.Contains("new RtsSelectionRuntimeCameraSystem.Context", runtimeCameraContext);
+        StringAssert.Contains("SelectionRuntimeConfigSystem.State runtimeConfig", runtimeCameraContext);
         StringAssert.Contains("UpdateRuntimeCameraTick", runtimeCamera);
         StringAssert.Contains("HandleBuildModeCameraPan", runtimeCamera);
         StringAssert.Contains("HandleFullscreenIsoCameraPan", runtimeCamera);
@@ -3050,7 +3096,9 @@ public sealed class GameplayArchitectureContractTests
             "private void UpdateBuildModeCameraTransition",
             "private void SyncCameraZoomModeState",
             "private void ConsumeInitialCameraFocusRequest",
-            "private void UpdateSmoothCameraFocus"
+            "private void UpdateSmoothCameraFocus",
+            "CreateRuntimeCameraContext",
+            "new RtsSelectionRuntimeCameraSystem.Context"
         })
         {
             Assert.IsFalse(
@@ -3182,12 +3230,18 @@ public sealed class GameplayArchitectureContractTests
     {
         const string selectionFile = "Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs";
         const string runtimeInputFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputSystem.cs";
+        const string runtimeInputContextFile = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeInputContextSystem.cs";
         Assert.IsTrue(File.Exists(runtimeInputFile), "RTS runtime pointer input orchestration must live in RtsSelectionRuntimeInputSystem during shell retirement.");
+        Assert.IsTrue(File.Exists(runtimeInputContextFile), "RTS runtime input context construction must live outside SelectionRuntimeContextSystem.");
 
         string selection = File.ReadAllText(selectionFile);
         string runtimeInput = File.ReadAllText(runtimeInputFile);
+        string runtimeInputContext = File.ReadAllText(runtimeInputContextFile);
         StringAssert.Contains("RtsSelectionRuntimeInputSystem _rtsSelectionRuntimeInputSystem", selection);
-        StringAssert.Contains("CreateRuntimeInputContext", selection);
+        StringAssert.Contains("RtsSelectionRuntimeInputContextSystem _rtsSelectionRuntimeInputContextSystem", selection);
+        StringAssert.Contains("RuntimeInputContext", selection);
+        StringAssert.Contains("new RtsSelectionRuntimeInputSystem.Context", runtimeInputContext);
+        StringAssert.Contains("SelectionRuntimeConfigSystem.State runtimeConfig", runtimeInputContext);
         StringAssert.Contains("ProcessQueuedMoveOrder", runtimeInput);
         StringAssert.Contains("UpdateNormalPointerInput", runtimeInput);
         StringAssert.Contains("QueueSelectionRectangleRequest", runtimeInput);
@@ -3205,7 +3259,9 @@ public sealed class GameplayArchitectureContractTests
             "private static Rect GetScreenRect",
             "_selectionModeHoldArmed",
             "_ignoreUiClickUntilRelease",
-            "_hasLiveSelectionRect"
+            "_hasLiveSelectionRect",
+            "CreateRuntimeInputContext",
+            "new RtsSelectionRuntimeInputSystem.Context"
         };
 
         foreach (string token in forbiddenSelectionTokens)

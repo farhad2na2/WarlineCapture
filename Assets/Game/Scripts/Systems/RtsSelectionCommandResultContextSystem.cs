@@ -1,0 +1,72 @@
+using System;
+using Unity.Entities;
+using UnityEngine;
+
+public sealed class RtsSelectionCommandResultContextSystem
+{
+    public RtsSelectionCommandResultFlushSystem.Context Create(
+        RtsSelectionInputSystem inputSystem,
+        SelectionHudFeedbackSystem hudFeedbackSystem,
+        SelectionHudFeedbackSystem.Context hudFeedbackContext,
+        SelectionOrderMarkerSystem orderMarkerSystem,
+        SelectionMoveCommandRequestSystem moveCommandRequestSystem,
+        SelectionAttackCommandRequestSystem attackCommandRequestSystem,
+        SelectionTransportCommandRequestSystem transportCommandRequestSystem,
+        SelectedMoveOrderCommandSystem selectedMoveOrderCommandSystem,
+        AttackOrderCommandSystem attackOrderCommandSystem,
+        TransportBoardingCommandSystem transportBoardingCommandSystem,
+        UnitMoveOrderSystem unitMoveOrderSystem,
+        UnitTargetOrderSystem unitTargetOrderSystem,
+        UnitTransportBoardingSystem unitTransportBoardingSystem,
+        SelectionStateSystem selectionStateSystem,
+        BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
+        SelectionRuntimeQuerySystem querySystem,
+        RtsSelectionCommandResultFlushSystem.TryGetEntityManagerAction tryGetDefaultEntityManager,
+        Action<EntityManager> ensureRuntimeSelectionDependencies,
+        RtsSelectionCommandResultFlushSystem.ClearCurrentSelectionAction clearCurrentSelection,
+        Action<Vector2> requestMoveOrderScreenMarker,
+        Action<Vector2> requestAttackOrderScreenMarker,
+        Action<bool> setCameraDragging,
+        Action<SelectionStateSystem> clearFocusedUnit,
+        SelectedMoveOrderCommandSystem.ClickedUnitResolver tryGetMoveClickedUnitEntity,
+        SelectedMoveOrderCommandSystem.ClickedCellResolver tryGetMoveClickedCell,
+        AttackOrderCommandSystem.TryGetClickedUnitEntityDelegate tryGetAttackClickedUnitEntity,
+        TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetTransportClickedUnitEntity,
+        TransportBoardingCommandSystem.TryGetClickedCellDelegate tryGetTransportClickedCell)
+    {
+        return new RtsSelectionCommandResultFlushSystem.Context(
+            inputSystem,
+            hudFeedbackSystem,
+            orderMarkerSystem,
+            moveCommandRequestSystem,
+            attackCommandRequestSystem,
+            transportCommandRequestSystem,
+            selectedMoveOrderCommandSystem,
+            attackOrderCommandSystem,
+            transportBoardingCommandSystem,
+            unitMoveOrderSystem,
+            unitTargetOrderSystem,
+            unitTransportBoardingSystem,
+            selectionStateSystem,
+            buildingPlacementInteractionSystem,
+            buildingPlacementInteractionContext,
+            querySystem.SelectedMoveQuery,
+            querySystem.GridConfigQuery,
+            tryGetDefaultEntityManager,
+            ensureRuntimeSelectionDependencies,
+            clearCurrentSelection,
+            result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
+            () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
+            visible => hudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),
+            requestMoveOrderScreenMarker,
+            requestAttackOrderScreenMarker,
+            setCameraDragging,
+            clearFocusedUnit,
+            tryGetMoveClickedUnitEntity,
+            tryGetMoveClickedCell,
+            tryGetAttackClickedUnitEntity,
+            tryGetTransportClickedUnitEntity,
+            tryGetTransportClickedCell);
+    }
+}

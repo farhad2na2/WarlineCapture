@@ -253,26 +253,26 @@ Goal: delete the remaining selection context-construction boundary without repla
    - Move selection and transport diagnostic queue helpers to the existing ECS diagnostics/logging boundary.
    - Runtime selection code must enqueue diagnostics without owning diagnostic entity creation/formatting policy.
 
-4. Pending: Extract query ownership
+4. Complete: Extract query ownership
    - Move `EnsureEntityQueries` and cached `EntityQuery` fields into the systems that use them.
    - Prioritize rectangle, focus, move, attack, transport, and marker systems.
 
-5. Pending: Extract HUD feedback context
+5. Complete: Extract HUD feedback context
    - Move HUD helper methods for selection, squad selection, command mode, command result, clear selection, and world marker visibility into `SelectionHudFeedbackSystem` or a narrow feedback context boundary.
 
-6. Pending: Extract camera context builder
+6. Complete: Extract camera context builder
    - Move `CreateRuntimeCameraContext` into `RtsSelectionRuntimeCameraSystem` or a narrow ECS-style context builder.
    - Startup should pass concrete camera/request/runtime dependencies, not a broad selection context object.
 
-7. Pending: Extract input context builder
+7. Complete: Extract input context builder
    - Move `CreateRuntimeInputContext` into `RtsSelectionRuntimeInputSystem` or a narrow ECS-style context builder.
    - Pointer input should depend on input state, runtime state, camera delegates, and command request systems only.
 
-8. Pending: Extract command-result context builder
+8. Complete: Extract command-result context builder
    - Move `CreateCommandResultFlushContext` into `RtsSelectionCommandResultFlushSystem` or a narrow context builder.
    - Command result flushing must own its ECS buffer/read dependencies directly.
 
-9. Pending: Extract focus command context builder
+9. Complete: Extract focus command context builder
    - Move `CreateFocusCommandContext` into `RtsSelectionFocusCommandSystem` or a narrow context builder.
    - Focus/select-all/clear command flow must not require `SelectionRuntimeContextSystem`.
 

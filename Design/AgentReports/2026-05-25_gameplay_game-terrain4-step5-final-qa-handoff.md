@@ -12,13 +12,13 @@ Final result:
 - Mask placement is bound to the explicit playable-map footprint, not the full island/beach renderer bounds.
 
 Final validation values:
-- Foundation source-prefab instances: `20440`
+- Foundation source-prefab instances: `22611`
 - Generated dressing prefabs: `3382`
 - Mountains / trees / bushes / rocks: `238 / 976 / 1473 / 695`
 - Playable map target: `2023 x 2023`
-- Green/dirt foundation footprint: `2694.917 x 2614.862`
+- Green/dirt foundation footprint: `2930.813 x 2831.412`
 - Foundation shortfall against target: west `0`, east `0`, south `0`, north `0`
-- Beach prefab centers inside 2024 gameplay map: `0 / 3780`
+- Beach prefab centers inside 2024 gameplay map: `0 / 4521`
 - Mask dressing validation: passed
 
 QA correction made in step 5:

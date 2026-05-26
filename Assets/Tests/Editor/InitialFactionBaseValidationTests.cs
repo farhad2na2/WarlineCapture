@@ -225,23 +225,32 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayTestHarness buildingPlacement = null;
+        BuildingGameplayCompositionSystem.Result buildingGameplay = default;
+        bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
         try
         {
             CreateGrid(world.EntityManager, 160, 120, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
             runtimeRoot = new GameObject("RuntimeHelipadPathBlocker_Root");
-            buildingPlacement = new BuildingGameplayTestHarness();
-            buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
+            buildingGameplay = CreateBuildingGameplay(placementConfig, runtimeRoot.transform);
+            buildingGameplayInitialized = true;
 
-            Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(helipad, new Vector2Int(50, 60), out _, out _, out _, ownerFactionId: 0));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+                buildingGameplay.RuntimeSpawnCommandContext,
+                helipad,
+                new Vector2Int(50, 60),
+                out _,
+                out _,
+                out _,
+                ownerFactionId: 0));
             using EntityQuery staticBlockers = world.EntityManager.CreateEntityQuery(ComponentType.ReadOnly<StaticGridBlocker>());
             Assert.AreEqual(0, staticBlockers.CalculateEntityCount(), "Building_Helipad should not block ground pathing or boarding approach.");
         }
         finally
         {
-            buildingPlacement?.Dispose();
+            if (buildingGameplayInitialized)
+                buildingGameplay.Dispose?.Invoke();
             if (runtimeRoot != null)
                 Object.DestroyImmediate(runtimeRoot);
             if (world.IsCreated)
@@ -276,7 +285,8 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayTestHarness buildingPlacement = null;
+        BuildingGameplayCompositionSystem.Result buildingGameplay = default;
+        bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
         try
@@ -284,34 +294,62 @@ public sealed class InitialFactionBaseValidationTests
             CreateGrid(world.EntityManager, 220, 160, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
             var grid = new GridConfig { Width = 220, Height = 160, CellSize = 1f, Origin = float3.zero };
             runtimeRoot = new GameObject("HelipadSpawnResolver_Root");
-            buildingPlacement = new BuildingGameplayTestHarness();
-            buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
+            buildingGameplay = CreateBuildingGameplay(placementConfig, runtimeRoot.transform);
+            buildingGameplayInitialized = true;
 
-            Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(helipad, new Vector2Int(50, 60), out _, out _, out _, ownerFactionId: 0));
-            Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(helipad, new Vector2Int(85, 60), out _, out _, out _, ownerFactionId: 0));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+                buildingGameplay.RuntimeSpawnCommandContext,
+                helipad,
+                new Vector2Int(50, 60),
+                out _,
+                out _,
+                out _,
+                ownerFactionId: 0));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+                buildingGameplay.RuntimeSpawnCommandContext,
+                helipad,
+                new Vector2Int(85, 60),
+                out _,
+                out _,
+                out _,
+                ownerFactionId: 0));
 
             int slotsPerHelipad = CountProductionSpawnPoints(helipad);
             Assert.Greater(slotsPerHelipad, 0);
-            Assert.IsTrue(buildingPlacement.TryGetFactionProductionSpawnPoint(0, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
-            Assert.IsTrue(buildingPlacement.TryGetFactionProductionSpawnPoint(0, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
+            BuildingSpawnSystem.Context spawnContext = buildingGameplay.CreateSpawnContext();
+            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, 0, "Building_Helipad", 0, grid, out int2 occupiedCell, out _));
+            Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, 0, "Building_Helipad", slotsPerHelipad, grid, out int2 freeCell, out _));
             for (int slot = 0; slot < slotsPerHelipad; slot++)
             {
-                Assert.IsTrue(buildingPlacement.TryGetFactionProductionSpawnPoint(0, "Building_Helipad", slot, grid, out int2 slotCell, out _));
+                Assert.IsTrue(buildingGameplay.Spawn.TryGetFactionProductionSpawnPoint(spawnContext, 0, "Building_Helipad", slot, grid, out int2 slotCell, out _));
                 Entity occupyingHelicopter = world.EntityManager.CreateEntity(typeof(UnitGrid), typeof(UnitFootprint), typeof(UnitHealth));
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitGrid { Cell = slotCell });
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitFootprint { Size = new int2(3, 3) });
                 world.EntityManager.SetComponentData(occupyingHelicopter, new UnitHealth { Current = 100, Max = 100 });
             }
 
+            spawnContext = buildingGameplay.CreateSpawnContext();
+            Entity gridEntity = GetGridEntity(world.EntityManager);
+            DynamicBlockerData blockerData = world.EntityManager.GetComponentData<DynamicBlockerData>(gridEntity);
             Assert.IsTrue(
-                buildingPlacement.TryResolveAvailableFactionHelipadSpawn(0, new int2(3, 3), out int2 resolvedCell, out _),
+                buildingGameplay.Spawn.TryResolveAvailableFactionHelipadSpawn(
+                    spawnContext,
+                    0,
+                    world.EntityManager,
+                    gridEntity,
+                    grid,
+                    blockerData,
+                    new int2(3, 3),
+                    out int2 resolvedCell,
+                    out _),
                 "Transport helicopter spawn should resolve to a usable owned helipad or fallback landing zone.");
             Assert.AreEqual(freeCell, resolvedCell, "The resolver should choose the free helipad before landing beside occupied pads.");
             Assert.AreNotEqual(occupiedCell, resolvedCell, "The resolver should not stack a transport helicopter on an occupied helipad.");
         }
         finally
         {
-            buildingPlacement?.Dispose();
+            if (buildingGameplayInitialized)
+                buildingGameplay.Dispose?.Invoke();
             if (runtimeRoot != null)
                 Object.DestroyImmediate(runtimeRoot);
             if (world.IsCreated)
@@ -345,23 +383,25 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayTestHarness buildingPlacement = null;
+        BuildingGameplayCompositionSystem.Result buildingGameplay = default;
+        bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
         try
         {
-            CreateGrid(world.EntityManager, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
+            ResolveInitialBaseValidationGridSize(spawnConfig, out int gridWidth, out int gridHeight);
+            CreateGrid(world.EntityManager, gridWidth, gridHeight, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds);
             runtimeRoot = new GameObject("InitialBaseRuntimePlacement_Root");
-            buildingPlacement = new BuildingGameplayTestHarness();
-            buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
-            RuntimeGameplayStateTestHelper.SetBuildingPlacement(world.EntityManager, buildingPlacement);
+            buildingGameplay = CreateBuildingGameplay(placementConfig, runtimeRoot.transform);
+            buildingGameplayInitialized = true;
+            void TickBuildingRuntime() => buildingGameplay.RuntimeUpdate.Update(buildingGameplay.RuntimeUpdateContext);
 
             var placements = new List<InitialFactionBasePlacement>();
             InitialFactionBaseLayoutPlanner.BuildPlacements(spawnConfig.BaseHalfWidthCells, spawnConfig.BaseHalfHeightCells, placements);
-            Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(spawnConfig.BaseGatePrefab, false, out Vector2Int bottomGateFootprint));
-            Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(spawnConfig.BaseGatePrefab, true, out Vector2Int sideGateFootprint));
-            Assert.IsTrue(buildingPlacement.TryGetRuntimeWallSegmentFootprint(spawnConfig.BaseWallPrefab, false, out Vector2Int bottomWallFootprint));
-            Assert.IsTrue(buildingPlacement.TryGetRuntimeWallSegmentFootprint(spawnConfig.BaseWallPrefab, true, out Vector2Int sideWallFootprint));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseGatePrefab, false, out Vector2Int bottomGateFootprint));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseGatePrefab, true, out Vector2Int sideGateFootprint));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeWallSegmentFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseWallPrefab, false, out Vector2Int bottomWallFootprint));
+            Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeWallSegmentFootprint(buildingGameplay.RuntimeSpawnCommandContext, spawnConfig.BaseWallPrefab, true, out Vector2Int sideWallFootprint));
             int gateHalfGap = InitialFactionBaseLayoutPlanner.CalculateGateHalfGap(bottomGateFootprint, sideGateFootprint, bottomWallFootprint, sideWallFootprint);
             var wallRuns = new List<InitialFactionBaseWallRun>();
             InitialFactionBaseLayoutPlanner.BuildWallRuns(spawnConfig.BaseHalfWidthCells, spawnConfig.BaseHalfHeightCells, gateHalfGap, wallRuns);
@@ -383,7 +423,8 @@ public sealed class InitialFactionBaseValidationTests
                 for (int wallRunIndex = 0; wallRunIndex < wallRuns.Count; wallRunIndex++)
                 {
                     InitialFactionBaseWallRun run = wallRuns[wallRunIndex];
-                    int wallSegments = buildingPlacement.TrySpawnRuntimeWallRun(
+                    int wallSegments = buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallRun(
+                        buildingGameplay.RuntimeSpawnCommandContext,
                         spawnConfig.BaseWallPrefab,
                         anchor + run.StartOffset,
                         anchor + run.EndOffset,
@@ -394,7 +435,8 @@ public sealed class InitialFactionBaseValidationTests
                 {
                     InitialFactionBaseGateFlankWall flank = gateFlankWalls[flankIndex];
                     Assert.IsTrue(
-                        buildingPlacement.TrySpawnRuntimeWallSegment(
+                        buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallSegment(
+                            buildingGameplay.RuntimeSpawnCommandContext,
                             spawnConfig.BaseWallPrefab,
                             anchor + flank.OriginOffset,
                             flank.RotateVertical,
@@ -411,9 +453,10 @@ public sealed class InitialFactionBaseValidationTests
                         : FindSpawnablePrefab(placementConfig, placement.PrefabKey);
                     Assert.NotNull(prefab, $"Missing prefab for {placement.PrefabKey}.");
 
-                    Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(prefab, placement.RotateVertical, out Vector2Int plannedFootprint));
+                    Assert.IsTrue(buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(buildingGameplay.RuntimeSpawnCommandContext, prefab, placement.RotateVertical, out Vector2Int plannedFootprint));
                     Vector2Int origin = InitialFactionBaseLayoutPlanner.ResolvePlacementOrigin(anchor, placement, plannedFootprint);
-                    bool spawned = buildingPlacement.TrySpawnRuntimeBuilding(
+                    bool spawned = buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+                        buildingGameplay.RuntimeSpawnCommandContext,
                         prefab,
                         origin,
                         out _,
@@ -430,7 +473,7 @@ public sealed class InitialFactionBaseValidationTests
                         AssertGateCenteredOnOpening((byte)faction.FactionId, anchor, placement, actualOrigin, actualFootprint);
                 }
 
-                RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(world.EntityManager, buildingPlacement);
+                RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(world.EntityManager, TickBuildingRuntime);
                 string ownedSummary = RuntimeGameplayStateTestHelper.DescribeOwnedBuildingSummaries(world.EntityManager);
                 StringAssert.Contains("id=building_airport count=1", ownedSummary);
                 StringAssert.Contains("id=building_helipad count=3", ownedSummary);
@@ -440,7 +483,8 @@ public sealed class InitialFactionBaseValidationTests
         }
         finally
         {
-            buildingPlacement?.Dispose();
+            if (buildingGameplayInitialized)
+                buildingGameplay.Dispose?.Invoke();
             if (runtimeRoot != null)
                 Object.DestroyImmediate(runtimeRoot);
             if (world.IsCreated)
@@ -540,6 +584,47 @@ public sealed class InitialFactionBaseValidationTests
         return string.IsNullOrWhiteSpace(key)
             ? string.Empty
             : key.Trim().ToLowerInvariant().Replace(" ", string.Empty).Replace("_", string.Empty).Replace("-", string.Empty);
+    }
+
+    private static BuildingGameplayCompositionSystem.Result CreateBuildingGameplay(
+        BuildingPlacementSystemConfig placementConfig,
+        Transform runtimeRoot)
+    {
+        var composition = new BuildingGameplayCompositionSystem();
+        return composition.Initialize(
+            placementConfig,
+            null,
+            runtimeRoot,
+            null,
+            default,
+            null,
+            null);
+    }
+
+    private static Entity GetGridEntity(EntityManager em)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        Assert.AreEqual(1, query.CalculateEntityCount(), "Initial faction base validation expects exactly one grid entity.");
+        return query.GetSingletonEntity();
+    }
+
+    private static void ResolveInitialBaseValidationGridSize(
+        InitialUnitsSpawnerAuthoringConfig spawnConfig,
+        out int width,
+        out int height)
+    {
+        width = 720;
+        height = 360;
+        if (spawnConfig == null)
+            return;
+
+        int margin = Mathf.Max(spawnConfig.BaseHalfWidthCells, spawnConfig.BaseHalfHeightCells) + 64;
+        for (int i = 0; i < spawnConfig.Factions.Count; i++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = spawnConfig.Factions[i];
+            width = Mathf.Max(width, faction.SpawnCell.x + spawnConfig.BaseHalfWidthCells + margin);
+            height = Mathf.Max(height, faction.SpawnCell.y + spawnConfig.BaseHalfHeightCells + margin);
+        }
     }
 
     private static void CreateGrid(

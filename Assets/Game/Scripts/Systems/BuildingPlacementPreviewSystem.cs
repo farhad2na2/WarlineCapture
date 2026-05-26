@@ -24,6 +24,7 @@ internal sealed class BuildingPlacementPreviewSystem
     private GameObject _placementOutline;
     private MeshRenderer _placementOutlineRenderer;
     private MaterialPropertyBlock _previewPropertyBlock;
+    private readonly List<WallPreviewRun> _wallPreviewRuns = new();
     private Action<UnityEngine.Object> _destroyRuntimeObject;
     private float _outlineHeight;
     private Color _validColor;
@@ -193,6 +194,43 @@ internal sealed class BuildingPlacementPreviewSystem
             positionVisual(segment, currentOrigins[i], definition, grid, vertical);
             SetPreviewSegmentValid(segment, valid);
         }
+    }
+
+    public void RebuildWallPlacementPreview(
+        BuildingPlacementLifecycleSystem.PlacementState placement,
+        List<Vector2Int> origins,
+        bool vertical,
+        GridConfig grid,
+        CreateVisualDelegate createVisual,
+        PositionVisualDelegate positionVisual)
+    {
+        if (placement?.PreviewInstance == null)
+            return;
+
+        _wallPreviewRuns.Clear();
+        if (placement.CommittedWallRuns != null)
+        {
+            for (int runIndex = 0; runIndex < placement.CommittedWallRuns.Count; runIndex++)
+            {
+                BuildingPlacementInputSystem.WallRun run = placement.CommittedWallRuns[runIndex];
+                if (run?.Origins == null)
+                    continue;
+
+                _wallPreviewRuns.Add(new WallPreviewRun(run.Origins, run.Vertical));
+            }
+        }
+
+        RebuildWallPreview(
+            placement.PreviewInstance,
+            placement.Definition,
+            _wallPreviewRuns,
+            origins,
+            vertical,
+            placement.HideCurrentWallPreview,
+            placement.IsValid,
+            grid,
+            createVisual,
+            positionVisual);
     }
 
     private float GetOutlineHeight(BuildingDefinition definition)

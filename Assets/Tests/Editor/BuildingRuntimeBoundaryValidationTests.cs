@@ -16,13 +16,17 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private GameObject _runtimeRoot;
     private GameObject _buildingPrefab;
     private BuildingPlacementSystemConfig _buildingConfig;
-    private BuildingGameplayTestHarness _buildingPlacement;
+    private BuildingGameplayCompositionSystem _buildingComposition;
+    private BuildingGameplayCompositionSystem.Result _buildingGameplay;
+    private bool _buildingGameplayInitialized;
 
     [TearDown]
     public void TearDown()
     {
-        _buildingPlacement?.Dispose();
-        _buildingPlacement = null;
+        if (_buildingGameplayInitialized)
+            _buildingGameplay.Dispose?.Invoke();
+        _buildingGameplayInitialized = false;
+        _buildingComposition = null;
 
         if (_world != null && _world.IsCreated)
             _world.Dispose();
@@ -60,8 +64,16 @@ public sealed class BuildingRuntimeBoundaryValidationTests
         SetPrivateField(_buildingConfig, "spawnables", new System.Collections.Generic.List<GameObject> { _buildingPrefab });
 
         _runtimeRoot = new GameObject("BuildingRuntimeBoundary_RuntimeRoot");
-        _buildingPlacement = new BuildingGameplayTestHarness();
-        _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            _buildingConfig,
+            null,
+            _runtimeRoot.transform,
+            null,
+            default,
+            null,
+            null);
+        _buildingGameplayInitialized = true;
 
         Entity boundary = em.CreateEntity(typeof(BuildingRuntimeBoundaryTag));
         DynamicBuffer<BuildingRuntimeSpawnRequest> requests = em.AddBuffer<BuildingRuntimeSpawnRequest>(boundary);
@@ -74,7 +86,7 @@ public sealed class BuildingRuntimeBoundaryValidationTests
             Status = BuildingRuntimeSpawnRequest.Pending
         });
 
-        Assert.DoesNotThrow(() => _buildingPlacement.TickRuntimeForTests());
+        Assert.DoesNotThrow(() => _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext));
 
         requests = em.GetBuffer<BuildingRuntimeSpawnRequest>(boundary);
         Assert.AreEqual(BuildingRuntimeSpawnRequest.Succeeded, requests[0].Status);

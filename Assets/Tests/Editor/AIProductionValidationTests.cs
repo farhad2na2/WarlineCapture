@@ -12,7 +12,9 @@ public sealed class AIProductionValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingGameplayTestHarness _buildingPlacement;
+    private BuildingGameplayCompositionSystem _buildingComposition;
+    private BuildingGameplayCompositionSystem.Result _buildingGameplay;
+    private bool _buildingGameplayInitialized;
     private NativeArray<int> _blockerCounts;
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
@@ -35,8 +37,10 @@ public sealed class AIProductionValidationTests
         InitialUnitsRuntimeState.PlayRequested = false;
         InitialUnitsRuntimeState.VerboseAILogs = false;
 
-        _buildingPlacement?.Dispose();
-        _buildingPlacement = null;
+        if (_buildingGameplayInitialized)
+            _buildingGameplay.Dispose?.Invoke();
+        _buildingGameplayInitialized = false;
+        _buildingComposition = null;
 
         if (_world != null && _world.IsCreated)
             _world.Dispose();
@@ -84,11 +88,20 @@ public sealed class AIProductionValidationTests
         SetPrivateField(_buildingConfig, "unitPrefabRegistryConfig", _unitRegistryConfig);
 
         _runtimeRoot = new GameObject("AIProduction_RuntimeRoot");
-        _buildingPlacement = new BuildingGameplayTestHarness();
-        _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
-        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            _buildingConfig,
+            null,
+            _runtimeRoot.transform,
+            null,
+            default,
+            null,
+            null);
+        _buildingGameplayInitialized = true;
+        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
-        Assert.IsTrue(_buildingPlacement.TrySpawnRuntimeBuilding(
+        Assert.IsTrue(_buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+            _buildingGameplay.RuntimeSpawnCommandContext,
             _buildingPrefab,
             new Vector2Int(24, 24),
             out _,
@@ -124,7 +137,7 @@ public sealed class AIProductionValidationTests
         entries.Add(new AIProductionPlanEntry { UnitId = new FixedString64Bytes("Rifleman") });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         SystemHandle system = _world.CreateSystem<AIProductionSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
@@ -133,19 +146,25 @@ public sealed class AIProductionValidationTests
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         system.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
 
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         FactionEconomy economy = em.GetComponentData<FactionEconomy>(economyEntity);
         Assert.AreEqual(40000, economy.Money);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
 
         AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(planEntity);
         Assert.AreEqual(1, plan.NextUnitIndex);
+    }
+
+    private void TickBuildingRuntime()
+    {
+        if (_buildingGameplayInitialized)
+            _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
     }
 
     private void CreateGrid(EntityManager em, int width, int height)

@@ -294,6 +294,37 @@ public sealed class BuildingProductionSystemTests
         Assert.AreSame(third, pending[0]);
     }
 
+    [Test]
+    public void BuildingGameplayComposition_InitializesRuntimeDollarsFromInitialUnitsConfig()
+    {
+        var placementConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        var initialUnitsConfig = ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringSceneConfigAsset>();
+        BuildingGameplayCompositionSystem.Result result = default;
+        try
+        {
+            SetPrivateField(initialUnitsConfig, "initialDollars", 12345);
+            SetPrivateField(placementConfig, "initialUnitsConfig", initialUnitsConfig);
+
+            var composition = new BuildingGameplayCompositionSystem();
+            result = composition.Initialize(
+                placementConfig,
+                worldCamera: null,
+                runtimeUiRoot: null,
+                roadFootprintQuerySystem: null,
+                roadFootprintQueryContext: default,
+                factionVisuals: null,
+                dayNight: null);
+
+            Assert.AreEqual(12345, result.UiCommand.CurrentDollars(result.UiCommandContext));
+        }
+        finally
+        {
+            result.Dispose?.Invoke();
+            UnityEngine.Object.DestroyImmediate(initialUnitsConfig);
+            UnityEngine.Object.DestroyImmediate(placementConfig);
+        }
+    }
+
     private sealed class TestPendingProduction : BuildingProductionSystem.IPendingProduction
     {
         public int ProductionIndex { get; set; }
@@ -314,6 +345,25 @@ public sealed class BuildingProductionSystemTests
         FieldInfo field = typeof(UnitGridAuthoring).GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.IsNotNull(field, $"{nameof(UnitGridAuthoring)} must expose serialized field '{fieldName}' for this test.");
         field.SetValue(authoring, value);
+    }
+
+    private static void SetPrivateField<T>(object target, string fieldName, T value)
+    {
+        FieldInfo field = FindPrivateField(target.GetType(), fieldName);
+        Assert.IsNotNull(field, $"{target.GetType().Name} must expose serialized field '{fieldName}' for this test.");
+        field.SetValue(target, value);
+    }
+
+    private static FieldInfo FindPrivateField(System.Type type, string fieldName)
+    {
+        for (System.Type current = type; current != null; current = current.BaseType)
+        {
+            FieldInfo field = current.GetField(fieldName, BindingFlags.Instance | BindingFlags.NonPublic);
+            if (field != null)
+                return field;
+        }
+
+        return null;
     }
 }
 #endif

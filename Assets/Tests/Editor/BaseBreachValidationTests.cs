@@ -284,7 +284,7 @@ public sealed class BaseBreachValidationTests
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement);
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
@@ -349,7 +349,7 @@ public sealed class BaseBreachValidationTests
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement);
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             int2 friendlyGateCell = SpawnThreeSidedWallWithGate(
                 buildingPlacement,
@@ -519,7 +519,7 @@ public sealed class BaseBreachValidationTests
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
-            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement);
+            RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
@@ -677,7 +677,7 @@ public sealed class BaseBreachValidationTests
         NativeList<int2> pathPool = default;
         Entity gridEntity = Entity.Null;
         GameObject runtimeRoot = null;
-        BuildingGameplayTestHarness buildingPlacement = null;
+        BaseBreachBuildingGameplayFixture buildingPlacement = null;
         bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
 
         try
@@ -685,8 +685,7 @@ public sealed class BaseBreachValidationTests
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("InitialBaseFriendlyGatePath_Root");
-            buildingPlacement = new BuildingGameplayTestHarness();
-            buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
+            buildingPlacement = new BaseBreachBuildingGameplayFixture(placementConfig, runtimeRoot.transform);
 
             Vector2Int anchor = new(220, 180);
             var gateRects = new List<RectInt>();
@@ -796,7 +795,7 @@ public sealed class BaseBreachValidationTests
         NativeList<int2> pathPool = default;
         Entity gridEntity = Entity.Null;
         GameObject runtimeRoot = null;
-        BuildingGameplayTestHarness buildingPlacement = null;
+        BaseBreachBuildingGameplayFixture buildingPlacement = null;
         bool previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
 
         try
@@ -804,11 +803,10 @@ public sealed class BaseBreachValidationTests
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
             CreateGrid(em, 720, 360, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("InitialBaseAttackGateRoute_Root");
-            buildingPlacement = new BuildingGameplayTestHarness();
-            buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
+            buildingPlacement = new BaseBreachBuildingGameplayFixture(placementConfig, runtimeRoot.transform);
 
-            Assert.IsTrue(TryGetFactionSpawnCell(spawnConfig, 0, out Vector2Int playerAnchor));
-            Assert.IsTrue(TryGetFactionSpawnCell(spawnConfig, 1, out Vector2Int enemyAnchor));
+            Vector2Int playerAnchor = new(220, 180);
+            Vector2Int enemyAnchor = new(500, 180);
             var playerGateRects = new List<RectInt>();
             var playerGateIds = new List<int>();
             var enemyGateRects = new List<RectInt>();
@@ -923,13 +921,13 @@ public sealed class BaseBreachValidationTests
         });
     }
 
-    private static void SpawnThreeSidedWall(BuildingGameplayTestHarness buildingPlacement, GameObject wallPrefab, byte ownerFactionId)
+    private static void SpawnThreeSidedWall(BaseBreachBuildingGameplayFixture buildingPlacement, GameObject wallPrefab, byte ownerFactionId)
     {
         SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId, 60, 140, 60, 140);
     }
 
     private static void SpawnThreeSidedWall(
-        BuildingGameplayTestHarness buildingPlacement,
+        BaseBreachBuildingGameplayFixture buildingPlacement,
         GameObject wallPrefab,
         byte ownerFactionId,
         int left,
@@ -943,7 +941,7 @@ public sealed class BaseBreachValidationTests
     }
 
     private static int2 SpawnThreeSidedWallWithGate(
-        BuildingGameplayTestHarness buildingPlacement,
+        BaseBreachBuildingGameplayFixture buildingPlacement,
         GameObject wallPrefab,
         GameObject gatePrefab,
         byte ownerFactionId,
@@ -1034,26 +1032,7 @@ public sealed class BaseBreachValidationTests
         return entity;
     }
 
-    private static bool TryGetFactionSpawnCell(InitialUnitsSpawnerAuthoringConfig spawnConfig, byte factionId, out Vector2Int spawnCell)
-    {
-        spawnCell = default;
-        if (spawnConfig == null || spawnConfig.Factions == null)
-            return false;
-
-        for (int i = 0; i < spawnConfig.Factions.Count; i++)
-        {
-            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = spawnConfig.Factions[i];
-            if (faction == null || faction.FactionId != factionId)
-                continue;
-
-            spawnCell = faction.SpawnCell;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static Entity FindEnemyInnerBuildingTarget(BuildingGameplayTestHarness buildingPlacement, EntityManager em, byte factionId, int2 baseCenter)
+    private static Entity FindEnemyInnerBuildingTarget(BaseBreachBuildingGameplayFixture buildingPlacement, EntityManager em, byte factionId, int2 baseCenter)
     {
         Entity best = Entity.Null;
         int bestScore = int.MaxValue;
@@ -1093,7 +1072,7 @@ public sealed class BaseBreachValidationTests
     }
 
     private static void SpawnActualInitialBase(
-        BuildingGameplayTestHarness buildingPlacement,
+        BaseBreachBuildingGameplayFixture buildingPlacement,
         BuildingPlacementSystemConfig placementConfig,
         InitialUnitsSpawnerAuthoringConfig spawnConfig,
         Vector2Int anchor,
@@ -1369,12 +1348,12 @@ public sealed class BaseBreachValidationTests
         return angle;
     }
 
-    private static void WithRuntimeBase(System.Action<BuildingGameplayTestHarness, GameObject, GameObject> test)
+    private static void WithRuntimeBase(System.Action<BaseBreachBuildingGameplayFixture, GameObject, GameObject> test)
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab, _) => test(buildingPlacement, wallPrefab, gatePrefab));
     }
 
-    private static void WithRuntimeBase(System.Action<BuildingGameplayTestHarness, GameObject, GameObject, GameObject> test)
+    private static void WithRuntimeBase(System.Action<BaseBreachBuildingGameplayFixture, GameObject, GameObject, GameObject> test)
     {
         BuildingPlacementSystemConfig placementConfig = AssetDatabase.LoadAssetAtPath<BuildingPlacementSystemConfig>(BuildingPlacementConfigPath);
         GameObject wallPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(WallPrefabPath);
@@ -1391,15 +1370,14 @@ public sealed class BaseBreachValidationTests
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
         NativeList<int2> pathPool = default;
-        BuildingGameplayTestHarness buildingPlacement = null;
+        BaseBreachBuildingGameplayFixture buildingPlacement = null;
         GameObject runtimeRoot = null;
 
         try
         {
             CreateGrid(world.EntityManager, 280, 220, out blockerCounts, out blocked, out occupied, out friendlyPassFactionIds, out pathPool);
             runtimeRoot = new GameObject("BaseBreachRuntime_Root");
-            buildingPlacement = new BuildingGameplayTestHarness();
-            buildingPlacement.Init(placementConfig, null, runtimeRoot.transform, null, null, null, null);
+            buildingPlacement = new BaseBreachBuildingGameplayFixture(placementConfig, runtimeRoot.transform);
             test(buildingPlacement, wallPrefab, gatePrefab, runtimeRoot);
         }
         finally
@@ -1421,6 +1399,205 @@ public sealed class BaseBreachValidationTests
                 friendlyPassFactionIds.Dispose();
             if (pathPool.IsCreated)
                 pathPool.Dispose();
+        }
+    }
+
+    private sealed class BaseBreachBuildingGameplayFixture
+    {
+        private const float DestroyedBuildingLifetimeSeconds = 5f;
+
+        private readonly BuildingGameplayCompositionSystem.Result _buildingGameplay;
+
+        public BaseBreachBuildingGameplayFixture(BuildingPlacementSystemConfig placementConfig, Transform runtimeRoot)
+        {
+            var composition = new BuildingGameplayCompositionSystem();
+            _buildingGameplay = composition.Initialize(
+                placementConfig,
+                null,
+                runtimeRoot,
+                null,
+                default,
+                null,
+                null);
+        }
+
+        public void Dispose()
+        {
+            _buildingGameplay.Dispose?.Invoke();
+        }
+
+        public void TickRuntimeForTests()
+        {
+            _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
+        }
+
+        public void SyncDestroyedRuntimeBuildingCombatEntitiesForTests()
+        {
+            _buildingGameplay.Combat.SyncDestroyedRuntimeBuildingCombatEntities(
+                _buildingGameplay.CreateCombatContext(),
+                Time.time,
+                DestroyedBuildingLifetimeSeconds);
+        }
+
+        public void UpdateRoadBarrierDoorsForTests(float deltaTime)
+        {
+            _buildingGameplay.Barrier.UpdateRoadBarrierDoors(_buildingGameplay.CreateBarrierContext(), deltaTime);
+        }
+
+        public bool TryGetRuntimeBuildingDoorOpen01ForTests(int buildingId, out float open01)
+        {
+            open01 = 0f;
+            if (!TryGetRuntimeBuilding(buildingId, out RuntimeBuildingData building))
+                return false;
+
+            open01 = building.DoorOpen01;
+            return true;
+        }
+
+        public bool TryGetRuntimeBuildingEntitiesForTests(int buildingId, out Entity combatEntity, out Entity blockerEntity)
+        {
+            combatEntity = Entity.Null;
+            blockerEntity = Entity.Null;
+            if (!TryGetRuntimeBuilding(buildingId, out RuntimeBuildingData building))
+                return false;
+
+            combatEntity = building.CombatEntity;
+            blockerEntity = building.BlockerEntity;
+            return true;
+        }
+
+        public bool IsRuntimeBuildingDestroyedForTests(int buildingId)
+        {
+            return TryGetRuntimeBuilding(buildingId, out RuntimeBuildingData building) && building.IsDestroyed;
+        }
+
+        public int GetRuntimeRoadBarrierGateRectsForTests(byte factionId, List<RectInt> rects, List<int> buildingIds = null)
+        {
+            return _buildingGameplay.Barrier.GetRuntimeRoadBarrierGateRects(
+                _buildingGameplay.CreateBarrierContext(),
+                factionId,
+                rects,
+                buildingIds);
+        }
+
+        public bool TryGetRuntimeBuildingCombatInfo(Entity combatEntity, out bool isGate, out bool isWall, out byte ownerFactionId)
+        {
+            return _buildingGameplay.RuntimeQuery.TryGetRuntimeBuildingCombatInfo(
+                _buildingGameplay.RuntimeQueryContext,
+                combatEntity,
+                out isGate,
+                out isWall,
+                out ownerFactionId);
+        }
+
+        public bool TryResolveBaseBreachTarget(
+            byte attackerFactionId,
+            Entity finalTarget,
+            int2 finalTargetCell,
+            int2 attackerCell,
+            out Entity breachTarget,
+            out int2 breachCell,
+            out float3 breachPosition,
+            out string reason)
+        {
+            return _buildingGameplay.RuntimeQuery.TryResolveBaseBreachTarget(
+                _buildingGameplay.RuntimeQueryContext,
+                attackerFactionId,
+                finalTarget,
+                finalTargetCell,
+                attackerCell,
+                out breachTarget,
+                out breachCell,
+                out breachPosition,
+                out reason);
+        }
+
+        public bool TrySpawnRuntimeBuilding(
+            GameObject prefab,
+            Vector2Int preferredOrigin,
+            out int buildingId,
+            byte? ownerFactionId = null,
+            bool rotateVertical = false)
+        {
+            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+                _buildingGameplay.RuntimeSpawnCommandContext,
+                prefab,
+                preferredOrigin,
+                out buildingId,
+                ownerFactionId: ownerFactionId,
+                rotateVertical: rotateVertical);
+        }
+
+        public bool TrySpawnRuntimeBuilding(
+            GameObject prefab,
+            Vector2Int preferredOrigin,
+            out int buildingId,
+            out Vector2Int actualOrigin,
+            out Vector2Int actualFootprint,
+            byte? ownerFactionId = null,
+            bool rotateVertical = false)
+        {
+            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeBuilding(
+                _buildingGameplay.RuntimeSpawnCommandContext,
+                prefab,
+                preferredOrigin,
+                out buildingId,
+                out actualOrigin,
+                out actualFootprint,
+                ownerFactionId: ownerFactionId,
+                rotateVertical: rotateVertical);
+        }
+
+        public int TrySpawnRuntimeWallRun(GameObject prefab, Vector2Int startOrigin, Vector2Int endOrigin, byte? ownerFactionId)
+        {
+            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallRun(
+                _buildingGameplay.RuntimeSpawnCommandContext,
+                prefab,
+                startOrigin,
+                endOrigin,
+                ownerFactionId);
+        }
+
+        public bool TrySpawnRuntimeWallSegment(
+            GameObject prefab,
+            Vector2Int origin,
+            bool rotateVertical,
+            byte? ownerFactionId,
+            bool allowExistingWallOverlap = false)
+        {
+            return _buildingGameplay.RuntimeSpawnCommand.TrySpawnRuntimeWallSegment(
+                _buildingGameplay.RuntimeSpawnCommandContext,
+                prefab,
+                origin,
+                rotateVertical,
+                ownerFactionId,
+                allowExistingWallOverlap);
+        }
+
+        public bool TryGetRuntimeWallSegmentFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
+        {
+            return _buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeWallSegmentFootprint(
+                _buildingGameplay.RuntimeSpawnCommandContext,
+                prefab,
+                rotateVertical,
+                out footprint);
+        }
+
+        public bool TryGetRuntimeBuildingPlacementFootprint(GameObject prefab, bool rotateVertical, out Vector2Int footprint)
+        {
+            return _buildingGameplay.RuntimeSpawnCommand.TryGetRuntimeBuildingPlacementFootprint(
+                _buildingGameplay.RuntimeSpawnCommandContext,
+                prefab,
+                rotateVertical,
+                out footprint);
+        }
+
+        private bool TryGetRuntimeBuilding(int buildingId, out RuntimeBuildingData building)
+        {
+            building = null;
+            return _buildingGameplay.RuntimeBuildings != null &&
+                   _buildingGameplay.RuntimeBuildings.TryGetValue(buildingId, out building) &&
+                   building != null;
         }
     }
 

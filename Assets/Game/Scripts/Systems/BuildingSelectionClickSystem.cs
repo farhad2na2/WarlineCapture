@@ -69,4 +69,17 @@ public sealed class BuildingSelectionClickSystem
             source.TryGetGridCell,
             source.HandleCellSelection);
     }
+
+    public Context CreateContext(
+        Func<bool> hasPendingPathJob,
+        TryGetGridDelegate tryGetGrid,
+        TryGetGridCellDelegate tryGetGridCell,
+        HandleCellSelectionDelegate handleCellSelection)
+    {
+        return CreateContext(new Source(
+            hasPendingPathJob,
+            tryGetGrid,
+            tryGetGridCell,
+            handleCellSelection));
+    }
 }

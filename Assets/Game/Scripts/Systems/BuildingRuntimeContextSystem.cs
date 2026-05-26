@@ -16,11 +16,15 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeVisualSystem RuntimeVisualSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
+        public readonly ResourceHaulerSystem ResourceHaulerSystem;
+        public readonly FactionResourceSystem FactionResourceSystem;
         public readonly BuildingProductionContextSystem ProductionContextSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
         public readonly EntityQuery LiveUnitFootprintQuery;
         public readonly EntityQuery RedirectUnitsQuery;
+        public readonly EntityQuery HaulerUnitsQuery;
+        public readonly EntityQuery SelectedUnitsQuery;
         public readonly EntityQuery LiveFactionUnitsQuery;
         public readonly Func<int?> GetActiveBuildingId;
         public readonly BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -29,8 +33,8 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeEntitySystem.GetFootprintCenterDelegate GetFootprintCenter;
         public readonly BuildingRuntimeQuerySystem.BuildingPredicate IsHouseBuilding;
         public readonly BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate TryResolveBuildingFocusWorldPosition;
-        public readonly BuildingRuntimeQuerySystem.TryGetBuildingApproachCellDelegate TryGetBuildingApproachCell;
-        public readonly BuildingRuntimeQuerySystem.IsBuildingApproachCellDelegate IsBuildingApproachCell;
+        public readonly BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate TryGetRuntimeBuilding;
+        public readonly BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate GetEffectivePlacementRect;
         public readonly BuildingCombatSystem.BuildingAction<RuntimeBuildingData> RememberOpenBaseBreach;
         public readonly BuildingCombatSystem.BuildingIdAction NotifyHomeBuildingDestroyed;
         public readonly BuildingCombatSystem.ObjectAction DestroyObject;
@@ -49,11 +53,15 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeVisualSystem runtimeVisualSystem,
             BuildingBarrierSystem barrierSystem,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
+            ResourceHaulerSystem resourceHaulerSystem,
+            FactionResourceSystem factionResourceSystem,
             BuildingProductionContextSystem productionContextSystem,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
             EntityQuery liveUnitFootprintQuery,
             EntityQuery redirectUnitsQuery,
+            EntityQuery haulerUnitsQuery,
+            EntityQuery selectedUnitsQuery,
             EntityQuery liveFactionUnitsQuery,
             Func<int?> getActiveBuildingId,
             BuildingRuntimeEntitySystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -62,8 +70,8 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeEntitySystem.GetFootprintCenterDelegate getFootprintCenter,
             BuildingRuntimeQuerySystem.BuildingPredicate isHouseBuilding,
             BuildingRuntimeQuerySystem.TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
-            BuildingRuntimeQuerySystem.TryGetBuildingApproachCellDelegate tryGetBuildingApproachCell,
-            BuildingRuntimeQuerySystem.IsBuildingApproachCellDelegate isBuildingApproachCell,
+            BuildingResourceHaulerBridgeSystem.TryGetRuntimeBuildingDelegate tryGetRuntimeBuilding,
+            BuildingResourceHaulerBridgeSystem.GetEffectivePlacementRectDelegate getEffectivePlacementRect,
             BuildingCombatSystem.BuildingAction<RuntimeBuildingData> rememberOpenBaseBreach,
             BuildingCombatSystem.BuildingIdAction notifyHomeBuildingDestroyed,
             BuildingCombatSystem.ObjectAction destroyObject,
@@ -81,11 +89,15 @@ internal sealed class BuildingRuntimeContextSystem
             RuntimeVisualSystem = runtimeVisualSystem;
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
+            ResourceHaulerSystem = resourceHaulerSystem;
+            FactionResourceSystem = factionResourceSystem;
             ProductionContextSystem = productionContextSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
             LiveUnitFootprintQuery = liveUnitFootprintQuery;
             RedirectUnitsQuery = redirectUnitsQuery;
+            HaulerUnitsQuery = haulerUnitsQuery;
+            SelectedUnitsQuery = selectedUnitsQuery;
             LiveFactionUnitsQuery = liveFactionUnitsQuery;
             GetActiveBuildingId = getActiveBuildingId;
             TryGetEntityManager = tryGetEntityManager;
@@ -94,8 +106,8 @@ internal sealed class BuildingRuntimeContextSystem
             GetFootprintCenter = getFootprintCenter;
             IsHouseBuilding = isHouseBuilding;
             TryResolveBuildingFocusWorldPosition = tryResolveBuildingFocusWorldPosition;
-            TryGetBuildingApproachCell = tryGetBuildingApproachCell;
-            IsBuildingApproachCell = isBuildingApproachCell;
+            TryGetRuntimeBuilding = tryGetRuntimeBuilding;
+            GetEffectivePlacementRect = getEffectivePlacementRect;
             RememberOpenBaseBreach = rememberOpenBaseBreach;
             NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
             DestroyObject = destroyObject;
@@ -128,13 +140,12 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly Func<bool> IsDeferringSideEffects;
         public readonly BuildingRuntimeCreationSystem.TryGetGridDelegate TryGetGridForRuntimeCreation;
         public readonly BuildingRuntimeCreationSystem.ResolvePlacementRectDelegate ResolvePlacementRect;
-        public readonly BuildingRuntimeCreationSystem.ShouldBlockPathingDelegate ShouldBlockPathing;
         public readonly BuildingRuntimeCreationSystem.RemoveOverlappingBlockersDelegate RemoveOverlappingBlockers;
-        public readonly BuildingRuntimeCreationSystem.CreateBlockerEntityDelegate CreateBlockerEntity;
-        public readonly BuildingRuntimeCreationSystem.CreateCombatEntityDelegate CreateCombatEntity;
-        public readonly BuildingRuntimeCreationSystem.RedirectUnitsDelegate RedirectUnits;
-        public readonly BuildingRuntimeCreationSystem.AddDeferredRedirectFootprintDelegate AddDeferredRedirectFootprint;
-        public readonly BuildingRuntimeCreationSystem.RuntimeAction MarkPendingMarkerRefresh;
+        public readonly BuildingRuntimeEntitySystem RuntimeEntitySystem;
+        public readonly BuildingRuntimeEntitySystem.Context RuntimeEntityContext;
+        public readonly BuildingPlacementRedirectSystem PlacementRedirectSystem;
+        public readonly BuildingPlacementRedirectSystem.EnsureEntityQueriesDelegate EnsureEntityQueries;
+        public readonly BuildingPlacementRedirectSystem.GetRedirectUnitsQueryDelegate GetRedirectUnitsQuery;
         public readonly BuildingRuntimeCreationSystem.RuntimeBuildingAction InitializeVisuals;
         public readonly BuildingRuntimeCreationSystem.RuntimeAction RefreshMarkers;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
@@ -166,13 +177,12 @@ internal sealed class BuildingRuntimeContextSystem
             Func<bool> isDeferringSideEffects,
             BuildingRuntimeCreationSystem.TryGetGridDelegate tryGetGridForRuntimeCreation,
             BuildingRuntimeCreationSystem.ResolvePlacementRectDelegate resolvePlacementRect,
-            BuildingRuntimeCreationSystem.ShouldBlockPathingDelegate shouldBlockPathing,
             BuildingRuntimeCreationSystem.RemoveOverlappingBlockersDelegate removeOverlappingBlockers,
-            BuildingRuntimeCreationSystem.CreateBlockerEntityDelegate createBlockerEntity,
-            BuildingRuntimeCreationSystem.CreateCombatEntityDelegate createCombatEntity,
-            BuildingRuntimeCreationSystem.RedirectUnitsDelegate redirectUnits,
-            BuildingRuntimeCreationSystem.AddDeferredRedirectFootprintDelegate addDeferredRedirectFootprint,
-            BuildingRuntimeCreationSystem.RuntimeAction markPendingMarkerRefresh,
+            BuildingRuntimeEntitySystem runtimeEntitySystem,
+            BuildingRuntimeEntitySystem.Context runtimeEntityContext,
+            BuildingPlacementRedirectSystem placementRedirectSystem,
+            BuildingPlacementRedirectSystem.EnsureEntityQueriesDelegate ensureEntityQueries,
+            BuildingPlacementRedirectSystem.GetRedirectUnitsQueryDelegate getRedirectUnitsQuery,
             BuildingRuntimeCreationSystem.RuntimeBuildingAction initializeVisuals,
             BuildingRuntimeCreationSystem.RuntimeAction refreshMarkers,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
@@ -203,13 +213,12 @@ internal sealed class BuildingRuntimeContextSystem
             IsDeferringSideEffects = isDeferringSideEffects;
             TryGetGridForRuntimeCreation = tryGetGridForRuntimeCreation;
             ResolvePlacementRect = resolvePlacementRect;
-            ShouldBlockPathing = shouldBlockPathing;
             RemoveOverlappingBlockers = removeOverlappingBlockers;
-            CreateBlockerEntity = createBlockerEntity;
-            CreateCombatEntity = createCombatEntity;
-            RedirectUnits = redirectUnits;
-            AddDeferredRedirectFootprint = addDeferredRedirectFootprint;
-            MarkPendingMarkerRefresh = markPendingMarkerRefresh;
+            RuntimeEntitySystem = runtimeEntitySystem;
+            RuntimeEntityContext = runtimeEntityContext;
+            PlacementRedirectSystem = placementRedirectSystem;
+            EnsureEntityQueries = ensureEntityQueries;
+            GetRedirectUnitsQuery = getRedirectUnitsQuery;
             InitializeVisuals = initializeVisuals;
             RefreshMarkers = refreshMarkers;
             TryGetEntityManager = tryGetEntityManager;
@@ -241,6 +250,21 @@ internal sealed class BuildingRuntimeContextSystem
             source.SetRuntimeBuildingOwnerFaction);
     }
 
+    public BuildingRuntimeSpawnCommandSystem.Context CreateSpawnCommandContext(
+        Source source,
+        BuildingRuntimeSpawnSystem runtimeSpawnSystem,
+        BuildingDefinition soldierBaseDefinition,
+        BuildingDefinition soldierTentDefinition,
+        BuildingDefinition factoryDefinition)
+    {
+        return new BuildingRuntimeSpawnCommandSystem.Context(
+            runtimeSpawnSystem,
+            CreateSpawnContext(source),
+            soldierBaseDefinition,
+            soldierTentDefinition,
+            factoryDefinition);
+    }
+
     public BuildingRuntimeCreationSystem.Context CreateCreationContext(Source source)
     {
         return new BuildingRuntimeCreationSystem.Context(
@@ -250,13 +274,17 @@ internal sealed class BuildingRuntimeContextSystem
             source.IsDeferringSideEffects?.Invoke() == true,
             source.TryGetGridForRuntimeCreation,
             source.ResolvePlacementRect,
-            source.ShouldBlockPathing,
+            definition => source.RuntimeEntitySystem == null || source.RuntimeEntitySystem.ShouldRuntimeBuildingBlockPathing(definition),
             source.RemoveOverlappingBlockers,
-            source.CreateBlockerEntity,
-            source.CreateCombatEntity,
-            source.RedirectUnits,
-            source.AddDeferredRedirectFootprint,
-            source.MarkPendingMarkerRefresh,
+            (definition, originCell, footprintCells) => source.RuntimeEntitySystem != null
+                ? source.RuntimeEntitySystem.CreateBlockerEntity(source.RuntimeEntityContext, definition, originCell, footprintCells)
+                : Entity.Null,
+            (originCell, definition, ownerFactionId, worldRotation) => source.RuntimeEntitySystem != null
+                ? source.RuntimeEntitySystem.CreateBuildingCombatEntity(source.RuntimeEntityContext, originCell, definition, ownerFactionId, worldRotation)
+                : Entity.Null,
+            footprint => source.PlacementRedirectSystem?.RedirectUnitsAroundPlacedBuilding(CreateCreationRedirectContext(source), footprint),
+            footprint => source.PlacementRedirectSystem?.AddDeferredRedirectFootprint(footprint),
+            () => source.PlacementRedirectSystem?.MarkPendingMarkerRefresh(),
             source.InitializeVisuals,
             source.RefreshMarkers);
     }
@@ -270,10 +298,14 @@ internal sealed class BuildingRuntimeContextSystem
             source.MarkerPropertyBlock);
     }
 
-    public BuildingRuntimeCitySpawnSystem.Context CreateCitySpawnContext(Source source)
+    public BuildingRuntimeCitySpawnSystem.Context CreateCitySpawnContext(
+        Source source,
+        BuildingRuntimeSpawnCommandSystem runtimeSpawnCommandSystem,
+        BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext)
     {
         return new BuildingRuntimeCitySpawnSystem.Context(
-            CreateSpawnContext(source),
+            runtimeSpawnCommandSystem,
+            runtimeSpawnCommandContext,
             source.DeleteBuildingById,
             source.BeginDeferredRuntimeBuildingSideEffects,
             source.EndDeferredRuntimeBuildingSideEffects);
@@ -292,12 +324,21 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingDefinitionSystem.RuntimeBuildingMatchesId);
     }
 
-    public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(RuntimeSource source)
+    public BuildingRuntimeEntitySystem.Context CreateRuntimeEntityContext(
+        RuntimeSource source,
+        BuildingCombatSystem combatSystem,
+        BuildingCombatSystem.Context<RuntimeBuildingData> combatContext,
+        Func<float> getTime,
+        float destroyedBuildingLifetimeSeconds)
     {
         return new BuildingRuntimeEntitySystem.Context(
             source.TryGetEntityManager,
             source.TryGetGridData,
-            source.GetFootprintCenter);
+            source.GetFootprintCenter,
+            combatSystem,
+            combatContext,
+            getTime,
+            destroyedBuildingLifetimeSeconds);
     }
 
     public BuildingRuntimeVisualSystem.Context CreateRuntimeVisualContext(RuntimeSource source)
@@ -348,9 +389,43 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingDefinitionSystem.RuntimeBuildingMatchesId,
             BuildingDefinitionSystem.UnitPrefabMatchesId,
             source.TryResolveBuildingFocusWorldPosition,
-            source.TryGetBuildingApproachCell,
-            source.IsBuildingApproachCell,
-            BuildingBarrierSystem.IsWallGateDefinition);
+            (RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
+            {
+                goal = default;
+                return source.ResourceHaulerBridgeSystem != null &&
+                    source.ResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell(
+                    CreateResourceHaulerBridgeContext(source),
+                    building,
+                    unitFootprint,
+                    referenceCell,
+                    out goal);
+            },
+            (RuntimeBuildingData building, int2 currentCell, int2 unitFootprint) =>
+                source.ResourceHaulerBridgeSystem != null &&
+                source.ResourceHaulerBridgeSystem.IsRuntimeBuildingApproachCell(
+                    CreateResourceHaulerBridgeContext(source),
+                    building,
+                    currentCell,
+                    unitFootprint),
+            BuildingBarrierSystem.IsWallGateDefinition,
+            (byte attackerFactionId,
+                Entity finalTarget,
+                int2 finalTargetCell,
+                int2 attackerCell,
+                out Entity breachTarget,
+                out int2 breachCell,
+                out float3 breachPosition,
+                out string reason) =>
+                source.BarrierSystem.TryResolveBaseBreachTarget(
+                    CreateBarrierContext(source),
+                    attackerFactionId,
+                    finalTarget,
+                    finalTargetCell,
+                    attackerCell,
+                    out breachTarget,
+                    out breachCell,
+                    out breachPosition,
+                    out reason));
     }
 
     public BuildingBarrierSystem.Context CreateBarrierContext(RuntimeSource source)
@@ -364,6 +439,50 @@ internal sealed class BuildingRuntimeContextSystem
             () => source.LiveFactionUnitsQuery,
             BuildingBarrierSystem.IsWallGateDefinition,
             (RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal) =>
-                source.TryGetBuildingApproachCell(building, unitFootprint, referenceCell, out goal));
+            {
+                goal = default;
+                return source.ResourceHaulerBridgeSystem != null &&
+                    source.ResourceHaulerBridgeSystem.TryGetRuntimeBuildingApproachCell(
+                    CreateResourceHaulerBridgeContext(source),
+                    building,
+                    unitFootprint,
+                    referenceCell,
+                    out goal);
+            });
+    }
+
+    private static BuildingPlacementRedirectSystem.Context CreateCreationRedirectContext(Source source)
+    {
+        return new BuildingPlacementRedirectSystem.Context(
+            (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
+            entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
+            source.GetRedirectUnitsQuery);
+    }
+
+    public BuildingResourceHaulerBridgeSystem.Context CreateResourceHaulerBridgeContext(RuntimeSource source)
+    {
+        return new BuildingResourceHaulerBridgeSystem.Context(
+            source.RuntimeBuildingSystem.Buildings,
+            source.ResourceHaulerSystem,
+            source.FactionResourceSystem,
+            (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
+            (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                source.TryGetGridData(out gridEntity, out grid, out roads, out blockerData),
+            entityManager => source.EnsureEntityQueries?.Invoke(entityManager),
+            () => source.HaulerUnitsQuery,
+            () => source.SelectedUnitsQuery,
+            source.TryGetRuntimeBuilding,
+            building => source.TryResolveBuildingFocusWorldPosition(building, out Vector3 worldPosition) ? worldPosition : Vector3.zero,
+            source.GetEffectivePlacementRect);
+    }
+
+    public bool TryAssignSelectedHaulerOrders(RuntimeSource source, int clickedBuildingId)
+    {
+        return source.ResourceHaulerBridgeSystem != null &&
+            source.ResourceHaulerBridgeSystem.TryAssignSelectedHaulerOrders(
+                CreateResourceHaulerBridgeContext(source),
+                clickedBuildingId);
     }
 }

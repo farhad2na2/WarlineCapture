@@ -4,6 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
 internal sealed class BuildingBarrierSystem
 {
@@ -458,6 +459,18 @@ internal sealed class BuildingBarrierSystem
     {
         vertical = false;
         return IsWallGateDefinition(definition) && TryResolveNearbyWallVertical(context, originCell, definition, out vertical);
+    }
+
+    public bool ResolvePlacementRotateVertical(Context context, BuildingPlacementInputSystem inputSystem, PlacementState placement)
+    {
+        if (placement?.Definition == null)
+            return false;
+
+        if (IsLinearWallDefinition(placement.Definition))
+            return inputSystem != null && inputSystem.IsWallPlacementVertical(placement);
+
+        return ShouldAlignGateToNearbyWall(context, placement.OriginCell, placement.Definition, out bool gateVertical) &&
+               gateVertical;
     }
 
     public static bool IsLinearWallDefinition(BuildingDefinition definition)

@@ -15,15 +15,27 @@ internal sealed class BuildingRuntimeEntitySystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDataDelegate TryGetGridData;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
+        public readonly BuildingCombatSystem CombatSystem;
+        public readonly BuildingCombatSystem.Context<RuntimeBuildingData> CombatContext;
+        public readonly System.Func<float> GetTime;
+        public readonly float DestroyedBuildingLifetimeSeconds;
 
         public Context(
             TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDataDelegate tryGetGridData,
-            GetFootprintCenterDelegate getFootprintCenter)
+            GetFootprintCenterDelegate getFootprintCenter,
+            BuildingCombatSystem combatSystem,
+            BuildingCombatSystem.Context<RuntimeBuildingData> combatContext,
+            System.Func<float> getTime,
+            float destroyedBuildingLifetimeSeconds)
         {
             TryGetEntityManager = tryGetEntityManager;
             TryGetGridData = tryGetGridData;
             GetFootprintCenter = getFootprintCenter;
+            CombatSystem = combatSystem;
+            CombatContext = combatContext;
+            GetTime = getTime;
+            DestroyedBuildingLifetimeSeconds = destroyedBuildingLifetimeSeconds;
         }
     }
 
@@ -37,6 +49,30 @@ internal sealed class BuildingRuntimeEntitySystem
         em.AddComponentData(entity, new GridBlockerSize { Size = new int2(footprintCells.x, footprintCells.y) });
         em.AddComponent<StaticGridBlocker>(entity);
         return entity;
+    }
+
+    public bool DeleteBuildingById(Context context, int buildingId)
+    {
+        return context.CombatSystem != null &&
+            context.CombatSystem.DeleteBuilding(
+                context.CombatContext,
+                buildingId,
+                destroyVisual: true,
+                context.GetTime?.Invoke() ?? 0f,
+                context.DestroyedBuildingLifetimeSeconds);
+    }
+
+    public void HandleRuntimeBuildingEntityDestroyed(
+        Context context,
+        int buildingId,
+        Entity blockerEntity,
+        GameObject buildingObject)
+    {
+        context.CombatSystem?.HandleRuntimeBuildingEntityDestroyed(
+            context.CombatContext,
+            buildingId,
+            blockerEntity,
+            buildingObject);
     }
 
     public bool ShouldRuntimeBuildingBlockPathing(BuildingDefinition definition)

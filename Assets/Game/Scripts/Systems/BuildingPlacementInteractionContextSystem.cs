@@ -61,6 +61,43 @@ internal sealed class BuildingPlacementInteractionContextSystem
         }
     }
 
+    public Source CreateSource(
+        Func<bool> hasPendingBuildingPlacement,
+        Func<bool> canConfirmBuildingPlacement,
+        Func<bool> hasSelectedBuilding,
+        Func<bool> hasActiveBuilding,
+        Func<bool> isDraggingPlacementPreview,
+        Func<string> getPlacementStatusText,
+        Func<string> getSelectedBuildingLabel,
+        Action beginSoldierBasePlacement,
+        Func<bool> confirmBuildingPlacement,
+        Action cancelBuildingPlacement,
+        Action createUnitFromSelectedBuilding,
+        Action deleteSelectedBuilding,
+        Action<string> clearSelectedBuilding,
+        Action exitBuildMode,
+        Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
+        BuildingPlacementInteractionSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
+    {
+        return new Source(
+            hasPendingBuildingPlacement,
+            canConfirmBuildingPlacement,
+            hasSelectedBuilding,
+            hasActiveBuilding,
+            isDraggingPlacementPreview,
+            getPlacementStatusText,
+            getSelectedBuildingLabel,
+            beginSoldierBasePlacement,
+            confirmBuildingPlacement,
+            cancelBuildingPlacement,
+            createUnitFromSelectedBuilding,
+            deleteSelectedBuilding,
+            clearSelectedBuilding,
+            exitBuildMode,
+            handleRuntimeBuildingEntityDestroyed,
+            tryResolveBaseBreachTarget);
+    }
+
     public BuildingPlacementInteractionSystem.Context CreateContext(Source source)
     {
         return new BuildingPlacementInteractionSystem.Context(

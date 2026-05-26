@@ -29,11 +29,11 @@ Counts:
 - Source ground prefab instances: 46
 - Source detail grass prefab instances: 135
 - Unique source prefab assets: 8
-- Placed prefab instances: 20440
-- Green material placements: 10992
+- Placed prefab instances: 22611
+- Green material placements: 12422
 - Dirt material placements: 2566
 - Dark grass material placements: 3102
-- Beach material placements: 3780
+- Beach material placements: 4521
 - Ground fill spacing: 18
 - Gameplay map target extent: 2023
 - Green playable half extent X/Z: 1260 / 1240
@@ -41,8 +41,8 @@ Counts:
 - Shore ground spacing: 30
 - Detail grass spacing: 78
 - Ground X/Z scale multiplier: 2.15
-- Shore ground X/Z scale multiplier: 1.12
+- Shore ground X/Z scale multiplier: 1.45
 - Detail grass X/Z scale multiplier: 0.95
-- Beach X/Z scale multiplier: 2.35
+- Beach X/Z scale multiplier: 2.5
 
 Runtime transfer note: move the source-prefab collection into a prefab catalog, port `EvaluateIsland`, `BoundaryPoint`, and the placement loops to runtime, and instantiate pooled versions of the same source prefab ids.

@@ -93,7 +93,7 @@ MonoBehaviour:
   spawnRadiusCells: 10
   respawnDelaySeconds: 1
   randomSeed: 1
-  initialDollars: 300000
+  initialDollars: 30000000
   initialOil: 50
   initialFuel: 100
   createFactionBases: 1

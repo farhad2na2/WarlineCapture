@@ -10,14 +10,14 @@ Target map footprint:
 - `MapTarget2024`: count 0, width 2023, depth 2023, x [-1011.5, 1011.5], z [-1011.5, 1011.5]
 
 Current foundation footprint:
-- `FoundationOverall`: count 20440, width 3057.73, depth 2970.207, x [-1519.661, 1538.069], z [-1545.781, 1424.427]
+- `FoundationOverall`: count 22611, width 3082.198, depth 2975.169, x [-1533.103, 1549.095], z [-1549.377, 1425.792]
 - Shortfall versus target: west 0, east 0, south 0, north 0
 
 Current foundation categories:
-- `GreenPlayableGround`: count 16660, width 2694.917, depth 2614.862, x [-1343.393, 1351.523], z [-1326.339, 1288.523]
-- `InnerBeachBlend`: count 2520, width 2958.253, depth 2906.406, x [-1472.41, 1485.843], z [-1514.832, 1391.573]
-- `OuterBeachCoast`: count 1260, width 3057.73, depth 2970.208, x [-1519.661, 1538.069], z [-1545.781, 1424.428]
-- Beach prefab centers inside 2024 gameplay map: 0 / 3780
+- `GreenPlayableGround`: count 18090, width 2930.813, depth 2831.412, x [-1441.291, 1489.521], z [-1475.949, 1355.464]
+- `InnerBeachBlend`: count 3021, width 2916.812, depth 2875.924, x [-1452.585, 1464.227], z [-1496.299, 1379.625]
+- `OuterBeachCoast`: count 1500, width 3082.197, depth 2975.17, x [-1533.103, 1549.094], z [-1549.377, 1425.793]
+- Beach prefab centers inside 2024 gameplay map: 0 / 4521
 
 Generated mask/dressing footprint:
 - `GeneratedDressingOverall`: count 3382, width 2053.926, depth 2078.858, x [-1017.907, 1036.019], z [-1069.185, 1009.673]

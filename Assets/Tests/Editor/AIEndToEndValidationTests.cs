@@ -13,7 +13,9 @@ public sealed class AIEndToEndValidationTests
 {
     private World _previousDefaultWorld;
     private World _world;
-    private BuildingGameplayTestHarness _buildingPlacement;
+    private BuildingGameplayCompositionSystem _buildingComposition;
+    private BuildingGameplayCompositionSystem.Result _buildingGameplay;
+    private bool _buildingGameplayInitialized;
     private NativeArray<int> _blockerCounts;
     private NativeBitArray _blocked;
     private NativeBitArray _occupied;
@@ -36,8 +38,10 @@ public sealed class AIEndToEndValidationTests
         InitialUnitsRuntimeState.PlayRequested = false;
         InitialUnitsRuntimeState.VerboseAILogs = false;
 
-        _buildingPlacement?.Dispose();
-        _buildingPlacement = null;
+        if (_buildingGameplayInitialized)
+            _buildingGameplay.Dispose?.Invoke();
+        _buildingGameplayInitialized = false;
+        _buildingComposition = null;
 
         if (_world != null && _world.IsCreated)
             _world.Dispose();
@@ -75,7 +79,7 @@ public sealed class AIEndToEndValidationTests
 
         CreateGrid(em, 80, 80);
         CreateBuildingPlacementHarness();
-        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, TickBuildingRuntime);
 
         Entity economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
         em.SetComponentData(economyEntity, new FactionEconomy { FactionId = 1, Money = 100000, LastLogTime = -999f });
@@ -97,7 +101,7 @@ public sealed class AIEndToEndValidationTests
         Entity unitD = CreateAttacker(em, 1, new int2(23, 20), new float3(23f, 0f, 20f));
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         SystemHandle buildSystem = _world.CreateSystem<AIBuildPlannerSystem>();
         SystemHandle logFlushSystem = _world.CreateSystem<AIDiagnosticLogFlushSystem>();
         SystemHandle productionSystem = _world.CreateSystem<AIProductionSystem>();
@@ -109,26 +113,26 @@ public sealed class AIEndToEndValidationTests
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIBuild\] faction=1 building=Tent_Regular cell=int2\(\d+, \d+\) cost=20000 result=Placed"));
         buildSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountRuntimeBuildingsForFaction(em, (byte)1, "Tent_Regular"));
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 unit=Rifleman cost=10000 result=Requested"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AIProduction\] faction=1 producer=Tent_Regular unit=Rifleman cost=10000 queue=1 result=Queued"));
         productionSystem.Update(_world.Unmanaged);
         logFlushSystem.Update(_world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
-        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, _buildingPlacement);
+        RuntimeGameplayStateTestHelper.PublishBuildingRuntimeBoundary(em, TickBuildingRuntime);
         Assert.AreEqual(1, RuntimeGameplayStateTestHelper.CountPendingProductionsForFaction(em, (byte)1, "Rifleman"));
 
         LogAssert.Expect(LogType.Log, new Regex(@"\[AISquad\] faction=1 squad=1 purpose=Attack units=4 targetFaction=0 targetCell=int2\(50, 50\)"));
@@ -177,8 +181,22 @@ public sealed class AIEndToEndValidationTests
         SetPrivateField(_buildingConfig, "unitPrefabRegistryConfig", _unitRegistryConfig);
 
         _runtimeRoot = new GameObject("AIEndToEnd_RuntimeRoot");
-        _buildingPlacement = new BuildingGameplayTestHarness();
-        _buildingPlacement.Init(_buildingConfig, null, _runtimeRoot.transform, null, null, null, null);
+        _buildingComposition = new BuildingGameplayCompositionSystem();
+        _buildingGameplay = _buildingComposition.Initialize(
+            _buildingConfig,
+            null,
+            _runtimeRoot.transform,
+            null,
+            default,
+            null,
+            null);
+        _buildingGameplayInitialized = true;
+    }
+
+    private void TickBuildingRuntime()
+    {
+        if (_buildingGameplayInitialized)
+            _buildingGameplay.RuntimeUpdate.Update(_buildingGameplay.RuntimeUpdateContext);
     }
 
     private static void CreateBuildPlan(EntityManager em)

@@ -5,25 +5,26 @@ internal sealed class BuildingRuntimeCitySpawnSystem
 {
     public readonly struct Context
     {
-        public readonly BuildingRuntimeSpawnSystem.Context RuntimeSpawnContext;
+        public readonly BuildingRuntimeSpawnCommandSystem RuntimeSpawnCommandSystem;
+        public readonly BuildingRuntimeSpawnCommandSystem.Context RuntimeSpawnCommandContext;
         public readonly Func<int, bool> DeleteBuildingById;
         public readonly Action BeginDeferredRuntimeBuildingSideEffects;
         public readonly Action EndDeferredRuntimeBuildingSideEffects;
 
         public Context(
-            BuildingRuntimeSpawnSystem.Context runtimeSpawnContext,
+            BuildingRuntimeSpawnCommandSystem runtimeSpawnCommandSystem,
+            BuildingRuntimeSpawnCommandSystem.Context runtimeSpawnCommandContext,
             Func<int, bool> deleteBuildingById,
             Action beginDeferredRuntimeBuildingSideEffects,
             Action endDeferredRuntimeBuildingSideEffects)
         {
-            RuntimeSpawnContext = runtimeSpawnContext;
+            RuntimeSpawnCommandSystem = runtimeSpawnCommandSystem;
+            RuntimeSpawnCommandContext = runtimeSpawnCommandContext;
             DeleteBuildingById = deleteBuildingById;
             BeginDeferredRuntimeBuildingSideEffects = beginDeferredRuntimeBuildingSideEffects;
             EndDeferredRuntimeBuildingSideEffects = endDeferredRuntimeBuildingSideEffects;
         }
     }
-
-    private readonly BuildingRuntimeSpawnSystem _runtimeSpawnSystem = new();
 
     public void BeginDeferredSideEffects(Context context)
     {
@@ -56,25 +57,25 @@ internal sealed class BuildingRuntimeCitySpawnSystem
         actualOrigin = default;
         actualFootprint = default;
 
-        if (!_runtimeSpawnSystem.TrySpawnRuntimeBuilding(
-                context.RuntimeSpawnContext,
+        if (context.RuntimeSpawnCommandSystem == null ||
+            !context.RuntimeSpawnCommandSystem.TrySpawnRuntimeBuilding(
+                context.RuntimeSpawnCommandContext,
                 prefab,
                 preferredOrigin,
+                out buildingId,
+                out actualOrigin,
+                out actualFootprint,
                 fallbackDisplayName,
                 fallbackDescription,
                 fallbackFootprint,
                 fallbackMaxHealth,
                 isCityGenerated: true,
                 ownerFactionId: null,
-                rotateVertical: false,
-                out BuildingRuntimeSpawnSystem.SpawnRuntimeBuildingResult result))
+                rotateVertical: false))
         {
             return false;
         }
 
-        buildingId = result.BuildingId;
-        actualOrigin = result.ActualOrigin;
-        actualFootprint = result.ActualFootprint;
         return true;
     }
 }

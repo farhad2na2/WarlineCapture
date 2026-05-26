@@ -145,6 +145,14 @@ internal sealed class BuildingProductionRequestSystem
     private RuntimeBuildingData _lastCampProductionFocusBuilding;
     private GameObject _lastCampProductionFocusPrefab;
 
+    public void CreateUnitFromSelectedBuilding(Context context, int? activeBuildingId, int productionIndex, int frameCount)
+    {
+        if (!activeBuildingId.HasValue)
+            return;
+
+        CreateUnitFromBuilding(context, activeBuildingId.Value, productionIndex, frameCount);
+    }
+
     public void CreateUnitFromBuilding(Context context, int buildingId, int productionIndex, int frameCount)
     {
         if (!ConsumeUiProductionArm(frameCount))

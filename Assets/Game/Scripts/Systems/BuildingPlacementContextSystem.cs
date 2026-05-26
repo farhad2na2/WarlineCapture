@@ -5,6 +5,8 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementContextSystem
 {
+    private readonly List<BuildingPlacementCommitSystem.WallRun> _wallCommitRuns = new();
+
     public readonly struct Source
     {
         public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
@@ -148,6 +150,51 @@ internal sealed class BuildingPlacementContextSystem
             source.CommitPlacement);
     }
 
+    public BuildingPlacementSessionSystem.Context CreateSessionContext(
+        Source source,
+        Action recordBuildingBuilt,
+        Action notifyStaticMinimapChanged,
+        Action<string> clearSelectedBuilding,
+        Action clearCommandMode)
+    {
+        return new BuildingPlacementSessionSystem.Context(
+            source.RuntimeGameplayStateSystem,
+            source.LifecycleSystem,
+            source.InputSystem,
+            source.PreviewSystem,
+            () => CreateCancelContext(source),
+            () => CreateBeginContext(source),
+            () => CreateConfirmContext(source),
+            recordBuildingBuilt,
+            notifyStaticMinimapChanged,
+            clearSelectedBuilding,
+            clearCommandMode);
+    }
+
+    public BuildingPlacementCommandSystem.Context CreateCommandContext(
+        Source source,
+        BuildingPlacementStartupSystem startupSystem,
+        BuildingDefinitionSystem definitionSystem,
+        BuildingPlacementSessionSystem sessionSystem,
+        Action<string> logWarning,
+        Action recordBuildingBuilt,
+        Action notifyStaticMinimapChanged,
+        Action<string> clearSelectedBuilding,
+        Action clearCommandMode)
+    {
+        return new BuildingPlacementCommandSystem.Context(
+            startupSystem,
+            definitionSystem,
+            sessionSystem,
+            CreateSessionContext(
+                source,
+                recordBuildingBuilt,
+                notifyStaticMinimapChanged,
+                clearSelectedBuilding,
+                clearCommandMode),
+            logWarning);
+    }
+
     public BuildingPlacementValidationSystem.WallValidationContext CreateWallValidationContext(Source source)
     {
         return new BuildingPlacementValidationSystem.WallValidationContext(
@@ -158,10 +205,9 @@ internal sealed class BuildingPlacementContextSystem
 
     public BuildingPlacementCommitSystem.CommitRequest CreateCommitRequest(
         Source source,
-        BuildingPlacementLifecycleSystem.PlacementState placement,
-        List<BuildingPlacementCommitSystem.WallRun> wallCommitRuns)
+        BuildingPlacementLifecycleSystem.PlacementState placement)
     {
-        wallCommitRuns.Clear();
+        _wallCommitRuns.Clear();
         if (placement.CommittedWallRuns != null)
         {
             for (int i = 0; i < placement.CommittedWallRuns.Count; i++)
@@ -170,7 +216,7 @@ internal sealed class BuildingPlacementContextSystem
                 if (run?.Origins == null || run.Origins.Count == 0)
                     continue;
 
-                wallCommitRuns.Add(new BuildingPlacementCommitSystem.WallRun(run.Origins, run.Vertical));
+                _wallCommitRuns.Add(new BuildingPlacementCommitSystem.WallRun(run.Origins, run.Vertical));
             }
         }
 
@@ -190,7 +236,7 @@ internal sealed class BuildingPlacementContextSystem
             placement.AutoRotateVertical,
             BuildingBarrierSystem.IsLinearWallDefinition(placement.Definition),
             placement.HideCurrentWallPreview,
-            wallCommitRuns,
+            _wallCommitRuns,
             currentWallOrigins,
             currentWallVertical);
     }

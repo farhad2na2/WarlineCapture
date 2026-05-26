@@ -122,7 +122,7 @@ public sealed class FactionResourceSystem
         current = 0;
         max = 0;
         progress01 = 0f;
-        if (building == null)
+        if (building == null || building.IsDestroyed)
             return false;
 
         max = Mathf.Max(0, building.FuelStorageCapacity);
@@ -287,7 +287,7 @@ public sealed class FactionResourceSystem
 
     public bool IsResourceStorageBuilding(IResourceBuilding building)
     {
-        if (building == null)
+        if (building == null || building.IsDestroyed)
             return false;
 
         bool storesOil = building.OilStorageCapacity > 0;

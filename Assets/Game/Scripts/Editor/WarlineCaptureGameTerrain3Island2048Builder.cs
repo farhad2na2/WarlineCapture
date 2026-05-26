@@ -34,9 +34,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const float ShoreGroundSpacing = 30f;
     private const float DetailGrassSpacing = 78f;
     private const float GroundSurfaceScaleXZ = 2.15f;
-    private const float ShoreGroundScaleXZ = 1.32f;
+    private const float ShoreGroundScaleXZ = 1.45f;
     private const float DetailGrassScaleXZ = 0.95f;
-    private const float BeachSurfaceScaleXZ = 2.35f;
+    private const float BeachSurfaceScaleXZ = 2.5f;
 
     private static readonly List<SourcePiece> BeachPieces = new();
     private static readonly List<SourcePiece> GroundPieces = new();
@@ -407,6 +407,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         PlaceGroundFill(ground.transform);
         PlaceShoreGroundOverlap(ground.transform);
         PlaceCoastalBeaches(beaches.transform);
+        PlaceTargetedSeamBeaches(beaches.transform);
         PlaceDetailGrassDecor(details.transform);
     }
 
@@ -437,16 +438,16 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
     private static void PlaceShoreGroundOverlap(Transform parent)
     {
-        const int ringCount = 1040;
+        const int ringCount = 1440;
         for (int i = 0; i < ringCount; i++)
         {
             float angle = (i / (float)ringCount) * Mathf.PI * 2f + (Hash01(i, 0, 211) - 0.5f) * 0.025f;
             Vector2 boundary = BoundaryPoint(angle);
             Vector2 inward = -new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
             Vector2 tangent = new(-inward.y, inward.x);
-            Vector2 position = boundary + inward * (14f + Hash01(i, 0, 223) * 62f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing * 0.72f);
+            Vector2 position = boundary + inward * (8f + Hash01(i, 0, 223) * 70f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing * 0.45f);
 
-            if (!EvaluateIsland(position, out float depth, out _) || depth < 0.08f)
+            if (!EvaluateIsland(position, out float depth, out _) || depth < -0.015f)
                 continue;
 
             SourcePiece source = Pick(GroundPieces, i, 0, 239);
@@ -457,7 +458,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
     private static void PlaceCoastalBeaches(Transform parent)
     {
-        const int ringCount = 1260;
+        const int ringCount = 1500;
         for (int i = 0; i < ringCount; i++)
         {
             float t = i / (float)ringCount;
@@ -468,25 +469,80 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             float lateralNoise = (Hash01(i, 0, 101) - 0.5f) * 8f;
             Vector2 tangent = new(-inward.y, inward.x);
             Vector2 position = boundary + outward * (10f + Hash01(i, 0, 113) * 22f) + tangent * lateralNoise;
+            position = PushBeachCenterOutsideGameplayMap(position);
 
             SourcePiece source = Pick(BeachPieces, i, 0, 127);
             float yaw = angle * Mathf.Rad2Deg + 90f + Mathf.Round((Hash01(i, 0, 139) - 0.5f) * 2f) * 12f;
             InstantiateSource(parent, source, new Vector3(position.x, source.Position.y, position.y), yaw, "BeachCoast");
 
             SourcePiece secondary = Pick(BeachPieces, i, 1, 151);
-            Vector2 p2 = boundary + inward * (8f + Hash01(i, 1, 163) * 22f) - tangent * lateralNoise * 0.45f;
+            Vector2 p2 = boundary + inward * (24f + Hash01(i, 1, 163) * 36f) - tangent * lateralNoise * 0.45f;
+            p2 = PushBeachCenterOutsideGameplayMap(p2);
             InstantiateSource(parent, secondary, new Vector3(p2.x, secondary.Position.y, p2.y), yaw + 180f, "BeachBlend");
 
             if (i % 2 == 0)
             {
                 SourcePiece inner = Pick(BeachPieces, i, 2, 167);
-                Vector2 p3 = boundary + inward * (28f + Hash01(i, 2, 173) * 30f) + tangent * lateralNoise * 0.25f;
+                Vector2 p3 = boundary + inward * (58f + Hash01(i, 2, 173) * 46f) + tangent * lateralNoise * 0.25f;
+                p3 = PushBeachCenterOutsideGameplayMap(p3);
                 InstantiateSource(parent, inner, new Vector3(p3.x, inner.Position.y, p3.y), yaw + 90f, "BeachInner");
 
                 SourcePiece landEdge = Pick(BeachPieces, i, 3, 181);
-                Vector2 p4 = boundary + inward * (52f + Hash01(i, 3, 191) * 30f) - tangent * lateralNoise * 0.2f;
+                Vector2 p4 = boundary + inward * (96f + Hash01(i, 3, 191) * 48f) - tangent * lateralNoise * 0.2f;
+                p4 = PushBeachCenterOutsideGameplayMap(p4);
                 InstantiateSource(parent, landEdge, new Vector3(p4.x, landEdge.Position.y, p4.y), yaw - 90f, "BeachLandEdge");
             }
+        }
+    }
+
+    private static Vector2 PushBeachCenterOutsideGameplayMap(Vector2 position)
+    {
+        const float margin = 10f;
+        if (Mathf.Abs(position.x) > HalfGameplayMapExtent || Mathf.Abs(position.y) > HalfGameplayMapExtent)
+            return position;
+
+        float limit = HalfGameplayMapExtent + margin;
+        if (Mathf.Abs(position.x) > Mathf.Abs(position.y))
+            position.x = Mathf.Sign(position.x == 0f ? 1f : position.x) * limit;
+        else
+            position.y = Mathf.Sign(position.y == 0f ? 1f : position.y) * limit;
+
+        return position;
+    }
+
+    private static void PlaceTargetedSeamBeaches(Transform parent)
+    {
+        Vector2[] seamPatches =
+        {
+            new(-520f, -1258f),
+            new(-480f, -1258f),
+            new(-440f, -1256f),
+            new(-400f, -1254f),
+            new(-360f, -1252f),
+            new(-430f, -1190f),
+            new(-390f, -1188f),
+            new(-350f, -1186f),
+            new(-330f, -1248f),
+            new(-290f, -1244f),
+            new(-250f, -1242f),
+            new(-210f, -1238f),
+            new(1224f, 650f),
+            new(1228f, 610f),
+            new(1232f, 570f),
+            new(1258f, 650f),
+            new(1262f, 610f),
+            new(1264f, 570f),
+            new(1268f, 530f),
+            new(1270f, 490f),
+            new(1272f, 450f)
+        };
+
+        for (int i = 0; i < seamPatches.Length; i++)
+        {
+            Vector2 p = PushBeachCenterOutsideGameplayMap(seamPatches[i]);
+            SourcePiece source = Pick(BeachPieces, i, 4, 421);
+            float yaw = i < 4 ? Hash01(i, 4, 431) * 18f : 90f + Hash01(i, 4, 433) * 18f;
+            InstantiateSource(parent, source, new Vector3(p.x, source.Position.y, p.y), yaw, "BeachBlend");
         }
     }
 

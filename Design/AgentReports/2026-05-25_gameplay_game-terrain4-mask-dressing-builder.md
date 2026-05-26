@@ -27,12 +27,12 @@ Validated references:
 - Foundation base child: `ExpandedIsland_SourceGameTerrain3PrefabsOnly`
 - Foundation child index: 0
 - Foundation active in hierarchy: True
-- Foundation transform count: 20444
-- Foundation renderers: 20440
-- Foundation mesh filters: 20440
-- Foundation colliders: 20187
-- Foundation world bounds center: (9.204, -2.635, -60.677)
-- Foundation world bounds size: (3057.73, 7.829, 2970.207)
+- Foundation transform count: 22615
+- Foundation renderers: 22611
+- Foundation mesh filters: 22611
+- Foundation colliders: 22358
+- Foundation world bounds center: (7.996, -2.635, -61.792)
+- Foundation world bounds size: (3082.198, 7.829, 2975.169)
 
 Generated child groups under `Island`:
 - `Generated_Mountains`: present, child index 1, children 238, purpose: Mask-placed mountain and cliff blocker dressing.

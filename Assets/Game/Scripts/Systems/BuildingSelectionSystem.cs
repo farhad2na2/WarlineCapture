@@ -106,6 +106,15 @@ internal sealed class BuildingSelectionSystem
         context.RefreshMarkers?.Invoke();
     }
 
+    public void DeleteSelectedBuilding(Context context, BuildingIdAction deleteBuildingById)
+    {
+        int? buildingId = context.RuntimeBuildingSystem?.CurrentActiveBuildingId;
+        if (!buildingId.HasValue)
+            return;
+
+        deleteBuildingById?.Invoke(buildingId.Value);
+    }
+
     public Context CreateContext(Source source)
     {
         return new Context(
@@ -121,6 +130,35 @@ internal sealed class BuildingSelectionSystem
             source.TryAssignSelectedHaulerOrders,
             source.TryIssueMoveOrderToBuilding,
             source.ShouldUseExpandedSelectionArea);
+    }
+
+    public Context CreateContext(
+        RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        TryGetGridDelegate tryGetGrid,
+        GetFootprintCenterDelegate getFootprintCenter,
+        RuntimeAction suppressNextWorldClick,
+        RuntimeAction refreshMarkers,
+        RuntimeAction clearFocusedUnit,
+        CameraFocusAction smoothMoveCameraGroundCenterTo,
+        ScreenPositionPredicate isBoardablePlayerTransportClick,
+        BuildingIdAction tryAssignSelectedHaulerOrders,
+        BuildingMoveOrderAction tryIssueMoveOrderToBuilding,
+        BuildingDefinitionPredicate shouldUseExpandedSelectionArea)
+    {
+        return CreateContext(new Source(
+            runtimeBuildingSystem,
+            runtimeBuildings,
+            tryGetGrid,
+            getFootprintCenter,
+            suppressNextWorldClick,
+            refreshMarkers,
+            clearFocusedUnit,
+            smoothMoveCameraGroundCenterTo,
+            isBoardablePlayerTransportClick,
+            tryAssignSelectedHaulerOrders,
+            tryIssueMoveOrderToBuilding,
+            shouldUseExpandedSelectionArea));
     }
 
     public void SelectAndFocusBuilding(Context context, RuntimeBuildingData building)
@@ -153,6 +191,36 @@ internal sealed class BuildingSelectionSystem
         Vector3 position = building.Instance.transform.position;
         position.y = 0f;
         return position;
+    }
+
+    public bool TryResolveBuildingFocusWorldPosition(Context context, RuntimeBuildingData building, out Vector3 worldPosition)
+    {
+        worldPosition = Vector3.zero;
+        if (building == null)
+            return false;
+
+        worldPosition = ResolveBuildingFocusWorldPosition(context, building);
+        return true;
+    }
+
+    public bool HasVisibleSelectableBuilding(Context context, Camera camera, int screenWidth, int screenHeight)
+    {
+        if (camera == null || context.RuntimeBuildings == null)
+            return false;
+
+        Rect screenRect = new(0f, 0f, screenWidth, screenHeight);
+        foreach (KeyValuePair<int, RuntimeBuildingData> pair in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = pair.Value;
+            if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
+                continue;
+
+            Vector3 screen = camera.WorldToScreenPoint(ResolveBuildingFocusWorldPosition(context, building));
+            if (screen.z > 0f && screenRect.Contains(new Vector2(screen.x, screen.y)))
+                return true;
+        }
+
+        return false;
     }
 
     public bool HandleBuildingSelectionClick(Context context, Vector2 screenPosition, Vector2Int cell)

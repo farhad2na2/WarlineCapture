@@ -53,6 +53,8 @@ public sealed class BuildingUiCommandSystem
     public delegate bool TryGetConfiguredUnitDelegate(int index, out ConfiguredUnitEntry entry);
     public delegate CampRequestFailure GetCampRequestFailureDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName);
     public delegate CampRequestFailure TryRequestCampItemDelegate(GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess);
+    public delegate void CreateSelectedBuildingUnitDelegate(int productionIndex);
+    public delegate void CreateBuildingUnitDelegate(int buildingId, int productionIndex);
 
     public readonly struct Context
     {
@@ -64,10 +66,13 @@ public sealed class BuildingUiCommandSystem
         public readonly Func<GameObject, bool> IsConfiguredSpawnablePrefab;
         public readonly GetCampRequestFailureDelegate GetCampRequestFailure;
         public readonly TryRequestCampItemDelegate TryRequestCampItem;
+        public readonly CreateSelectedBuildingUnitDelegate CreateSelectedBuildingUnit;
+        public readonly CreateBuildingUnitDelegate CreateBuildingUnit;
         public readonly Action DeleteSelectedBuilding;
         public readonly Func<bool> ConfirmBuildingPlacement;
         public readonly Action CancelBuildingPlacement;
         public readonly Action FocusLastCampProductionRequest;
+        public readonly Action ArmNextProductionFromUi;
         public readonly Action<string> ClearSelectedBuilding;
         public readonly Action ExitBuildMode;
 
@@ -80,10 +85,13 @@ public sealed class BuildingUiCommandSystem
             Func<GameObject, bool> isConfiguredSpawnablePrefab,
             GetCampRequestFailureDelegate getCampRequestFailure,
             TryRequestCampItemDelegate tryRequestCampItem,
+            CreateSelectedBuildingUnitDelegate createSelectedBuildingUnit,
+            CreateBuildingUnitDelegate createBuildingUnit,
             Action deleteSelectedBuilding,
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
             Action focusLastCampProductionRequest,
+            Action armNextProductionFromUi,
             Action<string> clearSelectedBuilding,
             Action exitBuildMode)
         {
@@ -95,10 +103,13 @@ public sealed class BuildingUiCommandSystem
             IsConfiguredSpawnablePrefab = isConfiguredSpawnablePrefab;
             GetCampRequestFailure = getCampRequestFailure;
             TryRequestCampItem = tryRequestCampItem;
+            CreateSelectedBuildingUnit = createSelectedBuildingUnit;
+            CreateBuildingUnit = createBuildingUnit;
             DeleteSelectedBuilding = deleteSelectedBuilding;
             ConfirmBuildingPlacement = confirmBuildingPlacement;
             CancelBuildingPlacement = cancelBuildingPlacement;
             FocusLastCampProductionRequest = focusLastCampProductionRequest;
+            ArmNextProductionFromUi = armNextProductionFromUi;
             ClearSelectedBuilding = clearSelectedBuilding;
             ExitBuildMode = exitBuildMode;
         }
@@ -165,6 +176,66 @@ public sealed class BuildingUiCommandSystem
     public void DeleteSelectedBuilding(Context context)
     {
         context.DeleteSelectedBuilding?.Invoke();
+    }
+
+    public void CreateUnitFromSelectedBuilding(Context context)
+    {
+        CreateUnitFromSelectedBuilding(context, 0);
+    }
+
+    public void CreateUnitFromSelectedBuilding(Context context, int productionIndex)
+    {
+        context.CreateSelectedBuildingUnit?.Invoke(productionIndex);
+    }
+
+    public void CreateUnitFromBuilding(Context context, int buildingId)
+    {
+        CreateUnitFromBuilding(context, buildingId, 0);
+    }
+
+    public void CreateUnitFromBuilding(Context context, int buildingId, int productionIndex)
+    {
+        context.CreateBuildingUnit?.Invoke(buildingId, productionIndex);
+    }
+
+    public void CreateSecondaryUnitFromSelectedBuilding(Context context)
+    {
+        CreateUnitFromSelectedBuilding(context, 1);
+    }
+
+    public void CreateSecondaryUnitFromBuilding(Context context, int buildingId)
+    {
+        CreateUnitFromBuilding(context, buildingId, 1);
+    }
+
+    public void CreateTertiaryUnitFromSelectedBuilding(Context context)
+    {
+        CreateUnitFromSelectedBuilding(context, 2);
+    }
+
+    public void CreateTertiaryUnitFromBuilding(Context context, int buildingId)
+    {
+        CreateUnitFromBuilding(context, buildingId, 2);
+    }
+
+    public void CreateQuaternaryUnitFromSelectedBuilding(Context context)
+    {
+        CreateUnitFromSelectedBuilding(context, 3);
+    }
+
+    public void CreateQuaternaryUnitFromBuilding(Context context, int buildingId)
+    {
+        CreateUnitFromBuilding(context, buildingId, 3);
+    }
+
+    public void CreateSoldierFromSelectedBuilding(Context context)
+    {
+        CreateUnitFromSelectedBuilding(context);
+    }
+
+    public void ArmNextProductionFromUi(Context context)
+    {
+        context.ArmNextProductionFromUi?.Invoke();
     }
 
     public bool ConfirmBuildingPlacement(Context context)

@@ -1,4 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using System.Text;
 using Unity.Entities;
 
@@ -13,24 +14,21 @@ internal static class RuntimeGameplayStateTestHelper
         entityManager.SetComponentData(entity, state);
     }
 
-    public static void SetBuildingPlacement(EntityManager entityManager, BuildingGameplaySystem buildingPlacement)
+    public static void SetBuildingPlacement(EntityManager entityManager, Action tickBuildingRuntime)
     {
         GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
-        TickBuildingPlacement(buildingPlacement);
+        TickBuildingRuntime(tickBuildingRuntime);
     }
 
-    public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, BuildingGameplaySystem buildingPlacement)
+    public static void PublishBuildingRuntimeBoundary(EntityManager entityManager, Action tickBuildingRuntime)
     {
         GetOrCreateBuildingRuntimeBoundaryEntity(entityManager);
-        TickBuildingPlacement(buildingPlacement);
+        TickBuildingRuntime(tickBuildingRuntime);
     }
 
-    private static void TickBuildingPlacement(BuildingGameplaySystem buildingPlacement)
+    private static void TickBuildingRuntime(Action tickBuildingRuntime)
     {
-        if (buildingPlacement == null)
-            return;
-
-        buildingPlacement.TickRuntimeForTests();
+        tickBuildingRuntime?.Invoke();
     }
 
     public static int CountRuntimeBuildingsForFaction(EntityManager entityManager, byte factionId, string buildingId)

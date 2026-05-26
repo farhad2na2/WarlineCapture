@@ -10,11 +10,18 @@ internal sealed class BuildingUiContextSystem
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
         public readonly BuildingProductionSystem ProductionSystem;
+        public readonly BuildingProductionRequestSystem ProductionRequestSystem;
+        public readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
         public readonly Func<int?> GetActiveBuildingId;
+        public readonly Func<int> GetFrameCount;
         public readonly BuildingUiQuerySystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Func<float> GetNow;
+        public readonly Func<bool> HasSelectedBuilding;
         public readonly Func<bool> HasActiveBuilding;
+        public readonly Func<string> GetPlacementStatusText;
+        public readonly Func<string> GetSelectedBuildingLabel;
         public readonly Func<string> GetSelectedBuildingDisplayName;
+        public readonly Func<string> GetSelectedBuildingDescription;
         public readonly BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
         public readonly BuildingUiQuerySystem.TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
         public readonly Func<int, bool> IsRuntimeBuildingWall;
@@ -22,12 +29,9 @@ internal sealed class BuildingUiContextSystem
         public readonly BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
         public readonly Func<Camera, bool> HasVisibleSelectableBuilding;
         public readonly BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate TryResolveLiveUnitPreviewPrefab;
-        public readonly BuildingUiCommandSystem.GetCampRequestFailureDelegate GetCampRequestFailure;
-        public readonly BuildingUiCommandSystem.TryRequestCampItemDelegate TryRequestCampItem;
         public readonly Action DeleteSelectedBuilding;
         public readonly Func<bool> ConfirmBuildingPlacement;
         public readonly Action CancelBuildingPlacement;
-        public readonly Action FocusLastCampProductionRequest;
         public readonly Action<string> ClearSelectedBuilding;
         public readonly Action ExitBuildMode;
 
@@ -36,11 +40,18 @@ internal sealed class BuildingUiContextSystem
             BuildingDefinitionSystem definitionSystem,
             RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
             BuildingProductionSystem productionSystem,
+            BuildingProductionRequestSystem productionRequestSystem,
+            Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
             Func<int?> getActiveBuildingId,
+            Func<int> getFrameCount,
             BuildingUiQuerySystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Func<float> getNow,
+            Func<bool> hasSelectedBuilding,
             Func<bool> hasActiveBuilding,
+            Func<string> getPlacementStatusText,
+            Func<string> getSelectedBuildingLabel,
             Func<string> getSelectedBuildingDisplayName,
+            Func<string> getSelectedBuildingDescription,
             BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
             BuildingUiQuerySystem.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
             Func<int, bool> isRuntimeBuildingWall,
@@ -48,12 +59,9 @@ internal sealed class BuildingUiContextSystem
             BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
             Func<Camera, bool> hasVisibleSelectableBuilding,
             BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
-            BuildingUiCommandSystem.GetCampRequestFailureDelegate getCampRequestFailure,
-            BuildingUiCommandSystem.TryRequestCampItemDelegate tryRequestCampItem,
             Action deleteSelectedBuilding,
             Func<bool> confirmBuildingPlacement,
             Action cancelBuildingPlacement,
-            Action focusLastCampProductionRequest,
             Action<string> clearSelectedBuilding,
             Action exitBuildMode)
         {
@@ -61,11 +69,18 @@ internal sealed class BuildingUiContextSystem
             DefinitionSystem = definitionSystem;
             RuntimeBuildingSystem = runtimeBuildingSystem;
             ProductionSystem = productionSystem;
+            ProductionRequestSystem = productionRequestSystem;
+            CreateProductionRequestContext = createProductionRequestContext;
             GetActiveBuildingId = getActiveBuildingId;
+            GetFrameCount = getFrameCount;
             TryGetEntityManager = tryGetEntityManager;
             GetNow = getNow;
+            HasSelectedBuilding = hasSelectedBuilding;
             HasActiveBuilding = hasActiveBuilding;
+            GetPlacementStatusText = getPlacementStatusText;
+            GetSelectedBuildingLabel = getSelectedBuildingLabel;
             GetSelectedBuildingDisplayName = getSelectedBuildingDisplayName;
+            GetSelectedBuildingDescription = getSelectedBuildingDescription;
             TryGetSelectedBuildingHealth = tryGetSelectedBuildingHealth;
             TryGetSelectedBuildingPreviewPrefab = tryGetSelectedBuildingPreviewPrefab;
             IsRuntimeBuildingWall = isRuntimeBuildingWall;
@@ -73,15 +88,73 @@ internal sealed class BuildingUiContextSystem
             TryGetRuntimeBuildingOwnerFaction = tryGetRuntimeBuildingOwnerFaction;
             HasVisibleSelectableBuilding = hasVisibleSelectableBuilding;
             TryResolveLiveUnitPreviewPrefab = tryResolveLiveUnitPreviewPrefab;
-            GetCampRequestFailure = getCampRequestFailure;
-            TryRequestCampItem = tryRequestCampItem;
             DeleteSelectedBuilding = deleteSelectedBuilding;
             ConfirmBuildingPlacement = confirmBuildingPlacement;
             CancelBuildingPlacement = cancelBuildingPlacement;
-            FocusLastCampProductionRequest = focusLastCampProductionRequest;
             ClearSelectedBuilding = clearSelectedBuilding;
             ExitBuildMode = exitBuildMode;
         }
+    }
+
+    public Source CreateSource(
+        RuntimeResourceSystem runtimeResourceSystem,
+        BuildingDefinitionSystem definitionSystem,
+        RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+        BuildingProductionSystem productionSystem,
+        BuildingProductionRequestSystem productionRequestSystem,
+        Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
+        Func<int?> getActiveBuildingId,
+        Func<int> getFrameCount,
+        BuildingUiQuerySystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        Func<float> getNow,
+        Func<bool> hasSelectedBuilding,
+        Func<bool> hasActiveBuilding,
+        Func<string> getPlacementStatusText,
+        Func<string> getSelectedBuildingLabel,
+        Func<string> getSelectedBuildingDisplayName,
+        Func<string> getSelectedBuildingDescription,
+        BuildingUiQuerySystem.TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
+        BuildingUiQuerySystem.TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
+        Func<int, bool> isRuntimeBuildingWall,
+        Func<int, bool> isRuntimeBuildingCityGenerated,
+        BuildingUiQuerySystem.TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
+        Func<Camera, bool> hasVisibleSelectableBuilding,
+        BuildingUiQuerySystem.TryResolveLiveUnitPreviewPrefabDelegate tryResolveLiveUnitPreviewPrefab,
+        Action deleteSelectedBuilding,
+        Func<bool> confirmBuildingPlacement,
+        Action cancelBuildingPlacement,
+        Action<string> clearSelectedBuilding,
+        Action exitBuildMode)
+    {
+        return new Source(
+            runtimeResourceSystem,
+            definitionSystem,
+            runtimeBuildingSystem,
+            productionSystem,
+            productionRequestSystem,
+            createProductionRequestContext,
+            getActiveBuildingId,
+            getFrameCount,
+            tryGetEntityManager,
+            getNow,
+            hasSelectedBuilding,
+            hasActiveBuilding,
+            getPlacementStatusText,
+            getSelectedBuildingLabel,
+            getSelectedBuildingDisplayName,
+            getSelectedBuildingDescription,
+            tryGetSelectedBuildingHealth,
+            tryGetSelectedBuildingPreviewPrefab,
+            isRuntimeBuildingWall,
+            isRuntimeBuildingCityGenerated,
+            tryGetRuntimeBuildingOwnerFaction,
+            hasVisibleSelectableBuilding,
+            tryResolveLiveUnitPreviewPrefab,
+            deleteSelectedBuilding,
+            confirmBuildingPlacement,
+            cancelBuildingPlacement,
+            clearSelectedBuilding,
+            exitBuildMode);
     }
 
     public BuildingUiCommandSystem.Context CreateCommandContext(Source source)
@@ -93,12 +166,40 @@ internal sealed class BuildingUiContextSystem
             () => source.DefinitionSystem.ConfiguredUnitCount,
             source.DefinitionSystem.TryGetConfiguredUnit,
             source.DefinitionSystem.IsConfiguredSpawnablePrefab,
-            source.GetCampRequestFailure,
-            source.TryRequestCampItem,
+            (GameObject prefab, int price, out string requiredBuildingDisplayName) =>
+                source.ProductionRequestSystem != null
+                    ? source.ProductionRequestSystem.GetCampRequestFailure(
+                        source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+                        prefab,
+                        price,
+                        out requiredBuildingDisplayName)
+                    : InvalidCampRequest(out requiredBuildingDisplayName),
+            (GameObject prefab, int price, out string requiredBuildingDisplayName, bool focusProducerOnSuccess) =>
+                source.ProductionRequestSystem != null
+                    ? source.ProductionRequestSystem.TryRequestCampItem(
+                        source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+                        prefab,
+                        price,
+                        focusProducerOnSuccess,
+                        source.GetFrameCount?.Invoke() ?? 0,
+                        out requiredBuildingDisplayName)
+                    : InvalidCampRequest(out requiredBuildingDisplayName),
+            productionIndex => source.ProductionRequestSystem?.CreateUnitFromSelectedBuilding(
+                source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+                source.GetActiveBuildingId?.Invoke(),
+                productionIndex,
+                source.GetFrameCount?.Invoke() ?? 0),
+            (buildingId, productionIndex) => source.ProductionRequestSystem?.CreateUnitFromBuilding(
+                source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default,
+                buildingId,
+                productionIndex,
+                source.GetFrameCount?.Invoke() ?? 0),
             source.DeleteSelectedBuilding,
             source.ConfirmBuildingPlacement,
             source.CancelBuildingPlacement,
-            source.FocusLastCampProductionRequest,
+            () => source.ProductionRequestSystem?.FocusLastCampProductionRequest(
+                source.CreateProductionRequestContext != null ? source.CreateProductionRequestContext() : default),
+            () => source.ProductionRequestSystem?.ArmNextProductionFromUi(source.GetFrameCount?.Invoke() ?? 0),
             source.ClearSelectedBuilding,
             source.ExitBuildMode);
     }
@@ -112,14 +213,26 @@ internal sealed class BuildingUiContextSystem
             source.TryGetEntityManager,
             source.ProductionSystem,
             source.GetNow,
+            source.HasSelectedBuilding,
             source.HasActiveBuilding,
+            source.GetPlacementStatusText,
+            source.GetSelectedBuildingLabel,
             source.GetSelectedBuildingDisplayName,
+            source.GetSelectedBuildingDescription,
             source.TryGetSelectedBuildingHealth,
             source.TryGetSelectedBuildingPreviewPrefab,
+            source.ProductionRequestSystem,
+            source.CreateProductionRequestContext,
             source.IsRuntimeBuildingWall,
             source.IsRuntimeBuildingCityGenerated,
             source.TryGetRuntimeBuildingOwnerFaction,
             source.HasVisibleSelectableBuilding,
             source.TryResolveLiveUnitPreviewPrefab);
+    }
+
+    private static BuildingUiCommandSystem.CampRequestFailure InvalidCampRequest(out string requiredBuildingDisplayName)
+    {
+        requiredBuildingDisplayName = string.Empty;
+        return BuildingUiCommandSystem.CampRequestFailure.InvalidSelection;
     }
 }

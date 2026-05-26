@@ -24,7 +24,7 @@ MonoBehaviour:
   zoomSpeed: 20
   minZoomHeight: 15
   maxZoomHeight: 200
-  normalModeZoomHeight: 44
+  normalModeZoomHeight: 34
   buildModeZoomHeight: 90
   normalModePitch: 40
   buildModePitch: 64

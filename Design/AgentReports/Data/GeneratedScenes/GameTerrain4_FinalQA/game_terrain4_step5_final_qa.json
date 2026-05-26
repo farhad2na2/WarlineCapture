@@ -3,7 +3,7 @@
   "date": "2026-05-25",
   "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
   "status": "passed",
-  "foundationPrefabInstances": 20440,
+    "foundationPrefabInstances": 22611,
   "generatedDressingPrefabs": 3382,
   "generatedCounts": {
     "mountains": 238,
@@ -16,11 +16,11 @@
     "depth": 2023
   },
   "greenPlayableGroundFootprint": {
-    "width": 2694.917,
-    "depth": 2614.862
+        "width": 2930.813,
+        "depth": 2831.412
   },
   "beachPlacementVsMap": {
-    "totalBeachPrefabs": 3780,
+        "totalBeachPrefabs": 4521,
     "centersInsideMap": 0,
     "passed": true
   },

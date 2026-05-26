@@ -1,0 +1,77 @@
+{
+  "pipelineId": "GameTerrain6_LodFarMapOptimization",
+  "date": "2026-05-26",
+  "sourceScene": "Assets/Game/Scenes/Game_Terrain5.unity",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain6.unity",
+  "meshAssetRoot": "Assets/Game/GeneratedTerrainOptimized/Game_Terrain6",
+  "chunkSizeWorldUnits": 256,
+  "cameraBasis": {
+    "normalHeight": 34,
+    "normalPitch": 40,
+    "normalFieldOfView": 36,
+    "buildHeight": 90,
+    "buildPitch": 64,
+    "buildFieldOfView": 52,
+    "wideAspect": 2.333333
+  },
+  "lodSwitch": {
+    "lod0CameraHeightRange": "0-70",
+    "lod1CameraHeightRange": "70-130",
+    "lod2CameraHeightRange": "130+"
+  },
+  "sourceChunks": 296,
+  "roleCounts": {
+    "groundSurface": 192,
+    "beachSurface": 49,
+    "dressingAndRockMass": 55
+  },
+  "lod0": {
+    "renderers": 296,
+    "meshFilters": 296,
+    "materialSlots": 296,
+    "uniqueMeshes": 296,
+    "uniqueMaterials": 3,
+    "vertices": 11454789,
+    "triangles": 11220414,
+    "maxVerticesPerRenderer": 124379,
+    "maxTrianglesPerRenderer": 111841
+  },
+  "lod1": {
+    "renderers": 296,
+    "meshFilters": 296,
+    "materialSlots": 296,
+    "uniqueMeshes": 296,
+    "uniqueMaterials": 3,
+    "vertices": 7148225,
+    "triangles": 4431028,
+    "maxVerticesPerRenderer": 63095,
+    "maxTrianglesPerRenderer": 40000
+  },
+  "lod2": {
+    "renderers": 1,
+    "meshFilters": 1,
+    "materialSlots": 1,
+    "uniqueMeshes": 1,
+    "uniqueMaterials": 1,
+    "vertices": 4,
+    "triangles": 2,
+    "maxVerticesPerRenderer": 4,
+    "maxTrianglesPerRenderer": 2
+  },
+  "lod2TriangleBudget": 250000,
+  "removedColliders": 0,
+  "proofCaptures": [
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain6_LodFarMap/game_terrain6_lod0_topdown_1024.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain6_LodFarMap/game_terrain6_lod0_gameplay_1600x900.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain6_LodFarMap/game_terrain6_lod1_topdown_1024.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain6_LodFarMap/game_terrain6_lod1_gameplay_1600x900.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain6_LodFarMap/game_terrain6_lod2_topdown_1024.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain6_LodFarMap/game_terrain6_lod2_gameplay_1600x900.png"
+  ],
+  "validation": [
+    "No source prefab-instance terrain hierarchy is copied from Game_Terrain4 into Game_Terrain6.",
+    "Visual terrain remains decorative; gameplay still uses grid, blocker, and heightmap data.",
+    "Terrain renderers have shadows, probes, motion vectors, dynamic occlusion, and visual colliders disabled.",
+    "Runtime streaming is intentionally deferred until LOD profiling proves it is needed."
+  ]
+}

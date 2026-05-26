@@ -8,6 +8,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
         public readonly RuntimeResourceSystem RuntimeResourceSystem;
         public readonly RuntimeUnitPrefabSystem RuntimeUnitPrefabSystem;
         public readonly BuildingDefinitionSystem DefinitionSystem;
+        public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
         public readonly BuildingSpawnPrefabSystem SpawnPrefabSystem;
         public readonly CitizenPrefabSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
@@ -20,6 +21,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             RuntimeResourceSystem runtimeResourceSystem,
             RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
             BuildingDefinitionSystem definitionSystem,
+            RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
             BuildingSpawnPrefabSystem spawnPrefabSystem,
             CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             Action<EntityManager> ensureEntityQueries,
@@ -31,6 +33,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             RuntimeResourceSystem = runtimeResourceSystem;
             RuntimeUnitPrefabSystem = runtimeUnitPrefabSystem;
             DefinitionSystem = definitionSystem;
+            RuntimeBuildingSystem = runtimeBuildingSystem;
             SpawnPrefabSystem = spawnPrefabSystem;
             TryGetEntityManager = tryGetEntityManager;
             EnsureEntityQueries = ensureEntityQueries;
@@ -39,6 +42,33 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
             LivePlayerUnitsQuery = livePlayerUnitsQuery;
             CreateCurrentSource = createCurrentSource;
         }
+    }
+
+    public Source CreateSource(
+        RuntimeResourceSystem runtimeResourceSystem,
+        RuntimeUnitPrefabSystem runtimeUnitPrefabSystem,
+        BuildingDefinitionSystem definitionSystem,
+        RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
+        BuildingSpawnPrefabSystem spawnPrefabSystem,
+        CitizenPrefabSystem.TryGetEntityManagerDelegate tryGetEntityManager,
+        Action<EntityManager> ensureEntityQueries,
+        EntityQuery unitPrefabRegistryQuery,
+        EntityQuery spawnPrefabCandidatesQuery,
+        EntityQuery livePlayerUnitsQuery,
+        Func<Source> createCurrentSource = null)
+    {
+        return new Source(
+            runtimeResourceSystem,
+            runtimeUnitPrefabSystem,
+            definitionSystem,
+            runtimeBuildingSystem,
+            spawnPrefabSystem,
+            tryGetEntityManager,
+            ensureEntityQueries,
+            unitPrefabRegistryQuery,
+            spawnPrefabCandidatesQuery,
+            livePlayerUnitsQuery,
+            createCurrentSource);
     }
 
     public CitizenResourceSystem.Context CreateCitizenResourceContext(Source source)
@@ -51,6 +81,7 @@ internal sealed class BuildingRuntimeResourcePrefabContextSystem
         return new RuntimeUnitPrefabSystem.Context(
             source.DefinitionSystem,
             source.SpawnPrefabSystem,
+            source.RuntimeBuildingSystem != null ? source.RuntimeBuildingSystem.Buildings : null,
             source.TryGetEntityManager,
             source.EnsureEntityQueries,
             () => CreateBuildingSpawnPrefabContext(

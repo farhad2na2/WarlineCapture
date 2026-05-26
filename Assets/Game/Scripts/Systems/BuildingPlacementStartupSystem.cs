@@ -15,6 +15,8 @@ internal sealed class BuildingPlacementStartupSystem
     private BuildingDefinition _soldierBaseDefinition;
     private BuildingDefinition _soldierTentDefinition;
     private BuildingDefinition _factoryDefinition;
+    private RoadFootprintQuerySystem _roadFootprintQuerySystem;
+    private RoadFootprintQuerySystem.Context _roadFootprintQueryContext;
 
     public Camera WorldCamera => _worldCamera;
     public float BuildPlaneY => _buildPlaneY;
@@ -25,6 +27,14 @@ internal sealed class BuildingPlacementStartupSystem
     public GameObject RoadPreviewPrefab => _config != null ? _config.RoadPreviewPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => _config != null ? _config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => _config != null ? _config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
+
+    public void ConfigureRoadFootprintQuery(
+        RoadFootprintQuerySystem roadFootprintQuerySystem,
+        RoadFootprintQuerySystem.Context roadFootprintQueryContext)
+    {
+        _roadFootprintQuerySystem = roadFootprintQuerySystem;
+        _roadFootprintQueryContext = roadFootprintQueryContext;
+    }
 
     public void Init(
         BuildingPlacementSystemConfig configAsset,
@@ -89,6 +99,23 @@ internal sealed class BuildingPlacementStartupSystem
         _runtimeRoot = null;
         _config = null;
         _worldCamera = null;
+        _roadFootprintQuerySystem = null;
+        _roadFootprintQueryContext = default;
+    }
+
+    public void FillRoadFootprintMask(GridConfig grid, bool[] roadFootprintMask)
+    {
+        _roadFootprintQuerySystem?.FillRoadFootprintMask(_roadFootprintQueryContext, grid, roadFootprintMask);
+    }
+
+    public bool HasRoadInFootprint(GridConfig grid, Vector2Int originCell, Vector2Int footprintCells)
+    {
+        return _roadFootprintQuerySystem != null &&
+               _roadFootprintQuerySystem.HasRoadInFootprint(
+                   _roadFootprintQueryContext,
+                   grid,
+                   originCell,
+                   footprintCells);
     }
 
     private void CreateBuildingRoot()

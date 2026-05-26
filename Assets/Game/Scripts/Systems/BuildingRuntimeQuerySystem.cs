@@ -15,6 +15,15 @@ internal sealed class BuildingRuntimeQuerySystem
     public delegate bool TryGetBuildingApproachCellDelegate(RuntimeBuildingData building, int2 unitFootprint, int2 referenceCell, out int2 goal);
     public delegate bool IsBuildingApproachCellDelegate(RuntimeBuildingData building, int2 currentCell, int2 unitFootprint);
     public delegate bool BuildingDefinitionPredicate(BuildingDefinition definition);
+    public delegate bool TryResolveBaseBreachTargetDelegate(
+        byte attackerFactionId,
+        Entity finalTarget,
+        int2 finalTargetCell,
+        int2 attackerCell,
+        out Entity breachTarget,
+        out int2 breachCell,
+        out float3 breachPosition,
+        out string reason);
 
     public readonly struct Context
     {
@@ -29,6 +38,7 @@ internal sealed class BuildingRuntimeQuerySystem
         public readonly TryGetBuildingApproachCellDelegate TryGetBuildingApproachCell;
         public readonly IsBuildingApproachCellDelegate IsBuildingApproachCell;
         public readonly BuildingDefinitionPredicate IsWallGateDefinition;
+        public readonly TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
@@ -41,7 +51,8 @@ internal sealed class BuildingRuntimeQuerySystem
             TryResolveBuildingWorldPositionDelegate tryResolveBuildingFocusWorldPosition,
             TryGetBuildingApproachCellDelegate tryGetBuildingApproachCell,
             IsBuildingApproachCellDelegate isBuildingApproachCell,
-            BuildingDefinitionPredicate isWallGateDefinition)
+            BuildingDefinitionPredicate isWallGateDefinition,
+            TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
         {
             RuntimeBuildings = runtimeBuildings;
             TryGetEntityManager = tryGetEntityManager;
@@ -54,6 +65,7 @@ internal sealed class BuildingRuntimeQuerySystem
             TryGetBuildingApproachCell = tryGetBuildingApproachCell;
             IsBuildingApproachCell = isBuildingApproachCell;
             IsWallGateDefinition = isWallGateDefinition;
+            TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
         }
     }
 
@@ -294,6 +306,34 @@ internal sealed class BuildingRuntimeQuerySystem
                !building.IsDestroyed &&
                context.IsBuildingApproachCell != null &&
                context.IsBuildingApproachCell(building, currentCell, unitFootprint);
+    }
+
+    public bool TryResolveBaseBreachTarget(
+        Context context,
+        byte attackerFactionId,
+        Entity finalTarget,
+        int2 finalTargetCell,
+        int2 attackerCell,
+        out Entity breachTarget,
+        out int2 breachCell,
+        out float3 breachPosition,
+        out string reason)
+    {
+        breachTarget = Entity.Null;
+        breachCell = default;
+        breachPosition = default;
+        reason = string.Empty;
+
+        return context.TryResolveBaseBreachTarget != null &&
+               context.TryResolveBaseBreachTarget(
+                   attackerFactionId,
+                   finalTarget,
+                   finalTargetCell,
+                   attackerCell,
+                   out breachTarget,
+                   out breachCell,
+                   out breachPosition,
+                   out reason);
     }
 
     private static bool TryGetRuntimeBuilding(Context context, int buildingId, out RuntimeBuildingData building)

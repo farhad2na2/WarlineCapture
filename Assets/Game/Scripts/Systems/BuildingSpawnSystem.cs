@@ -18,6 +18,13 @@ internal sealed class BuildingSpawnSystem
     }
 
     private readonly List<RecentSpawnReservation> _recentSpawnReservations = new();
+    private uint _buildingSpawnRandomState = 0x12345678u;
+
+    internal uint BuildingSpawnRandomState
+    {
+        get => _buildingSpawnRandomState;
+        set => _buildingSpawnRandomState = value;
+    }
 
     public readonly struct Context
     {
@@ -110,6 +117,80 @@ internal sealed class BuildingSpawnSystem
             if (reserved.IsCreated)
                 reserved.Dispose();
         }
+    }
+
+    public bool TryResolveAvailableFactionHelipadSpawn(
+        Context context,
+        byte factionId,
+        EntityManager em,
+        Entity gridEntity,
+        GridConfig grid,
+        DynamicBlockerData blockerData,
+        int2 unitFootprint,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        uint randomState = _buildingSpawnRandomState;
+        bool resolved = TryResolveAvailableFactionHelipadSpawn(
+            context,
+            factionId,
+            em,
+            gridEntity,
+            grid,
+            blockerData,
+            unitFootprint,
+            ref randomState,
+            out cell,
+            out worldPosition);
+        _buildingSpawnRandomState = randomState;
+        return resolved;
+    }
+
+    public bool TryGetFactionProductionSpawnPoint(
+        Context context,
+        byte factionId,
+        string buildingId,
+        int flattenedSlotIndex,
+        GridConfig grid,
+        out int2 cell,
+        out float3 worldPosition)
+    {
+        cell = default;
+        worldPosition = default;
+        if (context.RuntimeBuildings == null || string.IsNullOrWhiteSpace(buildingId))
+            return false;
+
+        int remainingSlotIndex = math.max(0, flattenedSlotIndex);
+        string normalizedBuildingId = BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId);
+        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building == null ||
+                building.IsDestroyed ||
+                !building.HasOwnerFaction ||
+                building.OwnerFactionId != factionId ||
+                building.Instance == null ||
+                building.ProductionSpawnLocalPositions == null ||
+                building.ProductionSpawnLocalPositions.Length == 0 ||
+                context.RuntimeBuildingMatchesId == null ||
+                !context.RuntimeBuildingMatchesId(building, normalizedBuildingId))
+            {
+                continue;
+            }
+
+            if (remainingSlotIndex >= building.ProductionSpawnLocalPositions.Length)
+            {
+                remainingSlotIndex -= building.ProductionSpawnLocalPositions.Length;
+                continue;
+            }
+
+            Vector3 slotWorldPosition = building.Instance.transform.TransformPoint(building.ProductionSpawnLocalPositions[remainingSlotIndex]);
+            cell = GridUtils.WorldToCell(grid, slotWorldPosition);
+            worldPosition = slotWorldPosition;
+            return GridUtils.InBounds(cell, grid.Width, grid.Height);
+        }
+
+        return false;
     }
 
     public bool TrySpawnPlayerUnitNearBuilding(

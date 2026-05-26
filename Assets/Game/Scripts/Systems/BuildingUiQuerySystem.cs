@@ -18,10 +18,16 @@ public sealed class BuildingUiQuerySystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingProductionSystem ProductionSystem;
         public readonly Func<float> GetNow;
+        public readonly Func<bool> HasSelectedBuilding;
         public readonly Func<bool> HasActiveBuilding;
+        public readonly Func<string> GetPlacementStatusText;
+        public readonly Func<string> GetSelectedBuildingLabel;
         public readonly Func<string> GetSelectedBuildingDisplayName;
+        public readonly Func<string> GetSelectedBuildingDescription;
         public readonly TryGetSelectedBuildingHealthDelegate TryGetSelectedBuildingHealth;
         public readonly TryGetSelectedBuildingPreviewPrefabDelegate TryGetSelectedBuildingPreviewPrefab;
+        public readonly BuildingProductionRequestSystem ProductionRequestSystem;
+        public readonly Func<BuildingProductionRequestSystem.Context> CreateProductionRequestContext;
         public readonly Func<int, bool> IsRuntimeBuildingWall;
         public readonly Func<int, bool> IsRuntimeBuildingCityGenerated;
         public readonly TryGetRuntimeBuildingOwnerFactionDelegate TryGetRuntimeBuildingOwnerFaction;
@@ -34,10 +40,16 @@ public sealed class BuildingUiQuerySystem
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingProductionSystem productionSystem,
             Func<float> getNow,
+            Func<bool> hasSelectedBuilding,
             Func<bool> hasActiveBuilding,
+            Func<string> getPlacementStatusText,
+            Func<string> getSelectedBuildingLabel,
             Func<string> getSelectedBuildingDisplayName,
+            Func<string> getSelectedBuildingDescription,
             TryGetSelectedBuildingHealthDelegate tryGetSelectedBuildingHealth,
             TryGetSelectedBuildingPreviewPrefabDelegate tryGetSelectedBuildingPreviewPrefab,
+            BuildingProductionRequestSystem productionRequestSystem,
+            Func<BuildingProductionRequestSystem.Context> createProductionRequestContext,
             Func<int, bool> isRuntimeBuildingWall,
             Func<int, bool> isRuntimeBuildingCityGenerated,
             TryGetRuntimeBuildingOwnerFactionDelegate tryGetRuntimeBuildingOwnerFaction,
@@ -49,10 +61,16 @@ public sealed class BuildingUiQuerySystem
             TryGetEntityManager = tryGetEntityManager;
             ProductionSystem = productionSystem;
             GetNow = getNow;
+            HasSelectedBuilding = hasSelectedBuilding;
             HasActiveBuilding = hasActiveBuilding;
+            GetPlacementStatusText = getPlacementStatusText;
+            GetSelectedBuildingLabel = getSelectedBuildingLabel;
             GetSelectedBuildingDisplayName = getSelectedBuildingDisplayName;
+            GetSelectedBuildingDescription = getSelectedBuildingDescription;
             TryGetSelectedBuildingHealth = tryGetSelectedBuildingHealth;
             TryGetSelectedBuildingPreviewPrefab = tryGetSelectedBuildingPreviewPrefab;
+            ProductionRequestSystem = productionRequestSystem;
+            CreateProductionRequestContext = createProductionRequestContext;
             IsRuntimeBuildingWall = isRuntimeBuildingWall;
             IsRuntimeBuildingCityGenerated = isRuntimeBuildingCityGenerated;
             TryGetRuntimeBuildingOwnerFaction = tryGetRuntimeBuildingOwnerFaction;
@@ -138,15 +156,36 @@ public sealed class BuildingUiQuerySystem
         GetProducedUnits(building.ProducedUnits, em, context.ProductionSystem, results);
     }
 
+    internal bool HasSelectedBuilding(Context context)
+    {
+        return context.HasSelectedBuilding != null &&
+               context.HasSelectedBuilding();
+    }
+
     internal bool HasActiveBuilding(Context context)
     {
         return context.HasActiveBuilding != null &&
                context.HasActiveBuilding();
     }
 
+    internal string PlacementStatusText(Context context)
+    {
+        return context.GetPlacementStatusText?.Invoke() ?? string.Empty;
+    }
+
+    internal string SelectedBuildingLabel(Context context)
+    {
+        return context.GetSelectedBuildingLabel?.Invoke() ?? string.Empty;
+    }
+
     internal string SelectedBuildingDisplayName(Context context)
     {
         return context.GetSelectedBuildingDisplayName?.Invoke() ?? string.Empty;
+    }
+
+    internal string SelectedBuildingDescription(Context context)
+    {
+        return context.GetSelectedBuildingDescription?.Invoke() ?? string.Empty;
     }
 
     internal bool TryGetSelectedBuildingHealth(Context context, out int current, out int max)
@@ -162,6 +201,15 @@ public sealed class BuildingUiQuerySystem
         prefab = null;
         return context.TryGetSelectedBuildingPreviewPrefab != null &&
                context.TryGetSelectedBuildingPreviewPrefab(out prefab);
+    }
+
+    internal bool CanCreateUnitFromSelectedBuilding(Context context, int productionIndex)
+    {
+        return context.ProductionRequestSystem != null &&
+               context.ProductionRequestSystem.CanCreateUnitFromSelectedBuilding(
+                   context.CreateProductionRequestContext != null ? context.CreateProductionRequestContext() : default,
+                   context.GetActiveBuildingId?.Invoke(),
+                   productionIndex);
     }
 
     internal bool IsRuntimeBuildingWall(Context context, int buildingId)

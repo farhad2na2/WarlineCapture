@@ -7,7 +7,7 @@ internal sealed class BuildingGameplayDependencySystem
     internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem { get; private set; }
     internal RuntimeGridBlockerSystem RuntimeGridBlockerSystem { get; private set; }
     internal RuntimeCityCompositionSystem RuntimeCitySystem { get; private set; }
-    internal CitizenPopulationSystem CitizenPopulationSystem { get; private set; }
+    internal CitizenPopulationEventSystem CitizenPopulationEventSystem { get; private set; }
     internal FactionVisualSettings FactionVisualSettings { get; private set; }
     internal DayNightSystem DayNightSystem { get; private set; }
 
@@ -28,7 +28,7 @@ internal sealed class BuildingGameplayDependencySystem
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem = null,
         RuntimeGridBlockerSystem runtimeGridBlockerSystem = null,
         RuntimeCityCompositionSystem runtimeCitySystem = null,
-        CitizenPopulationSystem citizenPopulationSystem = null)
+        CitizenPopulationEventSystem citizenPopulationEventSystem = null)
     {
         MainMenuPlayUi = mainMenuPlayUi;
         if (dayNightSystem != null)
@@ -41,8 +41,8 @@ internal sealed class BuildingGameplayDependencySystem
             RuntimeGridBlockerSystem = runtimeGridBlockerSystem;
         if (runtimeCitySystem != null)
             RuntimeCitySystem = runtimeCitySystem;
-        if (citizenPopulationSystem != null)
-            CitizenPopulationSystem = citizenPopulationSystem;
+        if (citizenPopulationEventSystem != null)
+            CitizenPopulationEventSystem = citizenPopulationEventSystem;
     }
 
     internal bool IsRuntimeBlockerCell(int x, int y, int width, int height)
@@ -103,6 +103,6 @@ internal sealed class BuildingGameplayDependencySystem
 
     internal void NotifyHomeBuildingDestroyed(int buildingId)
     {
-        CitizenPopulationSystem?.NotifyHomeBuildingDestroyed(buildingId);
+        CitizenPopulationEventSystem?.NotifyHomeBuildingDestroyed(buildingId);
     }
 }

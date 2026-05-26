@@ -25,7 +25,7 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeDecorationSpawnerSystem runtimeDecorations,
         DayNightSystem dayNight,
-        CitizenPopulationSystem citizenPopulation,
+        Action citizenPopulationRuntimeUpdate,
         MainMenuPlayUI mainMenu,
         UnitImpostorRenderSystem unitImpostors,
         ref bool gameplayStartPending)
@@ -78,7 +78,7 @@ public sealed class GameplayRuntimeUpdateSystem
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("DayNight", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            citizenPopulation?.Update();
+            citizenPopulationRuntimeUpdate?.Invoke();
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("CitizenPopulation", stepStart);
         }
 

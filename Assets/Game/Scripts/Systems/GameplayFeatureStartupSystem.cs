@@ -31,11 +31,11 @@ internal sealed class GameplayFeatureStartupSystem
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
-        Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
+        Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
         MainMenuPlayUI mainMenu,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-        CitizenPopulationSystem citizenPopulation,
+        CitizenPopulationEventSystem citizenPopulationEventSystem,
         Transform runtimeCityRoot,
         Transform runtimeBlockerRoot,
         Transform decorationRoot,
@@ -62,7 +62,7 @@ internal sealed class GameplayFeatureStartupSystem
             selectionBuildingInteractionSystem,
             runtimeGridBlockers,
             runtimeCity,
-            citizenPopulation);
+            citizenPopulationEventSystem);
 
         var runtimeDecorations = new RuntimeDecorationSpawnerSystem();
         runtimeDecorations.Init(

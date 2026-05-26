@@ -1,0 +1,61 @@
+{
+  "pipelineId": "GameTerrain7_NonLodMobileOptimization",
+  "date": "2026-05-26",
+  "sourceScene": "Assets/Game/Scenes/Game_Terrain5.unity",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain7.unity",
+  "meshAssetRoot": "Assets/Game/GeneratedTerrainOptimized/Game_Terrain7",
+  "chunkSizeWorldUnits": 256,
+  "cameraBasis": {
+    "normalHeight": 34,
+    "normalPitch": 40,
+    "normalFieldOfView": 36,
+    "buildHeight": 90,
+    "buildPitch": 64,
+    "buildFieldOfView": 52,
+    "wideAspect": 2.333333
+  },
+  "sourceLod0": {
+    "renderers": 296,
+    "meshFilters": 296,
+    "materialSlots": 296,
+    "uniqueMeshes": 296,
+    "uniqueMaterials": 3,
+    "vertices": 11454789,
+    "triangles": 11220414,
+    "maxVerticesPerRenderer": 124379,
+    "maxTrianglesPerRenderer": 111841
+  },
+  "terrain7": {
+    "renderers": 296,
+    "meshFilters": 296,
+    "materialSlots": 296,
+    "uniqueMeshes": 296,
+    "uniqueMaterials": 3,
+    "vertices": 11454789,
+    "triangles": 11220414,
+    "maxVerticesPerRenderer": 124379,
+    "maxTrianglesPerRenderer": 111841
+  },
+  "meshAssets": {
+    "meshAssets": 296,
+    "nonReadableMeshes": 0,
+    "readableMeshesRetained": 296,
+    "meshAssetDiskBytes": 1369996909
+  },
+  "removedLodSwitchers": 0,
+  "removedColliders": 0,
+  "removedNonessentialObjects": 1,
+  "runtimeChunkActivation": "deferred; not implemented because this pass must preserve the exact visible mesh and first collect profile evidence",
+  "proofCaptureNote": "Terrain7 is generated from Game_Terrain5 and keeps the exact optimized chunk meshes. The capture paths are optional visual references only; final visual QA should be run interactively or on device.",
+  "proofCaptures": [
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain7_NonLodMobile/game_terrain7_source_topdown_proof.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain7_NonLodMobile/game_terrain7_source_playable_angle_proof.png"
+  ],
+  "validation": [
+    "Only LOD0 geometry is active in the gameplay scene.",
+    "No WarlineCaptureTerrainLodHeightSwitch component remains in Game_Terrain7.",
+    "LOD1 and LOD2 roots are not present in the final Island hierarchy.",
+    "Visual terrain remains decorative; gameplay still uses grid, blocker, and heightmap data.",
+    "Terrain renderers have shadows, probes, motion vectors, dynamic occlusion, and visual colliders disabled."
+  ]
+}

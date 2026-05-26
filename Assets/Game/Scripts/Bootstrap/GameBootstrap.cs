@@ -89,7 +89,6 @@ public sealed class GameBootstrap : MonoBehaviour
     public FactionVisualSettings FactionVisuals { get; private set; }
     public UnitAttackTraceSystem UnitAttackTraces { get; private set; }
     public UnitImpostorRenderSystem UnitImpostors { get; private set; }
-    public CitizenPopulationSystem CitizenPopulation { get; private set; }
     public bool GameplayInitialized { get; private set; }
     public BuildingSelectionClickSystem.Context BuildingSelectionClickContext { get; private set; }
     private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawn;
@@ -106,9 +105,13 @@ public sealed class GameBootstrap : MonoBehaviour
     private Action<MainMenuPlayUI> _bindRoadMainMenu;
     private Action<MainMenuPlayUI, RuntimeGridBlockerSystem> _bindRoadGameplayFeatures;
     private Action<MainMenuPlayUI> _bindBuildingMainMenu;
-    private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
+    private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> _bindBuildingGameplayFeatures;
     private Action<MainMenuPlayUI> _bindSelectionMainMenu;
     private Action _selectionRuntimeUpdate;
+    private Action _citizenPopulationRuntimeUpdate;
+    private Action _disposeCitizenPopulation;
+    private CitizenPopulationReadModelSystem _citizenPopulationReadModel;
+    private CitizenPopulationEventSystem _citizenPopulationEventSystem;
     private Action _disposeSelection;
     private Action _disposeBuildingGameplay;
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
@@ -176,7 +179,12 @@ public sealed class GameBootstrap : MonoBehaviour
         SelectionRectangle = managedSystems.SelectionRectangleView;
         UnitAttackTraces = managedSystems.UnitAttackTraces;
         UnitImpostors = managedSystems.UnitImpostors;
-        CitizenPopulation = managedSystems.CitizenPopulation;
+        _disposeCitizenPopulation = managedSystems.DisposeCitizenPopulation;
+        _citizenPopulationRuntimeUpdate = managedSystems.CitizenPopulationComposition != null
+            ? managedSystems.CitizenPopulationComposition.RuntimeUpdateSystem.Update
+            : null;
+        _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
+        _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
         EnsureBuildingRuntimeBoundaryEntity();
         _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
     }
@@ -200,7 +208,7 @@ public sealed class GameBootstrap : MonoBehaviour
             SelectionUiCamera,
             SelectionScreenMarkers,
             DayNight,
-            CitizenPopulation,
+            _citizenPopulationReadModel,
             worldCamera,
             _gameplaySceneBindingSystem,
             World.DefaultGameObjectInjectionWorld,
@@ -261,7 +269,7 @@ public sealed class GameBootstrap : MonoBehaviour
             RuntimeGridBlockers,
             RuntimeDecorations,
             DayNight,
-            CitizenPopulation,
+            _citizenPopulationRuntimeUpdate,
             MainMenu,
             UnitImpostors,
             ref _gameplayStartPending);
@@ -307,7 +315,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _disposeRoad?.Invoke();
         UnitAttackTraces?.Dispose();
         UnitImpostors?.Dispose();
-        CitizenPopulation?.Dispose();
+        _disposeCitizenPopulation?.Invoke();
         DayNight?.Dispose();
         RuntimeDecorations?.Dispose();
         RuntimeGridBlockers?.Dispose();
@@ -339,6 +347,10 @@ public sealed class GameBootstrap : MonoBehaviour
         _bindBuildingGameplayFeatures = null;
         _bindSelectionMainMenu = null;
         _selectionRuntimeUpdate = null;
+        _citizenPopulationRuntimeUpdate = null;
+        _disposeCitizenPopulation = null;
+        _citizenPopulationReadModel = null;
+        _citizenPopulationEventSystem = null;
         _disposeSelection = null;
         _disposeBuildingGameplay = null;
         BuildingRuntimeUpdate = null;
@@ -347,7 +359,6 @@ public sealed class GameBootstrap : MonoBehaviour
         FactionVisuals = null;
         UnitAttackTraces = null;
         UnitImpostors = null;
-        CitizenPopulation = null;
         DayNight = null;
         RuntimeDecorations = null;
         RuntimeGridBlockers = null;
@@ -423,7 +434,7 @@ public sealed class GameBootstrap : MonoBehaviour
             MainMenu,
             SelectionUiCamera,
             SelectionBuildingInteraction,
-            CitizenPopulation,
+            _citizenPopulationEventSystem,
             _runtimeCityRoot,
             _runtimeBlockerRoot,
             DecorationRoot,

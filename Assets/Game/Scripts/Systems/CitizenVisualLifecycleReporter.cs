@@ -4,11 +4,11 @@ public sealed class CitizenVisualLifecycleReporter : MonoBehaviour
 {
     public int CitizenId;
     public bool SuppressNotifyOnDestroy;
-    private CitizenPopulationSystem _citizenPopulationSystem;
+    private CitizenPopulationEventSystem _eventSystem;
 
-    public void Bind(CitizenPopulationSystem citizenPopulationSystem)
+    public void Bind(CitizenPopulationEventSystem eventSystem)
     {
-        _citizenPopulationSystem = citizenPopulationSystem;
+        _eventSystem = eventSystem;
     }
 
     private void OnDestroy()
@@ -16,6 +16,6 @@ public sealed class CitizenVisualLifecycleReporter : MonoBehaviour
         if (SuppressNotifyOnDestroy)
             return;
 
-        _citizenPopulationSystem?.NotifyVisibleCitizenDestroyed(CitizenId);
+        _eventSystem?.NotifyVisibleCitizenDestroyed(CitizenId);
     }
 }

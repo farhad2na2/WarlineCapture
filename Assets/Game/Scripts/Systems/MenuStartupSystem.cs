@@ -22,7 +22,7 @@ internal sealed class MenuStartupSystem
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionScreenMarkerSystem selectionScreenMarkerSystem,
         DayNightSystem dayNight,
-        CitizenPopulationSystem citizenPopulation,
+        CitizenPopulationReadModelSystem citizenPopulationReadModel,
         Camera worldCamera,
         GameplaySceneBindingSystem sceneBindingSystem,
         World world,
@@ -38,7 +38,7 @@ internal sealed class MenuStartupSystem
                 selectionScreenMarkerSystem,
                 worldCamera,
                 dayNight,
-                citizenPopulation,
+                citizenPopulationReadModel,
                 buildingUiCommand,
                 buildingUiCommandContext);
             menuView.BindBuildingUiQuerySystem(

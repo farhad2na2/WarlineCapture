@@ -233,7 +233,7 @@ namespace Game.Scripts.UI
         private BuildingUiQuerySystem.Context _buildingUiQueryContext;
         private Camera _worldCamera;
         private DayNightSystem _dayNightSystem;
-        private CitizenPopulationSystem _citizenPopulationSystem;
+        private CitizenPopulationReadModelSystem _citizenPopulationReadModelSystem;
         private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
         private readonly List<Entity> _selectedUnits = new();
         private bool _initialized;
@@ -513,14 +513,14 @@ namespace Game.Scripts.UI
             public float Height => Mathf.Max(0.001f, MaxZ - MinZ);
         }
 
-        public void Init(
+        internal void Init(
             SelectionUiCommandSystem selectionUiCommandSystem,
             SelectionUiReadModelSystem selectionUiReadModelSystem,
             SelectionUiCameraSystem selectionUiCameraSystem,
             SelectionScreenMarkerSystem selectionScreenMarkerSystem,
             Camera worldCamera,
             DayNightSystem dayNightSystem = null,
-            CitizenPopulationSystem citizenPopulationSystem = null,
+            CitizenPopulationReadModelSystem citizenPopulationReadModelSystem = null,
             BuildingUiCommandSystem buildingUiCommandSystem = null,
             BuildingUiCommandSystem.Context buildingUiCommandContext = default)
         {
@@ -536,7 +536,7 @@ namespace Game.Scripts.UI
             _buildingUiCommandContext = buildingUiCommandContext;
             _worldCamera = worldCamera;
             _dayNightSystem = dayNightSystem;
-            _citizenPopulationSystem = citizenPopulationSystem;
+            _citizenPopulationReadModelSystem = citizenPopulationReadModelSystem;
             if (_selectionScreenMarkerSystem != null)
             {
                 _selectionScreenMarkerSystem.MoveOrderScreenMarkerRequested += ShowMoveOrderScreenReticle;
@@ -4825,7 +4825,8 @@ namespace Game.Scripts.UI
 
             GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
             int civilianDead = 0;
-            _citizenPopulationSystem?.GetTotals(out _, out _, out _, out _, out civilianDead);
+            if (_citizenPopulationReadModelSystem != null)
+                civilianDead = _citizenPopulationReadModelSystem.Totals.DeadCitizens;
 
             foreach (KeyValuePair<string, TMP_Text> pair in _statsAmountTexts)
             {

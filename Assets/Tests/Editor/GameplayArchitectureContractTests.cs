@@ -180,6 +180,47 @@ public sealed class GameplayArchitectureContractTests
         }
     }
 
+    public static void RunCitizenPopulationArchitectureBatchValidation()
+    {
+        string[] methodNames =
+        {
+            nameof(CitizenPopulationRefactorRoadmapMustRecordBaselineAndTargetBoundaries),
+            nameof(CitizenPopulationDeletionTargetContractMustBeExplicit),
+            nameof(CitizenPopulationBoundariesMustNotReachThroughBuildingPlacementSingleton),
+            nameof(CitizenPopulationExtractedBoundaryFilesMustExist),
+            nameof(CitizenPopulationShellMustBeDeleted),
+            nameof(CitizenPopulationManagedStartupMustCreateComposition),
+            nameof(CitizenPopulationRuntimeUpdateMustUseCompositionBoundary),
+            nameof(CitizenPopulationMenuReadsMustUseReadModelBoundary),
+            nameof(CitizenPopulationBuildingEventCouplingMustUseEventBoundary),
+            nameof(CitizenPopulationVisualReporterMustUseEventBoundary)
+        };
+
+        try
+        {
+            var tests = new GameplayArchitectureContractTests();
+            Type testType = typeof(GameplayArchitectureContractTests);
+            for (int i = 0; i < methodNames.Length; i++)
+            {
+                System.Reflection.MethodInfo method = testType.GetMethod(methodNames[i]);
+                Assert.NotNull(method, $"Missing citizen population architecture validation method {methodNames[i]}.");
+                method.Invoke(tests, null);
+            }
+
+            UnityEngine.Debug.Log($"[CitizenPopulationArchitectureValidation] result=Passed methods={methodNames.Length}");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Exception failure = ex is System.Reflection.TargetInvocationException && ex.InnerException != null
+                ? ex.InnerException
+                : ex;
+            UnityEngine.Debug.LogException(failure);
+            UnityEngine.Debug.LogError("[CitizenPopulationArchitectureValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     private static readonly string[] HotAILogCallFiles = Array.Empty<string>();
 
     private static readonly string[] LegacyStaticLogFacadeFiles =
@@ -296,6 +337,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`BuildingGameplayCompositionSystem` constructs narrow building systems directly and must not construct `BuildingGameplaySystem`; the retired `BuildingPlacementSystem` facade must not exist", contract);
         StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
         StringAssert.Contains("BuildingGameplaySystem refactor is tracked in `Design/Architecture/building_gameplay_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("CitizenPopulationSystem refactor is tracked in `Design/Architecture/citizen_population_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("The final target is deletion of `CitizenPopulationSystem.cs`", contract);
+        StringAssert.Contains("Do not replace `CitizenPopulationSystem` with `CitizenPopulationManager`, `CitizenPopulationFacade`, `CitizenPopulationController`, or any other broad managed shell", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not exist", contract);
         StringAssert.Contains("active placement mutable state, active placement cost, and active placement preview handoff belong in `BuildingPlacementLifecycleSystem`", contract);
@@ -1219,7 +1263,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers)", startup);
         StringAssert.Contains("BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn", startup);
         StringAssert.Contains("BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext", startup);
-        StringAssert.Contains("Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures", startup);
+        StringAssert.Contains("Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures", startup);
         Assert.IsFalse(
             startup.Contains("RoadBuildRuntimeStateSystem roadBuild", StringComparison.Ordinal) ||
             startup.Contains("roadBuild?.BindDependencies", StringComparison.Ordinal),
@@ -2286,7 +2330,7 @@ public sealed class GameplayArchitectureContractTests
             "internal SelectionBuildingInteractionSystem SelectionBuildingInteractionSystem",
             "internal RuntimeGridBlockerSystem RuntimeGridBlockerSystem",
             "internal RuntimeCityCompositionSystem RuntimeCitySystem",
-            "internal CitizenPopulationSystem CitizenPopulationSystem",
+            "internal CitizenPopulationEventSystem CitizenPopulationEventSystem",
             "internal FactionVisualSettings FactionVisualSettings",
             "internal DayNightSystem DayNightSystem",
             "internal void SetStartupDependencies",
@@ -7296,63 +7340,280 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void CitizenPopulationSystemMustNotReachThroughBuildingPlacementSingleton()
+    public void CitizenPopulationBoundariesMustNotReachThroughBuildingPlacementSingleton()
     {
-        const string file = "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs";
-        string text = File.ReadAllText(file);
+        const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
+        const string runtimeResourcePrefabContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextSystem.cs";
+        string buildingComposition = File.ReadAllText(buildingCompositionPath);
+        string runtimeResourcePrefabContext = File.ReadAllText(runtimeResourcePrefabContextPath);
 
-        StringAssert.Contains("BuildingRuntimeQuerySystem", text);
-        StringAssert.Contains("CitizenResourceSystem", text);
-        StringAssert.Contains("CitizenPrefabSystem", text);
-        string placement = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs");
-        string startup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
-        string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
-        string runtimeResourcePrefabContext = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeResourcePrefabContextSystem.cs");
-        StringAssert.Contains("CreateRuntimeBuildingQueryContext", placement);
-        StringAssert.Contains("RuntimeResourceSystem", placement);
-        StringAssert.Contains("RuntimeUnitPrefabSystem", placement);
-        StringAssert.Contains("BuildingRuntimeResourcePrefabContextSystem _buildingRuntimeResourcePrefabContextSystem", placement);
-        StringAssert.Contains("CreateRuntimeResourcePrefabContextSource", placement);
-        StringAssert.Contains("CreateRuntimeUnitPrefabContext", runtimeResourcePrefabContext);
-        StringAssert.Contains("CreateCitizenResourceContext", runtimeResourcePrefabContext);
-        StringAssert.Contains("CreateCitizenPrefabContext", runtimeResourcePrefabContext);
-        StringAssert.Contains("CreateBuildingSpawnPrefabContext", runtimeResourcePrefabContext);
-        StringAssert.Contains("Func<Source> CreateCurrentSource", runtimeResourcePrefabContext);
-        StringAssert.Contains("source.CreateCurrentSource != null ? source.CreateCurrentSource() : source", runtimeResourcePrefabContext);
-        StringAssert.Contains("_buildingGameplayCompositionSystem.CreateCitizenPopulation", startup);
         StringAssert.Contains("public readonly BuildingRuntimeQuerySystem RuntimeQuery", buildingComposition);
         StringAssert.Contains("public readonly BuildingRuntimeQuerySystem.Context RuntimeQueryContext", buildingComposition);
-        StringAssert.Contains("RuntimeQuery,", buildingComposition);
-        StringAssert.Contains("RuntimeQueryContext,", buildingComposition);
-        StringAssert.Contains("BuildingRuntimeResourcePrefabContextSystem.Source RuntimeResourcePrefabSource", buildingComposition);
+        StringAssert.Contains("private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;", buildingComposition);
+        StringAssert.Contains("public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;", buildingComposition);
         StringAssert.Contains("RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(RuntimeResourcePrefabSource)", buildingComposition);
         StringAssert.Contains("RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(RuntimeResourcePrefabSource)", buildingComposition);
+        StringAssert.Contains("CreateCitizenResourceContext", runtimeResourcePrefabContext);
+        StringAssert.Contains("CreateCitizenPrefabContext", runtimeResourcePrefabContext);
+
+        string[] citizenBoundaryFiles = Directory.GetFiles("Assets/Game/Scripts/Systems", "Citizen*.cs", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .ToArray();
+        string[] placementReferences = citizenBoundaryFiles
+            .Where(path => File.ReadAllText(path).Contains("BuildingPlacementSystem", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            placementReferences,
+            "Citizen boundaries must use BuildingRuntimeQuerySystem, CitizenResourceSystem, and CitizenPrefabSystem instead of reaching through BuildingPlacementSystem:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, placementReferences));
+    }
+
+    [Test]
+    public void CitizenPopulationRefactorRoadmapMustRecordBaselineAndTargetBoundaries()
+    {
+        const string roadmapPath = "Design/Architecture/citizen_population_system_refactor_roadmap.md";
+        Assert.IsTrue(File.Exists(roadmapPath), "Citizen population refactor must keep a dedicated roadmap.");
+
+        string roadmap = File.ReadAllText(roadmapPath);
+
+        StringAssert.Contains("Target file retired: `Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs`", roadmap);
+        StringAssert.Contains("Hard guard: `CitizenPopulationSystem.cs` must not exist.", roadmap);
+        StringAssert.Contains("1. Complete: Add architecture roadmap and baseline guard", roadmap);
+        StringAssert.Contains("32. Complete: Remove temporary architecture allowances", roadmap);
+        StringAssert.Contains("33. Pending: Validation gate", roadmap);
+
+        string[] plannedBoundaryTokens =
+        {
+            "CitizenPopulationCompositionSystem",
+            "CitizenPopulationLifecycleSystem",
+            "CitizenPopulationRuntimeUpdateSystem",
+            "CitizenPopulationStateSystem",
+            "CitizenPopulationEcsProjectionSystem",
+            "CitizenBuildingReadSystem",
+            "CitizenHouseholdRegistrationSystem",
+            "CitizenRefugeeSystem",
+            "CitizenScheduleSystem",
+            "CitizenDangerSystem",
+            "CitizenTravelSystem",
+            "CitizenVisibleUnitSystem",
+            "CitizenMovementCommandSystem",
+            "CitizenPopulationTotalsSystem",
+            "CitizenPopulationDebugSystem",
+            "CitizenPopulationEventSystem",
+            "CitizenPopulationDiagnosticSystem",
+            "CitizenPopulationReadModelSystem"
+        };
+
+        foreach (string token in plannedBoundaryTokens)
+            StringAssert.Contains(token, roadmap);
+
+        for (int step = 2; step <= 33; step++)
+        {
+            Assert.IsTrue(
+                roadmap.Contains($"{step}. Pending:", StringComparison.Ordinal) ||
+                roadmap.Contains($"{step}. Complete:", StringComparison.Ordinal),
+                $"Citizen population roadmap must keep step {step} tracked as pending or complete.");
+        }
+    }
+
+    [Test]
+    public void CitizenPopulationDeletionTargetContractMustBeExplicit()
+    {
+        const string roadmapPath = "Design/Architecture/citizen_population_system_refactor_roadmap.md";
+        string contract = File.ReadAllText(ContractPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+
+        StringAssert.Contains("2. Complete: Add final deletion contract", roadmap);
+        StringAssert.Contains("Citizen population runtime must use explicit narrow citizen `*System` boundaries", contract);
+        StringAssert.Contains("`CitizenPopulationSystem.cs` must not exist", contract);
+        StringAssert.Contains("`GameBootstrap`, `ManagedGameplayStartupSystem`, UI, building gameplay, runtime city, road build, and selection code must not construct, store, type-reference, or call through `CitizenPopulationSystem`", contract);
+        StringAssert.Contains("Do not replace the retired shell with `CitizenPopulationManager`, `CitizenPopulationFacade`, `CitizenPopulationController`, or any other broad managed shell", contract);
+
         Assert.IsFalse(
-            placement.Contains("_resourceDollars", StringComparison.Ordinal) ||
-            placement.Contains("CreateCitizenResourceContext", StringComparison.Ordinal) ||
-            placement.Contains("CreateCitizenPrefabContext", StringComparison.Ordinal),
-            "BuildingPlacementSystem must not own the citizen dollar backing store or citizen context factories; use RuntimeResourceSystem/RuntimeUnitPrefabSystem.");
-        Assert.IsFalse(
-            placement.Contains("CreateRuntimeUnitPrefabContext", StringComparison.Ordinal) ||
-            placement.Contains("new BuildingSpawnPrefabSystem.Context", StringComparison.Ordinal),
-            "Runtime unit-prefab and building spawn-prefab context construction belongs in BuildingRuntimeResourcePrefabContextSystem, not BuildingPlacementSystem.");
-        Assert.IsFalse(
-            text.Contains("BuildingPlacementSystem", StringComparison.Ordinal),
-            "CitizenPopulationSystem must receive narrow building/resource/prefab contexts instead of BuildingPlacementSystem.");
-        Assert.IsFalse(
-            text.Contains("_buildingPlacementSystem.GetRuntimeHouseBuildingIds", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.GetRuntimeBuildingIdsByRole", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.TryGetRuntimeBuildingFocusWorldPosition", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.TryGetRuntimeBuildingDestroyedState", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.TryGetRuntimeBuildingRefugeeSettings", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.TryGetRuntimeBuildingApproachCell", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.IsRuntimeBuildingApproachCell", StringComparison.Ordinal),
-            "CitizenPopulationSystem building read paths must use BuildingRuntimeQuerySystem instead of BuildingPlacementSystem facade read methods.");
-        Assert.IsFalse(
-            text.Contains("_buildingPlacementSystem.TrySpendDollars", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.TryResolveConfiguredUnitPrefabEntity", StringComparison.Ordinal) ||
-            text.Contains("_buildingPlacementSystem.TryResolveConfiguredUnitSpawnPrefab", StringComparison.Ordinal),
-            "CitizenPopulationSystem resource and prefab paths must use CitizenResourceSystem/CitizenPrefabSystem instead of BuildingPlacementSystem facade methods.");
+            contract.Contains("Temporary broad-shell debt is allowed only while the numbered roadmap extraction steps are incomplete", StringComparison.Ordinal),
+            "The citizen population deletion is complete; the contract must not preserve temporary broad-shell allowances.");
+    }
+
+    [Test]
+    public void CitizenPopulationExtractedBoundaryFilesMustExist()
+    {
+        string[] requiredFiles =
+        {
+            "Assets/Game/Scripts/Systems/CitizenPopulationComponent.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationLifecycleSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationStateSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationEcsProjectionSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenBuildingReadSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenHouseholdRegistrationSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenRefugeeSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenScheduleSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenStatusTransitionSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenDangerSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenTravelSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenMovementCommandSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPrefabSelectionSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationTotalsSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationReadModelSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationDebugSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationEventSystem.cs",
+            "Assets/Game/Scripts/Systems/CitizenPopulationDiagnosticSystem.cs"
+        };
+
+        foreach (string path in requiredFiles)
+            Assert.IsTrue(File.Exists(path), $"Missing extracted citizen population boundary: {path}");
+    }
+
+    [Test]
+    public void CitizenPopulationManagedStartupMustCreateComposition()
+    {
+        const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
+        const string managedStartupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string roadmapPath = "Design/Architecture/citizen_population_system_refactor_roadmap.md";
+
+        string buildingComposition = File.ReadAllText(buildingCompositionPath);
+        string managedStartup = File.ReadAllText(managedStartupPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+
+        StringAssert.Contains("26. Complete: Migrate managed startup to citizen composition", roadmap);
+        StringAssert.Contains("private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;", buildingComposition);
+        StringAssert.Contains("public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;", buildingComposition);
+        StringAssert.Contains("new CitizenPopulationCompositionSystem()", buildingComposition);
+        StringAssert.Contains("CitizenPopulationCompositionSystem.Result citizenPopulationComposition,", buildingComposition);
+        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)", buildingComposition);
+        StringAssert.Contains("CitizenPopulationCompositionBoundary.Init(", buildingComposition);
+        StringAssert.Contains("public void DisposeCitizenPopulation()", buildingComposition);
+        StringAssert.Contains("CitizenPopulationCompositionBoundary.Dispose(CitizenPopulationComposition);", buildingComposition);
+        StringAssert.Contains("public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;", managedStartup);
+        StringAssert.Contains("System.Action disposeCitizenPopulation)", managedStartup);
+        StringAssert.Contains("DisposeCitizenPopulation = disposeCitizenPopulation;", managedStartup);
+        StringAssert.Contains("building.CitizenPopulationComposition", managedStartup);
+        StringAssert.Contains("building.DisposeCitizenPopulation", managedStartup);
+    }
+
+    [Test]
+    public void CitizenPopulationRuntimeUpdateMustUseCompositionBoundary()
+    {
+        const string runtimeUpdatePath = "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateSystem.cs";
+        const string compositionPath = "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystem.cs";
+        const string gameplayRuntimePath = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
+        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+
+        Assert.IsTrue(File.Exists(runtimeUpdatePath), "Citizen population runtime update logic must live outside the retired shell.");
+        string runtimeUpdate = File.ReadAllText(runtimeUpdatePath);
+        string composition = File.ReadAllText(compositionPath);
+        string gameplayRuntime = File.ReadAllText(gameplayRuntimePath);
+        string bootstrap = File.ReadAllText(bootstrapPath);
+
+        StringAssert.Contains("internal sealed class CitizenPopulationRuntimeUpdateSystem", runtimeUpdate);
+        StringAssert.Contains("public void Bind(CitizenPopulationCompositionSystem.Result systems)", runtimeUpdate);
+        StringAssert.Contains("public void Update()", runtimeUpdate);
+        StringAssert.Contains("_systems.LifecycleSystem.Update(", runtimeUpdate);
+        StringAssert.Contains("public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();", composition);
+        StringAssert.Contains("result.RuntimeUpdateSystem.Bind(result);", composition);
+        StringAssert.Contains("Action citizenPopulationRuntimeUpdate", gameplayRuntime);
+        StringAssert.Contains("citizenPopulationRuntimeUpdate?.Invoke();", gameplayRuntime);
+        StringAssert.Contains("hadSlowStep |= performanceDiagnosticsSystem.EndStep(\"CitizenPopulation\", stepStart);", gameplayRuntime);
+        StringAssert.Contains("private Action _citizenPopulationRuntimeUpdate;", bootstrap);
+        StringAssert.Contains("managedSystems.CitizenPopulationComposition.RuntimeUpdateSystem.Update", bootstrap);
+    }
+
+    [Test]
+    public void CitizenPopulationMenuReadsMustUseReadModelBoundary()
+    {
+        const string menuStartupPath = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
+        const string menuViewPath = "Assets/Game/Scripts/UI/MenuView.cs";
+        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+
+        string menuStartup = File.ReadAllText(menuStartupPath);
+        string menuView = File.ReadAllText(menuViewPath);
+        string bootstrap = File.ReadAllText(bootstrapPath);
+
+        StringAssert.Contains("CitizenPopulationReadModelSystem citizenPopulationReadModel", menuStartup);
+        StringAssert.Contains("private CitizenPopulationReadModelSystem _citizenPopulationReadModelSystem;", menuView);
+        StringAssert.Contains("civilianDead = _citizenPopulationReadModelSystem.Totals.DeadCitizens;", menuView);
+        StringAssert.Contains("private CitizenPopulationReadModelSystem _citizenPopulationReadModel;", bootstrap);
+        StringAssert.Contains("_citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;", bootstrap);
+    }
+
+    [Test]
+    public void CitizenPopulationBuildingEventCouplingMustUseEventBoundary()
+    {
+        const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
+        const string managedStartupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string gameplayFeatureStartupPath = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
+        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+
+        string buildingComposition = File.ReadAllText(buildingCompositionPath);
+        string managedStartup = File.ReadAllText(managedStartupPath);
+        string gameplayFeatureStartup = File.ReadAllText(gameplayFeatureStartupPath);
+        string bootstrap = File.ReadAllText(bootstrapPath);
+
+        StringAssert.Contains("RuntimeCityCompositionSystem, CitizenPopulationEventSystem>", buildingComposition);
+        StringAssert.Contains("CitizenPopulationEventSystem citizenPopulationEventSystem", buildingComposition);
+        StringAssert.Contains("citizenPopulationEventSystem: citizenPopulationEventSystem", buildingComposition);
+        StringAssert.Contains("building.CitizenPopulationComposition.EventSystem", managedStartup);
+        StringAssert.Contains("RuntimeCityCompositionSystem, CitizenPopulationEventSystem>", managedStartup);
+        StringAssert.Contains("RuntimeCityCompositionSystem, CitizenPopulationEventSystem>", gameplayFeatureStartup);
+        StringAssert.Contains("CitizenPopulationEventSystem citizenPopulationEventSystem", gameplayFeatureStartup);
+        StringAssert.Contains("private CitizenPopulationEventSystem _citizenPopulationEventSystem;", bootstrap);
+        StringAssert.Contains("_citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;", bootstrap);
+    }
+
+    [Test]
+    public void CitizenPopulationVisualReporterMustUseEventBoundary()
+    {
+        const string reporterPath = "Assets/Game/Scripts/Systems/CitizenVisualLifecycleReporter.cs";
+
+        string reporter = File.ReadAllText(reporterPath);
+
+        StringAssert.Contains("private CitizenPopulationEventSystem _eventSystem;", reporter);
+        StringAssert.Contains("public void Bind(CitizenPopulationEventSystem eventSystem)", reporter);
+        StringAssert.Contains("_eventSystem?.NotifyVisibleCitizenDestroyed(CitizenId);", reporter);
+    }
+
+    [Test]
+    public void CitizenPopulationShellMustBeDeleted()
+    {
+        const string systemPath = "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs";
+        const string metaPath = "Assets/Game/Scripts/Systems/CitizenPopulationSystem.cs.meta";
+        const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
+        const string managedStartupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+
+        Assert.IsFalse(File.Exists(systemPath), "CitizenPopulationSystem.cs must stay deleted.");
+        Assert.IsFalse(File.Exists(metaPath), "CitizenPopulationSystem.cs.meta must stay deleted.");
+
+        string[] productionReferences = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => File.ReadAllText(path).Contains("CitizenPopulationSystem", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            productionReferences,
+            "Production code must not type-reference or construct the retired citizen population shell:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, productionReferences));
+
+        string buildingComposition = File.ReadAllText(buildingCompositionPath);
+        string managedStartup = File.ReadAllText(managedStartupPath);
+        string bootstrap = File.ReadAllText(bootstrapPath);
+
+        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)", buildingComposition);
+        StringAssert.Contains("CitizenPopulationCompositionBoundary.Init(", buildingComposition);
+        StringAssert.Contains("public void DisposeCitizenPopulation()", buildingComposition);
+        StringAssert.Contains("CitizenPopulationCompositionBoundary.Dispose(CitizenPopulationComposition);", buildingComposition);
+        StringAssert.Contains("System.Action DisposeCitizenPopulation", managedStartup);
+        StringAssert.Contains("building.DisposeCitizenPopulation", managedStartup);
+        StringAssert.Contains("private Action _disposeCitizenPopulation;", bootstrap);
+        StringAssert.Contains("_disposeCitizenPopulation = managedSystems.DisposeCitizenPopulation;", bootstrap);
+        StringAssert.Contains("_disposeCitizenPopulation?.Invoke();", bootstrap);
     }
 
     [Test]

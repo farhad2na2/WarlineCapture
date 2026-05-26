@@ -31,7 +31,7 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteraction;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly System.Action<MainMenuPlayUI> BindBuildingMainMenu;
-        public readonly System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> BindBuildingGameplayFeatures;
+        public readonly System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindBuildingGameplayFeatures;
         public readonly System.Action DisposeBuildingGameplay;
         public readonly BuildingRuntimeUpdateSystem BuildingRuntimeUpdate;
         public readonly BuildingRuntimeUpdateSystem.Context BuildingRuntimeUpdateContext;
@@ -46,7 +46,8 @@ internal sealed class ManagedGameplayStartupSystem
         public readonly SelectionRectangleView SelectionRectangleView;
         public readonly UnitAttackTraceSystem UnitAttackTraces;
         public readonly UnitImpostorRenderSystem UnitImpostors;
-        public readonly CitizenPopulationSystem CitizenPopulation;
+        public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
+        public readonly System.Action DisposeCitizenPopulation;
 
         public Result(
             DayNightSystem dayNight,
@@ -70,7 +71,7 @@ internal sealed class ManagedGameplayStartupSystem
             BuildingPlacementInteractionSystem buildingPlacementInteraction,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             System.Action<MainMenuPlayUI> bindBuildingMainMenu,
-            System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindBuildingGameplayFeatures,
+            System.Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindBuildingGameplayFeatures,
             System.Action disposeBuildingGameplay,
             BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
             BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
@@ -85,7 +86,8 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionRectangleView selectionRectangleView,
             UnitAttackTraceSystem unitAttackTraces,
             UnitImpostorRenderSystem unitImpostors,
-            CitizenPopulationSystem citizenPopulation)
+            CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+            System.Action disposeCitizenPopulation)
         {
             DayNight = dayNight;
             FactionVisuals = factionVisuals;
@@ -123,7 +125,8 @@ internal sealed class ManagedGameplayStartupSystem
             SelectionRectangleView = selectionRectangleView;
             UnitAttackTraces = unitAttackTraces;
             UnitImpostors = unitImpostors;
-            CitizenPopulation = citizenPopulation;
+            CitizenPopulationComposition = citizenPopulationComposition;
+            DisposeCitizenPopulation = disposeCitizenPopulation;
         }
     }
 
@@ -188,7 +191,7 @@ internal sealed class ManagedGameplayStartupSystem
         var unitImpostors = new UnitImpostorRenderSystem();
         unitImpostors.Init(worldCamera, ownerLayer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
 
-        CitizenPopulationSystem citizenPopulation = _buildingGameplayCompositionSystem.CreateCitizenPopulation(
+        _buildingGameplayCompositionSystem.InitializeCitizenPopulation(
             building,
             dayNight,
             worldCamera);
@@ -197,7 +200,7 @@ internal sealed class ManagedGameplayStartupSystem
             dayNight,
             selection.SelectionUiCamera,
             selection.SelectionBuildingInteraction,
-            citizenPopulation);
+            building.CitizenPopulationComposition.EventSystem);
 
         GameStrings.Init(gameStringsConfig);
         SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
@@ -252,6 +255,7 @@ internal sealed class ManagedGameplayStartupSystem
             selection.SelectionRectangleView,
             unitAttackTraces,
             unitImpostors,
-            citizenPopulation);
+            building.CitizenPopulationComposition,
+            building.DisposeCitizenPopulation);
     }
 }

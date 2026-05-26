@@ -94,6 +94,7 @@ public static class WarlineCaptureGameTerrain5OneGoOptimizer
     {
         WarlineCaptureGameTerrain4FullRegenerationPipeline.FullRegenerate();
         BuildOptimizedShippingTerrain();
+        WarlineCaptureGameTerrain7NonLodMobileOptimizer.BuildNonLodMobileTerrain();
     }
 
     private static List<MeshRenderer> CollectOptimizableRenderers(Transform root)

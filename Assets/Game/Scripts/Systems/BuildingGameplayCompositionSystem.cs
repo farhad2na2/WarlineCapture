@@ -40,9 +40,11 @@ internal sealed class BuildingGameplayCompositionSystem
         private readonly BuildingGameplayDependencySystem DependencySystem;
         private readonly BuildingRuntimeResourcePrefabContextSystem RuntimeResourcePrefabContextSystem;
         private readonly BuildingRuntimeResourcePrefabContextSystem.Source RuntimeResourcePrefabSource;
+        private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
+        public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
         public readonly Action<MainMenuPlayUI> BindMainMenu;
-        public readonly Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> BindGameplayFeatures;
+        public readonly Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures;
         public readonly Action Dispose;
 
         public Result(
@@ -72,9 +74,11 @@ internal sealed class BuildingGameplayCompositionSystem
             BuildingGameplayDependencySystem dependencySystem,
             BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
             BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+            CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
+            CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
             Action<MainMenuPlayUI> bindMainMenu,
-            Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> bindGameplayFeatures,
+            Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
             Action dispose)
         {
             SelectionClick = selectionClick;
@@ -103,6 +107,8 @@ internal sealed class BuildingGameplayCompositionSystem
             DependencySystem = dependencySystem;
             RuntimeResourcePrefabContextSystem = runtimeResourcePrefabContextSystem;
             RuntimeResourcePrefabSource = runtimeResourcePrefabSource;
+            CitizenPopulationCompositionBoundary = citizenPopulationCompositionBoundary;
+            CitizenPopulationComposition = citizenPopulationComposition;
             RuntimeBuildings = runtimeBuildings;
             BindMainMenu = bindMainMenu;
             BindGameplayFeatures = bindGameplayFeatures;
@@ -121,33 +127,37 @@ internal sealed class BuildingGameplayCompositionSystem
                 selectionBuildingInteractionSystem);
         }
 
-        public CitizenPopulationSystem CreateCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)
+        public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)
         {
-            var citizenPopulation = new CitizenPopulationSystem();
             CitizenResourceSystem.Context resourceContext = RuntimeResourcePrefabContextSystem.CreateCitizenResourceContext(RuntimeResourcePrefabSource);
             CitizenPrefabSystem.Context prefabContext = RuntimeResourcePrefabContextSystem.CreateCitizenPrefabContext(RuntimeResourcePrefabSource);
-            citizenPopulation.Init(
+            CitizenPopulationCompositionBoundary.Init(
+                CitizenPopulationComposition,
                 RuntimeQuery,
                 RuntimeQueryContext,
                 dayNight,
                 worldCamera,
                 resourceContext,
                 prefabContext);
-            return citizenPopulation;
+        }
+
+        public void DisposeCitizenPopulation()
+        {
+            CitizenPopulationCompositionBoundary.Dispose(CitizenPopulationComposition);
         }
 
         public void BindCitizenPopulation(
             DayNightSystem dayNight,
             SelectionUiCameraSystem selectionUiCameraSystem,
             SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-            CitizenPopulationSystem citizenPopulation)
+            CitizenPopulationEventSystem citizenPopulationEventSystem)
         {
             DependencySystem?.BindRuntimeDependencies(
                 null,
                 dayNight,
                 selectionUiCameraSystem,
                 selectionBuildingInteractionSystem,
-                citizenPopulationSystem: citizenPopulation);
+                citizenPopulationEventSystem: citizenPopulationEventSystem);
         }
     }
 
@@ -245,9 +255,11 @@ internal sealed class BuildingGameplayCompositionSystem
             childSystems.BuildingGameplayDependencySystem,
             childSystems.BuildingRuntimeResourcePrefabContextSystem,
             runtimeResourcePrefabSource,
+            new CitizenPopulationCompositionSystem(),
+            CitizenPopulationCompositionSystem.Create(),
             childSystems.RuntimeBuildingSystem.Buildings,
             mainMenu => childSystems.BuildingGameplayDependencySystem.BindRuntimeDependencies(mainMenu, dayNight),
-            (mainMenu, selectionUiCameraSystem, selectionBuildingInteractionSystem, runtimeGridBlockers, runtimeCity, citizenPopulation) =>
+            (mainMenu, selectionUiCameraSystem, selectionBuildingInteractionSystem, runtimeGridBlockers, runtimeCity, citizenPopulationEventSystem) =>
                 childSystems.BuildingGameplayDependencySystem.BindRuntimeDependencies(
                     mainMenu,
                     dayNight,
@@ -255,7 +267,7 @@ internal sealed class BuildingGameplayCompositionSystem
                     selectionBuildingInteractionSystem,
                     runtimeGridBlockers,
                     runtimeCity,
-                    citizenPopulation),
+                    citizenPopulationEventSystem),
             () => childSystems.BuildingGameplayDisposalSystem.Dispose(CreateDisposalSource(childSystems, interactionContext, markerPropertyBlock)));
     }
 
@@ -1238,9 +1250,9 @@ internal sealed class BuildingGameplayCompositionSystem
         building.BindSelection(dayNight, selectionUiCameraSystem, selectionBuildingInteractionSystem);
     }
 
-    public CitizenPopulationSystem CreateCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)
+    public void InitializeCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)
     {
-        return building.CreateCitizenPopulation(dayNight, worldCamera);
+        building.InitializeCitizenPopulation(dayNight, worldCamera);
     }
 
     public void BindCitizenPopulation(
@@ -1248,12 +1260,12 @@ internal sealed class BuildingGameplayCompositionSystem
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
-        CitizenPopulationSystem citizenPopulation)
+        CitizenPopulationEventSystem citizenPopulationEventSystem)
     {
         building.BindCitizenPopulation(
             dayNight,
             selectionUiCameraSystem,
             selectionBuildingInteractionSystem,
-            citizenPopulation);
+            citizenPopulationEventSystem);
     }
 }

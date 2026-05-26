@@ -4,6 +4,10 @@ Date: 2026-05-24
 
 This is the gameplay-facing workflow for turning authored or generated terrain map packs into a 2024x2024 WarlineCapture operation map. It applies to the active 3D single-map direction and replaces any old 2D/isometric macro-tile assumptions for new battlefield maps.
 
+For the streamlined end-to-end pipeline from image pack to generated source scene to optimized non-LOD Unity map, use:
+
+`Design/WarlineCapture_3D_Terrain_Map_One_Go_Workflow.md`
+
 ## Purpose
 
 Each operation map should be built from a reviewed image pack:

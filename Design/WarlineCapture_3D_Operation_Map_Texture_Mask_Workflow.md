@@ -182,3 +182,24 @@ Acceptance checks:
 - Tree and rock placement matches the Synty/POLYGON military art direction.
 - The base visual remains a background/reference layer; runtime units/buildings/VFX/markers remain separate.
 
+## Current Game_Terrain4 Handoff
+
+Current scene:
+
+`Assets/Game/Scenes/Game_Terrain4.unity`
+
+The current `Game_Terrain4` implementation uses the larger source-prefab island regeneration pipeline. The 2024x2024 playable map footprint is now inside green/dirt playable land, with beach and coast retained as visual border content outside the gameplay contract.
+
+Regeneration command:
+
+`Unity -batchmode -quit -projectPath <project> -executeMethod WarlineCaptureGameTerrain4FullRegenerationPipeline.FullRegenerate`
+
+Implementation artifacts:
+
+- Larger-island checklist: `Design/AgentTasks/game_terrain4_larger_island_regeneration_steps.md`
+- Full regeneration pipeline report: `Design/AgentReports/2026-05-25_gameplay_game-terrain4-full-regeneration-pipeline.md`
+- Step 5 final QA handoff: `Design/AgentReports/2026-05-25_gameplay_game-terrain4-step5-final-qa-handoff.md`
+- Validation data: `Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_validation_artifacts.json`
+- Playable-land audit data: `Design/AgentReports/Data/GeneratedScenes/GameTerrain4_PlayableLandAudit/game_terrain4_playable_land_audit.json`
+- Top-down proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png`
+- 16:9 playable-frame proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png`

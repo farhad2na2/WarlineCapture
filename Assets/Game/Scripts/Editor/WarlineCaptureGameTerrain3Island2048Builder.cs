@@ -25,11 +25,11 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const float HalfMapSize = MapSize * 0.5f;
     private const float GameplayMapExtent = 2023f;
     private const float HalfGameplayMapExtent = GameplayMapExtent * 0.5f;
-    private const float GreenPlayableHalfExtentX = 1110f;
-    private const float GreenPlayableHalfExtentZ = 1110f;
-    private const float DetailGrassHalfExtent = 1060f;
-    private const float IslandRadiusX = 1275f;
-    private const float IslandRadiusZ = 1250f;
+    private const float GreenPlayableHalfExtentX = 1260f;
+    private const float GreenPlayableHalfExtentZ = 1240f;
+    private const float DetailGrassHalfExtent = 1180f;
+    private const float IslandRadiusX = 1320f;
+    private const float IslandRadiusZ = 1300f;
     private const float GroundFillSpacing = 18f;
     private const float ShoreGroundSpacing = 30f;
     private const float DetailGrassSpacing = 78f;
@@ -149,6 +149,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         if (!scene.IsValid())
             throw new InvalidOperationException("Unable to open island target scene: " + TargetScenePath);
 
+        RenderSettings.fog = false;
         EnsureCaptureCameras();
         CaptureCamera("Camera_TopDown_2048Proof", 2048, 2048, CaptureRoot + "/game_terrain3_island2048_topdown_2048.png");
         CaptureCamera("Camera_Playable_Angled", 1920, 1080, CaptureRoot + "/game_terrain3_island2048_playable_angle_1920x1080.png");
@@ -367,6 +368,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         RenderSettings.ambientMode = UnityEngine.Rendering.AmbientMode.Flat;
         RenderSettings.ambientLight = new Color(0.76f, 0.78f, 0.68f, 1f);
         RenderSettings.skybox = null;
+        RenderSettings.fog = false;
 
         Light key = Child(root, "DirectionalLight_Key").AddComponent<Light>();
         key.type = LightType.Directional;
@@ -379,7 +381,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         top.transform.position = new Vector3(0f, 1850f, 0f);
         top.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
         top.orthographic = true;
-        top.orthographicSize = 1400f;
+        top.orthographicSize = 1520f;
         top.nearClipPlane = 0.1f;
         top.farClipPlane = 3000f;
         top.clearFlags = CameraClearFlags.SolidColor;
@@ -442,7 +444,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             Vector2 boundary = BoundaryPoint(angle);
             Vector2 inward = -new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
             Vector2 tangent = new(-inward.y, inward.x);
-            Vector2 position = boundary + inward * (104f + Hash01(i, 0, 223) * 38f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing);
+            Vector2 position = boundary + inward * (42f + Hash01(i, 0, 223) * 42f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing);
 
             if (!EvaluateIsland(position, out float depth, out _) || depth < 0.08f)
                 continue;
@@ -462,26 +464,27 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             float angle = t * Mathf.PI * 2f;
             Vector2 boundary = BoundaryPoint(angle);
             Vector2 inward = -new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
+            Vector2 outward = -inward;
             float lateralNoise = (Hash01(i, 0, 101) - 0.5f) * 8f;
             Vector2 tangent = new(-inward.y, inward.x);
-            Vector2 position = boundary + inward * (2f + Hash01(i, 0, 113) * 14f) + tangent * lateralNoise;
+            Vector2 position = boundary + outward * (10f + Hash01(i, 0, 113) * 22f) + tangent * lateralNoise;
 
             SourcePiece source = Pick(BeachPieces, i, 0, 127);
             float yaw = angle * Mathf.Rad2Deg + 90f + Mathf.Round((Hash01(i, 0, 139) - 0.5f) * 2f) * 12f;
             InstantiateSource(parent, source, new Vector3(position.x, source.Position.y, position.y), yaw, "BeachCoast");
 
             SourcePiece secondary = Pick(BeachPieces, i, 1, 151);
-            Vector2 p2 = boundary + inward * (24f + Hash01(i, 1, 163) * 24f) - tangent * lateralNoise * 0.45f;
+            Vector2 p2 = boundary + inward * (8f + Hash01(i, 1, 163) * 22f) - tangent * lateralNoise * 0.45f;
             InstantiateSource(parent, secondary, new Vector3(p2.x, secondary.Position.y, p2.y), yaw + 180f, "BeachBlend");
 
             if (i % 2 == 0)
             {
                 SourcePiece inner = Pick(BeachPieces, i, 2, 167);
-                Vector2 p3 = boundary + inward * (50f + Hash01(i, 2, 173) * 30f) + tangent * lateralNoise * 0.25f;
+                Vector2 p3 = boundary + inward * (28f + Hash01(i, 2, 173) * 30f) + tangent * lateralNoise * 0.25f;
                 InstantiateSource(parent, inner, new Vector3(p3.x, inner.Position.y, p3.y), yaw + 90f, "BeachInner");
 
                 SourcePiece landEdge = Pick(BeachPieces, i, 3, 181);
-                Vector2 p4 = boundary + inward * (76f + Hash01(i, 3, 191) * 30f) - tangent * lateralNoise * 0.2f;
+                Vector2 p4 = boundary + inward * (52f + Hash01(i, 3, 191) * 30f) - tangent * lateralNoise * 0.2f;
                 InstantiateSource(parent, landEdge, new Vector3(p4.x, landEdge.Position.y, p4.y), yaw - 90f, "BeachLandEdge");
             }
         }
@@ -654,7 +657,9 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             + 0.055f * Mathf.Sin(angle * 5.0f - 1.2f)
             + 0.030f * Mathf.Sin(angle * 8.0f + 2.1f)
             + 0.018f * Mathf.Cos(angle * 13.0f - 0.7f);
-        float normalized = Mathf.Sqrt((p.x * p.x) / (IslandRadiusX * IslandRadiusX) + (p.y * p.y) / (IslandRadiusZ * IslandRadiusZ));
+        float normalizedX = Mathf.Abs(p.x) / IslandRadiusX;
+        float normalizedZ = Mathf.Abs(p.y) / IslandRadiusZ;
+        float normalized = Mathf.Pow(Mathf.Pow(normalizedX, 4f) + Mathf.Pow(normalizedZ, 4f), 0.25f);
         depth = 1f + edgeNoise - normalized;
         return depth >= 0f;
     }
@@ -663,7 +668,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     {
         Vector2 direction = new(Mathf.Cos(angle), Mathf.Sin(angle));
         float low = 0f;
-        float high = 1100f;
+        float high = Mathf.Max(IslandRadiusX, IslandRadiusZ) * 1.25f;
         for (int i = 0; i < 18; i++)
         {
             float mid = (low + high) * 0.5f;
@@ -895,7 +900,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine();
         report.AppendLine("Task: Expand the small `Game_Terrain3` island into a 2048x2048 island using the same prefab assets and more placements, without scaling the original island up.");
         report.AppendLine();
-        report.AppendLine("Step 2 update: the island foundation now targets a larger green/dirt playable interior. The 2024 gameplay map footprint is `2023x2023` world units, and the builder fills green/dirt terrain across `2220x2220` before placing the beach ring outside the playable area.");
+        report.AppendLine("Step 2 update: the island foundation now targets a compact green/dirt playable interior. The 2024 gameplay map footprint is `2023x2023` world units, and the builder fills green/dirt terrain across `2520x2480` before placing a slightly overlapping beach ring outside the playable area.");
         report.AppendLine();
         report.AppendLine("Outputs:");
         report.AppendLine("- `" + TargetScenePath + "` under root GameObject `Island`");

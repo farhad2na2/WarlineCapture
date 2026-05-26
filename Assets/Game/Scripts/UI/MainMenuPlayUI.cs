@@ -6,7 +6,6 @@ public sealed class MainMenuPlayUI
     private SelectionUiCommandSystem _selectionUiCommandSystem;
 
     public void Init(
-        RoadBuildSystem roadBuildController,
         SelectionUiCommandSystem selectionUiCommandSystem,
         DayNightSystem dayNightSystem)
     {

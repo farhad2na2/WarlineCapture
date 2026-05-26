@@ -1,0 +1,43 @@
+{
+  "qaId": "GameTerrain4_Step5_FinalQA",
+  "date": "2026-05-25",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "status": "passed",
+  "foundationPrefabInstances": 20440,
+  "generatedDressingPrefabs": 3382,
+  "generatedCounts": {
+    "mountains": 238,
+    "trees": 976,
+    "bushes": 1473,
+    "rocks": 695
+  },
+  "playableMapTarget": {
+    "width": 2023,
+    "depth": 2023
+  },
+  "greenPlayableGroundFootprint": {
+    "width": 2694.917,
+    "depth": 2614.862
+  },
+  "beachPlacementVsMap": {
+    "totalBeachPrefabs": 3780,
+    "centersInsideMap": 0,
+    "passed": true
+  },
+  "foundationShortfall": {
+    "west": 0,
+    "east": 0,
+    "south": 0,
+    "north": 0
+  },
+  "step5Correction": "Playable proof validation now checks readable terrain content and uses a stable 16:9 playable-frame proof derived from validated map art and placement data. Island scale was tightened, fog was disabled for capture setup, and beach/green overlap was corrected while keeping beach prefab centers outside the 2024 gameplay map.",
+  "artifacts": {
+    "checklist": "Design/AgentTasks/game_terrain4_larger_island_regeneration_steps.md",
+    "handoffReport": "Design/AgentReports/2026-05-25_gameplay_game-terrain4-step5-final-qa-handoff.md",
+    "fullRegenerationSummary": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_FullRegeneration/game_terrain4_full_regeneration_summary.json",
+    "validationData": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_validation_artifacts.json",
+    "playableLandAudit": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_PlayableLandAudit/game_terrain4_playable_land_audit.json",
+    "topDownProof": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png",
+    "playableFrameProof": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png"
+  }
+}

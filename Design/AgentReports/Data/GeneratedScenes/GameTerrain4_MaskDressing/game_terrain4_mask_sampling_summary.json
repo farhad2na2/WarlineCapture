@@ -1,0 +1,575 @@
+{
+  "summaryId": "GameTerrain4_MaskSamplingSummary",
+  "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
+  "gridWidth": 2024,
+  "gridHeight": 2024,
+  "totalCells": 4096576,
+  "samplingRule": "u=gridX/2023.0; v=gridZ/2023.0; pixelX=round(u*(imageWidth-1)); pixelY=round((1.0-v)*(imageHeight-1))",
+  "layers": [
+    {
+      "path": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/base_visual.png",
+      "role": "visualReference",
+      "width": 2024,
+      "height": 2024,
+      "minValue": 9,
+      "maxValue": 225,
+      "averageValue": 102.724,
+      "classCounts": [
+        {
+          "class": "visualBright",
+          "count": 289,
+          "percent": 0.007
+        },
+        {
+          "class": "visualDark",
+          "count": 598941,
+          "percent": 14.621
+        },
+        {
+          "class": "visualHighMid",
+          "count": 1010742,
+          "percent": 24.673
+        },
+        {
+          "class": "visualLowMid",
+          "count": 2486604,
+          "percent": 60.7
+        }
+      ],
+      "coordinateProbes": [
+        {
+          "name": "SouthwestCorner",
+          "gridX": 0,
+          "gridZ": 0,
+          "pixelX": 0,
+          "pixelY": 2023,
+          "value": 106,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "SouthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 0,
+          "pixelX": 1012,
+          "pixelY": 2023,
+          "value": 113,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "SoutheastCorner",
+          "gridX": 2023,
+          "gridZ": 0,
+          "pixelX": 2023,
+          "pixelY": 2023,
+          "value": 101,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "WestEdgeMid",
+          "gridX": 0,
+          "gridZ": 1012,
+          "pixelX": 0,
+          "pixelY": 1011,
+          "value": 99,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "MapCenter",
+          "gridX": 1012,
+          "gridZ": 1012,
+          "pixelX": 1012,
+          "pixelY": 1011,
+          "value": 150,
+          "class": "visualHighMid"
+        },
+        {
+          "name": "EastEdgeMid",
+          "gridX": 2023,
+          "gridZ": 1012,
+          "pixelX": 2023,
+          "pixelY": 1011,
+          "value": 100,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "NorthwestCorner",
+          "gridX": 0,
+          "gridZ": 2023,
+          "pixelX": 0,
+          "pixelY": 0,
+          "value": 108,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "NorthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 2023,
+          "pixelX": 1012,
+          "pixelY": 0,
+          "value": 117,
+          "class": "visualLowMid"
+        },
+        {
+          "name": "NortheastCorner",
+          "gridX": 2023,
+          "gridZ": 2023,
+          "pixelX": 2023,
+          "pixelY": 0,
+          "value": 87,
+          "class": "visualLowMid"
+        }
+      ]
+    },
+    {
+      "path": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/blocker_mask.png",
+      "role": "pathfindingBlocker",
+      "width": 2024,
+      "height": 2024,
+      "minValue": 0,
+      "maxValue": 255,
+      "averageValue": 84.923,
+      "classCounts": [
+        {
+          "class": "blocked",
+          "count": 1338433,
+          "percent": 32.672
+        },
+        {
+          "class": "softEdgeReview",
+          "count": 53317,
+          "percent": 1.302
+        },
+        {
+          "class": "walkable",
+          "count": 2704826,
+          "percent": 66.027
+        }
+      ],
+      "coordinateProbes": [
+        {
+          "name": "SouthwestCorner",
+          "gridX": 0,
+          "gridZ": 0,
+          "pixelX": 0,
+          "pixelY": 2023,
+          "value": 0,
+          "class": "walkable"
+        },
+        {
+          "name": "SouthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 0,
+          "pixelX": 1012,
+          "pixelY": 2023,
+          "value": 0,
+          "class": "walkable"
+        },
+        {
+          "name": "SoutheastCorner",
+          "gridX": 2023,
+          "gridZ": 0,
+          "pixelX": 2023,
+          "pixelY": 2023,
+          "value": 0,
+          "class": "walkable"
+        },
+        {
+          "name": "WestEdgeMid",
+          "gridX": 0,
+          "gridZ": 1012,
+          "pixelX": 0,
+          "pixelY": 1011,
+          "value": 0,
+          "class": "walkable"
+        },
+        {
+          "name": "MapCenter",
+          "gridX": 1012,
+          "gridZ": 1012,
+          "pixelX": 1012,
+          "pixelY": 1011,
+          "value": 0,
+          "class": "walkable"
+        },
+        {
+          "name": "EastEdgeMid",
+          "gridX": 2023,
+          "gridZ": 1012,
+          "pixelX": 2023,
+          "pixelY": 1011,
+          "value": 0,
+          "class": "walkable"
+        },
+        {
+          "name": "NorthwestCorner",
+          "gridX": 0,
+          "gridZ": 2023,
+          "pixelX": 0,
+          "pixelY": 0,
+          "value": 2,
+          "class": "walkable"
+        },
+        {
+          "name": "NorthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 2023,
+          "pixelX": 1012,
+          "pixelY": 0,
+          "value": 2,
+          "class": "walkable"
+        },
+        {
+          "name": "NortheastCorner",
+          "gridX": 2023,
+          "gridZ": 2023,
+          "pixelX": 2023,
+          "pixelY": 0,
+          "value": 1,
+          "class": "walkable"
+        }
+      ]
+    },
+    {
+      "path": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/tree_density_mask.png",
+      "role": "treeDensity",
+      "width": 2024,
+      "height": 2024,
+      "minValue": 0,
+      "maxValue": 254,
+      "averageValue": 36.581,
+      "classCounts": [
+        {
+          "class": "treeDense",
+          "count": 105570,
+          "percent": 2.577
+        },
+        {
+          "class": "treeMedium",
+          "count": 332296,
+          "percent": 8.112
+        },
+        {
+          "class": "treeNone",
+          "count": 2559266,
+          "percent": 62.473
+        },
+        {
+          "class": "treeSparse",
+          "count": 1099444,
+          "percent": 26.838
+        }
+      ],
+      "coordinateProbes": [
+        {
+          "name": "SouthwestCorner",
+          "gridX": 0,
+          "gridZ": 0,
+          "pixelX": 0,
+          "pixelY": 2023,
+          "value": 1,
+          "class": "treeNone"
+        },
+        {
+          "name": "SouthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 0,
+          "pixelX": 1012,
+          "pixelY": 2023,
+          "value": 1,
+          "class": "treeNone"
+        },
+        {
+          "name": "SoutheastCorner",
+          "gridX": 2023,
+          "gridZ": 0,
+          "pixelX": 2023,
+          "pixelY": 2023,
+          "value": 1,
+          "class": "treeNone"
+        },
+        {
+          "name": "WestEdgeMid",
+          "gridX": 0,
+          "gridZ": 1012,
+          "pixelX": 0,
+          "pixelY": 1011,
+          "value": 1,
+          "class": "treeNone"
+        },
+        {
+          "name": "MapCenter",
+          "gridX": 1012,
+          "gridZ": 1012,
+          "pixelX": 1012,
+          "pixelY": 1011,
+          "value": 1,
+          "class": "treeNone"
+        },
+        {
+          "name": "EastEdgeMid",
+          "gridX": 2023,
+          "gridZ": 1012,
+          "pixelX": 2023,
+          "pixelY": 1011,
+          "value": 0,
+          "class": "treeNone"
+        },
+        {
+          "name": "NorthwestCorner",
+          "gridX": 0,
+          "gridZ": 2023,
+          "pixelX": 0,
+          "pixelY": 0,
+          "value": 2,
+          "class": "treeNone"
+        },
+        {
+          "name": "NorthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 2023,
+          "pixelX": 1012,
+          "pixelY": 0,
+          "value": 2,
+          "class": "treeNone"
+        },
+        {
+          "name": "NortheastCorner",
+          "gridX": 2023,
+          "gridZ": 2023,
+          "pixelX": 2023,
+          "pixelY": 0,
+          "value": 2,
+          "class": "treeNone"
+        }
+      ]
+    },
+    {
+      "path": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/rock_density_mask.png",
+      "role": "rockDensity",
+      "width": 2024,
+      "height": 2024,
+      "minValue": 0,
+      "maxValue": 255,
+      "averageValue": 36.648,
+      "classCounts": [
+        {
+          "class": "rockDense",
+          "count": 90889,
+          "percent": 2.219
+        },
+        {
+          "class": "rockMedium",
+          "count": 320979,
+          "percent": 7.835
+        },
+        {
+          "class": "rockNone",
+          "count": 2558644,
+          "percent": 62.458
+        },
+        {
+          "class": "rockSparse",
+          "count": 1126064,
+          "percent": 27.488
+        }
+      ],
+      "coordinateProbes": [
+        {
+          "name": "SouthwestCorner",
+          "gridX": 0,
+          "gridZ": 0,
+          "pixelX": 0,
+          "pixelY": 2023,
+          "value": 0,
+          "class": "rockNone"
+        },
+        {
+          "name": "SouthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 0,
+          "pixelX": 1012,
+          "pixelY": 2023,
+          "value": 9,
+          "class": "rockNone"
+        },
+        {
+          "name": "SoutheastCorner",
+          "gridX": 2023,
+          "gridZ": 0,
+          "pixelX": 2023,
+          "pixelY": 2023,
+          "value": 0,
+          "class": "rockNone"
+        },
+        {
+          "name": "WestEdgeMid",
+          "gridX": 0,
+          "gridZ": 1012,
+          "pixelX": 0,
+          "pixelY": 1011,
+          "value": 0,
+          "class": "rockNone"
+        },
+        {
+          "name": "MapCenter",
+          "gridX": 1012,
+          "gridZ": 1012,
+          "pixelX": 1012,
+          "pixelY": 1011,
+          "value": 3,
+          "class": "rockNone"
+        },
+        {
+          "name": "EastEdgeMid",
+          "gridX": 2023,
+          "gridZ": 1012,
+          "pixelX": 2023,
+          "pixelY": 1011,
+          "value": 0,
+          "class": "rockNone"
+        },
+        {
+          "name": "NorthwestCorner",
+          "gridX": 0,
+          "gridZ": 2023,
+          "pixelX": 0,
+          "pixelY": 0,
+          "value": 1,
+          "class": "rockNone"
+        },
+        {
+          "name": "NorthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 2023,
+          "pixelX": 1012,
+          "pixelY": 0,
+          "value": 7,
+          "class": "rockNone"
+        },
+        {
+          "name": "NortheastCorner",
+          "gridX": 2023,
+          "gridZ": 2023,
+          "pixelX": 2023,
+          "pixelY": 0,
+          "value": 1,
+          "class": "rockNone"
+        }
+      ]
+    },
+    {
+      "path": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01/height_mask.png",
+      "role": "heightReference",
+      "width": 2024,
+      "height": 2024,
+      "minValue": 8,
+      "maxValue": 247,
+      "averageValue": 74.335,
+      "classCounts": [
+        {
+          "class": "flatLowland",
+          "count": 2221047,
+          "percent": 54.217
+        },
+        {
+          "class": "gentleSlope",
+          "count": 1409287,
+          "percent": 34.402
+        },
+        {
+          "class": "mountainCliffHigh",
+          "count": 84120,
+          "percent": 2.053
+        },
+        {
+          "class": "raisedRoughHill",
+          "count": 382122,
+          "percent": 9.328
+        }
+      ],
+      "coordinateProbes": [
+        {
+          "name": "SouthwestCorner",
+          "gridX": 0,
+          "gridZ": 0,
+          "pixelX": 0,
+          "pixelY": 2023,
+          "value": 13,
+          "class": "flatLowland"
+        },
+        {
+          "name": "SouthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 0,
+          "pixelX": 1012,
+          "pixelY": 2023,
+          "value": 23,
+          "class": "flatLowland"
+        },
+        {
+          "name": "SoutheastCorner",
+          "gridX": 2023,
+          "gridZ": 0,
+          "pixelX": 2023,
+          "pixelY": 2023,
+          "value": 15,
+          "class": "flatLowland"
+        },
+        {
+          "name": "WestEdgeMid",
+          "gridX": 0,
+          "gridZ": 1012,
+          "pixelX": 0,
+          "pixelY": 1011,
+          "value": 13,
+          "class": "flatLowland"
+        },
+        {
+          "name": "MapCenter",
+          "gridX": 1012,
+          "gridZ": 1012,
+          "pixelX": 1012,
+          "pixelY": 1011,
+          "value": 22,
+          "class": "flatLowland"
+        },
+        {
+          "name": "EastEdgeMid",
+          "gridX": 2023,
+          "gridZ": 1012,
+          "pixelX": 2023,
+          "pixelY": 1011,
+          "value": 24,
+          "class": "flatLowland"
+        },
+        {
+          "name": "NorthwestCorner",
+          "gridX": 0,
+          "gridZ": 2023,
+          "pixelX": 0,
+          "pixelY": 0,
+          "value": 12,
+          "class": "flatLowland"
+        },
+        {
+          "name": "NorthEdgeMid",
+          "gridX": 1012,
+          "gridZ": 2023,
+          "pixelX": 1012,
+          "pixelY": 0,
+          "value": 19,
+          "class": "flatLowland"
+        },
+        {
+          "name": "NortheastCorner",
+          "gridX": 2023,
+          "gridZ": 2023,
+          "pixelX": 2023,
+          "pixelY": 0,
+          "value": 8,
+          "class": "flatLowland"
+        }
+      ]
+    }
+  ]
+}

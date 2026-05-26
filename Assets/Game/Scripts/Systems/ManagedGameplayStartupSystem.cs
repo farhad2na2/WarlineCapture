@@ -4,6 +4,7 @@ using UnityEngine.Rendering;
 
 internal sealed class ManagedGameplayStartupSystem
 {
+    private readonly RoadBuildCompositionSystem _roadBuildCompositionSystem = new();
     private readonly BuildingGameplayCompositionSystem _buildingGameplayCompositionSystem = new();
     private readonly SelectionGameplayStartupSystem _selectionGameplayStartupSystem = new();
 
@@ -11,7 +12,14 @@ internal sealed class ManagedGameplayStartupSystem
     {
         public readonly DayNightSystem DayNight;
         public readonly FactionVisualSettings FactionVisuals;
-        public readonly RoadBuildSystem RoadBuild;
+        public readonly RoadBuildReadModelSystem RoadBuildReadModel;
+        public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
+        public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
+        public readonly System.Action RoadRuntimeUpdate;
+        public readonly System.Action RoadOnGui;
+        public readonly System.Action DisposeRoad;
+        public readonly System.Action<MainMenuPlayUI> BindRoadMainMenu;
+        public readonly System.Action<MainMenuPlayUI, RuntimeGridBlockerSystem> BindRoadGameplayFeatures;
         public readonly BuildingSelectionClickSystem BuildingSelectionClick;
         public readonly BuildingSelectionClickSystem.Context BuildingSelectionClickContext;
         public readonly BuildingRuntimeCitySpawnSystem BuildingRuntimeCitySpawn;
@@ -43,7 +51,14 @@ internal sealed class ManagedGameplayStartupSystem
         public Result(
             DayNightSystem dayNight,
             FactionVisualSettings factionVisuals,
-            RoadBuildSystem roadBuild,
+            RoadBuildReadModelSystem roadBuildReadModel,
+            RoadRuntimeGenerationSystem roadRuntimeGeneration,
+            RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
+            System.Action roadRuntimeUpdate,
+            System.Action roadOnGui,
+            System.Action disposeRoad,
+            System.Action<MainMenuPlayUI> bindRoadMainMenu,
+            System.Action<MainMenuPlayUI, RuntimeGridBlockerSystem> bindRoadGameplayFeatures,
             BuildingSelectionClickSystem buildingSelectionClick,
             BuildingSelectionClickSystem.Context buildingSelectionClickContext,
             BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
@@ -74,7 +89,14 @@ internal sealed class ManagedGameplayStartupSystem
         {
             DayNight = dayNight;
             FactionVisuals = factionVisuals;
-            RoadBuild = roadBuild;
+            RoadBuildReadModel = roadBuildReadModel;
+            RoadRuntimeGeneration = roadRuntimeGeneration;
+            RoadRuntimeGenerationContext = roadRuntimeGenerationContext;
+            RoadRuntimeUpdate = roadRuntimeUpdate;
+            RoadOnGui = roadOnGui;
+            DisposeRoad = disposeRoad;
+            BindRoadMainMenu = bindRoadMainMenu;
+            BindRoadGameplayFeatures = bindRoadGameplayFeatures;
             BuildingSelectionClick = buildingSelectionClick;
             BuildingSelectionClickContext = buildingSelectionClickContext;
             BuildingRuntimeCitySpawn = buildingRuntimeCitySpawn;
@@ -126,14 +148,18 @@ internal sealed class ManagedGameplayStartupSystem
         var factionVisuals = new FactionVisualSettings();
         factionVisuals.Init(factionVisualConfig);
 
-        var roadBuild = new RoadBuildSystem();
-        roadBuild.Init(roadBuildConfig, worldCamera, runtimeUiRoot, null);
+        RoadBuildCompositionSystem.Result road = _roadBuildCompositionSystem.Initialize(
+            roadBuildConfig,
+            worldCamera,
+            runtimeUiRoot);
+        RoadBuildReadModelSystem roadBuildReadModel = road.RoadBuildReadModel;
 
         BuildingGameplayCompositionSystem.Result building = _buildingGameplayCompositionSystem.Initialize(
             buildingPlacementConfig,
             worldCamera,
             runtimeUiRoot,
-            roadBuild,
+            road.RoadFootprintQuery,
+            road.RoadFootprintQueryContext,
             factionVisuals,
             dayNight);
 
@@ -141,17 +167,17 @@ internal sealed class ManagedGameplayStartupSystem
             rtsSelectionConfig,
             worldCamera,
             runtimeUiRoot,
-            roadBuild,
+            roadBuildReadModel,
             building.Interaction,
             building.InteractionContext,
             factionVisuals);
 
-        roadBuild.BindDependencies(
+        _roadBuildCompositionSystem.BindBuildingInteraction(
+            road,
             building.Interaction,
             building.InteractionContext);
         _buildingGameplayCompositionSystem.BindSelection(
             building,
-            roadBuild,
             dayNight,
             selection.SelectionUiCamera,
             selection.SelectionBuildingInteraction);
@@ -168,7 +194,6 @@ internal sealed class ManagedGameplayStartupSystem
             worldCamera);
         _buildingGameplayCompositionSystem.BindCitizenPopulation(
             building,
-            roadBuild,
             dayNight,
             selection.SelectionUiCamera,
             selection.SelectionBuildingInteraction,
@@ -176,11 +201,31 @@ internal sealed class ManagedGameplayStartupSystem
 
         GameStrings.Init(gameStringsConfig);
         SharedPrefabPreviewCache.Init(prefabPreviewCameraConfig);
+        System.Action<MainMenuPlayUI> bindRoadMainMenu = mainMenu =>
+            _roadBuildCompositionSystem.BindMainMenu(
+                road,
+                building.Interaction,
+                building.InteractionContext,
+                mainMenu);
+        System.Action<MainMenuPlayUI, RuntimeGridBlockerSystem> bindRoadGameplayFeatures = (mainMenu, runtimeGridBlockers) =>
+            _roadBuildCompositionSystem.BindRuntimeGameplayFeatures(
+                road,
+                building.Interaction,
+                building.InteractionContext,
+                mainMenu,
+                runtimeGridBlockers);
 
         return new Result(
             dayNight,
             factionVisuals,
-            roadBuild,
+            roadBuildReadModel,
+            road.RoadRuntimeGeneration,
+            road.RoadRuntimeGenerationContext,
+            road.RuntimeUpdate,
+            road.OnGui,
+            road.Dispose,
+            bindRoadMainMenu,
+            bindRoadGameplayFeatures,
             building.SelectionClick,
             building.SelectionClickContext,
             building.RuntimeCitySpawn,

@@ -66,7 +66,7 @@ public sealed class GameBootstrap : MonoBehaviour
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
     public RuntimeCityCompositionSystem RuntimeCity { get; private set; }
-    public RoadBuildSystem RoadBuild { get; private set; }
+    public RoadBuildReadModelSystem RoadBuildReadModel { get; private set; }
     public BuildingSelectionClickSystem BuildingSelectionClick { get; private set; }
     public BuildingUiCommandSystem BuildingUiCommand { get; private set; }
     public BuildingUiQuerySystem BuildingUiQuery { get; private set; }
@@ -91,6 +91,13 @@ public sealed class GameBootstrap : MonoBehaviour
     private BuildingUiQuerySystem.Context _buildingUiQueryContext;
     private BuildingPlacementInteractionSystem _buildingPlacementInteraction;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
+    private RoadRuntimeGenerationSystem _roadRuntimeGeneration;
+    private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
+    private Action _roadRuntimeUpdate;
+    private Action _roadOnGui;
+    private Action _disposeRoad;
+    private Action<MainMenuPlayUI> _bindRoadMainMenu;
+    private Action<MainMenuPlayUI, RuntimeGridBlockerSystem> _bindRoadGameplayFeatures;
     private Action<MainMenuPlayUI> _bindBuildingMainMenu;
     private Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationSystem> _bindBuildingGameplayFeatures;
     private Action<MainMenuPlayUI> _bindSelectionMainMenu;
@@ -128,7 +135,14 @@ public sealed class GameBootstrap : MonoBehaviour
 
         DayNight = managedSystems.DayNight;
         FactionVisuals = managedSystems.FactionVisuals;
-        RoadBuild = managedSystems.RoadBuild;
+        RoadBuildReadModel = managedSystems.RoadBuildReadModel;
+        _roadRuntimeGeneration = managedSystems.RoadRuntimeGeneration;
+        _roadRuntimeGenerationContext = managedSystems.RoadRuntimeGenerationContext;
+        _roadRuntimeUpdate = managedSystems.RoadRuntimeUpdate;
+        _roadOnGui = managedSystems.RoadOnGui;
+        _disposeRoad = managedSystems.DisposeRoad;
+        _bindRoadMainMenu = managedSystems.BindRoadMainMenu;
+        _bindRoadGameplayFeatures = managedSystems.BindRoadGameplayFeatures;
         BuildingSelectionClick = managedSystems.BuildingSelectionClick;
         BuildingSelectionClickContext = managedSystems.BuildingSelectionClickContext;
         _buildingRuntimeCitySpawn = managedSystems.BuildingRuntimeCitySpawn;
@@ -165,7 +179,7 @@ public sealed class GameBootstrap : MonoBehaviour
         MainMenu = _menuStartupSystem.Initialize(
             menuView,
             BeginGameplay,
-            RoadBuild,
+            _bindRoadMainMenu,
             BuildingUiCommand,
             _buildingUiCommandContext,
             BuildingUiQuery,
@@ -227,7 +241,7 @@ public sealed class GameBootstrap : MonoBehaviour
             _performanceDiagnosticsSystem,
             _missionStartupSystem,
             null,
-            RoadBuild,
+            _roadRuntimeUpdate,
             BuildingRuntimeUpdate,
             _buildingRuntimeUpdateContext,
             _selectionRuntimeUpdate,
@@ -268,7 +282,7 @@ public sealed class GameBootstrap : MonoBehaviour
             GameplayInitialized,
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
-            RoadBuild,
+            _roadOnGui,
             SelectionRectangle);
     }
 
@@ -279,7 +293,7 @@ public sealed class GameBootstrap : MonoBehaviour
         MainMenu?.Dispose();
         _disposeSelection?.Invoke();
         _disposeBuildingGameplay?.Invoke();
-        RoadBuild?.Dispose();
+        _disposeRoad?.Invoke();
         UnitAttackTraces?.Dispose();
         UnitImpostors?.Dispose();
         CitizenPopulation?.Dispose();
@@ -304,6 +318,12 @@ public sealed class GameBootstrap : MonoBehaviour
         _buildingUiQueryContext = default;
         _buildingPlacementInteraction = null;
         _buildingPlacementInteractionContext = default;
+        _roadRuntimeGenerationContext = default;
+        _roadRuntimeUpdate = null;
+        _roadOnGui = null;
+        _disposeRoad = null;
+        _bindRoadMainMenu = null;
+        _bindRoadGameplayFeatures = null;
         _bindBuildingMainMenu = null;
         _bindBuildingGameplayFeatures = null;
         _bindSelectionMainMenu = null;
@@ -312,7 +332,7 @@ public sealed class GameBootstrap : MonoBehaviour
         _disposeBuildingGameplay = null;
         BuildingRuntimeUpdate = null;
         _buildingRuntimeUpdateContext = default;
-        RoadBuild = null;
+        _roadRuntimeGeneration = null;
         FactionVisuals = null;
         UnitAttackTraces = null;
         UnitImpostors = null;
@@ -381,7 +401,9 @@ public sealed class GameBootstrap : MonoBehaviour
             runtimeCitySpawnerConfig,
             runtimeGridBlockerConfig,
             runtimeDecorationSpawnerConfig,
-            RoadBuild,
+            _roadRuntimeGeneration,
+            _roadRuntimeGenerationContext,
+            _bindRoadGameplayFeatures,
             _buildingRuntimeCitySpawn,
             _buildingRuntimeCitySpawnContext,
             _buildingPlacementInteraction,

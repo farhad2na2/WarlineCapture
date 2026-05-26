@@ -37,7 +37,7 @@ internal sealed class RuntimeCityStartupSystem
 
     private static Result TryCreateGenerateResult(Context context)
     {
-        if (!context.HasRoadBuildSystem)
+        if (!context.HasRoadRuntimeGenerationSystem)
             return Result.None;
         if (context.GenerateBuildings && !context.HasSpawnSystem)
             return Result.None;
@@ -94,7 +94,7 @@ internal sealed class RuntimeCityStartupSystem
         public readonly bool PlayRequested;
         public readonly bool IsMissionExcluded;
         public readonly bool GenerateBuildings;
-        public readonly bool HasRoadBuildSystem;
+        public readonly bool HasRoadRuntimeGenerationSystem;
         public readonly bool HasSpawnSystem;
         public readonly IReadOnlyCollection<GameObject> HallPrefabs;
         public readonly IReadOnlyCollection<GameObject> ShopPrefabs;
@@ -112,7 +112,7 @@ internal sealed class RuntimeCityStartupSystem
             bool playRequested,
             bool isMissionExcluded,
             bool generateBuildings,
-            bool hasRoadBuildSystem,
+            bool hasRoadRuntimeGenerationSystem,
             bool hasSpawnSystem,
             IReadOnlyCollection<GameObject> hallPrefabs,
             IReadOnlyCollection<GameObject> shopPrefabs,
@@ -129,7 +129,7 @@ internal sealed class RuntimeCityStartupSystem
             PlayRequested = playRequested;
             IsMissionExcluded = isMissionExcluded;
             GenerateBuildings = generateBuildings;
-            HasRoadBuildSystem = hasRoadBuildSystem;
+            HasRoadRuntimeGenerationSystem = hasRoadRuntimeGenerationSystem;
             HasSpawnSystem = hasSpawnSystem;
             HallPrefabs = hallPrefabs;
             ShopPrefabs = shopPrefabs;

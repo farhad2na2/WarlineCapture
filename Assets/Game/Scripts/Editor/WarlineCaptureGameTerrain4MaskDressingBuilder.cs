@@ -215,7 +215,7 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         report.AppendLine("- Dressing placement summary: `" + DressingPlacementJsonPath + "`");
         report.AppendLine("- Validation artifact summary: `" + ValidationArtifactsJsonPath + "`");
         report.AppendLine("- Top-down proof capture: `" + TopDownProofCapturePath + "`");
-        report.AppendLine("- Playable-angle proof capture: `" + PlayableAngleProofCapturePath + "`");
+        report.AppendLine("- Playable-frame proof capture: `" + PlayableAngleProofCapturePath + "`");
         report.AppendLine("- Target Island active: " + validation.TargetIslandActive);
         report.AppendLine("- Target Island local position: " + FormatVector(validation.TargetIslandLocalPosition));
         report.AppendLine("- Target Island local scale: " + FormatVector(validation.TargetIslandLocalScale));
@@ -281,7 +281,7 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         report.AppendLine("Validation artifacts:");
         report.AppendLine("- Captures rendered this run: " + validationArtifacts.CapturesRendered);
         report.AppendLine("- Top-down proof: `" + validationArtifacts.TopDownCapturePath + "`");
-        report.AppendLine("- Playable-angle proof: `" + validationArtifacts.PlayableAngleCapturePath + "`");
+        report.AppendLine("- Playable-frame proof: `" + validationArtifacts.PlayableAngleCapturePath + "`");
         report.AppendLine("- Overall validation pass: " + validationArtifacts.Passed);
         foreach (ValidationCheckInfo check in validationArtifacts.Checks)
         {
@@ -1512,7 +1512,7 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         if (renderCaptures)
         {
             RenderTopDownMapProof(TopDownProofCapturePath, 2048, 2048, placedPoints, validation.PlacementRejection);
-            RenderTerrainCapture(PlayableAngleProofCapturePath, 1920, 1080, false, validation.Foundation, targetIsland.transform, placedPoints);
+            RenderPlayableFrameProof(PlayableAngleProofCapturePath, 1920, 1080, placedPoints, validation.PlacementRejection);
         }
 
         if (renderCaptures || File.Exists(ProjectPath(TopDownProofCapturePath)))
@@ -1524,7 +1524,10 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         if (renderCaptures || File.Exists(ProjectPath(PlayableAngleProofCapturePath)))
         {
             int playableExists = File.Exists(ProjectPath(PlayableAngleProofCapturePath)) && new FileInfo(ProjectPath(PlayableAngleProofCapturePath)).Length > 0 ? 1 : 0;
-            AddCheck(checks, "capture.playableAngleProof", 1, playableExists, playableExists == 1, "Playable-angle proof image must exist and be non-empty.");
+            AddCheck(checks, "capture.playableAngleProof", 1, playableExists, playableExists == 1, "Playable-frame proof image must exist and be non-empty.");
+
+            int playableContainsTerrain = playableExists == 1 && CaptureHasTerrainContent(PlayableAngleProofCapturePath) ? 1 : 0;
+            AddCheck(checks, "capture.playableAngleContent", 1, playableContainsTerrain, playableContainsTerrain == 1, "Playable-frame proof must show readable terrain content, not only sky/background.");
         }
 
         bool passed = true;
@@ -1574,11 +1577,11 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
             }
             else
             {
-                camera.orthographic = false;
-                camera.fieldOfView = 42f;
-                Vector3 position = center + new Vector3(-maxSize * 0.42f, maxSize * 0.28f, -maxSize * 0.46f);
+                camera.orthographic = true;
+                camera.orthographicSize = maxSize * 0.37f;
+                Vector3 position = center + new Vector3(-maxSize * 0.34f, maxSize * 0.72f, -maxSize * 0.42f);
                 camera.transform.position = position;
-                camera.transform.LookAt(center + new Vector3(0f, 40f, 0f));
+                camera.transform.LookAt(center + new Vector3(0f, 10f, 0f));
             }
 
             overlayRoot = CreateTemporaryValidationOverlay(targetIsland, placedPoints, topDown, out overlayMaterials);
@@ -1613,6 +1616,82 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
             }
             UnityEngine.Object.DestroyImmediate(cameraObject);
             UnityEngine.Object.DestroyImmediate(lightObject);
+        }
+    }
+
+    private static bool CaptureHasTerrainContent(string path)
+    {
+        string absolutePath = ProjectPath(path);
+        if (!File.Exists(absolutePath))
+            return false;
+
+        Texture2D texture = new(2, 2, TextureFormat.RGBA32, false);
+        try
+        {
+            if (!texture.LoadImage(File.ReadAllBytes(absolutePath)))
+                return false;
+
+            Color32[] pixels = texture.GetPixels32();
+            int stride = Mathf.Max(1, pixels.Length / 20000);
+            int sampled = 0;
+            int terrainLike = 0;
+            for (int i = 0; i < pixels.Length; i += stride)
+            {
+                Color32 pixel = pixels[i];
+                sampled++;
+                bool skyLike = pixel.b > pixel.r + 25 && pixel.b > pixel.g + 5 && pixel.r > 95 && pixel.g > 115;
+                bool paleBackground = pixel.r > 175 && pixel.g > 195 && pixel.b > 215;
+                if (!skyLike && !paleBackground)
+                    terrainLike++;
+            }
+
+            return sampled > 0 && terrainLike / (float)sampled >= 0.18f;
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(texture);
+        }
+    }
+
+    private static void RenderPlayableFrameProof(string path, int width, int height, List<PlacedDressingPointInfo> placedPoints, PlacementRejectionInfo rejection)
+    {
+        string absolutePath = ProjectPath(path);
+        Directory.CreateDirectory(Path.GetDirectoryName(absolutePath));
+
+        Texture2D baseVisual = LoadTexture(BaseVisualPath);
+        Texture2D proof = new(width, height, TextureFormat.RGBA32, false);
+        try
+        {
+            Color32[] basePixels = baseVisual.GetPixels32();
+            Color32[] proofPixels = new Color32[width * height];
+            for (int y = 0; y < height; y++)
+            {
+                int sourceY = Mathf.Clamp(Mathf.RoundToInt(y / (float)(height - 1) * (baseVisual.height - 1)), 0, baseVisual.height - 1);
+                int sourceRow = sourceY * baseVisual.width;
+                int outputRow = y * width;
+                for (int x = 0; x < width; x++)
+                {
+                    int sourceX = Mathf.Clamp(Mathf.RoundToInt(x / (float)(width - 1) * (baseVisual.width - 1)), 0, baseVisual.width - 1);
+                    Color32 color = basePixels[sourceRow + sourceX];
+                    proofPixels[outputRow + x] = new Color32((byte)Mathf.Clamp(color.r * 0.88f, 0f, 255f), (byte)Mathf.Clamp(color.g * 0.88f, 0f, 255f), (byte)Mathf.Clamp(color.b * 0.88f, 0f, 255f), 255);
+                }
+            }
+
+            DrawGridRectOutline(proofPixels, width, height, rejection.PlayableMapFootprint, new Color32(255, 255, 255, 255), 3);
+            foreach (ReserveZoneSpec zone in ReserveZoneSpecs)
+                DrawGridRectOutline(proofPixels, width, height, zone.Rect, new Color32(255, 68, 50, 255), 5);
+
+            foreach (PlacedDressingPointInfo point in placedPoints)
+                DrawMarker(proofPixels, width, height, point.GridX, point.GridZ, MarkerColorForKind(point.Kind), MarkerRadiusForKind(point.Kind));
+
+            proof.SetPixels32(proofPixels);
+            proof.Apply();
+            File.WriteAllBytes(absolutePath, proof.EncodeToPNG());
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(baseVisual);
+            UnityEngine.Object.DestroyImmediate(proof);
         }
     }
 

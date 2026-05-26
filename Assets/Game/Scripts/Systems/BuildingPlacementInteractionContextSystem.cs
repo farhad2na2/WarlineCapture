@@ -20,6 +20,7 @@ internal sealed class BuildingPlacementInteractionContextSystem
         public readonly Action CreateUnitFromSelectedBuilding;
         public readonly Action DeleteSelectedBuilding;
         public readonly Action<string> ClearSelectedBuilding;
+        public readonly Action ExitBuildMode;
         public readonly Action<int, Entity, GameObject> HandleRuntimeBuildingEntityDestroyed;
         public readonly BuildingPlacementInteractionSystem.TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
 
@@ -37,6 +38,7 @@ internal sealed class BuildingPlacementInteractionContextSystem
             Action createUnitFromSelectedBuilding,
             Action deleteSelectedBuilding,
             Action<string> clearSelectedBuilding,
+            Action exitBuildMode,
             Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
             BuildingPlacementInteractionSystem.TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
         {
@@ -53,6 +55,7 @@ internal sealed class BuildingPlacementInteractionContextSystem
             CreateUnitFromSelectedBuilding = createUnitFromSelectedBuilding;
             DeleteSelectedBuilding = deleteSelectedBuilding;
             ClearSelectedBuilding = clearSelectedBuilding;
+            ExitBuildMode = exitBuildMode;
             HandleRuntimeBuildingEntityDestroyed = handleRuntimeBuildingEntityDestroyed;
             TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
         }
@@ -74,6 +77,7 @@ internal sealed class BuildingPlacementInteractionContextSystem
             source.CreateUnitFromSelectedBuilding,
             source.DeleteSelectedBuilding,
             source.ClearSelectedBuilding,
+            source.ExitBuildMode,
             source.HandleRuntimeBuildingEntityDestroyed,
             source.TryResolveBaseBreachTarget);
     }

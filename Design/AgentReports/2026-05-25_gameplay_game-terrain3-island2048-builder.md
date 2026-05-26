@@ -4,7 +4,7 @@ Date: 2026-05-25
 
 Task: Expand the small `Game_Terrain3` island into a 2048x2048 island using the same prefab assets and more placements, without scaling the original island up.
 
-Step 2 update: the island foundation now targets a larger green/dirt playable interior. The 2024 gameplay map footprint is `2023x2023` world units, and the builder fills green/dirt terrain across `2220x2220` before placing the beach ring outside the playable area.
+Step 2 update: the island foundation now targets a compact green/dirt playable interior. The 2024 gameplay map footprint is `2023x2023` world units, and the builder fills green/dirt terrain across `2520x2480` before placing a slightly overlapping beach ring outside the playable area.
 
 Outputs:
 - `Assets/Game/Scenes/Game_Terrain4.unity` under root GameObject `Island`
@@ -29,15 +29,15 @@ Counts:
 - Source ground prefab instances: 46
 - Source detail grass prefab instances: 135
 - Unique source prefab assets: 8
-- Placed prefab instances: 17027
-- Green material placements: 9072
-- Dirt material placements: 1938
-- Dark grass material placements: 2237
+- Placed prefab instances: 20440
+- Green material placements: 10992
+- Dirt material placements: 2566
+- Dark grass material placements: 3102
 - Beach material placements: 3780
 - Ground fill spacing: 18
 - Gameplay map target extent: 2023
-- Green playable half extent X/Z: 1110 / 1110
-- Island radius X/Z: 1275 / 1250
+- Green playable half extent X/Z: 1260 / 1240
+- Island radius X/Z: 1320 / 1300
 - Shore ground spacing: 30
 - Detail grass spacing: 78
 - Ground X/Z scale multiplier: 2.15

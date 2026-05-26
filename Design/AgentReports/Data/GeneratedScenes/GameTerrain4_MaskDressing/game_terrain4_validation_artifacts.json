@@ -1,0 +1,117 @@
+{
+  "summaryId": "GameTerrain4_ValidationArtifacts",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
+  "capturesRenderedThisRun": true,
+  "topDownProofCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png",
+  "playableAngleProofCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png",
+  "totalPlacedPrefabs": 3382,
+  "passed": true,
+  "checks": [
+    {
+      "id": "totalPlacedPrefabs",
+      "passed": true,
+      "expected": 3382,
+      "actual": 3382,
+      "details": "Scene placed-prefab total must match the deterministic spacing plan."
+    },
+    {
+      "id": "count.Mountains",
+      "passed": true,
+      "expected": 238,
+      "actual": 238,
+      "details": "Generated group count for Mountains must match accepted spacing points."
+    },
+    {
+      "id": "count.Trees",
+      "passed": true,
+      "expected": 976,
+      "actual": 976,
+      "details": "Generated group count for Trees must match accepted spacing points."
+    },
+    {
+      "id": "count.Bushes",
+      "passed": true,
+      "expected": 1473,
+      "actual": 1473,
+      "details": "Generated group count for Bushes must match accepted spacing points."
+    },
+    {
+      "id": "count.Rocks",
+      "passed": true,
+      "expected": 695,
+      "actual": 695,
+      "details": "Generated group count for Rocks must match accepted spacing points."
+    },
+    {
+      "id": "reserveClear.CityReserve",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "No generated dressing may occupy reserved city/base placement space."
+    },
+    {
+      "id": "reserveClear.NorthwestBaseReserve",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "No generated dressing may occupy reserved city/base placement space."
+    },
+    {
+      "id": "reserveClear.SoutheastBaseReserve",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "No generated dressing may occupy reserved city/base placement space."
+    },
+    {
+      "id": "playableMapFootprint.containment",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "Generated dressing must remain inside the 2024 playable map footprint, which is now fully covered by green/dirt terrain."
+    },
+    {
+      "id": "pathing.vegetationClear",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "Trees and bushes must not sit on soft-edge or hard-blocker pathing cells."
+    },
+    {
+      "id": "pathing.rocksClear",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "Decorative rocks must not sit on hard-blocked pathing cells."
+    },
+    {
+      "id": "blockerBelt.mountainsNaturalTerrain",
+      "passed": true,
+      "expected": 238,
+      "actual": 238,
+      "details": "Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells."
+    },
+    {
+      "id": "capture.topDownProof",
+      "passed": true,
+      "expected": 1,
+      "actual": 1,
+      "details": "Top-down proof image must exist and be non-empty."
+    },
+    {
+      "id": "capture.playableAngleProof",
+      "passed": true,
+      "expected": 1,
+      "actual": 1,
+      "details": "Playable-frame proof image must exist and be non-empty."
+    },
+    {
+      "id": "capture.playableAngleContent",
+      "passed": true,
+      "expected": 1,
+      "actual": 1,
+      "details": "Playable-frame proof must show readable terrain content, not only sky/background."
+    }
+  ]
+}

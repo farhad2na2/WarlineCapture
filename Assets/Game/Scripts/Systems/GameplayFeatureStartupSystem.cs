@@ -24,7 +24,9 @@ internal sealed class GameplayFeatureStartupSystem
         RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig,
         RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig,
-        RoadBuildSystem roadBuild,
+        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
+        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
+        Action<MainMenuPlayUI, RuntimeGridBlockerSystem> bindRoadGameplayFeatures,
         BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawn,
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
@@ -43,7 +45,8 @@ internal sealed class GameplayFeatureStartupSystem
         var runtimeCity = new RuntimeCityCompositionSystem();
         runtimeCity.Configure(
             runtimeCitySpawnerConfig,
-            roadBuild,
+            roadRuntimeGenerationSystem,
+            roadRuntimeGenerationContext,
             buildingRuntimeCitySpawn,
             buildingRuntimeCitySpawnContext,
             runtimeCityRoot,
@@ -51,11 +54,7 @@ internal sealed class GameplayFeatureStartupSystem
 
         var runtimeGridBlockers = new RuntimeGridBlockerSystem();
         runtimeGridBlockers.Init(runtimeGridBlockerConfig, runtimeBlockerRoot, runtimeCity.ReadModel);
-        roadBuild?.BindDependencies(
-            buildingPlacementInteraction,
-            buildingPlacementInteractionContext,
-            mainMenu,
-            runtimeGridBlockers);
+        bindRoadGameplayFeatures?.Invoke(mainMenu, runtimeGridBlockers);
         sceneBindingSystem?.BindRuntimeGridBlockerDebugViews(runtimeGridBlockers);
         bindBuildingGameplayFeatures?.Invoke(
             mainMenu,

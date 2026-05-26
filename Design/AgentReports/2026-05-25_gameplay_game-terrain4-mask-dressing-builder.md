@@ -20,19 +20,19 @@ Validated references:
 - Dressing placement summary: `Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_dressing_placement_summary.json`
 - Validation artifact summary: `Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_validation_artifacts.json`
 - Top-down proof capture: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png`
-- Playable-angle proof capture: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png`
+- Playable-frame proof capture: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png`
 - Target Island active: True
 - Target Island local position: (0, 0, 0)
 - Target Island local scale: (1, 1, 1)
 - Foundation base child: `ExpandedIsland_SourceGameTerrain3PrefabsOnly`
 - Foundation child index: 0
 - Foundation active in hierarchy: True
-- Foundation transform count: 17031
-- Foundation renderers: 17027
-- Foundation mesh filters: 17027
-- Foundation colliders: 16829
-- Foundation world bounds center: (11.409, -2.635, -3.164)
-- Foundation world bounds size: (2358.803, 7.829, 2386.351)
+- Foundation transform count: 20444
+- Foundation renderers: 20440
+- Foundation mesh filters: 20440
+- Foundation colliders: 20187
+- Foundation world bounds center: (9.204, -2.635, -60.677)
+- Foundation world bounds size: (3057.73, 7.829, 2970.207)
 
 Generated child groups under `Island`:
 - `Generated_Mountains`: present, child index 1, children 238, purpose: Mask-placed mountain and cliff blocker dressing.
@@ -97,7 +97,7 @@ Dressing placement:
 Validation artifacts:
 - Captures rendered this run: True
 - Top-down proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png`
-- Playable-angle proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png`
+- Playable-frame proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png`
 - Overall validation pass: True
 - PASS `totalPlacedPrefabs`: expected 3382, actual 3382. Scene placed-prefab total must match the deterministic spacing plan.
 - PASS `count.Mountains`: expected 238, actual 238. Generated group count for Mountains must match accepted spacing points.
@@ -112,6 +112,7 @@ Validation artifacts:
 - PASS `pathing.rocksClear`: expected 0, actual 0. Decorative rocks must not sit on hard-blocked pathing cells.
 - PASS `blockerBelt.mountainsNaturalTerrain`: expected 238, actual 238. Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells.
 - PASS `capture.topDownProof`: expected 1, actual 1. Top-down proof image must exist and be non-empty.
-- PASS `capture.playableAngleProof`: expected 1, actual 1. Playable-angle proof image must exist and be non-empty.
+- PASS `capture.playableAngleProof`: expected 1, actual 1. Playable-frame proof image must exist and be non-empty.
+- PASS `capture.playableAngleContent`: expected 1, actual 1. Playable-frame proof must show readable terrain content, not only sky/background.
 
 Implementation report: `Game_Terrain4/Island` now contains the enlarged green/dirt island foundation plus generated sibling dressing groups. The validation pass confirms prefab counts, reserve-zone clearance, playable-map containment, vegetation pathing rules, rock blocker rules, mountain blocker-belt rules, and proof captures.

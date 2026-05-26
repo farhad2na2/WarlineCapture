@@ -1,0 +1,140 @@
+{
+  "summaryId": "GameTerrain4_PlacementRejectionSummary",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
+  "gridWidth": 2024,
+  "gridHeight": 2024,
+  "placementContract": "Mask grid 0..2023 maps to the 2024 playable map footprint on the enlarged green/dirt island foundation; beach/coast terrain is visual border content outside this gameplay contract.",
+  "rules": [
+    "Reject decorative placement outside the 2024 playable map footprint.",
+    "Reject decorative placement inside city/base reserve zones.",
+    "Reject tree and bush placement on blocker soft-edge or hard-blocked pathing cells.",
+    "Reject decorative rock placement on hard-blocked pathing cells.",
+    "Allow mountain/blocker dressing only on natural blocker/high-terrain candidates outside reserve zones."
+  ],
+  "playableMapFootprint": { "xMin": 0, "zMin": 0, "width": 2024, "height": 2024, "xMaxExclusive": 2024, "zMaxExclusive": 2024 },
+  "validAnyPlacementCells": 2101738,
+  "globalRejectionCounts": [
+      {
+        "reason": "hardBlocked",
+        "count": 1338433
+      },
+      {
+        "reason": "reserveZone",
+        "count": 712800
+      },
+      {
+        "reason": "softPathingEdge",
+        "count": 53317
+      }
+    ],
+  "reserveZones": [
+    {
+      "id": "CityReserve",
+      "intent": "Large open flat city/town area for future Middle East town prefabs.",
+      "rect": { "xMin": 520, "zMin": 720, "width": 720, "height": 560, "xMaxExclusive": 1240, "zMaxExclusive": 1280 },
+      "areaCells": 403200,
+      "blockedCells": 7747,
+      "softEdgeCells": 704,
+      "treeCandidateCells": 19036,
+      "rockCandidateCells": 16415,
+      "raisedOrHighCells": 6
+    },
+    {
+      "id": "NorthwestBaseReserve",
+      "intent": "Military camp/base reserve for command, tents, vehicles, helipad, and barricades.",
+      "rect": { "xMin": 190, "zMin": 1430, "width": 430, "height": 360, "xMaxExclusive": 620, "zMaxExclusive": 1790 },
+      "areaCells": 154800,
+      "blockedCells": 116806,
+      "softEdgeCells": 2774,
+      "treeCandidateCells": 105463,
+      "rockCandidateCells": 91282,
+      "raisedOrHighCells": 42397
+    },
+    {
+      "id": "SoutheastBaseReserve",
+      "intent": "Second military camp/base reserve far from the northwest base.",
+      "rect": { "xMin": 1410, "zMin": 250, "width": 430, "height": 360, "xMaxExclusive": 1840, "zMaxExclusive": 610 },
+      "areaCells": 154800,
+      "blockedCells": 65207,
+      "softEdgeCells": 2423,
+      "treeCandidateCells": 55830,
+      "rockCandidateCells": 85850,
+      "raisedOrHighCells": 22084
+    }
+  ],
+  "candidateSummaries": [
+    {
+      "kind": "Trees",
+      "rule": "Tree density >= 32, rejected outside the 2024 playable map, inside reserve zones, or on blocker/soft-edge pathing cells.",
+      "rawCandidateCells": 1537310,
+      "validCells": 635521,
+      "rejectedCells": 901789,
+      "rejectionCounts": [
+        {
+          "reason": "hardBlocked",
+          "count": 819444
+        },
+        {
+          "reason": "reserveZone",
+          "count": 180329
+        },
+        {
+          "reason": "softPathingEdge",
+          "count": 28375
+        }
+      ]
+    },
+    {
+      "kind": "Bushes",
+      "rule": "Tree density >= 32, rejected outside the 2024 playable map, inside reserve zones, or on blocker/soft-edge pathing cells.",
+      "rawCandidateCells": 1537310,
+      "validCells": 635521,
+      "rejectedCells": 901789,
+      "rejectionCounts": [
+        {
+          "reason": "hardBlocked",
+          "count": 819444
+        },
+        {
+          "reason": "reserveZone",
+          "count": 180329
+        },
+        {
+          "reason": "softPathingEdge",
+          "count": 28375
+        }
+      ]
+    },
+    {
+      "kind": "Rocks",
+      "rule": "Rock density >= 32, rejected outside the 2024 playable map, inside reserve zones, or on hard blocker cells.",
+      "rawCandidateCells": 1537932,
+      "validCells": 649284,
+      "rejectedCells": 888648,
+      "rejectionCounts": [
+        {
+          "reason": "hardBlocked",
+          "count": 819396
+        },
+        {
+          "reason": "reserveZone",
+          "count": 193547
+        }
+      ]
+    },
+    {
+      "kind": "Mountains",
+      "rule": "Height >= 208, blocker >= 160, or dense rock >= 176; rejected outside the 2024 playable map/reserves and must remain tied to natural blocker/high terrain.",
+      "rawCandidateCells": 1387335,
+      "validCells": 1193557,
+      "rejectedCells": 193778,
+      "rejectionCounts": [
+        {
+          "reason": "reserveZone",
+          "count": 193778
+        }
+      ]
+    }
+  ]
+}

@@ -67,7 +67,8 @@ public class BuildingGameplaySystem
     private readonly BuildingRuntimeResourcePrefabContextSystem _buildingRuntimeResourcePrefabContextSystem = new();
     private readonly BuildingPlacementStartupSystem _buildingPlacementStartupSystem = new();
     private int[] _placementInvalidPrefix;
-    private RoadBuildSystem _roadBuildController;
+    private RoadFootprintQuerySystem _roadFootprintQuerySystem;
+    private RoadFootprintQuerySystem.Context _roadFootprintQueryContext;
     private MainMenuPlayUI _mainMenuPlayUi;
     private SelectionUiCameraSystem _selectionUiCameraSystem;
     private SelectionBuildingInteractionSystem _selectionBuildingInteractionSystem;
@@ -181,10 +182,10 @@ public class BuildingGameplaySystem
             return;
 
         bool[] roadFootprintMask = null;
-        if (_roadBuildController != null)
+        if (_roadFootprintQuerySystem != null)
         {
             roadFootprintMask = new bool[grid.Width * grid.Height];
-            _roadBuildController.FillRoadFootprintMask(grid, roadFootprintMask);
+            _roadFootprintQuerySystem.FillRoadFootprintMask(_roadFootprintQueryContext, grid, roadFootprintMask);
         }
 
         BuildingPlacementValidationSystem.RebuildInvalidPrefix(
@@ -464,12 +465,34 @@ public class BuildingGameplaySystem
         BuildingPlacementSystemConfig configAsset,
         Camera sceneWorldCamera,
         Transform runtimeRoot,
-        RoadBuildSystem roadBuildController,
+        object roadBuildCompatibility,
         MainMenuPlayUI mainMenuPlayUi,
         FactionVisualSettings factionVisualSettings,
         DayNightSystem dayNightSystem)
     {
-        _roadBuildController = roadBuildController;
+        Init(
+            configAsset,
+            sceneWorldCamera,
+            runtimeRoot,
+            null,
+            default,
+            mainMenuPlayUi,
+            factionVisualSettings,
+            dayNightSystem);
+    }
+
+    public void Init(
+        BuildingPlacementSystemConfig configAsset,
+        Camera sceneWorldCamera,
+        Transform runtimeRoot,
+        RoadFootprintQuerySystem roadFootprintQuerySystem,
+        RoadFootprintQuerySystem.Context roadFootprintQueryContext,
+        MainMenuPlayUI mainMenuPlayUi,
+        FactionVisualSettings factionVisualSettings,
+        DayNightSystem dayNightSystem)
+    {
+        _roadFootprintQuerySystem = roadFootprintQuerySystem;
+        _roadFootprintQueryContext = roadFootprintQueryContext;
         _mainMenuPlayUi = mainMenuPlayUi;
         _factionVisualSettings = factionVisualSettings;
         _dayNightSystem = dayNightSystem;
@@ -485,7 +508,8 @@ public class BuildingGameplaySystem
     }
 
     public void BindDependencies(
-        RoadBuildSystem roadBuildController,
+        RoadFootprintQuerySystem roadFootprintQuerySystem,
+        RoadFootprintQuerySystem.Context roadFootprintQueryContext,
         MainMenuPlayUI mainMenuPlayUi,
         DayNightSystem dayNightSystem = null,
         SelectionUiCameraSystem selectionUiCameraSystem = null,
@@ -494,7 +518,11 @@ public class BuildingGameplaySystem
         RuntimeCityCompositionSystem runtimeCitySystem = null,
         CitizenPopulationSystem citizenPopulationSystem = null)
     {
-        _roadBuildController = roadBuildController;
+        if (roadFootprintQuerySystem != null)
+        {
+            _roadFootprintQuerySystem = roadFootprintQuerySystem;
+            _roadFootprintQueryContext = roadFootprintQueryContext;
+        }
         _mainMenuPlayUi = mainMenuPlayUi;
         if (selectionUiCameraSystem != null)
             _selectionUiCameraSystem = selectionUiCameraSystem;
@@ -904,7 +932,7 @@ public class BuildingGameplaySystem
             IsPointerOverPlacementUi,
             UpdatePlacement,
             IsRuntimeBlockerCell,
-            _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : (System.Func<GridConfig, Vector2Int, Vector2Int, bool>)null,
+            HasRoadInFootprint,
             CreateBuildingVisualInstance,
             PositionBuildingObject,
             RegisterRuntimeBuilding,
@@ -1559,8 +1587,18 @@ public class BuildingGameplaySystem
             _placementInvalidPrefixWidth,
             _placementInvalidPrefixHeight,
             IsRuntimeBlockerCell,
-            _roadBuildController != null ? _roadBuildController.HasRoadInFootprint : null,
+            HasRoadInFootprint,
             OverlapsAnyRuntimeBuilding);
+    }
+
+    private bool HasRoadInFootprint(GridConfig grid, Vector2Int originCell, Vector2Int footprintCells)
+    {
+        return _roadFootprintQuerySystem != null &&
+               _roadFootprintQuerySystem.HasRoadInFootprint(
+                   _roadFootprintQueryContext,
+                   grid,
+                   originCell,
+                   footprintCells);
     }
 
     private BuildingPlacementValidationSystem.WallValidationContext CreateWallValidationContext()
@@ -1830,6 +1868,7 @@ public class BuildingGameplaySystem
             CreateUnitFromSelectedBuilding,
             DeleteSelectedBuilding,
             ClearSelectedBuilding,
+            ExitBuildMode,
             HandleRuntimeBuildingEntityDestroyed,
             TryResolveBaseBreachTarget);
     }

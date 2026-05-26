@@ -12,7 +12,7 @@ public sealed class GameplayRuntimeUpdateSystem
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
         MissionStartupSystem missionStartupSystem,
         TacticalMapRuntimeLoader mapLoader,
-        RoadBuildSystem roadBuild,
+        Action roadBuildRuntimeUpdate,
         BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
         Action selectionRuntimeUpdate,
@@ -42,7 +42,7 @@ public sealed class GameplayRuntimeUpdateSystem
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MissionRuntime", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            roadBuild?.Update();
+            roadBuildRuntimeUpdate?.Invoke();
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("RoadBuild", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
@@ -129,14 +129,14 @@ public sealed class GameplayRuntimeUpdateSystem
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
-        RoadBuildSystem roadBuild,
+        Action roadBuildOnGui,
         SelectionRectangleView selectionRectangleView)
     {
         if (!(gameplayInitialized && runtimeGameplayStateSystem.PlayRequested))
             return;
 
         double start = performanceDiagnosticsSystem.BeginTimedSection();
-        roadBuild?.OnGui();
+        roadBuildOnGui?.Invoke();
         selectionRectangleView?.Draw();
         performanceDiagnosticsSystem.EndOnGui(start);
     }

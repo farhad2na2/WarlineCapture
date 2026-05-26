@@ -48,7 +48,7 @@ public sealed class BootstrapAndMenuPlayModeTests
         GameBootstrap bootstrap = bootstrapObject.AddComponent<GameBootstrap>();
 
         Assert.NotNull(bootstrap.DayNight, "Bootstrap should create core dependencies during Awake.");
-        Assert.NotNull(bootstrap.RoadBuild, "Bootstrap should create core dependencies during Awake.");
+        Assert.NotNull(bootstrap.RoadBuildReadModel, "Bootstrap should create road read-model dependencies during Awake.");
         Assert.NotNull(bootstrap.BuildingSelectionClick, "Bootstrap should create building selection click dependencies during Awake.");
         Assert.NotNull(bootstrap.BuildingRuntimeUpdate, "Bootstrap should create building runtime update dependencies during Awake.");
         Assert.NotNull(bootstrap.SelectionUiCommand, "Bootstrap should create selection command dependencies during Awake.");
@@ -229,7 +229,7 @@ public sealed class BootstrapAndMenuPlayModeTests
             em.AddComponent<SelectedUnitTag>(soldier);
 
             MainMenuPlayUI mainMenu = new();
-            mainMenu.Init(null, new SelectionUiCommandSystem(), null);
+            mainMenu.Init(new SelectionUiCommandSystem(), null);
 
             MethodInfo pointerDown = typeof(MainMenuPlayUI).GetMethod("OnToolbarUiPointerDown", BindingFlags.Instance | BindingFlags.NonPublic);
             Assert.NotNull(pointerDown);

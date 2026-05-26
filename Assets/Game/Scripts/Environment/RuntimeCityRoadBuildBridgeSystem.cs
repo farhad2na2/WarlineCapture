@@ -3,41 +3,50 @@ using UnityEngine;
 
 internal sealed class RuntimeCityRoadBuildBridgeSystem
 {
-    private RoadBuildSystem _roadBuildSystem;
+    private RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem;
+    private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
 
-    public bool HasRoadBuildSystem => _roadBuildSystem != null;
+    public bool HasRoadRuntimeGenerationSystem => _roadRuntimeGenerationSystem != null;
 
-    public void Configure(RoadBuildSystem roadBuildSystem)
+    public void Configure(
+        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
+        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext)
     {
-        _roadBuildSystem = roadBuildSystem;
+        _roadRuntimeGenerationSystem = roadRuntimeGenerationSystem;
+        _roadRuntimeGenerationContext = roadRuntimeGenerationContext;
     }
 
     public void Clear()
     {
-        _roadBuildSystem = null;
+        _roadRuntimeGenerationSystem = null;
+        _roadRuntimeGenerationContext = default;
     }
 
     public bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
     {
         roadCellSizeInGridCells = 0;
-        return _roadBuildSystem != null &&
-            _roadBuildSystem.TryGetRoadCellSizeInGridCells(out roadCellSizeInGridCells);
+        return _roadRuntimeGenerationSystem != null &&
+            _roadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCells(
+                _roadRuntimeGenerationContext,
+                out roadCellSizeInGridCells);
     }
 
     public void BeginDeferredRoadEcsSync()
     {
-        _roadBuildSystem?.BeginDeferredRoadEcsSync();
+        _roadRuntimeGenerationSystem?.BeginDeferredRoadEcsSync(_roadRuntimeGenerationContext);
     }
 
     public void EndDeferredRoadEcsSync()
     {
-        _roadBuildSystem?.EndDeferredRoadEcsSync();
+        _roadRuntimeGenerationSystem?.EndDeferredRoadEcsSync(_roadRuntimeGenerationContext);
     }
 
     public bool CreateRoadStrokeFromRoadCells(IReadOnlyList<Vector2Int> cells)
     {
-        return _roadBuildSystem != null &&
-            _roadBuildSystem.CreateRoadStrokeFromRoadCells(cells);
+        return _roadRuntimeGenerationSystem != null &&
+            _roadRuntimeGenerationSystem.CreateRoadStrokeFromRoadCells(
+                _roadRuntimeGenerationContext,
+                cells);
     }
 
     public bool CreateAutobahnStrokeFromRoadCells(
@@ -45,8 +54,9 @@ internal sealed class RuntimeCityRoadBuildBridgeSystem
         bool useAutobahnConnectorAtStart,
         bool useAutobahnConnectorAtEnd)
     {
-        return _roadBuildSystem != null &&
-            _roadBuildSystem.CreateAutobahnStrokeFromRoadCells(
+        return _roadRuntimeGenerationSystem != null &&
+            _roadRuntimeGenerationSystem.CreateAutobahnStrokeFromRoadCells(
+                _roadRuntimeGenerationContext,
                 cells,
                 useAutobahnConnectorAtStart,
                 useAutobahnConnectorAtEnd);
@@ -57,8 +67,9 @@ internal sealed class RuntimeCityRoadBuildBridgeSystem
         Vector2Int direction,
         int length)
     {
-        return _roadBuildSystem != null &&
-            _roadBuildSystem.CreateStandaloneStraightRoadChainFromConnector(
+        return _roadRuntimeGenerationSystem != null &&
+            _roadRuntimeGenerationSystem.CreateStandaloneStraightRoadChainFromConnector(
+                _roadRuntimeGenerationContext,
                 connectorCell,
                 direction,
                 length);
@@ -69,8 +80,9 @@ internal sealed class RuntimeCityRoadBuildBridgeSystem
         out Vector2Int roadConnectionCell)
     {
         roadConnectionCell = default;
-        return _roadBuildSystem != null &&
-            _roadBuildSystem.TryGetStandaloneStraightChainEndRoadCell(
+        return _roadRuntimeGenerationSystem != null &&
+            _roadRuntimeGenerationSystem.TryGetStandaloneStraightChainEndRoadCell(
+                _roadRuntimeGenerationContext,
                 direction,
                 out roadConnectionCell);
     }

@@ -161,15 +161,23 @@ public sealed class Chapter01M01PlayableRuntimeTests
     }
 
     [Test]
-    public void RoadBuildSetBuildMode_RejectsM01WithoutEnteringBuildMode()
+    public void RoadBuildCommandSetBuildMode_RejectsM01WithoutEnteringBuildMode()
     {
         InitialUnitsRuntimeState.PlayRequested = true;
         InitialUnitsRuntimeState.SelectionModeActive = true;
         InitialUnitsRuntimeState.BuildModeActive = false;
 
-        RoadBuildSystem.SetBuildMode(true);
+        var commandSystem = new RoadBuildCommandSystem();
+        var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
+        var context = new RoadBuildCommandSystem.Context(
+            runtimeGameplayStateSystem,
+            new RoadBuildSessionSystem(),
+            default,
+            null);
 
-        Assert.IsFalse(InitialUnitsRuntimeState.BuildModeActive, "M01 must not enter road/build mode through the static road build entry point.");
+        commandSystem.SetBuildMode(context, true);
+
+        Assert.IsFalse(InitialUnitsRuntimeState.BuildModeActive, "M01 must not enter road/build mode through the road build command boundary.");
     }
 
     [Test]

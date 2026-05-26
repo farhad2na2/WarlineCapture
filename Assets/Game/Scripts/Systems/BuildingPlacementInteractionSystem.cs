@@ -30,6 +30,7 @@ public sealed class BuildingPlacementInteractionSystem
         public readonly Action CreateUnitFromSelectedBuilding;
         public readonly Action DeleteSelectedBuilding;
         public readonly Action<string> ClearSelectedBuilding;
+        public readonly Action ExitBuildMode;
         public readonly Action<int, Entity, GameObject> HandleRuntimeBuildingEntityDestroyed;
         public readonly TryResolveBaseBreachTargetDelegate TryResolveBaseBreachTarget;
 
@@ -47,6 +48,7 @@ public sealed class BuildingPlacementInteractionSystem
             Action createUnitFromSelectedBuilding,
             Action deleteSelectedBuilding,
             Action<string> clearSelectedBuilding,
+            Action exitBuildMode,
             Action<int, Entity, GameObject> handleRuntimeBuildingEntityDestroyed,
             TryResolveBaseBreachTargetDelegate tryResolveBaseBreachTarget)
         {
@@ -63,6 +65,7 @@ public sealed class BuildingPlacementInteractionSystem
             CreateUnitFromSelectedBuilding = createUnitFromSelectedBuilding;
             DeleteSelectedBuilding = deleteSelectedBuilding;
             ClearSelectedBuilding = clearSelectedBuilding;
+            ExitBuildMode = exitBuildMode;
             HandleRuntimeBuildingEntityDestroyed = handleRuntimeBuildingEntityDestroyed;
             TryResolveBaseBreachTarget = tryResolveBaseBreachTarget;
         }
@@ -137,6 +140,11 @@ public sealed class BuildingPlacementInteractionSystem
     public void ClearSelectedBuilding(Context context, string reason)
     {
         context.ClearSelectedBuilding?.Invoke(reason);
+    }
+
+    public void ExitBuildMode(Context context)
+    {
+        context.ExitBuildMode?.Invoke();
     }
 
     public void HandleRuntimeBuildingEntityDestroyed(Context context, int buildingId, Entity blockerEntity, GameObject buildingObject)

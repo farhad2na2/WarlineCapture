@@ -8,7 +8,7 @@ internal sealed class MenuStartupSystem
     public MainMenuPlayUI Initialize(
         MenuView menuView,
         Action gameRequested,
-        RoadBuildSystem roadBuild,
+        Action<MainMenuPlayUI> bindRoadMainMenu,
         BuildingUiCommandSystem buildingUiCommand,
         BuildingUiCommandSystem.Context buildingUiCommandContext,
         BuildingUiQuerySystem buildingUiQuery,
@@ -50,10 +50,10 @@ internal sealed class MenuStartupSystem
         try
         {
             var mainMenu = new MainMenuPlayUI();
-            mainMenu.Init(roadBuild, selectionUiCommandSystem, dayNight);
+            mainMenu.Init(selectionUiCommandSystem, dayNight);
             BindMenuDependencies(
                 mainMenu,
-                roadBuild,
+                bindRoadMainMenu,
                 buildingPlacementInteraction,
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
@@ -66,7 +66,7 @@ internal sealed class MenuStartupSystem
             logException?.Invoke(exception);
             BindMenuDependencies(
                 null,
-                roadBuild,
+                bindRoadMainMenu,
                 buildingPlacementInteraction,
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
@@ -84,16 +84,13 @@ internal sealed class MenuStartupSystem
 
     private void BindMenuDependencies(
         MainMenuPlayUI mainMenu,
-        RoadBuildSystem roadBuild,
+        Action<MainMenuPlayUI> bindRoadMainMenu,
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         Action<MainMenuPlayUI> bindBuildingMainMenu,
         Action<MainMenuPlayUI> bindSelectionMainMenu)
     {
-        roadBuild?.BindDependencies(
-            buildingPlacementInteraction,
-            buildingPlacementInteractionContext,
-            mainMenu);
+        bindRoadMainMenu?.Invoke(mainMenu);
         bindBuildingMainMenu?.Invoke(mainMenu);
         bindSelectionMainMenu?.Invoke(mainMenu);
     }

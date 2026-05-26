@@ -46,7 +46,7 @@ internal sealed class SelectionGameplayStartupSystem
         RTSSelectionSystemConfig rtsSelectionConfig,
         Camera worldCamera,
         Transform runtimeUiRoot,
-        RoadBuildSystem roadBuild,
+        RoadBuildReadModelSystem roadBuildReadModel,
         BuildingPlacementInteractionSystem buildingInteraction,
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         FactionVisualSettings factionVisuals)
@@ -97,7 +97,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
         MainMenuPlayUI mainMenuPlayUi = null;
-        RoadBuildSystem roadBuildController = roadBuild;
+        RoadBuildReadModelSystem roadBuildReadState = roadBuildReadModel;
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem = buildingInteraction;
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = buildingInteractionContext;
         bool explicitAttackTargetModeActive = false;
@@ -125,7 +125,7 @@ internal sealed class SelectionGameplayStartupSystem
         void BindSelectionMainMenu(MainMenuPlayUI mainMenu)
         {
             mainMenuPlayUi = mainMenu;
-            roadBuildController = roadBuild;
+            roadBuildReadState = roadBuildReadModel;
             buildingPlacementInteractionSystem = buildingInteraction;
             buildingPlacementInteractionContext = buildingInteractionContext;
         }
@@ -172,7 +172,7 @@ internal sealed class SelectionGameplayStartupSystem
                 rtsCameraRequestSystem,
                 runtimeConfig,
                 mainMenuPlayUi,
-                roadBuildController,
+                roadBuildReadState,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
                 TryGetDefaultEntityManager,

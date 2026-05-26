@@ -37,13 +37,14 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
         CategoryBounds foundationOverall = BuildCategoryBounds("FoundationOverall", "All renderers under the preserved island foundation.", foundation.GetComponentsInChildren<Renderer>(true));
         CategoryBounds generatedOverall = BuildGeneratedOverall(generatedCategories);
         CategoryBounds mapTarget = CategoryBounds.FromRect("MapTarget2024", "Full 2024x2024 gameplay map target rect.", -MapGridMaxCoordinate * 0.5f, -MapGridMaxCoordinate * 0.5f, MapGridMaxCoordinate * 0.5f, MapGridMaxCoordinate * 0.5f, 0);
+        BeachPlacementInfo beachPlacement = BuildBeachPlacementInfo(foundation, mapTarget);
 
-        WriteJson(foundationOverall, mapTarget, foundationCategories, generatedOverall, generatedCategories);
-        WriteReport(foundationOverall, mapTarget, foundationCategories, generatedOverall, generatedCategories);
+        WriteJson(foundationOverall, mapTarget, foundationCategories, generatedOverall, generatedCategories, beachPlacement);
+        WriteReport(foundationOverall, mapTarget, foundationCategories, generatedOverall, generatedCategories, beachPlacement);
         AssetDatabase.Refresh();
 
         CategoryBounds green = FindCategory(foundationCategories, "GreenPlayableGround");
-        Debug.Log($"WARLINECAPTURE_GAME_TERRAIN4_PLAYABLE_LAND_AUDIT_READY mapWidth={mapTarget.Width:0.###} mapDepth={mapTarget.Depth:0.###} foundationWidth={foundationOverall.Width:0.###} foundationDepth={foundationOverall.Depth:0.###} greenWidth={green.Width:0.###} greenDepth={green.Depth:0.###} report={AuditReportPath}");
+        Debug.Log($"WARLINECAPTURE_GAME_TERRAIN4_PLAYABLE_LAND_AUDIT_READY mapWidth={mapTarget.Width:0.###} mapDepth={mapTarget.Depth:0.###} foundationWidth={foundationOverall.Width:0.###} foundationDepth={foundationOverall.Depth:0.###} greenWidth={green.Width:0.###} greenDepth={green.Depth:0.###} beachCentersInsideMap={beachPlacement.CentersInsideMap} report={AuditReportPath}");
     }
 
     private static List<CategoryBounds> ScanFoundationCategories(Transform foundation)
@@ -129,7 +130,33 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
         return "Foundation renderers not classified by current naming rules.";
     }
 
-    private static void WriteJson(CategoryBounds foundationOverall, CategoryBounds mapTarget, List<CategoryBounds> foundationCategories, CategoryBounds generatedOverall, List<CategoryBounds> generatedCategories)
+    private static BeachPlacementInfo BuildBeachPlacementInfo(Transform foundation, CategoryBounds mapTarget)
+    {
+        int total = 0;
+        int centersInsideMap = 0;
+        foreach (Transform transform in foundation.GetComponentsInChildren<Transform>(true))
+        {
+            if (!IsPlacedBeachPrefab(transform.name))
+                continue;
+
+            total++;
+            Vector3 position = transform.position;
+            if (position.x >= mapTarget.XMin && position.x <= mapTarget.XMax && position.z >= mapTarget.ZMin && position.z <= mapTarget.ZMax)
+                centersInsideMap++;
+        }
+
+        return new BeachPlacementInfo(total, centersInsideMap);
+    }
+
+    private static bool IsPlacedBeachPrefab(string objectName)
+    {
+        return objectName.StartsWith("BeachCoast_", StringComparison.Ordinal)
+            || objectName.StartsWith("BeachBlend_", StringComparison.Ordinal)
+            || objectName.StartsWith("BeachInner_", StringComparison.Ordinal)
+            || objectName.StartsWith("BeachLandEdge_", StringComparison.Ordinal);
+    }
+
+    private static void WriteJson(CategoryBounds foundationOverall, CategoryBounds mapTarget, List<CategoryBounds> foundationCategories, CategoryBounds generatedOverall, List<CategoryBounds> generatedCategories, BeachPlacementInfo beachPlacement)
     {
         Directory.CreateDirectory(ProjectPath(DataRoot));
 
@@ -147,6 +174,7 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
             json.AppendLine("    " + CategoryToJson(foundationCategories[i], 2) + comma);
         }
         json.AppendLine("  ],");
+        json.AppendLine("  \"beachPlacementVsMap\": " + BeachPlacementToJson(beachPlacement) + ",");
         json.AppendLine("  \"generatedOverall\": " + CategoryToJson(generatedOverall, 1) + ",");
         json.AppendLine("  \"generatedCategories\": [");
         for (int i = 0; i < generatedCategories.Count; i++)
@@ -159,7 +187,7 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
         File.WriteAllText(ProjectPath(AuditJsonPath), json.ToString());
     }
 
-    private static void WriteReport(CategoryBounds foundationOverall, CategoryBounds mapTarget, List<CategoryBounds> foundationCategories, CategoryBounds generatedOverall, List<CategoryBounds> generatedCategories)
+    private static void WriteReport(CategoryBounds foundationOverall, CategoryBounds mapTarget, List<CategoryBounds> foundationCategories, CategoryBounds generatedOverall, List<CategoryBounds> generatedCategories, BeachPlacementInfo beachPlacement)
     {
         Directory.CreateDirectory(ProjectPath(Path.GetDirectoryName(AuditReportPath)));
 
@@ -198,6 +226,7 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
         AppendCategory(report, green);
         AppendCategory(report, innerBeach);
         AppendCategory(report, outerBeach);
+        report.AppendLine("- Beach prefab centers inside 2024 gameplay map: " + beachPlacement.CentersInsideMap.ToString(CultureInfo.InvariantCulture) + " / " + beachPlacement.TotalBeachPrefabs.ToString(CultureInfo.InvariantCulture));
         foreach (CategoryBounds category in foundationCategories)
         {
             if (category.Id != "GreenPlayableGround" && category.Id != "InnerBeachBlend" && category.Id != "OuterBeachCoast")
@@ -237,6 +266,13 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
             + ", \"zMax\": " + category.ZMax.ToString("0.###", CultureInfo.InvariantCulture)
             + ", \"width\": " + category.Width.ToString("0.###", CultureInfo.InvariantCulture)
             + ", \"depth\": " + category.Depth.ToString("0.###", CultureInfo.InvariantCulture) + " }";
+    }
+
+    private static string BeachPlacementToJson(BeachPlacementInfo beachPlacement)
+    {
+        return "{ \"totalBeachPrefabs\": " + beachPlacement.TotalBeachPrefabs.ToString(CultureInfo.InvariantCulture)
+            + ", \"centersInsideMap\": " + beachPlacement.CentersInsideMap.ToString(CultureInfo.InvariantCulture)
+            + ", \"passed\": " + (beachPlacement.CentersInsideMap == 0 ? "true" : "false") + " }";
     }
 
     private static string ShortfallToJson(CategoryBounds measured, CategoryBounds target)
@@ -342,6 +378,18 @@ public static class WarlineCaptureGameTerrain4PlayableLandAudit
         public static CategoryBounds FromRect(string id, string description, float xMin, float zMin, float xMax, float zMax, int rendererCount)
         {
             return new CategoryBounds(id, description, rendererCount, xMin, xMax, zMin, zMax);
+        }
+    }
+
+    private readonly struct BeachPlacementInfo
+    {
+        public readonly int TotalBeachPrefabs;
+        public readonly int CentersInsideMap;
+
+        public BeachPlacementInfo(int totalBeachPrefabs, int centersInsideMap)
+        {
+            TotalBeachPrefabs = totalBeachPrefabs;
+            CentersInsideMap = centersInsideMap;
         }
     }
 

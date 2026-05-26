@@ -42,14 +42,15 @@ public sealed class RuntimeCityCompositionSystem
 
     internal void Configure(
         RuntimeCitySpawnerSystemConfig configAsset,
-        RoadBuildSystem roadBuildController,
+        RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,
+        RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
         BuildingRuntimeCitySpawnSystem buildingRuntimeCitySpawnSystem,
         BuildingRuntimeCitySpawnSystem.Context buildingRuntimeCitySpawnContext,
         Transform runtimeRoot,
         MainMenuPlayUI mainMenuPlayUi)
     {
         _config = configAsset;
-        _runtimeCityRoadBuildBridgeSystem.Configure(roadBuildController);
+        _runtimeCityRoadBuildBridgeSystem.Configure(roadRuntimeGenerationSystem, roadRuntimeGenerationContext);
         _runtimeCitySpawnBridgeSystem.Configure(buildingRuntimeCitySpawnSystem, buildingRuntimeCitySpawnContext);
         _runtimeCityVisualSystem.SetRuntimeRoot(runtimeRoot);
         _runtimeCityMinimapEventSystem.Configure(mainMenuPlayUi);
@@ -59,7 +60,7 @@ public sealed class RuntimeCityCompositionSystem
 
     public void ConfigureForValidation(RuntimeCitySpawnerSystemConfig configAsset)
     {
-        Configure(configAsset, null, null, default, null, null);
+        Configure(configAsset, null, default, null, default, null, null);
     }
 
     public void Update(int frameCount)
@@ -151,7 +152,7 @@ public sealed class RuntimeCityCompositionSystem
             _runtimeGameplayStateSystem.PlayRequested,
             Chapter01M01PlayableRuntime.IsActiveMission(),
             generateBuildings,
-            _runtimeCityRoadBuildBridgeSystem.HasRoadBuildSystem,
+            _runtimeCityRoadBuildBridgeSystem.HasRoadRuntimeGenerationSystem,
             _runtimeCitySpawnBridgeSystem.HasSpawnSystem,
             hallPrefabs,
             shopPrefabs,

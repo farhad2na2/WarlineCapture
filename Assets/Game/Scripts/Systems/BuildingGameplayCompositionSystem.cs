@@ -62,13 +62,13 @@ internal sealed class BuildingGameplayCompositionSystem
         }
 
         public void BindSelection(
-            RoadBuildSystem roadBuild,
             DayNightSystem dayNight,
             SelectionUiCameraSystem selectionUiCameraSystem,
             SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)
         {
             Building?.BindDependencies(
-                roadBuild,
+                null,
+                default,
                 null,
                 dayNight,
                 selectionUiCameraSystem,
@@ -93,14 +93,14 @@ internal sealed class BuildingGameplayCompositionSystem
         }
 
         public void BindCitizenPopulation(
-            RoadBuildSystem roadBuild,
             DayNightSystem dayNight,
             SelectionUiCameraSystem selectionUiCameraSystem,
             SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
             CitizenPopulationSystem citizenPopulation)
         {
             Building?.BindDependencies(
-                roadBuild,
+                null,
+                default,
                 null,
                 dayNight,
                 selectionUiCameraSystem,
@@ -113,12 +113,21 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingPlacementSystemConfig buildingPlacementConfig,
         Camera worldCamera,
         Transform runtimeUiRoot,
-        RoadBuildSystem roadBuild,
+        RoadFootprintQuerySystem roadFootprintQuerySystem,
+        RoadFootprintQuerySystem.Context roadFootprintQueryContext,
         FactionVisualSettings factionVisuals,
         DayNightSystem dayNight)
     {
         var building = new BuildingGameplaySystem();
-        building.Init(buildingPlacementConfig, worldCamera, runtimeUiRoot, roadBuild, null, factionVisuals, dayNight);
+        building.Init(
+            buildingPlacementConfig,
+            worldCamera,
+            runtimeUiRoot,
+            roadFootprintQuerySystem,
+            roadFootprintQueryContext,
+            null,
+            factionVisuals,
+            dayNight);
 
         var runtimeUpdate = new BuildingRuntimeUpdateSystem();
         return new Result(
@@ -136,10 +145,11 @@ internal sealed class BuildingGameplayCompositionSystem
             building.CreateBuildingUiQueryContext(),
             building.BuildingPlacementInteractionSystem,
             building.CreateBuildingPlacementInteractionContext(),
-            mainMenu => building.BindDependencies(roadBuild, mainMenu, dayNight),
+            mainMenu => building.BindDependencies(null, default, mainMenu, dayNight),
             (mainMenu, selectionUiCameraSystem, selectionBuildingInteractionSystem, runtimeGridBlockers, runtimeCity, citizenPopulation) =>
                 building.BindDependencies(
-                    roadBuild,
+                    null,
+                    default,
                     mainMenu,
                     dayNight,
                     selectionUiCameraSystem,
@@ -242,12 +252,11 @@ internal sealed class BuildingGameplayCompositionSystem
 
     public void BindSelection(
         Result building,
-        RoadBuildSystem roadBuild,
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem)
     {
-        building.BindSelection(roadBuild, dayNight, selectionUiCameraSystem, selectionBuildingInteractionSystem);
+        building.BindSelection(dayNight, selectionUiCameraSystem, selectionBuildingInteractionSystem);
     }
 
     public CitizenPopulationSystem CreateCitizenPopulation(Result building, DayNightSystem dayNight, Camera worldCamera)
@@ -257,14 +266,12 @@ internal sealed class BuildingGameplayCompositionSystem
 
     public void BindCitizenPopulation(
         Result building,
-        RoadBuildSystem roadBuild,
         DayNightSystem dayNight,
         SelectionUiCameraSystem selectionUiCameraSystem,
         SelectionBuildingInteractionSystem selectionBuildingInteractionSystem,
         CitizenPopulationSystem citizenPopulation)
     {
         building.BindCitizenPopulation(
-            roadBuild,
             dayNight,
             selectionUiCameraSystem,
             selectionBuildingInteractionSystem,

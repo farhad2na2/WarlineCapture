@@ -10,7 +10,6 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
 
     private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
     private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private RoadBuildSystem _roadBuildController;
     private int _buildingId;
     private Entity _entity;
     private Entity _blockerEntity;
@@ -44,19 +43,6 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
     {
         _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
         _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-        _roadBuildController = null;
-        _buildingId = buildingId;
-        _entity = entity != Entity.Null ? entity : blockerEntity;
-        _blockerEntity = blockerEntity;
-        CacheOffsetFromEntity();
-        _configured = true;
-    }
-
-    public void Configure(RoadBuildSystem controller, int buildingId, Entity entity, Entity blockerEntity)
-    {
-        _buildingPlacementInteractionSystem = null;
-        _buildingPlacementInteractionContext = default;
-        _roadBuildController = controller;
         _buildingId = buildingId;
         _entity = entity != Entity.Null ? entity : blockerEntity;
         _blockerEntity = blockerEntity;
@@ -81,7 +67,6 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
                 _buildingId,
                 _blockerEntity,
                 gameObject);
-            _roadBuildController?.HandleRuntimeBuildingEntityDestroyed(_buildingId, _blockerEntity, gameObject);
             _configured = false;
             return;
         }

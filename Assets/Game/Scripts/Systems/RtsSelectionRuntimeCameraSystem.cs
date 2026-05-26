@@ -15,7 +15,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
         public readonly RtsCameraRequestSystem CameraRequestSystem;
         public readonly Camera WorldCamera;
         public readonly MainMenuPlayUI MainMenuPlayUi;
-        public readonly RoadBuildSystem RoadBuildSystem;
+        public readonly RoadBuildReadModelSystem RoadBuildReadModel;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
@@ -47,7 +47,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             RtsCameraRequestSystem cameraRequestSystem,
             Camera worldCamera,
             MainMenuPlayUI mainMenuPlayUi,
-            RoadBuildSystem roadBuildSystem,
+            RoadBuildReadModelSystem roadBuildReadModel,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
             TryGetEntityManagerAction tryGetDefaultEntityManager,
@@ -78,7 +78,7 @@ public sealed class RtsSelectionRuntimeCameraSystem
             CameraRequestSystem = cameraRequestSystem;
             WorldCamera = worldCamera;
             MainMenuPlayUi = mainMenuPlayUi;
-            RoadBuildSystem = roadBuildSystem;
+            RoadBuildReadModel = roadBuildReadModel;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
@@ -365,10 +365,10 @@ public sealed class RtsSelectionRuntimeCameraSystem
         bool pointerOverBuildToolMenu = context.MainMenuPlayUi != null && context.MainMenuPlayUi.IsPointerOverBuildToolMenu(pointerPosition);
         bool hasPendingBuildingPlacement = context.BuildingPlacementInteractionSystem != null &&
                                            context.BuildingPlacementInteractionSystem.HasPendingBuildingPlacement(context.BuildingPlacementInteractionContext);
-        bool roadToolActive = context.RoadBuildSystem != null && context.RoadBuildSystem.IsRoadBuildModeActive;
+        bool roadToolActive = context.RoadBuildReadModel != null && context.RoadBuildReadModel.IsRoadBuildModeActive;
         bool idleBuildMode = !hasPendingBuildingPlacement && !roadToolActive;
         bool interactionActive =
-            (context.RoadBuildSystem != null && context.RoadBuildSystem.IsDraggingBuildInteraction) ||
+            (context.RoadBuildReadModel != null && context.RoadBuildReadModel.IsDraggingBuildInteraction) ||
             (context.BuildingPlacementInteractionSystem != null &&
              context.BuildingPlacementInteractionSystem.IsDraggingPlacementPreview(context.BuildingPlacementInteractionContext));
 

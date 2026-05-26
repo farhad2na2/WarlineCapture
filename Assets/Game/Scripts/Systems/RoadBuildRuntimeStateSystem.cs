@@ -317,7 +317,7 @@ internal sealed class RoadBuildRuntimeStateSystem
         roadCellSizeInGridCells = 0;
         if (roadGridSize <= 0f)
             return false;
-        if (!TryGetGridData(out _, out GridConfig grid, out _, out _))
+        if (!TryGetGridConfig(out GridConfig grid))
             return false;
         if (grid.CellSize <= 0f)
             return false;
@@ -1172,6 +1172,20 @@ internal sealed class RoadBuildRuntimeStateSystem
     private bool TryGetGridData(out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData)
     {
         return _roadGridProjectionSystem.TryGetGridData(out gridEntity, out grid, out roads, out blockerData);
+    }
+
+    private static bool TryGetGridConfig(out GridConfig grid)
+    {
+        grid = default;
+        if (!TryGetEntityManager(out EntityManager entityManager))
+            return false;
+
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        grid = entityManager.GetComponentData<GridConfig>(query.GetSingletonEntity());
+        return true;
     }
 
     private static bool TryGetEntityManager(out EntityManager entityManager)

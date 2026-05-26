@@ -90,7 +90,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddModeCard(middle.transform, 1120f, "SKIRMISH", "Custom engagement");
 
         GameObject right = CreateGroup("RightContent", root.transform, new Rect(2040f, 140f, 360f, 820f));
-        AddPanel(right.transform, "CommanderPanel", new Rect(18f, 20f, 324f, 680f));
+        AddSprite(right.transform, "CommanderPanel_Frame", "scn02_commander_panel_frame.png", new Rect(18f, 20f, 324f, 670f), false, Color.white);
         AddText(right.transform, "CommanderTitle", "COMMANDER", new Rect(44f, 52f, 272f, 36f), 28f, TextAlignmentOptions.Left, Text);
         AddSolid(right.transform, "PortraitPlaceholder", new Rect(56f, 112f, 248f, 250f), new Color(0.02f, 0.024f, 0.02f, 1f));
         AddRouteHotspot(right.transform, "CommanderPortraitButton", new Rect(56f, 112f, 248f, 250f), WarlineCaptureRoute.CommanderProfile);

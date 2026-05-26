@@ -1,8 +1,10 @@
 using System.Collections.Generic;
+using Unity.Entities;
 using UnityEngine;
 
 internal sealed class RuntimeCityRoadBuildBridgeSystem
 {
+    private const int DefaultRoadCellSizeInGridCells = 10;
     private RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem;
     private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
 
@@ -25,10 +27,22 @@ internal sealed class RuntimeCityRoadBuildBridgeSystem
     public bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
     {
         roadCellSizeInGridCells = 0;
-        return _roadRuntimeGenerationSystem != null &&
+        if (_roadRuntimeGenerationSystem != null &&
             _roadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCells(
                 _roadRuntimeGenerationContext,
-                out roadCellSizeInGridCells);
+                out roadCellSizeInGridCells))
+        {
+            return true;
+        }
+
+        if (TryGetGridCellSize(out float gridCellSize) && gridCellSize > 0f)
+        {
+            roadCellSizeInGridCells = Mathf.Max(1, Mathf.RoundToInt(DefaultRoadCellSizeInGridCells / gridCellSize));
+            Debug.LogWarning($"[RuntimeCity] roadCellSize fallback={roadCellSizeInGridCells} gridCellSize={gridCellSize:0.###}");
+            return true;
+        }
+
+        return false;
     }
 
     public void BeginDeferredRoadEcsSync()
@@ -85,5 +99,21 @@ internal sealed class RuntimeCityRoadBuildBridgeSystem
                 _roadRuntimeGenerationContext,
                 direction,
                 out roadConnectionCell);
+    }
+
+    private static bool TryGetGridCellSize(out float cellSize)
+    {
+        cellSize = 0f;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        cellSize = entityManager.GetComponentData<GridConfig>(query.GetSingletonEntity()).CellSize;
+        return cellSize > 0f;
     }
 }

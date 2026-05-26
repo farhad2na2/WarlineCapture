@@ -11,6 +11,10 @@ pipeline {
         }
     }
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     environment {
         PROJECT_PATH = "${CUSTOM_WORKSPACE}"
         UNITY_EXE = "${UNITY_EDITOR}"
@@ -20,6 +24,35 @@ pipeline {
     }
 
     stages {
+        stage('Checkout Unity Project') {
+            steps {
+                deleteDir()
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/farhad2na2/WarlineCapture.git',
+                        credentialsId: 'github-pat-2'
+                    ]],
+                    extensions: [[
+                        $class: 'SparseCheckoutPaths',
+                        sparseCheckoutPaths: [
+                            [path: '.gitattributes'],
+                            [path: '.gitignore'],
+                            [path: 'Assets'],
+                            [path: 'Packages'],
+                            [path: 'ProjectSettings'],
+                            [path: 'Tools'],
+                            [path: 'build.bat'],
+                            [path: 'Jenkinsfile.groovy'],
+                            [path: 'LICENSE.md'],
+                            [path: 'README.md']
+                        ]
+                    ]]
+                ])
+            }
+        }
+
         stage('Run Unity EditMode Tests') {
             when {
                 expression {

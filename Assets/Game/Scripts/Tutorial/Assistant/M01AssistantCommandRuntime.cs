@@ -12,14 +12,9 @@ public static class M01AssistantCommandRuntime
         return TrySelectRuntimeEntity(World.DefaultGameObjectInjectionWorld, runtimeEntityId);
     }
 
-    public static TacticalCommandResult TryIssueMoveToAnchor(TacticalMapRuntimeLoader loader, string anchorId)
-    {
-        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, loader, anchorId);
-    }
-
     public static TacticalCommandResult TryIssueMoveToAnchor(string anchorId)
     {
-        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, ResolveActiveLoader(), anchorId);
+        return TryIssueMoveToAnchor(World.DefaultGameObjectInjectionWorld, anchorId);
     }
 
     public static TacticalCommandResult TryIssueAttackTarget(string runtimeEntityId)
@@ -40,18 +35,17 @@ public static class M01AssistantCommandRuntime
 
     public static TacticalCommandResult TryIssueMoveToAnchor(
         World world,
-        TacticalMapRuntimeLoader loader,
         string anchorId)
     {
         if (!IsM01CommandAllowed())
             return Reject(TacticalCommandReasonCode.TargetNotAttackable);
-        if (anchorId != MoveToCoverAnchorId || loader == null || !loader.TryGetAnchorCell(anchorId, out Vector2Int cell))
+        if (anchorId != MoveToCoverAnchorId)
             return Reject(TacticalCommandReasonCode.TargetNotAttackable);
 
         return ExecuteAssistantCommand(world, new M01AssistantCommandRequestElement
         {
             Kind = M01AssistantCommandKind.MoveSelectedUnitsToCell,
-            TargetCell = new int2(cell.x, cell.y),
+            TargetCell = Chapter01M01PlayableRuntime.GetMoveToCoverCell(),
             HasTargetCell = 1
         });
     }
@@ -82,14 +76,12 @@ public static class M01AssistantCommandRuntime
         return Chapter01M01PlayableRuntime.IsActiveMission();
     }
 
-    public static bool HasTypedCommandHooks(World world, TacticalMapRuntimeLoader loader)
+    public static bool HasTypedCommandHooks(World world)
     {
         if (!IsM01CommandAllowed() || world == null || !world.IsCreated)
             return false;
 
-        return loader != null &&
-            loader.TryGetAnchorCell(MoveToCoverAnchorId, out _) &&
-            TryResolveRuntimeEntity(world.EntityManager, Chapter01M01PlayableRuntime.PlayerSquadEntityId, out Entity squad) &&
+        return TryResolveRuntimeEntity(world.EntityManager, Chapter01M01PlayableRuntime.PlayerSquadEntityId, out Entity squad) &&
             IsAlive(world.EntityManager, squad) &&
             TryResolveRuntimeEntity(world.EntityManager, Chapter01M01PlayableRuntime.EnemyPatrolEntityId, out Entity patrol) &&
             world.EntityManager.Exists(patrol);
@@ -123,21 +115,6 @@ public static class M01AssistantCommandRuntime
         }
 
         return false;
-    }
-
-    private static TacticalMapRuntimeLoader ResolveActiveLoader()
-    {
-        TacticalMapRuntimeLoader[] loaders = Resources.FindObjectsOfTypeAll<TacticalMapRuntimeLoader>();
-        for (int i = 0; i < loaders.Length; i++)
-        {
-            TacticalMapRuntimeLoader loader = loaders[i];
-            if (loader == null || !loader.gameObject.scene.IsValid())
-                continue;
-
-            return loader;
-        }
-
-        return null;
     }
 
     private static bool IsAlive(EntityManager em, Entity entity)

@@ -4,7 +4,6 @@ public sealed class CommandIntentExecutor
 {
     private readonly TutorialSessionState _sessionState;
     private readonly World _world;
-    private readonly TacticalMapRuntimeLoader _loader;
 
     public CommandIntentExecutor()
         : this(null)
@@ -18,12 +17,10 @@ public sealed class CommandIntentExecutor
 
     public CommandIntentExecutor(
         TutorialSessionState sessionState,
-        World world,
-        TacticalMapRuntimeLoader loader)
+        World world)
     {
         _sessionState = sessionState;
         _world = world;
-        _loader = loader;
     }
 
     public TacticalCommandResult ExecuteDoIt(AssistantRecommendation recommendation)
@@ -96,8 +93,8 @@ public sealed class CommandIntentExecutor
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (_world != null || _loader != null)
-            return M01AssistantCommandRuntime.TryIssueMoveToAnchor(_world, _loader, intent.TargetId);
+        if (_world != null)
+            return M01AssistantCommandRuntime.TryIssueMoveToAnchor(_world, intent.TargetId);
 
         return M01AssistantCommandRuntime.TryIssueMoveToAnchor(intent.TargetId);
     }

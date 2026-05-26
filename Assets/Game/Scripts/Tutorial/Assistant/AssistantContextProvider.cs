@@ -7,7 +7,6 @@ using UnityEngine;
 public sealed class AssistantContextProvider
 {
     private readonly World _world;
-    private readonly TacticalMapRuntimeLoader _loader;
     private readonly BattleHudGameplayBridge _gameplayBridge;
     private readonly WarlineCaptureRouter _router;
     private readonly WarlineCaptureMatchResultFlow _resultFlow;
@@ -20,14 +19,12 @@ public sealed class AssistantContextProvider
 
     public AssistantContextProvider(
         World world,
-        TacticalMapRuntimeLoader loader,
         BattleHudGameplayBridge gameplayBridge,
         WarlineCaptureRouter router = null,
         WarlineCaptureMatchResultFlow resultFlow = null,
         MatchObjectivePanelController objectivePanel = null)
     {
         _world = world;
-        _loader = loader;
         _gameplayBridge = gameplayBridge;
         _router = router;
         _resultFlow = resultFlow;
@@ -37,7 +34,6 @@ public sealed class AssistantContextProvider
     public AssistantContext BuildContext(TutorialSessionState sessionState = null)
     {
         World world = ResolveWorld();
-        TacticalMapRuntimeLoader loader = ResolveLoader();
         BattleHudGameplayBridge bridge = _gameplayBridge ?? BattleHudGameplayBridge.ResolveActive();
         WarlineCaptureRouter router = _router ?? ResolveActiveRouter();
         WarlineCaptureMatchResultFlow resultFlow = _resultFlow ?? ResolveResultFlow();
@@ -61,7 +57,7 @@ public sealed class AssistantContextProvider
             CurrentControlOwnerState = ResolveControlOwnerState(sessionState)
         };
 
-        ApplyRuntimeEntityState(context, sessionState, world, loader);
+        ApplyRuntimeEntityState(context, sessionState, world);
         ApplyLatestCommandResult(context, sessionState, bridge);
         return context;
     }
@@ -69,16 +65,12 @@ public sealed class AssistantContextProvider
     private void ApplyRuntimeEntityState(
         AssistantContext context,
         TutorialSessionState sessionState,
-        World world,
-        TacticalMapRuntimeLoader loader)
+        World world)
     {
         bool hasWorld = world != null && world.IsCreated;
-        bool hasLoader = loader != null && loader.Definition != null;
         bool activeM01 = context.IsM01Active && Chapter01M01PlayableRuntime.IsActiveMission();
 
-        context.MoveTargetAvailable = activeM01 &&
-            hasLoader &&
-            loader.TryGetAnchorCell(M01AssistantIds.MoveTargetAnchorId, out _);
+        context.MoveTargetAvailable = activeM01;
 
         if (!hasWorld)
         {
@@ -106,12 +98,12 @@ public sealed class AssistantContextProvider
         context.EnemyPatrolDestroyed = patrolSpawned && !patrolAlive;
         context.EnemyPatrolVisible = patrolAttackable;
         context.MoveCommandAccepted = (sessionState != null && sessionState.M01MoveCommandAccepted) ||
-            IsMoveCommandAccepted(em, playerSquad, loader);
+            IsMoveCommandAccepted(em, playerSquad);
         context.AttackCommandAccepted = (sessionState != null && sessionState.M01AttackCommandAccepted) ||
             IsAttackCommandAccepted(em, playerSquad, enemyPatrol);
         context.M01ResultExplained = sessionState != null && sessionState.M01ResultExplained;
         context.TypedCommandHooksAvailable = activeM01 &&
-            M01AssistantCommandRuntime.HasTypedCommandHooks(world, loader) &&
+            M01AssistantCommandRuntime.HasTypedCommandHooks(world) &&
             squadCommandable &&
             context.MoveTargetAvailable &&
             patrolSpawned;
@@ -154,22 +146,6 @@ public sealed class AssistantContextProvider
     private World ResolveWorld()
     {
         return _world ?? World.DefaultGameObjectInjectionWorld;
-    }
-
-    private TacticalMapRuntimeLoader ResolveLoader()
-    {
-        if (_loader != null)
-            return _loader;
-
-        TacticalMapRuntimeLoader[] loaders = Resources.FindObjectsOfTypeAll<TacticalMapRuntimeLoader>();
-        for (int i = 0; i < loaders.Length; i++)
-        {
-            TacticalMapRuntimeLoader loader = loaders[i];
-            if (loader != null && loader.gameObject.scene.IsValid())
-                return loader;
-        }
-
-        return null;
     }
 
     private static WarlineCaptureRouter ResolveActiveRouter()
@@ -295,16 +271,12 @@ public sealed class AssistantContextProvider
             em.HasComponent<LocalTransform>(entity);
     }
 
-    private static bool IsMoveCommandAccepted(EntityManager em, Entity playerSquad, TacticalMapRuntimeLoader loader)
+    private static bool IsMoveCommandAccepted(EntityManager em, Entity playerSquad)
     {
-        if (!IsExisting(em, playerSquad) ||
-            loader == null ||
-            !loader.TryGetAnchorCell(M01AssistantIds.MoveTargetAnchorId, out Vector2Int coverCell))
-        {
+        if (!IsExisting(em, playerSquad))
             return false;
-        }
 
-        int2 expected = new(coverCell.x, coverCell.y);
+        int2 expected = Chapter01M01PlayableRuntime.GetMoveToCoverCell();
         return em.HasComponent<UnitTarget>(playerSquad) && em.GetComponentData<UnitTarget>(playerSquad).Cell.Equals(expected) ||
             em.HasComponent<UnitPathRequest>(playerSquad) && em.GetComponentData<UnitPathRequest>(playerSquad).Goal.Equals(expected);
     }

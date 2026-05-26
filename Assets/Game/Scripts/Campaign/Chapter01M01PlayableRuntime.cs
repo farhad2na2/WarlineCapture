@@ -15,9 +15,17 @@ public static class Chapter01M01PlayableRuntime
     public const string DecorCommandPointEntityId = "decor.command_point";
     public const string ObjectiveId = "destroy_patrol";
     public const string PatrolRouteId = "route.enemy_patrol_01";
-    private const string PatrolRouteAnchorPrefix = "route.enemy_patrol_01.";
     private const float M01InfantryRunSpeedWorldUnitsPerSecond = 0.42f;
     private const float M01InfantryWalkSpeedWorldUnitsPerSecond = 0.28f;
+    private static readonly int2 PlayerSpawnCell = new(980, 1000);
+    private static readonly int2 EnemySpawnCell = new(1032, 1000);
+    private static readonly int2 CommandPointCell = new(1000, 996);
+    private static readonly int2 ObjectiveCell = EnemySpawnCell;
+    private static readonly int2 CameraStartCell = new(1006, 1000);
+    private static readonly int2 CoverCell = new(992, 1004);
+    private static readonly int2 PatrolWaypointA = EnemySpawnCell;
+    private static readonly int2 PatrolWaypointB = new(1018, 1004);
+    private static readonly int2 PatrolWaypointC = new(1030, 1012);
 
     public readonly struct RuntimeState
     {
@@ -83,46 +91,31 @@ public static class Chapter01M01PlayableRuntime
             WarlineCaptureMissionSession.ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
     }
 
-    public static bool TryInitializeActiveMission(World world, TacticalMapRuntimeLoader loader, out RuntimeState runtimeState)
+    public static bool TryInitializeActiveMission(World world, out RuntimeState runtimeState)
     {
         runtimeState = default;
-        if (!IsActiveMission() || world == null || !world.IsCreated || loader == null || loader.Definition == null)
+        if (!IsActiveMission() || world == null || !world.IsCreated)
             return false;
 
-        TacticalMapDefinition definition = loader.Definition;
-        if (definition.MissionId != WarlineCaptureMissionSession.ActiveMissionId ||
-            definition.ScenarioSetupId != WarlineCaptureMissionSession.ActiveScenarioSetupId ||
-            definition.LevelId != WarlineCaptureMissionSession.ActiveLevelId ||
-            definition.MapId != WarlineCaptureMissionSession.ActiveIsoMapId)
-        {
-            return false;
-        }
-
-        if (!loader.TryGetAnchorWorldPosition(PlayerSpawnAnchorId, out Vector3 playerSpawnWorld) ||
-            !loader.TryGetAnchorWorldPosition(EnemySpawnAnchorId, out Vector3 enemySpawnWorld) ||
-            !loader.TryGetAnchorWorldPosition(ObjectiveAnchorId, out Vector3 objectiveWorld) ||
-            !loader.TryGetAnchorWorldPosition(CameraStartAnchorId, out Vector3 cameraStartWorld))
-        {
-            return false;
-        }
-
-        bool hasCommandPoint = loader.TryGetAnchorWorldPosition(DecorCommandPointEntityId, out Vector3 commandPointWorld);
         EntityManager em = world.EntityManager;
+        Vector3 playerSpawnWorld = CellToWorld(em, PlayerSpawnCell);
+        Vector3 enemySpawnWorld = CellToWorld(em, EnemySpawnCell);
+        Vector3 commandPointWorld = CellToWorld(em, CommandPointCell);
+        Vector3 objectiveWorld = CellToWorld(em, ObjectiveCell);
+        Vector3 cameraStartWorld = CellToWorld(em, CameraStartCell);
         Entity player = ResolveOrCreateMissionUnit(
             em,
-            loader,
             PlayerSquadEntityId,
-            PlayerSpawnAnchorId,
             playerSpawnWorld,
+            PlayerSpawnCell,
             0,
             "Rifle Squad",
             createFallback: true);
         Entity enemy = ResolveOrCreateMissionUnit(
             em,
-            loader,
             EnemyPatrolEntityId,
-            EnemySpawnAnchorId,
             enemySpawnWorld,
+            EnemySpawnCell,
             1,
             "Hostile Patrol",
             createFallback: true);
@@ -132,11 +125,9 @@ public static class Chapter01M01PlayableRuntime
 
         BindMissionIdentity(em, player, PlayerSquadEntityId, PlayerSquadEntityId, isPlayer: true);
         BindMissionIdentity(em, enemy, EnemyPatrolEntityId, ObjectiveId, isPlayer: false);
-        ApplyPatrolRoute(em, loader, enemy);
+        ApplyPatrolRoute(em, enemy);
 
-        Entity commandPoint = hasCommandPoint
-            ? ResolveOrCreateMissionDecor(em, loader, DecorCommandPointEntityId, commandPointWorld)
-            : Entity.Null;
+        Entity commandPoint = ResolveOrCreateMissionDecor(em, DecorCommandPointEntityId, commandPointWorld, CommandPointCell);
 
         runtimeState = new RuntimeState(true, player, enemy, commandPoint, playerSpawnWorld, enemySpawnWorld, commandPointWorld, objectiveWorld, cameraStartWorld);
         return true;
@@ -165,28 +156,34 @@ public static class Chapter01M01PlayableRuntime
         return TryEvaluateActiveMission(world, out Evaluation evaluation) && evaluation.ResultRouteReady;
     }
 
-    public static bool TryGetCameraStartWorld(TacticalMapRuntimeLoader loader, out Vector3 cameraStartWorld)
+    public static bool TryGetCameraStartWorld(World world, out Vector3 cameraStartWorld)
     {
-        if (!IsActiveMission() || loader == null || loader.Definition == null)
+        if (!IsActiveMission())
         {
             cameraStartWorld = default;
             return false;
         }
 
-        return loader.TryGetAnchorWorldPosition(CameraStartAnchorId, out cameraStartWorld);
+        cameraStartWorld = world != null && world.IsCreated
+            ? CellToWorld(world.EntityManager, CameraStartCell)
+            : new Vector3(CameraStartCell.x, 0f, CameraStartCell.y);
+        return true;
+    }
+
+    public static int2 GetMoveToCoverCell()
+    {
+        return CoverCell;
     }
 
     private static Entity ResolveOrCreateMissionUnit(
         EntityManager em,
-        TacticalMapRuntimeLoader loader,
         string entityId,
-        string anchorId,
         Vector3 fallbackWorld,
+        int2 cell,
         byte factionId,
         string displayName,
         bool createFallback)
     {
-        int2 cell = ResolveAnchorCell(loader, anchorId, fallbackWorld);
         Entity existingById = FindMissionEntity(em, entityId);
         if (existingById != Entity.Null)
         {
@@ -252,13 +249,12 @@ public static class Chapter01M01PlayableRuntime
         em.SetComponentData(entity, attack);
     }
 
-    private static Entity ResolveOrCreateMissionDecor(EntityManager em, TacticalMapRuntimeLoader loader, string entityId, Vector3 worldPosition)
+    private static Entity ResolveOrCreateMissionDecor(EntityManager em, string entityId, Vector3 worldPosition, int2 cell)
     {
         Entity existingById = FindMissionEntity(em, entityId);
         if (existingById != Entity.Null)
         {
-            int2 existingCell = ResolveAnchorCell(loader, entityId, worldPosition);
-            SetComponent(em, existingById, new UnitGrid { Cell = existingCell });
+            SetComponent(em, existingById, new UnitGrid { Cell = cell });
             SetComponent(em, existingById, new UnitFootprint { Size = new int2(4, 3) });
             SetComponent(em, existingById, LocalTransform.FromPosition(worldPosition));
             if (em.HasComponent<LocalToWorld>(existingById))
@@ -266,7 +262,6 @@ public static class Chapter01M01PlayableRuntime
             return existingById;
         }
 
-        int2 cell = ResolveAnchorCell(loader, entityId, worldPosition);
         Entity entity = em.CreateEntity(
             typeof(MissionRuntimeEntityId),
             typeof(UnitGrid),
@@ -279,19 +274,16 @@ public static class Chapter01M01PlayableRuntime
         return entity;
     }
 
-    private static void ApplyPatrolRoute(EntityManager em, TacticalMapRuntimeLoader loader, Entity enemy)
+    private static void ApplyPatrolRoute(EntityManager em, Entity enemy)
     {
         if (enemy == Entity.Null || !em.Exists(enemy))
             return;
 
-        int2 a = ResolveRouteCell(loader, "a", EnemySpawnAnchorId);
-        int2 b = ResolveRouteCell(loader, "b", EnemySpawnAnchorId);
-        int2 c = ResolveRouteCell(loader, "c", EnemySpawnAnchorId);
         SetComponent(em, enemy, new MissionRuntimePatrolRoute
         {
-            WaypointA = a,
-            WaypointB = b,
-            WaypointC = c,
+            WaypointA = PatrolWaypointA,
+            WaypointB = PatrolWaypointB,
+            WaypointC = PatrolWaypointC,
             WaypointCount = 3,
             CurrentWaypointIndex = 1,
             HoldAtEnd = 1
@@ -303,24 +295,7 @@ public static class Chapter01M01PlayableRuntime
             em.RemoveComponent<UnitPathFollow>(enemy);
         if (em.HasComponent<UnitPathRange>(enemy))
             em.RemoveComponent<UnitPathRange>(enemy);
-        SetComponent(em, enemy, new UnitPathRequest { Goal = b });
-    }
-
-    private static int2 ResolveAnchorCell(TacticalMapRuntimeLoader loader, string anchorId, Vector3 fallbackWorld)
-    {
-        if (loader != null && loader.TryGetAnchorCell(anchorId, out Vector2Int anchorCell))
-            return new int2(anchorCell.x, anchorCell.y);
-
-        return new int2(Mathf.RoundToInt(fallbackWorld.x), Mathf.RoundToInt(fallbackWorld.z));
-    }
-
-    private static int2 ResolveRouteCell(TacticalMapRuntimeLoader loader, string suffix, string fallbackAnchor)
-    {
-        string anchorId = PatrolRouteAnchorPrefix + suffix;
-        if (loader.TryGetAnchorCell(anchorId, out Vector2Int cell) || loader.TryGetAnchorCell(fallbackAnchor, out cell))
-            return new int2(cell.x, cell.y);
-
-        return int2.zero;
+        SetComponent(em, enemy, new UnitPathRequest { Goal = PatrolWaypointB });
     }
 
     private static Entity CreateFallbackMissionUnit(EntityManager em, Vector3 worldPosition, int2 cell, byte factionId, string displayName)
@@ -483,6 +458,18 @@ public static class Chapter01M01PlayableRuntime
         }
 
         return best;
+    }
+
+    private static Vector3 CellToWorld(EntityManager em, int2 cell)
+    {
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        if (!query.IsEmptyIgnoreFilter)
+        {
+            GridConfig grid = em.GetComponentData<GridConfig>(query.GetSingletonEntity());
+            return GridUtils.CellToWorldCenter(grid, cell);
+        }
+
+        return new Vector3(cell.x, 0f, cell.y);
     }
 
     private static bool HasPendingInitialUnitSpawn(EntityManager em)

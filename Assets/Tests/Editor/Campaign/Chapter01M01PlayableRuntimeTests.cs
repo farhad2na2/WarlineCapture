@@ -2,15 +2,16 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEditor;
 using UnityEngine;
 
 public sealed class Chapter01M01PlayableRuntimeTests
 {
-    private const string DefinitionPath = "Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset";
+    private static readonly int2 PlayerSpawnCell = new(980, 1000);
+    private static readonly int2 EnemySpawnCell = new(1032, 1000);
+    private static readonly int2 CameraStartCell = new(1006, 1000);
+    private static readonly int2 CoverCell = new(992, 1004);
     private World _world;
     private World _previousWorld;
-    private GameObject _loaderRoot;
     private GameObject _cameraObject;
 
     [SetUp]
@@ -26,8 +27,6 @@ public sealed class Chapter01M01PlayableRuntimeTests
     [TearDown]
     public void TearDown()
     {
-        if (_loaderRoot != null)
-            Object.DestroyImmediate(_loaderRoot);
         if (_cameraObject != null)
             Object.DestroyImmediate(_cameraObject);
         if (_world != null && _world.IsCreated)
@@ -56,26 +55,18 @@ public sealed class Chapter01M01PlayableRuntimeTests
     }
 
     [Test]
-    public void M01Anchors_ResolveToGameplayXZRuntimePositions()
+    public void M01FixedMissionCells_ResolveToGameplayXZRuntimePositions()
     {
-        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
-        TacticalMapDefinition definition = loader.Definition;
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryGetCameraStartWorld(_world, out Vector3 cameraStartWorld));
 
-        AssertAnchorMapsToRuntimeXZ(loader, definition, Chapter01M01PlayableRuntime.PlayerSpawnAnchorId);
-        AssertAnchorMapsToRuntimeXZ(loader, definition, Chapter01M01PlayableRuntime.EnemySpawnAnchorId);
-        AssertAnchorMapsToRuntimeXZ(loader, definition, "route.enemy_patrol_01.a");
-        AssertAnchorMapsToRuntimeXZ(loader, definition, "route.enemy_patrol_01.b");
-        AssertAnchorMapsToRuntimeXZ(loader, definition, "route.enemy_patrol_01.c");
-        AssertAnchorMapsToRuntimeXZ(loader, definition, Chapter01M01PlayableRuntime.ObjectiveAnchorId);
-        AssertAnchorMapsToRuntimeXZ(loader, definition, Chapter01M01PlayableRuntime.CameraStartAnchorId);
+        Assert.AreEqual(new Vector3(CameraStartCell.x, 0f, CameraStartCell.y), cameraStartWorld);
+        Assert.AreEqual(CoverCell, Chapter01M01PlayableRuntime.GetMoveToCoverCell());
     }
 
     [Test]
     public void Initialize_CreatesFriendlySquadAndHostilePatrolFromMetadataAnchors()
     {
-        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
-
-        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, loader, out Chapter01M01PlayableRuntime.RuntimeState state));
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out Chapter01M01PlayableRuntime.RuntimeState state));
 
         EntityManager em = _world.EntityManager;
         Assert.IsTrue(em.Exists(state.PlayerSquad));
@@ -100,11 +91,10 @@ public sealed class Chapter01M01PlayableRuntimeTests
     [Test]
     public void Initialize_BindsExistingSpawnedUnitsBeforeCreatingFallbacks()
     {
-        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
-        Entity playerCandidate = CreateCandidateUnit(0, loader, Chapter01M01PlayableRuntime.PlayerSpawnAnchorId);
-        Entity enemyCandidate = CreateCandidateUnit(1, loader, Chapter01M01PlayableRuntime.EnemySpawnAnchorId);
+        Entity playerCandidate = CreateCandidateUnit(0, PlayerSpawnCell);
+        Entity enemyCandidate = CreateCandidateUnit(1, EnemySpawnCell);
 
-        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, loader, out Chapter01M01PlayableRuntime.RuntimeState state));
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out Chapter01M01PlayableRuntime.RuntimeState state));
 
         Assert.AreEqual(playerCandidate, state.PlayerSquad);
         Assert.AreEqual(enemyCandidate, state.EnemyPatrol);
@@ -115,8 +105,7 @@ public sealed class Chapter01M01PlayableRuntimeTests
     [Test]
     public void DestroyingHostilePatrol_CompletesObjectiveAndReadiesResultRoute()
     {
-        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
-        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, loader, out Chapter01M01PlayableRuntime.RuntimeState state));
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out Chapter01M01PlayableRuntime.RuntimeState state));
 
         EntityManager em = _world.EntityManager;
         em.SetComponentData(state.EnemyPatrol, new UnitHealth { Current = 0, Max = 100 });
@@ -133,8 +122,7 @@ public sealed class Chapter01M01PlayableRuntimeTests
     [Test]
     public void LosingCommandSquad_PreventsM01Completion()
     {
-        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
-        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, loader, out Chapter01M01PlayableRuntime.RuntimeState state));
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out Chapter01M01PlayableRuntime.RuntimeState state));
 
         EntityManager em = _world.EntityManager;
         em.SetComponentData(state.PlayerSquad, new UnitHealth { Current = 0, Max = 100 });
@@ -208,12 +196,11 @@ public sealed class Chapter01M01PlayableRuntimeTests
     [Test]
     public void MissionStartupSystem_AppliesM01CameraFraming()
     {
-        TacticalMapRuntimeLoader loader = CreateLoadedRuntimeLoader();
-        Camera camera = _cameraObject.GetComponent<Camera>();
+        Camera camera = CreateCamera();
         camera.aspect = 16f / 9f;
 
         MissionStartupSystem missionStartupSystem = new();
-        Assert.IsTrue(missionStartupSystem.ApplyM01ProductionCameraPoseForCurrentAspect(camera, loader));
+        Assert.IsTrue(missionStartupSystem.ApplyM01ProductionCameraPoseForCurrentAspect(_world, camera));
 
         Assert.IsTrue(camera.orthographic);
         Assert.AreEqual(10f, camera.transform.position.y, 0.0001f);
@@ -222,24 +209,15 @@ public sealed class Chapter01M01PlayableRuntimeTests
         Assert.LessOrEqual(camera.orthographicSize, 0.96f);
     }
 
-    private TacticalMapRuntimeLoader CreateLoadedRuntimeLoader()
+    private Camera CreateCamera()
     {
-        TacticalMapDefinition definition = AssetDatabase.LoadAssetAtPath<TacticalMapDefinition>(DefinitionPath);
-        Assert.NotNull(definition);
-
-        _loaderRoot = new GameObject("M01RuntimeLoaderTestRoot");
-        _cameraObject = new GameObject("M01RuntimeLoaderTestCamera");
-        Camera camera = _cameraObject.AddComponent<Camera>();
-        TacticalMapRuntimeLoader loader = _loaderRoot.AddComponent<TacticalMapRuntimeLoader>();
-        loader.Configure(definition, null, camera, TacticalMapRuntimePlane.GameplayXZ);
-        loader.Load();
-        return loader;
+        _cameraObject = new GameObject("M01RuntimeCameraTestRoot");
+        return _cameraObject.AddComponent<Camera>();
     }
 
-    private Entity CreateCandidateUnit(byte factionId, TacticalMapRuntimeLoader loader, string anchorId)
+    private Entity CreateCandidateUnit(byte factionId, int2 cell)
     {
-        Assert.IsTrue(loader.TryGetAnchorWorldPosition(anchorId, out Vector3 worldPosition));
-        Assert.IsTrue(loader.TryGetAnchorCell(anchorId, out Vector2Int cell));
+        Vector3 worldPosition = new(cell.x, 0f, cell.y);
 
         Entity entity = _world.EntityManager.CreateEntity(
             typeof(Faction),
@@ -250,23 +228,13 @@ public sealed class Chapter01M01PlayableRuntimeTests
             typeof(UnitHealth),
             typeof(LocalTransform));
         _world.EntityManager.SetComponentData(entity, new Faction { Id = factionId });
-        _world.EntityManager.SetComponentData(entity, new UnitGrid { Cell = new int2(cell.x, cell.y) });
+        _world.EntityManager.SetComponentData(entity, new UnitGrid { Cell = cell });
         _world.EntityManager.SetComponentData(entity, new UnitMove { Speed = 1f, WalkSpeed = 1f, RoadSpeedMultiplier = 1f, ArriveDistance = 0.05f });
         _world.EntityManager.SetComponentData(entity, new UnitCombat { AggroRangeCells = 5, ChaseBreakDistance = 1f, CanAttack = 1, AutoEngage = 1 });
         _world.EntityManager.SetComponentData(entity, new UnitAttack { Range = 1f, CooldownSeconds = 1f, Damage = 10 });
         _world.EntityManager.SetComponentData(entity, new UnitHealth { Current = 100, Max = 100 });
         _world.EntityManager.SetComponentData(entity, LocalTransform.FromPosition(worldPosition));
         return entity;
-    }
-
-    private static void AssertAnchorMapsToRuntimeXZ(TacticalMapRuntimeLoader loader, TacticalMapDefinition definition, string anchorId)
-    {
-        Assert.IsTrue(definition.TryGetAnchor(anchorId, out TacticalMapAnchor anchor), $"{anchorId} anchor must exist.");
-        Assert.IsTrue(loader.TryGetAnchorWorldPosition(anchorId, out Vector3 runtimePosition), $"{anchorId} must resolve.");
-        Vector2 expected = definition.NormalizedToWorld(anchor.NormalizedPosition);
-        Assert.AreEqual(expected.x, runtimePosition.x, 0.0001f);
-        Assert.AreEqual(0f, runtimePosition.y, 0.0001f);
-        Assert.AreEqual(expected.y, runtimePosition.z, 0.0001f);
     }
 
     private static void AssertRuntimePosition(Vector3 expected, float3 actual)

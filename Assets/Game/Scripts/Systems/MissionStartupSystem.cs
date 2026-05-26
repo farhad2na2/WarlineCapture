@@ -23,7 +23,7 @@ public sealed class MissionStartupSystem
         DayNightSystem dayNight,
         IReadOnlyList<GameObject> legacyVisualRootsDisabledForM01)
     {
-        UpdateActiveMission(world, null);
+        UpdateActiveMission(world);
         bool activeFixedTacticalMission = Chapter01M01PlayableRuntime.IsActiveMission();
         ApplyM01ProductionSceneVisibility(legacyVisualRootsDisabledForM01, activeFixedTacticalMission);
         ApplyFixedTacticalMissionGuardrails(dayNight, activeFixedTacticalMission);
@@ -31,16 +31,15 @@ public sealed class MissionStartupSystem
         return new Result(activeFixedTacticalMission);
     }
 
-    public void UpdateActiveMission(World world, TacticalMapRuntimeLoader loader)
+    public void UpdateActiveMission(World world)
     {
-        Chapter01M01PlayableRuntime.TryInitializeActiveMission(world, loader, out _);
+        Chapter01M01PlayableRuntime.TryInitializeActiveMission(world, out _);
     }
 
     public bool FocusInitialCamera(
         World world,
         SelectionUiCameraSystem selectionUiCameraSystem,
         Camera worldCamera,
-        TacticalMapRuntimeLoader loader,
         MissionCameraSystem.TryResolveFactionSpawnCell resolveFactionSpawnCell,
         byte fallbackFactionId)
     {
@@ -48,19 +47,18 @@ public sealed class MissionStartupSystem
             world,
             selectionUiCameraSystem,
             worldCamera,
-            loader,
             resolveFactionSpawnCell,
             fallbackFactionId);
     }
 
-    public bool ApplyM01ProductionCameraPoseForCurrentAspect(Camera worldCamera, TacticalMapRuntimeLoader loader)
+    public bool ApplyM01ProductionCameraPoseForCurrentAspect(World world, Camera worldCamera)
     {
-        return _missionCameraSystem.ApplyM01ProductionCameraPoseForCurrentAspect(worldCamera, loader);
+        return _missionCameraSystem.ApplyM01ProductionCameraPoseForCurrentAspect(world, worldCamera);
     }
 
-    public void ApplyM01ProductionCameraPoseIfActive(Camera worldCamera, TacticalMapRuntimeLoader loader)
+    public void ApplyM01ProductionCameraPoseIfActive(World world, Camera worldCamera)
     {
-        _missionCameraSystem.ApplyM01ProductionCameraPoseIfActive(worldCamera, loader);
+        _missionCameraSystem.ApplyM01ProductionCameraPoseIfActive(world, worldCamera);
     }
 
     private void ApplyFixedTacticalMissionGuardrails(DayNightSystem dayNight, bool activeFixedTacticalMission)

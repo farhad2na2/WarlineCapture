@@ -3,18 +3,12 @@ using NUnit.Framework;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEditor;
 using UnityEngine;
 
 public sealed class CommandIntentExecutorTests
 {
-    private const string DefinitionPath = "Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset";
-
     private World _previousWorld;
     private World _world;
-    private GameObject _loaderRoot;
-    private GameObject _cameraObject;
-    private TacticalMapRuntimeLoader _loader;
     private Chapter01M01PlayableRuntime.RuntimeState _runtimeState;
 
     [SetUp]
@@ -25,17 +19,12 @@ public sealed class CommandIntentExecutorTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("CommandIntentExecutorTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        _loader = CreateLoadedRuntimeLoader();
-        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, _loader, out _runtimeState));
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out _runtimeState));
     }
 
     [TearDown]
     public void TearDown()
     {
-        if (_loaderRoot != null)
-            Object.DestroyImmediate(_loaderRoot);
-        if (_cameraObject != null)
-            Object.DestroyImmediate(_cameraObject);
         if (_world != null && _world.IsCreated)
             _world.Dispose();
         World.DefaultGameObjectInjectionWorld = _previousWorld;
@@ -47,7 +36,7 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_SelectRuntimeEntity_SelectsM01CommandSquad()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(CreateSelectIntent());
 
@@ -60,15 +49,15 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_MoveToCover_IssuesNormalMoveOrderAndCompletesSessionStep()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
         Assert.IsTrue(executor.ExecuteDoItIntent(CreateSelectIntent()).Accepted);
-        Assert.IsTrue(_loader.TryGetAnchorCell(M01AssistantIds.MoveTargetAnchorId, out Vector2Int coverCell));
+        int2 coverCell = Chapter01M01PlayableRuntime.GetMoveToCoverCell();
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(CreateMoveIntent());
 
         EntityManager em = _world.EntityManager;
         Assert.IsTrue(result.Accepted);
-        Assert.AreEqual(new int2(coverCell.x, coverCell.y), em.GetComponentData<UnitTarget>(_runtimeState.PlayerSquad).Cell);
+        Assert.AreEqual(coverCell, em.GetComponentData<UnitTarget>(_runtimeState.PlayerSquad).Cell);
         Assert.IsTrue(session.IsStepCompleted(M01AssistantIds.MoveStepId));
     }
 
@@ -76,7 +65,7 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_AttackPatrol_IssuesNormalAttackOrderAndCompletesSessionStep()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
         Assert.IsTrue(executor.ExecuteDoItIntent(CreateSelectIntent()).Accepted);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(CreateAttackIntent());
@@ -91,7 +80,7 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_RejectsMissingRuntimeEntity()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(new AssistantIntent(
             "do.select_missing",
@@ -114,7 +103,7 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_MoveToCover_RejectsNoSelection()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(CreateMoveIntent());
 
@@ -125,7 +114,7 @@ public sealed class CommandIntentExecutorTests
     [Test]
     public void ExecuteDoIt_MoveToCover_RejectsMissingAnchor()
     {
-        var executor = new CommandIntentExecutor(new TutorialSessionState(), _world, _loader);
+        var executor = new CommandIntentExecutor(new TutorialSessionState(), _world);
         Assert.IsTrue(executor.ExecuteDoItIntent(CreateSelectIntent()).Accepted);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(new AssistantIntent(
@@ -147,7 +136,7 @@ public sealed class CommandIntentExecutorTests
     [Test]
     public void ExecuteDoIt_MoveToCover_RejectsDeadSquad()
     {
-        var executor = new CommandIntentExecutor(new TutorialSessionState(), _world, _loader);
+        var executor = new CommandIntentExecutor(new TutorialSessionState(), _world);
         EntityManager em = _world.EntityManager;
         em.AddComponent<SelectedUnitTag>(_runtimeState.PlayerSquad);
         em.SetComponentData(_runtimeState.PlayerSquad, new UnitHealth { Current = 0, Max = 100 });
@@ -160,7 +149,7 @@ public sealed class CommandIntentExecutorTests
     [Test]
     public void ExecuteDoIt_AttackPatrol_RejectsDeadPatrol()
     {
-        var executor = new CommandIntentExecutor(new TutorialSessionState(), _world, _loader);
+        var executor = new CommandIntentExecutor(new TutorialSessionState(), _world);
         Assert.IsTrue(executor.ExecuteDoItIntent(CreateSelectIntent()).Accepted);
         _world.EntityManager.SetComponentData(_runtimeState.EnemyPatrol, new UnitHealth { Current = 0, Max = 100 });
 
@@ -173,7 +162,7 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_DoesNotExecuteShowMeFocusIntent()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(new AssistantIntent(
             "show.objective_panel",
@@ -197,7 +186,7 @@ public sealed class CommandIntentExecutorTests
     public void ExecuteDoIt_RejectsNonM01MissionIntent()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.ExecuteDoItIntent(new AssistantIntent(
             "do.select_other_mission",
@@ -223,7 +212,7 @@ public sealed class CommandIntentExecutorTests
         var session = new TutorialSessionState();
         session.SetActivePreview("show.move_to_cover");
         session.SetActiveTakeover("do.move_to_cover");
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.StopAssistantControl();
 
@@ -237,7 +226,7 @@ public sealed class CommandIntentExecutorTests
     public void GetBuildCommandResult_RejectsM01BuildWithMissionReason()
     {
         var session = new TutorialSessionState();
-        var executor = new CommandIntentExecutor(session, _world, _loader);
+        var executor = new CommandIntentExecutor(session, _world);
 
         TacticalCommandResult result = executor.GetBuildCommandResult();
 
@@ -253,7 +242,7 @@ public sealed class CommandIntentExecutorTests
         var service = new WarlineCaptureAssistantService(new M01AssistantRecommendationProvider(), session);
         service.Evaluate(CreateM01Context(commandSquadSpawned: true, typedHooksAvailable: true));
 
-        TacticalCommandResult result = service.ExecuteCurrentDoIt(new CommandIntentExecutor(session, _world, _loader));
+        TacticalCommandResult result = service.ExecuteCurrentDoIt(new CommandIntentExecutor(session, _world));
 
         Assert.IsTrue(result.Accepted);
         Assert.IsTrue(_world.EntityManager.HasComponent<SelectedUnitTag>(_runtimeState.PlayerSquad));
@@ -274,20 +263,6 @@ public sealed class CommandIntentExecutorTests
         StringAssert.DoesNotContain("NameText", source);
         StringAssert.DoesNotContain("SelectedEntityPanel", source);
         StringAssert.DoesNotContain("Button", source);
-    }
-
-    private TacticalMapRuntimeLoader CreateLoadedRuntimeLoader()
-    {
-        TacticalMapDefinition definition = AssetDatabase.LoadAssetAtPath<TacticalMapDefinition>(DefinitionPath);
-        Assert.NotNull(definition);
-
-        _loaderRoot = new GameObject("CommandIntentExecutorRuntimeLoaderTestRoot");
-        _cameraObject = new GameObject("CommandIntentExecutorRuntimeLoaderTestCamera");
-        Camera camera = _cameraObject.AddComponent<Camera>();
-        TacticalMapRuntimeLoader loader = _loaderRoot.AddComponent<TacticalMapRuntimeLoader>();
-        loader.Configure(definition, null, camera, TacticalMapRuntimePlane.GameplayXZ);
-        loader.Load();
-        return loader;
     }
 
     private static AssistantIntent CreateSelectIntent()

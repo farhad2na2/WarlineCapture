@@ -1,21 +1,15 @@
 using System.IO;
 using NUnit.Framework;
 using Unity.Entities;
-using UnityEditor;
 using UnityEngine;
 
 public sealed class AssistantContextProviderTests
 {
-    private const string DefinitionPath = "Assets/Game/Data/TacticalMaps/Chapter01/iso.ch01.district_edge_01.asset";
-
     private bool _previousPlayRequested;
     private World _previousWorld;
     private World _world;
-    private GameObject _loaderRoot;
-    private GameObject _cameraObject;
     private GameObject _bridgeObject;
     private GameObject _objectivePanelObject;
-    private TacticalMapRuntimeLoader _loader;
     private BattleHudGameplayBridge _bridge;
     private Chapter01M01PlayableRuntime.RuntimeState _runtimeState;
 
@@ -29,8 +23,7 @@ public sealed class AssistantContextProviderTests
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AssistantContextProviderTests");
         World.DefaultGameObjectInjectionWorld = _world;
-        _loader = CreateLoadedRuntimeLoader();
-        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, _loader, out _runtimeState));
+        Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out _runtimeState));
         _bridgeObject = new GameObject("AssistantContextProviderBridge");
         _bridge = _bridgeObject.AddComponent<BattleHudGameplayBridge>();
         _objectivePanelObject = new GameObject("AssistantContextProviderObjectivePanel");
@@ -44,10 +37,6 @@ public sealed class AssistantContextProviderTests
             Object.DestroyImmediate(_objectivePanelObject);
         if (_bridgeObject != null)
             Object.DestroyImmediate(_bridgeObject);
-        if (_loaderRoot != null)
-            Object.DestroyImmediate(_loaderRoot);
-        if (_cameraObject != null)
-            Object.DestroyImmediate(_cameraObject);
         if (_world != null && _world.IsCreated)
             _world.Dispose();
         World.DefaultGameObjectInjectionWorld = _previousWorld;
@@ -88,7 +77,6 @@ public sealed class AssistantContextProviderTests
             M01AssistantIds.PlayerSquadEntityId).Accepted);
         Assert.IsTrue(M01AssistantCommandRuntime.TryIssueMoveToAnchor(
             _world,
-            _loader,
             M01AssistantIds.MoveTargetAnchorId).Accepted);
 
         AssistantContext context = CreateProvider().BuildContext(session);
@@ -188,25 +176,10 @@ public sealed class AssistantContextProviderTests
     {
         return new AssistantContextProvider(
             _world,
-            _loader,
             _bridge,
             router: null,
             resultFlow: null,
             objectivePanel: _objectivePanelObject.GetComponent<MatchObjectivePanelController>());
-    }
-
-    private TacticalMapRuntimeLoader CreateLoadedRuntimeLoader()
-    {
-        TacticalMapDefinition definition = AssetDatabase.LoadAssetAtPath<TacticalMapDefinition>(DefinitionPath);
-        Assert.NotNull(definition);
-
-        _loaderRoot = new GameObject("AssistantContextProviderRuntimeLoaderTestRoot");
-        _cameraObject = new GameObject("AssistantContextProviderRuntimeLoaderTestCamera");
-        Camera camera = _cameraObject.AddComponent<Camera>();
-        TacticalMapRuntimeLoader loader = _loaderRoot.AddComponent<TacticalMapRuntimeLoader>();
-        loader.Configure(definition, null, camera, TacticalMapRuntimePlane.GameplayXZ);
-        loader.Load();
-        return loader;
     }
 
     private static string ResolveRepoFilePath(string relativePath)

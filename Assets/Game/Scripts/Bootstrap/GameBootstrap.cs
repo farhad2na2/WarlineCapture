@@ -20,6 +20,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly MenuStartupSystem _menuStartupSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private readonly GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem = new();
+    private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -44,6 +45,12 @@ public sealed class GameBootstrap : MonoBehaviour
     [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
     [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
     [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
+
+    [Header("Runtime Grid")]
+    [SerializeField] private int runtimeGridWidth = 2048;
+    [SerializeField] private int runtimeGridHeight = 2048;
+    [SerializeField] private float runtimeGridCellSize = 1f;
+    [SerializeField] private Vector3 runtimeGridOrigin = Vector3.zero;
 
     public Camera WorldCamera => worldCamera;
     public Light DirectionalLight => directionalLight;
@@ -203,6 +210,12 @@ public sealed class GameBootstrap : MonoBehaviour
     public void BeginGameplay()
     {
         GameRuntimeStats.Reset();
+        _runtimeGridBootstrapSystem.Ensure(
+            World.DefaultGameObjectInjectionWorld,
+            runtimeGridWidth,
+            runtimeGridHeight,
+            runtimeGridCellSize,
+            runtimeGridOrigin);
         _initialFactionSpawnCellSystem.Configure(
             World.DefaultGameObjectInjectionWorld,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
@@ -227,7 +240,6 @@ public sealed class GameBootstrap : MonoBehaviour
             World.DefaultGameObjectInjectionWorld,
             SelectionUiCamera,
             worldCamera,
-            null,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
             0);
     }
@@ -240,7 +252,6 @@ public sealed class GameBootstrap : MonoBehaviour
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
             _missionStartupSystem,
-            null,
             _roadRuntimeUpdate,
             BuildingRuntimeUpdate,
             _buildingRuntimeUpdateContext,

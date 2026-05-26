@@ -16,7 +16,6 @@ public sealed class GameplayRuntimeUpdateSystem
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
         MissionStartupSystem missionStartupSystem,
-        TacticalMapRuntimeLoader mapLoader,
         Action roadBuildRuntimeUpdate,
         BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
         BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
@@ -43,7 +42,7 @@ public sealed class GameplayRuntimeUpdateSystem
             GameRuntimeStats.RecordMissionElapsed(Time.deltaTime);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld, mapLoader);
+            missionStartupSystem.UpdateActiveMission(World.DefaultGameObjectInjectionWorld);
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MissionRuntime", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
@@ -59,7 +58,7 @@ public sealed class GameplayRuntimeUpdateSystem
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("Selection", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();
-            missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(worldCamera, mapLoader);
+            missionStartupSystem.ApplyM01ProductionCameraPoseIfActive(World.DefaultGameObjectInjectionWorld, worldCamera);
             hadSlowStep |= performanceDiagnosticsSystem.EndStep("MissionCamera", stepStart);
 
             stepStart = performanceDiagnosticsSystem.BeginStep();

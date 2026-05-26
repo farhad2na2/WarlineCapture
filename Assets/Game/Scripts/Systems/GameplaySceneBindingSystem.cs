@@ -39,7 +39,6 @@ public sealed class GameplaySceneBindingSystem
 
             binding.BindRuntimeDependencies(
                 world,
-                null,
                 bridge,
                 router,
                 resultFlow,

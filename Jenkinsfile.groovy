@@ -27,29 +27,25 @@ pipeline {
         stage('Checkout Unity Project') {
             steps {
                 deleteDir()
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/farhad2na2/WarlineCapture.git',
-                        credentialsId: 'github-pat-2'
-                    ]],
-                    extensions: [[
-                        $class: 'SparseCheckoutPaths',
-                        sparseCheckoutPaths: [
-                            [path: '.gitattributes'],
-                            [path: '.gitignore'],
-                            [path: 'Assets'],
-                            [path: 'Packages'],
-                            [path: 'ProjectSettings'],
-                            [path: 'Tools'],
-                            [path: 'build.bat'],
-                            [path: 'Jenkinsfile.groovy'],
-                            [path: 'LICENSE.md'],
-                            [path: 'README.md']
-                        ]
-                    ]]
-                ])
+                withCredentials([usernamePassword(credentialsId: 'github-pat-2', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                    bat '''
+                    @echo off
+                    git --version
+                    git clone --filter=blob:none --sparse --depth 1 --branch main "https://%GIT_USER%:%GIT_TOKEN%@github.com/farhad2na2/WarlineCapture.git" "%PROJECT_PATH%"
+                    cd /d "%PROJECT_PATH%"
+                    git remote set-url origin https://github.com/farhad2na2/WarlineCapture.git
+                    git sparse-checkout set Assets Packages ProjectSettings Tools
+                    git rev-parse HEAD
+                    git status --short
+                    '''
+                }
+                script {
+                    env.GIT_COMMIT = bat(
+                        returnStdout: true,
+                        script: '@git -C "%PROJECT_PATH%" rev-parse HEAD'
+                    ).trim()
+                    echo "Checked out WarlineCapture commit ${env.GIT_COMMIT}"
+                }
             }
         }
 

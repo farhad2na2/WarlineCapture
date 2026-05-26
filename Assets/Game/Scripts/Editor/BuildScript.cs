@@ -85,9 +85,7 @@ public class BuildScript
             locationPathName = outputPath
         };
 
-        PlayerSettings.Android.minSdkVersion = (AndroidSdkVersions)25;
-        //PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
-        EditorUserBuildSettings.buildAppBundle = buildType == "AAB";
+        ConfigureAndroidBuild(buildType == "AAB");
         
         ExecuteBuild(buildPlayerOptions);
     }
@@ -129,6 +127,15 @@ public class BuildScript
 
         UnityEngine.Debug.Log(
             $"Build succeeded. target={buildPlayerOptions.target} output={summary.outputPath} size={summary.totalSize} warnings={summary.totalWarnings}");
+    }
+
+    private static void ConfigureAndroidBuild(bool buildAppBundle)
+    {
+        PlayerSettings.Android.minSdkVersion = (AndroidSdkVersions)25;
+        PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+        //PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
+        EditorUserBuildSettings.buildAppBundle = buildAppBundle;
+        UnityEngine.Debug.Log("[BuildScript] Android build configured: architectures=ARM64");
     }
 
     private static string GetArgument(string[] args, string argumentName)

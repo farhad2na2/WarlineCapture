@@ -325,6 +325,48 @@ public sealed class BuildingProductionSystemTests
         }
     }
 
+    [Test]
+    public void BuildingGameplayComposition_CampBuildingRequestStartsConfiguredPlacement()
+    {
+        var placementConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
+        var initialUnitsConfig = ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringSceneConfigAsset>();
+        var buildingPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        BuildingGameplayCompositionSystem.Result result = default;
+        try
+        {
+            buildingPrefab.name = "Soldier Base";
+            SetPrivateField(initialUnitsConfig, "initialDollars", 10000);
+            SetPrivateField(placementConfig, "initialUnitsConfig", initialUnitsConfig);
+            SetPrivateField(placementConfig, "spawnables", new List<GameObject> { buildingPrefab });
+
+            var composition = new BuildingGameplayCompositionSystem();
+            result = composition.Initialize(
+                placementConfig,
+                worldCamera: null,
+                runtimeUiRoot: null,
+                roadFootprintQuerySystem: null,
+                roadFootprintQueryContext: default,
+                factionVisuals: null,
+                dayNight: null);
+
+            BuildingUiCommandSystem.CampRequestFailure failure = result.UiCommand.TryRequestCampItem(
+                result.UiCommandContext,
+                buildingPrefab,
+                price: 500,
+                out _,
+                focusProducerOnSuccess: true);
+
+            Assert.AreEqual(BuildingUiCommandSystem.CampRequestFailure.None, failure);
+        }
+        finally
+        {
+            result.Dispose?.Invoke();
+            UnityEngine.Object.DestroyImmediate(buildingPrefab);
+            UnityEngine.Object.DestroyImmediate(initialUnitsConfig);
+            UnityEngine.Object.DestroyImmediate(placementConfig);
+        }
+    }
+
     private sealed class TestPendingProduction : BuildingProductionSystem.IPendingProduction
     {
         public int ProductionIndex { get; set; }

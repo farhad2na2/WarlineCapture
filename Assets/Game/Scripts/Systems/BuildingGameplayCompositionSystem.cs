@@ -375,7 +375,9 @@ internal sealed class BuildingGameplayCompositionSystem
     }
 
     private static BuildingProductionContextSystem.Source CreateProductionRuntimeContextSource(
-        BuildingGameplayCompositionSourceSystem source)
+        BuildingGameplayCompositionSourceSystem source,
+        BuildingPlacementInteractionSystem.Context interactionContext = default,
+        MaterialPropertyBlock markerPropertyBlock = null)
     {
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource = CreateRuntimeContextSource(source);
         BuildingRuntimeQuerySystem.Context runtimeQueryContext = source.BuildingRuntimeContextSystem.CreateRuntimeQueryContext(runtimeSource);
@@ -395,10 +397,14 @@ internal sealed class BuildingGameplayCompositionSystem
             source.BuildingSpawnSystem,
             spawnContext,
             source.RuntimeResourceSystem.CurrentDollars,
-            _ => false,
+            prefab => source.BuildingPlacementCommandSystem.BeginPlacementForConfiguredSpawnable(
+                CreatePlacementCommandContext(source, interactionContext, markerPropertyBlock),
+                prefab),
             source.RuntimeResourceSystem.TrySpendDollars,
             source.RuntimeResourceSystem.AddDollars,
-            _ => { },
+            cost => source.BuildingPlacementCommandSystem.SetActivePlacementCost(
+                CreatePlacementCommandContext(source, interactionContext, markerPropertyBlock),
+                cost),
             (building, productionIndex, spawnUnitPrefab) =>
                 TryQueuePlayerUnitProduction(source, productionSource, building, productionIndex, spawnUnitPrefab),
             buildingId => source.RuntimeBuildingSystem.SelectBuilding(buildingId),
@@ -543,7 +549,8 @@ internal sealed class BuildingGameplayCompositionSystem
             source.RuntimeBuildingSystem,
             source.BuildingProductionSystem,
             source.BuildingProductionRequestSystem,
-            () => source.BuildingProductionContextSystem.CreateProductionRequestContext(CreateProductionRuntimeContextSource(source)),
+            () => source.BuildingProductionContextSystem.CreateProductionRequestContext(
+                CreateProductionRuntimeContextSource(source, interactionContext, markerPropertyBlock)),
             () => source.RuntimeBuildingSystem.CurrentActiveBuildingId,
             () => Time.frameCount,
             TryGetEntityManager,

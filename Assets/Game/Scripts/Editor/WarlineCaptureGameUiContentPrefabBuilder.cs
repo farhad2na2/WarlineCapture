@@ -29,7 +29,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
     public static void BuildStep6()
     {
         EnsureFolders();
-        SavePrefab(BuildLoadingContent(), LoadingPrefabPath);
+        ValidateProtectedLoadingContentPrefab();
         SavePrefab(BuildMainMenuContent(), MainMenuPrefabPath);
         SavePrefab(BuildCommanderProfileContent(), CommanderProfilePrefabPath);
         SavePrefab(BuildMatchHudContent(), MatchHudPrefabPath);
@@ -37,36 +37,18 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         ValidateStep6();
-        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_BUILT prefabs=5");
+        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_BUILT generated=4 protected=SCN01_LoadingContent.prefab");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Content Prefabs Step 6")]
     public static void ValidateStep6()
     {
-        ValidatePrefab(LoadingPrefabPath, "SCN01_LoadingContent", "LoadingBody");
-        ValidateLoadingBackdropStretch();
-        ValidateLoadingProgressBinding();
+        ValidateProtectedLoadingContentPrefab();
         ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent");
         ValidatePrefab(CommanderProfilePrefabPath, "SCN03_CommanderProfileContent", "LeftContent", "MiddleContent", "RightContent");
         ValidatePrefab(MatchHudPrefabPath, "SCN08_MatchHudContent", "HeaderContent", "LeftContent", "RightContent", "FooterContent");
         ValidatePrefab(ResultPopupPrefabPath, "POP05_MissionResultPopup", "PopupFrame", "PopupFrame/Actions");
-        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_VALIDATED prefabs=5");
-    }
-
-    private static GameObject BuildLoadingContent()
-    {
-        GameObject root = CreateRoot("SCN01_LoadingContent");
-        AddSolid(root.transform, "LoadingBackdrop", StretchRect(), new Color(0.015f, 0.018f, 0.016f, 0.98f));
-        GameObject body = CreateRect("LoadingBody", root.transform, new Rect(780f, 365f, 840f, 350f));
-        AddPanel(body.transform, "Frame", StretchRect());
-        AddText(body.transform, "TitleText", "WARLINE CAPTURE", new Rect(46f, 42f, 748f, 58f), 48f, TextAlignmentOptions.Center, Text);
-        TMP_Text statusText = AddText(body.transform, "StatusText", "Preparing command interface", new Rect(46f, 120f, 748f, 40f), 24f, TextAlignmentOptions.Center, MutedText);
-        AddSolid(body.transform, "ProgressTrack", new Rect(96f, 206f, 648f, 18f), new Color(0.16f, 0.16f, 0.13f, 1f));
-        Image progressFill = AddSolid(body.transform, "ProgressFill", new Rect(96f, 206f, 0f, 18f), Accent);
-        TMP_Text percentText = AddText(body.transform, "PercentText", "0%", new Rect(96f, 238f, 648f, 34f), 24f, TextAlignmentOptions.Center, Accent);
-        WarlineCaptureShellLoadingProgressView loadingProgress = body.AddComponent<WarlineCaptureShellLoadingProgressView>();
-        loadingProgress.Configure(progressFill.rectTransform, percentText, statusText, 648f);
-        return root;
+        Debug.Log("WARLINECAPTURE_GAMEUI_CONTENT_STEP6_VALIDATED prefabs=5 protected=SCN01_LoadingContent.prefab");
     }
 
     private static GameObject BuildMainMenuContent()
@@ -463,19 +445,10 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         }
     }
 
-    private static void ValidateLoadingBackdropStretch()
+    private static void ValidateProtectedLoadingContentPrefab()
     {
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(LoadingPrefabPath);
-        RectTransform backdrop = prefab.transform.Find("LoadingBackdrop") as RectTransform;
-        if (backdrop == null)
-            throw new InvalidOperationException("SCN01 loading content must contain LoadingBackdrop.");
-
-        if (backdrop.anchorMin != Vector2.zero || backdrop.anchorMax != Vector2.one)
-            throw new InvalidOperationException("SCN01 LoadingBackdrop must be stretched to the full loading layer.");
-        if (backdrop.offsetMin != Vector2.zero || backdrop.offsetMax != Vector2.zero)
-            throw new InvalidOperationException("SCN01 LoadingBackdrop must use zero stretch offsets.");
-        if (backdrop.localScale != Vector3.one)
-            throw new InvalidOperationException("SCN01 LoadingBackdrop scale must remain 1.");
+        ValidatePrefab(LoadingPrefabPath, "SCN01_LoadingContent", "LoadingBody");
+        ValidateLoadingProgressBinding();
     }
 
     private static void ValidateLoadingProgressBinding()
@@ -486,15 +459,16 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         if (progressView == null)
             throw new InvalidOperationException("SCN01 loading content must contain WarlineCaptureShellLoadingProgressView on LoadingBody.");
 
-        RectTransform fill = body.Find("ProgressFill") as RectTransform;
-        TMP_Text percent = body.Find("PercentText")?.GetComponent<TMP_Text>();
-        TMP_Text status = body.Find("StatusText")?.GetComponent<TMP_Text>();
-        if (fill == null || percent == null || status == null)
-            throw new InvalidOperationException("SCN01 loading content must contain ProgressFill, PercentText, and StatusText.");
-        if (fill.rect.width > 0.5f)
-            throw new InvalidOperationException("SCN01 loading ProgressFill must start at zero width.");
-        if (percent.text != "0%")
-            throw new InvalidOperationException("SCN01 loading PercentText must start at 0%.");
+        SerializedObject serializedProgress = new(progressView);
+        if (serializedProgress.FindProperty("progressFill")?.objectReferenceValue == null ||
+            serializedProgress.FindProperty("percentText")?.objectReferenceValue == null ||
+            serializedProgress.FindProperty("statusText")?.objectReferenceValue == null)
+        {
+            throw new InvalidOperationException("SCN01 loading progress view must keep its fill, percent, and status references assigned.");
+        }
+
+        if (serializedProgress.FindProperty("fillWidth")?.floatValue <= 0f)
+            throw new InvalidOperationException("SCN01 loading progress view must keep a positive fill width.");
     }
 
     private static void EnsureFolders()

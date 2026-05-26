@@ -28,18 +28,20 @@ public static class WarlineCaptureGameUiSceneBuilder
     private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
     private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
     private const string CaptureFolder = "Design/AgentReports/Captures/GameUI";
-    private const int CaptureWidth = 2400;
-    private const int CaptureHeight = 1080;
+    private const int ShellWidth = 4800;
+    private const int ShellHeight = 2160;
+    private const int CaptureWidth = ShellWidth;
+    private const int CaptureHeight = ShellHeight;
 
-    private static readonly Rect StretchRegion = new(0f, 0f, 2400f, 1080f);
+    private static readonly Rect StretchRegion = new(0f, 0f, ShellWidth, ShellHeight);
 
     private static readonly ShellRegionDefinition[] RegionDefinitions =
     {
-        new(WarlineCaptureShellRegionId.HeaderRegion, "HeaderRegion", new Vector2(0f, 1f), new Rect(0f, 0f, 2400f, 140f)),
-        new(WarlineCaptureShellRegionId.LeftRegion, "LeftRegion", new Vector2(-1f, 0f), new Rect(0f, 140f, 360f, 820f)),
-        new(WarlineCaptureShellRegionId.MiddleRegion, "MiddleRegion", Vector2.zero, new Rect(360f, 140f, 1680f, 820f)),
-        new(WarlineCaptureShellRegionId.RightRegion, "RightRegion", new Vector2(1f, 0f), new Rect(2040f, 140f, 360f, 820f)),
-        new(WarlineCaptureShellRegionId.FooterRegion, "FooterRegion", new Vector2(0f, -1f), new Rect(0f, 960f, 2400f, 120f)),
+        new(WarlineCaptureShellRegionId.HeaderRegion, "HeaderRegion", new Vector2(0f, 1f), new Rect(0f, 0f, 4800f, 280f)),
+        new(WarlineCaptureShellRegionId.LeftRegion, "LeftRegion", new Vector2(-1f, 0f), new Rect(0f, 280f, 720f, 1640f)),
+        new(WarlineCaptureShellRegionId.MiddleRegion, "MiddleRegion", Vector2.zero, new Rect(720f, 280f, 3360f, 1640f)),
+        new(WarlineCaptureShellRegionId.RightRegion, "RightRegion", new Vector2(1f, 0f), new Rect(4080f, 280f, 720f, 1640f)),
+        new(WarlineCaptureShellRegionId.FooterRegion, "FooterRegion", new Vector2(0f, -1f), new Rect(0f, 1920f, 4800f, 240f)),
         new(WarlineCaptureShellRegionId.PopupLayer, "PopupLayer", Vector2.zero, StretchRegion),
         new(WarlineCaptureShellRegionId.LoadingLayer, "LoadingLayer", new Vector2(0f, -1f), StretchRegion)
     };
@@ -251,8 +253,8 @@ public static class WarlineCaptureGameUiSceneBuilder
             throw new InvalidOperationException($"{CanvasName} must contain a CanvasScaler component.");
         if (scaler.uiScaleMode != CanvasScaler.ScaleMode.ScaleWithScreenSize)
             throw new InvalidOperationException($"{CanvasName} must scale with screen size.");
-        if (scaler.referenceResolution != new Vector2(2400f, 1080f))
-            throw new InvalidOperationException($"{CanvasName} must use the 2400x1080 shell reference resolution.");
+        if (scaler.referenceResolution != new Vector2(ShellWidth, ShellHeight))
+            throw new InvalidOperationException($"{CanvasName} must use the {ShellWidth}x{ShellHeight} shell reference resolution.");
 
         if (canvasTransform.GetComponent<GraphicRaycaster>() == null)
             throw new InvalidOperationException($"{CanvasName} must contain a GraphicRaycaster component.");
@@ -508,7 +510,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         camera.clearFlags = CameraClearFlags.SolidColor;
         camera.backgroundColor = Color.black;
         camera.orthographic = true;
-        camera.orthographicSize = 540f;
+        camera.orthographicSize = ShellHeight * 0.5f;
         camera.nearClipPlane = 0.01f;
         camera.farClipPlane = 100f;
         camera.depth = 100f;
@@ -533,7 +535,7 @@ public static class WarlineCaptureGameUiSceneBuilder
 
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
-        scaler.referenceResolution = new Vector2(2400f, 1080f);
+        scaler.referenceResolution = new Vector2(ShellWidth, ShellHeight);
         scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
         scaler.matchWidthOrHeight = 0.5f;
         scaler.referencePixelsPerUnit = 100f;
@@ -659,7 +661,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         rect.anchorMin = new Vector2(1f, 1f);
         rect.anchorMax = new Vector2(1f, 1f);
         rect.pivot = new Vector2(1f, 1f);
-        rect.anchoredPosition = new Vector2(topLeftRect.xMax - 2400f, -topLeftRect.y);
+        rect.anchoredPosition = new Vector2(topLeftRect.xMax - ShellWidth, -topLeftRect.y);
         rect.sizeDelta = new Vector2(topLeftRect.width, topLeftRect.height);
         rect.localScale = Vector3.one;
         rect.localRotation = Quaternion.identity;
@@ -1108,7 +1110,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         return new Rect(x, y, width, height);
     }
 
-    private static Rect DesignCanvasBounds() => new(0f, 0f, 2400f, 1080f);
+    private static Rect DesignCanvasBounds() => new(0f, 0f, ShellWidth, ShellHeight);
 
     private static void ValidateRectInside(Rect inner, Rect outer, string name, float tolerance)
     {

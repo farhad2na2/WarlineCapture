@@ -304,15 +304,14 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
                 throw new InvalidOperationException("Source Island is missing example group: " + groupName);
 
             Dictionary<string, CatalogAccumulator> accumulators = new(StringComparer.Ordinal);
-            HashSet<int> seenInstanceRoots = new();
+            HashSet<GameObject> seenInstanceRoots = new();
             foreach (Transform transform in group.GetComponentsInChildren<Transform>(true))
             {
                 GameObject instanceRoot = PrefabUtility.GetNearestPrefabInstanceRoot(transform.gameObject);
                 if (instanceRoot == null || !IsDescendantOrSelf(instanceRoot.transform, group))
                     continue;
 
-                int instanceId = instanceRoot.GetInstanceID();
-                if (!seenInstanceRoots.Add(instanceId))
+                if (!seenInstanceRoots.Add(instanceRoot))
                     continue;
 
                 GameObject prefab = PrefabUtility.GetCorrespondingObjectFromOriginalSource(instanceRoot);

@@ -115,6 +115,13 @@ What this command does:
 5. Keeps generated dressing under `Game_Terrain4/Island`.
 6. Validates playable-land coverage and reserve-zone clearances.
 7. Writes reports, JSON summaries, and proof captures.
+8. Run the editor warning contract after any terrain generator script change:
+
+```bash
+Unity -batchmode -quit -projectPath <project> -executeMethod EditorScriptWarningContractTests.RunEditorWarningContractBatchValidation
+```
+
+Do not hand off terrain generator script changes while this warning contract fails.
 
 Current implementation:
 

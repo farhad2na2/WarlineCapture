@@ -167,7 +167,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         List<Bounds> grassBounds = new();
         List<Bounds> beachBounds = new();
         Dictionary<string, int> materialRendererCounts = new(StringComparer.Ordinal);
-        foreach (Renderer renderer in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        foreach (Renderer renderer in UnityEngine.Object.FindObjectsByType<Renderer>(FindObjectsInactive.Include))
         {
             string rootName = FindIslandInstanceName(renderer.transform);
             if (rootName.StartsWith("Ground", StringComparison.Ordinal))

@@ -34,7 +34,7 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const float ShoreGroundSpacing = 30f;
     private const float DetailGrassSpacing = 78f;
     private const float GroundSurfaceScaleXZ = 2.15f;
-    private const float ShoreGroundScaleXZ = 1.12f;
+    private const float ShoreGroundScaleXZ = 1.32f;
     private const float DetailGrassScaleXZ = 0.95f;
     private const float BeachSurfaceScaleXZ = 2.35f;
 
@@ -437,14 +437,14 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
 
     private static void PlaceShoreGroundOverlap(Transform parent)
     {
-        const int ringCount = 520;
+        const int ringCount = 1040;
         for (int i = 0; i < ringCount; i++)
         {
             float angle = (i / (float)ringCount) * Mathf.PI * 2f + (Hash01(i, 0, 211) - 0.5f) * 0.025f;
             Vector2 boundary = BoundaryPoint(angle);
             Vector2 inward = -new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)).normalized;
             Vector2 tangent = new(-inward.y, inward.x);
-            Vector2 position = boundary + inward * (42f + Hash01(i, 0, 223) * 42f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing);
+            Vector2 position = boundary + inward * (14f + Hash01(i, 0, 223) * 62f) + tangent * ((Hash01(i, 0, 227) - 0.5f) * ShoreGroundSpacing * 0.72f);
 
             if (!EvaluateIsland(position, out float depth, out _) || depth < 0.08f)
                 continue;

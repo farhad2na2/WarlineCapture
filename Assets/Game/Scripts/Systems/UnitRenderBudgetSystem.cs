@@ -126,6 +126,8 @@ public partial struct UnitRenderBudgetSystem : ISystem
         EntityManager em = state.EntityManager;
         var renderStateEcb = new EntityCommandBuffer(Allocator.Temp);
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
+        var animationIndexLookup = SystemAPI.GetComponentLookup<MaterialAnimationIndex>(true);
+        var moveVisualLookup = SystemAPI.GetComponentLookup<UnitMoveVisualState>(true);
         float3 cameraPosition = camera.transform.position;
 
         using NativeArray<Entity> units = _unitQuery.ToEntityArray(Allocator.Temp);
@@ -262,6 +264,9 @@ public partial struct UnitRenderBudgetSystem : ISystem
             byte factionId = em.GetComponentData<Faction>(unit).Id;
             bool isEnemyUnit = factionId != 0;
             bool isSelectedUnit = em.HasComponent<SelectedUnitTag>(unit);
+            bool isMovingUnit =
+                moveVisualLookup.HasComponent(unit) &&
+                moveVisualLookup[unit].IsMoving != 0;
             bool enemyShouldUseImpostor =
                 isEnemyUnit &&
                 !isSelectedUnit &&
@@ -300,6 +305,8 @@ public partial struct UnitRenderBudgetSystem : ISystem
             bool hasSafeVisibleLow =
                 lowRootSafe &&
                 (isProtectedVisibleCharacter || HasRenderableRecursive(em, lowRoot, childLookup));
+            bool midRootAnimatable = hasMidLodInstance && HasAnimationIndexRecursive(midRoot, animationIndexLookup, childLookup);
+            bool lowRootAnimatable = hasLowLodInstance && HasAnimationIndexRecursive(lowRoot, animationIndexLookup, childLookup);
             bool shouldShowMid = !shouldShowDetail && hasMidLodInstance && (midLodUnits.Contains(unit) || waitingForLow || (distances[i].Visible != 0 && hasSafeVisibleMid));
             bool shouldShowLow = !shouldShowDetail && !shouldShowMid && hasLowLodInstance && lowLodUnits.Contains(unit);
             bool shouldShowFar = !shouldShowDetail && !shouldShowMid && !shouldShowLow;
@@ -324,20 +331,34 @@ public partial struct UnitRenderBudgetSystem : ISystem
                 // Visible soldiers must never disappear during camera motion or LOD settling.
                 // Use detail only near the camera, safe mesh LODs in the mid range, and billboard
                 // impostors for distant visible characters so large RTS armies stay renderable.
+                bool movingVisibleCharacter = isMovingUnit;
                 bool farEnoughForImpostor =
                     enemyShouldUseImpostor ||
                     distances[i].DistanceSq >= VisibleCharacterImpostorFarDistance * VisibleCharacterImpostorFarDistance;
                 bool lowEnoughForSafeLow =
                     enemyLowEnoughForSafeLow ||
                     distances[i].DistanceSq >= VisibleCharacterLowDistanceSq;
-                bool canUseFarImpostor = farEnoughForImpostor;
-                bool canUseSafeLow = !canUseFarImpostor && lowEnoughForSafeLow && hasSafeLow;
                 bool forceDetailByBudget = shouldShowDetail && !cameraMotionActive && !farEnoughForImpostor && !lowEnoughForSafeLow;
-                bool canUseSafeMid = !forceDetailNearVisible && !forceDetailByBudget && !canUseFarImpostor && !canUseSafeLow && hasSafeMid;
-                bool mustShowDetailForSafety = !forceDetailNearVisible && !canUseFarImpostor && !canUseSafeMid && !canUseSafeLow && !forceDetailByBudget;
-                shouldShowDetail = forceDetailNearVisible || forceDetailByBudget || mustShowDetailForSafety;
-                shouldShowMid = !canUseFarImpostor && canUseSafeMid;
-                shouldShowLow = !canUseFarImpostor && canUseSafeLow;
+                UnitRenderVisualKind visibleCharacterVisual = ResolveVisibleCharacterVisualKind(
+                    movingVisibleCharacter,
+                    forceDetailNearVisible,
+                    forceDetailByBudget,
+                    farEnoughForImpostor,
+                    lowEnoughForSafeLow,
+                    hasSafeMid,
+                    midRootAnimatable,
+                    hasSafeLow,
+                    lowRootAnimatable);
+                bool canUseFarImpostor = visibleCharacterVisual == UnitRenderVisualKind.Far;
+                bool canUseSafeLow = visibleCharacterVisual == UnitRenderVisualKind.Low;
+                bool canUseSafeMid = visibleCharacterVisual == UnitRenderVisualKind.Mid;
+                bool mustShowDetailForSafety =
+                    visibleCharacterVisual == UnitRenderVisualKind.Detail &&
+                    !forceDetailNearVisible &&
+                    !forceDetailByBudget;
+                shouldShowDetail = visibleCharacterVisual == UnitRenderVisualKind.Detail;
+                shouldShowMid = canUseSafeMid;
+                shouldShowLow = canUseSafeLow;
                 shouldShowFar = canUseFarImpostor;
                 forceImmediateDetailVisual = shouldShowDetail && (forceDetailNearVisible || mustShowDetailForSafety);
 
@@ -370,7 +391,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
                 else
                     shouldShowDetail = true;
             }
-            if (enemyShouldUseImpostor)
+            if (enemyShouldUseImpostor && !(isProtectedVisibleCharacter && isMovingUnit))
             {
                 shouldShowDetail = false;
                 shouldShowMid = false;
@@ -676,6 +697,30 @@ public partial struct UnitRenderBudgetSystem : ISystem
         return key.ToString().StartsWith("Unit_Chr_", System.StringComparison.Ordinal);
     }
 
+    private static bool HasAnimationIndexRecursive(
+        Entity entity,
+        ComponentLookup<MaterialAnimationIndex> animationIndexLookup,
+        BufferLookup<Child> childLookup)
+    {
+        if (entity == Entity.Null)
+            return false;
+
+        if (animationIndexLookup.HasComponent(entity))
+            return true;
+
+        if (!childLookup.HasBuffer(entity))
+            return false;
+
+        DynamicBuffer<Child> children = childLookup[entity];
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (HasAnimationIndexRecursive(children[i].Value, animationIndexLookup, childLookup))
+                return true;
+        }
+
+        return false;
+    }
+
     private static UnitRenderVisualKind ResolveDesiredVisual(bool detail, bool mid, bool low, bool far)
     {
         if (detail)
@@ -686,6 +731,32 @@ public partial struct UnitRenderBudgetSystem : ISystem
             return UnitRenderVisualKind.Low;
         if (far)
             return UnitRenderVisualKind.Far;
+
+        return UnitRenderVisualKind.Detail;
+    }
+
+    public static UnitRenderVisualKind ResolveVisibleCharacterVisualKind(
+        bool movingVisibleCharacter,
+        bool forceDetailNearVisible,
+        bool forceDetailByBudget,
+        bool farEnoughForImpostor,
+        bool lowEnoughForSafeLow,
+        bool hasSafeMid,
+        bool midRootAnimatable,
+        bool hasSafeLow,
+        bool lowRootAnimatable)
+    {
+        if (forceDetailNearVisible || forceDetailByBudget)
+            return UnitRenderVisualKind.Detail;
+
+        if (!movingVisibleCharacter && farEnoughForImpostor)
+            return UnitRenderVisualKind.Far;
+
+        if (!movingVisibleCharacter && lowEnoughForSafeLow && hasSafeLow && lowRootAnimatable)
+            return UnitRenderVisualKind.Low;
+
+        if (hasSafeMid && midRootAnimatable)
+            return UnitRenderVisualKind.Mid;
 
         return UnitRenderVisualKind.Detail;
     }

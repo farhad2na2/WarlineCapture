@@ -14,6 +14,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
     private const string CommanderProfilePrefabPath = ContentFolder + "/SCN03_CommanderProfileContent.prefab";
     private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
     private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
+    private const string MainMenuV15CLayerRoot = "Assets/Game/Art/UI/Generated/MainMenuV15C/LayeredOneGo";
 
     private static readonly Color Clear = new(0f, 0f, 0f, 0f);
     private static readonly Color Panel = new(0.025f, 0.031f, 0.027f, 0.92f);
@@ -73,13 +74,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         GameObject root = CreateRoot("SCN02_MainMenuContent");
 
         GameObject header = CreateGroup("HeaderContent", root.transform, new Rect(0f, 0f, 2400f, 140f));
-        AddPanel(header.transform, "HeaderPanel", StretchRect());
-        AddText(header.transform, "LogoText", "WARLINE\nCAPTURE", new Rect(48f, 26f, 290f, 88f), 34f, TextAlignmentOptions.Left, Text);
-        AddHeaderStat(header.transform, 560f, "Credits", "187,540", Accent);
-        AddHeaderStat(header.transform, 940f, "Supplies", "92,860", new Color(0.64f, 0.74f, 0.46f, 1f));
-        AddHeaderStat(header.transform, 1320f, "Command", "2,715", Blue);
-        AddText(header.transform, "MailText", "MAIL", new Rect(2020f, 44f, 130f, 44f), 28f, TextAlignmentOptions.Center, Text);
-        AddText(header.transform, "GearText", "GEAR", new Rect(2190f, 44f, 130f, 44f), 28f, TextAlignmentOptions.Center, Text);
+        BuildDesignedMainMenuHeader(header.transform);
 
         GameObject left = CreateGroup("LeftContent", root.transform, new Rect(0f, 140f, 360f, 820f));
         AddNavButton(left.transform, 0f, "Campaign", true);
@@ -188,6 +183,72 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         GameObject actions = CreateRect("Actions", frame.transform, new Rect(160f, 430f, 600f, 72f));
         AddResultConfirmButton(actions.transform, "ContinueButton", "CONTINUE", StretchRect());
         return root;
+    }
+
+    private static void BuildDesignedMainMenuHeader(Transform parent)
+    {
+        AddSprite(parent, "Header_LogoPanel", "scn02_header_logo_panel_bg.png", HeaderScaleRect(0f, 0f, 930f, 250f), false, Color.white);
+        AddSprite(parent, "Header_CreditsPanel", "scn02_header_resource_panel_bg.png", HeaderScaleRect(930f, 0f, 780f, 250f), false, Color.white);
+        AddSprite(parent, "Header_SuppliesPanel", "scn02_header_resource_panel_bg.png", HeaderScaleRect(1710f, 0f, 780f, 250f), false, Color.white);
+        AddSprite(parent, "Header_CommandPanel", "scn02_header_logo_panel_bg.png", HeaderScaleRect(2490f, 0f, 690f, 250f), false, Color.white);
+        AddSprite(parent, "Header_RightActionsPanel", "scn02_header_right_actions_bg.png", HeaderScaleRect(3180f, 0f, 660f, 250f), false, Color.white);
+
+        AddSprite(parent, "Header_Logo", "scn02_brand_logo_lockup.png", HeaderScaleRect(54f, 34f, 650f, 142f), true, Color.white);
+        AddDesignedHeaderResource(parent, "Credits", "scn02_resource_coin_badge.png", "Credits", "187,540", 930f, new Color32(235, 179, 65, 255), 126f, 126f);
+        AddDesignedHeaderResource(parent, "Supplies", "scn02_resource_supplies_crate.png", "Supplies", "92,860", 1710f, new Color32(161, 166, 105, 255), 152f, 126f);
+        AddDesignedHeaderResource(parent, "Command", "scn02_resource_command_shield.png", "Command", "2,715", 2490f, new Color32(119, 180, 215, 255), 142f, 166f);
+        AddSprite(parent, "HeaderAction_Inbox", "scn02_icon_inbox_envelope.png", HeaderScaleRect(3286f, 50f, 150f, 118f), true, new Color32(221, 216, 194, 255));
+        AddSprite(parent, "HeaderAction_Settings", "scn02_icon_settings_gear.png", HeaderScaleRect(3556f, 50f, 148f, 148f), true, new Color32(221, 216, 194, 255));
+    }
+
+    private static void AddDesignedHeaderResource(
+        Transform parent,
+        string name,
+        string icon,
+        string label,
+        string value,
+        float panelX,
+        Color valueColor,
+        float iconWidth,
+        float iconHeight)
+    {
+        bool command = string.Equals(name, "Command", StringComparison.Ordinal);
+        Rect iconRect = command
+            ? HeaderScaleRect(panelX + 68f, 52f, iconWidth, iconHeight)
+            : HeaderScaleRect(panelX + 70f, 56f, iconWidth, iconHeight);
+        float textX = command ? panelX + 292f : panelX + 242f;
+
+        AddSprite(parent, $"Header_{name}_Icon", icon, iconRect, true, Color.white);
+        AddText(parent, $"Header_{name}_Label", label, HeaderScaleRect(textX, 68f, 360f, 38f), 16f, TextAlignmentOptions.Left, MutedText);
+        AddText(parent, $"Header_{name}_Value", value, HeaderScaleRect(textX, 112f, 360f, 60f), 25f, TextAlignmentOptions.Left, valueColor);
+    }
+
+    private static Rect HeaderScaleRect(float x, float y, float width, float height)
+    {
+        const float ScaleX = 2400f / 3840f;
+        const float ScaleY = 140f / 250f;
+        return new Rect(x * ScaleX, y * ScaleY, width * ScaleX, height * ScaleY);
+    }
+
+    private static Image AddSprite(Transform parent, string name, string spriteName, Rect rect, bool preserveAspect, Color color)
+    {
+        GameObject obj = CreateRect(name, parent, rect);
+        Image image = obj.AddComponent<Image>();
+        image.sprite = LoadMainMenuV15CSprite(spriteName);
+        image.type = Image.Type.Simple;
+        image.preserveAspect = preserveAspect;
+        image.color = color;
+        image.raycastTarget = false;
+        return image;
+    }
+
+    private static Sprite LoadMainMenuV15CSprite(string spriteName)
+    {
+        string path = $"{MainMenuV15CLayerRoot}/{spriteName}";
+        Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        if (sprite == null)
+            throw new InvalidOperationException($"Missing Main Menu V15C header sprite at {path}.");
+        return sprite;
     }
 
     private static void AddHeaderStat(Transform parent, float x, string label, string value, Color valueColor)

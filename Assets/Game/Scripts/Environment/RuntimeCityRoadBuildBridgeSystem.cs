@@ -5,6 +5,7 @@ using UnityEngine;
 internal sealed class RuntimeCityRoadBuildBridgeSystem
 {
     private const int DefaultRoadCellSizeInGridCells = 10;
+    private const string RoadCellSizeFallbackFixTag = "RuntimeCityRoadCellFallbackFix_2026-05-26";
     private RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem;
     private RoadRuntimeGenerationSystem.Context _roadRuntimeGenerationContext;
 
@@ -38,10 +39,11 @@ internal sealed class RuntimeCityRoadBuildBridgeSystem
         if (TryGetGridCellSize(out float gridCellSize) && gridCellSize > 0f)
         {
             roadCellSizeInGridCells = Mathf.Max(1, Mathf.RoundToInt(DefaultRoadCellSizeInGridCells / gridCellSize));
-            Debug.LogWarning($"[RuntimeCity] roadCellSize fallback={roadCellSizeInGridCells} gridCellSize={gridCellSize:0.###}");
+            Debug.LogWarning($"[RuntimeCity] {RoadCellSizeFallbackFixTag} fallback={roadCellSizeInGridCells} gridCellSize={gridCellSize:0.###}");
             return true;
         }
 
+        Debug.LogWarning($"[RuntimeCity] {RoadCellSizeFallbackFixTag} unavailable=missingGridCellSize");
         return false;
     }
 

@@ -35,6 +35,46 @@ internal sealed class RuntimeCityStartupSystem
         return TryCreateGenerateResult(context);
     }
 
+    public static string DescribeStartupBlocker(Context context)
+    {
+        if (!context.SpawnOnStart)
+            return "spawnOnStart=0";
+        if (context.IsSpawned)
+            return "alreadySpawned";
+        if (context.CityCount <= 0)
+            return $"cityCount={context.CityCount}";
+        if (!context.PlayRequested)
+            return "playRequested=0";
+        if (context.IsMissionExcluded)
+            return "missionExcluded";
+        if (context.TryGetPendingInitialUnits != null &&
+            context.TryGetPendingInitialUnits(out int initialSpawnConfigs, out int initializedInitialSpawnConfigs))
+        {
+            return $"pendingInitialUnits configs={initialSpawnConfigs} initialized={initializedInitialSpawnConfigs}";
+        }
+        if (!context.HasRoadRuntimeGenerationSystem)
+            return "missingRoadRuntimeGenerationSystem";
+        if (context.GenerateBuildings && !context.HasSpawnSystem)
+            return "missingBuildingSpawnSystem";
+        if (context.TryGetRoadCellSize == null)
+            return "missingRoadCellSizeQuery";
+        if (!context.TryGetRoadCellSize(out int roadCellSizeInGridCells))
+            return "missingRoadCellSize";
+        if (context.TryGetGridData == null)
+            return "missingGridDataQuery";
+        if (!context.TryGetGridData(out GridConfig grid))
+            return "missingGridData";
+        if (!HasRequiredPrefabs(context.HallPrefabs, context.ShopPrefabs, context.HousePrefabs))
+        {
+            int hallCount = context.HallPrefabs?.Count ?? 0;
+            int shopCount = context.ShopPrefabs?.Count ?? 0;
+            int houseCount = context.HousePrefabs?.Count ?? 0;
+            return $"missingCityPrefabs hall={hallCount} shop={shopCount} house={houseCount}";
+        }
+
+        return $"readyToGenerate roadCellSize={roadCellSizeInGridCells} grid={grid.Width}x{grid.Height}";
+    }
+
     private static Result TryCreateGenerateResult(Context context)
     {
         if (!context.HasRoadRuntimeGenerationSystem)

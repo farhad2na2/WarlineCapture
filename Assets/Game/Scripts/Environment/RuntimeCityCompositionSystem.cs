@@ -40,6 +40,17 @@ public sealed class RuntimeCityCompositionSystem
     public bool IsGenerating => _runtimeCityLifecycleSystem.IsGenerating;
     public RuntimeCityReadModelSystem ReadModel => _runtimeCityReadModelSystem;
 
+    public string DescribeStartupBlocker(int frameCount)
+    {
+        return RuntimeCityStartupSystem.DescribeStartupBlocker(CreateStartupContext(frameCount));
+    }
+
+    public void MarkSpawnedAfterLoadingGateTimeout()
+    {
+        _runtimeCityLifecycleSystem.MarkSpawned();
+        PublishReadModel();
+    }
+
     internal void Configure(
         RuntimeCitySpawnerSystemConfig configAsset,
         RoadRuntimeGenerationSystem roadRuntimeGenerationSystem,

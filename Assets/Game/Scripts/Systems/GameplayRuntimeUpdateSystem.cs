@@ -6,7 +6,9 @@ using UnityEngine;
 public sealed class GameplayRuntimeUpdateSystem
 {
     private const int LoadingGateDiagnosticIntervalFrames = 120;
+    private const int LoadingGateFailOpenFrames = 1800;
     private int _nextLoadingGateDiagnosticFrame;
+    private int _loadingGateStartedFrame = -1;
 
     public void Update(
         MenuView menuView,
@@ -89,6 +91,9 @@ public sealed class GameplayRuntimeUpdateSystem
         mainMenu?.Update();
         hadSlowStep |= performanceDiagnosticsSystem.EndStep("MainMenu", stepStart);
 
+        if (gameplayStartPending && _loadingGateStartedFrame < 0)
+            _loadingGateStartedFrame = Time.frameCount;
+
         if (gameplayStartPending && IsGameplayStartComplete(
                 gameplayInitialized,
                 runtimeGameplayStateSystem,
@@ -97,8 +102,21 @@ public sealed class GameplayRuntimeUpdateSystem
                 runtimeDecorations))
         {
             gameplayStartPending = false;
+            _loadingGateStartedFrame = -1;
             menuView?.NotifyGameplayReady();
             Debug.Log($"[LoadingGate] ready frame={Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)}");
+        }
+        else if (gameplayStartPending && ShouldFailOpenLoadingGate(
+                     gameplayInitialized,
+                     runtimeGameplayStateSystem,
+                     runtimeCity,
+                     out string failOpenReason))
+        {
+            gameplayStartPending = false;
+            _loadingGateStartedFrame = -1;
+            runtimeCity?.MarkSpawnedAfterLoadingGateTimeout();
+            menuView?.NotifyGameplayReady();
+            Debug.LogError($"[LoadingGate] failOpen frame={Time.frameCount} reason={failOpenReason}");
         }
         else if (gameplayStartPending)
         {
@@ -189,6 +207,26 @@ public sealed class GameplayRuntimeUpdateSystem
         return totalConfigCount == 0 || initializedConfigCount >= totalConfigCount;
     }
 
+    private bool ShouldFailOpenLoadingGate(
+        bool gameplayInitialized,
+        RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+        RuntimeCityCompositionSystem runtimeCity,
+        out string reason)
+    {
+        reason = string.Empty;
+        if (_loadingGateStartedFrame < 0)
+            return false;
+        if (!gameplayInitialized || !runtimeGameplayStateSystem.PlayRequested)
+            return false;
+        if (Time.frameCount - _loadingGateStartedFrame < LoadingGateFailOpenFrames)
+            return false;
+        if (runtimeCity == null || runtimeCity.HasSpawned || runtimeCity.IsGenerating)
+            return false;
+
+        reason = $"runtimeCityNotGenerating blocker={runtimeCity.DescribeStartupBlocker(Time.frameCount)}";
+        return true;
+    }
+
     private void LogLoadingGateIfDue(
         bool gameplayInitialized,
         RuntimeGameplayStateSystem runtimeGameplayStateSystem,
@@ -204,7 +242,7 @@ public sealed class GameplayRuntimeUpdateSystem
         bool playRequested = runtimeGameplayStateSystem.PlayRequested;
         string cityState = runtimeCity == null
             ? "null"
-            : $"spawned={(runtimeCity.HasSpawned ? 1 : 0)} generating={(runtimeCity.IsGenerating ? 1 : 0)} spawnOnStart={(runtimeCity.SpawnOnStartEnabled ? 1 : 0)}";
+            : $"spawned={(runtimeCity.HasSpawned ? 1 : 0)} generating={(runtimeCity.IsGenerating ? 1 : 0)} spawnOnStart={(runtimeCity.SpawnOnStartEnabled ? 1 : 0)} blocker={runtimeCity.DescribeStartupBlocker(Time.frameCount)}";
         string blockerState = runtimeGridBlockers == null
             ? "null"
             : $"spawned={(runtimeGridBlockers.HasSpawned ? 1 : 0)}";

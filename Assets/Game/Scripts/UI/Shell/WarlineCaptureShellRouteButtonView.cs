@@ -48,7 +48,10 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
     private void SubmitRouteRequest()
     {
         if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+        {
+            Debug.LogError($"[UiShellRoute] Missing UI shell boundary. intent={intent} route={route}");
             return;
+        }
 
         DynamicBuffer<UiShellRouteRequestComponent> requests =
             entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
@@ -58,6 +61,39 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
             Route = route,
             PushHistory = pushHistory ? (byte)1 : (byte)0
         });
+
+        Debug.Log($"[UiShellRoute] submitted intent={intent} route={route} pushHistory={(pushHistory ? 1 : 0)}");
+
+        if (intent == UiShellRouteIntent.EnterMatch)
+            TryStartGameplayForMatchRoute();
+    }
+
+    private static void TryStartGameplayForMatchRoute()
+    {
+        foreach (GameBootstrap bootstrap in Resources.FindObjectsOfTypeAll<GameBootstrap>())
+        {
+            if (bootstrap == null ||
+                bootstrap.gameObject == null ||
+                !bootstrap.gameObject.scene.IsValid() ||
+                !bootstrap.gameObject.scene.isLoaded)
+            {
+                continue;
+            }
+
+            try
+            {
+                bootstrap.BeginGameplay();
+                Debug.Log($"[UiShellRoute] BeginGameplay invoked from EnterMatch. scene={bootstrap.gameObject.scene.name}");
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogException(exception);
+            }
+
+            return;
+        }
+
+        Debug.LogError("[UiShellRoute] EnterMatch could not find a loaded GameBootstrap; gameplay was not started.");
     }
 
     private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)

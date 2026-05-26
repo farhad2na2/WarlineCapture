@@ -765,7 +765,10 @@ namespace Game.Scripts.UI
         private void ButtonGameClicked()
         {
             if (_gameStartPending)
+            {
+                Debug.Log("[MenuPlay] Ignored play request because game start is already pending.");
                 return;
+            }
 
             SuppressNextWorldClick();
             _gameStartPending = true;
@@ -773,7 +776,10 @@ namespace Game.Scripts.UI
                 buttonGame.gameObject.SetActive(false);
             if (panelLoading != null)
                 panelLoading.SetActive(true);
+            Debug.Log($"[MenuPlay] Play requested. hasBootstrapSubscriber={(GameRequested != null ? 1 : 0)}");
             GameRequested?.Invoke();
+            if (GameRequested == null)
+                Debug.LogError("[MenuPlay] Play request has no GameRequested subscriber; gameplay cannot start.");
         }
 
         public void RequestGameStart()

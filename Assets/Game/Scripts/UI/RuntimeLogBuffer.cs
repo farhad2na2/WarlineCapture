@@ -19,7 +19,7 @@ namespace Game.Scripts.UI
             }
         }
 
-        private const int Capacity = 50;
+        private const int Capacity = 200;
         private static readonly Queue<Entry> Entries = new(Capacity);
         private static bool _initialized;
 

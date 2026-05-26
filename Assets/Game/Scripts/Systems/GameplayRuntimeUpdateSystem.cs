@@ -5,6 +5,9 @@ using UnityEngine;
 
 public sealed class GameplayRuntimeUpdateSystem
 {
+    private const int LoadingGateDiagnosticIntervalFrames = 120;
+    private int _nextLoadingGateDiagnosticFrame;
+
     public void Update(
         MenuView menuView,
         bool gameplayInitialized,
@@ -95,6 +98,16 @@ public sealed class GameplayRuntimeUpdateSystem
         {
             gameplayStartPending = false;
             menuView?.NotifyGameplayReady();
+            Debug.Log($"[LoadingGate] ready frame={Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(runtimeGameplayStateSystem.PlayRequested ? 1 : 0)}");
+        }
+        else if (gameplayStartPending)
+        {
+            LogLoadingGateIfDue(
+                gameplayInitialized,
+                runtimeGameplayStateSystem,
+                runtimeCity,
+                runtimeGridBlockers,
+                runtimeDecorations);
         }
 
         if (gameplayActive)
@@ -174,5 +187,67 @@ public sealed class GameplayRuntimeUpdateSystem
         initializedSpawnConfigs.Dispose();
 
         return totalConfigCount == 0 || initializedConfigCount >= totalConfigCount;
+    }
+
+    private void LogLoadingGateIfDue(
+        bool gameplayInitialized,
+        RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeDecorationSpawnerSystem runtimeDecorations)
+    {
+        if (Time.frameCount < _nextLoadingGateDiagnosticFrame)
+            return;
+
+        _nextLoadingGateDiagnosticFrame = Time.frameCount + LoadingGateDiagnosticIntervalFrames;
+
+        bool playRequested = runtimeGameplayStateSystem.PlayRequested;
+        string cityState = runtimeCity == null
+            ? "null"
+            : $"spawned={(runtimeCity.HasSpawned ? 1 : 0)} generating={(runtimeCity.IsGenerating ? 1 : 0)} spawnOnStart={(runtimeCity.SpawnOnStartEnabled ? 1 : 0)}";
+        string blockerState = runtimeGridBlockers == null
+            ? "null"
+            : $"spawned={(runtimeGridBlockers.HasSpawned ? 1 : 0)}";
+        string decorationState = runtimeDecorations == null
+            ? "null"
+            : $"spawned={(runtimeDecorations.HasSpawned ? 1 : 0)}";
+
+        GetInitialSpawnCounts(out int spawnConfigs, out int spawnInitialized, out int spawnProgress);
+
+        Debug.Log(
+            $"[LoadingGate] waiting frame={Time.frameCount} gameplayInitialized={(gameplayInitialized ? 1 : 0)} " +
+            $"playRequested={(playRequested ? 1 : 0)} city={cityState} blockers={blockerState} decorations={decorationState} " +
+            $"initialSpawn=configs:{spawnConfigs},initialized:{spawnInitialized},progress:{spawnProgress}");
+    }
+
+    private static void GetInitialSpawnCounts(
+        out int configCount,
+        out int initializedCount,
+        out int progressCount)
+    {
+        configCount = 0;
+        initializedCount = 0;
+        progressCount = 0;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return;
+
+        EntityManager em = world.EntityManager;
+        EntityQuery configQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+        EntityQuery initializedQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
+            ComponentType.ReadOnly<InitialUnitsSpawnInitialized>());
+        EntityQuery progressQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>(),
+            ComponentType.ReadOnly<InitialUnitsSpawnProgress>());
+
+        configCount = configQuery.CalculateEntityCount();
+        initializedCount = initializedQuery.CalculateEntityCount();
+        progressCount = progressQuery.CalculateEntityCount();
+
+        configQuery.Dispose();
+        initializedQuery.Dispose();
+        progressQuery.Dispose();
     }
 }

@@ -317,6 +317,7 @@ internal sealed class BuildingGameplayCompositionSystem
             source.BuildingDefinitionSystem,
             source.BuildingPlacementPreviewSystem,
             source.BuildingRuntimeObjectSystem,
+            source.UnitPathfindingPendingStateReadSystem,
             () => source.BuildingPlacementCommandSystem.ExitBuildMode(CreatePlacementCommandContext(source, interactionContext, markerPropertyBlock)));
     }
 
@@ -383,6 +384,7 @@ internal sealed class BuildingGameplayCompositionSystem
             value => source.BuildingSpawnSystem.BuildingSpawnRandomState = value,
             GameRuntimeStats.RecordOilExtracted,
             GameRuntimeStats.RecordFuelProduced,
+            source.UnitPathfindingPendingStateReadSystem.HasPendingPathJob,
             OilBarrelsPerFuelBarrel);
     }
 
@@ -840,7 +842,7 @@ internal sealed class BuildingGameplayCompositionSystem
         BuildingGameplayCompositionSourceSystem source)
     {
         return source.BuildingSelectionClickSystem.CreateContext(new BuildingSelectionClickSystem.Source(
-            () => UnitPathfindingSystem.HasPendingPathJob,
+            source.UnitPathfindingPendingStateReadSystem.HasPendingPathJob,
             (out GridConfig grid) => TryGetGridForSelection(source, out grid),
             (Vector2 screenPosition, GridConfig grid, out Vector2Int cell) => TryGetGridCell(source, screenPosition, grid, out cell),
             (screenPosition, cell) => source.BuildingSelectionSystem.HandleBuildingSelectionClick(

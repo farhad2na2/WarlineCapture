@@ -18,6 +18,12 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const string CaptureRoot = "Design/AgentReports/Captures/GeneratedScenes/GameTerrain3_Island2048";
     private const string LayoutJsonPath = DataRoot + "/game_terrain3_island2048_layout.json";
     private const string ReportPath = "Design/AgentReports/2026-05-25_gameplay_game-terrain3-island2048-builder.md";
+    private const string MapPackRoot = "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01";
+    private const string BaseVisualPath = MapPackRoot + "/base_visual.png";
+    private const string SurfaceMaterialMaskPath = MapPackRoot + "/surface_material_mask.png";
+    private const string TreeDensityMaskPath = MapPackRoot + "/tree_density_mask.png";
+    private const string RockDensityMaskPath = MapPackRoot + "/rock_density_mask.png";
+    private const string HeightMaskPath = MapPackRoot + "/height_mask.png";
     private const string GrassGreenMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_01_A.mat";
     private const string DirtMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_02_A.mat";
     private const string GrassDarkMaterialPath = "Assets/Synty/PolygonBattleRoyale/Materials/PolygonBattleRoyale_03_A.mat";
@@ -37,15 +43,27 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
     private const float ShoreGroundScaleXZ = 1.45f;
     private const float DetailGrassScaleXZ = 0.95f;
     private const float BeachSurfaceScaleXZ = 2.5f;
+    private const int MapGridSize = 2024;
+    private const float MapGridMaxCoordinate = MapGridSize - 1f;
+    private const int DensityMediumThreshold = 96;
+    private const int DensityDenseThreshold = 176;
+    private const int HeightHighThreshold = 208;
 
     private static readonly List<SourcePiece> BeachPieces = new();
     private static readonly List<SourcePiece> GroundPieces = new();
     private static readonly List<SourcePiece> DetailGrassPieces = new();
     private static readonly List<PlacedPiece> PlacedPieces = new();
     private static readonly HashSet<string> UniquePrefabPaths = new(StringComparer.Ordinal);
+    private static readonly ReserveZoneSpec[] ReserveZoneSpecs =
+    {
+        new("CityReserve", 520, 720, 720, 560),
+        new("NorthwestBaseReserve", 190, 1430, 430, 360),
+        new("SoutheastBaseReserve", 1410, 250, 430, 360)
+    };
     private static Material GrassGreenMaterial;
     private static Material DirtMaterial;
     private static Material GrassDarkMaterial;
+    private static SurfaceReferenceMap SurfaceReference;
 
     private enum SourcePieceRole
     {
@@ -61,6 +79,16 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         Dirt,
         GrassDark,
         BeachSand
+    }
+
+    private enum SurfaceReferenceClass
+    {
+        GreenGrass,
+        DarkGrass,
+        Dirt,
+        RockMountain,
+        ForestCanopy,
+        ReserveClear
     }
 
     private readonly struct SourcePiece
@@ -101,6 +129,31 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         }
     }
 
+    private readonly struct ReserveZoneSpec
+    {
+        public readonly string Id;
+        public readonly int XMin;
+        public readonly int ZMin;
+        public readonly int Width;
+        public readonly int Height;
+
+        public ReserveZoneSpec(string id, int xMin, int zMin, int width, int height)
+        {
+            Id = id;
+            XMin = xMin;
+            ZMin = zMin;
+            Width = width;
+            Height = height;
+        }
+
+        public bool IsValid => !string.IsNullOrEmpty(Id);
+
+        public bool Contains(int gridX, int gridZ)
+        {
+            return gridX >= XMin && gridX < XMin + Width && gridZ >= ZMin && gridZ < ZMin + Height;
+        }
+    }
+
     [MenuItem("WarlineCapture/Design/Build Game Terrain4 Island 2048")]
     public static void BuildScene()
     {
@@ -109,12 +162,14 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         DetailGrassPieces.Clear();
         PlacedPieces.Clear();
         UniquePrefabPaths.Clear();
+        SurfaceReference = null;
 
         Directory.CreateDirectory(ProjectPath(DataRoot));
         Directory.CreateDirectory(ProjectPath(Path.GetDirectoryName(ReportPath)));
 
         CollectSourcePieces();
         LoadSurfaceMaterials();
+        SurfaceReference = SurfaceReferenceMap.Load();
         if (BeachPieces.Count == 0 || GroundPieces.Count == 0)
             throw new InvalidOperationException("Game_Terrain3 island source pieces were not found. Expected beach and ground prefab instances in " + SourceScenePath);
 
@@ -558,15 +613,20 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             float rowOffset = row % 2 == 0 ? 0f : DetailGrassSpacing * 0.5f;
             for (float x = -DetailGrassHalfExtent + rowOffset; x <= DetailGrassHalfExtent; x += DetailGrassSpacing)
             {
-                if (Hash01(index, row, 307) < 0.46f)
+                float jx = (Hash01(index, row, 311) - 0.5f) * 42f;
+                float jz = (Hash01(index, row, 313) - 0.5f) * 42f;
+                Vector2 p = new(x + jx, z + jz);
+                SurfaceReferenceClass surfaceClass = SurfaceReferenceClass.GreenGrass;
+                if (SurfaceReference != null)
+                    surfaceClass = SurfaceReference.ClassifyWorld(p);
+
+                float keepChance = DetailGrassKeepChance(surfaceClass, p, index, row);
+                if (Hash01(index, row, 307) > keepChance)
                 {
                     index++;
                     continue;
                 }
 
-                float jx = (Hash01(index, row, 311) - 0.5f) * 42f;
-                float jz = (Hash01(index, row, 313) - 0.5f) * 42f;
-                Vector2 p = new(x + jx, z + jz);
                 if (!EvaluateIsland(p, out float depth, out _) || depth < 0.24f)
                 {
                     index++;
@@ -667,16 +727,49 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         if (prefix.StartsWith("GroundShore", StringComparison.Ordinal) || depth < 0.16f)
             return SurfaceMaterialRole.GrassGreen;
 
+        SurfaceReferenceClass referenceClass = SurfaceReference != null
+            ? SurfaceReference.ClassifyWorld(p)
+            : SurfaceReferenceClass.GreenGrass;
+
         float dirtNoise = ValueNoise01(p, 210f, 701);
         float darkGrassNoise = ValueNoise01(p + new Vector2(83f, -57f), 165f, 709);
         float smallBreakup = ValueNoise01(p + new Vector2(-41f, 119f), 92f, 719);
 
-        if (depth > 0.24f && dirtNoise > 0.64f && smallBreakup > 0.42f)
+        if (referenceClass == SurfaceReferenceClass.ReserveClear)
+            return dirtNoise > 0.74f ? SurfaceMaterialRole.Dirt : SurfaceMaterialRole.GrassGreen;
+        if (referenceClass == SurfaceReferenceClass.Dirt)
+            return smallBreakup > 0.28f ? SurfaceMaterialRole.Dirt : SurfaceMaterialRole.GrassGreen;
+        if (referenceClass == SurfaceReferenceClass.RockMountain)
+            return smallBreakup > 0.32f ? SurfaceMaterialRole.Dirt : SurfaceMaterialRole.GrassDark;
+        if (referenceClass == SurfaceReferenceClass.ForestCanopy)
+            return darkGrassNoise > 0.34f ? SurfaceMaterialRole.GrassDark : SurfaceMaterialRole.GrassGreen;
+        if (referenceClass == SurfaceReferenceClass.DarkGrass)
+            return dirtNoise > 0.78f ? SurfaceMaterialRole.Dirt : SurfaceMaterialRole.GrassDark;
+
+        if (depth > 0.24f && dirtNoise > 0.78f && smallBreakup > 0.62f)
             return SurfaceMaterialRole.Dirt;
-        if (depth > 0.18f && darkGrassNoise > 0.61f)
+        if (depth > 0.18f && darkGrassNoise > 0.78f)
             return SurfaceMaterialRole.GrassDark;
 
         return SurfaceMaterialRole.GrassGreen;
+    }
+
+    private static float DetailGrassKeepChance(SurfaceReferenceClass surfaceClass, Vector2 position, int index, int row)
+    {
+        if (ReserveAtWorld(position).IsValid)
+            return 0.05f;
+
+        float breakup = ValueNoise01(position + new Vector2(37f, -91f), 135f, 733);
+        return surfaceClass switch
+        {
+            SurfaceReferenceClass.GreenGrass => Mathf.Lerp(0.54f, 0.78f, breakup),
+            SurfaceReferenceClass.DarkGrass => Mathf.Lerp(0.62f, 0.86f, breakup),
+            SurfaceReferenceClass.ForestCanopy => Mathf.Lerp(0.34f, 0.58f, breakup),
+            SurfaceReferenceClass.RockMountain => Mathf.Lerp(0.08f, 0.22f, breakup),
+            SurfaceReferenceClass.Dirt => Mathf.Lerp(0.04f, 0.16f, breakup),
+            SurfaceReferenceClass.ReserveClear => 0.04f,
+            _ => 0.46f
+        };
     }
 
     private static void ApplySurfaceMaterial(GameObject instance, SurfaceMaterialRole materialRole)
@@ -704,6 +797,24 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             renderer.sharedMaterials = materials;
             EditorUtility.SetDirty(renderer);
         }
+    }
+
+    private static ReserveZoneSpec ReserveAtWorld(Vector2 position)
+    {
+        int gridX = WorldToGrid(position.x);
+        int gridZ = WorldToGrid(position.y);
+        foreach (ReserveZoneSpec zone in ReserveZoneSpecs)
+        {
+            if (zone.Contains(gridX, gridZ))
+                return zone;
+        }
+
+        return default;
+    }
+
+    private static int WorldToGrid(float value)
+    {
+        return Mathf.Clamp(Mathf.RoundToInt(value + MapGridMaxCoordinate * 0.5f), 0, MapGridSize - 1);
     }
 
     private static bool EvaluateIsland(Vector2 p, out float depth, out float edgeNoise)
@@ -999,6 +1110,142 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
         report.AppendLine();
         report.AppendLine("Runtime transfer note: move the source-prefab collection into a prefab catalog, port `EvaluateIsland`, `BoundaryPoint`, and the placement loops to runtime, and instantiate pooled versions of the same source prefab ids.");
         File.WriteAllText(ProjectPath(ReportPath), report.ToString());
+    }
+
+    private sealed class SurfaceReferenceMap
+    {
+        private readonly Color32[] basePixels;
+        private readonly int baseWidth;
+        private readonly int baseHeight;
+        private readonly int[] surfaceMask;
+        private readonly int[] treeMask;
+        private readonly int[] rockMask;
+        private readonly int[] heightMask;
+
+        private SurfaceReferenceMap(Color32[] basePixels, int baseWidth, int baseHeight, int[] surfaceMask, int[] treeMask, int[] rockMask, int[] heightMask)
+        {
+            this.basePixels = basePixels;
+            this.baseWidth = baseWidth;
+            this.baseHeight = baseHeight;
+            this.surfaceMask = surfaceMask;
+            this.treeMask = treeMask;
+            this.rockMask = rockMask;
+            this.heightMask = heightMask;
+        }
+
+        public static SurfaceReferenceMap Load()
+        {
+            Color32[] basePixels = LoadPixels(BaseVisualPath, out int baseWidth, out int baseHeight);
+            int[] surface = File.Exists(ProjectPath(SurfaceMaterialMaskPath)) ? LoadLuminanceGrid(SurfaceMaterialMaskPath) : null;
+            int[] tree = LoadLuminanceGrid(TreeDensityMaskPath);
+            int[] rock = LoadLuminanceGrid(RockDensityMaskPath);
+            int[] height = LoadLuminanceGrid(HeightMaskPath);
+            return new SurfaceReferenceMap(basePixels, baseWidth, baseHeight, surface, tree, rock, height);
+        }
+
+        public SurfaceReferenceClass ClassifyWorld(Vector2 position)
+        {
+            int gridX = WorldToGrid(position.x);
+            int gridZ = WorldToGrid(position.y);
+            foreach (ReserveZoneSpec reserve in ReserveZoneSpecs)
+            {
+                if (reserve.Contains(gridX, gridZ))
+                    return SurfaceReferenceClass.ReserveClear;
+            }
+
+            int index = gridZ * MapGridSize + gridX;
+            if (surfaceMask != null)
+                return ClassifySurfaceMask(surfaceMask[index]);
+
+            int treeValue = treeMask[index];
+            int rockValue = rockMask[index];
+            int heightValue = heightMask[index];
+            Color32 color = SampleBaseColor(gridX, gridZ);
+
+            if (heightValue >= HeightHighThreshold || rockValue >= DensityDenseThreshold)
+                return SurfaceReferenceClass.RockMountain;
+            if (treeValue >= DensityDenseThreshold)
+                return SurfaceReferenceClass.ForestCanopy;
+            if (treeValue >= DensityMediumThreshold)
+                return SurfaceReferenceClass.DarkGrass;
+
+            float luminance = Luminance01(color);
+            bool warm = color.r >= color.g && color.g >= color.b * 0.72f;
+            bool mutedGreen = color.g >= color.r * 0.82f && color.g >= color.b * 0.82f;
+            if (warm && luminance >= 0.36f)
+                return SurfaceReferenceClass.Dirt;
+            if (mutedGreen && luminance < 0.32f)
+                return SurfaceReferenceClass.DarkGrass;
+            if (luminance < 0.25f)
+                return SurfaceReferenceClass.ForestCanopy;
+
+            return SurfaceReferenceClass.GreenGrass;
+        }
+
+        private Color32 SampleBaseColor(int gridX, int gridZ)
+        {
+            int pixelX = Mathf.Clamp(Mathf.RoundToInt(gridX / MapGridMaxCoordinate * (baseWidth - 1)), 0, baseWidth - 1);
+            int pixelY = Mathf.Clamp(Mathf.RoundToInt((1f - gridZ / MapGridMaxCoordinate) * (baseHeight - 1)), 0, baseHeight - 1);
+            return basePixels[pixelY * baseWidth + pixelX];
+        }
+
+        private static SurfaceReferenceClass ClassifySurfaceMask(int value)
+        {
+            if (value < 43)
+                return SurfaceReferenceClass.GreenGrass;
+            if (value < 86)
+                return SurfaceReferenceClass.DarkGrass;
+            if (value < 129)
+                return SurfaceReferenceClass.Dirt;
+            if (value < 172)
+                return SurfaceReferenceClass.RockMountain;
+            if (value < 215)
+                return SurfaceReferenceClass.ForestCanopy;
+            return SurfaceReferenceClass.ReserveClear;
+        }
+
+        private static float Luminance01(Color32 color)
+        {
+            return (color.r * 0.2126f + color.g * 0.7152f + color.b * 0.0722f) / 255f;
+        }
+
+        private static Color32[] LoadPixels(string path, out int width, out int height)
+        {
+            Texture2D texture = new(2, 2, TextureFormat.RGBA32, false);
+            try
+            {
+                if (!ImageConversion.LoadImage(texture, File.ReadAllBytes(ProjectPath(path))))
+                    throw new InvalidOperationException("Unable to decode terrain reference image: " + path);
+
+                width = texture.width;
+                height = texture.height;
+                return texture.GetPixels32();
+            }
+            finally
+            {
+                UnityEngine.Object.DestroyImmediate(texture);
+            }
+        }
+
+        private static int[] LoadLuminanceGrid(string path)
+        {
+            Color32[] pixels = LoadPixels(path, out int width, out int height);
+            int[] values = new int[MapGridSize * MapGridSize];
+            for (int gridZ = 0; gridZ < MapGridSize; gridZ++)
+            {
+                int pixelY = Mathf.Clamp(Mathf.RoundToInt((1f - gridZ / MapGridMaxCoordinate) * (height - 1)), 0, height - 1);
+                int rowOffset = gridZ * MapGridSize;
+                int pixelRow = pixelY * width;
+                for (int gridX = 0; gridX < MapGridSize; gridX++)
+                {
+                    int pixelX = Mathf.Clamp(Mathf.RoundToInt(gridX / MapGridMaxCoordinate * (width - 1)), 0, width - 1);
+                    Color32 color = pixels[pixelRow + pixelX];
+                    values[rowOffset + gridX] = Mathf.Clamp(Mathf.RoundToInt(color.r * 0.2126f + color.g * 0.7152f + color.b * 0.0722f), 0, 255);
+                }
+            }
+
+            return values;
+        }
     }
 
     private static int CountMaterialRole(SurfaceMaterialRole role)

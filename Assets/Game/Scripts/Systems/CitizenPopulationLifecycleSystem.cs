@@ -27,6 +27,7 @@ internal sealed class CitizenPopulationLifecycleSystem
         Action updateLogicalCitizens,
         Action syncVisibleCitizens,
         Action<bool> recalculateTotals,
+        Func<bool> hasPendingPathJob,
         float now)
     {
         CitizenPopulationDiagnosticSystem.FrameTimings timings = diagnosticSystem.BeginFrame();
@@ -38,7 +39,7 @@ internal sealed class CitizenPopulationLifecycleSystem
             bool refreshedBuildings = buildingReadSystem.RefreshRuntimeBuildingListsIfDue(now);
             diagnosticSystem.MarkBuildings(ref timings);
 
-            if (UnitPathfindingSystem.HasPendingPathJob)
+            if (hasPendingPathJob != null && hasPendingPathJob())
             {
                 diagnosticSystem.MarkSkippedForPathfinding(ref timings);
                 RecalculateTotalsIfDue(syncSummaryEntity: false, now, recalculateTotals);

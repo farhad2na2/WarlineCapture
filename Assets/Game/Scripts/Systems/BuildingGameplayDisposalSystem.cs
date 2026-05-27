@@ -10,6 +10,7 @@ internal sealed class BuildingGameplayDisposalSystem
         public readonly BuildingDefinitionSystem DefinitionSystem;
         public readonly BuildingPlacementPreviewSystem PlacementPreviewSystem;
         public readonly BuildingRuntimeObjectSystem RuntimeObjectSystem;
+        public readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem;
         public readonly Action ExitBuildMode;
 
         public Source(
@@ -18,6 +19,7 @@ internal sealed class BuildingGameplayDisposalSystem
             BuildingDefinitionSystem definitionSystem,
             BuildingPlacementPreviewSystem placementPreviewSystem,
             BuildingRuntimeObjectSystem runtimeObjectSystem,
+            UnitPathfindingPendingStateReadSystem unitPathfindingPendingStateReadSystem,
             Action exitBuildMode)
         {
             RuntimeBuildingSystem = runtimeBuildingSystem;
@@ -25,6 +27,7 @@ internal sealed class BuildingGameplayDisposalSystem
             DefinitionSystem = definitionSystem;
             PlacementPreviewSystem = placementPreviewSystem;
             RuntimeObjectSystem = runtimeObjectSystem;
+            UnitPathfindingPendingStateReadSystem = unitPathfindingPendingStateReadSystem;
             ExitBuildMode = exitBuildMode;
         }
     }
@@ -59,6 +62,7 @@ internal sealed class BuildingGameplayDisposalSystem
             source.DefinitionSystem,
             source.PlacementPreviewSystem,
             target => source.RuntimeObjectSystem?.DestroyRuntimeObject(target));
+        source.UnitPathfindingPendingStateReadSystem?.Dispose();
     }
 
     private static bool TryGetEntityManager(out EntityManager entityManager)

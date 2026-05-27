@@ -91,6 +91,26 @@ Examples:
 
 When changing a hot system, validation should show that the changed scenario stays within budget or document the blocker.
 
+## Pathfinding Performance Scenario
+
+`UnitPathfindingSystem` and its extracted pathfinding boundaries are hot-path gameplay code. Refactors in this area must preserve the current request budgets, scheduling semantics, allocator lifetimes, traversal costs, and job data layout unless a focused performance report explicitly approves the change.
+
+Focused pathfinding validation should cover:
+
+- Manual group move with enough selected units to exercise request batching.
+- Long-distance move that exercises segmentation and hierarchical waypoint planning.
+- Mixed infantry and vehicle-like footprint requests when the touched code affects placement or traversal policy.
+- Steady-state frames after warmup, excluding scene load/import spikes.
+
+Required pathfinding metrics:
+
+- Frame time average, p95, p99, and max after warmup.
+- `UnitPathfindingSystem`, `UnitPathfindingScheduleSystem`, and `UnitPathfindingApplySystem` p95, p99, and max timing when available.
+- Request count, adaptive request budget, pending job wall time, completed/retried/abandoned counts, and long-distance/segmented request counts when diagnostics are enabled for validation.
+- GC allocation after warmup.
+
+Pathfinding hot-path code must not add direct `Debug.Log*`, per-frame string formatting, LINQ, scene searches, or new mutable static runtime state. Diagnostic messages must go through the ECS diagnostic event boundary and remain disabled unless the validation/debug configuration explicitly enables them.
+
 ## Regression Workflow
 
 1. Establish or reuse a focused scenario.

@@ -29,10 +29,10 @@ Counts:
 - Source ground prefab instances: 46
 - Source detail grass prefab instances: 135
 - Unique source prefab assets: 8
-- Placed prefab instances: 22611
-- Green material placements: 12422
-- Dirt material placements: 2566
-- Dark grass material placements: 3102
+- Placed prefab instances: 22490
+- Green material placements: 8024
+- Dirt material placements: 6659
+- Dark grass material placements: 3286
 - Beach material placements: 4521
 - Ground fill spacing: 18
 - Gameplay map target extent: 2023

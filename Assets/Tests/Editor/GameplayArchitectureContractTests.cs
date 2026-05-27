@@ -9,13 +9,42 @@ using NUnit.Framework;
 public sealed class GameplayArchitectureContractTests
 {
     private const string ContractPath = "Design/Architecture/gameplay_solid_ecs_contract.md";
+    private const string PerformanceContractPath = "Design/Architecture/performance_regression_contract.md";
     private const string GameBootstrapAuditPath = "Design/Architecture/gamebootstrap_responsibility_audit.md";
     private const string GameBootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
     private const string RuntimeCityCompositionPath = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs";
+    private const string UnitPathfindingRoadmapPath = "Design/Architecture/unit_pathfinding_system_refactor_roadmap.md";
+    private const string UnitPathfindingSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs";
+    private const string UnitPathfindingDiagnosticSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticSystem.cs";
+    private const string UnitPathfindingBudgetSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingBudgetSystem.cs";
+    private const string UnitPathfindingPendingStateSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingPendingStateSystem.cs";
+    private const string UnitPathfindingQuerySystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingQuerySystem.cs";
+    private const string UnitPathRequestBufferSystemPath = "Assets/Game/Scripts/Systems/UnitPathRequestBufferSystem.cs";
+    private const string UnitPathIgnoredOccupancySystemPath = "Assets/Game/Scripts/Systems/UnitPathIgnoredOccupancySystem.cs";
+    private const string UnitPathRequestCollectionSystemPath = "Assets/Game/Scripts/Systems/UnitPathRequestCollectionSystem.cs";
+    private const string UnitPathLiveUnitSnapshotSystemPath = "Assets/Game/Scripts/Systems/UnitPathLiveUnitSnapshotSystem.cs";
+    private const string UnitPathScratchWorkspaceSystemPath = "Assets/Game/Scripts/Systems/UnitPathScratchWorkspaceSystem.cs";
+    private const string UnitPathReservedGoalSystemPath = "Assets/Game/Scripts/Systems/UnitPathReservedGoalSystem.cs";
+    private const string UnitPathCoarseWorkspaceSystemPath = "Assets/Game/Scripts/Systems/UnitPathCoarseWorkspaceSystem.cs";
+    private const string UnitPathSegmentationSystemPath = "Assets/Game/Scripts/Systems/UnitPathSegmentationSystem.cs";
+    private const string UnitHierarchicalPathSystemPath = "Assets/Game/Scripts/Systems/UnitHierarchicalPathSystem.cs";
+    private const string UnitPathGoalAssignmentSystemPath = "Assets/Game/Scripts/Systems/UnitPathGoalAssignmentSystem.cs";
+    private const string UnitPathPlacementValidationSystemPath = "Assets/Game/Scripts/Systems/UnitPathPlacementValidationSystem.cs";
+    private const string UnitPathResultApplySystemPath = "Assets/Game/Scripts/Systems/UnitPathResultApplySystem.cs";
+    private const string UnitPathRetrySystemPath = "Assets/Game/Scripts/Systems/UnitPathRetrySystem.cs";
+    private const string UnitPathValidationMetricsSystemPath = "Assets/Game/Scripts/Systems/UnitPathValidationMetricsSystem.cs";
+    private const string UnitPathfindBatchJobPath = "Assets/Game/Scripts/Systems/UnitPathfindBatchJob.cs";
+    private const string UnitPathfindingScheduleSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingScheduleSystem.cs";
+    private const string UnitPathfindingApplySystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingApplySystem.cs";
+    private const string UnitPathfindingDiagnosticLogComponentsPath = "Assets/Game/Scripts/Components/UnitPathfindingDiagnosticLogComponents.cs";
+    private const string UnitPathfindingDiagnosticLogFlushSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticLogFlushSystem.cs";
+    private const string UnitPathfindingFocusedPerformanceValidationPath = "Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs";
     private const string ScriptsRoot = "Assets/Game/Scripts";
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
     private const int LegacyGameBootstrapDirectLogCallCount = 7;
+    private const int UnitPathfindingBaselineLineCount = 2784;
+    private const int UnitPathfindingDirectDebugLogCallBaseline = 7;
 
     private static readonly string[] LegacyAILogCallFiles = Array.Empty<string>();
 
@@ -221,6 +250,72 @@ public sealed class GameplayArchitectureContractTests
         }
     }
 
+    public static void RunUnitPathfindingArchitectureBatchValidation()
+    {
+        string[] methodNames =
+        {
+            nameof(UnitPathfindingRefactorRoadmapMustRecordBaselineAndTargetBoundaries),
+            nameof(UnitPathfindingSystemBaselineMustStayExplicitUntilExtracted),
+            nameof(UnitPathfindingStaticRuntimeStateDebtMustNotSpread),
+            nameof(UnitPathfindingDiagnosticsMustLiveInDiagnosticSystem),
+            nameof(UnitPathfindingBudgetPolicyMustLiveInBudgetSystem),
+            nameof(UnitPathfindingPendingStateMustPublishEcsReadModel),
+            nameof(UnitPathfindingQueriesMustLiveInQuerySystem),
+            nameof(UnitPathRequestBuffersMustLiveInRequestBufferSystem),
+            nameof(UnitPathIgnoredOccupancyMustLiveInIgnoredOccupancySystem),
+            nameof(UnitPathRequestCollectionMustLiveInRequestCollectionSystem),
+            nameof(UnitPathLiveUnitSnapshotMustLiveInSnapshotSystem),
+            nameof(UnitPathScratchWorkspaceMustLiveInScratchWorkspaceSystem),
+            nameof(UnitPathReservedGoalsMustLiveInReservedGoalSystem),
+            nameof(UnitPathCoarseWorkspaceMustLiveInCoarseWorkspaceSystem),
+            nameof(UnitPathSegmentationPolicyMustLiveInSegmentationSystem),
+            nameof(UnitHierarchicalPathPlanningMustLiveInHierarchicalPathSystem),
+            nameof(UnitPathGoalAssignmentMustLiveInGoalAssignmentSystem),
+            nameof(UnitPathPlacementValidationMustLiveInPlacementValidationSystem),
+            nameof(UnitPathResultApplicationMustLiveInResultApplySystem),
+            nameof(UnitPathRetryPolicyMustLiveInRetrySystem),
+            nameof(UnitPathValidationMetricsMustLiveInValidationMetricsSystem),
+            nameof(UnitPathfindBatchJobMustLiveInDedicatedJobFile),
+            nameof(UnitPathfindBatchJobMustKeepFlatFieldsUntilProfiled),
+            nameof(UnitPathfindBatchJobMustKeepTraversalCostsJobLocalUntilProfiled),
+            nameof(UnitPathfindingSchedulingMustLiveInScheduleSystem),
+            nameof(UnitPathfindingApplyPhaseMustLiveInApplySystem),
+            nameof(UnitPathfindingCoordinatorMustStayNarrow),
+            nameof(UnitPathfindingBuildingPendingReadersMustUseEcsReadModel),
+            nameof(UnitPathfindingCitizenPendingReadersMustUseEcsReadModel),
+            nameof(UnitPathfindingSelectionPendingReadersMustUseEcsReadModel),
+            nameof(UnitPathfindingStaticPendingPropertyMustStayDeleted),
+            nameof(UnitPathfindingDiagnosticsMustUseEcsDiagnosticEvents),
+            nameof(UnitPathfindingPerformanceContractMustProtectHotPath),
+            nameof(UnitPathfindingCompatibilityAndFileOwnershipAuditMustStayClean),
+            nameof(UnitPathfindingFinalValidationGateMustHaveFocusedSmoke)
+        };
+
+        try
+        {
+            var tests = new GameplayArchitectureContractTests();
+            Type testType = typeof(GameplayArchitectureContractTests);
+            for (int i = 0; i < methodNames.Length; i++)
+            {
+                System.Reflection.MethodInfo method = testType.GetMethod(methodNames[i]);
+                Assert.NotNull(method, $"Missing unit pathfinding architecture validation method {methodNames[i]}.");
+                method.Invoke(tests, null);
+            }
+
+            UnityEngine.Debug.Log($"[UnitPathfindingArchitectureValidation] result=Passed methods={methodNames.Length}");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Exception failure = ex is System.Reflection.TargetInvocationException && ex.InnerException != null
+                ? ex.InnerException
+                : ex;
+            UnityEngine.Debug.LogException(failure);
+            UnityEngine.Debug.LogError("[UnitPathfindingArchitectureValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     private static readonly string[] HotAILogCallFiles = Array.Empty<string>();
 
     private static readonly string[] LegacyStaticLogFacadeFiles =
@@ -338,6 +433,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
         StringAssert.Contains("BuildingGameplaySystem refactor is tracked in `Design/Architecture/building_gameplay_system_refactor_roadmap.md`", contract);
         StringAssert.Contains("CitizenPopulationSystem refactor is tracked in `Design/Architecture/citizen_population_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("UnitPathfindingSystem refactor is tracked in `Design/Architecture/unit_pathfinding_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("Pathfinding is a hot gameplay system", contract);
+        StringAssert.Contains("`UnitPathfindingSystem.HasPendingPathJob` is temporary static runtime-state debt", contract);
+        StringAssert.Contains("The remaining `UnitPathfindingSystem` may stay only as a narrow ECS schedule/apply coordinator", contract);
         StringAssert.Contains("The final target is deletion of `CitizenPopulationSystem.cs`", contract);
         StringAssert.Contains("Do not replace `CitizenPopulationSystem` with `CitizenPopulationManager`, `CitizenPopulationFacade`, `CitizenPopulationController`, or any other broad managed shell", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
@@ -1984,6 +2083,1429 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Road-to-ECS projection:", roadmap);
         StringAssert.Contains("Legacy building compatibility:", roadmap);
         StringAssert.Contains("Static state compatibility:", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingRefactorRoadmapMustRecordBaselineAndTargetBoundaries()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingRoadmapPath), "UnitPathfindingSystem refactor must keep a dedicated roadmap.");
+
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+
+        StringAssert.Contains("Target file: `Assets/Game/Scripts/Systems/UnitPathfindingSystem.cs`", roadmap);
+        StringAssert.Contains("Current size at roadmap creation: 2784 lines.", roadmap);
+        StringAssert.Contains("The current pathfinding performance is acceptable", roadmap);
+        StringAssert.Contains("Do not change constants, traversal costs, request budgets", roadmap);
+        StringAssert.Contains("1. Complete: Add roadmap and baseline architecture guard", roadmap);
+        StringAssert.Contains("3. Complete: Freeze public/static surface", roadmap);
+        StringAssert.Contains("4. Complete: Extract diagnostics formatting into `UnitPathfindingDiagnosticSystem`", roadmap);
+        StringAssert.Contains("5. Complete: Extract adaptive request budgeting into `UnitPathfindingBudgetSystem`", roadmap);
+        StringAssert.Contains("6. Complete: Extract pending-job status publication into `UnitPathfindingPendingStateSystem`", roadmap);
+        StringAssert.Contains("7. Complete: Extract query creation into `UnitPathfindingQuerySystem`", roadmap);
+        StringAssert.Contains("8. Complete: Extract request buffers into `UnitPathRequestBufferSystem`", roadmap);
+        StringAssert.Contains("9. Complete: Extract ignored occupancy collection into `UnitPathIgnoredOccupancySystem`", roadmap);
+        StringAssert.Contains("10. Complete: Extract request collection into `UnitPathRequestCollectionSystem`", roadmap);
+        StringAssert.Contains("11. Complete: Extract live-unit snapshot ownership into `UnitPathLiveUnitSnapshotSystem`", roadmap);
+        StringAssert.Contains("12. Complete: Extract A* scratch workspace into `UnitPathScratchWorkspaceSystem`", roadmap);
+        StringAssert.Contains("13. Complete: Extract reserved-goal workspace into `UnitPathReservedGoalSystem`", roadmap);
+        StringAssert.Contains("14. Complete: Extract hierarchical coarse workspace into `UnitPathCoarseWorkspaceSystem`", roadmap);
+        StringAssert.Contains("15. Complete: Extract movement segmentation policy into `UnitPathSegmentationSystem`", roadmap);
+        StringAssert.Contains("16. Complete: Extract hierarchical waypoint planning into `UnitHierarchicalPathSystem`", roadmap);
+        StringAssert.Contains("17. Complete: Extract nearest free goal assignment into `UnitPathGoalAssignmentSystem`", roadmap);
+        StringAssert.Contains("18. Complete: Extract placement validity helpers into `UnitPathPlacementValidationSystem`", roadmap);
+        StringAssert.Contains("19. Complete: Extract path result application into `UnitPathResultApplySystem`", roadmap);
+        StringAssert.Contains("20. Complete: Extract retry/abandon policy into `UnitPathRetrySystem`", roadmap);
+        StringAssert.Contains("21. Complete: Extract validation counters into `UnitPathValidationMetricsSystem`", roadmap);
+        StringAssert.Contains("22. Complete: Move `PathfindBatchJob` into `UnitPathfindBatchJob.cs`", roadmap);
+        StringAssert.Contains("23. Complete: Reject job input/output struct extraction for performance stability", roadmap);
+        StringAssert.Contains("24. Complete: Reject traversal-cost helper extraction without generated-code proof", roadmap);
+        StringAssert.Contains("25. Complete: Extract scheduling phase into `UnitPathfindingScheduleSystem`", roadmap);
+        StringAssert.Contains("26. Complete: Extract apply phase into `UnitPathfindingApplySystem`", roadmap);
+        StringAssert.Contains("27. Complete: Reduce `UnitPathfindingSystem.OnUpdate` to coordinator flow", roadmap);
+        StringAssert.Contains("28. Complete: Migrate building production pending-path reads", roadmap);
+        StringAssert.Contains("29. Complete: Migrate citizen pending-path reads", roadmap);
+        StringAssert.Contains("30. Complete: Migrate selection/building click pending-path reads", roadmap);
+        StringAssert.Contains("31. Complete: Delete `UnitPathfindingSystem.HasPendingPathJob`", roadmap);
+        StringAssert.Contains("32. Complete: Move pathfinding diagnostics to ECS diagnostic events", roadmap);
+        StringAssert.Contains("33. Complete: Add pathfinding performance contract coverage", roadmap);
+        StringAssert.Contains("34. Complete: Compatibility and file ownership audit", roadmap);
+        StringAssert.Contains("Public/Static Surface Inventory Freeze", roadmap);
+        StringAssert.Contains("35. Complete: Final validation gate", roadmap);
+
+        for (int step = 2; step <= 35; step++)
+        {
+            Assert.IsTrue(
+                roadmap.Contains($"{step}. Pending:", StringComparison.Ordinal) ||
+                roadmap.Contains($"{step}. Complete:", StringComparison.Ordinal),
+                $"Unit pathfinding roadmap must keep step {step} tracked as pending or complete.");
+        }
+
+        string[] plannedBoundaryTokens =
+        {
+            "UnitPathfindingDiagnosticSystem",
+            "UnitPathfindingBudgetSystem",
+            "UnitPathfindingPendingStateSystem",
+            "UnitPathfindingQuerySystem",
+            "UnitPathRequestBufferSystem",
+            "UnitPathIgnoredOccupancySystem",
+            "UnitPathRequestCollectionSystem",
+            "UnitPathLiveUnitSnapshotSystem",
+            "UnitPathScratchWorkspaceSystem",
+            "UnitPathReservedGoalSystem",
+            "UnitPathCoarseWorkspaceSystem",
+            "UnitPathSegmentationSystem",
+            "UnitHierarchicalPathSystem",
+            "UnitPathGoalAssignmentSystem",
+            "UnitPathPlacementValidationSystem",
+            "UnitPathResultApplySystem",
+            "UnitPathRetrySystem",
+            "UnitPathValidationMetricsSystem",
+            "UnitPathfindBatchJob.cs",
+            "UnitPathfindingScheduleSystem",
+            "UnitPathfindingApplySystem"
+        };
+
+        foreach (string token in plannedBoundaryTokens)
+            StringAssert.Contains(token, roadmap);
+
+        StringAssert.Contains("UnitPathfindingSystem refactor is tracked in `Design/Architecture/unit_pathfinding_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("Pending path job state must migrate to an ECS singleton/read-model boundary", contract);
+    }
+
+    [Test]
+    public void UnitPathfindingSystemBaselineMustStayExplicitUntilExtracted()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingSystemPath), "UnitPathfindingSystem remains the temporary pathfinding coordinator while the roadmap is incomplete.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        int currentLines = File.ReadLines(UnitPathfindingSystemPath).Count();
+        int directLogCallCount = Regex.Matches(pathfinding, @"Debug\.Log(?:Exception|Warning|Error)?\s*\(").Count;
+
+        Assert.LessOrEqual(
+            currentLines,
+            UnitPathfindingBaselineLineCount,
+            "UnitPathfindingSystem must not grow beyond the pathfinding roadmap baseline without an explicit roadmap/guard update.");
+        Assert.LessOrEqual(
+            directLogCallCount,
+            UnitPathfindingDirectDebugLogCallBaseline,
+            "Do not add direct Debug.Log* calls to UnitPathfindingSystem. Move pathfinding diagnostics into the planned diagnostic boundary.");
+
+        StringAssert.Contains("public partial struct UnitPathfindingSystem : ISystem", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("PathfindBatchJob", StringComparison.Ordinal) ||
+            schedule.Contains("PathfindBatchJob", StringComparison.Ordinal),
+            "The pathfinding batch job must remain part of the pathfinding roadmap surface.");
+        Assert.IsFalse(
+            pathfinding.Contains("public static bool HasPendingPathJob", StringComparison.Ordinal),
+            "UnitPathfindingSystem.HasPendingPathJob must stay deleted after step 31.");
+        StringAssert.Contains("Current Responsibility Inventory", roadmap);
+        StringAssert.Contains("Allowed temporary public/static members:", roadmap);
+        StringAssert.Contains("Replacement: `UnitPathfindingPendingStateComponent` plus `UnitPathfindingPendingStateReadSystem`.", roadmap);
+        StringAssert.Contains("Target owner: `UnitPathPlacementValidationSystem`.", roadmap);
+        StringAssert.Contains("Performance Preservation Rules", roadmap);
+        StringAssert.Contains("Required Validation Gates", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingStaticRuntimeStateDebtMustNotSpread()
+    {
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string[] publicStaticLines = Regex.Matches(pathfinding, @"^\s*public\s+static\s+.+$", RegexOptions.Multiline)
+            .Cast<Match>()
+            .Select(match => match.Value.Trim())
+            .ToArray();
+
+        string[] allowedPublicStaticLines = Array.Empty<string>();
+
+        string[] violations = publicStaticLines
+            .Where(line => !allowedPublicStaticLines.Any(allowed => line.StartsWith(allowed, StringComparison.Ordinal)))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Do not add public static runtime state or commands to UnitPathfindingSystem. Static path helpers must stay pure and explicitly allowed:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+
+        string[] staticPendingJobReaders = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("UnitPathfindingSystem.cs", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("UnitPathfindingSystem.HasPendingPathJob", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        string[] allowedReaders = Array.Empty<string>();
+
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        for (int i = 0; i < allowedReaders.Length; i++)
+            StringAssert.Contains(allowedReaders[i], roadmap);
+
+        string[] newReaders = staticPendingJobReaders
+            .Where(path => !allowedReaders.Contains(path, StringComparer.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            newReaders,
+            "UnitPathfindingSystem.HasPendingPathJob is temporary migration debt. Do not add new readers; migrate callers to the planned ECS pending-state boundary:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, newReaders));
+    }
+
+    [Test]
+    public void UnitPathfindingDiagnosticsMustLiveInDiagnosticSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingDiagnosticSystemPath), "Step 4 extracts UnitPathfindingSystem diagnostics into a narrow diagnostic boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string diagnostics = File.ReadAllText(UnitPathfindingDiagnosticSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.Zero(
+            Regex.Matches(pathfinding, @"Debug\.Log(?:Exception|Warning|Error)?\s*\(").Count,
+            "UnitPathfindingSystem must not emit diagnostics directly after step 4.");
+        Assert.IsFalse(
+            pathfinding.Contains("StringBuilder", StringComparison.Ordinal),
+            "Pathfinding diagnostic string formatting must stay out of UnitPathfindingSystem after step 4.");
+        Assert.IsFalse(
+            pathfinding.Contains("AppendSampleComponentState", StringComparison.Ordinal),
+            "Manual-move sample formatting must stay in UnitPathfindingDiagnosticSystem.");
+
+        StringAssert.Contains("internal struct UnitPathfindingDiagnosticSystem", diagnostics);
+        StringAssert.Contains("LogHierarchicalValidation", diagnostics);
+        StringAssert.Contains("LogFrameFreeze", diagnostics);
+        StringAssert.Contains("LogValidationStart", diagnostics);
+        StringAssert.Contains("LogValidationEnd", diagnostics);
+        StringAssert.Contains("LogAsync", diagnostics);
+        StringAssert.Contains("LogValidationStuck", diagnostics);
+        StringAssert.Contains("BuildManualMoveSamples", diagnostics);
+        StringAssert.Contains("AppendSampleComponentState", diagnostics);
+        StringAssert.Contains("4. Complete: Extract diagnostics formatting into `UnitPathfindingDiagnosticSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingBudgetPolicyMustLiveInBudgetSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingBudgetSystemPath), "Step 5 extracts adaptive request budgeting into a narrow budget boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string budget = File.ReadAllText(UnitPathfindingBudgetSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("UpdateAdaptiveBudget", StringComparison.Ordinal),
+            "Adaptive budget transitions must stay out of UnitPathfindingSystem after step 5.");
+        Assert.IsFalse(
+            pathfinding.Contains("_adaptiveRequestsPerFrame", StringComparison.Ordinal),
+            "Adaptive request budget state must stay in UnitPathfindingBudgetSystem after step 5.");
+        Assert.IsFalse(
+            pathfinding.Contains("_stableOneFrameBatchCount", StringComparison.Ordinal),
+            "Adaptive budget stability counters must stay in UnitPathfindingBudgetSystem after step 5.");
+        Assert.IsFalse(
+            pathfinding.Contains("_pendingBudgetReduced", StringComparison.Ordinal),
+            "Pending-job budget-reduction state must stay in UnitPathfindingBudgetSystem after step 5.");
+
+        StringAssert.Contains("internal struct UnitPathfindingBudgetSystem", budget);
+        StringAssert.Contains("public const int MaxRequestsPerFrame = 32;", budget);
+        StringAssert.Contains("public const int MinRequestsPerFrame = 1;", budget);
+        StringAssert.Contains("private const double TargetPathJobWallSeconds = 0.008d;", budget);
+        StringAssert.Contains("private const double LowPathJobWallSeconds = 0.006d;", budget);
+        StringAssert.Contains("private const double HighPathJobWallSeconds = 0.012d;", budget);
+        StringAssert.Contains("private const int MaxManualInfantryRequestsPerFrame = 4;", budget);
+        StringAssert.Contains("private const int StableManualInfantryBatchesBeforeIncrease = 2;", budget);
+        StringAssert.Contains("private const int StableOneFrameBatchesBeforeIncrease = 3;", budget);
+        StringAssert.Contains("GetCurrentRequestBudget", budget);
+        StringAssert.Contains("ReduceForPendingJob", budget);
+        StringAssert.Contains("ReportCompletedJob", budget);
+        StringAssert.Contains("5. Complete: Extract adaptive request budgeting into `UnitPathfindingBudgetSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingPendingStateMustPublishEcsReadModel()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingPendingStateSystemPath), "Step 6 extracts pending path-job publication into an ECS read-model boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string pendingState = File.ReadAllText(UnitPathfindingPendingStateSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        StringAssert.Contains("public struct UnitPathfindingPendingStateComponent : IComponentData", pendingState);
+        StringAssert.Contains("public byte HasPendingPathJob;", pendingState);
+        StringAssert.Contains("public int RequestCount;", pendingState);
+        StringAssert.Contains("public int RequestBudget;", pendingState);
+        StringAssert.Contains("public int ScheduledFrame;", pendingState);
+        StringAssert.Contains("internal struct UnitPathfindingPendingStateSystem", pendingState);
+        StringAssert.Contains("EnsureSingleton", pendingState);
+        StringAssert.Contains("Publish", pendingState);
+
+        StringAssert.Contains("private UnitPathfindingPendingStateSystem _pendingState;", pathfinding);
+        StringAssert.Contains("_pendingState.Publish", pathfinding);
+        Assert.IsFalse(
+            pathfinding.Contains("HasPendingPathJob = _hasPendingPathJob;", StringComparison.Ordinal),
+            "Pending state publication must not mirror to UnitPathfindingSystem.HasPendingPathJob after step 31.");
+        StringAssert.Contains("HasPendingPathJob = hasPendingPathJob ? (byte)1 : (byte)0", pendingState);
+        StringAssert.Contains("6. Complete: Extract pending-job status publication into `UnitPathfindingPendingStateSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingQueriesMustLiveInQuerySystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingQuerySystemPath), "Step 7 extracts pathfinding query creation into a narrow query boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string queries = File.ReadAllText(UnitPathfindingQuerySystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("state.RequireForUpdate<GridConfig>()", StringComparison.Ordinal),
+            "UnitPathfindingSystem.OnCreate must delegate RequireForUpdate setup to UnitPathfindingQuerySystem after step 7.");
+        Assert.IsFalse(
+            pathfinding.Contains("state.GetEntityQuery(new EntityQueryDesc", StringComparison.Ordinal),
+            "UnitPathfindingSystem.OnCreate must delegate EntityQuery creation to UnitPathfindingQuerySystem after step 7.");
+
+        StringAssert.Contains("internal struct UnitPathfindingQuerySystem", queries);
+        StringAssert.Contains("RequestQuery", queries);
+        StringAssert.Contains("LiveUnitsQuery", queries);
+        StringAssert.Contains("PendingManualMoveQuery", queries);
+        StringAssert.Contains("PathFollowQuery", queries);
+        StringAssert.Contains("LongDistanceMoveQuery", queries);
+        StringAssert.Contains("RetryCooldownQuery", queries);
+        StringAssert.Contains("ManualRequestQuery", queries);
+        StringAssert.Contains("ManualPathFollowQuery", queries);
+        StringAssert.Contains("state.RequireForUpdate<GridConfig>()", queries);
+        StringAssert.Contains("state.RequireForUpdate<RuntimeGameplayStateComponent>()", queries);
+        StringAssert.Contains("_queries.Initialize(ref state);", pathfinding);
+        StringAssert.Contains("7. Complete: Extract query creation into `UnitPathfindingQuerySystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathRequestBuffersMustLiveInRequestBufferSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathRequestBufferSystemPath), "Step 8 extracts request NativeList ownership into a narrow buffer boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string buffers = File.ReadAllText(UnitPathRequestBufferSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("new NativeList<Entity>(UnitPathfindingBudgetSystem.MaxRequestsPerFrame", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not allocate request NativeLists directly after step 8.");
+        Assert.IsFalse(
+            pathfinding.Contains("private NativeList<Entity> _requestEntities", StringComparison.Ordinal),
+            "Request NativeList fields must stay in UnitPathRequestBufferSystem after step 8.");
+
+        StringAssert.Contains("internal struct UnitPathRequestBufferSystem", buffers);
+        StringAssert.Contains("public NativeList<Entity> Entities;", buffers);
+        StringAssert.Contains("public NativeList<UnitGrid> UnitGrids;", buffers);
+        StringAssert.Contains("public NativeList<UnitPathRequest> Goals;", buffers);
+        StringAssert.Contains("public NativeList<UnitFootprint> Footprints;", buffers);
+        StringAssert.Contains("public NativeList<UnitMovementBehavior> MovementBehaviors;", buffers);
+        StringAssert.Contains("public NativeList<byte> Factions;", buffers);
+        StringAssert.Contains("public NativeList<byte> ManualMoves;", buffers);
+        StringAssert.Contains("public NativeList<Entity> IgnoredOccupancyEntities;", buffers);
+        StringAssert.Contains("public NativeList<int2> AssignedGoals;", buffers);
+        StringAssert.Contains("public NativeList<byte> Status;", buffers);
+        StringAssert.Contains("public NativeList<byte> Segmented;", buffers);
+        StringAssert.Contains("public NativeList<byte> ContinuationMoves;", buffers);
+        StringAssert.Contains("public NativeList<byte> CheapSegmentModes;", buffers);
+        StringAssert.Contains("public NativeList<byte> AlternateSearchSkipped;", buffers);
+        StringAssert.Contains("public NativeList<int> AlternateAttempts;", buffers);
+        StringAssert.Contains("Allocator.Persistent", buffers);
+        StringAssert.Contains("ClearForCollection", buffers);
+        StringAssert.Contains("private UnitPathRequestBufferSystem _requestBuffers;", pathfinding);
+        StringAssert.Contains("_requestBuffers.Initialize();", pathfinding);
+        StringAssert.Contains("_requestBuffers.Dispose();", pathfinding);
+        StringAssert.Contains("8. Complete: Extract request buffers into `UnitPathRequestBufferSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathIgnoredOccupancyMustLiveInIgnoredOccupancySystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathIgnoredOccupancySystemPath), "Step 9 extracts ignored occupancy collection into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string ignoredOccupancy = File.ReadAllText(UnitPathIgnoredOccupancySystemPath);
+        string requestCollection = File.Exists(UnitPathRequestCollectionSystemPath)
+            ? File.ReadAllText(UnitPathRequestCollectionSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("AddIgnoredOccupancyForRequest", StringComparison.Ordinal),
+            "Transport boarding ignored-occupancy lookup must stay out of UnitPathfindingSystem after step 9.");
+
+        StringAssert.Contains("internal struct UnitPathIgnoredOccupancySystem", ignoredOccupancy);
+        StringAssert.Contains("AddForRequest", ignoredOccupancy);
+        StringAssert.Contains("UnitTransportBoardingTarget", ignoredOccupancy);
+        StringAssert.Contains("UnitGrid", ignoredOccupancy);
+        StringAssert.Contains("UnitFootprint", ignoredOccupancy);
+        StringAssert.Contains("IgnoredOccupancyEntities.Add", ignoredOccupancy);
+        StringAssert.Contains("IgnoredOccupancyCells.Add", ignoredOccupancy);
+        StringAssert.Contains("IgnoredOccupancySizes.Add", ignoredOccupancy);
+        StringAssert.Contains("private UnitPathIgnoredOccupancySystem _ignoredOccupancy;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_ignoredOccupancy.AddForRequest(ref state, ref _requestBuffers, entity);", StringComparison.Ordinal) ||
+            requestCollection.Contains("ignoredOccupancy.AddForRequest(ref state, ref requestBuffers, entity);", StringComparison.Ordinal),
+            "Ignored occupancy writes must be delegated through UnitPathIgnoredOccupancySystem.");
+        StringAssert.Contains("9. Complete: Extract ignored occupancy collection into `UnitPathIgnoredOccupancySystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathRequestCollectionMustLiveInRequestCollectionSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathRequestCollectionSystemPath), "Step 10 extracts manual-first request collection into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string requestCollection = File.ReadAllText(UnitPathRequestCollectionSystemPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("Query<RefRO<UnitGrid>, RefRO<UnitPathRequest>", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own manual-first request collection query loops after step 10.");
+
+        StringAssert.Contains("internal struct UnitPathRequestCollectionSystem", requestCollection);
+        StringAssert.Contains("public int Collect", requestCollection);
+        StringAssert.Contains("ref UnitPathfindingQuerySystem queries", requestCollection);
+        StringAssert.Contains("queries.ManualRequestQuery", requestCollection);
+        StringAssert.Contains("queries.RequestQuery", requestCollection);
+        StringAssert.Contains("ComponentLookup<ManualMoveOrderTag>", requestCollection);
+        StringAssert.Contains("ComponentLookup<UnitLongDistanceMove>", requestCollection);
+        StringAssert.Contains("ManualMoves.Add((byte)(manualMove ? 1 : 0))", requestCollection);
+        StringAssert.Contains("manualMoveLookup.HasComponent(entity)", requestCollection);
+        StringAssert.Contains("longDistanceLookup.HasComponent(entity)", requestCollection);
+        StringAssert.Contains("ignoredOccupancy.AddForRequest", requestCollection);
+        StringAssert.Contains("private UnitPathRequestCollectionSystem _requestCollection;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_requestCollection.Collect(ref state, ref _queries, ref _requestBuffers, ref _ignoredOccupancy, requestBudgetForLog);", StringComparison.Ordinal) ||
+            schedule.Contains("requestCollection.Collect(ref state, ref queries, ref requestBuffers, ref ignoredOccupancy, requestBudget)", StringComparison.Ordinal),
+            "Request collection must stay delegated through UnitPathRequestCollectionSystem.");
+        StringAssert.Contains("10. Complete: Extract request collection into `UnitPathRequestCollectionSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathLiveUnitSnapshotMustLiveInSnapshotSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathLiveUnitSnapshotSystemPath), "Step 11 extracts live-unit snapshot NativeArray ownership into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string snapshot = File.ReadAllText(UnitPathLiveUnitSnapshotSystemPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("_pendingLiveUnitEntities", StringComparison.Ordinal),
+            "Live-unit snapshot arrays must stay in UnitPathLiveUnitSnapshotSystem after step 11.");
+        Assert.IsFalse(
+            pathfinding.Contains("ToComponentDataArray<UnitGrid>(Allocator.Persistent)", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not directly allocate live-unit snapshot arrays after step 11.");
+
+        StringAssert.Contains("internal struct UnitPathLiveUnitSnapshotSystem", snapshot);
+        StringAssert.Contains("public NativeArray<Entity> Entities;", snapshot);
+        StringAssert.Contains("public NativeArray<UnitGrid> Grids;", snapshot);
+        StringAssert.Contains("public NativeArray<UnitFootprint> Footprints;", snapshot);
+        StringAssert.Contains("public NativeArray<byte> ManualGroupMembers;", snapshot);
+        StringAssert.Contains("Allocator.Persistent", snapshot);
+        StringAssert.Contains("ManualMoveGroupMemberTag", snapshot);
+        StringAssert.Contains("public void Dispose()", snapshot);
+        StringAssert.Contains("private UnitPathLiveUnitSnapshotSystem _liveUnitSnapshot;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_liveUnitSnapshot.Capture(ref state, _queries.LiveUnitsQuery);", StringComparison.Ordinal) ||
+            schedule.Contains("liveUnitSnapshot.Capture(ref state, queries.LiveUnitsQuery);", StringComparison.Ordinal),
+            "Live-unit snapshot capture must stay delegated through UnitPathLiveUnitSnapshotSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("_liveUnitSnapshot.Dispose();", StringComparison.Ordinal) ||
+            schedule.Contains("liveUnitSnapshot.Dispose();", StringComparison.Ordinal) ||
+            (File.Exists(UnitPathfindingApplySystemPath) && File.ReadAllText(UnitPathfindingApplySystemPath).Contains("liveUnitSnapshot.Dispose();", StringComparison.Ordinal)),
+            "Live-unit snapshot disposal must stay delegated through UnitPathLiveUnitSnapshotSystem.");
+        StringAssert.Contains("11. Complete: Extract live-unit snapshot ownership into `UnitPathLiveUnitSnapshotSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathScratchWorkspaceMustLiveInScratchWorkspaceSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathScratchWorkspaceSystemPath), "Step 12 extracts A* scratch workspace ownership into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string scratch = File.ReadAllText(UnitPathScratchWorkspaceSystemPath);
+        string batchJob = File.Exists(UnitPathfindBatchJobPath)
+            ? File.ReadAllText(UnitPathfindBatchJobPath)
+            : string.Empty;
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("EnsureScratch", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own scratch allocation after step 12.");
+        Assert.IsFalse(
+            pathfinding.Contains("ReserveScratchEpochs", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own scratch epoch reservation after step 12.");
+        Assert.IsFalse(
+            pathfinding.Contains("DisposeScratch", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own scratch disposal after step 12.");
+
+        StringAssert.Contains("internal struct UnitPathScratchWorkspaceSystem", scratch);
+        StringAssert.Contains("public const int EpochsPerRequest = 128;", scratch);
+        StringAssert.Contains("public NativeArray<int> CameFrom;", scratch);
+        StringAssert.Contains("public NativeArray<int> GScore;", scratch);
+        StringAssert.Contains("public NativeArray<byte> Closed;", scratch);
+        StringAssert.Contains("public NativeArray<byte> InOpen;", scratch);
+        StringAssert.Contains("public NativeArray<int> Epoch;", scratch);
+        StringAssert.Contains("public NativeArray<int> Open;", scratch);
+        StringAssert.Contains("public NativeArray<int> Path;", scratch);
+        StringAssert.Contains("threadSlots = 1;", scratch);
+        StringAssert.Contains("int total = gridSize;", scratch);
+        StringAssert.Contains("ReserveEpochs", scratch);
+        StringAssert.Contains("private UnitPathScratchWorkspaceSystem _scratchWorkspace;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_scratchWorkspace.Ensure", StringComparison.Ordinal) ||
+            schedule.Contains("scratchWorkspace.Ensure", StringComparison.Ordinal),
+            "Scratch allocation must stay delegated through UnitPathScratchWorkspaceSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("_scratchWorkspace.ReserveEpochs", StringComparison.Ordinal) ||
+            schedule.Contains("scratchWorkspace.ReserveEpochs", StringComparison.Ordinal),
+            "Scratch epoch reservation must stay delegated through UnitPathScratchWorkspaceSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("UnitPathScratchWorkspaceSystem.EpochsPerRequest", StringComparison.Ordinal) ||
+            batchJob.Contains("UnitPathScratchWorkspaceSystem.EpochsPerRequest", StringComparison.Ordinal),
+            "Scratch epoch slot sizing must stay wired through UnitPathScratchWorkspaceSystem.");
+        StringAssert.Contains("12. Complete: Extract A* scratch workspace into `UnitPathScratchWorkspaceSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathReservedGoalsMustLiveInReservedGoalSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathReservedGoalSystemPath), "Step 13 extracts reserved-goal workspace ownership into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string reservedGoals = File.ReadAllText(UnitPathReservedGoalSystemPath);
+        string goalAssignment = File.Exists(UnitPathGoalAssignmentSystemPath)
+            ? File.ReadAllText(UnitPathGoalAssignmentSystemPath)
+            : string.Empty;
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("PrepareReservedGoals", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own reserved-goal preparation after step 13.");
+        Assert.IsFalse(
+            pathfinding.Contains("DisposeReservedGoals", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own reserved-goal disposal after step 13.");
+        Assert.IsFalse(
+            pathfinding.Contains("private static void ReserveGoalFootprint", StringComparison.Ordinal),
+            "ReserveGoalFootprint must stay in UnitPathReservedGoalSystem after step 13.");
+
+        StringAssert.Contains("internal struct UnitPathReservedGoalSystem", reservedGoals);
+        StringAssert.Contains("public NativeArray<int> Epochs;", reservedGoals);
+        StringAssert.Contains("public int Generation;", reservedGoals);
+        StringAssert.Contains("public void Prepare", reservedGoals);
+        StringAssert.Contains("public void Dispose()", reservedGoals);
+        StringAssert.Contains("public static void ReserveGoalFootprint", reservedGoals);
+        StringAssert.Contains("UnitFootprintUtility.ClampSize", reservedGoals);
+        StringAssert.Contains("UnitFootprintUtility.GetMinCell", reservedGoals);
+        StringAssert.Contains("private UnitPathReservedGoalSystem _reservedGoals;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_reservedGoals.Prepare(gridSize);", StringComparison.Ordinal) ||
+            schedule.Contains("reservedGoals.Prepare(gridSize);", StringComparison.Ordinal),
+            "Reserved-goal preparation must stay delegated through UnitPathReservedGoalSystem.");
+        StringAssert.Contains("_reservedGoals.Dispose();", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("UnitPathReservedGoalSystem.ReserveGoalFootprint", StringComparison.Ordinal) ||
+            goalAssignment.Contains("UnitPathReservedGoalSystem.ReserveGoalFootprint", StringComparison.Ordinal),
+            "Reserved-goal footprint writes must continue to go through UnitPathReservedGoalSystem.");
+        StringAssert.Contains("13. Complete: Extract reserved-goal workspace into `UnitPathReservedGoalSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathCoarseWorkspaceMustLiveInCoarseWorkspaceSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathCoarseWorkspaceSystemPath), "Step 14 extracts hierarchical coarse workspace ownership into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string coarse = File.ReadAllText(UnitPathCoarseWorkspaceSystemPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("EnsureCoarseScratch", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own coarse workspace allocation after step 14.");
+        Assert.IsFalse(
+            pathfinding.Contains("DisposeCoarseScratch", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own coarse workspace disposal after step 14.");
+        Assert.IsFalse(
+            pathfinding.Contains("ReserveCoarseSearchEpoch", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own coarse workspace epoch reservation after step 14.");
+
+        StringAssert.Contains("internal struct UnitPathCoarseWorkspaceSystem", coarse);
+        StringAssert.Contains("public NativeArray<int> CameFrom;", coarse);
+        StringAssert.Contains("public NativeArray<int> GScore;", coarse);
+        StringAssert.Contains("public NativeArray<int> Epoch;", coarse);
+        StringAssert.Contains("public NativeArray<int> ClosedEpoch;", coarse);
+        StringAssert.Contains("public NativeArray<int> OpenEpoch;", coarse);
+        StringAssert.Contains("public NativeArray<int> Open;", coarse);
+        StringAssert.Contains("public int Width;", coarse);
+        StringAssert.Contains("public int Height;", coarse);
+        StringAssert.Contains("public bool Ensure", coarse);
+        StringAssert.Contains("public int ReserveSearchEpoch()", coarse);
+        StringAssert.Contains("public void Dispose()", coarse);
+        StringAssert.Contains("private UnitPathCoarseWorkspaceSystem _coarseWorkspace;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_coarseWorkspace.Ensure(grid.Width, grid.Height, UnitHierarchicalPathSystem.SectorSizeCells)", StringComparison.Ordinal) ||
+            schedule.Contains("coarseWorkspace.Ensure(grid.Width, grid.Height, UnitHierarchicalPathSystem.SectorSizeCells)", StringComparison.Ordinal),
+            "Coarse workspace preparation must stay delegated through UnitPathCoarseWorkspaceSystem.");
+        StringAssert.Contains("14. Complete: Extract hierarchical coarse workspace into `UnitPathCoarseWorkspaceSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathSegmentationPolicyMustLiveInSegmentationSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathSegmentationSystemPath), "Step 15 extracts movement segmentation policy into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string segmentation = File.ReadAllText(UnitPathSegmentationSystemPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("private static float GetMaxSegmentCells", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own segment distance policy after step 15.");
+        Assert.IsFalse(
+            pathfinding.Contains("private const float DefaultLongDistanceSegmentCells", StringComparison.Ordinal),
+            "Segment distance constants must stay in UnitPathSegmentationSystem after step 15.");
+
+        StringAssert.Contains("internal struct UnitPathSegmentationSystem", segmentation);
+        StringAssert.Contains("public const float DefaultLongDistanceSegmentCells = 32f;", segmentation);
+        StringAssert.Contains("public const float ManualInfantryLongDistanceSegmentCells = 1024f;", segmentation);
+        StringAssert.Contains("public const float ManualVehicleLongDistanceSegmentCells = 128f;", segmentation);
+        StringAssert.Contains("GetMaxSegmentCells", segmentation);
+        StringAssert.Contains("ExceedsMaxSegment", segmentation);
+        StringAssert.Contains("GetSegmentGoal", segmentation);
+        StringAssert.Contains("private UnitPathSegmentationSystem _segmentation;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_segmentation.ExceedsMaxSegment", StringComparison.Ordinal) ||
+            schedule.Contains("segmentation.ExceedsMaxSegment", StringComparison.Ordinal),
+            "Segment distance checks must stay delegated through UnitPathSegmentationSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("_segmentation.GetMaxSegmentCells", StringComparison.Ordinal) ||
+            schedule.Contains("segmentation.GetMaxSegmentCells", StringComparison.Ordinal),
+            "Segment max-distance policy must stay delegated through UnitPathSegmentationSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("_segmentation.GetSegmentGoal", StringComparison.Ordinal) ||
+            schedule.Contains("segmentation.GetSegmentGoal", StringComparison.Ordinal),
+            "Segment goal selection must stay delegated through UnitPathSegmentationSystem.");
+        StringAssert.Contains("15. Complete: Extract movement segmentation policy into `UnitPathSegmentationSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitHierarchicalPathPlanningMustLiveInHierarchicalPathSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitHierarchicalPathSystemPath), "Step 16 extracts hierarchical waypoint planning into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string hierarchical = File.ReadAllText(UnitHierarchicalPathSystemPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("TryFindHierarchicalWaypoint", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own hierarchical waypoint search after step 16.");
+        Assert.IsFalse(
+            pathfinding.Contains("TryChooseWaypointFromCoarsePath", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own hierarchical waypoint choice after step 16.");
+        Assert.IsFalse(
+            pathfinding.Contains("IsCoarseCellPassable", StringComparison.Ordinal),
+            "Coarse passability must stay in UnitHierarchicalPathSystem after step 16.");
+        Assert.IsFalse(
+            pathfinding.Contains("HierarchicalSectorSizeCells", StringComparison.Ordinal),
+            "Hierarchical sector sizing policy must stay in UnitHierarchicalPathSystem after step 16.");
+
+        StringAssert.Contains("internal struct UnitHierarchicalPathSystem", hierarchical);
+        StringAssert.Contains("public const int SectorSizeCells = 32;", hierarchical);
+        StringAssert.Contains("public const int MaxExpandedSectors = 2048;", hierarchical);
+        StringAssert.Contains("TryFindWaypoint", hierarchical);
+        StringAssert.Contains("TryChooseWaypointFromCoarsePath", hierarchical);
+        StringAssert.Contains("TryFindRepresentativeCell", hierarchical);
+        StringAssert.Contains("IsCoarseCellPassable", hierarchical);
+        StringAssert.Contains("coarseWorkspace.ReserveSearchEpoch()", hierarchical);
+        StringAssert.Contains("private UnitHierarchicalPathSystem _hierarchicalPath;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_hierarchicalPath.TryFindWaypoint", StringComparison.Ordinal) ||
+            schedule.Contains("hierarchicalPath.TryFindWaypoint", StringComparison.Ordinal),
+            "Hierarchical waypoint planning must stay delegated through UnitHierarchicalPathSystem.");
+        StringAssert.Contains("16. Complete: Extract hierarchical waypoint planning into `UnitHierarchicalPathSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathGoalAssignmentMustLiveInGoalAssignmentSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathGoalAssignmentSystemPath), "Step 17 extracts nearest-free-goal assignment into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string goalAssignment = File.ReadAllText(UnitPathGoalAssignmentSystemPath);
+        string batchJob = File.Exists(UnitPathfindBatchJobPath)
+            ? File.ReadAllText(UnitPathfindBatchJobPath)
+            : string.Empty;
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("private static int2 FindNearestFreeGoal", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own nearest-free-goal assignment after step 17.");
+        Assert.IsFalse(
+            pathfinding.Contains("private static bool CanUseGoalCell", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own goal-cell reservation checks after step 17.");
+        Assert.IsFalse(
+            pathfinding.Contains("private static bool IsFree", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own free-cell helpers after step 17.");
+        Assert.IsFalse(
+            pathfinding.Contains("private const int InfantryGoalSearchRadius", StringComparison.Ordinal),
+            "Goal search radii must stay in UnitPathGoalAssignmentSystem after step 17.");
+        Assert.IsFalse(
+            pathfinding.Contains("private const int VehicleAlternateGoalCandidates", StringComparison.Ordinal),
+            "Alternate-goal attempt caps must stay in UnitPathGoalAssignmentSystem after step 17.");
+
+        StringAssert.Contains("internal struct UnitPathGoalAssignmentSystem", goalAssignment);
+        StringAssert.Contains("public const int InfantryGoalSearchRadius = 10;", goalAssignment);
+        StringAssert.Contains("public const int VehicleGoalSearchRadius = 20;", goalAssignment);
+        StringAssert.Contains("public const int InfantryAlternateGoalCandidates = 16;", goalAssignment);
+        StringAssert.Contains("public const int VehicleAlternateGoalCandidates = 32;", goalAssignment);
+        StringAssert.Contains("FindNearestFreeGoal", goalAssignment);
+        StringAssert.Contains("CanUseGoalCell", goalAssignment);
+        StringAssert.Contains("IsFree", goalAssignment);
+        StringAssert.Contains("SquareRingOffset", goalAssignment);
+        StringAssert.Contains("UnitPathReservedGoalSystem.ReserveGoalFootprint", goalAssignment);
+        StringAssert.Contains("private UnitPathGoalAssignmentSystem _goalAssignment;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_goalAssignment.FindNearestFreeGoal", StringComparison.Ordinal) ||
+            schedule.Contains("goalAssignment.FindNearestFreeGoal", StringComparison.Ordinal),
+            "Nearest-free-goal assignment must stay delegated through UnitPathGoalAssignmentSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("UnitPathGoalAssignmentSystem.VehicleGoalSearchRadius", StringComparison.Ordinal) ||
+            batchJob.Contains("UnitPathGoalAssignmentSystem.VehicleGoalSearchRadius", StringComparison.Ordinal),
+            "Vehicle goal-search radius must stay wired through UnitPathGoalAssignmentSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("UnitPathGoalAssignmentSystem.InfantryAlternateGoalCandidates", StringComparison.Ordinal) ||
+            batchJob.Contains("UnitPathGoalAssignmentSystem.InfantryAlternateGoalCandidates", StringComparison.Ordinal),
+            "Alternate-goal caps must stay wired through UnitPathGoalAssignmentSystem.");
+        StringAssert.Contains("17. Complete: Extract nearest free goal assignment into `UnitPathGoalAssignmentSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathPlacementValidationMustLiveInPlacementValidationSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathPlacementValidationSystemPath), "Step 18 extracts placement validity helpers into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string goalAssignment = File.ReadAllText(UnitPathGoalAssignmentSystemPath);
+        string batchJob = File.Exists(UnitPathfindBatchJobPath)
+            ? File.ReadAllText(UnitPathfindBatchJobPath)
+            : string.Empty;
+        string placement = File.ReadAllText(UnitPathPlacementValidationSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("public static bool CanPlaceForPathing", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not expose CanPlaceForPathing after step 18.");
+        Assert.IsFalse(
+            pathfinding.Contains("CanInfantryPlaceForPathing", StringComparison.Ordinal),
+            "Infantry placement validation must stay in UnitPathPlacementValidationSystem after step 18.");
+        Assert.IsFalse(
+            pathfinding.Contains("CanVehiclePlaceForPathing", StringComparison.Ordinal),
+            "Vehicle placement validation must stay in UnitPathPlacementValidationSystem after step 18.");
+        Assert.IsFalse(
+            pathfinding.Contains("ShouldIgnoreManualGroupOccupancy", StringComparison.Ordinal),
+            "Manual-group occupancy checks must stay in UnitPathPlacementValidationSystem after step 18.");
+        Assert.IsFalse(
+            pathfinding.Contains("VehicleOccupancyPaddingCells", StringComparison.Ordinal),
+            "Vehicle occupancy padding must stay in UnitPathPlacementValidationSystem after step 18.");
+
+        StringAssert.Contains("internal struct UnitPathPlacementValidationSystem", placement);
+        StringAssert.Contains("public const int VehicleOccupancyPaddingCells = 1;", placement);
+        StringAssert.Contains("public static bool CanPlaceForPathing", placement);
+        StringAssert.Contains("CanInfantryPlaceForPathing", placement);
+        StringAssert.Contains("CanVehiclePlaceForPathing", placement);
+        StringAssert.Contains("ShouldIgnoreManualGroupOccupancy", placement);
+        StringAssert.Contains("IsOnlySoftBlockerAtCell", placement);
+        StringAssert.Contains("IsSoftBlocker", placement);
+        StringAssert.Contains("friendlyPassFactionIds", placement);
+        Assert.IsTrue(
+            pathfinding.Contains("UnitPathPlacementValidationSystem.CanPlaceForPathing", StringComparison.Ordinal) ||
+            batchJob.Contains("UnitPathPlacementValidationSystem.CanPlaceForPathing", StringComparison.Ordinal),
+            "Placement validation must stay wired through UnitPathPlacementValidationSystem.");
+        StringAssert.Contains("UnitPathPlacementValidationSystem.CanPlaceForPathing", goalAssignment);
+        StringAssert.Contains("18. Complete: Extract placement validity helpers into `UnitPathPlacementValidationSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathResultApplicationMustLiveInResultApplySystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathResultApplySystemPath), "Step 19 extracts path result application into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string resultApply = File.ReadAllText(UnitPathResultApplySystemPath);
+        string apply = File.Exists(UnitPathfindingApplySystemPath)
+            ? File.ReadAllText(UnitPathfindingApplySystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("private static void ApplyResults", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own path result application after step 19.");
+        Assert.IsFalse(
+            pathfinding.Contains("pool.Cells.Add(reader.Read<int2>())", StringComparison.Ordinal),
+            "Path-pool stream writes must stay in UnitPathResultApplySystem after step 19.");
+
+        StringAssert.Contains("internal struct UnitPathResultApplySystem", resultApply);
+        StringAssert.Contains("public void Apply", resultApply);
+        StringAssert.Contains("pool.Cells.Add(reader.Read<int2>())", resultApply);
+        StringAssert.Contains("UnitPathFollow", resultApply);
+        StringAssert.Contains("UnitPathRange", resultApply);
+        StringAssert.Contains("UnitLongDistanceMove", resultApply);
+        StringAssert.Contains("UnitPathRetryCooldown", resultApply);
+        StringAssert.Contains("AutoWanderMoveTag", resultApply);
+        StringAssert.Contains("RemoveComponent<UnitPathRequest>", resultApply);
+        StringAssert.Contains("UnitPathRetrySystem", resultApply);
+        StringAssert.Contains("private UnitPathResultApplySystem _resultApply;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_resultApply.Apply", StringComparison.Ordinal) ||
+            apply.Contains("resultApply.Apply", StringComparison.Ordinal),
+            "Path result application must stay delegated through UnitPathResultApplySystem.");
+        StringAssert.Contains("19. Complete: Extract path result application into `UnitPathResultApplySystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathRetryPolicyMustLiveInRetrySystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathRetrySystemPath), "Step 20 extracts retry/abandon policy into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string resultApply = File.ReadAllText(UnitPathResultApplySystemPath);
+        string retry = File.ReadAllText(UnitPathRetrySystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("FailedManualRetryDelayFrames", StringComparison.Ordinal),
+            "Manual retry delay must not remain in UnitPathfindingSystem after step 20.");
+        Assert.IsFalse(
+            resultApply.Contains("FailedManualRetryDelayFrames", StringComparison.Ordinal),
+            "Manual retry delay must stay in UnitPathRetrySystem after step 20.");
+        Assert.IsFalse(
+            resultApply.Contains("em.HasComponent<ManualMoveOrderTag>(entity)", StringComparison.Ordinal),
+            "Retry eligibility policy must stay in UnitPathRetrySystem after step 20.");
+
+        StringAssert.Contains("internal struct UnitPathRetrySystem", retry);
+        StringAssert.Contains("public const int FailedManualRetryDelayFrames = 8;", retry);
+        StringAssert.Contains("ShouldRetryManualMove", retry);
+        StringAssert.Contains("ApplyRetry", retry);
+        StringAssert.Contains("ApplyAbandon", retry);
+        StringAssert.Contains("ManualMoveOrderTag", retry);
+        StringAssert.Contains("UnitLongDistanceMove", retry);
+        StringAssert.Contains("UnitPathRetryCooldown", retry);
+        StringAssert.Contains("Time.frameCount + FailedManualRetryDelayFrames", retry);
+        StringAssert.Contains("retry.ShouldRetryManualMove", resultApply);
+        StringAssert.Contains("retry.ApplyRetry", resultApply);
+        StringAssert.Contains("retry.ApplyAbandon", resultApply);
+        StringAssert.Contains("20. Complete: Extract retry/abandon policy into `UnitPathRetrySystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathValidationMetricsMustLiveInValidationMetricsSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathValidationMetricsSystemPath), "Step 21 extracts validation counters into a narrow metrics boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string metrics = File.ReadAllText(UnitPathValidationMetricsSystemPath);
+        string apply = File.Exists(UnitPathfindingApplySystemPath)
+            ? File.ReadAllText(UnitPathfindingApplySystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("_validationPeak", StringComparison.Ordinal),
+            "Validation peak counters must stay in UnitPathValidationMetricsSystem after step 21.");
+        Assert.IsFalse(
+            pathfinding.Contains("_validationCompletedTotal", StringComparison.Ordinal),
+            "Validation total counters must stay in UnitPathValidationMetricsSystem after step 21.");
+        Assert.IsFalse(
+            pathfinding.Contains("_nextValidationStuckLogFrame", StringComparison.Ordinal),
+            "Validation stuck-log scheduling state must stay in UnitPathValidationMetricsSystem after step 21.");
+        Assert.IsFalse(
+            pathfinding.Contains("ValidationStuckLogIntervalFrames", StringComparison.Ordinal),
+            "Validation stuck-log constants must stay in UnitPathValidationMetricsSystem after step 21.");
+
+        StringAssert.Contains("internal struct UnitPathValidationMetricsSystem", metrics);
+        StringAssert.Contains("public const int StuckLogIntervalFrames = 180;", metrics);
+        StringAssert.Contains("public const int StuckLogFirstDelayFrames = 180;", metrics);
+        StringAssert.Contains("public const int StuckSampleCount = 6;", metrics);
+        StringAssert.Contains("BeginIfNeeded", metrics);
+        StringAssert.Contains("RecordActiveFrameAndShouldLogStuck", metrics);
+        StringAssert.Contains("TryEnd", metrics);
+        StringAssert.Contains("FrameInputs", metrics);
+        StringAssert.Contains("FrameResults", metrics);
+        StringAssert.Contains("EndSnapshot", metrics);
+        StringAssert.Contains("private UnitPathValidationMetricsSystem _validationMetrics;", pathfinding);
+        Assert.IsTrue(
+            pathfinding.Contains("_validationMetrics.BeginIfNeeded", StringComparison.Ordinal) ||
+            apply.Contains("validationMetrics.BeginIfNeeded", StringComparison.Ordinal),
+            "Validation begin decisions must stay delegated through UnitPathValidationMetricsSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("_validationMetrics.RecordActiveFrameAndShouldLogStuck", StringComparison.Ordinal) ||
+            apply.Contains("validationMetrics.RecordActiveFrameAndShouldLogStuck", StringComparison.Ordinal),
+            "Validation stuck-log decisions must stay delegated through UnitPathValidationMetricsSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("_validationMetrics.TryEnd", StringComparison.Ordinal) ||
+            apply.Contains("validationMetrics.TryEnd", StringComparison.Ordinal),
+            "Validation end decisions must stay delegated through UnitPathValidationMetricsSystem.");
+        Assert.IsTrue(
+            pathfinding.Contains("UnitPathValidationMetricsSystem.StuckSampleCount", StringComparison.Ordinal) ||
+            apply.Contains("UnitPathValidationMetricsSystem.StuckSampleCount", StringComparison.Ordinal),
+            "Validation stuck sample sizing must stay in UnitPathValidationMetricsSystem.");
+        StringAssert.Contains("21. Complete: Extract validation counters into `UnitPathValidationMetricsSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindBatchJobMustLiveInDedicatedJobFile()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindBatchJobPath), "Step 22 moves PathfindBatchJob into a dedicated job file.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string job = File.ReadAllText(UnitPathfindBatchJobPath);
+        string schedule = File.Exists(UnitPathfindingScheduleSystemPath)
+            ? File.ReadAllText(UnitPathfindingScheduleSystemPath)
+            : string.Empty;
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("private struct PathfindBatchJob : IJobFor", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not contain the pathfinding batch job after step 22.");
+        Assert.IsFalse(
+            pathfinding.Contains("private const int FreeTraversalCost", StringComparison.Ordinal),
+            "Job-local traversal constants must move with PathfindBatchJob after step 22.");
+        Assert.IsFalse(
+            pathfinding.Contains("private static readonly int2[] SearchDirs", StringComparison.Ordinal),
+            "Job-local search directions must move with PathfindBatchJob after step 22.");
+
+        StringAssert.Contains("[BurstCompile]", job);
+        StringAssert.Contains("internal struct PathfindBatchJob : IJobFor", job);
+        StringAssert.Contains("private const int FreeTraversalCost = 10;", job);
+        StringAssert.Contains("private const int InfantryMaxAStarExpansions = 450;", job);
+        StringAssert.Contains("public NativeStream.Writer Output;", job);
+        StringAssert.Contains("public void Execute", job);
+        StringAssert.Contains("TryWritePath", job);
+        StringAssert.Contains("HasDirectPath", job);
+        StringAssert.Contains("GetTraversalCost", job);
+        StringAssert.Contains("HeuristicOctile", job);
+        StringAssert.Contains("UnitPathPlacementValidationSystem.CanPlaceForPathing", job);
+        Assert.IsTrue(
+            pathfinding.Contains("var job = new PathfindBatchJob", StringComparison.Ordinal) ||
+            schedule.Contains("var job = new PathfindBatchJob", StringComparison.Ordinal),
+            "PathfindBatchJob construction must remain explicit after step 22.");
+        Assert.IsTrue(
+            pathfinding.Contains("job.Schedule(requestCount, state.Dependency)", StringComparison.Ordinal) ||
+            schedule.Contains("job.Schedule(requestCount, state.Dependency)", StringComparison.Ordinal),
+            "PathfindBatchJob scheduling semantics must remain unchanged.");
+        StringAssert.Contains("22. Complete: Move `PathfindBatchJob` into `UnitPathfindBatchJob.cs`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindBatchJobMustKeepFlatFieldsUntilProfiled()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindBatchJobPath), "Step 23 keeps PathfindBatchJob flat after rejecting wrapper structs.");
+
+        string job = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        string[] sourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Where(path => !path.EndsWith("GameplayArchitectureContractTests.cs", StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsFalse(
+            sourceFiles.Any(path => File.ReadAllText(path).Contains("UnitPathfindBatchInput", StringComparison.Ordinal)),
+            "Do not add UnitPathfindBatchInput without a separate profiling task proving no copy/layout regression.");
+        Assert.IsFalse(
+            sourceFiles.Any(path => File.ReadAllText(path).Contains("UnitPathfindBatchOutput", StringComparison.Ordinal)),
+            "Do not add UnitPathfindBatchOutput without a separate profiling task proving no copy/layout regression.");
+        Assert.IsFalse(
+            job.Contains("UnitPathfindBatchInput", StringComparison.Ordinal),
+            "PathfindBatchJob must not be wrapped in an input struct after step 23.");
+        Assert.IsFalse(
+            job.Contains("UnitPathfindBatchOutput", StringComparison.Ordinal),
+            "PathfindBatchJob must not be wrapped in an output struct after step 23.");
+
+        StringAssert.Contains("public NativeStream.Writer Output;", job);
+        StringAssert.Contains("public NativeArray<byte> Status;", job);
+        StringAssert.Contains("public NativeArray<int2> Goals;", job);
+        StringAssert.Contains("[ReadOnly] public NativeArray<UnitPathRequest> RequestedGoals;", job);
+        StringAssert.Contains("[NativeDisableParallelForRestriction] public NativeArray<int> ScratchCameFrom;", job);
+        StringAssert.Contains("23. Complete: Reject job input/output struct extraction for performance stability", roadmap);
+        StringAssert.Contains("Do not add `UnitPathfindBatchInput`, `UnitPathfindBatchOutput`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindBatchJobMustKeepTraversalCostsJobLocalUntilProfiled()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindBatchJobPath), "Step 24 keeps traversal costs job-local until generated-code proof exists.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string job = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("FreeTraversalCost = 10", StringComparison.Ordinal),
+            "Traversal cost constants must not move back into UnitPathfindingSystem.");
+        Assert.IsFalse(
+            pathfinding.Contains("GetTraversalCost(", StringComparison.Ordinal),
+            "Traversal-cost helpers must not move back into UnitPathfindingSystem.");
+
+        StringAssert.Contains("private const int FreeTraversalCost = 10;", job);
+        StringAssert.Contains("private const int FreeDiagonalTraversalCost = 14;", job);
+        StringAssert.Contains("private const int PreferredSurfaceTraversalCost = 6;", job);
+        StringAssert.Contains("private const int AvoidedSurfaceTraversalCost = 18;", job);
+        StringAssert.Contains("private static readonly int2[] SearchDirs", job);
+        StringAssert.Contains("private int GetTraversalCost", job);
+        StringAssert.Contains("private static int HeuristicOctile", job);
+        StringAssert.Contains("24. Complete: Reject traversal-cost helper extraction without generated-code proof", roadmap);
+        StringAssert.Contains("Traversal cost constants, search directions, `GetTraversalCost`, and `HeuristicOctile` remain job-local", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingSchedulingMustLiveInScheduleSystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingScheduleSystemPath), "Step 25 extracts pathfinding scheduling into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string schedule = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+        string queries = File.ReadAllText(UnitPathfindingQuerySystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("new PathfindBatchJob", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not construct the pathfinding batch job after step 25.");
+        Assert.IsFalse(
+            pathfinding.Contains("new NativeStream(requestCount", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not allocate the pathfinding output stream after step 25.");
+        Assert.IsFalse(
+            pathfinding.Contains("GetSegmentGoalHierarchical", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own scheduling-time hierarchical goal selection after step 25.");
+
+        StringAssert.Contains("internal struct UnitPathfindingScheduleSystem", schedule);
+        StringAssert.Contains("public struct Result", schedule);
+        StringAssert.Contains("Entity gridEntity = queries.GridQuery.GetSingletonEntity();", schedule);
+        StringAssert.Contains("scratchWorkspace.Ensure", schedule);
+        StringAssert.Contains("liveUnitSnapshot.Capture", schedule);
+        StringAssert.Contains("requestCollection.Collect", schedule);
+        StringAssert.Contains("reservedGoals.Prepare", schedule);
+        StringAssert.Contains("goalAssignment.FindNearestFreeGoal", schedule);
+        StringAssert.Contains("new NativeStream(requestCount, Allocator.Persistent)", schedule);
+        StringAssert.Contains("var job = new PathfindBatchJob", schedule);
+        StringAssert.Contains("job.Schedule(requestCount, state.Dependency)", schedule);
+        StringAssert.Contains("state.Dependency = pendingPathHandle;", schedule);
+        StringAssert.Contains("public EntityQuery GridQuery;", queries);
+        StringAssert.Contains("private UnitPathfindingScheduleSystem _schedule;", pathfinding);
+        StringAssert.Contains("_schedule.Schedule", pathfinding);
+        StringAssert.Contains("scheduleResult.PendingPathHandle", pathfinding);
+        StringAssert.Contains("25. Complete: Extract scheduling phase into `UnitPathfindingScheduleSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingApplyPhaseMustLiveInApplySystem()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingApplySystemPath), "Step 26 extracts completed-job apply into a narrow boundary.");
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string apply = File.ReadAllText(UnitPathfindingApplySystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("private void ApplyPendingPathJob", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own completed-job apply after step 26.");
+        Assert.IsFalse(
+            pathfinding.Contains("private void LogValidationStuck", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own validation stuck diagnostics after step 26.");
+        Assert.IsFalse(
+            pathfinding.Contains("BuildManualMoveSamples", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not build manual-move diagnostic samples after step 26.");
+        Assert.IsFalse(
+            pathfinding.Contains("DisposeCompletedPendingPathJob", StringComparison.Ordinal),
+            "UnitPathfindingSystem must not own completed pending resource disposal after step 26.");
+
+        StringAssert.Contains("internal struct UnitPathfindingApplySystem", apply);
+        StringAssert.Contains("public void Apply", apply);
+        StringAssert.Contains("pendingPathHandle.Complete();", apply);
+        StringAssert.Contains("budget.ReportCompletedJob", apply);
+        StringAssert.Contains("resultApply.Apply", apply);
+        StringAssert.Contains("validationMetrics.BeginIfNeeded", apply);
+        StringAssert.Contains("validationMetrics.RecordActiveFrameAndShouldLogStuck", apply);
+        StringAssert.Contains("diagnostics.LogValidationStuck", apply);
+        StringAssert.Contains("diagnostics.BuildManualMoveSamples", apply);
+        StringAssert.Contains("diagnostics.LogAsync", apply);
+        StringAssert.Contains("public void DisposePending", apply);
+        StringAssert.Contains("pendingPathStream.Dispose();", apply);
+        StringAssert.Contains("liveUnitSnapshot.Dispose();", apply);
+        StringAssert.Contains("hasPendingPathJob = false;", apply);
+        StringAssert.Contains("private UnitPathfindingApplySystem _apply;", pathfinding);
+        StringAssert.Contains("_apply.Apply", pathfinding);
+        StringAssert.Contains("_apply.DisposePending", pathfinding);
+        StringAssert.Contains("PublishPendingState(ref state);", pathfinding);
+        StringAssert.Contains("26. Complete: Extract apply phase into `UnitPathfindingApplySystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingCoordinatorMustStayNarrow()
+    {
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        int currentLines = File.ReadLines(UnitPathfindingSystemPath).Count();
+
+        Assert.LessOrEqual(
+            currentLines,
+            220,
+            "After step 27 UnitPathfindingSystem should stay a narrow coordinator; move new behavior to extracted systems.");
+        Assert.IsFalse(
+            pathfinding.Contains("new PathfindBatchJob", StringComparison.Ordinal),
+            "Coordinator must not construct path jobs after step 27.");
+        Assert.IsFalse(
+            pathfinding.Contains("new NativeStream", StringComparison.Ordinal),
+            "Coordinator must not allocate path job streams after step 27.");
+        Assert.IsFalse(
+            pathfinding.Contains("FindNearestFreeGoal", StringComparison.Ordinal),
+            "Coordinator must not own goal assignment after step 27.");
+        Assert.IsFalse(
+            pathfinding.Contains("GetSegmentGoalHierarchical", StringComparison.Ordinal),
+            "Coordinator must not own hierarchical segment-goal policy after step 27.");
+        Assert.IsFalse(
+            pathfinding.Contains("resultApply.Apply", StringComparison.Ordinal),
+            "Coordinator must not own path result application after step 27.");
+        Assert.IsFalse(
+            pathfinding.Contains("BuildManualMoveSamples", StringComparison.Ordinal),
+            "Coordinator must not own diagnostic sample formatting after step 27.");
+
+        StringAssert.Contains("public void OnUpdate(ref SystemState state)", pathfinding);
+        StringAssert.Contains("DisposePendingPathJob(ref state);", pathfinding);
+        StringAssert.Contains("_pendingPathHandle.IsCompleted", pathfinding);
+        StringAssert.Contains("_apply.Apply", pathfinding);
+        StringAssert.Contains("_schedule.Schedule", pathfinding);
+        StringAssert.Contains("PublishPendingState(ref state);", pathfinding);
+        StringAssert.Contains("27. Complete: Reduce `UnitPathfindingSystem.OnUpdate` to coordinator flow", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingBuildingPendingReadersMustUseEcsReadModel()
+    {
+        const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
+        const string buildingCompositionSourcePath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
+        const string buildingProductionTickPath = "Assets/Game/Scripts/Systems/BuildingProductionRuntimeTickSystem.cs";
+        const string buildingDisposalPath = "Assets/Game/Scripts/Systems/BuildingGameplayDisposalSystem.cs";
+
+        string pendingState = File.ReadAllText(UnitPathfindingPendingStateSystemPath);
+        string buildingComposition = File.ReadAllText(buildingCompositionPath);
+        string buildingCompositionSource = File.ReadAllText(buildingCompositionSourcePath);
+        string buildingProductionTick = File.ReadAllText(buildingProductionTickPath);
+        string buildingDisposal = File.ReadAllText(buildingDisposalPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            buildingComposition.Contains("UnitPathfindingSystem.HasPendingPathJob", StringComparison.Ordinal),
+            "Building composition callbacks must use the ECS pending-state read model after step 28.");
+        Assert.IsFalse(
+            buildingProductionTick.Contains("UnitPathfindingSystem.HasPendingPathJob", StringComparison.Ordinal),
+            "Building production runtime tick must use the ECS pending-state read model after step 28.");
+
+        StringAssert.Contains("internal sealed class UnitPathfindingPendingStateReadSystem", pendingState);
+        StringAssert.Contains("UnitPathfindingPendingStateComponent", pendingState);
+        StringAssert.Contains("CreateEntityQuery(ComponentType.ReadOnly<UnitPathfindingPendingStateComponent>())", pendingState);
+        StringAssert.Contains("public bool HasPendingPathJob()", pendingState);
+        StringAssert.Contains("internal readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();", buildingCompositionSource);
+        StringAssert.Contains("source.UnitPathfindingPendingStateReadSystem.HasPendingPathJob", buildingComposition);
+        StringAssert.Contains("public readonly Func<bool> HasPendingPathJob;", buildingProductionTick);
+        StringAssert.Contains("context.HasPendingPathJob != null && context.HasPendingPathJob()", buildingProductionTick);
+        StringAssert.Contains("UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem", buildingDisposal);
+        StringAssert.Contains("source.UnitPathfindingPendingStateReadSystem?.Dispose();", buildingDisposal);
+        StringAssert.Contains("28. Complete: Migrate building production pending-path reads", roadmap);
+        StringAssert.Contains("Remaining temporary static reader after this step was `CitizenPopulationLifecycleSystem.cs`.", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingCitizenPendingReadersMustUseEcsReadModel()
+    {
+        const string citizenCompositionPath = "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystem.cs";
+        const string citizenRuntimeUpdatePath = "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateSystem.cs";
+        const string citizenLifecyclePath = "Assets/Game/Scripts/Systems/CitizenPopulationLifecycleSystem.cs";
+
+        string citizenComposition = File.ReadAllText(citizenCompositionPath);
+        string citizenRuntimeUpdate = File.ReadAllText(citizenRuntimeUpdatePath);
+        string citizenLifecycle = File.ReadAllText(citizenLifecyclePath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            citizenLifecycle.Contains("UnitPathfindingSystem.HasPendingPathJob", StringComparison.Ordinal),
+            "Citizen lifecycle must use the ECS pending-state read model after step 29.");
+
+        StringAssert.Contains("public readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();", citizenComposition);
+        StringAssert.Contains("result.UnitPathfindingPendingStateReadSystem.Dispose();", citizenComposition);
+        StringAssert.Contains("_systems.UnitPathfindingPendingStateReadSystem.HasPendingPathJob", citizenRuntimeUpdate);
+        StringAssert.Contains("Func<bool> hasPendingPathJob", citizenLifecycle);
+        StringAssert.Contains("hasPendingPathJob != null && hasPendingPathJob()", citizenLifecycle);
+        StringAssert.Contains("29. Complete: Migrate citizen pending-path reads", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingSelectionPendingReadersMustUseEcsReadModel()
+    {
+        const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
+        const string buildingSelectionClickPath = "Assets/Game/Scripts/Systems/BuildingSelectionClickSystem.cs";
+
+        string buildingComposition = File.ReadAllText(buildingCompositionPath);
+        string buildingSelectionClick = File.ReadAllText(buildingSelectionClickPath);
+        string[] staticPendingJobReaders = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("UnitPathfindingSystem.cs", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("UnitPathfindingSystem.HasPendingPathJob", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsEmpty(
+            staticPendingJobReaders,
+            "All production readers must migrate away from UnitPathfindingSystem.HasPendingPathJob before step 31.");
+
+        StringAssert.Contains("source.UnitPathfindingPendingStateReadSystem.HasPendingPathJob", buildingComposition);
+        StringAssert.Contains("public readonly Func<bool> HasPendingPathJob;", buildingSelectionClick);
+        StringAssert.Contains("context.HasPendingPathJob != null && context.HasPendingPathJob()", buildingSelectionClick);
+        StringAssert.Contains("30. Complete: Migrate selection/building click pending-path reads", roadmap);
+        StringAssert.Contains("There are now no production readers of `UnitPathfindingSystem.HasPendingPathJob`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingStaticPendingPropertyMustStayDeleted()
+    {
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string[] sourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("UnitPathfindingSystem.cs", StringComparison.Ordinal))
+            .ToArray();
+        string[] externalReaders = sourceFiles
+            .Where(path => File.ReadAllText(path).Contains("UnitPathfindingSystem.HasPendingPathJob", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            pathfinding.Contains("public static bool HasPendingPathJob", StringComparison.Ordinal),
+            "UnitPathfindingSystem.HasPendingPathJob must not return after step 31.");
+        Assert.IsFalse(
+            pathfinding.Contains("HasPendingPathJob = _hasPendingPathJob", StringComparison.Ordinal),
+            "Pending path job state must only publish through the ECS read model after step 31.");
+        Assert.IsEmpty(
+            externalReaders,
+            "No source file may read UnitPathfindingSystem.HasPendingPathJob after step 31.");
+        StringAssert.Contains("31. Complete: Delete `UnitPathfindingSystem.HasPendingPathJob`", roadmap);
+        StringAssert.Contains("Removed the public static compatibility property from `UnitPathfindingSystem`.", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingDiagnosticsMustUseEcsDiagnosticEvents()
+    {
+        Assert.IsTrue(File.Exists(UnitPathfindingDiagnosticLogComponentsPath), "Step 32 adds pathfinding diagnostic ECS event components.");
+        Assert.IsTrue(File.Exists(UnitPathfindingDiagnosticLogFlushSystemPath), "Step 32 adds a pathfinding diagnostic flush system.");
+
+        string diagnostics = File.ReadAllText(UnitPathfindingDiagnosticSystemPath);
+        string components = File.ReadAllText(UnitPathfindingDiagnosticLogComponentsPath);
+        string flush = File.ReadAllText(UnitPathfindingDiagnosticLogFlushSystemPath);
+        string schedule = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+        string apply = File.ReadAllText(UnitPathfindingApplySystemPath);
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+
+        Assert.IsFalse(
+            diagnostics.Contains("Debug.Log", StringComparison.Ordinal),
+            "UnitPathfindingDiagnosticSystem must enqueue ECS diagnostic events instead of logging directly after step 32.");
+        Assert.IsFalse(
+            schedule.Contains("Debug.Log", StringComparison.Ordinal),
+            "Pathfinding schedule boundary must not log directly.");
+        Assert.IsFalse(
+            apply.Contains("Debug.Log", StringComparison.Ordinal),
+            "Pathfinding apply boundary must not log directly.");
+
+        StringAssert.Contains("public struct UnitPathfindingDiagnosticLogQueueComponent : IComponentData", components);
+        StringAssert.Contains("public struct UnitPathfindingDiagnosticLogComponent : IBufferElementData", components);
+        StringAssert.Contains("FixedString4096Bytes Message", components);
+        StringAssert.Contains("UnitPathfindingDiagnosticLogQueueComponent", diagnostics);
+        StringAssert.Contains("UnitPathfindingDiagnosticLogComponent", diagnostics);
+        StringAssert.Contains("logs.Add(new UnitPathfindingDiagnosticLogComponent", diagnostics);
+        StringAssert.Contains("UnitPathfindingDiagnosticLogFlushSystem", flush);
+        StringAssert.Contains("Debug.Log(logs[logIndex].Message.ToString())", flush);
+        StringAssert.Contains("logs.Clear();", flush);
+        StringAssert.Contains("_diagnostics.Initialize(ref state);", pathfinding);
+        StringAssert.Contains("LogHierarchicalValidation(state.EntityManager", schedule);
+        StringAssert.Contains("LogFrameFreeze(", schedule);
+        StringAssert.Contains("state.EntityManager,", schedule);
+        StringAssert.Contains("LogValidationStart(state.EntityManager", apply);
+        StringAssert.Contains("LogValidationEnd(", apply);
+        StringAssert.Contains("LogAsync(", apply);
+        StringAssert.Contains("LogValidationStuck(", apply);
+        StringAssert.Contains("32. Complete: Move pathfinding diagnostics to ECS diagnostic events", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingPerformanceContractMustProtectHotPath()
+    {
+        Assert.IsTrue(File.Exists(PerformanceContractPath), "Pathfinding performance rules must live in the shared performance regression contract.");
+
+        string performanceContract = File.ReadAllText(PerformanceContractPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string schedule = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+        string apply = File.ReadAllText(UnitPathfindingApplySystemPath);
+        string diagnostics = File.ReadAllText(UnitPathfindingDiagnosticSystemPath);
+        string flush = File.ReadAllText(UnitPathfindingDiagnosticLogFlushSystemPath);
+        string budget = File.ReadAllText(UnitPathfindingBudgetSystemPath);
+
+        StringAssert.Contains("## Pathfinding Performance Scenario", performanceContract);
+        StringAssert.Contains("Manual group move", performanceContract);
+        StringAssert.Contains("Long-distance move", performanceContract);
+        StringAssert.Contains("UnitPathfindingSystem", performanceContract);
+        StringAssert.Contains("UnitPathfindingScheduleSystem", performanceContract);
+        StringAssert.Contains("UnitPathfindingApplySystem", performanceContract);
+        StringAssert.Contains("request budgets, scheduling semantics, allocator lifetimes, traversal costs, and job data layout", performanceContract);
+        StringAssert.Contains("Diagnostic messages must go through the ECS diagnostic event boundary", performanceContract);
+        StringAssert.Contains("33. Complete: Add pathfinding performance contract coverage", roadmap);
+
+        string[] hotPathSources =
+        {
+            pathfinding,
+            schedule,
+            apply,
+            diagnostics,
+        };
+        foreach (string source in hotPathSources)
+        {
+            Assert.IsFalse(source.Contains("Debug.Log", StringComparison.Ordinal), "Pathfinding hot-path sources must not log directly after step 33.");
+            Assert.IsFalse(source.Contains("GameObject.Find", StringComparison.Ordinal), "Pathfinding hot-path sources must not perform scene searches.");
+            Assert.IsFalse(source.Contains("Camera.main", StringComparison.Ordinal), "Pathfinding hot-path sources must not use Camera.main.");
+            Assert.IsFalse(source.Contains(".Select(", StringComparison.Ordinal), "Pathfinding hot-path sources must not use LINQ projections.");
+            Assert.IsFalse(source.Contains(".Where(", StringComparison.Ordinal), "Pathfinding hot-path sources must not use LINQ filters.");
+        }
+
+        StringAssert.Contains("Debug.Log(logs[logIndex].Message.ToString())", flush);
+        Assert.IsFalse(
+            pathfinding.Contains("public static bool HasPendingPathJob", StringComparison.Ordinal),
+            "Pathfinding must not reintroduce mutable public static pending-job state.");
+        StringAssert.Contains("public const int MaxRequestsPerFrame = 32;", budget);
+        StringAssert.Contains("public const int MinRequestsPerFrame = 1;", budget);
+        StringAssert.Contains("private const double TargetPathJobWallSeconds = 0.008d;", budget);
+        StringAssert.Contains("private const double LowPathJobWallSeconds = 0.006d;", budget);
+        StringAssert.Contains("private const double HighPathJobWallSeconds = 0.012d;", budget);
+    }
+
+    [Test]
+    public void UnitPathfindingCompatibilityAndFileOwnershipAuditMustStayClean()
+    {
+        string[] extractedSystemPaths =
+        {
+            UnitPathfindingBudgetSystemPath,
+            UnitPathfindingPendingStateSystemPath,
+            UnitPathfindingQuerySystemPath,
+            UnitPathRequestBufferSystemPath,
+            UnitPathIgnoredOccupancySystemPath,
+            UnitPathRequestCollectionSystemPath,
+            UnitPathLiveUnitSnapshotSystemPath,
+            UnitPathScratchWorkspaceSystemPath,
+            UnitPathReservedGoalSystemPath,
+            UnitPathCoarseWorkspaceSystemPath,
+            UnitPathSegmentationSystemPath,
+            UnitHierarchicalPathSystemPath,
+            UnitPathGoalAssignmentSystemPath,
+            UnitPathPlacementValidationSystemPath,
+            UnitPathResultApplySystemPath,
+            UnitPathRetrySystemPath,
+            UnitPathValidationMetricsSystemPath,
+            UnitPathfindBatchJobPath,
+            UnitPathfindingScheduleSystemPath,
+            UnitPathfindingApplySystemPath,
+            UnitPathfindingDiagnosticLogFlushSystemPath,
+        };
+
+        foreach (string path in extractedSystemPaths)
+        {
+            Assert.IsTrue(File.Exists(path), $"Expected extracted pathfinding boundary file to exist: {path}");
+            string source = File.ReadAllText(path);
+            Assert.IsFalse(
+                source.Contains("UnitPathfindingSystem", StringComparison.Ordinal),
+                $"{path} must not depend back on the pathfinding coordinator after step 34.");
+            Assert.IsFalse(source.Contains("new List<", StringComparison.Ordinal), $"{path} must not add managed List allocation in the pathfinding boundary.");
+            Assert.IsFalse(source.Contains("new Dictionary<", StringComparison.Ordinal), $"{path} must not add managed Dictionary allocation in the pathfinding boundary.");
+            Assert.IsFalse(source.Contains(".ToList(", StringComparison.Ordinal), $"{path} must not use LINQ ToList in the pathfinding boundary.");
+            Assert.IsFalse(source.Contains(".Select(", StringComparison.Ordinal), $"{path} must not use LINQ Select in the pathfinding boundary.");
+            Assert.IsFalse(source.Contains(".Where(", StringComparison.Ordinal), $"{path} must not use LINQ Where in the pathfinding boundary.");
+        }
+
+        string pathfinding = File.ReadAllText(UnitPathfindingSystemPath);
+        string diagnostics = File.ReadAllText(UnitPathfindingDiagnosticSystemPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        int coordinatorLines = File.ReadLines(UnitPathfindingSystemPath).Count();
+
+        Assert.LessOrEqual(
+            coordinatorLines,
+            220,
+            "UnitPathfindingSystem must stay a narrow coordinator after the step 34 ownership audit.");
+        Assert.IsFalse(
+            pathfinding.Contains("new StringBuilder", StringComparison.Ordinal),
+            "Coordinator must not regain managed diagnostic formatting.");
+        StringAssert.Contains("UnitPathfindingSystem frame=", diagnostics);
+        StringAssert.Contains("34. Complete: Compatibility and file ownership audit", roadmap);
+        StringAssert.Contains("no extracted pathfinding boundary depends back on `UnitPathfindingSystem`", roadmap);
+    }
+
+    [Test]
+    public void UnitPathfindingFinalValidationGateMustHaveFocusedSmoke()
+    {
+        Assert.IsTrue(
+            File.Exists(UnitPathfindingFocusedPerformanceValidationPath),
+            "Step 35 must include a focused pathfinding performance validation harness.");
+
+        string focusedValidation = File.ReadAllText(UnitPathfindingFocusedPerformanceValidationPath);
+        string roadmap = File.ReadAllText(UnitPathfindingRoadmapPath);
+        string requestCollection = File.ReadAllText(UnitPathRequestCollectionSystemPath);
+        string querySystem = File.ReadAllText(UnitPathfindingQuerySystemPath);
+        string schedule = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+
+        StringAssert.Contains("UnitPathfindingFocusedPerformanceValidation", focusedValidation);
+        StringAssert.Contains("ManualGroupAndLongDistanceRequestsCompleteWithoutPathfindingDiagnostics", focusedValidation);
+        StringAssert.Contains("ManualInfantryCount = 4", focusedValidation);
+        StringAssert.Contains("usesVehicleMotion: true", focusedValidation);
+        StringAssert.Contains("UnitLongDistanceMove", focusedValidation);
+        StringAssert.Contains("allocatedBytesCurrentThread", focusedValidation);
+        StringAssert.Contains("pathDiagnosticsCount", focusedValidation);
+        StringAssert.Contains("RunBatchValidation", focusedValidation);
+        StringAssert.Contains("UnitPathfindingFocusedPerformanceValidation.RunBatchValidation", roadmap);
+        StringAssert.Contains("Focused pathfinding result: passed", roadmap);
+        StringAssert.Contains("35. Complete: Final validation gate", roadmap);
+
+        Assert.IsFalse(
+            requestCollection.Contains("SystemAPI.Query", StringComparison.Ordinal),
+            "Request collection is a helper boundary; it must not rely on helper-owned generated SystemAPI.Query handles.");
+        StringAssert.Contains("ComponentType.ReadOnly<Faction>()", querySystem);
+        StringAssert.Contains("requestCollection.Collect(ref state, ref queries, ref requestBuffers, ref ignoredOccupancy, requestBudget)", schedule);
     }
 
     [Test]

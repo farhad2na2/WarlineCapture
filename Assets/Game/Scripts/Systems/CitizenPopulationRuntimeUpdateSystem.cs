@@ -32,6 +32,7 @@ internal sealed class CitizenPopulationRuntimeUpdateSystem
             UpdateLogicalCitizenPopulation,
             SyncVisibleCitizens,
             RecalculateTotalsForLifecycle,
+            _systems.UnitPathfindingPendingStateReadSystem.HasPendingPathJob,
             Time.time);
     }
 

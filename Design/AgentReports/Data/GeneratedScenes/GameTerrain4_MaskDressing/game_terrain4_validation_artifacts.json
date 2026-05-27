@@ -5,43 +5,60 @@
   "capturesRenderedThisRun": true,
   "topDownProofCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png",
   "playableAngleProofCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png",
-  "totalPlacedPrefabs": 3382,
+  "cleanTopDownCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png",
+  "cleanPlayableCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png",
+  "referenceFidelitySummary": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_reference_fidelity_summary.json",
+  "totalPlacedPrefabs": 15296,
   "passed": true,
   "checks": [
     {
-      "id": "totalPlacedPrefabs",
+      "id": "totalPlacedPrefabs.minimum",
       "passed": true,
-      "expected": 3382,
-      "actual": 3382,
-      "details": "Scene placed-prefab total must match the deterministic spacing plan."
+      "expected": 5681,
+      "actual": 15296,
+      "details": "Scene placed-prefab total must be at least the deterministic spacing plan because fidelity clusters may expand accepted points."
     },
     {
-      "id": "count.Mountains",
+      "id": "count.Mountains.minimum",
       "passed": true,
-      "expected": 238,
-      "actual": 238,
-      "details": "Generated group count for Mountains must match accepted spacing points."
+      "expected": 358,
+      "actual": 716,
+      "details": "Generated group count for Mountains must be at least accepted spacing points after cluster expansion."
     },
     {
-      "id": "count.Trees",
+      "id": "count.Trees_Playable.minimum",
       "passed": true,
-      "expected": 976,
-      "actual": 976,
-      "details": "Generated group count for Trees must match accepted spacing points."
+      "expected": 972,
+      "actual": 972,
+      "details": "Generated group count for Trees_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
-      "id": "count.Bushes",
+      "id": "count.Trees_BlockerBelt.minimum",
       "passed": true,
-      "expected": 1473,
-      "actual": 1473,
-      "details": "Generated group count for Bushes must match accepted spacing points."
+      "expected": 859,
+      "actual": 4044,
+      "details": "Generated group count for Trees_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
-      "id": "count.Rocks",
+      "id": "count.Bushes_Playable.minimum",
       "passed": true,
-      "expected": 695,
-      "actual": 695,
-      "details": "Generated group count for Rocks must match accepted spacing points."
+      "expected": 1471,
+      "actual": 1471,
+      "details": "Generated group count for Bushes_Playable must be at least accepted spacing points after cluster expansion."
+    },
+    {
+      "id": "count.Bushes_BlockerBelt.minimum",
+      "passed": true,
+      "expected": 1144,
+      "actual": 7094,
+      "details": "Generated group count for Bushes_BlockerBelt must be at least accepted spacing points after cluster expansion."
+    },
+    {
+      "id": "count.Rocks.minimum",
+      "passed": true,
+      "expected": 877,
+      "actual": 999,
+      "details": "Generated group count for Rocks must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "reserveClear.CityReserve",
@@ -72,11 +89,11 @@
       "details": "Generated dressing must remain inside the 2024 playable map footprint, which is now fully covered by green/dirt terrain."
     },
     {
-      "id": "pathing.vegetationClear",
+      "id": "pathing.playableVegetationClear",
       "passed": true,
       "expected": 0,
       "actual": 0,
-      "details": "Trees and bushes must not sit on soft-edge or hard-blocker pathing cells."
+      "details": "Playable vegetation must not sit on soft-edge or hard-blocker pathing cells; blocker-belt vegetation is visual dressing and has colliders removed."
     },
     {
       "id": "pathing.rocksClear",
@@ -88,8 +105,8 @@
     {
       "id": "blockerBelt.mountainsNaturalTerrain",
       "passed": true,
-      "expected": 238,
-      "actual": 238,
+      "expected": 716,
+      "actual": 716,
       "details": "Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells."
     },
     {
@@ -112,6 +129,34 @@
       "expected": 1,
       "actual": 1,
       "details": "Playable-frame proof must show readable terrain content, not only sky/background."
+    },
+    {
+      "id": "fidelity.cleanTopDownCapture",
+      "passed": true,
+      "expected": 1,
+      "actual": 1,
+      "details": "Clean top-down scene capture must exist without debug overlays."
+    },
+    {
+      "id": "fidelity.blockerVegetation",
+      "passed": true,
+      "expected": 900,
+      "actual": 11138,
+      "details": "Dense blocker-belt vegetation should be visibly present."
+    },
+    {
+      "id": "fidelity.mountainRidgeMass",
+      "passed": true,
+      "expected": 320,
+      "actual": 716,
+      "details": "Mountain pass should read as connected ridge mass, not sparse isolated points."
+    },
+    {
+      "id": "fidelity.reservePollution",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "City/base reserve areas must remain clear of generated dressing."
     }
   ]
 }

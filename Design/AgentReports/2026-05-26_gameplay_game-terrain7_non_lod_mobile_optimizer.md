@@ -13,13 +13,13 @@ Implementation:
 - Keep gameplay authority in grid, blocker, and heightmap data.
 
 Results:
-- Source LOD0 renderers/material slots/triangles: `296` / `296` / `11220414`
-- Terrain7 renderers/material slots/triangles: `296` / `296` / `11220414`
+- Source LOD0 renderers/material slots/triangles: `317` / `317` / `14514340`
+- Terrain7 renderers/material slots/triangles: `317` / `317` / `14514340`
 - Terrain7 unique materials: `3`
-- Terrain7 referenced mesh assets: `296`
+- Terrain7 referenced mesh assets: `317`
 - Terrain7 non-readable mesh assets: `0`
-- Terrain7 readable mesh assets retained: `296`
-- Terrain7 referenced mesh asset disk bytes: `1369996909`
+- Terrain7 readable mesh assets retained: `317`
+- Terrain7 referenced mesh asset disk bytes: `2261617631`
 - Removed LOD switchers: `0`
 - Removed colliders: `0`
 - Removed nonessential objects: `1`

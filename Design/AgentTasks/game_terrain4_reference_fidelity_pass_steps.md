@@ -2,7 +2,7 @@
 
 Date: 2026-05-26
 
-Status: Planned, not implemented.
+Status: Complete.
 
 Goal: adjust the `Game_Terrain4` generation scripts so the generated 3D map reads like the `SyntyHighlands_01/base_visual.png` reference, while still using the existing Synty/POLYGON prefabs and keeping gameplay truth in grid, blocker, and height data.
 
@@ -28,58 +28,58 @@ The gameplay grid remains authoritative for pathing. Visual objects can exist on
 
 ## Steps
 
-- [ ] 1. Add a reference analysis pass for `base_visual.png`.
+- [x] 1. Add a reference analysis pass for `base_visual.png`.
   - Sample the same 2024x2024 coordinate contract already used by the mask builder.
   - Classify each sampled area into `greenGrass`, `darkGrass`, `dirt`, `rockMountain`, `forestCanopy`, and `reserveClear`.
   - Prefer an explicit optional `surface_material_mask.png` in the map pack. If it is missing, derive a best-effort material map from `base_visual.png`.
 
-- [ ] 2. Replace noise-first ground material selection with reference-driven material selection.
+- [x] 2. Replace noise-first ground material selection with reference-driven material selection.
   - Update `WarlineCaptureGameTerrain3Island2048Builder.ChooseGroundMaterial`.
   - For each ground prefab center, map world position back to grid coordinates and sample the material classification.
   - Use `PolygonBattleRoyale_01_A` for green zones, `PolygonBattleRoyale_03_A` for dark grass, and `PolygonBattleRoyale_02_A` for dirt.
   - Keep procedural noise only as small breakup inside a matching material zone, not as the main source of truth.
 
-- [ ] 3. Make city and base reserves visually clean from the start.
+- [x] 3. Make city and base reserves visually clean from the start.
   - Force reserve rectangles to mostly dirt or low grass, matching the reference clearings.
   - Allow sparse grass patches near reserve edges only.
   - Keep all generated blocker landscape props outside these reserves.
 
-- [ ] 4. Split vegetation into playable vegetation and blocker vegetation.
+- [x] 4. Split vegetation into playable vegetation and blocker vegetation.
   - `Generated_Trees_Playable`: lower-density trees near walkable lanes and open groves.
   - `Generated_Trees_BlockerBelt`: dense visual forest on hard blockers, high terrain, and mountain edges.
   - `Generated_Bushes_Playable`: scrub and bushes on walkable terrain.
   - `Generated_Bushes_BlockerBelt`: dense low vegetation around mountain/forest blockers.
   - Remove colliders from visual blocker vegetation if gameplay blockers already come from the grid.
 
-- [ ] 5. Replace single-point tree/bush placement with cluster placement.
+- [x] 5. Replace single-point tree/bush placement with cluster placement.
   - Use the density mask to select cluster centers.
   - In medium-density zones, spawn small clusters with spacing.
   - In dense zones, spawn multiple trees and bushes around each cluster center with jitter, rotation, and scale variation.
   - Keep movement lanes readable by preserving low-density corridors from the masks.
 
-- [ ] 6. Convert mountain placement from isolated points into ridge components.
+- [x] 6. Convert mountain placement from isolated points into ridge components.
   - Build connected components from `height_mask`, `blocker_mask`, and dense `rock_density_mask`.
   - For each large component, place overlapping mountain prefabs along the ridge direction.
   - Scale mountain prefabs by component size and local height value.
   - Use small rock prefabs around the edge as a transition from ridge to grass/dirt.
 
-- [ ] 7. Add reference-driven detail grass placement.
+- [x] 7. Add reference-driven detail grass placement.
   - Place `SM_Generic_Grass_Patch_01` and related grass patch prefabs mostly on green/dark grass cells.
   - Avoid dirt-heavy reserve interiors.
   - Use higher detail density in the foreground/playable camera band, lower density in far background.
 
-- [ ] 8. Add clean visual comparison captures.
+- [x] 8. Add clean visual comparison captures.
   - Generate a clean top-down capture without debug dots, red rectangles, or grid overlays.
   - Generate a playable-camera capture from the real game camera.
   - Keep current debug captures as separate validation artifacts.
 
-- [ ] 9. Add visual fidelity metrics before optimization.
+- [x] 9. Add visual fidelity metrics before optimization.
   - Compare generated ground material percentages against the reference classification.
   - Compare tree/bush density heatmaps against `tree_density_mask.png`.
   - Compare mountain footprint coverage against `height_mask.png` and `rock_density_mask.png`.
   - Fail the pass if reserves are polluted, blocker belts are sparse, or the clean capture is missing.
 
-- [ ] 10. Run the existing one-go optimization only after the fidelity pass.
+- [x] 10. Run the existing one-go optimization only after the fidelity pass.
   - Regenerate `Game_Terrain4`.
   - Validate visual fidelity.
   - Build `Game_Terrain5`.
@@ -113,3 +113,20 @@ The gameplay grid remains authoritative for pathing. Visual objects can exist on
 - Mountains read as connected ridge masses, not scattered single rocks.
 - City and base pads remain clear and buildable.
 - The clean top-down capture looks visually aligned with `base_visual.png` before `Game_Terrain5` and `Game_Terrain7` are built.
+
+## Completion Evidence
+
+- Unity validation command: `WarlineCaptureGameTerrain5OneGoOptimizer.FullRegenerateAndOptimize`
+- Validation workspace: `/Users/farhad/Projects/WarlineCapture-CodexUnity2`
+- Final log: `/private/tmp/warlinecapture-codexunity2-reference-fidelity-one-go-r3.log`
+- `Game_Terrain4` mask dressing validation: passed.
+- `Game_Terrain4` reference fidelity summary: passed.
+- `Game_Terrain4` generated dressing: 15,296 prefabs.
+- Mountains: 716.
+- Playable trees / blocker-belt trees: 972 / 4,044.
+- Playable bushes / blocker-belt bushes: 1,471 / 7,094.
+- Rocks: 999.
+- Reserve pollution: 0.
+- Clean captures:
+  - `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png`
+  - `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png`

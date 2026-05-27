@@ -12,13 +12,15 @@
   "sequence": [
     { "step": 1, "method": "WarlineCaptureGameTerrain3Island2048Builder.BuildScene", "output": "Design/AgentReports/Data/GeneratedScenes/GameTerrain3_Island2048/game_terrain3_island2048_layout.json" },
     { "step": 2, "method": "WarlineCaptureGameTerrain4MaskDressingBuilder.BuildMaskDressing", "output": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_validation_artifacts.json" },
-    { "step": 3, "method": "WarlineCaptureGameTerrain4PlayableLandAudit.AuditPlayableLandFootprint", "output": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_PlayableLandAudit/game_terrain4_playable_land_audit.json" }
+    { "step": 3, "method": "WarlineCaptureGameTerrain4MaskDressingBuilder.ValidateReferenceFidelity", "output": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_reference_fidelity_summary.json" },
+    { "step": 4, "method": "WarlineCaptureGameTerrain4PlayableLandAudit.AuditPlayableLandFootprint", "output": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_PlayableLandAudit/game_terrain4_playable_land_audit.json" }
   ],
   "validationArtifacts": {
     "islandBuilderReport": "Design/AgentReports/2026-05-25_gameplay_game-terrain3-island2048-builder.md",
     "islandBuilderLayoutJson": "Design/AgentReports/Data/GeneratedScenes/GameTerrain3_Island2048/game_terrain3_island2048_layout.json",
     "maskDressingReport": "Design/AgentReports/2026-05-25_gameplay_game-terrain4-mask-dressing-builder.md",
     "maskDressingValidationJson": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_validation_artifacts.json",
+    "referenceFidelityJson": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_reference_fidelity_summary.json",
     "playableAuditReport": "Design/AgentReports/2026-05-25_gameplay_game-terrain4-playable-land-audit.md",
     "playableAuditJson": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_PlayableLandAudit/game_terrain4_playable_land_audit.json"
   }

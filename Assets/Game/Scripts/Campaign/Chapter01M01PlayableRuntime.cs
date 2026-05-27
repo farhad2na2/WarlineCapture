@@ -15,6 +15,7 @@ public static class Chapter01M01PlayableRuntime
     public const string DecorCommandPointEntityId = "decor.command_point";
     public const string ObjectiveId = "destroy_patrol";
     public const string PatrolRouteId = "route.enemy_patrol_01";
+    private const string FallbackInfantryVisualPrefabKey = "Unit_Chr_Soldier_Male_02_Alt_04";
     private const float M01InfantryRunSpeedWorldUnitsPerSecond = 0.42f;
     private const float M01InfantryWalkSpeedWorldUnitsPerSecond = 0.28f;
     private static readonly int2 PlayerSpawnCell = new(980, 1000);
@@ -235,6 +236,7 @@ public static class Chapter01M01PlayableRuntime
 
         ApplyM01TacticalScaleAttackTrace(em, entity);
         ApplyM01InfantryMovementContract(em, entity);
+        EnsureFallbackVisualSource(em, entity);
     }
 
     private static void ApplyM01TacticalScaleAttackTrace(EntityManager em, Entity entity)
@@ -314,6 +316,7 @@ public static class Chapter01M01PlayableRuntime
             typeof(UnitAnimationSettings),
             typeof(UnitPrevWorldPos),
             typeof(UnitMoveVisualState),
+            typeof(UnitSourcePrefabKey),
             typeof(LocalTransform));
 
         em.SetComponentData(entity, new Faction { Id = factionId });
@@ -357,6 +360,7 @@ public static class Chapter01M01PlayableRuntime
         });
         em.SetComponentData(entity, new UnitPrevWorldPos { Value = worldPosition });
         em.SetComponentData(entity, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(FallbackInfantryVisualPrefabKey) });
         em.SetComponentData(entity, LocalTransform.FromPosition(worldPosition));
         return entity;
     }
@@ -389,6 +393,20 @@ public static class Chapter01M01PlayableRuntime
             combat.CanAttack = 1;
             em.SetComponentData(entity, combat);
         }
+        EnsureFallbackVisualSource(em, entity);
+    }
+
+    private static void EnsureFallbackVisualSource(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null ||
+            !em.Exists(entity) ||
+            em.HasComponent<UnitModelInstanceReference>(entity) ||
+            em.HasComponent<UnitSourcePrefabKey>(entity))
+        {
+            return;
+        }
+
+        SetComponent(em, entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes(FallbackInfantryVisualPrefabKey) });
     }
 
     private static void ApplyM01InfantryMovementContract(EntityManager em, Entity entity)

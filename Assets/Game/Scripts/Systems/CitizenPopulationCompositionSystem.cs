@@ -27,6 +27,7 @@ internal sealed class CitizenPopulationCompositionSystem
         public readonly CitizenPopulationDiagnosticSystem DiagnosticSystem = new();
         public readonly CitizenPopulationLifecycleSystem LifecycleSystem = new();
         public readonly CitizenPopulationRuntimeUpdateSystem RuntimeUpdateSystem = new();
+        public readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();
         public DayNightSystem DayNightSystem;
         public Camera WorldCamera;
     }
@@ -86,6 +87,7 @@ internal sealed class CitizenPopulationCompositionSystem
         result.PrefabSelectionSystem.Reset();
         result.EventSystem.Reset();
         result.RuntimeUpdateSystem.Reset();
+        result.UnitPathfindingPendingStateReadSystem.Dispose();
         result.EcsProjection.Reset();
         result.DayNightSystem = null;
         result.WorldCamera = null;

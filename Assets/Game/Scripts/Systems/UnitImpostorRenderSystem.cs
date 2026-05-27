@@ -44,6 +44,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private readonly Dictionary<Material, BatchState> _batchByMaterial = new();
     private World _cachedWorld;
     private EntityQuery _query;
+    private EntityQuery _missionFallbackQuery;
     private int _renderLayer;
     private bool _initialized;
     private bool _hasQuery;
@@ -77,41 +78,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         if (world == null || !world.IsCreated)
             return;
 
-        EntityQuery query = GetOrCreateQuery(world);
-        if (query.IsEmptyIgnoreFilter)
-            return;
-
-        using NativeArray<LocalTransform> transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
-        using NativeArray<UnitSourcePrefabKey> sourceKeys = query.ToComponentDataArray<UnitSourcePrefabKey>(Allocator.Temp);
-
         ResetBatches();
-
-        Vector3 cameraPosition = _camera.transform.position;
-        for (int i = 0; i < transforms.Length; i++)
-        {
-            float3 unitPosition = transforms[i].Position;
-            Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
-            FixedString64Bytes sourceKey = sourceKeys[i].Value;
-            ImpostorStyle style = GetOrCreateStyle(sourceKey);
-            Material material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
-            if (style == null || material == null)
-            {
-                style = GetFallbackStyle();
-                material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
-            }
-
-            Vector3 toCamera = cameraPosition - position;
-            toCamera.y = 0f;
-            if (toCamera.sqrMagnitude < 0.0001f)
-                toCamera = Vector3.forward;
-
-            Quaternion rotation = Quaternion.LookRotation(toCamera.normalized, Vector3.up);
-            Vector3 drawPosition = new(position.x, position.y + style.Height * CharacterImpostorHeightOffset, position.z);
-            Vector3 scale = new(style.Width, style.Height, 1f);
-            Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
-            AddToBatch(material, matrix);
-        }
-
+        DrawQuery(GetOrCreateCulledQuery(world));
+        DrawQuery(GetOrCreateMissionFallbackQuery(world));
         FlushBatches();
     }
 
@@ -122,6 +91,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             try
             {
                 _query.Dispose();
+                _missionFallbackQuery.Dispose();
             }
             catch (System.NullReferenceException)
             {
@@ -183,13 +153,16 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         }
     }
 
-    private EntityQuery GetOrCreateQuery(World world)
+    private EntityQuery GetOrCreateCulledQuery(World world)
     {
         if (_cachedWorld == world && _hasQuery)
             return _query;
 
         if (_hasQuery)
+        {
             _query.Dispose();
+            _missionFallbackQuery.Dispose();
+        }
 
         _cachedWorld = world;
         _query = world.EntityManager.CreateEntityQuery(new EntityQueryDesc
@@ -208,8 +181,75 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
                 ComponentType.ReadOnly<StaticGridBlocker>(),
             }
         });
+        _missionFallbackQuery = CreateMissionFallbackQuery(world);
         _hasQuery = true;
         return _query;
+    }
+
+    private EntityQuery GetOrCreateMissionFallbackQuery(World world)
+    {
+        if (_cachedWorld == world && _hasQuery)
+            return _missionFallbackQuery;
+
+        GetOrCreateCulledQuery(world);
+        return _missionFallbackQuery;
+    }
+
+    private EntityQuery CreateMissionFallbackQuery(World world)
+    {
+        return world.EntityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<MissionRuntimeEntityId>(),
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<LocalTransform>(),
+                ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<UnitTransportPassenger>(),
+                ComponentType.ReadOnly<Disabled>(),
+                ComponentType.ReadOnly<StaticGridBlocker>(),
+                ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>(),
+            }
+        });
+    }
+
+    private void DrawQuery(EntityQuery query)
+    {
+        if (query.IsEmptyIgnoreFilter)
+            return;
+
+        using NativeArray<LocalTransform> transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
+        using NativeArray<UnitSourcePrefabKey> sourceKeys = query.ToComponentDataArray<UnitSourcePrefabKey>(Allocator.Temp);
+
+        Vector3 cameraPosition = _camera.transform.position;
+        for (int i = 0; i < transforms.Length; i++)
+        {
+            float3 unitPosition = transforms[i].Position;
+            Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
+            FixedString64Bytes sourceKey = sourceKeys[i].Value;
+            ImpostorStyle style = GetOrCreateStyle(sourceKey);
+            Material material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
+            if (style == null || material == null)
+            {
+                style = GetFallbackStyle();
+                material = ResolveDirectionalMaterial(style, transforms[i].Rotation, cameraPosition - position);
+            }
+
+            Vector3 toCamera = cameraPosition - position;
+            toCamera.y = 0f;
+            if (toCamera.sqrMagnitude < 0.0001f)
+                toCamera = Vector3.forward;
+
+            Quaternion rotation = Quaternion.LookRotation(toCamera.normalized, Vector3.up);
+            Vector3 drawPosition = new(position.x, position.y + style.Height * CharacterImpostorHeightOffset, position.z);
+            Vector3 scale = new(style.Width, style.Height, 1f);
+            Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
+            AddToBatch(material, matrix);
+        }
     }
 
     private void ResetBatches()

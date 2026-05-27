@@ -228,11 +228,13 @@ public sealed class GameBootstrap : MonoBehaviour
             World.DefaultGameObjectInjectionWorld,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
         _aiStartupSystem.LogConfigValidation(aiControllerConfigs);
+        LogRuntimeEcsBootstrapState("beforeMissionInit");
         _missionStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
             worldCamera,
             DayNight,
             legacyVisualRootsDisabledForM01);
+        LogRuntimeEcsBootstrapState("afterMissionInit");
         AIStartupSystem.Result aiStartupResult = _aiStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
             aiControllerConfigs,
@@ -412,6 +414,36 @@ public sealed class GameBootstrap : MonoBehaviour
     {
         if (!em.HasBuffer<T>(entity))
             em.AddBuffer<T>(entity);
+    }
+
+    private static void LogRuntimeEcsBootstrapState(string phase)
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+        {
+            Debug.LogWarning($"[AndroidVisualDiag] phase={phase} world=missing");
+            return;
+        }
+
+        EntityManager em = world.EntityManager;
+        using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        using EntityQuery initialSpawnQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+        using EntityQuery registryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryTag>());
+        using EntityQuery unitQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
+        using EntityQuery modelQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitModelInstanceReference>());
+        using EntityQuery sourceKeyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using EntityQuery missionFallbackVisualQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<MissionRuntimeEntityId>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
+            ComponentType.Exclude<UnitModelInstanceReference>());
+
+        Debug.Log(
+            $"[AndroidVisualDiag] phase={phase} " +
+            $"gridConfigs={gridQuery.CalculateEntityCount()} initialSpawnConfigs={initialSpawnQuery.CalculateEntityCount()} " +
+            $"unitRegistries={registryQuery.CalculateEntityCount()} units={unitQuery.CalculateEntityCount()} " +
+            $"sourceKeys={sourceKeyQuery.CalculateEntityCount()} models={modelQuery.CalculateEntityCount()} " +
+            $"missionFallbackVisuals={missionFallbackVisualQuery.CalculateEntityCount()}");
     }
 
     private void InitializeGameplaySystemsIfNeeded()

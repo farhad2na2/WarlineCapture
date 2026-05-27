@@ -61,4 +61,5 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly BuildingGameplayEcsQuerySystem BuildingGameplayEcsQuerySystem = new();
     internal readonly BuildingGameplayGridDataSystem BuildingGameplayGridDataSystem = new();
     internal readonly BuildingPlacementInvalidCellSystem BuildingPlacementInvalidCellSystem = new();
+    internal readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();
 }

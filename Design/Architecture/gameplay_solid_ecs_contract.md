@@ -201,6 +201,16 @@ Use narrow migrations. Do not rewrite the entire project at once.
 6. Convert mission-specific hardcoding into mission configs and systems.
 7. Retire legacy class names only when touching that domain for real behavior work.
 
+## Unit Pathfinding Migration
+
+UnitPathfindingSystem refactor is tracked in `Design/Architecture/unit_pathfinding_system_refactor_roadmap.md`.
+
+Pathfinding is a hot gameplay system. Refactoring must preserve current movement behavior and current performance characteristics before improving architecture. Do not change pathing constants, traversal costs, request budgets, search radii, search expansion limits, segment thresholds, scheduling semantics, allocator lifetimes, or hot-path data layout unless a separate approved gameplay/performance task asks for it.
+
+Path request collection, live-unit snapshot ownership, native scratch workspace ownership, reserved-goal state, hierarchical waypoint planning, nearest-goal assignment, result application, retry/abandon policy, adaptive request budgeting, validation metrics, and pathfinding diagnostics must migrate into narrow `*System` boundaries. The remaining `UnitPathfindingSystem` may stay only as a narrow ECS schedule/apply coordinator.
+
+`UnitPathfindingSystem.HasPendingPathJob` is temporary static runtime-state debt. Pending path job state must migrate to an ECS singleton/read-model boundary, and building production, citizen population, and selection/building click guards must read that boundary instead of the static property.
+
 ## Building Domain Migration
 
 `BuildingPlacementSystem` must not exist. The retired facade is closed architecture debt; do not recreate it as a source file, wrapper, test harness, singleton, or compatibility type.

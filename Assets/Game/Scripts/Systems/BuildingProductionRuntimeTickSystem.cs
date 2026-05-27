@@ -18,6 +18,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
         public readonly Action<uint> SetRandomState;
         public readonly Action<float> RecordOilExtracted;
         public readonly Action<float> RecordFuelProduced;
+        public readonly Func<bool> HasPendingPathJob;
         public readonly float OilBarrelsPerFuelBarrel;
 
         public Context(
@@ -33,6 +34,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
             Action<uint> setRandomState,
             Action<float> recordOilExtracted,
             Action<float> recordFuelProduced,
+            Func<bool> hasPendingPathJob,
             float oilBarrelsPerFuelBarrel)
         {
             RuntimeBuildings = runtimeBuildings;
@@ -47,6 +49,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
             SetRandomState = setRandomState;
             RecordOilExtracted = recordOilExtracted;
             RecordFuelProduced = recordFuelProduced;
+            HasPendingPathJob = hasPendingPathJob;
             OilBarrelsPerFuelBarrel = oilBarrelsPerFuelBarrel;
         }
     }
@@ -89,7 +92,7 @@ internal sealed class BuildingProductionRuntimeTickSystem
     {
         context.ResourceHaulerBridgeSystem?.UpdateResourceHaulers(
             context.ResourceHaulerBridgeContext,
-            UnitPathfindingSystem.HasPendingPathJob,
+            context.HasPendingPathJob != null && context.HasPendingPathJob(),
             Time.time);
     }
 

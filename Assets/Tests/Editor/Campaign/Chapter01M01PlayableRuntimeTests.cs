@@ -81,6 +81,8 @@ public sealed class Chapter01M01PlayableRuntimeTests
         Assert.IsTrue(em.HasComponent<MissionRuntimeEnemyPatrolTag>(state.EnemyPatrol));
         Assert.IsTrue(em.HasComponent<MissionRuntimePatrolRoute>(state.EnemyPatrol));
         Assert.IsTrue(em.HasComponent<UnitPathRequest>(state.EnemyPatrol));
+        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", em.GetComponentData<UnitSourcePrefabKey>(state.PlayerSquad).Value.ToString());
+        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", em.GetComponentData<UnitSourcePrefabKey>(state.EnemyPatrol).Value.ToString());
         Assert.IsFalse(em.HasComponent<UnitDestroyedVisualReference>(state.CommandPoint));
 
         AssertRuntimePosition(state.PlayerSpawnWorld, em.GetComponentData<LocalTransform>(state.PlayerSquad).Position);
@@ -100,6 +102,8 @@ public sealed class Chapter01M01PlayableRuntimeTests
         Assert.AreEqual(enemyCandidate, state.EnemyPatrol);
         Assert.AreEqual(Chapter01M01PlayableRuntime.PlayerSquadEntityId, _world.EntityManager.GetComponentData<MissionRuntimeEntityId>(playerCandidate).Value.ToString());
         Assert.AreEqual(Chapter01M01PlayableRuntime.EnemyPatrolEntityId, _world.EntityManager.GetComponentData<MissionRuntimeEntityId>(enemyCandidate).Value.ToString());
+        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", _world.EntityManager.GetComponentData<UnitSourcePrefabKey>(playerCandidate).Value.ToString());
+        Assert.AreEqual("Unit_Chr_Soldier_Male_02_Alt_04", _world.EntityManager.GetComponentData<UnitSourcePrefabKey>(enemyCandidate).Value.ToString());
     }
 
     [Test]

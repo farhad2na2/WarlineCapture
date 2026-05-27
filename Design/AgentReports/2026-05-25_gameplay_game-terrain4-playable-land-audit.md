@@ -10,21 +10,19 @@ Target map footprint:
 - `MapTarget2024`: count 0, width 2023, depth 2023, x [-1011.5, 1011.5], z [-1011.5, 1011.5]
 
 Current foundation footprint:
-- `FoundationOverall`: count 22611, width 3082.198, depth 2975.169, x [-1533.103, 1549.095], z [-1549.377, 1425.792]
+- `FoundationOverall`: count 22490, width 3082.198, depth 2975.169, x [-1533.103, 1549.095], z [-1549.377, 1425.792]
 - Shortfall versus target: west 0, east 0, south 0, north 0
 
 Current foundation categories:
-- `GreenPlayableGround`: count 18090, width 2930.813, depth 2831.412, x [-1441.291, 1489.521], z [-1475.949, 1355.464]
+- `GreenPlayableGround`: count 17969, width 2930.813, depth 2831.412, x [-1441.291, 1489.521], z [-1475.949, 1355.464]
 - `InnerBeachBlend`: count 3021, width 2916.812, depth 2875.924, x [-1452.585, 1464.227], z [-1496.299, 1379.625]
 - `OuterBeachCoast`: count 1500, width 3082.197, depth 2975.17, x [-1533.103, 1549.094], z [-1549.377, 1425.793]
 - Beach prefab centers inside 2024 gameplay map: 0 / 4521
 
 Generated mask/dressing footprint:
-- `GeneratedDressingOverall`: count 3382, width 2053.926, depth 2078.858, x [-1017.907, 1036.019], z [-1069.185, 1009.673]
-- `Generated_Bushes`: count 1473, width 1961.523, depth 1975.426, x [-983.338, 978.186], z [-1007.205, 968.221]
-- `Generated_Mountains`: count 238, width 2053.926, depth 2078.858, x [-1017.907, 1036.019], z [-1069.185, 1009.673]
-- `Generated_Rocks`: count 695, width 1974.481, depth 1990.308, x [-990.807, 983.674], z [-994.816, 995.492]
-- `Generated_Trees`: count 976, width 1970.486, depth 1973.777, x [-994.706, 975.78], z [-1003.774, 970.003]
+- `GeneratedDressingOverall`: count 1715, width 2114.741, depth 2149.489, x [-1052.353, 1062.389], z [-1072.811, 1076.678]
+- `Generated_Mountains`: count 716, width 2114.741, depth 2149.489, x [-1052.353, 1062.389], z [-1072.811, 1076.678]
+- `Generated_Rocks`: count 999, width 1986.116, depth 1998.841, x [-997.129, 988.987], z [-996.705, 1002.136]
 
 Design implication for step 4:
 - Regenerate `Game_Terrain4` from the larger island foundation plus the remapped mask dressing contract whenever the map art changes.

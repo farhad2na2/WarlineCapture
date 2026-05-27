@@ -27,19 +27,21 @@ Validated references:
 - Foundation base child: `ExpandedIsland_SourceGameTerrain3PrefabsOnly`
 - Foundation child index: 0
 - Foundation active in hierarchy: True
-- Foundation transform count: 22615
-- Foundation renderers: 22611
-- Foundation mesh filters: 22611
+- Foundation transform count: 22494
+- Foundation renderers: 22490
+- Foundation mesh filters: 22490
 - Foundation colliders: 22358
 - Foundation world bounds center: (7.996, -2.635, -61.792)
 - Foundation world bounds size: (3082.198, 7.829, 2975.169)
 
 Generated child groups under `Island`:
-- `Generated_Mountains`: present, child index 1, children 238, purpose: Mask-placed mountain and cliff blocker dressing.
-- `Generated_Trees`: present, child index 2, children 976, purpose: Mask-placed tree dressing.
-- `Generated_Bushes`: present, child index 3, children 1473, purpose: Mask-placed bush and scrub dressing.
-- `Generated_Rocks`: present, child index 4, children 695, purpose: Mask-placed rock and rubble dressing.
-- `Generated_BlockerDebug`: present, child index 5, children 0, purpose: Generated blocker/pathing proof markers and debug output.
+- `Generated_Mountains`: present, child index 1, children 716, purpose: Mask-placed mountain and cliff blocker dressing.
+- `Generated_Trees_Playable`: present, child index 2, children 972, purpose: Lower-density tree dressing near playable lanes and open groves.
+- `Generated_Trees_BlockerBelt`: present, child index 3, children 4044, purpose: Dense tree dressing on visual blocker belts and mountain edges.
+- `Generated_Bushes_Playable`: present, child index 4, children 1471, purpose: Playable-lane scrub and bush dressing.
+- `Generated_Bushes_BlockerBelt`: present, child index 5, children 7094, purpose: Dense low vegetation around visual blocker belts and ridges.
+- `Generated_Rocks`: present, child index 6, children 999, purpose: Mask-placed rock and rubble dressing.
+- `Generated_BlockerDebug`: present, child index 7, children 0, purpose: Generated blocker/pathing proof markers and debug output.
 
 Source example group child counts:
 - Mountains: 12
@@ -71,48 +73,60 @@ Mask sampling:
 
 Placement rejection:
 - Playable map footprint grid rect: 0,0 2024x2024
-- Valid-any placement cells after global rejection: 2101738
+- Valid-any placement cells after global rejection: 2103428
 - Global rejection counts: hardBlocked=1338433, reserveZone=712800, softPathingEdge=53317
-- Trees: raw 1537310, valid 635521, rejected 901789 (hardBlocked=819444, reserveZone=180329, softPathingEdge=28375)
-- Bushes: raw 1537310, valid 635521, rejected 901789 (hardBlocked=819444, reserveZone=180329, softPathingEdge=28375)
+- Trees_Playable: raw 1537310, valid 635521, rejected 901789 (hardBlocked=819444, reserveZone=180329, softPathingEdge=28375)
+- Trees_BlockerBelt: raw 437866, valid 289629, rejected 148237 (notBlockerBelt=94072, reserveZone=60799)
+- Bushes_Playable: raw 1537310, valid 635521, rejected 901789 (hardBlocked=819444, reserveZone=180329, softPathingEdge=28375)
+- Bushes_BlockerBelt: raw 437866, valid 289629, rejected 148237 (notBlockerBelt=94072, reserveZone=60799)
 - Rocks: raw 1537932, valid 649284, rejected 888648 (hardBlocked=819396, reserveZone=193547)
 - Mountains: raw 1387335, valid 1193557, rejected 193778 (reserveZone=193778)
 
 Spacing plan:
 - Seed: 913742
 - Method: Deterministic stratified dart pass: choose one best mask-weighted candidate per tile, then enforce minimum distance against nearby accepted points.
-- Total accepted spaced points: 3382
-- Mountains: accepted 238 / tile candidates 530, min distance 76, rejected by spacing 292
-- Trees: accepted 976 / tile candidates 2159, min distance 34, rejected by spacing 1183
-- Bushes: accepted 1473 / tile candidates 3229, min distance 26, rejected by spacing 1756
-- Rocks: accepted 695 / tile candidates 1537, min distance 42, rejected by spacing 842
+- Total accepted spaced points: 5681
+- Mountains: accepted 358 / tile candidates 833, min distance 58, rejected by spacing 475
+- Trees_Playable: accepted 972 / tile candidates 2159, min distance 34, rejected by spacing 1187
+- Trees_BlockerBelt: accepted 859 / tile candidates 1777, min distance 22, rejected by spacing 918
+- Bushes_Playable: accepted 1471 / tile candidates 3229, min distance 26, rejected by spacing 1758
+- Bushes_BlockerBelt: accepted 1144 / tile candidates 2378, min distance 18, rejected by spacing 1234
+- Rocks: accepted 877 / tile candidates 1939, min distance 36, rejected by spacing 1062
 
 Dressing placement:
-- Total placed prefabs: 3382
-- Mountains: group `Generated_Mountains` contains 238 placed prefabs.
-- Trees: group `Generated_Trees` contains 976 placed prefabs.
-- Bushes: group `Generated_Bushes` contains 1473 placed prefabs.
-- Rocks: group `Generated_Rocks` contains 695 placed prefabs.
+- Total placed prefabs: 15296
+- Mountains: group `Generated_Mountains` contains 716 placed prefabs.
+- Trees_Playable: group `Generated_Trees_Playable` contains 972 placed prefabs.
+- Trees_BlockerBelt: group `Generated_Trees_BlockerBelt` contains 4044 placed prefabs.
+- Bushes_Playable: group `Generated_Bushes_Playable` contains 1471 placed prefabs.
+- Bushes_BlockerBelt: group `Generated_Bushes_BlockerBelt` contains 7094 placed prefabs.
+- Rocks: group `Generated_Rocks` contains 999 placed prefabs.
 
 Validation artifacts:
 - Captures rendered this run: True
 - Top-down proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_topdown_proof.png`
 - Playable-frame proof: `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_playable_angle_proof.png`
 - Overall validation pass: True
-- PASS `totalPlacedPrefabs`: expected 3382, actual 3382. Scene placed-prefab total must match the deterministic spacing plan.
-- PASS `count.Mountains`: expected 238, actual 238. Generated group count for Mountains must match accepted spacing points.
-- PASS `count.Trees`: expected 976, actual 976. Generated group count for Trees must match accepted spacing points.
-- PASS `count.Bushes`: expected 1473, actual 1473. Generated group count for Bushes must match accepted spacing points.
-- PASS `count.Rocks`: expected 695, actual 695. Generated group count for Rocks must match accepted spacing points.
+- PASS `totalPlacedPrefabs.minimum`: expected 5681, actual 15296. Scene placed-prefab total must be at least the deterministic spacing plan because fidelity clusters may expand accepted points.
+- PASS `count.Mountains.minimum`: expected 358, actual 716. Generated group count for Mountains must be at least accepted spacing points after cluster expansion.
+- PASS `count.Trees_Playable.minimum`: expected 972, actual 972. Generated group count for Trees_Playable must be at least accepted spacing points after cluster expansion.
+- PASS `count.Trees_BlockerBelt.minimum`: expected 859, actual 4044. Generated group count for Trees_BlockerBelt must be at least accepted spacing points after cluster expansion.
+- PASS `count.Bushes_Playable.minimum`: expected 1471, actual 1471. Generated group count for Bushes_Playable must be at least accepted spacing points after cluster expansion.
+- PASS `count.Bushes_BlockerBelt.minimum`: expected 1144, actual 7094. Generated group count for Bushes_BlockerBelt must be at least accepted spacing points after cluster expansion.
+- PASS `count.Rocks.minimum`: expected 877, actual 999. Generated group count for Rocks must be at least accepted spacing points after cluster expansion.
 - PASS `reserveClear.CityReserve`: expected 0, actual 0. No generated dressing may occupy reserved city/base placement space.
 - PASS `reserveClear.NorthwestBaseReserve`: expected 0, actual 0. No generated dressing may occupy reserved city/base placement space.
 - PASS `reserveClear.SoutheastBaseReserve`: expected 0, actual 0. No generated dressing may occupy reserved city/base placement space.
 - PASS `playableMapFootprint.containment`: expected 0, actual 0. Generated dressing must remain inside the 2024 playable map footprint, which is now fully covered by green/dirt terrain.
-- PASS `pathing.vegetationClear`: expected 0, actual 0. Trees and bushes must not sit on soft-edge or hard-blocker pathing cells.
+- PASS `pathing.playableVegetationClear`: expected 0, actual 0. Playable vegetation must not sit on soft-edge or hard-blocker pathing cells; blocker-belt vegetation is visual dressing and has colliders removed.
 - PASS `pathing.rocksClear`: expected 0, actual 0. Decorative rocks must not sit on hard-blocked pathing cells.
-- PASS `blockerBelt.mountainsNaturalTerrain`: expected 238, actual 238. Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells.
+- PASS `blockerBelt.mountainsNaturalTerrain`: expected 716, actual 716. Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells.
 - PASS `capture.topDownProof`: expected 1, actual 1. Top-down proof image must exist and be non-empty.
 - PASS `capture.playableAngleProof`: expected 1, actual 1. Playable-frame proof image must exist and be non-empty.
 - PASS `capture.playableAngleContent`: expected 1, actual 1. Playable-frame proof must show readable terrain content, not only sky/background.
+- PASS `fidelity.cleanTopDownCapture`: expected 1, actual 1. Clean top-down scene capture must exist without debug overlays.
+- PASS `fidelity.blockerVegetation`: expected 900, actual 11138. Dense blocker-belt vegetation should be visibly present.
+- PASS `fidelity.mountainRidgeMass`: expected 320, actual 716. Mountain pass should read as connected ridge mass, not sparse isolated points.
+- PASS `fidelity.reservePollution`: expected 0, actual 0. City/base reserve areas must remain clear of generated dressing.
 
 Implementation report: `Game_Terrain4/Island` now contains the enlarged green/dirt island foundation plus generated sibling dressing groups. The validation pass confirms prefab counts, reserve-zone clearance, playable-map containment, vegetation pathing rules, rock blocker rules, mountain blocker-belt rules, and proof captures.

@@ -8,12 +8,13 @@
   "rules": [
     "Reject decorative placement outside the 2024 playable map footprint.",
     "Reject decorative placement inside city/base reserve zones.",
-    "Reject tree and bush placement on blocker soft-edge or hard-blocked pathing cells.",
+    "Reject playable tree and bush placement on blocker soft-edge or hard-blocked pathing cells.",
+    "Allow blocker-belt tree and bush placement on blocker, soft-edge, raised, or rocky visual cells with colliders removed.",
     "Reject decorative rock placement on hard-blocked pathing cells.",
     "Allow mountain/blocker dressing only on natural blocker/high-terrain candidates outside reserve zones."
   ],
   "playableMapFootprint": { "xMin": 0, "zMin": 0, "width": 2024, "height": 2024, "xMaxExclusive": 2024, "zMaxExclusive": 2024 },
-  "validAnyPlacementCells": 2101738,
+  "validAnyPlacementCells": 2103428,
   "globalRejectionCounts": [
       {
         "reason": "hardBlocked",
@@ -65,8 +66,8 @@
   ],
   "candidateSummaries": [
     {
-      "kind": "Trees",
-      "rule": "Tree density >= 32, rejected outside the 2024 playable map, inside reserve zones, or on blocker/soft-edge pathing cells.",
+      "kind": "Trees_Playable",
+      "rule": "Tree density >= 32 on walkable/non-soft cells, outside reserve zones.",
       "rawCandidateCells": 1537310,
       "validCells": 635521,
       "rejectedCells": 901789,
@@ -86,8 +87,25 @@
       ]
     },
     {
-      "kind": "Bushes",
-      "rule": "Tree density >= 32, rejected outside the 2024 playable map, inside reserve zones, or on blocker/soft-edge pathing cells.",
+      "kind": "Trees_BlockerBelt",
+      "rule": "Tree density >= 96 on blocker, soft-edge, raised, or rocky cells, outside reserve zones.",
+      "rawCandidateCells": 437866,
+      "validCells": 289629,
+      "rejectedCells": 148237,
+      "rejectionCounts": [
+        {
+          "reason": "notBlockerBelt",
+          "count": 94072
+        },
+        {
+          "reason": "reserveZone",
+          "count": 60799
+        }
+      ]
+    },
+    {
+      "kind": "Bushes_Playable",
+      "rule": "Tree density >= 32 on walkable cells, outside reserve zones.",
       "rawCandidateCells": 1537310,
       "validCells": 635521,
       "rejectedCells": 901789,
@@ -103,6 +121,23 @@
         {
           "reason": "softPathingEdge",
           "count": 28375
+        }
+      ]
+    },
+    {
+      "kind": "Bushes_BlockerBelt",
+      "rule": "Tree density >= 96 on blocker, soft-edge, raised, or rocky cells, outside reserve zones.",
+      "rawCandidateCells": 437866,
+      "validCells": 289629,
+      "rejectedCells": 148237,
+      "rejectionCounts": [
+        {
+          "reason": "notBlockerBelt",
+          "count": 94072
+        },
+        {
+          "reason": "reserveZone",
+          "count": 60799
         }
       ]
     },

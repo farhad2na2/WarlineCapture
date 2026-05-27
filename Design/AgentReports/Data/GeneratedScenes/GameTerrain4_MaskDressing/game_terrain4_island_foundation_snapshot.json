@@ -11,9 +11,9 @@
   "localRotationEuler": [0, 0, 0],
   "localScale": [1, 1, 1],
   "childIndex": 0,
-  "transformCount": 22615,
-  "rendererCount": 22611,
-  "meshFilterCount": 22611,
+  "transformCount": 22494,
+  "rendererCount": 22490,
+  "meshFilterCount": 22490,
   "colliderCount": 22358,
   "worldBoundsCenter": [7.996, -2.635, -61.792],
   "worldBoundsSize": [3082.198, 7.829, 2975.169]

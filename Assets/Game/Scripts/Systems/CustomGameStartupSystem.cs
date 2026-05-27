@@ -110,7 +110,8 @@ public sealed class CustomGameStartupSystem
             return default;
 
         EntityManager em = world.EntityManager;
-        Entity entity = GetOrCreateStartupEntity(em);
+        Entity entity = GetOrCreateLegacyStartupEntity(em);
+        RemoveDuplicateCustomInitialSpawnConfigs(em, entity);
         Dictionary<string, Entity> convertedPrefabLookup = BuildConvertedPrefabLookup(em, unitPrefabRegistryConfig, entity);
 
         SetInitialUnitsConfig(em, entity, initialUnitsConfig);
@@ -182,6 +183,66 @@ public sealed class CustomGameStartupSystem
             return query.GetSingletonEntity();
 
         return em.CreateEntity(typeof(CustomGameStartupStateComponent));
+    }
+
+    private static Entity GetOrCreateLegacyStartupEntity(EntityManager em)
+    {
+        using (EntityQuery customInitialQuery = em.CreateEntityQuery(
+                   ComponentType.ReadOnly<CustomGameStartupStateComponent>(),
+                   ComponentType.ReadOnly<InitialUnitsSpawnConfig>()))
+        using (NativeArray<Entity> customInitialEntities = customInitialQuery.ToEntityArray(Allocator.Temp))
+        {
+            if (customInitialEntities.Length > 0)
+                return customInitialEntities[0];
+        }
+
+        using (EntityQuery initialQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>()))
+        using (NativeArray<Entity> initialEntities = initialQuery.ToEntityArray(Allocator.Temp))
+        {
+            if (initialEntities.Length > 0)
+            {
+                Entity entity = initialEntities[0];
+                EnsureComponent<CustomGameStartupStateComponent>(em, entity);
+                return entity;
+            }
+        }
+
+        return GetOrCreateStartupEntity(em);
+    }
+
+    private static void RemoveDuplicateCustomInitialSpawnConfigs(EntityManager em, Entity startupEntity)
+    {
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<CustomGameStartupStateComponent>(),
+            ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (entity == startupEntity)
+                continue;
+
+            RemoveInitialSpawnComponents(em, entity);
+        }
+    }
+
+    private static void RemoveInitialSpawnComponents(EntityManager em, Entity entity)
+    {
+        RemoveComponentIfPresent<InitialUnitsSpawnConfig>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsBlockerChurnConfig>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsBlockerChurnState>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsSpawnProgress>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsSpawnInitialized>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsFactionSpawnEntry>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsFactionUnitSpawnEntry>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsFactionBuildingSpawnEntry>(em, entity);
+        RemoveComponentIfPresent<InitialUnitsFactionUnitSpawnProgress>(em, entity);
+    }
+
+    private static void RemoveComponentIfPresent<T>(EntityManager em, Entity entity)
+    {
+        if (em.HasComponent<T>(entity))
+            em.RemoveComponent<T>(entity);
     }
 
     private static void EnsureBuffer<T>(EntityManager em, Entity entity)

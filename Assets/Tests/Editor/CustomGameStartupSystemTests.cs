@@ -27,6 +27,7 @@ public sealed class CustomGameStartupSystemTests
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_CreatesSourceKeyEntriesWithoutConvertedPrefabs);
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_UsesConvertedPrefabEntitiesWhenAvailable);
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_UsesExistingRegistryOrderWhenPrefabEntityNamesAreUnavailable);
+        RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_ReusesBakedInitialSpawnConfigInsteadOfDuplicating);
         RunWithLifecycle(tests, tests.InitialUnitsSpawnSystem_SkipsSourceKeyUnitsWithoutConvertedPrefabs);
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFallbackOverRenderableSourceKeyUnits);
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFarImpostorOverVisibleRenderableUnits);
@@ -267,6 +268,42 @@ public sealed class CustomGameStartupSystemTests
         {
             Object.DestroyImmediate(rifleman);
             Object.DestroyImmediate(apc);
+            Object.DestroyImmediate(depot);
+        }
+    }
+
+    [Test]
+    public void InitializeFromLegacyConfigs_ReusesBakedInitialSpawnConfigInsteadOfDuplicating()
+    {
+        GameObject rifleman = new("Unit_Chr_Rifleman");
+        GameObject truck = new("Unit_Veh_Truck");
+        GameObject depot = new("Building_Command_Depot");
+        try
+        {
+            EntityManager em = _world.EntityManager;
+            Entity bakedInitialSpawnEntity = em.CreateEntity(typeof(InitialUnitsSpawnConfig));
+            em.AddBuffer<InitialUnitsFactionSpawnEntry>(bakedInitialSpawnEntity);
+            em.AddBuffer<InitialUnitsFactionUnitSpawnEntry>(bakedInitialSpawnEntity);
+            em.AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(bakedInitialSpawnEntity);
+
+            InitialUnitsSpawnerAuthoringConfig spawnConfig = CreateLegacySpawnConfig(rifleman, truck, depot);
+            UnitPrefabRegistryAuthoringConfig registryConfig = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            registryConfig.UnitSpawnPrefabs.Add(rifleman);
+            registryConfig.UnitSpawnPrefabs.Add(truck);
+
+            new CustomGameStartupSystem().InitializeFromLegacyConfigs(_world, spawnConfig, registryConfig);
+
+            using EntityQuery customQuery = em.CreateEntityQuery(typeof(CustomGameStartupStateComponent));
+            Assert.AreEqual(1, customQuery.CalculateEntityCount());
+            Assert.AreEqual(bakedInitialSpawnEntity, customQuery.GetSingletonEntity(), "Skirmish startup should attach to the baked initial-spawn entity when the SubScene provides one.");
+
+            using EntityQuery initialSpawnQuery = em.CreateEntityQuery(typeof(InitialUnitsSpawnConfig));
+            Assert.AreEqual(1, initialSpawnQuery.CalculateEntityCount(), "Skirmish startup must not create a second InitialUnitsSpawnConfig while the baked SubScene config is present.");
+        }
+        finally
+        {
+            Object.DestroyImmediate(rifleman);
+            Object.DestroyImmediate(truck);
             Object.DestroyImmediate(depot);
         }
     }

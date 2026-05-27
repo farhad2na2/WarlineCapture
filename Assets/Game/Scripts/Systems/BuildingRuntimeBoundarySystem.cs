@@ -7,6 +7,7 @@ using UnityEngine;
 public sealed class BuildingRuntimeBoundarySystem
 {
     private const float PublishIntervalSeconds = 0.5f;
+    private const int MaxRuntimeSpawnRequestsPerUpdate = 16;
 
     private readonly List<byte> _factionIds = new();
     private readonly List<int> _pendingSpawnRequestIndices = new();
@@ -172,8 +173,12 @@ public sealed class BuildingRuntimeBoundarySystem
                 _pendingSpawnRequestIndices.Add(i);
         }
 
+        int processedRequests = 0;
         for (int pendingIndex = 0; pendingIndex < _pendingSpawnRequestIndices.Count; pendingIndex++)
         {
+            if (processedRequests >= MaxRuntimeSpawnRequestsPerUpdate)
+                break;
+
             int i = _pendingSpawnRequestIndices[pendingIndex];
             spawnRequests = EnsureBoundaryBuffer<BuildingRuntimeSpawnRequest>(em, boundaryEntity);
             if ((uint)i >= (uint)spawnRequests.Length)
@@ -183,6 +188,7 @@ public sealed class BuildingRuntimeBoundarySystem
             if (request.Status != BuildingRuntimeSpawnRequest.Pending)
                 continue;
 
+            processedRequests++;
             if (!TryResolveConfiguredBuildingDefinition(definitionSystem, request.BuildingId.ToString(), out BuildingDefinition definition))
             {
                 request.Status = BuildingRuntimeSpawnRequest.Failed;

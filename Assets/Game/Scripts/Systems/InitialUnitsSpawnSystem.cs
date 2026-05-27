@@ -635,17 +635,16 @@ public partial struct InitialUnitsSpawnSystem : ISystem
             for (int wallRunIndex = 0; wallRunIndex < wallRuns.Count; wallRunIndex++)
             {
                 InitialFactionBaseWallRun run = wallRuns[wallRunIndex];
-                EnqueueInitialBuildingSpawnRequest(
+                requestCount += EnqueueInitialWallRunSegmentSpawnRequests(
                     ref state,
                     boundaryEntity,
                     configEntity,
                     factionSpawn.FactionId,
                     wallId,
                     new int2(anchor.x + run.StartOffset.x, anchor.y + run.StartOffset.y),
-                    false,
-                    BuildingRuntimeSpawnRequest.KindWallRun,
-                    new int2(anchor.x + run.EndOffset.x, anchor.y + run.EndOffset.y));
-                requestCount++;
+                    new int2(anchor.x + run.EndOffset.x, anchor.y + run.EndOffset.y),
+                    bottomWallFootprint,
+                    sideWallFootprint);
             }
 
             for (int flankIndex = 0; flankIndex < gateFlankWalls.Count; flankIndex++)
@@ -706,6 +705,44 @@ public partial struct InitialUnitsSpawnSystem : ISystem
         }
 
         return allSpawned;
+    }
+
+    private static int EnqueueInitialWallRunSegmentSpawnRequests(
+        ref SystemState state,
+        Entity boundaryEntity,
+        Entity configEntity,
+        byte factionId,
+        string wallId,
+        int2 startOrigin,
+        int2 endOrigin,
+        Vector2Int bottomWallFootprint,
+        Vector2Int sideWallFootprint)
+    {
+        Vector2Int start = new(startOrigin.x, startOrigin.y);
+        Vector2Int end = new(endOrigin.x, endOrigin.y);
+        bool vertical = Mathf.Abs(end.y - start.y) > Mathf.Abs(end.x - start.x);
+        if (vertical)
+            end.x = start.x;
+        else
+            end.y = start.y;
+
+        Vector2Int footprint = vertical ? sideWallFootprint : bottomWallFootprint;
+        List<Vector2Int> origins = BuildingPlacementCommitSystem.BuildWallRunOrigins(start, end, footprint, vertical);
+        for (int i = 0; i < origins.Count; i++)
+        {
+            Vector2Int origin = origins[i];
+            EnqueueInitialBuildingSpawnRequest(
+                ref state,
+                boundaryEntity,
+                configEntity,
+                factionId,
+                wallId,
+                new int2(origin.x, origin.y),
+                vertical,
+                BuildingRuntimeSpawnRequest.KindWallSegment);
+        }
+
+        return origins.Count;
     }
 
     private static bool TryEnqueueInitialBuildingSpawnEntries(

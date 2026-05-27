@@ -133,10 +133,17 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
 
     private void AddEnterMenuSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)
     {
+        TryGetRegion(WarlineCaptureShellRegionId.MenuBackgroundRegion, out WarlineCaptureShellRegionView background);
         TryGetRegion(WarlineCaptureShellRegionId.HeaderRegion, out WarlineCaptureShellRegionView header);
         TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
         TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
         TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle);
+
+        if (background != null)
+        {
+            background.ResetVisualState();
+            background.CanvasGroup.alpha = 0f;
+        }
 
         PrimeOffscreen(header);
         PrimeOffscreen(left);
@@ -144,6 +151,7 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         if (middle != null)
             middle.RegionRoot.localScale = Vector3.zero;
 
+        AddAlphaStep(steps, background, 1f, motionHost.DefaultEnterEase, transitionId);
         AddRegionEnterStep(steps, header, transitionId);
         steps.Add(WarlineCaptureUiMotionStep.Parallel(
             RegionEnterFactory(left, transitionId),
@@ -153,12 +161,14 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
 
     private void AddExitMenuSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)
     {
+        TryGetRegion(WarlineCaptureShellRegionId.MenuBackgroundRegion, out WarlineCaptureShellRegionView background);
         TryGetRegion(WarlineCaptureShellRegionId.HeaderRegion, out WarlineCaptureShellRegionView header);
         TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
         TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
         TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle);
 
         steps.Add(WarlineCaptureUiMotionStep.Parallel(
+            RegionAlphaFactory(background, 0f, motionHost.DefaultExitEase, transitionId),
             RegionExitFactory(header, transitionId),
             RegionExitFactory(left, transitionId),
             RegionExitFactory(right, transitionId),
@@ -184,10 +194,14 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
 
     private void AddEnterMatchHudSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)
     {
+        TryGetRegion(WarlineCaptureShellRegionId.MenuBackgroundRegion, out WarlineCaptureShellRegionView background);
         TryGetRegion(WarlineCaptureShellRegionId.HeaderRegion, out WarlineCaptureShellRegionView header);
         TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
         TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
         TryGetRegion(WarlineCaptureShellRegionId.FooterRegion, out WarlineCaptureShellRegionView footer);
+
+        if (background != null && background.CanvasGroup != null)
+            background.CanvasGroup.alpha = 0f;
 
         PrimeOffscreen(header);
         PrimeOffscreen(left);
@@ -259,6 +273,19 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         steps.Add(WarlineCaptureUiMotionStep.Single(RegionScaleFactory(region, scale, ease, transitionId)));
     }
 
+    private void AddAlphaStep(
+        List<WarlineCaptureUiMotionStep> steps,
+        WarlineCaptureShellRegionView region,
+        float alpha,
+        WarlineCaptureUiEase ease,
+        int transitionId)
+    {
+        if (region == null)
+            return;
+
+        steps.Add(WarlineCaptureUiMotionStep.Single(RegionAlphaFactory(region, alpha, ease, transitionId)));
+    }
+
     private Func<System.Collections.IEnumerator> RegionEnterFactory(WarlineCaptureShellRegionView region, int transitionId)
     {
         if (region == null)
@@ -286,6 +313,18 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
             return EmptyStep;
 
         return motionHost.ScaleStep(region.RegionRoot, scale, motionHost.DefaultDurationSeconds, ease, transitionId);
+    }
+
+    private Func<System.Collections.IEnumerator> RegionAlphaFactory(
+        WarlineCaptureShellRegionView region,
+        float alpha,
+        WarlineCaptureUiEase ease,
+        int transitionId)
+    {
+        if (region == null)
+            return EmptyStep;
+
+        return motionHost.AlphaStep(region.CanvasGroup, alpha, motionHost.DefaultDurationSeconds, ease, transitionId);
     }
 
     private void PrimeOffscreen(WarlineCaptureShellRegionView region)

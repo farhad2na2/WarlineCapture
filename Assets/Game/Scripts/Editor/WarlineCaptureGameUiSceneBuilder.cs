@@ -27,7 +27,8 @@ public static class WarlineCaptureGameUiSceneBuilder
     private const string CommanderProfilePrefabPath = ContentFolder + "/SCN03_CommanderProfileContent.prefab";
     private const string MatchHudPrefabPath = ContentFolder + "/SCN08_MatchHudContent.prefab";
     private const string ResultPopupPrefabPath = PopupFolder + "/POP05_MissionResultPopup.prefab";
-    private const string CaptureFolder = "Design/AgentReports/Captures/GameUI";
+    private const string CaptureFolder = "Design/AgentReports/Captures/GameUI/MainMenu/CleanTargetLock";
+    private const string MainMenuCaptureFolder = CaptureFolder + "/Responsive";
     private const int ShellWidth = 4800;
     private const int ShellHeight = 2160;
     private const int CaptureWidth = ShellWidth;
@@ -35,8 +36,17 @@ public static class WarlineCaptureGameUiSceneBuilder
 
     private static readonly Rect StretchRegion = new(0f, 0f, ShellWidth, ShellHeight);
 
+    private static readonly CaptureResolution[] MainMenuCaptureResolutions =
+    {
+        new(1920, 1080, "1920x1080"),
+        new(2400, 1080, "2400x1080"),
+        new(3840, 2160, "3840x2160"),
+        new(4800, 2160, "4800x2160")
+    };
+
     private static readonly ShellRegionDefinition[] RegionDefinitions =
     {
+        new(WarlineCaptureShellRegionId.MenuBackgroundRegion, "MenuBackgroundRegion", Vector2.zero, StretchRegion),
         new(WarlineCaptureShellRegionId.HeaderRegion, "HeaderRegion", new Vector2(0f, 1f), new Rect(0f, 0f, 4800f, 280f)),
         new(WarlineCaptureShellRegionId.LeftRegion, "LeftRegion", new Vector2(-1f, 0f), new Rect(0f, 280f, 720f, 1640f)),
         new(WarlineCaptureShellRegionId.MiddleRegion, "MiddleRegion", Vector2.zero, new Rect(720f, 280f, 3360f, 1640f)),
@@ -196,6 +206,7 @@ public static class WarlineCaptureGameUiSceneBuilder
 
         PrepareMainMenuStable(shellView, contentPresenter);
         CaptureCamera(camera, $"{CaptureFolder}/GameUI_ReturnedMainMenu_Stable.png");
+        CaptureMainMenuAspectSamples(camera, shellView, contentPresenter);
 
         AssetDatabase.Refresh(ImportAssetOptions.ForceSynchronousImport);
         ValidateStep9Captures();
@@ -487,7 +498,9 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidateCaptureFile("GameUI_MatchHud_Stable.png");
         ValidateCaptureFile("GameUI_ResultPopup_Stable.png");
         ValidateCaptureFile("GameUI_ReturnedMainMenu_Stable.png");
-        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP9_VALIDATED captures=5 folder={CaptureFolder}");
+        for (int i = 0; i < MainMenuCaptureResolutions.Length; i++)
+            ValidateCaptureFile($"{MainMenuCaptureFolder}/GameUI_MainMenu_{MainMenuCaptureResolutions[i].Name}.png");
+        Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP9_VALIDATED captures={5 + MainMenuCaptureResolutions.Length} folder={CaptureFolder}");
     }
 
     private static void CreateEventSystem(Transform parent)
@@ -561,6 +574,8 @@ public static class WarlineCaptureGameUiSceneBuilder
             RectTransform regionRect = regionObject.GetComponent<RectTransform>();
             if (definition.IsStretch)
                 Stretch(regionRect);
+            else if (definition.Id == WarlineCaptureShellRegionId.HeaderRegion)
+                ApplyTopHorizontalStretchRect(regionRect, definition.Rect);
             else if (definition.Id == WarlineCaptureShellRegionId.RightRegion)
                 ApplyTopRightRect(regionRect, definition.Rect);
             else
@@ -652,6 +667,17 @@ public static class WarlineCaptureGameUiSceneBuilder
         rect.pivot = new Vector2(0f, 1f);
         rect.anchoredPosition = new Vector2(topLeftRect.x, -topLeftRect.y);
         rect.sizeDelta = new Vector2(topLeftRect.width, topLeftRect.height);
+        rect.localScale = Vector3.one;
+        rect.localRotation = Quaternion.identity;
+    }
+
+    private static void ApplyTopHorizontalStretchRect(RectTransform rect, Rect topLeftRect)
+    {
+        rect.anchorMin = new Vector2(0f, 1f);
+        rect.anchorMax = new Vector2(1f, 1f);
+        rect.pivot = new Vector2(0.5f, 1f);
+        rect.anchoredPosition = new Vector2(0f, -topLeftRect.y);
+        rect.sizeDelta = new Vector2(0f, topLeftRect.height);
         rect.localScale = Vector3.one;
         rect.localRotation = Quaternion.identity;
     }
@@ -832,15 +858,20 @@ public static class WarlineCaptureGameUiSceneBuilder
         });
 
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.HeaderRegion, canvasRect, "HeaderContent");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion, canvasRect, "MenuBackgroundContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MiddleRegion, canvasRect, "MiddleContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
         RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
 
         Rect headerBefore = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion).RegionRoot);
+        Rect backgroundBefore = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion).RegionRoot);
         contentPresenter.InstallMenuRouteBody(WarlineCaptureRoute.CommanderProfile);
         Rect headerAfter = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion).RegionRoot);
+        Rect backgroundAfter = GetReferenceTopLeftRect(RequireRegion(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion).RegionRoot);
         ValidateRectNear(headerAfter, headerBefore, "Header region after menu middle swap");
+        ValidateRectNear(backgroundAfter, backgroundBefore, "Menu background region after menu middle swap");
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion, canvasRect, "MenuBackgroundContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MiddleRegion, canvasRect, "MiddleContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
@@ -861,6 +892,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.FooterRegion, canvasRect, "FooterContent");
+        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion);
         RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.MiddleRegion);
     }
 
@@ -907,6 +939,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.ShowLoading }
         });
         ShowRegion(shellView, WarlineCaptureShellRegionId.LoadingLayer);
+        HideRegion(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion);
         HideRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion);
         HideRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
         HideRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
@@ -925,6 +958,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMenu }
         });
         HideRegion(shellView, WarlineCaptureShellRegionId.LoadingLayer);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
@@ -943,6 +977,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             new UiShellPresentationCommandComponent { Kind = UiShellCommandKind.EnterMatchHud }
         });
         HideRegion(shellView, WarlineCaptureShellRegionId.LoadingLayer);
+        HideRegion(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.HeaderRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
         HideRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
@@ -993,6 +1028,11 @@ public static class WarlineCaptureGameUiSceneBuilder
 
     private static void CaptureCamera(Camera camera, string relativePath)
     {
+        CaptureCamera(camera, relativePath, CaptureWidth, CaptureHeight);
+    }
+
+    private static void CaptureCamera(Camera camera, string relativePath, int width, int height)
+    {
         string fullPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
         Directory.CreateDirectory(Path.GetDirectoryName(fullPath));
 
@@ -1004,21 +1044,21 @@ public static class WarlineCaptureGameUiSceneBuilder
 
         try
         {
-            renderTexture = new RenderTexture(CaptureWidth, CaptureHeight, 24, RenderTextureFormat.ARGB32)
+            renderTexture = new RenderTexture(width, height, 24, RenderTextureFormat.ARGB32)
             {
                 antiAliasing = 1
             };
             renderTexture.Create();
 
             camera.targetTexture = renderTexture;
-            camera.aspect = CaptureWidth / (float)CaptureHeight;
+            camera.aspect = width / (float)height;
             RenderTexture.active = renderTexture;
             GL.Clear(true, true, camera.backgroundColor);
             Canvas.ForceUpdateCanvases();
             camera.Render();
 
-            texture = new Texture2D(CaptureWidth, CaptureHeight, TextureFormat.RGBA32, false);
-            texture.ReadPixels(new Rect(0, 0, CaptureWidth, CaptureHeight), 0, 0);
+            texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+            texture.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             texture.Apply(updateMipmaps: false, makeNoLongerReadable: false);
             File.WriteAllBytes(fullPath, texture.EncodeToPNG());
             Debug.Log($"WARLINECAPTURE_GAMEUI_STEP9_CAPTURE path={relativePath}");
@@ -1035,9 +1075,22 @@ public static class WarlineCaptureGameUiSceneBuilder
         }
     }
 
+    private static void CaptureMainMenuAspectSamples(
+        Camera camera,
+        WarlineCaptureShellView shellView,
+        WarlineCaptureShellContentPresenterView contentPresenter)
+    {
+        PrepareMainMenuStable(shellView, contentPresenter);
+        for (int i = 0; i < MainMenuCaptureResolutions.Length; i++)
+        {
+            CaptureResolution resolution = MainMenuCaptureResolutions[i];
+            CaptureCamera(camera, $"{MainMenuCaptureFolder}/GameUI_MainMenu_{resolution.Name}.png", resolution.Width, resolution.Height);
+        }
+    }
+
     private static void ValidateCaptureFile(string fileName)
     {
-        string relativePath = $"{CaptureFolder}/{fileName}";
+        string relativePath = fileName.StartsWith(CaptureFolder, StringComparison.Ordinal) ? fileName : $"{CaptureFolder}/{fileName}";
         string fullPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
         if (!File.Exists(fullPath))
             throw new InvalidOperationException($"Missing GameUI Step 9 capture {relativePath}.");
@@ -1098,6 +1151,15 @@ public static class WarlineCaptureGameUiSceneBuilder
             y = parentRect.y - rect.offsetMax.y;
             width = parentRect.width - rect.offsetMin.x + rect.offsetMax.x;
             height = parentRect.height - rect.offsetMin.y + rect.offsetMax.y;
+            return new Rect(x, y, width, height);
+        }
+
+        if (rect.anchorMin == new Vector2(0f, 1f) && rect.anchorMax == new Vector2(1f, 1f))
+        {
+            width = parentRect.width + rect.sizeDelta.x;
+            height = rect.sizeDelta.y;
+            x = parentRect.x + rect.anchoredPosition.x - rect.pivot.x * rect.sizeDelta.x;
+            y = parentRect.y - rect.anchoredPosition.y - (1f - rect.pivot.y) * height;
             return new Rect(x, y, width, height);
         }
 
@@ -1162,6 +1224,20 @@ public static class WarlineCaptureGameUiSceneBuilder
         public Vector2 OffScreenDirection { get; }
         public Rect Rect { get; }
         public bool IsStretch { get; }
+    }
+
+    private readonly struct CaptureResolution
+    {
+        public CaptureResolution(int width, int height, string name)
+        {
+            Width = width;
+            Height = height;
+            Name = name;
+        }
+
+        public int Width { get; }
+        public int Height { get; }
+        public string Name { get; }
     }
 }
 #endif

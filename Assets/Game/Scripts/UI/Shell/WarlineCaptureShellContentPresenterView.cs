@@ -61,11 +61,13 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
 
     private void InstallLoading()
     {
+        ClearRegion(WarlineCaptureShellRegionId.MenuBackgroundRegion);
         InstallRoot(loadingContentPrefab, WarlineCaptureShellRegionId.LoadingLayer);
     }
 
     private void InstallMainMenu()
     {
+        InstallSection(mainMenuContentPrefab, "MenuBackgroundContent", WarlineCaptureShellRegionId.MenuBackgroundRegion);
         InstallSection(mainMenuContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
         InstallMainMenuBody();
         ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
@@ -103,6 +105,7 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
 
     private void InstallMatchHud()
     {
+        ClearRegion(WarlineCaptureShellRegionId.MenuBackgroundRegion);
         InstallSection(matchHudContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
         InstallSection(matchHudContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
         InstallSection(matchHudContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);

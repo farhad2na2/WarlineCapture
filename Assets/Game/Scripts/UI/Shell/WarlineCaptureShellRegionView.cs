@@ -2,13 +2,14 @@ using UnityEngine;
 
 public enum WarlineCaptureShellRegionId
 {
-    LoadingLayer,
-    HeaderRegion,
-    LeftRegion,
-    MiddleRegion,
-    RightRegion,
-    FooterRegion,
-    PopupLayer
+    LoadingLayer = 0,
+    HeaderRegion = 1,
+    LeftRegion = 2,
+    MiddleRegion = 3,
+    RightRegion = 4,
+    FooterRegion = 5,
+    PopupLayer = 6,
+    MenuBackgroundRegion = 7
 }
 
 [DisallowMultipleComponent]

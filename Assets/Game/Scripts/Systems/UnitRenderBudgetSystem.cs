@@ -329,14 +329,11 @@ public partial struct UnitRenderBudgetSystem : ISystem
                     visibleCharacterSafeLowInstances++;
 
                 // Visible soldiers must never disappear during camera motion or LOD settling.
-                // Use detail only near the camera, safe mesh LODs in the mid range, and billboard
-                // impostors for distant visible characters so large RTS armies stay renderable.
+                // Keep character units on the detailed/static model path at every tactical height.
                 bool movingVisibleCharacter = isMovingUnit;
                 bool farEnoughForImpostor =
                     enemyShouldUseImpostor ||
-                    cameraPosition.y >= 80f ||
                     distances[i].DistanceSq >= VisibleCharacterImpostorFarDistance * VisibleCharacterImpostorFarDistance;
-                bool forceTacticalImpostor = cameraPosition.y >= 80f && farEnoughForImpostor;
                 bool lowEnoughForSafeLow =
                     enemyLowEnoughForSafeLow ||
                     distances[i].DistanceSq >= VisibleCharacterLowDistanceSq;
@@ -346,7 +343,6 @@ public partial struct UnitRenderBudgetSystem : ISystem
                     forceDetailNearVisible,
                     forceDetailByBudget,
                     farEnoughForImpostor,
-                    forceTacticalImpostor,
                     lowEnoughForSafeLow,
                     hasSafeMid,
                     midRootAnimatable,
@@ -420,6 +416,15 @@ public partial struct UnitRenderBudgetSystem : ISystem
             if (keepDetailVisibleDuringHandoff)
             {
                 shouldShowDetail = true;
+                shouldShowFar = false;
+                forceImmediateDetailVisual = true;
+            }
+
+            if (ShouldForceCharacterDetailVisual(isCharacter))
+            {
+                shouldShowDetail = true;
+                shouldShowMid = false;
+                shouldShowLow = false;
                 shouldShowFar = false;
                 forceImmediateDetailVisual = true;
             }
@@ -743,29 +748,18 @@ public partial struct UnitRenderBudgetSystem : ISystem
         bool forceDetailNearVisible,
         bool forceDetailByBudget,
         bool farEnoughForImpostor,
-        bool forceTacticalImpostor,
         bool lowEnoughForSafeLow,
         bool hasSafeMid,
         bool midRootAnimatable,
         bool hasSafeLow,
         bool lowRootAnimatable)
     {
-        if (forceDetailNearVisible || forceDetailByBudget)
-            return UnitRenderVisualKind.Detail;
-
-        if (forceTacticalImpostor && farEnoughForImpostor)
-            return UnitRenderVisualKind.Far;
-
-        if (!movingVisibleCharacter && farEnoughForImpostor)
-            return UnitRenderVisualKind.Far;
-
-        if (!movingVisibleCharacter && lowEnoughForSafeLow && hasSafeLow && lowRootAnimatable)
-            return UnitRenderVisualKind.Low;
-
-        if (hasSafeMid && midRootAnimatable)
-            return UnitRenderVisualKind.Mid;
-
         return UnitRenderVisualKind.Detail;
+    }
+
+    public static bool ShouldForceCharacterDetailVisual(bool isCharacter)
+    {
+        return isCharacter;
     }
 
     private static UnitRenderVisualKind ResolveDesiredVisualForDiagnostics(bool isCharacter, bool detail, bool mid, bool low)

@@ -4,21 +4,20 @@ using UnityEngine;
 public sealed class UnitRenderBudgetSystemTests
 {
     [Test]
-    public void MovingVisibleCharactersDoNotUseStaticFarImpostor()
+    public void MovingVisibleCharactersUseDetailedModelPath()
     {
         UnitRenderVisualKind visual = UnitRenderBudgetSystem.ResolveVisibleCharacterVisualKind(
             movingVisibleCharacter: true,
             forceDetailNearVisible: false,
             forceDetailByBudget: false,
             farEnoughForImpostor: true,
-            forceTacticalImpostor: false,
             lowEnoughForSafeLow: true,
             hasSafeMid: true,
             midRootAnimatable: true,
             hasSafeLow: true,
             lowRootAnimatable: true);
 
-        Assert.AreEqual(UnitRenderVisualKind.Mid, visual);
+        Assert.AreEqual(UnitRenderVisualKind.Detail, visual);
     }
 
     [Test]
@@ -29,7 +28,6 @@ public sealed class UnitRenderBudgetSystemTests
             forceDetailNearVisible: false,
             forceDetailByBudget: false,
             farEnoughForImpostor: true,
-            forceTacticalImpostor: false,
             lowEnoughForSafeLow: true,
             hasSafeMid: true,
             midRootAnimatable: false,
@@ -40,39 +38,27 @@ public sealed class UnitRenderBudgetSystemTests
     }
 
     [Test]
-    public void IdleDistantVisibleCharactersCanUseFarImpostor()
+    public void IdleDistantVisibleCharactersStayOnDetailedModelPath()
     {
         UnitRenderVisualKind visual = UnitRenderBudgetSystem.ResolveVisibleCharacterVisualKind(
             movingVisibleCharacter: false,
             forceDetailNearVisible: false,
             forceDetailByBudget: false,
             farEnoughForImpostor: true,
-            forceTacticalImpostor: false,
             lowEnoughForSafeLow: true,
             hasSafeMid: true,
             midRootAnimatable: true,
             hasSafeLow: true,
             lowRootAnimatable: true);
 
-        Assert.AreEqual(UnitRenderVisualKind.Far, visual);
+        Assert.AreEqual(UnitRenderVisualKind.Detail, visual);
     }
 
     [Test]
-    public void HighCameraVisibleCharactersUseTacticalFarImpostorEvenWhenMoving()
+    public void CharacterRenderPolicyForcesDetailedModelPath()
     {
-        UnitRenderVisualKind visual = UnitRenderBudgetSystem.ResolveVisibleCharacterVisualKind(
-            movingVisibleCharacter: true,
-            forceDetailNearVisible: false,
-            forceDetailByBudget: false,
-            farEnoughForImpostor: true,
-            forceTacticalImpostor: true,
-            lowEnoughForSafeLow: true,
-            hasSafeMid: true,
-            midRootAnimatable: true,
-            hasSafeLow: true,
-            lowRootAnimatable: true);
-
-        Assert.AreEqual(UnitRenderVisualKind.Far, visual);
+        Assert.IsTrue(UnitRenderBudgetSystem.ShouldForceCharacterDetailVisual(true));
+        Assert.IsFalse(UnitRenderBudgetSystem.ShouldForceCharacterDetailVisual(false));
     }
 
     [Test]

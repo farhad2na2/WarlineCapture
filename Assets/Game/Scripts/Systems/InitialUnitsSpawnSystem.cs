@@ -192,6 +192,10 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
             DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> unitSpawns = em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(entity);
             DynamicBuffer<InitialUnitsFactionUnitSpawnProgress> unitProgress = em.GetBuffer<InitialUnitsFactionUnitSpawnProgress>(entity);
+            bool hasCustomGameSourceSpawns = em.HasBuffer<CustomGameFactionUnitSourceSpawnEntry>(entity);
+            DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> customGameSourceSpawns = hasCustomGameSourceSpawns
+                ? em.GetBuffer<CustomGameFactionUnitSourceSpawnEntry>(entity)
+                : default;
             if (useM01CompactRuntime)
                 ApplyM01CompactUnitRoster(unitSpawns, unitProgress);
             int remainingBatch = InitialSpawnBatchSize;
@@ -201,8 +205,18 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 InitialUnitsFactionUnitSpawnProgress entryProgress = unitProgress[unitIndex];
                 int remaining = math.max(0, unitSpawn.Count - entryProgress.Spawned);
                 int toSpawn = math.min(remainingBatch, remaining);
-                if (toSpawn <= 0 || unitSpawn.Prefab == Entity.Null)
+                bool hasPrefab = unitSpawn.Prefab != Entity.Null;
+                bool hasSourceKey = TryGetCustomGameUnitSourceKey(customGameSourceSpawns, hasCustomGameSourceSpawns, unitIndex, unitSpawn, out FixedString64Bytes sourceKey);
+                if (toSpawn <= 0)
                     continue;
+                if (!hasPrefab)
+                {
+                    if (hasSourceKey)
+                        Debug.LogWarning($"[InitialSpawn] skipped source-key unit because no ECS prefab entity was resolved. sourceKey={sourceKey.ToString()} faction={unitSpawn.FactionId} count={unitSpawn.Count}");
+                    entryProgress.Spawned = unitSpawn.Count;
+                    unitProgress[unitIndex] = entryProgress;
+                    continue;
+                }
 
                 if (!TryGetFactionSpawnCell(factionSpawns, unitSpawn.FactionId, out int2 factionSpawnCell))
                     continue;
@@ -211,10 +225,10 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                 int spawnedThisEntry = 0;
                 for (int i = 0; i < toSpawn; i++)
                 {
-                    int2 footprintSize = em.HasComponent<UnitFootprint>(unitSpawn.Prefab)
+                    int2 footprintSize = hasPrefab && em.HasComponent<UnitFootprint>(unitSpawn.Prefab)
                         ? em.GetComponentData<UnitFootprint>(unitSpawn.Prefab).Size
                         : new int2(1, 1);
-                    bool isAirUnit = em.HasComponent<UnitAirMovement>(unitSpawn.Prefab);
+                    bool isAirUnit = hasPrefab && em.HasComponent<UnitAirMovement>(unitSpawn.Prefab);
                     int2 cell = default;
                     float3 pos = default;
                     bool foundPlatformSpawn = isAirUnit &&
@@ -248,16 +262,18 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
                     var instance = ecb.Instantiate(unitSpawn.Prefab);
                     byte faction = unitSpawn.FactionId;
-                    ecb.SetComponent(instance, new UnitGrid { Cell = cell });
                     if (!foundPlatformSpawn)
                         pos = GridUtils.CellToWorldCenter(grid, cell);
-                    ecb.SetComponent(instance, LocalTransform.FromPosition(pos));
-                    ecb.SetComponent(instance, new UnitPrevWorldPos { Value = pos });
-                    ecb.SetComponent(instance, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
-                    ecb.SetComponent(instance, new Faction { Id = faction });
-                    ecb.SetComponent(instance, new UnitRespawnPrefab { Prefab = Entity.Null });
-                    ecb.SetComponent(instance, new UnitAttackState { CooldownRemaining = 0f });
-                    if (em.HasComponent<UnitIdleWanderState>(unitSpawn.Prefab))
+                    ConfigureSpawnedUnit(
+                        em,
+                        ecb,
+                        instance,
+                        unitSpawn.Prefab,
+                        hasPrefab,
+                        faction,
+                        cell,
+                        pos);
+                    if (hasPrefab && em.HasComponent<UnitIdleWanderState>(unitSpawn.Prefab))
                     {
                         ecb.SetComponent(instance, new UnitIdleWanderState
                         {
@@ -266,12 +282,15 @@ public partial struct InitialUnitsSpawnSystem : ISystem
                             CurrentIdleDelaySeconds = 0f
                         });
                     }
-                    ecb.RemoveComponent<UnitPathFollow>(instance);
-                    ecb.RemoveComponent<UnitPathRange>(instance);
-                    ecb.RemoveComponent<EngageTarget>(instance);
-                    ecb.RemoveComponent<UnitPathRequest>(instance);
-                    ecb.RemoveComponent<UnitTarget>(instance);
-                    ecb.RemoveComponent<AutoWanderMoveTag>(instance);
+                    if (hasPrefab)
+                    {
+                        ecb.RemoveComponent<UnitPathFollow>(instance);
+                        ecb.RemoveComponent<UnitPathRange>(instance);
+                        ecb.RemoveComponent<EngageTarget>(instance);
+                        ecb.RemoveComponent<UnitPathRequest>(instance);
+                        ecb.RemoveComponent<UnitTarget>(instance);
+                        ecb.RemoveComponent<AutoWanderMoveTag>(instance);
+                    }
                     spawnedThisEntry++;
                     spawnedUnitsForLog++;
                 }
@@ -442,6 +461,64 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
         spawnCell = default;
         return false;
+    }
+
+    private static bool TryGetCustomGameUnitSourceKey(
+        DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> sourceSpawns,
+        bool hasSourceSpawns,
+        int unitIndex,
+        InitialUnitsFactionUnitSpawnEntry unitSpawn,
+        out FixedString64Bytes sourceKey)
+    {
+        sourceKey = default;
+        if (!hasSourceSpawns || unitIndex < 0 || unitIndex >= sourceSpawns.Length)
+            return false;
+
+        CustomGameFactionUnitSourceSpawnEntry sourceSpawn = sourceSpawns[unitIndex];
+        if (sourceSpawn.FactionId != unitSpawn.FactionId ||
+            sourceSpawn.Count != unitSpawn.Count ||
+            !math.all(sourceSpawn.SpawnOffset == unitSpawn.SpawnOffset) ||
+            sourceSpawn.SourceKey.Length == 0)
+        {
+            return false;
+        }
+
+        sourceKey = sourceSpawn.SourceKey;
+        return true;
+    }
+
+    private static void ConfigureSpawnedUnit(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity instance,
+        Entity prefab,
+        bool hasPrefab,
+        byte faction,
+        int2 cell,
+        float3 pos)
+    {
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitGrid { Cell = cell });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, LocalTransform.FromPosition(pos));
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitPrevWorldPos { Value = pos });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new Faction { Id = faction });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitRespawnPrefab { Prefab = Entity.Null });
+        SetOrAddComponent(em, ecb, instance, prefab, hasPrefab, new UnitAttackState { CooldownRemaining = 0f });
+    }
+
+    private static void SetOrAddComponent<T>(
+        EntityManager em,
+        EntityCommandBuffer ecb,
+        Entity instance,
+        Entity prefab,
+        bool hasPrefab,
+        T component)
+        where T : unmanaged, IComponentData
+    {
+        if (hasPrefab && em.HasComponent<T>(prefab))
+            ecb.SetComponent(instance, component);
+        else
+            ecb.AddComponent(instance, component);
     }
 
     private bool TryGetBuildingRuntimeBoundaryEntity(ref SystemState state, out Entity entity)

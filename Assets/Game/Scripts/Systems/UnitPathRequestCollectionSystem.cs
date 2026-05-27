@@ -3,6 +3,27 @@ using Unity.Entities;
 
 internal struct UnitPathRequestCollectionSystem
 {
+    private EntityTypeHandle _entityType;
+    private ComponentTypeHandle<UnitGrid> _unitGridType;
+    private ComponentTypeHandle<UnitPathRequest> _requestType;
+    private ComponentTypeHandle<UnitFootprint> _footprintType;
+    private ComponentTypeHandle<UnitMovementBehavior> _movementBehaviorType;
+    private ComponentTypeHandle<Faction> _factionType;
+    private ComponentLookup<UnitLongDistanceMove> _longDistanceLookup;
+    private ComponentLookup<ManualMoveOrderTag> _manualMoveLookup;
+
+    public void Initialize(ref SystemState state)
+    {
+        _entityType = state.GetEntityTypeHandle();
+        _unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
+        _requestType = state.GetComponentTypeHandle<UnitPathRequest>(true);
+        _footprintType = state.GetComponentTypeHandle<UnitFootprint>(true);
+        _movementBehaviorType = state.GetComponentTypeHandle<UnitMovementBehavior>(true);
+        _factionType = state.GetComponentTypeHandle<Faction>(true);
+        _longDistanceLookup = state.GetComponentLookup<UnitLongDistanceMove>(true);
+        _manualMoveLookup = state.GetComponentLookup<ManualMoveOrderTag>(true);
+    }
+
     public int Collect(
         ref SystemState state,
         ref UnitPathfindingQuerySystem queries,
@@ -11,15 +32,7 @@ internal struct UnitPathRequestCollectionSystem
         int requestBudget)
     {
         requestBuffers.ClearForCollection();
-
-        EntityTypeHandle entityType = state.GetEntityTypeHandle();
-        ComponentTypeHandle<UnitGrid> unitGridType = state.GetComponentTypeHandle<UnitGrid>(true);
-        ComponentTypeHandle<UnitPathRequest> requestType = state.GetComponentTypeHandle<UnitPathRequest>(true);
-        ComponentTypeHandle<UnitFootprint> footprintType = state.GetComponentTypeHandle<UnitFootprint>(true);
-        ComponentTypeHandle<UnitMovementBehavior> movementBehaviorType = state.GetComponentTypeHandle<UnitMovementBehavior>(true);
-        ComponentTypeHandle<Faction> factionType = state.GetComponentTypeHandle<Faction>(true);
-        ComponentLookup<UnitLongDistanceMove> longDistanceLookup = state.GetComponentLookup<UnitLongDistanceMove>(true);
-        ComponentLookup<ManualMoveOrderTag> manualMoveLookup = state.GetComponentLookup<ManualMoveOrderTag>(true);
+        Update(ref state);
 
         CollectFromQuery(
             ref state,
@@ -27,14 +40,14 @@ internal struct UnitPathRequestCollectionSystem
             ref requestBuffers,
             ref ignoredOccupancy,
             requestBudget,
-            entityType,
-            unitGridType,
-            requestType,
-            footprintType,
-            movementBehaviorType,
-            factionType,
-            longDistanceLookup,
-            manualMoveLookup,
+            _entityType,
+            _unitGridType,
+            _requestType,
+            _footprintType,
+            _movementBehaviorType,
+            _factionType,
+            _longDistanceLookup,
+            _manualMoveLookup,
             manualMove: true,
             skipManualMoveEntities: false);
 
@@ -46,19 +59,31 @@ internal struct UnitPathRequestCollectionSystem
                 ref requestBuffers,
                 ref ignoredOccupancy,
                 requestBudget,
-                entityType,
-                unitGridType,
-                requestType,
-                footprintType,
-                movementBehaviorType,
-                factionType,
-                longDistanceLookup,
-                manualMoveLookup,
+                _entityType,
+                _unitGridType,
+                _requestType,
+                _footprintType,
+                _movementBehaviorType,
+                _factionType,
+                _longDistanceLookup,
+                _manualMoveLookup,
                 manualMove: false,
                 skipManualMoveEntities: true);
         }
 
         return requestBuffers.Entities.Length;
+    }
+
+    private void Update(ref SystemState state)
+    {
+        _entityType.Update(ref state);
+        _unitGridType.Update(ref state);
+        _requestType.Update(ref state);
+        _footprintType.Update(ref state);
+        _movementBehaviorType.Update(ref state);
+        _factionType.Update(ref state);
+        _longDistanceLookup.Update(ref state);
+        _manualMoveLookup.Update(ref state);
     }
 
     private static void CollectFromQuery(

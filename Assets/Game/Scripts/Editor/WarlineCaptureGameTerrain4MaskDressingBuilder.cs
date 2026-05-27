@@ -101,10 +101,10 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     private static readonly SpacingSpec[] SpacingSpecs =
     {
         new("Mountains", 118, 118, "Sparse high-terrain ridge anchors; mountains frame movement lanes instead of forming connected walls."),
-        new("Trees_Playable", 28, 28, "Visible tree pass for walkable groves and readable movement lanes."),
-        new("Trees_BlockerBelt", 26, 26, "Dense tree-cluster pass for forest belts around natural blockers without burying trees under mountains."),
-        new("Bushes_Playable", 30, 30, "Playable scrub/bush pass; low vegetation fill without path clutter."),
-        new("Bushes_BlockerBelt", 24, 24, "Low vegetation pass around forest belts and ridge transitions."),
+        new("Trees_Playable", 22, 22, "Visible tree pass for walkable groves and readable movement lanes."),
+        new("Trees_BlockerBelt", 14, 14, "Jungle-density tree-cluster pass for forest belts around natural blockers without burying trees under mountains."),
+        new("Bushes_Playable", 24, 24, "Playable scrub/bush pass; low vegetation fill without path clutter."),
+        new("Bushes_BlockerBelt", 16, 16, "Dense low vegetation pass around forest belts and ridge transitions."),
         new("Rocks", 42, 42, "Rock/boulder transition pass around ridges and cliff edges.")
     };
 
@@ -1050,10 +1050,14 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     {
         bool dense = treeValue >= DensityDenseThreshold || rockValue >= DensityDenseThreshold || heightValue >= HeightHighThreshold || blockerValue >= BlockerBlockedThreshold;
         int hash = point.Hash;
+        if (kind == "Trees_Playable")
+            return treeValue >= DensityDenseThreshold ? 3 + hash % 2 : treeValue >= DensityMediumThreshold ? 2 : 1;
         if (kind == "Trees_BlockerBelt")
-            return dense ? 3 + hash % 2 : 2;
+            return dense ? 7 + hash % 4 : 4 + hash % 3;
+        if (kind == "Bushes_Playable")
+            return treeValue >= DensityDenseThreshold ? 2 : 1;
         if (kind == "Bushes_BlockerBelt")
-            return dense ? 3 + hash % 2 : 2;
+            return dense ? 5 + hash % 4 : 3 + hash % 3;
         if (kind == "Mountains")
             return 1;
         if (kind == "Rocks")
@@ -1068,8 +1072,10 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
         float radius = kind switch
         {
-            "Trees_BlockerBelt" => 9f + clusterIndex * 3.2f,
-            "Bushes_BlockerBelt" => 7f + clusterIndex * 2.4f,
+            "Trees_Playable" => 5f + clusterIndex * 4.5f,
+            "Trees_BlockerBelt" => 5f + clusterIndex * 3.0f,
+            "Bushes_Playable" => 4f + clusterIndex * 3.0f,
+            "Bushes_BlockerBelt" => 4f + clusterIndex * 2.4f,
             "Mountains" => 18f,
             "Rocks" => 11f,
             _ => 5f

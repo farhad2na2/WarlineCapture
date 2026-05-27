@@ -52,6 +52,7 @@ public partial struct UnitPathfindingSystem : ISystem
         _queries.Initialize(ref state);
 
         _requestBuffers.Initialize();
+        _requestCollection.Initialize(ref state);
     }
 
     public void OnDestroy(ref SystemState state)

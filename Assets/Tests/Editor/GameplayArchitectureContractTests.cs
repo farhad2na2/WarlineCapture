@@ -193,7 +193,22 @@ public sealed class GameplayArchitectureContractTests
             nameof(RoadBuildInteractionContextsMustLiveInInteractionContextSystem),
             nameof(RoadRuntimeGenerationContextMustLiveInRuntimeGenerationContextSystem),
             nameof(RoadGridContextsMustLiveInRoadGridContextSystem),
-            nameof(BuildingRoadLegacyContextMustLiveInBuildingRoadLegacyContextSystem)
+            nameof(BuildingRoadLegacyContextMustLiveInBuildingRoadLegacyContextSystem),
+            nameof(RoadBuildMutationMustLiveInRoadBuildMutationSystem),
+            nameof(RoadVisualResolutionMustLiveInRoadVisualResolutionSystem),
+            nameof(RoadVisualRefreshMustLiveInRoadVisualRefreshSystem),
+            nameof(RoadVisualRollbackRefreshMustLiveInRoadVisualRefreshSystem),
+            nameof(RoadDeferredEcsSyncMustLiveInRuntimeGenerationContextSystem),
+            nameof(BuildingRoadLegacyDefinitionsMustLiveInDefinitionSystem),
+            nameof(BuildingRoadLegacyPlacementVisualsMustLiveInPlacementVisualSystem),
+            nameof(BuildingRoadLegacyPlacementLifecycleMustLiveInPlacementSystem),
+            nameof(BuildingRoadLegacyInteractionMustLiveInInteractionSystem),
+            nameof(BuildingRoadLegacyGlobalAccessMustLiveInGridAndEcsSystems),
+            nameof(RoadBuildRuntimeStateMustNotExposeLegacyBuildingCommandWrappers),
+            nameof(RoadBuildRuntimeUpdateActionMustLiveInRuntimeActionSystem),
+            nameof(RoadBuildGuiActionMustLiveInRuntimeActionSystem),
+            nameof(RoadBuildDisposalSequencingMustLiveInDisposalSystem),
+            nameof(RoadBuildRuntimeStatePublicConsumersMustUseNarrowSystems)
         };
 
         try
@@ -2566,7 +2581,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_roadBuildVisualContextSystem.CreateChunkContext(CreateRoadBuildVisualContext())", runtimeState);
         StringAssert.Contains("_roadBuildVisualContextSystem.CreatePreviewContext(CreateRoadBuildVisualContext())", runtimeState);
         StringAssert.Contains("_roadBuildVisualContextSystem.CreateSpecialContext(CreateRoadBuildVisualContext())", runtimeState);
-        StringAssert.Contains("_roadBuildVisualContextSystem.GetPrefab(CreateRoadBuildVisualContext(), type)", runtimeState);
+        StringAssert.Contains("context.RoadBuildVisualContextSystem.GetPrefab(context.VisualContext, type)", visualContext + File.ReadAllText("Assets/Game/Scripts/Systems/RoadVisualResolutionSystem.cs"));
 
         string[] forbiddenRuntimeStateTokens =
         {
@@ -2732,6 +2747,721 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsEmpty(
             violations,
             "Building road legacy ECS context construction must live in BuildingRoadLegacyContextSystem after step 13:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadBuildMutationMustLiveInRoadBuildMutationSystem()
+    {
+        const string mutationPath = "Assets/Game/Scripts/Systems/RoadBuildMutationSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string mutation = File.ReadAllText(mutationPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("14. Complete: Extract road stroke mutation bridge", roadmap);
+        StringAssert.Contains("internal sealed class RoadBuildMutationSystem", mutation);
+        StringAssert.Contains("public readonly struct Context", mutation);
+        StringAssert.Contains("public void CreateStroke(", mutation);
+        StringAssert.Contains("public void DeleteStroke(Context context, int strokeId)", mutation);
+        StringAssert.Contains("public RoadNetworkSystem.Snapshot CaptureRoadBuildSessionSnapshot(Context context)", mutation);
+        StringAssert.Contains("public void RestoreRoadBuildSession(Context context, RoadNetworkSystem.Snapshot snapshot)", mutation);
+        StringAssert.Contains("context.RoadNetworkSystem.CreateStroke", mutation);
+        StringAssert.Contains("context.RoadNetworkSystem.DeleteStroke", mutation);
+        StringAssert.Contains("context.RoadNetworkSystem.RestoreSnapshot(snapshot)", mutation);
+        StringAssert.Contains("context.RefreshCells?.Invoke(dirtyCells)", mutation);
+        StringAssert.Contains("context.RebuildRoadStateFromCurrentTiles?.Invoke()", mutation);
+        StringAssert.Contains("public readonly RoadBuildMutationSystem RoadBuildMutationSystem = new();", source);
+        StringAssert.Contains("_roadBuildMutationSystem.CreateStroke(", runtimeState);
+        StringAssert.Contains("_roadBuildMutationSystem.DeleteStroke(", runtimeState);
+        StringAssert.Contains("_roadBuildMutationSystem.CaptureRoadBuildSessionSnapshot(", runtimeState);
+        StringAssert.Contains("_roadBuildMutationSystem.RestoreRoadBuildSession(", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "_roadNetworkSystem.CreateStroke(",
+            "_roadNetworkSystem.DeleteStroke(",
+            "_roadNetworkSystem.CaptureSnapshot(",
+            "_roadNetworkSystem.RestoreSnapshot("
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Road stroke mutation and session snapshot mutation must live in RoadBuildMutationSystem after step 14:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadVisualResolutionMustLiveInRoadVisualResolutionSystem()
+    {
+        const string visualResolutionPath = "Assets/Game/Scripts/Systems/RoadVisualResolutionSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string visualResolution = File.ReadAllText(visualResolutionPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("15. Complete: Extract visual type resolution", roadmap);
+        StringAssert.Contains("internal sealed class RoadVisualResolutionSystem", visualResolution);
+        StringAssert.Contains("public readonly struct Context", visualResolution);
+        StringAssert.Contains("public RoadVisualType ResolveVisualType(Context context, Vector2Int cell, TileConnectionMask mask)", visualResolution);
+        StringAssert.Contains("public GameObject GetPrefab(Context context, RoadVisualType type)", visualResolution);
+        StringAssert.Contains("public bool TryGetVariant(Context context, RoadVisualType type, TileConnectionMask mask, out VariantData variant)", visualResolution);
+        StringAssert.Contains("context.RoadNetworkSystem.AutobahnConnectorCells.Contains(cell)", visualResolution);
+        StringAssert.Contains("context.RoadNetworkSystem.AutobahnCells.Contains(cell)", visualResolution);
+        StringAssert.Contains("return RoadVisualType.TIntersection", visualResolution);
+        StringAssert.Contains("context.RoadBuildVisualContextSystem.GetPrefab(context.VisualContext, type)", visualResolution);
+        StringAssert.Contains("context.RoadVisualVariantSystem.TryGetVariant(type, mask, out variant)", visualResolution);
+        StringAssert.Contains("public readonly RoadVisualResolutionSystem RoadVisualResolutionSystem = new();", source);
+        StringAssert.Contains("_roadVisualResolutionSystem.ResolveVisualType(CreateRoadVisualResolutionContext(), cell, mask)", runtimeState);
+        StringAssert.Contains("_roadVisualResolutionSystem.GetPrefab(CreateRoadVisualResolutionContext(), type)", runtimeState);
+        StringAssert.Contains("_roadVisualResolutionSystem.TryGetVariant(CreateRoadVisualResolutionContext(), type, mask, out variant)", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "_autobahnConnectorCells.Contains(cell)",
+            "_autobahnCells.Contains(cell)",
+            "return RoadVisualType.TIntersection;",
+            "return RoadVisualType.Intersection;",
+            "_roadVisualVariantSystem.TryGetVariant(type, mask, out variant)",
+            "_roadBuildVisualContextSystem.GetPrefab(CreateRoadBuildVisualContext(), type)"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Road visual resolution and prefab/variant lookup handoff must live in RoadVisualResolutionSystem after step 15:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadVisualRefreshMustLiveInRoadVisualRefreshSystem()
+    {
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("16. Complete: Extract dirty-cell visual refresh", roadmap);
+        StringAssert.Contains("internal sealed class RoadVisualRefreshSystem", visualRefresh);
+        StringAssert.Contains("public readonly struct Context", visualRefresh);
+        StringAssert.Contains("public void RefreshCells(Context context, HashSet<Vector2Int> dirtyCells)", visualRefresh);
+        StringAssert.Contains("private void RefreshCell(Context context, Vector2Int cell)", visualRefresh);
+        StringAssert.Contains("context.RoadNetworkSystem.GetMask(cell)", visualRefresh);
+        StringAssert.Contains("context.RoadNetworkSystem.RoadTiles.Remove(cell)", visualRefresh);
+        StringAssert.Contains("context.RoadGridProjectionSystem.RequestRoadEcsSync(context.RoadGridProjectionContext)", visualRefresh);
+        StringAssert.Contains("context.RoadChunkVisualSystem.RebuildDirtyChunks(context.RoadChunkVisualContext)", visualRefresh);
+        StringAssert.Contains("context.RoadSpecialVisualSystem.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext)", visualRefresh);
+        StringAssert.Contains("public readonly RoadVisualRefreshSystem RoadVisualRefreshSystem = new();", source);
+        StringAssert.Contains("_roadVisualRefreshSystem.RefreshCells(CreateRoadVisualRefreshContext(), dirtyCells)", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "private void RefreshCells(HashSet<Vector2Int> dirtyCells)",
+            "private void RefreshCell(Vector2Int cell)",
+            "_roadGridProjectionSystem.RequestRoadEcsSync(CreateRoadGridProjectionContext())",
+            "_roadChunkVisualSystem.RemoveCellFromChunk(CreateRoadChunkVisualContext(), cell)",
+            "private void RebuildSpecialRoadObjects(HashSet<Vector2Int> dirtyCells)"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Dirty-cell road visual refresh must live in RoadVisualRefreshSystem after step 16:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadVisualRollbackRefreshMustLiveInRoadVisualRefreshSystem()
+    {
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("17. Complete: Extract road state rebuild/rollback refresh", roadmap);
+        StringAssert.Contains("public void RebuildRoadStateFromCurrentTiles(Context context)", visualRefresh);
+        StringAssert.Contains("context.RoadNetworkSystem.RebuildSpecialRoadCellMetadata()", visualRefresh);
+        StringAssert.Contains("context.RoadChunkVisualSystem.ClearChunks()", visualRefresh);
+        StringAssert.Contains("context.RoadSpecialVisualSystem.ClearSpecialRoadObjects()", visualRefresh);
+        StringAssert.Contains("context.RoadGridProjectionSystem.SyncRoadCellsToEcs(context.RoadGridProjectionContext)", visualRefresh);
+        StringAssert.Contains("context.RoadChunkVisualSystem.RebuildDirtyChunks(context.RoadChunkVisualContext)", visualRefresh);
+        StringAssert.Contains("context.RoadSpecialVisualSystem.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext)", visualRefresh);
+        StringAssert.Contains("_roadVisualRefreshSystem.RebuildRoadStateFromCurrentTiles(CreateRoadVisualRefreshContext())", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "private void RebuildRoadStateFromCurrentTiles()",
+            "private void RebuildSpecialRoadCellMetadata()",
+            "private void SyncRoadCellsToEcs()",
+            "_roadNetworkSystem.RebuildSpecialRoadCellMetadata()",
+            "_roadChunkVisualSystem.ClearChunks()",
+            "_roadSpecialVisualSystem.ClearSpecialRoadObjects()",
+            "_roadGridProjectionSystem.SyncRoadCellsToEcs(CreateRoadGridProjectionContext())"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Full road rollback/rebuild refresh must live in RoadVisualRefreshSystem after step 17:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadDeferredEcsSyncMustLiveInRuntimeGenerationContextSystem()
+    {
+        const string runtimeGenerationContextPath = "Assets/Game/Scripts/Systems/RoadRuntimeGenerationContextSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string runtimeGenerationContext = File.ReadAllText(runtimeGenerationContextPath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("18. Complete: Move deferred road ECS sync wrappers out", roadmap);
+        StringAssert.Contains("public void BeginDeferredRoadEcsSync(Context context)", runtimeGenerationContext);
+        StringAssert.Contains("public void EndDeferredRoadEcsSync(Context context)", runtimeGenerationContext);
+        StringAssert.Contains("context.RoadGridProjectionSystem.BeginDeferredRoadEcsSync()", runtimeGenerationContext);
+        StringAssert.Contains("context.RoadGridProjectionSystem.EndDeferredRoadEcsSync(context.RoadGridProjectionContext)", runtimeGenerationContext);
+        StringAssert.Contains("() => BeginDeferredRoadEcsSync(context)", runtimeGenerationContext);
+        StringAssert.Contains("() => EndDeferredRoadEcsSync(context)", runtimeGenerationContext);
+        StringAssert.Contains("CreateRoadGridProjectionContext()", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "public void BeginDeferredRoadEcsSync()",
+            "public void EndDeferredRoadEcsSync()",
+            "private void BeginDeferredRoadEcsSyncInternal()",
+            "private void EndDeferredRoadEcsSyncInternal()",
+            "_roadGridProjectionSystem.BeginDeferredRoadEcsSync()",
+            "_roadGridProjectionSystem.EndDeferredRoadEcsSync(CreateRoadGridProjectionContext())"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Deferred road ECS sync wrappers must live in RoadRuntimeGenerationContextSystem after step 18:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingRoadLegacyDefinitionsMustLiveInDefinitionSystem()
+    {
+        const string definitionPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyDefinitionSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string definition = File.ReadAllText(definitionPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("19. Complete: Move soldier-base definition and bounds cache", roadmap);
+        StringAssert.Contains("internal sealed class BuildingRoadLegacyDefinitionSystem", definition);
+        StringAssert.Contains("public void BuildDefinitions(", definition);
+        StringAssert.Contains("private void CacheBuildingBounds(BuildingDefinition definition)", definition);
+        StringAssert.Contains("private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)", definition);
+        StringAssert.Contains("storageSystem.SetSoldierBaseDefinition(soldierBaseDefinition)", definition);
+        StringAssert.Contains("public readonly BuildingRoadLegacyDefinitionSystem BuildingRoadLegacyDefinitionSystem = new();", source);
+        StringAssert.Contains("_buildingRoadLegacyDefinitionSystem.BuildDefinitions(", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "private void BuildDefinitions()",
+            "private void CacheBuildingBounds(BuildingDefinition definition)",
+            "private static bool TryGetLocalBounds(GameObject target, out Bounds bounds)",
+            "SetSoldierBaseDefinition(soldierBaseDefinition)"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Legacy soldier-base definition and local-bounds caching must live in BuildingRoadLegacyDefinitionSystem after step 19:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingRoadLegacyPlacementVisualsMustLiveInPlacementVisualSystem()
+    {
+        const string placementVisualPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementVisualSystem.cs";
+        const string placementPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string placementVisual = File.ReadAllText(placementVisualPath);
+        string placement = File.Exists(placementPath) ? File.ReadAllText(placementPath) : string.Empty;
+        string source = File.ReadAllText(sourcePath);
+        string disposal = File.Exists("Assets/Game/Scripts/Systems/RoadBuildDisposalSystem.cs")
+            ? File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildDisposalSystem.cs")
+            : string.Empty;
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("20. Complete: Move placement outline visuals", roadmap);
+        StringAssert.Contains("internal sealed class BuildingRoadLegacyPlacementVisualSystem", placementVisual);
+        StringAssert.Contains("internal sealed class State", placementVisual);
+        StringAssert.Contains("public void CreatePlacementOutline(", placementVisual);
+        StringAssert.Contains("public void Dispose(State state)", placementVisual);
+        StringAssert.Contains("public void UpdatePlacementOutline(", placementVisual);
+        StringAssert.Contains("public void HidePlacementOutline(State state)", placementVisual);
+        StringAssert.Contains("private Material CreatePlacementMaterial()", placementVisual);
+        StringAssert.Contains("private void ApplyPlacementMaterialColor(State state, Color color)", placementVisual);
+        StringAssert.Contains("GameObject.CreatePrimitive(PrimitiveType.Cube)", placementVisual);
+        StringAssert.Contains("ShadowCastingMode.Off", placementVisual);
+        StringAssert.Contains("RenderQueue.Transparent", placementVisual);
+        StringAssert.Contains("BlendMode.SrcAlpha", placementVisual);
+        StringAssert.Contains("public readonly BuildingRoadLegacyPlacementVisualSystem BuildingRoadLegacyPlacementVisualSystem = new();", source);
+        StringAssert.Contains("_buildingRoadLegacyPlacementVisualSystem.CreatePlacementOutline(", runtimeState);
+        Assert.IsTrue(
+            runtimeState.Contains("_buildingRoadLegacyPlacementVisualSystem.Dispose(_placementVisualState)", StringComparison.Ordinal) ||
+            disposal.Contains("context.PlacementVisualSystem.Dispose(context.PlacementVisualState)", StringComparison.Ordinal),
+            "Placement visual disposal must delegate to BuildingRoadLegacyPlacementVisualSystem either from the temporary holder or through RoadBuildDisposalSystem.");
+        StringAssert.Contains("_buildingRoadLegacyPlacementVisualSystem.HidePlacementOutline(_placementVisualState)", runtimeState);
+        Assert.IsTrue(
+            runtimeState.Contains("_buildingRoadLegacyPlacementVisualSystem.UpdatePlacementOutline(", StringComparison.Ordinal) ||
+            placement.Contains("context.PlacementVisualSystem?.UpdatePlacementOutline(", StringComparison.Ordinal),
+            "Placement outline updates must delegate to BuildingRoadLegacyPlacementVisualSystem either directly from the temporary holder or through the extracted placement lifecycle system.");
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "_placementOutline",
+            "_placementOutlineEdges",
+            "_placementOutlineRenderers",
+            "private void CreatePlacementOutline()",
+            "private Material CreatePlacementMaterial()",
+            "private void ApplyPlacementMaterialColor(Color color)",
+            "GameObject.CreatePrimitive(PrimitiveType.Cube)",
+            "ShadowCastingMode.Off",
+            "RenderQueue.Transparent",
+            "BlendMode.SrcAlpha"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Legacy building placement outline visuals must live in BuildingRoadLegacyPlacementVisualSystem after step 20:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingRoadLegacyPlacementLifecycleMustLiveInPlacementSystem()
+    {
+        const string placementPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string placement = File.ReadAllText(placementPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("21. Complete: Move legacy building placement lifecycle", roadmap);
+        StringAssert.Contains("internal sealed class BuildingRoadLegacyPlacementSystem", placement);
+        StringAssert.Contains("internal sealed class State", placement);
+        StringAssert.Contains("public void BeginBuildingPlacement(Context context, BuildingDefinition definition)", placement);
+        StringAssert.Contains("public void CancelBuildingPlacement(Context context)", placement);
+        StringAssert.Contains("public void UpdateBuildingPlacement(Context context, Vector2 screenPosition)", placement);
+        StringAssert.Contains("private void UpdateBuildingPlacementVisual(", placement);
+        StringAssert.Contains("private static void PositionBuildingObject(", placement);
+        StringAssert.Contains("private static Vector2Int GetCenterScreenPlacementOrigin(", placement);
+        StringAssert.Contains("private static Vector2Int CenterCellToOrigin(", placement);
+        StringAssert.Contains("private static bool IsBuildingPlacementValid(", placement);
+        StringAssert.Contains("Instantiate(definition.Prefab, context.BuildingRoot)", placement);
+        StringAssert.Contains("placement.OriginCell = CenterCellToOrigin", placement);
+        StringAssert.Contains("placement.IsValid = IsBuildingPlacementValid", placement);
+        StringAssert.Contains("GridUtils.CellToIndex(new int2(x, y), grid.Width)", placement);
+        StringAssert.Contains("public readonly BuildingRoadLegacyPlacementSystem BuildingRoadLegacyPlacementSystem = new();", source);
+        StringAssert.Contains("_buildingRoadLegacyPlacementSystem.BeginBuildingPlacement(", runtimeState);
+        StringAssert.Contains("_buildingRoadLegacyPlacementSystem.CancelBuildingPlacement(", runtimeState);
+        StringAssert.Contains("_buildingRoadLegacyPlacementSystem.UpdateBuildingPlacement(", runtimeState);
+        StringAssert.Contains("_buildingRoadLegacyPlacementSystem.SetDragging(_buildingPlacementState", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "_isDraggingBuildingPlacement",
+            "Instantiate(definition.Prefab, BuildingRoot)",
+            "UpdateBuildingPlacementVisual(",
+            "private void PositionBuildingObject(",
+            "private Vector2Int GetCenterScreenPlacementOrigin(",
+            "private static Vector2Int CenterCellToOrigin(",
+            "private bool IsBuildingPlacementValid(",
+            "placement.OriginCell = CenterCellToOrigin",
+            "placement.IsValid = IsBuildingPlacementValid",
+            "RuntimeGridBlockers == null || !RuntimeGridBlockers.IsRuntimeBlockerCell"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Legacy building placement lifecycle must live in BuildingRoadLegacyPlacementSystem after step 21:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingRoadLegacyInteractionMustLiveInInteractionSystem()
+    {
+        const string interactionPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string interaction = File.ReadAllText(interactionPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("22. Complete: Move legacy building commit and selection", roadmap);
+        StringAssert.Contains("internal sealed class BuildingRoadLegacyInteractionSystem", interaction);
+        StringAssert.Contains("public RuntimeBuildingData PlaceBuilding(", interaction);
+        StringAssert.Contains("public void HandleBuildingSelectionClick(", interaction);
+        StringAssert.Contains("public void SelectBuilding(Context context, int buildingId)", interaction);
+        StringAssert.Contains("public void DeleteBuilding(Context context, int buildingId, bool destroyVisual)", interaction);
+        StringAssert.Contains("context.StorageSystem.AddBuilding(building)", interaction);
+        StringAssert.Contains("context.StorageSystem.ReleaseActivePlacementPreview()", interaction);
+        StringAssert.Contains("context.StorageSystem?.SelectBuilding(buildingId)", interaction);
+        StringAssert.Contains("context.StorageSystem.RemoveBuilding(buildingId)", interaction);
+        StringAssert.Contains("public readonly BuildingRoadLegacyInteractionSystem BuildingRoadLegacyInteractionSystem = new();", source);
+        StringAssert.Contains("private BuildingRoadLegacyInteractionSystem _buildingRoadLegacyInteractionSystem => _source.BuildingRoadLegacyInteractionSystem;", runtimeState);
+        StringAssert.Contains("new BuildingRoadLegacyInteractionSystem.Context", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "private RuntimeBuildingData PlaceBuilding(",
+            "private void HandleBuildingSelectionClick(",
+            "private void SelectBuilding(int buildingId)",
+            "private void DeleteBuilding(int buildingId, bool destroyVisual)",
+            "_buildingRoadLegacyStorageSystem.AddBuilding(building)",
+            "_buildingRoadLegacyStorageSystem.ReleaseActivePlacementPreview()",
+            "_buildingRoadLegacyStorageSystem.SelectBuilding(buildingId)",
+            "_buildingRoadLegacyStorageSystem.RemoveBuilding(buildingId)"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Legacy building commit/selection/delete must live in BuildingRoadLegacyInteractionSystem after step 22:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingRoadLegacyGlobalAccessMustLiveInGridAndEcsSystems()
+    {
+        const string gridPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyGridSystem.cs";
+        const string ecsPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs";
+        const string projectionPath = "Assets/Game/Scripts/Systems/RoadGridProjectionSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string grid = File.ReadAllText(gridPath);
+        string ecs = File.ReadAllText(ecsPath);
+        string projection = File.ReadAllText(projectionPath);
+        string source = File.ReadAllText(sourcePath);
+        string disposal = File.Exists("Assets/Game/Scripts/Systems/RoadBuildDisposalSystem.cs")
+            ? File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildDisposalSystem.cs")
+            : string.Empty;
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("23. Complete: Move legacy building ECS/global access", roadmap);
+        StringAssert.Contains("internal sealed class BuildingRoadLegacyGridSystem", grid);
+        StringAssert.Contains("internal sealed class State", grid);
+        StringAssert.Contains("public bool TryGetGridData(", grid);
+        StringAssert.Contains("public bool TryGetGridConfig(Context context, out GridConfig grid)", grid);
+        StringAssert.Contains("public Vector3 GetFootprintCenter(", grid);
+        StringAssert.Contains("public bool TryGetGridCell(", grid);
+        StringAssert.Contains("public bool TryGetGridConfig(out GridConfig grid)", projection);
+        StringAssert.Contains("public bool TryGetEntityManager(out EntityManager entityManager)", ecs);
+        StringAssert.Contains("public void DisposeRuntimeBuildings(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)", ecs);
+        StringAssert.Contains("World.DefaultGameObjectInjectionWorld", ecs);
+        StringAssert.Contains("public readonly BuildingRoadLegacyGridSystem BuildingRoadLegacyGridSystem = new();", source);
+        StringAssert.Contains("ConfigureBuildingRoadLegacyGridState().TryGetGridData", runtimeState);
+        StringAssert.Contains("ConfigureBuildingRoadLegacyGridState().TryGetGridCell", runtimeState);
+        StringAssert.Contains("ConfigureBuildingRoadLegacyGridState().GetFootprintCenter", runtimeState);
+        Assert.IsTrue(
+            runtimeState.Contains("_buildingRoadLegacyEcsSystem.DisposeRuntimeBuildings(_buildingRoadLegacyStorageSystem.RuntimeBuildings)", StringComparison.Ordinal) ||
+            disposal.Contains("context.LegacyEcsSystem.DisposeRuntimeBuildings(context.LegacyStorageSystem.RuntimeBuildings)", StringComparison.Ordinal),
+            "Legacy runtime-building disposal must delegate to BuildingRoadLegacyEcsSystem either from the temporary holder or through RoadBuildDisposalSystem.");
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "World.DefaultGameObjectInjectionWorld",
+            "out EntityManager",
+            "EntityManager entityManager",
+            "EntityQuery",
+            "DynamicBuffer<GridRoad>",
+            "DynamicBlockerData",
+            "private bool TryGetGridData(",
+            "private static bool TryGetGridConfig(",
+            "private static bool TryGetEntityManager(",
+            "private bool TryGetGridCell(",
+            "private Vector3 GetFootprintCenter("
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "Legacy building ECS/global/grid access must live in BuildingRoadLegacyGridSystem or BuildingRoadLegacyEcsSystem after step 23:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadBuildRuntimeStateMustNotExposeLegacyBuildingCommandWrappers()
+    {
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("24. Complete: Delete legacy building command wrappers from road state", roadmap);
+        StringAssert.Contains(
+            "BuildingPlacementInteraction?.ClearSelectedBuilding(",
+            runtimeState);
+        StringAssert.Contains(
+            "BuildingPlacementInteraction?.CancelBuildingPlacement(BuildingPlacementInteractionContext)",
+            runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "public void BeginSoldierBasePlacement()",
+            "public void ConfirmBuildingPlacement()",
+            "public void CancelBuildingPlacement()",
+            "public void CreateSoldierFromSelectedBuilding()",
+            "public void DeleteSelectedBuilding()",
+            "public void ClearSelectedBuilding()",
+            "public bool CanConfirmBuildingPlacement",
+            "public bool HasSelectedBuilding"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "RoadBuildRuntimeStateSystem must not expose legacy building command wrappers after step 24:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadBuildRuntimeUpdateActionMustLiveInRuntimeActionSystem()
+    {
+        const string runtimeActionPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionSystem.cs";
+        const string compositionSourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        const string compositionPath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string runtimeAction = File.ReadAllText(runtimeActionPath);
+        string compositionSource = File.ReadAllText(compositionSourcePath);
+        string composition = File.ReadAllText(compositionPath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("25. Complete: Move runtime update action out", roadmap);
+        StringAssert.Contains("internal sealed class RoadBuildRuntimeActionSystem", runtimeAction);
+        StringAssert.Contains("internal sealed class State", runtimeAction);
+        StringAssert.Contains("public void ConfigureInput(", runtimeAction);
+        StringAssert.Contains("public void Update(State state)", runtimeAction);
+        StringAssert.Contains("state.InteractionContext.InputSystem.Update(", runtimeAction);
+        StringAssert.Contains("state.InteractionContextSystem.CreateInputContext(state.InteractionContext)", runtimeAction);
+        StringAssert.Contains("public readonly RoadBuildRuntimeActionSystem RoadBuildRuntimeActionSystem = new();", compositionSource);
+        StringAssert.Contains("RoadBuildRuntimeActionState = RoadBuildRuntimeActionSystem.CreateState();", compositionSource);
+        StringAssert.Contains("_roadBuildRuntimeActionSystem.ConfigureInput(", runtimeState);
+        StringAssert.Contains("roadSource.RoadBuildRuntimeActionSystem.Update(roadSource.RoadBuildRuntimeActionState)", composition);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "internal RoadBuildInputSystem RoadBuildInputSystem",
+            "internal RoadBuildInputSystem.Context RoadBuildInputContext",
+            "internal Camera RoadBuildInputCamera"
+        };
+        string[] runtimeViolations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+        Assert.IsEmpty(
+            runtimeViolations,
+            "RoadBuildRuntimeStateSystem must not expose input runtime-update surface after step 25:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, runtimeViolations));
+
+        string[] forbiddenCompositionTokens =
+        {
+            "roadBuild.RoadBuildInputSystem",
+            "roadBuild.RoadBuildInputContext",
+            "roadBuild.RoadBuildInputCamera"
+        };
+        string[] compositionViolations = forbiddenCompositionTokens
+            .Where(token => composition.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+        Assert.IsEmpty(
+            compositionViolations,
+            "RoadBuildCompositionSystem runtime update action must route through RoadBuildRuntimeActionSystem after step 25:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, compositionViolations));
+    }
+
+    [Test]
+    public void RoadBuildGuiActionMustLiveInRuntimeActionSystem()
+    {
+        const string runtimeActionPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionSystem.cs";
+        const string compositionPath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string runtimeAction = File.ReadAllText(runtimeActionPath);
+        string composition = File.ReadAllText(compositionPath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("26. Complete: Move GUI action out", roadmap);
+        StringAssert.Contains("public void ConfigureGui(", runtimeAction);
+        StringAssert.Contains("public void OnGui(State state)", runtimeAction);
+        StringAssert.Contains("state?.DeletePromptSystem?.OnGui(state.DeletePromptContext)", runtimeAction);
+        StringAssert.Contains("_roadBuildRuntimeActionSystem.ConfigureGui(", runtimeState);
+        StringAssert.Contains("roadSource.RoadBuildRuntimeActionSystem.OnGui(roadSource.RoadBuildRuntimeActionState)", composition);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "internal RoadDeletePromptSystem RoadDeletePromptSystem",
+            "internal RoadDeletePromptSystem.Context RoadDeletePromptContext"
+        };
+        string[] runtimeViolations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+        Assert.IsEmpty(
+            runtimeViolations,
+            "RoadBuildRuntimeStateSystem must not expose delete-prompt GUI surface after step 26:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, runtimeViolations));
+
+        string[] forbiddenCompositionTokens =
+        {
+            "roadBuild.RoadDeletePromptSystem",
+            "roadBuild.RoadDeletePromptContext"
+        };
+        string[] compositionViolations = forbiddenCompositionTokens
+            .Where(token => composition.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+        Assert.IsEmpty(
+            compositionViolations,
+            "RoadBuildCompositionSystem GUI action must route through RoadBuildRuntimeActionSystem after step 26:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, compositionViolations));
+    }
+
+    [Test]
+    public void RoadBuildDisposalSequencingMustLiveInDisposalSystem()
+    {
+        const string disposalPath = "Assets/Game/Scripts/Systems/RoadBuildDisposalSystem.cs";
+        const string sourcePath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string disposal = File.ReadAllText(disposalPath);
+        string source = File.ReadAllText(sourcePath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("27. Complete: Extract road disposal sequencing", roadmap);
+        StringAssert.Contains("internal sealed class RoadBuildDisposalSystem", disposal);
+        StringAssert.Contains("public readonly struct Context", disposal);
+        StringAssert.Contains("public void Dispose(Context context)", disposal);
+        StringAssert.Contains("context.StartupSystem.DisposeRuntimeRoots", disposal);
+        StringAssert.Contains("context.PlacementVisualSystem.Dispose", disposal);
+        StringAssert.Contains("context.VisualVariantSystem.DisposeCachedVisualData", disposal);
+        StringAssert.Contains("context.PreviewSystem.DisposePreview", disposal);
+        StringAssert.Contains("context.ChunkVisualSystem.DisposeChunks", disposal);
+        StringAssert.Contains("context.LegacyEcsSystem.DisposeRuntimeBuildings", disposal);
+        StringAssert.Contains("context.SpecialVisualSystem.DisposeVisuals", disposal);
+        StringAssert.Contains("context.MinimapEventSystem.Clear", disposal);
+        StringAssert.Contains("context.GridProjectionSystem.ClearRoadDataInEcs", disposal);
+        StringAssert.Contains("context.RoadTiles.Clear", disposal);
+        StringAssert.Contains("context.LegacyStorageSystem.Clear", disposal);
+        StringAssert.Contains("public readonly RoadBuildDisposalSystem RoadBuildDisposalSystem = new();", source);
+        StringAssert.Contains("_roadBuildDisposalSystem.Dispose(CreateRoadBuildDisposalContext())", runtimeState);
+
+        string[] forbiddenRuntimeStateTokens =
+        {
+            "_roadBuildStartupSystem.DisposeRuntimeRoots",
+            "_buildingRoadLegacyPlacementVisualSystem.Dispose",
+            "_roadVisualVariantSystem.DisposeCachedVisualData",
+            "_roadPreviewSystem.DisposePreview",
+            "_roadChunkVisualSystem.DisposeChunks",
+            "_buildingRoadLegacyEcsSystem.DisposeRuntimeBuildings",
+            "_roadSpecialVisualSystem.DisposeVisuals",
+            "_roadMinimapEventSystem.Clear",
+            "_roadGridProjectionSystem.ClearRoadDataInEcs",
+            "_roadTiles.Clear()",
+            "_buildingRoadLegacyStorageSystem.Clear()",
+            "private void ClearRoadDataInEcs()"
+        };
+        string[] violations = forbiddenRuntimeStateTokens
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "RoadBuildRuntimeStateSystem must not own disposal sequencing after step 27:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RoadBuildRuntimeStatePublicConsumersMustUseNarrowSystems()
+    {
+        const string compositionPath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSystem.cs";
+        const string runtimeActionPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionSystem.cs";
+        string runtimeState = File.ReadAllText(RoadBuildRuntimeStateSystemPath);
+        string composition = File.ReadAllText(compositionPath);
+        string runtimeAction = File.ReadAllText(runtimeActionPath);
+        string roadmap = File.ReadAllText(RoadBuildRuntimeStateRoadmapPath);
+
+        StringAssert.Contains("28. Complete: Move command/public API consumers to narrow systems", roadmap);
+        StringAssert.Contains("RoadRuntimeGenerationSystem roadRuntimeGeneration", composition);
+        StringAssert.Contains("RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext", composition);
+        StringAssert.Contains("RoadFootprintQuerySystem roadFootprintQuery", composition);
+        StringAssert.Contains("RoadFootprintQuerySystem.Context roadFootprintQueryContext", composition);
+        StringAssert.Contains("public void Update(State state)", runtimeAction);
+        StringAssert.Contains("public void OnGui(State state)", runtimeAction);
+        StringAssert.Contains("() => roadSource.RoadBuildRuntimeActionSystem.Update", composition);
+        StringAssert.Contains("() => roadSource.RoadBuildRuntimeActionSystem.OnGui", composition);
+
+        string[] forbiddenPublicWrappers =
+        {
+            "public bool TryGetRoadCellSizeInGridCells(",
+            "public bool CreateRoadStrokeFromRoadCells(",
+            "public bool CreateAutobahnStrokeFromRoadCells(",
+            "public bool TryGetAutobahnConnectorRoadCell(",
+            "public bool TryLogRoadConnectMarkers(",
+            "public bool CreateStandaloneStraightRoadChainFromConnector(",
+            "public bool TryGetStandaloneStraightChainEndRoadCell(",
+            "public bool CreateStandaloneDebugCityRoadNetworkFromStraightChain(",
+            "public bool HasRoadInFootprint(",
+            "public void FillRoadFootprintMask(",
+            "public void Update()",
+            "public void OnGui()",
+            "public void ActivateRoadBuildMode()",
+            "public void ConfirmRoadBuildSession()",
+            "public void CancelRoadBuildSession()",
+            "public void ExitBuildMode()"
+        };
+        string[] violations = forbiddenPublicWrappers
+            .Where(token => runtimeState.Contains(token, StringComparison.Ordinal))
+            .ToArray();
+
+        Assert.IsEmpty(
+            violations,
+            "RoadBuildRuntimeStateSystem must not expose public command/runtime-generation/footprint/update/gui wrappers after step 28:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
     }
@@ -5985,12 +6715,16 @@ public sealed class GameplayArchitectureContractTests
     public void RoadNetworkGraphMutationMustLiveInRoadNetworkSystem()
     {
         const string networkSystemPath = "Assets/Game/Scripts/Systems/RoadNetworkSystem.cs";
+        const string mutationSystemPath = "Assets/Game/Scripts/Systems/RoadBuildMutationSystem.cs";
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         Assert.IsTrue(File.Exists(networkSystemPath), "Road graph mutation and snapshot ownership must live in RoadNetworkSystem.");
 
         string networkSystem = File.ReadAllText(networkSystemPath);
+        string mutationSystem = File.ReadAllText(mutationSystemPath);
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -6014,12 +6748,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public void RebuildSpecialRoadCellMetadata", networkSystem);
 
         StringAssert.Contains("private RoadNetworkSystem _roadNetworkSystem => _source.RoadNetworkSystem", roadBuild);
-        StringAssert.Contains("_roadNetworkSystem.CreateStroke", roadBuild);
-        StringAssert.Contains("_roadNetworkSystem.DeleteStroke", roadBuild);
-        StringAssert.Contains("_roadNetworkSystem.CaptureSnapshot", roadBuild);
-        StringAssert.Contains("_roadNetworkSystem.RestoreSnapshot", roadBuild);
-        StringAssert.Contains("_roadNetworkSystem.GetMask", roadBuild);
-        StringAssert.Contains("_roadNetworkSystem.HasEdge", roadBuild);
+        StringAssert.Contains("context.RoadNetworkSystem.CreateStroke", mutationSystem);
+        StringAssert.Contains("context.RoadNetworkSystem.DeleteStroke", mutationSystem);
+        StringAssert.Contains("context.RoadNetworkSystem?.CaptureSnapshot()", mutationSystem);
+        StringAssert.Contains("context.RoadNetworkSystem.RestoreSnapshot(snapshot)", mutationSystem);
+        StringAssert.Contains("context.RoadNetworkSystem.GetMask(cell)", visualRefresh);
+        StringAssert.Contains("context.RoadNetworkSystem.RoadTiles", visualRefresh);
 
         string[] forbiddenTokens =
         {
@@ -6180,12 +6914,18 @@ public sealed class GameplayArchitectureContractTests
     public void RoadGridProjectionMustLiveInRoadGridProjectionSystem()
     {
         const string gridProjectionSystemPath = "Assets/Game/Scripts/Systems/RoadGridProjectionSystem.cs";
+        const string buildingRoadLegacyGridSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyGridSystem.cs";
+        const string runtimeGenerationContextPath = "Assets/Game/Scripts/Systems/RoadRuntimeGenerationContextSystem.cs";
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         Assert.IsTrue(File.Exists(gridProjectionSystemPath), "Road ECS projection and road-grid query ownership must live in RoadGridProjectionSystem.");
 
         string gridProjectionSystem = File.ReadAllText(gridProjectionSystemPath);
+        string buildingRoadLegacyGridSystem = File.ReadAllText(buildingRoadLegacyGridSystemPath);
+        string runtimeGenerationContext = File.ReadAllText(runtimeGenerationContextPath);
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -6211,12 +6951,12 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("private RoadGridProjectionSystem _roadGridProjectionSystem => _source.RoadGridProjectionSystem", roadBuild);
         StringAssert.Contains("private RoadGridProjectionSystem.Context CreateRoadGridProjectionContext()", roadBuild);
-        StringAssert.Contains("_roadGridProjectionSystem.BeginDeferredRoadEcsSync", roadBuild);
-        StringAssert.Contains("_roadGridProjectionSystem.EndDeferredRoadEcsSync", roadBuild);
-        StringAssert.Contains("_roadGridProjectionSystem.RequestRoadEcsSync", roadBuild);
-        StringAssert.Contains("_roadGridProjectionSystem.SyncRoadCellsToEcs", roadBuild);
+        StringAssert.Contains("context.RoadGridProjectionSystem.BeginDeferredRoadEcsSync()", runtimeGenerationContext);
+        StringAssert.Contains("context.RoadGridProjectionSystem.EndDeferredRoadEcsSync(context.RoadGridProjectionContext)", runtimeGenerationContext);
+        StringAssert.Contains("context.RoadGridProjectionSystem.RequestRoadEcsSync(context.RoadGridProjectionContext)", visualRefresh);
+        StringAssert.Contains("context.RoadGridProjectionSystem.SyncRoadCellsToEcs(context.RoadGridProjectionContext)", visualRefresh);
         StringAssert.Contains("_roadGridProjectionSystem.ClearRoadDataInEcs", roadBuild);
-        StringAssert.Contains("_roadGridProjectionSystem.TryGetGridData", roadBuild);
+        StringAssert.Contains("context.RoadGridProjectionSystem.TryGetGridData", buildingRoadLegacyGridSystem);
 
         string[] forbiddenTokens =
         {
@@ -6255,6 +6995,8 @@ public sealed class GameplayArchitectureContractTests
         const string visualVariantSystemPath = "Assets/Game/Scripts/Systems/RoadVisualVariantSystem.cs";
         const string startupSystemPath = "Assets/Game/Scripts/Systems/RoadBuildStartupSystem.cs";
         const string visualContextPath = "Assets/Game/Scripts/Systems/RoadBuildVisualContextSystem.cs";
+        const string visualResolutionPath = "Assets/Game/Scripts/Systems/RoadVisualResolutionSystem.cs";
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
@@ -6263,6 +7005,8 @@ public sealed class GameplayArchitectureContractTests
         string visualVariantSystem = File.ReadAllText(visualVariantSystemPath);
         string startupSystem = File.ReadAllText(startupSystemPath);
         string visualContext = File.ReadAllText(visualContextPath);
+        string visualResolution = File.ReadAllText(visualResolutionPath);
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -6289,11 +7033,11 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("private RoadVisualVariantSystem _roadVisualVariantSystem => _source.RoadVisualVariantSystem", roadBuild);
         StringAssert.Contains("context.RoadBuildStartupSystem.CreateRoadPrefabSet(context.StartupState)", visualContext);
-        StringAssert.Contains("_roadBuildVisualContextSystem.GetPrefab(CreateRoadBuildVisualContext(), type)", roadBuild);
+        StringAssert.Contains("_roadVisualResolutionSystem.GetPrefab(CreateRoadVisualResolutionContext(), type)", roadBuild);
         StringAssert.Contains("visualVariantSystem.CacheVariants(CreateRoadPrefabSet(state))", startupSystem);
-        StringAssert.Contains("_roadVisualVariantSystem.TryGetVariant", roadBuild);
+        StringAssert.Contains("context.RoadVisualVariantSystem.TryGetVariant(type, mask, out variant)", visualResolution);
         StringAssert.Contains("_roadVisualVariantSystem.DisposeCachedVisualData", roadBuild);
-        StringAssert.Contains("_roadVisualVariantSystem.VisualData", roadBuild);
+        StringAssert.Contains("context.RoadVisualVariantSystem.VisualData", visualContext + visualRefresh);
         StringAssert.Contains("context.RoadVisualVariantSystem.MarkerLayouts", visualContext);
         StringAssert.Contains("context.RoadVisualVariantSystem.AutobahnConnectorMarkerData", visualContext);
 
@@ -6330,12 +7074,14 @@ public sealed class GameplayArchitectureContractTests
     public void RoadChunkVisualsMustLiveInRoadChunkVisualSystem()
     {
         const string chunkVisualSystemPath = "Assets/Game/Scripts/Systems/RoadChunkVisualSystem.cs";
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         Assert.IsTrue(File.Exists(chunkVisualSystemPath), "Road chunk membership, dirty queues, and chunk mesh rebuilds must live in RoadChunkVisualSystem.");
 
         string chunkVisualSystem = File.ReadAllText(chunkVisualSystemPath);
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -6360,10 +7106,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private RoadChunkVisualSystem _roadChunkVisualSystem => _source.RoadChunkVisualSystem", roadBuild);
         StringAssert.Contains("private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext()", roadBuild);
         StringAssert.Contains("_roadChunkVisualSystem.DisposeChunks", roadBuild);
-        StringAssert.Contains("_roadChunkVisualSystem.ClearChunks", roadBuild);
-        StringAssert.Contains("_roadChunkVisualSystem.AddCellToChunk", roadBuild);
-        StringAssert.Contains("_roadChunkVisualSystem.RemoveCellFromChunk", roadBuild);
-        StringAssert.Contains("_roadChunkVisualSystem.RebuildDirtyChunks", roadBuild);
+        StringAssert.Contains("context.RoadChunkVisualSystem.ClearChunks()", visualRefresh);
+        StringAssert.Contains("context.RoadChunkVisualSystem.AddCellToChunk", visualRefresh);
+        StringAssert.Contains("context.RoadChunkVisualSystem.RemoveCellFromChunk", visualRefresh);
+        StringAssert.Contains("context.RoadChunkVisualSystem.RebuildDirtyChunks", visualRefresh);
         StringAssert.Contains("RoadChunkVisualSystem.GetPlacementPosition", roadBuild);
 
         string[] forbiddenTokens =
@@ -6467,6 +7213,7 @@ public sealed class GameplayArchitectureContractTests
     {
         const string specialVisualSystemPath = "Assets/Game/Scripts/Systems/RoadSpecialVisualSystem.cs";
         const string runtimeGenerationSystemPath = "Assets/Game/Scripts/Systems/RoadRuntimeGenerationSystem.cs";
+        const string visualRefreshPath = "Assets/Game/Scripts/Systems/RoadVisualRefreshSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
@@ -6476,6 +7223,7 @@ public sealed class GameplayArchitectureContractTests
         string runtimeGenerationSystem = File.Exists(runtimeGenerationSystemPath)
             ? File.ReadAllText(runtimeGenerationSystemPath)
             : string.Empty;
+        string visualRefresh = File.ReadAllText(visualRefreshPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -6509,8 +7257,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext()", roadBuild);
         StringAssert.Contains("_roadSpecialVisualSystem.SpecialRoadObjects", roadBuild);
         StringAssert.Contains("_roadSpecialVisualSystem.DisposeVisuals", roadBuild);
-        StringAssert.Contains("_roadSpecialVisualSystem.ClearSpecialRoadObjects", roadBuild);
-        StringAssert.Contains("_roadSpecialVisualSystem.RebuildSpecialRoadObjects", roadBuild);
+        StringAssert.Contains("context.RoadSpecialVisualSystem.ClearSpecialRoadObjects()", visualRefresh);
+        StringAssert.Contains("context.RoadSpecialVisualSystem.RebuildSpecialRoadObjects(context.RoadSpecialVisualContext)", visualRefresh);
         StringAssert.Contains("context.SpecialVisualSystem.TryGetAutobahnConnectorRoadCell", runtimeGenerationSystem);
         StringAssert.Contains("context.SpecialVisualSystem.TryLogRoadConnectMarkers", runtimeGenerationSystem);
         StringAssert.Contains("context.SpecialVisualSystem.CreateStandaloneStraightRoadChainFromConnector", runtimeGenerationSystem);
@@ -6646,6 +7394,7 @@ public sealed class GameplayArchitectureContractTests
     {
         const string inputSystemPath = "Assets/Game/Scripts/Systems/RoadBuildInputSystem.cs";
         const string readModelPath = "Assets/Game/Scripts/Systems/RoadBuildReadModelSystem.cs";
+        const string legacyInteractionPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
@@ -6653,6 +7402,7 @@ public sealed class GameplayArchitectureContractTests
 
         string inputSystem = File.ReadAllText(inputSystemPath);
         string readModel = File.ReadAllText(readModelPath);
+        string legacyInteraction = File.ReadAllText(legacyInteractionPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -6685,7 +7435,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_roadBuildInputSystem.Update(CreateRoadBuildInputContext(), worldCamera)", roadBuild);
         StringAssert.Contains("_roadBuildInputSystem.CancelPendingBuild(CreateRoadBuildInputContext())", roadBuild);
         StringAssert.Contains("_context.RoadBuildInputSystem.IsDrawing(_context.RoadBuildInputState)", readModel);
-        StringAssert.Contains("_roadBuildInputSystem.IsPointerOverUI(screenPosition)", roadBuild);
+        StringAssert.Contains("_roadBuildInputSystem.IsPointerOverUI", roadBuild);
+        StringAssert.Contains("context.IsPointerOverUi(screenPosition)", legacyInteraction);
 
         string[] forbiddenTokens =
         {
@@ -6864,19 +7615,19 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("source.ExitBuildMode", interactionContext);
         StringAssert.Contains("source.BuildingPlacementCommandSystem.ExitBuildMode", buildingComposition);
 
-        StringAssert.Contains("CancelBuildingPlacement,", roadBuild);
-        StringAssert.Contains("public void BeginSoldierBasePlacement()", roadBuild);
         StringAssert.Contains("public BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem", dependencySystem);
         StringAssert.Contains("public BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext", dependencySystem);
-        StringAssert.Contains("BuildingPlacementInteraction?.BeginSoldierBasePlacement(BuildingPlacementInteractionContext)", roadBuild);
-        StringAssert.Contains("BuildingPlacementInteraction?.ConfirmBuildingPlacement(BuildingPlacementInteractionContext)", roadBuild);
         StringAssert.Contains("BuildingPlacementInteraction?.CancelBuildingPlacement(BuildingPlacementInteractionContext)", roadBuild);
-        StringAssert.Contains("BuildingPlacementInteraction?.CreateUnitFromSelectedBuilding(BuildingPlacementInteractionContext)", roadBuild);
-        StringAssert.Contains("BuildingPlacementInteraction?.DeleteSelectedBuilding(BuildingPlacementInteractionContext)", roadBuild);
-        StringAssert.Contains("BuildingPlacementInteraction?.ClearSelectedBuilding(BuildingPlacementInteractionContext, \"RoadBuild.ClearSelectedBuilding\")", roadBuild);
+        StringAssert.Contains("BuildingPlacementInteraction?.ClearSelectedBuilding(", roadBuild);
 
         string[] forbiddenTokens =
         {
+            "public void BeginSoldierBasePlacement()",
+            "public void ConfirmBuildingPlacement()",
+            "public void CancelBuildingPlacement()",
+            "public void CreateSoldierFromSelectedBuilding()",
+            "public void DeleteSelectedBuilding()",
+            "public void ClearSelectedBuilding()",
             "public void BeginSoldierBasePlacement()\n    {\n        if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())",
             "if (_soldierBaseDefinition == null || soldierBasePrefab == null)",
             "BeginBuildingPlacement(_soldierBaseDefinition)",
@@ -6902,6 +7653,9 @@ public sealed class GameplayArchitectureContractTests
     public void RoadBuildLegacyBuildingStorageMustLiveInBuildingRoadLegacyStorageSystem()
     {
         const string storageSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyStorageSystem.cs";
+        const string definitionSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyDefinitionSystem.cs";
+        const string placementSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyPlacementSystem.cs";
+        const string interactionSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs";
         const string readModelPath = "Assets/Game/Scripts/Systems/RoadBuildReadModelSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
@@ -6909,6 +7663,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(storageSystemPath), "Legacy road building storage must live in a building-owned compatibility storage system.");
 
         string storageSystem = File.ReadAllText(storageSystemPath);
+        string definitionSystem = File.ReadAllText(definitionSystemPath);
+        string placementSystem = File.ReadAllText(placementSystemPath);
+        string interactionSystem = File.ReadAllText(interactionSystemPath);
         string readModel = File.ReadAllText(readModelPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
@@ -6935,16 +7692,16 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("private BuildingRoadLegacyStorageSystem _buildingRoadLegacyStorageSystem => _source.BuildingRoadLegacyStorageSystem", roadBuild);
         StringAssert.Contains("_buildingRoadLegacyStorageSystem.RuntimeBuildings", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.ActivePlacement", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.SetSoldierBaseDefinition", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.BeginPlacement", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.ClearActivePlacement", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.AllocateBuildingId", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.AddBuilding", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.RemoveBuilding", roadBuild);
+        StringAssert.Contains("context.StorageSystem?.ActivePlacement", placementSystem);
+        StringAssert.Contains("storageSystem.SetSoldierBaseDefinition", definitionSystem);
+        StringAssert.Contains("context.StorageSystem.BeginPlacement", placementSystem);
+        StringAssert.Contains("context.StorageSystem?.ClearActivePlacement", placementSystem);
+        StringAssert.Contains("context.StorageSystem.AllocateBuildingId", interactionSystem);
+        StringAssert.Contains("context.StorageSystem.AddBuilding", interactionSystem);
+        StringAssert.Contains("context.StorageSystem.RemoveBuilding", interactionSystem);
         StringAssert.Contains("_context.LegacyStorageSystem.TryGetSelectedBuilding", readModel);
-        StringAssert.Contains("_buildingRoadLegacyStorageSystem.SelectBuilding", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyEcsSystem.AttachRuntimeLink", roadBuild);
+        StringAssert.Contains("context.StorageSystem?.SelectBuilding", interactionSystem);
+        StringAssert.Contains("context.EcsSystem.AttachRuntimeLink", interactionSystem);
 
         string[] forbiddenTokens =
         {
@@ -6976,12 +7733,14 @@ public sealed class GameplayArchitectureContractTests
     public void RoadBuildBuildingEcsHelpersMustLiveInBuildingRoadLegacyEcsSystem()
     {
         const string ecsSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyEcsSystem.cs";
+        const string interactionSystemPath = "Assets/Game/Scripts/Systems/BuildingRoadLegacyInteractionSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         Assert.IsTrue(File.Exists(ecsSystemPath), "Legacy road building ECS helpers must live in a building-owned compatibility ECS system.");
 
         string ecsSystem = File.ReadAllText(ecsSystemPath);
+        string interactionSystem = File.ReadAllText(interactionSystemPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -7004,9 +7763,9 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("private BuildingRoadLegacyEcsSystem _buildingRoadLegacyEcsSystem => _source.BuildingRoadLegacyEcsSystem", roadBuild);
         StringAssert.Contains("private BuildingRoadLegacyEcsSystem.Context CreateBuildingRoadLegacyEcsContext()", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyEcsSystem.CreateBlockerEntity", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyEcsSystem.CreateBuildingCombatEntity", roadBuild);
-        StringAssert.Contains("_buildingRoadLegacyEcsSystem.AttachRuntimeLink", roadBuild);
+        StringAssert.Contains("context.EcsSystem.CreateBlockerEntity", interactionSystem);
+        StringAssert.Contains("context.EcsSystem.CreateBuildingCombatEntity", interactionSystem);
+        StringAssert.Contains("context.EcsSystem.AttachRuntimeLink", interactionSystem);
 
         string[] forbiddenTokens =
         {
@@ -7098,12 +7857,14 @@ public sealed class GameplayArchitectureContractTests
     public void RoadRuntimeGenerationCommandsMustLiveInRoadRuntimeGenerationSystem()
     {
         const string runtimeGenerationPath = "Assets/Game/Scripts/Systems/RoadRuntimeGenerationSystem.cs";
+        const string runtimeGenerationContextPath = "Assets/Game/Scripts/Systems/RoadRuntimeGenerationContextSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         Assert.IsTrue(File.Exists(runtimeGenerationPath), "Runtime-city-facing road generation commands must live in RoadRuntimeGenerationSystem.");
 
         string runtimeGeneration = File.ReadAllText(runtimeGenerationPath);
+        string runtimeGenerationContext = File.ReadAllText(runtimeGenerationContextPath);
         string roadBuild = File.ReadAllText(roadBuildPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
@@ -7130,8 +7891,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem => _source.RoadRuntimeGenerationSystem", roadBuild);
         StringAssert.Contains("private RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext()", roadBuild);
         StringAssert.Contains("TryGetRoadCellSizeInGridCellsInternal", roadBuild);
-        StringAssert.Contains("BeginDeferredRoadEcsSyncInternal", roadBuild);
-        StringAssert.Contains("EndDeferredRoadEcsSyncInternal", roadBuild);
+        StringAssert.Contains("public void BeginDeferredRoadEcsSync(Context context)", runtimeGenerationContext);
+        StringAssert.Contains("public void EndDeferredRoadEcsSync(Context context)", runtimeGenerationContext);
         StringAssert.Contains("_roadRuntimeGenerationSystem.CreateRoadStrokeFromRoadCells", roadBuild);
         StringAssert.Contains("_roadRuntimeGenerationSystem.CreateAutobahnStrokeFromRoadCells", roadBuild);
         StringAssert.Contains("_roadRuntimeGenerationSystem.TryGetAutobahnConnectorRoadCell", roadBuild);
@@ -7575,28 +8336,26 @@ public sealed class GameplayArchitectureContractTests
     public void RoadBuildRuntimeUpdateAndGuiMustUseNarrowSystems()
     {
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
+        const string runtimeActionPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionSystem.cs";
         const string compositionPath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSystem.cs";
         const string runtimeUpdatePath = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
         const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         string roadBuild = File.ReadAllText(roadBuildPath);
+        string runtimeAction = File.ReadAllText(runtimeActionPath);
         string composition = File.ReadAllText(compositionPath);
         string runtimeUpdate = File.ReadAllText(runtimeUpdatePath);
         string bootstrap = File.ReadAllText(bootstrapPath);
         string roadmap = File.ReadAllText(roadmapPath);
 
         StringAssert.Contains("27. Complete: Replace runtime update and GUI delegates", roadmap);
-        StringAssert.Contains("internal RoadBuildInputSystem RoadBuildInputSystem", roadBuild);
-        StringAssert.Contains("internal RoadBuildInputSystem.Context RoadBuildInputContext", roadBuild);
-        StringAssert.Contains("internal Camera RoadBuildInputCamera", roadBuild);
-        StringAssert.Contains("internal RoadDeletePromptSystem RoadDeletePromptSystem", roadBuild);
-        StringAssert.Contains("internal RoadDeletePromptSystem.Context RoadDeletePromptContext", roadBuild);
+        StringAssert.Contains("internal sealed class RoadBuildRuntimeActionSystem", runtimeAction);
+        StringAssert.Contains("state.InteractionContext.InputSystem.Update(", runtimeAction);
+        StringAssert.Contains("state?.DeletePromptSystem?.OnGui(state.DeletePromptContext)", runtimeAction);
 
-        StringAssert.Contains("roadBuild.RoadBuildInputSystem.Update(", composition);
-        StringAssert.Contains("roadBuild.RoadBuildInputContext", composition);
-        StringAssert.Contains("roadBuild.RoadBuildInputCamera", composition);
-        StringAssert.Contains("roadBuild.RoadDeletePromptSystem.OnGui(roadBuild.RoadDeletePromptContext)", composition);
+        StringAssert.Contains("roadSource.RoadBuildRuntimeActionSystem.Update(roadSource.RoadBuildRuntimeActionState)", composition);
+        StringAssert.Contains("roadSource.RoadBuildRuntimeActionSystem.OnGui(roadSource.RoadBuildRuntimeActionState)", composition);
         StringAssert.Contains("roadBuildRuntimeUpdate?.Invoke", runtimeUpdate);
         StringAssert.Contains("roadBuildOnGui?.Invoke", runtimeUpdate);
         StringAssert.Contains("_roadRuntimeUpdate", bootstrap);

@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using static UnityEngine.Object;
 
 internal sealed class BuildingRoadLegacyEcsSystem
 {
@@ -46,6 +48,40 @@ internal sealed class BuildingRoadLegacyEcsSystem
             Spawned = spawned;
             BuildingSpawnRandomState = buildingSpawnRandomState;
         }
+    }
+
+    public bool TryGetEntityManager(out EntityManager entityManager)
+    {
+        entityManager = default;
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        entityManager = world.EntityManager;
+        return true;
+    }
+
+    public void DisposeRuntimeBuildings(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+    {
+        if (runtimeBuildings == null)
+            return;
+
+        foreach (var building in runtimeBuildings.Values)
+        {
+            if (building.Instance != null)
+                Destroy(building.Instance);
+
+            DestroyEntityIfExists(building.CombatEntity);
+            DestroyEntityIfExists(building.BlockerEntity);
+        }
+    }
+
+    private void DestroyEntityIfExists(Entity entity)
+    {
+        if (entity == Entity.Null || !TryGetEntityManager(out EntityManager em) || !em.Exists(entity))
+            return;
+
+        em.DestroyEntity(entity);
     }
 
     public Entity CreateBlockerEntity(Context context, Vector2Int originCell, Vector2Int footprintCells)

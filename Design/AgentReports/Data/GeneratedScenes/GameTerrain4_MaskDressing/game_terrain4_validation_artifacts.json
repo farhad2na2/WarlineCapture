@@ -8,14 +8,14 @@
   "cleanTopDownCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png",
   "cleanPlayableCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png",
   "referenceFidelitySummary": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_reference_fidelity_summary.json",
-  "totalPlacedPrefabs": 6427,
+  "totalPlacedPrefabs": 18795,
   "passed": true,
   "checks": [
     {
       "id": "totalPlacedPrefabs.minimum",
       "passed": true,
-      "expected": 3984,
-      "actual": 6427,
+      "expected": 5853,
+      "actual": 18795,
       "details": "Scene placed-prefab total must be at least the deterministic spacing plan because fidelity clusters may expand accepted points."
     },
     {
@@ -28,29 +28,29 @@
     {
       "id": "count.Trees_Playable.minimum",
       "passed": true,
-      "expected": 1178,
-      "actual": 1178,
+      "expected": 1657,
+      "actual": 2179,
       "details": "Generated group count for Trees_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Trees_BlockerBelt.minimum",
       "passed": true,
-      "expected": 484,
-      "actual": 1609,
+      "expected": 1065,
+      "actual": 8602,
       "details": "Generated group count for Trees_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Bushes_Playable.minimum",
       "passed": true,
-      "expected": 1048,
-      "actual": 1048,
+      "expected": 1479,
+      "actual": 1582,
       "details": "Generated group count for Bushes_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Bushes_BlockerBelt.minimum",
       "passed": true,
-      "expected": 524,
-      "actual": 1730,
+      "expected": 902,
+      "actual": 5570,
       "details": "Generated group count for Bushes_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
@@ -148,7 +148,7 @@
       "id": "fidelity.blockerVegetation",
       "passed": true,
       "expected": 900,
-      "actual": 3339,
+      "actual": 14172,
       "details": "Dense blocker-belt vegetation should be visibly present."
     },
     {

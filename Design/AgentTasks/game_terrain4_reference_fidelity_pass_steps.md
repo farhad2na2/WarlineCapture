@@ -121,10 +121,10 @@ The gameplay grid remains authoritative for pathing. Visual objects can exist on
 - Final log: `/private/tmp/warlinecapture-codexunity2-reference-fidelity-revision-one-go-r2.log`
 - `Game_Terrain4` mask dressing validation: passed.
 - `Game_Terrain4` reference fidelity summary: passed.
-- `Game_Terrain4` generated dressing: 6,427 prefabs.
+- Current `Game_Terrain4` generated dressing after jungle-density correction: 18,795 prefabs.
 - Mountains: 55 open-layout anchors. Mountain clustering was removed because the previous 716-mountain pass connected too many blockers and visually closed movement lanes.
-- Playable trees / blocker-belt trees: 1,178 / 1,609.
-- Playable bushes / blocker-belt bushes: 1,048 / 1,730.
+- Playable trees / blocker-belt trees: 2,179 / 8,602.
+- Playable bushes / blocker-belt bushes: 1,582 / 5,570.
 - Rocks: 807.
 - Vegetation under mountain anchors: 0.
 - Reserve pollution: 0.
@@ -144,3 +144,16 @@ Correction applied:
 - Visible tree spacing is tightened for playable groves and forest belts, while blocker-belt clusters are reduced so forest reads clearly without becoming hidden clutter.
 - Ground material classification treats warm, low-height, low-rock, low-tree corridors as dirt paths, improving the visual road/path read.
 - Reference fidelity validation now fails if mountain count exceeds the open-layout maximum or if any vegetation is placed under mountain anchors.
+
+## 2026-05-27 Jungle-Density Correction
+
+The open-layout correction still made tree placement read too sparse against the reference image. The issue was not the tree mask; it was the spacing and cluster contract. `Trees_BlockerBelt` still used 26-cell anchors with only 2-4 trees per cluster, so forest areas became evenly spaced individual trees rather than dense jungle masses.
+
+Correction applied:
+
+- `Trees_BlockerBelt` spacing changed from 26 cells to 14 cells.
+- Dense blocker-belt tree clusters now spawn 7-10 trees per accepted anchor; medium blocker-belt clusters spawn 4-6.
+- Playable tree groves use 22-cell spacing and can cluster lightly in dense tree-mask cells.
+- Blocker-belt bushes now use 16-cell spacing and 3-8 bushes per cluster, strengthening jungle undergrowth.
+- The mountain keep-out mask remains active, so dense vegetation does not hide under mountain prefabs.
+- Only `Game_Terrain4` was regenerated for this correction. Terrain5/Terrain7 optimization was intentionally skipped while the map art direction is still being tuned.

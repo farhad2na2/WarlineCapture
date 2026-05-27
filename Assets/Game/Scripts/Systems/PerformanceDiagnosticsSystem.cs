@@ -425,6 +425,7 @@ public sealed class PerformanceDiagnosticsSystem
                 out int units,
                 out int modelInstances,
                 out int sourceKeys,
+                out int sourceKeyFallbackVisuals,
                 out int missionFallbackVisuals,
                 out int initialSpawnConfigs);
             string label = gameplayActive ? "FrameRateDiag" : "FrameRateDiag:PreGame";
@@ -437,7 +438,7 @@ public sealed class PerformanceDiagnosticsSystem
                 $"{BuildFrameTimingDiagString()} " +
                 $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
                 $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
-                $"units={units} models={modelInstances} sourceKeys={sourceKeys} missionFallbackVisuals={missionFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
+                $"units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} missionFallbackVisuals={missionFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
                 $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)}{preGameDetails} " +
                 $"stepStats={BuildStepStatsString()} markers={BuildProfilerMarkerDiagString()}");
         }
@@ -475,12 +476,14 @@ public sealed class PerformanceDiagnosticsSystem
         out int units,
         out int modelInstances,
         out int sourceKeys,
+        out int sourceKeyFallbackVisuals,
         out int missionFallbackVisuals,
         out int initialSpawnConfigs)
     {
         units = 0;
         modelInstances = 0;
         sourceKeys = 0;
+        sourceKeyFallbackVisuals = 0;
         missionFallbackVisuals = 0;
         initialSpawnConfigs = 0;
         World world = World.DefaultGameObjectInjectionWorld;
@@ -495,6 +498,13 @@ public sealed class PerformanceDiagnosticsSystem
             ComponentType.ReadOnly<UnitModelInstanceReference>());
         using EntityQuery sourceKeyQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using EntityQuery sourceKeyFallbackVisualQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<LocalTransform>(),
+            ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>(),
+            ComponentType.Exclude<MissionRuntimeEntityId>());
         using EntityQuery missionFallbackVisualQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MissionRuntimeEntityId>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
@@ -505,6 +515,7 @@ public sealed class PerformanceDiagnosticsSystem
         units = unitQuery.CalculateEntityCount();
         modelInstances = modelQuery.CalculateEntityCount();
         sourceKeys = sourceKeyQuery.CalculateEntityCount();
+        sourceKeyFallbackVisuals = sourceKeyFallbackVisualQuery.CalculateEntityCount();
         missionFallbackVisuals = missionFallbackVisualQuery.CalculateEntityCount();
         initialSpawnConfigs = initialSpawnConfigQuery.CalculateEntityCount();
     }
@@ -543,12 +554,13 @@ public sealed class PerformanceDiagnosticsSystem
             out int units,
             out int modelInstances,
             out int sourceKeys,
+            out int sourceKeyFallbackVisuals,
             out int missionFallbackVisuals,
             out int initialSpawnConfigs);
         string label = gameplayActive ? "PerfDiag" : "PerfDiag:PreGame";
         Debug.Log(
             $"[{label}] slowUpdate frame={Time.frameCount} total={totalSeconds * 1000d:F1}ms " +
-            $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={_lastStepLogBuilder} units={units} models={modelInstances} sourceKeys={sourceKeys} missionFallbackVisuals={missionFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} " +
+            $"gc={BuildGcDeltaString()} {BuildFrameTimingDiagString()} steps={_lastStepLogBuilder} units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} missionFallbackVisuals={missionFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} " +
             $"drawCalls={ReadProfilerRecorder(_drawCallsRecorder)} batches={ReadProfilerRecorder(_batchesRecorder)} " +
             $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
             $"memory={BuildMemoryDiagString()} uiToolkit=0 " +

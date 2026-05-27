@@ -198,82 +198,103 @@ Every phase boundary must also run the existing road validation set when feasibl
 
 ## Phase 4: Road Mutation, Refresh, And Rebuild
 
-14. Pending: Extract road stroke mutation bridge
+14. Complete: Extract road stroke mutation bridge
    - Create `RoadBuildMutationSystem`.
    - Move `CreateStroke`, `DeleteStroke`, dirty-cell refresh triggering, and network snapshot restore handoff.
    - Use `RoadNetworkSystem` for graph mutation and `RoadVisualRefreshSystem` for visual/ECS refresh.
    - Expected output: stroke mutation no longer lives beside startup and legacy building behavior.
 
-15. Pending: Extract visual type resolution
+15. Complete: Extract visual type resolution
    - Create `RoadVisualResolutionSystem`.
    - Move road visual type resolution, prefab lookup handoff, and variant lookup handoff.
    - Preserve current visual-type rules exactly.
    - Expected output: visual resolution is testable and not tied to runtime state.
 
-16. Pending: Extract dirty-cell visual refresh
+16. Complete: Extract dirty-cell visual refresh
    - Create `RoadVisualRefreshSystem`.
    - Move `RefreshCells`, `RefreshCell`, chunk dirtying, road tile updates/removal, ECS sync requests, and special-road rebuild triggers.
    - Preserve dirty-cell/chunk behavior and avoid full rebuilds except rollback/full restore.
    - Expected output: road graph changes refresh visuals and ECS through a narrow visual refresh boundary.
 
-17. Pending: Extract road state rebuild/rollback refresh
+17. Complete: Extract road state rebuild/rollback refresh
    - Move `RebuildRoadStateFromCurrentTiles`, special road metadata rebuild, chunk clear/re-add, ECS full sync, and special visual full rebuild into `RoadVisualRefreshSystem` or a narrow `RoadBuildRollbackSystem`.
    - Expected output: session restore no longer calls back into broad runtime state.
 
-18. Pending: Move deferred road ECS sync wrappers out
+18. Complete: Move deferred road ECS sync wrappers out
    - Move `BeginDeferredRoadEcsSync`, `EndDeferredRoadEcsSync`, and internal sync callbacks into `RoadGridProjectionSystem` / `RoadRuntimeGenerationContextSystem`.
    - Expected output: runtime city no longer reaches through temporary state for deferred sync.
 
 ## Phase 5: Legacy Building Compatibility Removal
 
-19. Pending: Move soldier-base definition and bounds cache
+19. Complete: Move soldier-base definition and bounds cache
    - Move `BuildDefinitions`, `CacheBuildingBounds`, and `TryGetLocalBounds` into `BuildingRoadLegacyDefinitionSystem`.
    - Keep this as compatibility only; do not add new building gameplay here.
    - Expected output: road runtime state no longer owns building definitions or prefab bounds.
 
-20. Pending: Move placement outline visuals
+20. Complete: Move placement outline visuals
    - Create `BuildingRoadLegacyPlacementVisualSystem`.
    - Move outline GameObject creation, material creation, outline positioning, color application, and hide/dispose behavior.
    - Expected output: visual-only legacy building placement code is isolated.
+   - Added `BuildingRoadLegacyPlacementVisualSystem` as the owner for placement outline GameObject creation, material setup, positioning, color updates, hide, and dispose behavior.
+   - `RoadBuildRuntimeStateSystem` now delegates legacy placement outline visuals through this boundary and no longer stores outline GameObject/render state or rendering material code.
 
-21. Pending: Move legacy building placement lifecycle
+21. Complete: Move legacy building placement lifecycle
    - Create `BuildingRoadLegacyPlacementSystem`.
    - Move begin/cancel placement, center-screen origin selection, pointer placement update, validity evaluation, and placement preview positioning.
    - Preserve fallback behavior only for compatibility when `BuildingPlacementInteractionSystem` is absent.
    - Expected output: road runtime state no longer owns building placement lifecycle.
+   - Added `BuildingRoadLegacyPlacementSystem` as the owner for legacy placement drag state, begin/cancel placement, center-screen origin selection, pointer placement updates, validity checks, and preview positioning.
+   - `RoadBuildRuntimeStateSystem` now delegates those lifecycle operations through an explicit context; building commit, selection, and delete remain for step 22.
 
-22. Pending: Move legacy building commit and selection
+22. Complete: Move legacy building commit and selection
    - Create `BuildingRoadLegacyInteractionSystem`.
    - Move commit placement, building selection hit-test, select, delete, selected label fallback, and selected-building state mutation.
    - Expected output: legacy building selection/commit/delete no longer lives in road runtime state.
+   - Added `BuildingRoadLegacyInteractionSystem` as the owner for legacy placement commit, runtime building add/release, selection hit-tests, selection mutation, and delete behavior.
+   - `RoadBuildRuntimeStateSystem` no longer carries the legacy `PlaceBuilding`, selection hit-test, select, or delete methods.
 
-23. Pending: Move legacy building ECS/global access
+23. Complete: Move legacy building ECS/global access
    - Move direct `World.DefaultGameObjectInjectionWorld`, `EntityManager`, grid query, blocker data, combat/blocker entity cleanup, and grid-cell raycast helpers into legacy building/grid owner systems.
    - Expected output: `RoadBuildRuntimeStateSystem` has no direct `World`, `EntityManager`, `EntityQuery`, `DynamicBuffer<GridRoad>`, or `DynamicBlockerData` usage.
+   - Added `BuildingRoadLegacyGridSystem` as the owner for legacy grid-data access, grid config lookup, footprint-center calculation, and grid-cell raycast helpers.
+   - `BuildingRoadLegacyEcsSystem` now owns default-world entity-manager access and runtime building entity/visual disposal.
+   - `RoadBuildRuntimeStateSystem` no longer directly references `World.DefaultGameObjectInjectionWorld`, `EntityManager`, `EntityQuery`, `DynamicBuffer<GridRoad>`, or `DynamicBlockerData`.
 
-24. Pending: Delete legacy building command wrappers from road state
+24. Complete: Delete legacy building command wrappers from road state
    - Remove `BeginSoldierBasePlacement`, `ConfirmBuildingPlacement`, `CancelBuildingPlacement`, `CreateSoldierFromSelectedBuilding`, `DeleteSelectedBuilding`, `ClearSelectedBuilding`, `CanConfirmBuildingPlacement`, and `HasSelectedBuilding` from the temporary road holder.
    - Route production callers through `BuildingPlacementInteractionSystem` or the legacy compatibility owner directly.
    - Expected output: road runtime state has no building gameplay command surface.
+   - Removed the public legacy building command wrappers from `RoadBuildRuntimeStateSystem`.
+   - Road interaction cancel/clear callbacks now call `BuildingPlacementInteractionSystem` through explicit callbacks instead of keeping road-owned public command surface.
 
 ## Phase 6: Runtime Actions And Disposal
 
-25. Pending: Move runtime update action out
+25. Complete: Move runtime update action out
    - Have `RoadBuildCompositionSystem` call `RoadBuildInputSystem.Update` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadBuildInputSystem`.
    - Expected output: runtime update action does not touch the temporary holder.
+   - Added `RoadBuildRuntimeActionSystem` as the narrow runtime-update action owner.
+   - `RoadBuildCompositionSystem.Result.RuntimeUpdate` now invokes `RoadBuildRuntimeActionSystem.Update` through composition source state instead of reading `RoadBuildInputSystem`, `RoadBuildInputContext`, or camera through `RoadBuildRuntimeStateSystem`.
 
-26. Pending: Move GUI action out
+26. Complete: Move GUI action out
    - Have `RoadBuildCompositionSystem` call `RoadDeletePromptSystem.OnGui` through `RoadBuildInteractionContextSystem` output, not through `RoadBuildRuntimeStateSystem.RoadDeletePromptSystem`.
    - Expected output: GUI action does not touch the temporary holder.
+   - Extended `RoadBuildRuntimeActionSystem` to own the delete-prompt GUI action.
+   - `RoadBuildCompositionSystem.Result.OnGui` now invokes `RoadBuildRuntimeActionSystem.OnGui` through composition source state instead of reading `RoadDeletePromptSystem` or context through `RoadBuildRuntimeStateSystem`.
 
-27. Pending: Extract road disposal sequencing
+27. Complete: Extract road disposal sequencing
    - Create `RoadBuildDisposalSystem`.
    - Move root disposal, preview disposal, chunk disposal, special visual disposal, cached visual data disposal, minimap event clear, ECS road clear, legacy building cleanup, and storage clear.
    - Expected output: cleanup is explicit and can be invoked without broad runtime state.
+   - Added `RoadBuildDisposalSystem` as the owner for teardown sequencing across runtime roots, placement outline visuals, variant cache, preview, chunks, legacy building entities/visuals, special visuals, minimap events, ECS road data, road tiles, and legacy storage.
+   - `RoadBuildRuntimeStateSystem.Dispose` now only exits build mode, resets skip-click session state, and delegates cleanup sequencing through `RoadBuildDisposalSystem`.
 
-28. Pending: Move command/public API consumers to narrow systems
+28. Complete: Move command/public API consumers to narrow systems
    - Migrate any remaining production/test calls to `ActivateRoadBuildMode`, `ConfirmRoadBuildSession`, `CancelRoadBuildSession`, `ExitBuildMode`, road generation wrappers, footprint wrappers, update/gui, and dispose.
    - Expected output: `rg "RoadBuildRuntimeStateSystem" Assets/Game/Scripts -g '*.cs'` finds only the file being retired and temporary composition construction until deletion.
+   - Removed the remaining public road-generation, footprint-query, runtime update, GUI, and road-command wrapper methods from `RoadBuildRuntimeStateSystem`.
+   - Runtime generation and footprint consumers now receive `RoadRuntimeGenerationSystem`, `RoadRuntimeGenerationSystem.Context`, `RoadFootprintQuerySystem`, and `RoadFootprintQuerySystem.Context` from `RoadBuildCompositionSystem.Result`.
+   - Runtime update and GUI consumers now use `RoadBuildRuntimeActionSystem` through composition, not `RoadBuildRuntimeStateSystem.Update` or `OnGui`.
+   - The temporary holder keeps only startup/bind/disposal compatibility and internal context creation needed for steps 29-30.
 
 29. Pending: Convert temporary holder to empty adapter or skip directly to deletion
    - If references remain after step 28, reduce `RoadBuildRuntimeStateSystem` to a no-behavior adapter for one step only.
@@ -328,4 +349,10 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 11 complete: runtime road-generation context construction moved to `RoadRuntimeGenerationContextSystem`; road-cell-size, deferred sync, stroke creation, and special visual handoff remain explicit callbacks.
 - Step 12 complete: footprint query and grid projection context construction moved to `RoadGridContextSystem`; projection behavior and road grid sizing are unchanged.
 - Step 13 complete: legacy building ECS context construction moved to `BuildingRoadLegacyContextSystem`; entity manager, grid, footprint, interaction, and spawn-random callbacks remain explicit.
+- Step 14 complete: road stroke creation/deletion plus session snapshot capture/restore mutation moved to `RoadBuildMutationSystem`; runtime state only supplies refresh/rebuild callbacks pending steps 16-17.
+- Step 15 complete: visual type resolution plus prefab/variant lookup handoff moved to `RoadVisualResolutionSystem`; visual-type rules are unchanged.
+- Step 16 complete: dirty-cell road tile refresh, chunk dirtying, ECS sync request, and special-road dirty rebuild trigger moved to `RoadVisualRefreshSystem`.
+- Step 17 complete: full road state rollback/rebuild refresh moved to `RoadVisualRefreshSystem`; snapshot restore now triggers the visual refresh boundary instead of broad runtime-state rebuild code.
+- Step 18 complete: deferred road ECS sync begin/end callbacks moved to `RoadRuntimeGenerationContextSystem`, which now calls `RoadGridProjectionSystem` directly.
+- Step 19 complete: soldier-base definition construction and prefab local-bounds caching moved to `BuildingRoadLegacyDefinitionSystem`.
 - Step numbers are fixed. If new work is discovered, update the relevant existing step instead of adding step 35+.

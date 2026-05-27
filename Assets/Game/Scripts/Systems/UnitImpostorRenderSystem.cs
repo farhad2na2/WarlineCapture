@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.Graphics;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -45,11 +47,15 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private World _cachedWorld;
     private EntityQuery _query;
     private EntityQuery _missionFallbackQuery;
+    private EntityQuery _sourceKeyFallbackQuery;
     private int _renderLayer;
     private bool _initialized;
     private bool _hasQuery;
 
     public int LastDrawnCount { get; private set; }
+    public int LastCulledCandidateCount { get; private set; }
+    public int LastSourceKeyFallbackCandidateCount { get; private set; }
+    public int LastMissionFallbackCandidateCount { get; private set; }
 
     public void Init(Camera camera, int renderLayer, UnitPrefabRegistryAuthoringConfig registryConfig)
     {
@@ -59,7 +65,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         _fallbackMaterial = CreateFallbackMaterial();
         if (_fallbackMaterial == null)
         {
-            Debug.LogError($"Unit impostor rendering disabled because no compatible shader was found. Ensure '{ImpostorShaderName}' is included in the Android build.");
+            Debug.LogError($"Unit impostor rendering disabled because no compatible shader was found. Ensure '{ImpostorShaderName}' is included in the player build.");
             _initialized = false;
             return;
         }
@@ -71,6 +77,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     public void LateUpdate()
     {
         LastDrawnCount = 0;
+        LastCulledCandidateCount = 0;
+        LastSourceKeyFallbackCandidateCount = 0;
+        LastMissionFallbackCandidateCount = 0;
         if (!_initialized || _camera == null)
             return;
 
@@ -79,8 +88,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             return;
 
         ResetBatches();
-        DrawQuery(GetOrCreateCulledQuery(world));
-        DrawQuery(GetOrCreateMissionFallbackQuery(world));
+        LastCulledCandidateCount = DrawQuery(GetOrCreateCulledQuery(world), skipVisibleRenderableUnits: true);
+        LastSourceKeyFallbackCandidateCount = DrawQuery(GetOrCreateSourceKeyFallbackQuery(world), skipRenderableUnits: true);
+        LastMissionFallbackCandidateCount = DrawQuery(GetOrCreateMissionFallbackQuery(world), skipRenderableUnits: true);
         FlushBatches();
     }
 
@@ -92,6 +102,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             {
                 _query.Dispose();
                 _missionFallbackQuery.Dispose();
+                _sourceKeyFallbackQuery.Dispose();
             }
             catch (System.NullReferenceException)
             {
@@ -120,6 +131,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         _initialized = false;
         _hasQuery = false;
         LastDrawnCount = 0;
+        LastCulledCandidateCount = 0;
+        LastSourceKeyFallbackCandidateCount = 0;
+        LastMissionFallbackCandidateCount = 0;
     }
 
     private void RebuildPrefabLookup(UnitPrefabRegistryAuthoringConfig registryConfig)
@@ -162,6 +176,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         {
             _query.Dispose();
             _missionFallbackQuery.Dispose();
+            _sourceKeyFallbackQuery.Dispose();
         }
 
         _cachedWorld = world;
@@ -182,6 +197,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             }
         });
         _missionFallbackQuery = CreateMissionFallbackQuery(world);
+        _sourceKeyFallbackQuery = CreateSourceKeyFallbackQuery(world);
         _hasQuery = true;
         return _query;
     }
@@ -193,6 +209,15 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
 
         GetOrCreateCulledQuery(world);
         return _missionFallbackQuery;
+    }
+
+    private EntityQuery GetOrCreateSourceKeyFallbackQuery(World world)
+    {
+        if (_cachedWorld == world && _hasQuery)
+            return _sourceKeyFallbackQuery;
+
+        GetOrCreateCulledQuery(world);
+        return _sourceKeyFallbackQuery;
     }
 
     private EntityQuery CreateMissionFallbackQuery(World world)
@@ -217,17 +242,47 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         });
     }
 
-    private void DrawQuery(EntityQuery query)
+    private EntityQuery CreateSourceKeyFallbackQuery(World world)
+    {
+        return world.EntityManager.CreateEntityQuery(new EntityQueryDesc
+        {
+            All = new[]
+            {
+                ComponentType.ReadOnly<UnitGrid>(),
+                ComponentType.ReadOnly<LocalTransform>(),
+                ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            },
+            None = new[]
+            {
+                ComponentType.ReadOnly<UnitTransportPassenger>(),
+                ComponentType.ReadOnly<Disabled>(),
+                ComponentType.ReadOnly<StaticGridBlocker>(),
+                ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>(),
+                ComponentType.ReadOnly<MissionRuntimeEntityId>(),
+            }
+        });
+    }
+
+    private int DrawQuery(EntityQuery query, bool skipRenderableUnits = false, bool skipVisibleRenderableUnits = false)
     {
         if (query.IsEmptyIgnoreFilter)
-            return;
+            return 0;
 
+        EntityManager em = _cachedWorld.EntityManager;
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
         using NativeArray<LocalTransform> transforms = query.ToComponentDataArray<LocalTransform>(Allocator.Temp);
         using NativeArray<UnitSourcePrefabKey> sourceKeys = query.ToComponentDataArray<UnitSourcePrefabKey>(Allocator.Temp);
+        int candidateCount = 0;
 
         Vector3 cameraPosition = _camera.transform.position;
         for (int i = 0; i < transforms.Length; i++)
         {
+            if (skipRenderableUnits && IsRenderableUnit(em, entities[i]))
+                continue;
+            if (skipVisibleRenderableUnits && IsRenderableVisibleUnit(em, entities[i]))
+                continue;
+
             float3 unitPosition = transforms[i].Position;
             Vector3 position = new(unitPosition.x, unitPosition.y, unitPosition.z);
             FixedString64Bytes sourceKey = sourceKeys[i].Value;
@@ -249,7 +304,84 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             Vector3 scale = new(style.Width, style.Height, 1f);
             Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
             AddToBatch(material, matrix);
+            candidateCount++;
         }
+
+        return candidateCount;
+    }
+
+    private static bool IsRenderableUnit(EntityManager em, Entity entity)
+    {
+        return entity != Entity.Null &&
+               em.Exists(entity) &&
+               IsRenderableUnitRecursive(em, entity, depth: 0);
+    }
+
+    private static bool IsRenderableUnitRecursive(EntityManager em, Entity entity, int depth)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || depth > 12)
+            return false;
+
+        if (em.HasComponent<MaterialMeshInfo>(entity) ||
+            em.HasComponent<RenderFilterSettings>(entity) ||
+            em.HasComponent<RenderBounds>(entity))
+        {
+            return true;
+        }
+
+        if (!em.HasBuffer<Child>(entity))
+            return false;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (IsRenderableUnitRecursive(em, children[i].Value, depth + 1))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsRenderableVisibleUnit(EntityManager em, Entity entity)
+    {
+        return entity != Entity.Null &&
+               em.Exists(entity) &&
+               IsRenderableVisibleUnitRecursive(em, entity, depth: 0);
+    }
+
+    private static bool IsRenderableVisibleUnitRecursive(EntityManager em, Entity entity, int depth)
+    {
+        if (entity == Entity.Null || !em.Exists(entity) || depth > 12)
+            return false;
+
+        if (IsRenderableEntity(entity, em) &&
+            !em.HasComponent<Disabled>(entity) &&
+            !em.HasComponent<DisableRendering>(entity) &&
+            !em.HasComponent<UnitRenderBudgetCulledTag>(entity))
+        {
+            return true;
+        }
+
+        if (!em.HasBuffer<Child>(entity))
+            return false;
+
+        DynamicBuffer<Child> children = em.GetBuffer<Child>(entity);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (IsRenderableVisibleUnitRecursive(em, children[i].Value, depth + 1))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsRenderableEntity(Entity entity, EntityManager em)
+    {
+        return entity != Entity.Null &&
+               em.Exists(entity) &&
+               (em.HasComponent<MaterialMeshInfo>(entity) ||
+                em.HasComponent<RenderFilterSettings>(entity) ||
+                em.HasComponent<RenderBounds>(entity));
     }
 
     private void ResetBatches()

@@ -194,6 +194,21 @@ public sealed class RoadGridProjectionSystem
         return true;
     }
 
+    public bool TryGetGridConfig(out GridConfig grid)
+    {
+        grid = default;
+
+        if (!TryGetEntityManager(out EntityManager entityManager))
+            return false;
+
+        EnsureEntityQueries(entityManager);
+        if (_gridDataQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        grid = entityManager.GetComponentData<GridConfig>(_gridDataQuery.GetSingletonEntity());
+        return true;
+    }
+
     private bool TryGetRoadBuffer(out DynamicBuffer<GridRoad> roads, out GridConfig grid)
     {
         roads = default;

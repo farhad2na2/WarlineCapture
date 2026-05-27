@@ -29,10 +29,17 @@ internal sealed class RuntimeGridBootstrapSystem
         });
 
         int gridSize = width * height;
-        DynamicBuffer<GridWalkable> walkable = EnsureBuffer<GridWalkable>(entityManager, gridEntity, gridSize);
-        DynamicBuffer<GridRoad> roads = EnsureBuffer<GridRoad>(entityManager, gridEntity, gridSize);
-        DynamicBuffer<GridRoadSidewalk> sidewalks = EnsureBuffer<GridRoadSidewalk>(entityManager, gridEntity, gridSize);
-        DynamicBuffer<GridRoadDirt> dirtRoads = EnsureBuffer<GridRoadDirt>(entityManager, gridEntity, gridSize);
+        EnsureBufferExists<GridWalkable>(entityManager, gridEntity);
+        EnsureBufferExists<GridRoad>(entityManager, gridEntity);
+        EnsureBufferExists<GridRoadSidewalk>(entityManager, gridEntity);
+        EnsureBufferExists<GridRoadDirt>(entityManager, gridEntity);
+        if (!entityManager.HasComponent<DynamicBlockerData>(gridEntity))
+            entityManager.AddComponentData(gridEntity, default(DynamicBlockerData));
+
+        DynamicBuffer<GridWalkable> walkable = ResizeBuffer<GridWalkable>(entityManager, gridEntity, gridSize);
+        DynamicBuffer<GridRoad> roads = ResizeBuffer<GridRoad>(entityManager, gridEntity, gridSize);
+        DynamicBuffer<GridRoadSidewalk> sidewalks = ResizeBuffer<GridRoadSidewalk>(entityManager, gridEntity, gridSize);
+        DynamicBuffer<GridRoadDirt> dirtRoads = ResizeBuffer<GridRoadDirt>(entityManager, gridEntity, gridSize);
 
         for (int i = 0; i < gridSize; i++)
         {
@@ -41,9 +48,6 @@ internal sealed class RuntimeGridBootstrapSystem
             sidewalks[i] = new GridRoadSidewalk { Value = 0 };
             dirtRoads[i] = new GridRoadDirt { Value = 0 };
         }
-
-        if (!entityManager.HasComponent<DynamicBlockerData>(gridEntity))
-            entityManager.AddComponentData(gridEntity, default(DynamicBlockerData));
 
         Debug.Log($"[RuntimeGridBootstrap] {FixMarker} ready entity={gridEntity.Index} size={width}x{height} cellSize={cellSize:0.###}");
         return true;
@@ -60,12 +64,17 @@ internal sealed class RuntimeGridBootstrapSystem
         return entity;
     }
 
-    private static DynamicBuffer<T> EnsureBuffer<T>(EntityManager entityManager, Entity entity, int size)
+    private static void EnsureBufferExists<T>(EntityManager entityManager, Entity entity)
         where T : unmanaged, IBufferElementData
     {
-        DynamicBuffer<T> buffer = entityManager.HasBuffer<T>(entity)
-            ? entityManager.GetBuffer<T>(entity)
-            : entityManager.AddBuffer<T>(entity);
+        if (!entityManager.HasBuffer<T>(entity))
+            entityManager.AddBuffer<T>(entity);
+    }
+
+    private static DynamicBuffer<T> ResizeBuffer<T>(EntityManager entityManager, Entity entity, int size)
+        where T : unmanaged, IBufferElementData
+    {
+        DynamicBuffer<T> buffer = entityManager.GetBuffer<T>(entity);
         buffer.ResizeUninitialized(size);
         return buffer;
     }

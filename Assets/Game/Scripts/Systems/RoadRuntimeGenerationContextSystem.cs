@@ -3,23 +3,23 @@ internal sealed class RoadRuntimeGenerationContextSystem
     public readonly struct Context
     {
         public readonly RoadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCellsDelegate TryGetRoadCellSizeInGridCells;
-        public readonly RoadRuntimeGenerationSystem.RuntimeAction BeginDeferredRoadEcsSync;
-        public readonly RoadRuntimeGenerationSystem.RuntimeAction EndDeferredRoadEcsSync;
+        public readonly RoadGridProjectionSystem RoadGridProjectionSystem;
+        public readonly RoadGridProjectionSystem.Context RoadGridProjectionContext;
         public readonly RoadRuntimeGenerationSystem.CreateStrokeDelegate CreateStroke;
         public readonly RoadSpecialVisualSystem SpecialVisualSystem;
         public readonly RoadSpecialVisualSystem.Context SpecialVisualContext;
 
         public Context(
             RoadRuntimeGenerationSystem.TryGetRoadCellSizeInGridCellsDelegate tryGetRoadCellSizeInGridCells,
-            RoadRuntimeGenerationSystem.RuntimeAction beginDeferredRoadEcsSync,
-            RoadRuntimeGenerationSystem.RuntimeAction endDeferredRoadEcsSync,
+            RoadGridProjectionSystem roadGridProjectionSystem,
+            RoadGridProjectionSystem.Context roadGridProjectionContext,
             RoadRuntimeGenerationSystem.CreateStrokeDelegate createStroke,
             RoadSpecialVisualSystem specialVisualSystem,
             RoadSpecialVisualSystem.Context specialVisualContext)
         {
             TryGetRoadCellSizeInGridCells = tryGetRoadCellSizeInGridCells;
-            BeginDeferredRoadEcsSync = beginDeferredRoadEcsSync;
-            EndDeferredRoadEcsSync = endDeferredRoadEcsSync;
+            RoadGridProjectionSystem = roadGridProjectionSystem;
+            RoadGridProjectionContext = roadGridProjectionContext;
             CreateStroke = createStroke;
             SpecialVisualSystem = specialVisualSystem;
             SpecialVisualContext = specialVisualContext;
@@ -30,10 +30,20 @@ internal sealed class RoadRuntimeGenerationContextSystem
     {
         return new RoadRuntimeGenerationSystem.Context(
             context.TryGetRoadCellSizeInGridCells,
-            context.BeginDeferredRoadEcsSync,
-            context.EndDeferredRoadEcsSync,
+            () => BeginDeferredRoadEcsSync(context),
+            () => EndDeferredRoadEcsSync(context),
             context.CreateStroke,
             context.SpecialVisualSystem,
             context.SpecialVisualContext);
+    }
+
+    public void BeginDeferredRoadEcsSync(Context context)
+    {
+        context.RoadGridProjectionSystem.BeginDeferredRoadEcsSync();
+    }
+
+    public void EndDeferredRoadEcsSync(Context context)
+    {
+        context.RoadGridProjectionSystem.EndDeferredRoadEcsSync(context.RoadGridProjectionContext);
     }
 }

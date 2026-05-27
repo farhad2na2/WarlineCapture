@@ -55,10 +55,8 @@ internal sealed class RoadBuildCompositionSystem
             roadBuild.RoadRuntimeGenerationContext,
             roadBuild.RoadFootprintQuerySystem,
             roadBuild.RoadFootprintQueryContext,
-            () => roadBuild.RoadBuildInputSystem.Update(
-                roadBuild.RoadBuildInputContext,
-                roadBuild.RoadBuildInputCamera),
-            () => roadBuild.RoadDeletePromptSystem.OnGui(roadBuild.RoadDeletePromptContext),
+            () => roadSource.RoadBuildRuntimeActionSystem.Update(roadSource.RoadBuildRuntimeActionState),
+            () => roadSource.RoadBuildRuntimeActionSystem.OnGui(roadSource.RoadBuildRuntimeActionState),
             roadBuild.Dispose);
     }
 

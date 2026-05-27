@@ -21,7 +21,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private readonly GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem = new();
     private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
-    private readonly SkirmishRuntimeConfigBootstrapSystem _skirmishRuntimeConfigBootstrapSystem = new();
+    private readonly CustomGameStartupSystem _customGameStartupSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -242,7 +242,7 @@ public sealed class GameBootstrap : MonoBehaviour
         else
         {
             _missionStartupSystem.ApplySkirmishSceneDefaults(DayNight, legacyVisualRootsDisabledForM01);
-            _skirmishRuntimeConfigBootstrapSystem.EnsureRuntimeConfigs(
+            _customGameStartupSystem.InitializeFromLegacyConfigs(
                 World.DefaultGameObjectInjectionWorld,
                 buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null,
                 buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
@@ -435,7 +435,7 @@ public sealed class GameBootstrap : MonoBehaviour
         World world = World.DefaultGameObjectInjectionWorld;
         if (world == null || !world.IsCreated)
         {
-            Debug.LogWarning($"[AndroidVisualDiag] phase={phase} world=missing");
+            Debug.LogWarning($"[RuntimeVisualDiag] phase={phase} world=missing");
             return;
         }
 
@@ -447,6 +447,13 @@ public sealed class GameBootstrap : MonoBehaviour
         using EntityQuery unitQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
         using EntityQuery modelQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitModelInstanceReference>());
         using EntityQuery sourceKeyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
+        using EntityQuery sourceKeyFallbackVisualQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
+            ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>(),
+            ComponentType.Exclude<MissionRuntimeEntityId>());
         using EntityQuery missionFallbackVisualQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MissionRuntimeEntityId>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
@@ -457,12 +464,12 @@ public sealed class GameBootstrap : MonoBehaviour
         int isFirstContactMission = activeMissionId == ChapterOneMissionCatalog.FirstContactMissionId ? 1 : 0;
 
         Debug.Log(
-            $"[AndroidVisualDiag] phase={phase} " +
+            $"[RuntimeVisualDiag] phase={phase} " +
             $"activeMission={hasActiveMission} mission={activeMissionId} isM01={isFirstContactMission} " +
             $"gridConfigs={gridQuery.CalculateEntityCount()} initialSpawnConfigs={initialSpawnQuery.CalculateEntityCount()} " +
             $"unitRegistries={registryQuery.CalculateEntityCount()} prefabCandidates={prefabCandidateQuery.CalculateEntityCount()} " +
             $"units={unitQuery.CalculateEntityCount()} " +
-            $"sourceKeys={sourceKeyQuery.CalculateEntityCount()} models={modelQuery.CalculateEntityCount()} " +
+            $"sourceKeys={sourceKeyQuery.CalculateEntityCount()} sourceKeyFallbackVisuals={sourceKeyFallbackVisualQuery.CalculateEntityCount()} models={modelQuery.CalculateEntityCount()} " +
             $"missionFallbackVisuals={missionFallbackVisualQuery.CalculateEntityCount()}");
     }
 

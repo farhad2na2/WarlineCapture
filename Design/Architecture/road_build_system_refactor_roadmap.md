@@ -223,7 +223,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
 25. Complete: Create temporary `RoadBuildCompositionSystem`
     - Owns wiring of extracted road systems only while callers migrate.
     - Must not own graph algorithms, visual algorithms, ECS buffer writes, input processing, or building placement logic.
-    - RoadBuildCompositionSystem now owns temporary RoadBuildRuntimeStateSystem construction, RoadBuildReadModelSystem wiring, and building-interaction binding while the legacy shell is retired.
+    - RoadBuildCompositionSystem now owns narrow source/context/lifecycle wiring, RoadBuildReadModelSystem wiring, and building-interaction binding after the legacy shell was retired.
     - ManagedGameplayStartupSystem consumes the composition result instead of directly constructing RoadBuildSystem or RoadBuildReadModelSystem.
     - Expected output: constructor/startup wiring is explicit and easy to delete later.
 
@@ -246,7 +246,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Delete source and `.meta`.
     - Fix all compile references.
     - RoadBuildSystem.cs and its meta file were deleted.
-    - The temporary runtime state holder now lives in RoadBuildRuntimeStateSystem.cs while remaining callers finish migrating to explicit road boundaries.
+    - RoadBuildRuntimeStateSystem.cs was later retired by `road_build_runtime_state_system_refactor_roadmap.md`; explicit road boundaries now own runtime behavior.
     - Production source no longer references the RoadBuildSystem type; RoadBuildSystemConfig remains as serialized config compatibility debt.
     - Expected output: no production or test source file named `RoadBuildSystem.cs`.
 
@@ -254,9 +254,9 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Add hard guard: `RoadBuildSystem.cs` must not exist.
     - Remove any allowlist entries that temporarily permit broad shell references.
     - Keep serialized `RoadBuildSystemConfig` name as documented data compatibility debt until a separate migration.
-    - RoadBuildCompositionSystem exposes the temporary state holder as `RoadState`, not as a broad `RoadBuildSystem`-style facade field.
-    - RoadBuildRuntimeStateSystem follow-up roadmap removes public `RoadState` exposure from `RoadBuildCompositionSystem.Result`; composition may keep a private temporary bridge only until `RoadBuildRuntimeStateSystem` is deleted.
-    - Architecture validation now rejects restoring `RoadBuildSystem.cs`, `RoadBuildSystem.cs.meta`, exact production `RoadBuildSystem` type references, or construction of `RoadBuildRuntimeStateSystem` outside the temporary composition boundary.
+    - RoadBuildCompositionSystem exposes no broad `RoadState` or temporary road-runtime holder field.
+    - RoadBuildRuntimeStateSystem follow-up roadmap deleted the temporary holder and moved composition wiring to source/context/lifecycle systems.
+    - Architecture validation now rejects restoring `RoadBuildSystem.cs`, `RoadBuildSystem.cs.meta`, exact production `RoadBuildSystem` type references, or `RoadBuildRuntimeStateSystem.cs`.
     - Expected output: architecture tests reject shell restoration.
 
 30. Complete: Validation gate

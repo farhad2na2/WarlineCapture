@@ -3,7 +3,7 @@ using UnityEngine;
 
 internal sealed class RoadBuildCompositionSystem
 {
-    private RoadBuildRuntimeStateSystem _roadState;
+    private RoadBuildCompositionSourceSystem _roadSource;
 
     public readonly struct Result
     {
@@ -43,21 +43,22 @@ internal sealed class RoadBuildCompositionSystem
         Transform runtimeUiRoot)
     {
         var roadSource = new RoadBuildCompositionSourceSystem();
-        var roadBuild = new RoadBuildRuntimeStateSystem(roadSource);
-        _roadState = roadBuild;
-        roadBuild.Init(roadBuildConfig, worldCamera, runtimeUiRoot, null);
+        _roadSource = roadSource;
+        RoadBuildCompositionContextSystem contextSystem = roadSource.RoadBuildCompositionContextSystem;
+        RoadBuildCompositionLifecycleSystem lifecycleSystem = roadSource.RoadBuildCompositionLifecycleSystem;
+        lifecycleSystem.Init(roadSource, contextSystem, roadBuildConfig, worldCamera, runtimeUiRoot, null);
 
         RoadBuildReadModelSystem roadBuildReadModel = roadSource.RoadBuildReadModelSystem;
 
         return new Result(
             roadBuildReadModel,
-            roadBuild.RoadRuntimeGenerationSystem,
-            roadBuild.RoadRuntimeGenerationContext,
-            roadBuild.RoadFootprintQuerySystem,
-            roadBuild.RoadFootprintQueryContext,
+            roadSource.RoadRuntimeGenerationSystem,
+            contextSystem.CreateRoadRuntimeGenerationContext(roadSource),
+            roadSource.RoadFootprintQuerySystem,
+            contextSystem.CreateRoadFootprintQueryContext(roadSource),
             () => roadSource.RoadBuildRuntimeActionSystem.Update(roadSource.RoadBuildRuntimeActionState),
             () => roadSource.RoadBuildRuntimeActionSystem.OnGui(roadSource.RoadBuildRuntimeActionState),
-            roadBuild.Dispose);
+            () => lifecycleSystem.Dispose(roadSource, contextSystem));
     }
 
     public void BindBuildingInteraction(
@@ -65,7 +66,7 @@ internal sealed class RoadBuildCompositionSystem
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
     {
-        _roadState?.BindDependencies(
+        BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext);
     }
@@ -76,7 +77,7 @@ internal sealed class RoadBuildCompositionSystem
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         MainMenuPlayUI mainMenu)
     {
-        _roadState?.BindDependencies(
+        BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu);
@@ -89,7 +90,21 @@ internal sealed class RoadBuildCompositionSystem
         MainMenuPlayUI mainMenu,
         RuntimeGridBlockerSystem runtimeGridBlockers)
     {
-        _roadState?.BindDependencies(
+        BindDependencies(
+            buildingPlacementInteraction,
+            buildingPlacementInteractionContext,
+            mainMenu,
+            runtimeGridBlockers);
+    }
+
+    private void BindDependencies(
+        BuildingPlacementInteractionSystem buildingPlacementInteraction,
+        BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default,
+        MainMenuPlayUI mainMenu = null,
+        RuntimeGridBlockerSystem runtimeGridBlockers = null)
+    {
+        _roadSource?.RoadBuildCompositionLifecycleSystem.BindDependencies(
+            _roadSource,
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu,

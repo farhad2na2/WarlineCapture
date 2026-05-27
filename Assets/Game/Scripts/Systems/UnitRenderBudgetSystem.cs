@@ -334,7 +334,9 @@ public partial struct UnitRenderBudgetSystem : ISystem
                 bool movingVisibleCharacter = isMovingUnit;
                 bool farEnoughForImpostor =
                     enemyShouldUseImpostor ||
+                    cameraPosition.y >= 80f ||
                     distances[i].DistanceSq >= VisibleCharacterImpostorFarDistance * VisibleCharacterImpostorFarDistance;
+                bool forceTacticalImpostor = cameraPosition.y >= 80f && farEnoughForImpostor;
                 bool lowEnoughForSafeLow =
                     enemyLowEnoughForSafeLow ||
                     distances[i].DistanceSq >= VisibleCharacterLowDistanceSq;
@@ -344,6 +346,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
                     forceDetailNearVisible,
                     forceDetailByBudget,
                     farEnoughForImpostor,
+                    forceTacticalImpostor,
                     lowEnoughForSafeLow,
                     hasSafeMid,
                     midRootAnimatable,
@@ -740,6 +743,7 @@ public partial struct UnitRenderBudgetSystem : ISystem
         bool forceDetailNearVisible,
         bool forceDetailByBudget,
         bool farEnoughForImpostor,
+        bool forceTacticalImpostor,
         bool lowEnoughForSafeLow,
         bool hasSafeMid,
         bool midRootAnimatable,
@@ -748,6 +752,9 @@ public partial struct UnitRenderBudgetSystem : ISystem
     {
         if (forceDetailNearVisible || forceDetailByBudget)
             return UnitRenderVisualKind.Detail;
+
+        if (forceTacticalImpostor && farEnoughForImpostor)
+            return UnitRenderVisualKind.Far;
 
         if (!movingVisibleCharacter && farEnoughForImpostor)
             return UnitRenderVisualKind.Far;

@@ -40,9 +40,22 @@ internal sealed class RoadBuildCompositionSourceSystem
     public readonly RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem = new();
     public readonly RoadRuntimeGenerationContextSystem RoadRuntimeGenerationContextSystem = new();
     public readonly RoadBuildMutationSystem RoadBuildMutationSystem = new();
+    public readonly RoadBuildCompositionContextSystem RoadBuildCompositionContextSystem = new();
+    public readonly RoadBuildCompositionLifecycleSystem RoadBuildCompositionLifecycleSystem = new();
+
+    public RoadBuildStartupSystem.State RoadBuildStartupState = new();
+    public readonly RoadBuildDependencySystem.State RoadBuildDependencyState;
+    public readonly BuildingRoadLegacyPlacementVisualSystem.State BuildingRoadLegacyPlacementVisualState;
+    public readonly BuildingRoadLegacyPlacementSystem.State BuildingRoadLegacyPlacementState;
+    public readonly BuildingRoadLegacyGridSystem.State BuildingRoadLegacyGridState;
+    public uint BuildingSpawnRandomState = 0x12345678u;
 
     public RoadBuildCompositionSourceSystem()
     {
         RoadBuildRuntimeActionState = RoadBuildRuntimeActionSystem.CreateState();
+        RoadBuildDependencyState = RoadBuildDependencySystem.CreateState();
+        BuildingRoadLegacyPlacementVisualState = BuildingRoadLegacyPlacementVisualSystem.CreateState();
+        BuildingRoadLegacyPlacementState = BuildingRoadLegacyPlacementSystem.CreateState();
+        BuildingRoadLegacyGridState = BuildingRoadLegacyGridSystem.CreateState();
     }
 }

@@ -296,36 +296,47 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Runtime update and GUI consumers now use `RoadBuildRuntimeActionSystem` through composition, not `RoadBuildRuntimeStateSystem.Update` or `OnGui`.
    - The temporary holder keeps only startup/bind/disposal compatibility and internal context creation needed for steps 29-30.
 
-29. Pending: Convert temporary holder to empty adapter or skip directly to deletion
+29. Complete: Convert temporary holder to empty adapter or skip directly to deletion
    - If references remain after step 28, reduce `RoadBuildRuntimeStateSystem` to a no-behavior adapter for one step only.
    - If no references remain, skip the adapter and proceed to deletion.
    - Expected output: deletion blockers are mechanical and listed.
+   - Added `RoadBuildCompositionContextSystem` for remaining context construction and `RoadBuildCompositionLifecycleSystem` for startup/bind/dispose sequencing.
+   - Moved persistent startup/dependency/legacy placement state ownership into `RoadBuildCompositionSourceSystem`.
+   - Reduced `RoadBuildRuntimeStateSystem` from 557 lines to a 58-line no-behavior adapter that only delegates to composition context/lifecycle boundaries.
+   - Remaining deletion blockers are mechanical: `RoadBuildCompositionSystem` still constructs the adapter, focused architecture tests still temporarily allow/expect the adapter, and documentation still records temporary holder debt until steps 30-31.
 
 ## Phase 7: Delete Temporary Holder And Remove Debt
 
-30. Pending: Delete `RoadBuildRuntimeStateSystem`
+30. Complete: Delete `RoadBuildRuntimeStateSystem`
    - Delete `Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs` and `.meta`.
    - Fix remaining compile references by routing to narrow systems.
    - Expected output: no source file named `RoadBuildRuntimeStateSystem`.
+   - Deleted `Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs` and `.meta`.
+   - `RoadBuildCompositionSystem` now wires directly to `RoadBuildCompositionSourceSystem`, `RoadBuildCompositionContextSystem`, and `RoadBuildCompositionLifecycleSystem`.
+   - Runtime generation, footprint query, runtime update, GUI, bind, and dispose paths no longer route through a temporary adapter.
 
-31. Pending: Remove architecture debt allowances
+31. Complete: Remove architecture debt allowances
    - Remove tests/contract wording that temporarily allow construction of `RoadBuildRuntimeStateSystem`.
    - Update `road_build_system_refactor_roadmap.md` to say the temporary holder is retired.
    - Add hard guard: `RoadBuildRuntimeStateSystem.cs` must not exist.
    - Expected output: architecture tests fail if the temporary holder returns.
+   - Updated `gameplay_solid_ecs_contract.md` and `road_build_system_refactor_roadmap.md` so `RoadBuildRuntimeStateSystem.cs` is forbidden, not temporary debt.
+   - Updated focused architecture tests to read the source/context/lifecycle road boundary and to assert the deleted holder file stays absent.
 
 32. Complete: Remove composition `RoadState` exposure
    - Delete `RoadBuildCompositionSystem.Result.RoadState`.
    - Ensure composition exposes only narrow systems, contexts, actions, bind hooks, and disposal action.
    - Expected output: no broad road state field remains in startup composition.
-   - Completed early in step 4: `RoadBuildCompositionSystem.Result` no longer exposes `RoadState`; composition keeps a private `_roadState` bridge until the temporary holder is deleted.
+   - Completed early in step 4: `RoadBuildCompositionSystem.Result` no longer exposes `RoadState`; step 30 removed the private temporary bridge as well.
 
-33. Pending: Update documentation and handoff
+33. Complete: Update documentation and handoff
    - Update `gameplay_solid_ecs_contract.md`, `road_build_system_refactor_roadmap.md`, and this roadmap with final ownership.
    - Write a WarlineCapture handoff report under `Design/AgentReports`.
    - Expected output: PM/user can see what moved, validation run, known gaps, and next recommended task.
+   - Updated `gameplay_solid_ecs_contract.md`, `road_build_system_refactor_roadmap.md`, and this roadmap to record that the temporary holder is deleted.
+   - Wrote `Design/AgentReports/2026-05-27_gameplay_road_runtime_state_step33_holder_deleted.md`.
 
-34. Pending: Validation gate
+34. Complete: Validation gate
    - Run focused road runtime-state architecture validation.
    - Run existing road-build architecture validation.
    - Run runtime-city smoke.
@@ -333,6 +344,15 @@ Every phase boundary must also run the existing road validation set when feasibl
    - Run bootstrap/menu play-button smoke.
    - Run runtime FPS probe if runtime update, visual refresh, or grid projection changed during the final batch.
    - Expected result: compile clean, `RoadBuildSystem.cs` and `RoadBuildRuntimeStateSystem.cs` deleted, no broad road shell remains, runtime city still creates roads, building placement still respects road footprints, road build mode still creates/deletes/rolls back roads, and no new road/runtime-city performance regression appears.
+   - Focused road runtime-state architecture validation passed: `[RoadBuildRuntimeStateArchitectureValidation] result=Passed methods=29`.
+   - Existing road-build architecture validation passed: `[RoadBuildArchitectureValidation] result=Passed methods=31`.
+   - Runtime-city architecture validation passed: `[RuntimeCityArchitectureValidation] result=Passed methods=28`.
+   - Runtime-city Game scene smoke passed: cityPrefabs=36, productionCityCount=1, validationCityCount=1, buildingSpawnables=32, blockerPrefabs=63.
+   - Building placement validation passed 4/4.
+   - Building runtime boundary validation passed 1/1.
+   - Bootstrap/menu play-mode smoke passed 7/7.
+   - Runtime FPS play-button probe completed; RoadBuild runtime cost stayed low after startup. The probe captured startup hitches in BuildingPlacement/RuntimeCity and one Unity QuickSearch indexing exception, which are not introduced road-shell ownership failures.
+   - `git diff --check` passed for touched road scripts, tests, and docs.
 
 ## Progress Notes
 
@@ -355,4 +375,8 @@ Every phase boundary must also run the existing road validation set when feasibl
 - Step 17 complete: full road state rollback/rebuild refresh moved to `RoadVisualRefreshSystem`; snapshot restore now triggers the visual refresh boundary instead of broad runtime-state rebuild code.
 - Step 18 complete: deferred road ECS sync begin/end callbacks moved to `RoadRuntimeGenerationContextSystem`, which now calls `RoadGridProjectionSystem` directly.
 - Step 19 complete: soldier-base definition construction and prefab local-bounds caching moved to `BuildingRoadLegacyDefinitionSystem`.
+- Step 29 complete: remaining context construction moved to `RoadBuildCompositionContextSystem`, startup/bind/dispose sequencing moved to `RoadBuildCompositionLifecycleSystem`, persistent state moved into `RoadBuildCompositionSourceSystem`, and `RoadBuildRuntimeStateSystem` is now only a 58-line delegating adapter. Step 30 can delete the adapter file once composition and tests stop referencing it.
+- Step 30 complete: `RoadBuildRuntimeStateSystem.cs` and `.meta` were deleted. `RoadBuildCompositionSystem` now consumes source/context/lifecycle systems directly, so production code has no temporary road-runtime holder reference.
+- Step 31 complete: architecture contract, road-build roadmap, and focused tests now treat `RoadBuildRuntimeStateSystem.cs` as forbidden deleted debt rather than temporary compatibility debt.
+- Step 33 complete: documentation and WarlineCapture handoff report were updated for the deleted road runtime-state holder.
 - Step numbers are fixed. If new work is discovered, update the relevant existing step instead of adding step 35+.

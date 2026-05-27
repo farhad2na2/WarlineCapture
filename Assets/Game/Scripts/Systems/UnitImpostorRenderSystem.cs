@@ -22,6 +22,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private const float CharacterImpostorWidthScale = 1.65f;
     private const float CharacterImpostorHeightScale = 1.65f;
     private const float CharacterImpostorHeightOffset = 0f;
+    private const float CharacterTacticalBillboardStartCameraY = 80f;
+    private const float CharacterTacticalBillboardFullCameraY = 200f;
+    private const float CharacterTacticalBillboardMaxScale = 16f;
     private const string ImpostorShaderName = "WarlineCapture/Unit Impostor Unlit";
 
     private sealed class ImpostorStyle
@@ -295,13 +298,16 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
             }
 
             Vector3 toCamera = cameraPosition - position;
-            toCamera.y = 0f;
-            if (toCamera.sqrMagnitude < 0.0001f)
-                toCamera = Vector3.forward;
+            bool isCharacter = IsCharacterSourceKey(sourceKey);
 
-            Quaternion rotation = Quaternion.LookRotation(toCamera.normalized, Vector3.up);
+            Quaternion rotation = ResolveBillboardRotation(
+                isCharacter,
+                position,
+                cameraPosition,
+                _camera.transform.rotation);
             Vector3 drawPosition = new(position.x, position.y + style.Height * CharacterImpostorHeightOffset, position.z);
-            Vector3 scale = new(style.Width, style.Height, 1f);
+            float tacticalScale = isCharacter ? ResolveCharacterTacticalScale(cameraPosition.y) : 1f;
+            Vector3 scale = new(style.Width * tacticalScale, style.Height * tacticalScale, 1f);
             Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
             AddToBatch(material, matrix);
             candidateCount++;
@@ -734,6 +740,37 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private static bool IsCharacterPrefab(GameObject prefab)
     {
         return prefab != null && prefab.name.StartsWith("Unit_Chr_", System.StringComparison.Ordinal);
+    }
+
+    private static bool IsCharacterSourceKey(FixedString64Bytes sourceKey)
+    {
+        return sourceKey.ToString().StartsWith("Unit_Chr_", System.StringComparison.Ordinal);
+    }
+
+    public static float ResolveCharacterTacticalScale(float cameraY)
+    {
+        float t = Mathf.InverseLerp(
+            CharacterTacticalBillboardStartCameraY,
+            CharacterTacticalBillboardFullCameraY,
+            cameraY);
+        return Mathf.Lerp(1f, CharacterTacticalBillboardMaxScale, t);
+    }
+
+    public static Quaternion ResolveBillboardRotation(
+        bool isCharacter,
+        Vector3 position,
+        Vector3 cameraPosition,
+        Quaternion cameraRotation)
+    {
+        if (isCharacter && cameraPosition.y >= CharacterTacticalBillboardStartCameraY)
+            return Quaternion.LookRotation(-(cameraRotation * Vector3.forward), cameraRotation * Vector3.up);
+
+        Vector3 toCamera = cameraPosition - position;
+        toCamera.y = 0f;
+        if (toCamera.sqrMagnitude < 0.0001f)
+            toCamera = Vector3.forward;
+
+        return Quaternion.LookRotation(toCamera.normalized, Vector3.up);
     }
 
     private void DestroyStyleMaterials(ImpostorStyle style)

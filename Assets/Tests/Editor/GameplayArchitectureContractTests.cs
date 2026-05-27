@@ -41,6 +41,22 @@ public sealed class GameplayArchitectureContractTests
     private const string UnitPathfindingFocusedPerformanceValidationPath = "Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs";
     private const string RoadBuildRuntimeStateRoadmapPath = "Design/Architecture/road_build_runtime_state_system_refactor_roadmap.md";
     private const string RoadBuildRuntimeStateSystemPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
+    private const string UnitTransportBoardingRoadmapPath = "Design/Architecture/unit_transport_boarding_system_refactor_roadmap.md";
+    private const string UnitTransportBoardingSystemPath = "Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs";
+    private const string UnitTransportCapacitySystemPath = "Assets/Game/Scripts/Systems/UnitTransportCapacitySystem.cs";
+    private const string UnitTransportBoardingQuerySystemPath = "Assets/Game/Scripts/Systems/UnitTransportBoardingQuerySystem.cs";
+    private const string UnitTransportBoardingRuleSystemPath = "Assets/Game/Scripts/Systems/UnitTransportBoardingRuleSystem.cs";
+    private const string UnitTransportPassengerStateSystemPath = "Assets/Game/Scripts/Systems/UnitTransportPassengerStateSystem.cs";
+    private const string UnitTransportApproachCellSystemPath = "Assets/Game/Scripts/Systems/UnitTransportApproachCellSystem.cs";
+    private const string UnitTransportAirPickupSystemPath = "Assets/Game/Scripts/Systems/UnitTransportAirPickupSystem.cs";
+    private const string UnitTransportRopeDisembarkCommandSystemPath = "Assets/Game/Scripts/Systems/UnitTransportRopeDisembarkCommandSystem.cs";
+    private const string UnitTransportBoardingDiagnosticSystemPath = "Assets/Game/Scripts/Systems/UnitTransportBoardingDiagnosticSystem.cs";
+    private const string TransportBoardingCommandSystemPath = "Assets/Game/Scripts/Systems/TransportBoardingCommandSystem.cs";
+    private const string SelectionTransportCommandRequestSystemPath = "Assets/Game/Scripts/Systems/SelectionTransportCommandRequestSystem.cs";
+    private const string RtsSelectionPointerTargetCommandSystemPath = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandSystem.cs";
+    private const string RtsSelectionPointerTargetCommandContextSystemPath = "Assets/Game/Scripts/Systems/RtsSelectionPointerTargetCommandContextSystem.cs";
+    private const string RtsSelectionCommandResultFlushSystemPath = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultFlushSystem.cs";
+    private const string RtsSelectionCommandResultContextSystemPath = "Assets/Game/Scripts/Systems/RtsSelectionCommandResultContextSystem.cs";
     private const string RuntimeCityBuildingSpawnRoadmapPath = "Design/Architecture/runtime_city_building_spawn_system_refactor_roadmap.md";
     private const string RuntimeCityBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
     private const string RuntimeCityBuildingPlacementSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs";
@@ -185,6 +201,40 @@ public sealed class GameplayArchitectureContractTests
                 : ex;
             UnityEngine.Debug.LogException(failure);
             UnityEngine.Debug.LogError("[RuntimeCityBuildingSpawnArchitectureValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunUnitTransportBoardingArchitectureBatchValidation()
+    {
+        string[] methodNames =
+        {
+            nameof(UnitTransportBoardingRefactorRoadmapMustRecordBaselineAndTargetBoundaries),
+            nameof(UnitTransportBoardingBroadReplacementShellsMustNotExist),
+            nameof(UnitTransportBoardingSystemBaselineMustStayExplicitUntilExtracted)
+        };
+
+        try
+        {
+            var tests = new GameplayArchitectureContractTests();
+            Type testType = typeof(GameplayArchitectureContractTests);
+            for (int i = 0; i < methodNames.Length; i++)
+            {
+                System.Reflection.MethodInfo method = testType.GetMethod(methodNames[i]);
+                Assert.NotNull(method, $"Missing unit transport boarding architecture validation method {methodNames[i]}.");
+                method.Invoke(tests, null);
+            }
+
+            UnityEngine.Debug.Log($"[UnitTransportBoardingArchitectureValidation] result=Passed methods={methodNames.Length}");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Exception failure = ex is System.Reflection.TargetInvocationException && ex.InnerException != null
+                ? ex.InnerException
+                : ex;
+            UnityEngine.Debug.LogException(failure);
+            UnityEngine.Debug.LogError("[UnitTransportBoardingArchitectureValidation] result=Failed");
             UnityEditor.EditorApplication.Exit(1);
         }
     }
@@ -1755,6 +1805,375 @@ public sealed class GameplayArchitectureContractTests
         }
         Assert.IsFalse(File.Exists("Assets/Game/Scripts/Systems/SelectionRuntimeContextSystem.cs"),
             "SelectionRuntimeContextSystem is retired and must not be reintroduced for diagnostics.");
+    }
+
+    [Test]
+    public void UnitTransportBoardingRefactorRoadmapMustRecordBaselineAndTargetBoundaries()
+    {
+        Assert.IsTrue(File.Exists(UnitTransportBoardingRoadmapPath), $"{UnitTransportBoardingRoadmapPath} must track the UnitTransportBoardingSystem decomposition plan.");
+        Assert.IsTrue(File.Exists(UnitTransportBoardingSystemPath), $"{UnitTransportBoardingSystemPath} must remain present until the roadmap explicitly retires or narrows the ECS tick.");
+
+        string roadmap = File.ReadAllText(UnitTransportBoardingRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+
+        StringAssert.Contains("This roadmap has 30 steps.", roadmap);
+        StringAssert.Contains("Target file: `Assets/Game/Scripts/Systems/UnitTransportBoardingSystem.cs`", roadmap);
+        StringAssert.Contains("Current size at roadmap creation: 965 lines.", roadmap);
+        StringAssert.Contains("Final target: `UnitTransportBoardingSystem` may remain only as the ECS boarding-completion tick", roadmap);
+        StringAssert.Contains("`UnitTransportBoardingSystem` must expose no public/internal helper API.", roadmap);
+        StringAssert.Contains("Do not replace `UnitTransportBoardingSystem` with `UnitTransportBoardingManager`, `UnitTransportBoardingController`, `TransportBoardingFacade`, or another broad shell.", roadmap);
+        StringAssert.Contains("1. Complete: Add roadmap and baseline architecture guard", roadmap);
+        StringAssert.Contains("30. Complete: Validation gate", roadmap);
+
+        string[] responsibilityTokens =
+        {
+            "ECS boarding tick",
+            "Transport metadata and capacity",
+            "Candidate/read queries",
+            "Approach-cell search",
+            "Air pickup commands",
+            "Rope disembark commands",
+            "Diagnostics",
+            "Cross-system coupling"
+        };
+
+        foreach (string token in responsibilityTokens)
+            StringAssert.Contains(token, roadmap);
+
+        for (int step = 2; step <= 30; step++)
+        {
+            Assert.IsTrue(
+                roadmap.Contains($"{step}. Pending:", StringComparison.Ordinal) ||
+                roadmap.Contains($"{step}. Complete:", StringComparison.Ordinal),
+                $"Unit transport boarding roadmap must keep step {step} tracked as pending or complete.");
+        }
+
+        StringAssert.Contains("UnitTransportBoardingSystem refactor is tracked in `Design/Architecture/unit_transport_boarding_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("`UnitTransportBoardingSystem` may remain only as the ECS boarding-completion tick", contract);
+        StringAssert.Contains("It must expose only the ECS lifecycle methods required by `ISystem`, with no public/internal helper API.", contract);
+        StringAssert.Contains("Do not replace `UnitTransportBoardingSystem` with `UnitTransportBoardingManager`, `UnitTransportBoardingController`, `TransportBoardingFacade`, or another broad shell", contract);
+    }
+
+    [Test]
+    public void UnitTransportBoardingBroadReplacementShellsMustNotExist()
+    {
+        string roadmap = File.ReadAllText(UnitTransportBoardingRoadmapPath);
+        StringAssert.Contains("Do not replace `UnitTransportBoardingSystem` with `UnitTransportBoardingManager`, `UnitTransportBoardingController`, `TransportBoardingFacade`, or another broad shell.", roadmap);
+
+        string[] forbiddenTypeNames =
+        {
+            "UnitTransportBoardingManager",
+            "UnitTransportBoardingController",
+            "TransportBoardingFacade",
+            "UnitTransportManager",
+            "TransportBoardingController",
+            "TransportBoardingManager"
+        };
+
+        string[] sourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .ToArray();
+
+        foreach (string file in sourceFiles)
+        {
+            string code = File.ReadAllText(file);
+            foreach (string forbiddenTypeName in forbiddenTypeNames)
+            {
+                Assert.IsFalse(
+                    Regex.IsMatch(code, $@"\b(?:class|struct|interface)\s+{Regex.Escape(forbiddenTypeName)}\b"),
+                    $"{file} must not introduce broad transport boarding shell {forbiddenTypeName}.");
+            }
+        }
+    }
+
+    [Test]
+    public void UnitTransportBoardingSystemBaselineMustStayExplicitUntilExtracted()
+    {
+        Assert.IsTrue(File.Exists(UnitTransportCapacitySystemPath), "Step 4 must keep transport capacity metadata in UnitTransportCapacitySystem.");
+        Assert.IsTrue(File.Exists(UnitTransportBoardingQuerySystemPath), "Step 6 must keep boardable/candidate read queries in UnitTransportBoardingQuerySystem.");
+        Assert.IsTrue(File.Exists(UnitTransportBoardingRuleSystemPath), "Step 8 must keep boarding landed/reach rules in UnitTransportBoardingRuleSystem.");
+        Assert.IsTrue(File.Exists(UnitTransportPassengerStateSystemPath), "Step 10 must keep boarded passenger state mutation in UnitTransportPassengerStateSystem.");
+        Assert.IsTrue(File.Exists(UnitTransportApproachCellSystemPath), "Step 12 must keep approach-cell algorithms in UnitTransportApproachCellSystem.");
+        Assert.IsTrue(File.Exists(UnitTransportAirPickupSystemPath), "Step 14 must keep air pickup command behavior in UnitTransportAirPickupSystem.");
+        Assert.IsTrue(File.Exists(UnitTransportRopeDisembarkCommandSystemPath), "Step 16 must keep rope disembark command setup in UnitTransportRopeDisembarkCommandSystem.");
+        Assert.IsTrue(File.Exists(UnitTransportBoardingDiagnosticSystemPath), "Step 18 must keep boarding diagnostics in UnitTransportBoardingDiagnosticSystem.");
+
+        string boardingSystem = File.ReadAllText(UnitTransportBoardingSystemPath);
+        string capacitySystem = File.ReadAllText(UnitTransportCapacitySystemPath);
+        string querySystem = File.ReadAllText(UnitTransportBoardingQuerySystemPath);
+        string ruleSystem = File.ReadAllText(UnitTransportBoardingRuleSystemPath);
+        string passengerStateSystem = File.ReadAllText(UnitTransportPassengerStateSystemPath);
+        string approachCellSystem = File.ReadAllText(UnitTransportApproachCellSystemPath);
+        string airPickupSystem = File.ReadAllText(UnitTransportAirPickupSystemPath);
+        string ropeCommandSystem = File.ReadAllText(UnitTransportRopeDisembarkCommandSystemPath);
+        string diagnosticSystem = File.ReadAllText(UnitTransportBoardingDiagnosticSystemPath);
+        string transportBoardingCommandSystem = File.ReadAllText(TransportBoardingCommandSystemPath);
+        string selectionTransportCommandRequestSystem = File.ReadAllText(SelectionTransportCommandRequestSystemPath);
+        string pointerTargetCommandSystem = File.ReadAllText(RtsSelectionPointerTargetCommandSystemPath);
+        string pointerTargetContextSystem = File.ReadAllText(RtsSelectionPointerTargetCommandContextSystemPath);
+        string commandResultFlushSystem = File.ReadAllText(RtsSelectionCommandResultFlushSystemPath);
+        string commandResultContextSystem = File.ReadAllText(RtsSelectionCommandResultContextSystemPath);
+        string selectionGameplayStartupSystem = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs");
+        string roadmap = File.ReadAllText(UnitTransportBoardingRoadmapPath);
+
+        string[] retiredSurfaceOwners =
+        {
+            "Capacity metadata belongs in `UnitTransportCapacitySystem`.",
+            "Boardable/candidate read queries belong in `UnitTransportBoardingQuerySystem`.",
+            "Landed/reach/direct-cell rules belong in `UnitTransportBoardingRuleSystem`.",
+            "Approach, reservation, pickup-cell, and disembark-cell search belongs in `UnitTransportApproachCellSystem`.",
+            "Air pickup commands belong in `UnitTransportAirPickupSystem`.",
+            "Rope disembark command setup belongs in `UnitTransportRopeDisembarkCommandSystem`.",
+            "Boarding diagnostics belong in `UnitTransportBoardingDiagnosticSystem`."
+        };
+
+        foreach (string token in retiredSurfaceOwners)
+            StringAssert.Contains(token, roadmap);
+
+        string[] retiredHelperSurfaceTokens =
+        {
+            "public bool TryEnsureTransportCapacity(",
+            "public bool IsSoldierBoardingCandidate(",
+            "public bool IsTransportLandedForBoarding(",
+            "public bool TryPrepareAirTransportPickupForBoarding(",
+            "public bool StartRopeDisembarkTransport(",
+            "public bool TryFindTransportApproachCell("
+        };
+
+        foreach (string token in retiredHelperSurfaceTokens)
+        {
+            Assert.IsFalse(
+                boardingSystem.Contains(token, StringComparison.Ordinal),
+                $"UnitTransportBoardingSystem must not keep migrated helper surface after step 25: {token}");
+        }
+
+        StringAssert.Contains("public readonly struct UnitTransportCapacitySystem", capacitySystem);
+        StringAssert.Contains("public bool TryEnsureTransportCapacity(", capacitySystem);
+        StringAssert.Contains("public int ResolveTransportCapacity(", capacitySystem);
+        StringAssert.Contains("public bool IsPersonnelTransportName(", capacitySystem);
+        StringAssert.Contains("Unit_Veh_Helicopter_Transport", capacitySystem);
+        StringAssert.Contains("return IsPersonnelTransportName(sourceName) ? 10 : 0;", capacitySystem);
+        StringAssert.Contains("public readonly struct UnitTransportBoardingQuerySystem", querySystem);
+        StringAssert.Contains("public int GetTransportBoardingClickPaddingCells(", querySystem);
+        StringAssert.Contains("public bool IsBoardablePlayerTransport(", querySystem);
+        StringAssert.Contains("public bool IsSoldierBoardingCandidate(", querySystem);
+        StringAssert.Contains("Unit_Chr", querySystem);
+        StringAssert.Contains("Unit_Veh", querySystem);
+        StringAssert.Contains("public readonly struct UnitTransportBoardingRuleSystem", ruleSystem);
+        StringAssert.Contains("public const int BoardingClearanceCells = 4;", ruleSystem);
+        StringAssert.Contains("public const int AirBoardingClearanceCells = 1;", ruleSystem);
+        StringAssert.Contains("public const float AirBoardingGroundedHeightTolerance = 3f;", ruleSystem);
+        StringAssert.Contains("public bool IsTransportLandedForBoarding(", ruleSystem);
+        StringAssert.Contains("public int GetTransportBoardingDirectCells(", ruleSystem);
+        StringAssert.Contains("public ReachState EvaluateReach(", ruleSystem);
+        StringAssert.Contains("public readonly struct UnitTransportPassengerStateSystem", passengerStateSystem);
+        StringAssert.Contains("public int BoardPassenger(", passengerStateSystem);
+        StringAssert.Contains("passengers.Add(new UnitTransportPassengerElement", passengerStateSystem);
+        StringAssert.Contains("UnitTransportVisualUtility.SetPassengerHidden", passengerStateSystem);
+        StringAssert.Contains("ecb.RemoveComponent<UnitTransportBoardingTarget>", passengerStateSystem);
+        StringAssert.Contains("ecb.AddComponent(passenger, new UnitTransportPassenger", passengerStateSystem);
+        StringAssert.Contains("ecb.AddComponent<Disabled>", passengerStateSystem);
+        StringAssert.Contains("passengerStateSystem.BoardPassenger(", boardingSystem);
+        StringAssert.Contains("public readonly struct UnitTransportApproachCellSystem", approachCellSystem);
+        StringAssert.Contains("public bool TryFindAirTransportPickupCellNearPassenger(", approachCellSystem);
+        StringAssert.Contains("public bool TryFindTransportApproachCell(", approachCellSystem);
+        StringAssert.Contains("public void ReserveFootprintCells(", approachCellSystem);
+        StringAssert.Contains("public bool TryFindTransportDisembarkCell(", approachCellSystem);
+        StringAssert.Contains("private static bool IsTransportApproachPassable(", approachCellSystem);
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportApproachCellSystem().TryFindTransportApproachCell(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep approach-cell helper wrappers after step 25.");
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportApproachCellSystem().ReserveFootprintCells(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep footprint reservation helper wrappers after step 25.");
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportApproachCellSystem().TryFindTransportDisembarkCell(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep disembark-cell helper wrappers after step 25.");
+        StringAssert.Contains("approachCellSystem.TryFindTransportApproachCell(", transportBoardingCommandSystem);
+        StringAssert.Contains("approachCellSystem.ReserveFootprintCells(", transportBoardingCommandSystem);
+        StringAssert.Contains("transportApproachCellSystem.TryFindTransportDisembarkCell(", selectionTransportCommandRequestSystem);
+        Assert.IsFalse(
+            transportBoardingCommandSystem.Contains("transportBoardingSystem.TryFindTransportApproachCell(", StringComparison.Ordinal),
+            "TransportBoardingCommandSystem must use UnitTransportApproachCellSystem for approach-cell search.");
+        Assert.IsFalse(
+            transportBoardingCommandSystem.Contains("transportBoardingSystem.ReserveFootprintCells(", StringComparison.Ordinal),
+            "TransportBoardingCommandSystem must use UnitTransportApproachCellSystem for boarding footprint reservations.");
+        Assert.IsFalse(
+            selectionTransportCommandRequestSystem.Contains("transportBoardingSystem.TryFindTransportDisembarkCell(", StringComparison.Ordinal),
+            "SelectionTransportCommandRequestSystem must use UnitTransportApproachCellSystem for disembark-cell search.");
+        StringAssert.Contains("public readonly struct UnitTransportAirPickupSystem", airPickupSystem);
+        StringAssert.Contains("public bool TryPrepareAirTransportPickupForBoarding(", airPickupSystem);
+        StringAssert.Contains("public bool TryFindAirTransportPickupForBoarding(", airPickupSystem);
+        StringAssert.Contains("public void CommandAirTransportPickup(", airPickupSystem);
+        StringAssert.Contains("approachCellSystem.TryFindAirTransportPickupCellNearPassenger(", airPickupSystem);
+        StringAssert.Contains("moveOrderSystem.ClearMovementOrderComponents(em, transport);", airPickupSystem);
+        StringAssert.Contains("moveOrderSystem.IssueTargetOnlyMoveCommand(em, transport, pickupCell);", airPickupSystem);
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportAirPickupSystem().TryPrepareAirTransportPickupForBoarding(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep air-pickup preparation helper wrappers after step 25.");
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportAirPickupSystem().TryFindAirTransportPickupForBoarding(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep air-pickup search helper wrappers after step 25.");
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportAirPickupSystem().CommandAirTransportPickup(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep air-pickup command helper wrappers after step 25.");
+        StringAssert.Contains("airPickupSystem.TryFindAirTransportPickupForBoarding(", transportBoardingCommandSystem);
+        StringAssert.Contains("airPickupSystem.CommandAirTransportPickup(", transportBoardingCommandSystem);
+        Assert.IsFalse(
+            transportBoardingCommandSystem.Contains("transportBoardingSystem.TryFindAirTransportPickupForBoarding(", StringComparison.Ordinal),
+            "TransportBoardingCommandSystem must use UnitTransportAirPickupSystem for pickup landing search.");
+        Assert.IsFalse(
+            transportBoardingCommandSystem.Contains("transportBoardingSystem.CommandAirTransportPickup(", StringComparison.Ordinal),
+            "TransportBoardingCommandSystem must use UnitTransportAirPickupSystem for pickup movement commands.");
+        StringAssert.Contains("public readonly struct UnitTransportRopeDisembarkCommandSystem", ropeCommandSystem);
+        StringAssert.Contains("public bool IsRopeDisembarkTransport(", ropeCommandSystem);
+        StringAssert.Contains("public bool StartRopeDisembarkTransport(", ropeCommandSystem);
+        StringAssert.Contains("Unit_Veh_Helicopter_Transport", ropeCommandSystem);
+        StringAssert.Contains("moveOrderSystem.ClearMovementOrderComponents(em, transport);", ropeCommandSystem);
+        StringAssert.Contains("transform.Position.y = groundY + math.max(3f, airMovement.CruiseHeight);", ropeCommandSystem);
+        StringAssert.Contains("DropIntervalSeconds = 0.8f", ropeCommandSystem);
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportRopeDisembarkCommandSystem().IsRopeDisembarkTransport(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep rope capability helper wrappers after step 25.");
+        Assert.IsFalse(
+            boardingSystem.Contains("new UnitTransportRopeDisembarkCommandSystem().StartRopeDisembarkTransport(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep rope command helper wrappers after step 25.");
+        StringAssert.Contains("UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem", selectionTransportCommandRequestSystem);
+        StringAssert.Contains("ropeDisembarkCommandSystem.IsRopeDisembarkTransport(", selectionTransportCommandRequestSystem);
+        StringAssert.Contains("ropeDisembarkCommandSystem.StartRopeDisembarkTransport(", selectionTransportCommandRequestSystem);
+        Assert.IsFalse(
+            selectionTransportCommandRequestSystem.Contains("transportBoardingSystem.IsRopeDisembarkTransport(", StringComparison.Ordinal),
+            "SelectionTransportCommandRequestSystem must use UnitTransportRopeDisembarkCommandSystem for rope-capability checks.");
+        Assert.IsFalse(
+            selectionTransportCommandRequestSystem.Contains("transportBoardingSystem.StartRopeDisembarkTransport(", StringComparison.Ordinal),
+            "SelectionTransportCommandRequestSystem must use UnitTransportRopeDisembarkCommandSystem for rope request setup.");
+        StringAssert.Contains("public readonly struct UnitTransportBoardingDiagnosticSystem", diagnosticSystem);
+        StringAssert.Contains("public EntityQuery CreateDiagnosticLogQueueQuery(", diagnosticSystem);
+        StringAssert.Contains("public EntityQuery CreateDiagnosticsStateQuery(", diagnosticSystem);
+        StringAssert.Contains("public bool ShouldQueueTransportBoardingDiagnostics(", diagnosticSystem);
+        StringAssert.Contains("public Entity EnsureTransportBoardingDiagnosticQueue(", diagnosticSystem);
+        StringAssert.Contains("public void EnqueueTransportBoardingDiagnostic(", diagnosticSystem);
+        StringAssert.Contains("public string DescribeBoardingEntity(", diagnosticSystem);
+        StringAssert.Contains("public string DescribeAirState(", diagnosticSystem);
+        StringAssert.Contains("public void QueueCancelTransportMissingOrInvalid(", diagnosticSystem);
+        StringAssert.Contains("public void QueueWaitingTransportNotLanded(", diagnosticSystem);
+        StringAssert.Contains("public void QueueCancelNoSeats(", diagnosticSystem);
+        StringAssert.Contains("public void QueueWaitingNotReached(", diagnosticSystem);
+        StringAssert.Contains("public void QueueBoarded(", diagnosticSystem);
+        StringAssert.Contains("Application.isBatchMode", diagnosticSystem);
+        StringAssert.Contains("TransportBoardingDiagnosticLogQueue", diagnosticSystem);
+        StringAssert.Contains("new TransportBoardingDiagnosticLogComponent { Message = message }", diagnosticSystem);
+        StringAssert.Contains("airborne={airState.Airborne} takeoff={airState.TakeoffRolling} landing={airState.LandingRolling} returning={airState.ReturningHome} rope=", diagnosticSystem);
+        StringAssert.Contains("CreateDiagnosticLogQueueQuery(ref state)", boardingSystem);
+        StringAssert.Contains("CreateDiagnosticsStateQuery(ref state)", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.ShouldQueueTransportBoardingDiagnostics(", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.EnsureTransportBoardingDiagnosticQueue(", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.QueueCancelTransportMissingOrInvalid(", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.QueueWaitingTransportNotLanded(", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.QueueCancelNoSeats(", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.QueueWaitingNotReached(", boardingSystem);
+        StringAssert.Contains("diagnosticSystem.QueueBoarded(", boardingSystem);
+        Assert.IsFalse(
+            boardingSystem.Contains("private Entity EnsureTransportBoardingDiagnosticQueue(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep private diagnostic queue wrappers after step 19.");
+        Assert.IsFalse(
+            boardingSystem.Contains("private static void EnqueueTransportBoardingDiagnostic(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep private diagnostic enqueue wrappers after step 19.");
+        Assert.IsFalse(
+            boardingSystem.Contains("private static string DescribeBoardingEntity(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep diagnostic entity formatting after step 19.");
+        Assert.IsFalse(
+            boardingSystem.Contains("private static string DescribeAirState(", StringComparison.Ordinal),
+            "UnitTransportBoardingSystem must not keep diagnostic air-state formatting after step 19.");
+        string[] narrowTransportContextTokens =
+        {
+            "UnitTransportCapacitySystem",
+            "UnitTransportBoardingQuerySystem",
+            "UnitTransportBoardingRuleSystem",
+            "UnitTransportApproachCellSystem",
+            "UnitTransportAirPickupSystem",
+            "UnitTransportRopeDisembarkCommandSystem"
+        };
+
+        foreach (string token in narrowTransportContextTokens)
+        {
+            StringAssert.Contains(token, pointerTargetCommandSystem);
+            StringAssert.Contains(token, pointerTargetContextSystem);
+            StringAssert.Contains(token, commandResultFlushSystem);
+            StringAssert.Contains(token, commandResultContextSystem);
+        }
+        Assert.IsFalse(
+            pointerTargetCommandSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "RtsSelectionPointerTargetCommandSystem must not carry UnitTransportBoardingSystem after step 21.");
+        Assert.IsFalse(
+            pointerTargetContextSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "RtsSelectionPointerTargetCommandContextSystem must not compose UnitTransportBoardingSystem after step 21.");
+        Assert.IsFalse(
+            commandResultFlushSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "RtsSelectionCommandResultFlushSystem must not carry UnitTransportBoardingSystem after step 22.");
+        Assert.IsFalse(
+            commandResultContextSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "RtsSelectionCommandResultContextSystem must not compose UnitTransportBoardingSystem after step 22.");
+        Assert.IsFalse(
+            transportBoardingCommandSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "TransportBoardingCommandSystem must not receive UnitTransportBoardingSystem as a helper bundle after step 23.");
+        Assert.IsFalse(
+            selectionTransportCommandRequestSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "SelectionTransportCommandRequestSystem must not bridge transport commands through UnitTransportBoardingSystem after step 23.");
+        Assert.IsFalse(
+            selectionGameplayStartupSystem.Contains("UnitTransportBoardingSystem", StringComparison.Ordinal),
+            "SelectionGameplayStartupSystem must not construct UnitTransportBoardingSystem for managed command composition after step 24.");
+        string[] transportTestFiles = Directory.GetFiles("Assets/Tests", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .ToArray();
+        foreach (string testFile in transportTestFiles)
+        {
+            if (testFile == "Assets/Tests/Editor/GameplayArchitectureContractTests.cs")
+                continue;
+
+            string testCode = File.ReadAllText(testFile);
+            Assert.IsFalse(
+                testCode.Contains("new UnitTransportBoardingSystem(", StringComparison.Ordinal),
+                $"{testFile} must not instantiate UnitTransportBoardingSystem as a helper after step 26.");
+        }
+
+        StringAssert.Contains("21. Complete: Migrate pointer-target command path", roadmap);
+        StringAssert.Contains("22. Complete: Migrate command-result flush path", roadmap);
+        StringAssert.Contains("23. Complete: Migrate `TransportBoardingCommandSystem`", roadmap);
+        StringAssert.Contains("24. Complete: Migrate startup/composition construction", roadmap);
+        StringAssert.Contains("25. Complete: Remove helper public surface from `UnitTransportBoardingSystem`", roadmap);
+        StringAssert.Contains("26. Complete: Update tests to target final owners", roadmap);
+        StringAssert.Contains("27. Complete: Remove architecture debt allowances", roadmap);
+        StringAssert.Contains("28. Complete: Performance and allocation audit", roadmap);
+        StringAssert.Contains("29. Complete: Final tick ownership decision", roadmap);
+        StringAssert.Contains("Decision: keep `UnitTransportBoardingSystem` as the named ECS boarding-completion tick.", roadmap);
+        StringAssert.Contains("30. Complete: Validation gate", roadmap);
+
+        string[] allowedPublicMethodNames =
+        {
+            "OnCreate",
+            "OnUpdate"
+        };
+
+        string[] unexpectedPublicMethods = Regex.Matches(
+                boardingSystem,
+                @"^\s*public\s+(?!partial\s+struct\b)(?:[A-Za-z0-9_<>,]+\s+)+(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*\(",
+                RegexOptions.Multiline)
+            .Cast<Match>()
+            .Select(match => match.Groups["name"].Value)
+            .Where(name => !allowedPublicMethodNames.Contains(name, StringComparer.Ordinal))
+            .Distinct()
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            unexpectedPublicMethods,
+            "Do not add public helper surface to UnitTransportBoardingSystem while it is being decomposed:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, unexpectedPublicMethods));
+        StringAssert.Contains("`UnitTransportBoardingSystem` must expose no public/internal helper API.", roadmap);
+        StringAssert.Contains("27. Complete: Remove architecture debt allowances", roadmap);
     }
 
     [Test]

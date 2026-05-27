@@ -208,9 +208,9 @@ public sealed class SelectionUiQuerySystem
                entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0;
     }
 
-    public int GetTransportPassengerCount(EntityManager entityManager, Entity transport, UnitTransportBoardingSystem boardingSystem)
+    public int GetTransportPassengerCount(EntityManager entityManager, Entity transport, UnitTransportCapacitySystem capacitySystem)
     {
-        if (!entityManager.Exists(transport) || !boardingSystem.TryEnsureTransportCapacity(entityManager, transport))
+        if (!entityManager.Exists(transport) || !capacitySystem.TryEnsureTransportCapacity(entityManager, transport))
             return 0;
 
         return entityManager.GetBuffer<UnitTransportPassengerElement>(transport).Length;
@@ -219,7 +219,7 @@ public sealed class SelectionUiQuerySystem
     public void GetTransportPassengers(
         EntityManager entityManager,
         Entity transport,
-        UnitTransportBoardingSystem boardingSystem,
+        UnitTransportCapacitySystem capacitySystem,
         List<TransportPassengerUiInfo> results)
     {
         if (results == null)
@@ -227,7 +227,7 @@ public sealed class SelectionUiQuerySystem
 
         results.Clear();
         if (!entityManager.Exists(transport) ||
-            !boardingSystem.TryEnsureTransportCapacity(entityManager, transport) ||
+            !capacitySystem.TryEnsureTransportCapacity(entityManager, transport) ||
             !entityManager.HasBuffer<UnitTransportPassengerElement>(transport))
         {
             return;

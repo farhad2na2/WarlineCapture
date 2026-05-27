@@ -14,7 +14,7 @@ public sealed class FocusedUnitUiReadModelSystem
         EntityManager em,
         SelectionStateSystem selectionStateSystem,
         SelectionUiQuerySystem selectionUiQuerySystem,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportCapacitySystem transportCapacitySystem,
         float timeSeconds)
     {
         Entity readModelEntity = EnsureReadModelEntity(em);
@@ -63,9 +63,9 @@ public sealed class FocusedUnitUiReadModelSystem
             model.CapacityProgress01 = capacityProgress01;
         }
 
-        model.PassengerCount = selectionUiQuerySystem.GetTransportPassengerCount(em, focusedUnit, transportBoardingSystem);
+        model.PassengerCount = selectionUiQuerySystem.GetTransportPassengerCount(em, focusedUnit, transportCapacitySystem);
         _passengerScratch.Clear();
-        selectionUiQuerySystem.GetTransportPassengers(em, focusedUnit, transportBoardingSystem, _passengerScratch);
+        selectionUiQuerySystem.GetTransportPassengers(em, focusedUnit, transportCapacitySystem, _passengerScratch);
         for (int i = 0; i < _passengerScratch.Count; i++)
         {
             SelectionUiQuerySystem.TransportPassengerUiInfo passenger = _passengerScratch[i];

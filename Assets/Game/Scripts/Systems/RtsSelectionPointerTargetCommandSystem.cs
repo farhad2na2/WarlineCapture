@@ -17,7 +17,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
         public readonly FocusableUnitLookupSystem FocusableUnitLookupSystem;
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
-        public readonly UnitTransportBoardingSystem UnitTransportBoardingSystem;
+        public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
+        public readonly UnitTransportBoardingQuerySystem UnitTransportBoardingQuerySystem;
+        public readonly UnitTransportBoardingRuleSystem UnitTransportBoardingRuleSystem;
+        public readonly UnitTransportApproachCellSystem UnitTransportApproachCellSystem;
+        public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
+        public readonly UnitTransportRopeDisembarkCommandSystem UnitTransportRopeDisembarkCommandSystem;
         public readonly BuildingTargetMoveOrderSystem BuildingTargetMoveOrderSystem;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
@@ -48,7 +53,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             UnitTargetOrderSystem unitTargetOrderSystem,
             FocusableUnitLookupSystem focusableUnitLookupSystem,
             TransportBoardingCommandSystem transportBoardingCommandSystem,
-            UnitTransportBoardingSystem unitTransportBoardingSystem,
+            UnitTransportCapacitySystem unitTransportCapacitySystem,
+            UnitTransportBoardingQuerySystem unitTransportBoardingQuerySystem,
+            UnitTransportBoardingRuleSystem unitTransportBoardingRuleSystem,
+            UnitTransportApproachCellSystem unitTransportApproachCellSystem,
+            UnitTransportAirPickupSystem unitTransportAirPickupSystem,
+            UnitTransportRopeDisembarkCommandSystem unitTransportRopeDisembarkCommandSystem,
             BuildingTargetMoveOrderSystem buildingTargetMoveOrderSystem,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
@@ -78,7 +88,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             UnitTargetOrderSystem = unitTargetOrderSystem;
             FocusableUnitLookupSystem = focusableUnitLookupSystem;
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
-            UnitTransportBoardingSystem = unitTransportBoardingSystem;
+            UnitTransportCapacitySystem = unitTransportCapacitySystem;
+            UnitTransportBoardingQuerySystem = unitTransportBoardingQuerySystem;
+            UnitTransportBoardingRuleSystem = unitTransportBoardingRuleSystem;
+            UnitTransportApproachCellSystem = unitTransportApproachCellSystem;
+            UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
+            UnitTransportRopeDisembarkCommandSystem = unitTransportRopeDisembarkCommandSystem;
             BuildingTargetMoveOrderSystem = buildingTargetMoveOrderSystem;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
@@ -153,7 +168,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         return context.TransportBoardingCommandSystem.IsBoardablePlayerTransportClick(
             em,
             screenPosition,
-            context.UnitTransportBoardingSystem,
+            context.UnitTransportBoardingRuleSystem,
+            context.UnitTransportBoardingQuerySystem,
             (Vector2 position, EntityManager entityManager, out Entity entity) => TryGetClickedUnitEntity(context, position, entityManager, out entity),
             (Vector2 position, EntityManager entityManager, out int2 cell, out Vector3 worldPoint) => TryGetClickedCell(context, position, entityManager, out cell, out worldPoint));
     }

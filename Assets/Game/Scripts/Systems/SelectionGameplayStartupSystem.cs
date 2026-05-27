@@ -93,7 +93,12 @@ internal sealed class SelectionGameplayStartupSystem
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
         var selectionTransportCommandRequestSystem = new SelectionTransportCommandRequestSystem();
         var focusableUnitLookupSystem = new FocusableUnitLookupSystem();
-        var unitTransportBoardingSystem = new UnitTransportBoardingSystem();
+        var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
+        var unitTransportBoardingQuerySystem = new UnitTransportBoardingQuerySystem();
+        var unitTransportBoardingRuleSystem = new UnitTransportBoardingRuleSystem();
+        var unitTransportApproachCellSystem = new UnitTransportApproachCellSystem();
+        var unitTransportAirPickupSystem = new UnitTransportAirPickupSystem();
+        var unitTransportRopeDisembarkCommandSystem = new UnitTransportRopeDisembarkCommandSystem();
         var selectionBuildingInteraction = new SelectionBuildingInteractionSystem();
         var visibleSelectionScratch = new List<Entity>();
         MainMenuPlayUI mainMenuPlayUi = null;
@@ -196,7 +201,12 @@ internal sealed class SelectionGameplayStartupSystem
                 transportBoardingCommandSystem,
                 unitMoveOrderSystem,
                 unitTargetOrderSystem,
-                unitTransportBoardingSystem,
+                unitTransportCapacitySystem,
+                unitTransportBoardingQuerySystem,
+                unitTransportBoardingRuleSystem,
+                unitTransportApproachCellSystem,
+                unitTransportAirPickupSystem,
+                unitTransportRopeDisembarkCommandSystem,
                 selectionStateSystem,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
@@ -256,7 +266,12 @@ internal sealed class SelectionGameplayStartupSystem
                 unitTargetOrderSystem,
                 focusableUnitLookupSystem,
                 transportBoardingCommandSystem,
-                unitTransportBoardingSystem,
+                unitTransportCapacitySystem,
+                unitTransportBoardingQuerySystem,
+                unitTransportBoardingRuleSystem,
+                unitTransportApproachCellSystem,
+                unitTransportAirPickupSystem,
+                unitTransportRopeDisembarkCommandSystem,
                 buildingTargetMoveOrderSystem,
                 buildingPlacementInteractionSystem,
                 buildingPlacementInteractionContext,
@@ -322,7 +337,7 @@ internal sealed class SelectionGameplayStartupSystem
                 em,
                 selectionStateSystem,
                 selectionUiQuerySystem,
-                unitTransportBoardingSystem,
+                unitTransportCapacitySystem,
                 Time.time);
         }
 

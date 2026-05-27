@@ -194,3 +194,27 @@ Rules updated:
 - `Trees_Dirt` still spawns packed clumps once a dirt-core anchor is accepted.
 - `Trees_Playable` density was increased for green/mixed cells so green areas receive more of the normal tree set.
 - The proof overlay uses a brown marker for `Trees_Dirt`, separate from the green marker used by normal trees.
+
+## 2026-05-27 Updated-Variant No-Overlap Regeneration
+
+The source variants in `Game_Terrain3/Island` were rearranged, with updated tree, rock, and bush examples. `Game_Terrain4` was regenerated from those source groups only; Terrain5/Terrain7 optimization was intentionally skipped while map art is still being tuned.
+
+Rules updated:
+
+- The dressing generator now keeps a scene-wide one-unit occupancy grid across all generated dressing groups.
+- If a generated prefab candidate would share the same one-unit grid cell as an existing generated prefab, the builder searches nearby cells and reserves the first valid free cell.
+- If no valid nearby free cell can be found, that candidate is skipped instead of stacking on another prefab.
+- Validation now includes `placement.uniqueGridCells`, which fails the run if any generated dressing prefabs share the same one-unit grid cell.
+
+Latest validation:
+
+- Source groups / catalog prefabs from updated `Game_Terrain3`: 6 / 82.
+- `Game_Terrain4` generated dressing: 29,691 prefabs.
+- Mountains / dirt mountains: 55 / 40.
+- Green/mixed playable trees / dirt trees / blocker-belt trees: 5,728 / 10,054 / 7,218.
+- Playable bushes / blocker-belt bushes: 1,471 / 4,318.
+- Rocks: 807.
+- Duplicate one-unit placement cells: 0.
+- Pathing vegetation violations: 0.
+- Vegetation under mountain anchors: 0.
+- Reserve pollution: 0.

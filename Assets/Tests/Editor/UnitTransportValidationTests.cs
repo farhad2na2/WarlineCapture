@@ -197,8 +197,8 @@ public sealed class UnitTransportValidationTests
         using NativeArray<UnitGrid> liveGrids = liveUnitQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
         using NativeArray<UnitFootprint> liveFootprints = liveUnitQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
 
-        var boardingRules = new UnitTransportBoardingSystem();
-        bool prepared = boardingRules.TryPrepareAirTransportPickupForBoarding(
+        var airPickupSystem = new UnitTransportAirPickupSystem();
+        bool prepared = airPickupSystem.TryPrepareAirTransportPickupForBoarding(
             em,
             transport,
             grid,
@@ -261,8 +261,8 @@ public sealed class UnitTransportValidationTests
         using NativeArray<UnitGrid> liveGrids = liveUnitQuery.ToComponentDataArray<UnitGrid>(Allocator.Temp);
         using NativeArray<UnitFootprint> liveFootprints = liveUnitQuery.ToComponentDataArray<UnitFootprint>(Allocator.Temp);
 
-        var boardingRules = new UnitTransportBoardingSystem();
-        bool found = boardingRules.TryFindAirTransportPickupForBoarding(
+        var airPickupSystem = new UnitTransportAirPickupSystem();
+        bool found = airPickupSystem.TryFindAirTransportPickupForBoarding(
             em,
             transport,
             grid,
@@ -611,7 +611,12 @@ public sealed class UnitTransportValidationTests
                 requests,
                 results,
                 new TransportBoardingCommandSystem(),
-                new UnitTransportBoardingSystem(),
+                new UnitTransportCapacitySystem(),
+                new UnitTransportBoardingQuerySystem(),
+                new UnitTransportBoardingRuleSystem(),
+                new UnitTransportApproachCellSystem(),
+                new UnitTransportAirPickupSystem(),
+                new UnitTransportRopeDisembarkCommandSystem(),
                 new UnitMoveOrderSystem(),
                 new SelectionStateSystem(),
                 TryGetNoClickedUnit,
@@ -658,7 +663,8 @@ public sealed class UnitTransportValidationTests
             bool found = transportCommandSystem.IsBoardablePlayerTransportClick(
                 em,
                 Vector2.zero,
-                new UnitTransportBoardingSystem(),
+                new UnitTransportBoardingRuleSystem(),
+                new UnitTransportBoardingQuerySystem(),
                 TryGetNoClickedUnit,
                 TryGetNearbyHelipadCell);
 

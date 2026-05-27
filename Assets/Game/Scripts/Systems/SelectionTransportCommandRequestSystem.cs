@@ -22,7 +22,12 @@ public sealed class SelectionTransportCommandRequestSystem
         DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
         DynamicBuffer<RtsSelectionCommandResultElement> commandResults,
         TransportBoardingCommandSystem transportBoardingCommandSystem,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportAirPickupSystem transportAirPickupSystem,
+        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
         TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
@@ -52,12 +57,15 @@ public sealed class SelectionTransportCommandRequestSystem
                     em,
                     request,
                     transportBoardingCommandSystem,
-                    transportBoardingSystem,
+                    transportBoardingQuerySystem,
+                    transportBoardingRuleSystem,
+                    transportApproachCellSystem,
+                    transportAirPickupSystem,
                     moveOrderSystem,
                     selectionStateSystem,
                     tryGetClickedUnitEntity,
                     tryGetClickedCell)
-                : ProcessDisembarkTransportRequest(em, request, transportBoardingSystem, moveOrderSystem);
+                : ProcessDisembarkTransportRequest(em, request, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem);
             AddCommandResult(em, commandEntity, commandResults, result);
         }
 
@@ -93,11 +101,14 @@ public sealed class SelectionTransportCommandRequestSystem
             ComponentType.ReadOnly<DynamicOccupancyData>());
     }
 
-    private static RtsSelectionCommandResultElement ProcessBoardTransportRequest(
+    private RtsSelectionCommandResultElement ProcessBoardTransportRequest(
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
         TransportBoardingCommandSystem transportBoardingCommandSystem,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportAirPickupSystem transportAirPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
         TransportBoardingCommandSystem.TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
@@ -107,7 +118,10 @@ public sealed class SelectionTransportCommandRequestSystem
         TransportBoardingCommandSystem.Result result = transportBoardingCommandSystem.TryIssueBoardTransportOrderToClickedUnit(
             em,
             screenPosition,
-            transportBoardingSystem,
+            transportBoardingQuerySystem,
+            transportBoardingRuleSystem,
+            transportApproachCellSystem,
+            transportAirPickupSystem,
             moveOrderSystem,
             selectionStateSystem,
             tryGetClickedUnitEntity,
@@ -134,11 +148,13 @@ public sealed class SelectionTransportCommandRequestSystem
     private RtsSelectionCommandResultElement ProcessDisembarkTransportRequest(
         EntityManager em,
         RtsSelectionCommandIntentRequestElement request,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
         bool accepted = request.HasTargetEntity != 0 &&
-                        TryDisembarkTransport(em, request.TargetEntity, transportBoardingSystem, moveOrderSystem);
+                        TryDisembarkTransport(em, request.TargetEntity, transportCapacitySystem, transportApproachCellSystem, ropeDisembarkCommandSystem, moveOrderSystem);
         return new RtsSelectionCommandResultElement
         {
             Kind = request.Kind,
@@ -152,11 +168,13 @@ public sealed class SelectionTransportCommandRequestSystem
     private bool TryDisembarkTransport(
         EntityManager em,
         Entity transport,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportCapacitySystem transportCapacitySystem,
+        UnitTransportApproachCellSystem transportApproachCellSystem,
+        UnitTransportRopeDisembarkCommandSystem ropeDisembarkCommandSystem,
         UnitMoveOrderSystem moveOrderSystem)
     {
         if (!em.Exists(transport) ||
-            !transportBoardingSystem.TryEnsureTransportCapacity(em, transport) ||
+            !transportCapacitySystem.TryEnsureTransportCapacity(em, transport) ||
             !em.HasComponent<UnitGrid>(transport) ||
             !em.HasComponent<UnitFootprint>(transport) ||
             _gridPathingQuery.IsEmptyIgnoreFilter)
@@ -177,8 +195,8 @@ public sealed class SelectionTransportCommandRequestSystem
         if (em.HasComponent<LocalTransform>(transport))
             referenceCell = GridUtils.WorldToCell(grid, em.GetComponentData<LocalTransform>(transport).Position);
 
-        if (transportBoardingSystem.IsRopeDisembarkTransport(em, transport))
-            return transportBoardingSystem.StartRopeDisembarkTransport(em, transport, referenceCell, moveOrderSystem);
+        if (ropeDisembarkCommandSystem.IsRopeDisembarkTransport(em, transport))
+            return ropeDisembarkCommandSystem.StartRopeDisembarkTransport(em, transport, referenceCell, moveOrderSystem);
 
         _passengerSnapshot.Clear();
         for (int i = 0; i < passengers.Length; i++)
@@ -197,7 +215,7 @@ public sealed class SelectionTransportCommandRequestSystem
             if (!em.Exists(passenger))
                 continue;
 
-            if (!transportBoardingSystem.TryFindTransportDisembarkCell(
+            if (!transportApproachCellSystem.TryFindTransportDisembarkCell(
                     grid,
                     walkable,
                     blocked,

@@ -8,14 +8,14 @@
   "cleanTopDownCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png",
   "cleanPlayableCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png",
   "referenceFidelitySummary": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_reference_fidelity_summary.json",
-  "totalPlacedPrefabs": 32260,
+  "totalPlacedPrefabs": 29691,
   "passed": true,
   "checks": [
     {
       "id": "totalPlacedPrefabs.minimum",
       "passed": true,
       "expected": 8242,
-      "actual": 32260,
+      "actual": 29691,
       "details": "Scene placed-prefab total must be at least the deterministic spacing plan because fidelity clusters may expand accepted points."
     },
     {
@@ -36,35 +36,35 @@
       "id": "count.Trees_Playable.minimum",
       "passed": true,
       "expected": 2644,
-      "actual": 5755,
+      "actual": 5728,
       "details": "Generated group count for Trees_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Trees_Dirt.minimum",
       "passed": true,
       "expected": 1663,
-      "actual": 11556,
+      "actual": 10054,
       "details": "Generated group count for Trees_Dirt must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Trees_BlockerBelt.minimum",
       "passed": true,
       "expected": 938,
-      "actual": 7587,
+      "actual": 7218,
       "details": "Generated group count for Trees_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Bushes_Playable.minimum",
       "passed": true,
       "expected": 1403,
-      "actual": 1494,
+      "actual": 1471,
       "details": "Generated group count for Bushes_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Bushes_BlockerBelt.minimum",
       "passed": true,
       "expected": 804,
-      "actual": 4966,
+      "actual": 4318,
       "details": "Generated group count for Bushes_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
@@ -101,6 +101,13 @@
       "expected": 0,
       "actual": 0,
       "details": "Generated dressing must remain inside the 2024 playable map footprint, which is now fully covered by green/dirt terrain."
+    },
+    {
+      "id": "placement.uniqueGridCells",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "No generated dressing prefabs may share the same one-unit grid cell."
     },
     {
       "id": "pathing.playableVegetationClear",
@@ -162,7 +169,7 @@
       "id": "fidelity.blockerVegetation",
       "passed": true,
       "expected": 900,
-      "actual": 12553,
+      "actual": 11536,
       "details": "Dense blocker-belt vegetation should be visibly present."
     },
     {

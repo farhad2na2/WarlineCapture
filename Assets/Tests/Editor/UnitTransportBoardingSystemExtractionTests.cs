@@ -10,23 +10,23 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     [Test]
     public void IsPersonnelTransportName_RecognizesKnownPersonnelTransports()
     {
-        var boardingSystem = new UnitTransportBoardingSystem();
+        var capacitySystem = new UnitTransportCapacitySystem();
 
-        Assert.IsTrue(boardingSystem.IsPersonnelTransportName("Unit_Veh_APC_Fast"));
-        Assert.IsTrue(boardingSystem.IsPersonnelTransportName("Unit_Veh_Helicopter_Transport"));
-        Assert.IsFalse(boardingSystem.IsPersonnelTransportName("Unit_Veh_Tank_Heavy"));
+        Assert.IsTrue(capacitySystem.IsPersonnelTransportName("Unit_Veh_APC_Fast"));
+        Assert.IsTrue(capacitySystem.IsPersonnelTransportName("Unit_Veh_Helicopter_Transport"));
+        Assert.IsFalse(capacitySystem.IsPersonnelTransportName("Unit_Veh_Tank_Heavy"));
     }
 
     [Test]
     public void TryEnsureTransportCapacity_AddsCapacityAndPassengerBufferForKnownTransport()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");
-        var boardingSystem = new UnitTransportBoardingSystem();
+        var capacitySystem = new UnitTransportCapacitySystem();
         EntityManager entityManager = world.EntityManager;
         Entity transport = entityManager.CreateEntity(typeof(UnitSourcePrefabKey));
         entityManager.SetComponentData(transport, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Veh_APC_01") });
 
-        Assert.IsTrue(boardingSystem.TryEnsureTransportCapacity(entityManager, transport));
+        Assert.IsTrue(capacitySystem.TryEnsureTransportCapacity(entityManager, transport));
         Assert.AreEqual(10, entityManager.GetComponentData<UnitTransportCapacity>(transport).SoldierCapacity);
         Assert.IsTrue(entityManager.HasBuffer<UnitTransportPassengerElement>(transport));
     }
@@ -35,23 +35,23 @@ public sealed class UnitTransportBoardingSystemExtractionTests
     public void IsSoldierBoardingCandidate_AcceptsPlayerCharactersAndRejectsVehicles()
     {
         using var world = new World("UnitTransportBoardingSystemExtractionTests");
-        var boardingSystem = new UnitTransportBoardingSystem();
+        var querySystem = new UnitTransportBoardingQuerySystem();
         EntityManager entityManager = world.EntityManager;
         Entity soldier = CreateBoardingCandidate(entityManager, "Unit_Chr_Rifleman");
         Entity vehicle = CreateBoardingCandidate(entityManager, "Unit_Veh_APC_01");
 
-        Assert.IsTrue(boardingSystem.IsSoldierBoardingCandidate(entityManager, soldier));
-        Assert.IsFalse(boardingSystem.IsSoldierBoardingCandidate(entityManager, vehicle));
+        Assert.IsTrue(querySystem.IsSoldierBoardingCandidate(entityManager, soldier));
+        Assert.IsFalse(querySystem.IsSoldierBoardingCandidate(entityManager, vehicle));
     }
 
     [Test]
     public void ReserveFootprintCells_ReservesAllFootprintCellsWithinGrid()
     {
-        var boardingSystem = new UnitTransportBoardingSystem();
+        var approachCellSystem = new UnitTransportApproachCellSystem();
         GridConfig grid = new() { Width = 8, Height = 8 };
         HashSet<int> reserved = new();
 
-        boardingSystem.ReserveFootprintCells(grid, new int2(2, 2), new int2(2, 1), reserved);
+        approachCellSystem.ReserveFootprintCells(grid, new int2(2, 2), new int2(2, 1), reserved);
 
         CollectionAssert.AreEquivalent(new[] { 18, 19 }, reserved);
     }

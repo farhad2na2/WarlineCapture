@@ -298,6 +298,14 @@ Allowed direction:
 
 When touching building code, do not reintroduce `BuildingPlacementSystem`; extract or extend the matching `*System` slice.
 
+## Unit Transport Boarding Migration
+
+UnitTransportBoardingSystem refactor is tracked in `Design/Architecture/unit_transport_boarding_system_refactor_roadmap.md`.
+
+Transport boarding is gameplay ECS logic, not UI or bootstrap logic. `UnitTransportBoardingSystem` may remain only as the ECS boarding-completion tick that consumes `UnitTransportBoardingTarget` and mutates boarded passenger state through narrow owners. It must expose only the ECS lifecycle methods required by `ISystem`, with no public/internal helper API. Capacity metadata, boardable/candidate read queries, landed/reached rules, approach-cell search, air pickup commands, rope disembark command setup, and transport boarding diagnostics must live in explicit narrow `*System` boundaries.
+
+Do not replace `UnitTransportBoardingSystem` with `UnitTransportBoardingManager`, `UnitTransportBoardingController`, `TransportBoardingFacade`, or another broad shell. Selection, command-result flush, transport command, and startup composition code must receive only the narrow transport systems they need, not a bundled boarding helper surface.
+
 ## Decision Test
 
 For every class, answer:

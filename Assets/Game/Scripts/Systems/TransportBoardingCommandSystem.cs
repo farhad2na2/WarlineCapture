@@ -93,7 +93,10 @@ public sealed class TransportBoardingCommandSystem
     public Result TryIssueBoardTransportOrderToClickedUnit(
         EntityManager em,
         Vector2 screenPosition,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportApproachCellSystem approachCellSystem,
+        UnitTransportAirPickupSystem airPickupSystem,
         UnitMoveOrderSystem moveOrderSystem,
         SelectionStateSystem selectionStateSystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
@@ -103,7 +106,8 @@ public sealed class TransportBoardingCommandSystem
         if (!TryGetClickedOrNearbyBoardableTransport(
                 screenPosition,
                 em,
-                transportBoardingSystem,
+                transportBoardingRuleSystem,
+                transportBoardingQuerySystem,
                 tryGetClickedUnitEntity,
                 tryGetClickedCell,
                 out Entity transport))
@@ -112,7 +116,7 @@ public sealed class TransportBoardingCommandSystem
         }
 
         bool shouldLogTransportBoarding = ShouldQueueTransportBoardingDiagnostics(em);
-        if (!transportBoardingSystem.IsBoardablePlayerTransport(em, transport))
+        if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, transport))
         {
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=TransportNotBoardable transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
@@ -120,7 +124,7 @@ public sealed class TransportBoardingCommandSystem
         }
 
         bool airTransport = em.HasComponent<UnitAirMovement>(transport);
-        bool transportLanded = transportBoardingSystem.IsTransportLandedForBoarding(em, transport);
+        bool transportLanded = transportBoardingRuleSystem.IsTransportLandedForBoarding(em, transport);
         if (!transportLanded && !airTransport)
         {
             if (shouldLogTransportBoarding)
@@ -184,7 +188,7 @@ public sealed class TransportBoardingCommandSystem
         int2 pendingAirPickupCell = default;
         if (airTransport && !transportLanded)
         {
-            if (!transportBoardingSystem.TryFindAirTransportPickupForBoarding(
+            if (!airPickupSystem.TryFindAirTransportPickupForBoarding(
                     em,
                     transport,
                     grid,
@@ -222,7 +226,7 @@ public sealed class TransportBoardingCommandSystem
                 continue;
             }
 
-            if (!transportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
+            if (!transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
             {
                 if (shouldLogTransportBoarding)
                     EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=SkipPassenger reason=NotSoldierBoardingCandidate passenger={DescribeTransportBoardingEntity(em, passenger)} transport={DescribeTransportBoardingEntity(em, transport)}");
@@ -232,8 +236,8 @@ public sealed class TransportBoardingCommandSystem
             int2 referenceCell = em.GetComponentData<UnitGrid>(passenger).Cell;
             byte passengerFaction = em.GetComponentData<Faction>(passenger).Id;
             int2 passengerFootprint = em.GetComponentData<UnitFootprint>(passenger).Size;
-            int directBoardingCells = transportBoardingSystem.GetTransportBoardingDirectCells(em, transport);
-            if (!transportBoardingSystem.TryFindTransportApproachCell(
+            int directBoardingCells = transportBoardingRuleSystem.GetTransportBoardingDirectCells(em, transport);
+            if (!approachCellSystem.TryFindTransportApproachCell(
                     grid,
                     walkable,
                     blocked,
@@ -273,7 +277,7 @@ public sealed class TransportBoardingCommandSystem
                 Goal = goal,
                 DirectBoarding = goal.Equals(referenceCell)
             });
-            transportBoardingSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
+            approachCellSystem.ReserveFootprintCells(grid, goal, passengerFootprint, reservedBoardingCells);
         }
 
         if (boardingOrders.Count <= 0)
@@ -291,7 +295,7 @@ public sealed class TransportBoardingCommandSystem
 
         if (hasPendingAirPickupLanding)
         {
-            transportBoardingSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, moveOrderSystem);
+            airPickupSystem.CommandAirTransportPickup(em, transport, grid, pendingAirPickupCell, moveOrderSystem);
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=AirPickupLanding transport={DescribeTransportBoardingEntity(em, transport)} landing={pendingAirPickupCell}");
         }
@@ -300,7 +304,7 @@ public sealed class TransportBoardingCommandSystem
         {
             Entity passenger = boardingOrders[i].Passenger;
             int2 goal = boardingOrders[i].Goal;
-            if (!em.Exists(passenger) || !transportBoardingSystem.IsSoldierBoardingCandidate(em, passenger))
+            if (!em.Exists(passenger) || !transportBoardingQuerySystem.IsSoldierBoardingCandidate(em, passenger))
                 continue;
 
             moveOrderSystem.ClearMovementOrderComponents(em, passenger);
@@ -328,7 +332,8 @@ public sealed class TransportBoardingCommandSystem
     public bool IsBoardablePlayerTransportClick(
         EntityManager em,
         Vector2 screenPosition,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell)
     {
@@ -336,7 +341,8 @@ public sealed class TransportBoardingCommandSystem
         return TryGetClickedOrNearbyBoardableTransport(
             screenPosition,
             em,
-            transportBoardingSystem,
+            transportBoardingRuleSystem,
+            transportBoardingQuerySystem,
             tryGetClickedUnitEntity,
             tryGetClickedCell,
             out _,
@@ -404,7 +410,8 @@ public sealed class TransportBoardingCommandSystem
     private bool TryGetClickedOrNearbyBoardableTransport(
         Vector2 screenPosition,
         EntityManager em,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportBoardingRuleSystem transportBoardingRuleSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         TryGetClickedUnitEntityDelegate tryGetClickedUnitEntity,
         TryGetClickedCellDelegate tryGetClickedCell,
         out Entity transport,
@@ -414,7 +421,7 @@ public sealed class TransportBoardingCommandSystem
         bool shouldLogTransportBoarding = logDiagnostics && ShouldQueueTransportBoardingDiagnostics(em);
         Entity clickedEntity = Entity.Null;
         bool hasClickedEntity = tryGetClickedUnitEntity(screenPosition, em, out clickedEntity);
-        if (hasClickedEntity && transportBoardingSystem.IsBoardablePlayerTransport(em, clickedEntity))
+        if (hasClickedEntity && transportBoardingQuerySystem.IsBoardablePlayerTransport(em, clickedEntity))
         {
             transport = clickedEntity;
             if (shouldLogTransportBoarding)
@@ -424,24 +431,24 @@ public sealed class TransportBoardingCommandSystem
 
         if (!tryGetClickedCell(screenPosition, em, out int2 clickedCell, out _))
         {
-            if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity, transportBoardingSystem))
+            if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NoClickedCell clicked={DescribeTransportBoardingEntity(em, clickedEntity)} {DescribeTransportAirState(em, clickedEntity)}");
             return false;
         }
 
-        if (TryFindNearbyBoardableTransport(em, clickedCell, transportBoardingSystem, out transport))
+        if (TryFindNearbyBoardableTransport(em, clickedCell, transportBoardingQuerySystem, out transport))
         {
             if (shouldLogTransportBoarding)
                 EnqueueTransportBoardingDiagnostic(em, $"[TransportBoard] result=NearbyTransport clickedCell={clickedCell} transport={DescribeTransportBoardingEntity(em, transport)} {DescribeTransportAirState(em, transport)}");
             return true;
         }
 
-        if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity, transportBoardingSystem))
+        if (shouldLogTransportBoarding && hasClickedEntity && IsKnownPersonnelTransport(em, clickedEntity))
         {
             EnqueueTransportBoardingDiagnostic(
                 em,
                 $"[TransportBoard] result=ClickedTransportRejected clicked={DescribeTransportBoardingEntity(em, clickedEntity)} " +
-                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(transportBoardingSystem.IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
+                $"player={(IsPlayerFaction(em, clickedEntity) ? 1 : 0)} landed={(transportBoardingRuleSystem.IsTransportLandedForBoarding(em, clickedEntity) ? 1 : 0)} {DescribeTransportAirState(em, clickedEntity)}");
         }
 
         if (hasClickedEntity &&
@@ -459,7 +466,7 @@ public sealed class TransportBoardingCommandSystem
     private bool TryFindNearbyBoardableTransport(
         EntityManager em,
         int2 clickedCell,
-        UnitTransportBoardingSystem transportBoardingSystem,
+        UnitTransportBoardingQuerySystem transportBoardingQuerySystem,
         out Entity transport)
     {
         transport = Entity.Null;
@@ -469,12 +476,12 @@ public sealed class TransportBoardingCommandSystem
         for (int i = 0; i < entities.Length; i++)
         {
             Entity candidate = entities[i];
-            if (!transportBoardingSystem.IsBoardablePlayerTransport(em, candidate))
+            if (!transportBoardingQuerySystem.IsBoardablePlayerTransport(em, candidate))
                 continue;
 
             int2 cell = em.GetComponentData<UnitGrid>(candidate).Cell;
             int2 footprint = em.GetComponentData<UnitFootprint>(candidate).Size;
-            int clickPaddingCells = transportBoardingSystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
+            int clickPaddingCells = transportBoardingQuerySystem.GetTransportBoardingClickPaddingCells(em, candidate, footprint);
             if (!UnitFootprintUtility.ContainsCellWithPadding(cell, footprint, clickedCell, clickPaddingCells))
                 continue;
 
@@ -509,7 +516,7 @@ public sealed class TransportBoardingCommandSystem
         return count;
     }
 
-    private static bool IsKnownPersonnelTransport(EntityManager em, Entity entity, UnitTransportBoardingSystem transportBoardingSystem)
+    private static bool IsKnownPersonnelTransport(EntityManager em, Entity entity)
     {
         if (!em.Exists(entity))
             return false;
@@ -520,7 +527,7 @@ public sealed class TransportBoardingCommandSystem
             return true;
         }
 
-        return transportBoardingSystem.ResolveTransportCapacity(em, entity) > 0;
+        return new UnitTransportCapacitySystem().ResolveTransportCapacity(em, entity) > 0;
     }
 
     private static bool IsPlayerFaction(EntityManager em, Entity entity)

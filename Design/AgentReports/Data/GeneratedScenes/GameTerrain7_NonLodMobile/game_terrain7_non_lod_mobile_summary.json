@@ -15,32 +15,32 @@
     "wideAspect": 2.333333
   },
   "sourceLod0": {
-    "renderers": 317,
-    "meshFilters": 317,
-    "materialSlots": 317,
-    "uniqueMeshes": 317,
-    "uniqueMaterials": 3,
-    "vertices": 13057533,
-    "triangles": 11842730,
-    "maxVerticesPerRenderer": 163652,
-    "maxTrianglesPerRenderer": 91841
+    "renderers": 378,
+    "meshFilters": 378,
+    "materialSlots": 378,
+    "uniqueMeshes": 378,
+    "uniqueMaterials": 4,
+    "vertices": 66664223,
+    "triangles": 32210455,
+    "maxVerticesPerRenderer": 2042922,
+    "maxTrianglesPerRenderer": 772207
   },
   "terrain7": {
-    "renderers": 317,
-    "meshFilters": 317,
-    "materialSlots": 317,
-    "uniqueMeshes": 317,
-    "uniqueMaterials": 3,
-    "vertices": 13057533,
-    "triangles": 11842730,
-    "maxVerticesPerRenderer": 163652,
-    "maxTrianglesPerRenderer": 91841
+    "renderers": 378,
+    "meshFilters": 378,
+    "materialSlots": 378,
+    "uniqueMeshes": 378,
+    "uniqueMaterials": 4,
+    "vertices": 66664223,
+    "triangles": 32210455,
+    "maxVerticesPerRenderer": 2042922,
+    "maxTrianglesPerRenderer": 772207
   },
   "meshAssets": {
-    "meshAssets": 317,
+    "meshAssets": 378,
     "nonReadableMeshes": 0,
-    "readableMeshesRetained": 317,
-    "meshAssetDiskBytes": 1538870270
+    "readableMeshesRetained": 378,
+    "meshAssetDiskBytes": 8441061021
   },
   "removedLodSwitchers": 0,
   "removedColliders": 0,

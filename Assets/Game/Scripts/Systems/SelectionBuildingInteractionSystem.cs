@@ -8,7 +8,8 @@ public sealed class SelectionBuildingInteractionSystem
     private readonly SelectionHudFeedbackSystem _selectionHudFeedbackSystem = new();
     private readonly FocusableUnitLookupSystem _focusableUnitLookupSystem = new();
     private readonly TransportBoardingCommandSystem _transportBoardingCommandSystem = new();
-    private readonly UnitTransportBoardingSystem _unitTransportBoardingSystem = new();
+    private readonly UnitTransportBoardingRuleSystem _unitTransportBoardingRuleSystem = new();
+    private readonly UnitTransportBoardingQuerySystem _unitTransportBoardingQuerySystem = new();
     private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
 
     private SelectionStateSystem _selectionStateSystem;
@@ -49,7 +50,8 @@ public sealed class SelectionBuildingInteractionSystem
         return _transportBoardingCommandSystem.IsBoardablePlayerTransportClick(
             em,
             screenPosition,
-            _unitTransportBoardingSystem,
+            _unitTransportBoardingRuleSystem,
+            _unitTransportBoardingQuerySystem,
             TryGetClickedUnitEntity,
             TryGetClickedCell);
     }

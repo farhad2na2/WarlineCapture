@@ -26,7 +26,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly TransportBoardingCommandSystem TransportBoardingCommandSystem;
         public readonly UnitMoveOrderSystem UnitMoveOrderSystem;
         public readonly UnitTargetOrderSystem UnitTargetOrderSystem;
-        public readonly UnitTransportBoardingSystem UnitTransportBoardingSystem;
+        public readonly UnitTransportCapacitySystem UnitTransportCapacitySystem;
+        public readonly UnitTransportBoardingQuerySystem UnitTransportBoardingQuerySystem;
+        public readonly UnitTransportBoardingRuleSystem UnitTransportBoardingRuleSystem;
+        public readonly UnitTransportApproachCellSystem UnitTransportApproachCellSystem;
+        public readonly UnitTransportAirPickupSystem UnitTransportAirPickupSystem;
+        public readonly UnitTransportRopeDisembarkCommandSystem UnitTransportRopeDisembarkCommandSystem;
         public readonly SelectionStateSystem SelectionStateSystem;
         public readonly BuildingPlacementInteractionSystem BuildingPlacementInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext;
@@ -60,7 +65,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
             TransportBoardingCommandSystem transportBoardingCommandSystem,
             UnitMoveOrderSystem unitMoveOrderSystem,
             UnitTargetOrderSystem unitTargetOrderSystem,
-            UnitTransportBoardingSystem unitTransportBoardingSystem,
+            UnitTransportCapacitySystem unitTransportCapacitySystem,
+            UnitTransportBoardingQuerySystem unitTransportBoardingQuerySystem,
+            UnitTransportBoardingRuleSystem unitTransportBoardingRuleSystem,
+            UnitTransportApproachCellSystem unitTransportApproachCellSystem,
+            UnitTransportAirPickupSystem unitTransportAirPickupSystem,
+            UnitTransportRopeDisembarkCommandSystem unitTransportRopeDisembarkCommandSystem,
             SelectionStateSystem selectionStateSystem,
             BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
             BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
@@ -93,7 +103,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
             TransportBoardingCommandSystem = transportBoardingCommandSystem;
             UnitMoveOrderSystem = unitMoveOrderSystem;
             UnitTargetOrderSystem = unitTargetOrderSystem;
-            UnitTransportBoardingSystem = unitTransportBoardingSystem;
+            UnitTransportCapacitySystem = unitTransportCapacitySystem;
+            UnitTransportBoardingQuerySystem = unitTransportBoardingQuerySystem;
+            UnitTransportBoardingRuleSystem = unitTransportBoardingRuleSystem;
+            UnitTransportApproachCellSystem = unitTransportApproachCellSystem;
+            UnitTransportAirPickupSystem = unitTransportAirPickupSystem;
+            UnitTransportRopeDisembarkCommandSystem = unitTransportRopeDisembarkCommandSystem;
             SelectionStateSystem = selectionStateSystem;
             BuildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
             BuildingPlacementInteractionContext = buildingPlacementInteractionContext;
@@ -251,7 +266,12 @@ public sealed class RtsSelectionCommandResultFlushSystem
             commandRequests,
             commandResults,
             context.TransportBoardingCommandSystem,
-            context.UnitTransportBoardingSystem,
+            context.UnitTransportCapacitySystem,
+            context.UnitTransportBoardingQuerySystem,
+            context.UnitTransportBoardingRuleSystem,
+            context.UnitTransportApproachCellSystem,
+            context.UnitTransportAirPickupSystem,
+            context.UnitTransportRopeDisembarkCommandSystem,
             context.UnitMoveOrderSystem,
             context.SelectionStateSystem,
             context.TryGetTransportClickedUnitEntity,

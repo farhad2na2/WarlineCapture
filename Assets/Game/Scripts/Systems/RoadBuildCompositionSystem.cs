@@ -3,9 +3,10 @@ using UnityEngine;
 
 internal sealed class RoadBuildCompositionSystem
 {
+    private RoadBuildRuntimeStateSystem _roadState;
+
     public readonly struct Result
     {
-        public readonly RoadBuildRuntimeStateSystem RoadState;
         public readonly RoadBuildReadModelSystem RoadBuildReadModel;
         public readonly RoadRuntimeGenerationSystem RoadRuntimeGeneration;
         public readonly RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext;
@@ -16,7 +17,6 @@ internal sealed class RoadBuildCompositionSystem
         public readonly Action Dispose;
 
         public Result(
-            RoadBuildRuntimeStateSystem roadBuild,
             RoadBuildReadModelSystem roadBuildReadModel,
             RoadRuntimeGenerationSystem roadRuntimeGeneration,
             RoadRuntimeGenerationSystem.Context roadRuntimeGenerationContext,
@@ -26,7 +26,6 @@ internal sealed class RoadBuildCompositionSystem
             Action onGui,
             Action dispose)
         {
-            RoadState = roadBuild;
             RoadBuildReadModel = roadBuildReadModel;
             RoadRuntimeGeneration = roadRuntimeGeneration;
             RoadRuntimeGenerationContext = roadRuntimeGenerationContext;
@@ -43,19 +42,14 @@ internal sealed class RoadBuildCompositionSystem
         Camera worldCamera,
         Transform runtimeUiRoot)
     {
-        var roadBuild = new RoadBuildRuntimeStateSystem();
+        var roadSource = new RoadBuildCompositionSourceSystem();
+        var roadBuild = new RoadBuildRuntimeStateSystem(roadSource);
+        _roadState = roadBuild;
         roadBuild.Init(roadBuildConfig, worldCamera, runtimeUiRoot, null);
 
-        var roadBuildReadModel = new RoadBuildReadModelSystem();
-        roadBuildReadModel.Configure(
-            () => roadBuild.IsRoadBuildModeActive,
-            () => roadBuild.IsDraggingBuildInteraction,
-            () => roadBuild.HasPendingBuildingPlacement,
-            () => roadBuild.HasSelectedBuilding,
-            () => roadBuild.CanConfirmBuildingPlacement);
+        RoadBuildReadModelSystem roadBuildReadModel = roadSource.RoadBuildReadModelSystem;
 
         return new Result(
-            roadBuild,
             roadBuildReadModel,
             roadBuild.RoadRuntimeGenerationSystem,
             roadBuild.RoadRuntimeGenerationContext,
@@ -73,7 +67,7 @@ internal sealed class RoadBuildCompositionSystem
         BuildingPlacementInteractionSystem buildingPlacementInteraction,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext)
     {
-        result.RoadState?.BindDependencies(
+        _roadState?.BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext);
     }
@@ -84,7 +78,7 @@ internal sealed class RoadBuildCompositionSystem
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext,
         MainMenuPlayUI mainMenu)
     {
-        result.RoadState?.BindDependencies(
+        _roadState?.BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu);
@@ -97,7 +91,7 @@ internal sealed class RoadBuildCompositionSystem
         MainMenuPlayUI mainMenu,
         RuntimeGridBlockerSystem runtimeGridBlockers)
     {
-        result.RoadState?.BindDependencies(
+        _roadState?.BindDependencies(
             buildingPlacementInteraction,
             buildingPlacementInteractionContext,
             mainMenu,

@@ -1161,17 +1161,20 @@ public static class WarlineCaptureGameTerrain3Island2048Builder
             int rockValue = rockMask[index];
             int heightValue = heightMask[index];
             Color32 color = SampleBaseColor(gridX, gridZ);
+            float luminance = Luminance01(color);
+            bool warm = color.r >= color.g * 0.92f && color.g >= color.b * 0.70f;
+            bool mutedGreen = color.g >= color.r * 0.82f && color.g >= color.b * 0.82f;
+            bool roadLike = treeValue < 48 && rockValue < 80 && heightValue < 144 && warm && luminance >= 0.30f;
 
             if (heightValue >= HeightHighThreshold || rockValue >= DensityDenseThreshold)
                 return SurfaceReferenceClass.RockMountain;
+            if (roadLike)
+                return SurfaceReferenceClass.Dirt;
             if (treeValue >= DensityDenseThreshold)
                 return SurfaceReferenceClass.ForestCanopy;
             if (treeValue >= DensityMediumThreshold)
                 return SurfaceReferenceClass.DarkGrass;
 
-            float luminance = Luminance01(color);
-            bool warm = color.r >= color.g && color.g >= color.b * 0.72f;
-            bool mutedGreen = color.g >= color.r * 0.82f && color.g >= color.b * 0.82f;
             if (warm && luminance >= 0.36f)
                 return SurfaceReferenceClass.Dirt;
             if (mutedGreen && luminance < 0.32f)

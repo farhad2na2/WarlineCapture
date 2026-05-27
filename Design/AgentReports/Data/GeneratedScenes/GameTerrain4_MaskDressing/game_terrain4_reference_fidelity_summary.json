@@ -2,18 +2,19 @@
   "summaryId": "GameTerrain4_ReferenceFidelitySummary",
   "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
   "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
-  "capturesRenderedThisRun": true,
+  "capturesRenderedThisRun": false,
   "cleanTopDownCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png",
   "cleanPlayableCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png",
   "cleanTopDownExists": true,
   "cleanPlayableExists": true,
-  "blockerVegetationCount": 11138,
-  "mountainCount": 716,
+  "blockerVegetationCount": 3339,
+  "mountainCount": 55,
+  "vegetationMountainOverlapCount": 0,
   "reservePollutionCount": 0,
   "foundationMaterialRendererCounts": {
-    "greenGrass": 8024,
-    "dirt": 6659,
-    "darkGrass": 7807
+    "greenGrass": 7725,
+    "dirt": 7184,
+    "darkGrass": 7565
   },
   "passed": true
 }

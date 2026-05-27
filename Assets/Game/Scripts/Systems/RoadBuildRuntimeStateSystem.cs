@@ -5,10 +5,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using static UnityEngine.Object;
 using CombinedRoadVisualData = RoadFootprintQuerySystem.CombinedRoadVisualData;
-using BuildToolMode = RoadBuildSessionSystem.BuildToolMode;
 using EdgeKey = RoadNetworkSystem.EdgeKey;
-using ConnectorMarkerData = RoadVisualVariantSystem.ConnectorMarkerData;
-using MarkerLayoutData = RoadVisualVariantSystem.MarkerLayoutData;
 using RoadTileData = RoadNetworkSystem.RoadTileData;
 using VariantData = RoadVisualVariantSystem.VariantData;
 using RoadVisualType = RoadNetworkSystem.RoadVisualType;
@@ -18,67 +15,53 @@ using PlacementState = BuildingPlacementLifecycleSystem.PlacementState;
 
 internal sealed class RoadBuildRuntimeStateSystem
 {
-    private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
-    private readonly RoadBuildConfigSystem _roadBuildConfigSystem = new();
-    private readonly RoadRuntimeRootSystem _roadRuntimeRootSystem = new();
-    private readonly RoadNetworkSystem _roadNetworkSystem = new();
-    private readonly RoadPathPlanningSystem _roadPathPlanningSystem = new();
-    private readonly RoadFootprintQuerySystem _roadFootprintQuerySystem = new();
-    private readonly RoadGridProjectionSystem _roadGridProjectionSystem = new();
-    private readonly RoadVisualVariantSystem _roadVisualVariantSystem = new();
-    private readonly RoadChunkVisualSystem _roadChunkVisualSystem = new();
-    private readonly RoadPreviewSystem _roadPreviewSystem = new();
-    private readonly RoadSpecialVisualSystem _roadSpecialVisualSystem = new();
-    private readonly RoadBuildSessionSystem _roadBuildSessionSystem = new();
-    private readonly RoadBuildSessionSystem.State _roadBuildSessionState = new();
-    private readonly RoadMinimapEventSystem _roadMinimapEventSystem = new();
-    private readonly RoadBuildInputSystem _roadBuildInputSystem = new();
-    private readonly RoadBuildInputSystem.State _roadBuildInputState = new();
-    private readonly RoadBuildCommandSystem _roadBuildCommandSystem = new();
-    private readonly RoadDeletePromptSystem _roadDeletePromptSystem = new();
-    private readonly BuildingRoadLegacyStorageSystem _buildingRoadLegacyStorageSystem = new();
-    private readonly BuildingRoadLegacyEcsSystem _buildingRoadLegacyEcsSystem = new();
-    private readonly RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem = new();
+    private readonly RoadBuildCompositionSourceSystem _source;
 
-    [SerializeField] private RoadBuildSystemConfig config;
-    [Header("References")]
-    [SerializeField, HideInInspector] private Camera worldCamera;
-    [SerializeField, HideInInspector] private GameObject straightPrefab;
-    [SerializeField, HideInInspector] private GameObject tIntersectionPrefab;
-    [SerializeField, HideInInspector] private GameObject intersectionPrefab;
-    [SerializeField, HideInInspector] private GameObject endPrefab;
-    [SerializeField, HideInInspector] private GameObject cornerPrefab;
-    [SerializeField, HideInInspector] private GameObject autobahnPrefab;
-    [SerializeField, HideInInspector] private GameObject autobahnConnectPrefab;
+    private RuntimeGameplayStateSystem _runtimeGameplayStateSystem => _source.RuntimeGameplayStateSystem;
+    private RoadBuildStartupSystem _roadBuildStartupSystem => _source.RoadBuildStartupSystem;
+    private RoadBuildDependencySystem _roadBuildDependencySystem => _source.RoadBuildDependencySystem;
+    private RoadBuildReadModelSystem _roadBuildReadModelSystem => _source.RoadBuildReadModelSystem;
+    private RoadBuildVisualContextSystem _roadBuildVisualContextSystem => _source.RoadBuildVisualContextSystem;
+    private RoadBuildInteractionContextSystem _roadBuildInteractionContextSystem => _source.RoadBuildInteractionContextSystem;
+    private RoadGridContextSystem _roadGridContextSystem => _source.RoadGridContextSystem;
+    private RoadBuildConfigSystem _roadBuildConfigSystem => _source.RoadBuildConfigSystem;
+    private RoadRuntimeRootSystem _roadRuntimeRootSystem => _source.RoadRuntimeRootSystem;
+    private RoadNetworkSystem _roadNetworkSystem => _source.RoadNetworkSystem;
+    private RoadPathPlanningSystem _roadPathPlanningSystem => _source.RoadPathPlanningSystem;
+    private RoadFootprintQuerySystem _roadFootprintQuerySystem => _source.RoadFootprintQuerySystem;
+    private RoadGridProjectionSystem _roadGridProjectionSystem => _source.RoadGridProjectionSystem;
+    private RoadVisualVariantSystem _roadVisualVariantSystem => _source.RoadVisualVariantSystem;
+    private RoadChunkVisualSystem _roadChunkVisualSystem => _source.RoadChunkVisualSystem;
+    private RoadPreviewSystem _roadPreviewSystem => _source.RoadPreviewSystem;
+    private RoadSpecialVisualSystem _roadSpecialVisualSystem => _source.RoadSpecialVisualSystem;
+    private RoadBuildSessionSystem _roadBuildSessionSystem => _source.RoadBuildSessionSystem;
+    private RoadBuildSessionSystem.State _roadBuildSessionState => _source.RoadBuildSessionState;
+    private RoadMinimapEventSystem _roadMinimapEventSystem => _source.RoadMinimapEventSystem;
+    private RoadBuildInputSystem _roadBuildInputSystem => _source.RoadBuildInputSystem;
+    private RoadBuildInputSystem.State _roadBuildInputState => _source.RoadBuildInputState;
+    private RoadBuildCommandSystem _roadBuildCommandSystem => _source.RoadBuildCommandSystem;
+    private RoadDeletePromptSystem _roadDeletePromptSystem => _source.RoadDeletePromptSystem;
+    private BuildingRoadLegacyStorageSystem _buildingRoadLegacyStorageSystem => _source.BuildingRoadLegacyStorageSystem;
+    private BuildingRoadLegacyContextSystem _buildingRoadLegacyContextSystem => _source.BuildingRoadLegacyContextSystem;
+    private BuildingRoadLegacyEcsSystem _buildingRoadLegacyEcsSystem => _source.BuildingRoadLegacyEcsSystem;
+    private RoadRuntimeGenerationSystem _roadRuntimeGenerationSystem => _source.RoadRuntimeGenerationSystem;
+    private RoadRuntimeGenerationContextSystem _roadRuntimeGenerationContextSystem => _source.RoadRuntimeGenerationContextSystem;
 
-    [Header("Placement")]
-    [SerializeField, HideInInspector] private Vector3 gridOrigin = Vector3.zero;
-    [SerializeField, HideInInspector] private float buildPlaneY = 0f;
-    [SerializeField, HideInInspector] private float roadGridSize = 20f;
-    [SerializeField, HideInInspector] private int chunkSizeInCells = 8;
-    [SerializeField, HideInInspector] private float previewAlpha = 0.65f;
-
-    [Header("Buildings")]
-    [SerializeField, HideInInspector] private GameObject soldierBasePrefab;
-    [SerializeField, HideInInspector] private Vector2Int soldierBaseFootprintCells = new(20, 20);
-    [SerializeField, HideInInspector] private float placementOutlineHeight = 0.15f;
-    [SerializeField, HideInInspector] private float placementOutlineWidth = 0.35f;
-    [SerializeField, HideInInspector] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f);
-    [SerializeField, HideInInspector] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
-
+    private RoadBuildStartupSystem.State _startupState = new();
+    private RoadBuildDependencySystem.State _dependencyState;
     private uint _buildingSpawnRandomState = 0x12345678u;
-    private RoadRuntimeRootSystem.Roots _runtimeRoots;
     private GameObject _placementOutline;
     private Transform[] _placementOutlineEdges;
     private MeshRenderer[] _placementOutlineRenderers;
     private bool _isDraggingBuildingPlacement;
-    private BuildingPlacementInteractionSystem _buildingPlacementInteractionSystem;
-    private BuildingPlacementInteractionSystem.Context _buildingPlacementInteractionContext;
-    private MainMenuPlayUI _mainMenuPlayUi;
-    private RuntimeGridBlockerSystem _runtimeGridBlockers;
-    private Transform _runtimeRoot;
 
     private static readonly Vector2Int North = new(0, 1), East = new(1, 0), South = new(0, -1), West = new(-1, 0);
+
+    public RoadBuildRuntimeStateSystem(RoadBuildCompositionSourceSystem source)
+    {
+        _source = source;
+        _dependencyState = _roadBuildDependencySystem.CreateState();
+    }
 
     private Dictionary<EdgeKey, int> _edgeCounts => _roadNetworkSystem.EdgeCounts;
     private Dictionary<Vector2Int, List<int>> _strokeIdsByCell => _roadNetworkSystem.StrokeIdsByCell;
@@ -87,15 +70,36 @@ internal sealed class RoadBuildRuntimeStateSystem
     private HashSet<Vector2Int> _autobahnCells => _roadNetworkSystem.AutobahnCells;
     private HashSet<Vector2Int> _autobahnConnectorCells => _roadNetworkSystem.AutobahnConnectorCells;
     private Dictionary<RoadVisualType, CombinedRoadVisualData> _visualData => _roadVisualVariantSystem.VisualData;
-    private Dictionary<RoadVisualType, MarkerLayoutData> _markerLayouts => _roadVisualVariantSystem.MarkerLayouts;
-    private ConnectorMarkerData? _autobahnConnectorMarkerData => _roadVisualVariantSystem.AutobahnConnectorMarkerData;
     private Dictionary<Vector2Int, GameObject> _specialRoadObjects => _roadSpecialVisualSystem.SpecialRoadObjects;
 
-    private Transform RoadRoot => _runtimeRoots.RoadRoot;
-    private Transform SpecialRoadRoot => _runtimeRoots.SpecialRoadRoot;
-    private Transform SpecialRoadConnectorRoot => _runtimeRoots.SpecialRoadConnectorRoot;
-    private Transform DebugStraightRoadRoot => _runtimeRoots.DebugStraightRoadRoot;
-    private Transform BuildingRoot => _runtimeRoots.BuildingRoot;
+    private Camera worldCamera => _startupState.WorldCamera;
+    private GameObject straightPrefab => _startupState.StraightPrefab;
+    private GameObject tIntersectionPrefab => _startupState.TIntersectionPrefab;
+    private GameObject intersectionPrefab => _startupState.IntersectionPrefab;
+    private GameObject endPrefab => _startupState.EndPrefab;
+    private GameObject cornerPrefab => _startupState.CornerPrefab;
+    private GameObject autobahnPrefab => _startupState.AutobahnPrefab;
+    private GameObject autobahnConnectPrefab => _startupState.AutobahnConnectPrefab;
+    private Vector3 gridOrigin => _startupState.GridOrigin;
+    private float buildPlaneY => _startupState.BuildPlaneY;
+    private float roadGridSize => _startupState.RoadGridSize;
+    private int chunkSizeInCells => _startupState.ChunkSizeInCells;
+    private float previewAlpha => _startupState.PreviewAlpha;
+    private GameObject soldierBasePrefab => _startupState.SoldierBasePrefab;
+    private Vector2Int soldierBaseFootprintCells => _startupState.SoldierBaseFootprintCells;
+    private float placementOutlineHeight => _startupState.PlacementOutlineHeight;
+    private float placementOutlineWidth => _startupState.PlacementOutlineWidth;
+    private Color placementValidColor => _startupState.PlacementValidColor;
+    private Color placementInvalidColor => _startupState.PlacementInvalidColor;
+    private Transform RoadRoot => _startupState.RuntimeRoots.RoadRoot;
+    private Transform SpecialRoadRoot => _startupState.RuntimeRoots.SpecialRoadRoot;
+    private Transform SpecialRoadConnectorRoot => _startupState.RuntimeRoots.SpecialRoadConnectorRoot;
+    private Transform DebugStraightRoadRoot => _startupState.RuntimeRoots.DebugStraightRoadRoot;
+    private Transform BuildingRoot => _startupState.RuntimeRoots.BuildingRoot;
+    private Transform RuntimeRoot => _startupState.RuntimeRoot;
+    private BuildingPlacementInteractionSystem BuildingPlacementInteraction => _dependencyState.BuildingPlacementInteractionSystem;
+    private BuildingPlacementInteractionSystem.Context BuildingPlacementInteractionContext => _dependencyState.BuildingPlacementInteractionContext;
+    private RuntimeGridBlockerSystem RuntimeGridBlockers => _dependencyState.RuntimeGridBlockers;
 
     internal RoadRuntimeGenerationSystem RoadRuntimeGenerationSystem => _roadRuntimeGenerationSystem;
     internal RoadRuntimeGenerationSystem.Context RoadRuntimeGenerationContext => CreateRoadRuntimeGenerationContext();
@@ -107,92 +111,66 @@ internal sealed class RoadBuildRuntimeStateSystem
     internal RoadDeletePromptSystem RoadDeletePromptSystem => _roadDeletePromptSystem;
     internal RoadDeletePromptSystem.Context RoadDeletePromptContext => CreateRoadDeletePromptContext();
 
+    private RoadGridContextSystem.Context CreateRoadGridContext()
+    {
+        return new RoadGridContextSystem.Context(
+            _roadNetworkSystem,
+            _roadSpecialVisualSystem,
+            _roadVisualVariantSystem,
+            _roadFootprintQuerySystem,
+            _startupState);
+    }
+
     private RoadFootprintQuerySystem.Context CreateRoadFootprintQueryContext()
     {
-        return new RoadFootprintQuerySystem.Context(
-            _roadTiles,
-            _specialRoadObjects,
-            _visualData,
-            gridOrigin,
-            buildPlaneY,
-            roadGridSize);
+        return _roadGridContextSystem.CreateFootprintQueryContext(CreateRoadGridContext());
     }
 
     private RoadGridProjectionSystem.Context CreateRoadGridProjectionContext()
     {
-        return new RoadGridProjectionSystem.Context(
-            _roadTiles,
-            _roadFootprintQuerySystem,
-            CreateRoadFootprintQueryContext(),
-            roadGridSize);
+        return _roadGridContextSystem.CreateGridProjectionContext(CreateRoadGridContext());
     }
 
-    private RoadVisualVariantSystem.Prefabs CreateRoadPrefabSet()
+    private RoadBuildVisualContextSystem.Context CreateRoadBuildVisualContext()
     {
-        return new RoadVisualVariantSystem.Prefabs(
-            endPrefab,
-            straightPrefab,
-            cornerPrefab,
-            tIntersectionPrefab,
-            intersectionPrefab,
-            autobahnPrefab,
-            autobahnConnectPrefab);
-    }
-
-    private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext()
-    {
-        return new RoadChunkVisualSystem.Context(
-            _roadTiles,
-            _visualData,
-            _autobahnCells,
-            _autobahnConnectorCells,
-            RoadRoot,
-            gridOrigin,
-            buildPlaneY,
-            roadGridSize,
-            chunkSizeInCells);
-    }
-
-    private RoadPreviewSystem.Context CreateRoadPreviewContext()
-    {
-        return new RoadPreviewSystem.Context(
-            _visualData,
-            RoadRoot,
-            gridOrigin,
-            buildPlaneY,
-            roadGridSize,
-            previewAlpha,
-            endPrefab,
-            _roadPathPlanningSystem,
+        return new RoadBuildVisualContextSystem.Context(
             _roadNetworkSystem,
+            _roadPathPlanningSystem,
+            _roadVisualVariantSystem,
+            _roadBuildStartupSystem,
+            _startupState,
             ResolveVisualType,
-            TryGetVariant);
-    }
-
-    private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext()
-    {
-        return new RoadSpecialVisualSystem.Context(
-            _roadTiles,
-            _strokes,
-            _markerLayouts,
-            _autobahnConnectorMarkerData,
-            RoadRoot,
-            SpecialRoadRoot,
-            SpecialRoadConnectorRoot,
-            DebugStraightRoadRoot,
-            gridOrigin,
-            buildPlaneY,
-            roadGridSize,
-            chunkSizeInCells,
+            TryGetVariant,
             GetPrefab,
             TryGetVariant);
     }
 
-    private RoadBuildSessionSystem.Context CreateRoadBuildSessionContext()
+    private RoadChunkVisualSystem.Context CreateRoadChunkVisualContext()
     {
-        return new RoadBuildSessionSystem.Context(
-            _roadBuildSessionState,
+        return _roadBuildVisualContextSystem.CreateChunkContext(CreateRoadBuildVisualContext());
+    }
+
+    private RoadPreviewSystem.Context CreateRoadPreviewContext()
+    {
+        return _roadBuildVisualContextSystem.CreatePreviewContext(CreateRoadBuildVisualContext());
+    }
+
+    private RoadSpecialVisualSystem.Context CreateRoadSpecialVisualContext()
+    {
+        return _roadBuildVisualContextSystem.CreateSpecialContext(CreateRoadBuildVisualContext());
+    }
+
+    private RoadBuildInteractionContextSystem.Context CreateRoadBuildInteractionContext()
+    {
+        return new RoadBuildInteractionContextSystem.Context(
             _runtimeGameplayStateSystem,
+            _roadBuildSessionSystem,
+            _roadBuildSessionState,
+            _roadBuildInputSystem,
+            _roadBuildInputState,
+            _roadBuildCommandSystem,
+            _roadPathPlanningSystem,
+            _roadNetworkSystem,
             CaptureRoadBuildSessionSnapshot,
             RestoreRoadBuildSession,
             RemoveRuntimeBlockersUnderRoads,
@@ -203,60 +181,56 @@ internal sealed class RoadBuildRuntimeStateSystem
             CancelBuildingPlacement,
             CancelPendingBuild,
             HidePlacementOutline,
-            UpdatePreview);
+            UpdatePreview,
+            TryGetHoveredCell,
+            ClearPreview,
+            UpdateBuildingPlacement,
+            path => CreateStroke(path),
+            () => _buildingRoadLegacyStorageSystem.HasPendingBuildingPlacement,
+            value => _isDraggingBuildingPlacement = value,
+            ClearRoadBuildDragState,
+            DeleteStroke);
+    }
+
+    private RoadBuildSessionSystem.Context CreateRoadBuildSessionContext()
+    {
+        return _roadBuildInteractionContextSystem.CreateSessionContext(CreateRoadBuildInteractionContext());
     }
 
     private RoadBuildInputSystem.Context CreateRoadBuildInputContext()
     {
-        return new RoadBuildInputSystem.Context(
-            _roadBuildInputState,
-            _runtimeGameplayStateSystem,
-            _roadBuildSessionSystem,
-            _roadBuildSessionState,
-            _roadPathPlanningSystem,
-            _roadNetworkSystem,
-            TryGetHoveredCell,
-            ClearPreview,
-            UpdatePreview,
-            HidePlacementOutline,
-            UpdateBuildingPlacement,
-            path => CreateStroke(path),
-            () => _buildingRoadLegacyStorageSystem.HasPendingBuildingPlacement,
-            value => _isDraggingBuildingPlacement = value);
+        return _roadBuildInteractionContextSystem.CreateInputContext(CreateRoadBuildInteractionContext());
     }
 
     private RoadBuildCommandSystem.Context CreateRoadBuildCommandContext()
     {
-        return new RoadBuildCommandSystem.Context(
-            _runtimeGameplayStateSystem,
-            _roadBuildSessionSystem,
-            CreateRoadBuildSessionContext(),
-            ClearRoadBuildDragState);
+        return _roadBuildInteractionContextSystem.CreateCommandContext(CreateRoadBuildInteractionContext());
     }
 
     private RoadDeletePromptSystem.Context CreateRoadDeletePromptContext()
     {
-        return new RoadDeletePromptSystem.Context(
-            _runtimeGameplayStateSystem,
-            _roadBuildSessionSystem,
-            _roadBuildSessionState,
-            DeleteStroke);
+        return _roadBuildInteractionContextSystem.CreateDeletePromptContext(CreateRoadBuildInteractionContext());
+    }
+
+    private BuildingRoadLegacyContextSystem.Context CreateBuildingRoadLegacyContext()
+    {
+        return new BuildingRoadLegacyContextSystem.Context(
+            TryGetEntityManager,
+            TryGetGridData,
+            GetFootprintCenter,
+            BuildingPlacementInteraction,
+            BuildingPlacementInteractionContext,
+            _buildingSpawnRandomState);
     }
 
     private BuildingRoadLegacyEcsSystem.Context CreateBuildingRoadLegacyEcsContext()
     {
-        return new BuildingRoadLegacyEcsSystem.Context(
-            TryGetEntityManager,
-            TryGetGridData,
-            GetFootprintCenter,
-            _buildingPlacementInteractionSystem,
-            _buildingPlacementInteractionContext,
-            _buildingSpawnRandomState);
+        return _buildingRoadLegacyContextSystem.CreateEcsContext(CreateBuildingRoadLegacyContext());
     }
 
-    private RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext()
+    private RoadRuntimeGenerationContextSystem.Context CreateRoadRuntimeGenerationContextSource()
     {
-        return new RoadRuntimeGenerationSystem.Context(
+        return new RoadRuntimeGenerationContextSystem.Context(
             TryGetRoadCellSizeInGridCellsInternal,
             BeginDeferredRoadEcsSyncInternal,
             EndDeferredRoadEcsSyncInternal,
@@ -265,7 +239,23 @@ internal sealed class RoadBuildRuntimeStateSystem
             CreateRoadSpecialVisualContext());
     }
 
-    public bool HasPendingBuildingPlacement => _buildingRoadLegacyStorageSystem.HasPendingBuildingPlacement;
+    private RoadRuntimeGenerationSystem.Context CreateRoadRuntimeGenerationContext()
+    {
+        return _roadRuntimeGenerationContextSystem.CreateContext(CreateRoadRuntimeGenerationContextSource());
+    }
+
+    private RoadBuildReadModelSystem.Context CreateRoadBuildReadModelContext()
+    {
+        return new RoadBuildReadModelSystem.Context(
+            _runtimeGameplayStateSystem,
+            _roadBuildSessionSystem,
+            _roadBuildSessionState,
+            _roadBuildInputSystem,
+            _roadBuildInputState,
+            _buildingRoadLegacyStorageSystem,
+            _dependencyState,
+            () => _isDraggingBuildingPlacement);
+    }
 
     public void BeginDeferredRoadEcsSync()
     {
@@ -285,24 +275,6 @@ internal sealed class RoadBuildRuntimeStateSystem
     private void EndDeferredRoadEcsSyncInternal()
     {
         _roadGridProjectionSystem.EndDeferredRoadEcsSync(CreateRoadGridProjectionContext());
-    }
-
-    public bool CanConfirmBuildingPlacement =>
-        _buildingPlacementInteractionSystem != null
-            ? _buildingPlacementInteractionSystem.CanConfirmBuildingPlacement(_buildingPlacementInteractionContext)
-            : _buildingRoadLegacyStorageSystem.CanConfirmBuildingPlacement;
-
-    public bool HasSelectedBuilding =>
-        _buildingPlacementInteractionSystem != null
-            ? _buildingPlacementInteractionSystem.HasSelectedBuilding(_buildingPlacementInteractionContext)
-            : _buildingRoadLegacyStorageSystem.HasSelectedBuilding;
-
-    public bool IsRoadBuildModeActive => _roadBuildSessionSystem.IsRoadBuildModeActive(CreateRoadBuildSessionContext());
-    public bool IsDraggingBuildInteraction => _roadBuildInputSystem.IsDrawing(_roadBuildInputState) || (_buildingRoadLegacyStorageSystem.HasPendingBuildingPlacement && _isDraggingBuildingPlacement);
-
-    private void OnValidate()
-    {
-        ApplyConfigIfAvailable();
     }
 
     public bool TryGetRoadCellSizeInGridCells(out int roadCellSizeInGridCells)
@@ -409,60 +381,6 @@ internal sealed class RoadBuildRuntimeStateSystem
             occupiedCells);
     }
 
-    public string PlacementStatusText
-    {
-        get
-        {
-            if (_buildingPlacementInteractionSystem != null &&
-                _buildingPlacementInteractionSystem.HasPendingBuildingPlacement(_buildingPlacementInteractionContext))
-            {
-                return _buildingPlacementInteractionSystem.PlacementStatusText(_buildingPlacementInteractionContext);
-            }
-
-            PlacementState activePlacement = _buildingRoadLegacyStorageSystem.ActivePlacement;
-            if (activePlacement == null)
-                return "Choose a build type.";
-
-            string state = activePlacement.IsValid ? "Valid placement" : "Blocked by road or blocker";
-            Vector2Int origin = activePlacement.OriginCell;
-            Vector2Int size = activePlacement.Definition.FootprintCells;
-            return $"{activePlacement.Definition.DisplayName}: {state} ({origin.x},{origin.y}) {size.x}x{size.y}";
-        }
-    }
-
-    public string SelectedBuildingLabel
-    {
-        get
-        {
-            if (_buildingPlacementInteractionSystem != null &&
-                _buildingPlacementInteractionSystem.HasActiveBuilding(_buildingPlacementInteractionContext))
-            {
-                return _buildingPlacementInteractionSystem.SelectedBuildingLabel(_buildingPlacementInteractionContext);
-            }
-
-            if (!HasSelectedBuilding)
-                return "Building";
-
-            return _buildingRoadLegacyStorageSystem.TryGetSelectedBuilding(out RuntimeBuildingData building)
-                ? $"{building.Definition.DisplayName} ({building.OriginCell.x},{building.OriginCell.y})"
-                : "Building";
-        }
-    }
-
-    public string ActiveModeStatusText
-    {
-        get
-        {
-            if (_roadBuildSessionSystem.IsActiveTool(_roadBuildSessionState, BuildToolMode.Road))
-                return "Road build mode active";
-            if (HasSelectedBuilding)
-                return "Building selected";
-            if (_runtimeGameplayStateSystem.BuildModeActive)
-                return "Build mode active";
-            return "Simulation running";
-        }
-    }
-
     public void Init(
         RoadBuildSystemConfig configAsset,
         Camera sceneWorldCamera,
@@ -470,15 +388,19 @@ internal sealed class RoadBuildRuntimeStateSystem
         BuildingPlacementInteractionSystem buildingPlacementInteractionSystem,
         BuildingPlacementInteractionSystem.Context buildingPlacementInteractionContext = default)
     {
-        config = configAsset;
-        worldCamera = sceneWorldCamera;
-        _runtimeRoot = runtimeRoot;
-        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
-        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-        ApplyConfigIfAvailable();
-        _runtimeRoots = _roadRuntimeRootSystem.CreateRoots(runtimeRoot);
+        _startupState = _roadBuildStartupSystem.Initialize(
+            configAsset,
+            sceneWorldCamera,
+            runtimeRoot,
+            _roadBuildConfigSystem,
+            _roadRuntimeRootSystem,
+            _roadVisualVariantSystem);
+        _roadBuildDependencySystem.BindBuildingInteraction(
+            _dependencyState,
+            buildingPlacementInteractionSystem,
+            buildingPlacementInteractionContext);
+        _roadBuildReadModelSystem.Configure(CreateRoadBuildReadModelContext());
 
-        CacheVariants();
         BuildDefinitions();
         CreatePlacementOutline();
     }
@@ -489,44 +411,13 @@ internal sealed class RoadBuildRuntimeStateSystem
         MainMenuPlayUI mainMenuPlayUi = null,
         RuntimeGridBlockerSystem runtimeGridBlockers = null)
     {
-        _buildingPlacementInteractionSystem = buildingPlacementInteractionSystem;
-        _buildingPlacementInteractionContext = buildingPlacementInteractionContext;
-        _mainMenuPlayUi = mainMenuPlayUi;
-        _roadMinimapEventSystem.Configure(mainMenuPlayUi);
-        if (runtimeGridBlockers != null)
-            _runtimeGridBlockers = runtimeGridBlockers;
-    }
-
-    private void ApplyConfigIfAvailable()
-    {
-        if (!_roadBuildConfigSystem.TryCreateSnapshot(config, out RoadBuildConfigSystem.Snapshot snapshot))
-            return;
-
-        ApplyConfigSnapshot(snapshot);
-    }
-
-    private void ApplyConfigSnapshot(RoadBuildConfigSystem.Snapshot snapshot)
-    {
-        if (snapshot.WorldCamera != null)
-            worldCamera = snapshot.WorldCamera;
-        straightPrefab = snapshot.StraightPrefab;
-        tIntersectionPrefab = snapshot.TIntersectionPrefab;
-        intersectionPrefab = snapshot.IntersectionPrefab;
-        endPrefab = snapshot.EndPrefab;
-        cornerPrefab = snapshot.CornerPrefab;
-        autobahnPrefab = snapshot.AutobahnPrefab;
-        autobahnConnectPrefab = snapshot.AutobahnConnectPrefab;
-        gridOrigin = snapshot.GridOrigin;
-        buildPlaneY = snapshot.BuildPlaneY;
-        roadGridSize = snapshot.RoadGridSize;
-        chunkSizeInCells = snapshot.ChunkSizeInCells;
-        previewAlpha = snapshot.PreviewAlpha;
-        soldierBasePrefab = snapshot.SoldierBasePrefab;
-        soldierBaseFootprintCells = snapshot.SoldierBaseFootprintCells;
-        placementOutlineHeight = snapshot.PlacementOutlineHeight;
-        placementOutlineWidth = snapshot.PlacementOutlineWidth;
-        placementValidColor = snapshot.PlacementValidColor;
-        placementInvalidColor = snapshot.PlacementInvalidColor;
+        _roadBuildDependencySystem.BindDependencies(
+            _dependencyState,
+            buildingPlacementInteractionSystem,
+            buildingPlacementInteractionContext,
+            mainMenuPlayUi,
+            runtimeGridBlockers,
+            _roadMinimapEventSystem);
     }
 
     public void Dispose()
@@ -534,8 +425,7 @@ internal sealed class RoadBuildRuntimeStateSystem
         ExitBuildMode();
         _roadBuildSessionSystem.ResetSkipBuildClickFrames(_roadBuildSessionState);
 
-        _roadRuntimeRootSystem.DisposeRoots(_runtimeRoots);
-        _runtimeRoots = default;
+        _roadBuildStartupSystem.DisposeRuntimeRoots(_startupState, _roadRuntimeRootSystem);
 
         if (_placementOutline != null)
         {
@@ -593,19 +483,6 @@ internal sealed class RoadBuildRuntimeStateSystem
         _roadDeletePromptSystem.OnGui(CreateRoadDeletePromptContext());
     }
 
-    public static void SetBuildMode(bool enabled)
-    {
-        var commandSystem = new RoadBuildCommandSystem();
-        var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
-        commandSystem.SetBuildMode(
-            new RoadBuildCommandSystem.Context(
-                runtimeGameplayStateSystem,
-                new RoadBuildSessionSystem(),
-                default,
-                null),
-            enabled);
-    }
-
     public void ActivateRoadBuildMode()
     {
         _roadBuildCommandSystem.ActivateRoadBuildMode(CreateRoadBuildCommandContext());
@@ -623,32 +500,32 @@ internal sealed class RoadBuildRuntimeStateSystem
 
     public void BeginSoldierBasePlacement()
     {
-        _buildingPlacementInteractionSystem?.BeginSoldierBasePlacement(_buildingPlacementInteractionContext);
+        BuildingPlacementInteraction?.BeginSoldierBasePlacement(BuildingPlacementInteractionContext);
     }
 
     public void ConfirmBuildingPlacement()
     {
-        _buildingPlacementInteractionSystem?.ConfirmBuildingPlacement(_buildingPlacementInteractionContext);
+        BuildingPlacementInteraction?.ConfirmBuildingPlacement(BuildingPlacementInteractionContext);
     }
 
     public void CancelBuildingPlacement()
     {
-        _buildingPlacementInteractionSystem?.CancelBuildingPlacement(_buildingPlacementInteractionContext);
+        BuildingPlacementInteraction?.CancelBuildingPlacement(BuildingPlacementInteractionContext);
     }
 
     public void CreateSoldierFromSelectedBuilding()
     {
-        _buildingPlacementInteractionSystem?.CreateUnitFromSelectedBuilding(_buildingPlacementInteractionContext);
+        BuildingPlacementInteraction?.CreateUnitFromSelectedBuilding(BuildingPlacementInteractionContext);
     }
 
     public void DeleteSelectedBuilding()
     {
-        _buildingPlacementInteractionSystem?.DeleteSelectedBuilding(_buildingPlacementInteractionContext);
+        BuildingPlacementInteraction?.DeleteSelectedBuilding(BuildingPlacementInteractionContext);
     }
 
     public void ClearSelectedBuilding()
     {
-        _buildingPlacementInteractionSystem?.ClearSelectedBuilding(_buildingPlacementInteractionContext, "RoadBuild.ClearSelectedBuilding");
+        BuildingPlacementInteraction?.ClearSelectedBuilding(BuildingPlacementInteractionContext, "RoadBuild.ClearSelectedBuilding");
     }
 
     public void ExitBuildMode()
@@ -777,12 +654,7 @@ internal sealed class RoadBuildRuntimeStateSystem
 
     private GameObject GetPrefab(RoadVisualType type)
     {
-        return _roadVisualVariantSystem.GetPrefab(CreateRoadPrefabSet(), type);
-    }
-
-    private void CacheVariants()
-    {
-        _roadVisualVariantSystem.CacheVariants(CreateRoadPrefabSet());
+        return _roadBuildVisualContextSystem.GetPrefab(CreateRoadBuildVisualContext(), type);
     }
 
     private bool TryGetVariant(RoadVisualType type, TileConnectionMask mask, out VariantData variant)
@@ -897,7 +769,7 @@ internal sealed class RoadBuildRuntimeStateSystem
     private void CreatePlacementOutline()
     {
         _placementOutline = new GameObject("PlacementOutline");
-        _placementOutline.transform.SetParent(_runtimeRoot, false);
+        _placementOutline.transform.SetParent(RuntimeRoot, false);
         _placementOutlineEdges = new Transform[4];
         _placementOutlineRenderers = new MeshRenderer[4];
 
@@ -983,7 +855,7 @@ internal sealed class RoadBuildRuntimeStateSystem
         int buildingId = _buildingRoadLegacyStorageSystem.AllocateBuildingId();
         previewInstance.name = $"{placement.Definition.DisplayName}_{buildingId}";
 
-        _runtimeGridBlockers?.RemoveBlockersOverlappingFootprint(placement.OriginCell, placement.Definition.FootprintCells);
+        RuntimeGridBlockers?.RemoveBlockersOverlappingFootprint(placement.OriginCell, placement.Definition.FootprintCells);
         BuildingRoadLegacyEcsSystem.Context legacyEcsContext = CreateBuildingRoadLegacyEcsContext();
         Entity blockerEntity = _buildingRoadLegacyEcsSystem.CreateBlockerEntity(legacyEcsContext, placement.OriginCell, placement.Definition.FootprintCells);
         Entity combatEntity = _buildingRoadLegacyEcsSystem.CreateBuildingCombatEntity(legacyEcsContext, placement.OriginCell, placement.Definition);
@@ -1069,7 +941,7 @@ internal sealed class RoadBuildRuntimeStateSystem
                     return false;
                 if (blockerData.Blocked.IsCreated &&
                     blockerData.Blocked.IsSet(index) &&
-                    (_runtimeGridBlockers == null || !_runtimeGridBlockers.IsRuntimeBlockerCell(x, y, grid.Width, grid.Height)))
+                    (RuntimeGridBlockers == null || !RuntimeGridBlockers.IsRuntimeBlockerCell(x, y, grid.Width, grid.Height)))
                     return false;
             }
         }
@@ -1341,7 +1213,7 @@ internal sealed class RoadBuildRuntimeStateSystem
     {
         _roadGridProjectionSystem.RemoveRuntimeBlockersUnderRoads(
             CreateRoadGridProjectionContext(),
-            _runtimeGridBlockers);
+            RuntimeGridBlockers);
     }
 
     private void ClearRoadDataInEcs()

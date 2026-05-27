@@ -36,6 +36,14 @@ public sealed class MissionStartupSystem
         Chapter01M01PlayableRuntime.TryInitializeActiveMission(world, out _);
     }
 
+    public void ApplySkirmishSceneDefaults(
+        DayNightSystem dayNight,
+        IReadOnlyList<GameObject> legacyVisualRootsDisabledForM01)
+    {
+        ApplyM01ProductionSceneVisibility(legacyVisualRootsDisabledForM01, false);
+        ApplyFixedTacticalMissionGuardrails(dayNight, false);
+    }
+
     public bool FocusInitialCamera(
         World world,
         SelectionUiCameraSystem selectionUiCameraSystem,

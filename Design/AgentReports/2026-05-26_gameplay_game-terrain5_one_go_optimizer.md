@@ -18,16 +18,16 @@ Optimization rules:
 - Store generated chunk meshes in `Assets/Game/GeneratedTerrainOptimized/Game_Terrain5`.
 
 Results:
-- Source renderers: `37786`
-- Source material slots: `37786`
+- Source renderers: `28901`
+- Source material slots: `28901`
 - Source unique meshes: `27`
 - Optimized renderers: `317`
 - Optimized material slots: `317`
 - Combined chunk/material buckets: `317`
-- Optimized mesh vertices: `19918247`
-- Optimized mesh triangles: `14514340`
-- Max vertices in one optimized chunk renderer: `416118`
-- Max triangles in one optimized chunk renderer: `167601`
+- Optimized mesh vertices: `13057533`
+- Optimized mesh triangles: `11842730`
+- Max vertices in one optimized chunk renderer: `163652`
+- Max triangles in one optimized chunk renderer: `91841`
 
 Run commands:
 - Optimize existing `Game_Terrain4`: `Unity -batchmode -quit -projectPath <project> -executeMethod WarlineCaptureGameTerrain5OneGoOptimizer.BuildOptimizedShippingTerrain`

@@ -126,8 +126,7 @@ public sealed class QuickCustomScreenController : WarlineCaptureScreenController
     public void LaunchMission()
     {
         ApplyCurrentConfigToRuntime();
-        if (!WarlineCaptureMissionSession.HasActiveMission)
-            WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.QuickCustomSetup);
+        WarlineCaptureMissionSession.Clear();
         WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
     }
 

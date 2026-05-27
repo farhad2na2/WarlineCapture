@@ -13,7 +13,7 @@
       "activeSelf": true,
       "activeInHierarchy": true,
       "childIndex": 1,
-      "childCount": 716,
+      "childCount": 55,
       "localPosition": [0, 0, 0],
       "localRotationEuler": [0, 0, 0],
       "localScale": [1, 1, 1]
@@ -26,7 +26,7 @@
       "activeSelf": true,
       "activeInHierarchy": true,
       "childIndex": 2,
-      "childCount": 972,
+      "childCount": 1178,
       "localPosition": [0, 0, 0],
       "localRotationEuler": [0, 0, 0],
       "localScale": [1, 1, 1]
@@ -39,7 +39,7 @@
       "activeSelf": true,
       "activeInHierarchy": true,
       "childIndex": 3,
-      "childCount": 4044,
+      "childCount": 1609,
       "localPosition": [0, 0, 0],
       "localRotationEuler": [0, 0, 0],
       "localScale": [1, 1, 1]
@@ -52,7 +52,7 @@
       "activeSelf": true,
       "activeInHierarchy": true,
       "childIndex": 4,
-      "childCount": 1471,
+      "childCount": 1048,
       "localPosition": [0, 0, 0],
       "localRotationEuler": [0, 0, 0],
       "localScale": [1, 1, 1]
@@ -65,7 +65,7 @@
       "activeSelf": true,
       "activeInHierarchy": true,
       "childIndex": 5,
-      "childCount": 7094,
+      "childCount": 1730,
       "localPosition": [0, 0, 0],
       "localRotationEuler": [0, 0, 0],
       "localScale": [1, 1, 1]
@@ -78,7 +78,7 @@
       "activeSelf": true,
       "activeInHierarchy": true,
       "childIndex": 6,
-      "childCount": 999,
+      "childCount": 807,
       "localPosition": [0, 0, 0],
       "localRotationEuler": [0, 0, 0],
       "localScale": [1, 1, 1]

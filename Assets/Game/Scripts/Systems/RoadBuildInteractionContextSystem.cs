@@ -1,0 +1,150 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
+internal sealed class RoadBuildInteractionContextSystem
+{
+    public readonly struct Context
+    {
+        public readonly RuntimeGameplayStateSystem RuntimeGameplayStateSystem;
+        public readonly RoadBuildSessionSystem SessionSystem;
+        public readonly RoadBuildSessionSystem.State SessionState;
+        public readonly RoadBuildInputSystem InputSystem;
+        public readonly RoadBuildInputSystem.State InputState;
+        public readonly RoadBuildCommandSystem CommandSystem;
+        public readonly RoadPathPlanningSystem PathPlanningSystem;
+        public readonly RoadNetworkSystem NetworkSystem;
+        public readonly Func<RoadNetworkSystem.Snapshot> CaptureRoadBuildSessionSnapshot;
+        public readonly Action<RoadNetworkSystem.Snapshot> RestoreRoadBuildSession;
+        public readonly Action RemoveRuntimeBlockersUnderRoads;
+        public readonly Action NotifyStaticMinimapChanged;
+        public readonly Action ApplyBuildCommandMode;
+        public readonly Action ClearCommandMode;
+        public readonly Action ClearSelectedBuilding;
+        public readonly Action CancelBuildingPlacement;
+        public readonly Action CancelPendingBuild;
+        public readonly Action HidePlacementOutline;
+        public readonly Action UpdatePreview;
+        public readonly RoadBuildInputSystem.TryGetHoveredCellAction TryGetHoveredCell;
+        public readonly Action ClearPreview;
+        public readonly Action<Vector2> UpdateBuildingPlacement;
+        public readonly Action<List<Vector2Int>> CreateStroke;
+        public readonly Func<bool> HasActiveBuildingPlacement;
+        public readonly Action<bool> SetIsDraggingBuildingPlacement;
+        public readonly Action ClearRoadBuildDragState;
+        public readonly Action<int> DeleteStroke;
+
+        public Context(
+            RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+            RoadBuildSessionSystem sessionSystem,
+            RoadBuildSessionSystem.State sessionState,
+            RoadBuildInputSystem inputSystem,
+            RoadBuildInputSystem.State inputState,
+            RoadBuildCommandSystem commandSystem,
+            RoadPathPlanningSystem pathPlanningSystem,
+            RoadNetworkSystem networkSystem,
+            Func<RoadNetworkSystem.Snapshot> captureRoadBuildSessionSnapshot,
+            Action<RoadNetworkSystem.Snapshot> restoreRoadBuildSession,
+            Action removeRuntimeBlockersUnderRoads,
+            Action notifyStaticMinimapChanged,
+            Action applyBuildCommandMode,
+            Action clearCommandMode,
+            Action clearSelectedBuilding,
+            Action cancelBuildingPlacement,
+            Action cancelPendingBuild,
+            Action hidePlacementOutline,
+            Action updatePreview,
+            RoadBuildInputSystem.TryGetHoveredCellAction tryGetHoveredCell,
+            Action clearPreview,
+            Action<Vector2> updateBuildingPlacement,
+            Action<List<Vector2Int>> createStroke,
+            Func<bool> hasActiveBuildingPlacement,
+            Action<bool> setIsDraggingBuildingPlacement,
+            Action clearRoadBuildDragState,
+            Action<int> deleteStroke)
+        {
+            RuntimeGameplayStateSystem = runtimeGameplayStateSystem;
+            SessionSystem = sessionSystem;
+            SessionState = sessionState;
+            InputSystem = inputSystem;
+            InputState = inputState;
+            CommandSystem = commandSystem;
+            PathPlanningSystem = pathPlanningSystem;
+            NetworkSystem = networkSystem;
+            CaptureRoadBuildSessionSnapshot = captureRoadBuildSessionSnapshot;
+            RestoreRoadBuildSession = restoreRoadBuildSession;
+            RemoveRuntimeBlockersUnderRoads = removeRuntimeBlockersUnderRoads;
+            NotifyStaticMinimapChanged = notifyStaticMinimapChanged;
+            ApplyBuildCommandMode = applyBuildCommandMode;
+            ClearCommandMode = clearCommandMode;
+            ClearSelectedBuilding = clearSelectedBuilding;
+            CancelBuildingPlacement = cancelBuildingPlacement;
+            CancelPendingBuild = cancelPendingBuild;
+            HidePlacementOutline = hidePlacementOutline;
+            UpdatePreview = updatePreview;
+            TryGetHoveredCell = tryGetHoveredCell;
+            ClearPreview = clearPreview;
+            UpdateBuildingPlacement = updateBuildingPlacement;
+            CreateStroke = createStroke;
+            HasActiveBuildingPlacement = hasActiveBuildingPlacement;
+            SetIsDraggingBuildingPlacement = setIsDraggingBuildingPlacement;
+            ClearRoadBuildDragState = clearRoadBuildDragState;
+            DeleteStroke = deleteStroke;
+        }
+    }
+
+    public RoadBuildSessionSystem.Context CreateSessionContext(Context context)
+    {
+        return new RoadBuildSessionSystem.Context(
+            context.SessionState,
+            context.RuntimeGameplayStateSystem,
+            context.CaptureRoadBuildSessionSnapshot,
+            context.RestoreRoadBuildSession,
+            context.RemoveRuntimeBlockersUnderRoads,
+            context.NotifyStaticMinimapChanged,
+            context.ApplyBuildCommandMode,
+            context.ClearCommandMode,
+            context.ClearSelectedBuilding,
+            context.CancelBuildingPlacement,
+            context.CancelPendingBuild,
+            context.HidePlacementOutline,
+            context.UpdatePreview);
+    }
+
+    public RoadBuildInputSystem.Context CreateInputContext(Context context)
+    {
+        return new RoadBuildInputSystem.Context(
+            context.InputState,
+            context.RuntimeGameplayStateSystem,
+            context.SessionSystem,
+            context.SessionState,
+            context.PathPlanningSystem,
+            context.NetworkSystem,
+            context.TryGetHoveredCell,
+            context.ClearPreview,
+            context.UpdatePreview,
+            context.HidePlacementOutline,
+            context.UpdateBuildingPlacement,
+            context.CreateStroke,
+            context.HasActiveBuildingPlacement,
+            context.SetIsDraggingBuildingPlacement);
+    }
+
+    public RoadBuildCommandSystem.Context CreateCommandContext(Context context)
+    {
+        return new RoadBuildCommandSystem.Context(
+            context.RuntimeGameplayStateSystem,
+            context.SessionSystem,
+            CreateSessionContext(context),
+            context.ClearRoadBuildDragState);
+    }
+
+    public RoadDeletePromptSystem.Context CreateDeletePromptContext(Context context)
+    {
+        return new RoadDeletePromptSystem.Context(
+            context.RuntimeGameplayStateSystem,
+            context.SessionSystem,
+            context.SessionState,
+            context.DeleteStroke);
+    }
+}

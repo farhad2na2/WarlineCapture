@@ -772,6 +772,7 @@ namespace Game.Scripts.UI
 
             SuppressNextWorldClick();
             _gameStartPending = true;
+            WarlineCaptureMissionSession.Clear();
             if (buttonGame != null)
                 buttonGame.gameObject.SetActive(false);
             if (panelLoading != null)

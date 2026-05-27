@@ -8,56 +8,56 @@
   "cleanTopDownCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png",
   "cleanPlayableCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png",
   "referenceFidelitySummary": "Design/AgentReports/Data/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_reference_fidelity_summary.json",
-  "totalPlacedPrefabs": 15296,
+  "totalPlacedPrefabs": 6427,
   "passed": true,
   "checks": [
     {
       "id": "totalPlacedPrefabs.minimum",
       "passed": true,
-      "expected": 5681,
-      "actual": 15296,
+      "expected": 3984,
+      "actual": 6427,
       "details": "Scene placed-prefab total must be at least the deterministic spacing plan because fidelity clusters may expand accepted points."
     },
     {
       "id": "count.Mountains.minimum",
       "passed": true,
-      "expected": 358,
-      "actual": 716,
+      "expected": 55,
+      "actual": 55,
       "details": "Generated group count for Mountains must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Trees_Playable.minimum",
       "passed": true,
-      "expected": 972,
-      "actual": 972,
+      "expected": 1178,
+      "actual": 1178,
       "details": "Generated group count for Trees_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Trees_BlockerBelt.minimum",
       "passed": true,
-      "expected": 859,
-      "actual": 4044,
+      "expected": 484,
+      "actual": 1609,
       "details": "Generated group count for Trees_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Bushes_Playable.minimum",
       "passed": true,
-      "expected": 1471,
-      "actual": 1471,
+      "expected": 1048,
+      "actual": 1048,
       "details": "Generated group count for Bushes_Playable must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Bushes_BlockerBelt.minimum",
       "passed": true,
-      "expected": 1144,
-      "actual": 7094,
+      "expected": 524,
+      "actual": 1730,
       "details": "Generated group count for Bushes_BlockerBelt must be at least accepted spacing points after cluster expansion."
     },
     {
       "id": "count.Rocks.minimum",
       "passed": true,
-      "expected": 877,
-      "actual": 999,
+      "expected": 695,
+      "actual": 807,
       "details": "Generated group count for Rocks must be at least accepted spacing points after cluster expansion."
     },
     {
@@ -105,9 +105,16 @@
     {
       "id": "blockerBelt.mountainsNaturalTerrain",
       "passed": true,
-      "expected": 716,
-      "actual": 716,
+      "expected": 55,
+      "actual": 55,
       "details": "Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells."
+    },
+    {
+      "id": "fidelity.vegetationNotBuriedUnderMountains",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "Trees and bushes must keep a visible separation from mountain anchor prefabs."
     },
     {
       "id": "capture.topDownProof",
@@ -141,15 +148,29 @@
       "id": "fidelity.blockerVegetation",
       "passed": true,
       "expected": 900,
-      "actual": 11138,
+      "actual": 3339,
       "details": "Dense blocker-belt vegetation should be visibly present."
     },
     {
-      "id": "fidelity.mountainRidgeMass",
+      "id": "fidelity.mountainOpenLayoutMinimum",
       "passed": true,
-      "expected": 320,
-      "actual": 716,
-      "details": "Mountain pass should read as connected ridge mass, not sparse isolated points."
+      "expected": 50,
+      "actual": 55,
+      "details": "Mountain pass needs enough anchors to read as terrain framing."
+    },
+    {
+      "id": "fidelity.mountainOpenLayoutMaximum",
+      "passed": true,
+      "expected": 380,
+      "actual": 55,
+      "details": "Mountain pass must stay open and must not create connected walls across movement lanes."
+    },
+    {
+      "id": "fidelity.vegetationMountainOverlap",
+      "passed": true,
+      "expected": 0,
+      "actual": 0,
+      "details": "Vegetation must not be hidden underneath mountain prefabs."
     },
     {
       "id": "fidelity.reservePollution",

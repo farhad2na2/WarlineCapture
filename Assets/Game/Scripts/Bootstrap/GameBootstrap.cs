@@ -21,6 +21,7 @@ public sealed class GameBootstrap : MonoBehaviour
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private readonly GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem = new();
     private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
+    private readonly SkirmishRuntimeConfigBootstrapSystem _skirmishRuntimeConfigBootstrapSystem = new();
 
     [Header("Scene Refs")]
     [SerializeField] private MenuView menuView;
@@ -228,13 +229,26 @@ public sealed class GameBootstrap : MonoBehaviour
             World.DefaultGameObjectInjectionWorld,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
         _aiStartupSystem.LogConfigValidation(aiControllerConfigs);
-        LogRuntimeEcsBootstrapState("beforeMissionInit");
-        _missionStartupSystem.Initialize(
-            World.DefaultGameObjectInjectionWorld,
-            worldCamera,
-            DayNight,
-            legacyVisualRootsDisabledForM01);
-        LogRuntimeEcsBootstrapState("afterMissionInit");
+        if (WarlineCaptureMissionSession.HasActiveMission)
+        {
+            LogRuntimeEcsBootstrapState("beforeMissionInit");
+            _missionStartupSystem.Initialize(
+                World.DefaultGameObjectInjectionWorld,
+                worldCamera,
+                DayNight,
+                legacyVisualRootsDisabledForM01);
+            LogRuntimeEcsBootstrapState("afterMissionInit");
+        }
+        else
+        {
+            _missionStartupSystem.ApplySkirmishSceneDefaults(DayNight, legacyVisualRootsDisabledForM01);
+            _skirmishRuntimeConfigBootstrapSystem.EnsureRuntimeConfigs(
+                World.DefaultGameObjectInjectionWorld,
+                buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null,
+                buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
+            Debug.Log("[SkirmishStart] Mission startup skipped because no active mission session is set.");
+            LogRuntimeEcsBootstrapState("skirmishMissionSkipped");
+        }
         AIStartupSystem.Result aiStartupResult = _aiStartupSystem.Initialize(
             World.DefaultGameObjectInjectionWorld,
             aiControllerConfigs,
@@ -429,6 +443,7 @@ public sealed class GameBootstrap : MonoBehaviour
         using EntityQuery gridQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
         using EntityQuery initialSpawnQuery = em.CreateEntityQuery(ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
         using EntityQuery registryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryTag>());
+        using EntityQuery prefabCandidateQuery = em.CreateEntityQuery(ComponentType.ReadOnly<Prefab>());
         using EntityQuery unitQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
         using EntityQuery modelQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitModelInstanceReference>());
         using EntityQuery sourceKeyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
@@ -437,11 +452,16 @@ public sealed class GameBootstrap : MonoBehaviour
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
             ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
             ComponentType.Exclude<UnitModelInstanceReference>());
+        string activeMissionId = WarlineCaptureMissionSession.ActiveMissionId;
+        int hasActiveMission = WarlineCaptureMissionSession.HasActiveMission ? 1 : 0;
+        int isFirstContactMission = activeMissionId == ChapterOneMissionCatalog.FirstContactMissionId ? 1 : 0;
 
         Debug.Log(
             $"[AndroidVisualDiag] phase={phase} " +
+            $"activeMission={hasActiveMission} mission={activeMissionId} isM01={isFirstContactMission} " +
             $"gridConfigs={gridQuery.CalculateEntityCount()} initialSpawnConfigs={initialSpawnQuery.CalculateEntityCount()} " +
-            $"unitRegistries={registryQuery.CalculateEntityCount()} units={unitQuery.CalculateEntityCount()} " +
+            $"unitRegistries={registryQuery.CalculateEntityCount()} prefabCandidates={prefabCandidateQuery.CalculateEntityCount()} " +
+            $"units={unitQuery.CalculateEntityCount()} " +
             $"sourceKeys={sourceKeyQuery.CalculateEntityCount()} models={modelQuery.CalculateEntityCount()} " +
             $"missionFallbackVisuals={missionFallbackVisualQuery.CalculateEntityCount()}");
     }

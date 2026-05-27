@@ -20,10 +20,10 @@
     "materialSlots": 317,
     "uniqueMeshes": 317,
     "uniqueMaterials": 3,
-    "vertices": 19918247,
-    "triangles": 14514340,
-    "maxVerticesPerRenderer": 416118,
-    "maxTrianglesPerRenderer": 167601
+    "vertices": 13057533,
+    "triangles": 11842730,
+    "maxVerticesPerRenderer": 163652,
+    "maxTrianglesPerRenderer": 91841
   },
   "terrain7": {
     "renderers": 317,
@@ -31,16 +31,16 @@
     "materialSlots": 317,
     "uniqueMeshes": 317,
     "uniqueMaterials": 3,
-    "vertices": 19918247,
-    "triangles": 14514340,
-    "maxVerticesPerRenderer": 416118,
-    "maxTrianglesPerRenderer": 167601
+    "vertices": 13057533,
+    "triangles": 11842730,
+    "maxVerticesPerRenderer": 163652,
+    "maxTrianglesPerRenderer": 91841
   },
   "meshAssets": {
     "meshAssets": 317,
     "nonReadableMeshes": 0,
     "readableMeshesRetained": 317,
-    "meshAssetDiskBytes": 2261617631
+    "meshAssetDiskBytes": 1538870270
   },
   "removedLodSwitchers": 0,
   "removedColliders": 0,

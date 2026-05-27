@@ -2,17 +2,17 @@
   "auditId": "GameTerrain4_PlayableLandFootprintAudit",
   "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
   "mapTarget": { "id": "MapTarget2024", "description": "Full 2024x2024 gameplay map target rect.", "rendererCount": 0, "xMin": -1011.5, "xMax": 1011.5, "zMin": -1011.5, "zMax": 1011.5, "width": 2023, "depth": 2023 },
-  "foundationOverall": { "id": "FoundationOverall", "description": "All renderers under the preserved island foundation.", "rendererCount": 22490, "xMin": -1533.103, "xMax": 1549.095, "zMin": -1549.377, "zMax": 1425.792, "width": 3082.198, "depth": 2975.169 },
+  "foundationOverall": { "id": "FoundationOverall", "description": "All renderers under the preserved island foundation.", "rendererCount": 22474, "xMin": -1533.103, "xMax": 1549.095, "zMin": -1549.377, "zMax": 1425.792, "width": 3082.198, "depth": 2975.169 },
   "foundationVsMapShortfall": { "west": 0, "east": 0, "south": 0, "north": 0 },
   "foundationCategories": [
-    { "id": "GreenPlayableGround", "description": "Grass/dirt foundation prefabs that should carry the 2024x2024 gameplay map after the rebuild.", "rendererCount": 17969, "xMin": -1441.291, "xMax": 1489.521, "zMin": -1475.949, "zMax": 1355.464, "width": 2930.813, "depth": 2831.412 },
+    { "id": "GreenPlayableGround", "description": "Grass/dirt foundation prefabs that should carry the 2024x2024 gameplay map after the rebuild.", "rendererCount": 17953, "xMin": -1441.291, "xMax": 1489.521, "zMin": -1475.949, "zMax": 1355.464, "width": 2930.813, "depth": 2831.412 },
     { "id": "InnerBeachBlend", "description": "Beach blend/land-edge prefabs currently mixed into the island interior.", "rendererCount": 3021, "xMin": -1452.585, "xMax": 1464.227, "zMin": -1496.299, "zMax": 1379.625, "width": 2916.812, "depth": 2875.924 },
     { "id": "OuterBeachCoast", "description": "Outer beach/coast prefabs that should remain outside the playable map.", "rendererCount": 1500, "xMin": -1533.103, "xMax": 1549.094, "zMin": -1549.377, "zMax": 1425.793, "width": 3082.197, "depth": 2975.17 }
   ],
   "beachPlacementVsMap": { "totalBeachPrefabs": 4521, "centersInsideMap": 0, "passed": true },
-  "generatedOverall": { "id": "GeneratedDressingOverall", "description": "All generated mountain/tree/bush/rock dressing renderer bounds.", "rendererCount": 1715, "xMin": -1052.353, "xMax": 1062.389, "zMin": -1072.811, "zMax": 1076.678, "width": 2114.741, "depth": 2149.489 },
+  "generatedOverall": { "id": "GeneratedDressingOverall", "description": "All generated mountain/tree/bush/rock dressing renderer bounds.", "rendererCount": 862, "xMin": -984.918, "xMax": 991.11, "zMin": -1007.716, "zMax": 1003.584, "width": 1976.028, "depth": 2011.301 },
   "generatedCategories": [
-    { "id": "Generated_Mountains", "description": "Generated dressing group bounds.", "rendererCount": 716, "xMin": -1052.353, "xMax": 1062.389, "zMin": -1072.811, "zMax": 1076.678, "width": 2114.741, "depth": 2149.489 },
-    { "id": "Generated_Rocks", "description": "Generated dressing group bounds.", "rendererCount": 999, "xMin": -997.129, "xMax": 988.987, "zMin": -996.705, "zMax": 1002.136, "width": 1986.116, "depth": 1998.841 }
+    { "id": "Generated_Mountains", "description": "Generated dressing group bounds.", "rendererCount": 55, "xMin": -974.156, "xMax": 991.11, "zMin": -1007.716, "zMax": 1003.584, "width": 1965.266, "depth": 2011.301 },
+    { "id": "Generated_Rocks", "description": "Generated dressing group bounds.", "rendererCount": 807, "xMin": -984.918, "xMax": 983.437, "zMin": -993.5, "zMax": 994.646, "width": 1968.355, "depth": 1988.146 }
   ]
 }

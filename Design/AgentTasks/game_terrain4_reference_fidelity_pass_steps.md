@@ -2,7 +2,7 @@
 
 Date: 2026-05-26
 
-Status: Complete.
+Status: Complete after 2026-05-27 visual-rejection correction.
 
 Goal: adjust the `Game_Terrain4` generation scripts so the generated 3D map reads like the `SyntyHighlands_01/base_visual.png` reference, while still using the existing Synty/POLYGON prefabs and keeping gameplay truth in grid, blocker, and height data.
 
@@ -118,15 +118,29 @@ The gameplay grid remains authoritative for pathing. Visual objects can exist on
 
 - Unity validation command: `WarlineCaptureGameTerrain5OneGoOptimizer.FullRegenerateAndOptimize`
 - Validation workspace: `/Users/farhad/Projects/WarlineCapture-CodexUnity2`
-- Final log: `/private/tmp/warlinecapture-codexunity2-reference-fidelity-one-go-r3.log`
+- Final log: `/private/tmp/warlinecapture-codexunity2-reference-fidelity-revision-one-go-r2.log`
 - `Game_Terrain4` mask dressing validation: passed.
 - `Game_Terrain4` reference fidelity summary: passed.
-- `Game_Terrain4` generated dressing: 15,296 prefabs.
-- Mountains: 716.
-- Playable trees / blocker-belt trees: 972 / 4,044.
-- Playable bushes / blocker-belt bushes: 1,471 / 7,094.
-- Rocks: 999.
+- `Game_Terrain4` generated dressing: 6,427 prefabs.
+- Mountains: 55 open-layout anchors. Mountain clustering was removed because the previous 716-mountain pass connected too many blockers and visually closed movement lanes.
+- Playable trees / blocker-belt trees: 1,178 / 1,609.
+- Playable bushes / blocker-belt bushes: 1,048 / 1,730.
+- Rocks: 807.
+- Vegetation under mountain anchors: 0.
 - Reserve pollution: 0.
 - Clean captures:
   - `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_topdown_scene.png`
   - `Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png`
+
+## 2026-05-27 Visual-Rejection Correction
+
+The first completed pass still failed the intended art read: trees were not visible enough, dirt road/path corridors did not read clearly, mountains connected into movement-blocking chains, and some vegetation was hidden under mountain prefabs.
+
+Correction applied:
+
+- Mountain candidates now require true high/rock terrain: high height mask, dense rock peak, or hard raised rocky terrain. Hard blocker value alone is no longer enough.
+- Mountain spacing is widened to 118 cells and cluster count is forced to one prefab per anchor.
+- Trees and bushes receive a 56-cell mountain keep-out mask so they cannot be generated under large mountain prefabs.
+- Visible tree spacing is tightened for playable groves and forest belts, while blocker-belt clusters are reduced so forest reads clearly without becoming hidden clutter.
+- Ground material classification treats warm, low-height, low-rock, low-tree corridors as dirt paths, improving the visual road/path read.
+- Reference fidelity validation now fails if mountain count exceeds the open-layout maximum or if any vegetation is placed under mountain anchors.

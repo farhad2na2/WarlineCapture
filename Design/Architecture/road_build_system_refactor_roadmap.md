@@ -255,6 +255,7 @@ Goal: retire the broad managed `RoadBuildSystem` shell by moving road state, roa
     - Remove any allowlist entries that temporarily permit broad shell references.
     - Keep serialized `RoadBuildSystemConfig` name as documented data compatibility debt until a separate migration.
     - RoadBuildCompositionSystem exposes the temporary state holder as `RoadState`, not as a broad `RoadBuildSystem`-style facade field.
+    - RoadBuildRuntimeStateSystem follow-up roadmap removes public `RoadState` exposure from `RoadBuildCompositionSystem.Result`; composition may keep a private temporary bridge only until `RoadBuildRuntimeStateSystem` is deleted.
     - Architecture validation now rejects restoring `RoadBuildSystem.cs`, `RoadBuildSystem.cs.meta`, exact production `RoadBuildSystem` type references, or construction of `RoadBuildRuntimeStateSystem` outside the temporary composition boundary.
     - Expected output: architecture tests reject shell restoration.
 

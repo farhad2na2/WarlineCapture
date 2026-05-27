@@ -324,7 +324,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
     }
 
     [Test]
-    public void QuickCustomLaunchMission_StartsFirstContactProductionRoute()
+    public void QuickCustomLaunchMission_StartsSkirmishWithoutMissionSession()
     {
         GameObject prefab = LoadQuickCustomPrefab();
         GameObject legacyCanvas = new("UI_Canvas");
@@ -344,13 +344,9 @@ public sealed class WarlineCaptureUiQuickCustomTests
             controller.Bind(QuickGameConfig.Defaults);
             controller.LaunchMission();
 
-            WarlineCaptureRouter router = routerRoot.GetComponent<WarlineCaptureRouter>();
-            Assert.IsFalse(legacyCanvas.activeSelf);
-            Assert.IsTrue(routerRoot.activeSelf);
-            Assert.AreEqual(WarlineCaptureRoute.Match, router.ActiveRoute);
-            Assert.IsTrue(WarlineCaptureMissionSession.HasActiveMission);
-            Assert.AreEqual(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureMissionSession.ActiveMissionId);
-            Assert.AreEqual("iso.ch01.district_edge_01", WarlineCaptureMissionSession.ActiveIsoMapId);
+            Assert.IsTrue(legacyCanvas.activeSelf);
+            Assert.IsFalse(routerRoot.activeSelf);
+            Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission);
         }
         finally
         {
@@ -364,7 +360,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
     }
 
     [Test]
-    public void QuickCustomLaunchButtonClick_StartsFirstContactProductionRoute()
+    public void QuickCustomLaunchButtonClick_StartsSkirmishWithoutMissionSession()
     {
         GameObject prefab = LoadQuickCustomPrefab();
         GameObject legacyCanvas = new("UI_Canvas");
@@ -387,12 +383,9 @@ public sealed class WarlineCaptureUiQuickCustomTests
             Assert.NotNull(launchButton);
             launchButton.onClick.Invoke();
 
-            WarlineCaptureRouter router = routerRoot.GetComponent<WarlineCaptureRouter>();
-            Assert.IsFalse(legacyCanvas.activeSelf);
-            Assert.IsTrue(routerRoot.activeSelf);
-            Assert.AreEqual(WarlineCaptureRoute.Match, router.ActiveRoute);
-            Assert.IsTrue(WarlineCaptureMissionSession.HasActiveMission);
-            Assert.AreEqual(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureMissionSession.ActiveMissionId);
+            Assert.IsTrue(legacyCanvas.activeSelf);
+            Assert.IsFalse(routerRoot.activeSelf);
+            Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission);
         }
         finally
         {

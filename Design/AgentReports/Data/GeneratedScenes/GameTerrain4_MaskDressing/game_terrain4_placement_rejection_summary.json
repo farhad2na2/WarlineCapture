@@ -14,7 +14,7 @@
     "Allow mountain/blocker dressing only on natural blocker/high-terrain candidates outside reserve zones."
   ],
   "playableMapFootprint": { "xMin": 0, "zMin": 0, "width": 2024, "height": 2024, "xMaxExclusive": 2024, "zMaxExclusive": 2024 },
-  "validAnyPlacementCells": 2103428,
+  "validAnyPlacementCells": 1275780,
   "globalRejectionCounts": [
       {
         "reason": "hardBlocked",
@@ -160,14 +160,14 @@
     },
     {
       "kind": "Mountains",
-      "rule": "Height >= 208, blocker >= 160, or dense rock >= 176; rejected outside the 2024 playable map/reserves and must remain tied to natural blocker/high terrain.",
-      "rawCandidateCells": 1387335,
-      "validCells": 1193557,
-      "rejectedCells": 193778,
+      "rule": "Height >= 208, rock >= 224, or hard blocker with raised rocky terrain; rejected outside the 2024 playable map/reserves and kept sparse so movement lanes remain open.",
+      "rawCandidateCells": 202453,
+      "validCells": 168240,
+      "rejectedCells": 34213,
       "rejectionCounts": [
         {
           "reason": "reserveZone",
-          "count": 193778
+          "count": 34213
         }
       ]
     }

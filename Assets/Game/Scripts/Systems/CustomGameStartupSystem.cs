@@ -112,7 +112,7 @@ public sealed class CustomGameStartupSystem
         EntityManager em = world.EntityManager;
         Entity entity = GetOrCreateLegacyStartupEntity(em);
         RemoveDuplicateCustomInitialSpawnConfigs(em, entity);
-        Dictionary<string, Entity> convertedPrefabLookup = BuildConvertedPrefabLookup(em, unitPrefabRegistryConfig, entity);
+        Dictionary<string, Entity> convertedPrefabLookup = BuildConvertedPrefabLookup(em, initialUnitsConfig, unitPrefabRegistryConfig, entity);
 
         SetInitialUnitsConfig(em, entity, initialUnitsConfig);
         if (em.HasComponent<UnitPrefabRegistryTag>(entity))
@@ -145,6 +145,7 @@ public sealed class CustomGameStartupSystem
 
         FillLegacyUnitRegistry(em, unitPrefabRegistryConfig, convertedPrefabLookup, legacyRegistry, unitSources, visualEntries, out int missingVisualReferences);
         FillLegacyFactionBuffers(em, initialUnitsConfig, convertedPrefabLookup, factionSpawns, initialUnits, initialBuildings, sourceUnitSpawns);
+        LogMissingConvertedPrefabResolutionIfNeeded(em, initialUnits, sourceUnitSpawns, legacyRegistry);
 
         int factionCount = factionSpawns.Length;
         int initialUnitCount = sourceUnitSpawns.Length;
@@ -632,10 +633,12 @@ public sealed class CustomGameStartupSystem
 
     private static Dictionary<string, Entity> BuildConvertedPrefabLookup(
         EntityManager em,
+        InitialUnitsSpawnerAuthoringConfig initialUnitsConfig,
         UnitPrefabRegistryAuthoringConfig config,
         Entity startupEntity)
     {
         Dictionary<string, Entity> lookup = new();
+        AddExistingInitialSpawnPrefabsToLookup(em, initialUnitsConfig, startupEntity, lookup);
         if (config == null || config.UnitSpawnPrefabs == null || config.UnitSpawnPrefabs.Count == 0)
             return lookup;
 
@@ -664,6 +667,121 @@ public sealed class CustomGameStartupSystem
         }
 
         return lookup;
+    }
+
+    private static void AddExistingInitialSpawnPrefabsToLookup(
+        EntityManager em,
+        InitialUnitsSpawnerAuthoringConfig config,
+        Entity startupEntity,
+        Dictionary<string, Entity> lookup)
+    {
+        if (config == null ||
+            config.Factions == null ||
+            startupEntity == Entity.Null ||
+            !em.Exists(startupEntity) ||
+            !em.HasBuffer<InitialUnitsFactionUnitSpawnEntry>(startupEntity))
+        {
+            return;
+        }
+
+        DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> existingUnits =
+            em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(startupEntity);
+        int existingUnitIndex = 0;
+        for (int factionIndex = 0; factionIndex < config.Factions.Count; factionIndex++)
+        {
+            InitialUnitsSpawnerAuthoringConfig.FactionEntry faction = config.Factions[factionIndex];
+            if (faction == null)
+                continue;
+
+            GameObject firstUnitPrefab = null;
+            int configuredUnitCount = 0;
+            if (faction.Units != null)
+            {
+                for (int unitIndex = 0; unitIndex < faction.Units.Count; unitIndex++)
+                {
+                    InitialUnitsSpawnerAuthoringConfig.FactionUnitEntry unit = faction.Units[unitIndex];
+                    if (unit == null || unit.Prefab == null || unit.Count <= 0)
+                        continue;
+
+                    firstUnitPrefab ??= unit.Prefab;
+                    configuredUnitCount += math.max(0, unit.Count);
+                    AddExistingInitialSpawnPrefabToLookup(em, existingUnits, existingUnitIndex, unit.Prefab, lookup);
+                    existingUnitIndex++;
+                }
+            }
+
+            if (config.CreateFactionBases && firstUnitPrefab != null && configuredUnitCount < config.BaseMinimumUnitsPerFaction)
+            {
+                AddExistingInitialSpawnPrefabToLookup(em, existingUnits, existingUnitIndex, firstUnitPrefab, lookup);
+                existingUnitIndex++;
+            }
+        }
+    }
+
+    private static void AddExistingInitialSpawnPrefabToLookup(
+        EntityManager em,
+        DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> existingUnits,
+        int existingUnitIndex,
+        GameObject sourcePrefab,
+        Dictionary<string, Entity> lookup)
+    {
+        if (sourcePrefab == null ||
+            existingUnitIndex < 0 ||
+            existingUnitIndex >= existingUnits.Length)
+        {
+            return;
+        }
+
+        Entity prefabEntity = existingUnits[existingUnitIndex].Prefab;
+        string sourceKey = GetPrefabName(sourcePrefab);
+        if (string.IsNullOrWhiteSpace(sourceKey) ||
+            prefabEntity == Entity.Null ||
+            !em.Exists(prefabEntity))
+        {
+            return;
+        }
+
+        lookup[sourceKey] = prefabEntity;
+    }
+
+    private static void LogMissingConvertedPrefabResolutionIfNeeded(
+        EntityManager em,
+        DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> initialUnits,
+        DynamicBuffer<CustomGameFactionUnitSourceSpawnEntry> sourceUnitSpawns,
+        DynamicBuffer<UnitPrefabRegistryEntry> legacyRegistry)
+    {
+        if (initialUnits.Length == 0)
+            return;
+
+        int resolvedInitialPrefabs = 0;
+        for (int i = 0; i < initialUnits.Length; i++)
+        {
+            Entity prefab = initialUnits[i].Prefab;
+            if (prefab != Entity.Null && em.Exists(prefab))
+                resolvedInitialPrefabs++;
+        }
+
+        if (resolvedInitialPrefabs > 0)
+            return;
+
+        int resolvedRegistryPrefabs = 0;
+        for (int i = 0; i < legacyRegistry.Length; i++)
+        {
+            Entity prefab = legacyRegistry[i].Prefab;
+            if (prefab != Entity.Null && em.Exists(prefab))
+                resolvedRegistryPrefabs++;
+        }
+
+        using EntityQuery prefabQuery = em.CreateEntityQuery(ComponentType.ReadOnly<Prefab>());
+        using EntityQuery registryQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+            ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+        Debug.LogWarning(
+            $"[CustomGameStartup] no converted ECS unit prefabs resolved for legacy skirmish. " +
+            $"initialUnitEntries={initialUnits.Length} sourceUnitEntries={sourceUnitSpawns.Length} " +
+            $"resolvedInitialPrefabs={resolvedInitialPrefabs} resolvedRegistryPrefabs={resolvedRegistryPrefabs} " +
+            $"prefabCandidates={prefabQuery.CalculateEntityCount()} unitRegistrySingletons={registryQuery.CalculateEntityCount()}. " +
+            "Android player builds must switch to Android before BuildPipeline.BuildPlayer so GameSubScene EntityScene artifacts are baked for Android.");
     }
 
     private static bool TryResolveConvertedPrefabEntity(

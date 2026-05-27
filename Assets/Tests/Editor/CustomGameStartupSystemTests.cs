@@ -28,6 +28,7 @@ public sealed class CustomGameStartupSystemTests
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_UsesConvertedPrefabEntitiesWhenAvailable);
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_UsesExistingRegistryOrderWhenPrefabEntityNamesAreUnavailable);
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_ReusesBakedInitialSpawnConfigInsteadOfDuplicating);
+        RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_PreservesBakedInitialSpawnPrefabEntitiesWhenRegistryIsMissing);
         RunWithLifecycle(tests, tests.InitialUnitsSpawnSystem_SkipsSourceKeyUnitsWithoutConvertedPrefabs);
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFallbackOverRenderableSourceKeyUnits);
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFarImpostorOverVisibleRenderableUnits);
@@ -35,6 +36,7 @@ public sealed class CustomGameStartupSystemTests
         RunWithLifecycle(tests, tests.RuntimeGridBootstrapSystem_CreatesBuffersWithoutInvalidatingHandles);
         tests.GameBootstrapDelegatesNoMissionStartupToCustomGameStartupSystem();
         tests.GameScene_AutoloadsGameSubSceneUntilRuntimePrefabReplacementExists();
+        tests.BuildScriptSwitchesActiveBuildTargetBeforeAndroidBuild();
     }
 
     private static void RunWithLifecycle(CustomGameStartupSystemTests tests, System.Action action)
@@ -309,6 +311,66 @@ public sealed class CustomGameStartupSystemTests
     }
 
     [Test]
+    public void InitializeFromLegacyConfigs_PreservesBakedInitialSpawnPrefabEntitiesWhenRegistryIsMissing()
+    {
+        GameObject rifleman = new("Unit_Chr_Rifleman");
+        GameObject truck = new("Unit_Veh_Truck");
+        GameObject depot = new("Building_Command_Depot");
+        try
+        {
+            EntityManager em = _world.EntityManager;
+            Entity bakedInitialSpawnEntity = em.CreateEntity(typeof(InitialUnitsSpawnConfig));
+            Entity riflemanPrefab = em.CreateEntity(typeof(Prefab), typeof(UnitGrid));
+            Entity truckPrefab = em.CreateEntity(typeof(Prefab), typeof(UnitGrid));
+            em.AddBuffer<InitialUnitsFactionSpawnEntry>(bakedInitialSpawnEntity);
+            em.AddBuffer<InitialUnitsFactionUnitSpawnEntry>(bakedInitialSpawnEntity);
+            em.AddBuffer<InitialUnitsFactionBuildingSpawnEntry>(bakedInitialSpawnEntity);
+            DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> bakedUnits =
+                em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(bakedInitialSpawnEntity);
+            bakedUnits.Add(new InitialUnitsFactionUnitSpawnEntry
+            {
+                FactionId = 1,
+                Prefab = riflemanPrefab,
+                Count = 2,
+                SpawnOffset = new int2(1, 2)
+            });
+            bakedUnits.Add(new InitialUnitsFactionUnitSpawnEntry
+            {
+                FactionId = 1,
+                Prefab = truckPrefab,
+                Count = 1,
+                SpawnOffset = new int2(3, 4)
+            });
+
+            InitialUnitsSpawnerAuthoringConfig spawnConfig = CreateLegacySpawnConfig(rifleman, truck, depot);
+            UnitPrefabRegistryAuthoringConfig registryConfig = ScriptableObject.CreateInstance<UnitPrefabRegistryAuthoringConfig>();
+            registryConfig.UnitSpawnPrefabs.Add(rifleman);
+            registryConfig.UnitSpawnPrefabs.Add(truck);
+
+            new CustomGameStartupSystem().InitializeFromLegacyConfigs(_world, spawnConfig, registryConfig);
+
+            using EntityQuery customQuery = em.CreateEntityQuery(typeof(CustomGameStartupStateComponent));
+            Entity startupEntity = customQuery.GetSingletonEntity();
+            Assert.AreEqual(bakedInitialSpawnEntity, startupEntity);
+
+            DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> initialUnits =
+                em.GetBuffer<InitialUnitsFactionUnitSpawnEntry>(startupEntity);
+            Assert.AreEqual(riflemanPrefab, initialUnits[0].Prefab);
+            Assert.AreEqual(truckPrefab, initialUnits[1].Prefab);
+
+            DynamicBuffer<UnitPrefabRegistryEntry> registry = em.GetBuffer<UnitPrefabRegistryEntry>(startupEntity);
+            Assert.AreEqual(riflemanPrefab, registry[0].Prefab);
+            Assert.AreEqual(truckPrefab, registry[1].Prefab);
+        }
+        finally
+        {
+            Object.DestroyImmediate(rifleman);
+            Object.DestroyImmediate(truck);
+            Object.DestroyImmediate(depot);
+        }
+    }
+
+    [Test]
     public void RuntimeGridBootstrapSystem_CreatesBuffersWithoutInvalidatingHandles()
     {
         RuntimeGridBootstrapSystem system = new();
@@ -453,6 +515,14 @@ public sealed class CustomGameStartupSystemTests
         StringAssert.Contains("m_Name: GameSubScene", block);
         StringAssert.Contains("m_IsActive: 1", block);
         StringAssert.Contains("AutoLoadScene: 1", subSceneComponentWindow);
+    }
+
+    [Test]
+    public void BuildScriptSwitchesActiveBuildTargetBeforeAndroidBuild()
+    {
+        string buildScript = File.ReadAllText("Assets/Game/Scripts/Editor/BuildScript.cs");
+        StringAssert.Contains("SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);", buildScript);
+        StringAssert.Contains("EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget)", buildScript);
     }
 
     private static CustomGameStartupConfig CreateStartupConfig()

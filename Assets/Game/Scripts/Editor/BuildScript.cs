@@ -9,6 +9,7 @@ public class BuildScript
 {
     public static void BuildWindows()
     {
+        SwitchBuildTarget(BuildTargetGroup.Standalone, BuildTarget.StandaloneWindows64);
         var path = "Build/Windows";
         CreateDirectory(path);
         var buildPlayerOptions = new BuildPlayerOptions
@@ -24,6 +25,7 @@ public class BuildScript
     
     public static void BuildWebGL()
     {
+        SwitchBuildTarget(BuildTargetGroup.WebGL, BuildTarget.WebGL);
         var path = "Build/WebGL";
         CreateDirectory(path);
         var buildPlayerOptions = new BuildPlayerOptions
@@ -39,6 +41,7 @@ public class BuildScript
     
     public static void BuildIOS()
     {
+        SwitchBuildTarget(BuildTargetGroup.iOS, BuildTarget.iOS);
         var path = "Build/iOS";
         CreateDirectory(path);
         var buildPlayerOptions = new BuildPlayerOptions
@@ -56,6 +59,7 @@ public class BuildScript
     {
         var arg = Environment.GetCommandLineArgs();
         var buildType = GetArgument(arg, "-buildType");
+        SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
         
         var outputDirectory = buildType switch
         {
@@ -136,6 +140,18 @@ public class BuildScript
         //PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
         EditorUserBuildSettings.buildAppBundle = buildAppBundle;
         UnityEngine.Debug.Log("[BuildScript] Android build configured: architectures=ARM64");
+    }
+
+    private static void SwitchBuildTarget(BuildTargetGroup buildTargetGroup, BuildTarget buildTarget)
+    {
+        if (EditorUserBuildSettings.activeBuildTarget != buildTarget &&
+            !EditorUserBuildSettings.SwitchActiveBuildTarget(buildTargetGroup, buildTarget))
+        {
+            throw new InvalidOperationException(
+                $"Failed to switch active build target. targetGroup={buildTargetGroup} target={buildTarget}");
+        }
+
+        UnityEngine.Debug.Log($"[BuildScript] Active build target: {EditorUserBuildSettings.activeBuildTarget}");
     }
 
     private static string GetArgument(string[] args, string argumentName)

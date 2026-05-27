@@ -1,0 +1,121 @@
+using System.Collections.Generic;
+using UnityEngine;
+using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
+using YardSide = RuntimeCityYardGateSystem.YardSide;
+
+internal sealed class RuntimeCityHouseYardWallSystem
+{
+    public void PlaceHouseYardWalls(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityWalkabilitySystem walkabilitySystem,
+        RuntimeCityYardWallPlanSystem yardWallPlanSystem,
+        RuntimeCityYardGateSystem yardGateSystem,
+        RuntimeCityYardWallVisualSystem yardWallVisualSystem,
+        RuntimeCityVisualSystem visualSystem,
+        List<GameObject> houseWallPrefabs,
+        GameObject houseWallGatePrefab,
+        GameObject houseWallPillarPrefab,
+        float houseWallChance,
+        int houseWallMinDistanceCells,
+        int houseWallMaxDistanceCells,
+        List<RectInt> houseFootprints,
+        Vector2Int centerRoadCell,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        GridConfig grid,
+        ref Unity.Mathematics.Random rng,
+        List<ReservedFootprint> reservedFootprints)
+    {
+        if (houseFootprints == null || houseFootprints.Count == 0)
+            return;
+        if (houseWallPrefabs == null || houseWallPrefabs.Count == 0 || houseWallGatePrefab == null)
+            return;
+
+        RuntimeCityYardWallPlanSystem.HousePlan plan = yardWallPlanSystem.CreateHousePlan(
+            houseFootprints,
+            houseWallChance,
+            prefabSelectionSystem,
+            ref rng);
+        int builtCount = 0;
+        for (int i = 0; i < plan.ShuffledHouses.Count && builtCount < plan.TargetCount; i++)
+        {
+            if (TryBuildHouseYardWall(
+                    context,
+                    placementSystem,
+                    prefabSelectionSystem,
+                    walkabilitySystem,
+                    yardWallPlanSystem,
+                    yardGateSystem,
+                    yardWallVisualSystem,
+                    visualSystem,
+                    houseWallPrefabs,
+                    houseWallGatePrefab,
+                    houseWallPillarPrefab,
+                    houseWallMinDistanceCells,
+                    houseWallMaxDistanceCells,
+                    plan.ShuffledHouses[i],
+                    centerRoadCell,
+                    roadCellSizeInGridCells,
+                    roadCells,
+                    grid,
+                    ref rng,
+                    reservedFootprints))
+            {
+                builtCount++;
+            }
+        }
+    }
+
+    private bool TryBuildHouseYardWall(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        RuntimeCityPrefabSelectionSystem prefabSelectionSystem,
+        RuntimeCityWalkabilitySystem walkabilitySystem,
+        RuntimeCityYardWallPlanSystem yardWallPlanSystem,
+        RuntimeCityYardGateSystem yardGateSystem,
+        RuntimeCityYardWallVisualSystem yardWallVisualSystem,
+        RuntimeCityVisualSystem visualSystem,
+        List<GameObject> houseWallPrefabs,
+        GameObject houseWallGatePrefab,
+        GameObject houseWallPillarPrefab,
+        int houseWallMinDistanceCells,
+        int houseWallMaxDistanceCells,
+        RectInt houseRect,
+        Vector2Int centerRoadCell,
+        int roadCellSizeInGridCells,
+        HashSet<Vector2Int> roadCells,
+        GridConfig grid,
+        ref Unity.Mathematics.Random rng,
+        List<ReservedFootprint> reservedFootprints)
+    {
+        if (!yardWallPlanSystem.TryFindYardRect(
+                walkabilitySystem,
+                prefabSelectionSystem,
+                houseRect,
+                houseWallMinDistanceCells,
+                houseWallMaxDistanceCells,
+                roadCellSizeInGridCells,
+                roadCells,
+                reservedFootprints,
+                grid,
+                ref rng,
+                out RectInt yardRect))
+        {
+            return false;
+        }
+
+        Vector2Int cityCenterGridCell = new(
+            centerRoadCell.x * roadCellSizeInGridCells + Mathf.FloorToInt(roadCellSizeInGridCells * 0.5f),
+            centerRoadCell.y * roadCellSizeInGridCells + Mathf.FloorToInt(roadCellSizeInGridCells * 0.5f));
+        YardSide gateSide = yardGateSystem.GetPreferredYardGateSide(houseRect, cityCenterGridCell);
+        GameObject wallPrefab = prefabSelectionSystem.GetRandomPrefab(houseWallPrefabs, ref rng);
+        if (wallPrefab == null)
+            return false;
+
+        yardWallVisualSystem.BuildYardBoundaryVisuals(context, placementSystem, prefabSelectionSystem, visualSystem, yardGateSystem, yardRect, gateSide, wallPrefab, houseWallGatePrefab, houseWallPillarPrefab, grid);
+        walkabilitySystem.ReserveFootprint(reservedFootprints, yardRect.position, yardRect.size, 0);
+        return true;
+    }
+}

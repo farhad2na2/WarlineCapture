@@ -7,8 +7,8 @@
   "cleanPlayableCapture": "Design/AgentReports/Captures/GeneratedScenes/GameTerrain4_MaskDressing/game_terrain4_clean_playable_scene.png",
   "cleanTopDownExists": true,
   "cleanPlayableExists": true,
-  "blockerVegetationCount": 14172,
-  "mountainCount": 55,
+  "blockerVegetationCount": 12553,
+  "mountainCount": 95,
   "vegetationMountainOverlapCount": 0,
   "reservePollutionCount": 0,
   "foundationMaterialRendererCounts": {

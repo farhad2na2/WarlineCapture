@@ -4,7 +4,7 @@
   "sourceIslandRoot": "Island",
   "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
   "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
-  "uniquePrefabAssets": 19,
+  "uniquePrefabAssets": 82,
   "groups": [
     {
       "group": "Mountains",
@@ -45,6 +45,76 @@
             "SM_Generic_Mountains_Soft_01 (2)",
             "SM_Generic_Mountains_Soft_01 (1)",
             "SM_Generic_Mountains_Soft_01"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "DirthMountain",
+      "sourceExampleInstances": 7,
+      "uniquePrefabAssets": 7,
+      "prefabs": [
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_04.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_04"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_05.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_05"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_06.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_06"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Mountain_07.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Mountain_07"
           ]
         }
       ]
@@ -131,10 +201,341 @@
       ]
     },
     {
-      "group": "Bushes",
-      "sourceExampleInstances": 41,
-      "uniquePrefabAssets": 4,
+      "group": "DirthTrees",
+      "sourceExampleInstances": 18,
+      "uniquePrefabAssets": 18,
       "prefabs": [
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Big_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Big_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Big_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Big_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Big_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Big_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Bush_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Bush_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Bush_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Bush_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Bush_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Bush_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Large_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Large_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Large_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Large_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Large_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Large_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Round_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Round_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Round_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Round_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Round_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Round_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Small_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Small_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Small_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Small_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Tree_Small_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Tree_Small_03"
+          ]
+        }
+      ]
+    },
+    {
+      "group": "Bushes",
+      "sourceExampleInstances": 59,
+      "uniquePrefabAssets": 22,
+      "prefabs": [
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Group_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Group_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Group_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Group_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Large_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Large_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Large_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Large_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Large_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Large_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Large_04.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Large_04"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Large_05.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Large_05"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Small_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Small_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Small_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Small_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Bush_Small_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Bush_Small_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Fern_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Fern_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Fern_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Fern_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Plant_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Plant_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Plant_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_Tall_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Plant_Tall_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Plant_Tall_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Plant_Tall_02"
+          ]
+        },
         {
           "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Generic/SM_Env_Bush_01.prefab",
           "sampleCount": 4,
@@ -197,9 +598,189 @@
     },
     {
       "group": "Rocks",
-      "sourceExampleInstances": 155,
-      "uniquePrefabAssets": 6,
+      "sourceExampleInstances": 175,
+      "uniquePrefabAssets": 26,
       "prefabs": [
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Cactus_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Cactus_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Cactus_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Cactus_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Cactus_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Cactus_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Pebbles_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Pebbles_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Pebbles_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Pebbles_04.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Pebbles_04"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_04.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_04"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_05.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_05"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_06.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_06"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_Archway_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_Archway_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_Flat_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_Flat_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Rock_Flat_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Rock_Flat_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Ruin_01.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Ruin_01"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Ruin_02.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Ruin_02"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Ruin_03.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Ruin_03"
+          ]
+        },
+        {
+          "prefabPath": "Assets/Game/Prefabs/Environment/Blockers/SM_Env_Ruin_04.prefab",
+          "sampleCount": 1,
+          "minLocalScale": [1, 1, 1],
+          "maxLocalScale": [1, 1, 1],
+          "sourceNames": [
+            "SM_Env_Ruin_04"
+          ]
+        },
         {
           "prefabPath": "Assets/Synty/PolygonBattleRoyale/Prefabs/Environments/SM_Env_Rock_01.prefab",
           "sampleCount": 20,

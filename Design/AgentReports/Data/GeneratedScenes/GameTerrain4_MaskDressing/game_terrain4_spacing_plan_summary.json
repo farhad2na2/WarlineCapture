@@ -4,7 +4,7 @@
   "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
   "seed": 913742,
   "method": "Deterministic stratified dart pass: choose one best mask-weighted candidate per tile, then enforce minimum distance against nearby accepted points.",
-  "totalAcceptedPoints": 5853,
+  "totalAcceptedPoints": 8242,
   "maxSamplePointsPerKind": 64,
   "kinds": [
     {
@@ -13,9 +13,9 @@
       "minDistanceCells": 118,
       "tileSizeCells": 118,
       "tilesVisited": 324,
-      "tileCandidateCount": 138,
+      "tileCandidateCount": 137,
       "acceptedCount": 55,
-      "rejectedBySpacing": 83,
+      "rejectedBySpacing": 82,
       "samplePoints": [
         {
           "gridX": 162,
@@ -60,10 +60,10 @@
           "hash": 595118757
         },
         {
-          "gridX": 1850,
-          "gridZ": 116,
-          "weight": 526,
-          "hash": 1208603769
+          "gridX": 1887,
+          "gridZ": 117,
+          "weight": 461,
+          "hash": 1743731602
         },
         {
           "gridX": 578,
@@ -181,9 +181,9 @@
         },
         {
           "gridX": 1576,
-          "gridZ": 789,
-          "weight": 455,
-          "hash": 2044137140
+          "gridZ": 790,
+          "weight": 444,
+          "hash": 1793659607
         },
         {
           "gridX": 117,
@@ -294,12 +294,6 @@
           "hash": 424537749
         },
         {
-          "gridX": 635,
-          "gridZ": 1765,
-          "weight": 463,
-          "hash": 471096195
-        },
-        {
           "gridX": 1153,
           "gridZ": 1692,
           "weight": 735,
@@ -318,6 +312,18 @@
           "hash": 697495517
         },
         {
+          "gridX": 588,
+          "gridZ": 1792,
+          "weight": 751,
+          "hash": 1384379436
+        },
+        {
+          "gridX": 718,
+          "gridZ": 1824,
+          "weight": 736,
+          "hash": 1960086327
+        },
+        {
           "gridX": 1424,
           "gridZ": 1887,
           "weight": 669,
@@ -328,12 +334,6 @@
           "gridZ": 1894,
           "weight": 453,
           "hash": 523619878
-        },
-        {
-          "gridX": 782,
-          "gridZ": 1908,
-          "weight": 576,
-          "hash": 1265454605
         },
         {
           "gridX": 1103,
@@ -350,44 +350,272 @@
       ]
     },
     {
-      "kind": "Trees_Playable",
-      "description": "Visible tree pass for walkable groves and readable movement lanes.",
-      "minDistanceCells": 22,
-      "tileSizeCells": 22,
-      "tilesVisited": 8464,
-      "tileCandidateCount": 3642,
-      "acceptedCount": 1657,
-      "rejectedBySpacing": 1985,
+      "kind": "Mountains_Dirt",
+      "description": "Sparse dirt-biome mountain anchors using DirthMountain examples.",
+      "minDistanceCells": 132,
+      "tileSizeCells": 132,
+      "tilesVisited": 256,
+      "tileCandidateCount": 76,
+      "acceptedCount": 40,
+      "rejectedBySpacing": 36,
       "samplePoints": [
         {
-          "gridX": 221,
-          "gridZ": 20,
-          "weight": 44,
-          "hash": 839227483
+          "gridX": 423,
+          "gridZ": 93,
+          "weight": 703,
+          "hash": 2023969964
         },
         {
-          "gridX": 262,
-          "gridZ": 16,
-          "weight": 41,
-          "hash": 205992329
+          "gridX": 1043,
+          "gridZ": 102,
+          "weight": 542,
+          "hash": 1681929607
         },
         {
-          "gridX": 326,
-          "gridZ": 5,
-          "weight": 52,
-          "hash": 93425739
+          "gridX": 1186,
+          "gridZ": 82,
+          "weight": 519,
+          "hash": 1875488692
         },
         {
-          "gridX": 370,
-          "gridZ": 10,
-          "weight": 35,
-          "hash": 1329284554
+          "gridX": 1520,
+          "gridZ": 130,
+          "weight": 530,
+          "hash": 1618993006
         },
         {
-          "gridX": 452,
-          "gridZ": 18,
-          "weight": 51,
-          "hash": 1504951281
+          "gridX": 1847,
+          "gridZ": 125,
+          "weight": 560,
+          "hash": 451820306
+        },
+        {
+          "gridX": 130,
+          "gridZ": 153,
+          "weight": 618,
+          "hash": 1088680571
+        },
+        {
+          "gridX": 655,
+          "gridZ": 208,
+          "weight": 558,
+          "hash": 1205668240
+        },
+        {
+          "gridX": 1292,
+          "gridZ": 170,
+          "weight": 706,
+          "hash": 1569165285
+        },
+        {
+          "gridX": 70,
+          "gridZ": 395,
+          "weight": 536,
+          "hash": 580656696
+        },
+        {
+          "gridX": 1054,
+          "gridZ": 385,
+          "weight": 602,
+          "hash": 1291806402
+        },
+        {
+          "gridX": 1372,
+          "gridZ": 286,
+          "weight": 642,
+          "hash": 209417827
+        },
+        {
+          "gridX": 728,
+          "gridZ": 409,
+          "weight": 520,
+          "hash": 579749741
+        },
+        {
+          "gridX": 1885,
+          "gridZ": 514,
+          "weight": 567,
+          "hash": 1742967805
+        },
+        {
+          "gridX": 579,
+          "gridZ": 585,
+          "weight": 441,
+          "hash": 1677257675
+        },
+        {
+          "gridX": 1283,
+          "gridZ": 562,
+          "weight": 554,
+          "hash": 886682646
+        },
+        {
+          "gridX": 1715,
+          "gridZ": 648,
+          "weight": 579,
+          "hash": 740534394
+        },
+        {
+          "gridX": 118,
+          "gridZ": 712,
+          "weight": 492,
+          "hash": 956794334
+        },
+        {
+          "gridX": 1576,
+          "gridZ": 789,
+          "weight": 455,
+          "hash": 1376843629
+        },
+        {
+          "gridX": 1843,
+          "gridZ": 684,
+          "weight": 673,
+          "hash": 59377901
+        },
+        {
+          "gridX": 129,
+          "gridZ": 855,
+          "weight": 531,
+          "hash": 269395869
+        },
+        {
+          "gridX": 318,
+          "gridZ": 825,
+          "weight": 523,
+          "hash": 1251730677
+        },
+        {
+          "gridX": 199,
+          "gridZ": 1004,
+          "weight": 647,
+          "hash": 387360581
+        },
+        {
+          "gridX": 1440,
+          "gridZ": 1006,
+          "weight": 527,
+          "hash": 1793325520
+        },
+        {
+          "gridX": 315,
+          "gridZ": 1158,
+          "weight": 702,
+          "hash": 972040775
+        },
+        {
+          "gridX": 1364,
+          "gridZ": 1179,
+          "weight": 551,
+          "hash": 1452176962
+        },
+        {
+          "gridX": 1767,
+          "gridZ": 1167,
+          "weight": 569,
+          "hash": 973713809
+        },
+        {
+          "gridX": 593,
+          "gridZ": 1308,
+          "weight": 534,
+          "hash": 722862604
+        },
+        {
+          "gridX": 167,
+          "gridZ": 1435,
+          "weight": 576,
+          "hash": 892161251
+        },
+        {
+          "gridX": 1271,
+          "gridZ": 1443,
+          "weight": 602,
+          "hash": 1368088472
+        },
+        {
+          "gridX": 1890,
+          "gridZ": 1424,
+          "weight": 577,
+          "hash": 1551699824
+        },
+        {
+          "gridX": 678,
+          "gridZ": 1568,
+          "weight": 604,
+          "hash": 1180762712
+        },
+        {
+          "gridX": 1054,
+          "gridZ": 1538,
+          "weight": 552,
+          "hash": 753793418
+        },
+        {
+          "gridX": 840,
+          "gridZ": 1623,
+          "weight": 569,
+          "hash": 1394930130
+        },
+        {
+          "gridX": 1181,
+          "gridZ": 1709,
+          "weight": 698,
+          "hash": 1693046020
+        },
+        {
+          "gridX": 126,
+          "gridZ": 1794,
+          "weight": 645,
+          "hash": 149871612
+        },
+        {
+          "gridX": 625,
+          "gridZ": 1790,
+          "weight": 671,
+          "hash": 1762854527
+        },
+        {
+          "gridX": 1320,
+          "gridZ": 1787,
+          "weight": 663,
+          "hash": 1139518285
+        },
+        {
+          "gridX": 1823,
+          "gridZ": 1784,
+          "weight": 560,
+          "hash": 707153793
+        },
+        {
+          "gridX": 807,
+          "gridZ": 1898,
+          "weight": 539,
+          "hash": 1775582624
+        },
+        {
+          "gridX": 1105,
+          "gridZ": 1933,
+          "weight": 608,
+          "hash": 1788842315
+        }
+      ]
+    },
+    {
+      "kind": "Trees_Playable",
+      "description": "Dense visible tree pass for green/mixed walkable groves and readable movement lanes.",
+      "minDistanceCells": 14,
+      "tileSizeCells": 14,
+      "tilesVisited": 21025,
+      "tileCandidateCount": 5709,
+      "acceptedCount": 2644,
+      "rejectedBySpacing": 3065,
+      "samplePoints": [
+        {
+          "gridX": 327,
+          "gridZ": 13,
+          "weight": 33,
+          "hash": 1683572174
         },
         {
           "gridX": 636,
@@ -396,112 +624,40 @@
           "hash": 458161933
         },
         {
-          "gridX": 872,
+          "gridX": 260,
+          "gridZ": 27,
+          "weight": 72,
+          "hash": 921910486
+        },
+        {
+          "gridX": 452,
           "gridZ": 18,
-          "weight": 44,
-          "hash": 546243942
+          "weight": 51,
+          "hash": 1504951281
+        },
+        {
+          "gridX": 865,
+          "gridZ": 27,
+          "weight": 32,
+          "hash": 89252603
+        },
+        {
+          "gridX": 896,
+          "gridZ": 25,
+          "weight": 33,
+          "hash": 27547260
         },
         {
           "gridX": 919,
-          "gridZ": 21,
-          "weight": 52,
-          "hash": 196063762
+          "gridZ": 22,
+          "weight": 40,
+          "hash": 54412889
         },
         {
-          "gridX": 1155,
-          "gridZ": 9,
-          "weight": 39,
-          "hash": 194411801
-        },
-        {
-          "gridX": 1192,
-          "gridZ": 16,
-          "weight": 37,
-          "hash": 17108880
-        },
-        {
-          "gridX": 1216,
-          "gridZ": 18,
-          "weight": 39,
-          "hash": 1896210590
-        },
-        {
-          "gridX": 1416,
-          "gridZ": 13,
-          "weight": 53,
-          "hash": 159303155
-        },
-        {
-          "gridX": 1451,
-          "gridZ": 18,
-          "weight": 34,
-          "hash": 411340833
-        },
-        {
-          "gridX": 1477,
-          "gridZ": 15,
-          "weight": 50,
-          "hash": 48861599
-        },
-        {
-          "gridX": 252,
-          "gridZ": 41,
-          "weight": 75,
-          "hash": 1394213653
-        },
-        {
-          "gridX": 299,
-          "gridZ": 39,
-          "weight": 86,
-          "hash": 472775453
-        },
-        {
-          "gridX": 347,
-          "gridZ": 33,
-          "weight": 76,
-          "hash": 1342584710
-        },
-        {
-          "gridX": 579,
-          "gridZ": 25,
-          "weight": 32,
-          "hash": 2129045242
-        },
-        {
-          "gridX": 856,
-          "gridZ": 37,
-          "weight": 74,
-          "hash": 619545398
-        },
-        {
-          "gridX": 932,
-          "gridZ": 39,
-          "weight": 70,
-          "hash": 1520064811
-        },
-        {
-          "gridX": 954,
-          "gridZ": 43,
-          "weight": 35,
-          "hash": 738623412
-        },
-        {
-          "gridX": 1099,
-          "gridZ": 43,
-          "weight": 45,
-          "hash": 1975236952
-        },
-        {
-          "gridX": 1161,
-          "gridZ": 43,
-          "weight": 63,
-          "hash": 1782488829
-        },
-        {
-          "gridX": 1333,
-          "gridZ": 26,
-          "weight": 46,
-          "hash": 141593294
+          "gridX": 1187,
+          "gridZ": 23,
+          "weight": 33,
+          "hash": 1732636455
         },
         {
           "gridX": 1390,
@@ -510,40 +666,130 @@
           "hash": 142114794
         },
         {
-          "gridX": 1427,
-          "gridZ": 43,
-          "weight": 86,
-          "hash": 688445321
-        },
-        {
-          "gridX": 1464,
-          "gridZ": 43,
-          "weight": 65,
-          "hash": 681671359
-        },
-        {
-          "gridX": 1500,
-          "gridZ": 43,
-          "weight": 52,
-          "hash": 2076815308
-        },
-        {
-          "gridX": 1532,
-          "gridZ": 43,
+          "gridX": 1453,
+          "gridZ": 18,
           "weight": 32,
-          "hash": 616877333
+          "hash": 1813876121
+        },
+        {
+          "gridX": 1477,
+          "gridZ": 15,
+          "weight": 50,
+          "hash": 48861599
+        },
+        {
+          "gridX": 1613,
+          "gridZ": 23,
+          "weight": 32,
+          "hash": 915763022
+        },
+        {
+          "gridX": 1745,
+          "gridZ": 26,
+          "weight": 34,
+          "hash": 2096767696
+        },
+        {
+          "gridX": 236,
+          "gridZ": 33,
+          "weight": 75,
+          "hash": 735111543
+        },
+        {
+          "gridX": 251,
+          "gridZ": 40,
+          "weight": 69,
+          "hash": 1828910067
+        },
+        {
+          "gridX": 277,
+          "gridZ": 39,
+          "weight": 66,
+          "hash": 929898399
+        },
+        {
+          "gridX": 299,
+          "gridZ": 39,
+          "weight": 86,
+          "hash": 472775453
+        },
+        {
+          "gridX": 335,
+          "gridZ": 39,
+          "weight": 50,
+          "hash": 1806616360
+        },
+        {
+          "gridX": 350,
+          "gridZ": 31,
+          "weight": 72,
+          "hash": 213868350
+        },
+        {
+          "gridX": 932,
+          "gridZ": 39,
+          "weight": 70,
+          "hash": 1520064811
+        },
+        {
+          "gridX": 969,
+          "gridZ": 38,
+          "weight": 42,
+          "hash": 119789495
+        },
+        {
+          "gridX": 1107,
+          "gridZ": 39,
+          "weight": 32,
+          "hash": 1439477387
+        },
+        {
+          "gridX": 1158,
+          "gridZ": 33,
+          "weight": 60,
+          "hash": 1641786003
+        },
+        {
+          "gridX": 1421,
+          "gridZ": 39,
+          "weight": 80,
+          "hash": 964449772
+        },
+        {
+          "gridX": 1443,
+          "gridZ": 41,
+          "weight": 60,
+          "hash": 1326514067
+        },
+        {
+          "gridX": 1483,
+          "gridZ": 31,
+          "weight": 72,
+          "hash": 1554969337
+        },
+        {
+          "gridX": 1506,
+          "gridZ": 41,
+          "weight": 36,
+          "hash": 1126479862
+        },
+        {
+          "gridX": 1548,
+          "gridZ": 29,
+          "weight": 37,
+          "hash": 1581715643
         },
         {
           "gridX": 1571,
-          "gridZ": 37,
-          "weight": 56,
-          "hash": 1863814308
+          "gridZ": 36,
+          "weight": 53,
+          "hash": 1780320737
         },
         {
-          "gridX": 1599,
-          "gridZ": 42,
-          "weight": 93,
-          "hash": 1286418043
+          "gridX": 1592,
+          "gridZ": 38,
+          "weight": 37,
+          "hash": 1082887827
         },
         {
           "gridX": 1705,
@@ -552,10 +798,16 @@
           "hash": 72403904
         },
         {
-          "gridX": 1759,
-          "gridZ": 42,
-          "weight": 127,
-          "hash": 1031435102
+          "gridX": 1719,
+          "gridZ": 39,
+          "weight": 33,
+          "hash": 942182264
+        },
+        {
+          "gridX": 1760,
+          "gridZ": 41,
+          "weight": 71,
+          "hash": 1509085269
         },
         {
           "gridX": 1824,
@@ -570,46 +822,58 @@
           "hash": 1751722202
         },
         {
-          "gridX": 103,
-          "gridZ": 65,
-          "weight": 39,
-          "hash": 895627028
+          "gridX": 97,
+          "gridZ": 51,
+          "weight": 33,
+          "hash": 1040744641
         },
         {
           "gridX": 164,
-          "gridZ": 58,
-          "weight": 78,
-          "hash": 1591630666
+          "gridZ": 55,
+          "weight": 41,
+          "hash": 673194135
         },
         {
-          "gridX": 212,
-          "gridZ": 63,
-          "weight": 103,
-          "hash": 550962464
+          "gridX": 187,
+          "gridZ": 55,
+          "weight": 32,
+          "hash": 2128463040
         },
         {
-          "gridX": 236,
-          "gridZ": 63,
-          "weight": 116,
-          "hash": 568124133
+          "gridX": 205,
+          "gridZ": 54,
+          "weight": 37,
+          "hash": 1560678713
         },
         {
-          "gridX": 263,
-          "gridZ": 63,
-          "weight": 133,
-          "hash": 1744779452
+          "gridX": 220,
+          "gridZ": 55,
+          "weight": 47,
+          "hash": 1129502341
         },
         {
-          "gridX": 328,
-          "gridZ": 53,
-          "weight": 54,
-          "hash": 1040977574
-        },
-        {
-          "gridX": 438,
+          "gridX": 233,
           "gridZ": 47,
-          "weight": 35,
-          "hash": 174108935
+          "weight": 57,
+          "hash": 1711800333
+        },
+        {
+          "gridX": 273,
+          "gridZ": 55,
+          "weight": 79,
+          "hash": 1640883948
+        },
+        {
+          "gridX": 292,
+          "gridZ": 52,
+          "weight": 151,
+          "hash": 940387526
+        },
+        {
+          "gridX": 347,
+          "gridZ": 47,
+          "weight": 140,
+          "hash": 1783494192
         },
         {
           "gridX": 654,
@@ -618,94 +882,100 @@
           "hash": 623891043
         },
         {
-          "gridX": 686,
-          "gridZ": 57,
-          "weight": 32,
-          "hash": 1170275357
+          "gridX": 675,
+          "gridZ": 55,
+          "weight": 58,
+          "hash": 899611305
         },
         {
-          "gridX": 715,
-          "gridZ": 65,
-          "weight": 46,
-          "hash": 2127128455
+          "gridX": 717,
+          "gridZ": 49,
+          "weight": 34,
+          "hash": 21056330
         },
         {
-          "gridX": 733,
-          "gridZ": 50,
-          "weight": 36,
-          "hash": 1692517580
+          "gridX": 873,
+          "gridZ": 55,
+          "weight": 67,
+          "hash": 2009193055
         },
         {
-          "gridX": 856,
-          "gridZ": 59,
-          "weight": 33,
-          "hash": 1551240396
+          "gridX": 902,
+          "gridZ": 52,
+          "weight": 43,
+          "hash": 1748404899
         },
         {
-          "gridX": 883,
-          "gridZ": 46,
-          "weight": 78,
-          "hash": 592439732
+          "gridX": 922,
+          "gridZ": 49,
+          "weight": 47,
+          "hash": 77542161
         },
         {
-          "gridX": 904,
-          "gridZ": 63,
-          "weight": 63,
-          "hash": 619008863
+          "gridX": 948,
+          "gridZ": 51,
+          "weight": 58,
+          "hash": 647366234
         },
         {
-          "gridX": 930,
-          "gridZ": 65,
-          "weight": 95,
-          "hash": 833078961
+          "gridX": 1091,
+          "gridZ": 49,
+          "weight": 54,
+          "hash": 1952350672
         },
         {
-          "gridX": 1073,
-          "gridZ": 54,
-          "weight": 40,
-          "hash": 164584097
+          "gridX": 1108,
+          "gridZ": 53,
+          "weight": 81,
+          "hash": 144722315
         },
         {
-          "gridX": 1125,
-          "gridZ": 63,
-          "weight": 72,
-          "hash": 1439093443
-        },
-        {
-          "gridX": 1161,
-          "gridZ": 65,
-          "weight": 157,
-          "hash": 1724160390
+          "gridX": 1122,
+          "gridZ": 52,
+          "weight": 39,
+          "hash": 927003906
         },
         {
           "gridX": 1340,
-          "gridZ": 65,
-          "weight": 111,
-          "hash": 367823072
+          "gridZ": 55,
+          "weight": 34,
+          "hash": 488158806
         },
         {
-          "gridX": 1540,
-          "gridZ": 65,
-          "weight": 61,
-          "hash": 1182786671
+          "gridX": 1428,
+          "gridZ": 52,
+          "weight": 98,
+          "hash": 399516274
         },
         {
-          "gridX": 1574,
-          "gridZ": 60,
-          "weight": 73,
-          "hash": 1069447586
+          "gridX": 1448,
+          "gridZ": 55,
+          "weight": 121,
+          "hash": 1379160616
         },
         {
-          "gridX": 1648,
-          "gridZ": 65,
+          "gridX": 1483,
+          "gridZ": 51,
           "weight": 35,
-          "hash": 419018851
+          "hash": 782853893
         },
         {
-          "gridX": 1693,
-          "gridZ": 65,
+          "gridX": 1529,
+          "gridZ": 52,
+          "weight": 64,
+          "hash": 1916221435
+        },
+        {
+          "gridX": 1578,
+          "gridZ": 49,
           "weight": 65,
-          "hash": 1575425200
+          "hash": 1053160865
+        },
+        {
+          "gridX": 1617,
+          "gridZ": 52,
+          "weight": 34,
+          "hash": 1803635416
         },
         {
           "gridX": 1718,
@@ -714,34 +984,412 @@
           "hash": 763604524
         },
         {
-          "gridX": 1784,
-          "gridZ": 65,
-          "weight": 52,
-          "hash": 1211009395
-        },
-        {
-          "gridX": 1804,
-          "gridZ": 44,
+          "gridX": 1771,
+          "gridZ": 55,
           "weight": 33,
-          "hash": 680972407
+          "hash": 1311829926
         },
         {
-          "gridX": 1839,
-          "gridZ": 59,
-          "weight": 51,
-          "hash": 821189407
+          "gridX": 1842,
+          "gridZ": 55,
+          "weight": 44,
+          "hash": 969629046
+        }
+      ]
+    },
+    {
+      "kind": "Trees_Dirt",
+      "description": "Compact dirt-biome tree-clump pass using DirthTrees examples while keeping dirt road corridors readable.",
+      "minDistanceCells": 14,
+      "tileSizeCells": 14,
+      "tilesVisited": 21025,
+      "tileCandidateCount": 3215,
+      "acceptedCount": 1663,
+      "rejectedBySpacing": 1552,
+      "samplePoints": [
+        {
+          "gridX": 326,
+          "gridZ": 5,
+          "weight": 116,
+          "hash": 1518507161
         },
         {
-          "gridX": 1913,
-          "gridZ": 65,
-          "weight": 36,
-          "hash": 1411818878
+          "gridX": 1211,
+          "gridZ": 13,
+          "weight": 91,
+          "hash": 1549907723
         },
         {
-          "gridX": 1959,
+          "gridX": 1416,
+          "gridZ": 13,
+          "weight": 117,
+          "hash": 2144664394
+        },
+        {
+          "gridX": 258,
+          "gridZ": 27,
+          "weight": 127,
+          "hash": 1023945224
+        },
+        {
+          "gridX": 363,
+          "gridZ": 25,
+          "weight": 100,
+          "hash": 1105663998
+        },
+        {
+          "gridX": 894,
+          "gridZ": 23,
+          "weight": 117,
+          "hash": 1259074173
+        },
+        {
+          "gridX": 919,
+          "gridZ": 21,
+          "weight": 116,
+          "hash": 712581147
+        },
+        {
+          "gridX": 1863,
+          "gridZ": 27,
+          "weight": 81,
+          "hash": 906792456
+        },
+        {
+          "gridX": 176,
+          "gridZ": 30,
+          "weight": 107,
+          "hash": 572257869
+        },
+        {
+          "gridX": 237,
+          "gridZ": 32,
+          "weight": 125,
+          "hash": 1035602692
+        },
+        {
+          "gridX": 250,
+          "gridZ": 39,
+          "weight": 125,
+          "hash": 1370366322
+        },
+        {
+          "gridX": 279,
+          "gridZ": 41,
+          "weight": 127,
+          "hash": 2028010326
+        },
+        {
+          "gridX": 296,
+          "gridZ": 41,
+          "weight": 127,
+          "hash": 657738611
+        },
+        {
+          "gridX": 333,
+          "gridZ": 36,
+          "weight": 114,
+          "hash": 2002253642
+        },
+        {
+          "gridX": 856,
+          "gridZ": 36,
+          "weight": 124,
+          "hash": 367376180
+        },
+        {
+          "gridX": 932,
+          "gridZ": 38,
+          "weight": 123,
+          "hash": 1200386915
+        },
+        {
+          "gridX": 1420,
+          "gridZ": 33,
+          "weight": 127,
+          "hash": 1373965107
+        },
+        {
+          "gridX": 1448,
+          "gridZ": 40,
+          "weight": 157,
+          "hash": 874687093
+        },
+        {
+          "gridX": 1482,
+          "gridZ": 29,
+          "weight": 126,
+          "hash": 1515284457
+        },
+        {
+          "gridX": 1571,
+          "gridZ": 37,
+          "weight": 120,
+          "hash": 1588385670
+        },
+        {
+          "gridX": 1759,
+          "gridZ": 41,
+          "weight": 127,
+          "hash": 433963627
+        },
+        {
+          "gridX": 233,
+          "gridZ": 46,
+          "weight": 120,
+          "hash": 1331181624
+        },
+        {
+          "gridX": 265,
+          "gridZ": 42,
+          "weight": 122,
+          "hash": 2042692039
+        },
+        {
+          "gridX": 278,
+          "gridZ": 55,
+          "weight": 127,
+          "hash": 736626592
+        },
+        {
+          "gridX": 321,
+          "gridZ": 52,
+          "weight": 114,
+          "hash": 1097844489
+        },
+        {
+          "gridX": 342,
+          "gridZ": 50,
+          "weight": 127,
+          "hash": 1670052824
+        },
+        {
+          "gridX": 669,
+          "gridZ": 50,
+          "weight": 134,
+          "hash": 196045440
+        },
+        {
+          "gridX": 874,
+          "gridZ": 54,
+          "weight": 126,
+          "hash": 812860573
+        },
+        {
+          "gridX": 919,
+          "gridZ": 55,
+          "weight": 126,
+          "hash": 1792182237
+        },
+        {
+          "gridX": 1090,
+          "gridZ": 51,
+          "weight": 121,
+          "hash": 875242467
+        },
+        {
+          "gridX": 1461,
+          "gridZ": 49,
+          "weight": 184,
+          "hash": 1904256767
+        },
+        {
+          "gridX": 1480,
+          "gridZ": 52,
+          "weight": 118,
+          "hash": 1270861510
+        },
+        {
+          "gridX": 1501,
+          "gridZ": 52,
+          "weight": 129,
+          "hash": 2103823283
+        },
+        {
+          "gridX": 1521,
+          "gridZ": 49,
+          "weight": 127,
+          "hash": 258850228
+        },
+        {
+          "gridX": 1739,
+          "gridZ": 54,
+          "weight": 92,
+          "hash": 31655592
+        },
+        {
+          "gridX": 1865,
+          "gridZ": 52,
+          "weight": 109,
+          "hash": 179470946
+        },
+        {
+          "gridX": 1898,
+          "gridZ": 46,
+          "weight": 91,
+          "hash": 691023061
+        },
+        {
+          "gridX": 93,
+          "gridZ": 68,
+          "weight": 124,
+          "hash": 909446530
+        },
+        {
+          "gridX": 159,
+          "gridZ": 61,
+          "weight": 128,
+          "hash": 1873895831
+        },
+        {
+          "gridX": 200,
+          "gridZ": 69,
+          "weight": 117,
+          "hash": 1481005847
+        },
+        {
+          "gridX": 236,
           "gridZ": 60,
-          "weight": 33,
-          "hash": 1035884395
+          "weight": 126,
+          "hash": 987223342
+        },
+        {
+          "gridX": 255,
+          "gridZ": 66,
+          "weight": 127,
+          "hash": 610326556
+        },
+        {
+          "gridX": 303,
+          "gridZ": 64,
+          "weight": 127,
+          "hash": 882594825
+        },
+        {
+          "gridX": 654,
+          "gridZ": 64,
+          "weight": 127,
+          "hash": 894478064
+        },
+        {
+          "gridX": 688,
+          "gridZ": 69,
+          "weight": 115,
+          "hash": 468892435
+        },
+        {
+          "gridX": 895,
+          "gridZ": 68,
+          "weight": 127,
+          "hash": 336200381
+        },
+        {
+          "gridX": 941,
+          "gridZ": 69,
+          "weight": 117,
+          "hash": 1681358329
+        },
+        {
+          "gridX": 1099,
+          "gridZ": 62,
+          "weight": 127,
+          "hash": 49367978
+        },
+        {
+          "gridX": 1131,
+          "gridZ": 61,
+          "weight": 118,
+          "hash": 136317750
+        },
+        {
+          "gridX": 1338,
+          "gridZ": 64,
+          "weight": 126,
+          "hash": 426661514
+        },
+        {
+          "gridX": 1507,
+          "gridZ": 68,
+          "weight": 134,
+          "hash": 416052584
+        },
+        {
+          "gridX": 1540,
+          "gridZ": 65,
+          "weight": 125,
+          "hash": 776501796
+        },
+        {
+          "gridX": 1703,
+          "gridZ": 66,
+          "weight": 127,
+          "hash": 1360454263
+        },
+        {
+          "gridX": 1735,
+          "gridZ": 69,
+          "weight": 118,
+          "hash": 1081241951
+        },
+        {
+          "gridX": 1761,
+          "gridZ": 68,
+          "weight": 127,
+          "hash": 702956105
+        },
+        {
+          "gridX": 1778,
+          "gridZ": 68,
+          "weight": 117,
+          "hash": 1292568576
+        },
+        {
+          "gridX": 1885,
+          "gridZ": 61,
+          "weight": 87,
+          "hash": 643888721
+        },
+        {
+          "gridX": 1924,
+          "gridZ": 60,
+          "weight": 112,
+          "hash": 2009015907
+        },
+        {
+          "gridX": 49,
+          "gridZ": 81,
+          "weight": 106,
+          "hash": 494696601
+        },
+        {
+          "gridX": 109,
+          "gridZ": 76,
+          "weight": 127,
+          "hash": 915139412
+        },
+        {
+          "gridX": 561,
+          "gridZ": 78,
+          "weight": 117,
+          "hash": 1312040541
+        },
+        {
+          "gridX": 671,
+          "gridZ": 71,
+          "weight": 127,
+          "hash": 684917738
+        },
+        {
+          "gridX": 872,
+          "gridZ": 76,
+          "weight": 122,
+          "hash": 428127885
+        },
+        {
+          "gridX": 1129,
+          "gridZ": 83,
+          "weight": 119,
+          "hash": 1486118826
         }
       ]
     },
@@ -751,9 +1399,9 @@
       "minDistanceCells": 14,
       "tileSizeCells": 14,
       "tilesVisited": 21025,
-      "tileCandidateCount": 2233,
-      "acceptedCount": 1065,
-      "rejectedBySpacing": 1168,
+      "tileCandidateCount": 1972,
+      "acceptedCount": 938,
+      "rejectedBySpacing": 1034,
       "samplePoints": [
         {
           "gridX": 1424,
@@ -772,18 +1420,6 @@
           "gridZ": 69,
           "weight": 297,
           "hash": 1078362853
-        },
-        {
-          "gridX": 381,
-          "gridZ": 67,
-          "weight": 242,
-          "hash": 1520661173
-        },
-        {
-          "gridX": 1161,
-          "gridZ": 67,
-          "weight": 201,
-          "hash": 1645678387
         },
         {
           "gridX": 1429,
@@ -810,12 +1446,6 @@
           "hash": 652935887
         },
         {
-          "gridX": 415,
-          "gridZ": 97,
-          "weight": 202,
-          "hash": 2003947987
-        },
-        {
           "gridX": 572,
           "gridZ": 95,
           "weight": 235,
@@ -838,12 +1468,6 @@
           "gridZ": 94,
           "weight": 303,
           "hash": 483866254
-        },
-        {
-          "gridX": 1159,
-          "gridZ": 97,
-          "weight": 225,
-          "hash": 552490574
         },
         {
           "gridX": 1378,
@@ -882,12 +1506,6 @@
           "hash": 1587777704
         },
         {
-          "gridX": 405,
-          "gridZ": 107,
-          "weight": 276,
-          "hash": 2116447900
-        },
-        {
           "gridX": 643,
           "gridZ": 106,
           "weight": 303,
@@ -922,24 +1540,6 @@
           "gridZ": 115,
           "weight": 132,
           "hash": 725614950
-        },
-        {
-          "gridX": 397,
-          "gridZ": 120,
-          "weight": 281,
-          "hash": 2093582337
-        },
-        {
-          "gridX": 418,
-          "gridZ": 120,
-          "weight": 334,
-          "hash": 410963323
-        },
-        {
-          "gridX": 434,
-          "gridZ": 125,
-          "weight": 241,
-          "hash": 1374456342
         },
         {
           "gridX": 620,
@@ -990,22 +1590,10 @@
           "hash": 1882930484
         },
         {
-          "gridX": 1792,
-          "gridZ": 125,
-          "weight": 288,
-          "hash": 1896964118
-        },
-        {
           "gridX": 390,
           "gridZ": 139,
           "weight": 333,
           "hash": 106771082
-        },
-        {
-          "gridX": 408,
-          "gridZ": 130,
-          "weight": 314,
-          "hash": 1284730753
         },
         {
           "gridX": 649,
@@ -1020,22 +1608,22 @@
           "hash": 2107068142
         },
         {
-          "gridX": 1516,
-          "gridZ": 139,
-          "weight": 242,
-          "hash": 2013911966
-        },
-        {
-          "gridX": 107,
-          "gridZ": 146,
-          "weight": 219,
-          "hash": 1577274199
+          "gridX": 1791,
+          "gridZ": 126,
+          "weight": 288,
+          "hash": 2114110219
         },
         {
           "gridX": 377,
           "gridZ": 152,
           "weight": 236,
           "hash": 2144199346
+        },
+        {
+          "gridX": 406,
+          "gridZ": 151,
+          "weight": 230,
+          "hash": 30079193
         },
         {
           "gridX": 424,
@@ -1098,34 +1686,10 @@
           "hash": 87809052
         },
         {
-          "gridX": 1512,
-          "gridZ": 153,
-          "weight": 262,
-          "hash": 1427235076
-        },
-        {
           "gridX": 1782,
           "gridZ": 147,
           "weight": 277,
           "hash": 527497641
-        },
-        {
-          "gridX": 1800,
-          "gridZ": 142,
-          "weight": 226,
-          "hash": 261309178
-        },
-        {
-          "gridX": 120,
-          "gridZ": 155,
-          "weight": 237,
-          "hash": 797534823
-        },
-        {
-          "gridX": 136,
-          "gridZ": 167,
-          "weight": 212,
-          "hash": 516687362
         },
         {
           "gridX": 391,
@@ -1134,10 +1698,94 @@
           "hash": 1833212547
         },
         {
-          "gridX": 657,
+          "gridX": 717,
+          "gridZ": 165,
+          "weight": 244,
+          "hash": 1992464404
+        },
+        {
+          "gridX": 895,
           "gridZ": 167,
-          "weight": 279,
-          "hash": 1378282887
+          "weight": 188,
+          "hash": 1890757767
+        },
+        {
+          "gridX": 914,
+          "gridZ": 160,
+          "weight": 351,
+          "hash": 1176128973
+        },
+        {
+          "gridX": 1213,
+          "gridZ": 166,
+          "weight": 356,
+          "hash": 1634664581
+        },
+        {
+          "gridX": 1440,
+          "gridZ": 160,
+          "weight": 296,
+          "hash": 2107471105
+        },
+        {
+          "gridX": 1469,
+          "gridZ": 164,
+          "weight": 312,
+          "hash": 1659515674
+        },
+        {
+          "gridX": 1792,
+          "gridZ": 160,
+          "weight": 268,
+          "hash": 330221594
+        },
+        {
+          "gridX": 1809,
+          "gridZ": 167,
+          "weight": 256,
+          "hash": 8361518
+        },
+        {
+          "gridX": 696,
+          "gridZ": 168,
+          "weight": 280,
+          "hash": 2131958281
+        },
+        {
+          "gridX": 727,
+          "gridZ": 176,
+          "weight": 228,
+          "hash": 1778508002
+        },
+        {
+          "gridX": 909,
+          "gridZ": 174,
+          "weight": 304,
+          "hash": 854330335
+        },
+        {
+          "gridX": 1138,
+          "gridZ": 181,
+          "weight": 220,
+          "hash": 891075292
+        },
+        {
+          "gridX": 1233,
+          "gridZ": 169,
+          "weight": 362,
+          "hash": 1944570172
+        },
+        {
+          "gridX": 1411,
+          "gridZ": 181,
+          "weight": 230,
+          "hash": 1817931429
+        },
+        {
+          "gridX": 1455,
+          "gridZ": 171,
+          "weight": 319,
+          "hash": 187938224
         }
       ]
     },
@@ -1147,9 +1795,9 @@
       "minDistanceCells": 24,
       "tileSizeCells": 24,
       "tilesVisited": 7225,
-      "tileCandidateCount": 3205,
-      "acceptedCount": 1479,
-      "rejectedBySpacing": 1726,
+      "tileCandidateCount": 3017,
+      "acceptedCount": 1403,
+      "rejectedBySpacing": 1614,
       "samplePoints": [
         {
           "gridX": 221,
@@ -1260,12 +1908,6 @@
           "hash": 1660097217
         },
         {
-          "gridX": 438,
-          "gridZ": 47,
-          "weight": 19,
-          "hash": 1631258481
-        },
-        {
           "gridX": 579,
           "gridZ": 25,
           "weight": 16,
@@ -1302,10 +1944,10 @@
           "hash": 960229337
         },
         {
-          "gridX": 1160,
-          "gridZ": 47,
-          "weight": 80,
-          "hash": 1124996768
+          "gridX": 1158,
+          "gridZ": 33,
+          "weight": 44,
+          "hash": 1473678202
         },
         {
           "gridX": 1333,
@@ -1446,6 +2088,12 @@
           "hash": 1276399450
         },
         {
+          "gridX": 1128,
+          "gridZ": 62,
+          "weight": 41,
+          "hash": 131883739
+        },
+        {
           "gridX": 1340,
           "gridZ": 65,
           "weight": 95,
@@ -1494,16 +2142,16 @@
           "hash": 756900204
         },
         {
-          "gridX": 1803,
+          "gridX": 1823,
           "gridZ": 71,
-          "weight": 38,
-          "hash": 883872573
+          "weight": 40,
+          "hash": 2128990698
         },
         {
-          "gridX": 1839,
-          "gridZ": 59,
-          "weight": 35,
-          "hash": 2084041617
+          "gridX": 1858,
+          "gridZ": 61,
+          "weight": 34,
+          "hash": 1315829156
         },
         {
           "gridX": 1913,
@@ -1543,9 +2191,9 @@
       "minDistanceCells": 16,
       "tileSizeCells": 16,
       "tilesVisited": 16129,
-      "tileCandidateCount": 1888,
-      "acceptedCount": 902,
-      "rejectedBySpacing": 986,
+      "tileCandidateCount": 1676,
+      "acceptedCount": 804,
+      "rejectedBySpacing": 872,
       "samplePoints": [
         {
           "gridX": 286,
@@ -1560,12 +2208,6 @@
           "hash": 1280023958
         },
         {
-          "gridX": 381,
-          "gridZ": 67,
-          "weight": 226,
-          "hash": 1599748034
-        },
-        {
           "gridX": 623,
           "gridZ": 76,
           "weight": 243,
@@ -1578,12 +2220,6 @@
           "hash": 1885805369
         },
         {
-          "gridX": 1164,
-          "gridZ": 69,
-          "weight": 255,
-          "hash": 1472738030
-        },
-        {
           "gridX": 572,
           "gridZ": 95,
           "weight": 219,
@@ -1594,12 +2230,6 @@
           "gridZ": 94,
           "weight": 287,
           "hash": 702525391
-        },
-        {
-          "gridX": 1158,
-          "gridZ": 95,
-          "weight": 201,
-          "hash": 642680920
         },
         {
           "gridX": 1414,
@@ -1630,18 +2260,6 @@
           "gridZ": 101,
           "weight": 246,
           "hash": 1696952137
-        },
-        {
-          "gridX": 399,
-          "gridZ": 111,
-          "weight": 228,
-          "hash": 1185692975
-        },
-        {
-          "gridX": 416,
-          "gridZ": 110,
-          "weight": 214,
-          "hash": 649763699
         },
         {
           "gridX": 639,
@@ -1698,18 +2316,6 @@
           "hash": 561945322
         },
         {
-          "gridX": 405,
-          "gridZ": 127,
-          "weight": 278,
-          "hash": 892710132
-        },
-        {
-          "gridX": 432,
-          "gridZ": 123,
-          "weight": 270,
-          "hash": 1977669037
-        },
-        {
           "gridX": 620,
           "gridZ": 114,
           "weight": 174,
@@ -1752,12 +2358,6 @@
           "hash": 521555883
         },
         {
-          "gridX": 1792,
-          "gridZ": 126,
-          "weight": 297,
-          "hash": 1482491556
-        },
-        {
           "gridX": 393,
           "gridZ": 141,
           "weight": 364,
@@ -1788,16 +2388,10 @@
           "hash": 2049628635
         },
         {
-          "gridX": 1516,
+          "gridX": 1787,
           "gridZ": 139,
-          "weight": 226,
-          "hash": 635471296
-        },
-        {
-          "gridX": 107,
-          "gridZ": 146,
-          "weight": 203,
-          "hash": 1096479453
+          "weight": 245,
+          "hash": 851942555
         },
         {
           "gridX": 423,
@@ -1806,10 +2400,10 @@
           "hash": 782806136
         },
         {
-          "gridX": 666,
-          "gridZ": 159,
-          "weight": 257,
-          "hash": 1902585188
+          "gridX": 659,
+          "gridZ": 148,
+          "weight": 204,
+          "hash": 1239279199
         },
         {
           "gridX": 678,
@@ -1860,46 +2454,10 @@
           "hash": 1900793220
         },
         {
-          "gridX": 1502,
-          "gridZ": 152,
-          "weight": 251,
-          "hash": 246351599
-        },
-        {
           "gridX": 1784,
           "gridZ": 155,
           "weight": 309,
           "hash": 1977246124
-        },
-        {
-          "gridX": 1814,
-          "gridZ": 159,
-          "weight": 225,
-          "hash": 1035844337
-        },
-        {
-          "gridX": 1908,
-          "gridZ": 157,
-          "weight": 210,
-          "hash": 1707270230
-        },
-        {
-          "gridX": 138,
-          "gridZ": 168,
-          "weight": 186,
-          "hash": 1316178280
-        },
-        {
-          "gridX": 159,
-          "gridZ": 173,
-          "weight": 224,
-          "hash": 1055542405
-        },
-        {
-          "gridX": 175,
-          "gridZ": 172,
-          "weight": 244,
-          "hash": 449624548
         },
         {
           "gridX": 383,
@@ -1908,16 +2466,10 @@
           "hash": 2013546656
         },
         {
-          "gridX": 630,
-          "gridZ": 173,
-          "weight": 224,
-          "hash": 44995377
-        },
-        {
-          "gridX": 688,
+          "gridX": 687,
           "gridZ": 160,
-          "weight": 285,
-          "hash": 1269674692
+          "weight": 272,
+          "hash": 1890616141
         },
         {
           "gridX": 895,
@@ -1930,6 +2482,102 @@
           "gridZ": 171,
           "weight": 303,
           "hash": 1038153164
+        },
+        {
+          "gridX": 1474,
+          "gridZ": 168,
+          "weight": 333,
+          "hash": 464495067
+        },
+        {
+          "gridX": 1800,
+          "gridZ": 175,
+          "weight": 277,
+          "hash": 1581356404
+        },
+        {
+          "gridX": 1877,
+          "gridZ": 173,
+          "weight": 217,
+          "hash": 1924377321
+        },
+        {
+          "gridX": 1899,
+          "gridZ": 173,
+          "weight": 211,
+          "hash": 735698566
+        },
+        {
+          "gridX": 1927,
+          "gridZ": 171,
+          "weight": 233,
+          "hash": 1966454844
+        },
+        {
+          "gridX": 175,
+          "gridZ": 187,
+          "weight": 226,
+          "hash": 301812667
+        },
+        {
+          "gridX": 728,
+          "gridZ": 176,
+          "weight": 241,
+          "hash": 448311704
+        },
+        {
+          "gridX": 749,
+          "gridZ": 191,
+          "weight": 223,
+          "hash": 583049194
+        },
+        {
+          "gridX": 909,
+          "gridZ": 176,
+          "weight": 234,
+          "hash": 2066486601
+        },
+        {
+          "gridX": 1138,
+          "gridZ": 181,
+          "weight": 204,
+          "hash": 1035037984
+        },
+        {
+          "gridX": 1211,
+          "gridZ": 176,
+          "weight": 303,
+          "hash": 1845383615
+        },
+        {
+          "gridX": 1230,
+          "gridZ": 176,
+          "weight": 309,
+          "hash": 546462667
+        },
+        {
+          "gridX": 1407,
+          "gridZ": 179,
+          "weight": 207,
+          "hash": 1040696153
+        },
+        {
+          "gridX": 1491,
+          "gridZ": 189,
+          "weight": 345,
+          "hash": 697828187
+        },
+        {
+          "gridX": 1511,
+          "gridZ": 191,
+          "weight": 338,
+          "hash": 1104793355
+        },
+        {
+          "gridX": 1816,
+          "gridZ": 179,
+          "weight": 269,
+          "hash": 26170886
         }
       ]
     },

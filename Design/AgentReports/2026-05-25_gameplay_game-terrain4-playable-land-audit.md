@@ -20,9 +20,9 @@ Current foundation categories:
 - Beach prefab centers inside 2024 gameplay map: 0 / 4521
 
 Generated mask/dressing footprint:
-- `GeneratedDressingOverall`: count 862, width 1976.028, depth 2011.301, x [-984.918, 991.11], z [-1007.716, 1003.584]
+- `GeneratedDressingOverall`: count 862, width 1975.693, depth 2011.301, x [-984.583, 991.11], z [-1007.716, 1003.584]
 - `Generated_Mountains`: count 55, width 1965.266, depth 2011.301, x [-974.156, 991.11], z [-1007.716, 1003.584]
-- `Generated_Rocks`: count 807, width 1968.355, depth 1988.146, x [-984.918, 983.437], z [-993.5, 994.646]
+- `Generated_Rocks`: count 807, width 1967.822, depth 1985.983, x [-984.583, 983.24], z [-991.833, 994.15]
 
 Design implication for step 4:
 - Regenerate `Game_Terrain4` from the larger island foundation plus the remapped mask dressing contract whenever the map art changes.

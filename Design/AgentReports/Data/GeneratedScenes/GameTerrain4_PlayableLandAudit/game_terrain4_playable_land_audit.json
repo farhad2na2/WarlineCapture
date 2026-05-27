@@ -10,9 +10,9 @@
     { "id": "OuterBeachCoast", "description": "Outer beach/coast prefabs that should remain outside the playable map.", "rendererCount": 1500, "xMin": -1533.103, "xMax": 1549.094, "zMin": -1549.377, "zMax": 1425.793, "width": 3082.197, "depth": 2975.17 }
   ],
   "beachPlacementVsMap": { "totalBeachPrefabs": 4521, "centersInsideMap": 0, "passed": true },
-  "generatedOverall": { "id": "GeneratedDressingOverall", "description": "All generated mountain/tree/bush/rock dressing renderer bounds.", "rendererCount": 862, "xMin": -984.918, "xMax": 991.11, "zMin": -1007.716, "zMax": 1003.584, "width": 1976.028, "depth": 2011.301 },
+  "generatedOverall": { "id": "GeneratedDressingOverall", "description": "All generated mountain/tree/bush/rock dressing renderer bounds.", "rendererCount": 862, "xMin": -984.583, "xMax": 991.11, "zMin": -1007.716, "zMax": 1003.584, "width": 1975.693, "depth": 2011.301 },
   "generatedCategories": [
     { "id": "Generated_Mountains", "description": "Generated dressing group bounds.", "rendererCount": 55, "xMin": -974.156, "xMax": 991.11, "zMin": -1007.716, "zMax": 1003.584, "width": 1965.266, "depth": 2011.301 },
-    { "id": "Generated_Rocks", "description": "Generated dressing group bounds.", "rendererCount": 807, "xMin": -984.918, "xMax": 983.437, "zMin": -993.5, "zMax": 994.646, "width": 1968.355, "depth": 1988.146 }
+    { "id": "Generated_Rocks", "description": "Generated dressing group bounds.", "rendererCount": 807, "xMin": -984.583, "xMax": 983.24, "zMin": -991.833, "zMax": 994.15, "width": 1967.822, "depth": 1985.983 }
   ]
 }

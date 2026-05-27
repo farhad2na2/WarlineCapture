@@ -10,7 +10,26 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem = new();
     private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new();
     private readonly RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem = new();
-    private readonly RuntimeCityBuildingSpawnSystem _runtimeCityBuildingSpawnSystem = new();
+    private readonly RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem = new();
+    private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();
+    private readonly RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem = new();
+    private readonly RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem = new();
+    private readonly RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem = new();
+    private readonly RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem = new();
+    private readonly RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem = new();
+    private readonly RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem = new();
+    private readonly RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem = new();
+    private readonly RuntimeCityBulkBuildingSpawnRoutineSystem _runtimeCityBulkBuildingSpawnRoutineSystem = new();
+    private readonly RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem = new();
+    private readonly RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem = new();
+    private readonly RuntimeCityYardGateSystem _runtimeCityYardGateSystem = new();
+    private readonly RuntimeCityYardWallVisualSystem _runtimeCityYardWallVisualSystem = new();
+    private readonly RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem = new();
+    private readonly RuntimeCityDecorationPrefabGroupSystem _runtimeCityDecorationPrefabGroupSystem = new();
+    private readonly RuntimeCityClothCoverSpawnSystem _runtimeCityClothCoverSpawnSystem = new();
+    private readonly RuntimeCityArchwaySpawnSystem _runtimeCityArchwaySpawnSystem = new();
+    private readonly RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem = new();
+    private readonly RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem = new();
     private readonly RuntimeCityVisualSystem _runtimeCityVisualSystem = new();
     private readonly RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem = new();
     private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new();
@@ -25,6 +44,7 @@ public sealed class RuntimeCityCompositionSystem
     private readonly RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem = new();
     private readonly RuntimeCityReadModelSystem _runtimeCityReadModelSystem = new();
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+    private RuntimeCityBuildingSpawnContextSystem.Context _runtimeCityBuildingSpawnContext;
 
     private RuntimeCityConfigSystem.Snapshot cityConfig => _runtimeCityConfigSystem.Current;
     private bool spawnOnStart => cityConfig.SpawnOnStart;
@@ -109,7 +129,7 @@ public sealed class RuntimeCityCompositionSystem
     private void ApplyConfigIfAvailable()
     {
         _runtimeCityConfigSystem.Apply(_config);
-        _runtimeCityBuildingSpawnSystem.Configure(
+        _runtimeCityBuildingSpawnContext = _runtimeCityBuildingSpawnContextSystem.Create(
             cityConfig,
             _runtimeCityBuildingPlotSystem,
             _runtimeCityWalkabilitySystem,
@@ -184,7 +204,10 @@ public sealed class RuntimeCityCompositionSystem
             CreateLifecycleContext(frameCount),
             _runtimeCityLayoutSystem,
             _runtimeCityWalkabilitySystem,
-            _runtimeCityBuildingSpawnSystem,
+            CreateBuildingSpawnSystems(),
+            _runtimeCityBuildingSpawnContext,
+            _runtimeCityBuildingPlacementSystem,
+            _runtimeCityCorridorBuildingSpawnSystem,
             _runtimeCityRoadBuildBridgeSystem,
             _runtimeCitySpawnBridgeSystem,
             _runtimeCityChainSystem,
@@ -197,6 +220,30 @@ public sealed class RuntimeCityCompositionSystem
             ShouldYield,
             _runtimeCityMinimapEventSystem,
             _runtimeCityDiagnosticSystem);
+    }
+
+    private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()
+    {
+        return new RuntimeCityBuildingSpawnContextSystem.Systems(
+            _runtimeCityBuildingPlacementSystem,
+            _runtimeCityLandmarkOffsetSystem,
+            _runtimeCityHallSpawnSystem,
+            _runtimeCityLandmarkSpawnSystem,
+            _runtimeCityBulkPlotPlanSystem,
+            _runtimeCityEntryBuildingSpawnSystem,
+            _runtimeCityRoadsideBuildingSpawnSystem,
+            _runtimeCityRuralBuildingSpawnSystem,
+            _runtimeCityBulkBuildingSpawnRoutineSystem,
+            _runtimeCityCorridorBuildingSpawnSystem,
+            _runtimeCityYardWallPlanSystem,
+            _runtimeCityYardGateSystem,
+            _runtimeCityYardWallVisualSystem,
+            _runtimeCityHouseYardWallSystem,
+            _runtimeCityDecorationPrefabGroupSystem,
+            _runtimeCityClothCoverSpawnSystem,
+            _runtimeCityArchwaySpawnSystem,
+            _runtimeCityFreeScatterDecorationSystem,
+            _runtimeCityDecorationBuildingSpawnSystem);
     }
 
     private RuntimeCityChainSystem.Context CreateChainContext()

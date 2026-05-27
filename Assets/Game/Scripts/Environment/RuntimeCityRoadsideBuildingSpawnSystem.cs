@@ -1,0 +1,141 @@
+using System.Collections.Generic;
+using UnityEngine;
+using PlotCandidate = RuntimeCityBuildingPlotSystem.PlotCandidate;
+using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;
+
+internal sealed class RuntimeCityRoadsideBuildingSpawnSystem
+{
+    public readonly struct Plan
+    {
+        public readonly int CentralShopTarget;
+        public readonly int RuralHouseTarget;
+        public readonly int RoadsideHouseTarget;
+
+        public Plan(int centralShopTarget, int ruralHouseTarget, int roadsideHouseTarget)
+        {
+            CentralShopTarget = centralShopTarget;
+            RuralHouseTarget = ruralHouseTarget;
+            RoadsideHouseTarget = roadsideHouseTarget;
+        }
+    }
+
+    public Plan CreatePlan(RuntimeCityBuildingSpawnContextSystem.Context context)
+    {
+        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        int centralShopTarget = Mathf.Min(config.ShopCount, Mathf.Max(0, Mathf.RoundToInt(config.ShopCount * 0.65f)));
+        int ruralHouseTarget = Mathf.RoundToInt(Mathf.Max(0, config.HouseCount) * Mathf.Clamp01(config.RuralHouseRatio));
+        int roadsideHouseTarget = Mathf.Max(0, config.HouseCount - ruralHouseTarget);
+        return new Plan(centralShopTarget, ruralHouseTarget, roadsideHouseTarget);
+    }
+
+    public void PlaceCentralShops(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> centralPlots,
+        Plan plan,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        placementSystem.PlaceFromPlots(
+            context,
+            config.ShopPrefabs,
+            centralPlots,
+            plan.CentralShopTarget,
+            1,
+            roadCellSizeInGridCells,
+            "Market",
+            "Old town market.",
+            config.DefaultBuildingMaxHealth,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+
+    public void PlaceGasStations(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> outerPlots,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints)
+    {
+        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        placementSystem.PlaceFromPlots(
+            context,
+            config.GasStationPrefabs,
+            outerPlots,
+            config.GasStationCount,
+            config.GasStationMinSpacingRoadCells,
+            roadCellSizeInGridCells,
+            "Gas Station",
+            "Roadside fuel stop.",
+            config.DefaultBuildingMaxHealth,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints);
+    }
+
+    public void PlaceOuterShops(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> outerPlots,
+        Plan plan,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints)
+    {
+        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        placementSystem.PlaceFromPlots(
+            context,
+            config.ShopPrefabs,
+            outerPlots,
+            Mathf.Max(0, config.ShopCount - plan.CentralShopTarget),
+            1,
+            roadCellSizeInGridCells,
+            "Shop",
+            "Old town shop.",
+            config.DefaultBuildingMaxHealth,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints);
+    }
+
+    public void PlaceRoadsideHouses(
+        RuntimeCityBuildingSpawnContextSystem.Context context,
+        RuntimeCityBuildingPlacementSystem placementSystem,
+        List<PlotCandidate> outerPlots,
+        Plan plan,
+        int roadCellSizeInGridCells,
+        ref Unity.Mathematics.Random rng,
+        List<Vector2Int> usedPlotCells,
+        List<ReservedFootprint> reservedFootprints,
+        List<RectInt> shopAndHouseFootprints,
+        List<RectInt> houseFootprints)
+    {
+        RuntimeCityConfigSystem.Snapshot config = context.Config;
+        placementSystem.PlaceFromPlots(
+            context,
+            config.HousePrefabs,
+            outerPlots,
+            plan.RoadsideHouseTarget,
+            1,
+            roadCellSizeInGridCells,
+            "House",
+            "Old town house.",
+            config.DefaultBuildingMaxHealth,
+            ref rng,
+            usedPlotCells,
+            reservedFootprints,
+            shopAndHouseFootprints,
+            houseFootprints);
+    }
+}

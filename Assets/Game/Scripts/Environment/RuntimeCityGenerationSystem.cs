@@ -55,8 +55,8 @@ internal sealed class RuntimeCityGenerationSystem
             context.RoadCommitSystem.CommitCityRoadNetwork(context.RoadCommitContext, currentCity, occupiedRoadCells);
             if (cityConfig.GenerateBuildings)
             {
-                context.BuildingSpawnSystem.EnsureCityHall(currentCity, context.RoadCellSizeInGridCells, ref rng);
-                context.BuildingSpawnSystem.SpawnCityImportantBuildings(currentCity, context.RoadCellSizeInGridCells, ref rng);
+                EnsureCityHall(context, currentCity, ref rng);
+                SpawnCityImportantBuildings(context, currentCity, ref rng);
             }
             cities.Add(currentCity);
             if (context.ShouldYield(1))
@@ -137,8 +137,10 @@ internal sealed class RuntimeCityGenerationSystem
                 context.RoadCommitSystem.CommitCityRoadNetwork(context.RoadCommitContext, anchoredNextCity, occupiedRoadCells);
                 if (cityConfig.GenerateBuildings)
                 {
-                    context.BuildingSpawnSystem.SpawnCityImportantBuildings(anchoredNextCity, context.RoadCellSizeInGridCells, ref rng);
-                    context.BuildingSpawnSystem.SpawnCorridorEntranceBuildings(
+                    SpawnCityImportantBuildings(context, anchoredNextCity, ref rng);
+                    context.CorridorBuildingSpawnSystem.SpawnCorridorEntranceBuildings(
+                        context.BuildingSpawnContext,
+                        context.BuildingPlacementSystem,
                         anchoredNextCity,
                         endConnectorCell,
                         travelDirection,
@@ -160,8 +162,8 @@ internal sealed class RuntimeCityGenerationSystem
             {
                 if (cityConfig.GenerateBuildings)
                 {
-                    var bulkRng = new RuntimeCityBuildingSpawnSystem.GenerationRandomState { Value = rng };
-                    IEnumerator bulkRoutine = context.BuildingSpawnSystem.SpawnCityBulkBuildingsRoutine(cities[i], context.Grid, context.RoadCellSizeInGridCells, bulkRng);
+                    var bulkRng = new RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState { Value = rng };
+                    IEnumerator bulkRoutine = SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng);
                     while (bulkRoutine.MoveNext())
                         yield return null;
                     rng = bulkRng.Value;
@@ -185,6 +187,93 @@ internal sealed class RuntimeCityGenerationSystem
         }
     }
 
+    private static void EnsureCityHall(Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
+    {
+        context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(
+            context.BuildingSpawnContext,
+            context.BuildingSpawnSystems.PlacementSystem,
+            context.BuildingSpawnSystems.LandmarkOffsetSystem,
+            city,
+            context.RoadCellSizeInGridCells,
+            ref rng);
+    }
+
+    private static void SpawnCityImportantBuildings(Context context, CityLayoutData city, ref Unity.Mathematics.Random rng)
+    {
+        context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(
+            context.BuildingSpawnContext,
+            context.BuildingSpawnSystems.PlacementSystem,
+            context.BuildingSpawnSystems.LandmarkOffsetSystem,
+            city,
+            context.RoadCellSizeInGridCells,
+            ref rng);
+        context.BuildingSpawnSystems.LandmarkSpawnSystem.SpawnLandmarks(
+            context.BuildingSpawnContext,
+            context.BuildingSpawnSystems.PlacementSystem,
+            context.BuildingSpawnSystems.LandmarkOffsetSystem,
+            city.CenterRoadCell,
+            context.RoadCellSizeInGridCells,
+            city.RoadCells,
+            ref rng,
+            city.ReservedFootprints);
+    }
+
+    private static IEnumerator SpawnCityBulkBuildingsRoutine(Context context, CityLayoutData city, RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng)
+    {
+        return context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(
+            context.BuildingSpawnContext,
+            context.BuildingSpawnSystems.PlacementSystem,
+            context.BuildingSpawnSystems.BulkPlotPlanSystem,
+            context.BuildingSpawnSystems.EntryBuildingSpawnSystem,
+            context.BuildingSpawnSystems.RoadsideBuildingSpawnSystem,
+            context.BuildingSpawnSystems.RuralBuildingSpawnSystem,
+            city,
+            context.Grid,
+            context.RoadCellSizeInGridCells,
+            rng,
+            (List<RectInt> houseFootprints, Vector2Int centerRoadCell, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, GridConfig callbackGrid, ref Unity.Mathematics.Random callbackRng, List<RuntimeCityWalkabilitySystem.ReservedFootprint> reservedFootprints) =>
+                context.BuildingSpawnSystems.HouseYardWallSystem.PlaceHouseYardWalls(
+                    context.BuildingSpawnContext,
+                    context.BuildingSpawnSystems.PlacementSystem,
+                    context.BuildingSpawnContext.PrefabSelectionSystem,
+                    context.BuildingSpawnContext.WalkabilitySystem,
+                    context.BuildingSpawnSystems.YardWallPlanSystem,
+                    context.BuildingSpawnSystems.YardGateSystem,
+                    context.BuildingSpawnSystems.YardWallVisualSystem,
+                    context.BuildingSpawnContext.VisualSystem,
+                    context.BuildingSpawnContext.Config.HouseWallPrefabs,
+                    context.BuildingSpawnContext.Config.HouseWallGatePrefab,
+                    context.BuildingSpawnContext.Config.HouseWallPillarPrefab,
+                    context.BuildingSpawnContext.Config.HouseWallChance,
+                    context.BuildingSpawnContext.Config.HouseWallMinDistanceCells,
+                    context.BuildingSpawnContext.Config.HouseWallMaxDistanceCells,
+                    houseFootprints,
+                    centerRoadCell,
+                    callbackRoadCellSizeInGridCells,
+                    roadCells,
+                    callbackGrid,
+                    ref callbackRng,
+                    reservedFootprints),
+            (RuntimeCityBuildingSpawnContextSystem.Context callbackContext, List<GameObject> prefabs, int count, Vector2Int centerRoadCell, int townRadius, int callbackRoadCellSizeInGridCells, HashSet<Vector2Int> roadCells, ref Unity.Mathematics.Random callbackRng, List<Vector2Int> usedPlotCells, List<RuntimeCityWalkabilitySystem.ReservedFootprint> reservedFootprints, List<RectInt> shopAndHouseFootprints) =>
+                context.BuildingSpawnSystems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(
+                    callbackContext,
+                    context.BuildingSpawnSystems.PlacementSystem,
+                    context.BuildingSpawnSystems.DecorationPrefabGroupSystem,
+                    context.BuildingSpawnSystems.ClothCoverSpawnSystem,
+                    context.BuildingSpawnSystems.ArchwaySpawnSystem,
+                    context.BuildingSpawnSystems.FreeScatterDecorationSystem,
+                    prefabs,
+                    count,
+                    centerRoadCell,
+                    townRadius,
+                    callbackRoadCellSizeInGridCells,
+                    roadCells,
+                    ref callbackRng,
+                    usedPlotCells,
+                    reservedFootprints,
+                    shopAndHouseFootprints));
+    }
+
     public delegate List<RectInt> CollectInitialBaseExclusionRoadRectsDelegate(int roadCellSizeInGridCells);
 
     public delegate bool ShouldYieldDelegate(int completedWorkItems);
@@ -198,7 +287,10 @@ internal sealed class RuntimeCityGenerationSystem
         public readonly RuntimeCityLifecycleSystem.Context LifecycleContext;
         public readonly RuntimeCityLayoutSystem LayoutSystem;
         public readonly RuntimeCityWalkabilitySystem WalkabilitySystem;
-        public readonly RuntimeCityBuildingSpawnSystem BuildingSpawnSystem;
+        public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;
+        public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;
+        public readonly RuntimeCityBuildingPlacementSystem BuildingPlacementSystem;
+        public readonly RuntimeCityCorridorBuildingSpawnSystem CorridorBuildingSpawnSystem;
         public readonly RuntimeCityRoadBuildBridgeSystem RoadBuildBridgeSystem;
         public readonly RuntimeCitySpawnBridgeSystem SpawnBridgeSystem;
         public readonly RuntimeCityChainSystem ChainSystem;
@@ -220,7 +312,10 @@ internal sealed class RuntimeCityGenerationSystem
             RuntimeCityLifecycleSystem.Context lifecycleContext,
             RuntimeCityLayoutSystem layoutSystem,
             RuntimeCityWalkabilitySystem walkabilitySystem,
-            RuntimeCityBuildingSpawnSystem buildingSpawnSystem,
+            RuntimeCityBuildingSpawnContextSystem.Systems buildingSpawnSystems,
+            RuntimeCityBuildingSpawnContextSystem.Context buildingSpawnContext,
+            RuntimeCityBuildingPlacementSystem buildingPlacementSystem,
+            RuntimeCityCorridorBuildingSpawnSystem corridorBuildingSpawnSystem,
             RuntimeCityRoadBuildBridgeSystem roadBuildBridgeSystem,
             RuntimeCitySpawnBridgeSystem spawnBridgeSystem,
             RuntimeCityChainSystem chainSystem,
@@ -241,7 +336,10 @@ internal sealed class RuntimeCityGenerationSystem
             LifecycleContext = lifecycleContext;
             LayoutSystem = layoutSystem;
             WalkabilitySystem = walkabilitySystem;
-            BuildingSpawnSystem = buildingSpawnSystem;
+            BuildingSpawnSystems = buildingSpawnSystems;
+            BuildingSpawnContext = buildingSpawnContext;
+            BuildingPlacementSystem = buildingPlacementSystem;
+            CorridorBuildingSpawnSystem = corridorBuildingSpawnSystem;
             RoadBuildBridgeSystem = roadBuildBridgeSystem;
             SpawnBridgeSystem = spawnBridgeSystem;
             ChainSystem = chainSystem;

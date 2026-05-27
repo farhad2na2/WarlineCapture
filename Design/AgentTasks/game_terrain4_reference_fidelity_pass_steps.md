@@ -157,3 +157,40 @@ Correction applied:
 - Blocker-belt bushes now use 16-cell spacing and 3-8 bushes per cluster, strengthening jungle undergrowth.
 - The mountain keep-out mask remains active, so dense vegetation does not hide under mountain prefabs.
 - Only `Game_Terrain4` was regenerated for this correction. Terrain5/Terrain7 optimization was intentionally skipped while the map art direction is still being tuned.
+
+## 2026-05-27 Dirt-Biome Source Group Correction
+
+The map now uses the new source example groups added under `Game_Terrain3/Island`:
+
+- `DirthTrees`: used by `Generated_Trees_Dirt` for dirt-biome tree placement.
+- `DirthMountain`: used by `Generated_Mountains_Dirt` for dirt-biome mountain placement.
+
+Rules added:
+
+- Green/mixed tree and mountain placements continue using the original `Trees` and `Mountains` source groups.
+- Dirt-biome trees are placed from `DirthTrees` only on dirt-classified cells, while staying off open dirt road/path corridors and all soft/hard pathing cells.
+- Dirt-biome mountains are placed from `DirthMountain` only on dirt-classified mountain candidate cells.
+- Mountain keep-out still covers both normal and dirt-biome mountains, so vegetation does not get buried under either mountain set.
+- Only `Game_Terrain4` was regenerated. Terrain5/Terrain7 optimization remains intentionally skipped while map art is being tuned.
+
+Latest validation:
+
+- `Game_Terrain4` generated dressing: 32,260 prefabs.
+- Mountains / dirt mountains: 55 / 40.
+- Green/mixed playable trees / dirt trees / blocker-belt trees: 5,755 / 11,556 / 7,587.
+- Playable bushes / blocker-belt bushes: 1,494 / 4,966.
+- Rocks: 807.
+- Pathing vegetation violations: 0.
+- Vegetation under mountain anchors: 0.
+- Reserve pollution: 0.
+
+## 2026-05-27 Dirt-Core Restriction
+
+The first dirt-biome pass still leaked dry trees into olive/green mixed areas. The dirt classifier now requires a stronger tan/brown color separation from the base visual reference and low tree-mask density before `DirthTrees` can be used.
+
+Rules updated:
+
+- `Trees_Dirt` now uses only dirt-core cells: stronger red-over-green and red-over-blue thresholds, green suppression, low tree-mask density, and non-pathing cells.
+- `Trees_Dirt` still spawns packed clumps once a dirt-core anchor is accepted.
+- `Trees_Playable` density was increased for green/mixed cells so green areas receive more of the normal tree set.
+- The proof overlay uses a brown marker for `Trees_Dirt`, separate from the green marker used by normal trees.

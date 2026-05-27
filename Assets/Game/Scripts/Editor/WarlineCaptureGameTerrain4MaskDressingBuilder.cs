@@ -49,11 +49,16 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     private const int HeightHighThreshold = 208;
     private const int SpacingSeed = 913742;
     private const int MaxSamplePointsPerKind = 64;
+    private static Color32[] baseVisualPixels;
+    private static int baseVisualWidth;
+    private static int baseVisualHeight;
 
     private static readonly string[] SourceExampleGroups =
     {
         "Mountains",
+        "DirthMountain",
         "Trees",
+        "DirthTrees",
         "Bushes",
         "Rocks"
     };
@@ -61,7 +66,9 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     private static readonly GeneratedGroupSpec[] GeneratedGroupSpecs =
     {
         new("Generated_Mountains", "Mask-placed mountain and cliff blocker dressing."),
+        new("Generated_Mountains_Dirt", "Dirt-biome mountain and cliff dressing using DirthMountain source examples."),
         new("Generated_Trees_Playable", "Lower-density tree dressing near playable lanes and open groves."),
+        new("Generated_Trees_Dirt", "Dirt-biome tree dressing using DirthTrees source examples."),
         new("Generated_Trees_BlockerBelt", "Dense tree dressing on visual blocker belts and mountain edges."),
         new("Generated_Bushes_Playable", "Playable-lane scrub and bush dressing."),
         new("Generated_Bushes_BlockerBelt", "Dense low vegetation around visual blocker belts and ridges."),
@@ -101,7 +108,9 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     private static readonly SpacingSpec[] SpacingSpecs =
     {
         new("Mountains", 118, 118, "Sparse high-terrain ridge anchors; mountains frame movement lanes instead of forming connected walls."),
-        new("Trees_Playable", 22, 22, "Visible tree pass for walkable groves and readable movement lanes."),
+        new("Mountains_Dirt", 132, 132, "Sparse dirt-biome mountain anchors using DirthMountain examples."),
+        new("Trees_Playable", 14, 14, "Dense visible tree pass for green/mixed walkable groves and readable movement lanes."),
+        new("Trees_Dirt", 14, 14, "Compact dirt-biome tree-clump pass using DirthTrees examples while keeping dirt road corridors readable."),
         new("Trees_BlockerBelt", 14, 14, "Jungle-density tree-cluster pass for forest belts around natural blockers without burying trees under mountains."),
         new("Bushes_Playable", 24, 24, "Playable scrub/bush pass; low vegetation fill without path clutter."),
         new("Bushes_BlockerBelt", 16, 16, "Dense low vegetation pass around forest belts and ridge transitions."),
@@ -889,13 +898,17 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         List<SpacingKindSummary> summaries = new();
         int totalAccepted = 0;
         bool[] mountainExclusion = null;
+        List<SpacingPointInfo> mountainExclusionPoints = new();
         foreach (SpacingSpec spec in SpacingSpecs)
         {
             SpacingKindSummary summary = GenerateSpacingForKind(spec, playableMapFootprint, blocker, tree, rock, height, mountainExclusion);
             summaries.Add(summary);
             totalAccepted += summary.AcceptedCount;
-            if (spec.Kind == "Mountains")
-                mountainExclusion = BuildMountainExclusionMask(summary.AcceptedPoints, 56);
+            if (IsMountainKind(spec.Kind))
+            {
+                mountainExclusionPoints.AddRange(summary.AcceptedPoints);
+                mountainExclusion = BuildMountainExclusionMask(mountainExclusionPoints, 56);
+            }
         }
 
         return new SpacingPlanInfo(
@@ -983,7 +996,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         int[] tree = LoadMaskValues(TreeDensityMaskPath);
         int[] rock = LoadMaskValues(RockDensityMaskPath);
         int[] height = LoadMaskValues(HeightMaskPath);
-        bool[] mountainExclusion = BuildMountainExclusionMask(AcceptedPointsForKind(validation.SpacingPlan, "Mountains"), 56);
+        bool[] mountainExclusion = BuildMountainExclusionMask(AcceptedMountainPoints(validation.SpacingPlan), 56);
+        HashSet<int> occupiedCells = new();
 
         foreach (SpacingKindSummary summary in validation.SpacingPlan.KindSummaries)
         {
@@ -1003,14 +1017,14 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
                 int index = point.GridZ * MapGridSize + point.GridX;
                 int clusterCount = ClusterCountForPoint(summary.Kind, point, blocker[index], tree[index], rock[index], height[index]);
                 for (int c = 0; c < clusterCount; c++)
-                    InstantiateDressingInstance(group, catalog, summary.Kind, point, i, c, validation.PlacementRejection.PlayableMapFootprint, blocker, tree, rock, height, mountainExclusion);
+                    InstantiateDressingInstance(group, catalog, summary.Kind, point, i, c, validation.PlacementRejection.PlayableMapFootprint, blocker, tree, rock, height, mountainExclusion, occupiedCells);
             }
         }
 
         EditorSceneManager.MarkSceneDirty(targetScene);
     }
 
-    private static void InstantiateDressingInstance(Transform group, List<CatalogEntry> catalog, string kind, SpacingPointInfo point, int pointIndex, int clusterIndex, GridRect playableMapFootprint, int[] blocker, int[] tree, int[] rock, int[] height, bool[] mountainExclusion)
+    private static void InstantiateDressingInstance(Transform group, List<CatalogEntry> catalog, string kind, SpacingPointInfo point, int pointIndex, int clusterIndex, GridRect playableMapFootprint, int[] blocker, int[] tree, int[] rock, int[] height, bool[] mountainExclusion, HashSet<int> occupiedCells)
     {
         int hash = StableHash(point.GridX + clusterIndex * 17, point.GridZ - clusterIndex * 29, SpacingSeed + kind.Length * 811 + clusterIndex * 97);
         CatalogEntry entry = catalog[((hash + pointIndex) & int.MaxValue) % catalog.Count];
@@ -1035,6 +1049,11 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
             gridZ = point.GridZ;
         }
 
+        if (!TryReservePlacementCell(kind, gridX, gridZ, playableMapFootprint, blocker, tree, rock, height, mountainExclusion, occupiedCells, out int resolvedGridX, out int resolvedGridZ))
+            return;
+        gridX = resolvedGridX;
+        gridZ = resolvedGridZ;
+
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         instance.name = kind + "_" + pointIndex.ToString("0000", CultureInfo.InvariantCulture) + "_" + clusterIndex.ToString("00", CultureInfo.InvariantCulture) + "_" + Path.GetFileNameWithoutExtension(entry.PrefabPath);
         instance.transform.SetParent(group, false);
@@ -1051,7 +1070,9 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         bool dense = treeValue >= DensityDenseThreshold || rockValue >= DensityDenseThreshold || heightValue >= HeightHighThreshold || blockerValue >= BlockerBlockedThreshold;
         int hash = point.Hash;
         if (kind == "Trees_Playable")
-            return treeValue >= DensityDenseThreshold ? 3 + hash % 2 : treeValue >= DensityMediumThreshold ? 2 : 1;
+            return treeValue >= DensityDenseThreshold ? 5 + hash % 3 : treeValue >= DensityMediumThreshold ? 3 + hash % 3 : 1 + hash % 2;
+        if (kind == "Trees_Dirt")
+            return 5 + hash % 5;
         if (kind == "Trees_BlockerBelt")
             return dense ? 7 + hash % 4 : 4 + hash % 3;
         if (kind == "Bushes_Playable")
@@ -1059,6 +1080,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         if (kind == "Bushes_BlockerBelt")
             return dense ? 5 + hash % 4 : 3 + hash % 3;
         if (kind == "Mountains")
+            return 1;
+        if (kind == "Mountains_Dirt")
             return 1;
         if (kind == "Rocks")
             return dense ? 2 : 1;
@@ -1072,7 +1095,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
         float radius = kind switch
         {
-            "Trees_Playable" => 5f + clusterIndex * 4.5f,
+            "Trees_Playable" => 4.5f + clusterIndex * 3.4f,
+            "Trees_Dirt" => 3.5f + clusterIndex * 2.4f,
             "Trees_BlockerBelt" => 5f + clusterIndex * 3.0f,
             "Bushes_Playable" => 4f + clusterIndex * 3.0f,
             "Bushes_BlockerBelt" => 4f + clusterIndex * 2.4f,
@@ -1082,6 +1106,62 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         };
         float angle = ((hash % 36000) / 100f + clusterIndex * 137.5f) * Mathf.Deg2Rad;
         return new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+    }
+
+    private static bool TryReservePlacementCell(string kind, int gridX, int gridZ, GridRect playableMapFootprint, int[] blocker, int[] tree, int[] rock, int[] height, bool[] mountainExclusion, HashSet<int> occupiedCells, out int resolvedGridX, out int resolvedGridZ)
+    {
+        if (TryReservePlacementCellCandidate(kind, gridX, gridZ, playableMapFootprint, blocker, tree, rock, height, mountainExclusion, occupiedCells))
+        {
+            resolvedGridX = gridX;
+            resolvedGridZ = gridZ;
+            return true;
+        }
+
+        for (int radius = 1; radius <= 10; radius++)
+        {
+            for (int dz = -radius; dz <= radius; dz++)
+            {
+                for (int dx = -radius; dx <= radius; dx++)
+                {
+                    if (Mathf.Abs(dx) != radius && Mathf.Abs(dz) != radius)
+                        continue;
+
+                    int candidateX = Mathf.Clamp(gridX + dx, 0, MapGridSize - 1);
+                    int candidateZ = Mathf.Clamp(gridZ + dz, 0, MapGridSize - 1);
+                    if (TryReservePlacementCellCandidate(kind, candidateX, candidateZ, playableMapFootprint, blocker, tree, rock, height, mountainExclusion, occupiedCells))
+                    {
+                        resolvedGridX = candidateX;
+                        resolvedGridZ = candidateZ;
+                        return true;
+                    }
+                }
+            }
+        }
+
+        resolvedGridX = gridX;
+        resolvedGridZ = gridZ;
+        return false;
+    }
+
+    private static bool TryReservePlacementCellCandidate(string kind, int gridX, int gridZ, GridRect playableMapFootprint, int[] blocker, int[] tree, int[] rock, int[] height, bool[] mountainExclusion, HashSet<int> occupiedCells)
+    {
+        int key = OccupiedCellKey(gridX, gridZ);
+        if (occupiedCells.Contains(key))
+            return false;
+
+        int index = gridZ * MapGridSize + gridX;
+        if (mountainExclusion != null && IsVegetationKind(kind) && mountainExclusion[index])
+            return false;
+        if (!IsValidPlacementCandidate(kind, gridX, gridZ, playableMapFootprint, blocker[index], tree[index], rock[index], height[index]))
+            return false;
+
+        occupiedCells.Add(key);
+        return true;
+    }
+
+    private static int OccupiedCellKey(int gridX, int gridZ)
+    {
+        return gridZ * MapGridSize + gridX;
     }
 
     private static void RemoveColliders(GameObject instance)
@@ -1101,8 +1181,12 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     {
         if (kind == "Mountains")
             return "Generated_Mountains";
+        if (kind == "Mountains_Dirt")
+            return "Generated_Mountains_Dirt";
         if (kind == "Trees_Playable")
             return "Generated_Trees_Playable";
+        if (kind == "Trees_Dirt")
+            return "Generated_Trees_Dirt";
         if (kind == "Trees_BlockerBelt")
             return "Generated_Trees_BlockerBelt";
         if (kind == "Bushes_Playable")
@@ -1117,8 +1201,14 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     private static List<CatalogEntry> CatalogForKind(Dictionary<string, List<CatalogEntry>> catalog, string kind)
     {
         string catalogKind = kind;
-        if (kind.StartsWith("Trees_", StringComparison.Ordinal))
+        if (kind == "Mountains_Dirt")
+            catalogKind = "DirthMountain";
+        else if (kind == "Trees_Dirt")
+            catalogKind = "DirthTrees";
+        else if (kind.StartsWith("Trees_", StringComparison.Ordinal))
             catalogKind = "Trees";
+        else if (kind == "Mountains")
+            catalogKind = "Mountains";
         else if (kind.StartsWith("Bushes_", StringComparison.Ordinal))
             catalogKind = "Bushes";
 
@@ -1183,11 +1273,15 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         bool raised = heightValue >= HeightRaisedThreshold;
         bool rocky = rockValue >= DensityMediumThreshold;
         bool blockerBelt = softPathing || hardBlocked || raised || rocky;
+        bool dirtArea = IsDirtArea(gridX, gridZ, treeValue, rockValue, heightValue);
+        bool openDirtPath = IsOpenDirtPath(gridX, gridZ, blockerValue, treeValue, rockValue, heightValue);
 
         if (kind == "Trees_Playable")
-            return treeValue >= DensityCandidateThreshold && !softPathing && !hardBlocked;
+            return treeValue >= DensityCandidateThreshold && !dirtArea && !softPathing && !hardBlocked;
+        if (kind == "Trees_Dirt")
+            return dirtArea && !openDirtPath && !softPathing && !hardBlocked;
         if (kind == "Trees_BlockerBelt")
-            return treeValue >= DensityMediumThreshold && blockerBelt;
+            return treeValue >= DensityMediumThreshold && !dirtArea && blockerBelt;
         if (kind == "Bushes_Playable")
             return treeValue >= DensityCandidateThreshold && !softPathing && !hardBlocked;
         if (kind == "Bushes_BlockerBelt")
@@ -1195,7 +1289,9 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         if (kind == "Rocks")
             return rockValue >= DensityCandidateThreshold && !hardBlocked;
         if (kind == "Mountains")
-            return IsMountainCandidate(blockerValue, rockValue, heightValue);
+            return !dirtArea && IsMountainCandidate(blockerValue, rockValue, heightValue);
+        if (kind == "Mountains_Dirt")
+            return dirtArea && IsMountainCandidate(blockerValue, rockValue, heightValue);
 
         return false;
     }
@@ -1204,6 +1300,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     {
         if (kind == "Trees_Playable")
             return treeValue;
+        if (kind == "Trees_Dirt")
+            return 64 + treeValue + Mathf.Max(0, rockValue - 48) / 2;
         if (kind == "Trees_BlockerBelt")
             return treeValue + Mathf.Max(blockerValue, heightValue) / 2;
         if (kind == "Bushes_Playable")
@@ -1213,6 +1311,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         if (kind == "Rocks")
             return rockValue + Mathf.Max(0, heightValue - 96) / 2;
         if (kind == "Mountains")
+            return heightValue * 2 + rockValue + Mathf.Max(0, blockerValue - 192);
+        if (kind == "Mountains_Dirt")
             return heightValue * 2 + rockValue + Mathf.Max(0, blockerValue - 192);
         return 0;
     }
@@ -1225,9 +1325,65 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         return highRidge || denseRockPeak || hardRaisedRock;
     }
 
+    private static bool IsMountainKind(string kind)
+    {
+        return kind == "Mountains" || kind == "Mountains_Dirt";
+    }
+
     private static bool IsVegetationKind(string kind)
     {
         return kind.StartsWith("Trees_", StringComparison.Ordinal) || kind.StartsWith("Bushes_", StringComparison.Ordinal);
+    }
+
+    private static bool IsDirtArea(int gridX, int gridZ, int treeValue, int rockValue, int heightValue)
+    {
+        Color32 color = SampleBaseVisualColor(gridX, gridZ);
+        int luminance = Luminance(color);
+        bool tanBrown = color.r >= color.g + 20 && color.r >= color.b + 42 && color.g >= color.b + 18 && luminance >= 105;
+        bool sandyNeutral = color.r >= color.g + 12 && color.r >= color.b + 45 && color.g >= color.b + 24 && luminance >= 118;
+        bool greenSuppressed = color.g <= color.r - 10 && color.g <= color.b + 58;
+        bool confirmedDirtColor = (tanBrown || sandyNeutral) && greenSuppressed;
+        bool drySparse = treeValue < 64 && rockValue < DensityDenseThreshold && heightValue < HeightHighThreshold && confirmedDirtColor;
+        bool rockyDirt = confirmedDirtColor && treeValue < 64 && rockValue >= DensityCandidateThreshold && heightValue < HeightHighThreshold;
+        return drySparse || rockyDirt;
+    }
+
+    private static bool IsOpenDirtPath(int gridX, int gridZ, int blockerValue, int treeValue, int rockValue, int heightValue)
+    {
+        return IsDirtArea(gridX, gridZ, treeValue, rockValue, heightValue)
+            && blockerValue < BlockerSoftEdgeThreshold
+            && treeValue < 48
+            && rockValue < 80
+            && heightValue < HeightRaisedThreshold;
+    }
+
+    private static Color32 SampleBaseVisualColor(int gridX, int gridZ)
+    {
+        EnsureBaseVisualCache();
+        if (baseVisualPixels == null || baseVisualPixels.Length == 0)
+            return new Color32(90, 90, 70, 255);
+
+        int pixelX = Mathf.Clamp(Mathf.RoundToInt(gridX / MapGridMaxCoordinate * (baseVisualWidth - 1)), 0, baseVisualWidth - 1);
+        int pixelY = Mathf.Clamp(Mathf.RoundToInt((1f - gridZ / MapGridMaxCoordinate) * (baseVisualHeight - 1)), 0, baseVisualHeight - 1);
+        return baseVisualPixels[pixelY * baseVisualWidth + pixelX];
+    }
+
+    private static void EnsureBaseVisualCache()
+    {
+        if (baseVisualPixels != null)
+            return;
+
+        Texture2D texture = LoadTexture(BaseVisualPath);
+        try
+        {
+            baseVisualPixels = texture.GetPixels32();
+            baseVisualWidth = texture.width;
+            baseVisualHeight = texture.height;
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(texture);
+        }
     }
 
     private static List<SpacingPointInfo> AcceptedPointsForKind(SpacingPlanInfo plan, string kind)
@@ -1239,6 +1395,18 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         }
 
         return new List<SpacingPointInfo>();
+    }
+
+    private static List<SpacingPointInfo> AcceptedMountainPoints(SpacingPlanInfo plan)
+    {
+        List<SpacingPointInfo> points = new();
+        foreach (SpacingKindSummary summary in plan.KindSummaries)
+        {
+            if (IsMountainKind(summary.Kind))
+                points.AddRange(summary.AcceptedPoints);
+        }
+
+        return points;
     }
 
     private static bool[] BuildMountainExclusionMask(List<SpacingPointInfo> mountainPoints, int radius)
@@ -1683,6 +1851,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
                 outsidePlayableMapViolations++;
         }
         AddCheck(checks, "playableMapFootprint.containment", 0, outsidePlayableMapViolations, outsidePlayableMapViolations == 0, "Generated dressing must remain inside the 2024 playable map footprint, which is now fully covered by green/dirt terrain.");
+        int duplicatePlacementCellViolations = CountDuplicatePlacementCells(placedPoints);
+        AddCheck(checks, "placement.uniqueGridCells", 0, duplicatePlacementCellViolations, duplicatePlacementCellViolations == 0, "No generated dressing prefabs may share the same one-unit grid cell.");
 
         int vegetationPathingViolations = 0;
         int rockPathingViolations = 0;
@@ -1696,12 +1866,12 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
             int rockValue = rock[index];
             int heightValue = height[index];
 
-            bool playableVegetation = point.Kind == "Trees_Playable" || point.Kind == "Bushes_Playable";
+            bool playableVegetation = point.Kind == "Trees_Playable" || point.Kind == "Trees_Dirt" || point.Kind == "Bushes_Playable";
             if (playableVegetation && blockerValue >= BlockerSoftEdgeThreshold)
                 vegetationPathingViolations++;
             if (point.Kind == "Rocks" && blockerValue >= BlockerBlockedThreshold)
                 rockPathingViolations++;
-            if (point.Kind == "Mountains")
+            if (IsMountainKind(point.Kind))
             {
                 bool naturalBlockerTerrain = IsMountainCandidate(blockerValue, rockValue, heightValue);
                 if (naturalBlockerTerrain)
@@ -1713,7 +1883,7 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
         AddCheck(checks, "pathing.playableVegetationClear", 0, vegetationPathingViolations, vegetationPathingViolations == 0, "Playable vegetation must not sit on soft-edge or hard-blocker pathing cells; blocker-belt vegetation is visual dressing and has colliders removed.");
         AddCheck(checks, "pathing.rocksClear", 0, rockPathingViolations, rockPathingViolations == 0, "Decorative rocks must not sit on hard-blocked pathing cells.");
-        AddCheck(checks, "blockerBelt.mountainsNaturalTerrain", CountPlacedKind(placedPoints, "Mountains"), mountainNaturalBlockerCompliant, mountainNaturalBlockerViolations == 0, "Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells.");
+        AddCheck(checks, "blockerBelt.mountainsNaturalTerrain", CountMountainKind(placedPoints), mountainNaturalBlockerCompliant, mountainNaturalBlockerViolations == 0, "Mountain dressing must stay tied to blocker, high-terrain, or dense-rock mask cells.");
         AddCheck(checks, "fidelity.vegetationNotBuriedUnderMountains", 0, vegetationMountainOverlapViolations, vegetationMountainOverlapViolations == 0, "Trees and bushes must keep a visible separation from mountain anchor prefabs.");
 
         if (renderCaptures)
@@ -2083,8 +2253,10 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
     private static Color32 MarkerColorForKind(string kind)
     {
-        if (kind == "Mountains")
+        if (IsMountainKind(kind))
             return new Color32(238, 88, 28, 255);
+        if (kind == "Trees_Dirt")
+            return new Color32(93, 72, 38, 255);
         if (kind.StartsWith("Trees_", StringComparison.Ordinal))
             return new Color32(24, 116, 45, 255);
         if (kind.StartsWith("Bushes_", StringComparison.Ordinal))
@@ -2094,8 +2266,10 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
     private static int MarkerRadiusForKind(string kind)
     {
-        if (kind == "Mountains")
+        if (IsMountainKind(kind))
             return 8;
+        if (kind == "Trees_Dirt")
+            return 5;
         if (kind.StartsWith("Trees_", StringComparison.Ordinal))
             return 5;
         if (kind.StartsWith("Bushes_", StringComparison.Ordinal))
@@ -2110,7 +2284,8 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
             CreateOverlayMaterial(new Color(0.95f, 0.49f, 0.16f, 1f)),
             CreateOverlayMaterial(new Color(0.12f, 0.45f, 0.16f, 1f)),
             CreateOverlayMaterial(new Color(0.53f, 0.70f, 0.22f, 1f)),
-            CreateOverlayMaterial(new Color(0.42f, 0.42f, 0.42f, 1f))
+            CreateOverlayMaterial(new Color(0.42f, 0.42f, 0.42f, 1f)),
+            CreateOverlayMaterial(new Color(0.36f, 0.25f, 0.12f, 1f))
         };
 
         GameObject root = new("Temp_GameTerrain4_ValidationMarkerOverlay")
@@ -2161,8 +2336,10 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
     private static Material MaterialForKind(string kind, List<Material> materials)
     {
-        if (kind == "Mountains")
+        if (IsMountainKind(kind))
             return materials[0];
+        if (kind == "Trees_Dirt")
+            return materials[4];
         if (kind.StartsWith("Trees_", StringComparison.Ordinal))
             return materials[1];
         if (kind.StartsWith("Bushes_", StringComparison.Ordinal))
@@ -2172,7 +2349,7 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
 
     private static Vector3 MarkerScaleForKind(string kind, bool topDown)
     {
-        if (kind == "Mountains")
+        if (IsMountainKind(kind))
             return topDown ? new Vector3(24f, 6f, 24f) : new Vector3(22f, 22f, 22f);
         if (kind.StartsWith("Trees_", StringComparison.Ordinal))
             return topDown ? new Vector3(14f, 5f, 14f) : new Vector3(12f, 18f, 12f);
@@ -2214,12 +2391,38 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
         return count;
     }
 
+    private static int CountMountainKind(List<PlacedDressingPointInfo> points)
+    {
+        int count = 0;
+        foreach (PlacedDressingPointInfo point in points)
+        {
+            if (IsMountainKind(point.Kind))
+                count++;
+        }
+
+        return count;
+    }
+
+    private static int CountDuplicatePlacementCells(List<PlacedDressingPointInfo> points)
+    {
+        HashSet<int> seen = new();
+        int duplicates = 0;
+        foreach (PlacedDressingPointInfo point in points)
+        {
+            int key = OccupiedCellKey(point.GridX, point.GridZ);
+            if (!seen.Add(key))
+                duplicates++;
+        }
+
+        return duplicates;
+    }
+
     private static int CountVegetationMountainOverlaps(List<PlacedDressingPointInfo> points, int radius)
     {
         List<PlacedDressingPointInfo> mountains = new();
         foreach (PlacedDressingPointInfo point in points)
         {
-            if (point.Kind == "Mountains")
+            if (IsMountainKind(point.Kind))
                 mountains.Add(point);
         }
 
@@ -2274,7 +2477,7 @@ public static class WarlineCaptureGameTerrain4MaskDressingBuilder
     private static ReferenceFidelityInfo BuildReferenceFidelityInfo(Transform targetIsland, List<PlacedDressingPointInfo> placedPoints, bool capturesRendered)
     {
         int blockerVegetation = CountPlacedKind(placedPoints, "Trees_BlockerBelt") + CountPlacedKind(placedPoints, "Bushes_BlockerBelt");
-        int mountains = CountPlacedKind(placedPoints, "Mountains");
+        int mountains = CountMountainKind(placedPoints);
         int vegetationMountainOverlap = CountVegetationMountainOverlaps(placedPoints, 48);
         int reservePollution = 0;
         foreach (ReserveZoneSpec zone in ReserveZoneSpecs)

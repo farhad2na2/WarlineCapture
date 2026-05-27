@@ -41,6 +41,27 @@ public sealed class GameplayArchitectureContractTests
     private const string UnitPathfindingFocusedPerformanceValidationPath = "Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs";
     private const string RoadBuildRuntimeStateRoadmapPath = "Design/Architecture/road_build_runtime_state_system_refactor_roadmap.md";
     private const string RoadBuildRuntimeStateSystemPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
+    private const string RuntimeCityBuildingSpawnRoadmapPath = "Design/Architecture/runtime_city_building_spawn_system_refactor_roadmap.md";
+    private const string RuntimeCityBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
+    private const string RuntimeCityBuildingPlacementSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs";
+    private const string RuntimeCityLandmarkOffsetSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityLandmarkOffsetSystem.cs";
+    private const string RuntimeCityHallSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs";
+    private const string RuntimeCityLandmarkSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityLandmarkSpawnSystem.cs";
+    private const string RuntimeCityBulkPlotPlanSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBulkPlotPlanSystem.cs";
+    private const string RuntimeCityEntryBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityEntryBuildingSpawnSystem.cs";
+    private const string RuntimeCityRoadsideBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityRoadsideBuildingSpawnSystem.cs";
+    private const string RuntimeCityRuralBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityRuralBuildingSpawnSystem.cs";
+    private const string RuntimeCityBulkBuildingSpawnRoutineSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutineSystem.cs";
+    private const string RuntimeCityCorridorBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityCorridorBuildingSpawnSystem.cs";
+    private const string RuntimeCityYardWallPlanSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityYardWallPlanSystem.cs";
+    private const string RuntimeCityYardGateSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityYardGateSystem.cs";
+    private const string RuntimeCityYardWallVisualSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityYardWallVisualSystem.cs";
+    private const string RuntimeCityHouseYardWallSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallSystem.cs";
+    private const string RuntimeCityDecorationPrefabGroupSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityDecorationPrefabGroupSystem.cs";
+    private const string RuntimeCityClothCoverSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityClothCoverSpawnSystem.cs";
+    private const string RuntimeCityArchwaySpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityArchwaySpawnSystem.cs";
+    private const string RuntimeCityFreeScatterDecorationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityFreeScatterDecorationSystem.cs";
+    private const string RuntimeCityDecorationBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityDecorationBuildingSpawnSystem.cs";
     private const string ScriptsRoot = "Assets/Game/Scripts";
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
@@ -126,6 +147,44 @@ public sealed class GameplayArchitectureContractTests
                 : ex;
             UnityEngine.Debug.LogException(failure);
             UnityEngine.Debug.LogError("[RuntimeCityArchitectureValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunRuntimeCityBuildingSpawnArchitectureBatchValidation()
+    {
+        string[] methodNames =
+        {
+            nameof(RuntimeCityBuildingSpawnRefactorRoadmapMustRecordBaselineAndTargetBoundaries),
+            nameof(RuntimeCityBuildingSpawnBroadReplacementShellsMustNotExist),
+            nameof(RuntimeCityBuildingSpawnContextMustLiveInRuntimeCityBuildingSpawnContextSystem),
+            nameof(RuntimeCityCompositionSystemMustOwnBuildingSpawnChildSystems),
+            nameof(RuntimeCityGenerationSystemMustUseBuildingSpawnChildSystemsDirectly),
+            nameof(RuntimeCityBuildingSpawnAuditMustBlockDriftBackToBroadShells),
+            nameof(RuntimeCityBuildingSpawnCoordinatorShellMustStayDeleted)
+        };
+
+        try
+        {
+            var tests = new GameplayArchitectureContractTests();
+            Type testType = typeof(GameplayArchitectureContractTests);
+            for (int i = 0; i < methodNames.Length; i++)
+            {
+                System.Reflection.MethodInfo method = testType.GetMethod(methodNames[i]);
+                Assert.NotNull(method, $"Missing runtime city building-spawn architecture validation method {methodNames[i]}.");
+                method.Invoke(tests, null);
+            }
+
+            UnityEngine.Debug.Log($"[RuntimeCityBuildingSpawnArchitectureValidation] result=Passed methods={methodNames.Length}");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Exception failure = ex is System.Reflection.TargetInvocationException && ex.InnerException != null
+                ? ex.InnerException
+                : ex;
+            UnityEngine.Debug.LogException(failure);
+            UnityEngine.Debug.LogError("[RuntimeCityBuildingSpawnArchitectureValidation] result=Failed");
             UnityEditor.EditorApplication.Exit(1);
         }
     }
@@ -8843,6 +8902,1292 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void RuntimeCityBuildingSpawnRefactorRoadmapMustRecordBaselineAndTargetBoundaries()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityBuildingSpawnRoadmapPath), $"{RuntimeCityBuildingSpawnRoadmapPath} must track the RuntimeCityBuildingSpawnSystem decomposition plan.");
+        Assert.IsFalse(File.Exists(RuntimeCityBuildingSpawnSystemPath), $"{RuntimeCityBuildingSpawnSystemPath} was deleted in step 35 and must not return.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+
+        StringAssert.Contains("This roadmap has 36 steps.", roadmap);
+        StringAssert.Contains("Target file: `Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs`", roadmap);
+        StringAssert.Contains("Current size at roadmap creation: 1107 lines.", roadmap);
+        StringAssert.Contains("Final target: `RuntimeCityBuildingSpawnSystem` may remain only as an algorithm-light city-building spawn coordinator", roadmap);
+        StringAssert.Contains("Do not replace `RuntimeCityBuildingSpawnSystem` with `RuntimeCityBuildingManager`, `RuntimeCityBuildingController`, `RuntimeCityBuildingSpawnerFacade`, or another broad shell.", roadmap);
+        StringAssert.Contains("1. Complete: Add roadmap and baseline architecture guard", roadmap);
+        StringAssert.Contains("36. Pending: Validation gate", roadmap);
+
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem follow-up refactor is tracked in `Design/Architecture/runtime_city_building_spawn_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("`RuntimeCityBuildingSpawnSystem` may remain only as an algorithm-light city-building spawn coordinator", contract);
+        StringAssert.Contains("Do not replace RuntimeCityBuildingSpawnSystem with RuntimeCityBuildingManager, RuntimeCityBuildingController, RuntimeCityBuildingSpawnerFacade, or another broad shell", contract);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem was deleted in step 35", contract);
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnSystemBaselineMustStayExplicitUntilExtracted()
+    {
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        int currentLines = File.ReadLines(RuntimeCityBuildingSpawnSystemPath).Count();
+
+        Assert.LessOrEqual(currentLines, 1125, "RuntimeCityBuildingSpawnSystem must not grow beyond the step-5 context-routing seam without an explicit roadmap/guard update.");
+        StringAssert.Contains("Mutable config/dependency storage", roadmap);
+        StringAssert.Contains("Landmark placement", roadmap);
+        StringAssert.Contains("Bulk building sequencing", roadmap);
+        StringAssert.Contains("Plot placement", roadmap);
+        StringAssert.Contains("Rural placement", roadmap);
+        StringAssert.Contains("Yard walls", roadmap);
+        StringAssert.Contains("Decoration buildings", roadmap);
+
+        string[] currentResponsibilityTokens =
+        {
+            "public void SpawnCityImportantBuildings(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context",
+            "public void EnsureCityHall(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context",
+            "public IEnumerator SpawnCityBulkBuildingsRoutine(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context",
+            "public void SpawnCorridorEntranceBuildings("
+        };
+
+        foreach (string token in currentResponsibilityTokens)
+            StringAssert.Contains(token, buildingSpawnSystem);
+
+        string[] allowedPublicSurface =
+        {
+            "public void SpawnCityImportantBuildings(",
+            "public void EnsureCityHall(",
+            "public IEnumerator SpawnCityBulkBuildingsRoutine(",
+            "public void SpawnCorridorEntranceBuildings("
+        };
+
+        MatchCollection publicMatches = Regex.Matches(
+            buildingSpawnSystem,
+            @"\bpublic\s+(?:sealed\s+class|IEnumerator|void)\s+[A-Za-z_][A-Za-z0-9_]*");
+        string[] unexpectedPublicSurface = publicMatches
+            .Cast<Match>()
+            .Select(match => match.Value + "(")
+            .Where(matchText => !allowedPublicSurface.Any(allowed => matchText.StartsWith(allowed.TrimEnd('('), StringComparison.Ordinal)))
+            .Distinct()
+            .OrderBy(value => value, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            unexpectedPublicSurface,
+            "Do not add public surface to RuntimeCityBuildingSpawnSystem while it is being decomposed:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, unexpectedPublicSurface));
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnBroadReplacementShellsMustNotExist()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        StringAssert.Contains("Do not replace `RuntimeCityBuildingSpawnSystem` with `RuntimeCityBuildingManager`, `RuntimeCityBuildingController`, `RuntimeCityBuildingSpawnerFacade`, or another broad shell.", roadmap);
+
+        string[] forbiddenTypeNames =
+        {
+            "RuntimeCityBuildingManager",
+            "RuntimeCityBuildingController",
+            "RuntimeCityBuildingSpawnerFacade",
+            "RuntimeCityBuildingFacade",
+            "RuntimeCityBuildingSpawnManager",
+            "RuntimeCityBuildingSpawnController"
+        };
+
+        string[] environmentFiles = Directory.GetFiles("Assets/Game/Scripts/Environment", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .ToArray();
+        var violations = new List<string>();
+
+        foreach (string file in environmentFiles)
+        {
+            string text = File.ReadAllText(file);
+            foreach (string forbiddenTypeName in forbiddenTypeNames)
+            {
+                if (Regex.IsMatch(text, $@"\b(?:class|struct|interface|new)\s+{Regex.Escape(forbiddenTypeName)}\b|\b{Regex.Escape(forbiddenTypeName)}\s+[A-Za-z_]"))
+                    violations.Add($"{file}: {forbiddenTypeName}");
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "Do not replace RuntimeCityBuildingSpawnSystem with a broad manager/controller/facade shell:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnContextMustLiveInRuntimeCityBuildingSpawnContextSystem()
+    {
+        const string contextSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnContextSystem.cs";
+        const string compositionPath = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs";
+
+        Assert.IsTrue(File.Exists(contextSystemPath), "Runtime city building spawn context construction must live in RuntimeCityBuildingSpawnContextSystem.");
+
+        string contextSystem = File.ReadAllText(contextSystemPath);
+        string composition = File.ReadAllText(compositionPath);
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+
+        StringAssert.Contains("4. Complete: Create `RuntimeCityBuildingSpawnContextSystem`", roadmap);
+        StringAssert.Contains("internal sealed class RuntimeCityBuildingSpawnContextSystem", contextSystem);
+        StringAssert.Contains("public Context Create(", contextSystem);
+        StringAssert.Contains("public readonly struct Context", contextSystem);
+        StringAssert.Contains("public readonly struct Systems", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityHallSpawnSystem HallSpawnSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityDecorationBuildingSpawnSystem DecorationBuildingSpawnSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityConfigSystem.Snapshot Config;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityBuildingPlotSystem BuildingPlotSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityWalkabilitySystem WalkabilitySystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityPrefabSelectionSystem PrefabSelectionSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityVisualSystem VisualSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCitySpawnBridgeSystem SpawnBridgeSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityDiagnosticSystem DiagnosticSystem;", contextSystem);
+        StringAssert.Contains("private readonly RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem = new()", composition);
+        StringAssert.Contains("_runtimeCityBuildingSpawnContextSystem.Create(", composition);
+
+        Assert.IsFalse(File.Exists(RuntimeCityBuildingSpawnSystemPath), "RuntimeCityBuildingSpawnSystem must not return after step 35.");
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnPublicSurfaceMustDelegateThroughContext()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+
+        StringAssert.Contains("5. Complete: Route public methods through explicit context", roadmap);
+        StringAssert.Contains("public void SpawnCityImportantBuildings(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("public void EnsureCityHall(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("public IEnumerator SpawnCityBulkBuildingsRoutine(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("systems.HallSpawnSystem.EnsureCityHall(context,", buildingSpawnSystem);
+        StringAssert.Contains("=> systems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(", buildingSpawnSystem);
+        StringAssert.Contains("systems.HouseYardWallSystem.PlaceHouseYardWalls(", buildingSpawnSystem);
+        StringAssert.Contains("systems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(", buildingSpawnSystem);
+        StringAssert.Contains("=> systems.CorridorBuildingSpawnSystem.SpawnCorridorEntranceBuildings(context, systems.PlacementSystem, city, connectorCell, direction, corridorLength, roadCellSizeInGridCells, ref rng);", buildingSpawnSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("public void Configure(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_context", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("internal void", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem public surface must route through the explicit context without adding internal compatibility members.");
+    }
+
+    [Test]
+    public void RuntimeCityBuildingPlacementSystemMustOwnSpawnReserveValidation()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityBuildingPlacementSystemPath), "Runtime city building spawn/delete/reserve validation must live in RuntimeCityBuildingPlacementSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string placementSystem = File.ReadAllText(RuntimeCityBuildingPlacementSystemPath);
+
+        StringAssert.Contains("6. Complete: Create `RuntimeCityBuildingPlacementSystem`", roadmap);
+        StringAssert.Contains("7. Complete: Move shared plot placement helper", roadmap);
+        StringAssert.Contains("8. Complete: Remove mutable config/dependency reads from shared placement paths", roadmap);
+        StringAssert.Contains("Shared runtime-city building footprint lookup, spawn/delete-on-failed-validation, reservation, road-overlap validation, required-touch validation, and placement anchor recording belong in `RuntimeCityBuildingPlacementSystem`", contract);
+        StringAssert.Contains("Roadside plot spacing, random prefab choice, centered-origin projection, spawn/reserve request construction, and used-plot recording belong in `RuntimeCityBuildingPlacementSystem.PlaceFromPlots`", contract);
+        StringAssert.Contains("Shared placement paths must receive explicit `RuntimeCityBuildingSpawnContextSystem.Context` and `RuntimeCityConfigSystem.Snapshot` values", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityBuildingPlacementSystem", placementSystem);
+        StringAssert.Contains("public readonly struct Request", placementSystem);
+        StringAssert.Contains("public readonly struct Result", placementSystem);
+        StringAssert.Contains("public Vector2Int GetFootprint(", placementSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetCachedFootprintCells(prefab)", placementSystem);
+        StringAssert.Contains("public bool TrySpawnAndReserve(", placementSystem);
+        StringAssert.Contains("public void PlaceFromPlots(", placementSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.HasPlotSpacing(", placementSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab(prefabs, ref rng)", placementSystem);
+        StringAssert.Contains("usedPlotCells.Add(candidate.PlotCell);", placementSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.TrySpawnCityBuilding(", placementSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.DeleteCityBuilding(buildingId);", placementSystem);
+        StringAssert.Contains("context.WalkabilitySystem.ReserveFootprint(", placementSystem);
+        StringAssert.Contains("context.WalkabilitySystem.DoesRectOverlapRoadCells(", placementSystem);
+        StringAssert.Contains("context.WalkabilitySystem.TouchesRect(", placementSystem);
+        StringAssert.Contains("placementAnchors?.Add(actualRect);", placementSystem);
+        StringAssert.Contains("private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("placementSystem.TrySpawnAndReserve(", File.ReadAllText(RuntimeCityFreeScatterDecorationSystemPath));
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("_runtimeCitySpawnBridgeSystem.TrySpawnCityBuilding", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCitySpawnBridgeSystem.DeleteCityBuilding", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCityWalkabilitySystem.WouldBeTooCloseToReserved", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCityWalkabilitySystem.DoesRectOverlapRoadCells", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private void PlaceFromPlots(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCityBuildingPlacementSystem.PlaceFromPlots(_context", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("PlaceRuralHouses(housePrefabs", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("PlaceCityDecorationBuildings(cityDecorationPrefabs", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must route building spawn/delete/reserved/road validation and shared plot placement through RuntimeCityBuildingPlacementSystem with explicit context/config values.");
+    }
+
+    [Test]
+    public void RuntimeCityLandmarkOffsetSystemMustOwnOffsetOrder()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityLandmarkOffsetSystemPath), "Runtime city landmark offset policy must live in RuntimeCityLandmarkOffsetSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string hallSpawnSystem = File.ReadAllText(RuntimeCityHallSpawnSystemPath);
+        string landmarkSpawnSystem = File.ReadAllText(RuntimeCityLandmarkSpawnSystemPath);
+        string offsetSystem = File.ReadAllText(RuntimeCityLandmarkOffsetSystemPath);
+
+        StringAssert.Contains("9. Complete: Extract landmark offset policy", roadmap);
+        StringAssert.Contains("Hall, clock-tower, fountain, monument, and pillar offset order plus landmark hall-distance filtering belong in `RuntimeCityLandmarkOffsetSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityLandmarkOffsetSystem", offsetSystem);
+        StringAssert.Contains("private static readonly Vector2Int[] HallOffsetsValue", offsetSystem);
+        StringAssert.Contains("Vector2Int.zero", offsetSystem);
+        StringAssert.Contains("new Vector2Int(-1, -2)", offsetSystem);
+        StringAssert.Contains("private static readonly Vector2Int[] ClockTowerOffsetsValue", offsetSystem);
+        StringAssert.Contains("new(3, 0)", offsetSystem);
+        StringAssert.Contains("new(-1, 4)", offsetSystem);
+        StringAssert.Contains("private static readonly Vector2Int[] FountainOffsetsValue", offsetSystem);
+        StringAssert.Contains("new(2, 3)", offsetSystem);
+        StringAssert.Contains("new(0, -4)", offsetSystem);
+        StringAssert.Contains("private static readonly Vector2Int[] MonumentOffsetsValue", offsetSystem);
+        StringAssert.Contains("new(3, 4)", offsetSystem);
+        StringAssert.Contains("new(0, -5)", offsetSystem);
+        StringAssert.Contains("private static readonly Vector2Int[] PillarOffsetsValue", offsetSystem);
+        StringAssert.Contains("new(5, 2)", offsetSystem);
+        StringAssert.Contains("new(0, -6)", offsetSystem);
+        StringAssert.Contains("public bool IsTooCloseToHall(RuntimeCityConfigSystem.Snapshot config, Vector2Int offset)", offsetSystem);
+        StringAssert.Contains("config.LandmarkMinDistanceFromHallRoadCells", offsetSystem);
+        StringAssert.Contains("private readonly RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("offsetSystem.HallOffsets", hallSpawnSystem);
+        StringAssert.Contains("offsetSystem.ClockTowerOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.FountainOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.MonumentOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.PillarOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.IsTooCloseToHall(context.Config, offsets[i])", landmarkSpawnSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private bool IsTooCloseToHall(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("Vector2Int.zero", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("new(3, 0)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("new(2, 3)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("new(3, 4)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("new(5, 2)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must not own landmark offset arrays or hall-distance filtering after step 9.");
+    }
+
+    [Test]
+    public void RuntimeCityHallSpawnSystemMustOwnCityHallPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityHallSpawnSystemPath), "Runtime city hall placement must live in RuntimeCityHallSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string hallSpawnSystem = File.ReadAllText(RuntimeCityHallSpawnSystemPath);
+
+        StringAssert.Contains("10. Complete: Extract city hall placement", roadmap);
+        StringAssert.Contains("City hall placement, hall candidate shuffle, centered-origin search, clearance reservation, and hall failure diagnostics belong in `RuntimeCityHallSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityHallSpawnSystem", hallSpawnSystem);
+        StringAssert.Contains("public void EnsureCityHall(", hallSpawnSystem);
+        StringAssert.Contains("private static bool TrySpawnHall(", hallSpawnSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(hallCandidates, ref rng)", hallSpawnSystem);
+        StringAssert.Contains("offsetSystem.HallOffsets", hallSpawnSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.GetCenteredOriginForPlot", hallSpawnSystem);
+        StringAssert.Contains("placementSystem.TrySpawnAndReserve(", hallSpawnSystem);
+        StringAssert.Contains("config.LandmarkClearanceCells", hallSpawnSystem);
+        StringAssert.Contains("context.DiagnosticSystem?.LogHallPlacementFailed(city.CenterRoadCell);", hallSpawnSystem);
+        StringAssert.Contains("private readonly RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("systems.HallSpawnSystem.EnsureCityHall(", buildingSpawnSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private bool TrySpawnHall(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private static bool TrySpawnHall(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("LogHallPlacementFailed(city.CenterRoadCell)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate city hall placement and diagnostics to RuntimeCityHallSpawnSystem after step 10.");
+    }
+
+    [Test]
+    public void RuntimeCityLandmarkSpawnSystemMustOwnNonHallLandmarkPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityLandmarkSpawnSystemPath), "Runtime non-hall landmark placement must live in RuntimeCityLandmarkSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string landmarkSpawnSystem = File.ReadAllText(RuntimeCityLandmarkSpawnSystemPath);
+
+        StringAssert.Contains("11. Complete: Extract non-hall landmark placement", roadmap);
+        StringAssert.Contains("Clock tower, fountain, monument, and pillar placement belong in `RuntimeCityLandmarkSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityLandmarkSpawnSystem", landmarkSpawnSystem);
+        StringAssert.Contains("public void SpawnLandmarks(", landmarkSpawnSystem);
+        StringAssert.Contains("private static void TrySpawnClockTower(", landmarkSpawnSystem);
+        StringAssert.Contains("private static void TrySpawnFountain(", landmarkSpawnSystem);
+        StringAssert.Contains("private static void TrySpawnMonument(", landmarkSpawnSystem);
+        StringAssert.Contains("private static void TrySpawnPillar(", landmarkSpawnSystem);
+        StringAssert.Contains("private static void TrySpawnLandmark(", landmarkSpawnSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab(context.Config.FountainPrefabs, ref rng)", landmarkSpawnSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab(context.Config.MonumentPrefabs, ref rng)", landmarkSpawnSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab(context.Config.PillarPrefabs, ref rng)", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.ClockTowerOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.FountainOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.MonumentOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("offsetSystem.PillarOffsets", landmarkSpawnSystem);
+        StringAssert.Contains("placementSystem.TrySpawnAndReserve(", landmarkSpawnSystem);
+        StringAssert.Contains("context.Config.LandmarkClearanceCells", landmarkSpawnSystem);
+        StringAssert.Contains("\"Clock Tower\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Clock tower at the heart of the old town.\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Fountain\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Town fountain near the center square.\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Monument\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Town monument near the center square.\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Pillar\"", landmarkSpawnSystem);
+        StringAssert.Contains("\"Stone pillar near the center district.\"", landmarkSpawnSystem);
+        StringAssert.Contains("private readonly RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("systems.LandmarkSpawnSystem.SpawnLandmarks(", buildingSpawnSystem);
+
+        string[] retiredLandmarkTokens =
+        {
+            "private void TrySpawnClockTower(",
+            "private void TrySpawnFountain(",
+            "private void TrySpawnMonument(",
+            "private void TrySpawnPillar("
+        };
+
+        foreach (string token in retiredLandmarkTokens)
+        {
+            Assert.IsFalse(
+                buildingSpawnSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityLandmarkSpawnSystem, not RuntimeCityBuildingSpawnSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityImportantBuildingCoordinatorMustOnlyDelegate()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+
+        StringAssert.Contains("12. Complete: Collapse important-building coordinator", roadmap);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem.SpawnCityImportantBuildings may only sequence city hall placement before non-hall landmark placement", contract);
+        StringAssert.Contains("public void SpawnCityImportantBuildings(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("systems.HallSpawnSystem.EnsureCityHall(context, systems.PlacementSystem, systems.LandmarkOffsetSystem, city, roadCellSizeInGridCells, ref rng);", buildingSpawnSystem);
+        StringAssert.Contains("systems.LandmarkSpawnSystem.SpawnLandmarks(context, systems.PlacementSystem, systems.LandmarkOffsetSystem, city.CenterRoadCell, roadCellSizeInGridCells, city.RoadCells, ref rng, city.ReservedFootprints);", buildingSpawnSystem);
+
+        string[] retiredImportantBuildingTokens =
+        {
+            "private void EnsureCityHall(",
+            "private bool TrySpawnHall(",
+            "private static bool TrySpawnHall(",
+            "private void TrySpawnClockTower(",
+            "private void TrySpawnFountain(",
+            "private void TrySpawnMonument(",
+            "private void TrySpawnPillar("
+        };
+
+        foreach (string token in retiredImportantBuildingTokens)
+        {
+            Assert.IsFalse(
+                buildingSpawnSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in the hall or landmark spawn systems, not RuntimeCityBuildingSpawnSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityBulkPlotPlanSystemMustOwnBulkPlotCollection()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityBulkPlotPlanSystemPath), "Runtime city bulk plot planning must live in RuntimeCityBulkPlotPlanSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string plotPlanSystem = File.ReadAllText(RuntimeCityBulkPlotPlanSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+
+        StringAssert.Contains("13. Complete: Extract bulk plot planning", roadmap);
+        StringAssert.Contains("Bulk runtime-city plot collection and shuffling belong in `RuntimeCityBulkPlotPlanSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityBulkPlotPlanSystem", plotPlanSystem);
+        StringAssert.Contains("public readonly struct Plan", plotPlanSystem);
+        StringAssert.Contains("public readonly List<PlotCandidate> CentralPlots;", plotPlanSystem);
+        StringAssert.Contains("public readonly List<PlotCandidate> OuterPlots;", plotPlanSystem);
+        StringAssert.Contains("public readonly List<PlotCandidate> EntryPlots;", plotPlanSystem);
+        StringAssert.Contains("public Plan CreatePlan(", plotPlanSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.CollectRoadsidePlots(", plotPlanSystem);
+        StringAssert.Contains("config.HallPlazaRadiusRoadCells + 1", plotPlanSystem);
+        StringAssert.Contains("config.HallPlazaRadiusRoadCells + 3", plotPlanSystem);
+        StringAssert.Contains("config.HallPlazaRadiusRoadCells + 4", plotPlanSystem);
+        StringAssert.Contains("townRadius + 1", plotPlanSystem);
+        StringAssert.Contains("city.HasIncomingAnchor", plotPlanSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.CollectEntryRoadsidePlots(city, townRadius)", plotPlanSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(centralPlots, ref rng);", plotPlanSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(outerPlots, ref rng);", plotPlanSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(entryPlots, ref rng);", plotPlanSystem);
+        StringAssert.Contains("return new Plan(centralPlots, outerPlots, entryPlots);", plotPlanSystem);
+        StringAssert.Contains("private readonly RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("RuntimeCityBulkPlotPlanSystem.Plan plotPlan = plotPlanSystem.CreatePlan(context, city, townRadius, roadCells, centerRoadCell, ref rng.Value);", routineSystem);
+        StringAssert.Contains("List<PlotCandidate> centralPlots = plotPlan.CentralPlots;", routineSystem);
+        StringAssert.Contains("List<PlotCandidate> outerPlots = plotPlan.OuterPlots;", routineSystem);
+        StringAssert.Contains("List<PlotCandidate> entryPlots = plotPlan.EntryPlots;", routineSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("CollectRoadsidePlots(roadCells, centerRoadCell, townRadius", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("CollectEntryRoadsidePlots(city, townRadius)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("Shuffle(centralPlots, ref rng.Value)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("Shuffle(outerPlots, ref rng.Value)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("Shuffle(entryPlots, ref rng.Value)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate bulk plot collection and shuffling to RuntimeCityBulkPlotPlanSystem after step 13.");
+    }
+
+    [Test]
+    public void RuntimeCityEntryBuildingSpawnSystemMustOwnEntryBuildingPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityEntryBuildingSpawnSystemPath), "Runtime city entry building placement must live in RuntimeCityEntryBuildingSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string entryBuildingSpawnSystem = File.ReadAllText(RuntimeCityEntryBuildingSpawnSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+
+        StringAssert.Contains("14. Complete: Extract entry building placement", roadmap);
+        StringAssert.Contains("Entry shop and entry house placement belong in `RuntimeCityEntryBuildingSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityEntryBuildingSpawnSystem", entryBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceEntryShops(", entryBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceEntryHouses(", entryBuildingSpawnSystem);
+        StringAssert.Contains("config.ShopPrefabs", entryBuildingSpawnSystem);
+        StringAssert.Contains("Mathf.Min(2, Mathf.Max(0, config.ShopCount))", entryBuildingSpawnSystem);
+        StringAssert.Contains("\"Entry Shop\"", entryBuildingSpawnSystem);
+        StringAssert.Contains("\"Roadside shop near the city entrance.\"", entryBuildingSpawnSystem);
+        StringAssert.Contains("config.HousePrefabs", entryBuildingSpawnSystem);
+        StringAssert.Contains("Mathf.Min(4, Mathf.Max(0, config.HouseCount))", entryBuildingSpawnSystem);
+        StringAssert.Contains("\"Entry House\"", entryBuildingSpawnSystem);
+        StringAssert.Contains("\"House near the city entrance road.\"", entryBuildingSpawnSystem);
+        StringAssert.Contains("config.DefaultBuildingMaxHealth", entryBuildingSpawnSystem);
+        StringAssert.Contains("placementSystem.PlaceFromPlots(", entryBuildingSpawnSystem);
+        StringAssert.Contains("private readonly RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("entryBuildingSpawnSystem.PlaceEntryShops(", routineSystem);
+        StringAssert.Contains("entryBuildingSpawnSystem.PlaceEntryHouses(", routineSystem);
+        StringAssert.Contains("yield return null;", routineSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("\"Entry Shop\"", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("\"Roadside shop near the city entrance.\"", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("\"Entry House\"", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate entry building placement labels and placement requests to RuntimeCityEntryBuildingSpawnSystem after step 14.");
+    }
+
+    [Test]
+    public void RuntimeCityRoadsideBuildingSpawnSystemMustOwnRoadsidePlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityRoadsideBuildingSpawnSystemPath), "Runtime city central/outer roadside placement must live in RuntimeCityRoadsideBuildingSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string roadsideBuildingSpawnSystem = File.ReadAllText(RuntimeCityRoadsideBuildingSpawnSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+
+        StringAssert.Contains("15. Complete: Extract central and outer roadside placement", roadmap);
+        StringAssert.Contains("Central and outer roadside commercial/residential placement belongs in `RuntimeCityRoadsideBuildingSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityRoadsideBuildingSpawnSystem", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public readonly struct Plan", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public readonly int CentralShopTarget;", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public readonly int RuralHouseTarget;", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public readonly int RoadsideHouseTarget;", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public Plan CreatePlan(", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("Mathf.RoundToInt(config.ShopCount * 0.65f)", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("Mathf.RoundToInt(Mathf.Max(0, config.HouseCount) * Mathf.Clamp01(config.RuralHouseRatio))", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceCentralShops(", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceGasStations(", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceOuterShops(", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceRoadsideHouses(", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Market\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Old town market.\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Gas Station\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Roadside fuel stop.\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Shop\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Old town shop.\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"House\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("\"Old town house.\"", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("config.GasStationMinSpacingRoadCells", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("placementSystem.PlaceFromPlots(", roadsideBuildingSpawnSystem);
+        StringAssert.Contains("private readonly RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("RuntimeCityRoadsideBuildingSpawnSystem.Plan roadsidePlan = roadsideBuildingSpawnSystem.CreatePlan(context);", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceCentralShops(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceGasStations(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceOuterShops(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceRoadsideHouses(", routineSystem);
+        StringAssert.Contains("int ruralHouseTarget = roadsidePlan.RuralHouseTarget;", routineSystem);
+
+        string[] retiredRoadsideTokens =
+        {
+            "\"Market\"",
+            "\"Old town market.\"",
+            "\"Gas Station\"",
+            "\"Roadside fuel stop.\"",
+            "\"Old town shop.\"",
+            "\"Old town house.\"",
+            "Mathf.RoundToInt(config.ShopCount * 0.65f)",
+            "Mathf.RoundToInt(Mathf.Max(0, config.HouseCount) * Mathf.Clamp01(config.RuralHouseRatio))"
+        };
+
+        foreach (string token in retiredRoadsideTokens)
+        {
+            Assert.IsFalse(
+                buildingSpawnSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in RuntimeCityRoadsideBuildingSpawnSystem, not RuntimeCityBuildingSpawnSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityRuralBuildingSpawnSystemMustOwnRuralScatterPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityRuralBuildingSpawnSystemPath), "Runtime city rural scatter placement must live in RuntimeCityRuralBuildingSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string ruralBuildingSpawnSystem = File.ReadAllText(RuntimeCityRuralBuildingSpawnSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+
+        StringAssert.Contains("16. Complete: Extract rural scatter placement", roadmap);
+        StringAssert.Contains("Rural scatter placement belongs in `RuntimeCityRuralBuildingSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityRuralBuildingSpawnSystem", ruralBuildingSpawnSystem);
+        StringAssert.Contains("public void PlaceRuralBuildings(", ruralBuildingSpawnSystem);
+        StringAssert.Contains("int maxAttempts = Mathf.Max(120, count * 20);", ruralBuildingSpawnSystem);
+        StringAssert.Contains("rng.NextInt(-(townRadius + 3), townRadius + 4)", ruralBuildingSpawnSystem);
+        StringAssert.Contains("distance < context.Config.HallPlazaRadiusRoadCells + 5", ruralBuildingSpawnSystem);
+        StringAssert.Contains("distance > townRadius + 3", ruralBuildingSpawnSystem);
+        StringAssert.Contains("roadCells.Contains(plotCell)", ruralBuildingSpawnSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.HasPlotSpacing(plotCell, usedPlotCells, 1)", ruralBuildingSpawnSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab(prefabs, ref rng)", ruralBuildingSpawnSystem);
+        StringAssert.Contains("placementSystem.GetFootprint(context, prefab)", ruralBuildingSpawnSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.GetCenteredOriginForPlot(plotCell, footprint, roadCellSizeInGridCells)", ruralBuildingSpawnSystem);
+        StringAssert.Contains("placementSystem.TrySpawnAndReserve(", ruralBuildingSpawnSystem);
+        StringAssert.Contains("\"House\"", ruralBuildingSpawnSystem);
+        StringAssert.Contains("\"Rural old town house.\"", ruralBuildingSpawnSystem);
+        StringAssert.Contains("usedPlotCells.Add(plotCell);", ruralBuildingSpawnSystem);
+        StringAssert.Contains("private readonly RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("ruralBuildingSpawnSystem.PlaceRuralBuildings(context, placementSystem, config.HousePrefabs", routineSystem);
+        StringAssert.Contains("ruralBuildingSpawnSystem.PlaceRuralBuildings(context, placementSystem, config.OtherBuildingPrefabs", routineSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private void PlaceRuralHouses(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("int maxAttempts = Mathf.Max(120, count * 20);", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("rng.NextInt(-(townRadius + 3), townRadius + 4)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("\"Rural old town house.\"", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate rural scatter placement to RuntimeCityRuralBuildingSpawnSystem after step 16.");
+    }
+
+    [Test]
+    public void RuntimeCityBulkBuildingSpawnRoutineSystemMustOwnCoroutineSequencing()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityBulkBuildingSpawnRoutineSystemPath), "Runtime city bulk building coroutine sequencing must live in RuntimeCityBulkBuildingSpawnRoutineSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+
+        StringAssert.Contains("17. Complete: Extract bulk routine sequencing", roadmap);
+        StringAssert.Contains("Bulk runtime-city building coroutine sequencing and yield cadence belong in `RuntimeCityBulkBuildingSpawnRoutineSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityBulkBuildingSpawnRoutineSystem", routineSystem);
+        StringAssert.Contains("public IEnumerator SpawnRoutine(", routineSystem);
+        StringAssert.Contains("public delegate void PlaceHouseYardWallsAction(", routineSystem);
+        StringAssert.Contains("public delegate void PlaceCityDecorationBuildingsAction(", routineSystem);
+        StringAssert.Contains("plotPlanSystem.CreatePlan(", routineSystem);
+        StringAssert.Contains("entryBuildingSpawnSystem.PlaceEntryShops(", routineSystem);
+        StringAssert.Contains("entryBuildingSpawnSystem.PlaceEntryHouses(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.CreatePlan(context)", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceCentralShops(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceGasStations(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceOuterShops(", routineSystem);
+        StringAssert.Contains("roadsideBuildingSpawnSystem.PlaceRoadsideHouses(", routineSystem);
+        StringAssert.Contains("ruralBuildingSpawnSystem.PlaceRuralBuildings(context, placementSystem, config.HousePrefabs", routineSystem);
+        StringAssert.Contains("placeHouseYardWalls(houseFootprints, centerRoadCell, roadCellSizeInGridCells, roadCells, grid, ref rng.Value, reservedFootprints);", routineSystem);
+        StringAssert.Contains("placementSystem.PlaceFromPlots(context, config.OtherBuildingPrefabs", routineSystem);
+        StringAssert.Contains("ruralBuildingSpawnSystem.PlaceRuralBuildings(context, placementSystem, config.OtherBuildingPrefabs", routineSystem);
+        StringAssert.Contains("placeCityDecorationBuildings(context, config.CityDecorationPrefabs", routineSystem);
+        StringAssert.Contains("private readonly RuntimeCityBulkBuildingSpawnRoutineSystem _runtimeCityBulkBuildingSpawnRoutineSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("=> systems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(", buildingSpawnSystem);
+        StringAssert.Contains("systems.HouseYardWallSystem.PlaceHouseYardWalls(", buildingSpawnSystem);
+        StringAssert.Contains("systems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(", buildingSpawnSystem);
+
+        int yieldCount = Regex.Matches(routineSystem, @"yield return null;").Count;
+        Assert.AreEqual(11, yieldCount, "RuntimeCityBulkBuildingSpawnRoutineSystem must preserve the existing eleven bulk routine yield points.");
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private IEnumerator SpawnCityBulkBuildingsRoutine(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCityEntryBuildingSpawnSystem.PlaceEntryShops(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCityRoadsideBuildingSpawnSystem.PlaceCentralShops(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("_runtimeCityRuralBuildingSpawnSystem.PlaceRuralBuildings(context", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate bulk coroutine sequencing to RuntimeCityBulkBuildingSpawnRoutineSystem after step 17.");
+    }
+
+    [Test]
+    public void RuntimeCityBulkBuildingSpawnRoutineSystemMustOwnGenerationRandomState()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityBulkBuildingSpawnRoutineSystemPath), "Runtime city bulk building random-state bridge must live in RuntimeCityBulkBuildingSpawnRoutineSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+
+        StringAssert.Contains("18. Complete: Move `GenerationRandomState`", roadmap);
+        StringAssert.Contains("Coroutine random-state handoff for runtime-city bulk building spawning belongs in `RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState`", contract);
+        StringAssert.Contains("public sealed class GenerationRandomState", routineSystem);
+        StringAssert.Contains("public Unity.Mathematics.Random Value;", routineSystem);
+        StringAssert.Contains("GenerationRandomState rng", routineSystem);
+        StringAssert.Contains("RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState rng", buildingSpawnSystem);
+        StringAssert.Contains("new RuntimeCityBulkBuildingSpawnRoutineSystem.GenerationRandomState { Value = rng }", generationSystem);
+        StringAssert.Contains("rng = bulkRng.Value;", generationSystem);
+        StringAssert.Contains("IEnumerator bulkRoutine = SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng);", generationSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("public sealed class GenerationRandomState", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("RuntimeCityBuildingSpawnSystem.GenerationRandomState", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must not own coroutine random-state plumbing after step 18.");
+    }
+
+    [Test]
+    public void RuntimeCityCorridorBuildingSpawnSystemMustOwnCorridorEntrancePlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityCorridorBuildingSpawnSystemPath), "Runtime city corridor entrance building placement must live in RuntimeCityCorridorBuildingSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string corridorSystem = File.ReadAllText(RuntimeCityCorridorBuildingSpawnSystemPath);
+
+        StringAssert.Contains("19. Complete: Extract corridor entrance placement", roadmap);
+        StringAssert.Contains("Corridor entrance shop and house placement belongs in `RuntimeCityCorridorBuildingSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityCorridorBuildingSpawnSystem", corridorSystem);
+        StringAssert.Contains("public void SpawnCorridorEntranceBuildings(", corridorSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.BuildCorridorRoadsidePlots(connectorCell, direction, corridorLength)", corridorSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(corridorPlots, ref rng);", corridorSystem);
+        StringAssert.Contains("Mathf.Min(2, Mathf.Max(0, config.ShopCount))", corridorSystem);
+        StringAssert.Contains("\"Corridor Shop\"", corridorSystem);
+        StringAssert.Contains("\"Shop near the city entrance road.\"", corridorSystem);
+        StringAssert.Contains("Mathf.Min(6, Mathf.Max(0, config.HouseCount))", corridorSystem);
+        StringAssert.Contains("\"Corridor House\"", corridorSystem);
+        StringAssert.Contains("\"House near the city entrance road.\"", corridorSystem);
+        StringAssert.Contains("city.ReservedFootprints", corridorSystem);
+        StringAssert.Contains("private readonly RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("=> systems.CorridorBuildingSpawnSystem.SpawnCorridorEntranceBuildings(context, systems.PlacementSystem, city, connectorCell, direction, corridorLength, roadCellSizeInGridCells, ref rng);", buildingSpawnSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private void SpawnCorridorEntranceBuildings(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("BuildCorridorRoadsidePlots(connectorCell, direction, corridorLength)", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("\"Corridor Shop\"", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("\"Corridor House\"", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate corridor entrance placement to RuntimeCityCorridorBuildingSpawnSystem after step 19.");
+    }
+
+    [Test]
+    public void RuntimeCityGenerationSystemMustRouteCorridorPlacementThroughCorridorBoundary()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+
+        StringAssert.Contains("20. Complete: Route generation through corridor boundary", roadmap);
+        StringAssert.Contains("Runtime-city generation must call `RuntimeCityCorridorBuildingSpawnSystem` directly for corridor entrance placement", contract);
+        StringAssert.Contains("private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();", composition);
+        StringAssert.Contains("private readonly RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem = new();", composition);
+        StringAssert.Contains("private RuntimeCityBuildingSpawnContextSystem.Context _runtimeCityBuildingSpawnContext;", composition);
+        StringAssert.Contains("_runtimeCityBuildingSpawnContext,", composition);
+        StringAssert.Contains("_runtimeCityBuildingPlacementSystem,", composition);
+        StringAssert.Contains("_runtimeCityCorridorBuildingSpawnSystem,", composition);
+        StringAssert.Contains("public readonly RuntimeCityBuildingSpawnContextSystem.Context BuildingSpawnContext;", generationSystem);
+        StringAssert.Contains("public readonly RuntimeCityBuildingPlacementSystem BuildingPlacementSystem;", generationSystem);
+        StringAssert.Contains("public readonly RuntimeCityCorridorBuildingSpawnSystem CorridorBuildingSpawnSystem;", generationSystem);
+        StringAssert.Contains("context.CorridorBuildingSpawnSystem.SpawnCorridorEntranceBuildings(", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnContext,", generationSystem);
+        StringAssert.Contains("context.BuildingPlacementSystem,", generationSystem);
+
+        Assert.IsFalse(
+            generationSystem.Contains("context.BuildingSpawnSystem.SpawnCorridorEntranceBuildings", StringComparison.Ordinal),
+            "RuntimeCityGenerationSystem must call the corridor spawn boundary directly after step 20.");
+    }
+
+    [Test]
+    public void RuntimeCityYardWallPlanSystemMustOwnFitPlanning()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityYardWallPlanSystemPath), "Runtime city yard-wall fit planning must live in RuntimeCityYardWallPlanSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string yardWallPlanSystem = File.ReadAllText(RuntimeCityYardWallPlanSystemPath);
+        string houseYardWallSystem = File.Exists(RuntimeCityHouseYardWallSystemPath)
+            ? File.ReadAllText(RuntimeCityHouseYardWallSystemPath)
+            : string.Empty;
+
+        StringAssert.Contains("21. Complete: Extract yard-wall fit planning", roadmap);
+        StringAssert.Contains("Yard-wall candidate house planning and yard-rect fit checks belong in `RuntimeCityYardWallPlanSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityYardWallPlanSystem", yardWallPlanSystem);
+        StringAssert.Contains("public readonly struct HousePlan", yardWallPlanSystem);
+        StringAssert.Contains("public HousePlan CreateHousePlan(", yardWallPlanSystem);
+        StringAssert.Contains("prefabSelectionSystem.Shuffle(shuffledHouses, ref rng);", yardWallPlanSystem);
+        StringAssert.Contains("Mathf.RoundToInt(shuffledHouses.Count * Mathf.Clamp01(houseWallChance))", yardWallPlanSystem);
+        StringAssert.Contains("public bool TryFindYardRect(", yardWallPlanSystem);
+        StringAssert.Contains("int minPadding = Mathf.Max(1, Mathf.Min(minDistanceCells, maxDistanceCells));", yardWallPlanSystem);
+        StringAssert.Contains("for (int padding = minPadding; padding <= maxPadding; padding++)", yardWallPlanSystem);
+        StringAssert.Contains("prefabSelectionSystem.Shuffle(candidatePaddings, ref rng);", yardWallPlanSystem);
+        StringAssert.Contains("walkabilitySystem.ExpandRect(houseRect, candidatePaddings[i])", yardWallPlanSystem);
+        StringAssert.Contains("walkabilitySystem.CanPlaceHouseYardRect(yardRect, houseRect, roadCellSizeInGridCells, roadCells, reservedFootprints, grid)", yardWallPlanSystem);
+        StringAssert.Contains("private readonly RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("yardWallPlanSystem.CreateHousePlan(", houseYardWallSystem);
+        StringAssert.Contains("yardWallPlanSystem.TryFindYardRect(", houseYardWallSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("var shuffledHouses = new List<RectInt>(houseFootprints);", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("int minPadding = Mathf.Max(1, Mathf.Min(houseWallMinDistanceCells, houseWallMaxDistanceCells));", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("candidatePaddings.Add(padding);", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("CanPlaceHouseYardRect(yardRect, houseRect, roadCellSizeInGridCells, roadCells, reservedFootprints, grid)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate yard-wall house and fit planning to RuntimeCityYardWallPlanSystem after step 21.");
+    }
+
+    [Test]
+    public void RuntimeCityYardGateSystemMustOwnGateMath()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityYardGateSystemPath), "Runtime city yard gate math must live in RuntimeCityYardGateSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string yardGateSystem = File.ReadAllText(RuntimeCityYardGateSystemPath);
+        string houseYardWallSystem = File.Exists(RuntimeCityHouseYardWallSystemPath)
+            ? File.ReadAllText(RuntimeCityHouseYardWallSystemPath)
+            : string.Empty;
+        string yardWallVisualSystem = File.Exists(RuntimeCityYardWallVisualSystemPath)
+            ? File.ReadAllText(RuntimeCityYardWallVisualSystemPath)
+            : string.Empty;
+
+        StringAssert.Contains("22. Complete: Extract yard gate math", roadmap);
+        StringAssert.Contains("Yard gate side policy and centered opening math belong in `RuntimeCityYardGateSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityYardGateSystem", yardGateSystem);
+        StringAssert.Contains("public enum YardSide", yardGateSystem);
+        StringAssert.Contains("public int GetCenteredOpeningStart(int totalLength, int openingLength)", yardGateSystem);
+        StringAssert.Contains("Mathf.Max(0, (totalLength - Mathf.Max(1, totalLength / 2)) / 2)", yardGateSystem);
+        StringAssert.Contains("Mathf.Clamp((totalLength - openingLength) / 2, 1, Mathf.Max(1, totalLength - openingLength - 1))", yardGateSystem);
+        StringAssert.Contains("public YardSide GetPreferredYardGateSide(RectInt houseRect, Vector2Int centerRoadCell)", yardGateSystem);
+        StringAssert.Contains("Mathf.Abs(delta.x) > Mathf.Abs(delta.y)", yardGateSystem);
+        StringAssert.Contains("using YardSide = RuntimeCityYardGateSystem.YardSide;", houseYardWallSystem);
+        StringAssert.Contains("private readonly RuntimeCityYardGateSystem _runtimeCityYardGateSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("yardGateSystem.GetPreferredYardGateSide(houseRect, cityCenterGridCell)", houseYardWallSystem);
+        StringAssert.Contains("gateSystem.GetCenteredOpeningStart(yardRect.width, horizontalGateLength)", yardWallVisualSystem);
+        StringAssert.Contains("gateSystem.GetCenteredOpeningStart(yardRect.height, verticalGateLength)", yardWallVisualSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private enum YardSide", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private static int GetCenteredOpeningStart", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private static YardSide GetPreferredYardGateSide", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate yard gate math to RuntimeCityYardGateSystem after step 22.");
+    }
+
+    [Test]
+    public void RuntimeCityYardWallVisualSystemMustOwnVisualSpawning()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityYardWallVisualSystemPath), "Runtime city yard wall visual spawning must live in RuntimeCityYardWallVisualSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string houseYardWallSystem = File.Exists(RuntimeCityHouseYardWallSystemPath)
+            ? File.ReadAllText(RuntimeCityHouseYardWallSystemPath)
+            : string.Empty;
+        string yardWallVisualSystem = File.ReadAllText(RuntimeCityYardWallVisualSystemPath);
+
+        StringAssert.Contains("23. Complete: Extract yard wall visuals", roadmap);
+        StringAssert.Contains("Yard-wall boundary visual spawning belongs in `RuntimeCityYardWallVisualSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityYardWallVisualSystem", yardWallVisualSystem);
+        StringAssert.Contains("public void BuildYardBoundaryVisuals(", yardWallVisualSystem);
+        StringAssert.Contains("RuntimeCityYardGateSystem gateSystem", yardWallVisualSystem);
+        StringAssert.Contains("PlaceHorizontalWallSide(", yardWallVisualSystem);
+        StringAssert.Contains("PlaceHorizontalWallRun(", yardWallVisualSystem);
+        StringAssert.Contains("PlaceVerticalWallSide(", yardWallVisualSystem);
+        StringAssert.Contains("PlaceVerticalWallRun(", yardWallVisualSystem);
+        StringAssert.Contains("Quaternion.Euler(0f, 90f, 0f)", yardWallVisualSystem);
+        StringAssert.Contains("visualSystem.SpawnVisualOnlyPrefab", yardWallVisualSystem);
+        StringAssert.Contains("placementSystem.GetFootprint(context, pillarPrefab)", yardWallVisualSystem);
+        StringAssert.Contains("gateSystem.GetCenteredOpeningStart", yardWallVisualSystem);
+        StringAssert.Contains("private readonly RuntimeCityYardWallVisualSystem _runtimeCityYardWallVisualSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("yardWallVisualSystem.BuildYardBoundaryVisuals(context, placementSystem, prefabSelectionSystem, visualSystem, yardGateSystem, yardRect, gateSide, wallPrefab, houseWallGatePrefab, houseWallPillarPrefab, grid);", houseYardWallSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private void BuildYardBoundaryVisuals(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private void PlaceHorizontalWallSide(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private void PlaceHorizontalWallRun(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private void PlaceVerticalWallSide(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private void PlaceVerticalWallRun(", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate yard-wall visual spawning to RuntimeCityYardWallVisualSystem after step 23.");
+    }
+
+    [Test]
+    public void RuntimeCityHouseYardWallSystemMustOwnYardWallOrchestration()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityHouseYardWallSystemPath), "Runtime city house yard-wall orchestration must live in RuntimeCityHouseYardWallSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string houseYardWallSystem = File.ReadAllText(RuntimeCityHouseYardWallSystemPath);
+        string routineSystem = File.ReadAllText(RuntimeCityBulkBuildingSpawnRoutineSystemPath);
+
+        StringAssert.Contains("24. Complete: Extract house yard wall orchestration", roadmap);
+        StringAssert.Contains("House yard-wall orchestration belongs in `RuntimeCityHouseYardWallSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityHouseYardWallSystem", houseYardWallSystem);
+        StringAssert.Contains("public void PlaceHouseYardWalls(", houseYardWallSystem);
+        StringAssert.Contains("private bool TryBuildHouseYardWall(", houseYardWallSystem);
+        StringAssert.Contains("houseWallPrefabs == null || houseWallPrefabs.Count == 0 || houseWallGatePrefab == null", houseYardWallSystem);
+        StringAssert.Contains("yardWallPlanSystem.CreateHousePlan(", houseYardWallSystem);
+        StringAssert.Contains("builtCount < plan.TargetCount", houseYardWallSystem);
+        StringAssert.Contains("yardWallPlanSystem.TryFindYardRect(", houseYardWallSystem);
+        StringAssert.Contains("yardGateSystem.GetPreferredYardGateSide(houseRect, cityCenterGridCell)", houseYardWallSystem);
+        StringAssert.Contains("prefabSelectionSystem.GetRandomPrefab(houseWallPrefabs, ref rng)", houseYardWallSystem);
+        StringAssert.Contains("yardWallVisualSystem.BuildYardBoundaryVisuals(", houseYardWallSystem);
+        StringAssert.Contains("walkabilitySystem.ReserveFootprint(reservedFootprints, yardRect.position, yardRect.size, 0)", houseYardWallSystem);
+        StringAssert.Contains("private readonly RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("systems.HouseYardWallSystem.PlaceHouseYardWalls(", buildingSpawnSystem);
+        StringAssert.Contains("PlaceHouseYardWallsAction placeHouseYardWalls", routineSystem);
+        StringAssert.Contains("placeHouseYardWalls(houseFootprints, centerRoadCell, roadCellSizeInGridCells, roadCells, grid, ref rng.Value, reservedFootprints);", routineSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private void PlaceHouseYardWalls(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("private bool TryBuildHouseYardWall(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("builtCount < plan.TargetCount", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("ReserveFootprint(reservedFootprints, yardRect.position, yardRect.size, 0)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate house yard-wall orchestration to RuntimeCityHouseYardWallSystem after step 24.");
+    }
+
+    [Test]
+    public void RuntimeCityDecorationPrefabGroupSystemMustOwnPrefabClassification()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityDecorationPrefabGroupSystemPath), "Runtime city decoration prefab classification must live in RuntimeCityDecorationPrefabGroupSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string decorationBuildingSystem = File.ReadAllText(RuntimeCityDecorationBuildingSpawnSystemPath);
+        string groupSystem = File.ReadAllText(RuntimeCityDecorationPrefabGroupSystemPath);
+
+        StringAssert.Contains("25. Complete: Extract decoration prefab classification", roadmap);
+        StringAssert.Contains("Decoration prefab classification belongs in `RuntimeCityDecorationPrefabGroupSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityDecorationPrefabGroupSystem", groupSystem);
+        StringAssert.Contains("public readonly struct Groups", groupSystem);
+        StringAssert.Contains("public Groups CreateGroups(List<GameObject> prefabs)", groupSystem);
+        StringAssert.Contains("prefab.name.Contains(\"ClothCover\", StringComparison.OrdinalIgnoreCase)", groupSystem);
+        StringAssert.Contains("prefab.name.Contains(\"Archway\", StringComparison.OrdinalIgnoreCase)", groupSystem);
+        StringAssert.Contains("freeScatterPrefabs.Add(prefab);", groupSystem);
+        StringAssert.Contains("RuntimeCityDecorationPrefabGroupSystem.Groups decorationGroups = decorationPrefabGroupSystem.CreateGroups(prefabs);", decorationBuildingSystem);
+        StringAssert.Contains("decorationGroups.ClothCoverPrefabs", decorationBuildingSystem);
+        StringAssert.Contains("decorationGroups.ArchwayPrefabs", decorationBuildingSystem);
+        StringAssert.Contains("decorationGroups.FreeScatterPrefabs.Count > 0 ? decorationGroups.FreeScatterPrefabs : prefabs", decorationBuildingSystem);
+
+        Assert.IsFalse(
+            groupSystem.Contains("prefabs.FindAll", StringComparison.Ordinal),
+            "RuntimeCityDecorationPrefabGroupSystem must classify decoration prefabs without repeated FindAll allocation.");
+        Assert.IsFalse(
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("prefab.name.Contains(\"ClothCover\", StringComparison.OrdinalIgnoreCase)", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("prefab.name.Contains(\"Archway\", StringComparison.OrdinalIgnoreCase)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate decoration prefab classification to RuntimeCityDecorationPrefabGroupSystem after step 25.");
+    }
+
+    [Test]
+    public void RuntimeCityClothCoverSpawnSystemMustOwnAdjacentPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityClothCoverSpawnSystemPath), "Runtime city cloth-cover adjacent decoration placement must live in RuntimeCityClothCoverSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string decorationBuildingSystem = File.ReadAllText(RuntimeCityDecorationBuildingSpawnSystemPath);
+        string clothCoverSystem = File.ReadAllText(RuntimeCityClothCoverSpawnSystemPath);
+
+        StringAssert.Contains("26. Complete: Extract cloth-cover placement", roadmap);
+        StringAssert.Contains("Cloth-cover adjacent decoration placement belongs in `RuntimeCityClothCoverSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityClothCoverSpawnSystem", clothCoverSystem);
+        StringAssert.Contains("public int PlaceClothCoverBuildings(", clothCoverSystem);
+        StringAssert.Contains("private bool TrySpawnAdjacentDecoration(", clothCoverSystem);
+        StringAssert.Contains("var anchorIndices = new List<int>(shopAndHouseFootprints.Count);", clothCoverSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(anchorIndices, ref rng);", clothCoverSystem);
+        StringAssert.Contains("int anchorCursor = 0;", clothCoverSystem);
+        StringAssert.Contains("int prefabCursor = 0;", clothCoverSystem);
+        StringAssert.Contains("int targetCount = Mathf.Min(maxCount, clothCoverPrefabs.Count);", clothCoverSystem);
+        StringAssert.Contains("clothCoverPrefabs[prefabCursor % clothCoverPrefabs.Count]", clothCoverSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.BuildAdjacentOrigins(anchorRect, footprint)", clothCoverSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle(candidateOrigins, ref rng);", clothCoverSystem);
+        StringAssert.Contains("requiredTouchRect: anchorRect", clothCoverSystem);
+        StringAssert.Contains("\"Decorative structure beside a town building.\"", clothCoverSystem);
+        StringAssert.Contains("clothCoverSpawnSystem.PlaceClothCoverBuildings(", decorationBuildingSystem);
+
+        Assert.IsFalse(
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("private int PlaceClothCoverBuildings(", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("private bool TrySpawnAdjacentDecoration(", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("BuildAdjacentOrigins(anchorRect, footprint)", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("requiredTouchRect: anchorRect", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate cloth-cover adjacent placement to RuntimeCityClothCoverSpawnSystem after step 26.");
+    }
+
+    [Test]
+    public void RuntimeCityArchwaySpawnSystemMustOwnCentralArchwayPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityArchwaySpawnSystemPath), "Runtime city central archway placement must live in RuntimeCityArchwaySpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string decorationBuildingSystem = File.ReadAllText(RuntimeCityDecorationBuildingSpawnSystemPath);
+        string archwaySystem = File.ReadAllText(RuntimeCityArchwaySpawnSystemPath);
+
+        StringAssert.Contains("27. Complete: Extract central archway placement", roadmap);
+        StringAssert.Contains("Central archway decoration placement belongs in `RuntimeCityArchwaySpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityArchwaySpawnSystem", archwaySystem);
+        StringAssert.Contains("public int PlaceCentralArchwayBuildings(", archwaySystem);
+        StringAssert.Contains("int maxAttempts = Mathf.Max(120, maxCount * 24);", archwaySystem);
+        StringAssert.Contains("int minDistance = Mathf.Max(1, context.Config.HallPlazaRadiusRoadCells + 1);", archwaySystem);
+        StringAssert.Contains("int maxDistance = context.Config.HallPlazaRadiusRoadCells + 5;", archwaySystem);
+        StringAssert.Contains("context.BuildingPlotSystem.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng)", archwaySystem);
+        StringAssert.Contains("distance < minDistance || distance > maxDistance", archwaySystem);
+        StringAssert.Contains("archwayPrefabs[placed % archwayPrefabs.Count]", archwaySystem);
+        StringAssert.Contains("\"Archway\"", archwaySystem);
+        StringAssert.Contains("\"Decorative archway near the town center.\"", archwaySystem);
+        StringAssert.Contains("archwaySpawnSystem.PlaceCentralArchwayBuildings(", decorationBuildingSystem);
+
+        Assert.IsFalse(
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("private int PlaceCentralArchwayBuildings(", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("\"Decorative archway near the town center.\"", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("archwayPrefabs[placed % archwayPrefabs.Count]", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate central archway placement to RuntimeCityArchwaySpawnSystem after step 27.");
+    }
+
+    [Test]
+    public void RuntimeCityFreeScatterDecorationSystemMustOwnScatterPlacement()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityFreeScatterDecorationSystemPath), "Runtime city free-scatter decoration placement must live in RuntimeCityFreeScatterDecorationSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string decorationBuildingSystem = File.ReadAllText(RuntimeCityDecorationBuildingSpawnSystemPath);
+        string scatterSystem = File.ReadAllText(RuntimeCityFreeScatterDecorationSystemPath);
+
+        StringAssert.Contains("28. Complete: Extract free scatter decoration placement", roadmap);
+        StringAssert.Contains("Free-scatter decoration placement belongs in `RuntimeCityFreeScatterDecorationSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityFreeScatterDecorationSystem", scatterSystem);
+        StringAssert.Contains("public void PlaceFreeScatterDecorations(", scatterSystem);
+        StringAssert.Contains("int maxAttempts = Mathf.Max(160, remainingCount * 24);", scatterSystem);
+        StringAssert.Contains("int maxDistance = townRadius + 3;", scatterSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng)", scatterSystem);
+        StringAssert.Contains("distance > maxDistance", scatterSystem);
+        StringAssert.Contains("roadCells.Contains(plotCell)", scatterSystem);
+        StringAssert.Contains("context.BuildingPlotSystem.HasPlotSpacing(plotCell, usedPlotCells, 1)", scatterSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab(prefabs, ref rng)", scatterSystem);
+        StringAssert.Contains("\"City Decoration\"", scatterSystem);
+        StringAssert.Contains("\"Decorative old-town structure.\"", scatterSystem);
+        StringAssert.Contains("freeScatterDecorationSystem.PlaceFreeScatterDecorations(", decorationBuildingSystem);
+
+        Assert.IsFalse(
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("int maxAttempts = Mathf.Max(160, remainingCount * 24);", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("\"Decorative old-town structure.\"", StringComparison.Ordinal) ||
+            File.ReadAllText(RuntimeCityBuildingSpawnSystemPath).Contains("GetRandomScatterPlotCell(centerRoadCell, maxDistance, ref rng)", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate free-scatter decoration placement to RuntimeCityFreeScatterDecorationSystem after step 28.");
+    }
+
+    [Test]
+    public void RuntimeCityDecorationBuildingSpawnSystemMustOwnDecorationSequencing()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCityDecorationBuildingSpawnSystemPath), "Runtime city decoration building sequencing must live in RuntimeCityDecorationBuildingSpawnSystem.");
+
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string decorationBuildingSystem = File.ReadAllText(RuntimeCityDecorationBuildingSpawnSystemPath);
+
+        StringAssert.Contains("29. Complete: Extract decoration sequencing", roadmap);
+        StringAssert.Contains("Decoration building sequencing belongs in `RuntimeCityDecorationBuildingSpawnSystem`", contract);
+        StringAssert.Contains("internal sealed class RuntimeCityDecorationBuildingSpawnSystem", decorationBuildingSystem);
+        StringAssert.Contains("public void PlaceCityDecorationBuildings(", decorationBuildingSystem);
+        StringAssert.Contains("RuntimeCityDecorationPrefabGroupSystem.Groups decorationGroups = decorationPrefabGroupSystem.CreateGroups(prefabs);", decorationBuildingSystem);
+        StringAssert.Contains("int clothPlaced = clothCoverSpawnSystem.PlaceClothCoverBuildings(", decorationBuildingSystem);
+        StringAssert.Contains("int archwaysPlaced = archwaySpawnSystem.PlaceCentralArchwayBuildings(", decorationBuildingSystem);
+        StringAssert.Contains("int remainingCount = count - clothPlaced - archwaysPlaced;", decorationBuildingSystem);
+        StringAssert.Contains("freeScatterDecorationSystem.PlaceFreeScatterDecorations(", decorationBuildingSystem);
+        StringAssert.Contains("private readonly RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem = new();", File.ReadAllText(RuntimeCityCompositionPath));
+        StringAssert.Contains("systems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(", buildingSpawnSystem);
+
+        Assert.IsFalse(
+            buildingSpawnSystem.Contains("private void PlaceCityDecorationBuildings(", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("RuntimeCityDecorationPrefabGroupSystem.Groups decorationGroups", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("int clothPlaced =", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("int archwaysPlaced =", StringComparison.Ordinal) ||
+            buildingSpawnSystem.Contains("int remainingCount = count - clothPlaced - archwaysPlaced;", StringComparison.Ordinal),
+            "RuntimeCityBuildingSpawnSystem must delegate decoration sequencing to RuntimeCityDecorationBuildingSpawnSystem after step 29.");
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnSystemMustNotOwnExtractedPrivateAlgorithms()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+
+        StringAssert.Contains("30. Complete: Remove private algorithm methods from coordinator", roadmap);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem must not own private landmark, plot, rural, yard-wall, or decoration algorithm methods after step 30", contract);
+
+        string[] migratedAlgorithmTokens =
+        {
+            "private bool TrySpawnHall(",
+            "private void TrySpawnClockTower(",
+            "private void TrySpawnFountain(",
+            "private void TrySpawnMonument(",
+            "private void TrySpawnPillars(",
+            "private void PlaceFromPlots(",
+            "private void PlaceRuralHouses(",
+            "private void PlaceHouseYardWalls(",
+            "private bool TryBuildHouseYardWall(",
+            "private int PlaceClothCoverBuildings(",
+            "private bool TrySpawnAdjacentDecoration(",
+            "private int PlaceCentralArchwayBuildings(",
+            "private void PlaceCityDecorationBuildings(",
+            "BuildAdjacentOrigins(anchorRect, footprint)",
+            "RuntimeCityDecorationPrefabGroupSystem.Groups decorationGroups",
+            "int clothPlaced =",
+            "int archwaysPlaced =",
+            "int remainingCount = count - clothPlaced - archwaysPlaced;"
+        };
+
+        foreach (string token in migratedAlgorithmTokens)
+        {
+            Assert.IsFalse(
+                buildingSpawnSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} belongs in an extracted runtime-city building spawn boundary, not RuntimeCityBuildingSpawnSystem.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnSystemMustNotCacheMutableSpawnContext()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string buildingSpawnSystem = File.ReadAllText(RuntimeCityBuildingSpawnSystemPath);
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+
+        StringAssert.Contains("31. Complete: Remove mutable `Configure` state", roadmap);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem must not cache mutable runtime-city config, dependency fields, or building-spawn context after step 31", contract);
+        StringAssert.Contains("public void SpawnCityImportantBuildings(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("public void EnsureCityHall(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("public IEnumerator SpawnCityBulkBuildingsRoutine(Systems systems, RuntimeCityBuildingSpawnContextSystem.Context context", buildingSpawnSystem);
+        StringAssert.Contains("public void SpawnCorridorEntranceBuildings(\n        Systems systems,\n        RuntimeCityBuildingSpawnContextSystem.Context context,", buildingSpawnSystem);
+        StringAssert.Contains("EnsureCityHall(context, currentCity, ref rng);", generationSystem);
+        StringAssert.Contains("SpawnCityImportantBuildings(context, currentCity, ref rng);", generationSystem);
+        StringAssert.Contains("SpawnCityImportantBuildings(context, anchoredNextCity, ref rng);", generationSystem);
+        StringAssert.Contains("IEnumerator bulkRoutine = SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng);", generationSystem);
+
+        string[] forbiddenMutableState =
+        {
+            "public void Configure(RuntimeCityBuildingSpawnContextSystem.Context",
+            "private RuntimeCityConfigSystem.Snapshot _config;",
+            "private RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem;",
+            "private RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem;",
+            "private RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem;",
+            "private RuntimeCityVisualSystem _runtimeCityVisualSystem;",
+            "private RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem;",
+            "private RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem;",
+            "private RuntimeCityBuildingSpawnContextSystem.Context _context;",
+            "_context = context;",
+            "_config = context.Config;"
+        };
+
+        foreach (string token in forbiddenMutableState)
+        {
+            Assert.IsFalse(
+                buildingSpawnSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} must stay out of RuntimeCityBuildingSpawnSystem after step 31.");
+        }
+
+        Assert.IsFalse(
+            composition.Contains("_runtimeCityBuildingSpawnSystem.Configure", StringComparison.Ordinal),
+            "RuntimeCityCompositionSystem must build the context and pass it into generation, not configure mutable state on RuntimeCityBuildingSpawnSystem.");
+    }
+
+    [Test]
+    public void RuntimeCityCompositionSystemMustOwnBuildingSpawnChildSystems()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string contextSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnContextSystem.cs");
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+
+        StringAssert.Contains("32. Complete: Update `RuntimeCityCompositionSystem` ownership", roadmap);
+        StringAssert.Contains("RuntimeCityCompositionSystem must compose extracted runtime-city building-spawn child systems explicitly after step 32", contract);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem was deleted in step 35", contract);
+        StringAssert.Contains("public readonly struct Systems", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityBuildingPlacementSystem PlacementSystem;", contextSystem);
+        StringAssert.Contains("public readonly RuntimeCityDecorationBuildingSpawnSystem DecorationBuildingSpawnSystem;", contextSystem);
+        StringAssert.Contains("private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()", composition);
+        StringAssert.Contains("new RuntimeCityBuildingSpawnContextSystem.Systems(", composition);
+        StringAssert.Contains("_runtimeCityHallSpawnSystem,", composition);
+        StringAssert.Contains("_runtimeCityBulkBuildingSpawnRoutineSystem,", composition);
+        StringAssert.Contains("_runtimeCityDecorationBuildingSpawnSystem);", composition);
+        StringAssert.Contains("public readonly RuntimeCityBuildingSpawnContextSystem.Systems BuildingSpawnSystems;", generationSystem);
+        StringAssert.Contains("BuildingSpawnSystems = buildingSpawnSystems;", generationSystem);
+        StringAssert.Contains("SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng)", generationSystem);
+
+        string[] forbiddenCoordinatorOwnedChildren =
+        {
+            "private readonly RuntimeCityBuildingPlacementSystem _runtimeCityBuildingPlacementSystem = new();",
+            "private readonly RuntimeCityLandmarkOffsetSystem _runtimeCityLandmarkOffsetSystem = new();",
+            "private readonly RuntimeCityHallSpawnSystem _runtimeCityHallSpawnSystem = new();",
+            "private readonly RuntimeCityLandmarkSpawnSystem _runtimeCityLandmarkSpawnSystem = new();",
+            "private readonly RuntimeCityBulkPlotPlanSystem _runtimeCityBulkPlotPlanSystem = new();",
+            "private readonly RuntimeCityEntryBuildingSpawnSystem _runtimeCityEntryBuildingSpawnSystem = new();",
+            "private readonly RuntimeCityRoadsideBuildingSpawnSystem _runtimeCityRoadsideBuildingSpawnSystem = new();",
+            "private readonly RuntimeCityRuralBuildingSpawnSystem _runtimeCityRuralBuildingSpawnSystem = new();",
+            "private readonly RuntimeCityBulkBuildingSpawnRoutineSystem _runtimeCityBulkBuildingSpawnRoutineSystem = new();",
+            "private readonly RuntimeCityCorridorBuildingSpawnSystem _runtimeCityCorridorBuildingSpawnSystem = new();",
+            "private readonly RuntimeCityYardWallPlanSystem _runtimeCityYardWallPlanSystem = new();",
+            "private readonly RuntimeCityYardGateSystem _runtimeCityYardGateSystem = new();",
+            "private readonly RuntimeCityYardWallVisualSystem _runtimeCityYardWallVisualSystem = new();",
+            "private readonly RuntimeCityHouseYardWallSystem _runtimeCityHouseYardWallSystem = new();",
+            "private readonly RuntimeCityDecorationPrefabGroupSystem _runtimeCityDecorationPrefabGroupSystem = new();",
+            "private readonly RuntimeCityClothCoverSpawnSystem _runtimeCityClothCoverSpawnSystem = new();",
+            "private readonly RuntimeCityArchwaySpawnSystem _runtimeCityArchwaySpawnSystem = new();",
+            "private readonly RuntimeCityFreeScatterDecorationSystem _runtimeCityFreeScatterDecorationSystem = new();",
+            "private readonly RuntimeCityDecorationBuildingSpawnSystem _runtimeCityDecorationBuildingSpawnSystem = new();"
+        };
+
+        foreach (string token in forbiddenCoordinatorOwnedChildren)
+        {
+            Assert.IsFalse(
+                contextSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} must be composed by RuntimeCityCompositionSystem, not hidden inside RuntimeCityBuildingSpawnContextSystem.");
+            StringAssert.Contains(token, composition);
+        }
+    }
+
+    [Test]
+    public void RuntimeCityGenerationSystemMustUseBuildingSpawnChildSystemsDirectly()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+
+        StringAssert.Contains("33. Complete: Update `RuntimeCityGenerationSystem` surface", roadmap);
+        StringAssert.Contains("RuntimeCityGenerationSystem must not depend on RuntimeCityBuildingSpawnSystem after step 33", contract);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem was deleted in step 35", contract);
+        StringAssert.Contains("EnsureCityHall(context, currentCity, ref rng);", generationSystem);
+        StringAssert.Contains("SpawnCityImportantBuildings(context, currentCity, ref rng);", generationSystem);
+        StringAssert.Contains("SpawnCityImportantBuildings(context, anchoredNextCity, ref rng);", generationSystem);
+        StringAssert.Contains("IEnumerator bulkRoutine = SpawnCityBulkBuildingsRoutine(context, cities[i], bulkRng);", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.LandmarkSpawnSystem.SpawnLandmarks(", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.HouseYardWallSystem.PlaceHouseYardWalls(", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.DecorationBuildingSpawnSystem.PlaceCityDecorationBuildings(", generationSystem);
+
+        Assert.IsFalse(
+            generationSystem.Contains("public readonly RuntimeCityBuildingSpawnSystem BuildingSpawnSystem;", StringComparison.Ordinal) ||
+            generationSystem.Contains("RuntimeCityBuildingSpawnSystem.Systems", StringComparison.Ordinal) ||
+            generationSystem.Contains("RuntimeCityBuildingSpawnSystem buildingSpawnSystem", StringComparison.Ordinal) ||
+            generationSystem.Contains("BuildingSpawnSystem = buildingSpawnSystem;", StringComparison.Ordinal) ||
+            generationSystem.Contains("context.BuildingSpawnSystem.", StringComparison.Ordinal),
+            "RuntimeCityGenerationSystem must call the composed child systems directly instead of depending on RuntimeCityBuildingSpawnSystem after step 33.");
+        Assert.IsFalse(
+            composition.Contains("_runtimeCityBuildingSpawnSystem,", StringComparison.Ordinal),
+            "RuntimeCityCompositionSystem must not pass RuntimeCityBuildingSpawnSystem into RuntimeCityGenerationSystem after step 33.");
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnAuditMustBlockDriftBackToBroadShells()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string audit = File.ReadAllText("Design/Architecture/runtime_city_spawner_responsibility_audit.md");
+        string contextSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnContextSystem.cs");
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+        string citySpawnerSurface = ReadRuntimeCitySpawnerArchitectureSurface("Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs");
+
+        StringAssert.Contains("34. Complete: Architecture contract and audit update", roadmap);
+        StringAssert.Contains("Runtime-city building-spawn audit drift is blocked after step 34", contract);
+        StringAssert.Contains("RuntimeCityBuildingSpawnAuditMustBlockDriftBackToBroadShells", audit);
+        StringAssert.Contains("RuntimeCityHallSpawnSystem", audit);
+        StringAssert.Contains("RuntimeCityDecorationBuildingSpawnSystem", audit);
+        StringAssert.Contains("RuntimeCityGenerationSystem` calls them directly", audit);
+        StringAssert.Contains("private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems()", composition);
+        StringAssert.Contains("public readonly RuntimeCityDecorationBuildingSpawnSystem DecorationBuildingSpawnSystem;", contextSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall(", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine(", generationSystem);
+
+        string[] forbiddenBroadShellFiles =
+        {
+            "RuntimeCityBuildingManager.cs",
+            "RuntimeCityBuildingController.cs",
+            "RuntimeCityBuildingSpawnerFacade.cs",
+            "RuntimeCitySpawnerSystem.cs"
+        };
+
+        foreach (string fileName in forbiddenBroadShellFiles)
+        {
+            Assert.IsFalse(
+                Directory.EnumerateFiles("Assets/Game/Scripts/Environment", "*.cs", SearchOption.AllDirectories)
+                    .Any(path => Path.GetFileName(path).Equals(fileName, StringComparison.Ordinal)),
+                $"{fileName} must not exist as a runtime-city building-spawn broad shell after step 34.");
+        }
+
+        string[] forbiddenCoordinatorDriftTokens =
+        {
+            "private RuntimeCityConfigSystem.Snapshot _config;",
+            "private RuntimeCityBuildingSpawnContextSystem.Context _context;",
+            "private bool TrySpawnHall(",
+            "private void PlaceRuralHouses(",
+            "private void PlaceHouseYardWalls(",
+            "private void PlaceCityDecorationBuildings(",
+            "RuntimeCityDecorationPrefabGroupSystem.Groups decorationGroups",
+            "context.BuildingSpawnSystem."
+        };
+
+        foreach (string token in forbiddenCoordinatorDriftTokens)
+        {
+            Assert.IsFalse(
+                contextSystem.Contains(token, StringComparison.Ordinal) ||
+                generationSystem.Contains(token, StringComparison.Ordinal),
+                $"{token} must not drift back into RuntimeCityBuildingSpawnContextSystem or RuntimeCityGenerationSystem after step 34.");
+        }
+
+        string[] forbiddenSpawnerDriftTokens =
+        {
+            "private void SpawnCityImportantBuildings(",
+            "private IEnumerator SpawnCityBulkBuildingsRoutine(",
+            "private void SpawnCorridorEntranceBuildings(",
+            "_runtimeCityBuildingSpawnSystem.Configure"
+        };
+
+        foreach (string token in forbiddenSpawnerDriftTokens)
+        {
+            Assert.IsFalse(
+                citySpawnerSurface.Contains(token, StringComparison.Ordinal),
+                $"{token} must not drift back into the runtime-city composition surface after step 34.");
+        }
+    }
+
+    [Test]
+    public void RuntimeCityBuildingSpawnCoordinatorShellMustStayDeleted()
+    {
+        string roadmap = File.ReadAllText(RuntimeCityBuildingSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string audit = File.ReadAllText("Design/Architecture/runtime_city_spawner_responsibility_audit.md");
+        string composition = File.ReadAllText(RuntimeCityCompositionPath);
+        string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+
+        StringAssert.Contains("35. Complete: Coordinator deletion audit", roadmap);
+        StringAssert.Contains("RuntimeCityBuildingSpawnSystem was deleted in step 35", contract);
+        StringAssert.Contains("Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs", audit);
+        Assert.IsFalse(File.Exists(RuntimeCityBuildingSpawnSystemPath), "RuntimeCityBuildingSpawnSystem.cs must stay deleted after step 35.");
+        Assert.IsFalse(File.Exists(RuntimeCityBuildingSpawnSystemPath + ".meta"), "RuntimeCityBuildingSpawnSystem.cs.meta must stay deleted after step 35.");
+        Assert.IsFalse(composition.Contains("_runtimeCityBuildingSpawnSystem", StringComparison.Ordinal), "RuntimeCityCompositionSystem must not hold the deleted coordinator shell.");
+        Assert.IsFalse(generationSystem.Contains("RuntimeCityBuildingSpawnSystem", StringComparison.Ordinal), "RuntimeCityGenerationSystem must not depend on the deleted coordinator shell.");
+        StringAssert.Contains("RuntimeCityBuildingSpawnContextSystem.Systems", composition);
+        StringAssert.Contains("RuntimeCityBuildingSpawnContextSystem.Systems", generationSystem);
+    }
+
+    [Test]
     public void RuntimeCitySpawnerSystemMustUseRuntimeCitySpawnBoundary()
     {
         const string file = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
@@ -8850,7 +10195,8 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("BuildingRuntimeCitySpawnSystem", text);
         Assert.IsFalse(
-            text.Contains("BuildingPlacementSystem", StringComparison.Ordinal) ||
+            text.Contains("BuildingPlacementSystem.Instance", StringComparison.Ordinal) ||
+            text.Contains(" BuildingPlacementSystem ", StringComparison.Ordinal) ||
             text.Contains("_buildingPlacement", StringComparison.Ordinal),
             "RuntimeCitySpawnerSystem must use the building runtime city-spawn boundary instead of the BuildingPlacementSystem facade.");
     }
@@ -8918,7 +10264,7 @@ public sealed class GameplayArchitectureContractTests
             "RuntimeCityCompositionSystem",
             "RuntimeCityGenerationSystem",
             "RuntimeCityIngressSystem",
-            "RuntimeCityBuildingSpawnSystem",
+            "RuntimeCityBuildingSpawnContextSystem",
             "RuntimeCityReadinessQuerySystem"
         };
 
@@ -8928,7 +10274,7 @@ public sealed class GameplayArchitectureContractTests
             StringAssert.Contains(token, audit);
         }
 
-        StringAssert.Contains("Deleted source file", audit);
+        StringAssert.Contains("Deleted source files", audit);
         StringAssert.Contains("RuntimeCitySpawnerSystem.cs` must not be restored", audit);
     }
 
@@ -9156,7 +10502,7 @@ public sealed class GameplayArchitectureContractTests
         string walkabilitySystem = File.ReadAllText(walkabilitySystemPath);
         string plotSystem = File.ReadAllText(plotSystemPath);
         string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
-        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string buildingSpawnSystem = ReadOptionalText(buildingSpawnSystemPath);
         string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
         string layoutSystem = File.ReadAllText(layoutSystemPath);
         string roadmap = File.ReadAllText(roadmapPath);
@@ -9164,15 +10510,12 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("10. Complete: Extract occupancy/walkability publication", roadmap);
         StringAssert.Contains("private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new()", citySpawner);
-        StringAssert.Contains("using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;", buildingSpawnSystem);
         StringAssert.Contains("using ReservedFootprint = RuntimeCityWalkabilitySystem.ReservedFootprint;", layoutSystem);
         StringAssert.Contains("context.WalkabilitySystem.ReserveStandaloneEntranceCorridor", generationSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.ReserveFootprint", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.WouldBeTooCloseToReserved", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.DoesRectOverlapRoadCells", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.CanPlaceHouseYardRect", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.ExpandRect", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityWalkabilitySystem.TouchesRect", buildingSpawnSystem);
+        StringAssert.Contains("context.WalkabilitySystem.WouldBeTooCloseToReserved", File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs"));
+        StringAssert.Contains("context.WalkabilitySystem.DoesRectOverlapRoadCells", File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs"));
+        StringAssert.Contains("context.WalkabilitySystem.TouchesRect", File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs"));
+        StringAssert.Contains("walkabilitySystem.ReserveFootprint", File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityHouseYardWallSystem.cs"));
         StringAssert.Contains("internal sealed class RuntimeCityWalkabilitySystem", walkabilitySystem);
         StringAssert.Contains("public struct ReservedFootprint", walkabilitySystem);
         StringAssert.Contains("public void ReserveFootprint", walkabilitySystem);
@@ -9183,6 +10526,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public RectInt ExpandRect", walkabilitySystem);
         StringAssert.Contains("public bool TouchesRect", walkabilitySystem);
         StringAssert.Contains("RuntimeCityWalkabilitySystem", audit);
+        Assert.IsFalse(File.Exists(buildingSpawnSystemPath), "RuntimeCityBuildingSpawnSystem shell must stay deleted after step 35.");
 
         string[] retiredSpawnerWalkabilityTokens =
         {
@@ -9227,38 +10571,58 @@ public sealed class GameplayArchitectureContractTests
     public void RuntimeCityBuildingSpawnSequencingMustLiveInRuntimeCityBuildingSpawnSystem()
     {
         const string buildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
+        const string buildingPlacementSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs";
+        const string hallSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs";
+        const string landmarkSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityLandmarkSpawnSystem.cs";
+        const string ruralBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityRuralBuildingSpawnSystem.cs";
+        const string corridorBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityCorridorBuildingSpawnSystem.cs";
+        const string bulkRoutineSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutineSystem.cs";
+        const string decorationBuildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityDecorationBuildingSpawnSystem.cs";
         const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
         const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 
-        Assert.IsTrue(File.Exists(buildingSpawnSystemPath), "Runtime city building/decor spawn sequencing must live in RuntimeCityBuildingSpawnSystem.");
+        Assert.IsFalse(File.Exists(buildingSpawnSystemPath), "RuntimeCityBuildingSpawnSystem shell must stay deleted after step 35.");
+        Assert.IsTrue(File.Exists(buildingPlacementSystemPath), "Runtime city shared building placement must live in RuntimeCityBuildingPlacementSystem.");
+        Assert.IsTrue(File.Exists(hallSpawnSystemPath), "Runtime city hall spawn sequencing must live in RuntimeCityHallSpawnSystem.");
+        Assert.IsTrue(File.Exists(landmarkSpawnSystemPath), "Runtime city non-hall landmark sequencing must live in RuntimeCityLandmarkSpawnSystem.");
+        Assert.IsTrue(File.Exists(ruralBuildingSpawnSystemPath), "Runtime city rural scatter sequencing must live in RuntimeCityRuralBuildingSpawnSystem.");
+        Assert.IsTrue(File.Exists(corridorBuildingSpawnSystemPath), "Runtime city corridor entrance sequencing must live in RuntimeCityCorridorBuildingSpawnSystem.");
+        Assert.IsTrue(File.Exists(bulkRoutineSystemPath), "Runtime city bulk building coroutine sequencing must live in RuntimeCityBulkBuildingSpawnRoutineSystem.");
+        Assert.IsTrue(File.Exists(decorationBuildingSpawnSystemPath), "Runtime city decoration sequencing must live in RuntimeCityDecorationBuildingSpawnSystem.");
 
-        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string contextSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnContextSystem.cs");
+        string buildingPlacementSystem = File.ReadAllText(buildingPlacementSystemPath);
+        string hallSpawnSystem = File.ReadAllText(hallSpawnSystemPath);
+        string landmarkSpawnSystem = File.ReadAllText(landmarkSpawnSystemPath);
+        string ruralBuildingSpawnSystem = File.ReadAllText(ruralBuildingSpawnSystemPath);
+        string corridorBuildingSpawnSystem = File.ReadAllText(corridorBuildingSpawnSystemPath);
+        string bulkRoutineSystem = File.ReadAllText(bulkRoutineSystemPath);
+        string decorationBuildingSpawnSystem = File.ReadAllText(decorationBuildingSpawnSystemPath);
         string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
         string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
         StringAssert.Contains("11. Complete: Reduce RuntimeCitySpawnerSystem to orchestrator", roadmap);
-        StringAssert.Contains("private readonly RuntimeCityBuildingSpawnSystem _runtimeCityBuildingSpawnSystem = new()", citySpawner);
-        StringAssert.Contains("_runtimeCityBuildingSpawnSystem.Configure", citySpawner);
-        StringAssert.Contains("context.BuildingSpawnSystem.EnsureCityHall", generationSystem);
-        StringAssert.Contains("context.BuildingSpawnSystem.SpawnCityImportantBuildings", generationSystem);
-        StringAssert.Contains("context.BuildingSpawnSystem.SpawnCorridorEntranceBuildings", generationSystem);
-        StringAssert.Contains("context.BuildingSpawnSystem.SpawnCityBulkBuildingsRoutine", generationSystem);
-        StringAssert.Contains("internal sealed class RuntimeCityBuildingSpawnSystem", buildingSpawnSystem);
-        StringAssert.Contains("public void Configure", buildingSpawnSystem);
-        StringAssert.Contains("public void SpawnCityImportantBuildings", buildingSpawnSystem);
-        StringAssert.Contains("public void EnsureCityHall", buildingSpawnSystem);
-        StringAssert.Contains("public IEnumerator SpawnCityBulkBuildingsRoutine", buildingSpawnSystem);
-        StringAssert.Contains("public void SpawnCorridorEntranceBuildings", buildingSpawnSystem);
-        StringAssert.Contains("private bool TrySpawnHall", buildingSpawnSystem);
-        StringAssert.Contains("private void TrySpawnClockTower", buildingSpawnSystem);
-        StringAssert.Contains("private void PlaceFromPlots", buildingSpawnSystem);
-        StringAssert.Contains("private void PlaceRuralHouses", buildingSpawnSystem);
-        StringAssert.Contains("private void PlaceHouseYardWalls", buildingSpawnSystem);
-        StringAssert.Contains("private void PlaceCityDecorationBuildings", buildingSpawnSystem);
-        StringAssert.Contains("RuntimeCityBuildingSpawnSystem", audit);
+        Assert.IsFalse(
+            citySpawner.Contains("_runtimeCityBuildingSpawnSystem.Configure", StringComparison.Ordinal),
+            "RuntimeCityCompositionSystem must not configure mutable context on RuntimeCityBuildingSpawnSystem after step 31.");
+        StringAssert.Contains("context.BuildingSpawnSystems.HallSpawnSystem.EnsureCityHall", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.LandmarkSpawnSystem.SpawnLandmarks", generationSystem);
+        StringAssert.Contains("context.CorridorBuildingSpawnSystem.SpawnCorridorEntranceBuildings", generationSystem);
+        StringAssert.Contains("context.BuildingSpawnSystems.BulkBuildingSpawnRoutineSystem.SpawnRoutine", generationSystem);
+        StringAssert.Contains("internal sealed class RuntimeCityBuildingSpawnContextSystem", contextSystem);
+        StringAssert.Contains("public readonly struct Systems", contextSystem);
+        StringAssert.Contains("private static bool TrySpawnHall", hallSpawnSystem);
+        StringAssert.Contains("private static void TrySpawnClockTower", landmarkSpawnSystem);
+        StringAssert.Contains("public void PlaceFromPlots", buildingPlacementSystem);
+        StringAssert.Contains("public void PlaceRuralBuildings", ruralBuildingSpawnSystem);
+        StringAssert.Contains("public void SpawnCorridorEntranceBuildings", corridorBuildingSpawnSystem);
+        StringAssert.Contains("public IEnumerator SpawnRoutine", bulkRoutineSystem);
+        StringAssert.Contains("public void PlaceCityDecorationBuildings", decorationBuildingSpawnSystem);
+        StringAssert.Contains("RuntimeCityHallSpawnSystem", audit);
+        StringAssert.Contains("RuntimeCityDecorationBuildingSpawnSystem", audit);
 
         string[] retiredSpawnerBuildingSpawnTokens =
         {
@@ -9278,7 +10642,7 @@ public sealed class GameplayArchitectureContractTests
         {
             Assert.IsFalse(
                 citySpawner.Contains(token, StringComparison.Ordinal),
-                $"{token} belongs in RuntimeCityBuildingSpawnSystem, not RuntimeCitySpawnerSystem.");
+                $"{token} belongs in extracted runtime-city building-spawn child systems, not RuntimeCitySpawnerSystem.");
         }
     }
 
@@ -9301,7 +10665,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_runtimeCityBuildingPlotSystem", citySpawner);
         StringAssert.Contains("_runtimeCityWalkabilitySystem", citySpawner);
         StringAssert.Contains("_runtimeCityPrefabSelectionSystem", citySpawner);
-        StringAssert.Contains("_runtimeCityBuildingSpawnSystem", citySpawner);
+        StringAssert.Contains("_runtimeCityBuildingSpawnContextSystem", citySpawner);
         StringAssert.Contains("_runtimeCityVisualSystem", citySpawner);
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem", citySpawner);
         StringAssert.Contains("_runtimeCityRoadBuildBridgeSystem", citySpawner);
@@ -9791,7 +11155,7 @@ public sealed class GameplayArchitectureContractTests
         string startupSystem = File.ReadAllText(startupSystemPath);
         string generationSystem = File.ReadAllText(generationSystemPath);
         string roadCommitSystem = File.ReadAllText(roadCommitSystemPath);
-        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string hallSpawnSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -9819,7 +11183,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("context.Diagnostics?.LogCityPlanningFailed", generationSystem);
         StringAssert.Contains("context.Diagnostics?.LogSourceExitRoadFailed", roadCommitSystem);
         StringAssert.Contains("context.Diagnostics?.LogAutobahnFailed", roadCommitSystem);
-        StringAssert.Contains("_runtimeCityDiagnosticSystem?.LogHallPlacementFailed", buildingSpawnSystem);
+        StringAssert.Contains("context.DiagnosticSystem?.LogHallPlacementFailed", hallSpawnSystem);
 
         string[] runtimeCityFiles =
         {
@@ -9828,7 +11192,7 @@ public sealed class GameplayArchitectureContractTests
             startupSystemPath,
             generationSystemPath,
             roadCommitSystemPath,
-            buildingSpawnSystemPath
+            "Assets/Game/Scripts/Environment/RuntimeCityHallSpawnSystem.cs"
         };
 
         string[] retiredDiagnosticTokens =
@@ -9926,18 +11290,20 @@ public sealed class GameplayArchitectureContractTests
 
         string prefabSelectionSystem = File.ReadAllText(prefabSelectionSystemPath);
         string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
-        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string buildingPlacementSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs");
+        string bulkPlotPlanSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBulkPlotPlanSystem.cs");
+        string yardWallVisualSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityYardWallVisualSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
         StringAssert.Contains("6. Complete: Extract prefab selection", roadmap);
         StringAssert.Contains("private readonly RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem = new()", citySpawner);
         StringAssert.Contains("_runtimeCityPrefabSelectionSystem.IsConfiguredPrefab(prefab, housePrefabs)", citySpawner);
-        StringAssert.Contains("_runtimeCityPrefabSelectionSystem.GetRandomPrefab", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityPrefabSelectionSystem.Shuffle", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityPrefabSelectionSystem.GetCachedFootprintCells", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityPrefabSelectionSystem.GetMajorFootprint", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityPrefabSelectionSystem.GetMinorFootprint", buildingSpawnSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetRandomPrefab", buildingPlacementSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.GetCachedFootprintCells", buildingPlacementSystem);
+        StringAssert.Contains("context.PrefabSelectionSystem.Shuffle", bulkPlotPlanSystem);
+        StringAssert.Contains("prefabSelectionSystem.GetMajorFootprint", yardWallVisualSystem);
+        StringAssert.Contains("prefabSelectionSystem.GetMinorFootprint", yardWallVisualSystem);
         StringAssert.Contains("internal sealed class RuntimeCityPrefabSelectionSystem", prefabSelectionSystem);
         StringAssert.Contains("private readonly Dictionary<GameObject, Vector2Int> _prefabFootprintCache = new()", prefabSelectionSystem);
         StringAssert.Contains("public bool IsConfiguredPrefab", prefabSelectionSystem);
@@ -9982,7 +11348,8 @@ public sealed class GameplayArchitectureContractTests
 
         string visualSystem = File.ReadAllText(visualSystemPath);
         string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
-        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string bulkRoutineSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBulkBuildingSpawnRoutineSystem.cs");
+        string yardWallVisualSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityYardWallVisualSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
 
@@ -9990,8 +11357,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private readonly RuntimeCityVisualSystem _runtimeCityVisualSystem = new()", citySpawner);
         StringAssert.Contains("_runtimeCityVisualSystem.SetRuntimeRoot(runtimeRoot)", citySpawner);
         StringAssert.Contains("_runtimeCityVisualSystem.Dispose()", citySpawner);
-        StringAssert.Contains("_runtimeCityVisualSystem.EnsureCityVisualRoot()", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCityVisualSystem.SpawnVisualOnlyPrefab", buildingSpawnSystem);
+        StringAssert.Contains("context.VisualSystem.EnsureCityVisualRoot()", bulkRoutineSystem);
+        StringAssert.Contains("visualSystem.SpawnVisualOnlyPrefab", yardWallVisualSystem);
         StringAssert.Contains("internal sealed class RuntimeCityVisualSystem", visualSystem);
         StringAssert.Contains("public void SetRuntimeRoot", visualSystem);
         StringAssert.Contains("public void EnsureCityVisualRoot", visualSystem);
@@ -10088,7 +11455,7 @@ public sealed class GameplayArchitectureContractTests
             "private readonly RuntimeCityBuildingPlotSystem _runtimeCityBuildingPlotSystem = new()",
             "private readonly RuntimeCityWalkabilitySystem _runtimeCityWalkabilitySystem = new()",
             "private readonly RuntimeCityPrefabSelectionSystem _runtimeCityPrefabSelectionSystem = new()",
-            "private readonly RuntimeCityBuildingSpawnSystem _runtimeCityBuildingSpawnSystem = new()",
+            "private readonly RuntimeCityBuildingSpawnContextSystem _runtimeCityBuildingSpawnContextSystem = new()",
             "private readonly RuntimeCityVisualSystem _runtimeCityVisualSystem = new()",
             "private readonly RuntimeCitySpawnBridgeSystem _runtimeCitySpawnBridgeSystem = new()",
             "private readonly RuntimeCityRoadBuildBridgeSystem _runtimeCityRoadBuildBridgeSystem = new()",
@@ -10102,6 +11469,7 @@ public sealed class GameplayArchitectureContractTests
             "private readonly RuntimeCityMinimapEventSystem _runtimeCityMinimapEventSystem = new()",
             "private readonly RuntimeCityDiagnosticSystem _runtimeCityDiagnosticSystem = new()",
             "private RuntimeCityGenerationSystem.Context CreateGenerationContext",
+            "private RuntimeCityBuildingSpawnContextSystem.Systems CreateBuildingSpawnSystems",
             "private RuntimeCityStartupSystem.Context CreateStartupContext",
             "private RuntimeCityChainSystem.Context CreateChainContext",
             "private RuntimeCityRoadCommitSystem.Context CreateRoadCommitContext",
@@ -10166,7 +11534,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsFalse(File.Exists(citySpawnerPath), "RuntimeCitySpawnerSystem.cs must not be restored.");
         StringAssert.Contains("27. Complete: Delete the spawner shell", File.ReadAllText(roadmapPath));
-        StringAssert.Contains("Deleted source file: `Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs`", File.ReadAllText(auditPath));
+        StringAssert.Contains("Deleted source files: `Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs`", File.ReadAllText(auditPath));
 
         string[] sourceFiles = Directory.GetFiles("Assets/Game/Scripts", "*.cs", SearchOption.AllDirectories)
             .Select(NormalizePath)
@@ -10254,7 +11622,7 @@ public sealed class GameplayArchitectureContractTests
 
         string spawnBridge = File.ReadAllText(spawnBridgePath);
         string citySpawner = ReadRuntimeCitySpawnerArchitectureSurface(citySpawnerPath);
-        string buildingSpawnSystem = File.ReadAllText(buildingSpawnSystemPath);
+        string buildingPlacementSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityBuildingPlacementSystem.cs");
         string generationSystem = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
         string roadmap = File.ReadAllText(roadmapPath);
         string audit = File.ReadAllText(auditPath);
@@ -10266,8 +11634,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_runtimeCitySpawnBridgeSystem.HasSpawnSystem", citySpawner);
         StringAssert.Contains("context.SpawnBridgeSystem.BeginDeferredSideEffects()", generationSystem);
         StringAssert.Contains("context.SpawnBridgeSystem.EndDeferredSideEffects()", generationSystem);
-        StringAssert.Contains("_runtimeCitySpawnBridgeSystem.TrySpawnCityBuilding", buildingSpawnSystem);
-        StringAssert.Contains("_runtimeCitySpawnBridgeSystem.DeleteCityBuilding", buildingSpawnSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.TrySpawnCityBuilding", buildingPlacementSystem);
+        StringAssert.Contains("context.SpawnBridgeSystem.DeleteCityBuilding", buildingPlacementSystem);
         StringAssert.Contains("internal sealed class RuntimeCitySpawnBridgeSystem", spawnBridge);
         StringAssert.Contains("private BuildingRuntimeCitySpawnSystem _buildingRuntimeCitySpawnSystem", spawnBridge);
         StringAssert.Contains("private BuildingRuntimeCitySpawnSystem.Context _buildingRuntimeCitySpawnContext", spawnBridge);

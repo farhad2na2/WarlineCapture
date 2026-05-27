@@ -3,7 +3,7 @@
   "targetScene": "Assets/Game/Scenes/Game_Terrain4.unity",
   "mapPack": "Design/VisualTargets/Gameplay/MapPacks/SyntyHighlands_01",
   "placementRule": "Generated dressing prefabs are instantiated only under the generated sibling groups beneath Island; the preserved foundation child is not modified.",
-  "totalPlacedPrefabs": 18795,
+  "totalPlacedPrefabs": 32260,
   "groups": [
     {
       "kind": "Mountains",
@@ -12,28 +12,40 @@
       "placedPrefabs": 55
     },
     {
+      "kind": "Mountains_Dirt",
+      "groupName": "Generated_Mountains_Dirt",
+      "exists": true,
+      "placedPrefabs": 40
+    },
+    {
       "kind": "Trees_Playable",
       "groupName": "Generated_Trees_Playable",
       "exists": true,
-      "placedPrefabs": 2179
+      "placedPrefabs": 5755
+    },
+    {
+      "kind": "Trees_Dirt",
+      "groupName": "Generated_Trees_Dirt",
+      "exists": true,
+      "placedPrefabs": 11556
     },
     {
       "kind": "Trees_BlockerBelt",
       "groupName": "Generated_Trees_BlockerBelt",
       "exists": true,
-      "placedPrefabs": 8602
+      "placedPrefabs": 7587
     },
     {
       "kind": "Bushes_Playable",
       "groupName": "Generated_Bushes_Playable",
       "exists": true,
-      "placedPrefabs": 1582
+      "placedPrefabs": 1494
     },
     {
       "kind": "Bushes_BlockerBelt",
       "groupName": "Generated_Bushes_BlockerBelt",
       "exists": true,
-      "placedPrefabs": 5570
+      "placedPrefabs": 4966
     },
     {
       "kind": "Rocks",

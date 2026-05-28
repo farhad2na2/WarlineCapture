@@ -9643,7 +9643,6 @@ MonoBehaviour:
   globalVolume: {fileID: 756031881}
   decorationCombinedMeshBaker: {fileID: 1026090171}
   decorationRoot: {fileID: 1026090170}
-  chapter01TacticalBinder: {fileID: 0}
   legacyVisualRootsDisabledForM01: []
   rtsSelectionConfig: {fileID: 11400000, guid: b2010000000000000000000000000002, type: 2}
   roadBuildConfig: {fileID: 11400000, guid: b2010000000000000000000000000003, type: 2}
@@ -9660,6 +9659,10 @@ MonoBehaviour:
   aiControllerConfigs:
   - {fileID: 11400000, guid: fb8b5c545d7f641d3b153c2f18c57aad, type: 2}
   - {fileID: 11400000, guid: 34d062317806444e2a70cd1ed240fc5a, type: 2}
+  runtimeGridWidth: 2048
+  runtimeGridHeight: 2048
+  runtimeGridCellSize: 1
+  runtimeGridOrigin: {x: 0, y: 0, z: 0}
 --- !u!1 &304953776
 GameObject:
   m_ObjectHideFlags: 0
@@ -66182,7 +66185,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &760912331521908740
 RectTransform:
   m_ObjectHideFlags: 0

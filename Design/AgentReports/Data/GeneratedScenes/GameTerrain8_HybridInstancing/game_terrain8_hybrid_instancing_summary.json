@@ -1,0 +1,98 @@
+{
+  "pipelineId": "GameTerrain8_HybridGroundChunksGpuInstancing",
+  "date": "2026-05-27",
+  "sourceScene": "Assets/Game/Scenes/Game_Terrain4.unity",
+  "targetScene": "Assets/Game/Scenes/Game_Terrain8.unity",
+  "chunkSizeWorldUnits": 256,
+  "cameraBasis": {
+    "normalHeight": 34,
+    "normalPitch": 40,
+    "normalFieldOfView": 36,
+    "buildHeight": 90,
+    "buildPitch": 64,
+    "buildFieldOfView": 52,
+    "wideAspect": 2.333333
+  },
+  "sourceIsland": {
+    "renderers": 52165,
+    "meshFilters": 52165,
+    "materialSlots": 52165,
+    "uniqueMeshes": 90,
+    "uniqueMaterials": 4,
+    "vertices": 66664223,
+    "triangles": 32210455,
+    "maxVerticesPerRenderer": 5430,
+    "maxTrianglesPerRenderer": 2251
+  },
+  "sourceFoundation": {
+    "renderers": 22474,
+    "meshFilters": 22474,
+    "materialSlots": 22474,
+    "uniqueMeshes": 8,
+    "uniqueMaterials": 3,
+    "vertices": 8736371,
+    "triangles": 10147121,
+    "maxVerticesPerRenderer": 1507,
+    "maxTrianglesPerRenderer": 602
+  },
+  "sourceDressing": {
+    "renderers": 29691,
+    "meshFilters": 29691,
+    "materialSlots": 29691,
+    "uniqueMeshes": 82,
+    "uniqueMaterials": 2,
+    "vertices": 57927852,
+    "triangles": 22063334,
+    "maxVerticesPerRenderer": 5430,
+    "maxTrianglesPerRenderer": 2251
+  },
+  "combinedGround": {
+    "renderers": 317,
+    "meshFilters": 317,
+    "materialSlots": 317,
+    "uniqueMeshes": 317,
+    "uniqueMaterials": 3,
+    "vertices": 8736371,
+    "triangles": 10147121,
+    "maxVerticesPerRenderer": 98309,
+    "maxTrianglesPerRenderer": 91841
+  },
+  "finalIsland": {
+    "renderers": 30008,
+    "meshFilters": 30008,
+    "materialSlots": 30008,
+    "uniqueMeshes": 399,
+    "uniqueMaterials": 5,
+    "vertices": 66664223,
+    "triangles": 32210455,
+    "maxVerticesPerRenderer": 98309,
+    "maxTrianglesPerRenderer": 91841
+  },
+  "groundChunkMaterialBuckets": 317,
+  "groundMeshAssetDiskBytes": 1083346069,
+  "instancedMaterials": {
+    "copiedMaterials": 2,
+    "instancingEnabledMaterials": 2
+  },
+  "instancing": {
+    "totalRenderers": 29691,
+    "eligibleRenderers": 29691,
+    "repeatedGroups": 82,
+    "largestGroupSize": 1187
+  },
+  "removedColliders": 39867,
+  "removedLodSwitchers": 0,
+  "removedNonessentialObjects": 2,
+  "proofCaptures": [
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain8_HybridInstancing/game_terrain8_source_topdown_proof.png",
+    "Design/AgentReports/Captures/GeneratedScenes/GameTerrain8_HybridInstancing/game_terrain8_source_playable_angle_proof.png"
+  ],
+  "validation": [
+    "Ground/foundation renderers are chunk-combined.",
+    "Generated dressing groups remain as repeated mesh renderers.",
+    "Dressing material copies have GPU instancing enabled.",
+    "Static flags are cleared so dressing is not static-batched away from instancing.",
+    "Visual colliders are removed; gameplay remains grid, blocker, and heightmap driven.",
+    "No live LOD switching is introduced."
+  ]
+}

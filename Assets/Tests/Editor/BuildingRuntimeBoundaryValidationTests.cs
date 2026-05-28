@@ -17,8 +17,27 @@ public sealed class BuildingRuntimeBoundaryValidationTests
     private GameObject _buildingPrefab;
     private BuildingPlacementSystemConfig _buildingConfig;
     private BuildingGameplayCompositionSystem _buildingComposition;
-    private BuildingGameplayCompositionSystem.Result _buildingGameplay;
+    private BuildingGameplayCompositionResultSystem.Result _buildingGameplay;
     private bool _buildingGameplayInitialized;
+
+    public static void RunBatchValidation()
+    {
+        var tests = new BuildingRuntimeBoundaryValidationTests();
+        try
+        {
+            tests.RuntimeSpawnRequestCompletionSurvivesSpawnStructuralChanges();
+            tests.TearDown();
+            Debug.Log("[BuildingRuntimeBoundaryValidation] result=Passed");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            tests.TearDown();
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingRuntimeBoundaryValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
 
     [TearDown]
     public void TearDown()

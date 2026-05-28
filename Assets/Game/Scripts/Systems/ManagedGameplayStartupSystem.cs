@@ -157,7 +157,7 @@ internal sealed class ManagedGameplayStartupSystem
             runtimeUiRoot);
         RoadBuildReadModelSystem roadBuildReadModel = road.RoadBuildReadModel;
 
-        BuildingGameplayCompositionSystem.Result building = _buildingGameplayCompositionSystem.Initialize(
+        BuildingGameplayCompositionResultSystem.Result building = _buildingGameplayCompositionSystem.Initialize(
             buildingPlacementConfig,
             worldCamera,
             runtimeUiRoot,
@@ -179,8 +179,7 @@ internal sealed class ManagedGameplayStartupSystem
             road,
             building.Interaction,
             building.InteractionContext);
-        _buildingGameplayCompositionSystem.BindSelection(
-            building,
+        building.BindSelection(
             dayNight,
             selection.SelectionUiCamera,
             selection.SelectionBuildingInteraction);
@@ -191,12 +190,8 @@ internal sealed class ManagedGameplayStartupSystem
         var unitImpostors = new UnitImpostorRenderSystem();
         unitImpostors.Init(worldCamera, ownerLayer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
 
-        _buildingGameplayCompositionSystem.InitializeCitizenPopulation(
-            building,
-            dayNight,
-            worldCamera);
-        _buildingGameplayCompositionSystem.BindCitizenPopulation(
-            building,
+        building.InitializeCitizenPopulation(dayNight, worldCamera);
+        building.BindCitizenPopulation(
             dayNight,
             selection.SelectionUiCamera,
             selection.SelectionBuildingInteraction,

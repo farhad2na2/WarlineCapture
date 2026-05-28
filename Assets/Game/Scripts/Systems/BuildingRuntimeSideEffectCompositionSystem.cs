@@ -1,0 +1,54 @@
+using Unity.Entities;
+using UnityEngine;
+
+internal sealed class BuildingRuntimeSideEffectCompositionSystem
+{
+    internal delegate bool TryGetEntityManagerDelegate(out EntityManager entityManager);
+
+    public void BeginDeferredRuntimeBuildingSideEffects(
+        BuildingGameplayCompositionSourceSystem source,
+        TryGetEntityManagerDelegate tryGetEntityManager)
+    {
+        source.BuildingPlacementRedirectSystem.BeginDeferredRuntimeBuildingSideEffects(
+            () => source.BuildingPlacementInvalidCellSystem.RebuildPlacementInvalidPrefix(
+                source.BuildingGameplayGridDataSystem,
+                source.BuildingGameplayEcsQuerySystem,
+                (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+                source.BuildingPlacementStartupSystem,
+                source.BuildingGameplayDependencySystem));
+    }
+
+    public void EndDeferredRuntimeBuildingSideEffects(
+        BuildingGameplayCompositionSourceSystem source,
+        TryGetEntityManagerDelegate tryGetEntityManager)
+    {
+        BuildingRuntimeContextSystem.RuntimeSource runtimeSource =
+            source.BuildingRuntimeCompositionSystem.CreateRuntimeContextSource(
+                source,
+                (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+                (BuildingGameplayCompositionSourceSystem gridSource, out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                    gridSource.BuildingGridCompositionSystem.TryGetGridData(
+                        gridSource,
+                        (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+                        out gridEntity,
+                        out grid,
+                        out roads,
+                        out blockerData),
+                (querySource, building) => querySource.BuildingRuntimeCompositionQuerySystem.IsHouseBuilding(querySource, building),
+                (BuildingGameplayCompositionSourceSystem querySource, RuntimeBuildingData building, out Vector3 worldPosition) =>
+                    querySource.BuildingRuntimeCompositionQuerySystem.TryResolveBuildingFocusWorldPosition(
+                        querySource,
+                        building,
+                        (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
+                        out worldPosition),
+                (BuildingGameplayCompositionSourceSystem querySource, int id, out RuntimeBuildingData building) =>
+                    querySource.BuildingRuntimeCompositionQuerySystem.TryGetRuntimeBuilding(querySource, id, out building),
+                (querySource, definition, originCell, grid, rotateVertical) =>
+                    querySource.BuildingRuntimeCompositionQuerySystem.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
+        source.BuildingPlacementRedirectSystem.EndDeferredRuntimeBuildingSideEffects(
+            source.BuildingRuntimeContextSystem.CreateRedirectContext(runtimeSource),
+            () => source.BuildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(
+                source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(runtimeSource)),
+            source.BuildingPlacementInvalidCellSystem.Clear);
+    }
+}

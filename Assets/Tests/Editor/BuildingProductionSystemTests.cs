@@ -1,4 +1,5 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using NUnit.Framework;
@@ -7,6 +8,24 @@ using UnityEngine;
 
 public sealed class BuildingProductionSystemTests
 {
+    public static void RunBuildingGameplayCompositionRuntimeSmokeValidation()
+    {
+        try
+        {
+            var tests = new BuildingProductionSystemTests();
+            tests.BuildingGameplayComposition_InitializesRuntimeDollarsFromInitialUnitsConfig();
+            tests.BuildingGameplayComposition_CampBuildingRequestStartsConfiguredPlacement();
+            Debug.Log("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Passed");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[BuildingGameplayCompositionRuntimeSmokeValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void InitializePendingProduction_SetsReadyTimeAndTransportFields()
     {
@@ -299,7 +318,7 @@ public sealed class BuildingProductionSystemTests
     {
         var placementConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         var initialUnitsConfig = ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringSceneConfigAsset>();
-        BuildingGameplayCompositionSystem.Result result = default;
+        BuildingGameplayCompositionResultSystem.Result result = default;
         try
         {
             SetPrivateField(initialUnitsConfig, "initialDollars", 12345);
@@ -331,7 +350,7 @@ public sealed class BuildingProductionSystemTests
         var placementConfig = ScriptableObject.CreateInstance<BuildingPlacementSystemConfig>();
         var initialUnitsConfig = ScriptableObject.CreateInstance<InitialUnitsSpawnerAuthoringSceneConfigAsset>();
         var buildingPrefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        BuildingGameplayCompositionSystem.Result result = default;
+        BuildingGameplayCompositionResultSystem.Result result = default;
         try
         {
             buildingPrefab.name = "Soldier Base";

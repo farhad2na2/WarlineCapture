@@ -10,6 +10,7 @@ Purpose: this is the single reference workflow for creating a new large 3D opera
 - Generate a readable source scene first: `Game_Terrain4`.
 - Generate the optimized chunk-bake scene from that source: `Game_Terrain5`.
 - Generate the final no-LOD gameplay-ready scene from the optimized bake: `Game_Terrain7`.
+- Use `Game_Terrain8` as the GPU-instancing experiment when the goal is lower generated mesh memory: ground chunks are combined, repeated dressing stays instanced.
 - Do not use live terrain LOD swapping for gameplay.
 - Do not run `Game_Terrain6` for new maps.
 - Treat `Game_Terrain7` as the final scene name, but remember the real renderer/material optimization happens in `Game_Terrain5`.
@@ -192,6 +193,67 @@ Current result from the first optimized map:
 | Chunk mesh assets | n/a | 296 |
 
 Important: `Game_Terrain5` is the real visual performance optimization stage. It reduces renderer/material submission count. It does not necessarily reduce triangles, because the visual shape is preserved.
+
+## Hybrid Ground-Chunk And GPU-Instanced Dressing Pass
+
+Experimental mobile visual output:
+
+`Assets/Game/Scenes/Game_Terrain8.unity`
+
+Run command for current `Game_Terrain4`:
+
+```bash
+Unity -batchmode -quit -projectPath <project> -executeMethod WarlineCaptureGameTerrain8HybridInstancingOptimizer.BuildHybridInstancedTerrain
+```
+
+Use this pass when the full chunk-combined path has acceptable draw calls but creates too much generated mesh asset memory. It is a separate optimization branch from `Game_Terrain7`.
+
+What this optimization does:
+
+1. Copies `Game_Terrain4` to `Game_Terrain8`.
+2. Combines only the island foundation child:
+
+`Island/ExpandedIsland_SourceGameTerrain3PrefabsOnly`
+
+3. Stores those combined ground chunk meshes in:
+
+`Assets/Game/GeneratedTerrainOptimized/Game_Terrain8/GroundChunks/`
+
+4. Deletes the original source foundation prefab hierarchy after the ground chunks are built.
+5. Keeps generated dressing groups as repeated prefab/mesh instances:
+   - `Generated_Mountains`
+   - `Generated_Mountains_Dirt`
+   - `Generated_Trees_Playable`
+   - `Generated_Trees_Dirt`
+   - `Generated_Trees_BlockerBelt`
+   - `Generated_Bushes_Playable`
+   - `Generated_Bushes_BlockerBelt`
+   - `Generated_Rocks`
+6. Creates material copies for the dressing pass under:
+
+`Assets/Game/GeneratedTerrainOptimized/Game_Terrain8/InstancedMaterials/`
+
+7. Enables GPU instancing on those dressing material copies and assigns them to the dressing renderers.
+8. Clears static flags on dressing renderers so Unity can batch same mesh/material instances through GPU instancing.
+9. Removes visual colliders and disables shadows, probes, motion vectors, and unnecessary renderer costs.
+10. Writes a summary that reports:
+   - source renderer count
+   - combined ground renderer count
+   - instanced dressing renderer count
+   - instancing-eligible renderer count
+   - repeated mesh/material batch count
+   - generated mesh asset disk size
+
+Important: Unity does not automatically make this useful just because a material says GPU instancing is enabled. Instancing only helps when many renderers use the same mesh and the same instancing-enabled material set. `Game_Terrain8` preserves those repeated dressing renderers so Unity has something meaningful to instance. Frame Debugger or Profiler validation is still required to prove the runtime draw-call result on device.
+
+Role split with this branch:
+
+- `Game_Terrain4`: readable generated source scene.
+- `Game_Terrain5`: full chunk-combined bake.
+- `Game_Terrain7`: no-LOD full chunk-combined final scene.
+- `Game_Terrain8`: hybrid scene with chunked ground and instanced repeated dressing.
+
+Do not treat `Game_Terrain8` as accepted over `Game_Terrain7` until profiling proves it is better for the current device target. It may use more scene renderers than `Game_Terrain7`, but should avoid generating one huge unique mesh set for all trees, bushes, rocks, and mountains.
 
 ## Final Scene To Use
 

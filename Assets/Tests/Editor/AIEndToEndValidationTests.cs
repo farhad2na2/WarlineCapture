@@ -14,7 +14,7 @@ public sealed class AIEndToEndValidationTests
     private World _previousDefaultWorld;
     private World _world;
     private BuildingGameplayCompositionSystem _buildingComposition;
-    private BuildingGameplayCompositionSystem.Result _buildingGameplay;
+    private BuildingGameplayCompositionResultSystem.Result _buildingGameplay;
     private bool _buildingGameplayInitialized;
     private NativeArray<int> _blockerCounts;
     private NativeBitArray _blocked;

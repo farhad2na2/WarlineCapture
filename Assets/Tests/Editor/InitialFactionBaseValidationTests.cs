@@ -50,6 +50,27 @@ public sealed class InitialFactionBaseValidationTests
         }
     }
 
+    public static void RunBuildingGameplayRuntimeSmokeValidation()
+    {
+        try
+        {
+            var tests = new InitialFactionBaseValidationTests();
+            tests.BuildingPlacementConfig_ResolvesEveryInitialBasePrefab();
+            tests.InitialBaseAirPlatformPrefabs_HaveProductionSpawnPoints();
+            tests.RuntimeHelipad_DoesNotCreateStaticPathBlocker();
+            tests.InitialBaseRuntimePlacement_SpawnsRequiredBaseBuildings();
+            tests.HelipadSpawnResolver_SkipsOccupiedPadForInitialTransportHelicopter();
+            Debug.Log("[InitialFactionBaseBuildingGameplaySmokeValidation] result=Passed");
+            EditorApplication.Exit(0);
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogException(ex);
+            Debug.LogError("[InitialFactionBaseBuildingGameplaySmokeValidation] result=Failed");
+            EditorApplication.Exit(1);
+        }
+    }
+
     [Test]
     public void InitialFactionBaseLayoutPlanner_BuildsExactBaseRecipe()
     {
@@ -225,7 +246,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayCompositionSystem.Result buildingGameplay = default;
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay = default;
         bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
@@ -285,7 +306,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayCompositionSystem.Result buildingGameplay = default;
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay = default;
         bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
@@ -383,7 +404,7 @@ public sealed class InitialFactionBaseValidationTests
         NativeBitArray blocked = default;
         NativeBitArray occupied = default;
         NativeArray<byte> friendlyPassFactionIds = default;
-        BuildingGameplayCompositionSystem.Result buildingGameplay = default;
+        BuildingGameplayCompositionResultSystem.Result buildingGameplay = default;
         bool buildingGameplayInitialized = false;
         GameObject runtimeRoot = null;
 
@@ -586,7 +607,7 @@ public sealed class InitialFactionBaseValidationTests
             : key.Trim().ToLowerInvariant().Replace(" ", string.Empty).Replace("_", string.Empty).Replace("-", string.Empty);
     }
 
-    private static BuildingGameplayCompositionSystem.Result CreateBuildingGameplay(
+    private static BuildingGameplayCompositionResultSystem.Result CreateBuildingGameplay(
         BuildingPlacementSystemConfig placementConfig,
         Transform runtimeRoot)
     {

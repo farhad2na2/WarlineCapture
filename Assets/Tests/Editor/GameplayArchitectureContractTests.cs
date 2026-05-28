@@ -98,6 +98,39 @@ public sealed class GameplayArchitectureContractTests
     private const string UnitRenderBudgetDiagnosticLogComponentsPath = "Assets/Game/Scripts/Components/UnitRenderBudgetDiagnosticLogComponents.cs";
     private const string UnitRenderBudgetDiagnosticLogSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDiagnosticLogSystem.cs";
     private const string UnitRenderBudgetDiagnosticLogFlushSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDiagnosticLogFlushSystem.cs";
+    private const string InitialUnitsSpawnRoadmapPath = "Design/Architecture/initial_units_spawn_system_refactor_roadmap.md";
+    private const string InitialUnitsSpawnSystemPath = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";
+    private const string InitialUnitsSpawnQuerySystemPath = "Assets/Game/Scripts/Systems/InitialUnitsSpawnQuerySystem.cs";
+    private const string InitialUnitsSpawnStartupGateSystemPath = "Assets/Game/Scripts/Systems/InitialUnitsSpawnStartupGateSystem.cs";
+    private const string InitialUnitsSpawnProgressSystemPath = "Assets/Game/Scripts/Systems/InitialUnitsSpawnProgressSystem.cs";
+    private const string InitialFactionSpawnSnapshotSystemPath = "Assets/Game/Scripts/Systems/InitialFactionSpawnSnapshotSystem.cs";
+    private const string InitialRespawnQueueProjectionSystemPath = "Assets/Game/Scripts/Systems/InitialRespawnQueueProjectionSystem.cs";
+    private const string InitialSpawnResourceSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnResourceSystem.cs";
+    private const string InitialBuildingBoundarySystemPath = "Assets/Game/Scripts/Systems/InitialBuildingBoundarySystem.cs";
+    private const string InitialBuildingSpawnableSystemPath = "Assets/Game/Scripts/Systems/InitialBuildingSpawnableSystem.cs";
+    private const string InitialFactionBaseRequestSystemPath = "Assets/Game/Scripts/Systems/InitialFactionBaseRequestSystem.cs";
+    private const string InitialBaseWallRunRequestSystemPath = "Assets/Game/Scripts/Systems/InitialBaseWallRunRequestSystem.cs";
+    private const string InitialConfiguredBuildingRequestSystemPath = "Assets/Game/Scripts/Systems/InitialConfiguredBuildingRequestSystem.cs";
+    private const string InitialBuildingCompletionSystemPath = "Assets/Game/Scripts/Systems/InitialBuildingCompletionSystem.cs";
+    private const string InitialSpawnCompletionSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnCompletionSystem.cs";
+    private const string InitialSpawnGridContextSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnGridContextSystem.cs";
+    private const string InitialSpawnReservationSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnReservationSystem.cs";
+    private const string InitialUnitSpawnCellSystemPath = "Assets/Game/Scripts/Systems/InitialUnitSpawnCellSystem.cs";
+    private const string InitialAirPlatformSpawnSystemPath = "Assets/Game/Scripts/Systems/InitialAirPlatformSpawnSystem.cs";
+    private const string InitialMissionRosterSystemPath = "Assets/Game/Scripts/Systems/InitialMissionRosterSystem.cs";
+    private const string InitialUnitSourceKeySystemPath = "Assets/Game/Scripts/Systems/InitialUnitSourceKeySystem.cs";
+    private const string InitialUnitSpawnBatchSystemPath = "Assets/Game/Scripts/Systems/InitialUnitSpawnBatchSystem.cs";
+    private const string InitialUnitSpawnApplySystemPath = "Assets/Game/Scripts/Systems/InitialUnitSpawnApplySystem.cs";
+    private const string InitialUnitSpawnResetSystemPath = "Assets/Game/Scripts/Systems/InitialUnitSpawnResetSystem.cs";
+    private const string InitialBlockerSpawnSystemPath = "Assets/Game/Scripts/Systems/InitialBlockerSpawnSystem.cs";
+    private const string InitialSpawnStructuralApplySystemPath = "Assets/Game/Scripts/Systems/InitialSpawnStructuralApplySystem.cs";
+    private const string InitialSpawnDiagnosticStateSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnDiagnosticStateSystem.cs";
+    private const string InitialSpawnDiagnosticLogComponentsPath = "Assets/Game/Scripts/Components/InitialSpawnDiagnosticLogComponents.cs";
+    private const string InitialSpawnDiagnosticLogSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogSystem.cs";
+    private const string InitialSpawnDiagnosticLogFlushSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnDiagnosticLogFlushSystem.cs";
+    private const string InitialSpawnDuplicateCellDiagnosticSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnDuplicateCellDiagnosticSystem.cs";
+    private const string InitialSpawnFreezeDiagnosticSystemPath = "Assets/Game/Scripts/Systems/InitialSpawnFreezeDiagnosticSystem.cs";
+    private const string InitialUnitsSpawnFocusedTestsPath = "Assets/Tests/Editor/InitialUnitsSpawnFocusedTests.cs";
     private const string RoadBuildRuntimeStateRoadmapPath = "Design/Architecture/road_build_runtime_state_system_refactor_roadmap.md";
     private const string RoadBuildRuntimeStateSystemPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
     private const string UnitTransportBoardingRoadmapPath = "Design/Architecture/unit_transport_boarding_system_refactor_roadmap.md";
@@ -626,6 +659,41 @@ public sealed class GameplayArchitectureContractTests
                 : ex;
             UnityEngine.Debug.LogException(failure);
             UnityEngine.Debug.LogError("[UnitRenderBudgetArchitectureValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
+    public static void RunInitialUnitsSpawnArchitectureBatchValidation()
+    {
+        string[] methodNames =
+        {
+            nameof(InitialUnitsSpawnRefactorRoadmapMustRecordBaselineAndTargetBoundaries),
+            nameof(InitialUnitsSpawnBroadReplacementShellsMustNotExist),
+            nameof(InitialUnitsSpawnSystemBaselineMustStayExplicitUntilExtracted),
+            nameof(InitialSpawnSystemMustNotReachThroughBuildingPlacementSingleton)
+        };
+
+        try
+        {
+            var tests = new GameplayArchitectureContractTests();
+            Type testType = typeof(GameplayArchitectureContractTests);
+            for (int i = 0; i < methodNames.Length; i++)
+            {
+                System.Reflection.MethodInfo method = testType.GetMethod(methodNames[i]);
+                Assert.NotNull(method, $"Missing initial units spawn architecture validation method {methodNames[i]}.");
+                method.Invoke(tests, null);
+            }
+
+            UnityEngine.Debug.Log($"[InitialUnitsSpawnArchitectureValidation] result=Passed methods={methodNames.Length}");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Exception failure = ex is System.Reflection.TargetInvocationException && ex.InnerException != null
+                ? ex.InnerException
+                : ex;
+            UnityEngine.Debug.LogException(failure);
+            UnityEngine.Debug.LogError("[InitialUnitsSpawnArchitectureValidation] result=Failed");
             UnityEditor.EditorApplication.Exit(1);
         }
     }
@@ -10620,10 +10688,598 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void InitialUnitsSpawnRefactorRoadmapMustRecordBaselineAndTargetBoundaries()
+    {
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnRoadmapPath), $"{InitialUnitsSpawnRoadmapPath} must track the InitialUnitsSpawnSystem decomposition plan.");
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnSystemPath), $"{InitialUnitsSpawnSystemPath} must remain present until the roadmap explicitly retires or narrows the ECS tick.");
+
+        string roadmap = File.ReadAllText(InitialUnitsSpawnRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string performance = File.ReadAllText(PerformanceContractPath);
+
+        StringAssert.Contains("This roadmap has 36 steps.", roadmap);
+        StringAssert.Contains("Target file: `Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs`", roadmap);
+        StringAssert.Contains("Current size at roadmap creation: 1236 lines.", roadmap);
+        StringAssert.Contains("Final target: `InitialUnitsSpawnSystem` may remain only as the ECS initial-spawn tick", roadmap);
+        StringAssert.Contains("## Current Responsibility Inventory", roadmap);
+        StringAssert.Contains("## Public/Internal Surface Hard Rule", roadmap);
+        StringAssert.Contains("Do not replace `InitialUnitsSpawnSystem` with `InitialUnitsSpawnManager`, `InitialUnitsSpawnController`, `InitialUnitsSpawnFacade`, `InitialUnitsSpawnOrchestrator`, or another broad shell.", roadmap);
+        StringAssert.Contains("Initial building/base spawning must keep using ECS building runtime boundary buffers", roadmap);
+        StringAssert.Contains("1. Complete: Add architecture guard and batch validation", roadmap);
+        StringAssert.Contains("36. Complete: Validation gate", roadmap);
+
+        StringAssert.Contains("InitialUnitsSpawnSystem refactor is tracked in `Design/Architecture/initial_units_spawn_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("`InitialUnitsSpawnSystem` is startup-critical ECS gameplay code", contract);
+        StringAssert.Contains("The remaining `InitialUnitsSpawnSystem` may stay only as the ECS initial-spawn tick", contract);
+        StringAssert.Contains("Do not replace `InitialUnitsSpawnSystem` with `InitialUnitsSpawnManager`, `InitialUnitsSpawnController`, `InitialUnitsSpawnFacade`, `InitialUnitsSpawnOrchestrator`, or another broad shell", contract);
+
+        StringAssert.Contains("## Initial Units Spawn Performance Scenario", performance);
+        StringAssert.Contains("`InitialUnitsSpawnSystem` and its extracted initial-spawn boundaries are startup-critical gameplay code.", performance);
+    }
+
+    [Test]
+    public void InitialUnitsSpawnBroadReplacementShellsMustNotExist()
+    {
+        string roadmap = File.ReadAllText(InitialUnitsSpawnRoadmapPath);
+        StringAssert.Contains("Do not replace `InitialUnitsSpawnSystem` with `InitialUnitsSpawnManager`, `InitialUnitsSpawnController`, `InitialUnitsSpawnFacade`, `InitialUnitsSpawnOrchestrator`, or another broad shell.", roadmap);
+
+        string[] forbiddenTypeNames =
+        {
+            "InitialUnitsSpawnManager",
+            "InitialUnitsSpawnController",
+            "InitialUnitsSpawnFacade",
+            "InitialUnitsSpawnOrchestrator"
+        };
+
+        string[] scriptFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories);
+        var violations = new List<string>();
+        for (int fileIndex = 0; fileIndex < scriptFiles.Length; fileIndex++)
+        {
+            string path = scriptFiles[fileIndex];
+            string fileName = Path.GetFileNameWithoutExtension(path);
+            string text = File.ReadAllText(path);
+            for (int nameIndex = 0; nameIndex < forbiddenTypeNames.Length; nameIndex++)
+            {
+                string typeName = forbiddenTypeNames[nameIndex];
+                if (fileName == typeName ||
+                    text.Contains($"class {typeName}", StringComparison.Ordinal) ||
+                    text.Contains($"struct {typeName}", StringComparison.Ordinal))
+                {
+                    violations.Add($"{path}: {typeName}");
+                }
+            }
+        }
+
+        Assert.IsEmpty(
+            violations,
+            "InitialUnitsSpawnSystem must shrink into narrow ECS systems, not a broad replacement shell:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void InitialUnitsSpawnSystemBaselineMustStayExplicitUntilExtracted()
+    {
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnSystemPath), "InitialUnitsSpawnSystem remains the temporary initial-spawn tick while the roadmap is incomplete.");
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnQuerySystemPath), "Step 4 must keep initial-spawn ECS query ownership in InitialUnitsSpawnQuerySystem.");
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnStartupGateSystemPath), "Step 5 must keep initial-spawn startup gating in InitialUnitsSpawnStartupGateSystem.");
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnProgressSystemPath), "Step 6 must keep initial-spawn progress initialization in InitialUnitsSpawnProgressSystem.");
+        Assert.IsTrue(File.Exists(InitialFactionSpawnSnapshotSystemPath), "Step 7 must keep faction spawn snapshot ownership in InitialFactionSpawnSnapshotSystem.");
+        Assert.IsTrue(File.Exists(InitialRespawnQueueProjectionSystemPath), "Step 8 must keep respawn queue projection in InitialRespawnQueueProjectionSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnResourceSystemPath), "Step 9 must keep initial resource projection in InitialSpawnResourceSystem.");
+        Assert.IsTrue(File.Exists(InitialBuildingBoundarySystemPath), "Step 10 must keep building runtime boundary access in InitialBuildingBoundarySystem.");
+        Assert.IsTrue(File.Exists(InitialBuildingSpawnableSystemPath), "Step 11 must keep building spawnable resolution in InitialBuildingSpawnableSystem.");
+        Assert.IsTrue(File.Exists(InitialFactionBaseRequestSystemPath), "Step 12 must keep faction base request planning in InitialFactionBaseRequestSystem.");
+        Assert.IsTrue(File.Exists(InitialBaseWallRunRequestSystemPath), "Step 13 must keep initial base wall-run request creation in InitialBaseWallRunRequestSystem.");
+        Assert.IsTrue(File.Exists(InitialConfiguredBuildingRequestSystemPath), "Step 14 must keep configured initial building requests in InitialConfiguredBuildingRequestSystem.");
+        Assert.IsTrue(File.Exists(InitialBuildingCompletionSystemPath), "Step 15 must keep completed building request processing in InitialBuildingCompletionSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnCompletionSystemPath), "Step 16 must keep initial-spawn completion gating in InitialSpawnCompletionSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnGridContextSystemPath), "Step 17 must keep initial-spawn grid context setup in InitialSpawnGridContextSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnReservationSystemPath), "Step 18 must keep initial spawn footprint reservation in InitialSpawnReservationSystem.");
+        Assert.IsTrue(File.Exists(InitialUnitSpawnCellSystemPath), "Step 19 must keep initial unit spawn-cell search in InitialUnitSpawnCellSystem.");
+        Assert.IsTrue(File.Exists(InitialAirPlatformSpawnSystemPath), "Step 20 must keep initial air-platform spawn policy in InitialAirPlatformSpawnSystem.");
+        Assert.IsTrue(File.Exists(InitialMissionRosterSystemPath), "Step 21 must keep M01 compact roster policy in InitialMissionRosterSystem.");
+        Assert.IsTrue(File.Exists(InitialUnitSourceKeySystemPath), "Step 22 must keep Custom Game source-key policy in InitialUnitSourceKeySystem.");
+        Assert.IsTrue(File.Exists(InitialUnitSpawnBatchSystemPath), "Step 23 must keep unit spawn batch planning in InitialUnitSpawnBatchSystem.");
+        Assert.IsTrue(File.Exists(InitialUnitSpawnApplySystemPath), "Step 24 must keep spawned-unit component setup in InitialUnitSpawnApplySystem.");
+        Assert.IsTrue(File.Exists(InitialUnitSpawnResetSystemPath), "Step 25 must keep spawned-unit runtime reset in InitialUnitSpawnResetSystem.");
+        Assert.IsTrue(File.Exists(InitialBlockerSpawnSystemPath), "Step 26 must keep blocker spawn batch ownership in InitialBlockerSpawnSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnStructuralApplySystemPath), "Step 27 must keep structural playback ownership in InitialSpawnStructuralApplySystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnDiagnosticStateSystemPath), "Step 28 must keep spawn-state diagnostics in InitialSpawnDiagnosticStateSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnDiagnosticLogComponentsPath), "Step 29 must keep initial-spawn diagnostic log components.");
+        Assert.IsTrue(File.Exists(InitialSpawnDiagnosticLogSystemPath), "Step 29 must keep initial-spawn diagnostic log enqueue ownership.");
+        Assert.IsTrue(File.Exists(InitialSpawnDiagnosticLogFlushSystemPath), "Step 29 must keep initial-spawn diagnostic log flushing at the shell edge.");
+        Assert.IsTrue(File.Exists(InitialSpawnDuplicateCellDiagnosticSystemPath), "Step 30 must keep duplicate-cell diagnostics in InitialSpawnDuplicateCellDiagnosticSystem.");
+        Assert.IsTrue(File.Exists(InitialSpawnFreezeDiagnosticSystemPath), "Step 31 must keep freeze diagnostics in InitialSpawnFreezeDiagnosticSystem.");
+        Assert.IsTrue(File.Exists(InitialUnitsSpawnFocusedTestsPath), "Step 32 must keep focused initial-spawn resource/building/source-key tests.");
+
+        string initialSpawn = File.ReadAllText(InitialUnitsSpawnSystemPath);
+        string querySystem = File.ReadAllText(InitialUnitsSpawnQuerySystemPath);
+        string startupGateSystem = File.ReadAllText(InitialUnitsSpawnStartupGateSystemPath);
+        string progressSystem = File.ReadAllText(InitialUnitsSpawnProgressSystemPath);
+        string factionSnapshotSystem = File.ReadAllText(InitialFactionSpawnSnapshotSystemPath);
+        string respawnQueueProjectionSystem = File.ReadAllText(InitialRespawnQueueProjectionSystemPath);
+        string resourceSystem = File.ReadAllText(InitialSpawnResourceSystemPath);
+        string buildingBoundarySystem = File.ReadAllText(InitialBuildingBoundarySystemPath);
+        string buildingSpawnableSystem = File.ReadAllText(InitialBuildingSpawnableSystemPath);
+        string factionBaseRequestSystem = File.ReadAllText(InitialFactionBaseRequestSystemPath);
+        string baseWallRunRequestSystem = File.ReadAllText(InitialBaseWallRunRequestSystemPath);
+        string configuredBuildingRequestSystem = File.ReadAllText(InitialConfiguredBuildingRequestSystemPath);
+        string buildingCompletionSystem = File.ReadAllText(InitialBuildingCompletionSystemPath);
+        string completionSystem = File.ReadAllText(InitialSpawnCompletionSystemPath);
+        string gridContextSystem = File.ReadAllText(InitialSpawnGridContextSystemPath);
+        string reservationSystem = File.ReadAllText(InitialSpawnReservationSystemPath);
+        string unitSpawnCellSystem = File.ReadAllText(InitialUnitSpawnCellSystemPath);
+        string airPlatformSpawnSystem = File.ReadAllText(InitialAirPlatformSpawnSystemPath);
+        string missionRosterSystem = File.ReadAllText(InitialMissionRosterSystemPath);
+        string sourceKeySystem = File.ReadAllText(InitialUnitSourceKeySystemPath);
+        string spawnBatchSystem = File.ReadAllText(InitialUnitSpawnBatchSystemPath);
+        string spawnApplySystem = File.ReadAllText(InitialUnitSpawnApplySystemPath);
+        string spawnResetSystem = File.ReadAllText(InitialUnitSpawnResetSystemPath);
+        string blockerSpawnSystem = File.ReadAllText(InitialBlockerSpawnSystemPath);
+        string structuralApplySystem = File.ReadAllText(InitialSpawnStructuralApplySystemPath);
+        string diagnosticStateSystem = File.ReadAllText(InitialSpawnDiagnosticStateSystemPath);
+        string diagnosticLogComponents = File.ReadAllText(InitialSpawnDiagnosticLogComponentsPath);
+        string diagnosticLogSystem = File.ReadAllText(InitialSpawnDiagnosticLogSystemPath);
+        string diagnosticLogFlushSystem = File.ReadAllText(InitialSpawnDiagnosticLogFlushSystemPath);
+        string duplicateCellDiagnosticSystem = File.ReadAllText(InitialSpawnDuplicateCellDiagnosticSystemPath);
+        string freezeDiagnosticSystem = File.ReadAllText(InitialSpawnFreezeDiagnosticSystemPath);
+        string focusedTests = File.ReadAllText(InitialUnitsSpawnFocusedTestsPath);
+        string boundarySurface = initialSpawn + querySystem + startupGateSystem + progressSystem + factionSnapshotSystem + respawnQueueProjectionSystem + resourceSystem + buildingBoundarySystem + buildingSpawnableSystem + factionBaseRequestSystem + baseWallRunRequestSystem + configuredBuildingRequestSystem + buildingCompletionSystem + completionSystem + gridContextSystem + reservationSystem + unitSpawnCellSystem + airPlatformSpawnSystem + missionRosterSystem + sourceKeySystem + spawnBatchSystem + spawnApplySystem + spawnResetSystem + blockerSpawnSystem + structuralApplySystem + diagnosticStateSystem + diagnosticLogComponents + diagnosticLogSystem + diagnosticLogFlushSystem + duplicateCellDiagnosticSystem + freezeDiagnosticSystem;
+        string roadmap = File.ReadAllText(InitialUnitsSpawnRoadmapPath);
+
+        StringAssert.Contains("public partial struct InitialUnitsSpawnSystem : ISystem", initialSpawn);
+        StringAssert.DoesNotContain("private EntityQuery", initialSpawn);
+        StringAssert.Contains("InitialSpawnBatchSize = 24", initialSpawn);
+        StringAssert.Contains("InitialBlockerBatchSize = 24", initialSpawn);
+        StringAssert.Contains("DiagnosticIntervalFrames = 120", initialSpawn);
+        StringAssert.Contains("InitialBaseCoreRequestEntryIndex = -100", initialSpawn);
+        StringAssert.Contains("MaxInitialBuildingCompletionWaitFrames = 300", initialSpawn);
+        StringAssert.Contains("BuildingRuntimeBoundaryTag", boundarySurface);
+        StringAssert.Contains("BuildingRuntimeSpawnRequest", boundarySurface);
+        StringAssert.Contains("BuildingConfiguredSpawnableReadModel", boundarySurface);
+        StringAssert.Contains("BuildingFactionProductionSpawnPointReadModel", boundarySurface);
+        StringAssert.Contains("TryGetCustomGameUnitSourceKey", initialSpawn);
+        StringAssert.Contains("ApplyM01CompactUnitRoster", initialSpawn);
+        StringAssert.Contains("TryGetInitialAirPlatformSpawn", initialSpawn);
+        StringAssert.Contains("CanCompleteInitialSpawn", completionSystem);
+        StringAssert.Contains("RequiresInitialBuildingCompletion", completionSystem);
+        StringAssert.Contains("InitialUnitsSpawnQuerySystem.Context _queryContext", initialSpawn);
+        StringAssert.Contains("InitialUnitsSpawnStartupGateSystem _startupGateSystem", initialSpawn);
+        StringAssert.Contains("InitialUnitsSpawnProgressSystem _progressSystem", initialSpawn);
+        StringAssert.Contains("InitialFactionSpawnSnapshotSystem _factionSpawnSnapshotSystem", initialSpawn);
+        StringAssert.Contains("InitialRespawnQueueProjectionSystem _respawnQueueProjectionSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnResourceSystem _resourceSystem", initialSpawn);
+        StringAssert.Contains("InitialFactionBaseRequestSystem _factionBaseRequestSystem", initialSpawn);
+        StringAssert.Contains("InitialConfiguredBuildingRequestSystem _configuredBuildingRequestSystem", initialSpawn);
+        StringAssert.Contains("InitialBuildingCompletionSystem _buildingCompletionSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnCompletionSystem _completionSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnGridContextSystem _gridContextSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnReservationSystem _reservationSystem", initialSpawn);
+        StringAssert.Contains("InitialUnitSpawnCellSystem _unitSpawnCellSystem", initialSpawn);
+        StringAssert.Contains("InitialAirPlatformSpawnSystem _airPlatformSpawnSystem", initialSpawn);
+        StringAssert.Contains("InitialMissionRosterSystem _missionRosterSystem", initialSpawn);
+        StringAssert.Contains("InitialUnitSourceKeySystem _sourceKeySystem", initialSpawn);
+        StringAssert.Contains("InitialUnitSpawnBatchSystem _unitSpawnBatchSystem", initialSpawn);
+        StringAssert.Contains("InitialUnitSpawnApplySystem _unitSpawnApplySystem", initialSpawn);
+        StringAssert.Contains("InitialUnitSpawnResetSystem _unitSpawnResetSystem", initialSpawn);
+        StringAssert.Contains("InitialBlockerSpawnSystem _blockerSpawnSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnStructuralApplySystem _structuralApplySystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnDiagnosticStateSystem _diagnosticStateSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnDiagnosticLogSystem _diagnosticLogSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnDuplicateCellDiagnosticSystem _duplicateCellDiagnosticSystem", initialSpawn);
+        StringAssert.Contains("InitialSpawnFreezeDiagnosticSystem _freezeDiagnosticSystem", initialSpawn);
+        StringAssert.Contains("_diagnosticLogSystem.EnsureQueue(state.EntityManager)", initialSpawn);
+        StringAssert.Contains("double startTime = _freezeDiagnosticSystem.BeginFrame()", initialSpawn);
+        StringAssert.Contains("_startupGateSystem.Evaluate(state.EntityManager, _queryContext)", initialSpawn);
+        StringAssert.Contains("_progressSystem.InitializePending(em, _queryContext)", initialSpawn);
+        StringAssert.Contains("_factionSpawnSnapshotSystem.Create(em, entity, Allocator.Temp)", initialSpawn);
+        StringAssert.Contains("_respawnQueueProjectionSystem.GetOrCreateQueue(ref state)", initialSpawn);
+        StringAssert.Contains("_respawnQueueProjectionSystem.ProjectInitialConfig(em, queueEntity, config, factionSpawns)", initialSpawn);
+        StringAssert.Contains("_respawnQueueProjectionSystem.WriteRandomState(em, queueEntity, queueState, rng.state)", initialSpawn);
+        StringAssert.Contains("_resourceSystem.ApplyInitialTotals(em, config)", initialSpawn);
+        StringAssert.Contains("_factionBaseRequestSystem.Enqueue(state.EntityManager, boundaryEntity, entity, config, baseGrid, factionSpawns, InitialBaseCoreRequestEntryIndex, out baseRequestCount)", initialSpawn);
+        StringAssert.Contains("_configuredBuildingRequestSystem.Enqueue(state.EntityManager, boundaryEntity, entity, factionSpawns, ref _diagnosticLogSystem, out configuredBuildingRequestCount)", initialSpawn);
+        StringAssert.Contains("_buildingCompletionSystem.Process(state.EntityManager, boundaryEntity, entity, baseGrid, InitialBaseCoreRequestEntryIndex)", initialSpawn);
+        StringAssert.Contains("_completionSystem.Update(", initialSpawn);
+        StringAssert.Contains("_gridContextSystem.TryGetGridConfig(state.EntityManager, _queryContext.GridContextQuery, out GridConfig baseGrid)", initialSpawn);
+        StringAssert.Contains("_gridContextSystem.TryCreate(em, _queryContext.GridContextQuery, Allocator.Temp, out InitialSpawnGridContextSystem.Context gridContext)", initialSpawn);
+        StringAssert.Contains("_reservationSystem.ReserveStaticBlockerFootprints(em, ref gridContext.Reserved, grid)", initialSpawn);
+        StringAssert.Contains("_reservationSystem.ReserveExistingUnitFootprints(em, ref gridContext.Reserved, grid)", initialSpawn);
+        StringAssert.Contains("_unitSpawnCellSystem.TryFindInitialUnitSpawnCell(", initialSpawn);
+        StringAssert.Contains("_airPlatformSpawnSystem.TryGetInitialAirPlatformSpawn(", initialSpawn);
+        StringAssert.Contains("_missionRosterSystem.ShouldSkipInitialBuildingRequests(useM01CompactRuntime)", initialSpawn);
+        StringAssert.Contains("_missionRosterSystem.ApplyM01CompactUnitRoster(unitSpawns, unitProgress)", initialSpawn);
+        StringAssert.Contains("_sourceKeySystem.TryGetCustomGameUnitSourceKey(customGameSourceSpawns, hasCustomGameSourceSpawns, unitIndex, unitSpawn, out FixedString64Bytes sourceKey)", initialSpawn);
+        StringAssert.Contains("_sourceKeySystem.TrySkipMissingPrefabUnit(em, unitSpawn, batch.HasPrefab, hasSourceKey, sourceKey, ref entryProgress, ref _diagnosticLogSystem)", initialSpawn);
+        StringAssert.Contains("_unitSpawnBatchSystem.TryCreateEntryBatch(unitSpawns, unitProgress, unitIndex, remainingBatch, out InitialUnitSpawnBatchSystem.EntryBatch batch)", initialSpawn);
+        StringAssert.Contains("_unitSpawnBatchSystem.TryCreateSpawnPlan(state.EntityManager, factionSpawns, batch, out InitialUnitSpawnBatchSystem.SpawnPlan spawnPlan)", initialSpawn);
+        StringAssert.Contains("_unitSpawnBatchSystem.ApplySpawnedCount(unitProgress, batch, spawnedThisEntry, ref remainingBatch)", initialSpawn);
+        StringAssert.Contains("_unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(", initialSpawn);
+        StringAssert.Contains("_unitSpawnResetSystem.ResetSpawnedUnitRuntimeState(em, ecb, instance, unitSpawn.Prefab, batch.HasPrefab, ref rng)", initialSpawn);
+        StringAssert.Contains("_blockerSpawnSystem.SpawnBatch(", initialSpawn);
+        StringAssert.Contains("progress.BlockersSpawned += blockerSpawnResult.ProgressIncrement", initialSpawn);
+        StringAssert.Contains("progress.BlockersSpawned >= blockerSpawnResult.TargetCount", initialSpawn);
+        StringAssert.Contains("InitialSpawnStructuralApplySystem.Context structuralContext = _structuralApplySystem.Create(Allocator.Temp)", initialSpawn);
+        StringAssert.Contains("ref EntityCommandBuffer ecb = ref structuralContext.Ecb", initialSpawn);
+        StringAssert.Contains("_structuralApplySystem.PlaybackAndDispose(em, ref structuralContext)", initialSpawn);
+        StringAssert.Contains("_diagnosticStateSystem.LogSpawnState(ref state, completedInitialSpawn ? \"completed\" : \"progress\", DiagnosticIntervalFrames, ref _diagnosticLogSystem)", initialSpawn);
+        StringAssert.Contains("_diagnosticLogSystem.EnqueueWarning(em, $\"[InitialSpawn] no-free-cell", initialSpawn);
+        StringAssert.Contains("_duplicateCellDiagnosticSystem.LogInitialSpawnCellDuplicates(ref state, grid, ref _diagnosticLogSystem)", initialSpawn);
+        StringAssert.Contains("_freezeDiagnosticSystem.LogIfExceeded(", initialSpawn);
+        StringAssert.Contains("state.RequireForUpdate(_queryContext.BuildingRuntimeBoundaryQuery);", initialSpawn);
+        StringAssert.Contains("state.RequireForUpdate(_queryContext.GridContextQuery);", initialSpawn);
+        StringAssert.Contains("_queryContext.ProgressQuery.ToEntityArray(Allocator.Temp)", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialUnitsSpawnQuerySystem", querySystem);
+        StringAssert.Contains("RuntimeGameplayStateQuery", querySystem);
+        StringAssert.Contains("GridContextQuery", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<BuildingRuntimeBoundaryTag>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<BuildingConfiguredSpawnableReadModel>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<BuildingFactionProductionSpawnPointReadModel>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadWrite<BuildingRuntimeSpawnRequest>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<RuntimeGameplayStateComponent>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<GridConfig>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<GridWalkable>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<DynamicBlockerData>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<DynamicOccupancyData>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<InitialUnitsSpawnConfig>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<InitialUnitsSpawnInitialized>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<InitialUnitsSpawnProgress>()", querySystem);
+        StringAssert.Contains("public readonly struct InitialUnitsSpawnStartupGateSystem", startupGateSystem);
+        StringAssert.Contains("runtimeState.PlayRequested == 0", startupGateSystem);
+        StringAssert.Contains("Chapter01M01PlayableRuntime.IsActiveMission()", startupGateSystem);
+        StringAssert.Contains("TryGetBuildingRuntimeBoundaryEntity", startupGateSystem);
+        StringAssert.Contains("public readonly struct InitialUnitsSpawnProgressSystem", progressSystem);
+        StringAssert.Contains("queryContext.PendingInitQuery.ToEntityArray(Allocator.Temp)", progressSystem);
+        StringAssert.Contains("RandomState = math.max(1u, config.RandomSeed)", progressSystem);
+        StringAssert.Contains("InitialUnitsFactionUnitSpawnProgress", progressSystem);
+        StringAssert.Contains("ResizeUninitialized(unitSpawnCount)", progressSystem);
+        StringAssert.Contains("public readonly struct InitialFactionSpawnSnapshotSystem", factionSnapshotSystem);
+        StringAssert.Contains("DynamicBuffer<InitialUnitsFactionSpawnEntry>", factionSnapshotSystem);
+        StringAssert.Contains("new NativeArray<InitialUnitsFactionSpawnEntry>(factionSpawnsBuffer.Length, allocator)", factionSnapshotSystem);
+        StringAssert.Contains("public readonly struct InitialRespawnQueueProjectionSystem", respawnQueueProjectionSystem);
+        StringAssert.Contains("RespawnQueueUtils.GetOrCreateQueue(ref state)", respawnQueueProjectionSystem);
+        StringAssert.Contains("queueState.SpawnRadiusCells = math.max(0, config.SpawnRadiusCells)", respawnQueueProjectionSystem);
+        StringAssert.Contains("queueState.RespawnDelaySeconds = math.max(0.01f, config.RespawnDelaySeconds)", respawnQueueProjectionSystem);
+        StringAssert.Contains("DynamicBuffer<RespawnFactionSpawnPoint>", respawnQueueProjectionSystem);
+        StringAssert.Contains("queueState.RandomState = randomState", respawnQueueProjectionSystem);
+        StringAssert.Contains("public readonly struct InitialSpawnResourceSystem", resourceSystem);
+        StringAssert.Contains("ComponentType.ReadWrite<FactionEconomy>()", resourceSystem);
+        StringAssert.Contains("economy.FactionId != 0", resourceSystem);
+        StringAssert.Contains("economy.Money = math.max(0, config.InitialDollars)", resourceSystem);
+        StringAssert.Contains("typeof(FactionEconomyPolicy)", resourceSystem);
+        StringAssert.Contains("Enabled = 0", resourceSystem);
+        StringAssert.Contains("public readonly struct InitialBuildingBoundarySystem", buildingBoundarySystem);
+        StringAssert.Contains("TryGetRuntimeSpawnRequests", buildingBoundarySystem);
+        StringAssert.Contains("GetRuntimeSpawnRequests", buildingBoundarySystem);
+        StringAssert.Contains("TryGetConfiguredSpawnableReadModels", buildingBoundarySystem);
+        StringAssert.Contains("TryGetFactionProductionSpawnPoints", buildingBoundarySystem);
+        StringAssert.Contains("em.HasBuffer<BuildingRuntimeSpawnRequest>(boundaryEntity)", buildingBoundarySystem);
+        StringAssert.Contains("em.GetBuffer<BuildingConfiguredSpawnableReadModel>(boundaryEntity, true)", buildingBoundarySystem);
+        StringAssert.Contains("new InitialBuildingBoundarySystem().TryGetRuntimeSpawnRequests", boundarySurface);
+        StringAssert.Contains("new InitialBuildingBoundarySystem().TryGetFactionProductionSpawnPoints", airPlatformSpawnSystem);
+        StringAssert.Contains("new InitialBuildingSpawnableSystem()", boundarySurface);
+        StringAssert.DoesNotContain("private static bool TryResolveSpawnableId", initialSpawn);
+        StringAssert.DoesNotContain("private static bool TryResolveSpawnableReadModel", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialBuildingSpawnableSystem", buildingSpawnableSystem);
+        StringAssert.Contains("TryResolveSpawnableId", buildingSpawnableSystem);
+        StringAssert.Contains("TryResolveSpawnableReadModel", buildingSpawnableSystem);
+        StringAssert.Contains("BuildingDefinitionSystem.NormalizeSpawnableKey(buildingId)", buildingSpawnableSystem);
+        StringAssert.Contains("new InitialBuildingBoundarySystem().TryGetConfiguredSpawnableReadModels", buildingSpawnableSystem);
+        StringAssert.DoesNotContain("EnqueueInitialFactionBaseRequests", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialFactionBaseRequestSystem", factionBaseRequestSystem);
+        StringAssert.Contains("config.BaseWallPrefabLookupKey", factionBaseRequestSystem);
+        StringAssert.Contains("\"Wall_Dirt_Straight\"", factionBaseRequestSystem);
+        StringAssert.Contains("\"Wall_Fence_Straight\"", factionBaseRequestSystem);
+        StringAssert.Contains("\"Building_Road_Barrier\"", factionBaseRequestSystem);
+        StringAssert.Contains("\"Building_Ammunition_Depot\"", factionBaseRequestSystem);
+        StringAssert.Contains("InitialFactionBaseLayoutPlanner.BuildPlacements", factionBaseRequestSystem);
+        StringAssert.Contains("InitialFactionBaseLayoutPlanner.CalculateGateHalfGap", factionBaseRequestSystem);
+        StringAssert.Contains("initialBaseCoreRequestEntryIndex", factionBaseRequestSystem);
+        StringAssert.Contains("new InitialBaseWallRunRequestSystem()", factionBaseRequestSystem);
+        StringAssert.DoesNotContain("EnqueueInitialWallRunSegmentSpawnRequests", factionBaseRequestSystem);
+        StringAssert.Contains("public readonly struct InitialBaseWallRunRequestSystem", baseWallRunRequestSystem);
+        StringAssert.Contains("BuildingPlacementCommitSystem.BuildWallRunOrigins", baseWallRunRequestSystem);
+        StringAssert.Contains("Mathf.Abs(end.y - start.y) > Mathf.Abs(end.x - start.x)", baseWallRunRequestSystem);
+        StringAssert.Contains("BuildingRuntimeSpawnRequest.KindWallSegment", baseWallRunRequestSystem);
+        StringAssert.DoesNotContain("TryEnqueueInitialBuildingSpawnEntries", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialConfiguredBuildingRequestSystem", configuredBuildingRequestSystem);
+        StringAssert.Contains("InitialUnitsFactionBuildingSpawnEntry", configuredBuildingRequestSystem);
+        StringAssert.Contains("TryResolveSpawnableReadModel", configuredBuildingRequestSystem);
+        StringAssert.Contains("skipping initial building entry with no faction spawn", configuredBuildingRequestSystem);
+        StringAssert.Contains("skipping unresolved initial building entry", configuredBuildingRequestSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueWarning(em", configuredBuildingRequestSystem);
+        StringAssert.Contains("BuildingRuntimeSpawnRequest.KindBuilding", configuredBuildingRequestSystem);
+        StringAssert.DoesNotContain("ProcessCompletedInitialBuildingRequests", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialBuildingCompletionSystem", buildingCompletionSystem);
+        StringAssert.Contains("request.PlanEntity != configEntity", buildingCompletionSystem);
+        StringAssert.Contains("request.Status == BuildingRuntimeSpawnRequest.Pending", buildingCompletionSystem);
+        StringAssert.Contains("request.Status == BuildingRuntimeSpawnRequest.Succeeded", buildingCompletionSystem);
+        StringAssert.Contains("request.EntryIndex == initialBaseCoreRequestEntryIndex", buildingCompletionSystem);
+        StringAssert.Contains("!Chapter01M01PlayableRuntime.IsActiveMission()", buildingCompletionSystem);
+        StringAssert.Contains("InitialUnitsRuntimeState.InitialCameraFocusWorld", buildingCompletionSystem);
+        StringAssert.Contains("requests.RemoveAt(i)", buildingCompletionSystem);
+        StringAssert.DoesNotContain("CanCompleteInitialSpawn", initialSpawn);
+        StringAssert.DoesNotContain("RequiresInitialBuildingCompletion", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialSpawnCompletionSystem", completionSystem);
+        StringAssert.Contains("progress.InitialBuildingCompletionWaitFrames++", completionSystem);
+        StringAssert.Contains("progress.InitialBuildingCompletionWaitFrames >= maxInitialBuildingCompletionWaitFrames", completionSystem);
+        StringAssert.Contains("fail-open initial building completion", completionSystem);
+        StringAssert.Contains("ecb.AddComponent<InitialUnitsSpawnInitialized>(configEntity)", completionSystem);
+        StringAssert.Contains("ecb.RemoveComponent<InitialUnitsSpawnProgress>(configEntity)", completionSystem);
+        StringAssert.Contains("ecb.RemoveComponent<InitialUnitsFactionUnitSpawnProgress>(configEntity)", completionSystem);
+        StringAssert.DoesNotContain("SystemAPI.GetSingleton<GridConfig>()", initialSpawn);
+        StringAssert.DoesNotContain("SystemAPI.GetSingletonEntity<GridConfig>()", initialSpawn);
+        StringAssert.DoesNotContain("new NativeBitArray(grid.Width * grid.Height, Allocator.Temp)", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialSpawnGridContextSystem", gridContextSystem);
+        StringAssert.Contains("public struct Context : IDisposable", gridContextSystem);
+        StringAssert.Contains("public readonly NativeArray<GridWalkable> Walkable", gridContextSystem);
+        StringAssert.Contains("public readonly NativeBitArray DynamicBlocked", gridContextSystem);
+        StringAssert.Contains("public readonly NativeBitArray Occupied", gridContextSystem);
+        StringAssert.Contains("public NativeBitArray Reserved", gridContextSystem);
+        StringAssert.Contains("em.GetComponentData<GridConfig>(gridEntity)", gridContextSystem);
+        StringAssert.Contains("em.GetBuffer<GridWalkable>(gridEntity).AsNativeArray()", gridContextSystem);
+        StringAssert.Contains("em.GetComponentData<DynamicBlockerData>(gridEntity).Blocked", gridContextSystem);
+        StringAssert.Contains("em.GetComponentData<DynamicOccupancyData>(gridEntity).Occupied", gridContextSystem);
+        StringAssert.Contains("new NativeBitArray(grid.Width * grid.Height, allocator)", gridContextSystem);
+        StringAssert.Contains("gridContext.Dispose()", initialSpawn);
+        StringAssert.DoesNotContain("private static void ReserveStaticBlockerFootprints", initialSpawn);
+        StringAssert.DoesNotContain("private static void ReserveExistingUnitFootprints", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialSpawnReservationSystem", reservationSystem);
+        StringAssert.Contains("public void ReserveStaticBlockerFootprints(EntityManager em, ref NativeBitArray reserved, GridConfig grid)", reservationSystem);
+        StringAssert.Contains("public void ReserveExistingUnitFootprints(EntityManager em, ref NativeBitArray reserved, GridConfig grid)", reservationSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<StaticGridBlocker>()", reservationSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<GridBlockerSize>()", reservationSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitFootprint>()", reservationSystem);
+        StringAssert.Contains("UnitFootprintUtility.GetMinCell(center, size)", reservationSystem);
+        StringAssert.Contains("reserved.Set(row + x, true)", reservationSystem);
+        StringAssert.DoesNotContain("private static bool TryReserveInitialAirSpawnCell", initialSpawn);
+        StringAssert.DoesNotContain("private static bool TryFindInitialUnitSpawnCell", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialUnitSpawnCellSystem", unitSpawnCellSystem);
+        StringAssert.Contains("public bool TryFindInitialUnitSpawnCell", unitSpawnCellSystem);
+        StringAssert.Contains("TryReserveInitialAirSpawnCell(grid, walkable, blocked, occupied, ref reserved, center, footprintSize, out cell)", unitSpawnCellSystem);
+        StringAssert.Contains("SpawnCellUtility.TryFindSpawnCellNear", unitSpawnCellSystem);
+        StringAssert.Contains("walkable[index].Value == 0 || occupied.IsSet(index)", unitSpawnCellSystem);
+        StringAssert.Contains("reserved.IsSet(index) && !blocked.IsSet(index)", unitSpawnCellSystem);
+        StringAssert.Contains("reserved.Set(row + x, true)", unitSpawnCellSystem);
+        StringAssert.DoesNotContain("private static bool TryGetInitialAirPlatformSpawn", initialSpawn);
+        StringAssert.DoesNotContain("private static int ResolveInitialAirPlatformSlotIndex", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialAirPlatformSpawnSystem", airPlatformSpawnSystem);
+        StringAssert.Contains("public bool TryGetInitialAirPlatformSpawn", airPlatformSpawnSystem);
+        StringAssert.Contains("new InitialBuildingBoundarySystem().TryGetFactionProductionSpawnPoints", airPlatformSpawnSystem);
+        StringAssert.Contains("configuredSpawnOffset.y <= -45", airPlatformSpawnSystem);
+        StringAssert.Contains("\"Building_Helipad\" : \"Building_Airport\"", airPlatformSpawnSystem);
+        StringAssert.Contains("ResolveInitialAirPlatformSlotIndex(configuredSpawnOffset, useHelipad)", airPlatformSpawnSystem);
+        StringAssert.Contains("x < 80", airPlatformSpawnSystem);
+        StringAssert.Contains("x < 100", airPlatformSpawnSystem);
+        StringAssert.Contains("x < 56", airPlatformSpawnSystem);
+        StringAssert.Contains("x < 70", airPlatformSpawnSystem);
+        StringAssert.Contains("GridUtils.InBounds(spawnPoint.Cell, grid.Width, grid.Height)", airPlatformSpawnSystem);
+        StringAssert.DoesNotContain("private static void ApplyM01CompactUnitRoster", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialMissionRosterSystem", missionRosterSystem);
+        StringAssert.Contains("public bool ShouldSkipInitialBuildingRequests(bool useM01CompactRuntime)", missionRosterSystem);
+        StringAssert.Contains("return useM01CompactRuntime", missionRosterSystem);
+        StringAssert.Contains("public void ApplyM01CompactUnitRoster", missionRosterSystem);
+        StringAssert.Contains("unit.FactionId == 0", missionRosterSystem);
+        StringAssert.Contains("unit.FactionId == 1", missionRosterSystem);
+        StringAssert.Contains("unit.Prefab != Entity.Null", missionRosterSystem);
+        StringAssert.Contains("unit.Count = keep ? 1 : 0", missionRosterSystem);
+        StringAssert.Contains("unit.SpawnOffset = int2.zero", missionRosterSystem);
+        StringAssert.Contains("progress.Spawned = 0", missionRosterSystem);
+        StringAssert.DoesNotContain("private static bool TryGetCustomGameUnitSourceKey", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialUnitSourceKeySystem", sourceKeySystem);
+        StringAssert.Contains("public bool TryGetCustomGameUnitSourceKey", sourceKeySystem);
+        StringAssert.Contains("CustomGameFactionUnitSourceSpawnEntry sourceSpawn = sourceSpawns[unitIndex]", sourceKeySystem);
+        StringAssert.Contains("sourceSpawn.FactionId != unitSpawn.FactionId", sourceKeySystem);
+        StringAssert.Contains("sourceSpawn.Count != unitSpawn.Count", sourceKeySystem);
+        StringAssert.Contains("!math.all(sourceSpawn.SpawnOffset == unitSpawn.SpawnOffset)", sourceKeySystem);
+        StringAssert.Contains("sourceSpawn.SourceKey.Length == 0", sourceKeySystem);
+        StringAssert.Contains("public bool TrySkipMissingPrefabUnit", sourceKeySystem);
+        StringAssert.Contains("if (hasPrefab)", sourceKeySystem);
+        StringAssert.Contains("skipped source-key unit because no ECS prefab entity was resolved", sourceKeySystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueWarning(em", sourceKeySystem);
+        StringAssert.Contains("entryProgress.Spawned = unitSpawn.Count", sourceKeySystem);
+        StringAssert.DoesNotContain("private static bool TryGetFactionSpawnCell", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialUnitSpawnBatchSystem", spawnBatchSystem);
+        StringAssert.Contains("public readonly struct EntryBatch", spawnBatchSystem);
+        StringAssert.Contains("public readonly struct SpawnPlan", spawnBatchSystem);
+        StringAssert.Contains("public bool TryCreateEntryBatch", spawnBatchSystem);
+        StringAssert.Contains("int remaining = math.max(0, unitSpawn.Count - entryProgress.Spawned)", spawnBatchSystem);
+        StringAssert.Contains("int toSpawn = math.min(remainingBatch, remaining)", spawnBatchSystem);
+        StringAssert.Contains("bool hasPrefab = unitSpawn.Prefab != Entity.Null", spawnBatchSystem);
+        StringAssert.Contains("return toSpawn > 0", spawnBatchSystem);
+        StringAssert.Contains("public bool TryCreateSpawnPlan", spawnBatchSystem);
+        StringAssert.Contains("TryGetFactionSpawnCell(factionSpawns, batch.UnitSpawn.FactionId, out int2 factionSpawnCell)", spawnBatchSystem);
+        StringAssert.Contains("factionSpawnCell + batch.UnitSpawn.SpawnOffset", spawnBatchSystem);
+        StringAssert.Contains("em.HasComponent<UnitFootprint>(batch.UnitSpawn.Prefab)", spawnBatchSystem);
+        StringAssert.Contains("em.HasComponent<UnitAirMovement>(batch.UnitSpawn.Prefab)", spawnBatchSystem);
+        StringAssert.Contains("public void ApplySpawnedCount", spawnBatchSystem);
+        StringAssert.Contains("entryProgress.Spawned += spawnedThisEntry", spawnBatchSystem);
+        StringAssert.Contains("remainingBatch -= spawnedThisEntry", spawnBatchSystem);
+        StringAssert.DoesNotContain("private static void ConfigureSpawnedUnit", initialSpawn);
+        StringAssert.DoesNotContain("private static void SetOrAddComponent", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialUnitSpawnApplySystem", spawnApplySystem);
+        StringAssert.Contains("public Entity InstantiateAndConfigureSpawnedUnit", spawnApplySystem);
+        StringAssert.Contains("Entity instance = ecb.Instantiate(prefab)", spawnApplySystem);
+        StringAssert.Contains("new UnitGrid { Cell = cell }", spawnApplySystem);
+        StringAssert.Contains("LocalTransform.FromPosition(pos)", spawnApplySystem);
+        StringAssert.Contains("new UnitPrevWorldPos { Value = pos }", spawnApplySystem);
+        StringAssert.Contains("new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f }", spawnApplySystem);
+        StringAssert.Contains("new Faction { Id = faction }", spawnApplySystem);
+        StringAssert.Contains("new UnitRespawnPrefab { Prefab = Entity.Null }", spawnApplySystem);
+        StringAssert.Contains("new UnitAttackState { CooldownRemaining = 0f }", spawnApplySystem);
+        StringAssert.Contains("if (hasPrefab && em.HasComponent<T>(prefab))", spawnApplySystem);
+        StringAssert.Contains("ecb.SetComponent(instance, component)", spawnApplySystem);
+        StringAssert.Contains("ecb.AddComponent(instance, component)", spawnApplySystem);
+        StringAssert.DoesNotContain("ecb.RemoveComponent<UnitPathFollow>(instance)", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialUnitSpawnResetSystem", spawnResetSystem);
+        StringAssert.Contains("public void ResetSpawnedUnitRuntimeState", spawnResetSystem);
+        StringAssert.Contains("ref Unity.Mathematics.Random rng", spawnResetSystem);
+        StringAssert.Contains("em.HasComponent<UnitIdleWanderState>(prefab)", spawnResetSystem);
+        StringAssert.Contains("RandomState = rng.NextUInt()", spawnResetSystem);
+        StringAssert.Contains("RetrySeconds = 0f", spawnResetSystem);
+        StringAssert.Contains("CurrentIdleDelaySeconds = 0f", spawnResetSystem);
+        StringAssert.Contains("ecb.RemoveComponent<UnitPathFollow>(instance)", spawnResetSystem);
+        StringAssert.Contains("ecb.RemoveComponent<UnitPathRange>(instance)", spawnResetSystem);
+        StringAssert.Contains("ecb.RemoveComponent<EngageTarget>(instance)", spawnResetSystem);
+        StringAssert.Contains("ecb.RemoveComponent<UnitPathRequest>(instance)", spawnResetSystem);
+        StringAssert.Contains("ecb.RemoveComponent<UnitTarget>(instance)", spawnResetSystem);
+        StringAssert.Contains("ecb.RemoveComponent<AutoWanderMoveTag>(instance)", spawnResetSystem);
+        StringAssert.DoesNotContain("SpawnCellUtility.TryFindSpawnCellNear(ref rng, grid, gridContext.Walkable", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialBlockerSpawnSystem", blockerSpawnSystem);
+        StringAssert.Contains("public readonly struct Result", blockerSpawnSystem);
+        StringAssert.Contains("public Result SpawnBatch", blockerSpawnSystem);
+        StringAssert.Contains("EntityManager em", blockerSpawnSystem);
+        StringAssert.Contains("int blockerTargetCount = useM01CompactRuntime ? 0 : config.BlockerCount", blockerSpawnSystem);
+        StringAssert.Contains("int blockersToSpawn = math.min(initialBlockerBatchSize, math.max(0, blockerTargetCount - blockersSpawned))", blockerSpawnSystem);
+        StringAssert.Contains("if (config.BlockerPrefab == Entity.Null)", blockerSpawnSystem);
+        StringAssert.Contains("SpawnCellUtility.TryFindSpawnCellNear", blockerSpawnSystem);
+        StringAssert.Contains("no-free-blocker-cell", blockerSpawnSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueWarning(em", blockerSpawnSystem);
+        StringAssert.Contains("Entity instance = ecb.Instantiate(config.BlockerPrefab)", blockerSpawnSystem);
+        StringAssert.Contains("new UnitGrid { Cell = cell }", blockerSpawnSystem);
+        StringAssert.Contains("LocalTransform.FromPosition(GridUtils.CellToWorldCenter(grid, cell))", blockerSpawnSystem);
+        StringAssert.Contains("return new Result(blockerTargetCount, blockersToSpawn, spawnedForLog)", blockerSpawnSystem);
+        StringAssert.DoesNotContain("new EntityCommandBuffer(Allocator.Temp)", initialSpawn);
+        StringAssert.DoesNotContain("ecb.Playback(em)", initialSpawn);
+        StringAssert.DoesNotContain("ecb.Dispose()", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialSpawnStructuralApplySystem", structuralApplySystem);
+        StringAssert.Contains("public struct Context", structuralApplySystem);
+        StringAssert.Contains("public EntityCommandBuffer Ecb", structuralApplySystem);
+        StringAssert.Contains("Ecb = new EntityCommandBuffer(allocator)", structuralApplySystem);
+        StringAssert.Contains("public Context Create(Allocator allocator)", structuralApplySystem);
+        StringAssert.Contains("public void PlaybackAndDispose(EntityManager em, ref Context context)", structuralApplySystem);
+        StringAssert.Contains("context.Ecb.Playback(em)", structuralApplySystem);
+        StringAssert.Contains("context.Ecb.Dispose()", structuralApplySystem);
+        StringAssert.DoesNotContain("private int _nextDiagnosticFrame", initialSpawn);
+        StringAssert.DoesNotContain("private void LogSpawnState", initialSpawn);
+        StringAssert.Contains("public struct InitialSpawnDiagnosticStateSystem", diagnosticStateSystem);
+        StringAssert.Contains("private int _nextDiagnosticFrame", diagnosticStateSystem);
+        StringAssert.Contains("int diagnosticIntervalFrames", diagnosticStateSystem);
+        StringAssert.Contains("ref InitialSpawnDiagnosticLogSystem diagnosticLogSystem", diagnosticStateSystem);
+        StringAssert.Contains("Time.frameCount < _nextDiagnosticFrame", diagnosticStateSystem);
+        StringAssert.Contains("_nextDiagnosticFrame = Time.frameCount + diagnosticIntervalFrames", diagnosticStateSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<InitialUnitsSpawnConfig>()", diagnosticStateSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<InitialUnitsSpawnProgress>()", diagnosticStateSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<InitialUnitsSpawnInitialized>()", diagnosticStateSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitGrid>()", diagnosticStateSystem);
+        StringAssert.Contains("RuntimeGridBlockerDependencyState", diagnosticStateSystem);
+        StringAssert.Contains("[InitialSpawnState]", diagnosticStateSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueLog(em", diagnosticStateSystem);
+        StringAssert.Contains("public struct InitialSpawnDiagnosticLogQueueComponent : IComponentData", diagnosticLogComponents);
+        StringAssert.Contains("public struct InitialSpawnDiagnosticLogComponent : IBufferElementData", diagnosticLogComponents);
+        StringAssert.Contains("public const byte LogSeverity = 0", diagnosticLogComponents);
+        StringAssert.Contains("public const byte WarningSeverity = 1", diagnosticLogComponents);
+        StringAssert.Contains("public FixedString4096Bytes Message", diagnosticLogComponents);
+        StringAssert.Contains("public struct InitialSpawnDiagnosticLogSystem", diagnosticLogSystem);
+        StringAssert.Contains("public void EnsureQueue(EntityManager em)", diagnosticLogSystem);
+        StringAssert.Contains("public void EnqueueLog(EntityManager em, string message)", diagnosticLogSystem);
+        StringAssert.Contains("public void EnqueueWarning(EntityManager em, string message)", diagnosticLogSystem);
+        StringAssert.Contains("InitialSpawnDiagnosticLogQueue", diagnosticLogSystem);
+        StringAssert.Contains("public partial struct InitialSpawnDiagnosticLogFlushSystem : ISystem", diagnosticLogFlushSystem);
+        StringAssert.Contains("[UpdateAfter(typeof(InitialUnitsSpawnSystem))]", diagnosticLogFlushSystem);
+        StringAssert.Contains("Debug.LogWarning(log.Message.ToString())", diagnosticLogFlushSystem);
+        StringAssert.Contains("Debug.Log(log.Message.ToString())", diagnosticLogFlushSystem);
+        StringAssert.DoesNotContain("private static void LogInitialSpawnCellDuplicates", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialSpawnDuplicateCellDiagnosticSystem", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("public void LogInitialSpawnCellDuplicates", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitGrid>()", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitFootprint>()", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("new NativeHashSet<int>(math.max(1024, entities.Length * 32), Allocator.Temp)", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("new NativeHashSet<int>(math.max(1, entities.Length), Allocator.Temp)", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("samples.Length < 430", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("duplicateCenters", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("duplicateFootprintCells", duplicateCellDiagnosticSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueLog(em", duplicateCellDiagnosticSystem);
+        StringAssert.DoesNotContain("FreezeLogThresholdSeconds", initialSpawn);
+        StringAssert.DoesNotContain("[FreezeDetect:ECS]", initialSpawn);
+        StringAssert.Contains("public readonly struct InitialSpawnFreezeDiagnosticSystem", freezeDiagnosticSystem);
+        StringAssert.Contains("private static readonly bool EnableInitialSpawnFreezeLogs = false", freezeDiagnosticSystem);
+        StringAssert.Contains("private const double FreezeLogThresholdSeconds = 0.05d", freezeDiagnosticSystem);
+        StringAssert.Contains("public double BeginFrame()", freezeDiagnosticSystem);
+        StringAssert.Contains("Time.realtimeSinceStartupAsDouble", freezeDiagnosticSystem);
+        StringAssert.Contains("public void LogIfExceeded(", freezeDiagnosticSystem);
+        StringAssert.Contains("elapsed < FreezeLogThresholdSeconds", freezeDiagnosticSystem);
+        StringAssert.Contains("[FreezeDetect:ECS]", freezeDiagnosticSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueLog(em", freezeDiagnosticSystem);
+        StringAssert.Contains("RunResourceBuildingSourceKeyBatchValidation", focusedTests);
+        StringAssert.Contains("InitialSpawnResourceSystem_CreatesPlayerEconomyWithConfiguredDollars", focusedTests);
+        StringAssert.Contains("InitialConfiguredBuildingRequestSystem_QueuesRuntimeSpawnRequestFromReadModel", focusedTests);
+        StringAssert.Contains("InitialUnitSourceKeySystem_SkipsUnresolvedSourceKeyWithoutFallback", focusedTests);
+        StringAssert.Contains("InitialUnitSpawnApplySystem_InstantiatesConvertedPrefabBackedUnit", focusedTests);
+        StringAssert.Contains("RunSpawnProgressCompletionBatchValidation", focusedTests);
+        StringAssert.Contains("InitialUnitsSpawnProgressSystem_InitializesProgressAndUnitEntries", focusedTests);
+        StringAssert.Contains("InitialUnitSpawnBatchSystem_ClampsEntryToInitialSpawnBatchSize", focusedTests);
+        StringAssert.Contains("InitialUnitSpawnCellSystem_RejectsReservedFootprint", focusedTests);
+        StringAssert.Contains("InitialAirPlatformSpawnSystem_ResolvesConfiguredHelipadSlot", focusedTests);
+        StringAssert.Contains("InitialBlockerSpawnSystem_PreservesPlannedProgressIncrement", focusedTests);
+        StringAssert.Contains("InitialSpawnCompletionSystem_WaitsThenFailOpens", focusedTests);
+
+        MatchCollection topLevelPublicOrInternalMembers = Regex.Matches(
+            initialSpawn,
+            @"^    (?:public|internal)\s+(?:static\s+)?(?:[\w<>,\[\]\.]+\s+)+\w+\s*\(",
+            RegexOptions.Multiline);
+        string[] allowedTopLevelPublicSurface =
+        {
+            "public void OnCreate(ref SystemState state)",
+            "public void OnUpdate(ref SystemState state)"
+        };
+        Assert.AreEqual(
+            allowedTopLevelPublicSurface.Length,
+            topLevelPublicOrInternalMembers.Count,
+            "Do not add public/internal helper surface to InitialUnitsSpawnSystem while it is being decomposed.");
+        for (int i = 0; i < allowedTopLevelPublicSurface.Length; i++)
+            StringAssert.Contains(allowedTopLevelPublicSurface[i], initialSpawn);
+
+        StringAssert.Contains("Public/Internal Surface Hard Rule", roadmap);
+        StringAssert.Contains("Preserve `InitialSpawnBatchSize = 24`", roadmap);
+        StringAssert.Contains("Preserve random-state semantics", roadmap);
+        StringAssert.Contains("Preserve Custom Game behavior", roadmap);
+        StringAssert.Contains("Preserve M01 compact behavior", roadmap);
+        StringAssert.Contains("Preserve spawn-cell behavior", roadmap);
+        StringAssert.Contains("4. Complete: Extract ECS query ownership", roadmap);
+        StringAssert.Contains("5. Complete: Extract startup and play-request gating", roadmap);
+        StringAssert.Contains("6. Complete: Extract progress initialization", roadmap);
+        StringAssert.Contains("7. Complete: Extract faction spawn snapshot", roadmap);
+        StringAssert.Contains("8. Complete: Extract respawn queue projection", roadmap);
+        StringAssert.Contains("9. Complete: Extract initial resource projection", roadmap);
+        StringAssert.Contains("10. Complete: Extract building runtime boundary access", roadmap);
+        StringAssert.Contains("11. Complete: Extract spawnable id/read-model resolution", roadmap);
+        StringAssert.Contains("12. Complete: Extract faction base request planning", roadmap);
+        StringAssert.Contains("13. Complete: Extract wall-run segment request creation", roadmap);
+        StringAssert.Contains("14. Complete: Extract configured initial building requests", roadmap);
+        StringAssert.Contains("15. Complete: Extract completed building request processing", roadmap);
+        StringAssert.Contains("16. Complete: Extract initial-spawn completion gate", roadmap);
+        StringAssert.Contains("17. Complete: Extract grid spawn context", roadmap);
+        StringAssert.Contains("18. Complete: Extract reserved-footprint projection", roadmap);
+        StringAssert.Contains("19. Complete: Extract unit spawn-cell search", roadmap);
+        StringAssert.Contains("20. Complete: Extract air platform spawn policy", roadmap);
+        StringAssert.Contains("21. Complete: Extract M01 compact roster policy", roadmap);
+        StringAssert.Contains("22. Complete: Extract Custom Game source-key policy", roadmap);
+        StringAssert.Contains("23. Complete: Extract unit spawn batch planning", roadmap);
+        StringAssert.Contains("24. Complete: Extract spawned-unit component setup", roadmap);
+        StringAssert.Contains("25. Complete: Extract spawned-unit runtime reset", roadmap);
+        StringAssert.Contains("26. Complete: Extract blocker spawn batch", roadmap);
+        StringAssert.Contains("27. Complete: Extract structural playback boundary", roadmap);
+        StringAssert.Contains("28. Complete: Extract spawn-state diagnostics", roadmap);
+        StringAssert.Contains("29. Complete: Migrate initial-spawn diagnostics to ECS logging boundary", roadmap);
+        StringAssert.Contains("30. Complete: Extract duplicate-cell diagnostics", roadmap);
+        StringAssert.Contains("31. Complete: Extract freeze/performance diagnostics", roadmap);
+        StringAssert.Contains("32. Complete: Add focused resource/building/source-key tests", roadmap);
+        StringAssert.Contains("33. Complete: Add focused spawn-cell/progress/completion tests", roadmap);
+        StringAssert.Contains("34. Complete: Performance and allocation audit", roadmap);
+        StringAssert.Contains("35. Complete: Final tick ownership decision", roadmap);
+        StringAssert.Contains("36. Complete: Validation gate", roadmap);
+    }
+
+    [Test]
     public void InitialSpawnSystemMustNotReachThroughBuildingPlacementSingleton()
     {
-        const string file = "Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs";
-        string text = File.ReadAllText(file);
+        string text = File.ReadAllText(InitialUnitsSpawnSystemPath);
+        if (File.Exists(InitialUnitsSpawnQuerySystemPath))
+            text += File.ReadAllText(InitialUnitsSpawnQuerySystemPath);
+        if (File.Exists(InitialSpawnCompletionSystemPath))
+            text += File.ReadAllText(InitialSpawnCompletionSystemPath);
 
         StringAssert.Contains("BuildingRuntimeBoundaryTag", text);
         StringAssert.Contains("BuildingRuntimeSpawnRequest", text);

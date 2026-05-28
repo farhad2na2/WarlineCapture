@@ -131,6 +131,27 @@ Required render-budget metrics:
 
 Render-budget hot-path code must not add direct ungated `Debug.Log*`, per-frame string formatting, LINQ, scene searches, runtime asset loading, reflection, or new mutable static runtime state. Diagnostic messages must stay gated before string construction and flow through the ECS diagnostic/logging boundary.
 
+## Initial Units Spawn Performance Scenario
+
+`InitialUnitsSpawnSystem` and its extracted initial-spawn boundaries are startup-critical gameplay code. Refactors in this area must preserve initial spawn batch size, blocker batch size, diagnostic cadence, random-state order, building request order, initial resource projection, Custom Game source-key skip behavior, M01 compact roster behavior, air-platform spawn policy, footprint reservation semantics, fail-open timing, and `EntityCommandBuffer` playback order unless a focused performance report explicitly approves the change.
+
+Focused initial-spawn validation should cover:
+
+- Main Game scene after pressing Play until the loading gate clears.
+- Custom Game startup with unresolved source-key unit entries and converted prefab-backed unit entries.
+- Initial faction bases/configured buildings enabled, including building request completion and base-core camera focus.
+- Air units with helipad/airport platform spawn-point read models.
+- Steady-state frames after initial spawn completes, excluding scene load/import spikes.
+
+Required initial-spawn metrics:
+
+- Loading-gate duration and frame count until `InitialUnitsSpawnInitialized`.
+- `InitialUnitsSpawnSystem` and extracted initial-spawn boundary p95, p99, and max timing during startup when available.
+- Spawned unit count, blocker count, initial building request count, pending request count, and fail-open count.
+- GC allocation during active initial spawning and after warmup.
+
+Initial-spawn startup code must not add direct ungated `Debug.Log*`, per-frame string formatting, LINQ, scene searches, runtime asset loading, reflection, or new mutable static runtime state. Diagnostic messages must stay gated before string construction and migrate to an ECS diagnostic/logging boundary during the refactor.
+
 ## Regression Workflow
 
 1. Establish or reuse a focused scenario.

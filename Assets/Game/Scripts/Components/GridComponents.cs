@@ -10,6 +10,10 @@ public struct GridConfig : IComponentData
     public float3 Origin;
 }
 
+public struct RuntimeGridBootstrapGridTag : IComponentData
+{
+}
+
 public struct GridWalkable : IBufferElementData
 {
     public byte Value; // 1 = walkable, 0 = blocked

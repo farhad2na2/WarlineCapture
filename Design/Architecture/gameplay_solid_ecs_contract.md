@@ -230,6 +230,16 @@ Query creation, runtime schedule/stability state, camera motion policy, unit sna
 
 Do not replace `UnitRenderBudgetSystem` with `UnitRenderBudgetManager`, `UnitRenderBudgetController`, `UnitRenderBudgetFacade`, `UnitRenderBudgetOrchestrator`, or another broad shell.
 
+## Initial Units Spawn Migration
+
+InitialUnitsSpawnSystem refactor is tracked in `Design/Architecture/initial_units_spawn_system_refactor_roadmap.md`.
+
+`InitialUnitsSpawnSystem` is startup-critical ECS gameplay code. Refactoring must preserve current initial unit, blocker, resource, faction-base, configured-building, Custom Game source-key, M01 compact-runtime, loading-gate, and respawn queue behavior before improving architecture. Do not change initial spawn batch size, blocker batch size, diagnostic cadence, fail-open wait frames, random-state order, building request order, air-platform slot policy, footprint reservation semantics, component reset list, or `EntityCommandBuffer` playback timing unless a separate approved gameplay/performance task asks for it.
+
+Query ownership, play/startup gating, progress initialization, faction spawn snapshots, respawn queue projection, initial resource projection, building runtime boundary reads, spawnable lookup, faction-base request planning, configured building request creation, building completion processing, completion gating, grid reservation, unit spawn-cell search, air-platform spawn policy, M01 compact roster policy, Custom Game source-key handling, unit spawn application/reset, blocker spawning, structural playback, and initial-spawn diagnostics must migrate into narrow `*System` boundaries. The remaining `InitialUnitsSpawnSystem` may stay only as the ECS initial-spawn tick that sequences those systems. It must not expose public/static helper API after migration, except ECS lifecycle methods if the tick remains.
+
+Do not replace `InitialUnitsSpawnSystem` with `InitialUnitsSpawnManager`, `InitialUnitsSpawnController`, `InitialUnitsSpawnFacade`, `InitialUnitsSpawnOrchestrator`, or another broad shell. Initial building/base spawning must keep using ECS building runtime boundary buffers and must not reintroduce `BuildingPlacementSystem`, `BuildingPlacementRuntimeComponent`, or managed placement facades.
+
 ## Building Domain Migration
 
 `BuildingPlacementSystem` must not exist. The retired facade is closed architecture debt; do not recreate it as a source file, wrapper, test harness, singleton, or compatibility type.

@@ -1,4 +1,5 @@
 using Unity.Entities;
+using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -56,10 +57,20 @@ internal sealed class RuntimeGridBootstrapSystem
     private static Entity ResolveGridEntity(EntityManager entityManager)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        if (!query.IsEmptyIgnoreFilter)
-            return query.GetSingletonEntity();
+        using NativeArray<Entity> gridEntities = query.ToEntityArray(Allocator.Temp);
+        if (gridEntities.Length > 0)
+        {
+            for (int i = 0; i < gridEntities.Length; i++)
+            {
+                Entity candidate = gridEntities[i];
+                if (!entityManager.HasComponent<RuntimeGridBootstrapGridTag>(candidate))
+                    return candidate;
+            }
 
-        Entity entity = entityManager.CreateEntity(typeof(GridConfig));
+            return gridEntities[0];
+        }
+
+        Entity entity = entityManager.CreateEntity(typeof(GridConfig), typeof(RuntimeGridBootstrapGridTag));
         entityManager.SetName(entity, "RuntimeGameplayGrid");
         return entity;
     }

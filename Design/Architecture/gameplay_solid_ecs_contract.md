@@ -157,6 +157,7 @@ The retired `AILog` facade must not be reintroduced.
 AI log enablement and transport boarding diagnostics must flow through `RuntimeDiagnosticsStateComponent` and `RuntimeDiagnosticsSystem`. `InitialUnitsRuntimeState.VerboseAILogs`, `InitialUnitsRuntimeState.ShouldLogAI`, and `InitialUnitsRuntimeState.TransportBoardingDiagnostics` are legacy compatibility state and must not be read directly by production systems outside the diagnostics boundary.
 AI domain logs must use ECS diagnostic event buffers such as `AIDiagnosticLogComponent`, flushed by a shell-edge logging system such as `AIDiagnosticLogFlushSystem`. Hot systems must gate diagnostic message construction before formatting strings.
 Transport boarding diagnostics must use ECS diagnostic event buffers such as `TransportBoardingDiagnosticLogComponent`, flushed by `TransportBoardingDiagnosticLogFlushSystem`. Boarding command and boarding execution call sites must gate diagnostic message construction before formatting entity descriptions or pathing details.
+Render-budget diagnostics must use ECS diagnostic event buffers such as `UnitRenderBudgetDiagnosticLogComponent`, flushed by `UnitRenderBudgetDiagnosticLogFlushSystem`. Render-budget diagnostic call sites must gate message construction before formatting LOD state, mismatch samples, or freeze timing details.
 
 ## Selection Domain Migration
 
@@ -218,6 +219,16 @@ Pathfinding is a hot gameplay system. Refactoring must preserve current movement
 Path request collection, live-unit snapshot ownership, native scratch workspace ownership, reserved-goal state, hierarchical waypoint planning, nearest-goal assignment, result application, retry/abandon policy, adaptive request budgeting, validation metrics, and pathfinding diagnostics must migrate into narrow `*System` boundaries. The remaining `UnitPathfindingSystem` may stay only as a narrow ECS schedule/apply coordinator.
 
 `UnitPathfindingSystem.HasPendingPathJob` is temporary static runtime-state debt. Pending path job state must migrate to an ECS singleton/read-model boundary, and building production, citizen population, and selection/building click guards must read that boundary instead of the static property.
+
+## Unit Render Budget Migration
+
+UnitRenderBudgetSystem refactor is tracked in `Design/Architecture/unit_render_budget_system_refactor_roadmap.md`.
+
+`UnitRenderBudgetSystem` is hot gameplay/rendering code. Refactoring must preserve current unit visibility, LOD, impostor/detail handoff, render-safety patching, diagnostics, and frame performance before improving architecture. Do not change LOD budget caps, update cadence, camera motion thresholds, visible-character detail policy, enemy impostor thresholds, visual transition stability, render bounds patching, culling tags, `EntityCommandBuffer` playback order, allocator lifetimes, or query membership unless a separate approved gameplay/performance task asks for it.
+
+Query creation, runtime schedule/stability state, camera motion policy, unit snapshot projection, distance/viewport projection, budget-band planning, character/vehicle classification, visible-character policy, LOD readiness recursion, renderability predicates, visual-state transitions, render-safety patching, visibility-change collection, far-impostor tags, structural visibility apply, and render-budget diagnostics must migrate into narrow `*System` boundaries. The remaining `UnitRenderBudgetSystem` may stay only as the ECS render-budget update tick that sequences those systems. It must not expose public/static helper API after migration, except ECS lifecycle methods if the tick remains.
+
+Do not replace `UnitRenderBudgetSystem` with `UnitRenderBudgetManager`, `UnitRenderBudgetController`, `UnitRenderBudgetFacade`, `UnitRenderBudgetOrchestrator`, or another broad shell.
 
 ## Building Domain Migration
 

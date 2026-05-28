@@ -111,6 +111,26 @@ Required pathfinding metrics:
 
 Pathfinding hot-path code must not add direct `Debug.Log*`, per-frame string formatting, LINQ, scene searches, or new mutable static runtime state. Diagnostic messages must go through the ECS diagnostic event boundary and remain disabled unless the validation/debug configuration explicitly enables them.
 
+## Unit Render Budget Performance Scenario
+
+`UnitRenderBudgetSystem` and its extracted render-budget boundaries are hot gameplay/rendering code. Refactors in this area must preserve the current LOD budget caps, update cadence, camera motion thresholds, visible-character detailed-model policy, enemy impostor thresholds, render bounds patching, culling tag semantics, `EntityCommandBuffer` playback order, allocator lifetimes, and query membership unless a focused performance report explicitly approves the change.
+
+Focused render-budget validation should cover:
+
+- Main Game scene after pressing Play with player and enemy units visible.
+- Tactical camera pan/zoom while units are visible, so camera-motion update cadence is exercised.
+- High-camera view where visible characters must still use the detailed model path and high-camera impostor helpers stay covered by tests.
+- Steady-state frames after warmup, excluding scene load/import spikes.
+
+Required render-budget metrics:
+
+- Frame time average, p95, p99, and max after warmup.
+- `UnitRenderBudgetSystem` and extracted render-budget boundary timings when available.
+- Unit count, visible-character count, visual transition count, far-impostor count, and structural visibility change count when diagnostics are enabled for validation.
+- GC allocation after warmup.
+
+Render-budget hot-path code must not add direct ungated `Debug.Log*`, per-frame string formatting, LINQ, scene searches, runtime asset loading, reflection, or new mutable static runtime state. Diagnostic messages must stay gated before string construction and flow through the ECS diagnostic/logging boundary.
+
 ## Regression Workflow
 
 1. Establish or reuse a focused scenario.

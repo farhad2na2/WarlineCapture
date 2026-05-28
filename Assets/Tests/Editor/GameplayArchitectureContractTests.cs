@@ -68,6 +68,36 @@ public sealed class GameplayArchitectureContractTests
     private const string UnitPathfindingDiagnosticLogComponentsPath = "Assets/Game/Scripts/Components/UnitPathfindingDiagnosticLogComponents.cs";
     private const string UnitPathfindingDiagnosticLogFlushSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticLogFlushSystem.cs";
     private const string UnitPathfindingFocusedPerformanceValidationPath = "Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs";
+    private const string UnitRenderBudgetRoadmapPath = "Design/Architecture/unit_render_budget_system_refactor_roadmap.md";
+    private const string UnitRenderBudgetSystemTestsPath = "Assets/Tests/Editor/UnitRenderBudgetSystemTests.cs";
+    private const string UnitRenderBudgetSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetSystem.cs";
+    private const string UnitRenderBudgetQuerySystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetQuerySystem.cs";
+    private const string UnitRenderBudgetScheduleSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetScheduleSystem.cs";
+    private const string UnitRenderBudgetCameraMotionSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetCameraMotionSystem.cs";
+    private const string UnitRenderBudgetSnapshotSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetSnapshotSystem.cs";
+    private const string UnitRenderBudgetDistanceSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDistanceSystem.cs";
+    private const string UnitRenderBudgetSortSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetSortSystem.cs";
+    private const string UnitRenderBudgetBandSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetBandSystem.cs";
+    private const string UnitRenderBudgetClassificationSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetClassificationSystem.cs";
+    private const string UnitRenderBudgetCharacterPolicySystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetCharacterPolicySystem.cs";
+    private const string UnitRenderBudgetLodReferenceSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetLodReferenceSystem.cs";
+    private const string UnitRenderBudgetAnimationReadinessSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetAnimationReadinessSystem.cs";
+    private const string UnitRenderBudgetRenderableQuerySystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetRenderableQuerySystem.cs";
+    private const string UnitRenderBudgetVisualStateSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetVisualStateSystem.cs";
+    private const string UnitRenderBudgetReadinessSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetReadinessSystem.cs";
+    private const string UnitRenderBudgetRenderSafetySystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetRenderSafetySystem.cs";
+    private const string UnitRenderBudgetVisualPlanSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetVisualPlanSystem.cs";
+    private const string UnitRenderBudgetDecisionSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDecisionSystem.cs";
+    private const string UnitRenderBudgetVisibilityChangeSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetVisibilityChangeSystem.cs";
+    private const string UnitRenderBudgetImpostorTagSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetImpostorTagSystem.cs";
+    private const string UnitRenderBudgetVisibilityApplySystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetVisibilityApplySystem.cs";
+    private const string UnitRenderBudgetDiagnosticStateSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDiagnosticStateSystem.cs";
+    private const string UnitRenderBudgetLightDiagnosticSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetLightDiagnosticSystem.cs";
+    private const string UnitRenderBudgetMismatchDiagnosticSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetMismatchDiagnosticSystem.cs";
+    private const string UnitRenderBudgetFreezeDiagnosticSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetFreezeDiagnosticSystem.cs";
+    private const string UnitRenderBudgetDiagnosticLogComponentsPath = "Assets/Game/Scripts/Components/UnitRenderBudgetDiagnosticLogComponents.cs";
+    private const string UnitRenderBudgetDiagnosticLogSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDiagnosticLogSystem.cs";
+    private const string UnitRenderBudgetDiagnosticLogFlushSystemPath = "Assets/Game/Scripts/Systems/UnitRenderBudgetDiagnosticLogFlushSystem.cs";
     private const string RoadBuildRuntimeStateRoadmapPath = "Design/Architecture/road_build_runtime_state_system_refactor_roadmap.md";
     private const string RoadBuildRuntimeStateSystemPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
     private const string UnitTransportBoardingRoadmapPath = "Design/Architecture/unit_transport_boarding_system_refactor_roadmap.md";
@@ -566,6 +596,40 @@ public sealed class GameplayArchitectureContractTests
         }
     }
 
+    public static void RunUnitRenderBudgetArchitectureBatchValidation()
+    {
+        string[] methodNames =
+        {
+            nameof(UnitRenderBudgetRefactorRoadmapMustRecordBaselineAndTargetBoundaries),
+            nameof(UnitRenderBudgetBroadReplacementShellsMustNotExist),
+            nameof(UnitRenderBudgetSystemBaselineMustStayExplicitUntilExtracted)
+        };
+
+        try
+        {
+            var tests = new GameplayArchitectureContractTests();
+            Type testType = typeof(GameplayArchitectureContractTests);
+            for (int i = 0; i < methodNames.Length; i++)
+            {
+                System.Reflection.MethodInfo method = testType.GetMethod(methodNames[i]);
+                Assert.NotNull(method, $"Missing unit render budget architecture validation method {methodNames[i]}.");
+                method.Invoke(tests, null);
+            }
+
+            UnityEngine.Debug.Log($"[UnitRenderBudgetArchitectureValidation] result=Passed methods={methodNames.Length}");
+            UnityEditor.EditorApplication.Exit(0);
+        }
+        catch (Exception ex)
+        {
+            Exception failure = ex is System.Reflection.TargetInvocationException && ex.InnerException != null
+                ? ex.InnerException
+                : ex;
+            UnityEngine.Debug.LogException(failure);
+            UnityEngine.Debug.LogError("[UnitRenderBudgetArchitectureValidation] result=Failed");
+            UnityEditor.EditorApplication.Exit(1);
+        }
+    }
+
     private static readonly string[] HotAILogCallFiles = Array.Empty<string>();
 
     private static readonly string[] LegacyStaticLogFacadeFiles =
@@ -688,6 +752,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Pathfinding is a hot gameplay system", contract);
         StringAssert.Contains("`UnitPathfindingSystem.HasPendingPathJob` is temporary static runtime-state debt", contract);
         StringAssert.Contains("The remaining `UnitPathfindingSystem` may stay only as a narrow ECS schedule/apply coordinator", contract);
+        StringAssert.Contains("UnitRenderBudgetSystem refactor is tracked in `Design/Architecture/unit_render_budget_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("`UnitRenderBudgetSystem` is hot gameplay/rendering code", contract);
+        StringAssert.Contains("The remaining `UnitRenderBudgetSystem` may stay only as the ECS render-budget update tick", contract);
         StringAssert.Contains("The final target is deletion of `CitizenPopulationSystem.cs`", contract);
         StringAssert.Contains("Do not replace `CitizenPopulationSystem` with `CitizenPopulationManager`, `CitizenPopulationFacade`, `CitizenPopulationController`, or any other broad managed shell", contract);
         StringAssert.Contains("The retired `AILog` facade must not be reintroduced", contract);
@@ -4112,6 +4179,622 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("UnitPathfindingSystem refactor is tracked in `Design/Architecture/unit_pathfinding_system_refactor_roadmap.md`", contract);
         StringAssert.Contains("Pending path job state must migrate to an ECS singleton/read-model boundary", contract);
+    }
+
+    [Test]
+    public void UnitRenderBudgetRefactorRoadmapMustRecordBaselineAndTargetBoundaries()
+    {
+        Assert.IsTrue(File.Exists(UnitRenderBudgetRoadmapPath), $"{UnitRenderBudgetRoadmapPath} must track the UnitRenderBudgetSystem decomposition plan.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetSystemPath), $"{UnitRenderBudgetSystemPath} must remain present until the roadmap explicitly retires or narrows the ECS tick.");
+
+        string roadmap = File.ReadAllText(UnitRenderBudgetRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+        string performanceContract = File.ReadAllText(PerformanceContractPath);
+
+        StringAssert.Contains("This roadmap has 36 steps.", roadmap);
+        StringAssert.Contains("Target file: `Assets/Game/Scripts/Systems/UnitRenderBudgetSystem.cs`", roadmap);
+        StringAssert.Contains("Current size at roadmap creation: 1388 lines.", roadmap);
+        StringAssert.Contains("Final target: `UnitRenderBudgetSystem` may remain only as the ECS render-budget update tick", roadmap);
+        StringAssert.Contains("New public/internal members must not be added to `UnitRenderBudgetSystem`.", roadmap);
+        StringAssert.Contains("Do not replace `UnitRenderBudgetSystem` with `UnitRenderBudgetManager`, `UnitRenderBudgetController`, `UnitRenderBudgetFacade`, `UnitRenderBudgetOrchestrator`, or another broad shell.", roadmap);
+        StringAssert.Contains("1. Complete: Add roadmap and baseline architecture guard", roadmap);
+        StringAssert.Contains("36. Complete: Validation gate", roadmap);
+        StringAssert.Contains("[UnitRenderBudgetFocusedValidation] result=Passed tests=13", roadmap);
+        StringAssert.Contains("[UnitRenderBudgetArchitectureValidation] result=Passed methods=3", roadmap);
+
+        string[] responsibilityTokens =
+        {
+            "ECS query setup",
+            "Runtime schedule and stability",
+            "Camera motion",
+            "Unit snapshot and projection",
+            "Budget band planning",
+            "Classification and policy",
+            "LOD readiness and safety",
+            "Visual state transitions",
+            "Visibility application",
+            "Diagnostics"
+        };
+
+        foreach (string token in responsibilityTokens)
+            StringAssert.Contains(token, roadmap);
+
+        string[] plannedBoundaryTokens =
+        {
+            "UnitRenderBudgetQuerySystem",
+            "UnitRenderBudgetScheduleSystem",
+            "UnitRenderBudgetCameraMotionSystem",
+            "UnitRenderBudgetSnapshotSystem",
+            "UnitRenderBudgetDistanceSystem",
+            "UnitRenderBudgetSortSystem",
+            "UnitRenderBudgetBandSystem",
+            "UnitRenderBudgetClassificationSystem",
+            "UnitRenderBudgetCharacterPolicySystem",
+            "UnitRenderBudgetLodReferenceSystem",
+            "UnitRenderBudgetAnimationReadinessSystem",
+            "UnitRenderBudgetRenderableQuerySystem",
+            "UnitRenderBudgetVisualStateSystem",
+            "UnitRenderBudgetReadinessSystem",
+            "UnitRenderBudgetRenderSafetySystem",
+            "UnitRenderBudgetDecisionSystem",
+            "UnitRenderBudgetVisibilityChangeSystem",
+            "UnitRenderBudgetImpostorTagSystem",
+            "UnitRenderBudgetVisibilityApplySystem",
+            "UnitRenderBudgetDiagnosticStateSystem",
+            "UnitRenderBudgetLightDiagnosticSystem",
+            "UnitRenderBudgetMismatchDiagnosticSystem",
+            "UnitRenderBudgetFreezeDiagnosticSystem"
+        };
+
+        foreach (string token in plannedBoundaryTokens)
+            StringAssert.Contains(token, roadmap);
+
+        for (int step = 2; step <= 36; step++)
+        {
+            Assert.IsTrue(
+                roadmap.Contains($"{step}. Pending:", StringComparison.Ordinal) ||
+                roadmap.Contains($"{step}. Complete:", StringComparison.Ordinal),
+                $"Unit render budget roadmap must keep step {step} tracked as pending or complete.");
+        }
+
+        StringAssert.Contains("UnitRenderBudgetSystem refactor is tracked in `Design/Architecture/unit_render_budget_system_refactor_roadmap.md`", contract);
+        StringAssert.Contains("The remaining `UnitRenderBudgetSystem` may stay only as the ECS render-budget update tick", contract);
+        StringAssert.Contains("Do not replace `UnitRenderBudgetSystem` with `UnitRenderBudgetManager`, `UnitRenderBudgetController`, `UnitRenderBudgetFacade`, `UnitRenderBudgetOrchestrator`, or another broad shell", contract);
+        StringAssert.Contains("Unit Render Budget Performance Scenario", performanceContract);
+        StringAssert.Contains("Refactors in this area must preserve the current LOD budget caps, update cadence, camera motion thresholds", performanceContract);
+    }
+
+    [Test]
+    public void UnitRenderBudgetBroadReplacementShellsMustNotExist()
+    {
+        string roadmap = File.ReadAllText(UnitRenderBudgetRoadmapPath);
+        StringAssert.Contains("Do not replace `UnitRenderBudgetSystem` with `UnitRenderBudgetManager`, `UnitRenderBudgetController`, `UnitRenderBudgetFacade`, `UnitRenderBudgetOrchestrator`, or another broad shell.", roadmap);
+
+        string[] forbiddenTypeNames =
+        {
+            "UnitRenderBudgetManager",
+            "UnitRenderBudgetController",
+            "UnitRenderBudgetFacade",
+            "UnitRenderBudgetOrchestrator",
+            "RenderBudgetManager",
+            "RenderBudgetController",
+            "RenderBudgetFacade"
+        };
+
+        string[] sourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .ToArray();
+
+        foreach (string file in sourceFiles)
+        {
+            string code = File.ReadAllText(file);
+            foreach (string forbiddenTypeName in forbiddenTypeNames)
+            {
+                Assert.IsFalse(
+                    Regex.IsMatch(code, $@"\b(?:class|struct|interface)\s+{Regex.Escape(forbiddenTypeName)}\b"),
+                    $"{file} must not introduce broad render-budget shell {forbiddenTypeName}.");
+            }
+        }
+    }
+
+    [Test]
+    public void UnitRenderBudgetSystemBaselineMustStayExplicitUntilExtracted()
+    {
+        Assert.IsTrue(File.Exists(UnitRenderBudgetSystemPath), "UnitRenderBudgetSystem remains the temporary render-budget tick while the roadmap is incomplete.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetSystemTestsPath), "Step 32 must keep focused render-budget tests in UnitRenderBudgetSystemTests.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetQuerySystemPath), "Step 4 must keep render-budget query ownership in UnitRenderBudgetQuerySystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetScheduleSystemPath), "Step 5 must keep render-budget scheduling and stability state in UnitRenderBudgetScheduleSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetCameraMotionSystemPath), "Step 6 must keep render-budget camera motion policy in UnitRenderBudgetCameraMotionSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetSnapshotSystemPath), "Step 8 must keep unit snapshot collection in UnitRenderBudgetSnapshotSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetDistanceSystemPath), "Step 9 must keep distance and viewport projection in UnitRenderBudgetDistanceSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetSortSystemPath), "Step 10 must keep render-budget sort policy in UnitRenderBudgetSortSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetBandSystemPath), "Step 11 must keep budget band planning in UnitRenderBudgetBandSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetClassificationSystemPath), "Step 12 must keep character/vehicle classification in UnitRenderBudgetClassificationSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetCharacterPolicySystemPath), "Step 13 must keep visible-character policy in UnitRenderBudgetCharacterPolicySystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetLodReferenceSystemPath), "Step 15 must keep LOD reference resolution in UnitRenderBudgetLodReferenceSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetAnimationReadinessSystemPath), "Step 16 must keep animation/material readiness recursion in UnitRenderBudgetAnimationReadinessSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetRenderableQuerySystemPath), "Step 17 must keep renderable visibility and safe-LOD predicates in UnitRenderBudgetRenderableQuerySystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetVisualStateSystemPath), "Step 18 must keep visual-state transition policy in UnitRenderBudgetVisualStateSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetReadinessSystemPath), "Step 19 must keep visual readiness tag policy in UnitRenderBudgetReadinessSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetRenderSafetySystemPath), "Step 20 must keep render safety patching in UnitRenderBudgetRenderSafetySystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetVisualPlanSystemPath), "Step 21 must keep desired visual planning in UnitRenderBudgetVisualPlanSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetDecisionSystemPath), "Step 22 must keep per-unit render-budget decisions in UnitRenderBudgetDecisionSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetVisibilityChangeSystemPath), "Step 23 must keep recursive visibility-change collection in UnitRenderBudgetVisibilityChangeSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetImpostorTagSystemPath), "Step 24 must keep unit-level far-impostor tag request policy in UnitRenderBudgetImpostorTagSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetVisibilityApplySystemPath), "Step 25 must keep structural visibility apply in UnitRenderBudgetVisibilityApplySystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetDiagnosticStateSystemPath), "Step 27 must keep diagnostic state, counters, and diagnostic frame tracking in UnitRenderBudgetDiagnosticStateSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetLightDiagnosticSystemPath), "Step 28 must keep light render-budget diagnostics in UnitRenderBudgetLightDiagnosticSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetMismatchDiagnosticSystemPath), "Step 29 must keep mismatch diagnostics in UnitRenderBudgetMismatchDiagnosticSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetFreezeDiagnosticSystemPath), "Step 30 must keep freeze diagnostics in UnitRenderBudgetFreezeDiagnosticSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetDiagnosticLogComponentsPath), "Step 31 must keep render-budget diagnostic events in ECS log components.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetDiagnosticLogSystemPath), "Step 31 must keep render-budget diagnostic enqueue ownership in UnitRenderBudgetDiagnosticLogSystem.");
+        Assert.IsTrue(File.Exists(UnitRenderBudgetDiagnosticLogFlushSystemPath), "Step 31 must keep direct Unity logging isolated to UnitRenderBudgetDiagnosticLogFlushSystem.");
+
+        string renderBudget = File.ReadAllText(UnitRenderBudgetSystemPath);
+        string querySystem = File.ReadAllText(UnitRenderBudgetQuerySystemPath);
+        string scheduleSystem = File.ReadAllText(UnitRenderBudgetScheduleSystemPath);
+        string cameraMotionSystem = File.ReadAllText(UnitRenderBudgetCameraMotionSystemPath);
+        string snapshotSystem = File.ReadAllText(UnitRenderBudgetSnapshotSystemPath);
+        string distanceSystem = File.ReadAllText(UnitRenderBudgetDistanceSystemPath);
+        string sortSystem = File.ReadAllText(UnitRenderBudgetSortSystemPath);
+        string bandSystem = File.ReadAllText(UnitRenderBudgetBandSystemPath);
+        string classificationSystem = File.ReadAllText(UnitRenderBudgetClassificationSystemPath);
+        string characterPolicySystem = File.ReadAllText(UnitRenderBudgetCharacterPolicySystemPath);
+        string lodReferenceSystem = File.ReadAllText(UnitRenderBudgetLodReferenceSystemPath);
+        string animationReadinessSystem = File.ReadAllText(UnitRenderBudgetAnimationReadinessSystemPath);
+        string renderableQuerySystem = File.ReadAllText(UnitRenderBudgetRenderableQuerySystemPath);
+        string visualStateSystem = File.ReadAllText(UnitRenderBudgetVisualStateSystemPath);
+        string readinessSystem = File.ReadAllText(UnitRenderBudgetReadinessSystemPath);
+        string renderSafetySystem = File.ReadAllText(UnitRenderBudgetRenderSafetySystemPath);
+        string visualPlanSystem = File.ReadAllText(UnitRenderBudgetVisualPlanSystemPath);
+        string decisionSystem = File.ReadAllText(UnitRenderBudgetDecisionSystemPath);
+        string visibilityChangeSystem = File.ReadAllText(UnitRenderBudgetVisibilityChangeSystemPath);
+        string impostorTagSystem = File.ReadAllText(UnitRenderBudgetImpostorTagSystemPath);
+        string visibilityApplySystem = File.ReadAllText(UnitRenderBudgetVisibilityApplySystemPath);
+        string diagnosticStateSystem = File.ReadAllText(UnitRenderBudgetDiagnosticStateSystemPath);
+        string lightDiagnosticSystem = File.ReadAllText(UnitRenderBudgetLightDiagnosticSystemPath);
+        string mismatchDiagnosticSystem = File.ReadAllText(UnitRenderBudgetMismatchDiagnosticSystemPath);
+        string freezeDiagnosticSystem = File.ReadAllText(UnitRenderBudgetFreezeDiagnosticSystemPath);
+        string diagnosticLogComponents = File.ReadAllText(UnitRenderBudgetDiagnosticLogComponentsPath);
+        string diagnosticLogSystem = File.ReadAllText(UnitRenderBudgetDiagnosticLogSystemPath);
+        string diagnosticLogFlushSystem = File.ReadAllText(UnitRenderBudgetDiagnosticLogFlushSystemPath);
+        string renderBudgetTests = File.ReadAllText(UnitRenderBudgetSystemTestsPath);
+        string roadmap = File.ReadAllText(UnitRenderBudgetRoadmapPath);
+
+        StringAssert.Contains("public partial struct UnitRenderBudgetSystem : ISystem", renderBudget);
+        StringAssert.Contains("private const int MaxDetailedUnits = 12;", renderBudget);
+        StringAssert.Contains("private const int MaxMidLodUnits = 36;", renderBudget);
+        StringAssert.Contains("private const int MaxLowLodUnits = 48;", renderBudget);
+        StringAssert.Contains("private const int MaxUpdatesPerFrame = 4096;", renderBudget);
+        StringAssert.Contains("private const int UpdateIntervalFrames = 10;", renderBudget);
+        Assert.IsFalse(
+            renderBudget.Contains("EnableRenderBudgetDiagnostics", StringComparison.Ordinal) ||
+            renderBudget.Contains("private const int DiagnosticIntervalFrames", StringComparison.Ordinal) ||
+            renderBudget.Contains("_scheduleSystem.ShouldRunDiagnostics", StringComparison.Ordinal) ||
+            renderBudget.Contains("_scheduleSystem.ScheduleNextDiagnostics", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not own diagnostic enable state or frame tracking after step 27.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static void LogRenderBudgetStateLight", StringComparison.Ordinal) ||
+            renderBudget.Contains("light=1", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not own light render-budget diagnostics after step 28.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static void LogMidLodDiagnostics", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static void AppendDiagnosticSample", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static string DescribeVisualRoot", StringComparison.Ordinal) ||
+            renderBudget.Contains("[UnitRenderVisibilityDiag]", StringComparison.Ordinal) ||
+            renderBudget.Contains("samples={sample}", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not own mismatch diagnostics after step 29.");
+        Assert.IsFalse(
+            renderBudget.Contains("EnableRenderBudgetFreezeLogs", StringComparison.Ordinal) ||
+            renderBudget.Contains("FreezeLogThresholdSeconds", StringComparison.Ordinal) ||
+            renderBudget.Contains("[FreezeDetect:ECS]", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not own freeze diagnostics after step 30.");
+        Assert.IsFalse(
+            renderBudget.Contains("Debug.Log", StringComparison.Ordinal) ||
+            lightDiagnosticSystem.Contains("Debug.Log", StringComparison.Ordinal) ||
+            mismatchDiagnosticSystem.Contains("Debug.Log", StringComparison.Ordinal) ||
+            freezeDiagnosticSystem.Contains("Debug.Log", StringComparison.Ordinal),
+            "Render-budget diagnostics must enqueue ECS log events instead of calling Unity Debug directly after step 31.");
+        string[] renderBudgetHotPathFiles = Directory.GetFiles("Assets/Game/Scripts/Systems", "UnitRenderBudget*.cs");
+        string[] forbiddenHotPathMarkers =
+        {
+            ".Select(",
+            ".Where(",
+            ".ToList(",
+            "new List<",
+            "FindObject",
+            "Resources.Load",
+            "System.Reflection",
+            "Allocator.Persistent"
+        };
+        foreach (string file in renderBudgetHotPathFiles)
+        {
+            string source = File.ReadAllText(file);
+            foreach (string marker in forbiddenHotPathMarkers)
+            {
+                Assert.IsFalse(
+                    source.Contains(marker, StringComparison.Ordinal),
+                    $"{file} must not add render-budget hot-path performance risk marker {marker}.");
+            }
+        }
+        Assert.IsFalse(
+            renderBudget.Contains("public static UnitRenderVisualKind ResolveVisibleCharacterVisualKind", StringComparison.Ordinal) ||
+            renderBudget.Contains("public static bool ShouldForceCharacterDetailVisual", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not expose visible-character static policy helpers after step 13.");
+        Assert.IsFalse(
+            renderBudget.Contains("private EntityQuery _unitQuery", StringComparison.Ordinal) ||
+            renderBudget.Contains("private EntityQuery _allUnitGridQuery", StringComparison.Ordinal) ||
+            renderBudget.Contains("private EntityQuery _spawnConfigQuery", StringComparison.Ordinal) ||
+            renderBudget.Contains("private EntityQuery _cameraReferenceQuery", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct query fields after step 4.");
+        Assert.IsFalse(
+            renderBudget.Contains("private int _nextUpdateFrame", StringComparison.Ordinal) ||
+            renderBudget.Contains("private int _nextDiagnosticFrame", StringComparison.Ordinal) ||
+            renderBudget.Contains("private int _lodResumeFrame", StringComparison.Ordinal) ||
+            renderBudget.Contains("private bool _budgetStable", StringComparison.Ordinal) ||
+            renderBudget.Contains("private int _stableUnitCount", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct schedule/stability fields after step 5.");
+        Assert.IsFalse(
+            renderBudget.Contains("private bool _hasCameraSnapshot", StringComparison.Ordinal) ||
+            renderBudget.Contains("private Vector3 _lastCameraPosition", StringComparison.Ordinal) ||
+            renderBudget.Contains("private Quaternion _lastCameraRotation", StringComparison.Ordinal) ||
+            renderBudget.Contains("private bool IsCameraMotionActive(Camera camera)", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct camera motion state after step 6.");
+        Assert.IsFalse(
+            renderBudget.Contains("ToEntityArray(Allocator.Temp)", StringComparison.Ordinal) ||
+            renderBudget.Contains("ToComponentDataArray<LocalTransform>(Allocator.Temp)", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct unit snapshot array collection after step 8.");
+        Assert.IsFalse(
+            renderBudget.Contains("camera.WorldToViewportPoint", StringComparison.Ordinal) ||
+            renderBudget.Contains("VisibleCharacterViewportPadding && viewportPosition", StringComparison.Ordinal) ||
+            renderBudget.Contains("VisibleCharacterEdgeSafetyMargin ||", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct distance/viewport projection after step 9.");
+        Assert.IsFalse(
+            renderBudget.Contains("struct UnitDistanceComparer", StringComparison.Ordinal) ||
+            renderBudget.Contains("distances.AsArray().Sort(new UnitDistanceComparer())", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct UnitDistance sort policy after step 10.");
+        Assert.IsFalse(
+            renderBudget.Contains("detailedUnits.Add(distances[i].Unit)", StringComparison.Ordinal) ||
+            renderBudget.Contains("midLodUnits.Add(unit)", StringComparison.Ordinal) ||
+            renderBudget.Contains("lowLodUnits.Add(unit)", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain detailed/mid/low budget band construction after step 11.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static bool IsCharacterUnit", StringComparison.Ordinal) ||
+            renderBudget.Contains("StartsWith(\"Unit_Chr_\", System.StringComparison.Ordinal)", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct character/vehicle classification after step 12.");
+        Assert.IsFalse(
+            renderBudget.Contains("UnitDetailedVisualReference", StringComparison.Ordinal) ||
+            renderBudget.Contains("UnitMidLodPrefabReference", StringComparison.Ordinal) ||
+            renderBudget.Contains("UnitMidLodInstanceReference", StringComparison.Ordinal) ||
+            renderBudget.Contains("UnitLowLodPrefabReference", StringComparison.Ordinal) ||
+            renderBudget.Contains("UnitLowLodInstanceReference", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct LOD visual reference resolution after step 15.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static bool HasAnimationIndexRecursive", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static bool HasMaterialAlphaCompleteRecursive", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static void CheckVisualReadinessRecursive", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct animation/material readiness recursion after step 16.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static bool IsRenderableVisibleRecursive", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static bool HasRenderableRecursive", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static bool IsSafeVisibleCharacterLod", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static bool IsRenderableEntity", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct renderable query predicates after step 17.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static UnitRenderVisualKind ResolveStableUnitRenderVisualState", StringComparison.Ordinal) ||
+            renderBudget.Contains("private const int VisualTransitionStableFrames", StringComparison.Ordinal) ||
+            renderBudget.Contains("private const int MaxVisualStateTransitionsPerUpdate", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct visual-state transition policy after step 18.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static bool IsVisualReadyForExclusiveDisplay", StringComparison.Ordinal) ||
+            renderBudget.Contains("ecb.AddComponent<UnitRenderVisualReadyTag>", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct visual readiness tag policy after step 19.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static int EnsureRenderSafetyRecursive", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static int EnsureRenderSafetyRecursiveOnce", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static int PatchLodGroup", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static readonly float3 RenderBoundsMinExtents", StringComparison.Ordinal) ||
+            renderBudget.Contains("private const int AlwaysVisibleLodMask", StringComparison.Ordinal) ||
+            renderBudget.Contains("private const float AlwaysVisibleLodDistance", StringComparison.Ordinal) ||
+            renderBudget.Contains("UnitRenderSafetyPatchedTag", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct render safety patching after step 20.");
+        Assert.IsFalse(
+            renderBudget.Contains("private static UnitRenderVisualKind ResolveDesiredVisual", StringComparison.Ordinal) ||
+            renderBudget.Contains("private static UnitRenderVisualKind ResolveDesiredVisualForDiagnostics", StringComparison.Ordinal) ||
+            renderBudget.Contains("ResolveVisibleCharacterVisualKind(", StringComparison.Ordinal) ||
+            renderBudget.Contains("ShouldForceCharacterDetailVisual(", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct desired visual planning after step 21.");
+        Assert.IsFalse(
+            renderBudget.Contains("UnitRenderBudgetVisualPlanSystem.Result visualPlan = ", StringComparison.Ordinal) ||
+            renderBudget.Contains("ResolveStableUnitRenderVisualState(", StringComparison.Ordinal) ||
+            renderBudget.Contains("EnsureRenderSafetyRecursiveOnce(", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct per-unit render decision branching after step 22.");
+        Assert.IsFalse(
+            renderBudget.Contains("em.RemoveComponent<UnitRenderBudgetCulledUnitTag>(unit)", StringComparison.Ordinal) ||
+            renderBudget.Contains("em.AddComponent<UnitRenderBudgetCulledUnitTag>(unit)", StringComparison.Ordinal) ||
+            renderBudget.Contains("em.RemoveComponent<DisableRendering>(entity)", StringComparison.Ordinal) ||
+            renderBudget.Contains("em.AddComponent<DisableRendering>(entity)", StringComparison.Ordinal) ||
+            renderBudget.Contains("renderStateEcb.Playback(em);", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must not regain direct structural visibility apply after step 25.");
+        StringAssert.Contains("UnitRenderBudgetDecisionSystem.Result decisionResult = _decisionSystem.Process(ref decisionContext);", renderBudget);
+        StringAssert.Contains("UnitRenderBudgetVisibilityApplySystem.Result applyResult = _visibilityApplySystem.Apply(", renderBudget);
+        Assert.IsFalse(
+            renderBudget.Contains("for (int i = 0; i < unitsToShowDetailed.Length; i++)", StringComparison.Ordinal) ||
+            renderBudget.Contains("for (int i = 0; i < unitsToShowFarImpostor.Length; i++)", StringComparison.Ordinal) ||
+            renderBudget.Contains("for (int i = 0; i < entitiesToShow.Length; i++)", StringComparison.Ordinal) ||
+            renderBudget.Contains("for (int i = 0; i < entitiesToHide.Length; i++)", StringComparison.Ordinal),
+            "UnitRenderBudgetSystem must stay routed through decision/apply systems after step 26.");
+        StringAssert.Contains("public readonly struct UnitRenderBudgetQuerySystem", querySystem);
+        StringAssert.Contains("public readonly EntityQuery UnitQuery;", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitGrid>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<Faction>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<LocalTransform>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitMovementBehavior>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<StaticGridBlocker>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<Disabled>()", querySystem);
+        StringAssert.Contains("ComponentType.ReadOnly<RuntimeCameraReferenceComponent>()", querySystem);
+        StringAssert.Contains("public struct UnitRenderBudgetScheduleSystem", scheduleSystem);
+        StringAssert.Contains("private int _nextUpdateFrame;", scheduleSystem);
+        StringAssert.Contains("private int _lodResumeFrame;", scheduleSystem);
+        StringAssert.Contains("private bool _budgetStable;", scheduleSystem);
+        StringAssert.Contains("private int _stableUnitCount;", scheduleSystem);
+        StringAssert.Contains("ShouldSkipStableBudget", scheduleSystem);
+        StringAssert.Contains("ShouldSkipUpdateFrame", scheduleSystem);
+        StringAssert.Contains("ScheduleNextUpdate", scheduleSystem);
+        StringAssert.Contains("MarkCameraMotion", scheduleSystem);
+        StringAssert.Contains("RecordBudgetStability", scheduleSystem);
+        Assert.IsFalse(
+            scheduleSystem.Contains("_nextDiagnosticFrame", StringComparison.Ordinal) ||
+            scheduleSystem.Contains("ShouldRunDiagnostics", StringComparison.Ordinal) ||
+            scheduleSystem.Contains("ScheduleNextDiagnostics", StringComparison.Ordinal),
+            "UnitRenderBudgetScheduleSystem must not own diagnostic frame tracking after step 27.");
+        StringAssert.Contains("public struct UnitRenderBudgetCameraMotionSystem", cameraMotionSystem);
+        StringAssert.Contains("private const int CameraSettleFrames = 8;", cameraMotionSystem);
+        StringAssert.Contains("private const float CameraMoveThresholdSq = 0.0004f;", cameraMotionSystem);
+        StringAssert.Contains("private const float CameraRotateThresholdDegrees = 0.03f;", cameraMotionSystem);
+        StringAssert.Contains("private bool _hasCameraSnapshot;", cameraMotionSystem);
+        StringAssert.Contains("private Vector3 _lastCameraPosition;", cameraMotionSystem);
+        StringAssert.Contains("private Quaternion _lastCameraRotation;", cameraMotionSystem);
+        StringAssert.Contains("public bool IsCameraMotionActive(", cameraMotionSystem);
+        StringAssert.Contains("scheduleSystem.MarkCameraMotion(frame, CameraSettleFrames);", cameraMotionSystem);
+        StringAssert.Contains("diagnosticStateSystem.ResetDiagnosticFrame();", cameraMotionSystem);
+        StringAssert.Contains("return scheduleSystem.IsWithinLodResume(frame);", cameraMotionSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetSnapshotSystem", snapshotSystem);
+        StringAssert.Contains("public struct Snapshot : IDisposable", snapshotSystem);
+        StringAssert.Contains("public NativeArray<Entity> Units;", snapshotSystem);
+        StringAssert.Contains("public NativeArray<LocalTransform> Transforms;", snapshotSystem);
+        StringAssert.Contains("unitQuery.ToEntityArray(allocator)", snapshotSystem);
+        StringAssert.Contains("unitQuery.ToComponentDataArray<LocalTransform>(allocator)", snapshotSystem);
+        StringAssert.Contains("Transforms.Dispose();", snapshotSystem);
+        StringAssert.Contains("Units.Dispose();", snapshotSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetDistanceSystem", distanceSystem);
+        StringAssert.Contains("public struct UnitDistance", distanceSystem);
+        StringAssert.Contains("public void Collect(", distanceSystem);
+        StringAssert.Contains("float3 cameraPosition = camera.transform.position;", distanceSystem);
+        StringAssert.Contains("math.distancesq(unitPosition, cameraPosition)", distanceSystem);
+        StringAssert.Contains("camera.WorldToViewportPoint(worldPosition)", distanceSystem);
+        StringAssert.Contains("viewportPosition.x >= -viewportPadding", distanceSystem);
+        StringAssert.Contains("viewportPosition.x <= edgeSafetyMargin", distanceSystem);
+        StringAssert.Contains("Entity unit = units[i];", distanceSystem);
+        StringAssert.Contains("em.HasComponent<UnitTransportPassenger>(unit)", distanceSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetSortSystem", sortSystem);
+        StringAssert.Contains("private struct UnitDistanceComparer", sortSystem);
+        StringAssert.Contains("int priorityCompare = x.Priority.CompareTo(y.Priority);", sortSystem);
+        StringAssert.Contains("return x.DistanceSq.CompareTo(y.DistanceSq);", sortSystem);
+        StringAssert.Contains("public void Sort(NativeList<UnitRenderBudgetDistanceSystem.UnitDistance> distances)", sortSystem);
+        StringAssert.Contains("distances.AsArray().Sort(new UnitDistanceComparer());", sortSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetBandSystem", bandSystem);
+        StringAssert.Contains("public struct Plan : IDisposable", bandSystem);
+        StringAssert.Contains("public NativeHashSet<Entity> DetailedUnits;", bandSystem);
+        StringAssert.Contains("public NativeHashSet<Entity> MidLodUnits;", bandSystem);
+        StringAssert.Contains("public NativeHashSet<Entity> LowLodUnits;", bandSystem);
+        StringAssert.Contains("public Plan Create(", bandSystem);
+        StringAssert.Contains("detailedCount < maxDetailedUnits", bandSystem);
+        StringAssert.Contains("midCount < maxMidLodUnits", bandSystem);
+        StringAssert.Contains("lowCount < maxLowLodUnits", bandSystem);
+        StringAssert.Contains("distances[i].DistanceSq > alwaysDetailedDistanceSq", bandSystem);
+        StringAssert.Contains("LowLodUnits.Dispose();", bandSystem);
+        StringAssert.Contains("MidLodUnits.Dispose();", bandSystem);
+        StringAssert.Contains("DetailedUnits.Dispose();", bandSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetClassificationSystem", classificationSystem);
+        StringAssert.Contains("public bool IsCharacterUnit(EntityManager em, Entity unit)", classificationSystem);
+        StringAssert.Contains("UsesVehicleMotion != 0", classificationSystem);
+        StringAssert.Contains("FixedString64Bytes key = em.GetComponentData<UnitSourcePrefabKey>(unit).Value;", classificationSystem);
+        StringAssert.Contains("StartsWith(\"Unit_Chr_\", System.StringComparison.Ordinal)", classificationSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetCharacterPolicySystem", characterPolicySystem);
+        StringAssert.Contains("public UnitRenderVisualKind ResolveVisibleCharacterVisualKind(", characterPolicySystem);
+        StringAssert.Contains("return UnitRenderVisualKind.Detail;", characterPolicySystem);
+        StringAssert.Contains("public bool ShouldForceCharacterDetailVisual(bool isCharacter)", characterPolicySystem);
+        StringAssert.Contains("return isCharacter;", characterPolicySystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetLodReferenceSystem", lodReferenceSystem);
+        StringAssert.Contains("public readonly struct UnitReferences", lodReferenceSystem);
+        StringAssert.Contains("public UnitReferences ResolveUnitReferences(EntityManager em, Entity unit)", lodReferenceSystem);
+        StringAssert.Contains("em.HasComponent<UnitDetailedVisualReference>(unit)", lodReferenceSystem);
+        StringAssert.Contains("em.GetComponentData<UnitMidLodInstanceReference>(unit).Instance", lodReferenceSystem);
+        StringAssert.Contains("em.GetComponentData<UnitLowLodInstanceReference>(unit).Instance", lodReferenceSystem);
+        StringAssert.Contains("public bool TryResolveMeshLod(EntityManager em, Entity entity, out MeshLODComponent meshLod)", lodReferenceSystem);
+        StringAssert.Contains("public bool TryResolveMeshLodGroup(EntityManager em, Entity group, out MeshLODGroupComponent lodGroup)", lodReferenceSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetAnimationReadinessSystem", animationReadinessSystem);
+        StringAssert.Contains("public bool HasAnimationIndexRecursive(", animationReadinessSystem);
+        StringAssert.Contains("ComponentLookup<MaterialAnimationIndex> animationIndexLookup", animationReadinessSystem);
+        StringAssert.Contains("public bool IsAnimatedRenderReady(", animationReadinessSystem);
+        StringAssert.Contains("UnitRenderBudgetRenderableQuerySystem renderableQuerySystem", animationReadinessSystem);
+        StringAssert.Contains("public bool HasMaterialAlphaCompleteRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)", animationReadinessSystem);
+        StringAssert.Contains("private static void CheckVisualReadinessRecursive(", animationReadinessSystem);
+        StringAssert.Contains("em.HasComponent<MeshLODComponent>(entity)", animationReadinessSystem);
+        StringAssert.Contains("!em.HasComponent<MaterialAlphaCompleteTag>(entity)", animationReadinessSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetRenderableQuerySystem", renderableQuerySystem);
+        StringAssert.Contains("public bool IsRenderableVisibleRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)", renderableQuerySystem);
+        StringAssert.Contains("public bool HasRenderableRecursive(EntityManager em, Entity entity, BufferLookup<Child> childLookup)", renderableQuerySystem);
+        StringAssert.Contains("public bool IsSafeVisibleCharacterLod(EntityManager em, Entity entity)", renderableQuerySystem);
+        StringAssert.Contains("public bool IsRenderableEntity(EntityManager em, Entity entity)", renderableQuerySystem);
+        StringAssert.Contains("em.HasComponent<RenderFilterSettings>(entity)", renderableQuerySystem);
+        StringAssert.Contains("!em.HasComponent<UnitRenderBudgetCulledTag>(entity)", renderableQuerySystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetVisualStateSystem", visualStateSystem);
+        StringAssert.Contains("private const int VisualTransitionStableFrames = 2;", visualStateSystem);
+        StringAssert.Contains("private const int MaxVisualStateTransitionsPerUpdate = 32;", visualStateSystem);
+        StringAssert.Contains("public UnitRenderVisualKind ResolveStableUnitRenderVisualState(", visualStateSystem);
+        StringAssert.Contains("ecb.AddComponent(unit, new UnitRenderVisualState", visualStateSystem);
+        StringAssert.Contains("Time.frameCount - state.LastChangedFrame >= VisualTransitionStableFrames", visualStateSystem);
+        StringAssert.Contains("visualTransitionsCommitted < MaxVisualStateTransitionsPerUpdate", visualStateSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetReadinessSystem", readinessSystem);
+        StringAssert.Contains("public bool IsVisualReadyForExclusiveDisplay(", readinessSystem);
+        StringAssert.Contains("NativeHashSet<Entity> readyTaggedThisFrame", readinessSystem);
+        StringAssert.Contains("em.HasComponent<UnitRenderVisualReadyTag>(root)", readinessSystem);
+        StringAssert.Contains("ecb.AddComponent<UnitRenderVisualReadyTag>(root)", readinessSystem);
+        StringAssert.Contains("animationReadinessSystem.IsAnimatedRenderReady(em, root, childLookup, renderableQuerySystem)", readinessSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetRenderSafetySystem", renderSafetySystem);
+        StringAssert.Contains("private const int AlwaysVisibleLodMask = 0xFF;", renderSafetySystem);
+        StringAssert.Contains("private const float AlwaysVisibleLodDistance = 1048576f;", renderSafetySystem);
+        StringAssert.Contains("private static readonly float3 RenderBoundsMinExtents = new float3(64f, 64f, 64f);", renderSafetySystem);
+        StringAssert.Contains("public int EnsureRenderSafetyRecursiveOnce(", renderSafetySystem);
+        StringAssert.Contains("private static int EnsureRenderSafetyRecursive(", renderSafetySystem);
+        StringAssert.Contains("private static int PatchLodGroup(", renderSafetySystem);
+        StringAssert.Contains("ecb.AddComponent<UnitRenderSafetyPatchedTag>(entity)", renderSafetySystem);
+        StringAssert.Contains("lodReferenceSystem.TryResolveMeshLod(em, entity, out MeshLODComponent meshLod)", renderSafetySystem);
+        StringAssert.Contains("lodReferenceSystem.TryResolveMeshLodGroup(em, group, out MeshLODGroupComponent lodGroup)", renderSafetySystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetVisualPlanSystem", visualPlanSystem);
+        StringAssert.Contains("public struct Request", visualPlanSystem);
+        StringAssert.Contains("public readonly struct Result", visualPlanSystem);
+        StringAssert.Contains("public Result CreateDesiredVisualPlan(", visualPlanSystem);
+        StringAssert.Contains("characterPolicySystem.ResolveVisibleCharacterVisualKind(", visualPlanSystem);
+        StringAssert.Contains("characterPolicySystem.ShouldForceCharacterDetailVisual(request.IsCharacter)", visualPlanSystem);
+        StringAssert.Contains("readinessSystem.IsVisualReadyForExclusiveDisplay(em, ecb, readyTaggedThisFrame", visualPlanSystem);
+        StringAssert.Contains("public UnitRenderVisualKind ResolveDesiredVisualForDiagnostics", visualPlanSystem);
+        StringAssert.Contains("private static UnitRenderVisualKind ResolveDesiredVisual", visualPlanSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetDecisionSystem", decisionSystem);
+        StringAssert.Contains("public struct Context", decisionSystem);
+        StringAssert.Contains("public struct Result", decisionSystem);
+        StringAssert.Contains("public Result Process(ref Context context)", decisionSystem);
+        StringAssert.Contains("for (int i = 0; i < context.Distances.Length; i++)", decisionSystem);
+        StringAssert.Contains("context.VisualPlanSystem.CreateDesiredVisualPlan(", decisionSystem);
+        StringAssert.Contains("context.VisualStateSystem.ResolveStableUnitRenderVisualState(", decisionSystem);
+        StringAssert.Contains("context.RenderSafetySystem.EnsureRenderSafetyRecursiveOnce(", decisionSystem);
+        StringAssert.Contains("context.VisibilityChangeSystem.CollectRenderVisibilityChangesRecursive(", decisionSystem);
+        StringAssert.Contains("context.ImpostorTagSystem.CollectUnitImpostorTagRequest(", decisionSystem);
+        Assert.IsFalse(
+            decisionSystem.Contains("em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit)", StringComparison.Ordinal) ||
+            decisionSystem.Contains("context.UnitsToShowFarImpostor.Add(unit);", StringComparison.Ordinal) ||
+            decisionSystem.Contains("context.UnitsToShowDetailed.Add(unit);", StringComparison.Ordinal),
+            "UnitRenderBudgetDecisionSystem must not own far-impostor tag request policy after step 24.");
+        Assert.IsFalse(
+            decisionSystem.Contains("private static void CollectRenderVisibilityChanges", StringComparison.Ordinal) ||
+            decisionSystem.Contains("em.HasComponent<DisableRendering>(entity)", StringComparison.Ordinal),
+            "UnitRenderBudgetDecisionSystem must not own recursive visibility-change collection after step 23.");
+        StringAssert.Contains("public readonly struct UnitRenderBudgetVisibilityChangeSystem", visibilityChangeSystem);
+        StringAssert.Contains("public void CollectRenderVisibilityChanges(", visibilityChangeSystem);
+        StringAssert.Contains("public void CollectRenderVisibilityChangesRecursive(", visibilityChangeSystem);
+        StringAssert.Contains("em.HasComponent<UnitRenderBudgetCulledTag>(entity)", visibilityChangeSystem);
+        StringAssert.Contains("em.HasComponent<Disabled>(entity) || em.HasComponent<DisableRendering>(entity)", visibilityChangeSystem);
+        StringAssert.Contains("entitiesToShow.Add(entity);", visibilityChangeSystem);
+        StringAssert.Contains("entitiesToHide.Add(entity);", visibilityChangeSystem);
+        StringAssert.Contains("CollectRenderVisibilityChangesRecursive(em, children[i].Value, visible, childLookup, entitiesToShow, entitiesToHide, ref changed);", visibilityChangeSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetImpostorTagSystem", impostorTagSystem);
+        StringAssert.Contains("public void CollectUnitImpostorTagRequest(", impostorTagSystem);
+        StringAssert.Contains("em.HasComponent<UnitRenderBudgetCulledUnitTag>(unit)", impostorTagSystem);
+        StringAssert.Contains("unitsToShowDetailed.Add(unit);", impostorTagSystem);
+        StringAssert.Contains("unitsToShowFarImpostor.Add(unit);", impostorTagSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetVisibilityApplySystem", visibilityApplySystem);
+        StringAssert.Contains("public readonly struct Result", visibilityApplySystem);
+        StringAssert.Contains("public Result Apply(", visibilityApplySystem);
+        StringAssert.Contains("em.RemoveComponent<UnitRenderBudgetCulledUnitTag>(unit)", visibilityApplySystem);
+        StringAssert.Contains("em.AddComponent<UnitRenderBudgetCulledUnitTag>(unit)", visibilityApplySystem);
+        StringAssert.Contains("em.RemoveComponent<DisableRendering>(entity)", visibilityApplySystem);
+        StringAssert.Contains("em.AddComponent<DisableRendering>(entity)", visibilityApplySystem);
+        StringAssert.Contains("renderStateEcb.Playback(em);", visibilityApplySystem);
+        StringAssert.Contains("renderStateEcb.Dispose();", visibilityApplySystem);
+        StringAssert.Contains("public struct UnitRenderBudgetDiagnosticStateSystem", diagnosticStateSystem);
+        StringAssert.Contains("private static readonly bool EnableRenderBudgetDiagnostics = false;", diagnosticStateSystem);
+        StringAssert.Contains("private const int DiagnosticIntervalFrames = 120;", diagnosticStateSystem);
+        StringAssert.Contains("private const int DiagnosticSampleMaxLength = 900;", diagnosticStateSystem);
+        StringAssert.Contains("private int _nextDiagnosticFrame;", diagnosticStateSystem);
+        StringAssert.Contains("public struct FrameCounters", diagnosticStateSystem);
+        StringAssert.Contains("public FrameCounters CreateFrameCounters(", diagnosticStateSystem);
+        StringAssert.Contains("VisibleCharacterMidSuppressed = 0", diagnosticStateSystem);
+        StringAssert.Contains("public bool ShouldRunDiagnostics(int frame)", diagnosticStateSystem);
+        StringAssert.Contains("return EnableRenderBudgetDiagnostics && frame >= _nextDiagnosticFrame;", diagnosticStateSystem);
+        StringAssert.Contains("public void ScheduleNextDiagnostics(int frame)", diagnosticStateSystem);
+        StringAssert.Contains("_nextDiagnosticFrame = frame + DiagnosticIntervalFrames;", diagnosticStateSystem);
+        StringAssert.Contains("public void ResetDiagnosticFrame()", diagnosticStateSystem);
+        StringAssert.Contains("public bool ShouldAppendDiagnosticSample(string sample)", diagnosticStateSystem);
+        StringAssert.Contains("private UnitRenderBudgetDiagnosticLogSystem _diagnosticLogSystem;", renderBudget);
+        StringAssert.Contains("_diagnosticLogSystem.LogEmptyQueryState(", renderBudget);
+        StringAssert.Contains("ref _diagnosticLogSystem", renderBudget);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetLightDiagnosticSystem", lightDiagnosticSystem);
+        StringAssert.Contains("public void LogRenderBudgetStateLight(", lightDiagnosticSystem);
+        StringAssert.Contains("NativeList<UnitDistance> distances", lightDiagnosticSystem);
+        StringAssert.Contains("float alwaysDetailedDistanceSq", lightDiagnosticSystem);
+        StringAssert.Contains("[UnitRenderBudgetState]", lightDiagnosticSystem);
+        StringAssert.Contains("light=1", lightDiagnosticSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueLog(", lightDiagnosticSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetMismatchDiagnosticSystem", mismatchDiagnosticSystem);
+        StringAssert.Contains("public void LogMidLodDiagnostics(", mismatchDiagnosticSystem);
+        StringAssert.Contains("UnitRenderBudgetDiagnosticStateSystem diagnosticStateSystem", mismatchDiagnosticSystem);
+        StringAssert.Contains("private static void AppendDiagnosticSample(", mismatchDiagnosticSystem);
+        StringAssert.Contains("private static string DescribeVisualRoot(", mismatchDiagnosticSystem);
+        StringAssert.Contains("[UnitRenderVisibilityDiag]", mismatchDiagnosticSystem);
+        StringAssert.Contains("samples={sample}", mismatchDiagnosticSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueLog(", mismatchDiagnosticSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueWarning(", mismatchDiagnosticSystem);
+        StringAssert.Contains("diagnosticStateSystem.ShouldAppendDiagnosticSample(sample)", mismatchDiagnosticSystem);
+        StringAssert.Contains("visibleCharacterImpostorBand={visibleCharacterImpostorNearDistance:F0}-{visibleCharacterImpostorFarDistance:F0}", mismatchDiagnosticSystem);
+        StringAssert.Contains("public readonly struct UnitRenderBudgetFreezeDiagnosticSystem", freezeDiagnosticSystem);
+        StringAssert.Contains("private static readonly bool EnableRenderBudgetFreezeLogs = false;", freezeDiagnosticSystem);
+        StringAssert.Contains("private const double FreezeLogThresholdSeconds = 0.05d;", freezeDiagnosticSystem);
+        StringAssert.Contains("public void LogFreezeIfNeeded(", freezeDiagnosticSystem);
+        StringAssert.Contains("if (!EnableRenderBudgetFreezeLogs || elapsed < FreezeLogThresholdSeconds)", freezeDiagnosticSystem);
+        StringAssert.Contains("[FreezeDetect:ECS]", freezeDiagnosticSystem);
+        StringAssert.Contains("diagnosticLogSystem.EnqueueLog(", freezeDiagnosticSystem);
+        StringAssert.Contains("visibleCharacterImpostorBand={visibleCharacterImpostorNearDistance:F0}-{visibleCharacterImpostorFarDistance:F0}", freezeDiagnosticSystem);
+        StringAssert.Contains("public struct UnitRenderBudgetDiagnosticLogQueueComponent", diagnosticLogComponents);
+        StringAssert.Contains("public struct UnitRenderBudgetDiagnosticLogComponent", diagnosticLogComponents);
+        StringAssert.Contains("public const byte WarningSeverity = 1;", diagnosticLogComponents);
+        StringAssert.Contains("public FixedString4096Bytes Message;", diagnosticLogComponents);
+        StringAssert.Contains("public byte Severity;", diagnosticLogComponents);
+        StringAssert.Contains("public struct UnitRenderBudgetDiagnosticLogSystem", diagnosticLogSystem);
+        StringAssert.Contains("public void LogEmptyQueryState(", diagnosticLogSystem);
+        StringAssert.Contains("public void EnqueueLog(", diagnosticLogSystem);
+        StringAssert.Contains("public void EnqueueWarning(", diagnosticLogSystem);
+        StringAssert.Contains("private static Entity GetOrCreateLogQueue(EntityManager em)", diagnosticLogSystem);
+        StringAssert.Contains("em.AddBuffer<UnitRenderBudgetDiagnosticLogComponent>(queueEntity);", diagnosticLogSystem);
+        StringAssert.Contains("public partial struct UnitRenderBudgetDiagnosticLogFlushSystem : ISystem", diagnosticLogFlushSystem);
+        StringAssert.Contains("ComponentType.ReadOnly<UnitRenderBudgetDiagnosticLogQueueComponent>()", diagnosticLogFlushSystem);
+        StringAssert.Contains("Debug.LogWarning(log.Message.ToString())", diagnosticLogFlushSystem);
+        StringAssert.Contains("Debug.Log(log.Message.ToString())", diagnosticLogFlushSystem);
+        StringAssert.Contains("logs.Clear();", diagnosticLogFlushSystem);
+        StringAssert.Contains("BudgetBandsRespectDetailedMidAndLowCaps", renderBudgetTests);
+        StringAssert.Contains("RunFocusedValidation", renderBudgetTests);
+        StringAssert.Contains("MovingVisibleCharactersUseDetailedModelPath", renderBudgetTests);
+        StringAssert.Contains("UnselectedEnemyBeyondImpostorThresholdUsesFarVisual", renderBudgetTests);
+        StringAssert.Contains("MissingMeshLodInstanceKeepsDetailVisibleUntilReady", renderBudgetTests);
+        StringAssert.Contains("VisualStateTransitionKeepsCurrentVisualUntilStableOrForced", renderBudgetTests);
+        StringAssert.Contains("VisibilityApplyAddsAndRemovesRenderTags", renderBudgetTests);
+        StringAssert.Contains("ReadinessSystemAddsReadyTagForRenderableVisual", renderBudgetTests);
+        StringAssert.Contains("RenderSafetyPatchesBoundsAndAddsSafetyTag", renderBudgetTests);
+
+        string[] allowedTopLevelPublicSurface =
+        {
+            "public void OnCreate(ref SystemState state)",
+            "public void OnUpdate(ref SystemState state)"
+        };
+        MatchCollection topLevelPublicOrInternalMembers = Regex.Matches(
+            renderBudget,
+            @"^    (?:public|internal)\s+(?:static\s+)?(?:[\w<>,\[\]\.]+\s+)+\w+\s*\(",
+            RegexOptions.Multiline);
+        Assert.AreEqual(
+            allowedTopLevelPublicSurface.Length,
+            topLevelPublicOrInternalMembers.Count,
+            "Do not add public/internal helper surface to UnitRenderBudgetSystem while it is being decomposed.");
+        foreach (string allowedMember in allowedTopLevelPublicSurface)
+            StringAssert.Contains(allowedMember, renderBudget);
+
+        StringAssert.Contains("Allowed current public/static surface", roadmap);
+        StringAssert.Contains("Preserve the current visible-character policy", roadmap);
+        StringAssert.Contains("Preserve hot-path allocator lifetimes and data layout.", roadmap);
+        StringAssert.Contains("Preserve diagnostic content and gating.", roadmap);
+        StringAssert.Contains("35. Complete: Final tick ownership decision", roadmap);
+        StringAssert.Contains("Decision: keep `UnitRenderBudgetSystem` as the named ECS render-budget tick.", roadmap);
     }
 
     [Test]

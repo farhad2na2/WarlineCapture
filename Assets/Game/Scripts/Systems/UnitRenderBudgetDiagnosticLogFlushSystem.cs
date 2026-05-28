@@ -1,0 +1,38 @@
+using Unity.Collections;
+using Unity.Entities;
+using UnityEngine;
+
+[UpdateInGroup(typeof(SimulationSystemGroup))]
+[UpdateAfter(typeof(UnitRenderBudgetSystem))]
+public partial struct UnitRenderBudgetDiagnosticLogFlushSystem : ISystem
+{
+    private EntityQuery _logQueueQuery;
+
+    public void OnCreate(ref SystemState state)
+    {
+        _logQueueQuery = state.GetEntityQuery(
+            ComponentType.ReadOnly<UnitRenderBudgetDiagnosticLogQueueComponent>(),
+            ComponentType.ReadWrite<UnitRenderBudgetDiagnosticLogComponent>());
+        state.RequireForUpdate(_logQueueQuery);
+    }
+
+    public void OnUpdate(ref SystemState state)
+    {
+        using NativeArray<Entity> queueEntities = _logQueueQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < queueEntities.Length; i++)
+        {
+            DynamicBuffer<UnitRenderBudgetDiagnosticLogComponent> logs =
+                state.EntityManager.GetBuffer<UnitRenderBudgetDiagnosticLogComponent>(queueEntities[i]);
+            for (int logIndex = 0; logIndex < logs.Length; logIndex++)
+            {
+                UnitRenderBudgetDiagnosticLogComponent log = logs[logIndex];
+                if (log.Severity == UnitRenderBudgetDiagnosticLogComponent.WarningSeverity)
+                    Debug.LogWarning(log.Message.ToString());
+                else
+                    Debug.Log(log.Message.ToString());
+            }
+
+            logs.Clear();
+        }
+    }
+}

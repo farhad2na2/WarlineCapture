@@ -1,0 +1,87 @@
+{
+  "pipelineId": "Terrain7VsTerrain8PerformanceComparison",
+  "date": "2026-05-28",
+  "environmentNote": "Editor offscreen Camera.Render benchmark. Use as same-machine comparison only; final FPS winner requires device profiling.",
+  "warmupFrames": 8,
+  "sampleFrames": 48,
+  "renderResolution": "1600x900",
+  "terrain7": {
+    "scenePath": "Assets/Game/Scenes/Game_Terrain7.unity",
+    "staticStats": {
+      "renderers": 378,
+      "meshFilters": 378,
+      "materialSlots": 378,
+      "uniqueMeshes": 378,
+      "uniqueMaterials": 4,
+      "vertices": 66664223,
+      "triangles": 32210455,
+      "maxVerticesPerRenderer": 2042922,
+      "maxTrianglesPerRenderer": 772207,
+      "colliders": 0,
+      "lodSwitchers": 0,
+      "meshAssetDiskBytes": 8441061021
+    },
+    "instancingStats": {
+      "totalRenderers": 378,
+      "eligibleRenderers": 0,
+      "repeatedGroups": 0,
+      "largestGroupSize": 0
+    },
+    "renderStats": {
+      "warmupFrames": 8,
+      "sampleFrames": 48,
+      "width": 1600,
+      "height": 900,
+      "averageRenderMilliseconds": 0.6411,
+      "p95RenderMilliseconds": 2.0603,
+      "estimatedFps": 1559.85,
+      "averageDrawCalls": 0,
+      "averageBatches": 0,
+      "averageSetPassCalls": 0,
+      "averageTriangles": 0,
+      "averageVertices": 0
+    }
+  },
+  "terrain8": {
+    "scenePath": "Assets/Game/Scenes/Game_Terrain8.unity",
+    "staticStats": {
+      "renderers": 30008,
+      "meshFilters": 30008,
+      "materialSlots": 30008,
+      "uniqueMeshes": 399,
+      "uniqueMaterials": 5,
+      "vertices": 66664223,
+      "triangles": 32210455,
+      "maxVerticesPerRenderer": 98309,
+      "maxTrianglesPerRenderer": 91841,
+      "colliders": 0,
+      "lodSwitchers": 0,
+      "meshAssetDiskBytes": 1087091013
+    },
+    "instancingStats": {
+      "totalRenderers": 30008,
+      "eligibleRenderers": 29691,
+      "repeatedGroups": 82,
+      "largestGroupSize": 1187
+    },
+    "renderStats": {
+      "warmupFrames": 8,
+      "sampleFrames": 48,
+      "width": 1600,
+      "height": 900,
+      "averageRenderMilliseconds": 0.7002,
+      "p95RenderMilliseconds": 0.9465,
+      "estimatedFps": 1428.14,
+      "averageDrawCalls": 0,
+      "averageBatches": 0,
+      "averageSetPassCalls": 0,
+      "averageTriangles": 0,
+      "averageVertices": 0
+    }
+  },
+  "interpretation": {
+    "lowerRenderMillisecondsWinsEditorRoute": "Game_Terrain7",
+    "lowerGeneratedMeshMemoryWins": "Game_Terrain8",
+    "instancingPreparedScene": "Game_Terrain8"
+  }
+}

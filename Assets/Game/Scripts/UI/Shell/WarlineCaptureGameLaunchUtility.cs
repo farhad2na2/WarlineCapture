@@ -1,10 +1,12 @@
-using Game.Scripts.UI;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public static class WarlineCaptureGameLaunchUtility
 {
+    private static readonly SceneLifecycleSystem SceneLifecycleSystem = new();
+    private static readonly MatchStartSystem MatchStartSystem = new();
+
     public static void StartExistingGameplayAndHideRouter(Component source)
     {
         Scene preferredScene = source != null ? source.gameObject.scene : default;
@@ -14,17 +16,8 @@ public static class WarlineCaptureGameLaunchUtility
             return;
         }
 
-        GameObject legacyCanvas = FindLoadedSceneObject("UI_Canvas", preferredScene);
-        if (legacyCanvas != null)
-            legacyCanvas.SetActive(true);
-
         AISettingsRuntimeState.ApplyToWorld(World.DefaultGameObjectInjectionWorld);
-
-        MenuView menuView = FindLoadedSceneComponent<MenuView>();
-        if (menuView != null)
-            menuView.RequestGameStart();
-        else
-            FindLoadedSceneComponent<GameBootstrap>()?.BeginGameplay();
+        QueueMatchLoadAndStart();
 
         WarlineCaptureRouter router = source != null ? source.GetComponentInParent<WarlineCaptureRouter>() : null;
         if (router != null)
@@ -44,10 +37,7 @@ public static class WarlineCaptureGameLaunchUtility
             legacyCanvas.SetActive(false);
 
         AISettingsRuntimeState.ApplyToWorld(World.DefaultGameObjectInjectionWorld);
-
-        GameBootstrap bootstrap = FindLoadedSceneComponent<GameBootstrap>();
-        if (bootstrap != null)
-            bootstrap.BeginGameplay();
+        QueueMatchLoadAndStart();
 
         WarlineCaptureRouter router = source != null ? source.GetComponentInParent<WarlineCaptureRouter>(true) : null;
         if (router != null)
@@ -61,17 +51,21 @@ public static class WarlineCaptureGameLaunchUtility
             legacyCanvas.SetActive(false);
     }
 
-    private static T FindLoadedSceneComponent<T>() where T : Component
+    private static void QueueMatchLoadAndStart()
     {
-        foreach (T component in Resources.FindObjectsOfTypeAll<T>())
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
         {
-            if (component.gameObject.scene.IsValid() && component.gameObject.scene.isLoaded)
-                return component;
+            Debug.LogError("[GameLaunch] Cannot queue Match start because the default ECS world is missing.");
+            return;
         }
 
-        return null;
+        EntityManager entityManager = world.EntityManager;
+        bool loadQueued = SceneLifecycleSystem.QueueLoadMatch(entityManager);
+        bool startQueued = MatchStartSystem.QueueStartAfterMatchLoaded(entityManager);
+        if (!loadQueued || !startQueued)
+            Debug.LogError($"[GameLaunch] Failed to queue Match start. loadQueued={(loadQueued ? 1 : 0)} startQueued={(startQueued ? 1 : 0)}");
     }
-
     private static GameObject FindLoadedSceneObject(string objectName, Scene preferredScene)
     {
         GameObject fallback = null;

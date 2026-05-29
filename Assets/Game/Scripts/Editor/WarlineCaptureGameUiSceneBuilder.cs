@@ -168,6 +168,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         AddMotionHost(shellRoot);
         AddShellViewAndBridge(shellRoot);
         AddContentPresenterAndSmoke(shellRoot);
+        AddMenuBootstrapView(root, uiCamera, canvasObject, shellRoot);
 
         EditorSceneManager.MarkSceneDirty(scene);
         if (!EditorSceneManager.SaveScene(scene, ScenePath))
@@ -247,6 +248,26 @@ public static class WarlineCaptureGameUiSceneBuilder
         BuildStep8();
         CaptureStep9();
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP9_BUILT scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Install Menu Bootstrap View")]
+    public static void InstallMenuBootstrapView()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        GameObject root = RequireSceneRoot(scene);
+        Camera uiCamera = RequireChild(root.transform, CameraName).GetComponent<Camera>();
+        GameObject canvasObject = RequireChild(root.transform, CanvasName).gameObject;
+        GameObject shellRoot = RequireChild(canvasObject.transform, ShellRootName).gameObject;
+
+        AddMenuBootstrapView(root, uiCamera, canvasObject, shellRoot);
+
+        EditorSceneManager.MarkSceneDirty(scene);
+        if (!EditorSceneManager.SaveScene(scene, ScenePath))
+            throw new InvalidOperationException($"Failed to save Menu scene at {ScenePath}.");
+
+        AssetDatabase.ImportAsset(ScenePath, ImportAssetOptions.ForceSynchronousImport | ImportAssetOptions.ForceUpdate);
+        ValidateMenuBootstrapView();
+        Debug.Log($"WARLINECAPTURE_MENU_BOOTSTRAP_VIEW_INSTALLED scene={ScenePath}");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Scene Step 1")]
@@ -491,8 +512,8 @@ public static class WarlineCaptureGameUiSceneBuilder
         WarlineCaptureGameUiSmokeDriverView smokeDriver = shellTransform.GetComponent<WarlineCaptureGameUiSmokeDriverView>();
         if (smokeDriver == null)
             throw new InvalidOperationException($"{ShellRootName} must contain WarlineCaptureGameUiSmokeDriverView in Step 7.");
-        if (!smokeDriver.PlayOnStart)
-            throw new InvalidOperationException("GameUI smoke driver must autoplay in the isolated Step 7 scene.");
+        if (scene.GetRootGameObjects()[0].GetComponent<MenuBootstrapView>() == null && !smokeDriver.PlayOnStart)
+            throw new InvalidOperationException("GameUI smoke driver must autoplay until MenuBootstrapView owns the Menu shell startup.");
 
         ValidateContentPresenterInstalls(shellView, contentPresenter);
 
@@ -518,6 +539,44 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidatePopupLayout(canvasRect, shellView, contentPresenter);
 
         Debug.Log($"WARLINECAPTURE_GAMEUI_SCENE_STEP8_VALIDATED scene={ScenePath}");
+    }
+
+    [MenuItem("WarlineCapture/UI/Validate Menu Bootstrap View")]
+    public static void ValidateMenuBootstrapView()
+    {
+        Scene scene = EditorSceneManager.OpenScene(ScenePath, OpenSceneMode.Single);
+        GameObject root = RequireSceneRoot(scene);
+        Transform canvasTransform = RequireChild(root.transform, CanvasName);
+        Transform shellTransform = RequireChild(canvasTransform, ShellRootName);
+
+        MenuBootstrapView[] menuBootstrapViews = root.GetComponents<MenuBootstrapView>();
+        if (menuBootstrapViews.Length != 1)
+            throw new InvalidOperationException($"{RootName} must contain exactly one MenuBootstrapView.");
+
+        MenuBootstrapView menuBootstrapView = menuBootstrapViews[0];
+        Camera uiCamera = RequireChild(root.transform, CameraName).GetComponent<Camera>();
+        Canvas uiCanvas = canvasTransform.GetComponent<Canvas>();
+        WarlineCaptureShellView shellView = shellTransform.GetComponent<WarlineCaptureShellView>();
+        WarlineCaptureShellEcsBridgeView shellEcsBridge = shellTransform.GetComponent<WarlineCaptureShellEcsBridgeView>();
+        WarlineCaptureShellContentPresenterView contentPresenter = shellTransform.GetComponent<WarlineCaptureShellContentPresenterView>();
+        WarlineCaptureRouter router = root.GetComponentInChildren<WarlineCaptureRouter>(true);
+
+        if (menuBootstrapView.UiCamera != uiCamera)
+            throw new InvalidOperationException("MenuBootstrapView must reference the Menu scene UI camera.");
+        if (menuBootstrapView.UiCanvas != uiCanvas)
+            throw new InvalidOperationException("MenuBootstrapView must reference the Menu scene UI canvas.");
+        if (menuBootstrapView.ShellView != shellView)
+            throw new InvalidOperationException("MenuBootstrapView must reference the Menu shell view.");
+        if (menuBootstrapView.ShellEcsBridge != shellEcsBridge)
+            throw new InvalidOperationException("MenuBootstrapView must reference the Menu shell ECS bridge.");
+        if (menuBootstrapView.ContentPresenter != contentPresenter)
+            throw new InvalidOperationException("MenuBootstrapView must reference the Menu content presenter.");
+        if (router != null && menuBootstrapView.Router != router)
+            throw new InvalidOperationException("MenuBootstrapView router reference must match the Menu scene router when one exists.");
+        if (menuBootstrapView.Router != null && router == null)
+            throw new InvalidOperationException("MenuBootstrapView must not reference a router outside the Menu scene.");
+
+        Debug.Log($"WARLINECAPTURE_MENU_BOOTSTRAP_VIEW_VALIDATED scene={ScenePath}");
     }
 
     [MenuItem("WarlineCapture/UI/Validate GameUI Captures Step 9")]
@@ -686,6 +745,40 @@ public static class WarlineCaptureGameUiSceneBuilder
 
         WarlineCaptureGameUiSmokeDriverView smokeDriver = shellRoot.AddComponent<WarlineCaptureGameUiSmokeDriverView>();
         smokeDriver.Configure(true, 2f, 0.25f);
+    }
+
+    private static void AddMenuBootstrapView(GameObject root, Camera uiCamera, GameObject canvasObject, GameObject shellRoot)
+    {
+        MenuBootstrapView menuBootstrapView = root.GetComponent<MenuBootstrapView>();
+        if (menuBootstrapView == null)
+            menuBootstrapView = root.AddComponent<MenuBootstrapView>();
+
+        menuBootstrapView.Configure(
+            uiCamera,
+            canvasObject.GetComponent<Canvas>(),
+            shellRoot.GetComponent<WarlineCaptureShellView>(),
+            shellRoot.GetComponent<WarlineCaptureShellEcsBridgeView>(),
+            shellRoot.GetComponent<WarlineCaptureShellContentPresenterView>(),
+            root.GetComponentInChildren<WarlineCaptureRouter>(true),
+            2f);
+
+        WarlineCaptureGameUiSmokeDriverView smokeDriver = shellRoot.GetComponent<WarlineCaptureGameUiSmokeDriverView>();
+        if (smokeDriver != null)
+        {
+            smokeDriver.Configure(false, 2f, 0.25f);
+            EditorUtility.SetDirty(smokeDriver);
+        }
+
+        EditorUtility.SetDirty(menuBootstrapView);
+    }
+
+    private static GameObject RequireSceneRoot(Scene scene)
+    {
+        GameObject[] roots = scene.GetRootGameObjects();
+        if (roots.Length != 1 || roots[0].name != RootName)
+            throw new InvalidOperationException($"Menu scene must contain exactly one root named {RootName}.");
+
+        return roots[0];
     }
 
     private static Transform RequireChild(Transform parent, string childName)

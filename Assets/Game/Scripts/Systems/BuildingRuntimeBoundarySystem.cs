@@ -616,13 +616,25 @@ public sealed class BuildingRuntimeBoundarySystem
     private static bool TryGetGridConfig(EntityManager em, out GridConfig grid)
     {
         using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
-        if (query.IsEmptyIgnoreFilter)
+        using NativeArray<Entity> gridEntities = query.ToEntityArray(Allocator.Temp);
+        if (gridEntities.Length == 0)
         {
             grid = default;
             return false;
         }
 
-        grid = em.GetComponentData<GridConfig>(query.GetSingletonEntity());
+        Entity gridEntity = gridEntities[0];
+        for (int i = 0; i < gridEntities.Length; i++)
+        {
+            Entity candidate = gridEntities[i];
+            if (!em.HasComponent<RuntimeGridBootstrapGridTag>(candidate))
+            {
+                gridEntity = candidate;
+                break;
+            }
+        }
+
+        grid = em.GetComponentData<GridConfig>(gridEntity);
         return true;
     }
 

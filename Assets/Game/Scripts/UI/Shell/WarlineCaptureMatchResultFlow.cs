@@ -9,7 +9,11 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
     [SerializeField] private Transform modalOverlay;
     [SerializeField] private MissionResultPopupController missionResultPopupPrefab;
 
+    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private MissionResultPopupController _activePopup;
+    private EntityQuery boundaryQuery;
+    private World cachedWorld;
+    private bool hasBoundaryQuery;
 
     public bool HasActivePopup => _activePopup != null && _activePopup.gameObject.activeInHierarchy;
 
@@ -107,8 +111,7 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
             continueButton.onClick.AddListener(() =>
             {
                 CloseActivePopup();
-                if (router != null)
-                    router.GoTo(returnRoute, false);
+                QueueReturnToMenu();
             });
         }
 
@@ -132,6 +135,55 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
         _activePopup = null;
         if (modalOverlay != null)
             modalOverlay.gameObject.SetActive(false);
+    }
+
+    private void QueueReturnToMenu()
+    {
+        if (!TryGetBoundary(out EntityManager entityManager, out Entity boundary))
+        {
+            Debug.LogError("[MatchResult] Cannot return to menu because the UI shell boundary is missing.");
+            return;
+        }
+
+        DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
+            entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+        routeRequests.Add(new UiShellRouteRequestComponent
+        {
+            Intent = UiShellRouteIntent.ReturnToMainMenu,
+            Route = WarlineCaptureRoute.MainMenu,
+            PushHistory = 0
+        });
+
+        if (sceneLifecycleSystem.QueueUnloadMatch(entityManager))
+            Debug.Log("[MatchResult] submitted Match scene unload request.");
+        else
+            Debug.LogError("[MatchResult] failed to submit Match scene unload request.");
+    }
+
+    private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)
+    {
+        entityManager = default;
+        boundary = Entity.Null;
+
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        if (cachedWorld != world || !hasBoundaryQuery)
+        {
+            cachedWorld = world;
+            boundaryQuery = world.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<UiShellBoundaryComponent>(),
+                ComponentType.ReadWrite<UiShellRouteRequestComponent>());
+            hasBoundaryQuery = true;
+        }
+
+        if (boundaryQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        entityManager = world.EntityManager;
+        boundary = boundaryQuery.GetSingletonEntity();
+        return true;
     }
 
     private static RewardGrantResult[] ApplyRewardsAndPersist(MissionConfig mission, MissionResultData result)

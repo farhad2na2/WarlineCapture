@@ -437,7 +437,8 @@ public sealed class WarlineCaptureUiComponentPrefabTests
             Assert.NotNull(prefab, prefabPath);
             Assert.IsNull(prefab.GetComponentInChildren<WarlineCaptureRouter>(true), prefabPath);
             Assert.IsNull(prefab.GetComponentInChildren<WarlineCaptureUiBootstrap>(true), prefabPath);
-            Assert.IsNull(prefab.GetComponentInChildren<GameBootstrap>(true), prefabPath);
+            foreach (MonoBehaviour behaviour in prefab.GetComponentsInChildren<MonoBehaviour>(true))
+                Assert.AreNotEqual("GameBootstrap", behaviour.GetType().Name, prefabPath);
         }
     }
 

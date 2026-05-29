@@ -15,24 +15,24 @@ public static class RuntimeCitySpawnerStep13Validation
         {
             EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
 
-            GameBootstrap bootstrap = FindSingleBootstrap();
-            RuntimeCitySpawnerSystemConfig validationCityConfig = CreateValidationRuntimeCityConfig(bootstrap.RuntimeCitySpawnerConfig);
-            ValidateRuntimeCityConfigReferences(bootstrap.RuntimeCitySpawnerConfig);
+            MatchSceneView matchScene = FindSingleMatchSceneView();
+            RuntimeCitySpawnerSystemConfig validationCityConfig = CreateValidationRuntimeCityConfig(matchScene.RuntimeCitySpawnerConfig);
+            ValidateRuntimeCityConfigReferences(matchScene.RuntimeCitySpawnerConfig);
             ValidateRuntimeCityGenerationConfig(validationCityConfig);
-            ValidateRoadConfig(bootstrap.RoadBuildConfig);
-            ValidateBlockerConfig(bootstrap.RuntimeGridBlockerConfig);
+            ValidateRoadConfig(matchScene.RoadBuildConfig);
+            ValidateBlockerConfig(matchScene.RuntimeGridBlockerConfig);
             ValidateCityPrefabsAreSpawnable(
                 validationCityConfig,
-                bootstrap.BuildingPlacementConfig);
+                matchScene.BuildingPlacementConfig);
             ValidateNoMissingScripts();
 
             Debug.Log(
                 "[RuntimeCityGameSceneSmokeValidation] result=Passed " +
                 $"cityPrefabs={CountCityPrefabs(validationCityConfig)} " +
-                $"productionCityCount={bootstrap.RuntimeCitySpawnerConfig.CityCount} " +
+                $"productionCityCount={matchScene.RuntimeCitySpawnerConfig.CityCount} " +
                 $"validationCityCount={validationCityConfig.CityCount} " +
-                $"buildingSpawnables={bootstrap.BuildingPlacementConfig.Spawnables.Count} " +
-                $"blockerPrefabs={bootstrap.RuntimeGridBlockerConfig.Prefabs.Count}");
+                $"buildingSpawnables={matchScene.BuildingPlacementConfig.Spawnables.Count} " +
+                $"blockerPrefabs={matchScene.RuntimeGridBlockerConfig.Prefabs.Count}");
             EditorApplication.Exit(0);
         }
         catch (Exception ex)
@@ -49,19 +49,19 @@ public static class RuntimeCitySpawnerStep13Validation
         {
             EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
 
-            GameBootstrap bootstrap = FindSingleBootstrap();
-            RuntimeCitySpawnerSystemConfig disabledConfig = CreateValidationRuntimeCityConfig(bootstrap.RuntimeCitySpawnerConfig);
+            MatchSceneView matchScene = FindSingleMatchSceneView();
+            RuntimeCitySpawnerSystemConfig disabledConfig = CreateValidationRuntimeCityConfig(matchScene.RuntimeCitySpawnerConfig);
             var serialized = new SerializedObject(disabledConfig);
             serialized.FindProperty("cityCount").intValue = 0;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
-            ValidateRuntimeCityConfigReferences(bootstrap.RuntimeCitySpawnerConfig);
-            AssertCondition(bootstrap.RuntimeCitySpawnerConfig.CityCount >= 0, "Production runtime city config must expose a valid city count.");
+            ValidateRuntimeCityConfigReferences(matchScene.RuntimeCitySpawnerConfig);
+            AssertCondition(matchScene.RuntimeCitySpawnerConfig.CityCount >= 0, "Production runtime city config must expose a valid city count.");
             AssertCondition(disabledConfig.CityCount == 0, "Disabled runtime city validation config must force cityCount to 0.");
             AssertCondition(disabledConfig.SpawnOnStart, "Disabled runtime city validation keeps spawn-on-start enabled to validate the no-city startup path.");
             AssertCondition(disabledConfig.GenerateBuildings, "Disabled runtime city validation keeps building generation enabled to prove cityCount gates generation.");
-            ValidateRoadConfig(bootstrap.RoadBuildConfig);
-            ValidateBlockerConfig(bootstrap.RuntimeGridBlockerConfig);
+            ValidateRoadConfig(matchScene.RoadBuildConfig);
+            ValidateBlockerConfig(matchScene.RuntimeGridBlockerConfig);
             ValidateNoMissingScripts();
 
             var runtimeCity = new RuntimeCityCompositionSystem();
@@ -77,7 +77,7 @@ public static class RuntimeCitySpawnerStep13Validation
 
             Debug.Log(
                 "[RuntimeCityDisabledValidation] result=Passed " +
-                $"productionCityCount={bootstrap.RuntimeCitySpawnerConfig.CityCount} " +
+                $"productionCityCount={matchScene.RuntimeCitySpawnerConfig.CityCount} " +
                 $"validationCityCount={disabledConfig.CityCount}");
             EditorApplication.Exit(0);
         }
@@ -89,17 +89,17 @@ public static class RuntimeCitySpawnerStep13Validation
         }
     }
 
-    private static GameBootstrap FindSingleBootstrap()
+    private static MatchSceneView FindSingleMatchSceneView()
     {
-        GameBootstrap[] bootstraps = UnityEngine.Object.FindObjectsByType<GameBootstrap>(
+        MatchSceneView[] matchScenes = UnityEngine.Object.FindObjectsByType<MatchSceneView>(
             FindObjectsInactive.Include);
-        AssertCondition(bootstraps.Length == 1, $"Expected exactly one GameBootstrap in {MatchScenePath}, found {bootstraps.Length}.");
-        return bootstraps[0];
+        AssertCondition(matchScenes.Length == 1, $"Expected exactly one MatchSceneView in {MatchScenePath}, found {matchScenes.Length}.");
+        return matchScenes[0];
     }
 
     private static RuntimeCitySpawnerSystemConfig CreateValidationRuntimeCityConfig(RuntimeCitySpawnerSystemConfig source)
     {
-        AssertCondition(source != null, "GameBootstrap must reference RuntimeCitySpawnerSystemConfig.");
+        AssertCondition(source != null, "MatchSceneView must reference RuntimeCitySpawnerSystemConfig.");
 
         RuntimeCitySpawnerSystemConfig validationConfig = UnityEngine.Object.Instantiate(source);
         validationConfig.name = source.name + "_ValidationRuntimeCityEnabled";
@@ -115,7 +115,7 @@ public static class RuntimeCitySpawnerStep13Validation
 
     private static void ValidateRuntimeCityConfigReferences(RuntimeCitySpawnerSystemConfig config)
     {
-        AssertCondition(config != null, "GameBootstrap must reference RuntimeCitySpawnerSystemConfig.");
+        AssertCondition(config != null, "MatchSceneView must reference RuntimeCitySpawnerSystemConfig.");
         AssertCondition(config.HallPrefabs.Count > 0, "Runtime city config needs hall prefabs.");
         AssertNoNullPrefabs(config.HallPrefabs, "hall");
         AssertCondition(config.ShopPrefabs.Count > 0, "Runtime city config needs shop prefabs.");
@@ -138,7 +138,7 @@ public static class RuntimeCitySpawnerStep13Validation
 
     private static void ValidateRoadConfig(RoadBuildSystemConfig config)
     {
-        AssertCondition(config != null, "GameBootstrap must reference RoadBuildSystemConfig.");
+        AssertCondition(config != null, "MatchSceneView must reference RoadBuildSystemConfig.");
         AssertCondition(config.RoadGridSize > 0f, "Road grid size must be positive.");
         AssertCondition(config.StraightPrefab != null, "RoadBuildSystemConfig needs a straight road prefab.");
         AssertCondition(config.TIntersectionPrefab != null, "RoadBuildSystemConfig needs a T intersection road prefab.");
@@ -151,7 +151,7 @@ public static class RuntimeCitySpawnerStep13Validation
 
     private static void ValidateBlockerConfig(RuntimeGridBlockerSystemConfig config)
     {
-        AssertCondition(config != null, "GameBootstrap must reference RuntimeGridBlockerSystemConfig.");
+        AssertCondition(config != null, "MatchSceneView must reference RuntimeGridBlockerSystemConfig.");
         AssertCondition(config.SpawnOnStart, "Runtime grid blocker spawning should stay enabled for the Match scene.");
         AssertCondition(config.BlockerCount > 0, "Runtime blocker config must spawn blockers.");
         AssertCondition(config.Prefabs.Count > 0, "Runtime blocker config needs blocker prefabs.");
@@ -162,7 +162,7 @@ public static class RuntimeCitySpawnerStep13Validation
         RuntimeCitySpawnerSystemConfig cityConfig,
         BuildingPlacementSystemConfig buildingConfig)
     {
-        AssertCondition(buildingConfig != null, "GameBootstrap must reference BuildingPlacementSystemConfig.");
+        AssertCondition(buildingConfig != null, "MatchSceneView must reference BuildingPlacementSystemConfig.");
         AssertCondition(buildingConfig.Spawnables.Count > 0, "BuildingPlacementSystemConfig needs spawnables for runtime city buildings.");
 
         var spawnablePrefabs = new HashSet<GameObject>(buildingConfig.Spawnables);

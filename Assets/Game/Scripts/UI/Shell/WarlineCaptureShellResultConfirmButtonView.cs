@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public sealed class WarlineCaptureShellResultConfirmButtonView : MonoBehaviour
 {
     private Button button;
+    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private EntityQuery boundaryQuery;
     private World cachedWorld;
     private bool hasBoundaryQuery;
@@ -52,6 +53,11 @@ public sealed class WarlineCaptureShellResultConfirmButtonView : MonoBehaviour
             Route = WarlineCaptureRoute.MainMenu,
             PushHistory = 0
         });
+
+        if (sceneLifecycleSystem.QueueUnloadMatch(entityManager))
+            Debug.Log("[UiShellResult] submitted Match scene unload request.");
+        else
+            Debug.LogError("[UiShellResult] failed to submit Match scene unload request.");
     }
 
     private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)

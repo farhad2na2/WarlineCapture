@@ -50,16 +50,16 @@ public sealed class GameSceneIsolationPlayModeTests
         Assert.NotNull(menu, "Default UI_Canvas must provide the MenuView used by the promoted prototype.");
         Assert.NotNull(menu.buttonGame, "Default MenuView must keep the scene-owned Game button.");
 
-        GameBootstrap bootstrap = FindSceneComponent<GameBootstrap>(defaultScene);
-        Assert.NotNull(bootstrap, "Promoted Match scene must keep the default GameBootstrap.");
-        Assert.NotNull(bootstrap.WorldCamera);
-        Assert.AreEqual("Main Camera", bootstrap.WorldCamera.name);
-        Assert.NotNull(bootstrap.GlobalVolume);
-        Assert.AreEqual("Global Volume", bootstrap.GlobalVolume.name);
-        Assert.NotNull(bootstrap.DirectionalLight);
-        Assert.AreEqual("Directional light", bootstrap.DirectionalLight.name);
-        Assert.NotNull(bootstrap.DecorationRoot);
-        Assert.AreEqual("Decorations", bootstrap.DecorationRoot.name);
+        MatchSceneView matchScene = FindSceneComponent<MatchSceneView>(defaultScene);
+        Assert.NotNull(matchScene, "Promoted Match scene must keep the default MatchSceneView.");
+        Assert.NotNull(matchScene.WorldCamera);
+        Assert.AreEqual("Main Camera", matchScene.WorldCamera.name);
+        Assert.NotNull(matchScene.GlobalVolume);
+        Assert.AreEqual("Global Volume", matchScene.GlobalVolume.name);
+        Assert.NotNull(matchScene.DirectionalLight);
+        Assert.AreEqual("Directional light", matchScene.DirectionalLight.name);
+        Assert.NotNull(matchScene.DecorationRoot);
+        Assert.AreEqual("Decorations", matchScene.DecorationRoot.name);
 
         menu.buttonGame.onClick.Invoke();
         for (int frame = 0; frame < 20; frame++)

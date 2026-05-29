@@ -5,6 +5,9 @@ using UnityEngine;
 
 internal sealed class MenuStartupSystem
 {
+    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
+    private readonly MatchStartSystem matchStartSystem = new();
+
     public MainMenuPlayUI Initialize(
         MenuView menuView,
         Action gameRequested,
@@ -30,7 +33,7 @@ internal sealed class MenuStartupSystem
     {
         if (menuView != null)
         {
-            menuView.GameRequested += gameRequested;
+            menuView.GameRequested += RequestMatchStart;
             menuView.Init(
                 selectionUiCommandSystem,
                 selectionUiReadModelSystem,
@@ -79,7 +82,23 @@ internal sealed class MenuStartupSystem
     public void Shutdown(MenuView menuView, Action gameRequested)
     {
         if (menuView != null)
-            menuView.GameRequested -= gameRequested;
+            menuView.GameRequested -= RequestMatchStart;
+    }
+
+    private void RequestMatchStart()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+        {
+            Debug.LogError("[MenuPlay] Cannot queue Match start because the default ECS world is missing.");
+            return;
+        }
+
+        EntityManager entityManager = world.EntityManager;
+        bool loadQueued = sceneLifecycleSystem.QueueLoadMatch(entityManager);
+        bool startQueued = matchStartSystem.QueueStartAfterMatchLoaded(entityManager);
+        if (!loadQueued || !startQueued)
+            Debug.LogError($"[MenuPlay] Failed to queue Match start. loadQueued={(loadQueued ? 1 : 0)} startQueued={(startQueued ? 1 : 0)}");
     }
 
     private void BindMenuDependencies(

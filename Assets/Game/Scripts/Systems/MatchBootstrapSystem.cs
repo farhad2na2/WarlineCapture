@@ -4,72 +4,57 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Game.Scripts.UI;
+using UnityEngine.SceneManagement;
 
-[DisallowMultipleComponent]
-public sealed class GameBootstrap : MonoBehaviour
+internal sealed class MatchBootstrapSystem
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
     private readonly RuntimeCameraReferenceSystem _runtimeCameraReferenceSystem = new();
     private readonly AIStartupSystem _aiStartupSystem = new();
     private readonly MissionStartupSystem _missionStartupSystem = new();
-    private readonly PerformanceDiagnosticsSystem _performanceDiagnosticsSystem = new();
     private readonly InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem = new();
     private readonly GameplaySceneBindingSystem _gameplaySceneBindingSystem = new();
     private readonly RuntimeRootSystem _runtimeRootSystem = new();
-    private readonly ManagedGameplayStartupSystem _managedGameplayStartupSystem = new();
     private readonly MenuStartupSystem _menuStartupSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
-    private readonly GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem = new();
     private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
     private readonly CustomGameStartupSystem _customGameStartupSystem = new();
 
-    [Header("Scene Refs")]
-    [SerializeField] private MenuView menuView;
-    [SerializeField] private Camera worldCamera;
-    [SerializeField] private Light directionalLight;
-    [SerializeField] private Volume globalVolume;
-    [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
-    [SerializeField] private Transform decorationRoot;
-    [SerializeField] private GameObject[] legacyVisualRootsDisabledForM01 = Array.Empty<GameObject>();
+    private readonly ManagedGameplayStartupSystem managedGameplayStartupSystem = new();
+    private readonly GameplayRuntimeUpdateSystem gameplayRuntimeUpdateSystem = new();
+    private readonly PerformanceDiagnosticsSystem fallbackPerformanceDiagnosticsSystem = new();
+    private bool fallbackPerformanceDiagnosticsInitialized;
+    private MatchSceneView sceneView;
 
-    [Header("Configs")]
-    [SerializeField] private RTSSelectionSystemConfig rtsSelectionConfig;
-    [SerializeField] private RoadBuildSystemConfig roadBuildConfig;
-    [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
-    [SerializeField] private UnitAttackTraceSystemConfig unitAttackTraceConfig;
-    [SerializeField] private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;
-    [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
-    [SerializeField] private RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig;
-    [SerializeField] private DayNightSystemConfig dayNightConfig;
-    [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
-    [SerializeField] private GameStringsConfig gameStringsConfig;
-    [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
-    [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
-    [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
+    public MatchSceneView SceneView => sceneView;
+    public bool HasSceneView => sceneView != null;
+    private MatchSceneView MatchScene => sceneView;
 
-    [Header("Runtime Grid")]
-    [SerializeField] private int runtimeGridWidth = 2048;
-    [SerializeField] private int runtimeGridHeight = 2048;
-    [SerializeField] private float runtimeGridCellSize = 1f;
-    [SerializeField] private Vector3 runtimeGridOrigin = Vector3.zero;
+    private MenuView MenuView => MatchScene != null ? MatchScene.MenuView : null;
+    public Camera WorldCamera => MatchScene != null ? MatchScene.WorldCamera : null;
+    public Light DirectionalLight => MatchScene != null ? MatchScene.DirectionalLight : null;
+    public Volume GlobalVolume => MatchScene != null ? MatchScene.GlobalVolume : null;
+    public CombinedMeshBaker DecorationCombinedMeshBaker => MatchScene != null ? MatchScene.DecorationCombinedMeshBaker : null;
+    public Transform DecorationRoot => MatchScene != null ? MatchScene.DecorationRoot : null;
+    private GameObject[] LegacyVisualRootsDisabledForM01 => MatchScene != null ? MatchScene.LegacyVisualRootsDisabledForM01 : Array.Empty<GameObject>();
 
-    public Camera WorldCamera => worldCamera;
-    public Light DirectionalLight => directionalLight;
-    public Volume GlobalVolume => globalVolume;
-    public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
-    public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
-
-    public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
-    public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
-    public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
-    public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
-    public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
-    public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
-    public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
-    public DayNightSystemConfig DayNightConfig => dayNightConfig;
-    public GameStringsConfig GameStringsConfig => gameStringsConfig;
-    public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
-    public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
+    public RTSSelectionSystemConfig RtsSelectionConfig => MatchScene != null ? MatchScene.RtsSelectionConfig : null;
+    public RoadBuildSystemConfig RoadBuildConfig => MatchScene != null ? MatchScene.RoadBuildConfig : null;
+    public BuildingPlacementSystemConfig BuildingPlacementConfig => MatchScene != null ? MatchScene.BuildingPlacementConfig : null;
+    public UnitAttackTraceSystemConfig UnitAttackTraceConfig => MatchScene != null ? MatchScene.UnitAttackTraceConfig : null;
+    public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => MatchScene != null ? MatchScene.RuntimeCitySpawnerConfig : null;
+    public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => MatchScene != null ? MatchScene.RuntimeDecorationSpawnerConfig : null;
+    public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => MatchScene != null ? MatchScene.RuntimeGridBlockerConfig : null;
+    public DayNightSystemConfig DayNightConfig => MatchScene != null ? MatchScene.DayNightConfig : null;
+    public GameStringsConfig GameStringsConfig => MatchScene != null ? MatchScene.GameStringsConfig : null;
+    public AIPlanEntryStartupConfig AIPlanEntryConfig => MatchScene != null ? MatchScene.AIPlanEntryConfig : null;
+    public IReadOnlyList<AIControllerConfig> AIControllerConfigs => MatchScene != null ? MatchScene.AIControllerConfigs : Array.Empty<AIControllerConfig>();
+    private FactionVisualSettingsConfig FactionVisualConfig => MatchScene != null ? MatchScene.FactionVisualConfig : null;
+    private PrefabPreviewCameraConfig PrefabPreviewCameraConfig => MatchScene != null ? MatchScene.PrefabPreviewCameraConfig : null;
+    private int RuntimeGridWidth => MatchScene != null ? MatchScene.RuntimeGridWidth : 2048;
+    private int RuntimeGridHeight => MatchScene != null ? MatchScene.RuntimeGridHeight : 2048;
+    private float RuntimeGridCellSize => MatchScene != null ? MatchScene.RuntimeGridCellSize : 1f;
+    private Vector3 RuntimeGridOrigin => MatchScene != null ? MatchScene.RuntimeGridOrigin : Vector3.zero;
 
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
@@ -117,32 +102,33 @@ public sealed class GameBootstrap : MonoBehaviour
     private Action _disposeBuildingGameplay;
     private BuildingRuntimeUpdateSystem.Context _buildingRuntimeUpdateContext;
     private Entity _buildingRuntimeBoundaryEntity;
+    private PerformanceDiagnosticsSystem _performanceDiagnosticsSystem;
     private bool _gameplayStartPending;
     private Transform _runtimeBlockerRoot;
     private Transform _runtimeCityRoot;
     private Transform _runtimeUiRoot;
 
-    private void Awake()
+    public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)
     {
-        Application.runInBackground = true;
-        _performanceDiagnosticsSystem.Initialize();
+        Initialize(view);
+        _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
 
-        _runtimeRootSystem.Ensure(transform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot);
+        _runtimeRootSystem.Ensure(ownerTransform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot);
 
-        ManagedGameplayStartupSystem.Result managedSystems = _managedGameplayStartupSystem.Initialize(
-            dayNightConfig,
-            factionVisualConfig,
-            roadBuildConfig,
-            buildingPlacementConfig,
-            rtsSelectionConfig,
-            unitAttackTraceConfig,
-            gameStringsConfig,
-            prefabPreviewCameraConfig,
-            worldCamera,
-            directionalLight,
-            globalVolume,
+        ManagedGameplayStartupSystem.Result managedSystems = InitializeManagedRuntime(
+            DayNightConfig,
+            FactionVisualConfig,
+            RoadBuildConfig,
+            BuildingPlacementConfig,
+            RtsSelectionConfig,
+            UnitAttackTraceConfig,
+            GameStringsConfig,
+            PrefabPreviewCameraConfig,
+            WorldCamera,
+            DirectionalLight,
+            GlobalVolume,
             _runtimeUiRoot,
-            gameObject.layer);
+            ownerLayer);
 
         DayNight = managedSystems.DayNight;
         FactionVisuals = managedSystems.FactionVisuals;
@@ -187,13 +173,13 @@ public sealed class GameBootstrap : MonoBehaviour
         _citizenPopulationReadModel = managedSystems.CitizenPopulationComposition?.ReadModel;
         _citizenPopulationEventSystem = managedSystems.CitizenPopulationComposition?.EventSystem;
         EnsureBuildingRuntimeBoundaryEntity();
-        _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
+        _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
     }
 
-    private void Start()
+    public void Start()
     {
         MainMenu = _menuStartupSystem.Initialize(
-            menuView,
+            MenuView,
             BeginGameplay,
             _bindRoadMainMenu,
             BuildingUiCommand,
@@ -210,7 +196,7 @@ public sealed class GameBootstrap : MonoBehaviour
             SelectionScreenMarkers,
             DayNight,
             _citizenPopulationReadModel,
-            worldCamera,
+            WorldCamera,
             _gameplaySceneBindingSystem,
             World.DefaultGameObjectInjectionWorld,
             Debug.LogException);
@@ -219,59 +205,61 @@ public sealed class GameBootstrap : MonoBehaviour
     public void BeginGameplay()
     {
         GameRuntimeStats.Reset();
-        _runtimeGridBootstrapSystem.Ensure(
+        ProjectRuntimeStartupConfig(
             World.DefaultGameObjectInjectionWorld,
-            runtimeGridWidth,
-            runtimeGridHeight,
-            runtimeGridCellSize,
-            runtimeGridOrigin);
-        _initialFactionSpawnCellSystem.Configure(
-            World.DefaultGameObjectInjectionWorld,
-            buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
-        _aiStartupSystem.LogConfigValidation(aiControllerConfigs);
+            _runtimeGridBootstrapSystem,
+            RuntimeGridWidth,
+            RuntimeGridHeight,
+            RuntimeGridCellSize,
+            RuntimeGridOrigin,
+            _initialFactionSpawnCellSystem,
+            BuildingPlacementConfig,
+            _aiStartupSystem,
+            AIControllerConfigs);
         if (WarlineCaptureMissionSession.HasActiveMission)
         {
             LogRuntimeEcsBootstrapState("beforeMissionInit");
             _missionStartupSystem.Initialize(
                 World.DefaultGameObjectInjectionWorld,
-                worldCamera,
+                WorldCamera,
                 DayNight,
-                legacyVisualRootsDisabledForM01);
+                LegacyVisualRootsDisabledForM01);
             LogRuntimeEcsBootstrapState("afterMissionInit");
         }
         else
         {
-            _missionStartupSystem.ApplySkirmishSceneDefaults(DayNight, legacyVisualRootsDisabledForM01);
+            _missionStartupSystem.ApplySkirmishSceneDefaults(DayNight, LegacyVisualRootsDisabledForM01);
             _customGameStartupSystem.InitializeFromLegacyConfigs(
                 World.DefaultGameObjectInjectionWorld,
-                buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null,
-                buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
+                BuildingPlacementConfig != null ? BuildingPlacementConfig.InitialUnitsConfig : null,
+                BuildingPlacementConfig != null ? BuildingPlacementConfig.UnitPrefabRegistryConfig : null);
             Debug.Log("[SkirmishStart] Mission startup skipped because no active mission session is set.");
             LogRuntimeEcsBootstrapState("skirmishMissionSkipped");
         }
-        AIStartupSystem.Result aiStartupResult = _aiStartupSystem.Initialize(
+        AIStartupSystem.Result aiStartupResult = InitializeAiStartupConfig(
             World.DefaultGameObjectInjectionWorld,
-            aiControllerConfigs,
-            aiPlanEntryConfig,
+            _aiStartupSystem,
+            AIControllerConfigs,
+            AIPlanEntryConfig,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell);
         if (aiStartupResult.HasPlayerAutoMode)
             _runtimeGameplayStateSystem.PlayerAutoModeEnabled = aiStartupResult.PlayerAutoModeEnabled;
         InitializeGameplaySystemsIfNeeded();
         _gameplayStartPending = true;
-        _runtimeCameraReferenceSystem.SetWorldCamera(worldCamera);
+        _runtimeCameraReferenceSystem.SetWorldCamera(WorldCamera);
         _runtimeGameplayStateSystem.ResetForGameplayStart();
         _missionStartupSystem.FocusInitialCamera(
             World.DefaultGameObjectInjectionWorld,
             SelectionUiCamera,
-            worldCamera,
+            WorldCamera,
             _initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell,
             0);
     }
 
-    private void Update()
+    public void Update()
     {
-        _gameplayRuntimeUpdateSystem.Update(
-            menuView,
+        UpdateRuntime(
+            MenuView,
             GameplayInitialized,
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
@@ -280,7 +268,7 @@ public sealed class GameBootstrap : MonoBehaviour
             BuildingRuntimeUpdate,
             _buildingRuntimeUpdateContext,
             _selectionRuntimeUpdate,
-            worldCamera,
+            WorldCamera,
             RuntimeCity,
             RuntimeGridBlockers,
             RuntimeDecorations,
@@ -291,19 +279,29 @@ public sealed class GameBootstrap : MonoBehaviour
             ref _gameplayStartPending);
     }
 
-    private void OnApplicationFocus(bool hasFocus)
+    public void OnApplicationFocus(bool hasFocus)
     {
-        _performanceDiagnosticsSystem.OnApplicationFocus(hasFocus);
+        OnApplicationFocus(_performanceDiagnosticsSystem, hasFocus);
     }
 
-    private void OnApplicationPause(bool pauseStatus)
+    public void OnApplicationPause(bool pauseStatus)
     {
-        _performanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
+        OnApplicationPause(_performanceDiagnosticsSystem, pauseStatus);
     }
 
-    private void LateUpdate()
+    public void OnApplicationFocus(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool hasFocus)
     {
-        _gameplayRuntimeUpdateSystem.LateUpdate(
+        ForwardApplicationFocus(performanceDiagnosticsSystem, hasFocus);
+    }
+
+    public void OnApplicationPause(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool pauseStatus)
+    {
+        ForwardApplicationPause(performanceDiagnosticsSystem, pauseStatus);
+    }
+
+    public void LateUpdate()
+    {
+        LateUpdateRuntime(
             GameplayInitialized,
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
@@ -311,9 +309,9 @@ public sealed class GameBootstrap : MonoBehaviour
             UnitImpostors);
     }
 
-    private void OnGUI()
+    public void OnGUI()
     {
-        _gameplayRuntimeUpdateSystem.OnGui(
+        OnGuiRuntime(
             GameplayInitialized,
             _runtimeGameplayStateSystem,
             _performanceDiagnosticsSystem,
@@ -321,21 +319,26 @@ public sealed class GameBootstrap : MonoBehaviour
             SelectionRectangle);
     }
 
-    private void OnDestroy()
+    public void OnDestroy()
     {
-        _menuStartupSystem.Shutdown(menuView, BeginGameplay);
+        ShutdownRuntime(
+            _menuStartupSystem,
+            MenuView,
+            BeginGameplay,
+            MainMenu,
+            _disposeSelection,
+            _disposeBuildingGameplay,
+            _disposeRoad,
+            UnitAttackTraces,
+            UnitImpostors,
+            _disposeCitizenPopulation,
+            DayNight,
+            RuntimeDecorations,
+            RuntimeGridBlockers,
+            RuntimeCity,
+            _runtimeCameraReferenceSystem,
+            _performanceDiagnosticsSystem);
 
-        MainMenu?.Dispose();
-        _disposeSelection?.Invoke();
-        _disposeBuildingGameplay?.Invoke();
-        _disposeRoad?.Invoke();
-        UnitAttackTraces?.Dispose();
-        UnitImpostors?.Dispose();
-        _disposeCitizenPopulation?.Invoke();
-        DayNight?.Dispose();
-        RuntimeDecorations?.Dispose();
-        RuntimeGridBlockers?.Dispose();
-        RuntimeCity?.Dispose();
         MainMenu = null;
         SelectionUiCommand = null;
         SelectionUiReadModel = null;
@@ -379,9 +382,253 @@ public sealed class GameBootstrap : MonoBehaviour
         RuntimeDecorations = null;
         RuntimeGridBlockers = null;
         RuntimeCity = null;
-        _runtimeCameraReferenceSystem.ClearWorldCamera();
-        _performanceDiagnosticsSystem.Dispose();
+    }
+
+
+    public void Initialize(MatchSceneView view)
+    {
+        sceneView = view;
+    }
+
+    public void Shutdown()
+    {
+        sceneView = null;
+    }
+
+    public PerformanceDiagnosticsSystem ResolvePerformanceDiagnosticsSystem()
+    {
+        PerformanceDiagnosticsSystem persistentDiagnostics = TryResolveMenuPerformanceDiagnostics();
+        if (persistentDiagnostics != null)
+            return persistentDiagnostics;
+
+        if (!fallbackPerformanceDiagnosticsInitialized)
+        {
+            Application.runInBackground = true;
+            fallbackPerformanceDiagnosticsSystem.Initialize();
+            fallbackPerformanceDiagnosticsInitialized = true;
+        }
+
+        return fallbackPerformanceDiagnosticsSystem;
+    }
+
+    private void ForwardApplicationFocus(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool hasFocus)
+    {
+        if (fallbackPerformanceDiagnosticsInitialized && performanceDiagnosticsSystem == fallbackPerformanceDiagnosticsSystem)
+            fallbackPerformanceDiagnosticsSystem.OnApplicationFocus(hasFocus);
+    }
+
+    private void ForwardApplicationPause(PerformanceDiagnosticsSystem performanceDiagnosticsSystem, bool pauseStatus)
+    {
+        if (fallbackPerformanceDiagnosticsInitialized && performanceDiagnosticsSystem == fallbackPerformanceDiagnosticsSystem)
+            fallbackPerformanceDiagnosticsSystem.OnApplicationPause(pauseStatus);
+    }
+
+    public ManagedGameplayStartupSystem.Result InitializeManagedRuntime(
+        DayNightSystemConfig dayNightConfig,
+        FactionVisualSettingsConfig factionVisualConfig,
+        RoadBuildSystemConfig roadBuildConfig,
+        BuildingPlacementSystemConfig buildingPlacementConfig,
+        RTSSelectionSystemConfig rtsSelectionConfig,
+        UnitAttackTraceSystemConfig unitAttackTraceConfig,
+        GameStringsConfig gameStringsConfig,
+        PrefabPreviewCameraConfig prefabPreviewCameraConfig,
+        Camera worldCamera,
+        Light directionalLight,
+        Volume globalVolume,
+        Transform runtimeUiRoot,
+        int ownerLayer)
+    {
+        return managedGameplayStartupSystem.Initialize(
+            dayNightConfig,
+            factionVisualConfig,
+            roadBuildConfig,
+            buildingPlacementConfig,
+            rtsSelectionConfig,
+            unitAttackTraceConfig,
+            gameStringsConfig,
+            prefabPreviewCameraConfig,
+            worldCamera,
+            directionalLight,
+            globalVolume,
+            runtimeUiRoot,
+            ownerLayer);
+    }
+
+    public void ProjectRuntimeStartupConfig(
+        World world,
+        RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
+        int runtimeGridWidth,
+        int runtimeGridHeight,
+        float runtimeGridCellSize,
+        Vector3 runtimeGridOrigin,
+        InitialFactionSpawnCellSystem initialFactionSpawnCellSystem,
+        BuildingPlacementSystemConfig buildingPlacementConfig,
+        AIStartupSystem aiStartupSystem,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs)
+    {
+        runtimeGridBootstrapSystem.Ensure(
+            world,
+            runtimeGridWidth,
+            runtimeGridHeight,
+            runtimeGridCellSize,
+            runtimeGridOrigin);
+        initialFactionSpawnCellSystem.Configure(
+            world,
+            buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
+        aiStartupSystem.LogConfigValidation(aiControllerConfigs);
+    }
+
+    public AIStartupSystem.Result InitializeAiStartupConfig(
+        World world,
+        AIStartupSystem aiStartupSystem,
+        IReadOnlyList<AIControllerConfig> aiControllerConfigs,
+        AIPlanEntryStartupConfig aiPlanEntryConfig,
+        AIStartupSystem.TryResolveFactionSpawnCell tryResolveFactionSpawnCell)
+    {
+        return aiStartupSystem.Initialize(
+            world,
+            aiControllerConfigs,
+            aiPlanEntryConfig,
+            tryResolveFactionSpawnCell);
+    }
+
+    public void UpdateRuntime(
+        MenuView menuView,
+        bool gameplayInitialized,
+        RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        MissionStartupSystem missionStartupSystem,
+        Action roadBuildRuntimeUpdate,
+        BuildingRuntimeUpdateSystem buildingRuntimeUpdate,
+        BuildingRuntimeUpdateSystem.Context buildingRuntimeUpdateContext,
+        Action selectionRuntimeUpdate,
+        Camera worldCamera,
+        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeDecorationSpawnerSystem runtimeDecorations,
+        DayNightSystem dayNight,
+        Action citizenPopulationRuntimeUpdate,
+        MainMenuPlayUI mainMenu,
+        UnitImpostorRenderSystem unitImpostors,
+        ref bool gameplayStartPending)
+    {
+        gameplayRuntimeUpdateSystem.Update(
+            menuView,
+            gameplayInitialized,
+            runtimeGameplayStateSystem,
+            performanceDiagnosticsSystem,
+            missionStartupSystem,
+            roadBuildRuntimeUpdate,
+            buildingRuntimeUpdate,
+            buildingRuntimeUpdateContext,
+            selectionRuntimeUpdate,
+            worldCamera,
+            runtimeCity,
+            runtimeGridBlockers,
+            runtimeDecorations,
+            dayNight,
+            citizenPopulationRuntimeUpdate,
+            mainMenu,
+            unitImpostors,
+            ref gameplayStartPending);
+    }
+
+    public void LateUpdateRuntime(
+        bool gameplayInitialized,
+        RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        UnitAttackTraceSystem unitAttackTraces,
+        UnitImpostorRenderSystem unitImpostors)
+    {
+        gameplayRuntimeUpdateSystem.LateUpdate(
+            gameplayInitialized,
+            runtimeGameplayStateSystem,
+            performanceDiagnosticsSystem,
+            unitAttackTraces,
+            unitImpostors);
+    }
+
+    public void OnGuiRuntime(
+        bool gameplayInitialized,
+        RuntimeGameplayStateSystem runtimeGameplayStateSystem,
+        PerformanceDiagnosticsSystem performanceDiagnosticsSystem,
+        Action roadBuildOnGui,
+        SelectionRectangleView selectionRectangleView)
+    {
+        gameplayRuntimeUpdateSystem.OnGui(
+            gameplayInitialized,
+            runtimeGameplayStateSystem,
+            performanceDiagnosticsSystem,
+            roadBuildOnGui,
+            selectionRectangleView);
+    }
+
+    public void ShutdownRuntime(
+        MenuStartupSystem menuStartupSystem,
+        MenuView menuView,
+        Action gameRequested,
+        MainMenuPlayUI mainMenu,
+        Action disposeSelection,
+        Action disposeBuildingGameplay,
+        Action disposeRoad,
+        UnitAttackTraceSystem unitAttackTraces,
+        UnitImpostorRenderSystem unitImpostors,
+        Action disposeCitizenPopulation,
+        DayNightSystem dayNight,
+        RuntimeDecorationSpawnerSystem runtimeDecorations,
+        RuntimeGridBlockerSystem runtimeGridBlockers,
+        RuntimeCityCompositionSystem runtimeCity,
+        RuntimeCameraReferenceSystem runtimeCameraReferenceSystem,
+        PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
+    {
+        Shutdown();
+        menuStartupSystem?.Shutdown(menuView, gameRequested);
+        mainMenu?.Dispose();
+        disposeSelection?.Invoke();
+        disposeBuildingGameplay?.Invoke();
+        disposeRoad?.Invoke();
+        unitAttackTraces?.Dispose();
+        unitImpostors?.Dispose();
+        disposeCitizenPopulation?.Invoke();
+        dayNight?.Dispose();
+        runtimeDecorations?.Dispose();
+        runtimeGridBlockers?.Dispose();
+        runtimeCity?.Dispose();
+        runtimeCameraReferenceSystem?.ClearWorldCamera();
+        ReleasePerformanceDiagnostics(performanceDiagnosticsSystem);
         SharedPrefabPreviewCache.ReleaseAll();
+    }
+
+    private void ReleasePerformanceDiagnostics(PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
+    {
+        if (!fallbackPerformanceDiagnosticsInitialized ||
+            performanceDiagnosticsSystem != fallbackPerformanceDiagnosticsSystem)
+        {
+            return;
+        }
+
+        fallbackPerformanceDiagnosticsSystem.Dispose();
+        fallbackPerformanceDiagnosticsInitialized = false;
+    }
+
+    private static PerformanceDiagnosticsSystem TryResolveMenuPerformanceDiagnostics()
+    {
+        MenuBootstrapView[] menuBootstrapViews = UnityEngine.Object.FindObjectsByType<MenuBootstrapView>(
+            FindObjectsInactive.Exclude);
+        for (int i = 0; i < menuBootstrapViews.Length; i++)
+        {
+            MenuBootstrapView view = menuBootstrapViews[i];
+            if (view == null)
+                continue;
+
+            UnityEngine.SceneManagement.Scene scene = view.gameObject.scene;
+            if (!scene.IsValid() || !scene.isLoaded)
+                continue;
+
+            return view.PerformanceDiagnostics;
+        }
+
+        return null;
     }
 
     private void EnsureBuildingRuntimeBoundaryEntity()
@@ -479,9 +726,9 @@ public sealed class GameBootstrap : MonoBehaviour
             return;
 
         GameplayFeatureStartupSystem.Result gameplaySystems = _gameplayFeatureStartupSystem.Initialize(
-            runtimeCitySpawnerConfig,
-            runtimeGridBlockerConfig,
-            runtimeDecorationSpawnerConfig,
+            RuntimeCitySpawnerConfig,
+            RuntimeGridBlockerConfig,
+            RuntimeDecorationSpawnerConfig,
             _roadRuntimeGeneration,
             _roadRuntimeGenerationContext,
             _bindRoadGameplayFeatures,
@@ -497,7 +744,7 @@ public sealed class GameBootstrap : MonoBehaviour
             _runtimeCityRoot,
             _runtimeBlockerRoot,
             DecorationRoot,
-            decorationCombinedMeshBaker,
+            DecorationCombinedMeshBaker,
             _gameplaySceneBindingSystem);
 
         RuntimeCity = gameplaySystems.RuntimeCity;

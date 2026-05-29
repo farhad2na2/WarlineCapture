@@ -5,13 +5,23 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using UnityEditor;
 
 public sealed class GameplayArchitectureContractTests
 {
     private const string ContractPath = "Design/Architecture/gameplay_solid_ecs_contract.md";
     private const string PerformanceContractPath = "Design/Architecture/performance_regression_contract.md";
-    private const string GameBootstrapAuditPath = "Design/Architecture/gamebootstrap_responsibility_audit.md";
+    private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string GameBootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+    private const string GameBootstrapMetaPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs.meta";
+    private const string MenuBootstrapViewPath = "Assets/Game/Scripts/Bootstrap/MenuBootstrapView.cs";
+    private const string MatchSceneViewPath = "Assets/Game/Scripts/Bootstrap/MatchSceneView.cs";
+    private const string MatchBootstrapSystemPath = "Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs";
+    private const string MatchStartSystemPath = "Assets/Game/Scripts/Systems/MatchStartSystem.cs";
+    private const string WarlineCaptureMatchSceneViewInstallerPath = "Assets/Game/Scripts/Editor/WarlineCaptureMatchSceneViewInstaller.cs";
+    private const string WarlineCaptureShellRouteButtonViewPath = "Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRouteButtonView.cs";
+    private const string WarlineCaptureGameUiSceneBuilderPath = "Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs";
     private const string RuntimeCityCompositionPath = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs";
     private const string BuildingGameplayCompositionRoadmapPath = "Design/Architecture/building_gameplay_composition_system_refactor_roadmap.md";
     private const string BuildingGameplayCompositionSystemPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
@@ -173,7 +183,6 @@ public sealed class GameplayArchitectureContractTests
     private const string ScriptsRoot = "Assets/Game/Scripts";
     private const string BootstrapRoot = "Assets/Game/Scripts/Bootstrap";
     private const string ScenesRoot = "Assets/Game/Scripts/Scenes";
-    private const int LegacyGameBootstrapDirectLogCallCount = 7;
     private const int UnitPathfindingBaselineLineCount = 2784;
     private const int UnitPathfindingDirectDebugLogCallBaseline = 7;
 
@@ -745,28 +754,7 @@ public sealed class GameplayArchitectureContractTests
 
     private static readonly string[] LegacyBootstrapRootFiles =
     {
-        "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs",
         "Assets/Game/Scripts/Bootstrap/FactionVisualSettings.cs"
-    };
-
-    private static readonly string[] LegacyGameBootstrapDomainPolicyMethods = Array.Empty<string>();
-
-    private static readonly string[] GameBootstrapDomainPolicyMethodTokens =
-    {
-        "AI",
-        "AIBuild",
-        "AIProduction",
-        "AISquad",
-        "AITarget",
-        "FactionEconom",
-        "FactionControl",
-        "M01",
-        "Mission",
-        "Tactical",
-        "CameraPose",
-        "CameraStart",
-        "FrameAnchor",
-        "SpawnCell"
     };
 
     private static readonly string[] DomainPolicyTokens =
@@ -784,6 +772,143 @@ public sealed class GameplayArchitectureContractTests
     };
 
     [Test]
+    public void MenuSceneIsFirstEnabledBuildSceneAndMatchSceneIsSecond()
+    {
+        string[] enabledScenePaths = EditorBuildSettings.scenes
+            .Where(scene => scene.enabled)
+            .Select(scene => scene.path)
+            .ToArray();
+
+        Assert.GreaterOrEqual(enabledScenePaths.Length, 2, "Build settings must include Menu and Match as the first two enabled scenes.");
+        Assert.AreEqual(MenuScenePath, enabledScenePaths[0], "Menu must be the persistent first build scene.");
+        Assert.AreEqual(MatchScenePath, enabledScenePaths[1], "Match must be the enabled gameplay scene after Menu.");
+    }
+
+    [Test]
+    public void MenuBootstrapViewHasNoGameplaySceneReferences()
+    {
+        Assert.IsTrue(File.Exists(MenuBootstrapViewPath), $"{MenuBootstrapViewPath} must exist as the Menu scene view.");
+
+        string source = File.ReadAllText(MenuBootstrapViewPath);
+        StringAssert.Contains("public sealed class MenuBootstrapView : MonoBehaviour", source);
+        StringAssert.Contains("private readonly MenuBootstrapSystem menuBootstrapSystem = new();", source);
+
+        string[] forbiddenTokens =
+        {
+            "GameBootstrap",
+            "MatchSceneView",
+            "MenuView",
+            "RoadBuildSystemConfig",
+            "BuildingPlacementSystemConfig",
+            "RuntimeCitySpawnerSystemConfig",
+            "AIControllerConfig",
+            "WorldCamera",
+            "DirectionalLight",
+            "GlobalVolume"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"MenuBootstrapView must not reference gameplay/match token `{token}`.");
+    }
+
+    [Test]
+    public void MatchSceneViewOwnsMatchReferencesAndNoMenuShellLogic()
+    {
+        Assert.IsTrue(File.Exists(MatchSceneViewPath), $"{MatchSceneViewPath} must exist as the Match scene view.");
+
+        string source = File.ReadAllText(MatchSceneViewPath);
+        StringAssert.Contains("public sealed class MatchSceneView : MonoBehaviour", source);
+        StringAssert.Contains("private MenuView menuView;", source);
+        StringAssert.Contains("private Camera worldCamera;", source);
+        StringAssert.Contains("private Light directionalLight;", source);
+        StringAssert.Contains("private Volume globalVolume;", source);
+        StringAssert.Contains("private BuildingPlacementSystemConfig buildingPlacementConfig;", source);
+        StringAssert.Contains("private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;", source);
+        StringAssert.Contains("private List<AIControllerConfig> aiControllerConfigs", source);
+        StringAssert.Contains("public int RuntimeGridWidth", source);
+        StringAssert.Contains("private readonly MatchBootstrapSystem matchBootstrapSystem = new();", source);
+        StringAssert.Contains("matchBootstrapSystem.Awake(this, transform, gameObject.layer);", source);
+        StringAssert.Contains("matchBootstrapSystem.BeginGameplay();", source);
+
+        string[] forbiddenTokens =
+        {
+            "MenuBootstrapSystem",
+            "MenuBootstrapView",
+            "WarlineCaptureShell",
+            "WarlineCaptureRouter",
+            "SceneLifecycleSystem",
+            "MatchStartSystem"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"MatchSceneView must not own app/menu shell logic token `{token}`.");
+    }
+
+    [Test]
+    public void FooterDeployButtonQueuesMatchLoadAndStartWithoutOldCanvasPlayButton()
+    {
+        Assert.IsTrue(File.Exists(WarlineCaptureShellRouteButtonViewPath), $"{WarlineCaptureShellRouteButtonViewPath} must own shell route button behavior.");
+        Assert.IsTrue(File.Exists(WarlineCaptureGameUiSceneBuilderPath), $"{WarlineCaptureGameUiSceneBuilderPath} must validate Menu footer content.");
+
+        string routeButtonSource = File.ReadAllText(WarlineCaptureShellRouteButtonViewPath);
+        StringAssert.Contains("if (intent == UiShellRouteIntent.EnterMatch)", routeButtonSource);
+        StringAssert.Contains("sceneLifecycleSystem.QueueLoadMatch(entityManager)", routeButtonSource);
+        StringAssert.Contains("matchStartSystem.QueueStartAfterMatchLoaded(entityManager)", routeButtonSource);
+        Assert.IsFalse(routeButtonSource.Contains("MenuView", StringComparison.Ordinal), "Footer Deploy must not depend on the old Match Canvas MenuView.");
+        Assert.IsFalse(routeButtonSource.Contains("RequestGameStart", StringComparison.Ordinal), "Footer Deploy must not invoke the old Canvas play button path.");
+        Assert.IsFalse(routeButtonSource.Contains("BeginGameplay", StringComparison.Ordinal), "Footer Deploy must not call GameBootstrap.BeginGameplay directly.");
+        Assert.IsFalse(routeButtonSource.Contains("UI_Canvas", StringComparison.Ordinal), "Footer Deploy must not activate the old Match Canvas.");
+
+        string builderSource = File.ReadAllText(WarlineCaptureGameUiSceneBuilderPath);
+        StringAssert.Contains("FooterContent/DeployCommandButton", builderSource);
+        StringAssert.Contains("UiShellRouteIntent.EnterMatch", builderSource);
+        StringAssert.Contains("WarlineCaptureRoute.Match", builderSource);
+    }
+
+    [Test]
+    public void GameBootstrapTypeIsRetiredAndMatchBootstrapOwnsMatchStartup()
+    {
+        Assert.IsFalse(File.Exists(GameBootstrapPath), $"{GameBootstrapPath} must be removed after MatchBootstrapSystem owns match startup.");
+        Assert.IsTrue(File.Exists(MatchBootstrapSystemPath), $"{MatchBootstrapSystemPath} must own match startup.");
+
+        string source = File.ReadAllText(MatchBootstrapSystemPath);
+        StringAssert.Contains("internal sealed class MatchBootstrapSystem", source);
+        StringAssert.Contains("public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)", source);
+        StringAssert.Contains("public void BeginGameplay()", source);
+        StringAssert.Contains("MatchSceneView", source);
+
+        string[] forbiddenTokens =
+        {
+            "[SerializeField]",
+            "SceneManager.LoadScene",
+            "SceneManager.UnloadScene"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"MatchBootstrapSystem must not own app-level responsibility token `{token}`.");
+    }
+
+    [Test]
+    public void MatchSceneStartupNoLongerDependsOnGameBootstrapSceneComponent()
+    {
+        Assert.IsTrue(File.Exists(MatchStartSystemPath), $"{MatchStartSystemPath} must own queued match start.");
+        Assert.IsTrue(File.Exists(WarlineCaptureMatchSceneViewInstallerPath), $"{WarlineCaptureMatchSceneViewInstallerPath} must validate Match scene startup ownership.");
+
+        string matchStartSource = File.ReadAllText(MatchStartSystemPath);
+        StringAssert.Contains("Resources.FindObjectsOfTypeAll<MatchSceneView>()", matchStartSource);
+        StringAssert.Contains("matchScene.BeginGameplay();", matchStartSource);
+        StringAssert.Contains("Loaded Match scene has no active MatchSceneView.", matchStartSource);
+        Assert.IsFalse(matchStartSource.Contains("GameBootstrap", StringComparison.Ordinal), "MatchStartSystem must not find or invoke the legacy GameBootstrap scene component.");
+
+        string installerSource = File.ReadAllText(WarlineCaptureMatchSceneViewInstallerPath);
+        StringAssert.Contains("AssertNoLegacyGameBootstrapScriptReference();", installerSource);
+        StringAssert.Contains("LegacyGameBootstrapScriptGuid", installerSource);
+        StringAssert.Contains("FindSingleSceneComponent<MatchSceneView>(scene)", installerSource);
+        Assert.IsFalse(installerSource.Contains("GetComponent<GameBootstrap>()", StringComparison.Ordinal), "MatchSceneView installer must not require a GameBootstrap sibling component.");
+        Assert.IsFalse(installerSource.Contains("GetComponentsInChildren<GameBootstrap>", StringComparison.Ordinal), "MatchSceneView installer must not type-reference the retired GameBootstrap component.");
+    }
+
+    [Test]
     public void GameplayArchitectureContractExists()
     {
         Assert.IsTrue(File.Exists(ContractPath), $"{ContractPath} must document the SOLID/ECS architecture contract.");
@@ -796,7 +921,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("use `RuntimeGameplayStateSystem` as the compatibility boundary", contract);
         StringAssert.Contains("New domain gameplay types should end in `Entity`, `Component`, or `System`", contract);
         StringAssert.Contains("`*View` are serialized-reference binders only", contract);
-        StringAssert.Contains("gamebootstrap_responsibility_audit.md", contract);
+        StringAssert.Contains("`GameBootstrap` is retired and must not be restored", contract);
         StringAssert.Contains("AI startup config projection is owned by `AIStartupSystem`", contract);
         StringAssert.Contains("Faction economy startup projection is owned by `FactionEconomyStartupSystem`", contract);
         StringAssert.Contains("AI faction-control startup projection is owned by `AIFactionControlStartupSystem`", contract);
@@ -809,7 +934,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Building runtime updates inside that loop must go through `BuildingRuntimeUpdateSystem`", contract);
         StringAssert.Contains("`BuildingRuntimeUpdateSystem` ownership and context construction belong in managed composition", contract);
         StringAssert.Contains("it must invoke a narrow building runtime tick callback", contract);
-        StringAssert.Contains("`GameBootstrap` must not hold a public or private `BuildingPlacementSystem` facade", contract);
+        StringAssert.Contains("`MatchBootstrapSystem` must not hold a public or private `BuildingPlacementSystem` facade", contract);
         StringAssert.Contains("Managed building gameplay composition is owned by `BuildingGameplayCompositionSystem`", contract);
         StringAssert.Contains("`BuildingGameplayCompositionSystem` constructs narrow building systems directly and must not construct `BuildingGameplaySystem`; the retired `BuildingPlacementSystem` facade must not exist", contract);
         StringAssert.Contains("`ManagedGameplayStartupSystem` may consume that composition result, but it must not hold or reach through `BuildingPlacementSystem`", contract);
@@ -910,101 +1035,101 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("interaction context construction belongs in `BuildingPlacementInteractionContextSystem`, not `BuildingPlacementSystem`", contract);
         StringAssert.Contains("Runtime building entity-link callbacks must route through `BuildingPlacementInteractionSystem`", contract);
         StringAssert.Contains("AI/building cross-domain integration must move through `BuildingRuntimeBoundaryTag` ECS buffers", contract);
-        StringAssert.Contains("`GameBootstrap` must not publish a managed `BuildingPlacementSystem` facade through ECS component objects", contract);
+        StringAssert.Contains("`MatchBootstrapSystem` must not publish a managed `BuildingPlacementSystem` facade through ECS component objects", contract);
         StringAssert.Contains("`BuildingPlacementSystem` must not expose faction production, faction resource economy/sell, or faction count compatibility wrappers", contract);
         StringAssert.Contains("buildingplacement_retirement_audit.md", contract);
         StringAssert.Contains("do not reintroduce `BuildingPlacementSystem`", contract);
     }
 
     [Test]
-    public void GameBootstrapResponsibilityAuditExists()
+    public void RetiredGameBootstrapSourceMustNotReturn()
     {
-        Assert.IsTrue(File.Exists(GameBootstrapAuditPath), $"{GameBootstrapAuditPath} must map bootstrap debt before refactoring.");
+        Assert.IsFalse(File.Exists(GameBootstrapPath), $"{GameBootstrapPath} must stay deleted.");
+        Assert.IsFalse(File.Exists(GameBootstrapMetaPath), $"{GameBootstrapMetaPath} must stay deleted.");
 
-        string audit = File.ReadAllText(GameBootstrapAuditPath);
-        StringAssert.Contains("Target Responsibility", audit);
-        StringAssert.Contains("AI Startup Policy And Plan Mutation", audit);
-        StringAssert.Contains("Faction Economy Startup Policy", audit);
-        StringAssert.Contains("Fixed Tactical Mission Guardrails", audit);
-        StringAssert.Contains("Camera And Framing Policy", audit);
-        StringAssert.Contains("Gameplay Feature Runtime Updates", audit);
-        StringAssert.Contains("Diagnostics And Performance Logging", audit);
-        StringAssert.Contains("Broad Scene Lookup And UI Runtime Binding", audit);
-        StringAssert.Contains("Recommended Migration Order", audit);
-    }
-
-    [Test]
-    public void GameBootstrapDomainPolicyMethodDebtCannotGrow()
-    {
-        string[] violations = GetMethodNames(GameBootstrapPath)
-            .Where(IsGameBootstrapDomainPolicyMethodName)
-            .Where(method => !LegacyGameBootstrapDomainPolicyMethods.Contains(method, StringComparer.Ordinal))
+        string[] productionReferences = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("GameBootstrap", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
             .ToArray();
 
         Assert.IsEmpty(
-            violations,
-            "Do not add new domain-policy methods to GameBootstrap. Move new AI, mission, camera, faction, spawning, or diagnostics policy into ECS systems/configs or audited startup boundaries:" +
+            productionReferences,
+            "Production code must not reference the retired GameBootstrap type:" +
             Environment.NewLine +
-            string.Join(Environment.NewLine, violations));
+            string.Join(Environment.NewLine, productionReferences));
     }
 
     [Test]
-    public void GameBootstrapDirectDebugLogDebtCannotGrow()
-    {
-        string code = File.ReadAllText(GameBootstrapPath);
-        int directLogCallCount = Regex.Matches(code, @"Debug\.Log(?:Exception|Warning|Error)?\s*\(").Count;
-
-        Assert.LessOrEqual(
-            directLogCallCount,
-            LegacyGameBootstrapDirectLogCallCount,
-            "Do not add direct Debug.Log* calls to GameBootstrap. Move diagnostics into ECS diagnostic events or a shell logging service.");
-
-        foreach (Match match in Regex.Matches(code, @"Debug\.Log(?:Warning|Error)?\s*\(\s*(?:\$)?""\[([^\]]+)\]"))
-        {
-            string category = match.Groups[1].Value;
-            if (category.Contains("{", StringComparison.Ordinal))
-                continue;
-
-            Assert.IsTrue(
-                category == "FreezeDetect" || category == "FrameRateDiag" || category == "FrameRateDiag:PreGame" || category == "PerfDiag" || category == "PerfDiag:PreGame",
-                $"Unexpected GameBootstrap direct log category '{category}'. Add diagnostics through a logging boundary instead.");
-        }
-    }
-
-    [Test]
-    public void GameBootstrapMustDelegateAIStartupSlice()
+    public void MatchBootstrapOwnsFormerStartupBoundariesThroughNarrowSystems()
     {
         const string aiStartupFile = "Assets/Game/Scripts/Systems/AIStartupSystem.cs";
+        const string missionStartupFile = "Assets/Game/Scripts/Systems/MissionStartupSystem.cs";
+        const string missionCameraFile = "Assets/Game/Scripts/Systems/MissionCameraSystem.cs";
+        const string initialFactionSpawnCellFile = "Assets/Game/Scripts/Systems/InitialFactionSpawnCellSystem.cs";
+        const string performanceDiagnosticsFile = "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystem.cs";
+        const string runtimeUpdateFile = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
+        const string sceneBindingFile = "Assets/Game/Scripts/Systems/GameplaySceneBindingSystem.cs";
+        const string runtimeRootSystemFile = "Assets/Game/Scripts/Systems/RuntimeRootSystem.cs";
+        const string managedGameplayStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string menuStartupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
+        const string gameplayFeatureStartupFile = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
         Assert.IsTrue(File.Exists(aiStartupFile), "AI startup config projection must live in AIStartupSystem.");
+        Assert.IsTrue(File.Exists(missionStartupFile), "Mission startup policy must live in MissionStartupSystem.");
+        Assert.IsTrue(File.Exists(missionCameraFile), "M01 camera/framing policy must live in MissionCameraSystem.");
+        Assert.IsTrue(File.Exists(initialFactionSpawnCellFile), "Configured faction spawn-cell resolution must live outside bootstrap.");
+        Assert.IsTrue(File.Exists(performanceDiagnosticsFile), "Performance diagnostics must live in PerformanceDiagnosticsSystem.");
+        Assert.IsTrue(File.Exists(runtimeUpdateFile), "Managed runtime update orchestration must live in GameplayRuntimeUpdateSystem.");
+        Assert.IsTrue(File.Exists(sceneBindingFile), "Broad scene lookup and UI runtime binding must live in GameplaySceneBindingSystem.");
+        Assert.IsTrue(File.Exists(runtimeRootSystemFile), "Runtime root creation must live in RuntimeRootSystem.");
+        Assert.IsTrue(File.Exists(managedGameplayStartupFile), "Managed gameplay construction must live in ManagedGameplayStartupSystem.");
+        Assert.IsTrue(File.Exists(menuStartupFile), "Menu and UI startup binding must live in MenuStartupSystem.");
+        Assert.IsTrue(File.Exists(gameplayFeatureStartupFile), "Runtime gameplay feature startup must live in GameplayFeatureStartupSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
-        StringAssert.Contains("AIStartupSystem _aiStartupSystem", bootstrap);
-        StringAssert.Contains("_aiStartupSystem.LogConfigValidation", bootstrap);
-        StringAssert.Contains("_aiStartupSystem.Initialize", bootstrap);
+        string matchBootstrap = File.ReadAllText(MatchBootstrapSystemPath);
+        StringAssert.Contains("AIStartupSystem _aiStartupSystem", matchBootstrap);
+        StringAssert.Contains("aiStartupSystem.LogConfigValidation", matchBootstrap);
+        StringAssert.Contains("aiStartupSystem.Initialize", matchBootstrap);
+        StringAssert.Contains("MissionStartupSystem _missionStartupSystem", matchBootstrap);
+        StringAssert.Contains("InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem", matchBootstrap);
+        StringAssert.Contains("_missionStartupSystem.Initialize", matchBootstrap);
+        StringAssert.Contains("_missionStartupSystem.FocusInitialCamera", matchBootstrap);
+        StringAssert.Contains("_initialFactionSpawnCellSystem.TryGetConfiguredFactionSpawnCell", matchBootstrap);
+        StringAssert.Contains("ManagedGameplayStartupSystem managedGameplayStartupSystem", matchBootstrap);
+        StringAssert.Contains("GameplayRuntimeUpdateSystem gameplayRuntimeUpdateSystem", matchBootstrap);
+        StringAssert.Contains("GameplaySceneBindingSystem _gameplaySceneBindingSystem", matchBootstrap);
+        StringAssert.Contains("RuntimeRootSystem _runtimeRootSystem", matchBootstrap);
+        StringAssert.Contains("MenuStartupSystem _menuStartupSystem", matchBootstrap);
+        StringAssert.Contains("GameplayFeatureStartupSystem _gameplayFeatureStartupSystem", matchBootstrap);
+        StringAssert.Contains("_runtimeRootSystem.Ensure", matchBootstrap);
+        StringAssert.Contains("InitializeManagedRuntime(", matchBootstrap);
+        StringAssert.Contains("_menuStartupSystem.Initialize", matchBootstrap);
+        StringAssert.Contains("_gameplayFeatureStartupSystem.Initialize", matchBootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.Update", matchBootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.LateUpdate", matchBootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.OnGui", matchBootstrap);
+        Assert.IsFalse(
+            matchBootstrap.Contains("SceneManager.LoadScene", StringComparison.Ordinal) ||
+            matchBootstrap.Contains("SceneManager.UnloadScene", StringComparison.Ordinal),
+            "MatchBootstrapSystem must not own app-level scene load/unload policy.");
+    }
 
-        string[] migratedMethodNames =
-        {
-            "LogAIConfigValidation",
-            "ShouldQueueAIConfigDiagnostics",
-            "TryEnqueueAIDiagnostic",
-            "FlushQueuedAIDiagnostics",
-            "EnsureFactionEconomiesInitialized",
-            "EnsureFactionControlConfigInitialized",
-            "EnsureAIBuildPlansInitialized",
-            "AddBuildPlanEntries",
-            "EnsureAIProductionPlansInitialized",
-            "AddProductionPlanEntries",
-            "EnsureAISquadPlansInitialized",
-            "EnsureAITargetPrioritySettingsInitialized",
-            "ShouldIncludeAIConfig"
-        };
+    [Test]
+    public void MenuMatchBootstrapContractUsesRetiredGameBootstrapWording()
+    {
+        string contract = File.ReadAllText(ContractPath);
+        string roadmap = File.ReadAllText("Design/Architecture/menu_match_bootstrap_split_roadmap.md");
 
-        foreach (string methodName in migratedMethodNames)
-        {
-            Assert.IsFalse(
-                Regex.IsMatch(bootstrap, $@"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+{methodName}\s*\("),
-                $"{methodName} belongs outside GameBootstrap.");
-        }
+        StringAssert.Contains("`GameBootstrap` is retired and must not be restored", contract);
+        StringAssert.Contains("Persistent app/menu lifetime belongs to `MenuBootstrapSystem` plus `MenuBootstrapView`", contract);
+        StringAssert.Contains("match-scene lifetime belongs to `MatchBootstrapSystem` plus `MatchSceneView`", contract);
+        StringAssert.Contains("`GameBootstrap` is retired, deleted, and guarded against restoration", roadmap);
+
+        Assert.IsFalse(contract.Contains("gamebootstrap_responsibility_audit.md", StringComparison.Ordinal));
+        Assert.IsFalse(contract.Contains("`GameBootstrap` may", StringComparison.Ordinal));
+        Assert.IsFalse(contract.Contains("GameBootstrap` is legacy composition debt", StringComparison.Ordinal));
+        Assert.IsFalse(roadmap.Contains("temporary compatibility shim", StringComparison.Ordinal));
     }
 
     [Test]
@@ -1124,7 +1249,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(missionCameraFile), "M01 camera/framing policy must live in MissionCameraSystem.");
         Assert.IsTrue(File.Exists(initialFactionSpawnCellFile), "Configured faction spawn-cell resolution must live outside GameBootstrap.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         StringAssert.Contains("MissionStartupSystem _missionStartupSystem", bootstrap);
         StringAssert.Contains("InitialFactionSpawnCellSystem _initialFactionSpawnCellSystem", bootstrap);
         StringAssert.Contains("_missionStartupSystem.Initialize", bootstrap);
@@ -1217,12 +1342,13 @@ public sealed class GameplayArchitectureContractTests
         const string performanceDiagnosticsFile = "Assets/Game/Scripts/Systems/PerformanceDiagnosticsSystem.cs";
         Assert.IsTrue(File.Exists(performanceDiagnosticsFile), "Performance diagnostics must live in PerformanceDiagnosticsSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         StringAssert.Contains("PerformanceDiagnosticsSystem _performanceDiagnosticsSystem", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.Initialize", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.OnApplicationFocus", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.OnApplicationPause", bootstrap);
-        StringAssert.Contains("_performanceDiagnosticsSystem.Dispose", bootstrap);
+        StringAssert.Contains("ResolvePerformanceDiagnosticsSystem", bootstrap);
+        StringAssert.Contains("fallbackPerformanceDiagnosticsSystem.Initialize", bootstrap);
+        StringAssert.Contains("ForwardApplicationFocus", bootstrap);
+        StringAssert.Contains("ForwardApplicationPause", bootstrap);
+        StringAssert.Contains("ReleasePerformanceDiagnostics", bootstrap);
 
         string[] bootstrapDiagnosticDebtTokens =
         {
@@ -1278,7 +1404,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(buildingProductionRuntimeTickFile), "Building production/resource runtime frame ticks must live in BuildingProductionRuntimeTickSystem.");
         Assert.IsTrue(File.Exists(buildingRuntimeBoundaryPublishFile), "Building runtime boundary publish frame ticks must live in BuildingRuntimeBoundaryPublishSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         string managedStartup = File.ReadAllText("Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs");
         string buildingComposition = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs");
         string placement = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs");
@@ -1288,7 +1414,7 @@ public sealed class GameplayArchitectureContractTests
         string buildingRuntimeTickDiagnostics = File.ReadAllText(buildingRuntimeTickDiagnosticsFile);
         string buildingProductionRuntimeTick = File.ReadAllText(buildingProductionRuntimeTickFile);
         string buildingRuntimeBoundaryPublish = File.ReadAllText(buildingRuntimeBoundaryPublishFile);
-        StringAssert.Contains("GameplayRuntimeUpdateSystem _gameplayRuntimeUpdateSystem", bootstrap);
+        StringAssert.Contains("GameplayRuntimeUpdateSystem gameplayRuntimeUpdateSystem", bootstrap);
         StringAssert.Contains("BuildingRuntimeUpdateSystem BuildingRuntimeUpdate", bootstrap);
         StringAssert.Contains("_buildingRuntimeUpdateContext", bootstrap);
         StringAssert.Contains("_disposeBuildingGameplay", bootstrap);
@@ -1309,9 +1435,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("building.RuntimeUpdate", managedStartup);
         StringAssert.Contains("building.RuntimeUpdateContext", managedStartup);
         StringAssert.Contains("building.Dispose", managedStartup);
-        StringAssert.Contains("_gameplayRuntimeUpdateSystem.Update", bootstrap);
-        StringAssert.Contains("_gameplayRuntimeUpdateSystem.LateUpdate", bootstrap);
-        StringAssert.Contains("_gameplayRuntimeUpdateSystem.OnGui", bootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.Update", bootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.LateUpdate", bootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.OnGui", bootstrap);
         StringAssert.Contains("ref _gameplayStartPending", bootstrap);
 
         string[] bootstrapRuntimeUpdateDebtTokens =
@@ -1502,7 +1628,7 @@ public sealed class GameplayArchitectureContractTests
         const string sceneBindingFile = "Assets/Game/Scripts/Systems/GameplaySceneBindingSystem.cs";
         Assert.IsTrue(File.Exists(sceneBindingFile), "Broad scene lookup and UI runtime binding must live outside GameBootstrap.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         StringAssert.Contains("GameplaySceneBindingSystem _gameplaySceneBindingSystem", bootstrap);
         StringAssert.Contains("_menuStartupSystem.Initialize", bootstrap);
 
@@ -1545,9 +1671,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(File.Exists(retiredRuntimeRootBootstrapFile), "Runtime roots must follow the ECS-style System naming boundary.");
         Assert.IsTrue(File.Exists(runtimeRootSystemFile), "Runtime root creation must live in RuntimeRootSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         StringAssert.Contains("RuntimeRootSystem _runtimeRootSystem", bootstrap);
-        StringAssert.Contains("_runtimeRootSystem.Ensure(transform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot)", bootstrap);
+        StringAssert.Contains("_runtimeRootSystem.Ensure(ownerTransform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot)", bootstrap);
         Assert.IsFalse(
             Regex.IsMatch(bootstrap, @"\b(?:public|private|internal|protected)\s+(?:static\s+)?[A-Za-z_][A-Za-z0-9_<>,\[\]\.\s]*\s+EnsureRuntimeRoots\s*\("),
             "Runtime root creation belongs in RuntimeRootSystem, not GameBootstrap.");
@@ -1571,9 +1697,9 @@ public sealed class GameplayArchitectureContractTests
         const string managedGameplayStartupFile = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
         Assert.IsTrue(File.Exists(managedGameplayStartupFile), "Managed gameplay construction and first-pass wiring must live in ManagedGameplayStartupSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
-        StringAssert.Contains("ManagedGameplayStartupSystem _managedGameplayStartupSystem", bootstrap);
-        StringAssert.Contains("_managedGameplayStartupSystem.Initialize", bootstrap);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
+        StringAssert.Contains("ManagedGameplayStartupSystem managedGameplayStartupSystem", bootstrap);
+        StringAssert.Contains("managedGameplayStartupSystem.Initialize", bootstrap);
         StringAssert.Contains("EnsureBuildingRuntimeBoundaryEntity", bootstrap);
         StringAssert.Contains("_runtimeCameraReferenceSystem.SetWorldCamera", bootstrap);
 
@@ -1655,7 +1781,7 @@ public sealed class GameplayArchitectureContractTests
         const string menuStartupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
         Assert.IsTrue(File.Exists(menuStartupFile), "Menu and UI startup binding must live in MenuStartupSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         string startup = File.ReadAllText(menuStartupFile);
         StringAssert.Contains("MenuStartupSystem _menuStartupSystem", bootstrap);
         StringAssert.Contains("_menuStartupSystem.Initialize", bootstrap);
@@ -1714,7 +1840,7 @@ public sealed class GameplayArchitectureContractTests
         const string gameplayFeatureStartupFile = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
         Assert.IsTrue(File.Exists(gameplayFeatureStartupFile), "Runtime gameplay feature startup must live in GameplayFeatureStartupSystem.");
 
-        string bootstrap = File.ReadAllText(GameBootstrapPath);
+        string bootstrap = File.ReadAllText(MatchBootstrapSystemPath);
         StringAssert.Contains("GameplayFeatureStartupSystem _gameplayFeatureStartupSystem", bootstrap);
         StringAssert.Contains("_gameplayFeatureStartupSystem.Initialize", bootstrap);
         StringAssert.Contains("RuntimeCity = gameplaySystems.RuntimeCity", bootstrap);
@@ -1772,6 +1898,7 @@ public sealed class GameplayArchitectureContractTests
         string[] rootBootstrapFiles = Directory.GetFiles(BootstrapRoot, "*.cs", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
             .Where(path => !LegacyBootstrapRootFiles.Contains(path, StringComparer.Ordinal))
+            .Where(path => !path.EndsWith("View.cs", StringComparison.Ordinal))
             .ToArray();
 
         List<string> violations = new();
@@ -1801,7 +1928,8 @@ public sealed class GameplayArchitectureContractTests
         {
             foreach (string typeName in GetTopLevelTypeNames(file))
             {
-                if (!typeName.EndsWith("System", StringComparison.Ordinal) &&
+                if (!typeName.EndsWith("View", StringComparison.Ordinal) &&
+                    !typeName.EndsWith("System", StringComparison.Ordinal) &&
                     !typeName.EndsWith("Service", StringComparison.Ordinal) &&
                     !typeName.EndsWith("Registry", StringComparison.Ordinal) &&
                     !typeName.EndsWith("Config", StringComparison.Ordinal))
@@ -10020,7 +10148,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeCameraPath = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraSystem.cs";
         const string runtimeCameraContextPath = "Assets/Game/Scripts/Systems/RtsSelectionRuntimeCameraContextSystem.cs";
         const string selectionStartupPath = "Assets/Game/Scripts/Systems/SelectionGameplayStartupSystem.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         string runtimeUpdate = File.ReadAllText(runtimeUpdatePath);
@@ -10160,7 +10288,7 @@ public sealed class GameplayArchitectureContractTests
     {
         const string compositionPath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSystem.cs";
         const string startupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
         const string featureStartupPath = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
         const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
@@ -10201,9 +10329,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("_disposeRoad = managedSystems.DisposeRoad", bootstrap);
         StringAssert.Contains("_bindRoadMainMenu = managedSystems.BindRoadMainMenu", bootstrap);
         StringAssert.Contains("_bindRoadGameplayFeatures = managedSystems.BindRoadGameplayFeatures", bootstrap);
-        StringAssert.Contains("_gameplayRuntimeUpdateSystem.Update", bootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.Update", bootstrap);
         StringAssert.Contains("_roadRuntimeUpdate", bootstrap);
-        StringAssert.Contains("_gameplayRuntimeUpdateSystem.OnGui", bootstrap);
+        StringAssert.Contains("gameplayRuntimeUpdateSystem.OnGui", bootstrap);
         StringAssert.Contains("_roadOnGui", bootstrap);
         StringAssert.Contains("_disposeRoad?.Invoke()", bootstrap);
 
@@ -10278,7 +10406,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeActionPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeActionSystem.cs";
         const string compositionPath = "Assets/Game/Scripts/Systems/RoadBuildCompositionSystem.cs";
         const string runtimeUpdatePath = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
         string runtimeAction = File.ReadAllText(runtimeActionPath);
@@ -10465,7 +10593,7 @@ public sealed class GameplayArchitectureContractTests
         const string boundaryFile = "Assets/Game/Scripts/Components/BuildingRuntimeEcsBoundaryComponents.cs";
         const string boundarySystemFile = "Assets/Game/Scripts/Systems/BuildingRuntimeBoundarySystem.cs";
         const string retiredRuntimeComponentFile = "Assets/Game/Scripts/Components/BuildingPlacementRuntimeComponent.cs";
-        const string bootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapFile = MatchBootstrapSystemPath;
         const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         Assert.IsTrue(File.Exists(boundaryFile), "Building runtime ECS boundary components must be explicit ECS contracts.");
         Assert.IsTrue(File.Exists(boundarySystemFile), "Building runtime boundary publish/consume orchestration must live in BuildingRuntimeBoundarySystem.");
@@ -14225,7 +14353,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("2. Complete: Add final deletion contract", roadmap);
         StringAssert.Contains("Citizen population runtime must use explicit narrow citizen `*System` boundaries", contract);
         StringAssert.Contains("`CitizenPopulationSystem.cs` must not exist", contract);
-        StringAssert.Contains("`GameBootstrap`, `ManagedGameplayStartupSystem`, UI, building gameplay, runtime city, road build, and selection code must not construct, store, type-reference, or call through `CitizenPopulationSystem`", contract);
+        StringAssert.Contains("`MatchBootstrapSystem`, `ManagedGameplayStartupSystem`, UI, building gameplay, runtime city, road build, and selection code must not construct, store, type-reference, or call through `CitizenPopulationSystem`", contract);
         StringAssert.Contains("Do not replace the retired shell with `CitizenPopulationManager`, `CitizenPopulationFacade`, `CitizenPopulationController`, or any other broad managed shell", contract);
 
         Assert.IsFalse(
@@ -14301,7 +14429,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeUpdatePath = "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateSystem.cs";
         const string compositionPath = "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystem.cs";
         const string gameplayRuntimePath = "Assets/Game/Scripts/Systems/GameplayRuntimeUpdateSystem.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
 
         Assert.IsTrue(File.Exists(runtimeUpdatePath), "Citizen population runtime update logic must live outside the retired shell.");
         string runtimeUpdate = File.ReadAllText(runtimeUpdatePath);
@@ -14327,7 +14455,7 @@ public sealed class GameplayArchitectureContractTests
     {
         const string menuStartupPath = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";
         const string menuViewPath = "Assets/Game/Scripts/UI/MenuView.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
 
         string menuStartup = File.ReadAllText(menuStartupPath);
         string menuView = File.ReadAllText(menuViewPath);
@@ -14346,7 +14474,7 @@ public sealed class GameplayArchitectureContractTests
         const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
         const string managedStartupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
         const string gameplayFeatureStartupPath = "Assets/Game/Scripts/Systems/GameplayFeatureStartupSystem.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
 
         string buildingComposition = File.ReadAllText(buildingCompositionPath);
         string managedStartup = File.ReadAllText(managedStartupPath);
@@ -14384,7 +14512,7 @@ public sealed class GameplayArchitectureContractTests
         const string buildingCompositionPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
         const string buildingResultPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionResultSystem.cs";
         const string managedStartupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
-        const string bootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string bootstrapPath = MatchBootstrapSystemPath;
 
         Assert.IsFalse(File.Exists(systemPath), "CitizenPopulationSystem.cs must stay deleted.");
         Assert.IsFalse(File.Exists(metaPath), "CitizenPopulationSystem.cs.meta must stay deleted.");
@@ -14746,7 +14874,7 @@ public sealed class GameplayArchitectureContractTests
         const string menuViewFile = "Assets/Game/Scripts/UI/MenuView.cs";
         const string roadBuildFile = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string buildingPlacementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
-        const string gameBootstrapFile = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
+        const string gameBootstrapFile = MatchBootstrapSystemPath;
         const string stateSystemFile = "Assets/Game/Scripts/Systems/RuntimeGameplayStateSystem.cs";
         const string stateComponentsFile = "Assets/Game/Scripts/Components/RuntimeGameplayStateComponents.cs";
         Assert.IsTrue(File.Exists(stateSystemFile), "Runtime gameplay state access must go through RuntimeGameplayStateSystem.");
@@ -16996,11 +17124,6 @@ public sealed class GameplayArchitectureContractTests
         {
             yield return match.Groups[1].Value;
         }
-    }
-
-    private static bool IsGameBootstrapDomainPolicyMethodName(string methodName)
-    {
-        return GameBootstrapDomainPolicyMethodTokens.Any(token => methodName.Contains(token, StringComparison.Ordinal));
     }
 
     private static string NormalizePath(string path)

@@ -40,21 +40,22 @@ public sealed class BootstrapAndMenuPlayModeTests
     }
 
     [Test]
-    public void GameBootstrap_AwakeDoesNotInitializeGameplayBeforePlayRequest()
+    public void MatchSceneView_AwakeDoesNotInitializeGameplayBeforePlayRequest()
     {
         InitialUnitsRuntimeState.PlayRequested = false;
 
         GameObject bootstrapObject = Track(new GameObject("Bootstrap"));
-        GameBootstrap bootstrap = bootstrapObject.AddComponent<GameBootstrap>();
+        MatchSceneView matchScene = bootstrapObject.AddComponent<MatchSceneView>();
+        MatchBootstrapSystem bootstrap = matchScene.MatchBootstrap;
 
-        Assert.NotNull(bootstrap.DayNight, "Bootstrap should create core dependencies during Awake.");
-        Assert.NotNull(bootstrap.RoadBuildReadModel, "Bootstrap should create road read-model dependencies during Awake.");
-        Assert.NotNull(bootstrap.BuildingSelectionClick, "Bootstrap should create building selection click dependencies during Awake.");
-        Assert.NotNull(bootstrap.BuildingRuntimeUpdate, "Bootstrap should create building runtime update dependencies during Awake.");
-        Assert.NotNull(bootstrap.SelectionUiCommand, "Bootstrap should create selection command dependencies during Awake.");
-        Assert.NotNull(bootstrap.SelectionUiReadModel, "Bootstrap should create selection read-model dependencies during Awake.");
-        Assert.NotNull(bootstrap.SelectionUiCamera, "Bootstrap should create selection camera dependencies during Awake.");
-        Assert.NotNull(bootstrap.SelectionScreenMarkers, "Bootstrap should create selection marker dependencies during Awake.");
+        Assert.NotNull(bootstrap.DayNight, "Match bootstrap should create core dependencies during Awake.");
+        Assert.NotNull(bootstrap.RoadBuildReadModel, "Match bootstrap should create road read-model dependencies during Awake.");
+        Assert.NotNull(bootstrap.BuildingSelectionClick, "Match bootstrap should create building selection click dependencies during Awake.");
+        Assert.NotNull(bootstrap.BuildingRuntimeUpdate, "Match bootstrap should create building runtime update dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionUiCommand, "Match bootstrap should create selection command dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionUiReadModel, "Match bootstrap should create selection read-model dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionUiCamera, "Match bootstrap should create selection camera dependencies during Awake.");
+        Assert.NotNull(bootstrap.SelectionScreenMarkers, "Match bootstrap should create selection marker dependencies during Awake.");
         Assert.IsFalse(InitialUnitsRuntimeState.PlayRequested, "PlayRequested must remain false when the scene first starts.");
         Assert.IsFalse(bootstrap.GameplayInitialized, "Gameplay systems must not initialize before the menu play request.");
         Assert.IsNull(bootstrap.RuntimeCity, "Runtime city must not be created before gameplay starts.");

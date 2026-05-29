@@ -1,0 +1,114 @@
+using System;
+using System.Collections.Generic;
+using Game.Scripts.UI;
+using UnityEngine;
+using UnityEngine.Rendering;
+
+[DisallowMultipleComponent]
+public sealed class MatchSceneView : MonoBehaviour
+{
+    private readonly MatchBootstrapSystem matchBootstrapSystem = new();
+
+    [Header("Scene Refs")]
+    [SerializeField] private MenuView menuView;
+    [SerializeField] private Camera worldCamera;
+    [SerializeField] private Light directionalLight;
+    [SerializeField] private Volume globalVolume;
+    [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
+    [SerializeField] private Transform decorationRoot;
+    [SerializeField] private GameObject[] legacyVisualRootsDisabledForM01 = Array.Empty<GameObject>();
+
+    [Header("Configs")]
+    [SerializeField] private RTSSelectionSystemConfig rtsSelectionConfig;
+    [SerializeField] private RoadBuildSystemConfig roadBuildConfig;
+    [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
+    [SerializeField] private UnitAttackTraceSystemConfig unitAttackTraceConfig;
+    [SerializeField] private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;
+    [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
+    [SerializeField] private RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig;
+    [SerializeField] private DayNightSystemConfig dayNightConfig;
+    [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
+    [SerializeField] private GameStringsConfig gameStringsConfig;
+    [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
+    [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
+    [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
+
+    [Header("Runtime Grid")]
+    [SerializeField] private int runtimeGridWidth = 2048;
+    [SerializeField] private int runtimeGridHeight = 2048;
+    [SerializeField] private float runtimeGridCellSize = 1f;
+    [SerializeField] private Vector3 runtimeGridOrigin = Vector3.zero;
+
+    public MenuView MenuView => menuView;
+    public Camera WorldCamera => worldCamera;
+    public Light DirectionalLight => directionalLight;
+    public Volume GlobalVolume => globalVolume;
+    public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
+    public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
+    public GameObject[] LegacyVisualRootsDisabledForM01 => legacyVisualRootsDisabledForM01;
+
+    public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;
+    public RoadBuildSystemConfig RoadBuildConfig => roadBuildConfig;
+    public BuildingPlacementSystemConfig BuildingPlacementConfig => buildingPlacementConfig;
+    public UnitAttackTraceSystemConfig UnitAttackTraceConfig => unitAttackTraceConfig;
+    public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
+    public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
+    public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
+    public DayNightSystemConfig DayNightConfig => dayNightConfig;
+    public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
+    public GameStringsConfig GameStringsConfig => gameStringsConfig;
+    public PrefabPreviewCameraConfig PrefabPreviewCameraConfig => prefabPreviewCameraConfig;
+    public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
+    public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
+
+    public int RuntimeGridWidth => runtimeGridWidth;
+    public int RuntimeGridHeight => runtimeGridHeight;
+    public float RuntimeGridCellSize => runtimeGridCellSize;
+    public Vector3 RuntimeGridOrigin => runtimeGridOrigin;
+    internal MatchBootstrapSystem MatchBootstrap => matchBootstrapSystem;
+
+    public void BeginGameplay()
+    {
+        matchBootstrapSystem.BeginGameplay();
+    }
+
+    private void Awake()
+    {
+        matchBootstrapSystem.Awake(this, transform, gameObject.layer);
+    }
+
+    private void Start()
+    {
+        matchBootstrapSystem.Start();
+    }
+
+    private void Update()
+    {
+        matchBootstrapSystem.Update();
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        matchBootstrapSystem.OnApplicationFocus(hasFocus);
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        matchBootstrapSystem.OnApplicationPause(pauseStatus);
+    }
+
+    private void LateUpdate()
+    {
+        matchBootstrapSystem.LateUpdate();
+    }
+
+    private void OnGUI()
+    {
+        matchBootstrapSystem.OnGUI();
+    }
+
+    private void OnDestroy()
+    {
+        matchBootstrapSystem.OnDestroy();
+    }
+}

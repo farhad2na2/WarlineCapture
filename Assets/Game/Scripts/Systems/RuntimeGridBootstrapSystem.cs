@@ -36,11 +36,16 @@ internal sealed class RuntimeGridBootstrapSystem
         EnsureBufferExists<GridRoadDirt>(entityManager, gridEntity);
         if (!entityManager.HasComponent<DynamicBlockerData>(gridEntity))
             entityManager.AddComponentData(gridEntity, default(DynamicBlockerData));
+        if (!entityManager.HasComponent<PathPoolData>(gridEntity))
+            entityManager.AddComponentData(gridEntity, new PathPoolData { Cells = new NativeList<int2>(1024, Allocator.Persistent) });
+        if (!entityManager.HasComponent<DynamicOccupancyData>(gridEntity))
+            entityManager.AddComponentData(gridEntity, default(DynamicOccupancyData));
 
         DynamicBuffer<GridWalkable> walkable = ResizeBuffer<GridWalkable>(entityManager, gridEntity, gridSize);
         DynamicBuffer<GridRoad> roads = ResizeBuffer<GridRoad>(entityManager, gridEntity, gridSize);
         DynamicBuffer<GridRoadSidewalk> sidewalks = ResizeBuffer<GridRoadSidewalk>(entityManager, gridEntity, gridSize);
         DynamicBuffer<GridRoadDirt> dirtRoads = ResizeBuffer<GridRoadDirt>(entityManager, gridEntity, gridSize);
+        EnsureDynamicGridStorage(entityManager, gridEntity, gridSize);
 
         for (int i = 0; i < gridSize; i++)
         {
@@ -88,5 +93,42 @@ internal sealed class RuntimeGridBootstrapSystem
         DynamicBuffer<T> buffer = entityManager.GetBuffer<T>(entity);
         buffer.ResizeUninitialized(size);
         return buffer;
+    }
+
+    private static void EnsureDynamicGridStorage(EntityManager entityManager, Entity entity, int gridSize)
+    {
+        DynamicBlockerData blockerData = entityManager.GetComponentData<DynamicBlockerData>(entity);
+        if (blockerData.GridSize != gridSize ||
+            !blockerData.Counts.IsCreated ||
+            !blockerData.Blocked.IsCreated ||
+            !blockerData.FriendlyPassFactionIds.IsCreated)
+        {
+            if (blockerData.Counts.IsCreated)
+                blockerData.Counts.Dispose();
+            if (blockerData.Blocked.IsCreated)
+                blockerData.Blocked.Dispose();
+            if (blockerData.FriendlyPassFactionIds.IsCreated)
+                blockerData.FriendlyPassFactionIds.Dispose();
+
+            blockerData.GridSize = gridSize;
+            blockerData.Counts = new NativeArray<int>(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            blockerData.Blocked = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+            blockerData.FriendlyPassFactionIds = new NativeArray<byte>(gridSize, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+            for (int i = 0; i < blockerData.FriendlyPassFactionIds.Length; i++)
+                blockerData.FriendlyPassFactionIds[i] = byte.MaxValue;
+
+            entityManager.SetComponentData(entity, blockerData);
+        }
+
+        DynamicOccupancyData occupancyData = entityManager.GetComponentData<DynamicOccupancyData>(entity);
+        if (occupancyData.GridSize == gridSize && occupancyData.Occupied.IsCreated)
+            return;
+
+        if (occupancyData.Occupied.IsCreated)
+            occupancyData.Occupied.Dispose();
+
+        occupancyData.GridSize = gridSize;
+        occupancyData.Occupied = new NativeBitArray(gridSize, Allocator.Persistent, NativeArrayOptions.ClearMemory);
+        entityManager.SetComponentData(entity, occupancyData);
     }
 }

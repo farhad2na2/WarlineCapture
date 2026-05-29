@@ -11,6 +11,8 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
     [SerializeField] private bool pushHistory;
 
     private Button button;
+    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
+    private readonly MatchStartSystem matchStartSystem = new();
     private EntityQuery boundaryQuery;
     private World cachedWorld;
     private bool hasBoundaryQuery;
@@ -65,35 +67,23 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
         Debug.Log($"[UiShellRoute] submitted intent={intent} route={route} pushHistory={(pushHistory ? 1 : 0)}");
 
         if (intent == UiShellRouteIntent.EnterMatch)
-            TryStartGameplayForMatchRoute();
+            QueueMatchLoad(entityManager);
     }
 
-    private static void TryStartGameplayForMatchRoute()
+    private void QueueMatchLoad(EntityManager entityManager)
     {
-        foreach (GameBootstrap bootstrap in Resources.FindObjectsOfTypeAll<GameBootstrap>())
+        if (sceneLifecycleSystem.QueueLoadMatch(entityManager))
         {
-            if (bootstrap == null ||
-                bootstrap.gameObject == null ||
-                !bootstrap.gameObject.scene.IsValid() ||
-                !bootstrap.gameObject.scene.isLoaded)
-            {
-                continue;
-            }
-
-            try
-            {
-                bootstrap.BeginGameplay();
-                Debug.Log($"[UiShellRoute] BeginGameplay invoked from EnterMatch. scene={bootstrap.gameObject.scene.name}");
-            }
-            catch (System.Exception exception)
-            {
-                Debug.LogException(exception);
-            }
-
-            return;
+            Debug.Log("[UiShellRoute] submitted Match scene load request.");
+            if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
+                Debug.Log("[UiShellRoute] submitted Match gameplay start request.");
+            else
+                Debug.LogError("[UiShellRoute] failed to submit Match gameplay start request.");
         }
-
-        Debug.LogError("[UiShellRoute] EnterMatch could not find a loaded GameBootstrap; gameplay was not started.");
+        else
+        {
+            Debug.LogError("[UiShellRoute] failed to submit Match scene load request.");
+        }
     }
 
     private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)

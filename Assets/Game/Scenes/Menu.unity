@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 2
   regionRoot: {fileID: 192328447}
@@ -348,7 +348,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 01614664b831546d2ae94a42149d80ac, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.UI.InputSystemUIInputModule
   m_SendPointerHoverToParent: 1
   m_MoveRepeatDelay: 0.5
@@ -379,7 +379,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.EventSystems.EventSystem
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
@@ -502,7 +502,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 1
   regionRoot: {fileID: 1009183429}
@@ -605,7 +605,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 0
   regionRoot: {fileID: 1199507512}
@@ -673,7 +673,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 6
   regionRoot: {fileID: 1334896000}
@@ -776,7 +776,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 3
   regionRoot: {fileID: 1581662441}
@@ -879,7 +879,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 7
   regionRoot: {fileID: 1634352076}
@@ -948,7 +948,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
   m_IgnoreReversedGraphics: 1
   m_BlockingObjects: 0
@@ -965,7 +965,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -1095,9 +1095,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1d7a014920c1417eb08b8bdd9c17f62, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureGameUiSmokeDriverView
-  playOnStart: 1
+  playOnStart: 0
   loadingDurationSeconds: 2
   stableHoldSeconds: 0.25
 --- !u!114 &1818590229
@@ -1110,7 +1110,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8505b7d2fd6644f0f92cbb3d9777cc78, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellContentPresenterView
   shellView: {fileID: 1818590231}
   loadingContentPrefab: {fileID: 3981841928839128331, guid: 1e63ba198df9a4dfebad255997466d77, type: 3}
@@ -1130,7 +1130,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0af322b279da44b4687812c16fd112ea, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellEcsBridgeView
   shellView: {fileID: 1818590231}
 --- !u!114 &1818590231
@@ -1143,7 +1143,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67c89a23447e44653a35fe6f347b33e8, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellView
   motionHost: {fileID: 1818590232}
   regions:
@@ -1166,7 +1166,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 421ffb8ffe9a842a69cd65b8da1eb8c1, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureUiMotionHostView
   defaultDurationSeconds: 0.26
   defaultEnterEase: 2
@@ -1220,7 +1220,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 4
   regionRoot: {fileID: 1833058601}
@@ -1249,6 +1249,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1865759524}
+  - component: {fileID: 1865759525}
   m_Layer: 0
   m_Name: GameUIRoot
   m_TagString: Untagged
@@ -1274,6 +1275,25 @@ Transform:
   - {fileID: 1738460049}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1865759525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865759523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee2eb32a27f84ba4ba14e27bc59dade4, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::MenuBootstrapView
+  uiCamera: {fileID: 348415466}
+  uiCanvas: {fileID: 1738460052}
+  shellView: {fileID: 1818590231}
+  shellEcsBridge: {fileID: 1818590230}
+  contentPresenter: {fileID: 1818590229}
+  router: {fileID: 0}
+  startupLoadingDurationSeconds: 2
 --- !u!1 &1958929999
 GameObject:
   m_ObjectHideFlags: 0
@@ -1357,7 +1377,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdeb160d1e688468e82b9680e065921b, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRegionView
   regionId: 5
   regionRoot: {fileID: 2106161135}

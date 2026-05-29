@@ -34,7 +34,7 @@ public sealed class CustomGameStartupSystemTests
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFarImpostorOverVisibleRenderableUnits);
         RunWithLifecycle(tests, tests.InitialUnitsSpawnSystem_DoesNotRouteConvertedPrefabUnitsThroughSourceKeyImpostors);
         RunWithLifecycle(tests, tests.RuntimeGridBootstrapSystem_CreatesBuffersWithoutInvalidatingHandles);
-        tests.GameBootstrapDelegatesNoMissionStartupToCustomGameStartupSystem();
+        tests.MatchBootstrapDelegatesNoMissionStartupToCustomGameStartupSystem();
         tests.MatchScene_AutoloadsMatchSubSceneUntilRuntimePrefabReplacementExists();
         tests.BuildScriptSwitchesActiveBuildTargetBeforeAndroidBuild();
     }
@@ -491,9 +491,9 @@ public sealed class CustomGameStartupSystemTests
     }
 
     [Test]
-    public void GameBootstrapDelegatesNoMissionStartupToCustomGameStartupSystem()
+    public void MatchBootstrapDelegatesNoMissionStartupToCustomGameStartupSystem()
     {
-        string bootstrap = File.ReadAllText("Assets/Game/Scripts/Bootstrap/GameBootstrap.cs");
+        string bootstrap = File.ReadAllText("Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs");
         StringAssert.Contains("private readonly CustomGameStartupSystem _customGameStartupSystem = new();", bootstrap);
         StringAssert.Contains("_customGameStartupSystem.InitializeFromLegacyConfigs(", bootstrap);
         StringAssert.DoesNotContain("SkirmishRuntimeConfigBootstrapSystem _skirmishRuntimeConfigBootstrapSystem", bootstrap);

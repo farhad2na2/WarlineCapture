@@ -51,6 +51,7 @@ public sealed class GameplayArchitectureContractTests
     private const string MapSurfaceCommandTargetSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceCommandTargetSystem.cs";
     private const string MapSurfaceDiagnosticsSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs";
     private const string MapSurfaceEditorOverlaySystemPath = "Assets/Game/Scripts/Editor/MapSurfaceEditorOverlaySystem.cs";
+    private const string MapSurfacePreviewOverlaySystemPath = "Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs";
     private const string MapSurfaceDebugCaptureSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceDebugCaptureSystem.cs";
     private const string MapSurfaceLayeredGridFocusedTestsPath = "Assets/Tests/Editor/MapSurfaceLayeredGridFocusedTests.cs";
     private const string MapSurfaceRuntimeValidationProbeSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceRuntimeValidationProbeSystem.cs";
@@ -1290,6 +1291,8 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("[CustomEditor(typeof(MapSurfaceAuthoring))]", editor);
         StringAssert.Contains("public sealed class MapSurfaceAuthoringEditor : Editor", editor);
+        StringAssert.Contains("Preview Bake In Scene View (No Save)", editor);
+        StringAssert.Contains("MapSurfacePreviewOverlaySystem.ShowPreview", editor);
         StringAssert.Contains("GUILayout.Button(\"Bake Map Surface Data\"", editor);
         StringAssert.Contains("BakeSelectedAuthoring((MapSurfaceAuthoring)target)", editor);
         StringAssert.Contains("new MapSurfaceBakeSystem()", editor);
@@ -1312,6 +1315,24 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsFalse(editor.Contains("FindObjects", StringComparison.Ordinal), "Map surface inspector bake must use explicit MapBakeGroupAuthoring classifications, not global scene scans.");
         Assert.IsFalse(editor.Contains("Physics.", StringComparison.Ordinal), "Map surface inspector bake must sample mesh data, not runtime physics.");
+    }
+
+    [Test]
+    public void MapSurfacePreviewOverlayMustDrawUnsavedBakeResult()
+    {
+        Assert.IsTrue(File.Exists(MapSurfacePreviewOverlaySystemPath), $"{MapSurfacePreviewOverlaySystemPath} must draw unsaved map-surface bake previews.");
+
+        string preview = File.ReadAllText(MapSurfacePreviewOverlaySystemPath);
+
+        StringAssert.Contains("public static class MapSurfacePreviewOverlaySystem", preview);
+        StringAssert.Contains("SceneView.duringSceneGui += DrawPreview", preview);
+        StringAssert.Contains("public static void ShowPreview(", preview);
+        StringAssert.Contains("public static void ClearPreview()", preview);
+        StringAssert.Contains("MapSurfaceEditorOverlaySystem", preview);
+        StringAssert.Contains("no asset saved", preview);
+        StringAssert.Contains("previewBlob.Dispose()", preview);
+        Assert.IsFalse(preview.Contains("AssetDatabase.CreateAsset", StringComparison.Ordinal), "Preview must not write baked data assets.");
+        Assert.IsFalse(preview.Contains("AssetDatabase.SaveAssets", StringComparison.Ordinal), "Preview must not save assets.");
     }
 
     [Test]

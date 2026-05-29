@@ -12,6 +12,8 @@ using UnityEngine.SceneManagement;
 public sealed class MapSurfaceAuthoringEditor : Editor
 {
     private const string DefaultAssetDirectory = "Assets/Game/Data/MapSurfaces";
+    private static MapSurfaceEditorOverlaySystem.OverlayMode previewMode = MapSurfaceEditorOverlaySystem.OverlayMode.RoadBridgeRamp;
+    private static int previewCellStride = 16;
 
     public override void OnInspectorGUI()
     {
@@ -26,60 +28,36 @@ public sealed class MapSurfaceAuthoringEditor : Editor
 
         using (new EditorGUI.DisabledScope(Application.isPlaying))
         {
+            previewMode = (MapSurfaceEditorOverlaySystem.OverlayMode)EditorGUILayout.EnumPopup("Preview Mode", previewMode);
+            previewCellStride = EditorGUILayout.IntSlider("Preview Cell Stride", previewCellStride, 4, 64);
+            if (GUILayout.Button("Preview Bake In Scene View (No Save)", GUILayout.Height(30f)))
+                PreviewSelectedAuthoring((MapSurfaceAuthoring)target);
+            if (MapSurfacePreviewOverlaySystem.HasPreview && GUILayout.Button("Clear Bake Preview", GUILayout.Height(24f)))
+                MapSurfacePreviewOverlaySystem.ClearPreview();
+
+            EditorGUILayout.Space(4f);
             if (GUILayout.Button("Bake Map Surface Data", GUILayout.Height(30f)))
                 BakeSelectedAuthoring((MapSurfaceAuthoring)target);
         }
     }
 
+    private void PreviewSelectedAuthoring(MapSurfaceAuthoring authoring)
+    {
+        if (!TryBuildSurfaceBlob(authoring, out MapSurfaceBakeRequest request, out BlobAssetReference<MapSurfaceBlob> surfaceBlob, out int sourceCount))
+            return;
+
+        string label = $"{authoring.name}: sources={sourceCount} cells={request.Dimensions.x}x{request.Dimensions.y}";
+        MapSurfacePreviewOverlaySystem.ShowPreview(request, surfaceBlob, previewMode, previewCellStride, label);
+    }
+
     private void BakeSelectedAuthoring(MapSurfaceAuthoring authoring)
     {
-        if (authoring == null)
-            return;
-
-        if (authoring.GridConfig == null)
-        {
-            EditorUtility.DisplayDialog(
-                "Map Surface Bake",
-                "Assign Grid Config before baking map surface data.",
-                "OK");
-            return;
-        }
-
         MapSurfaceDataAsset asset = ResolveOrCreateDataAsset(authoring);
         if (asset == null)
             return;
 
-        MapSurfaceBakeRequest request = CreateBakeRequest(authoring);
-        List<MapSurfaceMeshBakeSource> sources = new();
-        AddAuthoringGroupSources(authoring.transform, sources);
-
-        var bakeSystem = new MapSurfaceBakeSystem();
-        bool baked;
-        BlobAssetReference<MapSurfaceBlob> surfaceBlob;
-        if (sources.Count > 0)
-        {
-            baked = bakeSystem.TryBuildSingleLayerTerrain(
-                request,
-                sources.ToArray(),
-                Allocator.Persistent,
-                out surfaceBlob);
-        }
-        else
-        {
-            baked = bakeSystem.TryBuildFlatEquivalent(
-                request,
-                Allocator.Persistent,
-                out surfaceBlob);
-        }
-
-        if (!baked || !surfaceBlob.IsCreated)
-        {
-            EditorUtility.DisplayDialog(
-                "Map Surface Bake",
-                "Bake failed. Check grid dimensions, cell size, and source meshes.",
-                "OK");
+        if (!TryBuildSurfaceBlob(authoring, out MapSurfaceBakeRequest request, out BlobAssetReference<MapSurfaceBlob> surfaceBlob, out int sourceCount))
             return;
-        }
 
         MapSurfaceDataAsset previewAsset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
         previewAsset.ConfigureBakedSurface(
@@ -87,7 +65,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             request.CellSize,
             new Vector2Int(request.Dimensions.x, request.Dimensions.y),
             surfaceBlob,
-            sources.Count == 0);
+            sourceCount == 0);
 
         if (previewAsset.CompressedPayloadBytes > MapSurfaceDataAsset.GitFriendlyPayloadByteLimit)
         {
@@ -109,7 +87,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             request.CellSize,
             new Vector2Int(request.Dimensions.x, request.Dimensions.y),
             surfaceBlob,
-            sources.Count == 0);
+            sourceCount == 0);
         UnityEngine.Object.DestroyImmediate(previewAsset);
         surfaceBlob.Dispose();
 
@@ -120,6 +98,48 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         Debug.Log(
             $"[MapSurfaceBake] Baked {asset.SurfaceCount} surfaces, {asset.ConnectionCount} connections " +
             $"to {AssetDatabase.GetAssetPath(asset)} compactBytes={asset.CompressedPayloadBytes} uncompressedBytes={asset.UncompressedPayloadBytes}");
+    }
+
+    private static bool TryBuildSurfaceBlob(
+        MapSurfaceAuthoring authoring,
+        out MapSurfaceBakeRequest request,
+        out BlobAssetReference<MapSurfaceBlob> surfaceBlob,
+        out int sourceCount)
+    {
+        request = default;
+        surfaceBlob = default;
+        sourceCount = 0;
+
+        if (authoring == null)
+            return false;
+
+        if (authoring.GridConfig == null)
+        {
+            EditorUtility.DisplayDialog(
+                "Map Surface Bake",
+                "Assign Grid Config before baking map surface data.",
+                "OK");
+            return false;
+        }
+
+        request = CreateBakeRequest(authoring);
+        List<MapSurfaceMeshBakeSource> sources = new();
+        AddAuthoringGroupSources(authoring.transform, sources);
+        sourceCount = sources.Count;
+
+        var bakeSystem = new MapSurfaceBakeSystem();
+        bool baked = sourceCount > 0
+            ? bakeSystem.TryBuildSingleLayerTerrain(request, sources.ToArray(), Allocator.Persistent, out surfaceBlob)
+            : bakeSystem.TryBuildFlatEquivalent(request, Allocator.Persistent, out surfaceBlob);
+
+        if (baked && surfaceBlob.IsCreated)
+            return true;
+
+        EditorUtility.DisplayDialog(
+            "Map Surface Bake",
+            "Bake failed. Check grid dimensions, cell size, and source meshes.",
+            "OK");
+        return false;
     }
 
     private MapSurfaceDataAsset ResolveOrCreateDataAsset(MapSurfaceAuthoring authoring)

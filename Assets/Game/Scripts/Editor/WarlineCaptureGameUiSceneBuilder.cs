@@ -13,7 +13,7 @@ using UnityEngine.UI;
 
 public static class WarlineCaptureGameUiSceneBuilder
 {
-    private const string ScenePath = "Assets/Game/Scenes/GameUI.unity";
+    private const string ScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string RootName = "GameUIRoot";
     private const string CameraName = "GameUICamera";
     private const string EventSystemName = "EventSystem";

@@ -218,6 +218,22 @@ Pathfinding is a hot gameplay system. Refactoring must preserve current movement
 
 Path request collection, live-unit snapshot ownership, native scratch workspace ownership, reserved-goal state, hierarchical waypoint planning, nearest-goal assignment, result application, retry/abandon policy, adaptive request budgeting, validation metrics, and pathfinding diagnostics must migrate into narrow `*System` boundaries. The remaining `UnitPathfindingSystem` may stay only as a narrow ECS schedule/apply coordinator.
 
+## Map Surface, Slopes, Roads, And Bridges
+
+Layered map-surface implementation is tracked in `Design/Architecture/map_surface_layered_grid_implementation_roadmap.md`.
+
+Gameplay must not assume all units, buildings, roads, and command targets live at world `y = 0`. Terrain height, slope, roads, bridge decks, highways under bridges, ramps, and other walkable layers must flow through ECS-owned map-surface data.
+
+The target boundary is a precomputed, layered surface grid:
+- `MapSurfaceComponent` owns the baked surface reference and grid metadata.
+- `MapSurfaceQuerySystem` owns allocation-free height, normal, slope, surface-type, and layer sampling contexts.
+- `MapSurfaceConnectionSystem` owns explicit connectivity between terrain, roads, bridge decks, lower highways, ramps, and authored transitions.
+- `UnitSurfaceTrackingSystem`, `UnitGroundingSystem`, `VehicleSlopeAlignmentSystem`, `BuildingSurfacePlacementSystem`, and `PathfindingSurfaceCostSystem` consume the surface data through narrow contexts.
+
+Runtime gameplay must not add per-frame physics raycasts, collider-dependent grounding, broad scene-object lookup, singleton surface registries, or `*Manager` / `*Controller` surface owners for normal unit movement, building placement, pathfinding, or bridge traversal. Static map-surface helpers are allowed only when they are pure stateless data/math operations.
+
+Bridge and overpass cells must support multiple walkable surfaces at the same `x/z`. Units path and ground against their current surface/layer, not against a single cell height. Layer changes are valid only through authored connection edges such as ramps and bridge approaches; units must not jump between bridge decks and roads/highways underneath by height proximity.
+
 `UnitPathfindingSystem.HasPendingPathJob` is temporary static runtime-state debt. Pending path job state must migrate to an ECS singleton/read-model boundary, and building production, citizen population, and selection/building click guards must read that boundary instead of the static property.
 
 ## Unit Render Budget Migration

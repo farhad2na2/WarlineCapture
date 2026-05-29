@@ -319,7 +319,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             "WarlineCaptureUIBootstrap",
             "Main Camera",
             "Directional Light",
-            "GameSubScene"
+            "MatchSubScene"
         };
         foreach (string forbiddenRoot in forbiddenRoots)
         {

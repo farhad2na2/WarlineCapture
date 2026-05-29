@@ -17,7 +17,7 @@ public static class WarlineCaptureSceneKitAudit
     private static readonly string[] ScenePaths =
     {
         "Assets/Game/Scenes/Demo.unity",
-        "Assets/Game/Scenes/Game.unity",
+        "Assets/Game/Scenes/Match.unity",
         "Assets/PolygonMilitary/Scenes/Demo.unity"
     };
 

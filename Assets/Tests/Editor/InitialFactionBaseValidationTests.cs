@@ -9,7 +9,7 @@ using UnityEngine;
 
 public sealed class InitialFactionBaseValidationTests
 {
-    private const string SceneConfigPath = "Assets/Game/Configs/Scene/GameSubScene_InitialUnitsSpawner_Config.asset";
+    private const string SceneConfigPath = "Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset";
     private const string RuntimeCityConfigPath = "Assets/Game/Configs/Scene/Game_RuntimeCitySpawner_Config.asset";
     private const string BuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset";
     private static readonly string[] RequiredInitialGroundVehiclePrefabs =

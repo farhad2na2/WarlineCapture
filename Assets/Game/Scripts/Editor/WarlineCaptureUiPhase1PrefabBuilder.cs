@@ -968,10 +968,10 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Debug.Log("[WarlineCaptureUI] Confirm Raid popup generated.");
     }
 
-    [MenuItem("WarlineCapture/UI/Install Phase 1 Bootstrap In Game Scene")]
-    public static void InstallBootstrapInGameScene()
+    [MenuItem("WarlineCapture/UI/Install Phase 1 Bootstrap In Match Scene")]
+    public static void InstallBootstrapInMatchScene()
     {
-        const string scenePath = "Assets/Game/Scenes/Game.unity";
+        const string scenePath = "Assets/Game/Scenes/Match.unity";
         BuildAll();
 
         UnityEngine.SceneManagement.Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -989,13 +989,13 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
-        Debug.Log("[WarlineCaptureUI] Installed disabled Phase 1 UI bootstrap in Game.unity.");
+        Debug.Log("[WarlineCaptureUI] Installed disabled Phase 1 UI bootstrap in Match.unity.");
     }
 
-    [MenuItem("WarlineCapture/UI/Enable Parallel UI In Game Scene")]
-    public static void EnableParallelUiInGameScene()
+    [MenuItem("WarlineCapture/UI/Enable Parallel UI In Match Scene")]
+    public static void EnableParallelUiInMatchScene()
     {
-        const string scenePath = "Assets/Game/Scenes/Game.unity";
+        const string scenePath = "Assets/Game/Scenes/Match.unity";
         BuildAll();
 
         UnityEngine.SceneManagement.Scene scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Single);
@@ -1018,7 +1018,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
-        Debug.Log("[WarlineCaptureUI] Enabled parallel UI in Game.unity and deactivated legacy UI_Canvas without removing it.");
+        Debug.Log("[WarlineCaptureUI] Enabled parallel UI in Match.unity and deactivated legacy UI_Canvas without removing it.");
     }
 
     [MenuItem("WarlineCapture/UI/Capture Main Menu Visual")]

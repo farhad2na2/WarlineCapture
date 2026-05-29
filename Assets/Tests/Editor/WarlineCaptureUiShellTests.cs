@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 public sealed class WarlineCaptureUiShellTests
 {
-    private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string ShellPrefabPath = "Assets/Game/Prefabs/UI/Shell/WarlineCaptureAppCanvas.prefab";
     private const string SplashPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_Splash.prefab";
     private const string MainMenuPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab";
@@ -45,9 +45,9 @@ public sealed class WarlineCaptureUiShellTests
     };
 
     [Test]
-    public void GameScene_UsesSceneOwnedCanvasWithoutParallelLegacyBootstrap()
+    public void MatchScene_UsesSceneOwnedCanvasWithoutParallelLegacyBootstrap()
     {
-        SceneYamlTestUtility scene = SceneYamlTestUtility.Load(GameScenePath);
+        SceneYamlTestUtility scene = SceneYamlTestUtility.Load(MatchScenePath);
         string legacyCanvasBlock = scene.FindRequiredBlockContaining("m_Name: UI_Canvas");
 
         Assert.Throws<AssertionException>(() => scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureUiBootstrap"));

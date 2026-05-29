@@ -35,7 +35,7 @@ public sealed class CustomGameStartupSystemTests
         RunWithLifecycle(tests, tests.InitialUnitsSpawnSystem_DoesNotRouteConvertedPrefabUnitsThroughSourceKeyImpostors);
         RunWithLifecycle(tests, tests.RuntimeGridBootstrapSystem_CreatesBuffersWithoutInvalidatingHandles);
         tests.GameBootstrapDelegatesNoMissionStartupToCustomGameStartupSystem();
-        tests.GameScene_AutoloadsGameSubSceneUntilRuntimePrefabReplacementExists();
+        tests.MatchScene_AutoloadsMatchSubSceneUntilRuntimePrefabReplacementExists();
         tests.BuildScriptSwitchesActiveBuildTargetBeforeAndroidBuild();
     }
 
@@ -502,17 +502,17 @@ public sealed class CustomGameStartupSystemTests
     }
 
     [Test]
-    public void GameScene_AutoloadsGameSubSceneUntilRuntimePrefabReplacementExists()
+    public void MatchScene_AutoloadsMatchSubSceneUntilRuntimePrefabReplacementExists()
     {
-        string scene = File.ReadAllText("Assets/Game/Scenes/Game.unity");
-        int nameIndex = scene.IndexOf("m_Name: GameSubScene", System.StringComparison.Ordinal);
-        Assert.GreaterOrEqual(nameIndex, 0, "Game scene should keep GameSubScene active until Custom Game owns a real runtime ECS prefab replacement.");
+        string scene = File.ReadAllText("Assets/Game/Scenes/Match.unity");
+        int nameIndex = scene.IndexOf("m_Name: MatchSubScene", System.StringComparison.Ordinal);
+        Assert.GreaterOrEqual(nameIndex, 0, "Match scene should keep MatchSubScene active until Custom Game owns a real runtime ECS prefab replacement.");
         int blockStart = scene.LastIndexOf("--- !u!1", nameIndex, System.StringComparison.Ordinal);
         int blockEnd = scene.IndexOf("--- !u!1", nameIndex + 1, System.StringComparison.Ordinal);
         string block = scene.Substring(blockStart, blockEnd - blockStart);
         string subSceneComponentWindow = scene.Substring(nameIndex, Mathf.Min(1200, scene.Length - nameIndex));
 
-        StringAssert.Contains("m_Name: GameSubScene", block);
+        StringAssert.Contains("m_Name: MatchSubScene", block);
         StringAssert.Contains("m_IsActive: 1", block);
         StringAssert.Contains("AutoLoadScene: 1", subSceneComponentWindow);
     }

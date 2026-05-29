@@ -13,7 +13,7 @@ using UnityEngine;
 public sealed class BaseBreachValidationTests
 {
     private const string BuildingPlacementConfigPath = "Assets/Game/Configs/Scene/Game_BuildingPlacement_Config.asset";
-    private const string InitialSpawnConfigPath = "Assets/Game/Configs/Scene/GameSubScene_InitialUnitsSpawner_Config.asset";
+    private const string InitialSpawnConfigPath = "Assets/Game/Configs/Scene/MatchSubScene_InitialUnitsSpawner_Config.asset";
     private const string WallPrefabPath = "Assets/Game/Prefabs/Buildings/Wall_Dirt_Straight.prefab";
     private const string GatePrefabPath = "Assets/Game/Prefabs/Buildings/Building_Road_Barrier.prefab";
 

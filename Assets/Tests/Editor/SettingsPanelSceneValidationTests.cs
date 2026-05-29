@@ -9,10 +9,10 @@ using UnityEngine.UI;
 
 public sealed class SettingsPanelSceneValidationTests
 {
-    private const string ScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string ScenePath = "Assets/Game/Scenes/Match.unity";
 
     [Test]
-    public void GameScene_SettingsButtonPanelAndGameplaySpeedDropdownAreWired()
+    public void MatchScene_SettingsButtonPanelAndGameplaySpeedDropdownAreWired()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
         string menuViewBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView");
@@ -50,7 +50,7 @@ public sealed class SettingsPanelSceneValidationTests
     }
 
     [Test]
-    public void GameScene_FpsLabelIsWiredAndUpdatedByMenuView()
+    public void MatchScene_FpsLabelIsWiredAndUpdatedByMenuView()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
         string menuViewBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView");

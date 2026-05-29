@@ -781,7 +781,7 @@ public sealed class CustomGameStartupSystem
             $"initialUnitEntries={initialUnits.Length} sourceUnitEntries={sourceUnitSpawns.Length} " +
             $"resolvedInitialPrefabs={resolvedInitialPrefabs} resolvedRegistryPrefabs={resolvedRegistryPrefabs} " +
             $"prefabCandidates={prefabQuery.CalculateEntityCount()} unitRegistrySingletons={registryQuery.CalculateEntityCount()}. " +
-            "Android player builds must switch to Android before BuildPipeline.BuildPlayer so GameSubScene EntityScene artifacts are baked for Android.");
+            "Android player builds must switch to Android before BuildPipeline.BuildPlayer so MatchSubScene EntityScene artifacts are baked for Android.");
     }
 
     private static bool TryResolveConvertedPrefabEntity(

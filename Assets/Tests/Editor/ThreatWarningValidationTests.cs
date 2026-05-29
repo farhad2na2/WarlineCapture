@@ -8,7 +8,7 @@ using UnityEngine;
 
 public sealed class ThreatWarningValidationTests
 {
-    private const string ScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string ScenePath = "Assets/Game/Scenes/Match.unity";
     private const string RadarTankConfigPath = "Assets/Game/Configs/Prefabs/Prefab_UnitGrid_Veh_Radar_Tank.asset";
     private const string SatelliteDishConfigPath = "Assets/Game/Configs/Prefabs/Prefab_BuildingDefinition_Building_Satelite_Dish_Config.asset";
     private const string GameStringsConfigPath = "Assets/Game/Configs/Scene/Game_GameStrings_Config.asset";
@@ -19,7 +19,7 @@ public sealed class ThreatWarningValidationTests
         {
             var tests = new ThreatWarningValidationTests();
             tests.ThreatWarningConfigs_AssignDetectorRolesDescriptionsAndStrings();
-            tests.GameScene_TacticalWarningPanelIsWiredOnMenuView();
+            tests.MatchScene_TacticalWarningPanelIsWiredOnMenuView();
             tests.ThreatDetectionWarningSystem_GroundRadarWarnsOnlyWhenNewGroundThreatEntersRadius();
             tests.ThreatDetectionWarningSystem_GroundRadarIgnoresEnemySoldiersMovingTowardSensor();
             tests.ThreatDetectionWarningSystem_IgnoresVehiclesMovingAwayFromSensor();
@@ -66,7 +66,7 @@ public sealed class ThreatWarningValidationTests
     }
 
     [Test]
-    public void GameScene_TacticalWarningPanelIsWiredOnMenuView()
+    public void MatchScene_TacticalWarningPanelIsWiredOnMenuView()
     {
         SceneYamlTestUtility scene = SceneYamlTestUtility.Load(ScenePath);
         string menuViewBlock = scene.FindRequiredBlockContaining("m_EditorClassIdentifier: Assembly-CSharp::Game.Scripts.UI.MenuView");

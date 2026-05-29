@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a101000000000000000000000000000b, type: 3}
+  m_Name: MatchSubScene_GridAuthoring_Config
+  m_EditorClassIdentifier: 
+  width: 2048
+  height: 2048
+  cellSize: 1
+  blockedCells: []
+  drawGrid: 1
+  drawWhenNotSelected: 0
+  drawRuntimeDebugInPlayMode: 1
+  fillWalkableCells: 0
+  fillRoadCells: 1
+  fillSidewalkCells: 1
+  roadCellDebugScale: 0.35
+  fillBuildingCells: 1
+  fillRuntimeBlockerCells: 1
+  fillVehicleFootprintCells: 1
+  drawUnitPaths: 1
+  maxGridLinesPerAxis: 256
+  maxFilledDebugCells: 250000
+  gridLineColor: {r: 0.735849, g: 0.735849, b: 0.735849, a: 1}
+  walkableFillColor: {r: 0.2, g: 1, b: 0.2, a: 0.05}
+  roadFillColor: {r: 0, g: 0.62254906, b: 1, a: 1}
+  sidewalkFillColor: {r: 0.2, g: 0.85, b: 0.25, a: 0.5}
+  buildingFillColor: {r: 1, g: 0.65, b: 0.2, a: 0.3}
+  runtimeBlockerFillColor: {r: 0.18, g: 0.18, b: 0.18, a: 0.55}
+  vehicleFootprintFillColor: {r: 0.08, g: 0.5, b: 0.82, a: 0.4}
+  unitPathColor: {r: 0.15, g: 1, b: 0.9, a: 0.9}
+  stuckUnitPathColor: {r: 1, g: 0.15, b: 0.15, a: 0.95}
+  blockedFillColor: {r: 1, g: 0.2, b: 0.2, a: 0.25}

@@ -14,7 +14,7 @@ public static class RuntimeFpsPlayButtonProbe
     private const string ActiveKey = "WarlineCapture.RuntimeFpsPlayButtonProbe.Active";
     private const string StageKey = "WarlineCapture.RuntimeFpsPlayButtonProbe.Stage";
     private const string OutputPath = "/private/tmp/warlinecapture-runtime-fps-probe.json";
-    private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const double StartupTimeoutSeconds = 30d;
     private const double GameplayWarmupSeconds = 22d;
     private const double GameplaySampleSeconds = 45d;
@@ -49,7 +49,7 @@ public static class RuntimeFpsPlayButtonProbe
         SessionState.SetInt(ActiveKey, 1);
         SessionState.SetInt(StageKey, 0);
         Attach();
-        EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+        EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
         EditorApplication.EnterPlaymode();
     }
 

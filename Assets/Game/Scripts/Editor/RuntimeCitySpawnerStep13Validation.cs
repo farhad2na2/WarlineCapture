@@ -7,13 +7,13 @@ using UnityEngine;
 
 public static class RuntimeCitySpawnerStep13Validation
 {
-    private const string GameScenePath = "Assets/Game/Scenes/Game.unity";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
 
     public static void RunGameSceneSmokeValidation()
     {
         try
         {
-            EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+            EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
 
             GameBootstrap bootstrap = FindSingleBootstrap();
             RuntimeCitySpawnerSystemConfig validationCityConfig = CreateValidationRuntimeCityConfig(bootstrap.RuntimeCitySpawnerConfig);
@@ -47,7 +47,7 @@ public static class RuntimeCitySpawnerStep13Validation
     {
         try
         {
-            EditorSceneManager.OpenScene(GameScenePath, OpenSceneMode.Single);
+            EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
 
             GameBootstrap bootstrap = FindSingleBootstrap();
             RuntimeCitySpawnerSystemConfig disabledConfig = CreateValidationRuntimeCityConfig(bootstrap.RuntimeCitySpawnerConfig);
@@ -93,7 +93,7 @@ public static class RuntimeCitySpawnerStep13Validation
     {
         GameBootstrap[] bootstraps = UnityEngine.Object.FindObjectsByType<GameBootstrap>(
             FindObjectsInactive.Include);
-        AssertCondition(bootstraps.Length == 1, $"Expected exactly one GameBootstrap in {GameScenePath}, found {bootstraps.Length}.");
+        AssertCondition(bootstraps.Length == 1, $"Expected exactly one GameBootstrap in {MatchScenePath}, found {bootstraps.Length}.");
         return bootstraps[0];
     }
 
@@ -152,7 +152,7 @@ public static class RuntimeCitySpawnerStep13Validation
     private static void ValidateBlockerConfig(RuntimeGridBlockerSystemConfig config)
     {
         AssertCondition(config != null, "GameBootstrap must reference RuntimeGridBlockerSystemConfig.");
-        AssertCondition(config.SpawnOnStart, "Runtime grid blocker spawning should stay enabled for the Game scene.");
+        AssertCondition(config.SpawnOnStart, "Runtime grid blocker spawning should stay enabled for the Match scene.");
         AssertCondition(config.BlockerCount > 0, "Runtime blocker config must spawn blockers.");
         AssertCondition(config.Prefabs.Count > 0, "Runtime blocker config needs blocker prefabs.");
         AssertNoNullPrefabs(config.Prefabs, "runtime blocker");

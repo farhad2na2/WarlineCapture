@@ -8673,7 +8673,6 @@ public sealed class GameplayArchitectureContractTests
         const string pathPlanningSystemPath = "Assets/Game/Scripts/Systems/RoadPathPlanningSystem.cs";
         const string previewSystemPath = "Assets/Game/Scripts/Systems/RoadPreviewSystem.cs";
         const string inputSystemPath = "Assets/Game/Scripts/Systems/RoadBuildInputSystem.cs";
-        const string readModelPath = "Assets/Game/Scripts/Systems/RoadBuildReadModelSystem.cs";
         const string roadBuildPath = "Assets/Game/Scripts/Systems/RoadBuildRuntimeStateSystem.cs";
         const string roadmapPath = "Design/Architecture/road_build_system_refactor_roadmap.md";
 
@@ -13537,7 +13536,6 @@ public sealed class GameplayArchitectureContractTests
         const string startupSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityStartupSystem.cs";
         const string generationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs";
         const string roadCommitSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityRoadCommitSystem.cs";
-        const string buildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
         const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 
@@ -13676,7 +13674,6 @@ public sealed class GameplayArchitectureContractTests
     {
         const string prefabSelectionSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityPrefabSelectionSystem.cs";
         const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
-        const string buildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
         const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 
@@ -13734,7 +13731,6 @@ public sealed class GameplayArchitectureContractTests
     {
         const string visualSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityVisualSystem.cs";
         const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
-        const string buildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
         const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 
@@ -14008,7 +14004,6 @@ public sealed class GameplayArchitectureContractTests
     {
         const string spawnBridgePath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnBridgeSystem.cs";
         const string citySpawnerPath = "Assets/Game/Scripts/Environment/RuntimeCitySpawnerSystem.cs";
-        const string buildingSpawnSystemPath = "Assets/Game/Scripts/Environment/RuntimeCityBuildingSpawnSystem.cs";
         const string roadmapPath = "Design/Architecture/runtime_city_spawner_refactor_roadmap.md";
         const string auditPath = "Design/Architecture/runtime_city_spawner_responsibility_audit.md";
 

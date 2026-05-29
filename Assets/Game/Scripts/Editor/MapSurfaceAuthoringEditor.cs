@@ -13,7 +13,6 @@ public sealed class MapSurfaceAuthoringEditor : Editor
 {
     private const string DefaultAssetDirectory = "Assets/Game/Data/MapSurfaces";
     private static MapSurfaceEditorOverlaySystem.OverlayMode previewMode = MapSurfaceEditorOverlaySystem.OverlayMode.RoadBridgeRamp;
-    private static int previewCellStride = 16;
 
     public override void OnInspectorGUI()
     {
@@ -29,8 +28,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         using (new EditorGUI.DisabledScope(Application.isPlaying))
         {
             previewMode = (MapSurfaceEditorOverlaySystem.OverlayMode)EditorGUILayout.EnumPopup("Preview Mode", previewMode);
-            previewCellStride = EditorGUILayout.IntSlider("Preview Cell Stride", previewCellStride, 4, 64);
-            if (GUILayout.Button("Preview Bake In Scene View (No Save)", GUILayout.Height(30f)))
+            if (GUILayout.Button("Preview Authoring In Scene View (No Bake)", GUILayout.Height(30f)))
                 PreviewSelectedAuthoring((MapSurfaceAuthoring)target);
             if (MapSurfacePreviewOverlaySystem.HasPreview && GUILayout.Button("Clear Bake Preview", GUILayout.Height(24f)))
                 MapSurfacePreviewOverlaySystem.ClearPreview();
@@ -43,11 +41,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
 
     private void PreviewSelectedAuthoring(MapSurfaceAuthoring authoring)
     {
-        if (!TryBuildSurfaceBlob(authoring, out MapSurfaceBakeRequest request, out BlobAssetReference<MapSurfaceBlob> surfaceBlob, out int sourceCount))
-            return;
-
-        string label = $"{authoring.name}: sources={sourceCount} cells={request.Dimensions.x}x{request.Dimensions.y}";
-        MapSurfacePreviewOverlaySystem.ShowPreview(request, surfaceBlob, previewMode, previewCellStride, label);
+        MapSurfacePreviewOverlaySystem.ShowAuthoringPreview(authoring, previewMode);
     }
 
     private void BakeSelectedAuthoring(MapSurfaceAuthoring authoring)
@@ -56,7 +50,11 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         if (asset == null)
             return;
 
-        if (!TryBuildSurfaceBlob(authoring, out MapSurfaceBakeRequest request, out BlobAssetReference<MapSurfaceBlob> surfaceBlob, out int sourceCount))
+        if (!TryBuildSurfaceBlob(
+                authoring,
+                out MapSurfaceBakeRequest request,
+                out BlobAssetReference<MapSurfaceBlob> surfaceBlob,
+                out int sourceCount))
             return;
 
         MapSurfaceDataAsset previewAsset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
@@ -173,6 +171,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             grid.CellSize,
             new int2(grid.Width, grid.Height));
     }
+
 
     private static void AddAuthoringGroupSources(Transform root, List<MapSurfaceMeshBakeSource> sources)
     {

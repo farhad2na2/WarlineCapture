@@ -1291,8 +1291,8 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("[CustomEditor(typeof(MapSurfaceAuthoring))]", editor);
         StringAssert.Contains("public sealed class MapSurfaceAuthoringEditor : Editor", editor);
-        StringAssert.Contains("Preview Bake In Scene View (No Save)", editor);
-        StringAssert.Contains("MapSurfacePreviewOverlaySystem.ShowPreview", editor);
+        StringAssert.Contains("Preview Authoring In Scene View (No Bake)", editor);
+        StringAssert.Contains("MapSurfacePreviewOverlaySystem.ShowAuthoringPreview", editor);
         StringAssert.Contains("GUILayout.Button(\"Bake Map Surface Data\"", editor);
         StringAssert.Contains("BakeSelectedAuthoring((MapSurfaceAuthoring)target)", editor);
         StringAssert.Contains("new MapSurfaceBakeSystem()", editor);
@@ -1326,11 +1326,13 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("public static class MapSurfacePreviewOverlaySystem", preview);
         StringAssert.Contains("SceneView.duringSceneGui += DrawPreview", preview);
-        StringAssert.Contains("public static void ShowPreview(", preview);
+        StringAssert.Contains("public static void ShowAuthoringPreview(", preview);
+        StringAssert.Contains("private const int MaxPreviewItems", preview);
+        StringAssert.Contains("GetComponentsInChildren<Renderer>", preview);
         StringAssert.Contains("public static void ClearPreview()", preview);
-        StringAssert.Contains("MapSurfaceEditorOverlaySystem", preview);
         StringAssert.Contains("no asset saved", preview);
-        StringAssert.Contains("previewBlob.Dispose()", preview);
+        Assert.IsFalse(preview.Contains("TryBuildSingleLayerTerrain", StringComparison.Ordinal), "Preview must not call the full mesh bake path.");
+        Assert.IsFalse(preview.Contains("BlobAssetReference", StringComparison.Ordinal), "Preview must not allocate baked blobs.");
         Assert.IsFalse(preview.Contains("AssetDatabase.CreateAsset", StringComparison.Ordinal), "Preview must not write baked data assets.");
         Assert.IsFalse(preview.Contains("AssetDatabase.SaveAssets", StringComparison.Ordinal), "Preview must not save assets.");
     }

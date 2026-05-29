@@ -48,6 +48,7 @@ public struct SceneLifecycleStateComponent : IComponentData
     public SceneLifecycleSceneId ActiveScene;
     public SceneLifecycleStatusKind Status;
     public int ActiveRequestId;
+    public float Progress01;
     public byte IsBusy;
     public byte IsMatchLoaded;
 }

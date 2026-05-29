@@ -184,8 +184,7 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
             menuBootstrap.ShellView,
             menuBootstrap.ShellEcsBridge,
             menuBootstrap.ContentPresenter,
-            menuBootstrap.Router,
-            0.01f);
+            menuBootstrap.Router);
 
         return menuScene;
     }

@@ -759,8 +759,7 @@ public static class WarlineCaptureGameUiSceneBuilder
             shellRoot.GetComponent<WarlineCaptureShellView>(),
             shellRoot.GetComponent<WarlineCaptureShellEcsBridgeView>(),
             shellRoot.GetComponent<WarlineCaptureShellContentPresenterView>(),
-            root.GetComponentInChildren<WarlineCaptureRouter>(true),
-            2f);
+            root.GetComponentInChildren<WarlineCaptureRouter>(true));
 
         WarlineCaptureGameUiSmokeDriverView smokeDriver = shellRoot.GetComponent<WarlineCaptureGameUiSmokeDriverView>();
         if (smokeDriver != null)

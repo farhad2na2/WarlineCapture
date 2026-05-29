@@ -11,7 +11,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [SerializeField] private WarlineCaptureShellEcsBridgeView shellEcsBridge;
     [SerializeField] private WarlineCaptureShellContentPresenterView contentPresenter;
     [SerializeField] private WarlineCaptureRouter router;
-    [SerializeField] private float startupLoadingDurationSeconds = 2f;
 
     public Camera UiCamera => uiCamera;
     public Canvas UiCanvas => uiCanvas;
@@ -19,7 +18,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
     public WarlineCaptureShellEcsBridgeView ShellEcsBridge => shellEcsBridge;
     public WarlineCaptureShellContentPresenterView ContentPresenter => contentPresenter;
     public WarlineCaptureRouter Router => router;
-    public float StartupLoadingDurationSeconds => startupLoadingDurationSeconds;
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
 
     public void Configure(
@@ -28,8 +26,7 @@ public sealed class MenuBootstrapView : MonoBehaviour
         WarlineCaptureShellView configuredShellView,
         WarlineCaptureShellEcsBridgeView configuredShellEcsBridge,
         WarlineCaptureShellContentPresenterView configuredContentPresenter,
-        WarlineCaptureRouter configuredRouter,
-        float configuredStartupLoadingDurationSeconds)
+        WarlineCaptureRouter configuredRouter)
     {
         uiCamera = configuredUiCamera;
         uiCanvas = configuredUiCanvas;
@@ -37,7 +34,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
         shellEcsBridge = configuredShellEcsBridge;
         contentPresenter = configuredContentPresenter;
         router = configuredRouter;
-        startupLoadingDurationSeconds = Mathf.Max(0.01f, configuredStartupLoadingDurationSeconds);
     }
 
     private void Awake()

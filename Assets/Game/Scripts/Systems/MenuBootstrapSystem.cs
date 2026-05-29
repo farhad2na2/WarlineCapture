@@ -5,6 +5,7 @@ using UnityEngine;
 internal sealed class MenuBootstrapSystem
 {
     private const int DeferredMatchLoadVisibleFrames = 2;
+    private const float MinimumLoadingVisibleSeconds = 2f;
 
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private readonly MatchStartSystem matchStartSystem = new();
@@ -16,7 +17,6 @@ internal sealed class MenuBootstrapSystem
     private bool hasBoundaryQuery;
     private bool diagnosticsInitialized;
     private bool initialized;
-    private float loadingElapsedSeconds;
     private bool hasCapturedUiPresentation;
     private CameraClearFlags defaultUiCameraClearFlags;
     private Color defaultUiCameraBackgroundColor;
@@ -24,6 +24,9 @@ internal sealed class MenuBootstrapSystem
     private RenderMode defaultUiCanvasRenderMode;
     private Camera defaultUiCanvasWorldCamera;
     private int deferredMatchLoadFrame = -1;
+    private int activeLoadingSequenceId = -1;
+    private float activeLoadingStartedAt;
+    private WarlineCaptureRoute activeLoadingRoute;
     private bool matchLoadQueuedForCurrentRoute;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
@@ -61,6 +64,7 @@ internal sealed class MenuBootstrapSystem
 
     public void Update(MenuBootstrapView view, float unscaledDeltaTime)
     {
+        _ = unscaledDeltaTime;
         if (!initialized)
             Initialize(view);
         if (view == null || !TryGetWorldEntityManager(out EntityManager entityManager))
@@ -73,32 +77,9 @@ internal sealed class MenuBootstrapSystem
             return;
 
         UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
-        UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
         ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
         QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
-        if (shellState.CurrentMode != UiShellMode.Loading ||
-            shellState.IsTransitionRunning != 0 ||
-            loading.IsComplete != 0)
-        {
-            loadingElapsedSeconds = 0f;
-            return;
-        }
-
-        loadingElapsedSeconds += Mathf.Max(0f, unscaledDeltaTime);
-        float duration = Mathf.Max(0.01f, view.StartupLoadingDurationSeconds);
-        float progress = Mathf.Clamp01(loadingElapsedSeconds / duration);
-        if (shellState.ActiveRoute == WarlineCaptureRoute.Match && !IsMatchStartComplete(entityManager))
-        {
-            SetLoading(
-                entityManager,
-                boundary,
-                Mathf.Min(progress, 0.95f),
-                false,
-                "Loading match");
-            return;
-        }
-
-        SetLoading(entityManager, boundary, progress, progress >= 1f);
+        UpdateActualLoadingProgress(entityManager, boundary, shellState);
     }
 
     public void Shutdown(MenuBootstrapView view)
@@ -107,10 +88,10 @@ internal sealed class MenuBootstrapSystem
             RestoreUiPresentationMode(view.UiCamera, view.UiCanvas);
 
         initialized = false;
-        loadingElapsedSeconds = 0f;
         hasCapturedUiPresentation = false;
         performanceDiagnosticsReferenceSystem.Clear(performanceDiagnosticsSystem);
         deferredMatchLoadFrame = -1;
+        ResetLoadingMinimumWindow();
         matchLoadQueuedForCurrentRoute = false;
         if (!diagnosticsInitialized)
             return;
@@ -151,6 +132,103 @@ internal sealed class MenuBootstrapSystem
             Status = new FixedString64Bytes(status),
             IsComplete = complete ? (byte)1 : (byte)0
         });
+    }
+
+    private void UpdateActualLoadingProgress(EntityManager entityManager, Entity boundary, UiShellStateComponent shellState)
+    {
+        if (shellState.CurrentMode != UiShellMode.Loading)
+        {
+            ResetLoadingMinimumWindow();
+            return;
+        }
+
+        TrackLoadingMinimumWindow(shellState);
+
+        if (shellState.IsTransitionRunning != 0)
+            return;
+
+        UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+        if (loading.IsComplete != 0)
+            return;
+
+        if (shellState.ActiveRoute == WarlineCaptureRoute.Match)
+        {
+            UpdateMatchLoadingProgress(entityManager, boundary);
+            return;
+        }
+
+        UpdateMenuLoadingProgress(entityManager, boundary);
+    }
+
+    private void UpdateMatchLoadingProgress(EntityManager entityManager, Entity boundary)
+    {
+        if (!matchLoadQueuedForCurrentRoute)
+        {
+            SetLoading(entityManager, boundary, 0f, false, "Preparing match load");
+            return;
+        }
+
+        if (!TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent sceneState))
+        {
+            SetLoading(entityManager, boundary, 0f, false, "Loading match");
+            return;
+        }
+
+        if (sceneState.IsMatchLoaded == 0)
+        {
+            SetLoading(entityManager, boundary, Mathf.Min(sceneState.Progress01, 0.9f), false, "Loading match");
+            return;
+        }
+
+        if (!IsMatchStartComplete(entityManager))
+        {
+            SetLoading(entityManager, boundary, 0.95f, false, "Starting match");
+            return;
+        }
+
+        SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Match ready");
+    }
+
+    private void UpdateMenuLoadingProgress(EntityManager entityManager, Entity boundary)
+    {
+        if (TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent sceneState) &&
+            (sceneState.IsBusy != 0 || sceneState.IsMatchLoaded != 0))
+        {
+            if (sceneState.IsBusy == 0 && sceneState.IsMatchLoaded != 0)
+                sceneLifecycleSystem.QueueUnloadMatch(entityManager);
+
+            float progress = sceneState.Status == SceneLifecycleStatusKind.Unloading ? sceneState.Progress01 : 0f;
+            SetLoading(entityManager, boundary, progress, false, "Unloading match");
+            return;
+        }
+
+        SetLoading(entityManager, boundary, 1f, IsMinimumLoadingWindowElapsed(), "Command shell ready");
+    }
+
+    private void TrackLoadingMinimumWindow(UiShellStateComponent shellState)
+    {
+        if (activeLoadingSequenceId == shellState.TransitionSequenceId &&
+            activeLoadingRoute == shellState.ActiveRoute)
+        {
+            return;
+        }
+
+        activeLoadingSequenceId = shellState.TransitionSequenceId;
+        activeLoadingRoute = shellState.ActiveRoute;
+        activeLoadingStartedAt = Time.unscaledTime;
+    }
+
+    private bool IsMinimumLoadingWindowElapsed()
+    {
+        return activeLoadingSequenceId >= 0 &&
+            Time.unscaledTime - activeLoadingStartedAt >= MinimumLoadingVisibleSeconds;
+    }
+
+    private void ResetLoadingMinimumWindow()
+    {
+        activeLoadingSequenceId = -1;
+        activeLoadingStartedAt = 0f;
+        activeLoadingRoute = WarlineCaptureRoute.Splash;
     }
 
     private void QueueDeferredMatchLoadAfterLoadingFeedback(EntityManager entityManager, UiShellStateComponent shellState)
@@ -296,6 +374,12 @@ internal sealed class MenuBootstrapSystem
 
     private static bool IsMatchSceneLoaded(EntityManager entityManager)
     {
+        return TryGetSceneLifecycleState(entityManager, out SceneLifecycleStateComponent state) && state.IsMatchLoaded != 0;
+    }
+
+    private static bool TryGetSceneLifecycleState(EntityManager entityManager, out SceneLifecycleStateComponent state)
+    {
+        state = default;
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>());
         if (query.IsEmptyIgnoreFilter)
             return false;
@@ -304,8 +388,8 @@ internal sealed class MenuBootstrapSystem
         if (!entityManager.HasComponent<SceneLifecycleStateComponent>(entity))
             return false;
 
-        SceneLifecycleStateComponent state = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
-        return state.IsMatchLoaded != 0;
+        state = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
+        return true;
     }
 
     private static void ResetShellForFreshMenuScene()

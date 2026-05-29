@@ -1381,9 +1381,6 @@ MonoBehaviour:
   statusText: {fileID: 545853354562924444}
   tipText: {fileID: 5704818562141494492}
   loadingTips: {fileID: 11400000, guid: 82761876614a4aa88967d6788c9ef0f7, type: 2}
-  minimumVisibleSeconds: 1.25
-  fakeLoadingSeconds: 3
-  routeAfterFakeLoad: 1
   defaultStatusText: LOADING ASSETS...
 --- !u!222 &4576078718790014678
 CanvasRenderer:

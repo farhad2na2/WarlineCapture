@@ -268,8 +268,8 @@ public sealed class WarlineCaptureUiShellTests
         SplashScreenController splashController = splashPrefab.GetComponent<SplashScreenController>();
         Assert.NotNull(splashController);
         var splashSerialized = new SerializedObject(splashController);
-        Assert.AreEqual(3f, splashSerialized.FindProperty("fakeLoadingSeconds").floatValue, 0.001f);
-        Assert.AreEqual((int)WarlineCaptureRoute.MainMenu, splashSerialized.FindProperty("routeAfterFakeLoad").enumValueIndex);
+        Assert.IsNull(splashSerialized.FindProperty("fakeLoadingSeconds"));
+        Assert.IsNull(splashSerialized.FindProperty("routeAfterFakeLoad"));
 
         AssertImageSpritePath(splashPrefab.transform, string.Empty, SplashBackgroundPath);
         AssertImageSpritePath(splashPrefab.transform, "OuterHudFrame", SplashOuterFramePath);

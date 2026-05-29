@@ -20,6 +20,8 @@ public sealed class GameplayArchitectureContractTests
     private const string MatchBootstrapSystemPath = "Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs";
     private const string MatchStartSystemPath = "Assets/Game/Scripts/Systems/MatchStartSystem.cs";
     private const string MenuBootstrapSystemPath = "Assets/Game/Scripts/Systems/MenuBootstrapSystem.cs";
+    private const string SceneLifecycleSystemPath = "Assets/Game/Scripts/Systems/SceneLifecycleSystem.cs";
+    private const string SceneLifecycleComponentsPath = "Assets/Game/Scripts/Components/SceneLifecycleComponents.cs";
     private const string MenuDiagnosticsViewPath = "Assets/Game/Scripts/UI/MenuDiagnosticsView.cs";
     private const string MenuDiagnosticsSystemPath = "Assets/Game/Scripts/Systems/MenuDiagnosticsSystem.cs";
     private const string WarlineCaptureMatchSceneViewInstallerPath = "Assets/Game/Scripts/Editor/WarlineCaptureMatchSceneViewInstaller.cs";
@@ -867,12 +869,29 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("QueueDeferredMatchLoadAfterLoadingFeedback", menuBootstrapSource);
         StringAssert.Contains("DeferredMatchLoadVisibleFrames", menuBootstrapSource);
         StringAssert.Contains("shellState.IsTransitionRunning != 0", menuBootstrapSource);
+        StringAssert.Contains("UpdateActualLoadingProgress", menuBootstrapSource);
+        StringAssert.Contains("TryGetSceneLifecycleState", menuBootstrapSource);
+        StringAssert.Contains("MinimumLoadingVisibleSeconds = 2f", menuBootstrapSource);
+        StringAssert.Contains("IsMinimumLoadingWindowElapsed()", menuBootstrapSource);
         StringAssert.Contains("IsMatchSceneLoaded(entityManager)", menuBootstrapSource);
         StringAssert.Contains("CameraClearFlags.SolidColor", menuBootstrapSource);
         StringAssert.Contains("uiCamera.enabled = false", menuBootstrapSource);
         StringAssert.Contains("uiCamera.enabled = true", menuBootstrapSource);
         StringAssert.Contains("sceneLifecycleSystem.QueueLoadMatch(entityManager)", menuBootstrapSource);
+        StringAssert.Contains("sceneLifecycleSystem.QueueUnloadMatch(entityManager)", menuBootstrapSource);
         StringAssert.Contains("matchStartSystem.QueueStartAfterMatchLoaded(entityManager)", menuBootstrapSource);
+        Assert.IsFalse(menuBootstrapSource.Contains("loadingElapsedSeconds", StringComparison.Ordinal), "Menu/Match loading progress must not use fake elapsed-time loading.");
+        Assert.IsFalse(menuBootstrapSource.Contains("StartupLoadingDurationSeconds", StringComparison.Ordinal), "Menu/Match loading progress must not depend on a fake configured duration.");
+
+        string menuBootstrapViewSource = File.ReadAllText(MenuBootstrapViewPath);
+        Assert.IsFalse(menuBootstrapViewSource.Contains("startupLoadingDurationSeconds", StringComparison.Ordinal), "MenuBootstrapView must not expose fake loading duration configuration.");
+
+        string sceneLifecycleSource = File.ReadAllText(SceneLifecycleSystemPath);
+        StringAssert.Contains("_activeOperation.progress", sceneLifecycleSource);
+        StringAssert.Contains("PublishActiveOperationProgress", sceneLifecycleSource);
+
+        string sceneLifecycleComponentsSource = File.ReadAllText(SceneLifecycleComponentsPath);
+        StringAssert.Contains("public float Progress01;", sceneLifecycleComponentsSource);
 
         string builderSource = File.ReadAllText(WarlineCaptureGameUiSceneBuilderPath);
         StringAssert.Contains("FooterContent/DeployCommandButton", builderSource);

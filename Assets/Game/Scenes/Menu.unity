@@ -2206,7 +2206,6 @@ MonoBehaviour:
   shellEcsBridge: {fileID: 1818590230}
   contentPresenter: {fileID: 1818590229}
   router: {fileID: 0}
-  startupLoadingDurationSeconds: 2
 --- !u!1 &1958929999
 GameObject:
   m_ObjectHideFlags: 0

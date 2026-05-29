@@ -62,7 +62,10 @@ public sealed class SceneLifecycleSystem
 
         SceneLifecycleStateComponent state = em.GetComponentData<SceneLifecycleStateComponent>(entity);
         if (state.IsBusy != 0)
+        {
+            PublishActiveOperationProgress(em, entity, state);
             return;
+        }
 
         DynamicBuffer<SceneLifecycleRequestElement> requests = em.GetBuffer<SceneLifecycleRequestElement>(entity);
         if (requests.Length == 0)
@@ -258,7 +261,19 @@ public sealed class SceneLifecycleSystem
         SceneLifecycleStateComponent state = em.GetComponentData<SceneLifecycleStateComponent>(entity);
         state.IsMatchLoaded = IsSceneLoaded(MatchSceneName) ? (byte)1 : (byte)0;
         if (state.IsBusy == 0)
+        {
             state.Status = state.IsMatchLoaded != 0 ? SceneLifecycleStatusKind.Loaded : SceneLifecycleStatusKind.Unloaded;
+            state.Progress01 = state.IsMatchLoaded != 0 ? 1f : 0f;
+        }
+        em.SetComponentData(entity, state);
+    }
+
+    private void PublishActiveOperationProgress(EntityManager em, Entity entity, SceneLifecycleStateComponent state)
+    {
+        if (_activeOperation == null)
+            return;
+
+        state.Progress01 = Mathf.Clamp01(_activeOperation.progress / 0.9f);
         em.SetComponentData(entity, state);
     }
 
@@ -275,6 +290,7 @@ public sealed class SceneLifecycleSystem
             ActiveScene = request.Scene,
             Status = status,
             ActiveRequestId = request.RequestId,
+            Progress01 = isBusy ? 0f : 1f,
             IsBusy = isBusy ? (byte)1 : (byte)0,
             IsMatchLoaded = isMatchLoaded ? (byte)1 : (byte)0
         });

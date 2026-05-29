@@ -2501,8 +2501,6 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedObject(controller, "statusText", statusText);
         SetSerializedObject(controller, "tipText", tipText);
         SetSerializedObject(controller, "loadingTips", AssetDatabase.LoadAssetAtPath<WarlineCaptureLoadingTips>(LoadingTipsPath));
-        SetSerializedFloat(controller, "fakeLoadingSeconds", 3f);
-        SetSerializedEnum(controller, "routeAfterFakeLoad", (int)WarlineCaptureRoute.MainMenu);
 
         return screen;
     }

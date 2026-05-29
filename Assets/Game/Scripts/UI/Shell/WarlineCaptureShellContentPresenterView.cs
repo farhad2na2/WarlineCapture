@@ -8,14 +8,18 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
     [SerializeField] private GameObject loadingContentPrefab;
     [SerializeField] private GameObject mainMenuContentPrefab;
     [SerializeField] private GameObject commanderProfileContentPrefab;
+    [SerializeField] private GameObject armoryContentPrefab;
     [SerializeField] private GameObject matchHudContentPrefab;
+    [SerializeField] private GameObject buildDrawerPopupPrefab;
     [SerializeField] private GameObject resultPopupPrefab;
 
     public WarlineCaptureShellView ShellView => shellView;
     public GameObject LoadingContentPrefab => loadingContentPrefab;
     public GameObject MainMenuContentPrefab => mainMenuContentPrefab;
     public GameObject CommanderProfileContentPrefab => commanderProfileContentPrefab;
+    public GameObject ArmoryContentPrefab => armoryContentPrefab;
     public GameObject MatchHudContentPrefab => matchHudContentPrefab;
+    public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
     public GameObject ResultPopupPrefab => resultPopupPrefab;
 
     public void Configure(
@@ -23,14 +27,18 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         GameObject loadingPrefab,
         GameObject mainMenuPrefab,
         GameObject commanderProfilePrefab,
+        GameObject armoryPrefab,
         GameObject matchHudPrefab,
+        GameObject buildDrawerPrefab,
         GameObject popupPrefab)
     {
         shellView = view;
         loadingContentPrefab = loadingPrefab;
         mainMenuContentPrefab = mainMenuPrefab;
         commanderProfileContentPrefab = commanderProfilePrefab;
+        armoryContentPrefab = armoryPrefab;
         matchHudContentPrefab = matchHudPrefab;
+        buildDrawerPopupPrefab = buildDrawerPrefab;
         resultPopupPrefab = popupPrefab;
     }
 
@@ -91,15 +99,34 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
             return;
         }
 
+        if (route == WarlineCaptureRoute.Armory)
+        {
+            InstallArmoryBody();
+            return;
+        }
+
         InstallMainMenuBody();
     }
 
     private void InstallCommanderProfileBody()
     {
+        InstallSection(commanderProfileContentPrefab, "MenuBackgroundContent", WarlineCaptureShellRegionId.MenuBackgroundRegion);
+        InstallSection(commanderProfileContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
         InstallSection(commanderProfileContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
         InstallSection(commanderProfileContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
         InstallSection(commanderProfileContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
-        ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
+        InstallSection(commanderProfileContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
+        ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private void InstallArmoryBody()
+    {
+        InstallSection(armoryContentPrefab, "MenuBackgroundContent", WarlineCaptureShellRegionId.MenuBackgroundRegion);
+        InstallSection(armoryContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
+        InstallSection(armoryContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
+        InstallSection(armoryContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
+        InstallSection(armoryContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
+        InstallSection(armoryContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
         ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
     }
 
@@ -127,6 +154,11 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         frame.anchorMax = new Vector2(0.5f, 0.5f);
         frame.pivot = new Vector2(0.5f, 0.5f);
         frame.anchoredPosition = Vector2.zero;
+    }
+
+    public GameObject InstallBuildDrawerPopup()
+    {
+        return InstallRoot(buildDrawerPopupPrefab, WarlineCaptureShellRegionId.PopupLayer);
     }
 
     private GameObject InstallRoot(GameObject prefab, WarlineCaptureShellRegionId regionId)

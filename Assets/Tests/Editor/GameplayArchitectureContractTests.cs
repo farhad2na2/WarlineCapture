@@ -20,6 +20,8 @@ public sealed class GameplayArchitectureContractTests
     private const string MatchBootstrapSystemPath = "Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs";
     private const string MatchStartSystemPath = "Assets/Game/Scripts/Systems/MatchStartSystem.cs";
     private const string MenuBootstrapSystemPath = "Assets/Game/Scripts/Systems/MenuBootstrapSystem.cs";
+    private const string MenuDiagnosticsViewPath = "Assets/Game/Scripts/UI/MenuDiagnosticsView.cs";
+    private const string MenuDiagnosticsSystemPath = "Assets/Game/Scripts/Systems/MenuDiagnosticsSystem.cs";
     private const string WarlineCaptureMatchSceneViewInstallerPath = "Assets/Game/Scripts/Editor/WarlineCaptureMatchSceneViewInstaller.cs";
     private const string WarlineCaptureShellRouteButtonViewPath = "Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRouteButtonView.cs";
     private const string WarlineCaptureGameUiSceneBuilderPath = "Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs";
@@ -876,6 +878,38 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("FooterContent/DeployCommandButton", builderSource);
         StringAssert.Contains("UiShellRouteIntent.EnterMatch", builderSource);
         StringAssert.Contains("WarlineCaptureRoute.Match", builderSource);
+    }
+
+    [Test]
+    public void MenuDiagnosticsPanelUsesDedicatedViewAndSystemBoundary()
+    {
+        Assert.IsTrue(File.Exists(MenuDiagnosticsViewPath), $"{MenuDiagnosticsViewPath} must own serialized Menu diagnostics references.");
+        Assert.IsTrue(File.Exists(MenuDiagnosticsSystemPath), $"{MenuDiagnosticsSystemPath} must own Menu diagnostics behavior.");
+        Assert.IsTrue(File.Exists(MenuScenePath), $"{MenuScenePath} must contain the persistent diagnostics surface.");
+
+        string viewSource = File.ReadAllText(MenuDiagnosticsViewPath);
+        StringAssert.Contains("private readonly MenuDiagnosticsSystem diagnosticsSystem = new();", viewSource);
+        StringAssert.Contains("[SerializeField] private Button fpsButton;", viewSource);
+        StringAssert.Contains("[SerializeField] private TMP_Text fpsText;", viewSource);
+        StringAssert.Contains("[SerializeField] private GameObject logPanel;", viewSource);
+        StringAssert.Contains("[SerializeField] private Button closeButton;", viewSource);
+        Assert.IsFalse(viewSource.Contains("MenuView", StringComparison.Ordinal), "Menu diagnostics must not depend on the retired Match canvas MenuView.");
+
+        string systemSource = File.ReadAllText(MenuDiagnosticsSystemPath);
+        StringAssert.Contains("Application.logMessageReceived", systemSource);
+        StringAssert.Contains("RuntimeLogBuffer.Snapshot", systemSource);
+        StringAssert.Contains("FpsUiUpdateIntervalSeconds", systemSource);
+        StringAssert.Contains("ToggleRuntimeLogPanel", systemSource);
+        StringAssert.Contains("HideRuntimeLogPanel", systemSource);
+        Assert.IsFalse(systemSource.Contains("MenuView", StringComparison.Ordinal), "Menu diagnostics behavior must not move back into MenuView.");
+        Assert.IsFalse(systemSource.Contains("FindObject", StringComparison.Ordinal), "Menu diagnostics runtime behavior must use serialized references, not scene searches.");
+        Assert.IsFalse(systemSource.Contains("GameObject.Find", StringComparison.Ordinal), "Menu diagnostics runtime behavior must use serialized references, not name lookups.");
+
+        string sceneSource = File.ReadAllText(MenuScenePath);
+        StringAssert.Contains("MenuDiagnosticsPanel", sceneSource);
+        StringAssert.Contains("Panel_FPS", sceneSource);
+        StringAssert.Contains("Panel_Log", sceneSource);
+        StringAssert.Contains("Assembly-CSharp::Game.Scripts.UI.MenuDiagnosticsView", sceneSource);
     }
 
     [Test]

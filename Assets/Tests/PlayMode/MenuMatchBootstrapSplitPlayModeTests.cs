@@ -1,6 +1,7 @@
 #if UNITY_INCLUDE_TESTS && UNITY_EDITOR
 using System;
 using System.Threading.Tasks;
+using Game.Scripts.UI;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Entities;
@@ -39,6 +40,31 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
     {
         Scene menuScene = await LoadMenuScene();
         await StartMatchFromMenu(menuScene);
+    }
+
+    [Test]
+    public async Task MenuDiagnosticsFpsPanel_TogglesRuntimeLogWithCloseButton()
+    {
+        Scene menuScene = await LoadMenuScene();
+        MenuDiagnosticsView diagnostics = FindSceneComponent<MenuDiagnosticsView>(menuScene);
+        Assert.NotNull(diagnostics, "Menu scene must keep the FPS/log diagnostics surface on the persistent Menu canvas.");
+        Assert.NotNull(diagnostics.FpsButton, "Menu diagnostics FPS panel must expose a button.");
+        Assert.NotNull(diagnostics.FpsText, "Menu diagnostics FPS panel must expose the FPS label.");
+        Assert.NotNull(diagnostics.LogPanel, "Menu diagnostics must expose the on-screen log panel.");
+        Assert.NotNull(diagnostics.LogText, "Menu diagnostics must expose the on-screen log text.");
+        Assert.NotNull(diagnostics.CloseButton, "Menu diagnostics log panel must expose a close button.");
+        Assert.IsFalse(diagnostics.LogPanel.activeSelf, "On-screen log must start hidden.");
+
+        Debug.Log("[MenuDiagnosticsTest] runtime log surface smoke");
+        diagnostics.FpsButton.onClick.Invoke();
+        await NextFrame();
+
+        Assert.IsTrue(diagnostics.LogPanel.activeSelf, "Clicking the FPS panel must show the on-screen log.");
+        StringAssert.Contains("[MenuDiagnosticsTest] runtime log surface smoke", diagnostics.LogText.text);
+
+        diagnostics.CloseButton.onClick.Invoke();
+        await NextFrame();
+        Assert.IsFalse(diagnostics.LogPanel.activeSelf, "Clicking the on-screen log close button must hide the panel.");
     }
 
     [Test]

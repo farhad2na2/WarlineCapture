@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public static class MapPrefabBakeAuthoringSetup
 {
     private const string MapPrefabPath = "Assets/Game/Prefabs/Maps/Map.prefab";
     private const string MapRootName = "Map";
+    private const string GridConfigGuid = "b201000000000000000000000000000b";
+    private const string MapSurfaceDataPath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
 
     [MenuItem("WarlineCapture/Maps/Setup Map Bake Authoring")]
     public static void SetupMapBakeAuthoring()
@@ -22,8 +25,11 @@ public static class MapPrefabBakeAuthoringSetup
             if (mapRoot == null)
                 throw new InvalidOperationException($"Could not find {MapRootName} root in {MapPrefabPath}.");
 
-            if (mapRoot.GetComponent<MapSurfaceAuthoring>() == null)
-                mapRoot.gameObject.AddComponent<MapSurfaceAuthoring>();
+            MapSurfaceAuthoring surfaceAuthoring = mapRoot.GetComponent<MapSurfaceAuthoring>();
+            if (surfaceAuthoring == null)
+                surfaceAuthoring = mapRoot.gameObject.AddComponent<MapSurfaceAuthoring>();
+
+            ConfigureSurfaceAuthoring(surfaceAuthoring);
 
             int configured = 0;
             IReadOnlyDictionary<string, MapBakeGroupRole> roles = DefaultRoles();
@@ -92,6 +98,35 @@ public static class MapPrefabBakeAuthoringSetup
         serialized.FindProperty("includeInactiveChildren").boolValue = true;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(group);
+    }
+
+    private static void ConfigureSurfaceAuthoring(MapSurfaceAuthoring authoring)
+    {
+        GridAuthoringConfig gridConfig = AssetDatabase.LoadAssetAtPath<GridAuthoringConfig>(AssetDatabase.GUIDToAssetPath(GridConfigGuid));
+        if (gridConfig == null)
+            throw new InvalidOperationException($"Could not load GridAuthoringConfig from GUID {GridConfigGuid}.");
+
+        MapSurfaceDataAsset surfaceData = ResolveOrCreateSurfaceData();
+        SerializedObject serialized = new(authoring);
+        serialized.FindProperty("bakedSurfaceData").objectReferenceValue = surfaceData;
+        serialized.FindProperty("gridConfig").objectReferenceValue = gridConfig;
+        serialized.FindProperty("gridOrigin").vector3Value = Vector3.zero;
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        EditorUtility.SetDirty(authoring);
+    }
+
+    private static MapSurfaceDataAsset ResolveOrCreateSurfaceData()
+    {
+        MapSurfaceDataAsset surfaceData = AssetDatabase.LoadAssetAtPath<MapSurfaceDataAsset>(MapSurfaceDataPath);
+        if (surfaceData != null)
+            return surfaceData;
+
+        Directory.CreateDirectory(Path.GetDirectoryName(MapSurfaceDataPath));
+        surfaceData = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        AssetDatabase.CreateAsset(surfaceData, MapSurfaceDataPath);
+        EditorUtility.SetDirty(surfaceData);
+        AssetDatabase.SaveAssets();
+        return surfaceData;
     }
 
     private static int ResolveMovementMask(MapBakeGroupRole role)

@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.IO.Compression;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -6,15 +8,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MapSurfaceData", menuName = "WarlineCapture/Map Surface Data")]
 public sealed class MapSurfaceDataAsset : ScriptableObject
 {
+    private const int CurrentPayloadVersion = 1;
+    public const int GitFriendlyPayloadByteLimit = 25 * 1024 * 1024;
+
     [SerializeField] private Vector3 gridOrigin;
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private Vector2Int dimensions = Vector2Int.one;
     [SerializeField] private bool generatedFlatEquivalent;
     [SerializeField] private int surfaceCount;
     [SerializeField] private int connectionCount;
-    [SerializeField] private SerializedMapSurfaceCell[] cells = Array.Empty<SerializedMapSurfaceCell>();
-    [SerializeField] private SerializedMapSurfaceSample[] samples = Array.Empty<SerializedMapSurfaceSample>();
-    [SerializeField] private SerializedMapSurfaceConnection[] connections = Array.Empty<SerializedMapSurfaceConnection>();
+    [SerializeField] private int payloadVersion = CurrentPayloadVersion;
+    [SerializeField] private int uncompressedPayloadBytes;
+    [SerializeField] private byte[] compressedSurfacePayload = Array.Empty<byte>();
 
     public Vector3 GridOrigin => gridOrigin;
     public float CellSize => cellSize;
@@ -22,9 +27,10 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
     public bool GeneratedFlatEquivalent => generatedFlatEquivalent;
     public int SurfaceCount => surfaceCount;
     public int ConnectionCount => connectionCount;
-    public SerializedMapSurfaceCell[] Cells => cells;
-    public SerializedMapSurfaceSample[] Samples => samples;
-    public SerializedMapSurfaceConnection[] Connections => connections;
+    public int PayloadVersion => payloadVersion;
+    public int UncompressedPayloadBytes => uncompressedPayloadBytes;
+    public int CompressedPayloadBytes => compressedSurfacePayload?.Length ?? 0;
+    public bool HasCompactPayload => compressedSurfacePayload != null && compressedSurfacePayload.Length > 0;
 
     public void ConfigureFlatEquivalent(Vector3 gridOrigin, float cellSize, Vector2Int dimensions)
     {
@@ -34,38 +40,9 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         generatedFlatEquivalent = true;
         surfaceCount = Mathf.Max(0, dimensions.x) * Mathf.Max(0, dimensions.y);
         connectionCount = 0;
-        cells = new SerializedMapSurfaceCell[surfaceCount];
-        samples = new SerializedMapSurfaceSample[surfaceCount];
-        connections = Array.Empty<SerializedMapSurfaceConnection>();
-        for (int y = 0; y < dimensions.y; y++)
-        {
-            for (int x = 0; x < dimensions.x; x++)
-            {
-                int index = x + y * dimensions.x;
-                cells[index] = new SerializedMapSurfaceCell
-                {
-                    FirstSurfaceIndex = index,
-                    SurfaceCount = 1,
-                    InlineSurfaceIndex = index
-                };
-                samples[index] = new SerializedMapSurfaceSample
-                {
-                    Cell = new Vector2Int(x, y),
-                    SurfaceId = index,
-                    LayerId = 0,
-                    Height = gridOrigin.y,
-                    Normal = Vector3.up,
-                    SlopeDegrees = 0f,
-                    SurfaceType = MapSurfaceType.Terrain,
-                    MovementMask = MapSurfaceMovementMask.AllGroundUnits |
-                                   MapSurfaceMovementMask.AirGrounded |
-                                   MapSurfaceMovementMask.BuildingPlacement,
-                    Flags = MapSurfaceFlags.None,
-                    FirstConnectionIndex = 0,
-                    ConnectionCount = 0
-                };
-            }
-        }
+        payloadVersion = CurrentPayloadVersion;
+        uncompressedPayloadBytes = 0;
+        compressedSurfacePayload = Array.Empty<byte>();
     }
 
     public void ConfigureBakedSurface(
@@ -84,94 +61,76 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         {
             surfaceCount = 0;
             connectionCount = 0;
-            cells = Array.Empty<SerializedMapSurfaceCell>();
-            samples = Array.Empty<SerializedMapSurfaceSample>();
-            connections = Array.Empty<SerializedMapSurfaceConnection>();
+            payloadVersion = CurrentPayloadVersion;
+            uncompressedPayloadBytes = 0;
+            compressedSurfacePayload = Array.Empty<byte>();
             return;
         }
 
         ref MapSurfaceBlob blob = ref surfaceBlob.Value;
-        cells = new SerializedMapSurfaceCell[blob.Cells.Length];
-        for (int i = 0; i < blob.Cells.Length; i++)
-        {
-            MapSurfaceCell cell = blob.Cells[i];
-            cells[i] = new SerializedMapSurfaceCell
-            {
-                FirstSurfaceIndex = cell.FirstSurfaceIndex,
-                SurfaceCount = cell.SurfaceCount,
-                InlineSurfaceIndex = cell.InlineSurfaceIndex
-            };
-        }
-
-        samples = new SerializedMapSurfaceSample[blob.Samples.Length];
-        for (int i = 0; i < blob.Samples.Length; i++)
-        {
-            MapSurfaceSample sample = blob.Samples[i];
-            samples[i] = new SerializedMapSurfaceSample
-            {
-                Cell = new Vector2Int(sample.Cell.x, sample.Cell.y),
-                SurfaceId = sample.SurfaceId,
-                LayerId = sample.LayerId,
-                Height = sample.Height,
-                Normal = new Vector3(sample.Normal.x, sample.Normal.y, sample.Normal.z),
-                SlopeDegrees = sample.SlopeDegrees,
-                SurfaceType = sample.SurfaceType,
-                MovementMask = sample.MovementMask,
-                Flags = sample.Flags,
-                FirstConnectionIndex = sample.FirstConnectionIndex,
-                ConnectionCount = sample.ConnectionCount
-            };
-        }
-
-        connections = new SerializedMapSurfaceConnection[blob.Connections.Length];
-        for (int i = 0; i < blob.Connections.Length; i++)
-        {
-            MapSurfaceConnection connection = blob.Connections[i];
-            connections[i] = new SerializedMapSurfaceConnection
-            {
-                FromSurfaceId = connection.FromSurfaceId,
-                ToSurfaceId = connection.ToSurfaceId,
-                Direction = new Vector2Int(connection.Direction.x, connection.Direction.y),
-                ConnectionType = connection.ConnectionType,
-                MovementMask = connection.MovementMask
-            };
-        }
-
-        surfaceCount = samples.Length;
-        connectionCount = connections.Length;
+        surfaceCount = blob.Samples.Length;
+        connectionCount = blob.Connections.Length;
+        payloadVersion = CurrentPayloadVersion;
+        compressedSurfacePayload = BuildCompressedPayload(ref blob, out uncompressedPayloadBytes);
     }
-}
 
-[Serializable]
-public struct SerializedMapSurfaceCell
-{
-    public int FirstSurfaceIndex;
-    public int SurfaceCount;
-    public int InlineSurfaceIndex;
-}
+    private static byte[] BuildCompressedPayload(ref MapSurfaceBlob blob, out int uncompressedByteCount)
+    {
+        using var uncompressed = new MemoryStream();
+        using (var writer = new BinaryWriter(uncompressed))
+        {
+            writer.Write(CurrentPayloadVersion);
+            writer.Write(blob.Cells.Length);
+            writer.Write(blob.Samples.Length);
+            writer.Write(blob.Connections.Length);
 
-[Serializable]
-public struct SerializedMapSurfaceSample
-{
-    public Vector2Int Cell;
-    public int SurfaceId;
-    public int LayerId;
-    public float Height;
-    public Vector3 Normal;
-    public float SlopeDegrees;
-    public MapSurfaceType SurfaceType;
-    public MapSurfaceMovementMask MovementMask;
-    public MapSurfaceFlags Flags;
-    public int FirstConnectionIndex;
-    public int ConnectionCount;
-}
+            for (int i = 0; i < blob.Cells.Length; i++)
+            {
+                MapSurfaceCell cell = blob.Cells[i];
+                writer.Write(cell.FirstSurfaceIndex);
+                writer.Write(cell.SurfaceCount);
+                writer.Write(cell.InlineSurfaceIndex);
+            }
 
-[Serializable]
-public struct SerializedMapSurfaceConnection
-{
-    public int FromSurfaceId;
-    public int ToSurfaceId;
-    public Vector2Int Direction;
-    public MapSurfaceConnectionType ConnectionType;
-    public MapSurfaceMovementMask MovementMask;
+            for (int i = 0; i < blob.Samples.Length; i++)
+            {
+                MapSurfaceSample sample = blob.Samples[i];
+                writer.Write(sample.Cell.x);
+                writer.Write(sample.Cell.y);
+                writer.Write(sample.SurfaceId);
+                writer.Write(sample.LayerId);
+                writer.Write(sample.Height);
+                writer.Write(sample.Normal.x);
+                writer.Write(sample.Normal.y);
+                writer.Write(sample.Normal.z);
+                writer.Write(sample.SlopeDegrees);
+                writer.Write((int)sample.SurfaceType);
+                writer.Write((int)sample.MovementMask);
+                writer.Write((int)sample.Flags);
+                writer.Write(sample.FirstConnectionIndex);
+                writer.Write(sample.ConnectionCount);
+            }
+
+            for (int i = 0; i < blob.Connections.Length; i++)
+            {
+                MapSurfaceConnection connection = blob.Connections[i];
+                writer.Write(connection.FromSurfaceId);
+                writer.Write(connection.ToSurfaceId);
+                writer.Write(connection.Direction.x);
+                writer.Write(connection.Direction.y);
+                writer.Write((int)connection.ConnectionType);
+                writer.Write((int)connection.MovementMask);
+            }
+        }
+
+        uncompressedByteCount = checked((int)uncompressed.Length);
+        using var compressed = new MemoryStream();
+        using (var gzip = new GZipStream(compressed, System.IO.Compression.CompressionLevel.Optimal, true))
+        {
+            uncompressed.Position = 0;
+            uncompressed.CopyTo(gzip);
+        }
+
+        return compressed.ToArray();
+    }
 }

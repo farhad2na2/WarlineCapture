@@ -36,11 +36,11 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         if (authoring == null)
             return;
 
-        if (authoring.GridAuthoring == null)
+        if (authoring.GridConfig == null)
         {
             EditorUtility.DisplayDialog(
                 "Map Surface Bake",
-                "Assign Grid Authoring before baking map surface data.",
+                "Assign Grid Config before baking map surface data.",
                 "OK");
             return;
         }
@@ -49,7 +49,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         if (asset == null)
             return;
 
-        MapSurfaceBakeRequest request = CreateBakeRequest(authoring.GridAuthoring);
+        MapSurfaceBakeRequest request = CreateBakeRequest(authoring);
         List<MapSurfaceMeshBakeSource> sources = new();
         AddAuthoringGroupSources(authoring.transform, sources);
 
@@ -81,6 +81,28 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             return;
         }
 
+        MapSurfaceDataAsset previewAsset = ScriptableObject.CreateInstance<MapSurfaceDataAsset>();
+        previewAsset.ConfigureBakedSurface(
+            new Vector3(request.GridOrigin.x, request.GridOrigin.y, request.GridOrigin.z),
+            request.CellSize,
+            new Vector2Int(request.Dimensions.x, request.Dimensions.y),
+            surfaceBlob,
+            sources.Count == 0);
+
+        if (previewAsset.CompressedPayloadBytes > MapSurfaceDataAsset.GitFriendlyPayloadByteLimit)
+        {
+            int payloadMb = Mathf.CeilToInt(previewAsset.CompressedPayloadBytes / (1024f * 1024f));
+            int limitMb = Mathf.CeilToInt(MapSurfaceDataAsset.GitFriendlyPayloadByteLimit / (1024f * 1024f));
+            UnityEngine.Object.DestroyImmediate(previewAsset);
+            surfaceBlob.Dispose();
+            EditorUtility.DisplayDialog(
+                "Map Surface Bake",
+                $"Bake produced a compact payload of {payloadMb} MB, above the {limitMb} MB Git-friendly limit. " +
+                "Use a lower-resolution bake, chunked surface assets, or a sparse authoring pass before saving.",
+                "OK");
+            return;
+        }
+
         Undo.RecordObject(asset, "Bake Map Surface Data");
         asset.ConfigureBakedSurface(
             new Vector3(request.GridOrigin.x, request.GridOrigin.y, request.GridOrigin.z),
@@ -88,13 +110,16 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             new Vector2Int(request.Dimensions.x, request.Dimensions.y),
             surfaceBlob,
             sources.Count == 0);
+        UnityEngine.Object.DestroyImmediate(previewAsset);
         surfaceBlob.Dispose();
 
         EditorUtility.SetDirty(asset);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
-        Debug.Log($"[MapSurfaceBake] Baked {asset.SurfaceCount} surfaces, {asset.ConnectionCount} connections to {AssetDatabase.GetAssetPath(asset)}");
+        Debug.Log(
+            $"[MapSurfaceBake] Baked {asset.SurfaceCount} surfaces, {asset.ConnectionCount} connections " +
+            $"to {AssetDatabase.GetAssetPath(asset)} compactBytes={asset.CompressedPayloadBytes} uncompressedBytes={asset.UncompressedPayloadBytes}");
     }
 
     private MapSurfaceDataAsset ResolveOrCreateDataAsset(MapSurfaceAuthoring authoring)
@@ -120,10 +145,11 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         return asset;
     }
 
-    private static MapSurfaceBakeRequest CreateBakeRequest(GridAuthoring grid)
+    private static MapSurfaceBakeRequest CreateBakeRequest(MapSurfaceAuthoring authoring)
     {
+        GridAuthoringConfig grid = authoring.GridConfig;
         return new MapSurfaceBakeRequest(
-            (float3)grid.transform.position,
+            (float3)authoring.GridOrigin,
             grid.CellSize,
             new int2(grid.Width, grid.Height));
     }

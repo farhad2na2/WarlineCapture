@@ -1140,7 +1140,11 @@ public sealed class GameplayArchitectureContractTests
         string combined = mapAuthoring + Environment.NewLine + mapGroupAuthoring + Environment.NewLine + bridgeAuthoring;
 
         StringAssert.Contains("public sealed class MapSurfaceAuthoring : MonoBehaviour", mapAuthoring);
-        StringAssert.Contains("[SerializeField] private GridAuthoring gridAuthoring;", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private GridAuthoringConfig gridConfig;", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private Vector3 gridOrigin;", mapAuthoring);
+        StringAssert.Contains("public GridAuthoringConfig GridConfig => gridConfig;", mapAuthoring);
+        StringAssert.Contains("public Vector3 GridOrigin => gridOrigin;", mapAuthoring);
+        Assert.IsFalse(mapAuthoring.Contains("GridAuthoring gridAuthoring", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep scene-object GridAuthoring references on the Map prefab.");
         Assert.IsFalse(mapAuthoring.Contains("terrainRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root terrain fields.");
         Assert.IsFalse(mapAuthoring.Contains("roadRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root road fields.");
         Assert.IsFalse(mapAuthoring.Contains("bridgeRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root bridge fields.");
@@ -1252,14 +1256,15 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public sealed class MapSurfaceDataAsset : ScriptableObject", dataAsset);
         StringAssert.Contains("[CreateAssetMenu(fileName = \"MapSurfaceData\", menuName = \"WarlineCapture/Map Surface Data\")]", dataAsset);
         StringAssert.Contains("public void ConfigureFlatEquivalent", dataAsset);
-        StringAssert.Contains("[SerializeField] private SerializedMapSurfaceCell[] cells", dataAsset);
-        StringAssert.Contains("[SerializeField] private SerializedMapSurfaceSample[] samples", dataAsset);
-        StringAssert.Contains("[SerializeField] private SerializedMapSurfaceConnection[] connections", dataAsset);
+        StringAssert.Contains("[SerializeField] private byte[] compressedSurfacePayload", dataAsset);
+        StringAssert.Contains("public const int GitFriendlyPayloadByteLimit", dataAsset);
+        StringAssert.Contains("public int CompressedPayloadBytes =>", dataAsset);
+        StringAssert.Contains("private static byte[] BuildCompressedPayload", dataAsset);
+        Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceCell[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-cell YAML arrays.");
+        Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceSample[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-sample YAML arrays.");
+        Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceConnection[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-connection YAML arrays.");
         StringAssert.Contains("public void ConfigureBakedSurface(", dataAsset);
         StringAssert.Contains("BlobAssetReference<MapSurfaceBlob> surfaceBlob", dataAsset);
-        StringAssert.Contains("public struct SerializedMapSurfaceSample", dataAsset);
-        StringAssert.Contains("public Vector2Int Cell;", dataAsset);
-        StringAssert.Contains("public MapSurfaceType SurfaceType;", dataAsset);
         StringAssert.Contains("public Vector3 GridOrigin => gridOrigin;", dataAsset);
         StringAssert.Contains("public Vector2Int Dimensions => dimensions;", dataAsset);
         StringAssert.Contains("[SerializeField] private MapSurfaceDataAsset bakedSurfaceData;", authoring);
@@ -1281,7 +1286,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(MapSurfaceAuthoringEditorPath), $"{MapSurfaceAuthoringEditorPath} must expose the Map object inspector bake workflow.");
 
         string editor = File.ReadAllText(MapSurfaceAuthoringEditorPath);
-        string gridAuthoring = File.ReadAllText("Assets/Game/Scripts/Authorings/GridAuthoring.cs");
+        string gridConfig = File.ReadAllText("Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs");
 
         StringAssert.Contains("[CustomEditor(typeof(MapSurfaceAuthoring))]", editor);
         StringAssert.Contains("public sealed class MapSurfaceAuthoringEditor : Editor", editor);
@@ -1291,6 +1296,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("bakeSystem.TryBuildSingleLayerTerrain(", editor);
         StringAssert.Contains("bakeSystem.TryBuildFlatEquivalent(", editor);
         StringAssert.Contains("asset.ConfigureBakedSurface(", editor);
+        StringAssert.Contains("previewAsset.CompressedPayloadBytes > MapSurfaceDataAsset.GitFriendlyPayloadByteLimit", editor);
         StringAssert.Contains("MapBakeGroupAuthoring[] groups = root.GetComponentsInChildren<MapBakeGroupAuthoring>(true);", editor);
         StringAssert.Contains("group.transform", editor);
         StringAssert.Contains("group.IncludeInactiveChildren", editor);
@@ -1299,9 +1305,10 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(editor.Contains("authoring.RoadRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy road root fields.");
         Assert.IsFalse(editor.Contains("authoring.BridgeRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy bridge root fields.");
         Assert.IsFalse(editor.Contains("authoring.RampRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy ramp root fields.");
-        StringAssert.Contains("public int Width =>", gridAuthoring);
-        StringAssert.Contains("public int Height =>", gridAuthoring);
-        StringAssert.Contains("public float CellSize =>", gridAuthoring);
+        StringAssert.Contains("public class GridAuthoringConfig : ScriptableObject", gridConfig);
+        StringAssert.Contains("public int Width =>", gridConfig);
+        StringAssert.Contains("public int Height =>", gridConfig);
+        StringAssert.Contains("public float CellSize =>", gridConfig);
 
         Assert.IsFalse(editor.Contains("FindObjects", StringComparison.Ordinal), "Map surface inspector bake must use explicit MapBakeGroupAuthoring classifications, not global scene scans.");
         Assert.IsFalse(editor.Contains("Physics.", StringComparison.Ordinal), "Map surface inspector bake must sample mesh data, not runtime physics.");

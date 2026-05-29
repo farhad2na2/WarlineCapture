@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MatchSubScene_GridAuthoring_Config
   m_EditorClassIdentifier: 
   width: 2048
-  height: 2048
+  height: 1024
   cellSize: 1
   blockedCells: []
   drawGrid: 1

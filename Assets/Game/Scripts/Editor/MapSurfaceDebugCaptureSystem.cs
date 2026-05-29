@@ -39,6 +39,8 @@ public static class MapSurfaceDebugCaptureSystem
         builder.AppendLine($"Generated Flat Equivalent: {data.GeneratedFlatEquivalent}");
         builder.AppendLine($"Surface Count: {data.SurfaceCount}");
         builder.AppendLine($"Connection Count: {data.ConnectionCount}");
+        builder.AppendLine($"Compact Payload Bytes: {data.CompressedPayloadBytes}");
+        builder.AppendLine($"Uncompressed Payload Bytes: {data.UncompressedPayloadBytes}");
         AppendBakeGroups(builder, authoring);
         return builder.ToString();
     }

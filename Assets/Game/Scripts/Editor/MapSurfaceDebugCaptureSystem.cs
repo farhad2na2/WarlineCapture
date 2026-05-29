@@ -39,16 +39,22 @@ public static class MapSurfaceDebugCaptureSystem
         builder.AppendLine($"Generated Flat Equivalent: {data.GeneratedFlatEquivalent}");
         builder.AppendLine($"Surface Count: {data.SurfaceCount}");
         builder.AppendLine($"Connection Count: {data.ConnectionCount}");
-        builder.AppendLine($"Terrain Root: {FormatTransformName(authoring.TerrainRoot)}");
-        builder.AppendLine($"Road Root: {FormatTransformName(authoring.RoadRoot)}");
-        builder.AppendLine($"Bridge Root: {FormatTransformName(authoring.BridgeRoot)}");
-        builder.AppendLine($"Ramp Root: {FormatTransformName(authoring.RampRoot)}");
+        AppendBakeGroups(builder, authoring);
         return builder.ToString();
     }
 
-    private static string FormatTransformName(Transform target)
+    private static void AppendBakeGroups(StringBuilder builder, MapSurfaceAuthoring authoring)
     {
-        return target != null ? target.name : "None";
+        MapBakeGroupAuthoring[] groups = authoring.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
+        builder.AppendLine($"Bake Groups: {groups.Length}");
+        for (int i = 0; i < groups.Length; i++)
+        {
+            MapBakeGroupAuthoring group = groups[i];
+            if (group == null)
+                continue;
+
+            builder.AppendLine($"- {group.name}: {group.Role}");
+        }
     }
 }
 #endif

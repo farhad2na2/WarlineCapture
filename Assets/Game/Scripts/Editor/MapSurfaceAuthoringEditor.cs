@@ -20,7 +20,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         EditorGUILayout.Space(10f);
         EditorGUILayout.LabelField("Map Surface Bake", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
-            "Bakes from explicit MapSurfaceAuthoring roots into a MapSurfaceDataAsset. " +
+            "Bakes from MapBakeGroupAuthoring classifications under this MapSurfaceAuthoring into a MapSurfaceDataAsset. " +
             "This uses the current single-layer mesh bake path; bridge/highway multi-layer authoring can be added behind this same button.",
             MessageType.Info);
 
@@ -51,10 +51,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
 
         MapSurfaceBakeRequest request = CreateBakeRequest(authoring.GridAuthoring);
         List<MapSurfaceMeshBakeSource> sources = new();
-        AddMeshSources(authoring.TerrainRoot, sources, MapSurfaceType.Terrain, MapSurfaceFlags.None, MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded | MapSurfaceMovementMask.BuildingPlacement, 0);
-        AddMeshSources(authoring.RoadRoot, sources, MapSurfaceType.Road, MapSurfaceFlags.Road, MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded, 0);
-        AddMeshSources(authoring.BridgeRoot, sources, MapSurfaceType.BridgeDeck, MapSurfaceFlags.Road | MapSurfaceFlags.Bridge, MapSurfaceMovementMask.AllGroundUnits, 1);
-        AddMeshSources(authoring.RampRoot, sources, MapSurfaceType.Ramp, MapSurfaceFlags.Road | MapSurfaceFlags.Ramp, MapSurfaceMovementMask.AllGroundUnits, 0);
+        AddAuthoringGroupSources(authoring.transform, sources);
 
         var bakeSystem = new MapSurfaceBakeSystem();
         bool baked;
@@ -131,18 +128,90 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             new int2(grid.Width, grid.Height));
     }
 
+    private static void AddAuthoringGroupSources(Transform root, List<MapSurfaceMeshBakeSource> sources)
+    {
+        if (root == null)
+            return;
+
+        MapBakeGroupAuthoring[] groups = root.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
+        for (int i = 0; i < groups.Length; i++)
+        {
+            MapBakeGroupAuthoring group = groups[i];
+            if (group == null)
+                continue;
+
+            if (!TryResolveSurfaceSettings(group, out MapSurfaceType type, out MapSurfaceFlags flags, out MapSurfaceMovementMask movementMask, out int layerId))
+                continue;
+
+            AddMeshSources(
+                group.transform,
+                sources,
+                type,
+                flags,
+                movementMask,
+                layerId,
+                group.IncludeInactiveChildren);
+        }
+    }
+
+    private static bool TryResolveSurfaceSettings(
+        MapBakeGroupAuthoring group,
+        out MapSurfaceType type,
+        out MapSurfaceFlags flags,
+        out MapSurfaceMovementMask movementMask,
+        out int layerId)
+    {
+        type = MapSurfaceType.Terrain;
+        flags = MapSurfaceFlags.None;
+        movementMask = group.MovementMask;
+        layerId = group.LayerId;
+
+        switch (group.Role)
+        {
+            case MapBakeGroupRole.Terrain:
+                type = MapSurfaceType.Terrain;
+                movementMask |= MapSurfaceMovementMask.AllGroundUnits |
+                                MapSurfaceMovementMask.AirGrounded |
+                                MapSurfaceMovementMask.BuildingPlacement;
+                return true;
+            case MapBakeGroupRole.Road:
+                type = MapSurfaceType.Road;
+                flags = MapSurfaceFlags.Road;
+                movementMask |= MapSurfaceMovementMask.AllGroundUnits |
+                                MapSurfaceMovementMask.AirGrounded;
+                return true;
+            case MapBakeGroupRole.Bridge:
+                type = MapSurfaceType.BridgeDeck;
+                flags = MapSurfaceFlags.Road | MapSurfaceFlags.Bridge;
+                layerId = Mathf.Max(1, layerId);
+                movementMask |= MapSurfaceMovementMask.AllGroundUnits;
+                return true;
+            case MapBakeGroupRole.Ramp:
+                type = MapSurfaceType.Ramp;
+                flags = MapSurfaceFlags.Road | MapSurfaceFlags.Ramp;
+                movementMask |= MapSurfaceMovementMask.AllGroundUnits;
+                return true;
+            case MapBakeGroupRole.Blocker:
+            case MapBakeGroupRole.IgnoredDecoration:
+            default:
+                movementMask = MapSurfaceMovementMask.None;
+                return false;
+        }
+    }
+
     private static void AddMeshSources(
         Transform root,
         List<MapSurfaceMeshBakeSource> sources,
         MapSurfaceType surfaceType,
         MapSurfaceFlags flags,
         MapSurfaceMovementMask movementMask,
-        int layerId)
+        int layerId,
+        bool includeInactiveChildren)
     {
         if (root == null)
             return;
 
-        MeshFilter[] filters = root.GetComponentsInChildren<MeshFilter>(true);
+        MeshFilter[] filters = root.GetComponentsInChildren<MeshFilter>(includeInactiveChildren);
         for (int i = 0; i < filters.Length; i++)
         {
             MeshFilter filter = filters[i];

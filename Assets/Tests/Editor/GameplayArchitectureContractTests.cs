@@ -26,6 +26,7 @@ public sealed class GameplayArchitectureContractTests
     private const string MapSurfaceComponentsPath = "Assets/Game/Scripts/Components/MapSurfaceComponents.cs";
     private const string MapSurfaceDataAssetPath = "Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs";
     private const string MapSurfaceAuthoringPath = "Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs";
+    private const string MapBakeGroupAuthoringPath = "Assets/Game/Scripts/Authorings/MapBakeGroupAuthoring.cs";
     private const string MapSurfaceAuthoringEditorPath = "Assets/Game/Scripts/Editor/MapSurfaceAuthoringEditor.cs";
     private const string BridgeSurfaceAuthoringPath = "Assets/Game/Scripts/Authorings/BridgeSurfaceAuthoring.cs";
     private const string MapSurfaceBakeSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceBakeSystem.cs";
@@ -1129,19 +1130,26 @@ public sealed class GameplayArchitectureContractTests
     [Test]
     public void MapSurfaceAuthoringMustStayReferenceConfigOnly()
     {
-        Assert.IsTrue(File.Exists(MapSurfaceAuthoringPath), $"{MapSurfaceAuthoringPath} must bind authored map-surface roots.");
+        Assert.IsTrue(File.Exists(MapSurfaceAuthoringPath), $"{MapSurfaceAuthoringPath} must bind authored map-surface bake settings.");
+        Assert.IsTrue(File.Exists(MapBakeGroupAuthoringPath), $"{MapBakeGroupAuthoringPath} must classify map folders for deterministic baking.");
         Assert.IsTrue(File.Exists(BridgeSurfaceAuthoringPath), $"{BridgeSurfaceAuthoringPath} must bind authored bridge and overpass metadata.");
 
         string mapAuthoring = File.ReadAllText(MapSurfaceAuthoringPath);
+        string mapGroupAuthoring = File.ReadAllText(MapBakeGroupAuthoringPath);
         string bridgeAuthoring = File.ReadAllText(BridgeSurfaceAuthoringPath);
-        string combined = mapAuthoring + Environment.NewLine + bridgeAuthoring;
+        string combined = mapAuthoring + Environment.NewLine + mapGroupAuthoring + Environment.NewLine + bridgeAuthoring;
 
         StringAssert.Contains("public sealed class MapSurfaceAuthoring : MonoBehaviour", mapAuthoring);
         StringAssert.Contains("[SerializeField] private GridAuthoring gridAuthoring;", mapAuthoring);
-        StringAssert.Contains("[SerializeField] private Transform terrainRoot;", mapAuthoring);
-        StringAssert.Contains("[SerializeField] private Transform roadRoot;", mapAuthoring);
-        StringAssert.Contains("[SerializeField] private Transform bridgeRoot;", mapAuthoring);
-        StringAssert.Contains("[SerializeField] private Transform rampRoot;", mapAuthoring);
+        Assert.IsFalse(mapAuthoring.Contains("terrainRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root terrain fields.");
+        Assert.IsFalse(mapAuthoring.Contains("roadRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root road fields.");
+        Assert.IsFalse(mapAuthoring.Contains("bridgeRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root bridge fields.");
+        Assert.IsFalse(mapAuthoring.Contains("rampRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root ramp fields.");
+        StringAssert.Contains("public enum MapBakeGroupRole", mapGroupAuthoring);
+        StringAssert.Contains("public sealed class MapBakeGroupAuthoring : MonoBehaviour", mapGroupAuthoring);
+        StringAssert.Contains("Blocker = 5", mapGroupAuthoring);
+        StringAssert.Contains("IgnoredDecoration = 0", mapGroupAuthoring);
+        StringAssert.Contains("public MapBakeGroupRole Role => role;", mapGroupAuthoring);
         StringAssert.Contains("public sealed class BridgeSurfaceAuthoring : MonoBehaviour", bridgeAuthoring);
         StringAssert.Contains("[SerializeField] private Transform bridgeDeckRoot;", bridgeAuthoring);
         StringAssert.Contains("[SerializeField] private Transform lowerSurfaceRoot;", bridgeAuthoring);
@@ -1283,12 +1291,19 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("bakeSystem.TryBuildSingleLayerTerrain(", editor);
         StringAssert.Contains("bakeSystem.TryBuildFlatEquivalent(", editor);
         StringAssert.Contains("asset.ConfigureBakedSurface(", editor);
-        StringAssert.Contains("root.GetComponentsInChildren<MeshFilter>(true)", editor);
+        StringAssert.Contains("MapBakeGroupAuthoring[] groups = root.GetComponentsInChildren<MapBakeGroupAuthoring>(true);", editor);
+        StringAssert.Contains("group.transform", editor);
+        StringAssert.Contains("group.IncludeInactiveChildren", editor);
+        StringAssert.Contains("MapBakeGroupRole.Blocker", editor);
+        Assert.IsFalse(editor.Contains("authoring.TerrainRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy terrain root fields.");
+        Assert.IsFalse(editor.Contains("authoring.RoadRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy road root fields.");
+        Assert.IsFalse(editor.Contains("authoring.BridgeRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy bridge root fields.");
+        Assert.IsFalse(editor.Contains("authoring.RampRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy ramp root fields.");
         StringAssert.Contains("public int Width =>", gridAuthoring);
         StringAssert.Contains("public int Height =>", gridAuthoring);
         StringAssert.Contains("public float CellSize =>", gridAuthoring);
 
-        Assert.IsFalse(editor.Contains("FindObjects", StringComparison.Ordinal), "Map surface inspector bake must use explicit roots from MapSurfaceAuthoring, not global scene scans.");
+        Assert.IsFalse(editor.Contains("FindObjects", StringComparison.Ordinal), "Map surface inspector bake must use explicit MapBakeGroupAuthoring classifications, not global scene scans.");
         Assert.IsFalse(editor.Contains("Physics.", StringComparison.Ordinal), "Map surface inspector bake must sample mesh data, not runtime physics.");
     }
 

@@ -181,7 +181,8 @@ Pathfinding integration rule:
    - Add vehicle visual alignment data only where needed, not to every unit.
 
 5. Complete: Define authored surface config
-   - Add `MapSurfaceAuthoring` with serialized sampling settings and explicit references to terrain/road/bridge/ramp source roots.
+   - Add `MapSurfaceAuthoring` with serialized sampling settings and a root bake controller.
+   - Add `MapBakeGroupAuthoring` on map folders to classify terrain, road, bridge, ramp, blocker, and ignored decoration sources.
    - Add `BridgeSurfaceAuthoring` only for bridge/overpass metadata: bridge deck, lower pass-through surface, approaches, clearance, and allowed movement masks.
    - Keep authoring classes as reference/config binders only.
 

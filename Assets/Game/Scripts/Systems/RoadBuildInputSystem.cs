@@ -33,6 +33,7 @@ public sealed class RoadBuildInputSystem
         public readonly Action HidePlacementOutline;
         public readonly Action<Vector2> UpdateBuildingPlacement;
         public readonly Action<List<Vector2Int>> CreateStroke;
+        public readonly Func<List<Vector2Int>, bool> IsRoadPathSurfaceValid;
         public readonly Func<bool> HasActiveBuildingPlacement;
         public readonly Action<bool> SetIsDraggingBuildingPlacement;
 
@@ -49,6 +50,7 @@ public sealed class RoadBuildInputSystem
             Action hidePlacementOutline,
             Action<Vector2> updateBuildingPlacement,
             Action<List<Vector2Int>> createStroke,
+            Func<List<Vector2Int>, bool> isRoadPathSurfaceValid,
             Func<bool> hasActiveBuildingPlacement,
             Action<bool> setIsDraggingBuildingPlacement)
         {
@@ -64,6 +66,7 @@ public sealed class RoadBuildInputSystem
             HidePlacementOutline = hidePlacementOutline;
             UpdateBuildingPlacement = updateBuildingPlacement;
             CreateStroke = createStroke;
+            IsRoadPathSurfaceValid = isRoadPathSurfaceValid;
             HasActiveBuildingPlacement = hasActiveBuildingPlacement;
             SetIsDraggingBuildingPlacement = setIsDraggingBuildingPlacement;
         }
@@ -195,8 +198,11 @@ public sealed class RoadBuildInputSystem
             context.State.PendingStartCell.Value,
             context.State.CurrentDragCell,
             context.State.DragFirstAxis);
-        if (path.Count > 1)
+        if (path.Count > 1 &&
+            (context.IsRoadPathSurfaceValid == null || context.IsRoadPathSurfaceValid(path)))
+        {
             context.CreateStroke?.Invoke(path);
+        }
 
         CancelPendingBuild(context);
     }

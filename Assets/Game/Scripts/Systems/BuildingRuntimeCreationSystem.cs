@@ -4,6 +4,9 @@ using UnityEngine;
 
 internal sealed class BuildingRuntimeCreationSystem
 {
+    private const float RuntimeBuildingMaxSurfaceHeightDelta = 0.5f;
+    private const float RuntimeBuildingMaxSurfaceSlopeDegrees = 45f;
+
     public delegate bool TryGetGridDelegate(out GridConfig grid);
     public delegate RectInt ResolvePlacementRectDelegate(BuildingDefinition definition, Vector2Int originCell, GridConfig grid);
     public delegate bool ShouldBlockPathingDelegate(BuildingDefinition definition);
@@ -21,6 +24,7 @@ internal sealed class BuildingRuntimeCreationSystem
         public readonly BuildingPlacementInteractionSystem RuntimeLinkInteractionSystem;
         public readonly BuildingPlacementInteractionSystem.Context RuntimeLinkInteractionContext;
         public readonly bool DeferSideEffects;
+        public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly ResolvePlacementRectDelegate ResolvePlacementRect;
         public readonly ShouldBlockPathingDelegate ShouldBlockPathing;
@@ -38,6 +42,7 @@ internal sealed class BuildingRuntimeCreationSystem
             BuildingPlacementInteractionSystem runtimeLinkInteractionSystem,
             BuildingPlacementInteractionSystem.Context runtimeLinkInteractionContext,
             bool deferSideEffects,
+            BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             TryGetGridDelegate tryGetGrid,
             ResolvePlacementRectDelegate resolvePlacementRect,
             ShouldBlockPathingDelegate shouldBlockPathing,
@@ -54,6 +59,7 @@ internal sealed class BuildingRuntimeCreationSystem
             RuntimeLinkInteractionSystem = runtimeLinkInteractionSystem;
             RuntimeLinkInteractionContext = runtimeLinkInteractionContext;
             DeferSideEffects = deferSideEffects;
+            TryGetEntityManager = tryGetEntityManager;
             TryGetGrid = tryGetGrid;
             ResolvePlacementRect = resolvePlacementRect;
             ShouldBlockPathing = shouldBlockPathing;
@@ -68,6 +74,9 @@ internal sealed class BuildingRuntimeCreationSystem
         }
     }
 
+    private readonly BuildingSurfacePlacementSystem _surfacePlacementSystem = new();
+    private readonly BuildingFoundationVisualSystem _foundationVisualSystem = new();
+
     public RuntimeBuildingData RegisterRuntimeBuilding(
         Context context,
         BuildingDefinition definition,
@@ -81,12 +90,19 @@ internal sealed class BuildingRuntimeCreationSystem
         int buildingId = context.RuntimeBuildingSystem.AllocateId();
         instance.name = $"{definition.DisplayName}_{buildingId}";
 
+        EntityManager entityManager = default;
+        bool hasEntityManager = context.TryGetEntityManager != null && context.TryGetEntityManager(out entityManager);
+        bool hasSurfaceResult = false;
+        BuildingSurfacePlacementSystem.Result surfaceResult = default;
         RectInt occupiedRect = new(originCell, definition.FootprintCells);
         if (context.TryGetGrid != null &&
             context.ResolvePlacementRect != null &&
             context.TryGetGrid(out GridConfig grid))
         {
             occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
+            hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
+            if (hasSurfaceResult)
+                _foundationVisualSystem.ApplyVisualFoundation(instance, surfaceResult);
         }
 
         bool pathBlocking = context.ShouldBlockPathing == null || context.ShouldBlockPathing(definition);
@@ -99,6 +115,8 @@ internal sealed class BuildingRuntimeCreationSystem
         Entity combatEntity = context.CreateCombatEntity != null
             ? context.CreateCombatEntity(originCell, definition, 0, instance.transform.rotation)
             : Entity.Null;
+        if (hasEntityManager && hasSurfaceResult)
+            _foundationVisualSystem.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
 
         if (context.DeferSideEffects)
         {
@@ -138,6 +156,29 @@ internal sealed class BuildingRuntimeCreationSystem
             context.RefreshMarkers?.Invoke();
 
         return building;
+    }
+
+    private bool TryEvaluateRuntimeBuildingSurface(
+        Context context,
+        BuildingDefinition definition,
+        Vector2Int originCell,
+        out BuildingSurfacePlacementSystem.Result surfaceResult)
+    {
+        surfaceResult = default;
+        if (context.TryGetEntityManager == null ||
+            !context.TryGetEntityManager(out EntityManager entityManager) ||
+            !_surfacePlacementSystem.TryEvaluateFootprint(
+                entityManager,
+                originCell,
+                definition.FootprintCells,
+                RuntimeBuildingMaxSurfaceHeightDelta,
+                RuntimeBuildingMaxSurfaceSlopeDegrees,
+                out surfaceResult))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private static void AttachRuntimeLink(

@@ -11,6 +11,7 @@ public sealed class GameplayArchitectureContractTests
 {
     private const string ContractPath = "Design/Architecture/gameplay_solid_ecs_contract.md";
     private const string PerformanceContractPath = "Design/Architecture/performance_regression_contract.md";
+    private const string MapSurfaceLayeredGridRoadmapPath = "Design/Architecture/map_surface_layered_grid_implementation_roadmap.md";
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string GameBootstrapPath = "Assets/Game/Scripts/Bootstrap/GameBootstrap.cs";
@@ -22,6 +23,41 @@ public sealed class GameplayArchitectureContractTests
     private const string MenuBootstrapSystemPath = "Assets/Game/Scripts/Systems/MenuBootstrapSystem.cs";
     private const string SceneLifecycleSystemPath = "Assets/Game/Scripts/Systems/SceneLifecycleSystem.cs";
     private const string SceneLifecycleComponentsPath = "Assets/Game/Scripts/Components/SceneLifecycleComponents.cs";
+    private const string MapSurfaceComponentsPath = "Assets/Game/Scripts/Components/MapSurfaceComponents.cs";
+    private const string MapSurfaceDataAssetPath = "Assets/Game/Scripts/Configs/MapSurfaceDataAsset.cs";
+    private const string MapSurfaceAuthoringPath = "Assets/Game/Scripts/Authorings/MapSurfaceAuthoring.cs";
+    private const string MapSurfaceAuthoringEditorPath = "Assets/Game/Scripts/Editor/MapSurfaceAuthoringEditor.cs";
+    private const string BridgeSurfaceAuthoringPath = "Assets/Game/Scripts/Authorings/BridgeSurfaceAuthoring.cs";
+    private const string MapSurfaceBakeSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceBakeSystem.cs";
+    private const string MapSurfaceBridgeBakeSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceBridgeBakeSystem.cs";
+    private const string MapSurfaceConnectionBakeSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceConnectionBakeSystem.cs";
+    private const string MapSurfaceQuerySystemPath = "Assets/Game/Scripts/Systems/MapSurfaceQuerySystem.cs";
+    private const string MapSurfaceConnectionSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceConnectionSystem.cs";
+    private const string MapSurfaceFlatEquivalentBootstrapSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs";
+    private const string MapSurfaceSpawnGroundingSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceSpawnGroundingSystem.cs";
+    private const string UnitGroundingSystemPath = "Assets/Game/Scripts/Systems/UnitGroundingSystem.cs";
+    private const string UnitSurfaceTrackingSystemPath = "Assets/Game/Scripts/Systems/UnitSurfaceTrackingSystem.cs";
+    private const string VehicleSlopeAlignmentSystemPath = "Assets/Game/Scripts/Systems/VehicleSlopeAlignmentSystem.cs";
+    private const string BuildingSurfacePlacementSystemPath = "Assets/Game/Scripts/Systems/BuildingSurfacePlacementSystem.cs";
+    private const string BuildingFoundationVisualSystemPath = "Assets/Game/Scripts/Systems/BuildingFoundationVisualSystem.cs";
+    private const string MapSurfaceLayeredCellSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceLayeredCellSystem.cs";
+    private const string MapSurfaceSlopeClassificationSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceSlopeClassificationSystem.cs";
+    private const string MapSurfacePathfindingReadSystemPath = "Assets/Game/Scripts/Systems/MapSurfacePathfindingReadSystem.cs";
+    private const string MapSurfacePathingValidationSystemPath = "Assets/Game/Scripts/Systems/MapSurfacePathingValidationSystem.cs";
+    private const string MapSurfacePathCostSystemPath = "Assets/Game/Scripts/Systems/MapSurfacePathCostSystem.cs";
+    private const string MapSurfaceRoadPrioritySystemPath = "Assets/Game/Scripts/Systems/MapSurfaceRoadPrioritySystem.cs";
+    private const string RoadSurfacePlacementSystemPath = "Assets/Game/Scripts/Systems/RoadSurfacePlacementSystem.cs";
+    private const string MapSurfaceCommandTargetSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceCommandTargetSystem.cs";
+    private const string MapSurfaceDiagnosticsSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs";
+    private const string MapSurfaceEditorOverlaySystemPath = "Assets/Game/Scripts/Editor/MapSurfaceEditorOverlaySystem.cs";
+    private const string MapSurfaceDebugCaptureSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceDebugCaptureSystem.cs";
+    private const string MapSurfaceLayeredGridFocusedTestsPath = "Assets/Tests/Editor/MapSurfaceLayeredGridFocusedTests.cs";
+    private const string MapSurfaceRuntimeValidationProbeSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceRuntimeValidationProbeSystem.cs";
+    private const string MapSurfacePerformanceValidationSystemPath = "Assets/Game/Scripts/Systems/MapSurfacePerformanceValidationSystem.cs";
+    private const string RuntimeCitySurfaceIntegrationSystemPath = "Assets/Game/Scripts/Environment/RuntimeCitySurfaceIntegrationSystem.cs";
+    private const string UnitGridMovementSystemPath = "Assets/Game/Scripts/Systems/UnitGridMovementSystem.cs";
+    private const string UnitGridAuthoringPath = "Assets/Game/Scripts/Authorings/UnitGridAuthoring.cs";
+    private const string WarlineCaptureConfigsPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
     private const string MenuDiagnosticsViewPath = "Assets/Game/Scripts/UI/MenuDiagnosticsView.cs";
     private const string MenuDiagnosticsSystemPath = "Assets/Game/Scripts/Systems/MenuDiagnosticsSystem.cs";
     private const string WarlineCaptureMatchSceneViewInstallerPath = "Assets/Game/Scripts/Editor/WarlineCaptureMatchSceneViewInstaller.cs";
@@ -80,6 +116,7 @@ public sealed class GameplayArchitectureContractTests
     private const string UnitPathfindBatchJobPath = "Assets/Game/Scripts/Systems/UnitPathfindBatchJob.cs";
     private const string UnitPathfindingScheduleSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingScheduleSystem.cs";
     private const string UnitPathfindingApplySystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingApplySystem.cs";
+    private const string UnitPathSurfaceMetadataSystemPath = "Assets/Game/Scripts/Systems/UnitPathSurfaceMetadataSystem.cs";
     private const string UnitPathfindingDiagnosticLogComponentsPath = "Assets/Game/Scripts/Components/UnitPathfindingDiagnosticLogComponents.cs";
     private const string UnitPathfindingDiagnosticLogFlushSystemPath = "Assets/Game/Scripts/Systems/UnitPathfindingDiagnosticLogFlushSystem.cs";
     private const string UnitPathfindingFocusedPerformanceValidationPath = "Assets/Tests/Editor/UnitPathfindingFocusedPerformanceValidation.cs";
@@ -207,6 +244,18 @@ public sealed class GameplayArchitectureContractTests
     private static string ReadOptionalText(string path)
     {
         return File.Exists(path) ? File.ReadAllText(path) : string.Empty;
+    }
+
+    private static bool IsMapSurfaceRuntimeFile(string path)
+    {
+        string fileName = Path.GetFileName(path);
+        return fileName.StartsWith("MapSurface", StringComparison.Ordinal) ||
+               fileName.StartsWith("Surface", StringComparison.Ordinal) ||
+               fileName.Equals("UnitGroundingSystem.cs", StringComparison.Ordinal) ||
+               fileName.Equals("UnitSurfaceTrackingSystem.cs", StringComparison.Ordinal) ||
+               fileName.Equals("VehicleSlopeAlignmentSystem.cs", StringComparison.Ordinal) ||
+               fileName.Equals("BuildingSurfacePlacementSystem.cs", StringComparison.Ordinal) ||
+               fileName.Equals("PathfindingSurfaceCostSystem.cs", StringComparison.Ordinal);
     }
 
     private static string ReadRuntimeCitySpawnerArchitectureSurface(string citySpawnerPath)
@@ -975,6 +1024,1358 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("FindSingleSceneComponent<MatchSceneView>(scene)", installerSource);
         Assert.IsFalse(installerSource.Contains("GetComponent<GameBootstrap>()", StringComparison.Ordinal), "MatchSceneView installer must not require a GameBootstrap sibling component.");
         Assert.IsFalse(installerSource.Contains("GetComponentsInChildren<GameBootstrap>", StringComparison.Ordinal), "MatchSceneView installer must not type-reference the retired GameBootstrap component.");
+    }
+
+    [Test]
+    public void MapSurfaceLayeredGridRoadmapTracksFlatGroundInventory()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceLayeredGridRoadmapPath), $"{MapSurfaceLayeredGridRoadmapPath} must track terrain height, slope, road, and bridge surface implementation.");
+
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+        string contract = File.ReadAllText(ContractPath);
+
+        StringAssert.Contains("# Map Surface Layered Grid Implementation Roadmap", roadmap);
+        StringAssert.Contains("## Step 1 Baseline Inventory", roadmap);
+        StringAssert.Contains("1. Complete: Baseline current flat-ground contracts", roadmap);
+        StringAssert.Contains("GridComponents.cs", roadmap);
+        StringAssert.Contains("UnitGridMovementSystem.cs", roadmap);
+        StringAssert.Contains("InitialUnitsSpawnSystem.cs", roadmap);
+        StringAssert.Contains("BuildingPlacementGridSystem.cs", roadmap);
+        StringAssert.Contains("RoadBuildStartupSystem.cs", roadmap);
+        StringAssert.Contains("RuntimeCityVisualSystem.cs", roadmap);
+        StringAssert.Contains("RtsSelectionPointerTargetCommandSystem.cs", roadmap);
+        StringAssert.Contains("Current flat-grid `int2` cell math is not itself debt", roadmap);
+        StringAssert.Contains("Reuse the current `UnitPathfindingSystem` pipeline", roadmap);
+        StringAssert.Contains("Layered map-surface implementation is tracked in `Design/Architecture/map_surface_layered_grid_implementation_roadmap.md`", contract);
+    }
+
+    [Test]
+    public void MapSurfaceRuntimeImplementationMustAvoidPhysicsColliderAndBroadOwners()
+    {
+        string contract = File.ReadAllText(ContractPath);
+
+        StringAssert.Contains("Runtime gameplay must not add per-frame physics raycasts", contract);
+        StringAssert.Contains("collider-dependent grounding", contract);
+        StringAssert.Contains("singleton surface registries", contract);
+        StringAssert.Contains("Static map-surface helpers are allowed only when they are pure stateless data/math operations", contract);
+
+        string[] sourceFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories);
+
+        string[] broadOwnerViolations = sourceFiles
+            .Where(path =>
+            {
+                string source = File.ReadAllText(path);
+                return Regex.IsMatch(source, @"\b(?:class|struct)\s+(?:MapSurfaceManager|SurfaceManager|TerrainManager|BridgeController)\b") ||
+                       Regex.IsMatch(source, @"\b(?:MapSurface|Surface|Terrain|Bridge)\w*\s+Instance\s*[;=]");
+            })
+            .ToArray();
+        Assert.IsEmpty(broadOwnerViolations, "Map-surface ownership must stay in ECS systems/components, not managers/controllers/singleton instances: " + string.Join(", ", broadOwnerViolations));
+
+        string[] forbiddenRuntimeTokens =
+        {
+            "Physics.Raycast",
+            "Physics.SphereCast",
+            "Physics.CapsuleCast",
+            "RaycastCommand",
+            "Collider",
+            "GetComponent<Collider",
+            "GetComponentsInChildren<Collider"
+        };
+
+        string[] surfaceRuntimeViolations = sourceFiles
+            .Where(IsMapSurfaceRuntimeFile)
+            .Where(path =>
+            {
+                string source = File.ReadAllText(path);
+                return forbiddenRuntimeTokens.Any(token => source.Contains(token, StringComparison.Ordinal));
+            })
+            .ToArray();
+        Assert.IsEmpty(surfaceRuntimeViolations, "Map-surface runtime systems must not depend on runtime physics raycasts or colliders: " + string.Join(", ", surfaceRuntimeViolations));
+    }
+
+    [Test]
+    public void MapSurfaceComponentMustOwnBakedSurfaceMetadataOnly()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceComponentsPath), $"{MapSurfaceComponentsPath} must define the ECS map-surface data owner before behavior systems are added.");
+
+        string source = File.ReadAllText(MapSurfaceComponentsPath);
+
+        StringAssert.Contains("public struct MapSurfaceComponent : IComponentData", source);
+        StringAssert.Contains("public BlobAssetReference<MapSurfaceBlob> SurfaceBlob;", source);
+        StringAssert.Contains("public float3 GridOrigin;", source);
+        StringAssert.Contains("public float CellSize;", source);
+        StringAssert.Contains("public int2 Dimensions;", source);
+        StringAssert.Contains("public byte HasSurfaceData;", source);
+        StringAssert.Contains("public byte HasLayeredCells;", source);
+        StringAssert.Contains("public struct MapSurfaceBlob", source);
+        StringAssert.Contains("public BlobArray<MapSurfaceCell> Cells;", source);
+        StringAssert.Contains("public BlobArray<MapSurfaceSample> Samples;", source);
+        StringAssert.Contains("public BlobArray<MapSurfaceConnection> Connections;", source);
+        StringAssert.Contains("public enum MapSurfaceConnectionType : byte", source);
+        StringAssert.Contains("public struct UnitSurfaceComponent : IComponentData", source);
+        StringAssert.Contains("public struct BuildingSurfaceComponent : IComponentData", source);
+        StringAssert.Contains("public struct VehicleSurfaceAlignmentComponent : IComponentData", source);
+        StringAssert.Contains("public float FoundationHeight;", source);
+        StringAssert.Contains("public float MaxFootprintSlopeDegrees;", source);
+        StringAssert.Contains("public float PitchDegrees;", source);
+        StringAssert.Contains("public float RollDegrees;", source);
+
+        Assert.IsFalse(source.Contains("class ", StringComparison.Ordinal), "Map surface component file must stay data-only and must not introduce managed classes.");
+        Assert.IsFalse(source.Contains("MonoBehaviour", StringComparison.Ordinal), "Map surface runtime data must not be authored as MonoBehaviour behavior.");
+        Assert.IsFalse(source.Contains("void Update", StringComparison.Ordinal), "Map surface components must not own behavior.");
+        Assert.IsFalse(source.Contains("Physics.", StringComparison.Ordinal), "Map surface components must not depend on runtime physics.");
+    }
+
+    [Test]
+    public void MapSurfaceAuthoringMustStayReferenceConfigOnly()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceAuthoringPath), $"{MapSurfaceAuthoringPath} must bind authored map-surface roots.");
+        Assert.IsTrue(File.Exists(BridgeSurfaceAuthoringPath), $"{BridgeSurfaceAuthoringPath} must bind authored bridge and overpass metadata.");
+
+        string mapAuthoring = File.ReadAllText(MapSurfaceAuthoringPath);
+        string bridgeAuthoring = File.ReadAllText(BridgeSurfaceAuthoringPath);
+        string combined = mapAuthoring + Environment.NewLine + bridgeAuthoring;
+
+        StringAssert.Contains("public sealed class MapSurfaceAuthoring : MonoBehaviour", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private GridAuthoring gridAuthoring;", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform terrainRoot;", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform roadRoot;", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform bridgeRoot;", mapAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform rampRoot;", mapAuthoring);
+        StringAssert.Contains("public sealed class BridgeSurfaceAuthoring : MonoBehaviour", bridgeAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform bridgeDeckRoot;", bridgeAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform lowerSurfaceRoot;", bridgeAuthoring);
+        StringAssert.Contains("[SerializeField] private Transform[] approachRoots;", bridgeAuthoring);
+        StringAssert.Contains("public MapSurfaceMovementMask AllowedMovementMask => allowedMovementMask;", bridgeAuthoring);
+
+        string[] forbiddenTokens =
+        {
+            "void Awake",
+            "void Start",
+            "void Update",
+            "FindObjects",
+            "GetComponent",
+            "Physics.",
+            "Collider",
+            "new GameObject"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(combined.Contains(token, StringComparison.Ordinal), $"Map-surface authoring must remain reference/config only and not contain `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceBakeSystemMustProduceFlatEquivalentSkeletonWithoutSceneScanning()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceBakeSystemPath), $"{MapSurfaceBakeSystemPath} must own editor map-surface baking.");
+
+        string source = File.ReadAllText(MapSurfaceBakeSystemPath);
+
+        StringAssert.Contains("public readonly struct MapSurfaceBakeRequest", source);
+        StringAssert.Contains("public sealed class MapSurfaceBakeSystem", source);
+        StringAssert.Contains("public bool TryBuildFlatEquivalent", source);
+        StringAssert.Contains("BlobBuilderArray<MapSurfaceCell> cells", source);
+        StringAssert.Contains("BlobBuilderArray<MapSurfaceSample> samples", source);
+        StringAssert.Contains("SurfaceType = MapSurfaceType.Terrain", source);
+        StringAssert.Contains("SlopeDegrees = 0f", source);
+        StringAssert.Contains("Height = request.GridOrigin.y", source);
+        StringAssert.Contains("surfaceBlob = builder.CreateBlobAssetReference<MapSurfaceBlob>(allocator);", source);
+
+        string[] forbiddenTokens =
+        {
+            "FindObjects",
+            "Resources.",
+            "SceneManager",
+            "Physics.",
+            "Collider",
+            "GameObject.Find",
+            "GetComponent"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"Map-surface bake skeleton must be deterministic and not use `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceBakeSystemMustBakeSingleLayerTerrainFromMeshDataWithoutColliders()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceBakeSystemPath), $"{MapSurfaceBakeSystemPath} must own editor map-surface baking.");
+
+        string source = File.ReadAllText(MapSurfaceBakeSystemPath);
+
+        StringAssert.Contains("public readonly struct MapSurfaceMeshBakeSource", source);
+        StringAssert.Contains("public readonly Mesh Mesh;", source);
+        StringAssert.Contains("public readonly Matrix4x4 LocalToWorld;", source);
+        StringAssert.Contains("public bool TryBuildSingleLayerTerrain", source);
+        StringAssert.Contains("MapSurfaceMeshBakeSource[] terrainSources", source);
+        StringAssert.Contains("TrySampleHighestTerrain", source);
+        StringAssert.Contains("TrySampleTriangleHeight", source);
+        StringAssert.Contains("CalculateSlopeDegrees", source);
+        StringAssert.Contains("Vector3[] vertices = source.Mesh.vertices;", source);
+        StringAssert.Contains("int[] triangles = source.Mesh.triangles;", source);
+        StringAssert.Contains("source.LocalToWorld.MultiplyPoint3x4", source);
+        StringAssert.Contains("Normal = math.normalizesafe(normal, new float3(0f, 1f, 0f))", source);
+        StringAssert.Contains("SlopeDegrees = CalculateSlopeDegrees(normal)", source);
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Collider",
+            "Raycast",
+            "GetComponent",
+            "FindObjects",
+            "Resources.",
+            "SceneManager"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"Single-layer terrain bake must use mesh data and not `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceBakedDataMustHaveAssetReferenceAndSingleActiveValidation()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceDataAssetPath), $"{MapSurfaceDataAssetPath} must define the generated/loadable map-surface data asset.");
+
+        string dataAsset = File.ReadAllText(MapSurfaceDataAssetPath);
+        string authoring = File.ReadAllText(MapSurfaceAuthoringPath);
+        string bakeSystem = File.ReadAllText(MapSurfaceBakeSystemPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceDataAsset : ScriptableObject", dataAsset);
+        StringAssert.Contains("[CreateAssetMenu(fileName = \"MapSurfaceData\", menuName = \"WarlineCapture/Map Surface Data\")]", dataAsset);
+        StringAssert.Contains("public void ConfigureFlatEquivalent", dataAsset);
+        StringAssert.Contains("[SerializeField] private SerializedMapSurfaceCell[] cells", dataAsset);
+        StringAssert.Contains("[SerializeField] private SerializedMapSurfaceSample[] samples", dataAsset);
+        StringAssert.Contains("[SerializeField] private SerializedMapSurfaceConnection[] connections", dataAsset);
+        StringAssert.Contains("public void ConfigureBakedSurface(", dataAsset);
+        StringAssert.Contains("BlobAssetReference<MapSurfaceBlob> surfaceBlob", dataAsset);
+        StringAssert.Contains("public struct SerializedMapSurfaceSample", dataAsset);
+        StringAssert.Contains("public Vector2Int Cell;", dataAsset);
+        StringAssert.Contains("public MapSurfaceType SurfaceType;", dataAsset);
+        StringAssert.Contains("public Vector3 GridOrigin => gridOrigin;", dataAsset);
+        StringAssert.Contains("public Vector2Int Dimensions => dimensions;", dataAsset);
+        StringAssert.Contains("[SerializeField] private MapSurfaceDataAsset bakedSurfaceData;", authoring);
+        StringAssert.Contains("public MapSurfaceDataAsset BakedSurfaceData => bakedSurfaceData;", authoring);
+        StringAssert.Contains("public bool TryValidateSingleActiveSurfaceReference", bakeSystem);
+        StringAssert.Contains("MapSurfaceAuthoring[] authorings", bakeSystem);
+        StringAssert.Contains("out MapSurfaceDataAsset surfaceData", bakeSystem);
+        StringAssert.Contains("Match must have exactly one active MapSurfaceAuthoring with a baked MapSurfaceDataAsset reference.", bakeSystem);
+        StringAssert.Contains("Match has multiple active MapSurfaceAuthoring baked surface references.", bakeSystem);
+        StringAssert.Contains("public MapSurfaceDataAsset CreateFlatEquivalentDataAsset", bakeSystem);
+
+        Assert.IsFalse(bakeSystem.Contains("FindObjects", StringComparison.Ordinal), "Single active map-surface reference validation must receive explicit authoring references and must not scan scenes.");
+        Assert.IsFalse(bakeSystem.Contains("Resources.", StringComparison.Ordinal), "Map-surface data loading must not depend on Resources lookup.");
+    }
+
+    [Test]
+    public void MapSurfaceAuthoringInspectorMustExposeBakeButtonWithoutSceneScanning()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceAuthoringEditorPath), $"{MapSurfaceAuthoringEditorPath} must expose the Map object inspector bake workflow.");
+
+        string editor = File.ReadAllText(MapSurfaceAuthoringEditorPath);
+        string gridAuthoring = File.ReadAllText("Assets/Game/Scripts/Authorings/GridAuthoring.cs");
+
+        StringAssert.Contains("[CustomEditor(typeof(MapSurfaceAuthoring))]", editor);
+        StringAssert.Contains("public sealed class MapSurfaceAuthoringEditor : Editor", editor);
+        StringAssert.Contains("GUILayout.Button(\"Bake Map Surface Data\"", editor);
+        StringAssert.Contains("BakeSelectedAuthoring((MapSurfaceAuthoring)target)", editor);
+        StringAssert.Contains("new MapSurfaceBakeSystem()", editor);
+        StringAssert.Contains("bakeSystem.TryBuildSingleLayerTerrain(", editor);
+        StringAssert.Contains("bakeSystem.TryBuildFlatEquivalent(", editor);
+        StringAssert.Contains("asset.ConfigureBakedSurface(", editor);
+        StringAssert.Contains("root.GetComponentsInChildren<MeshFilter>(true)", editor);
+        StringAssert.Contains("public int Width =>", gridAuthoring);
+        StringAssert.Contains("public int Height =>", gridAuthoring);
+        StringAssert.Contains("public float CellSize =>", gridAuthoring);
+
+        Assert.IsFalse(editor.Contains("FindObjects", StringComparison.Ordinal), "Map surface inspector bake must use explicit roots from MapSurfaceAuthoring, not global scene scans.");
+        Assert.IsFalse(editor.Contains("Physics.", StringComparison.Ordinal), "Map surface inspector bake must sample mesh data, not runtime physics.");
+    }
+
+    [Test]
+    public void MapSurfaceQuerySystemMustBeAllocationFreeBlobSamplingBoundary()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceQuerySystemPath), $"{MapSurfaceQuerySystemPath} must expose allocation-free map-surface sampling.");
+
+        string source = File.ReadAllText(MapSurfaceQuerySystemPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceQuerySystem", source);
+        StringAssert.Contains("public readonly struct Context", source);
+        StringAssert.Contains("public bool TryCreateContext(EntityManager entityManager, EntityQuery surfaceQuery, out Context context)", source);
+        StringAssert.Contains("public bool TryGetCellIndex(Context context, int2 cell, out int index)", source);
+        StringAssert.Contains("public bool TryGetPrimarySurface(Context context, int2 cell, out MapSurfaceSample sample)", source);
+        StringAssert.Contains("public bool TryGetSurfaceRange(Context context, int2 cell, out MapSurfaceCellSurfaceRange range)", source);
+        StringAssert.Contains("public bool TryGetSurfaceInRange(Context context, MapSurfaceCellSurfaceRange range, int surfaceOffset, out MapSurfaceSample sample)", source);
+        StringAssert.Contains("public bool TryGetSurfaceById(Context context, int surfaceId, out MapSurfaceSample sample)", source);
+        StringAssert.Contains("public bool TryGetNearestValidSurface(Context context, int2 cell, out MapSurfaceSample sample)", source);
+        StringAssert.Contains("public bool TrySampleHeight(Context context, int2 cell, out float height)", source);
+        StringAssert.Contains("public bool TrySampleNormal(Context context, int2 cell, out float3 normal)", source);
+        StringAssert.Contains("public bool TrySampleSlope(Context context, int2 cell, out float slopeDegrees)", source);
+        StringAssert.Contains("public bool TrySampleBilinearHeight(Context context, float3 worldPosition, out float height)", source);
+        StringAssert.Contains("public bool TrySampleBilinearNormal(Context context, float3 worldPosition, out float3 normal)", source);
+        StringAssert.Contains("private readonly MapSurfaceLayeredCellSystem _layeredCellSystem = new();", source);
+
+        string[] forbiddenTokens =
+        {
+            "new List",
+            "new Dictionary",
+            ".ToArray(",
+            ".Select(",
+            ".Where(",
+            "FindObjects",
+            "Physics.",
+            "Collider",
+            "GameObject"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"MapSurfaceQuerySystem hot sampling must not contain `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceFlatEquivalentBootstrapMustOnlyBridgeGridConfigIntoSurfaceData()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceFlatEquivalentBootstrapSystemPath), $"{MapSurfaceFlatEquivalentBootstrapSystemPath} must provide the flat-equivalent Match wiring bridge.");
+
+        string source = File.ReadAllText(MapSurfaceFlatEquivalentBootstrapSystemPath);
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+
+        StringAssert.Contains("public partial struct MapSurfaceFlatEquivalentBootstrapSystem : ISystem", source);
+        StringAssert.Contains("[UpdateInGroup(typeof(InitializationSystemGroup))]", source);
+        StringAssert.Contains("ComponentType.ReadOnly<GridConfig>()", source);
+        StringAssert.Contains("ComponentType.ReadOnly<MapSurfaceComponent>()", source);
+        StringAssert.Contains("typeof(MapSurfaceFlatEquivalentRuntimeBlobTag)", source);
+        StringAssert.Contains("state.Enabled = false;", source);
+        StringAssert.Contains("Height = grid.Origin.y", source);
+        StringAssert.Contains("SlopeDegrees = 0f", source);
+        StringAssert.Contains("blob.Dispose();", source);
+        StringAssert.Contains("public struct MapSurfaceFlatEquivalentRuntimeBlobTag : IComponentData", components);
+
+        string[] forbiddenTokens =
+        {
+            "FindObjects",
+            "Resources.",
+            "SceneManager",
+            "Physics.",
+            "Collider",
+            "UnitPathfindingSystem",
+            "GridUtils.CellToWorldCenter",
+            "new List",
+            "new Dictionary"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"Flat-equivalent map-surface bridge must not touch `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceUnitGroundingSystemMustApplyOnlySurfaceYAndPreservePathMovementOwnership()
+    {
+        Assert.IsTrue(File.Exists(UnitGroundingSystemPath), $"{UnitGroundingSystemPath} must own unit surface grounding.");
+        Assert.IsTrue(File.Exists(UnitSurfaceTrackingSystemPath), $"{UnitSurfaceTrackingSystemPath} must own unit surface/layer tracking.");
+
+        string grounding = File.ReadAllText(UnitGroundingSystemPath);
+        string tracking = File.ReadAllText(UnitSurfaceTrackingSystemPath);
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string movement = File.ReadAllText(UnitGridMovementSystemPath);
+        string authoring = File.ReadAllText(UnitGridAuthoringPath);
+        string configs = File.ReadAllText(WarlineCaptureConfigsPath);
+
+        StringAssert.Contains("public partial struct UnitSurfaceTrackingSystem : ISystem", tracking);
+        StringAssert.Contains("[UpdateAfter(typeof(UnitGridMovementSystem))]", tracking);
+        StringAssert.Contains("[UpdateBefore(typeof(UnitGroundingSystem))]", tracking);
+        StringAssert.Contains("[WithNone(typeof(UnitAirMovement))]", tracking);
+        StringAssert.Contains("unitSurface.SurfaceId = sample.SurfaceId;", tracking);
+        StringAssert.Contains("unitSurface.LayerId = sample.LayerId;", tracking);
+        StringAssert.Contains("unitSurface.LastSampledHeight = sample.Height;", tracking);
+        StringAssert.Contains("unitSurface.LastSampledNormal = math.normalizesafe(sample.Normal, new float3(0f, 1f, 0f));", tracking);
+        StringAssert.Contains("public partial struct UnitGroundingSystem : ISystem", grounding);
+        StringAssert.Contains("[UpdateAfter(typeof(UnitSurfaceTrackingSystem))]", grounding);
+        StringAssert.Contains("[UpdateBefore(typeof(UnitMoveVisualStateSystem))]", grounding);
+        StringAssert.Contains("[WithNone(typeof(UnitAirMovement))]", grounding);
+        StringAssert.Contains("position.y = unitSurface.LastSampledHeight + offset;", grounding);
+        StringAssert.Contains("transform.Position = position;", grounding);
+        StringAssert.Contains("unitSurface.IsGrounded = 1;", grounding);
+        StringAssert.Contains("GroundOffsetLookup", grounding);
+        StringAssert.Contains("public struct UnitGroundOffsetComponent : IComponentData", components);
+        StringAssert.Contains("targetPos.y = transform.Position.y;", movement);
+        StringAssert.Contains("finalTargetPos.y = transform.Position.y;", movement);
+        StringAssert.Contains("[SerializeField, HideInInspector] private float groundOffset;", authoring);
+        StringAssert.Contains("groundOffset = config.GroundOffset;", authoring);
+        StringAssert.Contains("AddComponent(entity, new UnitSurfaceComponent", authoring);
+        StringAssert.Contains("AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.groundOffset });", authoring);
+        StringAssert.Contains("[SerializeField] private float groundOffset;", configs);
+        StringAssert.Contains("public float GroundOffset => groundOffset;", configs);
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Collider",
+            "Raycast",
+            "UnitPathfindingSystem",
+            "GridUtils.CellToWorldCenter",
+            "new List",
+            ".ToArray(",
+            ".Where("
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(grounding.Contains(token, StringComparison.Ordinal), $"UnitGroundingSystem must be a surface-blob Y application boundary and not contain `{token}`.");
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(tracking.Contains(token, StringComparison.Ordinal), $"UnitSurfaceTrackingSystem must be a surface-blob tracking boundary and not contain `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceSpawnGroundingMustRouteSpawnPositionsWithoutOwningSpawnOrder()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceSpawnGroundingSystemPath), $"{MapSurfaceSpawnGroundingSystemPath} must provide spawn-time map-surface Y adjustment.");
+
+        string spawnGrounding = File.ReadAllText(MapSurfaceSpawnGroundingSystemPath);
+        string initialSpawn = File.ReadAllText("Assets/Game/Scripts/Systems/InitialUnitsSpawnSystem.cs");
+        string respawn = File.ReadAllText("Assets/Game/Scripts/Systems/UnitRespawnSystem.cs");
+        string buildingSpawn = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingSpawnSystem.cs");
+        string ropeDisembark = File.ReadAllText("Assets/Game/Scripts/Systems/UnitTransportRopeDisembarkSystem.cs");
+        string citizens = File.ReadAllText("Assets/Game/Scripts/Systems/CitizenVisibleUnitSystem.cs");
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public readonly struct MapSurfaceSpawnGroundingSystem", spawnGrounding);
+        StringAssert.Contains("public bool TryGroundCellCenter", spawnGrounding);
+        StringAssert.Contains("public bool TryGroundWorldPosition", spawnGrounding);
+        StringAssert.Contains("worldPosition.y = sample.Height + groundOffset;", spawnGrounding);
+        StringAssert.Contains("surfaceQuery.GetSingleton<MapSurfaceComponent>()", spawnGrounding);
+        StringAssert.Contains("blob.Samples[surfaceCell.FirstSurfaceIndex]", spawnGrounding);
+        Assert.IsFalse(spawnGrounding.Contains("static bool TryGetSurface", StringComparison.Ordinal), "Spawn grounding must not hide ECS access behind static service helpers.");
+
+        StringAssert.Contains("_spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);", initialSpawn);
+        StringAssert.Contains("_spawnGroundingSystem.TryGroundCellCenter(state.EntityManager, grid, cell, ref pos, out _);", respawn);
+        StringAssert.Contains("_spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);", buildingSpawn);
+        StringAssert.Contains("_spawnGroundingSystem.TryGroundWorldPosition(em, grid, ref endPosition, out dropCell, out _);", ropeDisembark);
+        StringAssert.Contains("spawnGroundingSystem.TryGroundCellCenter(em, grid, disperseCell, ref endPosition, out _)", ropeDisembark);
+        StringAssert.Contains("_spawnGroundingSystem.TryGroundCellCenter(ecsProjection.EntityManager, grid, spawnCell, ref groundedWorldPosition, out _);", citizens);
+        StringAssert.Contains("12. Complete: Add initial spawn grounding", roadmap);
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Collider",
+            "Raycast",
+            "UnitPathfindingSystem",
+            "SpawnCellUtility.TryFindSpawnCellNear",
+            "TryFindInitialUnitSpawnCell",
+            "TryFindStrictSpawnCell"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(spawnGrounding.Contains(token, StringComparison.Ordinal), $"MapSurfaceSpawnGroundingSystem must only adjust sampled Y and not touch `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceBuildingPlacementQueryMustEvaluateFootprintHeightAndSlopeOnly()
+    {
+        Assert.IsTrue(File.Exists(BuildingSurfacePlacementSystemPath), $"{BuildingSurfacePlacementSystemPath} must own building footprint surface sampling.");
+
+        string source = File.ReadAllText(BuildingSurfacePlacementSystemPath);
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("internal sealed class BuildingSurfacePlacementSystem", source);
+        StringAssert.Contains("public readonly struct Result", source);
+        StringAssert.Contains("public bool TryEvaluateFootprint(", source);
+        StringAssert.Contains("float maxAllowedHeightDelta", source);
+        StringAssert.Contains("float maxAllowedSlopeDegrees", source);
+        StringAssert.Contains("MaxFootprintHeightDelta", source);
+        StringAssert.Contains("MaxFootprintSlopeDegrees", source);
+        StringAssert.Contains("FoundationHeight", source);
+        StringAssert.Contains("sample.SurfaceId != surfaceId || sample.LayerId != layerId", source);
+        StringAssert.Contains("heightDelta <= math.max(0f, maxAllowedHeightDelta)", source);
+        StringAssert.Contains("maxSlope <= math.max(0f, maxAllowedSlopeDegrees)", source);
+        StringAssert.Contains("public BuildingSurfaceComponent ToComponent(Result result)", source);
+        StringAssert.Contains("IsPlacementSurfaceValid = (byte)(result.IsValid ? 1 : 0)", source);
+        StringAssert.Contains("public struct BuildingSurfaceComponent : IComponentData", components);
+        StringAssert.Contains("13. Complete: Add building placement height query", roadmap);
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Collider",
+            "Raycast",
+            "UnitPathfindingSystem",
+            "BuildingSpawnSystem",
+            "RegisterRuntimeBuilding",
+            "Instantiate",
+            "new List",
+            ".ToArray(",
+            ".Where("
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"BuildingSurfacePlacementSystem must only sample footprint surface data and not touch `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceRuntimeBuildingCreationMustApplyFoundationHeightWithoutChangingSpawnSemantics()
+    {
+        string creation = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs");
+        string context = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs");
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("private readonly BuildingSurfacePlacementSystem _surfacePlacementSystem = new();", creation);
+        StringAssert.Contains("private readonly BuildingFoundationVisualSystem _foundationVisualSystem = new();", creation);
+        StringAssert.Contains("TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);", creation);
+        StringAssert.Contains("_foundationVisualSystem.ApplyVisualFoundation(instance, surfaceResult);", creation);
+        StringAssert.Contains("RuntimeBuildingMaxSurfaceHeightDelta", creation);
+        StringAssert.Contains("RuntimeBuildingMaxSurfaceSlopeDegrees", creation);
+        StringAssert.Contains("public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;", creation);
+        StringAssert.Contains("source.TryGetEntityManager,", context);
+        StringAssert.Contains("14. Complete: Add building runtime spawn grounding", roadmap);
+        StringAssert.Contains("28. Complete: Add building foundation visual handling", roadmap);
+
+        Assert.IsFalse(creation.Contains("transform.rotation =", StringComparison.Ordinal), "Runtime building surface grounding must keep buildings upright in this first pass.");
+        Assert.IsFalse(creation.Contains("RegisterRuntimeBuilding?.Invoke", StringComparison.Ordinal), "BuildingRuntimeCreationSystem must remain the registration owner, not call back into spawn.");
+        Assert.IsFalse(creation.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Building runtime grounding must not touch pathfinding.");
+        Assert.IsFalse(creation.Contains("Physics.", StringComparison.Ordinal), "Building runtime grounding must not use physics.");
+        Assert.IsFalse(creation.Contains("Collider", StringComparison.Ordinal), "Building runtime grounding must not use colliders.");
+    }
+
+    [Test]
+    public void MapSurfaceSlopeClassificationMustPublishMovementPolicyWithoutPathfindingChanges()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceSlopeClassificationSystemPath), $"{MapSurfaceSlopeClassificationSystemPath} must publish slope classes before pathfinding consumes them.");
+
+        string slope = File.ReadAllText(MapSurfaceSlopeClassificationSystemPath);
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public enum MapSurfaceSlopeClass : byte", components);
+        StringAssert.Contains("Flat = 0", components);
+        StringAssert.Contains("Gentle = 1", components);
+        StringAssert.Contains("Steep = 2", components);
+        StringAssert.Contains("Blocked = 3", components);
+        StringAssert.Contains("public readonly struct MapSurfaceSlopeClassificationSystem", slope);
+        StringAssert.Contains("public const float FlatSlopeDegrees = 5f;", slope);
+        StringAssert.Contains("public const float GentleSlopeDegrees = 18f;", slope);
+        StringAssert.Contains("public const float SteepSlopeDegrees = 35f;", slope);
+        StringAssert.Contains("public MapSurfaceSlopeClass Classify(MapSurfaceSample sample)", slope);
+        StringAssert.Contains("public bool AllowsMovement(MapSurfaceSample sample, MapSurfaceMovementMask movementMask)", slope);
+        StringAssert.Contains("public float GetMaxSlopeForMovement(MapSurfaceMovementMask movementMask)", slope);
+        StringAssert.Contains("(sample.Flags & MapSurfaceFlags.Reserved) != 0", slope);
+        StringAssert.Contains("MapSurfaceMovementMask.Infantry", slope);
+        StringAssert.Contains("MapSurfaceMovementMask.WheeledVehicle", slope);
+        StringAssert.Contains("MapSurfaceMovementMask.TrackedVehicle", slope);
+        StringAssert.Contains("MapSurfaceMovementMask.BuildingPlacement", slope);
+        StringAssert.Contains("15. Complete: Add slope classification", roadmap);
+
+        string[] forbiddenTokens =
+        {
+            "UnitPathfindingSystem",
+            "UnitPathRequest",
+            "Path",
+            "GridWalkable",
+            "GridRoad",
+            "Physics.",
+            "Collider",
+            "HasFlag"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(slope.Contains(token, StringComparison.Ordinal), $"Slope classification must publish data only and not touch `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfacePathfindingReadContextMustNotChangeBudgetsOrPathCosts()
+    {
+        Assert.IsTrue(File.Exists(MapSurfacePathfindingReadSystemPath), $"{MapSurfacePathfindingReadSystemPath} must expose the read-only pathfinding surface context.");
+
+        string readSystem = File.ReadAllText(MapSurfacePathfindingReadSystemPath);
+        string querySystem = File.ReadAllText("Assets/Game/Scripts/Systems/UnitPathfindingQuerySystem.cs");
+        string scheduleSystem = File.ReadAllText("Assets/Game/Scripts/Systems/UnitPathfindingScheduleSystem.cs");
+        string batchJob = File.ReadAllText("Assets/Game/Scripts/Systems/UnitPathfindBatchJob.cs");
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("internal readonly struct MapSurfacePathfindingReadSystem", readSystem);
+        StringAssert.Contains("public readonly struct Context", readSystem);
+        StringAssert.Contains("public readonly MapSurfaceComponent Surface;", readSystem);
+        StringAssert.Contains("public readonly byte HasSurfaceData;", readSystem);
+        StringAssert.Contains("public bool TryCreateContext(EntityManager entityManager, EntityQuery surfaceQuery, out Context context)", readSystem);
+        StringAssert.Contains("public Context CreateFlatFallbackContext()", readSystem);
+        StringAssert.Contains("MapSurfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());", querySystem);
+        StringAssert.Contains("private MapSurfacePathfindingReadSystem _surfaceReadSystem;", scheduleSystem);
+        StringAssert.Contains("MapSurfacePathfindingReadSystem.Context surfaceContext", scheduleSystem);
+        StringAssert.Contains("_surfaceReadSystem.TryCreateContext(em, queries.MapSurfaceQuery", scheduleSystem);
+        StringAssert.Contains("MapSurface = surfaceContext.Surface,", scheduleSystem);
+        StringAssert.Contains("HasMapSurface = surfaceContext.HasSurfaceData,", scheduleSystem);
+        StringAssert.Contains("[ReadOnly] public MapSurfaceComponent MapSurface;", batchJob);
+        StringAssert.Contains("[ReadOnly] public byte HasMapSurface;", batchJob);
+        StringAssert.Contains("16. Complete: Add pathfinding surface read context", roadmap);
+
+        AssertPathfindingConstantUnchanged(batchJob, "FreeTraversalCost", "10");
+        AssertPathfindingConstantUnchanged(batchJob, "FreeDiagonalTraversalCost", "14");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceTraversalCost", "6");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceDiagonalTraversalCost", "8");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceTraversalCost", "18");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceDiagonalTraversalCost", "25");
+        AssertPathfindingConstantUnchanged(batchJob, "OccupiedTraversalPenalty", "50");
+
+        Assert.IsFalse(readSystem.Contains("new Native", StringComparison.Ordinal), "Map-surface pathfinding read context must not own allocator lifetimes.");
+        Assert.IsFalse(readSystem.Contains("Allocator.", StringComparison.Ordinal), "Map-surface pathfinding read context must not allocate.");
+        Assert.IsFalse(readSystem.Contains("Physics.", StringComparison.Ordinal), "Map-surface pathfinding read context must not use physics.");
+        Assert.IsFalse(scheduleSystem.Contains("AdaptiveRequestsPerFrame =", StringComparison.Ordinal), "Map-surface read context must not alter path request budgets.");
+        Assert.IsFalse(scheduleSystem.Contains("requestBudget =", StringComparison.Ordinal), "Map-surface read context must not rewrite request budget values.");
+    }
+
+    [Test]
+    public void MapSurfacePathingValidationMustRejectSlopesWithoutChangingFlatFallbackOrPathCosts()
+    {
+        Assert.IsTrue(File.Exists(MapSurfacePathingValidationSystemPath), $"{MapSurfacePathingValidationSystemPath} must own map-surface pathing validation.");
+
+        string validation = File.ReadAllText(MapSurfacePathingValidationSystemPath);
+        string scheduleSystem = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+        string batchJob = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public readonly struct MapSurfacePathingValidationSystem", validation);
+        StringAssert.Contains("public bool CanTraverse(MapSurfaceComponent surface, byte hasSurfaceData, int2 cell, MapSurfaceMovementMask movementMask)", validation);
+        StringAssert.Contains("if (hasSurfaceData == 0)", validation);
+        StringAssert.Contains("return true;", validation);
+        StringAssert.Contains("sample.SlopeDegrees", validation);
+        StringAssert.Contains("MapSurfaceSlopeClassificationSystem.SteepSlopeDegrees", validation);
+        StringAssert.Contains("MapSurfaceSlopeClassificationSystem.GentleSlopeDegrees", validation);
+        StringAssert.Contains("MapSurfaceMovementMask.Infantry", validation);
+        StringAssert.Contains("MapSurfaceMovementMask.WheeledVehicle | MapSurfaceMovementMask.TrackedVehicle", validation);
+        StringAssert.Contains("SurfaceValidation = new MapSurfacePathingValidationSystem(),", scheduleSystem);
+        StringAssert.Contains("public MapSurfacePathingValidationSystem SurfaceValidation;", batchJob);
+        StringAssert.Contains("IsSurfaceCellPathable(start, isVehicle)", batchJob);
+        StringAssert.Contains("IsSurfaceFootprintPathable(goal, footprintSize, isVehicle)", batchJob);
+        StringAssert.Contains("IsSurfaceFootprintPathable(nextCell, footprintSize, isVehicle)", batchJob);
+        StringAssert.Contains("17. Complete: Add slope walkability rejection", roadmap);
+
+        AssertPathfindingConstantUnchanged(batchJob, "FreeTraversalCost", "10");
+        AssertPathfindingConstantUnchanged(batchJob, "FreeDiagonalTraversalCost", "14");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceTraversalCost", "6");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceDiagonalTraversalCost", "8");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceTraversalCost", "18");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceDiagonalTraversalCost", "25");
+        AssertPathfindingConstantUnchanged(batchJob, "OccupiedTraversalPenalty", "50");
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Raycast",
+            "FindObjects",
+            "GameObject.Find",
+            "new Native",
+            "Allocator.",
+            ".Where(",
+            ".Select("
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(validation.Contains(token, StringComparison.Ordinal), $"Surface pathing validation must stay a hot-path data boundary without `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceSlopePathCostMustBeDisabledByDefaultAndPreserveCurrentCosts()
+    {
+        Assert.IsTrue(File.Exists(MapSurfacePathCostSystemPath), $"{MapSurfacePathCostSystemPath} must own optional slope traversal cost.");
+
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string costSystem = File.ReadAllText(MapSurfacePathCostSystemPath);
+        string readSystem = File.ReadAllText(MapSurfacePathfindingReadSystemPath);
+        string flatBootstrap = File.ReadAllText(MapSurfaceFlatEquivalentBootstrapSystemPath);
+        string scheduleSystem = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+        string batchJob = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public struct MapSurfacePathCostComponent : IComponentData", components);
+        StringAssert.Contains("public byte EnableSlopeCost;", components);
+        StringAssert.Contains("public int GentleSlopeTraversalCost;", components);
+        StringAssert.Contains("public int SteepSlopeTraversalCost;", components);
+        StringAssert.Contains("public readonly struct MapSurfacePathCostSystem", costSystem);
+        StringAssert.Contains("public int GetSlopeTraversalCost(", costSystem);
+        StringAssert.Contains("if (hasSurfaceData == 0 || pathCost.EnableSlopeCost == 0)", costSystem);
+        StringAssert.Contains("return 0;", costSystem);
+        StringAssert.Contains("CreateDisabledDefault()", costSystem);
+        StringAssert.Contains("public readonly MapSurfacePathCostComponent PathCost;", readSystem);
+        StringAssert.Contains("MapSurfacePathCost = surfaceContext.PathCost,", scheduleSystem);
+        StringAssert.Contains("SurfacePathCost = new MapSurfacePathCostSystem(),", scheduleSystem);
+        StringAssert.Contains("[ReadOnly] public MapSurfacePathCostComponent MapSurfacePathCost;", batchJob);
+        StringAssert.Contains("public MapSurfacePathCostSystem SurfacePathCost;", batchJob);
+        StringAssert.Contains("private int GetSlopeTraversalCost(int cellIndex)", batchJob);
+        StringAssert.Contains("MapSurfacePathCost.EnableSlopeCost == 0", batchJob);
+        StringAssert.Contains("typeof(MapSurfacePathCostComponent)", flatBootstrap);
+        StringAssert.Contains("EnableSlopeCost = 0", flatBootstrap);
+        StringAssert.Contains("18. Complete: Add slope movement cost", roadmap);
+
+        AssertPathfindingConstantUnchanged(batchJob, "FreeTraversalCost", "10");
+        AssertPathfindingConstantUnchanged(batchJob, "FreeDiagonalTraversalCost", "14");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceTraversalCost", "6");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceDiagonalTraversalCost", "8");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceTraversalCost", "18");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceDiagonalTraversalCost", "25");
+        AssertPathfindingConstantUnchanged(batchJob, "OccupiedTraversalPenalty", "50");
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Raycast",
+            "FindObjects",
+            "GameObject.Find",
+            "new Native",
+            "Allocator.",
+            ".Where(",
+            ".Select("
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(costSystem.Contains(token, StringComparison.Ordinal), $"Slope path cost must stay a hot-path data boundary without `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceRoadPriorityMustMapExistingRoadBuffersWithoutChangingCosts()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceRoadPrioritySystemPath), $"{MapSurfaceRoadPrioritySystemPath} must own road priority mapping.");
+
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string roadPriority = File.ReadAllText(MapSurfaceRoadPrioritySystemPath);
+        string bakeSystem = File.ReadAllText(MapSurfaceBakeSystemPath);
+        string scheduleSystem = File.ReadAllText(UnitPathfindingScheduleSystemPath);
+        string batchJob = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public enum MapSurfaceRoadPriority : byte", components);
+        StringAssert.Contains("public readonly struct MapSurfaceRoadPrioritySystem", roadPriority);
+        StringAssert.Contains("NormalizeFlagsForSurfaceType(MapSurfaceType surfaceType, MapSurfaceFlags flags)", roadPriority);
+        StringAssert.Contains("MapSurfaceType.Road", roadPriority);
+        StringAssert.Contains("MapSurfaceType.DirtRoad", roadPriority);
+        StringAssert.Contains("MapSurfaceType.BridgeDeck", roadPriority);
+        StringAssert.Contains("MapSurfaceType.Highway", roadPriority);
+        StringAssert.Contains("MapSurfaceType.Ramp", roadPriority);
+        StringAssert.Contains("ResolveGridRoadPriority(byte sidewalk, byte dirtRoad, bool isVehicle)", roadPriority);
+        StringAssert.Contains("MapSurfaceRoadPriority.Preferred", roadPriority);
+        StringAssert.Contains("MapSurfaceRoadPriority.Avoided", roadPriority);
+        StringAssert.Contains("roadPrioritySystem.NormalizeFlagsForSurfaceType(surfaceType, flags)", bakeSystem);
+        StringAssert.Contains("SurfaceRoadPriority = new MapSurfaceRoadPrioritySystem(),", scheduleSystem);
+        StringAssert.Contains("public MapSurfaceRoadPrioritySystem SurfaceRoadPriority;", batchJob);
+        StringAssert.Contains("SurfaceRoadPriority.ResolveGridRoadPriority", batchJob);
+        StringAssert.Contains("roadPriority == MapSurfaceRoadPriority.Preferred", batchJob);
+        StringAssert.Contains("roadPriority == MapSurfaceRoadPriority.Avoided", batchJob);
+        StringAssert.Contains("19. Complete: Add road surface priority", roadmap);
+
+        AssertPathfindingConstantUnchanged(batchJob, "FreeTraversalCost", "10");
+        AssertPathfindingConstantUnchanged(batchJob, "FreeDiagonalTraversalCost", "14");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceTraversalCost", "6");
+        AssertPathfindingConstantUnchanged(batchJob, "PreferredSurfaceDiagonalTraversalCost", "8");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceTraversalCost", "18");
+        AssertPathfindingConstantUnchanged(batchJob, "AvoidedSurfaceDiagonalTraversalCost", "25");
+        AssertPathfindingConstantUnchanged(batchJob, "OccupiedTraversalPenalty", "50");
+
+        string[] forbiddenTokens =
+        {
+            "Physics.",
+            "Raycast",
+            "FindObjects",
+            "GameObject.Find",
+            "new Native",
+            "Allocator.",
+            ".Where(",
+            ".Select("
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(roadPriority.Contains(token, StringComparison.Ordinal), $"Road priority mapping must stay a hot-path data boundary without `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceLayeredCellStorageMustExposeSparseSurfaceRangesWithoutPathfindingLayerChanges()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceLayeredCellSystemPath), $"{MapSurfaceLayeredCellSystemPath} must expose layered cell ranges.");
+
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string layered = File.ReadAllText(MapSurfaceLayeredCellSystemPath);
+        string query = File.ReadAllText(MapSurfaceQuerySystemPath);
+        string batchJob = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public struct MapSurfaceCellSurfaceRange", components);
+        StringAssert.Contains("public int FirstSurfaceIndex;", components);
+        StringAssert.Contains("public ushort SurfaceCount;", components);
+        StringAssert.Contains("public ushort InlineSurfaceIndex;", components);
+        StringAssert.Contains("public byte IsLayered;", components);
+        StringAssert.Contains("public readonly struct MapSurfaceLayeredCellSystem", layered);
+        StringAssert.Contains("TryGetSurfaceRange(MapSurfaceComponent surface, int2 cell, out MapSurfaceCellSurfaceRange range)", layered);
+        StringAssert.Contains("TryGetSurface(MapSurfaceComponent surface, MapSurfaceCellSurfaceRange range, int surfaceOffset, out MapSurfaceSample sample)", layered);
+        StringAssert.Contains("IsLayered = (byte)(cellData.SurfaceCount > 1 ? 1 : 0)", layered);
+        StringAssert.Contains("private readonly MapSurfaceLayeredCellSystem _layeredCellSystem = new();", query);
+        StringAssert.Contains("TryGetSurfaceRange(Context context, int2 cell, out MapSurfaceCellSurfaceRange range)", query);
+        StringAssert.Contains("TryGetSurfaceInRange(Context context, MapSurfaceCellSurfaceRange range, int surfaceOffset, out MapSurfaceSample sample)", query);
+        StringAssert.Contains("20. Complete: Add multi-layer surface storage", roadmap);
+
+        Assert.IsFalse(batchJob.Contains("MapSurfaceCellSurfaceRange", StringComparison.Ordinal), "Step 20 must not change pathfinding layer selection yet.");
+        Assert.IsFalse(batchJob.Contains("TryGetSurfaceInRange", StringComparison.Ordinal), "Step 20 must not scan layered surfaces in A* expansion.");
+
+        string[] forbiddenTokens =
+        {
+            "new List",
+            "new Dictionary",
+            ".ToArray(",
+            ".Where(",
+            ".Select(",
+            "Physics.",
+            "Raycast",
+            "FindObjects",
+            "GameObject.Find",
+            "Allocator."
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(layered.Contains(token, StringComparison.Ordinal), $"Layered cell queries must stay allocation-free without `{token}`.");
+    }
+
+    [Test]
+    public void MapSurfaceBridgeDeckBakeMustMarkBridgeRoadFlagsWithoutConnectingLowerSurface()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceBridgeBakeSystemPath), $"{MapSurfaceBridgeBakeSystemPath} must own bridge-deck bake metadata.");
+
+        string bridgeBake = File.ReadAllText(MapSurfaceBridgeBakeSystemPath);
+        string bridgeAuthoring = File.ReadAllText(BridgeSurfaceAuthoringPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceBridgeBakeSystem", bridgeBake);
+        StringAssert.Contains("CreateBridgeDeckSource(", bridgeBake);
+        StringAssert.Contains("CreateBridgeApproachSource(", bridgeBake);
+        StringAssert.Contains("CreateLowerPassThroughSource(", bridgeBake);
+        StringAssert.Contains("MapSurfaceType.BridgeDeck", bridgeBake);
+        StringAssert.Contains("MapSurfaceType.Ramp", bridgeBake);
+        StringAssert.Contains("MapSurfaceType.Highway", bridgeBake);
+        StringAssert.Contains("NormalizeFlagsForSurfaceType(MapSurfaceType.BridgeDeck, MapSurfaceFlags.None)", bridgeBake);
+        StringAssert.Contains("NormalizeFlagsForSurfaceType(MapSurfaceType.Ramp, MapSurfaceFlags.None)", bridgeBake);
+        StringAssert.Contains("math.max(1, layerId)", bridgeBake);
+        StringAssert.Contains("public Transform LowerSurfaceRoot => lowerSurfaceRoot;", bridgeAuthoring);
+        StringAssert.Contains("public float LowerSurfaceClearance => lowerSurfaceClearance;", bridgeAuthoring);
+        StringAssert.Contains("21. Complete: Add bridge deck bake", roadmap);
+
+        Assert.IsFalse(bridgeBake.Contains("MapSurfaceConnection", StringComparison.Ordinal), "Bridge deck bake must not connect bridge deck to lower roads before explicit connection steps.");
+        Assert.IsFalse(bridgeBake.Contains("Physics.", StringComparison.Ordinal), "Bridge deck bake metadata must not depend on physics.");
+        Assert.IsFalse(bridgeBake.Contains("FindObjects", StringComparison.Ordinal), "Bridge deck bake must receive explicit bridge sources.");
+    }
+
+    [Test]
+    public void MapSurfaceLowerPassThroughBakeMustPreserveHighwayUnderBridgeAsSeparateLayer()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceBridgeBakeSystemPath), $"{MapSurfaceBridgeBakeSystemPath} must own bridge lower-pass-through metadata.");
+
+        string bridgeBake = File.ReadAllText(MapSurfaceBridgeBakeSystemPath);
+        string bridgeAuthoring = File.ReadAllText(BridgeSurfaceAuthoringPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("CreateLowerPassThroughSource(", bridgeBake);
+        StringAssert.Contains("MapSurfaceType normalizedType = lowerSurfaceType == MapSurfaceType.Highway", bridgeBake);
+        StringAssert.Contains("? MapSurfaceType.Highway", bridgeBake);
+        StringAssert.Contains(": MapSurfaceType.Road", bridgeBake);
+        StringAssert.Contains("NormalizeFlagsForSurfaceType(normalizedType, MapSurfaceFlags.None)", bridgeBake);
+        StringAssert.Contains("math.max(0, layerId)", bridgeBake);
+        StringAssert.Contains("public Transform LowerSurfaceRoot => lowerSurfaceRoot;", bridgeAuthoring);
+        StringAssert.Contains("public int LowerLayerId => lowerLayerId;", bridgeAuthoring);
+        StringAssert.Contains("22. Complete: Add lower highway/road preservation under bridges", roadmap);
+
+        Assert.IsFalse(bridgeBake.Contains("MapSurfaceConnection", StringComparison.Ordinal), "Lower pass-through bake must not connect to bridge deck before explicit connection steps.");
+        Assert.IsFalse(bridgeBake.Contains("Physics.", StringComparison.Ordinal), "Lower pass-through bake metadata must not depend on physics.");
+        Assert.IsFalse(bridgeBake.Contains("FindObjects", StringComparison.Ordinal), "Lower pass-through bake must receive explicit bridge sources.");
+    }
+
+    [Test]
+    public void MapSurfaceConnectionBakeMustCreateOnlyExplicitBridgeAndRampEdges()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceConnectionBakeSystemPath), $"{MapSurfaceConnectionBakeSystemPath} must own authored connection bake metadata.");
+
+        string connectionBake = File.ReadAllText(MapSurfaceConnectionBakeSystemPath);
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceConnectionBakeSystem", connectionBake);
+        StringAssert.Contains("CreateBridgeApproachConnection(", connectionBake);
+        StringAssert.Contains("CreateRampConnection(", connectionBake);
+        StringAssert.Contains("CreateBridgeDeckSameLayerConnection(", connectionBake);
+        StringAssert.Contains("CreateLowerRoadSameLayerConnection(", connectionBake);
+        StringAssert.Contains("MapSurfaceConnectionType.BridgeApproach", connectionBake);
+        StringAssert.Contains("MapSurfaceConnectionType.Ramp", connectionBake);
+        StringAssert.Contains("MapSurfaceConnectionType.SameLayer", connectionBake);
+        StringAssert.Contains("math.clamp(direction, new int2(-1, -1), new int2(1, 1))", connectionBake);
+        StringAssert.Contains("public struct MapSurfaceConnection", components);
+        StringAssert.Contains("public MapSurfaceConnectionType ConnectionType;", components);
+        StringAssert.Contains("23. Complete: Add bridge/ramp connection bake", roadmap);
+
+        Assert.IsFalse(connectionBake.Contains("Height", StringComparison.Ordinal), "Connection bake must not infer vertical transitions by height proximity.");
+        Assert.IsFalse(connectionBake.Contains("Slope", StringComparison.Ordinal), "Connection bake must not infer vertical transitions by slope.");
+        Assert.IsFalse(connectionBake.Contains("Physics.", StringComparison.Ordinal), "Connection bake must not depend on physics.");
+        Assert.IsFalse(connectionBake.Contains("FindObjects", StringComparison.Ordinal), "Connection bake must receive explicit authored sources.");
+    }
+
+    [Test]
+    public void MapSurfaceConnectionSystemMustOwnRuntimeConnectionQueriesSeparateFromSampling()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceConnectionSystemPath), $"{MapSurfaceConnectionSystemPath} must own runtime map-surface connection reads.");
+
+        string connectionSystem = File.ReadAllText(MapSurfaceConnectionSystemPath);
+        string querySystem = File.ReadAllText(MapSurfaceQuerySystemPath);
+        string batchJob = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public readonly struct MapSurfaceConnectionSystem", connectionSystem);
+        StringAssert.Contains("public readonly struct Context", connectionSystem);
+        StringAssert.Contains("public bool TryCreateContext(EntityQuery surfaceQuery, out Context context)", connectionSystem);
+        StringAssert.Contains("public bool TryGetConnection(Context context, MapSurfaceSample sample, int connectionOffset, out MapSurfaceConnection connection)", connectionSystem);
+        StringAssert.Contains("public bool TryFindConnection(", connectionSystem);
+        StringAssert.Contains("public bool AllowsMovement(MapSurfaceConnection connection, MapSurfaceMovementMask movementMask)", connectionSystem);
+        StringAssert.Contains("sample.FirstConnectionIndex + connectionOffset", connectionSystem);
+        StringAssert.Contains("connection.ConnectionType == MapSurfaceConnectionType.Blocked", connectionSystem);
+        StringAssert.Contains("(connection.MovementMask & movementMask) != 0", connectionSystem);
+        StringAssert.Contains("24. Complete: Add `MapSurfaceConnectionSystem`", roadmap);
+
+        Assert.IsFalse(querySystem.Contains("MapSurfaceConnectionSystem", StringComparison.Ordinal), "Surface sampling must stay separate from connection traversal.");
+        Assert.IsFalse(connectionSystem.Contains("TrySampleHeight", StringComparison.Ordinal), "Connection traversal must not own surface height sampling.");
+        Assert.IsFalse(connectionSystem.Contains("TrySampleNormal", StringComparison.Ordinal), "Connection traversal must not own surface normal sampling.");
+        Assert.IsFalse(connectionSystem.Contains("Physics.", StringComparison.Ordinal), "Runtime connection reads must not depend on physics.");
+        Assert.IsFalse(connectionSystem.Contains("FindObjects", StringComparison.Ordinal), "Runtime connection reads must not scan scenes.");
+        Assert.IsFalse(connectionSystem.Contains("new Native", StringComparison.Ordinal), "Runtime connection reads must not allocate native containers.");
+        Assert.IsFalse(batchJob.Contains("MapSurfaceConnectionSystem", StringComparison.Ordinal), "Step 24 only adds the connection read boundary; path result layer traversal is added in later steps.");
+    }
+
+    [Test]
+    public void MapSurfaceUnitTrackingMustOwnSurfaceLayerStateBeforeGrounding()
+    {
+        Assert.IsTrue(File.Exists(UnitSurfaceTrackingSystemPath), $"{UnitSurfaceTrackingSystemPath} must own unit surface tracking.");
+
+        string tracking = File.ReadAllText(UnitSurfaceTrackingSystemPath);
+        string grounding = File.ReadAllText(UnitGroundingSystemPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public partial struct UnitSurfaceTrackingSystem : ISystem", tracking);
+        StringAssert.Contains("[UpdateAfter(typeof(UnitGridMovementSystem))]", tracking);
+        StringAssert.Contains("[UpdateBefore(typeof(UnitGroundingSystem))]", tracking);
+        StringAssert.Contains("unitSurface.SurfaceId = sample.SurfaceId;", tracking);
+        StringAssert.Contains("unitSurface.LayerId = sample.LayerId;", tracking);
+        StringAssert.Contains("unitSurface.LastSampledHeight = sample.Height;", tracking);
+        StringAssert.Contains("if (unitSurface.HasSurface != 0)", tracking);
+        StringAssert.Contains("candidate.SurfaceId != unitSurface.SurfaceId", tracking);
+        StringAssert.Contains("candidate.LayerId != unitSurface.LayerId", tracking);
+        StringAssert.Contains("[UpdateAfter(typeof(UnitSurfaceTrackingSystem))]", grounding);
+        StringAssert.Contains("position.y = unitSurface.LastSampledHeight + offset;", grounding);
+        StringAssert.Contains("25. Complete: Add unit surface tracking", roadmap);
+
+        Assert.IsFalse(grounding.Contains("SurfaceId = sample.SurfaceId", StringComparison.Ordinal), "Grounding must not own surface-id tracking after step 25.");
+        Assert.IsFalse(grounding.Contains("LayerId = sample.LayerId", StringComparison.Ordinal), "Grounding must not own layer tracking after step 25.");
+        Assert.IsFalse(tracking.Contains("LocalTransform", StringComparison.Ordinal), "Surface tracking must not apply transforms.");
+        Assert.IsFalse(tracking.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Surface tracking must not depend on pathfinding coordinator.");
+    }
+
+    [Test]
+    public void MapSurfacePathResultsMustCarrySurfaceMetadataWithoutChangingPathPool()
+    {
+        Assert.IsTrue(File.Exists(UnitPathSurfaceMetadataSystemPath), $"{UnitPathSurfaceMetadataSystemPath} must own path surface metadata writes.");
+
+        string components = File.ReadAllText("Assets/Game/Scripts/Components/GridComponents.cs");
+        string metadata = File.ReadAllText(UnitPathSurfaceMetadataSystemPath);
+        string apply = File.ReadAllText(UnitPathfindingApplySystemPath);
+        string resultApply = File.ReadAllText(UnitPathResultApplySystemPath);
+        string batchJob = File.ReadAllText(UnitPathfindBatchJobPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public struct UnitPathSurfaceNode : IBufferElementData", components);
+        StringAssert.Contains("public int SurfaceId;", components);
+        StringAssert.Contains("public int LayerId;", components);
+        StringAssert.Contains("internal readonly struct UnitPathSurfaceMetadataSystem", metadata);
+        StringAssert.Contains("PrepareBuffer(EntityManager em, Entity entity)", metadata);
+        StringAssert.Contains("em.HasBuffer<UnitPathSurfaceNode>(entity)", metadata);
+        StringAssert.Contains("Append(", metadata);
+        StringAssert.Contains("TryResolvePathSurface(", metadata);
+        StringAssert.Contains("candidate.SurfaceId == currentSurface.SurfaceId", metadata);
+        StringAssert.Contains("candidate.LayerId == currentSurface.LayerId", metadata);
+        StringAssert.Contains("private MapSurfacePathfindingReadSystem _surfaceReadSystem;", apply);
+        StringAssert.Contains("MapSurfacePathfindingReadSystem.Context surfaceContext", apply);
+        StringAssert.Contains("resultApply.Apply(", apply);
+        StringAssert.Contains("MapSurfacePathfindingReadSystem.Context surfaceContext", resultApply);
+        StringAssert.Contains("var surfaceMetadata = new UnitPathSurfaceMetadataSystem();", resultApply);
+        StringAssert.Contains("surfaceMetadata.PrepareBuffer(em, entity)", resultApply);
+        StringAssert.Contains("surfaceMetadata.Append(surfaceBuffer, surfaceContext.Surface, surfaceContext.HasSurfaceData, pathCell, currentSurface)", resultApply);
+        StringAssert.Contains("surfaceMetadata.ClearIfPresent(em, entity);", resultApply);
+        StringAssert.Contains("pool.Cells.Add(pathCell);", resultApply);
+        StringAssert.Contains("Output.Write(cell);", batchJob);
+        StringAssert.Contains("26. Complete: Add path result surface ids", roadmap);
+
+        Assert.IsFalse(batchJob.Contains("UnitPathSurfaceNode", StringComparison.Ordinal), "Path job output stream must not change shape in step 26.");
+        Assert.IsFalse(components.Contains("public struct UnitPathCell : IBufferElementData\n{\n    public int2 Value;\n    public int SurfaceId;", StringComparison.Ordinal), "UnitPathCell layout must not change.");
+        Assert.IsFalse(metadata.Contains("new Native", StringComparison.Ordinal), "Path surface metadata must not allocate native containers.");
+        Assert.IsFalse(metadata.Contains("Allocator.", StringComparison.Ordinal), "Path surface metadata must not own allocator lifetimes.");
+        Assert.IsFalse(metadata.Contains(".ToArray(", StringComparison.Ordinal), "Path surface metadata must not copy path data.");
+        Assert.IsFalse(metadata.Contains("FindObjects", StringComparison.Ordinal), "Path surface metadata must not scan scenes.");
+        Assert.IsFalse(metadata.Contains("Physics.", StringComparison.Ordinal), "Path surface metadata must not depend on runtime physics.");
+    }
+
+    [Test]
+    public void MapSurfaceVehicleSlopeAlignmentMustPreserveYawAndExcludeSoldiers()
+    {
+        Assert.IsTrue(File.Exists(VehicleSlopeAlignmentSystemPath), $"{VehicleSlopeAlignmentSystemPath} must own vehicle pitch/roll alignment.");
+
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string alignment = File.ReadAllText(VehicleSlopeAlignmentSystemPath);
+        string authoring = File.ReadAllText(UnitGridAuthoringPath);
+        string movement = File.ReadAllText(UnitGridMovementSystemPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public struct VehicleSurfaceAlignmentComponent : IComponentData", components);
+        StringAssert.Contains("public float3 SurfaceNormal;", components);
+        StringAssert.Contains("public float PitchDegrees;", components);
+        StringAssert.Contains("public float RollDegrees;", components);
+        StringAssert.Contains("public float AlignmentWeight;", components);
+        StringAssert.Contains("public partial struct VehicleSlopeAlignmentSystem : ISystem", alignment);
+        StringAssert.Contains("[UpdateAfter(typeof(UnitGroundingSystem))]", alignment);
+        StringAssert.Contains("[WithNone(typeof(UnitAirMovement), typeof(StaticGridBlocker), typeof(UnitDeathAnimationState))]", alignment);
+        StringAssert.Contains("UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior)", alignment);
+        StringAssert.Contains("float3 flatForward = UnitVehicleMovementUtility.Forward(transform.Rotation);", alignment);
+        StringAssert.Contains("float3 surfaceForward = flatForward - normal * math.dot(flatForward, normal);", alignment);
+        StringAssert.Contains("quaternion.LookRotationSafe(surfaceForward, normal)", alignment);
+        StringAssert.Contains("ClampNormalSlope(normal, MaxPitchRollDegrees)", alignment);
+        StringAssert.Contains("math.slerp(transform.Rotation, targetRotation", alignment);
+        StringAssert.Contains("authoring.usesVehicleMotion && !authoring.isAirUnit", authoring);
+        StringAssert.Contains("AddComponent(entity, new VehicleSurfaceAlignmentComponent", authoring);
+        StringAssert.Contains("27. Complete: Add vehicle slope alignment", roadmap);
+
+        Assert.IsFalse(alignment.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Vehicle slope alignment must not couple to pathfinding ownership.");
+        Assert.IsFalse(alignment.Contains("GridUtils.CellToWorldCenter", StringComparison.Ordinal), "Vehicle slope alignment must consume sampled surface data, not recompute grid positions.");
+        Assert.IsFalse(alignment.Contains("Physics.", StringComparison.Ordinal), "Vehicle slope alignment must not depend on runtime physics.");
+        Assert.IsFalse(alignment.Contains("FindObjects", StringComparison.Ordinal), "Vehicle slope alignment must not scan scenes.");
+        Assert.IsFalse(movement.Contains("VehicleSurfaceAlignmentComponent", StringComparison.Ordinal), "Step 27 must not move slope alignment into movement/pathing.");
+    }
+
+    [Test]
+    public void MapSurfaceBuildingFoundationVisualHandlingMustSyncVisualAndCombatEntity()
+    {
+        Assert.IsTrue(File.Exists(BuildingFoundationVisualSystemPath), $"{BuildingFoundationVisualSystemPath} must own building foundation visual/entity application.");
+
+        string foundation = File.ReadAllText(BuildingFoundationVisualSystemPath);
+        string creation = File.ReadAllText("Assets/Game/Scripts/Systems/BuildingRuntimeCreationSystem.cs");
+        string surfacePlacement = File.ReadAllText(BuildingSurfacePlacementSystemPath);
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("internal sealed class BuildingFoundationVisualSystem", foundation);
+        StringAssert.Contains("ApplyVisualFoundation(GameObject instance, BuildingSurfacePlacementSystem.Result surfaceResult)", foundation);
+        StringAssert.Contains("position.y = surfaceResult.FoundationHeight;", foundation);
+        StringAssert.Contains("ApplyCombatEntityFoundation(", foundation);
+        StringAssert.Contains("transform.Position.y = surfaceResult.FoundationHeight;", foundation);
+        StringAssert.Contains("surfacePlacementSystem.ToComponent(surfaceResult)", foundation);
+        StringAssert.Contains("em.AddComponentData(entity, surfaceComponent);", foundation);
+        StringAssert.Contains("private readonly BuildingFoundationVisualSystem _foundationVisualSystem = new();", creation);
+        StringAssert.Contains("TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult)", creation);
+        StringAssert.Contains("_foundationVisualSystem.ApplyVisualFoundation(instance, surfaceResult);", creation);
+        StringAssert.Contains("_foundationVisualSystem.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);", creation);
+        StringAssert.Contains("RuntimeBuildingMaxSurfaceHeightDelta", creation);
+        StringAssert.Contains("RuntimeBuildingMaxSurfaceSlopeDegrees", creation);
+        StringAssert.Contains("public BuildingSurfaceComponent ToComponent(Result result)", surfacePlacement);
+        StringAssert.Contains("public struct BuildingSurfaceComponent : IComponentData", components);
+        StringAssert.Contains("28. Complete: Add building foundation visual handling", roadmap);
+
+        Assert.IsFalse(foundation.Contains("Physics.", StringComparison.Ordinal), "Building foundation visual handling must use baked surface results, not runtime physics.");
+        Assert.IsFalse(foundation.Contains("FindObjects", StringComparison.Ordinal), "Building foundation visual handling must not scan scenes.");
+        Assert.IsFalse(foundation.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Building foundation visual handling must not couple to pathfinding.");
+        Assert.IsFalse(creation.Contains("position.y = surfaceResult.FoundationHeight;", StringComparison.Ordinal), "Foundation y application should stay in BuildingFoundationVisualSystem.");
+    }
+
+    [Test]
+    public void MapSurfaceRoadPlacementValidationMustStayOutsideRoadSessionMutation()
+    {
+        Assert.IsTrue(File.Exists(RoadSurfacePlacementSystemPath), $"{RoadSurfacePlacementSystemPath} must own road surface placement validation.");
+
+        string surfacePlacement = File.ReadAllText(RoadSurfacePlacementSystemPath);
+        string source = File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildCompositionSourceSystem.cs");
+        string context = File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildInteractionContextSystem.cs");
+        string input = File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildInputSystem.cs");
+        string mutation = File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildMutationSystem.cs");
+        string session = File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildSessionSystem.cs");
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("internal sealed class RoadSurfacePlacementSystem", surfacePlacement);
+        StringAssert.Contains("private const float MaxRoadSurfaceHeightDelta", surfacePlacement);
+        StringAssert.Contains("private const float MaxRoadSurfaceSlopeDegrees", surfacePlacement);
+        StringAssert.Contains("public void Configure(MapSurfaceComponent surface)", surfacePlacement);
+        StringAssert.Contains("public bool IsPathSurfaceValid(List<Vector2Int> cells)", surfacePlacement);
+        StringAssert.Contains("public bool TryEvaluatePath(MapSurfaceComponent surface, IReadOnlyList<Vector2Int> cells, out Result result)", surfacePlacement);
+        StringAssert.Contains("sample.MovementMask & MapSurfaceMovementMask.AllGroundUnits", surfacePlacement);
+        StringAssert.Contains("ResolveRoadSurfaceType(bool isAutobahn, bool isBridgeDeck, bool isRamp)", surfacePlacement);
+        StringAssert.Contains("MapSurfaceType.BridgeDeck", surfacePlacement);
+        StringAssert.Contains("MapSurfaceType.Ramp", surfacePlacement);
+        StringAssert.Contains("MapSurfaceType.Highway", surfacePlacement);
+        StringAssert.Contains("public readonly RoadSurfacePlacementSystem RoadSurfacePlacementSystem = new();", source);
+        StringAssert.Contains("public readonly Func<List<Vector2Int>, bool> IsRoadPathSurfaceValid;", context);
+        StringAssert.Contains("path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path)", File.ReadAllText("Assets/Game/Scripts/Systems/RoadBuildCompositionContextSystem.cs"));
+        StringAssert.Contains("context.IsRoadPathSurfaceValid == null || context.IsRoadPathSurfaceValid(path)", input);
+        StringAssert.Contains("29. Complete: Add road placement surface validation", roadmap);
+
+        Assert.IsFalse(surfacePlacement.Contains("CreateStroke", StringComparison.Ordinal), "Road surface validation must not mutate road strokes.");
+        Assert.IsFalse(surfacePlacement.Contains("RestoreRoadBuildSession", StringComparison.Ordinal), "Road surface validation must not own rollback.");
+        Assert.IsFalse(surfacePlacement.Contains("Physics.", StringComparison.Ordinal), "Road surface validation must use baked surface data, not physics.");
+        Assert.IsFalse(surfacePlacement.Contains("FindObjects", StringComparison.Ordinal), "Road surface validation must not scan scenes.");
+        Assert.IsFalse(mutation.Contains("RoadSurfacePlacementSystem", StringComparison.Ordinal), "Road mutation must stay separate from surface validation.");
+        Assert.IsFalse(session.Contains("RoadSurfacePlacementSystem", StringComparison.Ordinal), "Road session/rollback must stay separate from surface validation.");
+    }
+
+    [Test]
+    public void MapSurfaceRuntimeCityIntegrationMustBeFailOpenAndPreserveGenerationOwnership()
+    {
+        Assert.IsTrue(File.Exists(RuntimeCitySurfaceIntegrationSystemPath), $"{RuntimeCitySurfaceIntegrationSystemPath} must own runtime-city surface integration.");
+
+        string integration = File.ReadAllText(RuntimeCitySurfaceIntegrationSystemPath);
+        string visual = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityVisualSystem.cs");
+        string generation = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityGenerationSystem.cs");
+        string walkability = File.ReadAllText("Assets/Game/Scripts/Environment/RuntimeCityWalkabilitySystem.cs");
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("internal sealed class RuntimeCitySurfaceIntegrationSystem", integration);
+        StringAssert.Contains("private readonly BuildingSurfacePlacementSystem _buildingSurfacePlacementSystem = new();", integration);
+        StringAssert.Contains("private readonly RoadSurfacePlacementSystem _roadSurfacePlacementSystem = new();", integration);
+        StringAssert.Contains("public void Configure(MapSurfaceComponent surface)", integration);
+        StringAssert.Contains("public Vector3 ResolveFootprintCenter(", integration);
+        StringAssert.Contains("return fallbackCenter;", integration);
+        StringAssert.Contains("fallbackCenter.y = surfaceResult.FoundationHeight;", integration);
+        StringAssert.Contains("public bool CanReserveFootprint(Vector2Int originCell, Vector2Int footprintCells)", integration);
+        StringAssert.Contains("public bool IsRoadPathSurfaceValid(List<Vector2Int> cells)", integration);
+        StringAssert.Contains("public bool TryResolvePrimarySurface(Vector2Int cell, out MapSurfaceSample sample)", integration);
+        StringAssert.Contains("private readonly RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem = new();", visual);
+        StringAssert.Contains("public void ConfigureSurface(MapSurfaceComponent surface)", visual);
+        StringAssert.Contains("_surfaceIntegrationSystem.ResolveFootprintCenter(originCell, footprintCells, grid, center)", visual);
+        StringAssert.Contains("30. Complete: Add runtime city surface integration", roadmap);
+
+        Assert.IsFalse(integration.Contains("Unity.Mathematics.Random", StringComparison.Ordinal), "Runtime-city surface integration must not change generation random order.");
+        Assert.IsFalse(integration.Contains("yield return", StringComparison.Ordinal), "Runtime-city surface integration must not change coroutine yield points.");
+        Assert.IsFalse(integration.Contains("Instantiate", StringComparison.Ordinal), "Runtime-city surface integration must not own visual spawning.");
+        Assert.IsFalse(integration.Contains("Physics.", StringComparison.Ordinal), "Runtime-city surface integration must not use runtime physics.");
+        Assert.IsFalse(integration.Contains("FindObjects", StringComparison.Ordinal), "Runtime-city surface integration must not scan scenes.");
+        Assert.IsFalse(generation.Contains("RuntimeCitySurfaceIntegrationSystem", StringComparison.Ordinal), "Generation/count/random ownership must not move into surface integration.");
+        Assert.IsFalse(walkability.Contains("MapSurfaceComponent", StringComparison.Ordinal), "Walkability reservations must remain grid-owned; surface checks stay in the integration boundary.");
+    }
+
+    [Test]
+    public void MapSurfaceCommandTargetingMustUseBakedSurfaceQueriesWithoutChangingMoveRequests()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceCommandTargetSystemPath), $"{MapSurfaceCommandTargetSystemPath} must own surface-aware command targeting.");
+
+        string commandTarget = File.ReadAllText(MapSurfaceCommandTargetSystemPath);
+        string pointerTarget = File.ReadAllText(RtsSelectionPointerTargetCommandSystemPath);
+        string buildingInteraction = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionBuildingInteractionSystem.cs");
+        string moveCommand = File.ReadAllText("Assets/Game/Scripts/Systems/SelectionMoveCommandRequestSystem.cs");
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceCommandTargetSystem", commandTarget);
+        StringAssert.Contains("public bool TryResolveCommandTarget(", commandTarget);
+        StringAssert.Contains("private readonly MapSurfaceQuerySystem _querySystem = new();", commandTarget);
+        StringAssert.Contains("TryResolveFlatFallback(grid, ray, out int2 fallbackCell, out Vector3 fallbackWorldPoint)", commandTarget);
+        StringAssert.Contains("_querySystem.TryCreateContext(entityManager, surfaceQuery, out MapSurfaceQuerySystem.Context surfaceContext)", commandTarget);
+        StringAssert.Contains("TryResolvePreferredSelectionLayer(entityManager, selectionStateSystem, out int preferredSurfaceId, out int preferredLayerId)", commandTarget);
+        StringAssert.Contains("sample.SurfaceId == preferredSurfaceId", commandTarget);
+        StringAssert.Contains("sample.LayerId == preferredLayerId", commandTarget);
+        StringAssert.Contains("TryIntersectSurface(grid, ray, sample, out Vector3 worldPoint, out float distance)", commandTarget);
+        StringAssert.Contains("private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();", pointerTarget);
+        StringAssert.Contains("_mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());", pointerTarget);
+        StringAssert.Contains("_mapSurfaceCommandTargetSystem.TryResolveCommandTarget(", pointerTarget);
+        StringAssert.Contains("private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();", buildingInteraction);
+        StringAssert.Contains("31. Complete: Add command targeting surface resolution", roadmap);
+
+        Assert.IsFalse(commandTarget.Contains("Physics.", StringComparison.Ordinal), "Command targeting must use baked surface data, not runtime physics.");
+        Assert.IsFalse(commandTarget.Contains("FindObjects", StringComparison.Ordinal), "Command targeting must not scan scenes.");
+        Assert.IsFalse(commandTarget.Contains("IssueGroupedManualMoveOrder", StringComparison.Ordinal), "Command targeting must not own move-order issuing.");
+        Assert.IsFalse(commandTarget.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Command targeting must not own pathfinding.");
+        Assert.IsFalse(moveCommand.Contains("MapSurfaceComponent", StringComparison.Ordinal), "Move request processing must stay cell-command oriented; surface target resolution stays in pointer targeting.");
+        Assert.IsFalse(moveCommand.Contains("MapSurfaceCommandTargetSystem", StringComparison.Ordinal), "Move request processing must not take over surface target resolution.");
+    }
+
+    [Test]
+    public void MapSurfaceDiagnosticsAndVisualizationMustStayLowFrequencyAndEditorOnly()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceDiagnosticsSystemPath), $"{MapSurfaceDiagnosticsSystemPath} must publish runtime surface counters.");
+        Assert.IsTrue(File.Exists(MapSurfaceEditorOverlaySystemPath), $"{MapSurfaceEditorOverlaySystemPath} must own editor-only map-surface overlays.");
+        Assert.IsTrue(File.Exists(MapSurfaceDebugCaptureSystemPath), $"{MapSurfaceDebugCaptureSystemPath} must own PM/QA surface capture commands.");
+
+        string components = File.ReadAllText(MapSurfaceComponentsPath);
+        string diagnostics = File.ReadAllText(MapSurfaceDiagnosticsSystemPath);
+        string overlay = File.ReadAllText(MapSurfaceEditorOverlaySystemPath);
+        string capture = File.ReadAllText(MapSurfaceDebugCaptureSystemPath);
+        string movement = File.ReadAllText(UnitGridMovementSystemPath);
+        string pathfindingRead = File.ReadAllText(MapSurfacePathfindingReadSystemPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public struct MapSurfaceDiagnosticsComponent : IComponentData", components);
+        StringAssert.Contains("public partial struct MapSurfaceDiagnosticsSystem : ISystem", diagnostics);
+        StringAssert.Contains("private const double DiagnosticsIntervalSeconds = 1d;", diagnostics);
+        StringAssert.Contains("MapSurfaceDiagnosticsComponent diagnostics = BuildDiagnostics(surface);", diagnostics);
+        StringAssert.Contains("diagnostics.LayeredCellCount++", diagnostics);
+        StringAssert.Contains("diagnostics.BridgeSurfaceCount++", diagnostics);
+        StringAssert.Contains("diagnostics.RampSurfaceCount++", diagnostics);
+        StringAssert.Contains("#if UNITY_EDITOR", overlay);
+        StringAssert.Contains("public sealed class MapSurfaceEditorOverlaySystem", overlay);
+        StringAssert.Contains("Height", overlay);
+        StringAssert.Contains("Slope", overlay);
+        StringAssert.Contains("Layer", overlay);
+        StringAssert.Contains("RoadBridgeRamp", overlay);
+        StringAssert.Contains("Blocked", overlay);
+        StringAssert.Contains("Handles.DrawSolidRectangleWithOutline", overlay);
+        StringAssert.Contains("[MenuItem(\"WarlineCapture/Map Surface/Capture Selected Surface Summary\")]", capture);
+        StringAssert.Contains("Selection.activeGameObject", capture);
+        StringAssert.Contains("BuildSummary(authoring, authoring.BakedSurfaceData)", capture);
+        StringAssert.Contains("32. Complete: Add diagnostics and visualization", roadmap);
+
+        Assert.IsFalse(diagnostics.Contains("Debug.Log", StringComparison.Ordinal), "Runtime surface diagnostics must publish counters, not format hot-path logs.");
+        Assert.IsFalse(diagnostics.Contains("StringBuilder", StringComparison.Ordinal), "Runtime surface diagnostics must not build strings.");
+        Assert.IsFalse(diagnostics.Contains("FindObjects", StringComparison.Ordinal), "Runtime surface diagnostics must not scan scenes.");
+        Assert.IsFalse(diagnostics.Contains("Physics.", StringComparison.Ordinal), "Runtime surface diagnostics must not use physics.");
+        Assert.IsFalse(capture.Contains("FindObjects", StringComparison.Ordinal), "Surface capture must use an explicit selected authoring object, not scene-wide scans.");
+        Assert.IsFalse(movement.Contains("MapSurfaceDiagnosticsSystem", StringComparison.Ordinal), "Movement must not own surface diagnostics.");
+        Assert.IsFalse(pathfindingRead.Contains("MapSurfaceDiagnosticsSystem", StringComparison.Ordinal), "Pathfinding read context must not own surface diagnostics.");
+    }
+
+    [Test]
+    public void MapSurfaceFocusedTestsMustCoverLayeredGridBehavior()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceLayeredGridFocusedTestsPath), $"{MapSurfaceLayeredGridFocusedTestsPath} must cover map-surface behavior directly.");
+
+        string tests = File.ReadAllText(MapSurfaceLayeredGridFocusedTestsPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceLayeredGridFocusedTests", tests);
+        StringAssert.Contains("FlatEquivalentSurfaceSamplesPrimaryHeightAndNormal", tests);
+        StringAssert.Contains("SlopeSamplingAndClassificationUseBakedSampleData", tests);
+        StringAssert.Contains("BuildingFootprintValidationRejectsHeightDelta", tests);
+        StringAssert.Contains("LayeredBridgeAndLowerHighwayRemainIndependentlyWalkable", tests);
+        StringAssert.Contains("LayeredCellsDoNotPermitSurfaceJumpWithoutExplicitConnection", tests);
+        StringAssert.Contains("MapSurfaceQuerySystem.Context", tests);
+        StringAssert.Contains("BuildingSurfacePlacementSystem, Assembly-CSharp", tests);
+        StringAssert.Contains("MapSurfaceConnectionSystem.Context", tests);
+        StringAssert.Contains("33. Complete: Add focused tests", roadmap);
+
+        Assert.IsFalse(tests.Contains("Physics.", StringComparison.Ordinal), "Focused map-surface tests must use baked data, not runtime physics.");
+        Assert.IsFalse(tests.Contains("FindObjects", StringComparison.Ordinal), "Focused map-surface tests must not depend on scene scans.");
+    }
+
+    [Test]
+    public void MapSurfaceRuntimeValidationProbeMustCoverSlopeVehicleAndBridgeSeparation()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceRuntimeValidationProbeSystemPath), $"{MapSurfaceRuntimeValidationProbeSystemPath} must own deterministic runtime surface probes.");
+
+        string probe = File.ReadAllText(MapSurfaceRuntimeValidationProbeSystemPath);
+        string tests = File.ReadAllText(MapSurfaceLayeredGridFocusedTestsPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public sealed class MapSurfaceRuntimeValidationProbeSystem", probe);
+        StringAssert.Contains("public bool RunProbe(MapSurfaceComponent surface, int2 slopeCell, int2 layeredBridgeCell, out Result result)", probe);
+        StringAssert.Contains("UnitMoveOverSlopeGrounded", probe);
+        StringAssert.Contains("TankVisualPitchRollResolved", probe);
+        StringAssert.Contains("BridgeAndHighwaySeparated", probe);
+        StringAssert.Contains("MapSurfaceType.BridgeDeck", probe);
+        StringAssert.Contains("MapSurfaceType.Highway", probe);
+        StringAssert.Contains("ResolveVehiclePitchDegrees", probe);
+        StringAssert.Contains("RuntimeValidationProbeCoversSlopeTankAndBridgeSeparation", tests);
+        StringAssert.Contains("34. Complete: Add runtime validation scene/probe", roadmap);
+
+        Assert.IsFalse(probe.Contains("Physics.", StringComparison.Ordinal), "Runtime validation probe must use baked surface data, not physics.");
+        Assert.IsFalse(probe.Contains("FindObjects", StringComparison.Ordinal), "Runtime validation probe must not scan scenes.");
+        Assert.IsFalse(probe.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Runtime validation probe must not replace pathfinding.");
+    }
+
+    [Test]
+    public void MapSurfacePerformanceGateMustMeasureSamplingWithoutHotPathOwnership()
+    {
+        Assert.IsTrue(File.Exists(MapSurfacePerformanceValidationSystemPath), $"{MapSurfacePerformanceValidationSystemPath} must own deterministic map-surface performance validation.");
+
+        string performance = File.ReadAllText(MapSurfacePerformanceValidationSystemPath);
+        string tests = File.ReadAllText(MapSurfaceLayeredGridFocusedTestsPath);
+        string movement = File.ReadAllText(UnitGridMovementSystemPath);
+        string pathfindingRead = File.ReadAllText(MapSurfacePathfindingReadSystemPath);
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+
+        StringAssert.Contains("public sealed class MapSurfacePerformanceValidationSystem", performance);
+        StringAssert.Contains("public const double BaselineFrameBudgetMilliseconds = 16.67d;", performance);
+        StringAssert.Contains("public const long MaxSamplingAllocationBytes = 128;", performance);
+        StringAssert.Contains("public Result RunSamplingProbe(MapSurfaceComponent surface, int sampleIterations)", performance);
+        StringAssert.Contains("GC.GetAllocatedBytesForCurrentThread()", performance);
+        StringAssert.Contains("EstimateSurfaceMemoryBytes", performance);
+        StringAssert.Contains("_querySystem.TrySampleHeight(context, cell, out _)", performance);
+        StringAssert.Contains("_pathingValidationSystem.CanTraverse(surface, surface.HasSurfaceData, cell, MapSurfaceMovementMask.Infantry)", performance);
+        StringAssert.Contains("PerformanceValidationProbeKeepsSurfaceSamplingAllocationBounded", tests);
+        StringAssert.Contains("35. Complete: Performance validation gate", roadmap);
+
+        Assert.IsFalse(performance.Contains("Debug.Log", StringComparison.Ordinal), "Performance validation must return data and not log from the measured path.");
+        Assert.IsFalse(performance.Contains("FindObjects", StringComparison.Ordinal), "Performance validation must not scan scenes.");
+        Assert.IsFalse(performance.Contains("Physics.", StringComparison.Ordinal), "Performance validation must not use physics.");
+        Assert.IsFalse(movement.Contains("MapSurfacePerformanceValidationSystem", StringComparison.Ordinal), "Movement hot path must not own performance probes.");
+        Assert.IsFalse(pathfindingRead.Contains("MapSurfacePerformanceValidationSystem", StringComparison.Ordinal), "Pathfinding read hot path must not own performance probes.");
+    }
+
+    [Test]
+    public void MapSurfaceFinalArchitectureGateMustKeepGameplayOutOfBootstrapUiAndBuilders()
+    {
+        string roadmap = File.ReadAllText(MapSurfaceLayeredGridRoadmapPath);
+        StringAssert.Contains("36. Complete: Final architecture gate", roadmap);
+        StringAssert.Contains("Unity EditMode `-testFilter MapSurface` passed", roadmap);
+
+        string[] bootstrapUiViolations = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path =>
+                path.Contains("/Bootstrap/", StringComparison.Ordinal) ||
+                path.Contains("/UI/", StringComparison.Ordinal))
+            .Where(path =>
+            {
+                string source = File.ReadAllText(path);
+                return source.Contains("MapSurfaceComponent", StringComparison.Ordinal) ||
+                       source.Contains("MapSurfaceQuerySystem", StringComparison.Ordinal) ||
+                       source.Contains("UnitSurfaceComponent", StringComparison.Ordinal) ||
+                       source.Contains("BuildingSurfaceComponent", StringComparison.Ordinal);
+            })
+            .ToArray();
+
+        Assert.IsEmpty(
+            bootstrapUiViolations,
+            "Map-surface gameplay logic must stay out of bootstrap and UI/view code:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, bootstrapUiViolations));
+
+        string[] editorBuilderViolations = Directory.GetFiles("Assets/Game/Scripts/Editor", "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !Path.GetFileName(path).StartsWith("MapSurface", StringComparison.Ordinal))
+            .Where(path =>
+            {
+                string source = File.ReadAllText(path);
+                return source.Contains("MapSurfaceComponent", StringComparison.Ordinal) ||
+                       source.Contains("MapSurfaceQuerySystem", StringComparison.Ordinal) ||
+                       source.Contains("UnitSurfaceComponent", StringComparison.Ordinal) ||
+                       source.Contains("BuildingSurfaceComponent", StringComparison.Ordinal);
+            })
+            .ToArray();
+
+        Assert.IsEmpty(
+            editorBuilderViolations,
+            "Non-map editor builders must not own map-surface gameplay policy:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, editorBuilderViolations));
+
+        string[] mapSurfaceRuntimeFiles = Directory.GetFiles(ScriptsRoot, "*.cs", SearchOption.AllDirectories)
+            .Select(NormalizePath)
+            .Where(path => !path.Contains("/Editor/", StringComparison.Ordinal))
+            .Where(IsMapSurfaceRuntimeFile)
+            .ToArray();
+
+        var violations = new List<string>();
+        foreach (string path in mapSurfaceRuntimeFiles)
+        {
+            string source = File.ReadAllText(path);
+            if (source.Contains("Physics.", StringComparison.Ordinal))
+                violations.Add($"{path} uses runtime physics in map-surface gameplay.");
+            if (Regex.IsMatch(source, @"\b(?:MapSurface|Surface|Terrain|Bridge)\w*\s+Instance\s*[;=]"))
+                violations.Add($"{path} declares singleton-style map-surface Instance state.");
+            if (Regex.IsMatch(source, @"\bstatic\s+(?!readonly\b)(?!.*\()(?!(?:class|void|bool|int|float|double|long|string)\s+\w+\s*\()[^;=]+="))
+                violations.Add($"{path} appears to declare static mutable map-surface state.");
+        }
+
+        Assert.IsEmpty(violations, string.Join(Environment.NewLine, violations));
     }
 
     [Test]
@@ -17241,6 +18642,11 @@ public sealed class GameplayArchitectureContractTests
         {
             yield return match.Groups[1].Value;
         }
+    }
+
+    private static void AssertPathfindingConstantUnchanged(string source, string constantName, string expectedValue)
+    {
+        StringAssert.Contains($"private const int {constantName} = {expectedValue};", source);
     }
 
     private static string NormalizePath(string path)

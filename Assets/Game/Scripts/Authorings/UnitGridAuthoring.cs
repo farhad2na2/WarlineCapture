@@ -30,6 +30,7 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector, Min(0.01f)] private float walkSpeed = 2f;
     [SerializeField, HideInInspector, Min(1f)] private float roadSpeedMultiplier = 1.2f;
     [SerializeField, HideInInspector, Min(0.001f)] private float arriveDistance = 0.05f;
+    [SerializeField, HideInInspector] private float groundOffset;
     [SerializeField, HideInInspector, Min(0)] private int resourceHaulerBarrelCapacity;
     [SerializeField, HideInInspector, Min(0.01f)] private float resourceHaulerFillDurationSeconds = 2f;
     [SerializeField, HideInInspector, Min(0.01f)] private float resourceHaulerUnloadDurationSeconds = 1.5f;
@@ -96,6 +97,7 @@ public class UnitGridAuthoring : MonoBehaviour
         walkSpeed = config.WalkSpeed;
         roadSpeedMultiplier = config.RoadSpeedMultiplier;
         arriveDistance = config.ArriveDistance;
+        groundOffset = config.GroundOffset;
         displayName = config.DisplayName;
         description = config.Description;
         weaponDisplayName = config.WeaponDisplayName;
@@ -192,6 +194,26 @@ public class UnitGridAuthoring : MonoBehaviour
             });
             AddComponent(entity, vehicleMovement);
             AddComponent(entity, new UnitVehicleKinematics { CurrentSpeed = 0f, StallSeconds = 0f });
+            AddComponent(entity, new UnitSurfaceComponent
+            {
+                SurfaceId = -1,
+                LayerId = 0,
+                LastSampledHeight = authoring.transform.position.y,
+                LastSampledNormal = new float3(0f, 1f, 0f),
+                HasSurface = 0,
+                IsGrounded = 0
+            });
+            if (authoring.usesVehicleMotion && !authoring.isAirUnit)
+            {
+                AddComponent(entity, new VehicleSurfaceAlignmentComponent
+                {
+                    SurfaceNormal = new float3(0f, 1f, 0f),
+                    PitchDegrees = 0f,
+                    RollDegrees = 0f,
+                    AlignmentWeight = 0f
+                });
+            }
+            AddComponent(entity, new UnitGroundOffsetComponent { Value = authoring.groundOffset });
             if (authoring.soldierTransportCapacity > 0)
             {
                 AddComponent(entity, new UnitTransportCapacity

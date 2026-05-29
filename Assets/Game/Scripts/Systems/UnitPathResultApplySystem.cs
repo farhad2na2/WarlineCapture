@@ -13,6 +13,7 @@ internal struct UnitPathResultApplySystem
         NativeArray<int2> assignedGoals,
         NativeArray<byte> segmented,
         NativeArray<byte> manualMoves,
+        MapSurfacePathfindingReadSystem.Context surfaceContext,
         NativeStream stream,
         NativeArray<byte> status,
         out int completedCount,
@@ -34,6 +35,7 @@ internal struct UnitPathResultApplySystem
         var reader = stream.AsReader();
         var follow = new UnitPathFollow { PathIndex = 0 };
         var retry = new UnitPathRetrySystem();
+        var surfaceMetadata = new UnitPathSurfaceMetadataSystem();
 
         for (int i = 0; i < entities.Length; i++)
         {
@@ -45,10 +47,25 @@ internal struct UnitPathResultApplySystem
 
             int count = reader.BeginForEachIndex(i);
             int start = pool.Cells.Length;
+            bool writePathSurfaceMetadata = entityHasMatchingRequest && status[i] == 1 && count > 0;
+            DynamicBuffer<UnitPathSurfaceNode> surfaceBuffer = default;
+            UnitSurfaceComponent currentSurface = default;
+            if (writePathSurfaceMetadata)
+            {
+                surfaceBuffer = surfaceMetadata.PrepareBuffer(em, entity);
+                if (em.HasComponent<UnitSurfaceComponent>(entity))
+                    currentSurface = em.GetComponentData<UnitSurfaceComponent>(entity);
+            }
+
             if (entityHasMatchingRequest)
             {
                 for (int j = 0; j < count; j++)
-                    pool.Cells.Add(reader.Read<int2>());
+                {
+                    int2 pathCell = reader.Read<int2>();
+                    pool.Cells.Add(pathCell);
+                    if (writePathSurfaceMetadata)
+                        surfaceMetadata.Append(surfaceBuffer, surfaceContext.Surface, surfaceContext.HasSurfaceData, pathCell, currentSurface);
+                }
             }
             else
             {
@@ -104,6 +121,7 @@ internal struct UnitPathResultApplySystem
                     em.RemoveComponent<UnitPathFollow>(entity);
                 if (em.HasComponent<UnitPathRange>(entity))
                     em.RemoveComponent<UnitPathRange>(entity);
+                surfaceMetadata.ClearIfPresent(em, entity);
                 if (em.HasComponent<AutoWanderMoveTag>(entity))
                     em.RemoveComponent<AutoWanderMoveTag>(entity);
 

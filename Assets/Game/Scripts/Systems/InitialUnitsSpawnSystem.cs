@@ -39,6 +39,7 @@ public partial struct InitialUnitsSpawnSystem : ISystem
     private InitialSpawnDiagnosticLogSystem _diagnosticLogSystem;
     private InitialSpawnDuplicateCellDiagnosticSystem _duplicateCellDiagnosticSystem;
     private InitialSpawnFreezeDiagnosticSystem _freezeDiagnosticSystem;
+    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
 
     public void OnCreate(ref SystemState state)
     {
@@ -227,7 +228,10 @@ public partial struct InitialUnitsSpawnSystem : ISystem
 
                     byte faction = unitSpawn.FactionId;
                     if (!foundPlatformSpawn)
+                    {
                         pos = GridUtils.CellToWorldCenter(grid, cell);
+                        _spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);
+                    }
                     Entity instance = _unitSpawnApplySystem.InstantiateAndConfigureSpawnedUnit(
                         em,
                         ecb,

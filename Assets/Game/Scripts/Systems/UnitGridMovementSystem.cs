@@ -113,9 +113,11 @@ public partial struct UnitGridMoveJob : IJobEntity
             }
         }
         float3 targetPos = GridUtils.CellToWorldCenter(Grid, targetCell);
+        targetPos.y = transform.Position.y;
         bool finalPathStep = follow.PathIndex >= (range.Length - 1);
         int2 finalCell = Pool[range.Start + range.Length - 1];
         float3 finalTargetPos = GridUtils.CellToWorldCenter(Grid, finalCell);
+        finalTargetPos.y = transform.Position.y;
         float3 toFinalTarget = finalTargetPos - transform.Position;
         toFinalTarget.y = 0f;
 

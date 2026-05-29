@@ -9,9 +9,9 @@ public class GridAuthoring : MonoBehaviour
 {
     [SerializeField] private GridAuthoringConfig config;
     private RuntimeGridBlockerSystem _runtimeGridBlockers;
-    private int Width => config != null ? config.Width : 16;
-    private int Height => config != null ? config.Height : 16;
-    private float CellSize => config != null ? config.CellSize : 1f;
+    public int Width => config != null ? config.Width : 16;
+    public int Height => config != null ? config.Height : 16;
+    public float CellSize => config != null ? config.CellSize : 1f;
     private Vector2Int[] BlockedCells => config != null ? config.BlockedCells : null;
     private bool DrawGrid => config == null || config.DrawGrid;
     private bool DrawWhenNotSelected => config == null || config.DrawWhenNotSelected;

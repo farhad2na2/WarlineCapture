@@ -11,6 +11,7 @@ internal struct UnitPathfindingQuerySystem
     public EntityQuery RetryCooldownQuery;
     public EntityQuery ManualRequestQuery;
     public EntityQuery ManualPathFollowQuery;
+    public EntityQuery MapSurfaceQuery;
 
     public void Initialize(ref SystemState state)
     {
@@ -132,5 +133,6 @@ internal struct UnitPathfindingQuerySystem
                 ComponentType.ReadOnly<StaticGridBlocker>(),
             }
         });
+        MapSurfaceQuery = state.GetEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
     }
 }

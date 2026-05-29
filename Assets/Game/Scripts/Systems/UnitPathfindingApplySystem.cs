@@ -6,6 +6,8 @@ using UnityEngine;
 
 internal struct UnitPathfindingApplySystem
 {
+    private MapSurfacePathfindingReadSystem _surfaceReadSystem;
+
     public void Apply(
         ref SystemState state,
         ref UnitPathfindingQuerySystem queries,
@@ -54,6 +56,9 @@ internal struct UnitPathfindingApplySystem
 
         Entity gridEntity = queries.GridQuery.GetSingletonEntity();
         PathPoolData pool = state.EntityManager.GetComponentData<PathPoolData>(gridEntity);
+        MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(state.EntityManager, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+            ? resolvedSurfaceContext
+            : _surfaceReadSystem.CreateFlatFallbackContext();
         NativeArray<Entity> requestEntities = requestBuffers.Entities.AsArray();
         NativeArray<UnitPathRequest> requestGoals = requestBuffers.Goals.AsArray();
         NativeArray<int2> assignedGoals = requestBuffers.AssignedGoals.AsArray();
@@ -73,6 +78,7 @@ internal struct UnitPathfindingApplySystem
             assignedGoals,
             segmented,
             manualMoves,
+            surfaceContext,
             pendingPathStream,
             status,
             out int completedCount,

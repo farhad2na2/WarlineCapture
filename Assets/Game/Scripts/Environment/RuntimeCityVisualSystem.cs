@@ -2,6 +2,7 @@ using UnityEngine;
 
 internal sealed class RuntimeCityVisualSystem
 {
+    private readonly RuntimeCitySurfaceIntegrationSystem _surfaceIntegrationSystem = new();
     private Transform _runtimeRoot;
     private Transform _cityVisualRoot;
 
@@ -13,8 +14,19 @@ internal sealed class RuntimeCityVisualSystem
 
     public void Dispose()
     {
+        _surfaceIntegrationSystem.Clear();
         _cityVisualRoot = null;
         _runtimeRoot = null;
+    }
+
+    public void ConfigureSurface(MapSurfaceComponent surface)
+    {
+        _surfaceIntegrationSystem.Configure(surface);
+    }
+
+    public void ClearSurface()
+    {
+        _surfaceIntegrationSystem.Clear();
     }
 
     public void EnsureCityVisualRoot()
@@ -44,7 +56,9 @@ internal sealed class RuntimeCityVisualSystem
 
         var wrapper = new GameObject($"{prefab.name}_Visual");
         wrapper.transform.SetParent(_cityVisualRoot, false);
-        wrapper.transform.SetPositionAndRotation(GetFootprintCenter(originCell, footprintCells, grid), rotation);
+        Vector3 center = GetFootprintCenter(originCell, footprintCells, grid);
+        center = _surfaceIntegrationSystem.ResolveFootprintCenter(originCell, footprintCells, grid, center);
+        wrapper.transform.SetPositionAndRotation(center, rotation);
         wrapper.transform.localScale = Vector3.one;
 
         GameObject visual;

@@ -7,6 +7,8 @@ using UnityEngine;
 [UpdateAfter(typeof(UnitDeathSystem))]
 public partial struct UnitRespawnSystem : ISystem
 {
+    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
@@ -58,6 +60,9 @@ public partial struct UnitRespawnSystem : ISystem
             var instance = ecb.Instantiate(req.Prefab);
             ecb.SetComponent(instance, new UnitGrid { Cell = cell });
             float3 pos = GridUtils.CellToWorldCenter(grid, cell);
+            bool isAirUnit = state.EntityManager.HasComponent<UnitAirMovement>(req.Prefab);
+            if (!isAirUnit)
+                _spawnGroundingSystem.TryGroundCellCenter(state.EntityManager, grid, cell, ref pos, out _);
             ecb.SetComponent(instance, LocalTransform.FromPosition(pos));
             ecb.SetComponent(instance, new UnitPrevWorldPos { Value = pos });
             ecb.SetComponent(instance, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });

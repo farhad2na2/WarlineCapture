@@ -272,6 +272,7 @@ internal sealed class BuildingRuntimeContextSystem
             source.RuntimeLinkInteractionSystem,
             source.RuntimeLinkInteractionContext,
             source.IsDeferringSideEffects?.Invoke() == true,
+            source.TryGetEntityManager,
             source.TryGetGridForRuntimeCreation,
             source.ResolvePlacementRect,
             definition => source.RuntimeEntitySystem == null || source.RuntimeEntitySystem.ShouldRuntimeBuildingBlockPathing(definition),

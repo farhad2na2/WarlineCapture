@@ -9,6 +9,7 @@ internal sealed class CitizenVisibleUnitSystem
     private const float VisibleCitizenSpawnDistance = 140f;
     private const float VisibleCitizenDespawnDistance = 170f;
     private const float VisibleCitizenArriveDistance = 0.35f;
+    private readonly MapSurfaceSpawnGroundingSystem _spawnGroundingSystem = new();
 
     public delegate bool HandleCitizenDeathAction(int citizenId, string reason);
 
@@ -226,6 +227,12 @@ internal sealed class CitizenVisibleUnitSystem
             return;
         if (!travelSystem.TryWorldToCell(ecsProjection, worldPosition, out int2 spawnCell))
             return;
+        if (ecsProjection.TryGetGridConfig(out GridConfig grid))
+        {
+            float3 groundedWorldPosition = worldPosition;
+            _spawnGroundingSystem.TryGroundCellCenter(ecsProjection.EntityManager, grid, spawnCell, ref groundedWorldPosition, out _);
+            worldPosition = groundedWorldPosition;
+        }
 
         Entity instance = ecsProjection.EntityManager.Instantiate(prefabEntity);
         if (ecsProjection.EntityManager.HasComponent<UnitGrid>(instance))

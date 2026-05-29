@@ -9,6 +9,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 {
     private const int RopeDropClearanceCells = 2;
     private const float RopeDropDurationSeconds = 1.2f;
+    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
 
     public void OnCreate(ref SystemState state)
     {
@@ -78,7 +79,7 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
             float3 startPosition = ResolveTransportRopeAnchor(em, transport, transportTransform.ValueRO);
             float3 endPosition = startPosition;
             endPosition.y = grid.Origin.y;
-            dropCell = GridUtils.WorldToCell(grid, endPosition);
+            _spawnGroundingSystem.TryGroundWorldPosition(em, grid, ref endPosition, out dropCell, out _);
             int2 shortDisperseCell = ResolveAdjacentDisperseCell(grid, dropCell, request.ValueRO.DropCount);
             if (startPosition.y < endPosition.y + 2f)
                 startPosition.y = endPosition.y + 2f;
@@ -413,6 +414,8 @@ public partial struct UnitTransportRopeDisembarkSystem : ISystem
 
 public partial struct UnitTransportRopeDropSystem : ISystem
 {
+    private MapSurfaceSpawnGroundingSystem _spawnGroundingSystem;
+
     public void OnCreate(ref SystemState state)
     {
         state.RequireForUpdate<GridConfig>();
@@ -447,6 +450,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
             {
                 transform.ValueRW.Position = drop.ValueRO.EndPosition;
                 IssueDisperseMoveOrder(
+                    _spawnGroundingSystem,
                     em,
                     ecb,
                     entity,
@@ -468,6 +472,7 @@ public partial struct UnitTransportRopeDropSystem : ISystem
     }
 
     private static void IssueDisperseMoveOrder(
+        MapSurfaceSpawnGroundingSystem spawnGroundingSystem,
         EntityManager em,
         EntityCommandBuffer ecb,
         Entity entity,
@@ -517,7 +522,8 @@ public partial struct UnitTransportRopeDropSystem : ISystem
         RemoveIfPresent<AutoWanderMoveTag>(ecb, em, entity);
 
         float3 endPosition = GridUtils.CellToWorldCenter(grid, disperseCell);
-        endPosition.y = currentPosition.y;
+        if (!spawnGroundingSystem.TryGroundCellCenter(em, grid, disperseCell, ref endPosition, out _))
+            endPosition.y = currentPosition.y;
         float speed = em.HasComponent<UnitMove>(entity) ? math.max(0.1f, em.GetComponentData<UnitMove>(entity).Speed) : 2f;
         float duration = math.max(0.1f, math.distance(currentPosition, endPosition) / speed);
         UnitTransportRopeDisperseState disperse = new()

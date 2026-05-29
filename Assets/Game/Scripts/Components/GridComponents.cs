@@ -191,6 +191,12 @@ public struct UnitPathCell : IBufferElementData
     public int2 Value;
 }
 
+public struct UnitPathSurfaceNode : IBufferElementData
+{
+    public int SurfaceId;
+    public int LayerId;
+}
+
 public struct UnitGridInitialized : IComponentData
 {
 }

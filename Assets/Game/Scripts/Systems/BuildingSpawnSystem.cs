@@ -18,6 +18,7 @@ internal sealed class BuildingSpawnSystem
     }
 
     private readonly List<RecentSpawnReservation> _recentSpawnReservations = new();
+    private readonly MapSurfaceSpawnGroundingSystem _spawnGroundingSystem = new();
     private uint _buildingSpawnRandomState = 0x12345678u;
 
     internal uint BuildingSpawnRandomState
@@ -243,6 +244,8 @@ internal sealed class BuildingSpawnSystem
         }
 
         Entity instance = em.Instantiate(prefabEntity);
+        if (!isAirUnit)
+            _spawnGroundingSystem.TryGroundCellCenter(em, grid, cell, ref pos, out _);
         em.SetComponentData(instance, new UnitGrid { Cell = cell });
         em.SetComponentData(instance, LocalTransform.FromPosition(pos));
         building.ProducedUnits ??= new List<Entity>();

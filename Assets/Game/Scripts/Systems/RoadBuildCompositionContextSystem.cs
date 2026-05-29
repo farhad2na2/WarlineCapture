@@ -65,6 +65,7 @@ internal sealed class RoadBuildCompositionContextSystem
                 CreateBuildingRoadLegacyPlacementContext(source),
                 screenPosition),
             path => source.RoadBuildMutationSystem.CreateStroke(CreateRoadBuildMutationContext(source), path),
+            path => source.RoadSurfacePlacementSystem.IsPathSurfaceValid(path),
             () => source.BuildingRoadLegacyStorageSystem.HasPendingBuildingPlacement,
             value => source.BuildingRoadLegacyPlacementSystem.SetDragging(source.BuildingRoadLegacyPlacementState, value),
             () => source.BuildingRoadLegacyPlacementSystem.SetDragging(source.BuildingRoadLegacyPlacementState, false),

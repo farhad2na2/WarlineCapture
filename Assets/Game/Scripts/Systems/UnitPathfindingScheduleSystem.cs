@@ -6,6 +6,8 @@ using UnityEngine;
 
 internal struct UnitPathfindingScheduleSystem
 {
+    private MapSurfacePathfindingReadSystem _surfaceReadSystem;
+
     public struct Result
     {
         public bool Scheduled;
@@ -77,6 +79,9 @@ internal struct UnitPathfindingScheduleSystem
             DynamicBuffer<GridRoad> roads = em.GetBuffer<GridRoad>(gridEntity);
             DynamicBuffer<GridRoadSidewalk> sidewalks = em.GetBuffer<GridRoadSidewalk>(gridEntity);
             DynamicBuffer<GridRoadDirt> dirtRoads = em.GetBuffer<GridRoadDirt>(gridEntity);
+            MapSurfacePathfindingReadSystem.Context surfaceContext = _surfaceReadSystem.TryCreateContext(em, queries.MapSurfaceQuery, out MapSurfacePathfindingReadSystem.Context resolvedSurfaceContext)
+                ? resolvedSurfaceContext
+                : _surfaceReadSystem.CreateFlatFallbackContext();
             DynamicBlockerData dynamicBlockerData = em.GetComponentData<DynamicBlockerData>(gridEntity);
             DynamicOccupancyData dynamicOccupancyData = em.GetComponentData<DynamicOccupancyData>(gridEntity);
             NativeBitArray dynamicBlockers = dynamicBlockerData.Blocked;
@@ -221,6 +226,12 @@ internal struct UnitPathfindingScheduleSystem
                 Roads = roads.AsNativeArray(),
                 Sidewalks = sidewalks.AsNativeArray(),
                 DirtRoads = dirtRoads.AsNativeArray(),
+                MapSurface = surfaceContext.Surface,
+                HasMapSurface = surfaceContext.HasSurfaceData,
+                SurfaceValidation = new MapSurfacePathingValidationSystem(),
+                MapSurfacePathCost = surfaceContext.PathCost,
+                SurfacePathCost = new MapSurfacePathCostSystem(),
+                SurfaceRoadPriority = new MapSurfaceRoadPrioritySystem(),
                 DynamicBlocked = dynamicBlockers,
                 FriendlyPassFactionIds = friendlyPassFactionIds,
                 Occupied = occupied,

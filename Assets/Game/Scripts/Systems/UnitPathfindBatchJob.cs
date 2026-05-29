@@ -32,6 +32,12 @@ internal struct PathfindBatchJob : IJobFor
     [ReadOnly] public NativeArray<GridRoad> Roads;
     [ReadOnly] public NativeArray<GridRoadSidewalk> Sidewalks;
     [ReadOnly] public NativeArray<GridRoadDirt> DirtRoads;
+    [ReadOnly] public MapSurfaceComponent MapSurface;
+    [ReadOnly] public byte HasMapSurface;
+    public MapSurfacePathingValidationSystem SurfaceValidation;
+    [ReadOnly] public MapSurfacePathCostComponent MapSurfacePathCost;
+    public MapSurfacePathCostSystem SurfacePathCost;
+    public MapSurfaceRoadPrioritySystem SurfaceRoadPriority;
     [ReadOnly] public NativeBitArray DynamicBlocked;
     [ReadOnly] public NativeArray<byte> FriendlyPassFactionIds;
     [ReadOnly] public NativeBitArray Occupied;
@@ -97,6 +103,13 @@ internal struct PathfindBatchJob : IJobFor
 
         int startIndex = GridUtils.CellToIndex(start, Grid.Width);
         if (Walkable[startIndex].Value == 0)
+        {
+            Status[index] = 0;
+            Output.EndForEachIndex();
+            return;
+        }
+
+        if (!IsSurfaceCellPathable(start, isVehicle))
         {
             Status[index] = 0;
             Output.EndForEachIndex();
@@ -242,6 +255,9 @@ internal struct PathfindBatchJob : IJobFor
         if (Walkable[goalIndex].Value == 0)
             return false;
 
+        if (!IsSurfaceCellPathable(goal, isVehicle))
+            return false;
+
         return UnitPathPlacementValidationSystem.CanPlaceForPathing(
             Grid,
             Walkable,
@@ -261,7 +277,8 @@ internal struct PathfindBatchJob : IJobFor
             factionId,
             ignoredOccupancyEntity,
             ignoredOccupancyCell,
-            ignoredOccupancySize);
+            ignoredOccupancySize) &&
+            IsSurfaceFootprintPathable(goal, footprintSize, isVehicle);
     }
 
     private bool TryWritePath(Entity movingEntity, Entity ignoredOccupancyEntity, int2 ignoredOccupancyCell, int2 ignoredOccupancySize, int2 start, int2 goal, int2 footprintSize, bool isVehicle, bool manualMove, bool cheapSegmentMode, byte factionId, int searchEpoch)
@@ -279,6 +296,9 @@ internal struct PathfindBatchJob : IJobFor
         int minSearchY = math.max(0, math.min(start.y, goal.y) - searchBoundsPadding);
         int maxSearchY = math.min(Grid.Height - 1, math.max(start.y, goal.y) + searchBoundsPadding);
         if (Walkable[goalIndex].Value == 0)
+            return false;
+
+        if (!IsSurfaceCellPathable(goal, isVehicle))
             return false;
 
         bool goalValid = UnitPathPlacementValidationSystem.CanPlaceForPathing(
@@ -301,6 +321,7 @@ internal struct PathfindBatchJob : IJobFor
             ignoredOccupancyEntity,
             ignoredOccupancyCell,
             ignoredOccupancySize);
+        goalValid = goalValid && IsSurfaceFootprintPathable(goal, footprintSize, isVehicle);
         if (goalIndex != startIndex && !goalValid)
             return false;
 
@@ -379,6 +400,9 @@ internal struct PathfindBatchJob : IJobFor
                 if (Walkable[nextIndex].Value == 0)
                     continue;
 
+                if (!IsSurfaceCellPathable(nextCell, isVehicle))
+                    continue;
+
                 bool diagonalStep = nextCell.x != currentCell.x && nextCell.y != currentCell.y;
                 if (diagonalStep)
                 {
@@ -404,6 +428,7 @@ internal struct PathfindBatchJob : IJobFor
                         ignoredOccupancyEntity,
                         ignoredOccupancyCell,
                         ignoredOccupancySize);
+                    canPlaceHorizontal = canPlaceHorizontal && IsSurfaceFootprintPathable(horizontalCell, footprintSize, isVehicle);
                     bool canPlaceVertical = UnitPathPlacementValidationSystem.CanPlaceForPathing(
                         Grid,
                         Walkable,
@@ -424,6 +449,7 @@ internal struct PathfindBatchJob : IJobFor
                         ignoredOccupancyEntity,
                         ignoredOccupancyCell,
                         ignoredOccupancySize);
+                    canPlaceVertical = canPlaceVertical && IsSurfaceFootprintPathable(verticalCell, footprintSize, isVehicle);
                     if (!canPlaceHorizontal || !canPlaceVertical)
                         continue;
                 }
@@ -450,6 +476,8 @@ internal struct PathfindBatchJob : IJobFor
                     ignoredOccupancyCell,
                     ignoredOccupancySize);
                 if (!canPlaceNext)
+                    continue;
+                if (!IsSurfaceFootprintPathable(nextCell, footprintSize, isVehicle))
                     continue;
 
                 int currentG = ScratchGScore[threadOffset + current];
@@ -530,24 +558,30 @@ internal struct PathfindBatchJob : IJobFor
     {
         bool isSidewalk = Sidewalks[cellIndex].Value != 0;
         bool isDirtRoad = DirtRoads[cellIndex].Value != 0;
+        int slopeCost = GetSlopeTraversalCost(cellIndex);
+        MapSurfaceRoadPriority roadPriority = SurfaceRoadPriority.ResolveGridRoadPriority(
+            (byte)(isSidewalk ? 1 : 0),
+            (byte)(isDirtRoad ? 1 : 0),
+            isVehicle);
 
-        if (isVehicle)
-        {
-            if (isDirtRoad)
-                return diagonalStep ? PreferredSurfaceDiagonalTraversalCost : PreferredSurfaceTraversalCost;
-            if (isSidewalk)
-                return diagonalStep ? AvoidedSurfaceDiagonalTraversalCost : AvoidedSurfaceTraversalCost;
-            return diagonalStep ? FreeDiagonalTraversalCost : FreeTraversalCost;
-        }
+        if (roadPriority == MapSurfaceRoadPriority.Preferred)
+            return (diagonalStep ? PreferredSurfaceDiagonalTraversalCost : PreferredSurfaceTraversalCost) + slopeCost;
+        if (roadPriority == MapSurfaceRoadPriority.Avoided)
+            return (diagonalStep ? AvoidedSurfaceDiagonalTraversalCost : AvoidedSurfaceTraversalCost) + slopeCost;
 
-        if (isSidewalk)
-            return diagonalStep ? PreferredSurfaceDiagonalTraversalCost : PreferredSurfaceTraversalCost;
-        if (isDirtRoad)
-            return diagonalStep ? AvoidedSurfaceDiagonalTraversalCost : AvoidedSurfaceTraversalCost;
-        return diagonalStep ? FreeDiagonalTraversalCost : FreeTraversalCost;
+        return (diagonalStep ? FreeDiagonalTraversalCost : FreeTraversalCost) + slopeCost;
     }
 
-    private static bool HasDirectPath(
+    private int GetSlopeTraversalCost(int cellIndex)
+    {
+        if (HasMapSurface == 0 || MapSurfacePathCost.EnableSlopeCost == 0)
+            return 0;
+
+        int2 cell = GridUtils.IndexToCell(cellIndex, Grid.Width);
+        return SurfacePathCost.GetSlopeTraversalCost(MapSurface, HasMapSurface, MapSurfacePathCost, cell);
+    }
+
+    private bool HasDirectPath(
         in GridConfig grid,
         NativeArray<GridWalkable> walkable,
         NativeBitArray dynamicBlocked,
@@ -588,7 +622,40 @@ internal struct PathfindBatchJob : IJobFor
             if (!UnitPathPlacementValidationSystem.CanPlaceForPathing(grid, walkable, dynamicBlocked, friendlyPassFactionIds, occupied, liveUnitEntities, liveUnitGrids, liveUnitFootprints, liveUnitManualGroupMembers, movingEntity, next, footprintSize, current, isVehicle, manualMove, factionId, ignoredOccupancyEntity, ignoredOccupancyCell, ignoredOccupancySize))
                 return false;
 
+            if (!IsSurfaceFootprintPathable(next, footprintSize, isVehicle))
+                return false;
+
             current = next;
+        }
+
+        return true;
+    }
+
+    private bool IsSurfaceCellPathable(int2 cell, bool isVehicle)
+    {
+        MapSurfaceMovementMask movementMask = SurfaceValidation.ResolveMovementMask(isVehicle);
+        return SurfaceValidation.CanTraverse(MapSurface, HasMapSurface, cell, movementMask);
+    }
+
+    private bool IsSurfaceFootprintPathable(int2 cell, int2 footprintSize, bool isVehicle)
+    {
+        if (HasMapSurface == 0)
+            return true;
+
+        int2 clamped = UnitFootprintUtility.ClampSize(footprintSize);
+        int2 min = UnitFootprintUtility.GetMinCell(cell, clamped);
+        int2 max = min + clamped;
+        if (min.x < 0 || min.y < 0 || max.x > Grid.Width || max.y > Grid.Height)
+            return false;
+
+        MapSurfaceMovementMask movementMask = SurfaceValidation.ResolveMovementMask(isVehicle);
+        for (int y = min.y; y < max.y; y++)
+        {
+            for (int x = min.x; x < max.x; x++)
+            {
+                if (!SurfaceValidation.CanTraverse(MapSurface, HasMapSurface, new int2(x, y), movementMask))
+                    return false;
+            }
         }
 
         return true;
@@ -623,4 +690,3 @@ internal struct PathfindBatchJob : IJobFor
         return new int2(-r, (-r + 1) + step);
     }
 }
-

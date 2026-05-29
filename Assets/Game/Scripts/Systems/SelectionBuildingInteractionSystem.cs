@@ -11,12 +11,14 @@ public sealed class SelectionBuildingInteractionSystem
     private readonly UnitTransportBoardingRuleSystem _unitTransportBoardingRuleSystem = new();
     private readonly UnitTransportBoardingQuerySystem _unitTransportBoardingQuerySystem = new();
     private readonly BuildingTargetMoveOrderSystem _buildingTargetMoveOrderSystem = new();
+    private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();
 
     private SelectionStateSystem _selectionStateSystem;
     private SelectionScreenMarkerSystem _screenMarkerSystem;
     private Camera _worldCamera;
     private World _queryWorld;
     private EntityQuery _gridConfigQuery;
+    private EntityQuery _mapSurfaceQuery;
 
     public void Init(
         SelectionStateSystem selectionStateSystem,
@@ -89,6 +91,7 @@ public sealed class SelectionBuildingInteractionSystem
 
         _queryWorld = world;
         _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
         _focusableUnitLookupSystem.EnsureEntityQueries(em);
         _transportBoardingCommandSystem.EnsureEntityQueries(em);
         _focusedUnitLifecycleSystem.EnsureEntityQueries(em);
@@ -106,14 +109,21 @@ public sealed class SelectionBuildingInteractionSystem
             return false;
 
         GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        Ray ray = _worldCamera.ScreenPointToRay(screenPosition);
-        Plane plane = new(Vector3.up, new Vector3(0f, grid.Origin.y, 0f));
-        if (!plane.Raycast(ray, out float distance))
+        if (!_mapSurfaceCommandTargetSystem.TryResolveCommandTarget(
+                em,
+                _mapSurfaceQuery,
+                grid,
+                _worldCamera,
+                screenPosition,
+                SelectionState,
+                out MapSurfaceCommandTargetSystem.Result target))
+        {
             return false;
+        }
 
-        worldPoint = ray.GetPoint(distance);
-        cell = GridUtils.WorldToCell(grid, worldPoint);
-        return GridUtils.InBounds(cell, grid.Width, grid.Height);
+        cell = target.Cell;
+        worldPoint = target.WorldPoint;
+        return true;
     }
 
     private bool TryGetClickedUnitEntity(Vector2 screenPosition, EntityManager em, out Entity bestEntity)

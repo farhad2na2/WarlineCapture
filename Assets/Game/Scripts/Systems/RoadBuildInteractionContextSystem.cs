@@ -29,6 +29,7 @@ internal sealed class RoadBuildInteractionContextSystem
         public readonly Action ClearPreview;
         public readonly Action<Vector2> UpdateBuildingPlacement;
         public readonly Action<List<Vector2Int>> CreateStroke;
+        public readonly Func<List<Vector2Int>, bool> IsRoadPathSurfaceValid;
         public readonly Func<bool> HasActiveBuildingPlacement;
         public readonly Action<bool> SetIsDraggingBuildingPlacement;
         public readonly Action ClearRoadBuildDragState;
@@ -58,6 +59,7 @@ internal sealed class RoadBuildInteractionContextSystem
             Action clearPreview,
             Action<Vector2> updateBuildingPlacement,
             Action<List<Vector2Int>> createStroke,
+            Func<List<Vector2Int>, bool> isRoadPathSurfaceValid,
             Func<bool> hasActiveBuildingPlacement,
             Action<bool> setIsDraggingBuildingPlacement,
             Action clearRoadBuildDragState,
@@ -86,6 +88,7 @@ internal sealed class RoadBuildInteractionContextSystem
             ClearPreview = clearPreview;
             UpdateBuildingPlacement = updateBuildingPlacement;
             CreateStroke = createStroke;
+            IsRoadPathSurfaceValid = isRoadPathSurfaceValid;
             HasActiveBuildingPlacement = hasActiveBuildingPlacement;
             SetIsDraggingBuildingPlacement = setIsDraggingBuildingPlacement;
             ClearRoadBuildDragState = clearRoadBuildDragState;
@@ -126,6 +129,7 @@ internal sealed class RoadBuildInteractionContextSystem
             context.HidePlacementOutline,
             context.UpdateBuildingPlacement,
             context.CreateStroke,
+            context.IsRoadPathSurfaceValid,
             context.HasActiveBuildingPlacement,
             context.SetIsDraggingBuildingPlacement);
     }

@@ -120,6 +120,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
     private World _queryWorld;
     private EntityQuery _gridConfigQuery;
+    private EntityQuery _mapSurfaceQuery;
+    private readonly MapSurfaceCommandTargetSystem _mapSurfaceCommandTargetSystem = new();
 
     public void IssueMoveOrder(Context context, Vector2 screenPosition)
     {
@@ -244,14 +246,21 @@ public sealed class RtsSelectionPointerTargetCommandSystem
             return false;
 
         GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
-        Ray ray = context.WorldCamera.ScreenPointToRay(screenPosition);
-        Plane plane = new(Vector3.up, new Vector3(0f, grid.Origin.y, 0f));
-        if (!plane.Raycast(ray, out float distance))
+        if (!_mapSurfaceCommandTargetSystem.TryResolveCommandTarget(
+                em,
+                _mapSurfaceQuery,
+                grid,
+                context.WorldCamera,
+                screenPosition,
+                context.SelectionStateSystem,
+                out MapSurfaceCommandTargetSystem.Result target))
+        {
             return false;
+        }
 
-        worldPoint = ray.GetPoint(distance);
-        cell = GridUtils.WorldToCell(grid, worldPoint);
-        return GridUtils.InBounds(cell, grid.Width, grid.Height);
+        cell = target.Cell;
+        worldPoint = target.WorldPoint;
+        return true;
     }
 
     private void EnsureEntityQueries(EntityManager em)
@@ -262,5 +271,6 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         _queryWorld = world;
         _gridConfigQuery = em.CreateEntityQuery(ComponentType.ReadOnly<GridConfig>());
+        _mapSurfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
     }
 }

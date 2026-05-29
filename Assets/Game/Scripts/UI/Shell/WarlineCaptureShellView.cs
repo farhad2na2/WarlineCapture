@@ -116,9 +116,9 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
             return;
 
         loading.ResetVisualState();
-        loading.CanvasGroup.alpha = 0f;
+        loading.CanvasGroup.alpha = 1f;
         steps.Add(WarlineCaptureUiMotionStep.Single(
-            motionHost.AlphaStep(loading.CanvasGroup, 1f, motionHost.DefaultDurationSeconds, motionHost.DefaultEnterEase, transitionId)));
+            motionHost.AlphaStep(loading.CanvasGroup, 1f, 0f, motionHost.DefaultEnterEase, transitionId)));
     }
 
     private void AddExitLoadingSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)

@@ -4,6 +4,8 @@ using UnityEngine;
 
 internal sealed class MenuBootstrapSystem
 {
+    private const int DeferredMatchLoadVisibleFrames = 2;
+
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private readonly MatchStartSystem matchStartSystem = new();
     private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
@@ -21,6 +23,8 @@ internal sealed class MenuBootstrapSystem
     private bool defaultUiCameraEnabled;
     private RenderMode defaultUiCanvasRenderMode;
     private Camera defaultUiCanvasWorldCamera;
+    private int deferredMatchLoadFrame = -1;
+    private bool matchLoadQueuedForCurrentRoute;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
 
@@ -70,7 +74,8 @@ internal sealed class MenuBootstrapSystem
 
         UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
         UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
-        ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState);
+        ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState, entityManager);
+        QueueDeferredMatchLoadAfterLoadingFeedback(entityManager, shellState);
         if (shellState.CurrentMode != UiShellMode.Loading ||
             shellState.IsTransitionRunning != 0 ||
             loading.IsComplete != 0)
@@ -105,6 +110,8 @@ internal sealed class MenuBootstrapSystem
         loadingElapsedSeconds = 0f;
         hasCapturedUiPresentation = false;
         performanceDiagnosticsReferenceSystem.Clear(performanceDiagnosticsSystem);
+        deferredMatchLoadFrame = -1;
+        matchLoadQueuedForCurrentRoute = false;
         if (!diagnosticsInitialized)
             return;
 
@@ -146,7 +153,50 @@ internal sealed class MenuBootstrapSystem
         });
     }
 
-    private void ApplyUiPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState)
+    private void QueueDeferredMatchLoadAfterLoadingFeedback(EntityManager entityManager, UiShellStateComponent shellState)
+    {
+        if (shellState.ActiveRoute != WarlineCaptureRoute.Match)
+        {
+            deferredMatchLoadFrame = -1;
+            matchLoadQueuedForCurrentRoute = false;
+            return;
+        }
+
+        if (matchLoadQueuedForCurrentRoute)
+            return;
+
+        if (shellState.CurrentMode != UiShellMode.Loading || shellState.IsTransitionRunning != 0)
+        {
+            deferredMatchLoadFrame = -1;
+            return;
+        }
+
+        if (deferredMatchLoadFrame < 0)
+        {
+            deferredMatchLoadFrame = Time.frameCount;
+            return;
+        }
+
+        if (Time.frameCount - deferredMatchLoadFrame < DeferredMatchLoadVisibleFrames)
+            return;
+
+        if (!sceneLifecycleSystem.QueueLoadMatch(entityManager))
+        {
+            Debug.LogError("[UiShellRoute] failed to submit deferred Match scene load request.");
+            return;
+        }
+
+        matchLoadQueuedForCurrentRoute = true;
+        deferredMatchLoadFrame = -1;
+        Debug.Log("[UiShellRoute] submitted deferred Match scene load request after loading feedback.");
+
+        if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
+            Debug.Log("[UiShellRoute] submitted deferred Match gameplay start request.");
+        else
+            Debug.LogError("[UiShellRoute] failed to submit deferred Match gameplay start request.");
+    }
+
+    private void ApplyUiPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState, EntityManager entityManager)
     {
         CaptureUiPresentationMode(uiCamera, uiCanvas);
 
@@ -162,10 +212,20 @@ internal sealed class MenuBootstrapSystem
 
             if (uiCamera != null)
             {
-                if (uiCamera.clearFlags != CameraClearFlags.Depth)
-                    uiCamera.clearFlags = CameraClearFlags.Depth;
-                if (uiCamera.enabled)
-                    uiCamera.enabled = false;
+                if (IsMatchSceneLoaded(entityManager))
+                {
+                    if (uiCamera.clearFlags != CameraClearFlags.Depth)
+                        uiCamera.clearFlags = CameraClearFlags.Depth;
+                    if (uiCamera.enabled)
+                        uiCamera.enabled = false;
+                }
+                else
+                {
+                    if (uiCamera.clearFlags != CameraClearFlags.SolidColor)
+                        uiCamera.clearFlags = CameraClearFlags.SolidColor;
+                    if (!uiCamera.enabled)
+                        uiCamera.enabled = true;
+                }
             }
 
             return;
@@ -232,6 +292,20 @@ internal sealed class MenuBootstrapSystem
 
         MatchStartQueueComponent queue = entityManager.GetComponentData<MatchStartQueueComponent>(entity);
         return queue.HasStarted != 0 && queue.IsStartPending == 0;
+    }
+
+    private static bool IsMatchSceneLoaded(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<SceneLifecycleBoundaryComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        if (!entityManager.HasComponent<SceneLifecycleStateComponent>(entity))
+            return false;
+
+        SceneLifecycleStateComponent state = entityManager.GetComponentData<SceneLifecycleStateComponent>(entity);
+        return state.IsMatchLoaded != 0;
     }
 
     private static void ResetShellForFreshMenuScene()

@@ -19,6 +19,7 @@ public sealed class GameplayArchitectureContractTests
     private const string MatchSceneViewPath = "Assets/Game/Scripts/Bootstrap/MatchSceneView.cs";
     private const string MatchBootstrapSystemPath = "Assets/Game/Scripts/Systems/MatchBootstrapSystem.cs";
     private const string MatchStartSystemPath = "Assets/Game/Scripts/Systems/MatchStartSystem.cs";
+    private const string MenuBootstrapSystemPath = "Assets/Game/Scripts/Systems/MenuBootstrapSystem.cs";
     private const string WarlineCaptureMatchSceneViewInstallerPath = "Assets/Game/Scripts/Editor/WarlineCaptureMatchSceneViewInstaller.cs";
     private const string WarlineCaptureShellRouteButtonViewPath = "Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRouteButtonView.cs";
     private const string WarlineCaptureGameUiSceneBuilderPath = "Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs";
@@ -845,19 +846,31 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
-    public void FooterDeployButtonQueuesMatchLoadAndStartWithoutOldCanvasPlayButton()
+    public void FooterDeployButtonRoutesToMatchAndMenuBootstrapDefersSceneLoadUntilLoadingFeedback()
     {
         Assert.IsTrue(File.Exists(WarlineCaptureShellRouteButtonViewPath), $"{WarlineCaptureShellRouteButtonViewPath} must own shell route button behavior.");
+        Assert.IsTrue(File.Exists(MenuBootstrapSystemPath), $"{MenuBootstrapSystemPath} must own persistent shell/match scene orchestration.");
         Assert.IsTrue(File.Exists(WarlineCaptureGameUiSceneBuilderPath), $"{WarlineCaptureGameUiSceneBuilderPath} must validate Menu footer content.");
 
         string routeButtonSource = File.ReadAllText(WarlineCaptureShellRouteButtonViewPath);
-        StringAssert.Contains("if (intent == UiShellRouteIntent.EnterMatch)", routeButtonSource);
-        StringAssert.Contains("sceneLifecycleSystem.QueueLoadMatch(entityManager)", routeButtonSource);
-        StringAssert.Contains("matchStartSystem.QueueStartAfterMatchLoaded(entityManager)", routeButtonSource);
+        StringAssert.Contains("requests.Add(new UiShellRouteRequestComponent", routeButtonSource);
+        Assert.IsFalse(routeButtonSource.Contains("QueueLoadMatch", StringComparison.Ordinal), "Footer Deploy click must not start Match scene load before loading UI can render.");
+        Assert.IsFalse(routeButtonSource.Contains("QueueStartAfterMatchLoaded", StringComparison.Ordinal), "Footer Deploy click must not queue gameplay start before loading UI can render.");
         Assert.IsFalse(routeButtonSource.Contains("MenuView", StringComparison.Ordinal), "Footer Deploy must not depend on the old Match Canvas MenuView.");
         Assert.IsFalse(routeButtonSource.Contains("RequestGameStart", StringComparison.Ordinal), "Footer Deploy must not invoke the old Canvas play button path.");
         Assert.IsFalse(routeButtonSource.Contains("BeginGameplay", StringComparison.Ordinal), "Footer Deploy must not call GameBootstrap.BeginGameplay directly.");
         Assert.IsFalse(routeButtonSource.Contains("UI_Canvas", StringComparison.Ordinal), "Footer Deploy must not activate the old Match Canvas.");
+
+        string menuBootstrapSource = File.ReadAllText(MenuBootstrapSystemPath);
+        StringAssert.Contains("QueueDeferredMatchLoadAfterLoadingFeedback", menuBootstrapSource);
+        StringAssert.Contains("DeferredMatchLoadVisibleFrames", menuBootstrapSource);
+        StringAssert.Contains("shellState.IsTransitionRunning != 0", menuBootstrapSource);
+        StringAssert.Contains("IsMatchSceneLoaded(entityManager)", menuBootstrapSource);
+        StringAssert.Contains("CameraClearFlags.SolidColor", menuBootstrapSource);
+        StringAssert.Contains("uiCamera.enabled = false", menuBootstrapSource);
+        StringAssert.Contains("uiCamera.enabled = true", menuBootstrapSource);
+        StringAssert.Contains("sceneLifecycleSystem.QueueLoadMatch(entityManager)", menuBootstrapSource);
+        StringAssert.Contains("matchStartSystem.QueueStartAfterMatchLoaded(entityManager)", menuBootstrapSource);
 
         string builderSource = File.ReadAllText(WarlineCaptureGameUiSceneBuilderPath);
         StringAssert.Contains("FooterContent/DeployCommandButton", builderSource);

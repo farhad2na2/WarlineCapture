@@ -11,8 +11,6 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
     [SerializeField] private bool pushHistory;
 
     private Button button;
-    private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
-    private readonly MatchStartSystem matchStartSystem = new();
     private EntityQuery boundaryQuery;
     private World cachedWorld;
     private bool hasBoundaryQuery;
@@ -65,25 +63,6 @@ public sealed class WarlineCaptureShellRouteButtonView : MonoBehaviour
         });
 
         Debug.Log($"[UiShellRoute] submitted intent={intent} route={route} pushHistory={(pushHistory ? 1 : 0)}");
-
-        if (intent == UiShellRouteIntent.EnterMatch)
-            QueueMatchLoad(entityManager);
-    }
-
-    private void QueueMatchLoad(EntityManager entityManager)
-    {
-        if (sceneLifecycleSystem.QueueLoadMatch(entityManager))
-        {
-            Debug.Log("[UiShellRoute] submitted Match scene load request.");
-            if (matchStartSystem.QueueStartAfterMatchLoaded(entityManager))
-                Debug.Log("[UiShellRoute] submitted Match gameplay start request.");
-            else
-                Debug.LogError("[UiShellRoute] failed to submit Match gameplay start request.");
-        }
-        else
-        {
-            Debug.LogError("[UiShellRoute] failed to submit Match scene load request.");
-        }
     }
 
     private bool TryGetBoundary(out EntityManager entityManager, out Entity boundary)

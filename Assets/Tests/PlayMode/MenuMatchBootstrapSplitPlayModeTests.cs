@@ -42,6 +42,39 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
     }
 
     [Test]
+    public async Task FooterDeployButton_ShowsLoadingBeforeMatchSceneLoadStarts()
+    {
+        Scene menuScene = await LoadMenuScene();
+        WarlineCaptureShellRouteButtonView deployButton = null;
+        await WaitFor(
+            () =>
+            {
+                deployButton = FindFooterDeployButton(menuScene);
+                return deployButton != null && deployButton.gameObject.activeInHierarchy;
+            },
+            240,
+            "FooterContent/DeployCommandButton did not become available from Menu.unity.");
+
+        deployButton.GetComponent<Button>().onClick.Invoke();
+
+        await WaitFor(
+            () => TryReadUiShellState(out UiShellStateComponent state) &&
+                  state.ActiveRoute == WarlineCaptureRoute.Match &&
+                  state.CurrentMode == UiShellMode.Loading &&
+                  state.IsTransitionRunning == 0 &&
+                  LoadingLayerVisiblyCoversMenu(menuScene) &&
+                  PersistentMenuUiCameraCanRenderLoading(menuScene) &&
+                  !IsSceneLoaded(MatchSceneName),
+            120,
+            "Footer Deploy must visibly cover the menu with an active UI camera before the expensive Match scene load starts.");
+
+        await WaitFor(
+            () => IsSceneLoaded(MatchSceneName),
+            600,
+            "Footer Deploy showed loading but did not start the deferred Match scene load.");
+    }
+
+    [Test]
     public async Task ResultContinueButton_UnloadsMatchAndKeepsMenuAlive()
     {
         Scene menuScene = await LoadMenuScene();
@@ -265,6 +298,44 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
             WarlineCaptureShellResultConfirmButtonView child = FindResultContinueButton(root.GetChild(i));
             if (child != null)
                 return child;
+        }
+
+        return null;
+    }
+
+    private static bool LoadingLayerVisiblyCoversMenu(Scene scene)
+    {
+        WarlineCaptureShellRegionView loadingLayer = FindShellRegion(scene, WarlineCaptureShellRegionId.LoadingLayer);
+        return loadingLayer != null &&
+               loadingLayer.gameObject.activeInHierarchy &&
+               loadingLayer.RegionRoot != null &&
+               loadingLayer.RegionRoot.localScale == Vector3.one &&
+               loadingLayer.CanvasGroup != null &&
+               loadingLayer.CanvasGroup.alpha >= 0.99f &&
+               loadingLayer.CanvasGroup.blocksRaycasts;
+    }
+
+    private static bool PersistentMenuUiCameraCanRenderLoading(Scene scene)
+    {
+        MenuBootstrapView menuBootstrap = FindSceneComponent<MenuBootstrapView>(scene);
+        return menuBootstrap != null &&
+               menuBootstrap.UiCamera != null &&
+               menuBootstrap.UiCamera.enabled &&
+               menuBootstrap.UiCamera.clearFlags == CameraClearFlags.SolidColor &&
+               menuBootstrap.UiCanvas != null &&
+               menuBootstrap.UiCanvas.renderMode == RenderMode.ScreenSpaceOverlay;
+    }
+
+    private static WarlineCaptureShellRegionView FindShellRegion(Scene scene, WarlineCaptureShellRegionId regionId)
+    {
+        foreach (GameObject root in scene.GetRootGameObjects())
+        {
+            WarlineCaptureShellRegionView[] regions = root.GetComponentsInChildren<WarlineCaptureShellRegionView>(true);
+            for (int i = 0; i < regions.Length; i++)
+            {
+                if (regions[i] != null && regions[i].RegionId == regionId)
+                    return regions[i];
+            }
         }
 
         return null;

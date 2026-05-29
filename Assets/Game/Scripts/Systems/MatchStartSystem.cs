@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 
 public sealed class MatchStartSystem
 {
+    private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
     private World _world;
     private Entity _matchStartEntity;
 
@@ -64,9 +65,9 @@ public sealed class MatchStartSystem
             return;
         }
 
-        if (!TryStartLoadedMatch(out string message))
+        if (!TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message))
         {
-            EnqueueResultIfStatusChanged(em, entity, ref queue, MatchStartStatusKind.WaitingForMatchLoaded, message);
+            EnqueueResultIfStatusChanged(em, entity, ref queue, waitStatus, message);
             return;
         }
 
@@ -118,33 +119,71 @@ public sealed class MatchStartSystem
         return scene.IsValid() && scene.isLoaded;
     }
 
-    private static bool TryStartLoadedMatch(out string message)
+    private bool TryStartLoadedMatch(out MatchStartStatusKind waitStatus, out string message)
     {
-        foreach (MatchSceneView matchScene in Resources.FindObjectsOfTypeAll<MatchSceneView>())
+        if (!_matchSceneReferenceSystem.TryGetLoadedMatchSceneView(World.DefaultGameObjectInjectionWorld, out MatchSceneView matchScene))
         {
-            if (matchScene == null ||
-                matchScene.gameObject == null ||
-                !matchScene.gameObject.scene.IsValid() ||
-                !matchScene.gameObject.scene.isLoaded)
-            {
-                continue;
-            }
+            waitStatus = MatchStartStatusKind.WaitingForMatchLoaded;
+            message = "Loaded Match scene has no registered MatchSceneView.";
+            return false;
+        }
 
-            try
+        if (RequiresUnitPrefabRegistry(matchScene) &&
+            !IsUnitPrefabRegistryReady(World.DefaultGameObjectInjectionWorld))
+        {
+            waitStatus = MatchStartStatusKind.WaitingForRuntimeContent;
+            message = "Waiting for Match subscene unit prefab registry before gameplay start.";
+            return false;
+        }
+
+        try
+        {
+            matchScene.BeginGameplay();
+            waitStatus = MatchStartStatusKind.Started;
+            message = $"Gameplay start invoked from loaded Match scene. scene={matchScene.gameObject.scene.name}";
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogException(exception);
+            waitStatus = MatchStartStatusKind.WaitingForMatchLoaded;
+            message = exception.Message;
+            return false;
+        }
+    }
+
+    private static bool RequiresUnitPrefabRegistry(MatchSceneView matchScene)
+    {
+        UnitPrefabRegistryAuthoringConfig config = matchScene != null &&
+            matchScene.BuildingPlacementConfig != null
+                ? matchScene.BuildingPlacementConfig.UnitPrefabRegistryConfig
+                : null;
+        return config != null && config.UnitSpawnPrefabs != null && config.UnitSpawnPrefabs.Count > 0;
+    }
+
+    private static bool IsUnitPrefabRegistryReady(World world)
+    {
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager em = world.EntityManager;
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+            ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (em.HasBuffer<UnitPrefabRegistryEntry>(entity) &&
+                em.GetBuffer<UnitPrefabRegistryEntry>(entity).Length > 0)
             {
-                matchScene.BeginGameplay();
-                message = $"Gameplay start invoked from loaded Match scene. scene={matchScene.gameObject.scene.name}";
                 return true;
-            }
-            catch (Exception exception)
-            {
-                Debug.LogException(exception);
-                message = exception.Message;
-                return false;
             }
         }
 
-        message = "Loaded Match scene has no active MatchSceneView.";
         return false;
     }
 

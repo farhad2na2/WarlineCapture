@@ -6,13 +6,29 @@ internal sealed class CitizenDangerSystem
     private const float DangerDetectRadius = 35f;
     private const float DangerScanIntervalSeconds = 1f;
 
+    private readonly List<Transform> _dangerSourceTransforms = new();
     private readonly List<Vector3> _dangerWorldPositions = new();
     private float _nextDangerScanAt;
 
     public void Reset()
     {
+        _dangerSourceTransforms.Clear();
         _dangerWorldPositions.Clear();
         _nextDangerScanAt = 0f;
+    }
+
+    public void RegisterDangerSource(Transform source)
+    {
+        if (source == null || _dangerSourceTransforms.Contains(source))
+            return;
+
+        _dangerSourceTransforms.Add(source);
+    }
+
+    public void UnregisterDangerSource(Transform source)
+    {
+        if (source != null)
+            _dangerSourceTransforms.Remove(source);
     }
 
     public void RefreshDangerSourcesIfNeeded(float now)
@@ -22,27 +38,16 @@ internal sealed class CitizenDangerSystem
 
         _nextDangerScanAt = now + DangerScanIntervalSeconds;
         _dangerWorldPositions.Clear();
-
-        Transform[] sceneTransforms = Object.FindObjectsByType<Transform>(FindObjectsInactive.Exclude);
-        for (int i = 0; i < sceneTransforms.Length; i++)
+        for (int i = _dangerSourceTransforms.Count - 1; i >= 0; i--)
         {
-            Transform transform = sceneTransforms[i];
-            if (transform == null)
-                continue;
-
-            string name = transform.name;
-            if (string.IsNullOrWhiteSpace(name))
-                continue;
-
-            if (name.IndexOf("fire", System.StringComparison.OrdinalIgnoreCase) < 0 &&
-                name.IndexOf("burn", System.StringComparison.OrdinalIgnoreCase) < 0 &&
-                name.IndexOf("smoke", System.StringComparison.OrdinalIgnoreCase) < 0 &&
-                name.IndexOf("explosion", System.StringComparison.OrdinalIgnoreCase) < 0)
+            Transform source = _dangerSourceTransforms[i];
+            if (source == null)
             {
+                _dangerSourceTransforms.RemoveAt(i);
                 continue;
             }
 
-            _dangerWorldPositions.Add(transform.position);
+            _dangerWorldPositions.Add(source.position);
         }
     }
 

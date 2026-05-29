@@ -895,10 +895,13 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsTrue(File.Exists(WarlineCaptureMatchSceneViewInstallerPath), $"{WarlineCaptureMatchSceneViewInstallerPath} must validate Match scene startup ownership.");
 
         string matchStartSource = File.ReadAllText(MatchStartSystemPath);
-        StringAssert.Contains("Resources.FindObjectsOfTypeAll<MatchSceneView>()", matchStartSource);
+        StringAssert.Contains("private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();", matchStartSource);
+        StringAssert.Contains("TryGetLoadedMatchSceneView(World.DefaultGameObjectInjectionWorld, out MatchSceneView matchScene)", matchStartSource);
         StringAssert.Contains("matchScene.BeginGameplay();", matchStartSource);
-        StringAssert.Contains("Loaded Match scene has no active MatchSceneView.", matchStartSource);
+        StringAssert.Contains("Loaded Match scene has no registered MatchSceneView.", matchStartSource);
         Assert.IsFalse(matchStartSource.Contains("GameBootstrap", StringComparison.Ordinal), "MatchStartSystem must not find or invoke the legacy GameBootstrap scene component.");
+        Assert.IsFalse(matchStartSource.Contains("Resources.FindObjectsOfTypeAll", StringComparison.Ordinal), "MatchStartSystem must use MatchSceneReferenceSystem, not global scene search.");
+        Assert.IsFalse(matchStartSource.Contains("FindObjectsByType", StringComparison.Ordinal), "MatchStartSystem must use MatchSceneReferenceSystem, not global scene search.");
 
         string installerSource = File.ReadAllText(WarlineCaptureMatchSceneViewInstallerPath);
         StringAssert.Contains("AssertNoLegacyGameBootstrapScriptReference();", installerSource);
@@ -929,6 +932,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Mission startup is owned by `MissionStartupSystem`; M01 camera/framing policy is owned by `MissionCameraSystem`", contract);
         StringAssert.Contains("Configured faction spawn-cell resolution is owned by `InitialFactionSpawnCellSystem`", contract);
         StringAssert.Contains("Broad scene lookup and UI runtime binding are owned by `GameplaySceneBindingSystem`", contract);
+        StringAssert.Contains("FindObjects" + "SortMode", contract);
+        StringAssert.Contains("ECS managed reference components", contract);
         StringAssert.Contains("Performance diagnostics are owned by `PerformanceDiagnosticsSystem`", contract);
         StringAssert.Contains("Managed gameplay runtime update orchestration is owned by `GameplayRuntimeUpdateSystem`", contract);
         StringAssert.Contains("Building runtime updates inside that loop must go through `BuildingRuntimeUpdateSystem`", contract);
@@ -1661,6 +1666,52 @@ public sealed class GameplayArchitectureContractTests
 
         string menuStartup = File.ReadAllText("Assets/Game/Scripts/Systems/MenuStartupSystem.cs");
         StringAssert.Contains("sceneBindingSystem?.BindGameplayUiRuntimeDependencies", menuStartup);
+    }
+
+    [Test]
+    public void RuntimeGameplayCodeMustNotUseGlobalFindObjectsByTypeApis()
+    {
+        string[] runtimeRoots =
+        {
+            "Assets/Game/Scripts/Bootstrap",
+            "Assets/Game/Scripts/Systems",
+            "Assets/Game/Scripts/UI",
+            "Assets/Game/Scripts/Tutorial"
+        };
+        string[] forbiddenTokens =
+        {
+            "FindObjectsByType",
+            "FindObjects" + "SortMode"
+        };
+        List<string> violations = new();
+
+        foreach (string root in runtimeRoots)
+        {
+            if (!Directory.Exists(root))
+                continue;
+
+            foreach (string path in Directory.GetFiles(root, "*.cs", SearchOption.AllDirectories))
+            {
+                string normalized = path.Replace('\\', '/');
+                if (normalized.Contains("/Editor/", StringComparison.Ordinal))
+                    continue;
+
+                string source = File.ReadAllText(normalized);
+                foreach (string token in forbiddenTokens)
+                {
+                    int index = source.IndexOf(token, StringComparison.Ordinal);
+                    if (index >= 0)
+                        violations.Add($"{normalized}:{LineNumber(source, index)} uses `{token}`");
+                }
+            }
+        }
+
+        if (violations.Count == 0)
+            return;
+
+        Assert.Fail(
+            "Runtime gameplay code must use explicit references, ECS reference components, or injected boundary systems instead of global FindObjects APIs.\n" +
+            string.Join("\n", violations.OrderBy(v => v, StringComparer.Ordinal)));
     }
 
     [Test]
@@ -17129,6 +17180,19 @@ public sealed class GameplayArchitectureContractTests
     private static string NormalizePath(string path)
     {
         return path.Replace('\\', '/');
+    }
+
+    private static int LineNumber(string source, int index)
+    {
+        int line = 1;
+        int length = Math.Min(index, source.Length);
+        for (int i = 0; i < length; i++)
+        {
+            if (source[i] == '\n')
+                line++;
+        }
+
+        return line;
     }
 }
 #endif

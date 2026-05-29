@@ -8,6 +8,7 @@ using Game.Scripts.UI;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class RuntimeFpsPlayButtonProbe
 {
@@ -122,24 +123,22 @@ public static class RuntimeFpsPlayButtonProbe
 
     private static bool TryClickGameButton()
     {
-        foreach (WarlineCaptureShellRouteButtonView routeButton in UnityEngine.Object.FindObjectsByType<WarlineCaptureShellRouteButtonView>(
-                     FindObjectsInactive.Include,
-                     FindObjectsSortMode.None))
+        Scene menuScene = SceneManager.GetSceneByName("Menu");
+        if (!menuScene.IsValid() || !menuScene.isLoaded)
+            return false;
+
+        foreach (GameObject root in menuScene.GetRootGameObjects())
         {
-            if (routeButton == null ||
-                routeButton.name != "DeployCommandButton" ||
-                routeButton.Intent != UiShellRouteIntent.EnterMatch ||
-                routeButton.Route != WarlineCaptureRoute.Match)
-            {
+            WarlineCaptureShellRouteButtonView routeButton = FindComponentInTree<WarlineCaptureShellRouteButtonView>(root.transform, IsDeployCommandButton);
+            if (routeButton == null)
                 continue;
-            }
 
             routeButton.GetComponent<UnityEngine.UI.Button>()?.onClick.Invoke();
             s_clickedGameButton = true;
             return true;
         }
 
-        MenuView menu = UnityEngine.Object.FindAnyObjectByType<MenuView>();
+        MenuView menu = FindMenuView(menuScene);
         if (menu == null)
             return false;
 
@@ -153,6 +152,46 @@ public static class RuntimeFpsPlayButtonProbe
         menu.RequestGameStart();
         s_requestFallbackUsed = true;
         return true;
+    }
+
+    private static bool IsDeployCommandButton(WarlineCaptureShellRouteButtonView routeButton)
+    {
+        return routeButton != null &&
+               routeButton.name == "DeployCommandButton" &&
+               routeButton.Intent == UiShellRouteIntent.EnterMatch &&
+               routeButton.Route == WarlineCaptureRoute.Match;
+    }
+
+    private static MenuView FindMenuView(Scene menuScene)
+    {
+        foreach (GameObject root in menuScene.GetRootGameObjects())
+        {
+            MenuView menu = FindComponentInTree<MenuView>(root.transform, static candidate => candidate != null);
+            if (menu != null)
+                return menu;
+        }
+
+        return null;
+    }
+
+    private static T FindComponentInTree<T>(Transform root, Func<T, bool> predicate)
+        where T : Component
+    {
+        if (root == null)
+            return null;
+
+        T component = root.GetComponent<T>();
+        if (component != null && predicate(component))
+            return component;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            T child = FindComponentInTree(root.GetChild(i), predicate);
+            if (child != null)
+                return child;
+        }
+
+        return null;
     }
 
     private static void HandleLog(string condition, string stackTrace, LogType type)

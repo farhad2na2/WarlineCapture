@@ -7,6 +7,7 @@ internal sealed class MenuBootstrapSystem
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
     private readonly MatchStartSystem matchStartSystem = new();
     private readonly PerformanceDiagnosticsSystem performanceDiagnosticsSystem = new();
+    private readonly PerformanceDiagnosticsReferenceSystem performanceDiagnosticsReferenceSystem = new();
 
     private EntityQuery boundaryQuery;
     private World cachedWorld;
@@ -14,6 +15,9 @@ internal sealed class MenuBootstrapSystem
     private bool diagnosticsInitialized;
     private bool initialized;
     private float loadingElapsedSeconds;
+    private bool hasCapturedUiCameraClearMode;
+    private CameraClearFlags defaultUiCameraClearFlags;
+    private Color defaultUiCameraBackgroundColor;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
 
@@ -63,6 +67,7 @@ internal sealed class MenuBootstrapSystem
 
         UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
         UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
+        ApplyUiCameraClearMode(view.UiCamera, shellState);
         if (shellState.CurrentMode != UiShellMode.Loading ||
             shellState.IsTransitionRunning != 0 ||
             loading.IsComplete != 0)
@@ -74,6 +79,17 @@ internal sealed class MenuBootstrapSystem
         loadingElapsedSeconds += Mathf.Max(0f, unscaledDeltaTime);
         float duration = Mathf.Max(0.01f, view.StartupLoadingDurationSeconds);
         float progress = Mathf.Clamp01(loadingElapsedSeconds / duration);
+        if (shellState.ActiveRoute == WarlineCaptureRoute.Match && !IsMatchStartComplete(entityManager))
+        {
+            SetLoading(
+                entityManager,
+                boundary,
+                Mathf.Min(progress, 0.95f),
+                false,
+                "Loading match");
+            return;
+        }
+
         SetLoading(entityManager, boundary, progress, progress >= 1f);
     }
 
@@ -81,6 +97,8 @@ internal sealed class MenuBootstrapSystem
     {
         initialized = false;
         loadingElapsedSeconds = 0f;
+        hasCapturedUiCameraClearMode = false;
+        performanceDiagnosticsReferenceSystem.Clear(performanceDiagnosticsSystem);
         if (!diagnosticsInitialized)
             return;
 
@@ -91,21 +109,77 @@ internal sealed class MenuBootstrapSystem
     private void EnsurePersistentDiagnosticsInitialized()
     {
         if (diagnosticsInitialized)
+        {
+            performanceDiagnosticsReferenceSystem.Register(performanceDiagnosticsSystem);
             return;
+        }
 
         Application.runInBackground = true;
         performanceDiagnosticsSystem.Initialize();
         diagnosticsInitialized = true;
+        performanceDiagnosticsReferenceSystem.Register(performanceDiagnosticsSystem);
     }
 
     private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete)
     {
+        SetLoading(
+            entityManager,
+            boundary,
+            progress01,
+            complete,
+            complete ? "Command shell ready" : "Loading command shell");
+    }
+
+    private static void SetLoading(EntityManager entityManager, Entity boundary, float progress01, bool complete, string status)
+    {
         entityManager.SetComponentData(boundary, new UiShellLoadingProgressComponent
         {
             Progress01 = Mathf.Clamp01(progress01),
-            Status = new FixedString64Bytes(complete ? "Command shell ready" : "Loading command shell"),
+            Status = new FixedString64Bytes(status),
             IsComplete = complete ? (byte)1 : (byte)0
         });
+    }
+
+    private void ApplyUiCameraClearMode(Camera uiCamera, UiShellStateComponent shellState)
+    {
+        if (uiCamera == null)
+            return;
+
+        if (!hasCapturedUiCameraClearMode)
+        {
+            defaultUiCameraClearFlags = uiCamera.clearFlags;
+            defaultUiCameraBackgroundColor = uiCamera.backgroundColor;
+            hasCapturedUiCameraClearMode = true;
+        }
+
+        bool overlaysMatchWorld =
+            shellState.ActiveRoute == WarlineCaptureRoute.Match &&
+            (shellState.CurrentMode == UiShellMode.Loading ||
+             shellState.CurrentMode == UiShellMode.MatchHud ||
+             shellState.CurrentMode == UiShellMode.PopupOnly);
+
+        CameraClearFlags targetClearFlags = overlaysMatchWorld
+            ? CameraClearFlags.Depth
+            : defaultUiCameraClearFlags;
+        if (uiCamera.clearFlags != targetClearFlags)
+            uiCamera.clearFlags = targetClearFlags;
+
+        if (!overlaysMatchWorld && uiCamera.backgroundColor != defaultUiCameraBackgroundColor)
+            uiCamera.backgroundColor = defaultUiCameraBackgroundColor;
+    }
+
+    private static bool IsMatchStartComplete(EntityManager entityManager)
+    {
+        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MatchStartBoundaryComponent>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        Entity entity = query.GetSingletonEntity();
+        if (!entityManager.HasComponent<MatchStartQueueComponent>(entity))
+            return false;
+
+        MatchStartQueueComponent queue = entityManager.GetComponentData<MatchStartQueueComponent>(entity);
+        return queue.HasStarted != 0 && queue.IsStartPending == 0;
     }
 
     private static void ResetShellForFreshMenuScene()

@@ -6,8 +6,9 @@ public enum MatchStartStatusKind : byte
     None = 0,
     Queued = 1,
     WaitingForMatchLoaded = 2,
-    Started = 3,
-    Failed = 4
+    WaitingForRuntimeContent = 3,
+    Started = 4,
+    Failed = 5
 }
 
 public struct MatchStartBoundaryComponent : IComponentData

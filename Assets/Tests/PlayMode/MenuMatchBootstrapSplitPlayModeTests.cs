@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -13,6 +14,7 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
     private const string MenuScenePath = "Assets/Game/Scenes/Menu.unity";
     private const string MenuSceneName = "Menu";
     private const string MatchSceneName = "Match";
+    private const int MatchRuntimeContentMaxFrames = 1800;
 
     [TearDown]
     public void TearDown()
@@ -158,10 +160,21 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
         Assert.IsTrue(matchScene.IsValid() && matchScene.isLoaded, "Match scene should be loaded additively after footer Deploy.");
         Assert.AreNotEqual(menuScene, matchScene, "Footer Deploy must not replace the persistent Menu scene.");
         Assert.NotNull(FindSceneComponent<MatchSceneView>(matchScene), "Loaded Match scene must contain MatchSceneView.");
+        await WaitFor(
+            HasReadyUnitPrefabRegistry,
+            MatchRuntimeContentMaxFrames,
+            "Footer Deploy loaded Match.unity but the Match subscene unit prefab registry did not become ready.");
+
+        MenuBootstrapView menuBootstrap = FindSceneComponent<MenuBootstrapView>(menuScene);
+        Assert.NotNull(menuBootstrap, "MenuBootstrapView must remain available while Match is loaded.");
+        await WaitFor(
+            () => menuBootstrap.UiCamera != null && menuBootstrap.UiCamera.clearFlags == CameraClearFlags.Depth,
+            120,
+            "Menu UI camera must stop clearing color while it overlays the loaded Match world.");
 
         await WaitFor(
             () => InitialUnitsRuntimeState.PlayRequested,
-            600,
+            MatchRuntimeContentMaxFrames,
             "Footer Deploy loaded Match.unity but did not issue the gameplay start request.");
     }
 
@@ -255,6 +268,33 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
     {
         Scene scene = SceneManager.GetSceneByName(sceneName);
         return scene.IsValid() && scene.isLoaded;
+    }
+
+    private static bool HasReadyUnitPrefabRegistry()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitPrefabRegistryTag>(),
+            ComponentType.ReadOnly<UnitPrefabRegistryEntry>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (entityManager.HasBuffer<UnitPrefabRegistryEntry>(entity) &&
+                entityManager.GetBuffer<UnitPrefabRegistryEntry>(entity).Length > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static Entity GetUiShellBoundary(EntityManager entityManager)

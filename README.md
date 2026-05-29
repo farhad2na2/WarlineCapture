@@ -400,7 +400,7 @@ Recent project patterns also favor:
 
 Avoid introducing:
 
-- `FindObjectOfType`, `FindAnyObjectByType`, `FindObjectsByType`, `GameObject.Find`, `Camera.main`, or similar global lookup patterns in gameplay code
+- `FindObjectOfType`, `FindAnyObjectByType`, `FindObjectsByType`, `FindObjectsSortMode`, `GameObject.Find`, `Camera.main`, or similar global lookup patterns in gameplay code. Use serialized references, ECS managed reference components, or injected boundary systems instead.
 - new runtime controller MonoBehaviours placed directly in the scene
 - per-frame LINQ in gameplay/runtime hot paths
 - per-frame string interpolation or log construction in gameplay/runtime hot paths

@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using Unity.Entities;
 using Game.Scripts.UI;
-using UnityEngine.SceneManagement;
 
 internal sealed class MatchBootstrapSystem
 {
@@ -19,6 +18,8 @@ internal sealed class MatchBootstrapSystem
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
     private readonly CustomGameStartupSystem _customGameStartupSystem = new();
+    private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
+    private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
 
     private readonly ManagedGameplayStartupSystem managedGameplayStartupSystem = new();
     private readonly GameplayRuntimeUpdateSystem gameplayRuntimeUpdateSystem = new();
@@ -111,6 +112,7 @@ internal sealed class MatchBootstrapSystem
     public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)
     {
         Initialize(view);
+        _matchSceneReferenceSystem.Register(view);
         _performanceDiagnosticsSystem = ResolvePerformanceDiagnosticsSystem();
 
         _runtimeRootSystem.Ensure(ownerTransform, ref _runtimeBlockerRoot, ref _runtimeCityRoot, ref _runtimeUiRoot);
@@ -178,6 +180,7 @@ internal sealed class MatchBootstrapSystem
 
     public void Start()
     {
+        _matchSceneReferenceSystem.Register(sceneView);
         MainMenu = _menuStartupSystem.Initialize(
             MenuView,
             BeginGameplay,
@@ -392,13 +395,13 @@ internal sealed class MatchBootstrapSystem
 
     public void Shutdown()
     {
+        _matchSceneReferenceSystem.Clear(sceneView);
         sceneView = null;
     }
 
     public PerformanceDiagnosticsSystem ResolvePerformanceDiagnosticsSystem()
     {
-        PerformanceDiagnosticsSystem persistentDiagnostics = TryResolveMenuPerformanceDiagnostics();
-        if (persistentDiagnostics != null)
+        if (_performanceDiagnosticsReferenceSystem.TryGet(World.DefaultGameObjectInjectionWorld, out PerformanceDiagnosticsSystem persistentDiagnostics))
             return persistentDiagnostics;
 
         if (!fallbackPerformanceDiagnosticsInitialized)
@@ -609,26 +612,6 @@ internal sealed class MatchBootstrapSystem
 
         fallbackPerformanceDiagnosticsSystem.Dispose();
         fallbackPerformanceDiagnosticsInitialized = false;
-    }
-
-    private static PerformanceDiagnosticsSystem TryResolveMenuPerformanceDiagnostics()
-    {
-        MenuBootstrapView[] menuBootstrapViews = UnityEngine.Object.FindObjectsByType<MenuBootstrapView>(
-            FindObjectsInactive.Exclude);
-        for (int i = 0; i < menuBootstrapViews.Length; i++)
-        {
-            MenuBootstrapView view = menuBootstrapViews[i];
-            if (view == null)
-                continue;
-
-            UnityEngine.SceneManagement.Scene scene = view.gameObject.scene;
-            if (!scene.IsValid() || !scene.isLoaded)
-                continue;
-
-            return view.PerformanceDiagnostics;
-        }
-
-        return null;
     }
 
     private void EnsureBuildingRuntimeBoundaryEntity()

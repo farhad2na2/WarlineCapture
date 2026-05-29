@@ -4,6 +4,11 @@ using UnityEngine;
 
 internal sealed class BuildingPlacementInputRuntimeTickSystem
 {
+    private const float DefaultClickDragThresholdPixels = 8f;
+
+    private bool _pendingBuildingSelectionClick;
+    private Vector2 _buildingSelectionPressPosition;
+
     public readonly struct Context
     {
         public readonly Func<Camera> GetWorldCamera;
@@ -18,6 +23,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         public readonly Func<MainMenuPlayUI> GetMainMenu;
         public readonly BuildingSelectionClickSystem SelectionClickSystem;
         public readonly BuildingSelectionClickSystem.Context SelectionClickContext;
+        public readonly float ClickDragThresholdPixels;
 
         public Context(
             Func<Camera> getWorldCamera,
@@ -31,7 +37,8 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             RuntimeGameplayStateSystem runtimeGameplayStateSystem,
             Func<MainMenuPlayUI> getMainMenu,
             BuildingSelectionClickSystem selectionClickSystem,
-            BuildingSelectionClickSystem.Context selectionClickContext)
+            BuildingSelectionClickSystem.Context selectionClickContext,
+            float clickDragThresholdPixels)
         {
             GetWorldCamera = getWorldCamera;
             GetActivePlacement = getActivePlacement;
@@ -45,6 +52,9 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             GetMainMenu = getMainMenu;
             SelectionClickSystem = selectionClickSystem;
             SelectionClickContext = selectionClickContext;
+            ClickDragThresholdPixels = clickDragThresholdPixels > 0f
+                ? clickDragThresholdPixels
+                : DefaultClickDragThresholdPixels;
         }
     }
 
@@ -90,6 +100,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         BuildingPlacementLifecycleSystem.PlacementState activePlacement = context.GetActivePlacement?.Invoke();
         if (activePlacement != null)
         {
+            _pendingBuildingSelectionClick = false;
             context.PlacementInputSystem?.UpdateActivePlacementPointer(
                 activePlacement,
                 pointer,
@@ -100,6 +111,7 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
 
         if (context.IsPlayRequested?.Invoke() != true)
         {
+            _pendingBuildingSelectionClick = false;
             context.PlacementPreviewSystem?.HideOutline();
             afterOutline = Time.realtimeSinceStartupAsDouble;
             return new Result(afterOutline, afterMouse, afterOutline, afterOutline, afterOutline);
@@ -113,34 +125,49 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
         {
             Vector2 pointerPosition = pointer.Position;
             MainMenuPlayUI mainMenu = context.GetMainMenu?.Invoke();
-            bool ignoreBecauseCommandUiPressed = mainMenu != null &&
-                                                 mainMenu.ShouldIgnoreBuildingSelectionThisFrame();
-            bool overGameplayUi = mainMenu != null &&
-                                  mainMenu.IsPointerOverAnyGameplayUi(pointerPosition, out _);
-            bool hasActiveBuilding = context.HasActiveBuilding?.Invoke() == true;
-            bool overUnitCommandUi = false;
-            if (!ignoreBecauseCommandUiPressed && !overGameplayUi && hasActiveBuilding)
-            {
-                overUnitCommandUi = mainMenu != null &&
-                                    mainMenu.IsPointerOverUnitCommandUi(pointerPosition, out _);
-            }
-            afterUi = Time.realtimeSinceStartupAsDouble;
+            BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
+            afterUi = gate.MeasuredAt;
 
-            if (!ignoreBecauseCommandUiPressed && !overGameplayUi && overUnitCommandUi && hasActiveBuilding)
+            if (!gate.IgnoreBecauseCommandUiPressed && !gate.OverGameplayUi && gate.OverUnitCommandUi && gate.HasActiveBuilding)
             {
+                _pendingBuildingSelectionClick = false;
                 if (context.RuntimeGameplayStateSystem != null)
                     context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
                 afterInput = Time.realtimeSinceStartupAsDouble;
                 return new Result(afterOutline, afterMouse, afterUi, afterInput, afterInput);
             }
 
-            if (!ignoreBecauseCommandUiPressed && !overGameplayUi && !overUnitCommandUi)
+            _pendingBuildingSelectionClick = !gate.IgnoreBecauseCommandUiPressed &&
+                                             !gate.OverGameplayUi &&
+                                             !gate.OverUnitCommandUi;
+            if (_pendingBuildingSelectionClick)
+                _buildingSelectionPressPosition = pointerPosition;
+        }
+
+        if (pointer.WasReleasedThisFrame)
+        {
+            Vector2 pointerPosition = pointer.Position;
+            if (_pendingBuildingSelectionClick &&
+                Vector2.Distance(_buildingSelectionPressPosition, pointerPosition) < context.ClickDragThresholdPixels)
             {
-                context.SelectionClickSystem?.HandleBuildingSelectionClick(
-                    context.SelectionClickContext,
-                    pointerPosition);
-                afterBuildingClick = Time.realtimeSinceStartupAsDouble;
+                MainMenuPlayUI mainMenu = context.GetMainMenu?.Invoke();
+                BuildingSelectionClickGate gate = GetBuildingSelectionClickGate(context, mainMenu, pointerPosition);
+                afterUi = Math.Max(afterUi, gate.MeasuredAt);
+
+                if (!gate.IgnoreBecauseCommandUiPressed && !gate.OverGameplayUi && !gate.OverUnitCommandUi)
+                {
+                    context.SelectionClickSystem?.HandleBuildingSelectionClick(
+                        context.SelectionClickContext,
+                        pointerPosition);
+                    afterBuildingClick = Time.realtimeSinceStartupAsDouble;
+                }
             }
+
+            _pendingBuildingSelectionClick = false;
+        }
+        else if (!pointer.IsPressed)
+        {
+            _pendingBuildingSelectionClick = false;
         }
 
         afterInput = Time.realtimeSinceStartupAsDouble;
@@ -150,5 +177,53 @@ internal sealed class BuildingPlacementInputRuntimeTickSystem
             afterBuildingClick = afterUi;
 
         return new Result(afterOutline, afterMouse, afterUi, afterBuildingClick, afterInput);
+    }
+
+    private static BuildingSelectionClickGate GetBuildingSelectionClickGate(
+        Context context,
+        MainMenuPlayUI mainMenu,
+        Vector2 pointerPosition)
+    {
+        bool ignoreBecauseCommandUiPressed = mainMenu != null &&
+                                             mainMenu.ShouldIgnoreBuildingSelectionThisFrame();
+        bool overGameplayUi = mainMenu != null &&
+                              mainMenu.IsPointerOverAnyGameplayUi(pointerPosition, out _);
+        bool hasActiveBuilding = context.HasActiveBuilding?.Invoke() == true;
+        bool overUnitCommandUi = false;
+        if (!ignoreBecauseCommandUiPressed && !overGameplayUi && hasActiveBuilding)
+        {
+            overUnitCommandUi = mainMenu != null &&
+                                mainMenu.IsPointerOverUnitCommandUi(pointerPosition, out _);
+        }
+
+        return new BuildingSelectionClickGate(
+            ignoreBecauseCommandUiPressed,
+            overGameplayUi,
+            hasActiveBuilding,
+            overUnitCommandUi,
+            Time.realtimeSinceStartupAsDouble);
+    }
+
+    private readonly struct BuildingSelectionClickGate
+    {
+        public readonly bool IgnoreBecauseCommandUiPressed;
+        public readonly bool OverGameplayUi;
+        public readonly bool HasActiveBuilding;
+        public readonly bool OverUnitCommandUi;
+        public readonly double MeasuredAt;
+
+        public BuildingSelectionClickGate(
+            bool ignoreBecauseCommandUiPressed,
+            bool overGameplayUi,
+            bool hasActiveBuilding,
+            bool overUnitCommandUi,
+            double measuredAt)
+        {
+            IgnoreBecauseCommandUiPressed = ignoreBecauseCommandUiPressed;
+            OverGameplayUi = overGameplayUi;
+            HasActiveBuilding = hasActiveBuilding;
+            OverUnitCommandUi = overUnitCommandUi;
+            MeasuredAt = measuredAt;
+        }
     }
 }

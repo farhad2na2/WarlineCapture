@@ -164,7 +164,8 @@ internal sealed class ManagedGameplayStartupSystem
             road.RoadFootprintQuery,
             road.RoadFootprintQueryContext,
             factionVisuals,
-            dayNight);
+            dayNight,
+            rtsSelectionConfig);
 
         SelectionGameplayStartupSystem.Result selection = _selectionGameplayStartupSystem.Initialize(
             rtsSelectionConfig,

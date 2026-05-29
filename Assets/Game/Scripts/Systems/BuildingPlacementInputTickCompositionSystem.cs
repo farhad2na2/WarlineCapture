@@ -8,6 +8,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystem
         BuildingGameplayCompositionSourceSystem source,
         BuildingPlacementInteractionSystem.Context interactionContext,
         MaterialPropertyBlock markerPropertyBlock,
+        float clickDragThresholdPixels,
         Func<BuildingGameplayCompositionSourceSystem, BuildingPlacementInteractionSystem.Context, MaterialPropertyBlock, BuildingPlacementInputSystem.ActivePlacementPointerContext> createActivePlacementPointerContext,
         Func<BuildingGameplayCompositionSourceSystem, BuildingSelectionClickSystem.Context> createSelectionClickContext)
     {
@@ -23,6 +24,7 @@ internal sealed class BuildingPlacementInputTickCompositionSystem
             source.RuntimeGameplayStateSystem,
             () => source.BuildingGameplayDependencySystem.MainMenuPlayUi,
             source.BuildingSelectionClickSystem,
-            createSelectionClickContext(source));
+            createSelectionClickContext(source),
+            clickDragThresholdPixels);
     }
 }

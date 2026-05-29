@@ -213,9 +213,7 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         }
 
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
-        context.InputSystem.IgnoreNextLeftMouseRelease = true;
         context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
         context.SetCameraDragging?.Invoke(false);
         return true;
     }

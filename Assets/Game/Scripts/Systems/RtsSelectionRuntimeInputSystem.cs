@@ -147,40 +147,13 @@ public sealed class RtsSelectionRuntimeInputSystem
         input.BeginPointerPress(pointerPosition, !runtime.PlayRequested && pointerOverBlockingUi);
         context.SetCameraDragging?.Invoke(false);
 
-        if (context.GetExplicitAttackTargetModeActive?.Invoke() == true && !input.PointerPressedOverUi)
-        {
-            if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true)
-                context.SetExplicitAttackTargetModeActive?.Invoke(false);
-
-            input.SkipNextWorldReleaseAfterSelection = true;
-            runtime.SuppressNextWorldClick = true;
-            input.LastPointerPosition = pointerPosition;
-            return;
-        }
-
         if (runtime.SelectionModeActive)
             return;
 
         if (!input.PointerPressedOverUi)
         {
-            if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true)
-            {
-                runtime.SuppressNextWorldClick = true;
-            }
-            else if (context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition) == true)
-            {
-                runtime.SuppressNextWorldClick = true;
-            }
-            else if (context.TryFocusUnit?.Invoke(pointerPosition) == true)
-            {
-                input.SkipNextWorldReleaseAfterSelection = true;
-                runtime.SuppressNextWorldClick = true;
-            }
-            else
-            {
-                context.SetCameraDragging?.Invoke(true);
-                input.ArmSelectionModeHold(Time.unscaledTime);
-            }
+            context.SetCameraDragging?.Invoke(true);
+            input.ArmSelectionModeHold(Time.unscaledTime);
         }
         else
         {
@@ -232,6 +205,7 @@ public sealed class RtsSelectionRuntimeInputSystem
     {
         RtsSelectionInputSystem input = context.InputSystem;
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
+        input.DragCurrent = pointerPosition;
         bool releasePointerOverAnyUi = context.IsPointerOverAnyUi?.Invoke(pointerPosition) == true;
         bool releasePointerOverGameplayUi = context.IsPointerOverGameplayUi?.Invoke(pointerPosition) == true;
         bool releasePointerOverBlockingUi = runtime.PlayRequested ? releasePointerOverGameplayUi : (releasePointerOverAnyUi || releasePointerOverGameplayUi);
@@ -279,7 +253,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             runtime.SelectionModeActive = false;
             runtime.SuppressNextWorldClick = false;
         }
-        else if (Vector2.Distance(input.DragStart, input.DragCurrent) < context.DragThresholdPixels)
+        else if (Vector2.Distance(input.DragStart, pointerPosition) < context.DragThresholdPixels)
         {
             if (runtime.SuppressNextWorldClick)
             {
@@ -287,7 +261,27 @@ public sealed class RtsSelectionRuntimeInputSystem
             }
             else if (!releasePointerOverBlockingUi)
             {
-                input.QueueMoveOrder(pointerPosition, Time.frameCount + 1);
+                if (context.GetExplicitAttackTargetModeActive?.Invoke() == true)
+                {
+                    if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true)
+                        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+                }
+                else if (context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true)
+                {
+                    runtime.SuppressNextWorldClick = false;
+                }
+                else if (context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition) == true)
+                {
+                    runtime.SuppressNextWorldClick = false;
+                }
+                else if (context.TryFocusUnit?.Invoke(pointerPosition) == true)
+                {
+                    runtime.SuppressNextWorldClick = false;
+                }
+                else
+                {
+                    input.QueueMoveOrder(pointerPosition, Time.frameCount + 1);
+                }
             }
         }
 

@@ -27,7 +27,8 @@ internal sealed class BuildingGameplayCompositionSystem
         RoadFootprintQuerySystem roadFootprintQuerySystem,
         RoadFootprintQuerySystem.Context roadFootprintQueryContext,
         FactionVisualSettings factionVisuals,
-        DayNightSystem dayNight)
+        DayNightSystem dayNight,
+        RTSSelectionSystemConfig rtsSelectionConfig = null)
     {
         MaterialPropertyBlock markerPropertyBlock = _markerVisualCompositionSystem.GetMarkerPropertyBlock();
         BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
@@ -413,6 +414,7 @@ internal sealed class BuildingGameplayCompositionSystem
                         source,
                         placementInteractionContext,
                         placementMarkerPropertyBlock,
+                        rtsSelectionConfig != null ? rtsSelectionConfig.DragThresholdPixels : 8f,
                         (pointerSource, pointerInteractionContext, pointerMarkerPropertyBlock) =>
                             _placementInteractionCompositionSystem.CreateActivePlacementPointerContext(
                                 pointerSource,

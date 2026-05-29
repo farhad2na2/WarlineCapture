@@ -159,7 +159,9 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
         Assert.IsTrue(menuScene.isLoaded, "Menu scene must stay loaded after Match loads additively.");
         Assert.IsTrue(matchScene.IsValid() && matchScene.isLoaded, "Match scene should be loaded additively after footer Deploy.");
         Assert.AreNotEqual(menuScene, matchScene, "Footer Deploy must not replace the persistent Menu scene.");
-        Assert.NotNull(FindSceneComponent<MatchSceneView>(matchScene), "Loaded Match scene must contain MatchSceneView.");
+        MatchSceneView matchSceneView = FindSceneComponent<MatchSceneView>(matchScene);
+        Assert.NotNull(matchSceneView, "Loaded Match scene must contain MatchSceneView.");
+        AssertMatchWorldCameraCanRender(matchSceneView.WorldCamera);
         await WaitFor(
             HasReadyUnitPrefabRegistry,
             MatchRuntimeContentMaxFrames,
@@ -168,14 +170,32 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
         MenuBootstrapView menuBootstrap = FindSceneComponent<MenuBootstrapView>(menuScene);
         Assert.NotNull(menuBootstrap, "MenuBootstrapView must remain available while Match is loaded.");
         await WaitFor(
-            () => menuBootstrap.UiCamera != null && menuBootstrap.UiCamera.clearFlags == CameraClearFlags.Depth,
+            () => PersistentMenuUiCannotClearMatchWorld(menuBootstrap),
             120,
-            "Menu UI camera must stop clearing color while it overlays the loaded Match world.");
+            "Persistent Menu UI must switch to overlay mode while Match is loaded so it cannot clear over the world camera.");
 
         await WaitFor(
             () => InitialUnitsRuntimeState.PlayRequested,
             MatchRuntimeContentMaxFrames,
             "Footer Deploy loaded Match.unity but did not issue the gameplay start request.");
+
+        await WaitFor(
+            () => TryReadUiShellState(out UiShellStateComponent state) &&
+                  state.ActiveRoute == WarlineCaptureRoute.Match &&
+                  state.CurrentMode == UiShellMode.MatchHud &&
+                  state.IsTransitionRunning == 0,
+            MatchRuntimeContentMaxFrames,
+            "Footer Deploy started gameplay but the persistent shell did not settle into Match HUD mode.");
+
+        Assert.IsTrue(
+            PersistentMenuUiCannotClearMatchWorld(menuBootstrap),
+            "Persistent Menu UI must still be overlay-only after Match HUD transition completes.");
+        AssertMatchWorldCameraCanRender(matchSceneView.WorldCamera);
+
+        await WaitFor(
+            HasSpawnedRuntimeUnits,
+            MatchRuntimeContentMaxFrames,
+            "Footer Deploy reached Match HUD but runtime units did not spawn.");
     }
 
     private static WarlineCaptureShellRouteButtonView FindFooterDeployButton(Scene scene)
@@ -295,6 +315,45 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
         }
 
         return false;
+    }
+
+    private static bool PersistentMenuUiCannotClearMatchWorld(MenuBootstrapView menuBootstrap)
+    {
+        if (menuBootstrap == null ||
+            menuBootstrap.UiCanvas == null ||
+            menuBootstrap.UiCanvas.renderMode != RenderMode.ScreenSpaceOverlay ||
+            menuBootstrap.UiCanvas.worldCamera != null)
+        {
+            return false;
+        }
+
+        Camera uiCamera = menuBootstrap.UiCamera;
+        return uiCamera == null || (!uiCamera.enabled && uiCamera.clearFlags == CameraClearFlags.Depth);
+    }
+
+    private static void AssertMatchWorldCameraCanRender(Camera worldCamera)
+    {
+        Assert.NotNull(worldCamera, "Loaded Match scene must expose a world camera.");
+        Assert.IsTrue(worldCamera.gameObject.activeInHierarchy, "Match world camera object must be active.");
+        Assert.IsTrue(worldCamera.enabled, "Match world camera must be enabled.");
+        Assert.AreEqual(null, worldCamera.targetTexture, "Match world camera must render to the Game view, not a detached target texture.");
+        Assert.AreNotEqual(0, worldCamera.cullingMask, "Match world camera culling mask must include renderable layers.");
+        Assert.Greater(worldCamera.rect.width, 0f, "Match world camera viewport width must be visible.");
+        Assert.Greater(worldCamera.rect.height, 0f, "Match world camera viewport height must be visible.");
+    }
+
+    private static bool HasSpawnedRuntimeUnits()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>(),
+            ComponentType.ReadOnly<Faction>());
+        return query.CalculateEntityCount() > 0;
     }
 
     private static Entity GetUiShellBoundary(EntityManager entityManager)

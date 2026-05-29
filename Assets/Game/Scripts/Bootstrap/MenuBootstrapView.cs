@@ -67,6 +67,6 @@ public sealed class MenuBootstrapView : MonoBehaviour
 
     private void OnDisable()
     {
-        menuBootstrapSystem.Shutdown();
+        menuBootstrapSystem.Shutdown(this);
     }
 }

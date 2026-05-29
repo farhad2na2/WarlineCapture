@@ -15,9 +15,12 @@ internal sealed class MenuBootstrapSystem
     private bool diagnosticsInitialized;
     private bool initialized;
     private float loadingElapsedSeconds;
-    private bool hasCapturedUiCameraClearMode;
+    private bool hasCapturedUiPresentation;
     private CameraClearFlags defaultUiCameraClearFlags;
     private Color defaultUiCameraBackgroundColor;
+    private bool defaultUiCameraEnabled;
+    private RenderMode defaultUiCanvasRenderMode;
+    private Camera defaultUiCanvasWorldCamera;
 
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => performanceDiagnosticsSystem;
 
@@ -67,7 +70,7 @@ internal sealed class MenuBootstrapSystem
 
         UiShellStateComponent shellState = entityManager.GetComponentData<UiShellStateComponent>(boundary);
         UiShellLoadingProgressComponent loading = entityManager.GetComponentData<UiShellLoadingProgressComponent>(boundary);
-        ApplyUiCameraClearMode(view.UiCamera, shellState);
+        ApplyUiPresentationMode(view.UiCamera, view.UiCanvas, shellState);
         if (shellState.CurrentMode != UiShellMode.Loading ||
             shellState.IsTransitionRunning != 0 ||
             loading.IsComplete != 0)
@@ -93,11 +96,14 @@ internal sealed class MenuBootstrapSystem
         SetLoading(entityManager, boundary, progress, progress >= 1f);
     }
 
-    public void Shutdown()
+    public void Shutdown(MenuBootstrapView view)
     {
+        if (view != null)
+            RestoreUiPresentationMode(view.UiCamera, view.UiCanvas);
+
         initialized = false;
         loadingElapsedSeconds = 0f;
-        hasCapturedUiCameraClearMode = false;
+        hasCapturedUiPresentation = false;
         performanceDiagnosticsReferenceSystem.Clear(performanceDiagnosticsSystem);
         if (!diagnosticsInitialized)
             return;
@@ -140,32 +146,78 @@ internal sealed class MenuBootstrapSystem
         });
     }
 
-    private void ApplyUiCameraClearMode(Camera uiCamera, UiShellStateComponent shellState)
+    private void ApplyUiPresentationMode(Camera uiCamera, Canvas uiCanvas, UiShellStateComponent shellState)
     {
-        if (uiCamera == null)
+        CaptureUiPresentationMode(uiCamera, uiCanvas);
+
+        if (shellState.ActiveRoute == WarlineCaptureRoute.Match)
+        {
+            if (uiCanvas != null)
+            {
+                if (uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay)
+                    uiCanvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                if (uiCanvas.worldCamera != null)
+                    uiCanvas.worldCamera = null;
+            }
+
+            if (uiCamera != null)
+            {
+                if (uiCamera.clearFlags != CameraClearFlags.Depth)
+                    uiCamera.clearFlags = CameraClearFlags.Depth;
+                if (uiCamera.enabled)
+                    uiCamera.enabled = false;
+            }
+
+            return;
+        }
+
+        RestoreUiPresentationMode(uiCamera, uiCanvas);
+    }
+
+    private void CaptureUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
+    {
+        if (hasCapturedUiPresentation)
             return;
 
-        if (!hasCapturedUiCameraClearMode)
+        if (uiCamera != null)
         {
             defaultUiCameraClearFlags = uiCamera.clearFlags;
             defaultUiCameraBackgroundColor = uiCamera.backgroundColor;
-            hasCapturedUiCameraClearMode = true;
+            defaultUiCameraEnabled = uiCamera.enabled;
         }
 
-        bool overlaysMatchWorld =
-            shellState.ActiveRoute == WarlineCaptureRoute.Match &&
-            (shellState.CurrentMode == UiShellMode.Loading ||
-             shellState.CurrentMode == UiShellMode.MatchHud ||
-             shellState.CurrentMode == UiShellMode.PopupOnly);
+        if (uiCanvas != null)
+        {
+            defaultUiCanvasRenderMode = uiCanvas.renderMode;
+            defaultUiCanvasWorldCamera = uiCanvas.worldCamera;
+        }
 
-        CameraClearFlags targetClearFlags = overlaysMatchWorld
-            ? CameraClearFlags.Depth
-            : defaultUiCameraClearFlags;
-        if (uiCamera.clearFlags != targetClearFlags)
-            uiCamera.clearFlags = targetClearFlags;
+        hasCapturedUiPresentation = true;
+    }
 
-        if (!overlaysMatchWorld && uiCamera.backgroundColor != defaultUiCameraBackgroundColor)
-            uiCamera.backgroundColor = defaultUiCameraBackgroundColor;
+    private void RestoreUiPresentationMode(Camera uiCamera, Canvas uiCanvas)
+    {
+        if (!hasCapturedUiPresentation)
+            return;
+
+        if (uiCamera != null)
+        {
+            if (uiCamera.enabled != defaultUiCameraEnabled)
+                uiCamera.enabled = defaultUiCameraEnabled;
+            if (uiCamera.clearFlags != defaultUiCameraClearFlags)
+                uiCamera.clearFlags = defaultUiCameraClearFlags;
+            if (uiCamera.backgroundColor != defaultUiCameraBackgroundColor)
+                uiCamera.backgroundColor = defaultUiCameraBackgroundColor;
+        }
+
+        if (uiCanvas != null)
+        {
+            if (uiCanvas.renderMode != defaultUiCanvasRenderMode)
+                uiCanvas.renderMode = defaultUiCanvasRenderMode;
+            Camera targetWorldCamera = defaultUiCanvasWorldCamera != null ? defaultUiCanvasWorldCamera : uiCamera;
+            if (uiCanvas.renderMode == RenderMode.ScreenSpaceCamera && uiCanvas.worldCamera != targetWorldCamera)
+                uiCanvas.worldCamera = targetWorldCamera;
+        }
     }
 
     private static bool IsMatchStartComplete(EntityManager entityManager)

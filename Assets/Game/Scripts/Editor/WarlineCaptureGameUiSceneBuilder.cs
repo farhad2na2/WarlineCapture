@@ -797,8 +797,8 @@ public static class WarlineCaptureGameUiSceneBuilder
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.MiddleRegion, "MiddleContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
-        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
-        RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/DeployCommandButton", UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
+        RequireRegionChild(shellView, WarlineCaptureShellRegionId.FooterRegion, "FooterContent");
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.FooterRegion, "FooterContent/DeployCommandButton", UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
         RequireRouteButton(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent/CommanderPortraitButton", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
 
         contentPresenter.InstallMenuRouteBody(WarlineCaptureRoute.CommanderProfile);
@@ -924,7 +924,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.LeftRegion, canvasRect, "LeftContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MiddleRegion, canvasRect, "MiddleContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
-        RequireRegionEmpty(shellView, WarlineCaptureShellRegionId.FooterRegion);
+        ValidateRegionContent(shellView, WarlineCaptureShellRegionId.FooterRegion, canvasRect, "FooterContent");
 
         contentPresenter.InstallMenuRouteBody(WarlineCaptureRoute.CommanderProfile);
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MenuBackgroundRegion, canvasRect, "MenuBackgroundContent");
@@ -1030,7 +1030,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         ShowRegion(shellView, WarlineCaptureShellRegionId.LeftRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.MiddleRegion);
         ShowRegion(shellView, WarlineCaptureShellRegionId.RightRegion);
-        HideRegion(shellView, WarlineCaptureShellRegionId.FooterRegion);
+        ShowRegion(shellView, WarlineCaptureShellRegionId.FooterRegion);
         HideRegion(shellView, WarlineCaptureShellRegionId.PopupLayer);
     }
 

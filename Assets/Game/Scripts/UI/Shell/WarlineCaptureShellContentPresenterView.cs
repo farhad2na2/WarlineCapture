@@ -78,7 +78,6 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         InstallSection(mainMenuContentPrefab, "MenuBackgroundContent", WarlineCaptureShellRegionId.MenuBackgroundRegion);
         InstallSection(mainMenuContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
         InstallMainMenuBody();
-        ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
         ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
     }
 
@@ -87,7 +86,7 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         InstallSection(mainMenuContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
         InstallSection(mainMenuContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
         InstallSection(mainMenuContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
-        ClearRegion(WarlineCaptureShellRegionId.FooterRegion);
+        InstallSection(mainMenuContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
         ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
     }
 

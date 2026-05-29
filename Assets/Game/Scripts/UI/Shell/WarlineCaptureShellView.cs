@@ -138,6 +138,7 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
         TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
         TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle);
+        TryGetRegion(WarlineCaptureShellRegionId.FooterRegion, out WarlineCaptureShellRegionView footer);
 
         if (background != null)
         {
@@ -148,6 +149,7 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         PrimeOffscreen(header);
         PrimeOffscreen(left);
         PrimeOffscreen(right);
+        PrimeOffscreen(footer);
         if (middle != null)
             middle.RegionRoot.localScale = Vector3.zero;
 
@@ -155,7 +157,8 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         AddRegionEnterStep(steps, header, transitionId);
         steps.Add(WarlineCaptureUiMotionStep.Parallel(
             RegionEnterFactory(left, transitionId),
-            RegionEnterFactory(right, transitionId)));
+            RegionEnterFactory(right, transitionId),
+            RegionEnterFactory(footer, transitionId)));
         AddScaleStep(steps, middle, Vector3.one, motionHost.DefaultEnterEase, transitionId);
     }
 
@@ -166,12 +169,14 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
         TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
         TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle);
+        TryGetRegion(WarlineCaptureShellRegionId.FooterRegion, out WarlineCaptureShellRegionView footer);
 
         steps.Add(WarlineCaptureUiMotionStep.Parallel(
             RegionAlphaFactory(background, 0f, motionHost.DefaultExitEase, transitionId),
             RegionExitFactory(header, transitionId),
             RegionExitFactory(left, transitionId),
             RegionExitFactory(right, transitionId),
+            RegionExitFactory(footer, transitionId),
             RegionScaleFactory(middle, Vector3.zero, motionHost.DefaultExitEase, transitionId)));
     }
 
@@ -180,16 +185,19 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         TryGetRegion(WarlineCaptureShellRegionId.LeftRegion, out WarlineCaptureShellRegionView left);
         TryGetRegion(WarlineCaptureShellRegionId.MiddleRegion, out WarlineCaptureShellRegionView middle);
         TryGetRegion(WarlineCaptureShellRegionId.RightRegion, out WarlineCaptureShellRegionView right);
+        TryGetRegion(WarlineCaptureShellRegionId.FooterRegion, out WarlineCaptureShellRegionView footer);
 
         steps.Add(WarlineCaptureUiMotionStep.Parallel(
             RegionExitFactory(left, transitionId),
             RegionScaleFactory(middle, Vector3.zero, motionHost.DefaultSwapEase, transitionId),
-            RegionExitFactory(right, transitionId)));
-        steps.Add(WarlineCaptureUiMotionStep.Single(() => SwapMenuRouteBodyRoutine(route, left, middle, right)));
+            RegionExitFactory(right, transitionId),
+            RegionExitFactory(footer, transitionId)));
+        steps.Add(WarlineCaptureUiMotionStep.Single(() => SwapMenuRouteBodyRoutine(route, left, middle, right, footer)));
         steps.Add(WarlineCaptureUiMotionStep.Parallel(
             RegionEnterFactory(left, transitionId),
             RegionScaleFactory(middle, Vector3.one, motionHost.DefaultSwapEase, transitionId),
-            RegionEnterFactory(right, transitionId)));
+            RegionEnterFactory(right, transitionId),
+            RegionEnterFactory(footer, transitionId)));
     }
 
     private void AddEnterMatchHudSteps(int transitionId, List<WarlineCaptureUiMotionStep> steps)
@@ -340,7 +348,8 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         WarlineCaptureRoute route,
         WarlineCaptureShellRegionView left,
         WarlineCaptureShellRegionView middle,
-        WarlineCaptureShellRegionView right)
+        WarlineCaptureShellRegionView right,
+        WarlineCaptureShellRegionView footer)
     {
         contentPresenter?.InstallMenuRouteBody(route);
 
@@ -363,6 +372,13 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
             right.CanvasGroup.alpha = 1f;
             right.RegionRoot.anchoredPosition = OffscreenPosition(right);
             right.RegionRoot.localScale = Vector3.one;
+        }
+
+        if (footer != null)
+        {
+            footer.CanvasGroup.alpha = 1f;
+            footer.RegionRoot.anchoredPosition = OffscreenPosition(footer);
+            footer.RegionRoot.localScale = Vector3.one;
         }
 
         yield break;

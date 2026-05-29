@@ -207,6 +207,9 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         GameObject right = CreateGroup("RightContent", root.transform, new Rect(4080f, MainMenuHeaderSize.y, MainMenuSideSize.x, MainMenuSideSize.y));
         BuildMainMenuCommanderPanel(right.transform);
 
+        GameObject footer = CreateGroup("FooterContent", root.transform, new Rect(0f, 1920f, MatchHudFooterSize.x, MatchHudFooterSize.y));
+        BuildMainMenuFooter(footer.transform);
+
         return root;
     }
 
@@ -1445,14 +1448,18 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddLockedCommanderRow(lockedRows.transform, "SquadManagementRow", "SQUAD MANAGEMENT\nLOCKED", 0f);
         AddLockedCommanderRow(lockedRows.transform, "IntelReportRow", "INTEL REPORT\nLOCKED", 190f);
 
-        GameObject deployVisual = CreateMainMenuRect("DeployOperationButton", parent, new Rect(-421f, 1508f, 1141f, 264f), MainMenuSideSize);
+        AddRouteHotspot(parent, "CommanderPortraitButton", new Rect(83f, 246f, 528f, 507f), WarlineCaptureRoute.CommanderProfile);
+    }
+
+    private static void BuildMainMenuFooter(Transform parent)
+    {
+        GameObject deployVisual = CreateMainMenuRect("DeployOperationButton", parent, new Rect(3659f, -132f, 1141f, 264f), MatchHudFooterSize);
         AddMainMenuSpriteCentered(deployVisual.transform, "Frame", "scn02_deploy_cta_frame.png", Vector2.zero, new Vector2(1141f, 264f), false);
         AddTextCentered(deployVisual.transform, "Text", "DEPLOY OPERATION", new Vector2(-70f, 0f), new Vector2(760f, 112f), 64f, TextAlignmentOptions.Center, Color.black);
         AddMainMenuSpriteCentered(deployVisual.transform, "Chevrons", "scn02_deploy_chevrons.png", new Vector2(448f, 0f), new Vector2(150f, 108f), true);
         AddRouteButtonHotspot(deployVisual.transform, "Hotspot", StretchRect(), UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
 
-        AddRouteHotspot(parent, "CommanderPortraitButton", new Rect(83f, 246f, 528f, 507f), WarlineCaptureRoute.CommanderProfile);
-        AddRouteButtonHotspot(parent, "DeployCommandButton", new Rect(-421f, 1508f, 1141f, 264f), UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
+        AddRouteButtonHotspot(parent, "DeployCommandButton", new Rect(3659f, -132f, 1141f, 264f), UiShellRouteIntent.EnterMatch, WarlineCaptureRoute.Match);
     }
 
     private static void AddLockedCommanderRow(Transform parent, string name, string label, float y)
@@ -2081,7 +2088,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
     {
         ValidateMainMenuSourceContract();
 
-        ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "MenuBackgroundContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent");
+        ValidatePrefab(MainMenuPrefabPath, "SCN02_MainMenuContent", "MenuBackgroundContent", "HeaderContent", "LeftContent", "MiddleContent", "RightContent", "FooterContent");
 
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuPrefabPath);
         ValidateDirectChildren(
@@ -2091,12 +2098,14 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
             "HeaderContent",
             "LeftContent",
             "MiddleContent",
-            "RightContent");
+            "RightContent",
+            "FooterContent");
         ValidateRectSize(prefab.transform.Find("MenuBackgroundContent") as RectTransform, MainMenuBackgroundSize, "SCN02 MenuBackgroundContent");
         ValidateRectSize(prefab.transform.Find("HeaderContent") as RectTransform, MainMenuHeaderSize, "SCN02 HeaderContent");
         ValidateRectSize(prefab.transform.Find("LeftContent") as RectTransform, MainMenuSideSize, "SCN02 LeftContent");
         ValidateRectSize(prefab.transform.Find("MiddleContent") as RectTransform, MainMenuMiddleSize, "SCN02 MiddleContent");
         ValidateRectSize(prefab.transform.Find("RightContent") as RectTransform, MainMenuSideSize, "SCN02 RightContent");
+        ValidateRectSize(prefab.transform.Find("FooterContent") as RectTransform, MatchHudFooterSize, "SCN02 FooterContent");
 
         RequireMainMenuChild(prefab, "MenuBackgroundContent/BackgroundViewport/BackgroundArt");
         RequireMainMenuChild(prefab, "HeaderContent/HeaderLogoPanel/Frame");
@@ -2120,9 +2129,9 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         RequireMainMenuChild(prefab, "RightContent/CommanderPanel/PortraitPanel/Portrait");
         RequireMainMenuChild(prefab, "RightContent/CommanderPanel/LockedRowsContainer/SquadManagementRow/LockIcon");
         RequireMainMenuChild(prefab, "RightContent/CommanderPanel/LockedRowsContainer/IntelReportRow/LockIcon");
-        RequireMainMenuChild(prefab, "RightContent/DeployOperationButton/Hotspot");
         RequireMainMenuChild(prefab, "RightContent/CommanderPortraitButton");
-        RequireMainMenuChild(prefab, "RightContent/DeployCommandButton");
+        RequireMainMenuChild(prefab, "FooterContent/DeployOperationButton/Hotspot");
+        RequireMainMenuChild(prefab, "FooterContent/DeployCommandButton");
 
         ValidateCenteredRect(prefab, "HeaderContent/HeaderLogoPanel/Frame");
         ValidateCenteredRect(prefab, "HeaderContent/HeaderLogoPanel/Logo");

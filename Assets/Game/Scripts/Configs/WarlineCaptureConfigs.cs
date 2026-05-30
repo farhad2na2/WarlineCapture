@@ -268,13 +268,14 @@ public class RuntimeGridBlockerSystemConfig : ScriptableObject
 
 [CreateAssetMenu(menuName = "WarlineCapture/Config/Day Night System")]
 public class DayNightSystemConfig : ScriptableObject
-{ [SerializeField] private float fullDayDurationMinutes = 5f; [SerializeField] private float startHour = 9f; [SerializeField] private Light directionalLight; [SerializeField] private Volume globalVolume; [SerializeField] private float sunYaw = 170f; [SerializeField, Range(0f, 24f)] private float nightStartsAtHour = 19f; [SerializeField, Range(0f, 24f)] private float morningStartsAtHour = 6f; [SerializeField, Range(0f, 24f)] private float nightVisionStartHour = 19f; [SerializeField, Range(0f, 24f)] private float nightVisionEndHour = 6f; [SerializeField] private float nightVisionPostExposure = 2.2f; [SerializeField] private Color nightVisionColorFilter = new(0.55f, 1f, 0.58f, 1f); [SerializeField] private float nightVisionTemperature = -80f; [SerializeField] private float nightVisionTint = -55f; [SerializeField, Min(0f)] private float nightVisionBloomIntensity = 0.02f; [SerializeField, Min(0f)] private float nightVisionBloomThreshold = 2f; [SerializeField] private bool affectFog = true; [SerializeField] private bool affectVolume = true; [SerializeField] private bool updateDynamicGI = false; [SerializeField, Min(1f)] private float dynamicGIRefreshIntervalSeconds = 30f;
+{ [SerializeField] private float fullDayDurationMinutes = 5f; [SerializeField] private float startHour = 9f; [SerializeField] private Light directionalLight; [SerializeField] private Volume globalVolume; [SerializeField] private float sunYaw = 170f; [SerializeField] private bool animateDirectionalLight; [SerializeField, Range(0f, 24f)] private float nightStartsAtHour = 19f; [SerializeField, Range(0f, 24f)] private float morningStartsAtHour = 6f; [SerializeField, Range(0f, 24f)] private float nightVisionStartHour = 19f; [SerializeField, Range(0f, 24f)] private float nightVisionEndHour = 6f; [SerializeField] private float nightVisionPostExposure = 2.2f; [SerializeField] private Color nightVisionColorFilter = new(0.55f, 1f, 0.58f, 1f); [SerializeField] private float nightVisionTemperature = -80f; [SerializeField] private float nightVisionTint = -55f; [SerializeField, Min(0f)] private float nightVisionBloomIntensity = 0.02f; [SerializeField, Min(0f)] private float nightVisionBloomThreshold = 2f; [SerializeField] private bool affectFog = true; [SerializeField] private bool affectVolume = true; [SerializeField] private bool updateDynamicGI = false; [SerializeField, Min(1f)] private float dynamicGIRefreshIntervalSeconds = 30f;
 
     public float FullDayDurationMinutes => fullDayDurationMinutes;
     public float StartHour => startHour;
     public Light DirectionalLight => directionalLight;
     public Volume GlobalVolume => globalVolume;
     public float SunYaw => sunYaw;
+    public bool AnimateDirectionalLight => animateDirectionalLight;
     public float NightStartsAtHour => nightStartsAtHour;
     public float MorningStartsAtHour => morningStartsAtHour;
     public float NightVisionStartHour => nightVisionStartHour;

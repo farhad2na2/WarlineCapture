@@ -10,13 +10,13 @@ QualitySettings:
     name: Mobile
     pixelLightCount: 2
     shadows: 2
-    shadowResolution: 1
+    shadowResolution: 2
     shadowProjection: 1
-    shadowCascades: 2
+    shadowCascades: 4
     shadowDistance: 240
     shadowNearPlaneOffset: 3
     shadowCascade2Split: 0.33333334
-    shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
+    shadowCascade4Split: {x: 0.12299999, y: 0.2926, z: 0.53599995}
     shadowmaskMode: 0
     skinWeights: 2
     globalTextureMipmapLimit: 0
@@ -64,13 +64,13 @@ QualitySettings:
     name: PC
     pixelLightCount: 2
     shadows: 2
-    shadowResolution: 1
+    shadowResolution: 3
     shadowProjection: 1
-    shadowCascades: 2
+    shadowCascades: 4
     shadowDistance: 240
     shadowNearPlaneOffset: 3
     shadowCascade2Split: 0.33333334
-    shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
+    shadowCascade4Split: {x: 0.12299999, y: 0.2926, z: 0.53599995}
     shadowmaskMode: 1
     skinWeights: 4
     globalTextureMipmapLimit: 0

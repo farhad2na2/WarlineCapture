@@ -3421,6 +3421,28 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void DayNightRuntimeMustNotAnimateShadowLightUnlessConfigured()
+    {
+        const string dayNightSystemPath = "Assets/Game/Scripts/Environment/DayNightSystem.cs";
+        const string dayNightConfigAssetPath = "Assets/Game/Configs/Scene/Game_DayNight_Config.asset";
+
+        Assert.IsTrue(File.Exists(dayNightSystemPath), "DayNightSystem must own runtime day/night visuals.");
+        Assert.IsTrue(File.Exists(dayNightConfigAssetPath), "Match day/night config asset must exist.");
+
+        string configs = File.ReadAllText(WarlineCaptureConfigsPath);
+        string dayNight = File.ReadAllText(dayNightSystemPath);
+        string configAsset = File.ReadAllText(dayNightConfigAssetPath);
+
+        StringAssert.Contains("[SerializeField] private bool animateDirectionalLight;", configs);
+        StringAssert.Contains("public bool AnimateDirectionalLight => animateDirectionalLight;", configs);
+        StringAssert.Contains("private bool animateDirectionalLight;", dayNight);
+        StringAssert.Contains("animateDirectionalLight = config.AnimateDirectionalLight;", dayNight);
+        StringAssert.Contains("if (animateDirectionalLight)", dayNight);
+        StringAssert.Contains("directionalLight.transform.rotation = Quaternion.Euler(elevation, sunYaw, 0f);", dayNight);
+        StringAssert.Contains("animateDirectionalLight: 0", configAsset);
+    }
+
+    [Test]
     public void GameBootstrapMustDelegateMenuStartupBinding()
     {
         const string menuStartupFile = "Assets/Game/Scripts/Systems/MenuStartupSystem.cs";

@@ -12,6 +12,7 @@ public sealed class DayNightSystem
     private Light directionalLight;
     private Volume globalVolume;
     private float sunYaw = 170f;
+    private bool animateDirectionalLight;
     private float nightStartsAtHour = 19f;
     private float morningStartsAtHour = 6f;
     private float nightVisionStartHour = 19f;
@@ -102,6 +103,7 @@ public sealed class DayNightSystem
         if (config.GlobalVolume != null)
             globalVolume = config.GlobalVolume;
         sunYaw = config.SunYaw;
+        animateDirectionalLight = config.AnimateDirectionalLight;
         nightStartsAtHour = Mathf.Repeat(config.NightStartsAtHour, 24f);
         morningStartsAtHour = Mathf.Repeat(config.MorningStartsAtHour, 24f);
         nightVisionStartHour = Mathf.Repeat(config.NightVisionStartHour, 24f);
@@ -250,7 +252,8 @@ public sealed class DayNightSystem
             return;
 
         float elevation = ComputeDirectionalElevationFromConfig(hour);
-        directionalLight.transform.rotation = Quaternion.Euler(elevation, sunYaw, 0f);
+        if (animateDirectionalLight)
+            directionalLight.transform.rotation = Quaternion.Euler(elevation, sunYaw, 0f);
 
         Color nightColor = new(0.34f, 0.40f, 0.52f);
         Color dawnColor = new(1f, 0.67f, 0.42f);

@@ -17,6 +17,7 @@ MonoBehaviour:
   directionalLight: {fileID: 0}
   globalVolume: {fileID: 0}
   sunYaw: 170
+  animateDirectionalLight: 0
   nightStartsAtHour: 21.5
   morningStartsAtHour: 5
   nightVisionStartHour: 21

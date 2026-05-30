@@ -52,10 +52,7 @@ internal sealed class MatchBootstrapSystem
     public IReadOnlyList<AIControllerConfig> AIControllerConfigs => MatchScene != null ? MatchScene.AIControllerConfigs : Array.Empty<AIControllerConfig>();
     private FactionVisualSettingsConfig FactionVisualConfig => MatchScene != null ? MatchScene.FactionVisualConfig : null;
     private PrefabPreviewCameraConfig PrefabPreviewCameraConfig => MatchScene != null ? MatchScene.PrefabPreviewCameraConfig : null;
-    private int RuntimeGridWidth => MatchScene != null ? MatchScene.RuntimeGridWidth : 2048;
-    private int RuntimeGridHeight => MatchScene != null ? MatchScene.RuntimeGridHeight : 2048;
-    private float RuntimeGridCellSize => MatchScene != null ? MatchScene.RuntimeGridCellSize : 1f;
-    private Vector3 RuntimeGridOrigin => MatchScene != null ? MatchScene.RuntimeGridOrigin : Vector3.zero;
+    private GridAuthoringConfig RuntimeGridConfig => MatchScene != null ? MatchScene.RuntimeGridConfig : null;
 
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
@@ -211,10 +208,7 @@ internal sealed class MatchBootstrapSystem
         ProjectRuntimeStartupConfig(
             World.DefaultGameObjectInjectionWorld,
             _runtimeGridBootstrapSystem,
-            RuntimeGridWidth,
-            RuntimeGridHeight,
-            RuntimeGridCellSize,
-            RuntimeGridOrigin,
+            RuntimeGridConfig,
             _initialFactionSpawnCellSystem,
             BuildingPlacementConfig,
             _aiStartupSystem,
@@ -460,21 +454,24 @@ internal sealed class MatchBootstrapSystem
     public void ProjectRuntimeStartupConfig(
         World world,
         RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
-        int runtimeGridWidth,
-        int runtimeGridHeight,
-        float runtimeGridCellSize,
-        Vector3 runtimeGridOrigin,
+        GridAuthoringConfig runtimeGridConfig,
         InitialFactionSpawnCellSystem initialFactionSpawnCellSystem,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         AIStartupSystem aiStartupSystem,
         IReadOnlyList<AIControllerConfig> aiControllerConfigs)
     {
+        if (runtimeGridConfig == null)
+        {
+            Debug.LogError("[MatchBootstrap] missingRuntimeGridConfig");
+            return;
+        }
+
         runtimeGridBootstrapSystem.Ensure(
             world,
-            runtimeGridWidth,
-            runtimeGridHeight,
-            runtimeGridCellSize,
-            runtimeGridOrigin);
+            runtimeGridConfig.Width,
+            runtimeGridConfig.Height,
+            runtimeGridConfig.CellSize,
+            runtimeGridConfig.Origin);
         initialFactionSpawnCellSystem.Configure(
             world,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);

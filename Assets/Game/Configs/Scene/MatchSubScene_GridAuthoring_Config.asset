@@ -15,6 +15,7 @@ MonoBehaviour:
   width: 2048
   height: 1024
   cellSize: 1
+  origin: {x: 0, y: 0, z: 0}
   blockedCells: []
   drawGrid: 1
   drawWhenNotSelected: 0

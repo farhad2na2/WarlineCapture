@@ -881,8 +881,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private Volume globalVolume;", source);
         StringAssert.Contains("private BuildingPlacementSystemConfig buildingPlacementConfig;", source);
         StringAssert.Contains("private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;", source);
+        StringAssert.Contains("private GridAuthoringConfig runtimeGridConfig;", source);
         StringAssert.Contains("private List<AIControllerConfig> aiControllerConfigs", source);
-        StringAssert.Contains("public int RuntimeGridWidth", source);
+        Assert.IsFalse(source.Contains("runtimeGridWidth", StringComparison.Ordinal), "MatchSceneView must not duplicate grid width; use GridAuthoringConfig.");
+        Assert.IsFalse(source.Contains("runtimeGridHeight", StringComparison.Ordinal), "MatchSceneView must not duplicate grid height; use GridAuthoringConfig.");
+        Assert.IsFalse(source.Contains("runtimeGridCellSize", StringComparison.Ordinal), "MatchSceneView must not duplicate grid cell size; use GridAuthoringConfig.");
+        Assert.IsFalse(source.Contains("runtimeGridOrigin", StringComparison.Ordinal), "MatchSceneView must not duplicate runtime grid origin data.");
         StringAssert.Contains("private readonly MatchBootstrapSystem matchBootstrapSystem = new();", source);
         StringAssert.Contains("matchBootstrapSystem.Awake(this, transform, gameObject.layer);", source);
         StringAssert.Contains("matchBootstrapSystem.BeginGameplay();", source);

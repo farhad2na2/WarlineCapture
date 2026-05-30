@@ -26,18 +26,13 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;
     [SerializeField] private RuntimeDecorationSpawnerSystemConfig runtimeDecorationSpawnerConfig;
     [SerializeField] private RuntimeGridBlockerSystemConfig runtimeGridBlockerConfig;
+    [SerializeField] private GridAuthoringConfig runtimeGridConfig;
     [SerializeField] private DayNightSystemConfig dayNightConfig;
     [SerializeField] private FactionVisualSettingsConfig factionVisualConfig;
     [SerializeField] private GameStringsConfig gameStringsConfig;
     [SerializeField] private PrefabPreviewCameraConfig prefabPreviewCameraConfig;
     [SerializeField] private AIPlanEntryStartupConfig aiPlanEntryConfig;
     [SerializeField] private List<AIControllerConfig> aiControllerConfigs = new();
-
-    [Header("Runtime Grid")]
-    [SerializeField] private int runtimeGridWidth = 2048;
-    [SerializeField] private int runtimeGridHeight = 2048;
-    [SerializeField] private float runtimeGridCellSize = 1f;
-    [SerializeField] private Vector3 runtimeGridOrigin = Vector3.zero;
 
     public MenuView MenuView => menuView;
     public Camera WorldCamera => worldCamera;
@@ -54,6 +49,7 @@ public sealed class MatchSceneView : MonoBehaviour
     public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => runtimeCitySpawnerConfig;
     public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => runtimeDecorationSpawnerConfig;
     public RuntimeGridBlockerSystemConfig RuntimeGridBlockerConfig => runtimeGridBlockerConfig;
+    public GridAuthoringConfig RuntimeGridConfig => runtimeGridConfig;
     public DayNightSystemConfig DayNightConfig => dayNightConfig;
     public FactionVisualSettingsConfig FactionVisualConfig => factionVisualConfig;
     public GameStringsConfig GameStringsConfig => gameStringsConfig;
@@ -61,10 +57,6 @@ public sealed class MatchSceneView : MonoBehaviour
     public AIPlanEntryStartupConfig AIPlanEntryConfig => aiPlanEntryConfig;
     public IReadOnlyList<AIControllerConfig> AIControllerConfigs => aiControllerConfigs;
 
-    public int RuntimeGridWidth => runtimeGridWidth;
-    public int RuntimeGridHeight => runtimeGridHeight;
-    public float RuntimeGridCellSize => runtimeGridCellSize;
-    public Vector3 RuntimeGridOrigin => runtimeGridOrigin;
     internal MatchBootstrapSystem MatchBootstrap => matchBootstrapSystem;
 
     public void BeginGameplay()

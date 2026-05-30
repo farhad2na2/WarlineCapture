@@ -58,7 +58,7 @@ public class GridAuthoring : MonoBehaviour
                 Width = authoring.Width,
                 Height = authoring.Height,
                 CellSize = authoring.CellSize,
-                Origin = (float3)authoring.transform.position
+                Origin = authoring.config != null ? (float3)authoring.config.Origin : (float3)authoring.transform.position
             });
 
             var walkable = AddBuffer<GridWalkable>(entity);

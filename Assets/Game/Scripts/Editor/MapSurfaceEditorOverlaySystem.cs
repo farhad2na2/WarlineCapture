@@ -7,6 +7,7 @@ public sealed class MapSurfaceEditorOverlaySystem
 {
     public enum OverlayMode
     {
+        Walkable,
         Height,
         Slope,
         Layer,
@@ -63,6 +64,10 @@ public sealed class MapSurfaceEditorOverlaySystem
     {
         switch (mode)
         {
+            case OverlayMode.Walkable:
+                return sample.MovementMask == MapSurfaceMovementMask.None
+                    ? new Color(0.9f, 0.05f, 0.05f, 0.28f)
+                    : new Color(0.05f, 0.85f, 0.18f, 0.24f);
             case OverlayMode.Height:
                 return Color.Lerp(new Color(0.05f, 0.25f, 0.9f, 0.18f), new Color(0.9f, 0.85f, 0.1f, 0.22f), math.saturate(sample.Height / 20f));
             case OverlayMode.Slope:

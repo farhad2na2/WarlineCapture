@@ -52,6 +52,7 @@ public sealed class GameplayArchitectureContractTests
     private const string MapSurfaceDiagnosticsSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceDiagnosticsSystem.cs";
     private const string MapSurfaceEditorOverlaySystemPath = "Assets/Game/Scripts/Editor/MapSurfaceEditorOverlaySystem.cs";
     private const string MapSurfacePreviewOverlaySystemPath = "Assets/Game/Scripts/Editor/MapSurfacePreviewOverlaySystem.cs";
+    private const string MapSurfacePreviewProofCapturePath = "Assets/Game/Scripts/Editor/MapSurfacePreviewProofCapture.cs";
     private const string MapSurfaceDebugCaptureSystemPath = "Assets/Game/Scripts/Editor/MapSurfaceDebugCaptureSystem.cs";
     private const string MapSurfaceLayeredGridFocusedTestsPath = "Assets/Tests/Editor/MapSurfaceLayeredGridFocusedTests.cs";
     private const string MapSurfaceRuntimeValidationProbeSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceRuntimeValidationProbeSystem.cs";
@@ -1301,8 +1302,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("asset.ConfigureBakedSurface(", editor);
         StringAssert.Contains("previewAsset.CompressedPayloadBytes > MapSurfaceDataAsset.GitFriendlyPayloadByteLimit", editor);
         StringAssert.Contains("MapBakeGroupAuthoring[] groups = root.GetComponentsInChildren<MapBakeGroupAuthoring>(true);", editor);
-        StringAssert.Contains("group.transform", editor);
+        StringAssert.Contains("AddMeshSources(", editor);
         StringAssert.Contains("group.IncludeInactiveChildren", editor);
+        StringAssert.Contains("ResolveMovementMaskOrDefault", editor);
         StringAssert.Contains("MapBakeGroupRole.Blocker", editor);
         Assert.IsFalse(editor.Contains("authoring.TerrainRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy terrain root fields.");
         Assert.IsFalse(editor.Contains("authoring.RoadRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy road root fields.");
@@ -1326,15 +1328,72 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("public static class MapSurfacePreviewOverlaySystem", preview);
         StringAssert.Contains("SceneView.duringSceneGui += DrawPreview", preview);
+        StringAssert.Contains("EditorApplication.projectChanged += ClearPreview", preview);
+        StringAssert.Contains("EditorApplication.hierarchyChanged += ClearPreview", preview);
         StringAssert.Contains("public static void ShowAuthoringPreview(", preview);
-        StringAssert.Contains("private const int MaxPreviewItems", preview);
-        StringAssert.Contains("GetComponentsInChildren<Renderer>", preview);
+        StringAssert.Contains("private const int MaxWalkablePreviewMeshes", preview);
+        StringAssert.Contains("private const int MaxBlockerPreviewMeshes", preview);
+        StringAssert.Contains("BuildWalkableBlockedPreviewMeshes", preview);
+        StringAssert.Contains("ResolveWalkableBlockedTarget", preview);
+        StringAssert.Contains("combined.AddRange(terrain);", preview);
+        StringAssert.Contains("combined.AddRange(blockers);", preview);
+        StringAssert.Contains("combined.AddRange(roads);", preview);
+        StringAssert.Contains("roads drawn last", preview);
+        StringAssert.Contains("ResolveWalkableColor", preview);
+        StringAssert.Contains("AllowsInfantryOnly", preview);
+        StringAssert.Contains("MapSurfaceMovementMask.WheeledVehicle | MapSurfaceMovementMask.TrackedVehicle", preview);
+        StringAssert.Contains("ResolvePreviewDrawMatrix", preview);
+        StringAssert.Contains("ResolveDrawMatrixForCapture", preview);
+        StringAssert.Contains("BuildFlattenedFootprintMatrix", preview);
+        StringAssert.Contains("matrix.m01 = 0f;", preview);
+        StringAssert.Contains("matrix.m21 = 0f;", preview);
+        StringAssert.Contains("blockers drawn as top-down footprints", preview);
+        StringAssert.Contains("CompareFunction.Always", preview);
+        StringAssert.Contains("BuildPreviewLabel", preview);
+        StringAssert.Contains("OverlayMode.Walkable", preview);
+        StringAssert.Contains("mode == MapSurfaceEditorOverlaySystem.OverlayMode.Walkable", preview);
+        StringAssert.Contains("IsBlockerOverlayMode", preview);
+        StringAssert.Contains("IsPriorityWalkableBlockedRole", preview);
+        StringAssert.Contains("IsOwnedByGroup", preview);
+        StringAssert.Contains("GetComponentInParent<MapBakeGroupAuthoring>(true)", preview);
+        StringAssert.Contains("Graphics.DrawMeshNow", preview);
+        StringAssert.Contains("BuildPreviewMeshes", preview);
+        StringAssert.Contains("GetComponentsInChildren<MeshFilter>", preview);
+        StringAssert.Contains("ShouldPreviewRole", preview);
+        StringAssert.Contains("MapBakeGroupRole.Terrain", preview);
+        StringAssert.Contains("MapBakeGroupRole.Road", preview);
+        StringAssert.Contains("MapBakeGroupRole.Bridge", preview);
+        Assert.IsFalse(preview.Contains("MapBakeGroupRole.IgnoredDecoration", StringComparison.Ordinal), "Walkable height preview must not include decoration props.");
         StringAssert.Contains("public static void ClearPreview()", preview);
         StringAssert.Contains("no asset saved", preview);
         Assert.IsFalse(preview.Contains("TryBuildSingleLayerTerrain", StringComparison.Ordinal), "Preview must not call the full mesh bake path.");
         Assert.IsFalse(preview.Contains("BlobAssetReference", StringComparison.Ordinal), "Preview must not allocate baked blobs.");
         Assert.IsFalse(preview.Contains("AssetDatabase.CreateAsset", StringComparison.Ordinal), "Preview must not write baked data assets.");
         Assert.IsFalse(preview.Contains("AssetDatabase.SaveAssets", StringComparison.Ordinal), "Preview must not save assets.");
+    }
+
+    [Test]
+    public void MapSurfacePreviewProofCaptureMustUseSameWalkablePreviewMeshSet()
+    {
+        Assert.IsTrue(File.Exists(MapSurfacePreviewProofCapturePath), $"{MapSurfacePreviewProofCapturePath} must generate a proof image from the preview mesh set.");
+
+        string source = File.ReadAllText(MapSurfacePreviewProofCapturePath);
+
+        StringAssert.Contains("public static class MapSurfacePreviewProofCapture", source);
+        StringAssert.Contains("CaptureWalkablePreview", source);
+        StringAssert.Contains("CaptureWalkableHeightPreview", source);
+        StringAssert.Contains("CaptureBlockedPreview", source);
+        StringAssert.Contains("CaptureTentCampWalkablePreview", source);
+        StringAssert.Contains("MapSurfacePreviewOverlaySystem.BuildPreviewMeshes", source);
+        StringAssert.Contains("MapSurfacePreviewOverlaySystem.ResolveDrawMatrixForCapture", source);
+        StringAssert.Contains("MapSurfaceEditorOverlaySystem.OverlayMode.Walkable", source);
+        StringAssert.Contains("MapSurfaceEditorOverlaySystem.OverlayMode.Height", source);
+        StringAssert.Contains("MapSurfaceEditorOverlaySystem.OverlayMode.Blocked", source);
+        StringAssert.Contains("map_surface_walkable_preview.png", source);
+        StringAssert.Contains("map_surface_walkable_height_preview.png", source);
+        StringAssert.Contains("map_surface_blocked_preview.png", source);
+        StringAssert.Contains("map_surface_tent_camp_walkable_preview.png", source);
+        Assert.IsFalse(source.Contains("TryBuildSingleLayerTerrain", StringComparison.Ordinal), "Proof capture must not run the full bake path.");
     }
 
     [Test]

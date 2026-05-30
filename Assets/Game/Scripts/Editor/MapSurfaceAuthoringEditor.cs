@@ -12,7 +12,7 @@ using UnityEngine.SceneManagement;
 public sealed class MapSurfaceAuthoringEditor : Editor
 {
     private const string DefaultAssetDirectory = "Assets/Game/Data/MapSurfaces";
-    private static MapSurfaceEditorOverlaySystem.OverlayMode previewMode = MapSurfaceEditorOverlaySystem.OverlayMode.RoadBridgeRamp;
+    private static MapSurfaceEditorOverlaySystem.OverlayMode previewMode = MapSurfaceEditorOverlaySystem.OverlayMode.Walkable;
 
     public override void OnInspectorGUI()
     {
@@ -189,7 +189,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
                 continue;
 
             AddMeshSources(
-                group.transform,
+                group,
                 sources,
                 type,
                 flags,
@@ -215,26 +215,30 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         {
             case MapBakeGroupRole.Terrain:
                 type = MapSurfaceType.Terrain;
-                movementMask |= MapSurfaceMovementMask.AllGroundUnits |
-                                MapSurfaceMovementMask.AirGrounded |
-                                MapSurfaceMovementMask.BuildingPlacement;
+                movementMask = ResolveMovementMaskOrDefault(
+                    movementMask,
+                    MapSurfaceMovementMask.AllGroundUnits |
+                    MapSurfaceMovementMask.AirGrounded |
+                    MapSurfaceMovementMask.BuildingPlacement);
                 return true;
             case MapBakeGroupRole.Road:
                 type = MapSurfaceType.Road;
                 flags = MapSurfaceFlags.Road;
-                movementMask |= MapSurfaceMovementMask.AllGroundUnits |
-                                MapSurfaceMovementMask.AirGrounded;
+                movementMask = ResolveMovementMaskOrDefault(
+                    movementMask,
+                    MapSurfaceMovementMask.AllGroundUnits |
+                    MapSurfaceMovementMask.AirGrounded);
                 return true;
             case MapBakeGroupRole.Bridge:
                 type = MapSurfaceType.BridgeDeck;
                 flags = MapSurfaceFlags.Road | MapSurfaceFlags.Bridge;
                 layerId = Mathf.Max(1, layerId);
-                movementMask |= MapSurfaceMovementMask.AllGroundUnits;
+                movementMask = ResolveMovementMaskOrDefault(movementMask, MapSurfaceMovementMask.AllGroundUnits);
                 return true;
             case MapBakeGroupRole.Ramp:
                 type = MapSurfaceType.Ramp;
                 flags = MapSurfaceFlags.Road | MapSurfaceFlags.Ramp;
-                movementMask |= MapSurfaceMovementMask.AllGroundUnits;
+                movementMask = ResolveMovementMaskOrDefault(movementMask, MapSurfaceMovementMask.AllGroundUnits);
                 return true;
             case MapBakeGroupRole.Blocker:
             case MapBakeGroupRole.IgnoredDecoration:
@@ -244,8 +248,17 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         }
     }
 
+    private static MapSurfaceMovementMask ResolveMovementMaskOrDefault(
+        MapSurfaceMovementMask authoredMask,
+        MapSurfaceMovementMask defaultMask)
+    {
+        return authoredMask == MapSurfaceMovementMask.None
+            ? defaultMask
+            : authoredMask;
+    }
+
     private static void AddMeshSources(
-        Transform root,
+        MapBakeGroupAuthoring ownerGroup,
         List<MapSurfaceMeshBakeSource> sources,
         MapSurfaceType surfaceType,
         MapSurfaceFlags flags,
@@ -253,14 +266,17 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         int layerId,
         bool includeInactiveChildren)
     {
-        if (root == null)
+        if (ownerGroup == null)
             return;
 
-        MeshFilter[] filters = root.GetComponentsInChildren<MeshFilter>(includeInactiveChildren);
+        MeshFilter[] filters = ownerGroup.GetComponentsInChildren<MeshFilter>(includeInactiveChildren);
         for (int i = 0; i < filters.Length; i++)
         {
             MeshFilter filter = filters[i];
             if (filter == null || filter.sharedMesh == null)
+                continue;
+
+            if (!IsOwnedByGroup(filter, ownerGroup))
                 continue;
 
             sources.Add(new MapSurfaceMeshBakeSource(
@@ -271,6 +287,15 @@ public sealed class MapSurfaceAuthoringEditor : Editor
                 movementMask,
                 layerId));
         }
+    }
+
+    private static bool IsOwnedByGroup(MeshFilter filter, MapBakeGroupAuthoring ownerGroup)
+    {
+        if (filter == null || ownerGroup == null)
+            return false;
+
+        MapBakeGroupAuthoring nearestGroup = filter.GetComponentInParent<MapBakeGroupAuthoring>(true);
+        return nearestGroup == ownerGroup;
     }
 }
 #endif

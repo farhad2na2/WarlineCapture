@@ -3,12 +3,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public static class MapPrefabBakeAuthoringSetup
 {
     private const string MapPrefabPath = "Assets/Game/Prefabs/Maps/Map.prefab";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string MapRootName = "Map";
+    private const string GroundHillsGroupName = "GroundHills";
     private const string GridConfigGuid = "b201000000000000000000000000000b";
     private const string MapSurfaceDataPath = "Assets/Game/Data/MapSurfaces/Match_Map_MapSurfaceData.asset";
 
@@ -56,11 +60,104 @@ public static class MapPrefabBakeAuthoringSetup
         }
     }
 
+    public static void MoveGroundHillMeshesToTerrainGroup()
+    {
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(MapPrefabPath);
+        try
+        {
+            Transform mapRoot = prefabRoot.name == MapRootName
+                ? prefabRoot.transform
+                : prefabRoot.transform.Find(MapRootName);
+
+            if (mapRoot == null)
+                throw new InvalidOperationException($"Could not find {MapRootName} root in {MapPrefabPath}.");
+
+            Transform mountains = mapRoot.Find("Mountains");
+            if (mountains == null)
+                throw new InvalidOperationException($"Could not find Map/Mountains in {MapPrefabPath}.");
+
+            Transform groundHills = mapRoot.Find(GroundHillsGroupName);
+            if (groundHills == null)
+            {
+                var groupObject = new GameObject(GroundHillsGroupName);
+                groundHills = groupObject.transform;
+                groundHills.SetParent(mapRoot, false);
+                groundHills.localPosition = Vector3.zero;
+                groundHills.localRotation = Quaternion.identity;
+                groundHills.localScale = Vector3.one;
+            }
+
+            MapBakeGroupAuthoring group = groundHills.GetComponent<MapBakeGroupAuthoring>();
+            if (group == null)
+                group = groundHills.gameObject.AddComponent<MapBakeGroupAuthoring>();
+
+            ConfigureGroup(group, MapBakeGroupRole.Terrain);
+
+            List<Transform> groundHillChildren = new();
+            CollectGroundHillChildren(mountains, groundHillChildren);
+            for (int i = 0; i < groundHillChildren.Count; i++)
+                groundHillChildren[i].SetParent(groundHills, true);
+
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, MapPrefabPath);
+            Debug.Log($"[MapPrefabBakeAuthoringSetup] Moved {groundHillChildren.Count} ground-hill meshes from Map/Mountains to Map/{GroundHillsGroupName}.");
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+    }
+
+    public static void ConfigureMatchSceneWaterGroundAsTerrain()
+    {
+        Scene previousScene = SceneManager.GetActiveScene();
+        Scene scene = EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+        try
+        {
+            Transform mapRoot = FindMapRoot(scene);
+            Transform props = mapRoot.Find("Props");
+            if (props == null)
+                throw new InvalidOperationException($"Could not find Map/Props in {MatchScenePath}.");
+
+            int configured = 0;
+            Transform[] children = props.GetComponentsInChildren<Transform>(true);
+            for (int i = 0; i < children.Length; i++)
+            {
+                Transform child = children[i];
+                if (!child.name.Equals("Water_Ground", StringComparison.Ordinal))
+                    continue;
+
+                MapBakeGroupAuthoring group = child.GetComponent<MapBakeGroupAuthoring>();
+                if (group == null)
+                    group = child.gameObject.AddComponent<MapBakeGroupAuthoring>();
+
+                ConfigureGroup(group, MapBakeGroupRole.Terrain);
+                configured++;
+            }
+
+            if (configured == 0)
+                throw new InvalidOperationException($"No Map/Props/Water_Ground objects found in {MatchScenePath}.");
+
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+            Debug.Log($"[MapPrefabBakeAuthoringSetup] Configured {configured} Match scene Water_Ground objects as terrain surface sources.");
+        }
+        finally
+        {
+            if (previousScene.IsValid() &&
+                !string.IsNullOrEmpty(previousScene.path) &&
+                previousScene.path != scene.path)
+            {
+                EditorSceneManager.OpenScene(previousScene.path, OpenSceneMode.Single);
+            }
+        }
+    }
+
     private static IReadOnlyDictionary<string, MapBakeGroupRole> DefaultRoles()
     {
         return new Dictionary<string, MapBakeGroupRole>(StringComparer.Ordinal)
         {
             { "Ground", MapBakeGroupRole.Terrain },
+            { "GroundHills", MapBakeGroupRole.Terrain },
             { "Grass", MapBakeGroupRole.Terrain },
             { "Beaches", MapBakeGroupRole.Terrain },
             { "Concrete", MapBakeGroupRole.Terrain },
@@ -87,6 +184,42 @@ public static class MapPrefabBakeAuthoringSetup
             { "Military", MapBakeGroupRole.IgnoredDecoration },
             { "Ruins", MapBakeGroupRole.IgnoredDecoration }
         };
+    }
+
+    private static void CollectGroundHillChildren(Transform root, List<Transform> results)
+    {
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (child.name.StartsWith("SM_Env_Ground_Hill", StringComparison.Ordinal))
+            {
+                results.Add(child);
+                continue;
+            }
+
+            CollectGroundHillChildren(child, results);
+        }
+    }
+
+    private static Transform FindMapRoot(Scene scene)
+    {
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+        {
+            Transform root = roots[i].transform;
+            if (root.name == MapRootName)
+                return root;
+
+            Transform child = root.Find(MapRootName);
+            if (child != null)
+                return child;
+
+            MapSurfaceAuthoring authoring = root.GetComponentInChildren<MapSurfaceAuthoring>(true);
+            if (authoring != null)
+                return authoring.transform;
+        }
+
+        throw new InvalidOperationException($"Could not find {MapRootName} root in {scene.path}.");
     }
 
     private static void ConfigureGroup(MapBakeGroupAuthoring group, MapBakeGroupRole role)

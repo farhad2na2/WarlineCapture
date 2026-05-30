@@ -167,7 +167,7 @@ public sealed class MapSurfaceAuthoringEditor : Editor
     {
         GridAuthoringConfig grid = authoring.GridConfig;
         return new MapSurfaceBakeRequest(
-            (float3)authoring.GridOrigin,
+            (float3)grid.Origin,
             grid.CellSize,
             new int2(grid.Width, grid.Height));
     }

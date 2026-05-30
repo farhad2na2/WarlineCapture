@@ -17,6 +17,7 @@ public static class MapSurfacePreviewOverlaySystem
     private static float minHeight;
     private static float maxHeight;
     private static Material previewMaterial;
+    private static Mesh gridPreviewMesh;
 
     public static bool HasPreview => previewMeshes.Length > 0;
 
@@ -37,6 +38,13 @@ public static class MapSurfacePreviewOverlaySystem
         if (authoring == null)
             return;
 
+        if (!TryGetGridBounds(authoring, out _))
+        {
+            previewLabel = $"{authoring.name}: assign GridAuthoringConfig before previewing map surface data";
+            SceneView.RepaintAll();
+            return;
+        }
+
         previewMode = mode;
         previewMeshes = BuildPreviewMeshes(authoring, mode);
         CalculateHeightRange(previewMeshes, out minHeight, out maxHeight);
@@ -55,6 +63,7 @@ public static class MapSurfacePreviewOverlaySystem
             mode == MapSurfaceEditorOverlaySystem.OverlayMode.Blocked)
             return BuildWalkableBlockedPreviewMeshes(authoring);
 
+        TryGetGridBounds(authoring, out Bounds gridBounds);
         var items = new List<PreviewMeshItem>(256);
         MapBakeGroupAuthoring[] groups = authoring.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
         for (int i = 0; i < groups.Length && items.Count < MaxWalkablePreviewMeshes; i++)
@@ -65,7 +74,7 @@ public static class MapSurfacePreviewOverlaySystem
 
             MeshFilter[] filters = group.GetComponentsInChildren<MeshFilter>(group.IncludeInactiveChildren);
             for (int filterIndex = 0; filterIndex < filters.Length && items.Count < MaxWalkablePreviewMeshes; filterIndex++)
-                AddMeshItem(filters[filterIndex], group, group.Role, items, MaxWalkablePreviewMeshes);
+                AddMeshItem(filters[filterIndex], group, group.Role, items, MaxWalkablePreviewMeshes, gridBounds);
         }
 
         return items.ToArray();
@@ -73,28 +82,32 @@ public static class MapSurfacePreviewOverlaySystem
 
     private static PreviewMeshItem[] BuildWalkableBlockedPreviewMeshes(MapSurfaceAuthoring authoring)
     {
-        var terrain = new List<PreviewMeshItem>(256);
         var roads = new List<PreviewMeshItem>(256);
         var blockers = new List<PreviewMeshItem>(256);
+        if (!TryGetGridBounds(authoring, out Bounds gridBounds))
+            return new PreviewMeshItem[0];
+
         MapBakeGroupAuthoring[] groups = authoring.GetComponentsInChildren<MapBakeGroupAuthoring>(true);
         for (int i = 0; i < groups.Length; i++)
         {
             MapBakeGroupAuthoring group = groups[i];
             if (group == null || !ShouldPreviewRole(group.Role, MapSurfaceEditorOverlaySystem.OverlayMode.Blocked))
                 continue;
+            if (group.Role == MapBakeGroupRole.Terrain)
+                continue;
 
-            List<PreviewMeshItem> target = ResolveWalkableBlockedTarget(group.Role, terrain, roads, blockers);
+            List<PreviewMeshItem> target = ResolveWalkableBlockedTarget(group.Role, roads, blockers);
             int limit = group.Role == MapBakeGroupRole.Blocker ? MaxBlockerPreviewMeshes : MaxWalkablePreviewMeshes;
             if (target.Count >= limit)
                 continue;
 
             MeshFilter[] filters = group.GetComponentsInChildren<MeshFilter>(group.IncludeInactiveChildren);
             for (int filterIndex = 0; filterIndex < filters.Length && target.Count < limit; filterIndex++)
-                AddMeshItem(filters[filterIndex], group, group.Role, target, limit);
+                AddMeshItem(filters[filterIndex], group, group.Role, target, limit, gridBounds);
         }
 
-        var combined = new List<PreviewMeshItem>(terrain.Count + blockers.Count + roads.Count);
-        combined.AddRange(terrain);
+        var combined = new List<PreviewMeshItem>(1 + blockers.Count + roads.Count);
+        combined.Add(BuildGridPreviewItem(authoring, gridBounds));
         combined.AddRange(blockers);
         combined.AddRange(roads);
         return combined.ToArray();
@@ -102,7 +115,6 @@ public static class MapSurfacePreviewOverlaySystem
 
     private static List<PreviewMeshItem> ResolveWalkableBlockedTarget(
         MapBakeGroupRole role,
-        List<PreviewMeshItem> terrain,
         List<PreviewMeshItem> roads,
         List<PreviewMeshItem> blockers)
     {
@@ -116,8 +128,60 @@ public static class MapSurfacePreviewOverlaySystem
                 return blockers;
             case MapBakeGroupRole.Terrain:
             default:
-                return terrain;
+                return roads;
         }
+    }
+
+    private static bool TryGetGridBounds(MapSurfaceAuthoring authoring, out Bounds bounds)
+    {
+        bounds = default;
+        GridAuthoringConfig grid = authoring != null ? authoring.GridConfig : null;
+        if (grid == null || grid.Width <= 0 || grid.Height <= 0 || grid.CellSize <= 0f)
+            return false;
+
+        Vector3 size = new(grid.Width * grid.CellSize, 0.01f, grid.Height * grid.CellSize);
+        Vector3 center = grid.Origin + new Vector3(size.x * 0.5f, 0f, size.z * 0.5f);
+        bounds = new Bounds(center, size);
+        return true;
+    }
+
+    private static PreviewMeshItem BuildGridPreviewItem(MapSurfaceAuthoring authoring, Bounds gridBounds)
+    {
+        GridAuthoringConfig grid = authoring.GridConfig;
+        Matrix4x4 localToWorld =
+            Matrix4x4.Translate(grid.Origin) *
+            Matrix4x4.Scale(new Vector3(grid.Width * grid.CellSize, 1f, grid.Height * grid.CellSize));
+
+        return new PreviewMeshItem(
+            GetGridPreviewMesh(),
+            localToWorld,
+            gridBounds,
+            MapBakeGroupRole.Terrain,
+            MapSurfaceMovementMask.AllGroundUnits |
+            MapSurfaceMovementMask.AirGrounded |
+            MapSurfaceMovementMask.BuildingPlacement);
+    }
+
+    private static Mesh GetGridPreviewMesh()
+    {
+        if (gridPreviewMesh != null)
+            return gridPreviewMesh;
+
+        gridPreviewMesh = new Mesh
+        {
+            name = "MapSurfaceGridPreviewQuad",
+            hideFlags = HideFlags.HideAndDontSave,
+            vertices = new[]
+            {
+                new Vector3(0f, 0f, 0f),
+                new Vector3(0f, 0f, 1f),
+                new Vector3(1f, 0f, 1f),
+                new Vector3(1f, 0f, 0f)
+            },
+            triangles = new[] { 0, 1, 2, 0, 2, 3 }
+        };
+        gridPreviewMesh.RecalculateBounds();
+        return gridPreviewMesh;
     }
 
     public static Color ResolveColorForCapture(
@@ -183,7 +247,8 @@ public static class MapSurfacePreviewOverlaySystem
         MapBakeGroupAuthoring ownerGroup,
         MapBakeGroupRole role,
         List<PreviewMeshItem> items,
-        int limit)
+        int limit,
+        Bounds gridBounds)
     {
         if (items.Count >= limit || filter == null || filter.sharedMesh == null)
             return;
@@ -198,8 +263,18 @@ public static class MapSurfacePreviewOverlaySystem
         Bounds bounds = renderer.bounds;
         if (bounds.size.sqrMagnitude <= 0.0001f)
             return;
+        if (!IntersectsGridXZ(bounds, gridBounds))
+            return;
 
         items.Add(new PreviewMeshItem(filter.sharedMesh, filter.transform.localToWorldMatrix, bounds, role, ownerGroup.MovementMask));
+    }
+
+    private static bool IntersectsGridXZ(Bounds itemBounds, Bounds gridBounds)
+    {
+        return itemBounds.max.x >= gridBounds.min.x &&
+               itemBounds.min.x <= gridBounds.max.x &&
+               itemBounds.max.z >= gridBounds.min.z &&
+               itemBounds.min.z <= gridBounds.max.z;
     }
 
     private static bool IsOwnedByGroup(MeshFilter filter, MapBakeGroupAuthoring ownerGroup)

@@ -425,7 +425,6 @@ public static class MapPrefabBakeAuthoringSetup
         SerializedObject serialized = new(authoring);
         serialized.FindProperty("bakedSurfaceData").objectReferenceValue = surfaceData;
         serialized.FindProperty("gridConfig").objectReferenceValue = gridConfig;
-        serialized.FindProperty("gridOrigin").vector3Value = Vector3.zero;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         EditorUtility.SetDirty(authoring);
     }

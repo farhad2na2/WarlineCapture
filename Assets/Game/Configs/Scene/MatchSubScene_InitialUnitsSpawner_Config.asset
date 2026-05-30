@@ -15,7 +15,7 @@ MonoBehaviour:
   blockerPrefab: {fileID: 1237425064649014, guid: f6662b2cec4426449a750eba281d5fb0, type: 3}
   factions:
   - factionId: 0
-    spawnCell: {x: 250, y: 250}
+    spawnCell: {x: 150, y: 250}
     units:
     - prefab: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
       count: 20

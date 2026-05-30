@@ -1147,9 +1147,9 @@ public sealed class GameplayArchitectureContractTests
 
         StringAssert.Contains("public sealed class MapSurfaceAuthoring : MonoBehaviour", mapAuthoring);
         StringAssert.Contains("[SerializeField] private GridAuthoringConfig gridConfig;", mapAuthoring);
-        StringAssert.Contains("[SerializeField] private Vector3 gridOrigin;", mapAuthoring);
         StringAssert.Contains("public GridAuthoringConfig GridConfig => gridConfig;", mapAuthoring);
-        StringAssert.Contains("public Vector3 GridOrigin => gridOrigin;", mapAuthoring);
+        Assert.IsFalse(mapAuthoring.Contains("gridOrigin", StringComparison.Ordinal), "MapSurfaceAuthoring must not duplicate grid origin; use GridAuthoringConfig.");
+        Assert.IsFalse(mapAuthoring.Contains("GridOrigin =>", StringComparison.Ordinal), "MapSurfaceAuthoring must not expose duplicate grid origin data.");
         Assert.IsFalse(mapAuthoring.Contains("GridAuthoring gridAuthoring", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep scene-object GridAuthoring references on the Map prefab.");
         Assert.IsFalse(mapAuthoring.Contains("terrainRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root terrain fields.");
         Assert.IsFalse(mapAuthoring.Contains("roadRoot", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep legacy single-root road fields.");
@@ -1310,6 +1310,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("group.IncludeInactiveChildren", editor);
         StringAssert.Contains("ResolveMovementMaskOrDefault", editor);
         StringAssert.Contains("MapBakeGroupRole.Blocker", editor);
+        StringAssert.Contains("(float3)grid.Origin", editor);
+        Assert.IsFalse(editor.Contains("authoring.GridOrigin", StringComparison.Ordinal), "Map surface bake requests must use GridAuthoringConfig origin, not duplicated authoring origin.");
         Assert.IsFalse(editor.Contains("authoring.TerrainRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy terrain root fields.");
         Assert.IsFalse(editor.Contains("authoring.RoadRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy road root fields.");
         Assert.IsFalse(editor.Contains("authoring.BridgeRoot", StringComparison.Ordinal), "Map surface inspector bake must use group classifications, not legacy bridge root fields.");
@@ -1339,9 +1341,12 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private const int MaxBlockerPreviewMeshes", preview);
         StringAssert.Contains("BuildWalkableBlockedPreviewMeshes", preview);
         StringAssert.Contains("ResolveWalkableBlockedTarget", preview);
-        StringAssert.Contains("combined.AddRange(terrain);", preview);
+        StringAssert.Contains("combined.Add(BuildGridPreviewItem", preview);
         StringAssert.Contains("combined.AddRange(blockers);", preview);
         StringAssert.Contains("combined.AddRange(roads);", preview);
+        StringAssert.Contains("TryGetGridBounds", preview);
+        StringAssert.Contains("grid.Origin", preview);
+        StringAssert.Contains("IntersectsGridXZ", preview);
         StringAssert.Contains("roads drawn last", preview);
         StringAssert.Contains("ResolveWalkableColor", preview);
         StringAssert.Contains("AllowsInfantryOnly", preview);

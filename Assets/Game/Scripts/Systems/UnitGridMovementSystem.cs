@@ -91,10 +91,11 @@ public partial struct UnitGridMoveJob : IJobEntity
             bool targetBlockedByOccupant = Occupied.IsSet(targetIndex);
             if (targetBlockedByOccupant)
             {
+                bool passableSelfOccupancy = IsOnlySelfOccupyingCell(entity, targetIndex);
                 bool passableGroupMember = groupedManualMove && IsOnlyManualMoveGroupMemberAtCell(entity, targetIndex);
                 bool passableVehicleSoftBlocker = isVehicle && IsVehicleSoftOccupiedTarget(targetIndex);
                 bool passableBoardingTransport = !isVehicle && IsBoardingTransportOccupancyCell(entity, targetIndex);
-                targetBlockedByOccupant = !passableGroupMember && !passableVehicleSoftBlocker && !passableBoardingTransport;
+                targetBlockedByOccupant = !passableSelfOccupancy && !passableGroupMember && !passableVehicleSoftBlocker && !passableBoardingTransport;
             }
 
             if (!targetOverlapsCurrentFootprint && targetBlockedByOccupant)
@@ -398,6 +399,25 @@ public partial struct UnitGridMoveJob : IJobEntity
         }
 
         return foundGroupMember;
+    }
+
+    private bool IsOnlySelfOccupyingCell(Entity entity, int cellIndex)
+    {
+        int2 cell = GridUtils.IndexToCell(cellIndex, Grid.Width);
+        bool foundSelf = false;
+        for (int i = 0; i < LiveUnitEntities.Length; i++)
+        {
+            int2 otherSize = LiveUnitFootprints[i].Size;
+            if (!UnitFootprintUtility.ContainsCell(LiveUnitGrids[i].Cell, otherSize, cell))
+                continue;
+
+            if (LiveUnitEntities[i] != entity)
+                return false;
+
+            foundSelf = true;
+        }
+
+        return foundSelf;
     }
 
     private bool CanVehicleOccupyCell(Entity entity, int2 candidateCell, int2 candidateSize, int2 currentCell, byte factionId, int sortKey)

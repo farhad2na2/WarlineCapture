@@ -35,6 +35,7 @@ public sealed class GameplayArchitectureContractTests
     private const string MapSurfaceQuerySystemPath = "Assets/Game/Scripts/Systems/MapSurfaceQuerySystem.cs";
     private const string MapSurfaceConnectionSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceConnectionSystem.cs";
     private const string MapSurfaceFlatEquivalentBootstrapSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceFlatEquivalentBootstrapSystem.cs";
+    private const string MapSurfaceRuntimeBootstrapSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceRuntimeBootstrapSystem.cs";
     private const string MapSurfaceSpawnGroundingSystemPath = "Assets/Game/Scripts/Systems/MapSurfaceSpawnGroundingSystem.cs";
     private const string UnitGroundingSystemPath = "Assets/Game/Scripts/Systems/UnitGroundingSystem.cs";
     private const string UnitSurfaceTrackingSystemPath = "Assets/Game/Scripts/Systems/UnitSurfaceTrackingSystem.cs";
@@ -879,9 +880,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private Camera worldCamera;", source);
         StringAssert.Contains("private Light directionalLight;", source);
         StringAssert.Contains("private Volume globalVolume;", source);
+        StringAssert.Contains("private MapSurfaceAuthoring mapSurfaceAuthoring;", source);
         StringAssert.Contains("private BuildingPlacementSystemConfig buildingPlacementConfig;", source);
         StringAssert.Contains("private RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig;", source);
         StringAssert.Contains("private GridAuthoringConfig runtimeGridConfig;", source);
+        StringAssert.Contains("public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;", source);
         StringAssert.Contains("private List<AIControllerConfig> aiControllerConfigs", source);
         Assert.IsFalse(source.Contains("runtimeGridWidth", StringComparison.Ordinal), "MatchSceneView must not duplicate grid width; use GridAuthoringConfig.");
         Assert.IsFalse(source.Contains("runtimeGridHeight", StringComparison.Ordinal), "MatchSceneView must not duplicate grid height; use GridAuthoringConfig.");
@@ -998,6 +1001,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public void Awake(MatchSceneView view, Transform ownerTransform, int ownerLayer)", source);
         StringAssert.Contains("public void BeginGameplay()", source);
         StringAssert.Contains("MatchSceneView", source);
+        StringAssert.Contains("private readonly MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem = new();", source);
+        StringAssert.Contains("_mapSurfaceRuntimeBootstrapSystem,", source);
+        StringAssert.Contains("MapSurfaceAuthoring,", source);
 
         string[] forbiddenTokens =
         {
@@ -1148,6 +1154,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public sealed class MapSurfaceAuthoring : MonoBehaviour", mapAuthoring);
         StringAssert.Contains("[SerializeField] private GridAuthoringConfig gridConfig;", mapAuthoring);
         StringAssert.Contains("public GridAuthoringConfig GridConfig => gridConfig;", mapAuthoring);
+        StringAssert.Contains("private sealed class Baker : Baker<MapSurfaceAuthoring>", mapAuthoring);
+        StringAssert.Contains("surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob)", mapAuthoring);
+        StringAssert.Contains("AddBlobAsset(ref surfaceBlob, out var _);", mapAuthoring);
+        StringAssert.Contains("AddComponent(entity, new MapSurfaceComponent", mapAuthoring);
+        StringAssert.Contains("AddComponent(entity, new MapSurfacePathCostComponent", mapAuthoring);
         Assert.IsFalse(mapAuthoring.Contains("gridOrigin", StringComparison.Ordinal), "MapSurfaceAuthoring must not duplicate grid origin; use GridAuthoringConfig.");
         Assert.IsFalse(mapAuthoring.Contains("GridOrigin =>", StringComparison.Ordinal), "MapSurfaceAuthoring must not expose duplicate grid origin data.");
         Assert.IsFalse(mapAuthoring.Contains("GridAuthoring gridAuthoring", StringComparison.Ordinal), "MapSurfaceAuthoring must not keep scene-object GridAuthoring references on the Map prefab.");
@@ -1277,6 +1288,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private static ushort PackHeight", dataAsset);
         StringAssert.Contains("private static short PackNormalComponent", dataAsset);
         StringAssert.Contains("new BinaryWriter(uncompressed, Encoding.UTF8, true)", dataAsset);
+        StringAssert.Contains("public bool TryCreateRuntimeBlobAsset(", dataAsset);
+        StringAssert.Contains("new GZipStream(compressed, CompressionMode.Decompress)", dataAsset);
+        StringAssert.Contains("TryReadSingleLayerGridPayload(reader, allocator, out surfaceBlob)", dataAsset);
+        StringAssert.Contains("TryReadFullPayload(reader, allocator, out surfaceBlob)", dataAsset);
+        StringAssert.Contains("builder.CreateBlobAssetReference<MapSurfaceBlob>(allocator)", dataAsset);
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceCell[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-cell YAML arrays.");
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceSample[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-sample YAML arrays.");
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceConnection[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-connection YAML arrays.");
@@ -1477,6 +1493,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("SlopeDegrees = 0f", source);
         StringAssert.Contains("blob.Dispose();", source);
         StringAssert.Contains("public struct MapSurfaceFlatEquivalentRuntimeBlobTag : IComponentData", components);
+        StringAssert.Contains("public struct MapSurfaceRuntimeBakedBlobTag : IComponentData", components);
 
         string[] forbiddenTokens =
         {
@@ -1496,6 +1513,41 @@ public sealed class GameplayArchitectureContractTests
     }
 
     [Test]
+    public void MapSurfaceRuntimeBootstrapMustProjectMainSceneBakedSurfaceBeforeFlatFallbackIsUsed()
+    {
+        Assert.IsTrue(File.Exists(MapSurfaceRuntimeBootstrapSystemPath), $"{MapSurfaceRuntimeBootstrapSystemPath} must project the Match scene MapSurfaceAuthoring data into ECS.");
+
+        string source = File.ReadAllText(MapSurfaceRuntimeBootstrapSystemPath);
+        string matchBootstrap = File.ReadAllText(MatchBootstrapSystemPath);
+        string matchScene = File.ReadAllText(MatchScenePath);
+
+        StringAssert.Contains("internal sealed class MapSurfaceRuntimeBootstrapSystem", source);
+        StringAssert.Contains("public bool Ensure(World world, MapSurfaceAuthoring authoring)", source);
+        StringAssert.Contains("surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob)", source);
+        StringAssert.Contains("ComponentType.ReadOnly<MapSurfaceComponent>()", source);
+        StringAssert.Contains("MapSurfaceRuntimeBakedBlobTag", source);
+        StringAssert.Contains("MapSurfaceFlatEquivalentRuntimeBlobTag", source);
+        StringAssert.Contains("entityManager.SetComponentData(surfaceEntity, new MapSurfaceComponent", source);
+        StringAssert.Contains("EnableSlopeCost = 0", source);
+        StringAssert.Contains("public void Dispose(World world)", source);
+        StringAssert.Contains("mapSurfaceRuntimeBootstrapSystem.Ensure(world, mapSurfaceAuthoring);", matchBootstrap);
+        StringAssert.Contains("mapSurfaceRuntimeBootstrapSystem?.Dispose(World.DefaultGameObjectInjectionWorld);", matchBootstrap);
+        StringAssert.Contains("mapSurfaceAuthoring: {fileID:", matchScene);
+
+        string[] forbiddenTokens =
+        {
+            "FindObjects",
+            "GameObject.Find",
+            "Resources.",
+            "Physics.",
+            "Collider"
+        };
+
+        foreach (string token in forbiddenTokens)
+            Assert.IsFalse(source.Contains(token, StringComparison.Ordinal), $"Runtime map-surface projection must use explicit scene references and not `{token}`.");
+    }
+
+    [Test]
     public void MapSurfaceUnitGroundingSystemMustApplyOnlySurfaceYAndPreservePathMovementOwnership()
     {
         Assert.IsTrue(File.Exists(UnitGroundingSystemPath), $"{UnitGroundingSystemPath} must own unit surface grounding.");
@@ -1512,10 +1564,14 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("[UpdateAfter(typeof(UnitGridMovementSystem))]", tracking);
         StringAssert.Contains("[UpdateBefore(typeof(UnitGroundingSystem))]", tracking);
         StringAssert.Contains("[WithNone(typeof(UnitAirMovement))]", tracking);
+        StringAssert.Contains("in LocalTransform transform", tracking);
+        StringAssert.Contains("TrySampleInterpolatedSurface(transform.Position, unitSurface, out MapSurfaceSample sample, out float height, out float3 normal)", tracking);
         StringAssert.Contains("unitSurface.SurfaceId = sample.SurfaceId;", tracking);
         StringAssert.Contains("unitSurface.LayerId = sample.LayerId;", tracking);
-        StringAssert.Contains("unitSurface.LastSampledHeight = sample.Height;", tracking);
-        StringAssert.Contains("unitSurface.LastSampledNormal = math.normalizesafe(sample.Normal, new float3(0f, 1f, 0f));", tracking);
+        StringAssert.Contains("unitSurface.LastSampledHeight = height;", tracking);
+        StringAssert.Contains("unitSurface.LastSampledNormal = normal;", tracking);
+        StringAssert.Contains("(worldPosition.x - Surface.GridOrigin.x) / Surface.CellSize - 0.5f", tracking);
+        StringAssert.Contains("(worldPosition.z - Surface.GridOrigin.z) / Surface.CellSize - 0.5f", tracking);
         StringAssert.Contains("public partial struct UnitGroundingSystem : ISystem", grounding);
         StringAssert.Contains("[UpdateAfter(typeof(UnitSurfaceTrackingSystem))]", grounding);
         StringAssert.Contains("[UpdateBefore(typeof(UnitMoveVisualStateSystem))]", grounding);
@@ -2080,9 +2136,11 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public partial struct UnitSurfaceTrackingSystem : ISystem", tracking);
         StringAssert.Contains("[UpdateAfter(typeof(UnitGridMovementSystem))]", tracking);
         StringAssert.Contains("[UpdateBefore(typeof(UnitGroundingSystem))]", tracking);
+        StringAssert.Contains("in LocalTransform transform", tracking);
+        StringAssert.Contains("TrySampleInterpolatedSurface(transform.Position, unitSurface, out MapSurfaceSample sample, out float height, out float3 normal)", tracking);
         StringAssert.Contains("unitSurface.SurfaceId = sample.SurfaceId;", tracking);
         StringAssert.Contains("unitSurface.LayerId = sample.LayerId;", tracking);
-        StringAssert.Contains("unitSurface.LastSampledHeight = sample.Height;", tracking);
+        StringAssert.Contains("unitSurface.LastSampledHeight = height;", tracking);
         StringAssert.Contains("if (unitSurface.HasSurface != 0)", tracking);
         StringAssert.Contains("candidate.SurfaceId != unitSurface.SurfaceId", tracking);
         StringAssert.Contains("candidate.LayerId != unitSurface.LayerId", tracking);
@@ -2092,7 +2150,7 @@ public sealed class GameplayArchitectureContractTests
 
         Assert.IsFalse(grounding.Contains("SurfaceId = sample.SurfaceId", StringComparison.Ordinal), "Grounding must not own surface-id tracking after step 25.");
         Assert.IsFalse(grounding.Contains("LayerId = sample.LayerId", StringComparison.Ordinal), "Grounding must not own layer tracking after step 25.");
-        Assert.IsFalse(tracking.Contains("LocalTransform", StringComparison.Ordinal), "Surface tracking must not apply transforms.");
+        Assert.IsFalse(tracking.Contains("transform.Position =", StringComparison.Ordinal), "Surface tracking must read current X/Z but must not apply transforms.");
         Assert.IsFalse(tracking.Contains("UnitPathfindingSystem", StringComparison.Ordinal), "Surface tracking must not depend on pathfinding coordinator.");
     }
 

@@ -17,6 +17,7 @@ internal sealed class MatchBootstrapSystem
     private readonly MenuStartupSystem _menuStartupSystem = new();
     private readonly GameplayFeatureStartupSystem _gameplayFeatureStartupSystem = new();
     private readonly RuntimeGridBootstrapSystem _runtimeGridBootstrapSystem = new();
+    private readonly MapSurfaceRuntimeBootstrapSystem _mapSurfaceRuntimeBootstrapSystem = new();
     private readonly CustomGameStartupSystem _customGameStartupSystem = new();
     private readonly MatchSceneReferenceSystem _matchSceneReferenceSystem = new();
     private readonly PerformanceDiagnosticsReferenceSystem _performanceDiagnosticsReferenceSystem = new();
@@ -53,6 +54,7 @@ internal sealed class MatchBootstrapSystem
     private FactionVisualSettingsConfig FactionVisualConfig => MatchScene != null ? MatchScene.FactionVisualConfig : null;
     private PrefabPreviewCameraConfig PrefabPreviewCameraConfig => MatchScene != null ? MatchScene.PrefabPreviewCameraConfig : null;
     private GridAuthoringConfig RuntimeGridConfig => MatchScene != null ? MatchScene.RuntimeGridConfig : null;
+    private MapSurfaceAuthoring MapSurfaceAuthoring => MatchScene != null ? MatchScene.MapSurfaceAuthoring : null;
 
     public RuntimeGridBlockerSystem RuntimeGridBlockers { get; private set; }
     public RuntimeDecorationSpawnerSystem RuntimeDecorations { get; private set; }
@@ -208,7 +210,9 @@ internal sealed class MatchBootstrapSystem
         ProjectRuntimeStartupConfig(
             World.DefaultGameObjectInjectionWorld,
             _runtimeGridBootstrapSystem,
+            _mapSurfaceRuntimeBootstrapSystem,
             RuntimeGridConfig,
+            MapSurfaceAuthoring,
             _initialFactionSpawnCellSystem,
             BuildingPlacementConfig,
             _aiStartupSystem,
@@ -333,6 +337,7 @@ internal sealed class MatchBootstrapSystem
             RuntimeDecorations,
             RuntimeGridBlockers,
             RuntimeCity,
+            _mapSurfaceRuntimeBootstrapSystem,
             _runtimeCameraReferenceSystem,
             _performanceDiagnosticsSystem);
 
@@ -454,7 +459,9 @@ internal sealed class MatchBootstrapSystem
     public void ProjectRuntimeStartupConfig(
         World world,
         RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
+        MapSurfaceRuntimeBootstrapSystem mapSurfaceRuntimeBootstrapSystem,
         GridAuthoringConfig runtimeGridConfig,
+        MapSurfaceAuthoring mapSurfaceAuthoring,
         InitialFactionSpawnCellSystem initialFactionSpawnCellSystem,
         BuildingPlacementSystemConfig buildingPlacementConfig,
         AIStartupSystem aiStartupSystem,
@@ -472,6 +479,7 @@ internal sealed class MatchBootstrapSystem
             runtimeGridConfig.Height,
             runtimeGridConfig.CellSize,
             runtimeGridConfig.Origin);
+        mapSurfaceRuntimeBootstrapSystem.Ensure(world, mapSurfaceAuthoring);
         initialFactionSpawnCellSystem.Configure(
             world,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
@@ -578,6 +586,7 @@ internal sealed class MatchBootstrapSystem
         RuntimeDecorationSpawnerSystem runtimeDecorations,
         RuntimeGridBlockerSystem runtimeGridBlockers,
         RuntimeCityCompositionSystem runtimeCity,
+        MapSurfaceRuntimeBootstrapSystem mapSurfaceRuntimeBootstrapSystem,
         RuntimeCameraReferenceSystem runtimeCameraReferenceSystem,
         PerformanceDiagnosticsSystem performanceDiagnosticsSystem)
     {
@@ -594,6 +603,7 @@ internal sealed class MatchBootstrapSystem
         runtimeDecorations?.Dispose();
         runtimeGridBlockers?.Dispose();
         runtimeCity?.Dispose();
+        mapSurfaceRuntimeBootstrapSystem?.Dispose(World.DefaultGameObjectInjectionWorld);
         runtimeCameraReferenceSystem?.ClearWorldCamera();
         ReleasePerformanceDiagnostics(performanceDiagnosticsSystem);
         SharedPrefabPreviewCache.ReleaseAll();
@@ -648,6 +658,7 @@ internal sealed class MatchBootstrapSystem
         EnsureBuffer<BuildingFactionUnitProductionRequest>(em, entity);
         EnsureBuffer<BuildingFactionResourceSellRequest>(em, entity);
         EnsureBuffer<BuildingRuntimeSpawnRequest>(em, entity);
+        EnsureBuffer<BuildingRuntimeSurfaceOverlay>(em, entity);
     }
 
     private static void EnsureBuffer<T>(EntityManager em, Entity entity)

@@ -19,11 +19,28 @@ public struct MapSurfaceFlatEquivalentRuntimeBlobTag : IComponentData
 {
 }
 
+public struct MapSurfaceRuntimeBakedBlobTag : IComponentData
+{
+}
+
 public struct MapSurfacePathCostComponent : IComponentData
 {
     public byte EnableSlopeCost;
     public int GentleSlopeTraversalCost;
     public int SteepSlopeTraversalCost;
+}
+
+public struct MapSurfaceSceneOverlay : IBufferElementData
+{
+    public float3 Center;
+    public quaternion Rotation;
+    public float2 HalfExtents;
+    public float Height;
+    public float3 Normal;
+    public MapSurfaceType SurfaceType;
+    public MapSurfaceMovementMask MovementMask;
+    public MapSurfaceFlags Flags;
+    public int LayerId;
 }
 
 public struct MapSurfaceDiagnosticsComponent : IComponentData

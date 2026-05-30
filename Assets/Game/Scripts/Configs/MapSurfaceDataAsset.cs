@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -9,7 +10,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MapSurfaceData", menuName = "WarlineCapture/Map Surface Data")]
 public sealed class MapSurfaceDataAsset : ScriptableObject
 {
-    private const int CurrentPayloadVersion = 2;
+    private const int CurrentPayloadVersion = 3;
     private const byte FullPayloadEncoding = 0;
     private const byte SingleLayerGridPayloadEncoding = 1;
     private const float PreferredHeightQuantizationStep = 0.01f;
@@ -37,6 +38,50 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
     public int UncompressedPayloadBytes => uncompressedPayloadBytes;
     public int CompressedPayloadBytes => compressedSurfacePayload?.Length ?? 0;
     public bool HasCompactPayload => compressedSurfacePayload != null && compressedSurfacePayload.Length > 0;
+
+    public bool TryCreateRuntimeBlobAsset(
+        Allocator allocator,
+        out BlobAssetReference<MapSurfaceBlob> surfaceBlob)
+    {
+        surfaceBlob = default;
+
+        if (!HasCompactPayload || cellSize <= 0f || dimensions.x <= 0 || dimensions.y <= 0)
+            return false;
+
+        try
+        {
+            using var compressed = new MemoryStream(compressedSurfacePayload);
+            using var gzip = new GZipStream(compressed, CompressionMode.Decompress);
+            using var uncompressed = new MemoryStream();
+            gzip.CopyTo(uncompressed);
+            uncompressed.Position = 0;
+
+            using var reader = new BinaryReader(uncompressed, Encoding.UTF8, true);
+            int version = reader.ReadInt32();
+            if (version == 1)
+                return TryReadFullPayload(reader, allocator, out surfaceBlob);
+
+            if (version != 2 && version != CurrentPayloadVersion)
+                return false;
+
+            byte encoding = reader.ReadByte();
+            return encoding switch
+            {
+                SingleLayerGridPayloadEncoding => TryReadSingleLayerGridPayload(reader, version, allocator, out surfaceBlob),
+                FullPayloadEncoding => TryReadFullPayload(reader, allocator, out surfaceBlob),
+                _ => false
+            };
+        }
+        catch (Exception exception)
+        {
+            if (surfaceBlob.IsCreated)
+                surfaceBlob.Dispose();
+
+            surfaceBlob = default;
+            Debug.LogError($"Failed to load baked map surface data '{name}': {exception.Message}", this);
+            return false;
+        }
+    }
 
     public void ConfigureFlatEquivalent(Vector3 gridOrigin, float cellSize, Vector2Int dimensions)
     {
@@ -128,9 +173,9 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
         {
             MapSurfaceSample sample = blob.Samples[i];
             writer.Write(PackHeight(sample.Height, minHeight, heightStep));
-            writer.Write(PackNormalComponent(sample.Normal.x));
-            writer.Write(PackNormalComponent(sample.Normal.y));
-            writer.Write(PackNormalComponent(sample.Normal.z));
+            writer.Write(PackNormalByte(sample.Normal.x));
+            writer.Write(PackNormalByte(sample.Normal.y));
+            writer.Write(PackNormalByte(sample.Normal.z));
             writer.Write((short)Mathf.Clamp(sample.LayerId, short.MinValue, short.MaxValue));
             writer.Write((byte)sample.SurfaceType);
             writer.Write((ushort)sample.MovementMask);
@@ -236,5 +281,173 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
     private static short PackNormalComponent(float value)
     {
         return (short)Mathf.Clamp(Mathf.RoundToInt(Mathf.Clamp(value, -1f, 1f) * short.MaxValue), short.MinValue, short.MaxValue);
+    }
+
+    private static sbyte PackNormalByte(float value)
+    {
+        return (sbyte)Mathf.Clamp(Mathf.RoundToInt(Mathf.Clamp(value, -1f, 1f) * sbyte.MaxValue), sbyte.MinValue, sbyte.MaxValue);
+    }
+
+    private bool TryReadSingleLayerGridPayload(
+        BinaryReader reader,
+        int payloadVersion,
+        Allocator allocator,
+        out BlobAssetReference<MapSurfaceBlob> surfaceBlob)
+    {
+        surfaceBlob = default;
+
+        int cellCount = reader.ReadInt32();
+        int sampleCount = reader.ReadInt32();
+        int serializedConnectionCount = reader.ReadInt32();
+        int width = reader.ReadInt32();
+        int height = reader.ReadInt32();
+        float minHeight = reader.ReadSingle();
+        float heightStep = reader.ReadSingle();
+
+        if (width != dimensions.x ||
+            height != dimensions.y ||
+            cellCount != width * height ||
+            sampleCount != cellCount ||
+            serializedConnectionCount != 0)
+            return false;
+
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref MapSurfaceBlob root = ref builder.ConstructRoot<MapSurfaceBlob>();
+        root.GridOrigin = ToFloat3(gridOrigin);
+        root.CellSize = cellSize;
+        root.Dimensions = new int2(width, height);
+
+        BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
+        BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, sampleCount);
+        builder.Allocate(ref root.Connections, 0);
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            ushort packedHeight = reader.ReadUInt16();
+            float3 normal = payloadVersion >= 3
+                ? new float3(
+                    UnpackNormalByte(reader.ReadSByte()),
+                    UnpackNormalByte(reader.ReadSByte()),
+                    UnpackNormalByte(reader.ReadSByte()))
+                : new float3(
+                    UnpackNormalComponent(reader.ReadInt16()),
+                    UnpackNormalComponent(reader.ReadInt16()),
+                    UnpackNormalComponent(reader.ReadInt16()));
+            normal = math.normalizesafe(normal, new float3(0f, 1f, 0f));
+
+            int x = i % width;
+            int y = i / width;
+            cells[i] = new MapSurfaceCell
+            {
+                FirstSurfaceIndex = i,
+                SurfaceCount = 1,
+                InlineSurfaceIndex = (ushort)i
+            };
+            samples[i] = new MapSurfaceSample
+            {
+                Cell = new int2(x, y),
+                SurfaceId = i,
+                LayerId = reader.ReadInt16(),
+                Height = minHeight + packedHeight * heightStep,
+                Normal = normal,
+                SlopeDegrees = CalculateSlopeDegrees(normal),
+                SurfaceType = (MapSurfaceType)reader.ReadByte(),
+                MovementMask = (MapSurfaceMovementMask)reader.ReadUInt16(),
+                Flags = (MapSurfaceFlags)reader.ReadUInt16(),
+                FirstConnectionIndex = 0,
+                ConnectionCount = 0
+            };
+        }
+
+        surfaceBlob = builder.CreateBlobAssetReference<MapSurfaceBlob>(allocator);
+        return surfaceBlob.IsCreated;
+    }
+
+    private bool TryReadFullPayload(
+        BinaryReader reader,
+        Allocator allocator,
+        out BlobAssetReference<MapSurfaceBlob> surfaceBlob)
+    {
+        surfaceBlob = default;
+
+        int cellCount = reader.ReadInt32();
+        int sampleCount = reader.ReadInt32();
+        int serializedConnectionCount = reader.ReadInt32();
+        if (cellCount <= 0 || sampleCount <= 0 || serializedConnectionCount < 0)
+            return false;
+
+        using var builder = new BlobBuilder(Allocator.Temp);
+        ref MapSurfaceBlob root = ref builder.ConstructRoot<MapSurfaceBlob>();
+        root.GridOrigin = ToFloat3(gridOrigin);
+        root.CellSize = cellSize;
+        root.Dimensions = new int2(dimensions.x, dimensions.y);
+
+        BlobBuilderArray<MapSurfaceCell> cells = builder.Allocate(ref root.Cells, cellCount);
+        BlobBuilderArray<MapSurfaceSample> samples = builder.Allocate(ref root.Samples, sampleCount);
+        BlobBuilderArray<MapSurfaceConnection> connections = builder.Allocate(ref root.Connections, serializedConnectionCount);
+
+        for (int i = 0; i < cellCount; i++)
+        {
+            cells[i] = new MapSurfaceCell
+            {
+                FirstSurfaceIndex = reader.ReadInt32(),
+                SurfaceCount = reader.ReadUInt16(),
+                InlineSurfaceIndex = reader.ReadUInt16()
+            };
+        }
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            samples[i] = new MapSurfaceSample
+            {
+                Cell = new int2(reader.ReadInt32(), reader.ReadInt32()),
+                SurfaceId = reader.ReadInt32(),
+                LayerId = reader.ReadInt32(),
+                Height = reader.ReadSingle(),
+                Normal = new float3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()),
+                SlopeDegrees = reader.ReadSingle(),
+                SurfaceType = (MapSurfaceType)reader.ReadInt32(),
+                MovementMask = (MapSurfaceMovementMask)reader.ReadInt32(),
+                Flags = (MapSurfaceFlags)reader.ReadInt32(),
+                FirstConnectionIndex = reader.ReadInt32(),
+                ConnectionCount = reader.ReadUInt16()
+            };
+        }
+
+        for (int i = 0; i < serializedConnectionCount; i++)
+        {
+            connections[i] = new MapSurfaceConnection
+            {
+                FromSurfaceId = reader.ReadInt32(),
+                ToSurfaceId = reader.ReadInt32(),
+                Direction = new int2(reader.ReadInt32(), reader.ReadInt32()),
+                ConnectionType = (MapSurfaceConnectionType)reader.ReadInt32(),
+                MovementMask = (MapSurfaceMovementMask)reader.ReadInt32()
+            };
+        }
+
+        surfaceBlob = builder.CreateBlobAssetReference<MapSurfaceBlob>(allocator);
+        return surfaceBlob.IsCreated;
+    }
+
+    private static float3 ToFloat3(Vector3 value)
+    {
+        return new float3(value.x, value.y, value.z);
+    }
+
+    private static float UnpackNormalComponent(short value)
+    {
+        return Mathf.Clamp(value / (float)short.MaxValue, -1f, 1f);
+    }
+
+    private static float UnpackNormalByte(sbyte value)
+    {
+        return Mathf.Clamp(value / (float)sbyte.MaxValue, -1f, 1f);
+    }
+
+    private static float CalculateSlopeDegrees(float3 normal)
+    {
+        float y = math.clamp(math.normalizesafe(normal, new float3(0f, 1f, 0f)).y, -1f, 1f);
+        return math.degrees(math.acos(y));
     }
 }

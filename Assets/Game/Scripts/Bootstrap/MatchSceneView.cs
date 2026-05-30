@@ -16,6 +16,7 @@ public sealed class MatchSceneView : MonoBehaviour
     [SerializeField] private Volume globalVolume;
     [SerializeField] private CombinedMeshBaker decorationCombinedMeshBaker;
     [SerializeField] private Transform decorationRoot;
+    [SerializeField] private MapSurfaceAuthoring mapSurfaceAuthoring;
     [SerializeField] private GameObject[] legacyVisualRootsDisabledForM01 = Array.Empty<GameObject>();
 
     [Header("Configs")]
@@ -40,6 +41,7 @@ public sealed class MatchSceneView : MonoBehaviour
     public Volume GlobalVolume => globalVolume;
     public CombinedMeshBaker DecorationCombinedMeshBaker => decorationCombinedMeshBaker;
     public Transform DecorationRoot => decorationRoot != null ? decorationRoot : (decorationCombinedMeshBaker != null ? decorationCombinedMeshBaker.transform : null);
+    public MapSurfaceAuthoring MapSurfaceAuthoring => mapSurfaceAuthoring;
     public GameObject[] LegacyVisualRootsDisabledForM01 => legacyVisualRootsDisabledForM01;
 
     public RTSSelectionSystemConfig RtsSelectionConfig => rtsSelectionConfig;

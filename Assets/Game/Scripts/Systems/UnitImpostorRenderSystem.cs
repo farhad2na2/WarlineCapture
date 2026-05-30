@@ -21,7 +21,6 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
     private const int DirectionalImpostorCount = 8;
     private const float CharacterImpostorWidthScale = 1.65f;
     private const float CharacterImpostorHeightScale = 1.65f;
-    private const float CharacterImpostorHeightOffset = 0f;
     private const float CharacterTacticalBillboardStartCameraY = 80f;
     private const float CharacterTacticalBillboardFullCameraY = 200f;
     private const float CharacterTacticalBillboardMaxScale = 16f;
@@ -32,6 +31,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         public Material[] DirectionMaterials;
         public float Width;
         public float Height;
+        public float GroundAnchorOffset;
     }
 
     private sealed class BatchState
@@ -305,9 +305,9 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
                 position,
                 cameraPosition,
                 _camera.transform.rotation);
-            Vector3 drawPosition = new(position.x, position.y + style.Height * CharacterImpostorHeightOffset, position.z);
             float tacticalScale = isCharacter ? ResolveCharacterTacticalScale(cameraPosition.y) : 1f;
             Vector3 scale = new(style.Width * tacticalScale, style.Height * tacticalScale, 1f);
+            Vector3 drawPosition = new(position.x, position.y - (style.GroundAnchorOffset * tacticalScale), position.z);
             Matrix4x4 matrix = Matrix4x4.TRS(drawPosition, rotation, scale);
             AddToBatch(material, matrix);
             candidateCount++;
@@ -471,7 +471,10 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         {
             DirectionMaterials = materials,
             Width = hasAtlas ? width : (IsCharacterPrefab(prefab) ? width * CharacterImpostorWidthScale : width),
-            Height = hasAtlas ? height : (IsCharacterPrefab(prefab) ? height * CharacterImpostorHeightScale : height)
+            Height = hasAtlas ? height : (IsCharacterPrefab(prefab) ? height * CharacterImpostorHeightScale : height),
+            GroundAnchorOffset = hasAtlas && IsCharacterPrefab(prefab)
+                ? height * atlasEntry.GroundAnchorNormalized
+                : 0f
         };
     }
 
@@ -481,7 +484,8 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
         {
             DirectionMaterials = new[] { _fallbackMaterial },
             Width = BaseCharacterWidth,
-            Height = BaseCharacterHeight
+            Height = BaseCharacterHeight,
+            GroundAnchorOffset = 0f
         };
     }
 

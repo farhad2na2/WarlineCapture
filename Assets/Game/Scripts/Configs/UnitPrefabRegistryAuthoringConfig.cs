@@ -4,12 +4,15 @@ using UnityEngine;
 [System.Serializable]
 public sealed class UnitImpostorAtlasEntry
 {
+    private const float DefaultGroundAnchorNormalized = 0.25f;
+
     [SerializeField] private GameObject prefab;
     [SerializeField] private Texture2D atlas;
     [SerializeField, Min(1)] private int directionCount = 8;
     [SerializeField, Min(1)] private int columns = 4;
     [SerializeField, Min(1)] private int rows = 2;
     [SerializeField] private Vector2 size = new(1f, 1.8f);
+    [SerializeField, Range(0f, 0.45f)] private float groundAnchorNormalized = DefaultGroundAnchorNormalized;
 
     public GameObject Prefab => prefab;
     public Texture2D Atlas => atlas;
@@ -17,6 +20,9 @@ public sealed class UnitImpostorAtlasEntry
     public int Columns => Mathf.Max(1, columns);
     public int Rows => Mathf.Max(1, rows);
     public Vector2 Size => size;
+    public float GroundAnchorNormalized => groundAnchorNormalized > 0f
+        ? Mathf.Clamp(groundAnchorNormalized, 0f, 0.45f)
+        : DefaultGroundAnchorNormalized;
 }
 
 [CreateAssetMenu(menuName = "WarlineCapture/Config/Unit Prefab Registry")]

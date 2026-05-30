@@ -4,7 +4,9 @@ using UnityEngine;
 
 public sealed class MapSurfaceCommandTargetSystem
 {
+    private const int TraversableTargetSearchRadius = 24;
     private readonly MapSurfaceQuerySystem _querySystem = new();
+    private readonly MapSurfaceSlopeClassificationSystem _slopeClassificationSystem = new();
 
     public readonly struct Result
     {
@@ -56,17 +58,22 @@ public sealed class MapSurfaceCommandTargetSystem
         }
 
         TryResolvePreferredSelectionLayer(entityManager, selectionStateSystem, out int preferredSurfaceId, out int preferredLayerId);
+        MapSurfaceMovementMask movementMask = ResolveSelectedMovementMask(entityManager, selectionStateSystem);
         if (TryResolveSurfaceHit(
                 surfaceContext,
                 grid,
                 ray,
                 fallbackCell,
+                movementMask,
                 preferredSurfaceId,
                 preferredLayerId,
                 out result))
         {
             return true;
         }
+
+        if (TryResolveNearestTraversableTarget(surfaceContext, grid, fallbackCell, movementMask, out result))
+            return true;
 
         result = Result.FlatFallback(fallbackCell, fallbackWorldPoint);
         return true;
@@ -91,6 +98,7 @@ public sealed class MapSurfaceCommandTargetSystem
         GridConfig grid,
         Ray ray,
         int2 fallbackCell,
+        MapSurfaceMovementMask movementMask,
         int preferredSurfaceId,
         int preferredLayerId,
         out Result result)
@@ -113,6 +121,7 @@ public sealed class MapSurfaceCommandTargetSystem
                 for (int i = 0; i < range.SurfaceCount; i++)
                 {
                     if (!_querySystem.TryGetSurfaceInRange(context, range, i, out MapSurfaceSample sample) ||
+                        !CanTraverse(sample, movementMask) ||
                         !TryIntersectSurface(grid, ray, sample, out Vector3 worldPoint, out float distance))
                     {
                         continue;
@@ -139,6 +148,65 @@ public sealed class MapSurfaceCommandTargetSystem
         }
 
         return found;
+    }
+
+    private bool TryResolveNearestTraversableTarget(
+        MapSurfaceQuerySystem.Context context,
+        GridConfig grid,
+        int2 originCell,
+        MapSurfaceMovementMask movementMask,
+        out Result result)
+    {
+        result = default;
+        if (movementMask == MapSurfaceMovementMask.None)
+            return false;
+
+        if (TryResolveTraversableCell(context, grid, originCell, movementMask, out result))
+            return true;
+
+        for (int radius = 1; radius <= TraversableTargetSearchRadius; radius++)
+        {
+            int ringLen = math.max(1, 8 * radius);
+            for (int step = 0; step < ringLen; step++)
+            {
+                int2 candidate = originCell + SquareRingOffset(radius, step);
+                if (TryResolveTraversableCell(context, grid, candidate, movementMask, out result))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool TryResolveTraversableCell(
+        MapSurfaceQuerySystem.Context context,
+        GridConfig grid,
+        int2 cell,
+        MapSurfaceMovementMask movementMask,
+        out Result result)
+    {
+        result = default;
+        if (!GridUtils.InBounds(cell, grid.Width, grid.Height) ||
+            !_querySystem.TryGetSurfaceRange(context, cell, out MapSurfaceCellSurfaceRange range))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < range.SurfaceCount; i++)
+        {
+            if (!_querySystem.TryGetSurfaceInRange(context, range, i, out MapSurfaceSample sample) ||
+                !CanTraverse(sample, movementMask))
+            {
+                continue;
+            }
+
+            Vector3 worldPoint = GridUtils.CellToWorldCenter(grid, cell);
+            worldPoint.y = sample.Height;
+            result = Result.SurfaceHit(cell, worldPoint, sample);
+            return true;
+        }
+
+        return false;
     }
 
     private static bool TryIntersectSurface(GridConfig grid, Ray ray, MapSurfaceSample sample, out Vector3 worldPoint, out float distance)
@@ -200,5 +268,81 @@ public sealed class MapSurfaceCommandTargetSystem
         surfaceId = surface.SurfaceId;
         layerId = surface.LayerId;
         return true;
+    }
+
+    private MapSurfaceMovementMask ResolveSelectedMovementMask(
+        EntityManager entityManager,
+        SelectionStateSystem selectionStateSystem)
+    {
+        if (selectionStateSystem == null)
+            return MapSurfaceMovementMask.Infantry;
+
+        bool hasGroundUnit = false;
+        bool hasVehicle = false;
+        if (TryReadMovement(entityManager, selectionStateSystem.FocusedUnit, out bool focusedVehicle))
+        {
+            hasGroundUnit = true;
+            hasVehicle |= focusedVehicle;
+        }
+
+        System.Collections.Generic.List<Entity> selected = selectionStateSystem.CachedSelectedMoveEntities;
+        for (int i = 0; i < selected.Count; i++)
+        {
+            if (!TryReadMovement(entityManager, selected[i], out bool vehicle))
+                continue;
+
+            hasGroundUnit = true;
+            hasVehicle |= vehicle;
+        }
+
+        if (!hasGroundUnit)
+            return MapSurfaceMovementMask.Infantry;
+
+        return hasVehicle
+            ? MapSurfaceMovementMask.WheeledVehicle | MapSurfaceMovementMask.TrackedVehicle
+            : MapSurfaceMovementMask.Infantry;
+    }
+
+    private static bool TryReadMovement(EntityManager entityManager, Entity entity, out bool isVehicle)
+    {
+        isVehicle = false;
+        if (entity == Entity.Null ||
+            !entityManager.Exists(entity) ||
+            entityManager.HasComponent<UnitAirMovement>(entity) ||
+            !entityManager.HasComponent<UnitFootprint>(entity) ||
+            !entityManager.HasComponent<UnitMovementBehavior>(entity))
+        {
+            return false;
+        }
+
+        UnitFootprint footprint = entityManager.GetComponentData<UnitFootprint>(entity);
+        UnitMovementBehavior movementBehavior = entityManager.GetComponentData<UnitMovementBehavior>(entity);
+        isVehicle = UnitVehicleMovementUtility.IsVehicle(footprint, movementBehavior);
+        return true;
+    }
+
+    private bool CanTraverse(MapSurfaceSample sample, MapSurfaceMovementMask movementMask)
+    {
+        return _slopeClassificationSystem.AllowsMovement(sample, movementMask);
+    }
+
+    private static int2 SquareRingOffset(int radius, int step)
+    {
+        int topLen = (2 * radius) + 1;
+        if (step < topLen)
+            return new int2(-radius + step, radius);
+
+        step -= topLen;
+        int rightLen = 2 * radius;
+        if (step < rightLen)
+            return new int2(radius, (radius - 1) - step);
+
+        step -= rightLen;
+        int bottomLen = 2 * radius;
+        if (step < bottomLen)
+            return new int2((radius - 1) - step, -radius);
+
+        step -= bottomLen;
+        return new int2(-radius, (-radius + 1) + step);
     }
 }

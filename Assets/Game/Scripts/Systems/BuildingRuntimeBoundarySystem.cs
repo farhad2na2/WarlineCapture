@@ -11,6 +11,7 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private readonly List<byte> _factionIds = new();
     private readonly List<int> _pendingSpawnRequestIndices = new();
+    private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
     private float _nextPublishAt;
     private bool _forcePublishNextUpdate;
 
@@ -296,6 +297,7 @@ public sealed class BuildingRuntimeBoundarySystem
         PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
         PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
         PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
+        _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
     }
 
     private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)

@@ -58,6 +58,18 @@ public struct BuildingFactionProductionSpawnPointReadModel : IBufferElementData
     public float3 WorldPosition;
 }
 
+public struct BuildingRuntimeSurfaceOverlay : IBufferElementData
+{
+    public int BuildingRuntimeId;
+    public float3 Center;
+    public quaternion Rotation;
+    public float2 HalfExtents;
+    public float Height;
+    public float3 Normal;
+    public MapSurfaceType SurfaceType;
+    public MapSurfaceMovementMask MovementMask;
+}
+
 public struct BuildingFactionUnitProductionRequest : IBufferElementData
 {
     public const byte Pending = 0;

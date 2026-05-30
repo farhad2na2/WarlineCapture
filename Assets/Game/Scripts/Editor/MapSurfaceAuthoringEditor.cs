@@ -5,6 +5,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +13,31 @@ using UnityEngine.SceneManagement;
 public sealed class MapSurfaceAuthoringEditor : Editor
 {
     private const string DefaultAssetDirectory = "Assets/Game/Data/MapSurfaces";
+    private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private static MapSurfaceEditorOverlaySystem.OverlayMode previewMode = MapSurfaceEditorOverlaySystem.OverlayMode.Walkable;
+
+    [MenuItem("WarlineCapture/Map Surface/Bake Active Scene Surface Data")]
+    public static void BakeActiveSceneSurfaceData()
+    {
+        if (!TryFindActiveSceneAuthoring(out MapSurfaceAuthoring authoring))
+            throw new MissingReferenceException("No MapSurfaceAuthoring found in the active scene.");
+
+        if (authoring.BakedSurfaceData == null)
+            throw new MissingReferenceException($"MapSurfaceAuthoring '{authoring.name}' has no baked surface data asset assigned.");
+
+        BakeAuthoringToAsset(authoring, authoring.BakedSurfaceData, allowOversizeDialog: false);
+    }
+
+    [MenuItem("WarlineCapture/Map Surface/Bake Match Scene Surface Data")]
+    public static void BakeMatchSceneSurfaceData()
+    {
+        if (!File.Exists(MatchScenePath))
+            throw new FileNotFoundException($"Match scene not found at {MatchScenePath}.");
+
+        EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+        BakeActiveSceneSurfaceData();
+        EditorSceneManager.SaveOpenScenes();
+    }
 
     public override void OnInspectorGUI()
     {
@@ -50,6 +75,11 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         if (asset == null)
             return;
 
+        BakeAuthoringToAsset(authoring, asset, allowOversizeDialog: true);
+    }
+
+    private static void BakeAuthoringToAsset(MapSurfaceAuthoring authoring, MapSurfaceDataAsset asset, bool allowOversizeDialog)
+    {
         if (!TryBuildSurfaceBlob(
                 authoring,
                 out MapSurfaceBakeRequest request,
@@ -71,11 +101,17 @@ public sealed class MapSurfaceAuthoringEditor : Editor
             int limitMb = Mathf.CeilToInt(MapSurfaceDataAsset.GitFriendlyPayloadByteLimit / (1024f * 1024f));
             UnityEngine.Object.DestroyImmediate(previewAsset);
             surfaceBlob.Dispose();
-            EditorUtility.DisplayDialog(
-                "Map Surface Bake",
+            string message =
                 $"Bake produced a compact payload of {payloadMb} MB, above the {limitMb} MB Git-friendly limit. " +
-                "Use a lower-resolution bake, chunked surface assets, or a sparse authoring pass before saving.",
-                "OK");
+                "Use a lower-resolution bake, chunked surface assets, or a sparse authoring pass before saving.";
+            if (allowOversizeDialog)
+            {
+                EditorUtility.DisplayDialog("Map Surface Bake", message, "OK");
+            }
+            else
+            {
+                Debug.LogWarning($"[MapSurfaceBake] {message}");
+            }
             return;
         }
 
@@ -96,6 +132,24 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         Debug.Log(
             $"[MapSurfaceBake] Baked {asset.SurfaceCount} surfaces, {asset.ConnectionCount} connections " +
             $"to {AssetDatabase.GetAssetPath(asset)} compactBytes={asset.CompressedPayloadBytes} uncompressedBytes={asset.UncompressedPayloadBytes}");
+    }
+
+    private static bool TryFindActiveSceneAuthoring(out MapSurfaceAuthoring authoring)
+    {
+        authoring = null;
+        Scene scene = SceneManager.GetActiveScene();
+        if (!scene.isLoaded)
+            return false;
+
+        GameObject[] roots = scene.GetRootGameObjects();
+        for (int i = 0; i < roots.Length; i++)
+        {
+            authoring = roots[i].GetComponentInChildren<MapSurfaceAuthoring>(true);
+            if (authoring != null)
+                return true;
+        }
+
+        return false;
     }
 
     private static bool TryBuildSurfaceBlob(
@@ -269,6 +323,10 @@ public sealed class MapSurfaceAuthoringEditor : Editor
                 movementMask = ResolveMovementMaskOrDefault(movementMask, MapSurfaceMovementMask.AllGroundUnits);
                 return true;
             case MapBakeGroupRole.Blocker:
+                type = MapSurfaceType.Blocked;
+                flags = MapSurfaceFlags.None;
+                movementMask = MapSurfaceMovementMask.None;
+                return true;
             case MapBakeGroupRole.IgnoredDecoration:
             default:
                 movementMask = MapSurfaceMovementMask.None;

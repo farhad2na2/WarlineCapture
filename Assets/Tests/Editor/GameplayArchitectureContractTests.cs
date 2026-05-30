@@ -1270,6 +1270,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public const int GitFriendlyPayloadByteLimit", dataAsset);
         StringAssert.Contains("public int CompressedPayloadBytes =>", dataAsset);
         StringAssert.Contains("private static byte[] BuildCompressedPayload", dataAsset);
+        StringAssert.Contains("new BinaryWriter(uncompressed, Encoding.UTF8, true)", dataAsset);
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceCell[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-cell YAML arrays.");
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceSample[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-sample YAML arrays.");
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceConnection[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-connection YAML arrays.");

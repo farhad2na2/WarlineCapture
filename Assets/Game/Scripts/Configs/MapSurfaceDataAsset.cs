@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Text;
 using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
@@ -77,7 +78,7 @@ public sealed class MapSurfaceDataAsset : ScriptableObject
     private static byte[] BuildCompressedPayload(ref MapSurfaceBlob blob, out int uncompressedByteCount)
     {
         using var uncompressed = new MemoryStream();
-        using (var writer = new BinaryWriter(uncompressed))
+        using (var writer = new BinaryWriter(uncompressed, Encoding.UTF8, true))
         {
             writer.Write(CurrentPayloadVersion);
             writer.Write(blob.Cells.Length);

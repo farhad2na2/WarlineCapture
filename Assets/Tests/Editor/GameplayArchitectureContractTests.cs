@@ -1267,9 +1267,15 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("[CreateAssetMenu(fileName = \"MapSurfaceData\", menuName = \"WarlineCapture/Map Surface Data\")]", dataAsset);
         StringAssert.Contains("public void ConfigureFlatEquivalent", dataAsset);
         StringAssert.Contains("[SerializeField] private byte[] compressedSurfacePayload", dataAsset);
+        StringAssert.Contains("[SerializeField] private byte payloadEncoding;", dataAsset);
         StringAssert.Contains("public const int GitFriendlyPayloadByteLimit", dataAsset);
         StringAssert.Contains("public int CompressedPayloadBytes =>", dataAsset);
         StringAssert.Contains("private static byte[] BuildCompressedPayload", dataAsset);
+        StringAssert.Contains("private const byte SingleLayerGridPayloadEncoding = 1;", dataAsset);
+        StringAssert.Contains("TryWriteSingleLayerGridPayload(ref blob, writer)", dataAsset);
+        StringAssert.Contains("private static bool CanUseSingleLayerGridPayload", dataAsset);
+        StringAssert.Contains("private static ushort PackHeight", dataAsset);
+        StringAssert.Contains("private static short PackNormalComponent", dataAsset);
         StringAssert.Contains("new BinaryWriter(uncompressed, Encoding.UTF8, true)", dataAsset);
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceCell[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-cell YAML arrays.");
         Assert.IsFalse(dataAsset.Contains("SerializedMapSurfaceSample[]", StringComparison.Ordinal), "Map-surface baked data must not serialize per-sample YAML arrays.");

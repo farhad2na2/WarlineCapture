@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -45,6 +47,7 @@ public readonly struct MapSurfaceMeshBakeSource
 
 public sealed class MapSurfaceBakeSystem
 {
+    private const int SpatialBucketSizeInCells = 16;
     private const string MissingSurfaceReferenceError = "Match must have exactly one active MapSurfaceAuthoring with a baked MapSurfaceDataAsset reference.";
     private const string MultipleSurfaceReferencesError = "Match has multiple active MapSurfaceAuthoring baked surface references. Keep exactly one active map-surface data reference.";
 
@@ -161,13 +164,15 @@ public sealed class MapSurfaceBakeSystem
         MapSurfaceBakeRequest request,
         MapSurfaceMeshBakeSource[] terrainSources,
         Allocator allocator,
-        out BlobAssetReference<MapSurfaceBlob> surfaceBlob)
+        out BlobAssetReference<MapSurfaceBlob> surfaceBlob,
+        Func<int, int, bool> shouldCancel = null)
     {
         surfaceBlob = default;
 
         if (request.CellSize <= 0f || request.Dimensions.x <= 0 || request.Dimensions.y <= 0)
             return false;
 
+        SpatialTriangleIndex spatialIndex = SpatialTriangleIndex.Build(request, terrainSources);
         int cellCount = request.Dimensions.x * request.Dimensions.y;
         using var builder = new BlobBuilder(Allocator.Temp);
         var roadPrioritySystem = new MapSurfaceRoadPrioritySystem();
@@ -182,6 +187,9 @@ public sealed class MapSurfaceBakeSystem
 
         for (int y = 0; y < request.Dimensions.y; y++)
         {
+            if (shouldCancel != null && (y & 7) == 0 && shouldCancel(y, request.Dimensions.y))
+                return false;
+
             for (int x = 0; x < request.Dimensions.x; x++)
             {
                 int index = x + y * request.Dimensions.x;
@@ -199,7 +207,8 @@ public sealed class MapSurfaceBakeSystem
                 };
 
                 bool sampled = TrySampleHighestTerrain(
-                    terrainSources,
+                    spatialIndex,
+                    cell,
                     new float2(worldCenter.x, worldCenter.z),
                     out float height,
                     out float3 normal,
@@ -242,7 +251,8 @@ public sealed class MapSurfaceBakeSystem
     }
 
     private static bool TrySampleHighestTerrain(
-        MapSurfaceMeshBakeSource[] terrainSources,
+        SpatialTriangleIndex spatialIndex,
+        int2 cell,
         float2 sampleXZ,
         out float height,
         out float3 normal,
@@ -260,40 +270,30 @@ public sealed class MapSurfaceBakeSystem
                        MapSurfaceMovementMask.BuildingPlacement;
         layerId = 0;
 
-        if (terrainSources == null)
+        if (spatialIndex == null)
+            return false;
+
+        List<TriangleCandidate> candidates = spatialIndex.GetCandidates(cell);
+        if (candidates == null || candidates.Count == 0)
             return false;
 
         bool found = false;
-        for (int sourceIndex = 0; sourceIndex < terrainSources.Length; sourceIndex++)
+        for (int i = 0; i < candidates.Count; i++)
         {
-            MapSurfaceMeshBakeSource source = terrainSources[sourceIndex];
-            if (source.Mesh == null)
+            TriangleCandidate candidate = candidates[i];
+            if (!TrySampleTriangleHeight(sampleXZ, candidate.A, candidate.B, candidate.C, out float candidateHeight))
                 continue;
 
-            Vector3[] vertices = source.Mesh.vertices;
-            int[] triangles = source.Mesh.triangles;
-            for (int triangleIndex = 0; triangleIndex + 2 < triangles.Length; triangleIndex += 3)
-            {
-                float3 a = source.LocalToWorld.MultiplyPoint3x4(vertices[triangles[triangleIndex]]);
-                float3 b = source.LocalToWorld.MultiplyPoint3x4(vertices[triangles[triangleIndex + 1]]);
-                float3 c = source.LocalToWorld.MultiplyPoint3x4(vertices[triangles[triangleIndex + 2]]);
+            if (found && candidateHeight <= height)
+                continue;
 
-                if (!TrySampleTriangleHeight(sampleXZ, a, b, c, out float candidateHeight))
-                    continue;
-
-                if (found && candidateHeight <= height)
-                    continue;
-
-                found = true;
-                height = candidateHeight;
-                normal = math.normalizesafe(math.cross(b - a, c - a), new float3(0f, 1f, 0f));
-                if (normal.y < 0f)
-                    normal = -normal;
-                surfaceType = source.SurfaceType;
-                flags = source.Flags;
-                movementMask = source.MovementMask;
-                layerId = source.LayerId;
-            }
+            found = true;
+            height = candidateHeight;
+            normal = candidate.Normal;
+            surfaceType = candidate.SurfaceType;
+            flags = candidate.Flags;
+            movementMask = candidate.MovementMask;
+            layerId = candidate.LayerId;
         }
 
         return found;
@@ -329,5 +329,159 @@ public sealed class MapSurfaceBakeSystem
         float3 safeNormal = math.normalizesafe(normal, new float3(0f, 1f, 0f));
         float upDot = math.saturate(math.abs(safeNormal.y));
         return math.degrees(math.acos(upDot));
+    }
+
+    private sealed class SpatialTriangleIndex
+    {
+        private readonly int bucketWidth;
+        private readonly int bucketHeight;
+        private readonly List<TriangleCandidate>[] buckets;
+
+        private SpatialTriangleIndex(int bucketWidth, int bucketHeight)
+        {
+            this.bucketWidth = math.max(1, bucketWidth);
+            this.bucketHeight = math.max(1, bucketHeight);
+            buckets = new List<TriangleCandidate>[this.bucketWidth * this.bucketHeight];
+        }
+
+        public static SpatialTriangleIndex Build(MapSurfaceBakeRequest request, MapSurfaceMeshBakeSource[] sources)
+        {
+            int bucketWidth = (request.Dimensions.x + SpatialBucketSizeInCells - 1) / SpatialBucketSizeInCells;
+            int bucketHeight = (request.Dimensions.y + SpatialBucketSizeInCells - 1) / SpatialBucketSizeInCells;
+            SpatialTriangleIndex index = new(bucketWidth, bucketHeight);
+            if (sources == null)
+                return index;
+
+            for (int sourceIndex = 0; sourceIndex < sources.Length; sourceIndex++)
+            {
+                MapSurfaceMeshBakeSource source = sources[sourceIndex];
+                if (source.Mesh == null)
+                    continue;
+
+                Vector3[] vertices = source.Mesh.vertices;
+                int[] triangles = source.Mesh.triangles;
+                for (int triangleIndex = 0; triangleIndex + 2 < triangles.Length; triangleIndex += 3)
+                {
+                    float3 a = source.LocalToWorld.MultiplyPoint3x4(vertices[triangles[triangleIndex]]);
+                    float3 b = source.LocalToWorld.MultiplyPoint3x4(vertices[triangles[triangleIndex + 1]]);
+                    float3 c = source.LocalToWorld.MultiplyPoint3x4(vertices[triangles[triangleIndex + 2]]);
+
+                    if (!TryGetTriangleCellRange(request, a, b, c, out int2 minCell, out int2 maxCell))
+                        continue;
+
+                    float3 normal = math.normalizesafe(math.cross(b - a, c - a), new float3(0f, 1f, 0f));
+                    if (normal.y < 0f)
+                        normal = -normal;
+
+                    TriangleCandidate candidate = new(
+                        a,
+                        b,
+                        c,
+                        normal,
+                        source.SurfaceType,
+                        source.Flags,
+                        source.MovementMask,
+                        source.LayerId);
+
+                    index.Add(candidate, minCell, maxCell);
+                }
+            }
+
+            return index;
+        }
+
+        public List<TriangleCandidate> GetCandidates(int2 cell)
+        {
+            int bucketX = math.clamp(cell.x / SpatialBucketSizeInCells, 0, bucketWidth - 1);
+            int bucketY = math.clamp(cell.y / SpatialBucketSizeInCells, 0, bucketHeight - 1);
+            return buckets[bucketX + bucketY * bucketWidth];
+        }
+
+        private void Add(TriangleCandidate candidate, int2 minCell, int2 maxCell)
+        {
+            int minBucketX = math.clamp(minCell.x / SpatialBucketSizeInCells, 0, bucketWidth - 1);
+            int maxBucketX = math.clamp(maxCell.x / SpatialBucketSizeInCells, 0, bucketWidth - 1);
+            int minBucketY = math.clamp(minCell.y / SpatialBucketSizeInCells, 0, bucketHeight - 1);
+            int maxBucketY = math.clamp(maxCell.y / SpatialBucketSizeInCells, 0, bucketHeight - 1);
+
+            for (int y = minBucketY; y <= maxBucketY; y++)
+            {
+                for (int x = minBucketX; x <= maxBucketX; x++)
+                {
+                    int index = x + y * bucketWidth;
+                    buckets[index] ??= new List<TriangleCandidate>(8);
+                    buckets[index].Add(candidate);
+                }
+            }
+        }
+    }
+
+    private readonly struct TriangleCandidate
+    {
+        public readonly float3 A;
+        public readonly float3 B;
+        public readonly float3 C;
+        public readonly float3 Normal;
+        public readonly MapSurfaceType SurfaceType;
+        public readonly MapSurfaceFlags Flags;
+        public readonly MapSurfaceMovementMask MovementMask;
+        public readonly int LayerId;
+
+        public TriangleCandidate(
+            float3 a,
+            float3 b,
+            float3 c,
+            float3 normal,
+            MapSurfaceType surfaceType,
+            MapSurfaceFlags flags,
+            MapSurfaceMovementMask movementMask,
+            int layerId)
+        {
+            A = a;
+            B = b;
+            C = c;
+            Normal = normal;
+            SurfaceType = surfaceType;
+            Flags = flags;
+            MovementMask = movementMask;
+            LayerId = layerId;
+        }
+    }
+
+    private static bool TryGetTriangleCellRange(
+        MapSurfaceBakeRequest request,
+        float3 a,
+        float3 b,
+        float3 c,
+        out int2 minCell,
+        out int2 maxCell)
+    {
+        float minX = math.min(a.x, math.min(b.x, c.x));
+        float maxX = math.max(a.x, math.max(b.x, c.x));
+        float minZ = math.min(a.z, math.min(b.z, c.z));
+        float maxZ = math.max(a.z, math.max(b.z, c.z));
+
+        int minCellX = (int)math.floor((minX - request.GridOrigin.x) / request.CellSize);
+        int maxCellX = (int)math.floor((maxX - request.GridOrigin.x) / request.CellSize);
+        int minCellY = (int)math.floor((minZ - request.GridOrigin.z) / request.CellSize);
+        int maxCellY = (int)math.floor((maxZ - request.GridOrigin.z) / request.CellSize);
+
+        if (maxCellX < 0 ||
+            maxCellY < 0 ||
+            minCellX >= request.Dimensions.x ||
+            minCellY >= request.Dimensions.y)
+        {
+            minCell = default;
+            maxCell = default;
+            return false;
+        }
+
+        minCell = new int2(
+            math.clamp(minCellX, 0, request.Dimensions.x - 1),
+            math.clamp(minCellY, 0, request.Dimensions.y - 1));
+        maxCell = new int2(
+            math.clamp(maxCellX, 0, request.Dimensions.x - 1),
+            math.clamp(maxCellY, 0, request.Dimensions.y - 1));
+        return true;
     }
 }

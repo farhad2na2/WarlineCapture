@@ -1226,6 +1226,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public readonly Matrix4x4 LocalToWorld;", source);
         StringAssert.Contains("public bool TryBuildSingleLayerTerrain", source);
         StringAssert.Contains("MapSurfaceMeshBakeSource[] terrainSources", source);
+        StringAssert.Contains("SpatialTriangleIndex.Build", source);
+        StringAssert.Contains("private sealed class SpatialTriangleIndex", source);
+        StringAssert.Contains("private const int SpatialBucketSizeInCells", source);
+        StringAssert.Contains("TryGetTriangleCellRange", source);
         StringAssert.Contains("TrySampleHighestTerrain", source);
         StringAssert.Contains("TrySampleTriangleHeight", source);
         StringAssert.Contains("CalculateSlopeDegrees", source);
@@ -1302,6 +1306,9 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BakeSelectedAuthoring((MapSurfaceAuthoring)target)", editor);
         StringAssert.Contains("new MapSurfaceBakeSystem()", editor);
         StringAssert.Contains("bakeSystem.TryBuildSingleLayerTerrain(", editor);
+        StringAssert.Contains("ShouldCancelBakeProgress", editor);
+        StringAssert.Contains("EditorUtility.DisplayCancelableProgressBar", editor);
+        StringAssert.Contains("EditorUtility.ClearProgressBar", editor);
         StringAssert.Contains("bakeSystem.TryBuildFlatEquivalent(", editor);
         StringAssert.Contains("asset.ConfigureBakedSurface(", editor);
         StringAssert.Contains("previewAsset.CompressedPayloadBytes > MapSurfaceDataAsset.GitFriendlyPayloadByteLimit", editor);

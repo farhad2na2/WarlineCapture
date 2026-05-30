@@ -126,18 +126,46 @@ public sealed class MapSurfaceAuthoringEditor : Editor
         sourceCount = sources.Count;
 
         var bakeSystem = new MapSurfaceBakeSystem();
-        bool baked = sourceCount > 0
-            ? bakeSystem.TryBuildSingleLayerTerrain(request, sources.ToArray(), Allocator.Persistent, out surfaceBlob)
-            : bakeSystem.TryBuildFlatEquivalent(request, Allocator.Persistent, out surfaceBlob);
+        bool baked;
+        bool[] cancelled = { false };
+        try
+        {
+            baked = sourceCount > 0
+                ? bakeSystem.TryBuildSingleLayerTerrain(
+                    request,
+                    sources.ToArray(),
+                    Allocator.Persistent,
+                    out surfaceBlob,
+                    (completedRows, totalRows) => ShouldCancelBakeProgress(completedRows, totalRows, cancelled))
+                : bakeSystem.TryBuildFlatEquivalent(request, Allocator.Persistent, out surfaceBlob);
+        }
+        finally
+        {
+            EditorUtility.ClearProgressBar();
+        }
 
         if (baked && surfaceBlob.IsCreated)
             return true;
+        if (cancelled[0])
+            return false;
 
         EditorUtility.DisplayDialog(
             "Map Surface Bake",
             "Bake failed. Check grid dimensions, cell size, and source meshes.",
             "OK");
         return false;
+    }
+
+    private static bool ShouldCancelBakeProgress(int completedRows, int totalRows, bool[] cancelled)
+    {
+        float progress = totalRows > 0 ? completedRows / (float)totalRows : 0f;
+        bool isCancelled = EditorUtility.DisplayCancelableProgressBar(
+            "Map Surface Bake",
+            $"Sampling configured grid rows {completedRows}/{totalRows}",
+            progress);
+        if (cancelled != null && cancelled.Length > 0)
+            cancelled[0] = isCancelled;
+        return isCancelled;
     }
 
     private MapSurfaceDataAsset ResolveOrCreateDataAsset(MapSurfaceAuthoring authoring)

@@ -152,6 +152,76 @@ public static class MapPrefabBakeAuthoringSetup
         }
     }
 
+    public static void AuditMapMilitaryCategory()
+    {
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(MapPrefabPath);
+        try
+        {
+            Transform mapRoot = prefabRoot.name == MapRootName
+                ? prefabRoot.transform
+                : prefabRoot.transform.Find(MapRootName);
+
+            if (mapRoot == null)
+                throw new InvalidOperationException($"Could not find {MapRootName} root in {MapPrefabPath}.");
+
+            Transform military = mapRoot.Find("Military");
+            if (military == null)
+            {
+                Debug.Log("[MapPrefabBakeAuthoringSetup] Map/Military does not exist.");
+                return;
+            }
+
+            for (int i = 0; i < military.childCount; i++)
+            {
+                Transform child = military.GetChild(i);
+                Debug.Log($"[MapMilitaryAudit] child={child.name} children={child.childCount} meshes={child.GetComponentsInChildren<MeshFilter>(true).Length}");
+            }
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+    }
+
+    public static void FlattenMapMilitaryCategory()
+    {
+        GameObject prefabRoot = PrefabUtility.LoadPrefabContents(MapPrefabPath);
+        try
+        {
+            Transform mapRoot = prefabRoot.name == MapRootName
+                ? prefabRoot.transform
+                : prefabRoot.transform.Find(MapRootName);
+
+            if (mapRoot == null)
+                throw new InvalidOperationException($"Could not find {MapRootName} root in {MapPrefabPath}.");
+
+            Transform military = mapRoot.Find("Military");
+            if (military == null)
+            {
+                Debug.Log("[MapPrefabBakeAuthoringSetup] Map/Military already removed.");
+                return;
+            }
+
+            int moved = 0;
+            while (military.childCount > 0)
+            {
+                Transform child = military.GetChild(0);
+                Transform destination = ResolveMilitaryChildDestination(mapRoot, child);
+                child.SetParent(destination, true);
+                moved++;
+            }
+
+            UnityEngine.Object.DestroyImmediate(military.gameObject);
+            SetupMapBakeAuthoringOnLoadedPrefab(mapRoot);
+            PrefabUtility.SaveAsPrefabAsset(prefabRoot, MapPrefabPath);
+            Debug.Log($"[MapPrefabBakeAuthoringSetup] Removed Map/Military and moved {moved} children to existing map categories.");
+        }
+        finally
+        {
+            PrefabUtility.UnloadPrefabContents(prefabRoot);
+        }
+    }
+
     private static IReadOnlyDictionary<string, MapBakeGroupRole> DefaultRoles()
     {
         return new Dictionary<string, MapBakeGroupRole>(StringComparer.Ordinal)
@@ -181,9 +251,121 @@ public static class MapPrefabBakeAuthoringSetup
             { "Characters", MapBakeGroupRole.IgnoredDecoration },
             { "Weapons", MapBakeGroupRole.IgnoredDecoration },
             { "ResourceAreas", MapBakeGroupRole.IgnoredDecoration },
-            { "Military", MapBakeGroupRole.IgnoredDecoration },
             { "Ruins", MapBakeGroupRole.IgnoredDecoration }
         };
+    }
+
+    private static void SetupMapBakeAuthoringOnLoadedPrefab(Transform mapRoot)
+    {
+        MapSurfaceAuthoring surfaceAuthoring = mapRoot.GetComponent<MapSurfaceAuthoring>();
+        if (surfaceAuthoring == null)
+            surfaceAuthoring = mapRoot.gameObject.AddComponent<MapSurfaceAuthoring>();
+
+        ConfigureSurfaceAuthoring(surfaceAuthoring);
+
+        IReadOnlyDictionary<string, MapBakeGroupRole> roles = DefaultRoles();
+        for (int i = 0; i < mapRoot.childCount; i++)
+        {
+            Transform child = mapRoot.GetChild(i);
+            if (!roles.TryGetValue(child.name, out MapBakeGroupRole role))
+                role = MapBakeGroupRole.IgnoredDecoration;
+
+            MapBakeGroupAuthoring group = child.GetComponent<MapBakeGroupAuthoring>();
+            if (group == null)
+                group = child.gameObject.AddComponent<MapBakeGroupAuthoring>();
+
+            ConfigureGroup(group, role);
+        }
+    }
+
+    private static Transform ResolveMilitaryChildDestination(Transform mapRoot, Transform child)
+    {
+        string destinationName = ResolveMilitaryChildDestinationName(child.name);
+        Transform destination = mapRoot.Find(destinationName);
+        if (destination == null)
+        {
+            var destinationObject = new GameObject(destinationName);
+            destination = destinationObject.transform;
+            destination.SetParent(mapRoot, false);
+            destination.localPosition = Vector3.zero;
+            destination.localRotation = Quaternion.identity;
+            destination.localScale = Vector3.one;
+        }
+
+        return destination;
+    }
+
+    private static string ResolveMilitaryChildDestinationName(string childName)
+    {
+        if (childName.StartsWith("SM_Env_Ground", StringComparison.OrdinalIgnoreCase))
+            return "Ground";
+        if (childName.IndexOf("DirtRoad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Road_", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("_Road_", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Roads";
+        }
+        if (childName.IndexOf("Runway", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Runways";
+        if (childName.IndexOf("Bridge", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Bridges";
+        if (childName.IndexOf("Rock", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Rocks";
+        if (childName.IndexOf("Mountain", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Mountains";
+        if (childName.IndexOf("Building", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Bld", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Tent", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Wall", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Tower", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Hangar", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Barrack", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Container", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Sandbag", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Barrier", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Fence", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Gate", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Buildings";
+        }
+        if (childName.IndexOf("Vehicle", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Veh", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Tank", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Truck", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Helicopter", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Plane", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Jet", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("APC", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Vehicles";
+        }
+        if (childName.IndexOf("Character", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Soldier", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Characters";
+        }
+        if (childName.IndexOf("Weapon", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Missile", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Ammo", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Weapons";
+        }
+        if (childName.IndexOf("Tree", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Palm", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Trees";
+        }
+        if (childName.IndexOf("Bush", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Bushes";
+        if (childName.IndexOf("Grass", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            childName.IndexOf("Plant", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Plants";
+        }
+        if (childName.IndexOf("Light", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Lights";
+
+        return "Props";
     }
 
     private static void CollectGroundHillChildren(Transform root, List<Transform> results)

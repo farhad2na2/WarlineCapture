@@ -36,8 +36,7 @@ public static class MapPrefabHierarchyOrganizer
         "Lights",
         "Props",
         "Runways",
-        "ResourceAreas",
-        "Military"
+        "ResourceAreas"
     };
 
     [MenuItem("WarlineCapture/Maps/Reorganize Map Prefab By Type")]
@@ -123,7 +122,7 @@ public static class MapPrefabHierarchyOrganizer
     {
         Transform leftoverParent = null;
         int moved = 0;
-        string[] areaNames = { "Cities", "Islands" };
+        string[] areaNames = { "Cities", "Islands", "Military" };
 
         for (int i = 0; i < areaNames.Length; i++)
         {
@@ -141,7 +140,7 @@ public static class MapPrefabHierarchyOrganizer
                 string canonicalName = NormalizeFolderName(child.name);
                 Transform targetParent = canonicalParents.TryGetValue(canonicalName, out Transform canonical)
                     ? canonical
-                    : leftoverParent ??= ResolveLeftoverParent(mapRoot);
+                    : ResolveInferredParent(canonicalParents, child.name) ?? (leftoverParent ??= ResolveLeftoverParent(mapRoot));
 
                 MovePreservingWorldAndActiveState(child, targetParent);
                 moved++;
@@ -193,8 +192,14 @@ public static class MapPrefabHierarchyOrganizer
     private static bool IsFolderName(string name)
     {
         string normalized = NormalizeFolderName(name);
-        if (normalized == "Cities" || normalized == "City" || normalized == "Islands" || normalized == "Island")
+        if (normalized == "Cities" ||
+            normalized == "City" ||
+            normalized == "Islands" ||
+            normalized == "Island" ||
+            normalized == "Military")
+        {
             return true;
+        }
 
         for (int i = 0; i < CanonicalParents.Length; i++)
         {
@@ -203,6 +208,87 @@ public static class MapPrefabHierarchyOrganizer
         }
 
         return normalized == LeftoverParentName;
+    }
+
+    private static Transform ResolveInferredParent(
+        IReadOnlyDictionary<string, Transform> canonicalParents,
+        string objectName)
+    {
+        string targetName = ResolveInferredParentName(objectName);
+        return canonicalParents.TryGetValue(targetName, out Transform parent)
+            ? parent
+            : null;
+    }
+
+    private static string ResolveInferredParentName(string objectName)
+    {
+        if (string.IsNullOrWhiteSpace(objectName))
+            return string.Empty;
+
+        if (objectName.StartsWith("SM_Env_Ground", StringComparison.OrdinalIgnoreCase))
+            return "Ground";
+        if (objectName.IndexOf("DirtRoad", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Road_", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("_Road_", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Roads";
+        }
+        if (objectName.IndexOf("Runway", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Runways";
+        if (objectName.IndexOf("Bridge", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Bridges";
+        if (objectName.IndexOf("Rock", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Rocks";
+        if (objectName.IndexOf("Mountain", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Mountains";
+        if (objectName.IndexOf("Bld", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Building", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Tent", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Wall", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Tower", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Hangar", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Barrack", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Container", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Sandbag", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Barrier", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Fence", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Gate", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Buildings";
+        }
+        if (objectName.IndexOf("Veh", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Vehicle", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Tank", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Truck", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Helicopter", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Plane", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Jet", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("APC", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Vehicles";
+        }
+        if (objectName.IndexOf("Weapon", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Missile", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Ammo", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Weapons";
+        }
+        if (objectName.IndexOf("Tree", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Palm", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Trees";
+        }
+        if (objectName.IndexOf("Bush", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Bushes";
+        if (objectName.IndexOf("Grass", StringComparison.OrdinalIgnoreCase) >= 0 ||
+            objectName.IndexOf("Plant", StringComparison.OrdinalIgnoreCase) >= 0)
+        {
+            return "Plants";
+        }
+        if (objectName.IndexOf("Light", StringComparison.OrdinalIgnoreCase) >= 0)
+            return "Lights";
+
+        return "Props";
     }
 
     private static bool HasOnlyTransform(GameObject gameObject)

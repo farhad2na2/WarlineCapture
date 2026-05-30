@@ -14,6 +14,8 @@ public sealed class BuildingRuntimeBoundarySystem
     private readonly BuildingRuntimeSurfaceOverlaySystem _surfaceOverlaySystem = new();
     private float _nextPublishAt;
     private bool _forcePublishNextUpdate;
+    private bool _configuredReadModelsPublished;
+    private int _lastPublishedRuntimeBuildingSignature = int.MinValue;
 
     internal void Update(
         BuildingDefinitionSystem definitionSystem,
@@ -286,18 +288,30 @@ public sealed class BuildingRuntimeBoundarySystem
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
         float now)
     {
-        if (!_forcePublishNextUpdate && now < _nextPublishAt)
+        bool forcePublish = _forcePublishNextUpdate;
+        if (!forcePublish && _configuredReadModelsPublished && now < _nextPublishAt)
             return;
 
+        int runtimeBuildingSignature = ComputeRuntimeBuildingSignature(runtimeBuildings);
+        bool buildingSetChanged = runtimeBuildingSignature != _lastPublishedRuntimeBuildingSignature;
         _forcePublishNextUpdate = false;
         _nextPublishAt = now + PublishIntervalSeconds;
-        PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
-        PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
+        if (!_configuredReadModelsPublished)
+        {
+            PublishConfiguredSpawnablesReadModel(definitionSystem, em, boundaryEntity);
+            PublishConfiguredUnitsReadModel(definitionSystem, em, boundaryEntity);
+            _configuredReadModelsPublished = true;
+        }
+
         PublishRuntimeFactionSummaries(factionResourceSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity, runtimeBuildings);
         PublishRuntimeOwnedBuildingSummaries(definitionSystem, runtimeBuildings, em, boundaryEntity);
-        PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQuerySystem, runtimeQueryContext, em, boundaryEntity);
-        PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
-        _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
+        PublishRuntimeUnitProductionSummaries(definitionSystem, runtimeQueryContext, em, boundaryEntity);
+        if (forcePublish || buildingSetChanged)
+        {
+            PublishFactionProductionSpawnPointsReadModel(em, boundaryEntity, runtimeBuildings);
+            _surfaceOverlaySystem.Publish(em, boundaryEntity, runtimeBuildings);
+            _lastPublishedRuntimeBuildingSignature = runtimeBuildingSignature;
+        }
     }
 
     private void PublishConfiguredSpawnablesReadModel(BuildingDefinitionSystem definitionSystem, EntityManager em, Entity boundaryEntity)
@@ -443,11 +457,10 @@ public sealed class BuildingRuntimeBoundarySystem
         FixedString128Bytes buildingId,
         int countDelta)
     {
-        string id = buildingId.ToString();
         for (int i = 0; i < buffer.Length; i++)
         {
             BuildingRuntimeOwnedBuildingSummary summary = buffer[i];
-            if (summary.FactionId != factionId || summary.BuildingId.ToString() != id)
+            if (summary.FactionId != factionId || !summary.BuildingId.Equals(buildingId))
                 continue;
 
             summary.Count += countDelta;
@@ -465,7 +478,6 @@ public sealed class BuildingRuntimeBoundarySystem
 
     private void PublishRuntimeUnitProductionSummaries(
         BuildingDefinitionSystem definitionSystem,
-        BuildingRuntimeQuerySystem runtimeQuerySystem,
         BuildingRuntimeQuerySystem.Context runtimeQueryContext,
         EntityManager em,
         Entity boundaryEntity)
@@ -473,7 +485,64 @@ public sealed class BuildingRuntimeBoundarySystem
         DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer =
             EnsureBoundaryBuffer<BuildingRuntimeUnitProductionSummary>(em, boundaryEntity);
         buffer.Clear();
+        PublishConfiguredUnitProductionSummaryRows(definitionSystem, buffer);
 
+        IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings = runtimeQueryContext.RuntimeBuildings;
+        if (runtimeBuildings == null)
+            return;
+
+        EntityManager producedUnitEntityManager = default;
+        bool hasEntityManager = runtimeQueryContext.TryGetEntityManager != null &&
+                                runtimeQueryContext.TryGetEntityManager(out producedUnitEntityManager);
+        foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+        {
+            RuntimeBuildingData building = pair.Value;
+            if (building == null || building.IsDestroyed || !building.HasOwnerFaction)
+                continue;
+
+            byte factionId = building.OwnerFactionId;
+            if (building.PendingProductions != null)
+            {
+                for (int i = 0; i < building.PendingProductions.Count; i++)
+                {
+                    RuntimeBuildingData.PendingProduction pending = building.PendingProductions[i];
+                    if (pending?.Prefab == null)
+                        continue;
+
+                    FixedString128Bytes unitId = ResolveBoundaryId(pending.Prefab, pending.Prefab.name);
+                    IncrementExistingProductionSummary(buffer, factionId, unitId, 0, 1);
+                }
+            }
+
+            if (!hasEntityManager || building.ProducedUnits == null)
+                continue;
+
+            runtimeQueryContext.ProductionSystem?.PruneProducedUnits(
+                building.ProducedUnits,
+                building.ProducedUnitSlots,
+                building.ProducedUnitPrefabs,
+                producedUnitEntityManager);
+            for (int i = 0; i < building.ProducedUnits.Count; i++)
+            {
+                Entity unit = building.ProducedUnits[i];
+                if (producedUnitEntityManager.HasComponent<Faction>(unit) &&
+                    producedUnitEntityManager.GetComponentData<Faction>(unit).Id != factionId)
+                {
+                    continue;
+                }
+
+                if (!TryResolveProducedUnitId(building, unit, producedUnitEntityManager, out FixedString128Bytes unitId))
+                    continue;
+
+                IncrementExistingProductionSummary(buffer, factionId, unitId, 1, 0);
+            }
+        }
+    }
+
+    private void PublishConfiguredUnitProductionSummaryRows(
+        BuildingDefinitionSystem definitionSystem,
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer)
+    {
         for (int factionIndex = 0; factionIndex < _factionIds.Count; factionIndex++)
         {
             byte factionId = _factionIds[factionIndex];
@@ -491,17 +560,62 @@ public sealed class BuildingRuntimeBoundarySystem
                     continue;
                 }
 
-                FixedString128Bytes unitId = ResolveBoundaryId(prefab, displayName);
-                string unitIdString = unitId.ToString();
                 buffer.Add(new BuildingRuntimeUnitProductionSummary
                 {
                     FactionId = factionId,
-                    UnitId = unitId,
-                    ProducedCount = runtimeQuerySystem.CountRuntimeProducedUnitsForFaction(runtimeQueryContext, factionId, unitIdString),
-                    QueuedCount = runtimeQuerySystem.CountPendingProductionsForFaction(runtimeQueryContext, factionId, unitIdString)
+                    UnitId = ResolveBoundaryId(prefab, displayName),
+                    ProducedCount = 0,
+                    QueuedCount = 0
                 });
             }
         }
+    }
+
+    private static void IncrementExistingProductionSummary(
+        DynamicBuffer<BuildingRuntimeUnitProductionSummary> buffer,
+        byte factionId,
+        FixedString128Bytes unitId,
+        int producedDelta,
+        int queuedDelta)
+    {
+        for (int i = 0; i < buffer.Length; i++)
+        {
+            BuildingRuntimeUnitProductionSummary summary = buffer[i];
+            if (summary.FactionId != factionId || !summary.UnitId.Equals(unitId))
+                continue;
+
+            summary.ProducedCount += producedDelta;
+            summary.QueuedCount += queuedDelta;
+            buffer[i] = summary;
+            return;
+        }
+    }
+
+    private static bool TryResolveProducedUnitId(
+        RuntimeBuildingData building,
+        Entity unit,
+        EntityManager em,
+        out FixedString128Bytes unitId)
+    {
+        if (building?.ProducedUnitPrefabs != null &&
+            building.ProducedUnitPrefabs.TryGetValue(unit, out GameObject prefab) &&
+            prefab != null)
+        {
+            unitId = ResolveBoundaryId(prefab, prefab.name);
+            return true;
+        }
+
+        if (unit != Entity.Null &&
+            em.Exists(unit) &&
+            em.HasComponent<UnitSourcePrefabKey>(unit))
+        {
+            unitId = ToFixedString128(BuildingDefinitionSystem.NormalizeSpawnableKey(
+                em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString()));
+            return unitId.Length > 0;
+        }
+
+        unitId = default;
+        return false;
     }
 
     private void PublishFactionProductionSpawnPointsReadModel(
@@ -604,6 +718,30 @@ public sealed class BuildingRuntimeBoundarySystem
         }
 
         _factionIds.Add(factionId);
+    }
+
+    private static int ComputeRuntimeBuildingSignature(IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings)
+    {
+        if (runtimeBuildings == null)
+            return 0;
+
+        unchecked
+        {
+            int hash = 17;
+            foreach (KeyValuePair<int, RuntimeBuildingData> pair in runtimeBuildings)
+            {
+                RuntimeBuildingData building = pair.Value;
+                hash = (hash * 31) + pair.Key;
+                if (building == null)
+                    continue;
+
+                hash = (hash * 31) + (building.IsDestroyed ? 1 : 0);
+                hash = (hash * 31) + (building.HasOwnerFaction ? building.OwnerFactionId : 255);
+                hash = (hash * 31) + (building.ProductionSpawnLocalPositions?.Length ?? 0);
+            }
+
+            return hash;
+        }
     }
 
     private static bool TryGetBoundaryEntity(EntityManager em, EntityQuery boundaryQuery, out Entity boundaryEntity)

@@ -4,6 +4,8 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
 {
     private const double DiagnosticsIntervalSeconds = 1d;
     private double _nextDiagnosticsTime;
+    private SurfaceDiagnosticsSignature _lastSignature;
+    private bool _hasLastSignature;
 
     public void OnUpdate(ref SystemState state)
     {
@@ -16,11 +18,41 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
             return;
 
         MapSurfaceComponent surface = state.EntityManager.GetComponentData<MapSurfaceComponent>(surfaceEntity);
+        SurfaceDiagnosticsSignature signature = BuildSignature(surface);
+        if (_hasLastSignature && signature.Equals(_lastSignature))
+            return;
+
         MapSurfaceDiagnosticsComponent diagnostics = BuildDiagnostics(surface);
         if (state.EntityManager.HasComponent<MapSurfaceDiagnosticsComponent>(surfaceEntity))
             state.EntityManager.SetComponentData(surfaceEntity, diagnostics);
         else
             state.EntityManager.AddComponentData(surfaceEntity, diagnostics);
+
+        _lastSignature = signature;
+        _hasLastSignature = true;
+    }
+
+    private static SurfaceDiagnosticsSignature BuildSignature(MapSurfaceComponent surface)
+    {
+        SurfaceDiagnosticsSignature signature = new()
+        {
+            HasSurfaceData = surface.HasSurfaceData,
+            HasLayeredCells = surface.HasLayeredCells,
+            HasRoadSurfaces = surface.HasRoadSurfaces,
+            HasBridgeSurfaces = surface.HasBridgeSurfaces,
+            Width = surface.Dimensions.x,
+            Height = surface.Dimensions.y,
+            BlobHash = surface.SurfaceBlob.IsCreated ? surface.SurfaceBlob.GetHashCode() : 0
+        };
+
+        if (surface.HasSurfaceData == 0 || !surface.SurfaceBlob.IsCreated)
+            return signature;
+
+        ref MapSurfaceBlob blob = ref surface.SurfaceBlob.Value;
+        signature.CellCount = blob.Cells.Length;
+        signature.SurfaceCount = blob.Samples.Length;
+        signature.ConnectionCount = blob.Connections.Length;
+        return signature;
     }
 
     internal static MapSurfaceDiagnosticsComponent BuildDiagnostics(MapSurfaceComponent surface)
@@ -58,5 +90,33 @@ public partial struct MapSurfaceDiagnosticsSystem : ISystem
         }
 
         return diagnostics;
+    }
+
+    private struct SurfaceDiagnosticsSignature
+    {
+        public byte HasSurfaceData;
+        public byte HasLayeredCells;
+        public byte HasRoadSurfaces;
+        public byte HasBridgeSurfaces;
+        public int Width;
+        public int Height;
+        public int CellCount;
+        public int SurfaceCount;
+        public int ConnectionCount;
+        public int BlobHash;
+
+        public bool Equals(SurfaceDiagnosticsSignature other)
+        {
+            return HasSurfaceData == other.HasSurfaceData &&
+                   HasLayeredCells == other.HasLayeredCells &&
+                   HasRoadSurfaces == other.HasRoadSurfaces &&
+                   HasBridgeSurfaces == other.HasBridgeSurfaces &&
+                   Width == other.Width &&
+                   Height == other.Height &&
+                   CellCount == other.CellCount &&
+                   SurfaceCount == other.SurfaceCount &&
+                   ConnectionCount == other.ConnectionCount &&
+                   BlobHash == other.BlobHash;
+        }
     }
 }

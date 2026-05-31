@@ -4342,7 +4342,7 @@ namespace Game.Scripts.UI
                 if (animationOrder[i] != kind)
                     continue;
 
-                animationIndex = i + 1;
+                animationIndex = (int)kind + 1;
                 return true;
             }
 

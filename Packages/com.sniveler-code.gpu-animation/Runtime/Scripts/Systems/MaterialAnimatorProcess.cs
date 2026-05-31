@@ -52,45 +52,63 @@ namespace SnivelerCode.GpuAnimation.Scripts.Systems
 
                 var blobReference = Animators[link.Value].Value;
                 ref var animator = ref blobReference.Value;
+                if (animator.Animations.Length == 0 || animator.BoneCount <= 0) return;
 
                 data.Time += DeltaTime;
 
-                ref var animation = ref animator.Animations[data.AnimationIndex % animator.Animations.Length];
-                var floatFrame = data.Time * animation.Fps * animation.Speed;
+                byte currentIndex = (byte)(data.AnimationIndex % animator.Animations.Length);
+                byte targetIndex = (byte)(animIndex.Value % animator.Animations.Length);
+                ref var currentAnimation = ref animator.Animations[currentIndex];
+                float3 renderConfig = ResolveRenderConfig(ref currentAnimation, animator.BoneCount, data.Time);
 
-                var rawFrame = (int)math.floor(floatFrame);
-                var rawFrameNext = rawFrame + 1;
-
-                var frame = rawFrame % animation.Frames;
-                var nextFrame = rawFrameNext % animation.Frames;
-                var clampValue = floatFrame - rawFrame;
-
-                var finalFrame = animation.Start + frame * animator.BoneCount;
-                var finalNextFrame = animation.Start + nextFrame * animator.BoneCount;
-                
-                // todo: transition from animator
-                if (animIndex.Value != data.AnimationIndex)
+                if (targetIndex != currentIndex)
                 {
-                    // simple transition
-                    if (data.TransitionTime < 0.5f)
+                    const float transitionDuration = 0.5f;
+                    if (data.TransitionIndex != targetIndex)
+                        data.TransitionTime = 0f;
+                    data.TransitionIndex = targetIndex;
+                    data.TransitionTime = math.min(data.TransitionTime + DeltaTime, transitionDuration);
+
+                    if (data.TransitionTime < transitionDuration)
                     {
-                        data.TransitionTime += DeltaTime;
-
-                        ref var prevAnimation = ref animator.Animations[animIndex.Value % animator.Animations.Length];
-                        nextFrame = rawFrame % prevAnimation.Frames;
-                        finalNextFrame = prevAnimation.Start + nextFrame * animator.BoneCount;
-
-                        clampValue = data.TransitionTime / 0.5f;
+                        ref var targetAnimation = ref animator.Animations[targetIndex];
+                        float3 targetConfig = ResolveRenderConfig(ref targetAnimation, animator.BoneCount, data.Time);
+                        renderConfig = new float3(renderConfig.x, targetConfig.x, data.TransitionTime / transitionDuration);
                     }
                     else
                     {
-                        data.AnimationIndex = animIndex.Value;
+                        data.AnimationIndex = targetIndex;
+                        data.TransitionIndex = targetIndex;
                         data.TransitionTime = 0f;
-                        return;
+
+                        ref var targetAnimation = ref animator.Animations[targetIndex];
+                        renderConfig = ResolveRenderConfig(ref targetAnimation, animator.BoneCount, data.Time);
                     }
                 }
+                else
+                {
+                    data.TransitionIndex = currentIndex;
+                    data.TransitionTime = 0f;
+                }
 
-                data.RenderConfig = new float3(finalFrame, finalNextFrame, clampValue);
+                data.RenderConfig = renderConfig;
+            }
+
+            private static float3 ResolveRenderConfig(ref MaterialAnimationBlobAsset animation, int boneCount, float time)
+            {
+                int frames = math.max(1, animation.Frames);
+                float frameRate = math.max(0.001f, animation.Fps * animation.Speed);
+                float floatFrame = math.fmod(time * frameRate, frames);
+                if (floatFrame < 0f)
+                    floatFrame += frames;
+
+                int frame = (int)math.floor(floatFrame);
+                int nextFrame = (frame + 1) % frames;
+                float clampValue = floatFrame - frame;
+
+                int finalFrame = animation.Start + frame * boneCount;
+                int finalNextFrame = animation.Start + nextFrame * boneCount;
+                return new float3(finalFrame, finalNextFrame, clampValue);
             }
         }
     }

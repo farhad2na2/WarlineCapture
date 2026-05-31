@@ -192,7 +192,7 @@ public partial struct UnitAnimationIndexSystem : ISystem
             if (animationOrder[slotIndex].Kind != preferred)
                 continue;
 
-            animationIndex = (byte)(slotIndex + 1);
+            animationIndex = (byte)(preferred + 1);
             return true;
         }
 

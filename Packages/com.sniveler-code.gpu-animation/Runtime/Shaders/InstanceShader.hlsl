@@ -3,9 +3,11 @@
 
 float4 get_sampler(UnityTexture2D anim_texture, float index)
 {
-    float row = index * anim_texture.texelSize.x;
-    float col = index % (uint)anim_texture.texelSize.z;
-    float2 uv_coords = float2(col * anim_texture.texelSize.x, row * anim_texture.texelSize.y);
+    uint pixel_index = (uint)index;
+    uint width = (uint)anim_texture.texelSize.z;
+    uint col = pixel_index % width;
+    uint row = pixel_index / width;
+    float2 uv_coords = (float2(col, row) + 0.5) * anim_texture.texelSize.xy;
     return anim_texture.SampleLevel(anim_texture.samplerstate, uv_coords, 0);   
 }
 

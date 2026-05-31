@@ -100,11 +100,11 @@ namespace SnivelerCode.GpuAnimation.Editor.Scripts
         static void GenerateMaterials(Shader shader)
         {
             s_BaseTexture = new Texture2D(s_BatchTextureSize, s_BatchTextureSize, TextureFormat.RGBA32, true);
-            AssetDatabase.CreateAsset(s_BaseTexture, Path.Combine(s_FolderResources, "BatchTexture.asset"));
+            s_BaseTexture = CreateOrReplaceAsset(s_BaseTexture, Path.Combine(s_FolderResources, "BatchTexture.asset"));
 
             s_BaseMaterial = new Material(shader) { name = "BatchMaterial", enableInstancing = true };
             s_BaseMaterialPath = Path.Combine(s_FolderResources, "BatchMaterial.mat");
-            AssetDatabase.CreateAsset(s_BaseMaterial, s_BaseMaterialPath);
+            s_BaseMaterial = CreateOrReplaceAsset(s_BaseMaterial, s_BaseMaterialPath);
             
             s_BaseMaterial.SetTexture(s_MainTexture, s_BaseTexture);
             s_PartialTextureIndex = new Dictionary<Texture2D, int>();
@@ -320,8 +320,8 @@ namespace SnivelerCode.GpuAnimation.Editor.Scripts
                 animTexture.SetPixels(texturePixels);
                 animTexture.Apply();
                 animTexture.filterMode = FilterMode.Point;
+                animTexture = CreateOrReplaceAsset(animTexture, Path.Combine(s_FolderResources, $"AnimationTexture{i}.asset"));
                 s_BaseMaterial.SetTexture(s_AnimTextures[i], animTexture);
-                AssetDatabase.CreateAsset(animTexture, Path.Combine(s_FolderResources, $"AnimationTexture{i}.asset"));
             }
         }
         
@@ -396,8 +396,7 @@ namespace SnivelerCode.GpuAnimation.Editor.Scripts
                 mesh.SetUVs(3, boneWeights);
 
                 var meshAssetPath = Path.Combine(s_FolderResources, $"{prefab.Name}_lod{i}.asset");
-                AssetDatabase.CreateAsset(mesh, meshAssetPath);
-                var meshAsset = AssetDatabase.LoadAssetAtPath<Mesh>(meshAssetPath);
+                var meshAsset = CreateOrReplaceAsset(mesh, meshAssetPath);
                 var materialAsset = AssetDatabase.LoadAssetAtPath<Material>(s_BaseMaterialPath);
                 if (meshAsset == null)
                 {
@@ -420,7 +419,7 @@ namespace SnivelerCode.GpuAnimation.Editor.Scripts
                 var meshFilter = lodObject.AddComponent<MeshFilter>();
                 meshFilter.sharedMesh = meshAsset;
 
-                var subMeshCount = mesh.subMeshCount;
+                var subMeshCount = meshAsset.subMeshCount;
 
                 var meshRenderer = lodObject.AddComponent<MeshRenderer>();
                 meshRenderer.motionVectorGenerationMode = MotionVectorGenerationMode.ForceNoMotion;
@@ -465,13 +464,29 @@ namespace SnivelerCode.GpuAnimation.Editor.Scripts
 
         static void WriteBoneMatrix(SkinnedMeshRenderer renderer)
         {
-            foreach (var boneMatrix in renderer.bones.Select((b, idx) => b.localToWorldMatrix * renderer.sharedMesh.bindposes[idx]))
+            var rendererWorldToLocal = renderer.transform.worldToLocalMatrix;
+            foreach (var boneMatrix in renderer.bones.Select((b, idx) => rendererWorldToLocal * b.localToWorldMatrix * renderer.sharedMesh.bindposes[idx]))
             {
                 s_TextureInstances[0].Write(s_WritePixelIndex, new Color(boneMatrix.m00, boneMatrix.m01, boneMatrix.m02, boneMatrix.m03));
                 s_TextureInstances[1].Write(s_WritePixelIndex, new Color(boneMatrix.m10, boneMatrix.m11, boneMatrix.m12, boneMatrix.m13));
                 s_TextureInstances[2].Write(s_WritePixelIndex, new Color(boneMatrix.m20, boneMatrix.m21, boneMatrix.m22, boneMatrix.m23));
                 s_WritePixelIndex++;
             }
+        }
+
+        static T CreateOrReplaceAsset<T>(T asset, string assetPath) where T : UnityEngine.Object
+        {
+            var existing = AssetDatabase.LoadAssetAtPath<T>(assetPath);
+            if (existing != null)
+            {
+                EditorUtility.CopySerialized(asset, existing);
+                UnityEngine.Object.DestroyImmediate(asset);
+                EditorUtility.SetDirty(existing);
+                return existing;
+            }
+
+            AssetDatabase.CreateAsset(asset, assetPath);
+            return AssetDatabase.LoadAssetAtPath<T>(assetPath);
         }
 
         static void ForceDirectory(string directory)

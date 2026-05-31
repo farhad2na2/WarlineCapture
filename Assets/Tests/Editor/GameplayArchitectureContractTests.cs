@@ -2392,6 +2392,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public struct MapSurfaceDiagnosticsComponent : IComponentData", components);
         StringAssert.Contains("public partial struct MapSurfaceDiagnosticsSystem : ISystem", diagnostics);
         StringAssert.Contains("private const double DiagnosticsIntervalSeconds = 1d;", diagnostics);
+        StringAssert.Contains("SurfaceDiagnosticsSignature signature = BuildSignature(surface);", diagnostics);
+        StringAssert.Contains("if (_hasLastSignature && signature.Equals(_lastSignature))", diagnostics);
         StringAssert.Contains("MapSurfaceDiagnosticsComponent diagnostics = BuildDiagnostics(surface);", diagnostics);
         StringAssert.Contains("diagnostics.LayeredCellCount++", diagnostics);
         StringAssert.Contains("diagnostics.BridgeSurfaceCount++", diagnostics);

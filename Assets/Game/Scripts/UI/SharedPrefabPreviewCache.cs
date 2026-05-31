@@ -502,7 +502,7 @@ public static class SharedPrefabPreviewCache
                     for (int orderIndex = 0; orderIndex < animationOrder.Count; orderIndex++)
                     {
                         if (animationOrder[orderIndex] == preferred)
-                            return orderIndex;
+                            return (int)preferred + 1;
                     }
                 }
             }

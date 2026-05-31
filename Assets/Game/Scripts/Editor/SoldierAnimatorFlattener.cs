@@ -653,6 +653,12 @@ public static class SoldierAnimatorFlattener
                 }
                 if (finalClip == null)
                     continue;
+
+                finalClip = CreateSanitizedClip(
+                    finalClip,
+                    $"{generatedFolder}/{definition.Name}.anim",
+                    definition.Name,
+                    definition.Loop);
             }
             else if (definition.UpperStateCandidates == null || definition.UpperStateCandidates.Length == 0)
             {
@@ -660,7 +666,11 @@ public static class SoldierAnimatorFlattener
                 if (lowerClip == null)
                     continue;
 
-                finalClip = lowerClip;
+                finalClip = CreateSanitizedClip(
+                    lowerClip,
+                    $"{generatedFolder}/{definition.Name}.anim",
+                    definition.Name,
+                    definition.Loop);
             }
             else
             {
@@ -696,10 +706,10 @@ public static class SoldierAnimatorFlattener
                 generatedStates.Add(new StateClipEntry(definition.Name, finalClip));
         }
 
-        EnsureDirectStateGenerated(generatedStates, sourceStateClips, "IdleHoldWeapon", familyDefinition.DirectHoldStateCandidates, allowedStates);
-        EnsureDirectStateGenerated(generatedStates, sourceStateClips, "Aim", familyDefinition.DirectAimStateCandidates, allowedStates);
-        EnsureDirectStateGenerated(generatedStates, sourceStateClips, "Shoot", familyDefinition.DirectShootStateCandidates, allowedStates);
-        EnsureDirectStateGenerated(generatedStates, sourceStateClips, "Grenade", familyDefinition.DirectGrenadeStateCandidates, allowedStates);
+        EnsureDirectStateGenerated(generatedStates, sourceStateClips, generatedFolder, "IdleHoldWeapon", familyDefinition.DirectHoldStateCandidates, allowedStates, loop: true);
+        EnsureDirectStateGenerated(generatedStates, sourceStateClips, generatedFolder, "Aim", familyDefinition.DirectAimStateCandidates, allowedStates, loop: true);
+        EnsureDirectStateGenerated(generatedStates, sourceStateClips, generatedFolder, "Shoot", familyDefinition.DirectShootStateCandidates, allowedStates, loop: false);
+        EnsureDirectStateGenerated(generatedStates, sourceStateClips, generatedFolder, "Grenade", familyDefinition.DirectGrenadeStateCandidates, allowedStates, loop: false);
 
         return generatedStates;
     }
@@ -707,9 +717,11 @@ public static class SoldierAnimatorFlattener
     private static void EnsureDirectStateGenerated(
         List<StateClipEntry> generatedStates,
         List<SourceStateClipEntry> sourceStateClips,
+        string generatedFolder,
         string stateName,
         string[] candidates,
-        HashSet<string> allowedStates)
+        HashSet<string> allowedStates,
+        bool loop)
     {
         if (!allowedStates.Contains(stateName))
             return;
@@ -721,7 +733,14 @@ public static class SoldierAnimatorFlattener
             ?? FindBestStateClip(sourceStateClips, candidates, System.Array.Empty<string>());
 
         if (clip != null)
-            generatedStates.Add(new StateClipEntry(stateName, clip));
+        {
+            AnimationClip sanitizedClip = CreateSanitizedClip(
+                clip,
+                $"{generatedFolder}/{stateName}.anim",
+                stateName,
+                loop);
+            generatedStates.Add(new StateClipEntry(stateName, sanitizedClip));
+        }
     }
 
     private static List<StateClipEntry> EnsureFinalFamilyStates(
@@ -844,6 +863,59 @@ public static class SoldierAnimatorFlattener
         return AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
     }
 
+    private static AnimationClip CreateSanitizedClip(AnimationClip sourceClip, string clipPath, string clipName, bool loop)
+    {
+        AnimationClip existing = AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+        if (existing != null)
+            AssetDatabase.DeleteAsset(clipPath);
+
+        var sanitizedClip = new AnimationClip
+        {
+            name = clipName,
+            frameRate = sourceClip.frameRate
+        };
+
+        CopySanitizedBindings(sourceClip, sanitizedClip);
+
+        var settings = AnimationUtility.GetAnimationClipSettings(sourceClip);
+        settings.loopTime = loop;
+        settings.loopBlend = loop;
+        settings.keepOriginalOrientation = true;
+        settings.keepOriginalPositionY = true;
+        settings.keepOriginalPositionXZ = true;
+        settings.heightFromFeet = false;
+        AnimationUtility.SetAnimationClipSettings(sanitizedClip, settings);
+        sanitizedClip.EnsureQuaternionContinuity();
+
+        AssetDatabase.CreateAsset(sanitizedClip, clipPath);
+        return AssetDatabase.LoadAssetAtPath<AnimationClip>(clipPath);
+    }
+
+    private static void CopySanitizedBindings(AnimationClip sourceClip, AnimationClip targetClip)
+    {
+        foreach (EditorCurveBinding binding in AnimationUtility.GetCurveBindings(sourceClip))
+        {
+            string property = binding.propertyName ?? string.Empty;
+            if (IsHumanoidRootMotionProperty(property))
+                continue;
+
+            AnimationCurve curve = AnimationUtility.GetEditorCurve(sourceClip, binding);
+            if (curve != null)
+                AnimationUtility.SetEditorCurve(targetClip, binding, curve);
+        }
+
+        foreach (EditorCurveBinding binding in AnimationUtility.GetObjectReferenceCurveBindings(sourceClip))
+        {
+            string property = binding.propertyName ?? string.Empty;
+            if (IsHumanoidRootMotionProperty(property))
+                continue;
+
+            ObjectReferenceKeyframe[] curve = AnimationUtility.GetObjectReferenceCurve(sourceClip, binding);
+            if (curve != null && curve.Length > 0)
+                AnimationUtility.SetObjectReferenceCurve(targetClip, binding, curve);
+        }
+    }
+
     private static float GetMaxFrameRate(IEnumerable<AnimationClip> clips)
     {
         float maxFrameRate = 0f;
@@ -884,6 +956,9 @@ public static class SoldierAnimatorFlattener
         string path = binding.path ?? string.Empty;
         string property = binding.propertyName ?? string.Empty;
 
+        if (IsHumanoidRootMotionProperty(property))
+            return false;
+
         if (string.IsNullOrEmpty(path))
         {
             if (IsRootBinding(path, property))
@@ -905,6 +980,11 @@ public static class SoldierAnimatorFlattener
         if (path == "Rig" || path == "Rig/B-root")
             return true;
 
+        return IsHumanoidRootMotionProperty(property);
+    }
+
+    private static bool IsHumanoidRootMotionProperty(string property)
+    {
         return property.IndexOf("RootT", System.StringComparison.OrdinalIgnoreCase) >= 0
             || property.IndexOf("RootQ", System.StringComparison.OrdinalIgnoreCase) >= 0;
     }

@@ -15,7 +15,7 @@ MonoBehaviour:
   spawnOnStart: 1
   generateBuildings: 1
   randomSeed: 24681357
-  cityCount: 1
+  cityCount: 0
   startCell: {x: 1000, y: 1000}
   generationYieldInterval: 1
   gasStationCount: 3

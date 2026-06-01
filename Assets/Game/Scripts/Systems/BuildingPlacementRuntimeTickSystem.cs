@@ -14,6 +14,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
         public readonly Action UpdateDestroyedBuildings;
         public readonly Action UpdateRoadBarrierDoors;
         public readonly Action FlushPendingMarkerRefresh;
+        public readonly Action EnqueueMapBuildingPlacements;
         public readonly Action UpdateBuildingRuntimeBoundary;
         public readonly Func<BuildingPlacementInputRuntimeTickSystem.Result> UpdateInput;
         public readonly BuildingPlacementRuntimeTickDiagnosticsSystem DiagnosticsSystem;
@@ -29,6 +30,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             Action updateDestroyedBuildings,
             Action updateRoadBarrierDoors,
             Action flushPendingMarkerRefresh,
+            Action enqueueMapBuildingPlacements,
             Action updateBuildingRuntimeBoundary,
             Func<BuildingPlacementInputRuntimeTickSystem.Result> updateInput,
             BuildingPlacementRuntimeTickDiagnosticsSystem diagnosticsSystem,
@@ -43,6 +45,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             UpdateDestroyedBuildings = updateDestroyedBuildings;
             UpdateRoadBarrierDoors = updateRoadBarrierDoors;
             FlushPendingMarkerRefresh = flushPendingMarkerRefresh;
+            EnqueueMapBuildingPlacements = enqueueMapBuildingPlacements;
             UpdateBuildingRuntimeBoundary = updateBuildingRuntimeBoundary;
             UpdateInput = updateInput;
             DiagnosticsSystem = diagnosticsSystem;
@@ -85,6 +88,7 @@ internal sealed class BuildingPlacementRuntimeTickSystem
             afterDoors = Time.realtimeSinceStartupAsDouble;
             context.FlushPendingMarkerRefresh?.Invoke();
             afterMarkers = Time.realtimeSinceStartupAsDouble;
+            context.EnqueueMapBuildingPlacements?.Invoke();
             context.UpdateBuildingRuntimeBoundary?.Invoke();
 
             BuildingPlacementInputRuntimeTickSystem.Result input = context.UpdateInput != null

@@ -125,7 +125,7 @@ internal sealed class BuildingRoadLegacyEcsSystem
             Cell = new int2(originCell.x, originCell.y)
         });
         em.AddComponentData(entity, new UnitGridInitialized());
-        em.AddComponentData(entity, new Faction { Id = 0 });
+        em.AddComponentData(entity, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
         em.AddComponentData(entity, new UnitHealth { Current = 500, Max = 500 });
         em.AddComponentData(entity, new UnitRespawnPrefab { Prefab = Entity.Null });
         em.AddComponentData(entity, new UnitPrevWorldPos { Value = center });
@@ -181,7 +181,7 @@ internal sealed class BuildingRoadLegacyEcsSystem
             if (em.HasComponent<UnitMoveVisualState>(instance))
                 em.SetComponentData(instance, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 0f });
             if (em.HasComponent<Faction>(instance))
-                em.SetComponentData(instance, new Faction { Id = 0 });
+                em.SetComponentData(instance, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
             if (em.HasComponent<UnitRespawnPrefab>(instance))
                 em.SetComponentData(instance, new UnitRespawnPrefab { Prefab = prefabEntity });
             if (em.HasComponent<UnitIdleWanderState>(instance))
@@ -227,7 +227,7 @@ internal sealed class BuildingRoadLegacyEcsSystem
             Entity entity = entities[i];
             if (em.HasComponent<StaticGridBlocker>(entity))
                 continue;
-            if (em.GetComponentData<Faction>(entity).Id != 0)
+            if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
                 continue;
 
             Entity candidate = em.GetComponentData<UnitRespawnPrefab>(entity).Prefab;

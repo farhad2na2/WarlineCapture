@@ -52,23 +52,25 @@ public sealed class SelectionUiQuerySystem
                 return configuredName;
         }
 
-        byte factionId = entityManager.HasComponent<Faction>(entity) ? entityManager.GetComponentData<Faction>(entity).Id : (byte)0;
+        byte factionId = entityManager.HasComponent<Faction>(entity)
+            ? entityManager.GetComponentData<Faction>(entity).Id
+            : FactionIdentitySystem.NeutralFactionId;
         if (!entityManager.HasComponent<UnitMove>(entity))
-            return factionId == 0 ? "Player Unit" : "Enemy Unit";
+            return FactionIdentitySystem.IsPlayerControlled(factionId) ? "Player Unit" : "Enemy Unit";
 
         bool isVehicle = IsVehicleUnit(entityManager, entity);
         if (!isVehicle)
-            return factionId == 0 ? "Soldier" : "Enemy Soldier";
+            return FactionIdentitySystem.IsPlayerControlled(factionId) ? "Soldier" : "Enemy Soldier";
 
         bool canAttack = entityManager.HasComponent<UnitCombat>(entity) && entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0;
         if (canAttack)
-            return factionId == 0 ? "Heavy APC" : "Enemy Heavy APC";
+            return FactionIdentitySystem.IsPlayerControlled(factionId) ? "Heavy APC" : "Enemy Heavy APC";
 
         float speed = entityManager.HasComponent<UnitMove>(entity) ? entityManager.GetComponentData<UnitMove>(entity).Speed : 0f;
         if (speed >= 10.5f)
-            return factionId == 0 ? "APC 02" : "Enemy APC 02";
+            return FactionIdentitySystem.IsPlayerControlled(factionId) ? "APC 02" : "Enemy APC 02";
 
-        return factionId == 0 ? "APC 01" : "Enemy APC 01";
+        return FactionIdentitySystem.IsPlayerControlled(factionId) ? "APC 01" : "Enemy APC 01";
     }
 
     public string ResolveFocusedUnitDescription(EntityManager entityManager, Entity entity)
@@ -80,12 +82,14 @@ public sealed class SelectionUiQuerySystem
                 return configuredDescription;
         }
 
-        byte factionId = entityManager.HasComponent<Faction>(entity) ? entityManager.GetComponentData<Faction>(entity).Id : (byte)0;
+        byte factionId = entityManager.HasComponent<Faction>(entity)
+            ? entityManager.GetComponentData<Faction>(entity).Id
+            : FactionIdentitySystem.NeutralFactionId;
         bool movable = entityManager.HasComponent<UnitMove>(entity);
         bool isVehicle = IsVehicleForVisibleSelection(entityManager, entity);
         bool canAttack = entityManager.HasComponent<UnitCombat>(entity) && entityManager.GetComponentData<UnitCombat>(entity).CanAttack != 0;
 
-        if (factionId == 0)
+        if (FactionIdentitySystem.IsPlayerControlled(factionId))
         {
             if (!movable)
                 return "Player-controlled unit.";
@@ -174,7 +178,7 @@ public sealed class SelectionUiQuerySystem
     {
         return entityManager.Exists(entity) &&
                entityManager.HasComponent<Faction>(entity) &&
-               entityManager.GetComponentData<Faction>(entity).Id == 0;
+               FactionIdentitySystem.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id);
     }
 
     public bool IsVehicleUnit(EntityManager entityManager, Entity entity)
@@ -368,7 +372,7 @@ public sealed class SelectionUiQuerySystem
         var parts = new List<string>();
 
         if (entityManager.HasComponent<Faction>(entity))
-            parts.Add(entityManager.GetComponentData<Faction>(entity).Id == 0 ? "PLAYER" : "ENEMY");
+            parts.Add(FactionIdentitySystem.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) ? "PLAYER" : "ENEMY");
 
         if (entityManager.HasComponent<UnitHealth>(entity))
         {

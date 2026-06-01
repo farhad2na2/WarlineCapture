@@ -81,7 +81,7 @@ public sealed class FocusedUnitLifecycleSystem
                 focusedUnit = Entity.Null;
             }
             else if (em.HasComponent<Faction>(focusedUnit) &&
-                     em.GetComponentData<Faction>(focusedUnit).Id != 0 &&
+                     !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(focusedUnit).Id) &&
                      em.HasComponent<SelectedUnitTag>(focusedUnit))
             {
                 em.RemoveComponent<SelectedUnitTag>(focusedUnit);
@@ -102,7 +102,7 @@ public sealed class FocusedUnitLifecycleSystem
         if (!em.Exists(selectedEntity) || !em.HasComponent<Faction>(selectedEntity))
             return false;
 
-        if (em.GetComponentData<Faction>(selectedEntity).Id != 0)
+        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(selectedEntity).Id))
             return false;
 
         selectionStateSystem.SetFocusedUnit(selectedEntity);
@@ -148,7 +148,7 @@ public sealed class FocusedUnitLifecycleSystem
             return false;
 
         ClearCurrentSelection(em, selectionStateSystem, clearReason, logSelectionDiagnostic, clearHudSelection);
-        if (em.GetComponentData<Faction>(entity).Id == 0 && !em.HasComponent<SelectedUnitTag>(entity))
+        if (FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) && !em.HasComponent<SelectedUnitTag>(entity))
             em.AddComponent<SelectedUnitTag>(entity);
 
         selectionStateSystem.CacheSelectedMoveEntity(em, entity);

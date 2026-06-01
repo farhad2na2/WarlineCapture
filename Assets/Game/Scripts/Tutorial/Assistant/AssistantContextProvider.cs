@@ -259,7 +259,7 @@ public sealed class AssistantContextProvider
     {
         return IsAlive(em, entity) &&
             em.HasComponent<Faction>(entity) &&
-            em.GetComponentData<Faction>(entity).Id == 0 &&
+            FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) &&
             em.HasComponent<UnitMove>(entity);
     }
 
@@ -267,7 +267,7 @@ public sealed class AssistantContextProvider
     {
         return IsAlive(em, entity) &&
             em.HasComponent<Faction>(entity) &&
-            em.GetComponentData<Faction>(entity).Id != 0 &&
+            FactionIdentitySystem.IsHostileToPlayer(em.GetComponentData<Faction>(entity).Id) &&
             em.HasComponent<LocalTransform>(entity);
     }
 

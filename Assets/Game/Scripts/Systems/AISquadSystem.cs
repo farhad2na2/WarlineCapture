@@ -106,7 +106,7 @@ public partial struct AISquadSystem : ISystem
             Entity squadEntity = em.CreateEntity(typeof(AISquad));
             DynamicBuffer<AISquadUnit> squadUnits = em.AddBuffer<AISquadUnit>(squadEntity);
             int squadId = plan.NextSquadId <= 0 ? 1 : plan.NextSquadId;
-            byte targetFactionId = plan.FactionId == 0 ? (byte)1 : (byte)0;
+            byte targetFactionId = FactionIdentitySystem.ResolveDefaultTargetFaction(plan.FactionId);
             int2 rallyCell = cellSum / members.Length;
             int2 targetCell = ResolveInitialTargetCell(em, targetFactionId, rallyCell);
             em.SetComponentData(squadEntity, new AISquad
@@ -201,7 +201,7 @@ public partial struct AISquadSystem : ISystem
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
     {
         if (!hasControls)
-            return factionId != 0;
+            return FactionIdentitySystem.IsAiControlledByDefault(factionId);
 
         for (int i = 0; i < controls.Length; i++)
         {
@@ -210,7 +210,7 @@ public partial struct AISquadSystem : ISystem
                 return control.AIControlled != 0;
         }
 
-        return factionId != 0;
+        return FactionIdentitySystem.IsAiControlledByDefault(factionId);
     }
 
     private bool ShouldQueueDiagnostics(ref SystemState state)

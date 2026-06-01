@@ -337,7 +337,7 @@ public static class Chapter01M01PlayableRuntime
             Range = 0.35f,
             CooldownSeconds = 0.75f,
             Damage = 15,
-            TraceColor = factionId == 0 ? new float4(0.35f, 0.8f, 1f, 1f) : new float4(1f, 0.25f, 0.2f, 1f),
+            TraceColor = FactionIdentitySystem.IsPlayerControlled(factionId) ? new float4(0.35f, 0.8f, 1f, 1f) : new float4(1f, 0.25f, 0.2f, 1f),
             TraceWidth = 0.015f,
             TraceScrollSpeed = 1f,
             TraceDashDensity = 8f,

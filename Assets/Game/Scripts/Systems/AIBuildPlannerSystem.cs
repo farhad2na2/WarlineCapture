@@ -347,7 +347,7 @@ public partial struct AIBuildPlannerSystem : ISystem
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
     {
         if (!hasControls)
-            return factionId != 0;
+            return FactionIdentitySystem.IsAiControlledByDefault(factionId);
 
         for (int i = 0; i < controls.Length; i++)
         {
@@ -356,13 +356,13 @@ public partial struct AIBuildPlannerSystem : ISystem
                 return control.AIControlled != 0;
         }
 
-        return factionId != 0;
+        return FactionIdentitySystem.IsAiControlledByDefault(factionId);
     }
 
     private static int2 ResolveDefaultBaseCenter(byte factionId, GridConfig grid)
     {
-        int x = factionId == 0 ? grid.Width / 4 : (grid.Width * 3) / 4;
-        int y = factionId == 0 ? grid.Height / 2 : grid.Height / 2;
+        int x = FactionIdentitySystem.IsPlayerControlled(factionId) ? grid.Width / 4 : (grid.Width * 3) / 4;
+        int y = grid.Height / 2;
         return new int2(math.max(0, x), math.max(0, y));
     }
 

@@ -231,7 +231,7 @@ Use `/Users/farhad/Projects/WarlineCapture-CodexUnity1` for Unity validation.
    - Added `Assets/Game/Scripts/Systems/UnitRenderBudgetClassificationSystem.cs`.
    - Moved character classification out of `UnitRenderBudgetSystem`.
    - Preserved the current behavior: units with `UnitMovementBehavior.UsesVehicleMotion != 0` are not characters, and remaining candidates must have a `UnitSourcePrefabKey` beginning with `Unit_Chr_`.
-   - Existing enemy classification remains local `Faction.Id != 0` logic until the later visual planning extraction, because changing that now would widen this step.
+   - Existing enemy classification is centralized through `FactionIdentitySystem` so neutral faction `0` remains non-commandable and non-player.
    - Validation:
      - `git diff --check` passed for touched render-budget files.
      - `GameplayArchitectureContractTests.RunUnitRenderBudgetArchitectureBatchValidation` passed in `/Users/farhad/Projects/WarlineCapture-CodexUnity1`.

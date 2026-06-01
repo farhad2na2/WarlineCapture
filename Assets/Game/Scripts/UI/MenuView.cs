@@ -1817,7 +1817,7 @@ namespace Game.Scripts.UI
                     {
                         Color32 color = isSelected
                             ? MinimapSelectedUnitColor
-                            : (isCivilian ? MinimapNeutralUnitColor : (factionId == 0 ? MinimapAllyUnitColor : MinimapEnemyUnitColor));
+                            : (isCivilian ? MinimapNeutralUnitColor : (FactionIdentitySystem.IsPlayerControlled((byte)factionId) ? MinimapAllyUnitColor : MinimapEnemyUnitColor));
                         DrawMinimapDot(pixelX, pixelY, color, isSelected ? 2 : 1, _minimapPixels);
                         drewUnitPixels = true;
                     }
@@ -1839,10 +1839,10 @@ namespace Game.Scripts.UI
                 CreateRuntimeMinimapIcon(
                     isSelected
                         ? _minimapSelectedTemplate
-                        : (isCivilian ? _minimapNeutralTemplate : (factionId == 0 ? _minimapAllyTemplate : _minimapEnemyTemplate)),
+                        : (isCivilian ? _minimapNeutralTemplate : (FactionIdentitySystem.IsPlayerControlled((byte)factionId) ? _minimapAllyTemplate : _minimapEnemyTemplate)),
                     isSelected
                         ? _minimapSelectedSprite
-                        : (isCivilian ? _minimapNeutralSprite : (factionId == 0 ? _minimapAllySprite : _minimapEnemySprite)),
+                        : (isCivilian ? _minimapNeutralSprite : (FactionIdentitySystem.IsPlayerControlled((byte)factionId) ? _minimapAllySprite : _minimapEnemySprite)),
                     normalized,
                     isSelected ? _minimapSelectedArrowSprite : null,
                     arrowZ);
@@ -1884,10 +1884,10 @@ namespace Game.Scripts.UI
                     GetOrCreateFullscreenMapRuntimeElementsRoot(),
                     isSelected
                         ? _minimapSelectedTemplate
-                        : (isCivilian ? _minimapNeutralTemplate : (factionId == 0 ? _minimapAllyTemplate : _minimapEnemyTemplate)),
+                        : (isCivilian ? _minimapNeutralTemplate : (FactionIdentitySystem.IsPlayerControlled((byte)factionId) ? _minimapAllyTemplate : _minimapEnemyTemplate)),
                     isSelected
                         ? _minimapSelectedSprite
-                        : (isCivilian ? _minimapNeutralSprite : (factionId == 0 ? _minimapAllySprite : _minimapEnemySprite)),
+                        : (isCivilian ? _minimapNeutralSprite : (FactionIdentitySystem.IsPlayerControlled((byte)factionId) ? _minimapAllySprite : _minimapEnemySprite)),
                     normalized,
                     isSelected ? _minimapSelectedArrowSprite : null,
                     arrowZ);
@@ -1956,7 +1956,7 @@ namespace Game.Scripts.UI
             if (_buildingUiQuerySystem != null &&
                 _buildingUiQuerySystem.TryGetRuntimeBuildingOwnerFaction(_buildingUiQueryContext, buildingId, out byte ownerFactionId))
             {
-                if (ownerFactionId == 0)
+                if (FactionIdentitySystem.IsPlayerControlled(ownerFactionId))
                 {
                     template = isWall && _minimapWallTemplate != null ? _minimapWallTemplate : _minimapHomeTemplate;
                     sprite = isWall && _minimapWallSprite != null ? _minimapWallSprite : _minimapHomeSprite;
@@ -1983,7 +1983,7 @@ namespace Game.Scripts.UI
             }
 
             byte factionId = em.GetComponentData<Faction>(buildingEntity).Id;
-            if (factionId == 0)
+            if (FactionIdentitySystem.IsPlayerControlled(factionId))
             {
                 template = isWall && _minimapWallTemplate != null ? _minimapWallTemplate : _minimapHomeTemplate;
                 sprite = isWall && _minimapWallSprite != null ? _minimapWallSprite : _minimapHomeSprite;
@@ -2008,7 +2008,7 @@ namespace Game.Scripts.UI
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
-                if (em.GetComponentData<Faction>(entity).Id != 0)
+                if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
                     continue;
 
                 UnitTarget target = em.GetComponentData<UnitTarget>(entity);
@@ -2043,7 +2043,7 @@ namespace Game.Scripts.UI
             for (int i = 0; i < entities.Length; i++)
             {
                 Entity entity = entities[i];
-                if (em.GetComponentData<Faction>(entity).Id != 0)
+                if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
                     continue;
 
                 UnitTarget target = em.GetComponentData<UnitTarget>(entity);
@@ -5002,7 +5002,7 @@ namespace Game.Scripts.UI
             for (int i = 0; i < controls.Length; i++)
             {
                 FactionControlEntry control = controls[i];
-                if (control.FactionId != 0)
+                if (!FactionIdentitySystem.IsPlayerControlled(control.FactionId))
                     continue;
 
                 control.AIControlled = enabled ? (byte)1 : (byte)0;
@@ -5014,7 +5014,7 @@ namespace Game.Scripts.UI
 
             controls.Add(new FactionControlEntry
             {
-                FactionId = 0,
+                FactionId = FactionIdentitySystem.PlayerFactionId,
                 AIControlled = enabled ? (byte)1 : (byte)0,
                 IsPlayerFaction = 1,
                 LastLogTime = -999f
@@ -5031,7 +5031,7 @@ namespace Game.Scripts.UI
                 {
                     Entity entity = entities[i];
                     AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(entity);
-                    if (plan.FactionId != 0)
+                    if (!FactionIdentitySystem.IsPlayerControlled(plan.FactionId))
                         continue;
 
                     plan.Enabled = enabledValue;
@@ -5048,7 +5048,7 @@ namespace Game.Scripts.UI
                 {
                     Entity entity = entities[i];
                     AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(entity);
-                    if (plan.FactionId != 0)
+                    if (!FactionIdentitySystem.IsPlayerControlled(plan.FactionId))
                         continue;
 
                     plan.Enabled = enabledValue;
@@ -5065,7 +5065,7 @@ namespace Game.Scripts.UI
                 {
                     Entity entity = entities[i];
                     AISquadPlan plan = em.GetComponentData<AISquadPlan>(entity);
-                    if (plan.FactionId != 0)
+                    if (!FactionIdentitySystem.IsPlayerControlled(plan.FactionId))
                         continue;
 
                     plan.Enabled = enabledValue;
@@ -5081,7 +5081,7 @@ namespace Game.Scripts.UI
                 {
                     Entity entity = entities[i];
                     FactionEconomy economy = em.GetComponentData<FactionEconomy>(entity);
-                    if (economy.FactionId != 0)
+                    if (!FactionIdentitySystem.IsPlayerControlled(economy.FactionId))
                         continue;
 
                     FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(entity);

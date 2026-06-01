@@ -80,7 +80,7 @@ public sealed class AIFactionControlStartupSystem
         {
             entries.Add(new FactionControlEntry
             {
-                FactionId = 0,
+                FactionId = FactionIdentitySystem.PlayerFactionId,
                 AIControlled = 0,
                 IsPlayerFaction = 1,
                 LastLogTime = -999f
@@ -91,7 +91,7 @@ public sealed class AIFactionControlStartupSystem
         {
             entries.Add(new FactionControlEntry
             {
-                FactionId = 1,
+                FactionId = FactionIdentitySystem.EnemyFactionId,
                 AIControlled = 1,
                 IsPlayerFaction = 0,
                 LastLogTime = -999f

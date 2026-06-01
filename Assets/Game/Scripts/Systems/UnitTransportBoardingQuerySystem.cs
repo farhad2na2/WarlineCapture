@@ -18,7 +18,7 @@ public readonly struct UnitTransportBoardingQuerySystem
         return em.Exists(transport) &&
                new UnitTransportCapacitySystem().TryEnsureTransportCapacity(em, transport) &&
                em.HasComponent<Faction>(transport) &&
-               em.GetComponentData<Faction>(transport).Id == 0 &&
+               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(transport).Id) &&
                em.HasComponent<UnitGrid>(transport) &&
                em.HasComponent<UnitFootprint>(transport) &&
                em.HasComponent<LocalTransform>(transport);
@@ -28,7 +28,7 @@ public readonly struct UnitTransportBoardingQuerySystem
     {
         if (!em.Exists(entity) ||
             !em.HasComponent<Faction>(entity) ||
-            em.GetComponentData<Faction>(entity).Id != 0 ||
+            !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) ||
             !em.HasComponent<UnitGrid>(entity) ||
             !em.HasComponent<UnitMove>(entity) ||
             !em.HasComponent<UnitFootprint>(entity) ||

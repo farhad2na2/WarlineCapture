@@ -30,9 +30,9 @@ public sealed class AITargetingValidationTests
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 7,
-            FactionId = 1,
+            FactionId = FactionIdentitySystem.EnemyFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
-            TargetFactionId = 0,
+            TargetFactionId = FactionIdentitySystem.PlayerFactionId,
             TargetKind = (byte)AITargetKind.None,
             TargetEntity = Entity.Null,
             RallyCell = new int2(10, 10),
@@ -43,15 +43,15 @@ public sealed class AITargetingValidationTests
             LastLogTime = -999f
         });
 
-        Entity lowValueUnit = CreateTarget(em, 0, new int2(11, 10), 100, false, false);
-        Entity highValueThreat = CreateTarget(em, 0, new int2(18, 10), 500, true, true);
-        CreateTarget(em, 1, new int2(9, 10), 500, true, true);
+        Entity lowValueUnit = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(11, 10), 100, false, false);
+        Entity highValueThreat = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(18, 10), 500, true, true);
+        CreateTarget(em, FactionIdentitySystem.EnemyFactionId, new int2(9, 10), 500, true, true);
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=7 target=Threat score=\d+ reason=Threat targetFaction=0 targetCell=int2\(18, 10\)"));
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=7 target=Threat score=\d+ reason=Threat targetFaction=1 targetCell=int2\(18, 10\)"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();
@@ -60,7 +60,7 @@ public sealed class AITargetingValidationTests
         Assert.AreEqual(highValueThreat, squad.TargetEntity);
         Assert.AreEqual((byte)AITargetKind.Threat, squad.TargetKind);
         Assert.AreEqual(new int2(18, 10), squad.TargetCell);
-        Assert.AreEqual(0, squad.TargetFactionId);
+        Assert.AreEqual(FactionIdentitySystem.PlayerFactionId, squad.TargetFactionId);
         Assert.Greater(squad.TargetScore, 0);
         Assert.AreNotEqual(lowValueUnit, squad.TargetEntity);
     }
@@ -75,7 +75,7 @@ public sealed class AITargetingValidationTests
         em.SetComponentData(squadEntity, new AISquad
         {
             SquadId = 8,
-            FactionId = 1,
+            FactionId = FactionIdentitySystem.EnemyFactionId,
             Purpose = (byte)AISquadPurpose.Attack,
             TargetKind = (byte)AITargetKind.None,
             TargetEntity = Entity.Null,
@@ -83,17 +83,17 @@ public sealed class AITargetingValidationTests
             LastLogTime = -999f
         });
         Entity priority = em.CreateEntity(typeof(AITargetPrioritySetting));
-        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = 1, Priority = (byte)AITargetPriority.Economy });
+        em.SetComponentData(priority, new AITargetPrioritySetting { FactionId = FactionIdentitySystem.EnemyFactionId, Priority = (byte)AITargetPriority.Economy });
 
-        Entity threat = CreateTarget(em, 0, new int2(11, 10), 500, true, false);
-        Entity hauler = CreateTarget(em, 0, new int2(12, 10), 100, false, false);
+        Entity threat = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(11, 10), 500, true, false);
+        Entity hauler = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(12, 10), 100, false, false);
         em.AddComponentData(hauler, new UnitResourceHauler { BarrelCapacity = 8 });
 
         RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
         SystemHandle system = world.CreateSystem<AITargetingSystem>();
         SystemHandle logFlushSystem = world.CreateSystem<AIDiagnosticLogFlushSystem>();
 
-        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=1 squad=8 target=Unit score=\d+ reason=Economy targetFaction=0 targetCell=int2\(12, 10\)"));
+        LogAssert.Expect(LogType.Log, new Regex(@"\[AITarget\] faction=2 squad=8 target=Unit score=\d+ reason=Economy targetFaction=1 targetCell=int2\(12, 10\)"));
         system.Update(world.Unmanaged);
         logFlushSystem.Update(world.Unmanaged);
         LogAssert.NoUnexpectedReceived();

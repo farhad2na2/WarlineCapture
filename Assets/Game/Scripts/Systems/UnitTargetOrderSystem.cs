@@ -257,7 +257,7 @@ public sealed class UnitTargetOrderSystem
         if (entity == Entity.Null || !entityManager.Exists(entity))
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         if (!entityManager.HasComponent<Faction>(entity) ||
-            entityManager.GetComponentData<Faction>(entity).Id != 0 ||
+            !FactionIdentitySystem.IsPlayerControlled(entityManager.GetComponentData<Faction>(entity).Id) ||
             !entityManager.HasComponent<UnitMove>(entity) ||
             !entityManager.HasComponent<UnitCombat>(entity) ||
             entityManager.GetComponentData<UnitCombat>(entity).CanAttack == 0)
@@ -284,7 +284,7 @@ public sealed class UnitTargetOrderSystem
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (entityManager.GetComponentData<Faction>(targetEntity).Id == 0)
+        if (!FactionIdentitySystem.IsHostileToPlayer(entityManager.GetComponentData<Faction>(targetEntity).Id))
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         if (entityManager.HasComponent<UnitHealth>(targetEntity) &&
             entityManager.GetComponentData<UnitHealth>(targetEntity).Current <= 0)

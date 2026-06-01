@@ -224,7 +224,7 @@ public sealed class M01AssistantCommandRequestSystem
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         }
 
-        if (em.GetComponentData<Faction>(entity).Id != 0)
+        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
         if (!IsAlive(em, entity))
             return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);

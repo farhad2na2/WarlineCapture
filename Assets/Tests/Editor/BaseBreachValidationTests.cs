@@ -22,7 +22,7 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
                 gatePrefab,
@@ -30,10 +30,10 @@ public sealed class BaseBreachValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
 
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
-                attackerFactionId: 1,
+                attackerFactionId: FactionIdentitySystem.EnemyFactionId,
                 finalTarget: Entity.Null,
                 finalTargetCell: new int2(100, 100),
                 attackerCell: new int2(100, 40),
@@ -52,10 +52,10 @@ public sealed class BaseBreachValidationTests
     {
         WithRuntimeBase((buildingPlacement, wallPrefab, gatePrefab) =>
         {
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
 
             Assert.IsTrue(buildingPlacement.TryResolveBaseBreachTarget(
-                attackerFactionId: 1,
+                attackerFactionId: FactionIdentitySystem.EnemyFactionId,
                 finalTarget: Entity.Null,
                 finalTargetCell: new int2(100, 100),
                 attackerCell: new int2(100, 40),
@@ -286,7 +286,7 @@ public sealed class BaseBreachValidationTests
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
             RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
                 gatePrefab,
@@ -294,17 +294,17 @@ public sealed class BaseBreachValidationTests
                 out _,
                 out _,
                 out _,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
 
-            Entity target = CreateTarget(em, 0, new int2(100, 100), new float3(100f, 0f, 100f));
-            Entity attacker = CreateAttacker(em, 1, new int2(100, 40), new float3(100f, 0f, 40f));
+            Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(100, 100), new float3(100f, 0f, 100f));
+            Entity attacker = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(100, 40), new float3(100f, 0f, 40f));
             Entity squadEntity = em.CreateEntity(typeof(AISquad));
             em.SetComponentData(squadEntity, new AISquad
             {
                 SquadId = 7,
-                FactionId = 1,
+                FactionId = FactionIdentitySystem.EnemyFactionId,
                 Purpose = (byte)AISquadPurpose.Attack,
-                TargetFactionId = 0,
+                TargetFactionId = FactionIdentitySystem.PlayerFactionId,
                 TargetKind = (byte)AITargetKind.Threat,
                 TargetEntity = target,
                 RallyCell = new int2(100, 40),
@@ -355,7 +355,7 @@ public sealed class BaseBreachValidationTests
                 buildingPlacement,
                 wallPrefab,
                 gatePrefab,
-                ownerFactionId: 1,
+                ownerFactionId: FactionIdentitySystem.EnemyFactionId,
                 left: 20,
                 right: 100,
                 bottom: 60,
@@ -364,15 +364,15 @@ public sealed class BaseBreachValidationTests
                 buildingPlacement,
                 wallPrefab,
                 gatePrefab,
-                ownerFactionId: 0,
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId,
                 left: 150,
                 right: 230,
                 bottom: 60,
                 top: 140);
 
-            Entity target = CreateTarget(em, 0, new int2(190, 100), new float3(190f, 0f, 100f));
-            Entity attacker = CreateAttacker(em, 1, new int2(60, 100), new float3(60f, 0f, 100f));
-            Entity squadEntity = CreateAttackSquad(em, 8, 1, 0, target, new int2(60, 100), new int2(190, 100));
+            Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(190, 100), new float3(190f, 0f, 100f));
+            Entity attacker = CreateAttacker(em, FactionIdentitySystem.EnemyFactionId, new int2(60, 100), new float3(60f, 0f, 100f));
+            Entity squadEntity = CreateAttackSquad(em, 8, FactionIdentitySystem.EnemyFactionId, FactionIdentitySystem.PlayerFactionId, target, new int2(60, 100), new int2(190, 100));
             em.AddBuffer<AISquadUnit>(squadEntity).Add(new AISquadUnit { Unit = attacker });
 
             SystemHandle combatSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<AICombatOrderSystem>();
@@ -415,7 +415,7 @@ public sealed class BaseBreachValidationTests
                 out _,
                 out Vector2Int gateOrigin,
                 out Vector2Int gateFootprint,
-                ownerFactionId: 1));
+                ownerFactionId: FactionIdentitySystem.EnemyFactionId));
 
             SystemHandle blockerSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
@@ -469,7 +469,7 @@ public sealed class BaseBreachValidationTests
                 gatePrefab,
                 new Vector2Int(80, 60),
                 out _,
-                ownerFactionId: 1));
+                ownerFactionId: FactionIdentitySystem.EnemyFactionId));
 
             Transform runtimeDoor = FindDescendantByName(runtimeRoot.transform, "Door_Z");
             Assert.NotNull(runtimeDoor);
@@ -490,7 +490,7 @@ public sealed class BaseBreachValidationTests
                 out int buildingId,
                 out Vector2Int gateOrigin,
                 out Vector2Int gateFootprint,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
 
             Transform runtimeDoor = FindDescendantByName(runtimeRoot.transform, "Door_Z");
             Assert.NotNull(runtimeDoor);
@@ -521,7 +521,7 @@ public sealed class BaseBreachValidationTests
             EntityManager em = World.DefaultGameObjectInjectionWorld.EntityManager;
             RuntimeGameplayStateTestHelper.SetBuildingPlacement(em, buildingPlacement.TickRuntimeForTests);
             RuntimeGameplayStateTestHelper.SetPlayRequested(em, true);
-            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: 0);
+            SpawnThreeSidedWall(buildingPlacement, wallPrefab, ownerFactionId: FactionIdentitySystem.PlayerFactionId);
             Assert.IsTrue(buildingPlacement.TryGetRuntimeBuildingPlacementFootprint(gatePrefab, false, out Vector2Int gateFootprint));
             Vector2Int gateOrigin = new(100 - gateFootprint.x / 2, 60);
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeBuilding(
@@ -530,7 +530,7 @@ public sealed class BaseBreachValidationTests
                 out int gateBuildingId,
                 out Vector2Int actualGateOrigin,
                 out Vector2Int actualGateFootprint,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
 
             SystemHandle blockerSystem = World.DefaultGameObjectInjectionWorld.CreateSystem<StaticGridBlockerUpdateSystem>();
             blockerSystem.Update(World.DefaultGameObjectInjectionWorld.Unmanaged);
@@ -573,9 +573,9 @@ public sealed class BaseBreachValidationTests
                 new int2(100, 40),
                 1));
 
-            Entity target = CreateTarget(em, 0, new int2(100, 100), new float3(100f, 0f, 100f));
+            Entity target = CreateTarget(em, FactionIdentitySystem.PlayerFactionId, new int2(100, 100), new float3(100f, 0f, 100f));
             Assert.IsFalse(buildingPlacement.TryResolveBaseBreachTarget(
-                attackerFactionId: 1,
+                attackerFactionId: FactionIdentitySystem.EnemyFactionId,
                 finalTarget: target,
                 finalTargetCell: new int2(100, 100),
                 attackerCell: new int2(100, 40),
@@ -902,12 +902,12 @@ public sealed class BaseBreachValidationTests
                 wallPrefab,
                 new Vector2Int(20, 20),
                 rotateVertical: false,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
             Assert.IsTrue(buildingPlacement.TrySpawnRuntimeWallSegment(
                 wallPrefab,
                 new Vector2Int(40, 20),
                 rotateVertical: true,
-                ownerFactionId: 0));
+                ownerFactionId: FactionIdentitySystem.PlayerFactionId));
 
             Transform buildingRoot = runtimeRoot.transform.Find("RuntimeBuildings");
             Assert.NotNull(buildingRoot);

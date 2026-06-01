@@ -250,7 +250,7 @@ public class UnitGridAuthoring : MonoBehaviour
                 });
             }
 
-            AddComponent(entity, new Faction { Id = 0 });
+            AddComponent(entity, new Faction { Id = FactionIdentitySystem.NeutralFactionId });
             AddComponent(entity, new UnitCombat
             {
                 AggroRangeCells = math.max(0, authoring.aggroRangeCells),

@@ -215,7 +215,7 @@ public static class AISettingsRuntimeState
             {
                 Entity entity = entities[i];
                 FactionEconomy economy = em.GetComponentData<FactionEconomy>(entity);
-                if (economy.FactionId == 0)
+                if (!FactionIdentitySystem.IsAiControlledByDefault(economy.FactionId))
                     continue;
 
                 FactionEconomyPolicy policy = em.GetComponentData<FactionEconomyPolicy>(entity);
@@ -231,7 +231,7 @@ public static class AISettingsRuntimeState
             {
                 Entity entity = entities[i];
                 AIBuildPlan plan = em.GetComponentData<AIBuildPlan>(entity);
-                if (plan.FactionId == 0)
+                if (!FactionIdentitySystem.IsAiControlledByDefault(plan.FactionId))
                     continue;
 
                 plan.Enabled = Expansion == AIExpansionSetting.Off ? (byte)0 : (byte)1;
@@ -248,7 +248,7 @@ public static class AISettingsRuntimeState
             {
                 Entity entity = entities[i];
                 AIProductionPlan plan = em.GetComponentData<AIProductionPlan>(entity);
-                if (plan.FactionId == 0)
+                if (!FactionIdentitySystem.IsAiControlledByDefault(plan.FactionId))
                     continue;
 
                 plan.UnitProductionIntervalSeconds = ApplyProductionInterval(6f, AIControllerRole.Enemy);
@@ -264,7 +264,7 @@ public static class AISettingsRuntimeState
             {
                 Entity entity = entities[i];
                 AISquadPlan plan = em.GetComponentData<AISquadPlan>(entity);
-                if (plan.FactionId == 0)
+                if (!FactionIdentitySystem.IsAiControlledByDefault(plan.FactionId))
                     continue;
 
                 int maxUnits = ApplyMaxSquadUnits(8, AIControllerRole.Enemy);
@@ -283,7 +283,7 @@ public static class AISettingsRuntimeState
             {
                 Entity entity = entities[i];
                 AITargetPrioritySetting setting = em.GetComponentData<AITargetPrioritySetting>(entity);
-                if (setting.FactionId == 0)
+                if (!FactionIdentitySystem.IsAiControlledByDefault(setting.FactionId))
                     continue;
 
                 setting.Priority = (byte)TargetPriority;

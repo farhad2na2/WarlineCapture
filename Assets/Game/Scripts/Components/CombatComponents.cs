@@ -5,7 +5,7 @@ using UnityEngine;
 
 public struct Faction : IComponentData
 {
-    public byte Id; // 0 = player, 1 = enemy (example)
+    public byte Id; // 0 = neutral, 1 = player, 2+ = hostile/AI factions.
 }
 
 public struct FactionEconomy : IComponentData

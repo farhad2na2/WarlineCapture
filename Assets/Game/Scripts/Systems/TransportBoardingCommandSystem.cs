@@ -534,7 +534,7 @@ public sealed class TransportBoardingCommandSystem
     {
         return em.Exists(entity) &&
                em.HasComponent<Faction>(entity) &&
-               em.GetComponentData<Faction>(entity).Id == 0;
+               FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id);
     }
 
     private static string DescribeTransportBoardingEntity(EntityManager em, Entity entity)

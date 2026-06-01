@@ -81,7 +81,7 @@ public readonly struct UnitRenderBudgetDecisionSystem
             Entity unit = context.Distances[i].Unit;
             bool isCharacter = context.ClassificationSystem.IsCharacterUnit(em, unit);
             byte factionId = em.GetComponentData<Faction>(unit).Id;
-            bool isEnemyUnit = factionId != 0;
+            bool isEnemyUnit = FactionIdentitySystem.IsHostileToPlayer(factionId);
             bool isSelectedUnit = em.HasComponent<SelectedUnitTag>(unit);
             bool isMovingUnit =
                 context.MoveVisualLookup.HasComponent(unit) &&

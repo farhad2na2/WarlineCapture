@@ -681,7 +681,7 @@ public partial struct AICombatOrderSystem : ISystem
     private static bool IsFactionAIControlled(byte factionId, bool hasControls, NativeArray<FactionControlEntry> controls)
     {
         if (!hasControls)
-            return factionId != 0;
+            return FactionIdentitySystem.IsAiControlledByDefault(factionId);
 
         for (int i = 0; i < controls.Length; i++)
         {
@@ -690,7 +690,7 @@ public partial struct AICombatOrderSystem : ISystem
                 return control.AIControlled != 0;
         }
 
-        return factionId != 0;
+        return FactionIdentitySystem.IsAiControlledByDefault(factionId);
     }
 
     private static bool TryGetGridBreachContext(ref SystemState state, out GridBreachContext context)

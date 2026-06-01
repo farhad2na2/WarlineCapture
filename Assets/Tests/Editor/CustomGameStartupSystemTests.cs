@@ -916,14 +916,14 @@ public sealed class CustomGameStartupSystemTests
             Assert.IsFalse(em.HasComponent<MissionRuntimeCommandSquadTag>(entity), "Custom Game units must not use M01 command squad tags.");
             Assert.IsFalse(em.HasComponent<MissionRuntimeEnemyPatrolTag>(entity), "Custom Game units must not use M01 enemy patrol tags.");
 
-            if (faction.Id == 0)
+            if (FactionIdentitySystem.IsPlayerControlled(faction.Id))
             {
                 playerCount++;
                 Assert.IsTrue(IsNear(grid.Cell, playerSpawnCenter, spawnRadiusCells), $"Player unit spawned outside configured player radius. cell={grid.Cell}");
                 if (sourceKeyText == "Unit_Chr_Rifleman")
                     playerRiflemanCount++;
             }
-            if (faction.Id == 1)
+            if (FactionIdentitySystem.IsHostileToPlayer(faction.Id))
             {
                 enemyCount++;
                 Assert.IsTrue(IsNear(grid.Cell, enemySpawnCenter, spawnRadiusCells), $"Enemy unit spawned outside configured enemy radius. cell={grid.Cell}");

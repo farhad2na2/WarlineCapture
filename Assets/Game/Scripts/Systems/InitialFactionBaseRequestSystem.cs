@@ -143,7 +143,7 @@ public readonly struct InitialFactionBaseRequestSystem
                     BuildingRuntimeSpawnRequest.KindBuilding,
                     default,
                     false,
-                    factionSpawn.FactionId == 0 && placement.Kind == InitialFactionBasePlacementKind.CoreBuilding
+                    FactionIdentitySystem.IsPlayerControlled(factionSpawn.FactionId) && placement.Kind == InitialFactionBasePlacementKind.CoreBuilding
                         ? initialBaseCoreRequestEntryIndex
                         : 0);
                 requestCount++;

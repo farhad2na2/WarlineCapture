@@ -15,7 +15,7 @@ MonoBehaviour:
   enabled: 1
   role: 0
   difficulty: 1
-  factionId: 1
+  factionId: 2
   autoControlsPlayerFaction: 0
   startingMoney: 75000
   incomeMultiplier: 1.15

@@ -17,7 +17,7 @@ public readonly struct InitialMissionRosterSystem
         for (int i = 0; i < unitSpawns.Length; i++)
         {
             InitialUnitsFactionUnitSpawnEntry unit = unitSpawns[i];
-            bool isPlayer = unit.FactionId == 0;
+            bool isPlayer = FactionIdentitySystem.IsPlayerControlled(unit.FactionId);
             bool isEnemy = unit.FactionId == 1;
             bool keep = unit.Prefab != Entity.Null &&
                 ((isPlayer && !playerAssigned) || (isEnemy && !enemyAssigned));

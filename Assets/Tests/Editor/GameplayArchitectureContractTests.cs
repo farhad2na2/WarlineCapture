@@ -68,7 +68,13 @@ public sealed class GameplayArchitectureContractTests
     private const string WarlineCaptureShellRouteButtonViewPath = "Assets/Game/Scripts/UI/Shell/WarlineCaptureShellRouteButtonView.cs";
     private const string WarlineCaptureGameUiSceneBuilderPath = "Assets/Game/Scripts/Editor/WarlineCaptureGameUiSceneBuilder.cs";
     private const string RuntimeCityCompositionPath = "Assets/Game/Scripts/Environment/RuntimeCityCompositionSystem.cs";
+    private const string FactionIdentitySystemPath = "Assets/Game/Scripts/Systems/FactionIdentitySystem.cs";
     private const string BuildingGameplayCompositionRoadmapPath = "Design/Architecture/building_gameplay_composition_system_refactor_roadmap.md";
+    private const string MapBuildingEntityConversionRoadmapPath = "Design/Architecture/map_building_entity_conversion_roadmap.md";
+    private const string MapBuildingPlacementConfigPath = "Assets/Game/Scripts/Configs/MapBuildingPlacementConfig.cs";
+    private const string MapBuildingPlacementSpawnSystemPath = "Assets/Game/Scripts/Systems/MapBuildingPlacementSpawnSystem.cs";
+    private const string MapBuildingPlacementBakeEditorPath = "Assets/Game/Scripts/Editor/MapBuildingPlacementBakeEditor.cs";
+    private const string MatchMapBuildingPlacementConfigAssetPath = "Assets/Game/Configs/Scene/Match_MapBuildingPlacement_Config.asset";
     private const string BuildingGameplayCompositionSystemPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
     private const string BuildingGameplayCompositionSourceSystemPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
     private const string BuildingGameplayCompositionResultSystemPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionResultSystem.cs";
@@ -12799,7 +12805,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("queueState.RandomState = randomState", respawnQueueProjectionSystem);
         StringAssert.Contains("public readonly struct InitialSpawnResourceSystem", resourceSystem);
         StringAssert.Contains("ComponentType.ReadWrite<FactionEconomy>()", resourceSystem);
-        StringAssert.Contains("economy.FactionId != 0", resourceSystem);
+        StringAssert.Contains("FactionIdentitySystem.PlayerFactionId", resourceSystem);
         StringAssert.Contains("economy.Money = math.max(0, config.InitialDollars)", resourceSystem);
         StringAssert.Contains("typeof(FactionEconomyPolicy)", resourceSystem);
         StringAssert.Contains("Enabled = 0", resourceSystem);
@@ -12914,8 +12920,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public bool ShouldSkipInitialBuildingRequests(bool useM01CompactRuntime)", missionRosterSystem);
         StringAssert.Contains("return useM01CompactRuntime", missionRosterSystem);
         StringAssert.Contains("public void ApplyM01CompactUnitRoster", missionRosterSystem);
-        StringAssert.Contains("unit.FactionId == 0", missionRosterSystem);
-        StringAssert.Contains("unit.FactionId == 1", missionRosterSystem);
+        StringAssert.Contains("FactionIdentitySystem.IsPlayerControlled(unit.FactionId)", missionRosterSystem);
+        StringAssert.Contains("FactionIdentitySystem.IsHostileToPlayer(unit.FactionId)", missionRosterSystem);
         StringAssert.Contains("unit.Prefab != Entity.Null", missionRosterSystem);
         StringAssert.Contains("unit.Count = keep ? 1 : 0", missionRosterSystem);
         StringAssert.Contains("unit.SpawnOffset = int2.zero", missionRosterSystem);
@@ -19066,6 +19072,57 @@ public sealed class GameplayArchitectureContractTests
             "Building definition configs must reference configured destroyed visual prefabs:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, missingDestroyedVisualConfigs));
+    }
+
+    [Test]
+    public void MapBuildingEntityConversionUsesExplicitConfigAndRuntimeSpawnRegistration()
+    {
+        Assert.IsTrue(File.Exists(MapBuildingEntityConversionRoadmapPath), "Map building entity conversion must keep a dedicated roadmap.");
+        Assert.IsTrue(File.Exists(MapBuildingPlacementConfigPath), "Map building placement data must live in an explicit config type.");
+        Assert.IsTrue(File.Exists(MapBuildingPlacementSpawnSystemPath), "Runtime map building conversion must have a narrow system owner.");
+        Assert.IsTrue(File.Exists(MapBuildingPlacementBakeEditorPath), "Editor bake tooling must own Match scene scanning.");
+        Assert.IsTrue(File.Exists(MatchMapBuildingPlacementConfigAssetPath), "Match map building placements must be baked to a scene config asset.");
+
+        string contract = File.ReadAllText(ContractPath);
+        StringAssert.Contains("Authored `Match` scene map-building model conversion belongs in `MapBuildingPlacementSpawnSystem`", contract);
+        StringAssert.Contains("Faction ownership for authored map buildings is baked from explicit `Faction1` and `Faction2` authoring volumes", contract);
+
+        string runtime = File.ReadAllText(MapBuildingPlacementSpawnSystemPath);
+        StringAssert.Contains("BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint", runtime);
+        StringAssert.Contains("spawnContext.RegisterRuntimeBuilding", runtime);
+        Assert.IsFalse(runtime.Contains("FindObjectsByType", StringComparison.Ordinal), "Runtime map building conversion must not use broad scene lookup.");
+        Assert.IsFalse(runtime.Contains("FindObjectOfType", StringComparison.Ordinal), "Runtime map building conversion must not use broad scene lookup.");
+        Assert.IsFalse(runtime.Contains("GameObject.Find", StringComparison.Ordinal), "Runtime map building conversion must not use broad scene lookup.");
+        Assert.IsFalse(runtime.Contains("BuildingRuntimeSpawnRequest", StringComparison.Ordinal), "Authored map conversion must not use generic build requests that can relocate buildings.");
+
+        string matchSceneView = File.ReadAllText(MatchSceneViewPath);
+        StringAssert.Contains("MapBuildingPlacementConfig MapBuildingPlacementConfig", matchSceneView);
+        StringAssert.Contains("Transform MapBuildingAuthoringRoot", matchSceneView);
+
+        MapBuildingPlacementConfig config = AssetDatabase.LoadAssetAtPath<MapBuildingPlacementConfig>(MatchMapBuildingPlacementConfigAssetPath);
+        Assert.IsNotNull(config, "Baked map building placement config must load.");
+        Assert.Greater(config.Placements.Count, 0, "Baked map building placement config must contain placements.");
+        Assert.IsTrue(config.Placements.Any(entry => entry.FactionId == 1), "Baked map building placement config must contain player-faction buildings.");
+        Assert.IsTrue(config.Placements.Any(entry => entry.FactionId == 2), "Baked map building placement config must contain enemy-faction buildings.");
+    }
+
+    [Test]
+    public void FactionIdentityUsesNeutralZeroAndCentralizedControlChecks()
+    {
+        Assert.IsTrue(File.Exists(FactionIdentitySystemPath), "Faction identity must have one central owner.");
+
+        string contract = File.ReadAllText(ContractPath);
+        StringAssert.Contains("faction `0` is neutral/non-commandable", contract);
+        StringAssert.Contains("faction `1` is the player", contract);
+        StringAssert.Contains("faction `2+` is hostile/AI", contract);
+
+        string identity = File.ReadAllText(FactionIdentitySystemPath);
+        StringAssert.Contains("public const byte NeutralFactionId = 0;", identity);
+        StringAssert.Contains("public const byte PlayerFactionId = 1;", identity);
+        StringAssert.Contains("public const byte EnemyFactionId = 2;", identity);
+        StringAssert.Contains("IsPlayerControlled(byte factionId)", identity);
+        StringAssert.Contains("IsAiControlledByDefault(byte factionId)", identity);
+        StringAssert.Contains("IsHostileToPlayer(byte factionId)", identity);
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

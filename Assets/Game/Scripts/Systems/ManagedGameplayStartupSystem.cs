@@ -135,6 +135,7 @@ internal sealed class ManagedGameplayStartupSystem
         FactionVisualSettingsConfig factionVisualConfig,
         RoadBuildSystemConfig roadBuildConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
+        MapBuildingPlacementConfig mapBuildingPlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
         UnitAttackTraceSystemConfig unitAttackTraceConfig,
         GameStringsConfig gameStringsConfig,
@@ -143,6 +144,7 @@ internal sealed class ManagedGameplayStartupSystem
         Light directionalLight,
         Volume globalVolume,
         Transform runtimeUiRoot,
+        Transform mapBuildingAuthoringRoot,
         int ownerLayer)
     {
         var dayNight = new DayNightSystem();
@@ -165,7 +167,9 @@ internal sealed class ManagedGameplayStartupSystem
             road.RoadFootprintQueryContext,
             factionVisuals,
             dayNight,
-            rtsSelectionConfig);
+            rtsSelectionConfig,
+            mapBuildingPlacementConfig,
+            mapBuildingAuthoringRoot);
 
         SelectionGameplayStartupSystem.Result selection = _selectionGameplayStartupSystem.Initialize(
             rtsSelectionConfig,

@@ -107,7 +107,7 @@ public sealed class VisibleUnitSelectionSystem
         if (em.HasComponent<Prefab>(entity) || em.HasComponent<StaticGridBlocker>(entity))
             return false;
 
-        if (em.GetComponentData<Faction>(entity).Id != 0)
+        if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
             return false;
 
         bool isVehicle = selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);

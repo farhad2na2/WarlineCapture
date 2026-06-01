@@ -12,7 +12,7 @@ public readonly struct InitialSpawnResourceSystem
         for (int i = 0; i < entities.Length; i++)
         {
             FactionEconomy economy = em.GetComponentData<FactionEconomy>(entities[i]);
-            if (economy.FactionId != 0)
+            if (!FactionIdentitySystem.IsPlayerControlled(economy.FactionId))
                 continue;
 
             economyEntity = entities[i];
@@ -24,7 +24,7 @@ public readonly struct InitialSpawnResourceSystem
         economyEntity = em.CreateEntity(typeof(FactionEconomy), typeof(FactionEconomyPolicy));
         em.SetComponentData(economyEntity, new FactionEconomy
         {
-            FactionId = 0,
+            FactionId = FactionIdentitySystem.PlayerFactionId,
             Money = math.max(0, config.InitialDollars)
         });
         em.SetComponentData(economyEntity, new FactionEconomyPolicy

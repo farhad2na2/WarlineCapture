@@ -43,6 +43,8 @@ internal sealed class MatchBootstrapSystem
     public RTSSelectionSystemConfig RtsSelectionConfig => MatchScene != null ? MatchScene.RtsSelectionConfig : null;
     public RoadBuildSystemConfig RoadBuildConfig => MatchScene != null ? MatchScene.RoadBuildConfig : null;
     public BuildingPlacementSystemConfig BuildingPlacementConfig => MatchScene != null ? MatchScene.BuildingPlacementConfig : null;
+    public MapBuildingPlacementConfig MapBuildingPlacementConfig => MatchScene != null ? MatchScene.MapBuildingPlacementConfig : null;
+    public Transform MapBuildingAuthoringRoot => MatchScene != null ? MatchScene.MapBuildingAuthoringRoot : null;
     public UnitAttackTraceSystemConfig UnitAttackTraceConfig => MatchScene != null ? MatchScene.UnitAttackTraceConfig : null;
     public RuntimeCitySpawnerSystemConfig RuntimeCitySpawnerConfig => MatchScene != null ? MatchScene.RuntimeCitySpawnerConfig : null;
     public RuntimeDecorationSpawnerSystemConfig RuntimeDecorationSpawnerConfig => MatchScene != null ? MatchScene.RuntimeDecorationSpawnerConfig : null;
@@ -121,6 +123,7 @@ internal sealed class MatchBootstrapSystem
             FactionVisualConfig,
             RoadBuildConfig,
             BuildingPlacementConfig,
+            MapBuildingPlacementConfig,
             RtsSelectionConfig,
             UnitAttackTraceConfig,
             GameStringsConfig,
@@ -129,6 +132,7 @@ internal sealed class MatchBootstrapSystem
             DirectionalLight,
             GlobalVolume,
             _runtimeUiRoot,
+            MapBuildingAuthoringRoot,
             ownerLayer);
 
         DayNight = managedSystems.DayNight;
@@ -430,6 +434,7 @@ internal sealed class MatchBootstrapSystem
         FactionVisualSettingsConfig factionVisualConfig,
         RoadBuildSystemConfig roadBuildConfig,
         BuildingPlacementSystemConfig buildingPlacementConfig,
+        MapBuildingPlacementConfig mapBuildingPlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
         UnitAttackTraceSystemConfig unitAttackTraceConfig,
         GameStringsConfig gameStringsConfig,
@@ -438,6 +443,7 @@ internal sealed class MatchBootstrapSystem
         Light directionalLight,
         Volume globalVolume,
         Transform runtimeUiRoot,
+        Transform mapBuildingAuthoringRoot,
         int ownerLayer)
     {
         return managedGameplayStartupSystem.Initialize(
@@ -445,6 +451,7 @@ internal sealed class MatchBootstrapSystem
             factionVisualConfig,
             roadBuildConfig,
             buildingPlacementConfig,
+            mapBuildingPlacementConfig,
             rtsSelectionConfig,
             unitAttackTraceConfig,
             gameStringsConfig,
@@ -453,6 +460,7 @@ internal sealed class MatchBootstrapSystem
             directionalLight,
             globalVolume,
             runtimeUiRoot,
+            mapBuildingAuthoringRoot,
             ownerLayer);
     }
 

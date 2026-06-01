@@ -34,7 +34,7 @@ public readonly struct InitialBuildingCompletionSystem
 
             if (request.Status == BuildingRuntimeSpawnRequest.Succeeded)
             {
-                if (request.FactionId == 0 &&
+                if (FactionIdentitySystem.IsPlayerControlled(request.FactionId) &&
                     request.EntryIndex == initialBaseCoreRequestEntryIndex &&
                     !Chapter01M01PlayableRuntime.IsActiveMission())
                 {

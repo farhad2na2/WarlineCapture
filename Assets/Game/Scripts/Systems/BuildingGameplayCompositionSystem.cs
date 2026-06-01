@@ -28,7 +28,9 @@ internal sealed class BuildingGameplayCompositionSystem
         RoadFootprintQuerySystem.Context roadFootprintQueryContext,
         FactionVisualSettings factionVisuals,
         DayNightSystem dayNight,
-        RTSSelectionSystemConfig rtsSelectionConfig = null)
+        RTSSelectionSystemConfig rtsSelectionConfig = null,
+        MapBuildingPlacementConfig mapBuildingPlacementConfig = null,
+        Transform mapBuildingAuthoringRoot = null)
     {
         MaterialPropertyBlock markerPropertyBlock = _markerVisualCompositionSystem.GetMarkerPropertyBlock();
         BuildingGameplayCompositionSourceSystem childSystems = _childSystem.Create();
@@ -445,6 +447,22 @@ internal sealed class BuildingGameplayCompositionSystem
                             createRuntimeContextSource,
                             createPlacementCommandContext),
                         createRuntimeContextSource),
+                    (source, placementInteractionContext, placementMarkerPropertyBlock) =>
+                    {
+                        BuildingRuntimeContextSystem.Source mapRuntimeContextSource =
+                            createBuildingRuntimeContextSource(source, placementInteractionContext, placementMarkerPropertyBlock);
+                        BuildingRuntimeSpawnSystem.Context mapSpawnContext =
+                            source.BuildingRuntimeContextSystem.CreateSpawnContext(mapRuntimeContextSource);
+                        return () => source.MapBuildingPlacementSpawnSystem.Update(
+                            new MapBuildingPlacementSpawnSystem.Context(
+                                mapBuildingPlacementConfig,
+                                mapBuildingAuthoringRoot,
+                                source.BuildingRuntimeSpawnSystem,
+                                mapSpawnContext,
+                                (out Entity gridEntity, out GridConfig grid, out DynamicBuffer<GridRoad> roads, out DynamicBlockerData blockerData) =>
+                                    tryGetGridData(source, out gridEntity, out grid, out roads, out blockerData),
+                                Debug.LogWarning));
+                    },
                     DestroyedBuildingLifetimeSeconds);
                 runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource);
                 runtimeTickContextReady = true;

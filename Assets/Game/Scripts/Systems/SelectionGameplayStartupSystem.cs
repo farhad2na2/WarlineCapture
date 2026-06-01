@@ -585,7 +585,7 @@ internal sealed class SelectionGameplayStartupSystem
 
             if (!em.Exists(entity) || !em.HasComponent<Faction>(entity) || !em.HasComponent<UnitMove>(entity))
                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
-            if (em.GetComponentData<Faction>(entity).Id != 0)
+            if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
             if (em.HasComponent<UnitHealth>(entity) && em.GetComponentData<UnitHealth>(entity).Current <= 0)
                 return TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetNotAttackable);

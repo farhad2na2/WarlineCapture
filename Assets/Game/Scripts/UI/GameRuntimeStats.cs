@@ -144,7 +144,7 @@ public static class GameRuntimeStats
 
     public static void RecordMilitaryDeath(byte factionId)
     {
-        if (factionId == 0)
+        if (FactionIdentitySystem.IsPlayerControlled(factionId))
             _ownSoldiersDead++;
         else
             _enemySoldiersDead++;

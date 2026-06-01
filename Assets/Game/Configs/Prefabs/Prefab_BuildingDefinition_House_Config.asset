@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
-  m_Name: Prefab_BuildingDefinition_Hall_01_Config
+  m_Name: Prefab_BuildingDefinition_House_Config
   m_EditorClassIdentifier: 
-  displayName: City Hall
-  description: Civic administration building used by civilians and city services.
-  maxHealth: 1200
-  role: 3
+  displayName: House
+  description: Civilian residence that provides housing for local households.
+  maxHealth: 350
+  role: 1
   isWall: 0
-  price: 50000
+  price: 9000
   oilBarrelsPerDay: 0
   oilStorageCapacity: 0
   fuelBarrelsPerDay: 0

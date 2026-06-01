@@ -38,17 +38,10 @@ MonoBehaviour:
   - {fileID: 7546298519455943663, guid: 3745b7c959c8348a68e93131b571bba7, type: 3}
   - {fileID: 3689421368615084249, guid: 984ce3a5f001c4cefbe34d63c3f5a738, type: 3}
   - {fileID: 657476235084452795, guid: 949e5dc03169d46779d1ef0f097fff5c, type: 3}
-  - {fileID: 2198447343974841528, guid: f36edf329571a4ff7836cde8a5622ede, type: 3}
-  - {fileID: 765231535457721506, guid: cbe0f6e27e4f34dff98b76b6cb858739, type: 3}
-  - {fileID: 6665034834335096940, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
-  - {fileID: 5733906895582332945, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
   - {fileID: 3689421368615084249, guid: 949e5dc03169d46779d1ef0f097fff5c, type: 3}
-  - {fileID: 6189581983765943743, guid: 76c6fc5da93c648fcb65a51df45bcde3, type: 3}
   - {fileID: 3689421368615084249, guid: f36edf329571a4ff7836cde8a5622ede, type: 3}
-  - {fileID: 3689421368615084249, guid: cbe0f6e27e4f34dff98b76b6cb858739, type: 3}
-  - {fileID: 1686526228411544, guid: b937e5e4e89dd1d40b9be7a9aa56f3dd, type: 3}
-  - {fileID: 1523267506957190, guid: a198ed07cf7b82f4b80c604b5f6dc8d8, type: 3}
-  - {fileID: 1326705888280374, guid: 9c128e9c86c940f459817a0618f0901a, type: 3}
+  - {fileID: 3689421368615084249, guid: 3313a6a43a5a74dc0a0c0f85c45af1d8, type: 3}
+  - {fileID: 5733906895582332945, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
   unitPrefabRegistryConfig: {fileID: 11400000, guid: b201000000000000000000000000000d, type: 2}
   initialUnitsConfig: {fileID: 11400000, guid: b201000000000000000000000000000c, type: 2}
   buildPlaneY: 0

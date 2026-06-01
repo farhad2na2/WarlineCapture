@@ -92,6 +92,8 @@ internal sealed class BuildingRuntimeCreationSystem
 
         EntityManager entityManager = default;
         bool hasEntityManager = context.TryGetEntityManager != null && context.TryGetEntityManager(out entityManager);
+        MapAuthoredBuildingVisualComponent mapAuthoredVisual = instance.GetComponent<MapAuthoredBuildingVisualComponent>();
+        bool preserveAuthoredTransform = mapAuthoredVisual != null && mapAuthoredVisual.PreserveAuthoredTransform;
         bool hasSurfaceResult = false;
         BuildingSurfacePlacementSystem.Result surfaceResult = default;
         RectInt occupiedRect = new(originCell, definition.FootprintCells);
@@ -101,7 +103,7 @@ internal sealed class BuildingRuntimeCreationSystem
         {
             occupiedRect = context.ResolvePlacementRect(definition, originCell, grid);
             hasSurfaceResult = TryEvaluateRuntimeBuildingSurface(context, definition, originCell, out surfaceResult);
-            if (hasSurfaceResult)
+            if (hasSurfaceResult && !preserveAuthoredTransform)
                 _foundationVisualSystem.ApplyVisualFoundation(instance, surfaceResult);
         }
 
@@ -115,7 +117,7 @@ internal sealed class BuildingRuntimeCreationSystem
         Entity combatEntity = context.CreateCombatEntity != null
             ? context.CreateCombatEntity(originCell, definition, 0, instance.transform.rotation)
             : Entity.Null;
-        if (hasEntityManager && hasSurfaceResult)
+        if (hasEntityManager && hasSurfaceResult && !preserveAuthoredTransform)
             _foundationVisualSystem.ApplyCombatEntityFoundation(entityManager, combatEntity, surfaceResult, _surfacePlacementSystem);
 
         if (context.DeferSideEffects)

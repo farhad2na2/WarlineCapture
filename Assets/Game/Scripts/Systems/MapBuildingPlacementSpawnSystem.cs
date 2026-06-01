@@ -115,7 +115,6 @@ internal sealed class MapBuildingPlacementSpawnSystem
     {
         BuildingRuntimeSpawnSystem.Context spawnContext = context.RuntimeSpawnContext;
         if (spawnContext.DefinitionSystem == null ||
-            spawnContext.CreateBuildingVisualInstance == null ||
             spawnContext.RegisterRuntimeBuilding == null)
         {
             return false;
@@ -128,15 +127,10 @@ internal sealed class MapBuildingPlacementSpawnSystem
             footprint,
             500,
             spawnContext.RunwaySystem);
-        GameObject instance = spawnContext.CreateBuildingVisualInstance(definition, spawnContext.BuildingRoot);
+        GameObject instance = CreateAuthoredMapVisualInstance(context, placement, spawnContext.BuildingRoot);
         if (instance == null)
             return false;
 
-        Transform instanceTransform = instance.transform;
-        instanceTransform.SetPositionAndRotation(
-            placement.WorldPosition,
-            Quaternion.Euler(placement.WorldEulerAngles));
-        instanceTransform.localScale = placement.WorldScale;
         RuntimeBuildingData building = spawnContext.RegisterRuntimeBuilding(
             BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint(definition, footprint),
             instance,
@@ -147,6 +141,142 @@ internal sealed class MapBuildingPlacementSpawnSystem
 
         spawnContext.SetRuntimeBuildingOwnerFaction?.Invoke(building, placement.FactionId);
         return true;
+    }
+
+    private static GameObject CreateAuthoredMapVisualInstance(
+        Context context,
+        MapBuildingPlacementConfigEntry placement,
+        Transform parent)
+    {
+        if (placement == null || placement.BuildingPrefab == null)
+            return null;
+
+        if (!TryResolveAuthoringTransform(context.AuthoringBuildingsRoot, placement, out Transform source))
+        {
+            context.LogWarning?.Invoke($"[MapBuildingPlacement] skipped {placement.SourcePath}: could not resolve authored map visual.");
+            return null;
+        }
+
+        GameObject wrapper = new GameObject($"{placement.BuildingPrefab.name}_MapVisualRoot");
+        wrapper.transform.SetParent(parent, false);
+        wrapper.transform.SetPositionAndRotation(placement.WorldPosition, Quaternion.Euler(placement.WorldEulerAngles));
+        wrapper.transform.localScale = placement.WorldScale;
+        wrapper.AddComponent<MapAuthoredBuildingVisualComponent>();
+
+        GameObject visual = UnityEngine.Object.Instantiate(source.gameObject, wrapper.transform);
+        visual.name = source.name;
+        visual.transform.localPosition = Vector3.zero;
+        visual.transform.localRotation = Quaternion.identity;
+        visual.transform.localScale = Vector3.one;
+        visual.SetActive(true);
+
+        return wrapper;
+    }
+
+    private static bool TryResolveAuthoringTransform(
+        Transform authoringRoot,
+        MapBuildingPlacementConfigEntry placement,
+        out Transform source)
+    {
+        source = null;
+        if (authoringRoot == null || placement == null)
+            return false;
+
+        string sourcePath = placement.SourcePath;
+        if (!string.IsNullOrEmpty(sourcePath))
+        {
+            string[] segments = sourcePath.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            int startIndex = 0;
+            for (int i = 0; i < segments.Length; i++)
+            {
+                if (string.Equals(segments[i], authoringRoot.name, StringComparison.Ordinal))
+                {
+                    startIndex = i + 1;
+                    break;
+                }
+            }
+
+            Transform current = authoringRoot;
+            bool resolved = true;
+            for (int i = startIndex; i < segments.Length; i++)
+            {
+                current = FindDirectChildByName(current, segments[i]);
+                if (current == null)
+                {
+                    resolved = false;
+                    break;
+                }
+            }
+
+            if (resolved && current != null)
+            {
+                source = current;
+                return true;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(placement.Category))
+        {
+            Transform category = FindDirectChildByName(authoringRoot, placement.Category);
+            string leafName = GetLeafName(sourcePath);
+            if (category != null && !string.IsNullOrEmpty(leafName) && TryFindDescendantByName(category, leafName, out source))
+            {
+                return true;
+            }
+        }
+
+        return !string.IsNullOrEmpty(sourcePath) &&
+            TryFindDescendantByName(authoringRoot, GetLeafName(sourcePath), out source);
+    }
+
+    private static Transform FindDirectChildByName(Transform parent, string childName)
+    {
+        if (parent == null || string.IsNullOrEmpty(childName))
+            return null;
+
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            Transform child = parent.GetChild(i);
+            if (string.Equals(child.name, childName, StringComparison.Ordinal))
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool TryFindDescendantByName(Transform root, string childName, out Transform result)
+    {
+        result = null;
+        if (root == null || string.IsNullOrEmpty(childName))
+            return false;
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (string.Equals(child.name, childName, StringComparison.Ordinal))
+            {
+                result = child;
+                return true;
+            }
+
+            if (TryFindDescendantByName(child, childName, out result))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static string GetLeafName(string sourcePath)
+    {
+        if (string.IsNullOrEmpty(sourcePath))
+            return string.Empty;
+
+        int index = sourcePath.LastIndexOf('/');
+        return index >= 0 && index + 1 < sourcePath.Length
+            ? sourcePath.Substring(index + 1)
+            : sourcePath;
     }
 
     private void HideAuthoringVisuals(Context context)

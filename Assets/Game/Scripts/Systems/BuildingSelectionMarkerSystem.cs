@@ -72,14 +72,27 @@ internal sealed class BuildingSelectionMarkerSystem
         Vector2Int footprint = building.Definition != null
             ? building.Definition.FootprintCells
             : Vector2Int.one;
-        Vector3 center = context.GetFootprintCenter(building.OriginCell, footprint, grid);
-        float y = building.Instance != null
-            ? building.Instance.transform.position.y
-            : center.y;
-        center.y = y + MarkerHeightOffset;
+        Vector3 center;
+        Quaternion rotation = Quaternion.identity;
+        if (IsMapAuthoredBuilding(building) && TryCalculateRendererBounds(building.Instance, out Bounds bounds))
+        {
+            center = bounds.center;
+            center.y = bounds.min.y + MarkerHeightOffset;
+            rotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
+        }
+        else
+        {
+            center = context.GetFootprintCenter(building.OriginCell, footprint, grid);
+            float y = building.Instance != null
+                ? building.Instance.transform.position.y
+                : center.y;
+            center.y = y + MarkerHeightOffset;
+            if (building.Instance != null)
+                rotation = Quaternion.Euler(0f, building.Instance.transform.eulerAngles.y, 0f);
+        }
 
         Transform markerTransform = _markerInstance.transform;
-        markerTransform.SetPositionAndRotation(center, Quaternion.identity);
+        markerTransform.SetPositionAndRotation(center, rotation);
         markerTransform.localScale = ResolveScale(footprint, grid);
         SetActive(true);
     }
@@ -191,6 +204,40 @@ internal sealed class BuildingSelectionMarkerSystem
         }
 
         return hasBounds ? bounds.size : Vector3.one;
+    }
+
+    private static bool IsMapAuthoredBuilding(RuntimeBuildingData building)
+    {
+        return building?.Instance != null &&
+            building.Instance.GetComponent<MapAuthoredBuildingVisualComponent>() != null;
+    }
+
+    private static bool TryCalculateRendererBounds(GameObject instance, out Bounds bounds)
+    {
+        bounds = default;
+        if (instance == null)
+            return false;
+
+        Renderer[] renderers = instance.GetComponentsInChildren<Renderer>(false);
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled)
+                continue;
+
+            if (hasBounds)
+            {
+                bounds.Encapsulate(renderer.bounds);
+            }
+            else
+            {
+                bounds = renderer.bounds;
+                hasBounds = true;
+            }
+        }
+
+        return hasBounds;
     }
 
     private void SetActive(bool active)

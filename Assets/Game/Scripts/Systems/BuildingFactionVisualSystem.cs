@@ -53,6 +53,12 @@ internal sealed class BuildingFactionVisualSystem
         if (building == null)
             return;
 
+        MapAuthoredBuildingVisualComponent mapAuthoredVisual = building.Instance != null
+            ? building.Instance.GetComponent<MapAuthoredBuildingVisualComponent>()
+            : null;
+        if (mapAuthoredVisual != null && mapAuthoredVisual.PreserveAuthoredMaterials)
+            return;
+
         if (!building.HasOwnerFaction)
         {
             Clear(context, building);

@@ -19085,11 +19085,17 @@ public sealed class GameplayArchitectureContractTests
 
         string contract = File.ReadAllText(ContractPath);
         StringAssert.Contains("Authored `Match` scene map-building model conversion belongs in `MapBuildingPlacementSpawnSystem`", contract);
+        StringAssert.Contains("must clone the authored map visual object and hide the authored source hierarchy after conversion", contract);
+        StringAssert.Contains("Map-authored runtime visuals must preserve authored transform and authored materials", contract);
+        StringAssert.Contains("must not be retargeted by runtime foundation projection or faction material tint", contract);
         StringAssert.Contains("Faction ownership for authored map buildings is baked from explicit `Faction1` and `Faction2` authoring volumes", contract);
 
         string runtime = File.ReadAllText(MapBuildingPlacementSpawnSystemPath);
         StringAssert.Contains("BuildingRuntimeSpawnSystem.CloneDefinitionWithFootprint", runtime);
         StringAssert.Contains("spawnContext.RegisterRuntimeBuilding", runtime);
+        StringAssert.Contains("CreateAuthoredMapVisualInstance", runtime);
+        StringAssert.Contains("MapAuthoredBuildingVisualComponent", runtime);
+        Assert.IsFalse(runtime.Contains("CreateBuildingVisualInstance", StringComparison.Ordinal), "Authored map conversion must not instantiate gameplay prefab visuals; it must clone the matching map visual.");
         Assert.IsFalse(runtime.Contains("FindObjectsByType", StringComparison.Ordinal), "Runtime map building conversion must not use broad scene lookup.");
         Assert.IsFalse(runtime.Contains("FindObjectOfType", StringComparison.Ordinal), "Runtime map building conversion must not use broad scene lookup.");
         Assert.IsFalse(runtime.Contains("GameObject.Find", StringComparison.Ordinal), "Runtime map building conversion must not use broad scene lookup.");

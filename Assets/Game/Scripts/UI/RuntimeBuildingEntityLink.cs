@@ -14,6 +14,8 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
     private Entity _entity;
     private Entity _blockerEntity;
     private Vector3 _positionOffset;
+    private Vector3 _authoredLocalScale = Vector3.one;
+    private bool _preserveAuthoredTransform;
     private bool _configured;
 
     public Entity Entity => _entity;
@@ -46,6 +48,9 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
         _buildingId = buildingId;
         _entity = entity != Entity.Null ? entity : blockerEntity;
         _blockerEntity = blockerEntity;
+        MapAuthoredBuildingVisualComponent authoredVisual = GetComponent<MapAuthoredBuildingVisualComponent>();
+        _preserveAuthoredTransform = authoredVisual != null && authoredVisual.PreserveAuthoredTransform;
+        _authoredLocalScale = transform.localScale;
         CacheOffsetFromEntity();
         _configured = true;
     }
@@ -77,7 +82,9 @@ public sealed class RuntimeBuildingEntityLink : MonoBehaviour
         LocalTransform transformData = em.GetComponentData<LocalTransform>(_entity);
         Vector3 worldPosition = (Vector3)transformData.Position + _positionOffset;
         transform.SetPositionAndRotation(worldPosition, transformData.Rotation);
-        transform.localScale = Vector3.one * transformData.Scale;
+        transform.localScale = _preserveAuthoredTransform
+            ? _authoredLocalScale
+            : Vector3.one * transformData.Scale;
     }
 
     private void CacheOffsetFromEntity()

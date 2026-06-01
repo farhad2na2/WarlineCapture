@@ -53,7 +53,6 @@ MonoBehaviour:
   - {fileID: 6189581983765943743, guid: 76c6fc5da93c648fcb65a51df45bcde3, type: 3}
   shopPrefabs:
   - {fileID: 3689421368615084249, guid: f36edf329571a4ff7836cde8a5622ede, type: 3}
-  - {fileID: 3689421368615084249, guid: cbe0f6e27e4f34dff98b76b6cb858739, type: 3}
   housePrefabs:
   - {fileID: 3689421368615084249, guid: d6dc5012decae44719d0ce1166fc8f7d, type: 3}
   otherBuildingPrefabs:

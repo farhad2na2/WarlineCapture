@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Helicopter_Attack_Config
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
@@ -35,13 +35,20 @@ MonoBehaviour:
   walkSpeed: 22
   roadSpeedMultiplier: 1
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Attack Helicopter
   description: Armed helicopter built for rapid strike missions and close air support.
   midLodPrefab: {fileID: 1211880870138892396, guid: 8f0cd6db019664f93b9763960a3dbf78, type: 3}
   lowLodPrefab: {fileID: 650540269167560651, guid: e34b989796ab84b548ba755db9d7dcbb, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 8625747569021253557, guid: 5475bab64175a4d408ebef70cf368dd7, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -63,4 +70,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

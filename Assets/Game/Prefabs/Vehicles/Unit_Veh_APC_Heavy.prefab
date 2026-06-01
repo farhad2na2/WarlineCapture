@@ -90,96 +90,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &3951190883157886248
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6365771272718015478}
-  - component: {fileID: 6516458241775982686}
-  - component: {fileID: 2310695721319642011}
-  m_Layer: 0
-  m_Name: Destroyed
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6365771272718015478
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3951190883157886248}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 7162043172575341401}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &6516458241775982686
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3951190883157886248}
-  m_Mesh: {fileID: 4300000, guid: a2884021661a3ce43bb13a9c2472733b, type: 3}
---- !u!23 &2310695721319642011
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3951190883157886248}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 53ac61dbbe655bd4eb7b4f80c9d8f45f, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5699381318538065267
 GameObject:
   m_ObjectHideFlags: 0
@@ -320,7 +230,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff37f00c6585b49f2b142f7c43215901, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CombinedMeshBaker
   combineOnStart: 0
   includeInactive: 1
@@ -429,6 +339,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: config
+      value:
+      objectReference: {fileID: 11400000, guid: c7fa4a41c2b24fd9b3e8f07ad2a08303, type: 2}
     - target: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -470,16 +384,53 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: price
+      value: 45000
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: speed
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: config
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: c7fa4a41c2b24fd9b3e8f07ad2a08303, type: 2}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: maxHealth
+      value: 850
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: walkSpeed
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackRange
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: description
+      value: Heavy armored personnel carrier with stronger protection for moving
+        squads under fire.
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: displayName
+      value: Heavy APC
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackDamage
+      value: 18
+      objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: usesTurretAim
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: aggroRangeCells
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceWidth
+      value: 0.18
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: footprintCells.x
@@ -490,9 +441,41 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: usesVehicleMotion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: weaponDisplayName
+      value:
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackImpactPrefab
+      value:
+      objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: roadSpeedMultiplier
+      value: 1.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 0.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: autoCalculateFootprint
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: soldierTransportCapacity
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: animationOrder.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: vehicleDestroyedVisualPrefab
+      value:
+      objectReference: {fileID: 3096256881772969162, guid: 54f26c6f3e2894556af680f0c9622171, type: 3}
     - target: {fileID: 882044389692386935, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_LocalPosition.y
       value: 3.3
@@ -501,19 +484,12 @@ PrefabInstance:
       propertyPath: m_Name
       value: Unit_Veh_APC_Heavy
       objectReference: {fileID: 0}
-    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
-      propertyPath: config
-      value: 
-      objectReference: {fileID: 11400000, guid: c7fa4a41c2b24fd9b3e8f07ad2a08303, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 4560879890176021786}
-    - targetCorrespondingSourceObject: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 6365771272718015478}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
 --- !u!4 &7162043172575341401 stripped

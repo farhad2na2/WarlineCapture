@@ -1910,119 +1910,6 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!1 &5503078642691854018
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5497255484701386352}
-  - component: {fileID: 5489016929419220708}
-  - component: {fileID: 5478663873716112614}
-  - component: {fileID: 5528625856950594562}
-  m_Layer: 0
-  m_Name: Destroyed
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5497255484701386352
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5503078642691854018}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5976052629555373990}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &5489016929419220708
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5503078642691854018}
-  m_Mesh: {fileID: 4300000, guid: 0f025b097ea2e3c41943e1232a5a55a4, type: 3}
---- !u!23 &5478663873716112614
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5503078642691854018}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 9980bf5b609866a41b882aff8d03fa5d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &5528625856950594562
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5503078642691854018}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 5
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 0f025b097ea2e3c41943e1232a5a55a4, type: 3}
 --- !u!1001 &6245578838107044744
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2072,21 +1959,102 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: price
+      value: 85000
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: speed
-      value: 30
+      value: 36
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: config
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 58c0a59a35f5e40dcbe52d5fc14df4d0, type: 2}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: isAirUnit
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: maxHealth
+      value: 550
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: walkSpeed
+      value: 36
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackRange
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: description
+      value: Fast combat aircraft for precision attacks and high-speed battlefield
+        response.
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: displayName
+      value: Strike Jet
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackDamage
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: aggroRangeCells
+      value: 16
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: allowAutoEngage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: runwayTaxiSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceWidth
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: usesVehicleMotion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: weaponDisplayName
+      value:
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackImpactPrefab
+      value:
+      objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: roadSpeedMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceDashDensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceScrollSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: animationOrder.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceVisibleSeconds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: vehicleDestroyedVisualPrefab
+      value:
+      objectReference: {fileID: 4963539933572514631, guid: 60cdc1b2ae32d45f29c1806c98013c06, type: 3}
     - target: {fileID: 554026173992658407, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -2101,17 +2069,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3526512665328490788, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_Mesh
-      value: 
+      value:
       objectReference: {fileID: 4300000, guid: 9d4b9456a0e614bb2bc74a3d6e4a07db, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 4600391807737946931}
-    - targetCorrespondingSourceObject: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 5497255484701386352}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
 --- !u!4 &5976052629555373990 stripped

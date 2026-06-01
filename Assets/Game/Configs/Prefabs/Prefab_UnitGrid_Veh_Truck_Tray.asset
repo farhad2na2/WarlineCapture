@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Truck_Tray
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 1
   footprintCells: {x: 3, y: 3}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 8
   roadSpeedMultiplier: 1.35
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Cargo Truck
   description: Transports oil barrels from pumps and storage points to refinery or
     base resource destinations.
   midLodPrefab: {fileID: 4946888390108900262, guid: 042ff714d784241729b1fe2659b03107, type: 3}
   lowLodPrefab: {fileID: 5258382387304802536, guid: 0e705c9a2cc7c4d008fab48938b334e5, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 1772523781246504530, guid: ae23edc606f194d6699c5e8f73e466bf, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 8
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 0
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

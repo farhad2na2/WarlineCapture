@@ -11,13 +11,15 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Jet_02_Config
-  m_EditorClassIdentifier: 
-  startCell: {x: 0, y: 0}
-  goalCell: {x: 2, y: 2}
+  m_EditorClassIdentifier:
+  weaponSprite: {fileID: 0}
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
+  usesVehicleMotion: 1
   isAirUnit: 1
+  canRequest: 1
   price: 90000
   productionDurationSeconds: 5
   productionTransportPrefab: {fileID: 0}
@@ -27,14 +29,26 @@ MonoBehaviour:
   productionTransportMaxConcurrent: 1
   productionTransportRequiresAirportRunway: 0
   productionTransportUsesRunwayLanding: 0
+  soldierTransportCapacity: 0
   runwayTaxiSpeed: 15
   speed: 36
   walkSpeed: 36
   roadSpeedMultiplier: 1
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Fighter Jet
   description: Advanced jet aircraft for air superiority and rapid strike operations.
-  factionId: 0
+  midLodPrefab: {fileID: 0}
+  lowLodPrefab: {fileID: 0}
+  vehicleDestroyedVisualPrefab: {fileID: 221872252364329820, guid: cfe935ae9d3de4f22b2ff25b9c110367, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
+  resourceHaulerBarrelCapacity: 0
+  resourceHaulerFillDurationSeconds: 2
+  resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 0
   usesTurretAim: 0
@@ -45,6 +59,7 @@ MonoBehaviour:
   attackDamage: 50
   maxHealth: 520
   attackImpactPrefab: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+  attackTraceColor: {r: 1, g: 0.85, b: 0.2, a: 1}
   attackTraceWidth: 0.5
   attackTraceScrollSpeed: 1
   attackTraceDashDensity: 1
@@ -55,4 +70,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

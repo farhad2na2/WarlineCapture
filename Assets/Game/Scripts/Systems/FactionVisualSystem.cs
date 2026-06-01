@@ -26,10 +26,12 @@ public partial struct FactionVisualSystem : ISystem
             };
 
         var factionLookup = SystemAPI.GetComponentLookup<Faction>(true);
+        var parentLookup = SystemAPI.GetComponentLookup<Parent>(true);
 
         state.Dependency = new UpdateTintJob
         {
             FactionLookup = factionLookup,
+            ParentLookup = parentLookup,
             PlayerColor = config.PlayerColor,
             EnemyColor = config.EnemyColor,
             NeutralColor = config.NeutralColor
@@ -41,25 +43,45 @@ public partial struct FactionVisualSystem : ISystem
     private partial struct UpdateTintJob : IJobEntity
     {
         [ReadOnly] public ComponentLookup<Faction> FactionLookup;
+        [ReadOnly] public ComponentLookup<Parent> ParentLookup;
         public float4 PlayerColor;
         public float4 EnemyColor;
         public float4 NeutralColor;
 
         public void Execute(ref FactionTintColor tint, in Parent parent)
         {
-            if (!FactionLookup.HasComponent(parent.Value))
+            if (!TryResolveFaction(parent.Value, out byte factionId))
             {
                 tint.Value = NeutralColor;
                 return;
             }
 
-            byte factionId = FactionLookup[parent.Value].Id;
             tint.Value = factionId switch
             {
                 0 => PlayerColor,
                 1 => EnemyColor,
                 _ => NeutralColor
             };
+        }
+
+        private bool TryResolveFaction(Entity entity, out byte factionId)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                if (FactionLookup.HasComponent(entity))
+                {
+                    factionId = FactionLookup[entity].Id;
+                    return true;
+                }
+
+                if (!ParentLookup.HasComponent(entity))
+                    break;
+
+                entity = ParentLookup[entity].Value;
+            }
+
+            factionId = 0;
+            return false;
         }
     }
 }

@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Missle_Launcher_Ground_Config
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 1
   footprintCells: {x: 3, y: 3}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 7.5
   roadSpeedMultiplier: 1.3
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Ground Missile Launcher
   description: Long-range ground-to-ground cruise missile launcher for enemy bases
     and fortified targets.
   midLodPrefab: {fileID: 8572898761752687562, guid: 673a614a5a4c04cc3a150a29301045e0, type: 3}
   lowLodPrefab: {fileID: 6368581098325830619, guid: 042c98158e7f7442b84445e9f7b5335d, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 4917785960060466873, guid: 4dfb82e1ed820469094fafb666ca2a01, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

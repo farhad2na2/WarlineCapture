@@ -174,6 +174,40 @@ public struct UnitDestroyedVisualInitialized : IComponentData
 {
 }
 
+public struct VehicleSelectionMarkerPrefabReference : IComponentData
+{
+    public Entity Prefab;
+}
+
+public struct VehicleSelectionMarkerInstanceReference : IComponentData
+{
+    public Entity Instance;
+}
+
+public struct VehicleHealthBarPrefabReference : IComponentData
+{
+    public Entity Prefab;
+}
+
+public struct VehicleHealthBarInstanceReference : IComponentData
+{
+    public Entity Instance;
+}
+
+public struct VehicleDestroyedVisualPrefabReference : IComponentData
+{
+    public Entity Prefab;
+}
+
+public struct VehicleDestroyedVisualInstanceReference : IComponentData
+{
+    public Entity Instance;
+}
+
+public struct VehicleDestroyedVisualSpawnRequest : IComponentData
+{
+}
+
 public struct VehicleWreckState : IComponentData
 {
     public float TimeRemaining;

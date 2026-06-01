@@ -130,7 +130,9 @@ public partial struct UnitDeathSystem : ISystem
 
     private static bool TryBeginVehicleWreck(EntityManager em, Entity entity)
     {
-        if (!em.HasComponent<UnitDestroyedVisualReference>(entity) ||
+        bool hasConfiguredDestroyedVisual = em.HasComponent<VehicleDestroyedVisualPrefabReference>(entity);
+        bool hasLegacyDestroyedVisual = em.HasComponent<UnitDestroyedVisualReference>(entity);
+        if ((!hasConfiguredDestroyedVisual && !hasLegacyDestroyedVisual) ||
             !em.HasComponent<UnitFootprint>(entity) ||
             !em.HasComponent<UnitGrid>(entity))
         {
@@ -154,22 +156,30 @@ public partial struct UnitDeathSystem : ISystem
             em.SetComponentData(entity, airState);
         }
 
-        UnitDestroyedVisualReference visualRef = em.GetComponentData<UnitDestroyedVisualReference>(entity);
-        if (em.HasBuffer<Child>(entity))
+        if (hasConfiguredDestroyedVisual)
         {
-            var children = em.GetBuffer<Child>(entity);
-            for (int i = 0; i < children.Length; i++)
-            {
-                Entity child = children[i].Value;
-                UnitDestroyedVisualSystem.SetChildVisible(em, child, child == visualRef.DestroyedVisual);
-            }
+            if (!em.HasComponent<VehicleDestroyedVisualSpawnRequest>(entity))
+                em.AddComponent<VehicleDestroyedVisualSpawnRequest>(entity);
         }
         else
         {
-            UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.AliveVisual, false);
-            if (em.HasComponent<UnitTurretReference>(entity))
-                UnitDestroyedVisualSystem.SetChildVisible(em, em.GetComponentData<UnitTurretReference>(entity).Turret, false);
-            UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.DestroyedVisual, true);
+            UnitDestroyedVisualReference visualRef = em.GetComponentData<UnitDestroyedVisualReference>(entity);
+            if (em.HasBuffer<Child>(entity))
+            {
+                var children = em.GetBuffer<Child>(entity);
+                for (int i = 0; i < children.Length; i++)
+                {
+                    Entity child = children[i].Value;
+                    UnitDestroyedVisualSystem.SetChildVisible(em, child, child == visualRef.DestroyedVisual);
+                }
+            }
+            else
+            {
+                UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.AliveVisual, false);
+                if (em.HasComponent<UnitTurretReference>(entity))
+                    UnitDestroyedVisualSystem.SetChildVisible(em, em.GetComponentData<UnitTurretReference>(entity).Turret, false);
+                UnitDestroyedVisualSystem.SetChildVisible(em, visualRef.DestroyedVisual, true);
+            }
         }
 
         if (!em.HasComponent<StaticGridBlocker>(entity))

@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Truck_Tanker
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 1
   footprintCells: {x: 3, y: 3}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 8
   roadSpeedMultiplier: 1.35
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Tanker Truck
   description: Transports fuel to Building_Fuel_Bladder or refuels vehicles directly
     in the field.
   midLodPrefab: {fileID: 8226449753340225800, guid: 217e90142e0d646bd98c2a2257d5baa7, type: 3}
   lowLodPrefab: {fileID: 6083655246020355125, guid: 3920f6fe615cf4ed4a75ced1d5264e4f, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 4166063007398048820, guid: c367211a0943747eab932d087be21ae9, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 0
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

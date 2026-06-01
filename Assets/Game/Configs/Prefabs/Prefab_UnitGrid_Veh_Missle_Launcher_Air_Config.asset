@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 1
   footprintCells: {x: 3, y: 3}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 7.5
   roadSpeedMultiplier: 1.3
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Air Missile Launcher
   description: Ground-to-air missile launcher for defending bases against helicopters,
     drones, and jets.
   midLodPrefab: {fileID: 3234085637068436902, guid: 9f704aa6bc6914c01b0fd8263fcbd3a3, type: 3}
   lowLodPrefab: {fileID: 717783129186473227, guid: 809aac1c7e88845fdabe5d494d902cad, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 367409465382437084, guid: 843f6b04fe0dc4a25b32fa6a84571de7, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 1
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

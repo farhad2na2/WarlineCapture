@@ -1,95 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4097333914781234884
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 4095121897029296148}
-  - component: {fileID: 4083961815140012012}
-  - component: {fileID: 4075288282314466442}
-  m_Layer: 0
-  m_Name: Destroyed
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4095121897029296148
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4097333914781234884}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5976052629555373990}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &4083961815140012012
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4097333914781234884}
-  m_Mesh: {fileID: 4300000, guid: 670f0213878f4cb42842d3dc100bb9ec, type: 3}
---- !u!23 &4075288282314466442
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4097333914781234884}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 9980bf5b609866a41b882aff8d03fa5d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 0
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7530019950432557969
 GameObject:
   m_ObjectHideFlags: 0
@@ -1594,21 +1504,102 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: price
+      value: 8000
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: speed
-      value: 30
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: config
-      value: 
+      value:
       objectReference: {fileID: 11400000, guid: 5de2cf82138c14bc3baf954f2e53c679, type: 2}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: isAirUnit
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: maxHealth
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: walkSpeed
+      value: 28
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackRange
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: description
+      value: Light unmanned aircraft for scouting, patrol support, and fast battlefield
+        awareness.
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: displayName
+      value: Recon Drone
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackDamage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: aggroRangeCells
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: allowAutoEngage
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: runwayTaxiSpeed
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceWidth
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: usesVehicleMotion
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: weaponDisplayName
+      value:
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackImpactPrefab
+      value:
+      objectReference: {fileID: 1974830201887114, guid: 8baff3207836e304f95274c39c8d572c, type: 3}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: roadSpeedMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceDashDensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceScrollSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: animationOrder.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: attackTraceVisibleSeconds
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 391336776749024018, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
+      propertyPath: vehicleDestroyedVisualPrefab
+      value:
+      objectReference: {fileID: 8521583760666758353, guid: 353d54205e7c549b68f0825d1cab986a, type: 3}
     - target: {fileID: 554026173992658407, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
       propertyPath: m_LocalScale.x
       value: 4
@@ -1625,11 +1616,8 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 7535617951771531055}
-    - targetCorrespondingSourceObject: {fileID: 307358480648297518, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
-      insertIndex: 1
-      addedObject: {fileID: 4095121897029296148}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ce6998c034284d98a89b5badc6e2f24, type: 3}
 --- !u!4 &5976052629555373990 stripped

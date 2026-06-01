@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Jet_01_Config
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 36
   roadSpeedMultiplier: 1
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Strike Jet
   description: Fast combat aircraft for precision attacks and high-speed battlefield
     response.
   midLodPrefab: {fileID: 8201624416784725301, guid: 09e49deba4fe6401990e3da22ca87400, type: 3}
   lowLodPrefab: {fileID: 3501472868591206909, guid: 7d9467e89cc3249db80d358ef966235c, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 4963539933572514631, guid: 60cdc1b2ae32d45f29c1806c98013c06, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 0
   usesTurretAim: 0
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

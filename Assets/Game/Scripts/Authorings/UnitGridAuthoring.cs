@@ -39,6 +39,10 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector] private string displayName;
     [SerializeField, HideInInspector, TextArea] private string description;
     [SerializeField, HideInInspector] private string weaponDisplayName;
+    [SerializeField, HideInInspector] private GameObject vehicleDestroyedVisualPrefab;
+    [SerializeField, HideInInspector] private GameObject vehicleSelectionMarkerPrefab;
+    [SerializeField, HideInInspector] private GameObject vehicleHealthBarPrefab;
+    [SerializeField, HideInInspector] private bool tintVehicleModelRenderers = true;
 
     [Header("Combat")]
     [SerializeField, HideInInspector] private bool canAttack = true;
@@ -101,6 +105,10 @@ public class UnitGridAuthoring : MonoBehaviour
         displayName = config.DisplayName;
         description = config.Description;
         weaponDisplayName = config.WeaponDisplayName;
+        vehicleDestroyedVisualPrefab = config.VehicleDestroyedVisualPrefab;
+        vehicleSelectionMarkerPrefab = config.VehicleSelectionMarkerPrefab;
+        vehicleHealthBarPrefab = config.VehicleHealthBarPrefab;
+        tintVehicleModelRenderers = config.TintVehicleModelRenderers;
         resourceHaulerBarrelCapacity = config.ResourceHaulerBarrelCapacity;
         resourceHaulerFillDurationSeconds = config.ResourceHaulerFillDurationSeconds;
         resourceHaulerUnloadDurationSeconds = config.ResourceHaulerUnloadDurationSeconds;
@@ -146,6 +154,10 @@ public class UnitGridAuthoring : MonoBehaviour
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;
     public GameObject AttackImpactPrefab => attackImpactPrefab;
+    public GameObject VehicleDestroyedVisualPrefab => config != null ? config.VehicleDestroyedVisualPrefab : vehicleDestroyedVisualPrefab;
+    public GameObject VehicleSelectionMarkerPrefab => config != null ? config.VehicleSelectionMarkerPrefab : vehicleSelectionMarkerPrefab;
+    public GameObject VehicleHealthBarPrefab => config != null ? config.VehicleHealthBarPrefab : vehicleHealthBarPrefab;
+    public bool TintVehicleModelRenderers => config != null ? config.TintVehicleModelRenderers : tintVehicleModelRenderers;
     public Sprite WeaponSprite => config != null ? config.WeaponSprite : null;
     public string WeaponDisplayName => config != null ? config.WeaponDisplayName : weaponDisplayName;
     public string ConfiguredDisplayName
@@ -368,8 +380,15 @@ public class UnitGridAuthoring : MonoBehaviour
 
                 DynamicBuffer<UnitHelicopterBladeReference> bladeBuffer = AddBuffer<UnitHelicopterBladeReference>(entity);
                 AddHelicopterBladeReferences(bladeBuffer, model);
+
+                if (authoring.usesVehicleMotion && authoring.TintVehicleModelRenderers)
+                    AddVehicleFactionTintTargets(model);
             }
-            if (destroyed != null)
+            if (authoring.usesVehicleMotion)
+            {
+                AddVehicleVisualPrefabReferences(authoring, entity);
+            }
+            else if (destroyed != null)
             {
                 Entity destroyedEntity = GetEntity(destroyed.gameObject, TransformUsageFlags.Renderable);
                 AddComponent(entity, new UnitDestroyedVisualReference
@@ -495,6 +514,51 @@ public class UnitGridAuthoring : MonoBehaviour
 
                 for (int i = 0; i < current.childCount; i++)
                     stack.Push(current.GetChild(i));
+            }
+        }
+
+        private void AddVehicleVisualPrefabReferences(UnitGridAuthoring authoring, Entity entity)
+        {
+            if (authoring.VehicleDestroyedVisualPrefab != null)
+            {
+                AddComponent(entity, new VehicleDestroyedVisualPrefabReference
+                {
+                    Prefab = GetEntity(authoring.VehicleDestroyedVisualPrefab, TransformUsageFlags.Dynamic)
+                });
+            }
+
+            if (authoring.VehicleSelectionMarkerPrefab != null)
+            {
+                AddComponent(entity, new VehicleSelectionMarkerPrefabReference
+                {
+                    Prefab = GetEntity(authoring.VehicleSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
+                });
+            }
+
+            if (authoring.VehicleHealthBarPrefab != null)
+            {
+                AddComponent(entity, new VehicleHealthBarPrefabReference
+                {
+                    Prefab = GetEntity(authoring.VehicleHealthBarPrefab, TransformUsageFlags.Dynamic)
+                });
+            }
+        }
+
+        private void AddVehicleFactionTintTargets(Transform model)
+        {
+            Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                Renderer renderer = renderers[i];
+                if (renderer == null)
+                    continue;
+
+                Entity rendererEntity = GetEntity(renderer.gameObject, TransformUsageFlags.Renderable);
+                AddComponent<FactionTintTarget>(rendererEntity);
+                AddComponent(rendererEntity, new FactionTintColor
+                {
+                    Value = new float4(1f, 1f, 1f, 1f)
+                });
             }
         }
 

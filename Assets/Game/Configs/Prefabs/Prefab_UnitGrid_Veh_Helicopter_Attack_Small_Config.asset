@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Helicopter_Attack_Small_Config
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 24
   roadSpeedMultiplier: 1
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Light Attack Helicopter
   description: Agile attack helicopter for quick response, harassment, and light
     air support.
   midLodPrefab: {fileID: 2090294392753675684, guid: 574f24c8b02514ebba0da146ea0b6ce4, type: 3}
   lowLodPrefab: {fileID: 3262028905881247734, guid: 75c8a5b2369ae44438a789eda7fcb821, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 2872881885516967011, guid: 0266f156a6e6d4ffe9bc26648ece164e, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 0
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

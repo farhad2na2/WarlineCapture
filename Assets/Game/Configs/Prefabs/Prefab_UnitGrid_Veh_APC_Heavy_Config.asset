@@ -11,9 +11,9 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_APC_Heavy_Config
-  m_EditorClassIdentifier: 
+  m_EditorClassIdentifier:
   weaponSprite: {fileID: 0}
-  weaponDisplayName: 
+  weaponDisplayName:
   allowIdleWander: 1
   autoCalculateFootprint: 1
   footprintCells: {x: 3, y: 3}
@@ -35,14 +35,21 @@ MonoBehaviour:
   walkSpeed: 8
   roadSpeedMultiplier: 1.35
   arriveDistance: 0.05
+  groundOffset: 0
   displayName: Heavy APC
   description: Heavy armored personnel carrier with stronger protection for moving
     squads under fire.
   midLodPrefab: {fileID: 547042622866973056, guid: 8ff7ab9f5299247db94378434dfce336, type: 3}
   lowLodPrefab: {fileID: 5321676028810666112, guid: 7e910cfa84b2f4f208c336ffda8720c1, type: 3}
+  vehicleDestroyedVisualPrefab: {fileID: 3096256881772969162, guid: 54f26c6f3e2894556af680f0c9622171, type: 3}
+  vehicleSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  vehicleHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintVehicleModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
   canAttack: 1
   allowAutoEngage: 1
   usesTurretAim: 1
@@ -64,4 +71,4 @@ MonoBehaviour:
   idleWanderDistanceMax: 5
   attackAnimationSeconds: 0.25
   deathAnimationSeconds: 1.25
-  animationOrder: 
+  animationOrder:

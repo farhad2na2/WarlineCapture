@@ -16,6 +16,7 @@ internal sealed class BuildingSelectionSystem
     {
         public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly Camera WorldCamera;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
         public readonly RuntimeAction SuppressNextWorldClick;
@@ -30,6 +31,7 @@ internal sealed class BuildingSelectionSystem
         public Source(
             RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            Camera worldCamera,
             TryGetGridDelegate tryGetGrid,
             GetFootprintCenterDelegate getFootprintCenter,
             RuntimeAction suppressNextWorldClick,
@@ -43,6 +45,7 @@ internal sealed class BuildingSelectionSystem
         {
             RuntimeBuildingSystem = runtimeBuildingSystem;
             RuntimeBuildings = runtimeBuildings;
+            WorldCamera = worldCamera;
             TryGetGrid = tryGetGrid;
             GetFootprintCenter = getFootprintCenter;
             SuppressNextWorldClick = suppressNextWorldClick;
@@ -60,6 +63,7 @@ internal sealed class BuildingSelectionSystem
     {
         public readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem;
         public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly Camera WorldCamera;
         public readonly TryGetGridDelegate TryGetGrid;
         public readonly GetFootprintCenterDelegate GetFootprintCenter;
         public readonly RuntimeAction SuppressNextWorldClick;
@@ -74,6 +78,7 @@ internal sealed class BuildingSelectionSystem
         public Context(
             RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            Camera worldCamera,
             TryGetGridDelegate tryGetGrid,
             GetFootprintCenterDelegate getFootprintCenter,
             RuntimeAction suppressNextWorldClick,
@@ -87,6 +92,7 @@ internal sealed class BuildingSelectionSystem
         {
             RuntimeBuildingSystem = runtimeBuildingSystem;
             RuntimeBuildings = runtimeBuildings;
+            WorldCamera = worldCamera;
             TryGetGrid = tryGetGrid;
             GetFootprintCenter = getFootprintCenter;
             SuppressNextWorldClick = suppressNextWorldClick;
@@ -120,6 +126,7 @@ internal sealed class BuildingSelectionSystem
         return new Context(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildings,
+            source.WorldCamera,
             source.TryGetGrid,
             source.GetFootprintCenter,
             source.SuppressNextWorldClick,
@@ -135,6 +142,7 @@ internal sealed class BuildingSelectionSystem
     public Context CreateContext(
         RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildingSystem,
         IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        Camera worldCamera,
         TryGetGridDelegate tryGetGrid,
         GetFootprintCenterDelegate getFootprintCenter,
         RuntimeAction suppressNextWorldClick,
@@ -149,6 +157,7 @@ internal sealed class BuildingSelectionSystem
         return CreateContext(new Source(
             runtimeBuildingSystem,
             runtimeBuildings,
+            worldCamera,
             tryGetGrid,
             getFootprintCenter,
             suppressNextWorldClick,
@@ -252,29 +261,142 @@ internal sealed class BuildingSelectionSystem
             if (cell.x < min.x || cell.y < min.y || cell.x >= min.x + size.x || cell.y >= min.y + size.y)
                 continue;
 
-            if (context.TryAssignSelectedHaulerOrders != null &&
-                context.TryAssignSelectedHaulerOrders(entry.Key))
-            {
-                context.SuppressNextWorldClick?.Invoke();
-                context.ClearFocusedUnit?.Invoke();
-                return true;
-            }
+            return SelectBuildingCandidate(context, entry.Key, min, size);
+        }
 
-            if (context.TryIssueMoveOrderToBuilding != null &&
-                context.TryIssueMoveOrderToBuilding(min, size))
-            {
-                context.SuppressNextWorldClick?.Invoke();
-                ClearSelectedBuilding(context);
-                return true;
-            }
+        return TrySelectVisualBuildingAtScreenPosition(context, screenPosition);
+    }
 
-            context.RuntimeBuildingSystem?.SelectBuilding(entry.Key);
+    private static bool SelectBuildingCandidate(
+        Context context,
+        int buildingId,
+        Vector2Int min,
+        Vector2Int size)
+    {
+        if (context.TryAssignSelectedHaulerOrders != null &&
+            context.TryAssignSelectedHaulerOrders(buildingId))
+        {
             context.SuppressNextWorldClick?.Invoke();
-            context.RefreshMarkers?.Invoke();
             context.ClearFocusedUnit?.Invoke();
             return true;
         }
 
-        return false;
+        if (context.TryIssueMoveOrderToBuilding != null &&
+            context.TryIssueMoveOrderToBuilding(min, size))
+        {
+            context.SuppressNextWorldClick?.Invoke();
+            context.RuntimeBuildingSystem?.ClearSelection();
+            context.RefreshMarkers?.Invoke();
+            return true;
+        }
+
+        context.RuntimeBuildingSystem?.SelectBuilding(buildingId);
+        context.SuppressNextWorldClick?.Invoke();
+        context.RefreshMarkers?.Invoke();
+        context.ClearFocusedUnit?.Invoke();
+        return true;
+    }
+
+    private static bool TrySelectVisualBuildingAtScreenPosition(Context context, Vector2 screenPosition)
+    {
+        if (context.WorldCamera == null || context.RuntimeBuildings == null)
+            return false;
+
+        int bestBuildingId = 0;
+        RuntimeBuildingData bestBuilding = null;
+        float bestDepth = float.MaxValue;
+        float bestArea = float.MaxValue;
+
+        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
+                continue;
+
+            if (!TryGetBuildingScreenRect(context.WorldCamera, building, out Rect rect, out float depth))
+                continue;
+            if (!rect.Contains(screenPosition))
+                continue;
+
+            float area = rect.width * rect.height;
+            if (depth > bestDepth + 0.001f)
+                continue;
+            if (Mathf.Abs(depth - bestDepth) <= 0.001f && area >= bestArea)
+                continue;
+
+            bestBuildingId = entry.Key;
+            bestBuilding = building;
+            bestDepth = depth;
+            bestArea = area;
+        }
+
+        if (bestBuilding == null || bestBuilding.Definition == null)
+            return false;
+
+        Vector2Int min = bestBuilding.OriginCell;
+        Vector2Int size = bestBuilding.Definition.FootprintCells;
+        if (context.ShouldUseExpandedSelectionArea != null &&
+            context.ShouldUseExpandedSelectionArea(bestBuilding.Definition))
+        {
+            min -= Vector2Int.one;
+            size += new Vector2Int(2, 2);
+        }
+
+        return SelectBuildingCandidate(context, bestBuildingId, min, size);
+    }
+
+    private static bool TryGetBuildingScreenRect(Camera camera, RuntimeBuildingData building, out Rect rect, out float depth)
+    {
+        rect = default;
+        depth = float.MaxValue;
+
+        Renderer[] renderers = building.FactionVisualRenderers;
+        if (renderers == null || renderers.Length == 0)
+            renderers = building.Instance.GetComponentsInChildren<Renderer>(true);
+        if (renderers == null || renderers.Length == 0)
+            return false;
+
+        bool hasPoint = false;
+        Vector2 min = new(float.MaxValue, float.MaxValue);
+        Vector2 max = new(float.MinValue, float.MinValue);
+        float minDepth = float.MaxValue;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            if (renderer == null || !renderer.enabled || !renderer.gameObject.activeInHierarchy)
+                continue;
+
+            Bounds bounds = renderer.bounds;
+            for (int corner = 0; corner < 8; corner++)
+            {
+                Vector3 world = new(
+                    (corner & 1) == 0 ? bounds.min.x : bounds.max.x,
+                    (corner & 2) == 0 ? bounds.min.y : bounds.max.y,
+                    (corner & 4) == 0 ? bounds.min.z : bounds.max.z);
+                Vector3 screen = camera.WorldToScreenPoint(world);
+                if (screen.z <= 0f)
+                    continue;
+
+                hasPoint = true;
+                min.x = Mathf.Min(min.x, screen.x);
+                min.y = Mathf.Min(min.y, screen.y);
+                max.x = Mathf.Max(max.x, screen.x);
+                max.y = Mathf.Max(max.y, screen.y);
+                minDepth = Mathf.Min(minDepth, screen.z);
+            }
+        }
+
+        if (!hasPoint)
+            return false;
+
+        const float PaddingPixels = 8f;
+        rect = Rect.MinMaxRect(
+            min.x - PaddingPixels,
+            min.y - PaddingPixels,
+            max.x + PaddingPixels,
+            max.y + PaddingPixels);
+        depth = minDepth;
+        return rect.width > 0f && rect.height > 0f;
     }
 }

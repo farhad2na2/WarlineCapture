@@ -54,8 +54,10 @@ public sealed class BuildingSelectionClickSystem
 
         if (context.TryGetGrid == null || !context.TryGetGrid(out GridConfig grid))
             return false;
-        if (context.TryGetGridCell == null || !context.TryGetGridCell(screenPosition, grid, out Vector2Int cell))
-            return false;
+
+        Vector2Int cell = new(int.MinValue / 2, int.MinValue / 2);
+        if (context.TryGetGridCell != null)
+            context.TryGetGridCell(screenPosition, grid, out cell);
 
         return context.HandleCellSelection != null &&
                context.HandleCellSelection(screenPosition, cell);

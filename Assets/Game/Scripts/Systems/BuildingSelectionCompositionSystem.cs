@@ -14,6 +14,7 @@ internal sealed class BuildingSelectionCompositionSystem
         return source.BuildingSelectionSystem.CreateContext(new BuildingSelectionSystem.Source(
             source.RuntimeBuildingSystem,
             source.RuntimeBuildingSystem.Buildings,
+            source.BuildingPlacementStartupSystem.WorldCamera,
             (out GridConfig grid) => tryGetGridForSelection(source, out grid),
             (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystem.BuildPlaneY),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,

@@ -748,7 +748,7 @@ internal sealed class BuildingProductionTransportSystem
         foreach (Transform child in root.GetComponentsInChildren<Transform>(true))
         {
             string name = child.name;
-            if (name == "Destroyed" || name == "SelectionMarker" || name == "FactionMarker")
+            if (name == "Destroyed" || name == "SelectionMarker")
                 child.gameObject.SetActive(false);
         }
     }

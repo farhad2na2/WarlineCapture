@@ -23,7 +23,6 @@ public sealed class BuildingCombatSystem
     public interface IRuntimeBuildingVisualState : IRuntimeBuilding
     {
         GameObject InstanceObject { get; }
-        Transform FactionMarkerTransform { get; }
         Transform DestroyedVisualTransform { get; }
         IReadOnlyList<Transform> AliveVisualRootTransforms { get; }
     }
@@ -251,7 +250,6 @@ public sealed class BuildingCombatSystem
             context.RuntimeBuildingSystem.ClearSelection();
         }
 
-        context.SetTransformVisible?.Invoke(building.FactionMarkerTransform, false);
         IReadOnlyList<Transform> aliveRoots = building.AliveVisualRootTransforms;
         if (aliveRoots != null)
         {

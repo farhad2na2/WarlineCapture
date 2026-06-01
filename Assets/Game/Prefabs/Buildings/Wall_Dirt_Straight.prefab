@@ -527,10 +527,6 @@ PrefabInstance:
       propertyPath: productions.Array.data[2].spawnUnitPrefab
       value: 
       objectReference: {fileID: 5616646512338707422, guid: e540888d7cd8a489f9472b3456bf2406, type: 3}
-    - target: {fileID: 5775103837051946191, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9112959322384211678, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: m_Name
       value: Wall_Dirt_Straight

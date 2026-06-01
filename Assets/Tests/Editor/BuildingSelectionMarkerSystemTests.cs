@@ -87,18 +87,20 @@ public sealed class BuildingSelectionMarkerSystemTests
     }
 
     [Test]
-    public void RuntimeVisualInitializationKeepsFactionMarkerButDoesNotStoreSelectionMarker()
+    public void RuntimeVisualInitializationCachesBuildingRenderersWithoutMarkerChildren()
     {
         GameObject buildingObject = new("RuntimeBuildingVisual");
         _objects.Add(buildingObject);
         GameObject modelRoot = new("ModelRoot");
         modelRoot.transform.SetParent(buildingObject.transform, false);
-        GameObject factionMarker = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Object.DestroyImmediate(factionMarker.GetComponent<Collider>());
-        factionMarker.name = "FactionMarker";
-        factionMarker.transform.SetParent(modelRoot.transform, false);
-        GameObject selectionMarker = new("SelectionMarker");
-        selectionMarker.transform.SetParent(modelRoot.transform, false);
+        GameObject model = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object.DestroyImmediate(model.GetComponent<Collider>());
+        model.name = "Model";
+        model.transform.SetParent(modelRoot.transform, false);
+        GameObject destroyed = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        Object.DestroyImmediate(destroyed.GetComponent<Collider>());
+        destroyed.name = "Destroyed";
+        destroyed.transform.SetParent(modelRoot.transform, false);
 
         var building = new RuntimeBuildingData
         {
@@ -110,15 +112,18 @@ public sealed class BuildingSelectionMarkerSystemTests
         var context = new BuildingRuntimeVisualSystem.Context(
             runtimeBuildings,
             new BuildingVisualSystem(),
+            new BuildingFactionVisualSystem(),
             new BuildingBarrierSystem(),
             null,
-            new MaterialPropertyBlock());
+            new MaterialPropertyBlock(),
+            0.2f);
 
         visualSystem.InitializeBuildingVisuals(context, building);
 
-        Assert.AreSame(factionMarker.transform, building.FactionMarker);
-        Assert.IsNotNull(building.FactionMarkerRenderers);
-        CollectionAssert.Contains(building.AliveVisualRoots, selectionMarker.transform);
+        Assert.IsNotNull(building.FactionVisualRenderers);
+        Assert.AreEqual(1, building.FactionVisualRenderers.Length);
+        Assert.AreSame(model.GetComponent<Renderer>(), building.FactionVisualRenderers[0]);
+        CollectionAssert.DoesNotContain(building.FactionVisualRenderers, destroyed.GetComponent<Renderer>());
     }
 
     private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildings)

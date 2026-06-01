@@ -8,22 +8,28 @@ internal sealed class BuildingRuntimeVisualSystem
     {
         public readonly IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
         public readonly BuildingVisualSystem VisualSystem;
+        public readonly BuildingFactionVisualSystem FactionVisualSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
+        public readonly float FactionTintStrength;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
             BuildingVisualSystem visualSystem,
+            BuildingFactionVisualSystem factionVisualSystem,
             BuildingBarrierSystem barrierSystem,
             FactionVisualSettings factionVisualSettings,
-            MaterialPropertyBlock markerPropertyBlock)
+            MaterialPropertyBlock markerPropertyBlock,
+            float factionTintStrength)
         {
             RuntimeBuildings = runtimeBuildings;
             VisualSystem = visualSystem;
+            FactionVisualSystem = factionVisualSystem;
             BarrierSystem = barrierSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
+            FactionTintStrength = Mathf.Clamp01(factionTintStrength);
         }
     }
 
@@ -36,7 +42,6 @@ internal sealed class BuildingRuntimeVisualSystem
             ? building.Instance.transform.GetChild(0)
             : building.Instance.transform;
 
-        building.FactionMarker = context.VisualSystem.FindDescendantByName(visualRoot, "FactionMarker");
         building.DoorZ = context.VisualSystem.FindDescendantByName(visualRoot, "Door_Z");
         building.DestroyedVisual = context.VisualSystem.FindDescendantByName(visualRoot, "Destroyed");
 
@@ -48,15 +53,11 @@ internal sealed class BuildingRuntimeVisualSystem
             context.BarrierSystem?.SetBarrierDoorOpen01(building, 0f);
         }
 
-        if (building.FactionMarker != null)
-            building.FactionMarkerRenderers = building.FactionMarker.GetComponentsInChildren<Renderer>(true);
-
         var aliveRoots = new List<Transform>();
         for (int i = 0; i < visualRoot.childCount; i++)
         {
             Transform child = visualRoot.GetChild(i);
-            if (child == building.DestroyedVisual ||
-                child == building.FactionMarker)
+            if (child == building.DestroyedVisual)
             {
                 continue;
             }
@@ -66,12 +67,12 @@ internal sealed class BuildingRuntimeVisualSystem
 
         building.AliveVisualRoots = aliveRoots.ToArray();
         building.AnimatedParts = context.VisualSystem.FindAnimatedBuildingParts(visualRoot);
-
-        Color factionColor = context.FactionVisualSettings != null
-            ? context.FactionVisualSettings.GetColor(0)
-            : new Color(0.12f, 0.72f, 1f, 1f);
-
-        context.VisualSystem.ApplyMarkerColor(building.FactionMarkerRenderers, factionColor, context.MarkerPropertyBlock);
+        context.FactionVisualSystem?.CacheBuildingRenderers(building, visualRoot, building.DestroyedVisual);
+        context.FactionVisualSystem?.ApplyOwnerFaction(new BuildingFactionVisualSystem.Context(
+            context.FactionVisualSettings,
+            context.MarkerPropertyBlock,
+            context.FactionTintStrength),
+            building);
         context.VisualSystem.SetTransformVisible(building.DestroyedVisual, false);
     }
 
@@ -109,7 +110,11 @@ internal sealed class BuildingRuntimeVisualSystem
                 continue;
 
             if (building.IsDestroyed)
-                context.VisualSystem.SetTransformVisible(building.FactionMarker, false);
+                context.FactionVisualSystem?.Clear(new BuildingFactionVisualSystem.Context(
+                    context.FactionVisualSettings,
+                    context.MarkerPropertyBlock,
+                    context.FactionTintStrength),
+                    building);
         }
     }
 

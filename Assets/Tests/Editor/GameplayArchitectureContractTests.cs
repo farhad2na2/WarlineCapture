@@ -17173,10 +17173,12 @@ public sealed class GameplayArchitectureContractTests
         const string placementFile = "Assets/Game/Scripts/Systems/BuildingGameplaySystem.cs";
         const string visualFile = "Assets/Game/Scripts/Systems/BuildingVisualSystem.cs";
         const string runtimeVisualFile = "Assets/Game/Scripts/Systems/BuildingRuntimeVisualSystem.cs";
+        const string factionVisualFile = "Assets/Game/Scripts/Systems/BuildingFactionVisualSystem.cs";
         const string runtimeContextFile = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         const string buildingCompositionFile = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSystem.cs";
         Assert.IsTrue(File.Exists(visualFile), "The building visual slice must live in BuildingVisualSystem.");
         Assert.IsTrue(File.Exists(runtimeVisualFile), "The runtime building visual slice must live in BuildingRuntimeVisualSystem.");
+        Assert.IsTrue(File.Exists(factionVisualFile), "Building owner-faction visuals must live in BuildingFactionVisualSystem.");
         Assert.IsTrue(File.Exists(runtimeContextFile), "Runtime visual context construction must live in BuildingRuntimeContextSystem.");
 
         string placement = File.ReadAllText(placementFile);
@@ -17185,13 +17187,15 @@ public sealed class GameplayArchitectureContractTests
         string buildingComposition = File.ReadAllText(buildingCompositionFile);
         StringAssert.Contains("BuildingVisualSystem _buildingVisualSystem", placement);
         StringAssert.Contains("BuildingRuntimeVisualSystem _buildingRuntimeVisualSystem", placement);
+        StringAssert.Contains("BuildingFactionVisualSystem", runtimeVisual);
         StringAssert.Contains("CreateBuildingRuntimeVisualContext", placement);
         StringAssert.Contains("_buildingRuntimeVisualSystem.InitializeBuildingVisuals", placement);
         StringAssert.Contains("tickDomains.RuntimeVisual.UpdateBuildingResourceVisuals", buildingComposition);
         StringAssert.Contains("_buildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility", placement);
         StringAssert.Contains("FindDescendantByName", runtimeVisual);
         StringAssert.Contains("SetTransformVisible", runtimeVisual);
-        StringAssert.Contains("ApplyMarkerColor", runtimeVisual);
+        StringAssert.Contains("CacheBuildingRenderers", runtimeVisual);
+        StringAssert.Contains("ApplyOwnerFaction", runtimeVisual);
         StringAssert.Contains("FindAnimatedBuildingParts", runtimeVisual);
         StringAssert.Contains("UpdateAnimatedBuildingParts", runtimeVisual);
         StringAssert.Contains("InitializeBuildingVisuals", runtimeVisual);
@@ -17219,6 +17223,9 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             Regex.IsMatch(placement, @"building\.FactionMarker\s*=\s*_buildingVisualSystem\.FindDescendantByName"),
             "Runtime building visual initialization belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
+        Assert.IsFalse(
+            runtimeVisual.Contains("FactionMarker", StringComparison.Ordinal),
+            "Runtime building visuals must not discover per-building faction marker children.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"building\.AnimatedParts\s*=\s*_buildingVisualSystem\.FindAnimatedBuildingParts"),
             "Runtime animated-part discovery assignment belongs in BuildingRuntimeVisualSystem, not BuildingPlacementSystem.");
@@ -17374,13 +17381,14 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("BuildingRuntimeOwnershipSystem _buildingRuntimeOwnershipSystem", placement);
         StringAssert.Contains("_buildingRuntimeContextSystem.CreateOwnershipContext(CreateBuildingRuntimeContextSource())", placement);
         StringAssert.Contains("new BuildingRuntimeOwnershipSystem.Context", runtimeContext);
+        StringAssert.Contains("BuildingFactionVisualSystem", runtimeContext);
         StringAssert.Contains("_buildingRuntimeOwnershipSystem.SetRuntimeBuildingOwnerFaction", placement);
         StringAssert.Contains("SetRuntimeBuildingOwnerFaction", runtimeOwnership);
         StringAssert.Contains("UpdateRuntimeGateFriendlyPassFaction", runtimeOwnership);
         StringAssert.Contains("FriendlyPassGridBlocker", runtimeOwnership);
         StringAssert.Contains("em.SetComponentData(building.CombatEntity, new Faction", runtimeOwnership);
-        StringAssert.Contains("ApplyMarkerColor", runtimeOwnership);
-        StringAssert.Contains("ResolveFactionColor", runtimeOwnership);
+        StringAssert.Contains("ApplyRuntimeBuildingFactionVisual", runtimeOwnership);
+        StringAssert.Contains("BuildingFactionVisualSystem", runtimeOwnership);
 
         Assert.IsFalse(
             Regex.IsMatch(placement, @"building\.HasOwnerFaction\s*=\s*ownerFactionId\.HasValue"),
@@ -17396,7 +17404,7 @@ public sealed class GameplayArchitectureContractTests
             "Runtime combat Faction projection belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             Regex.IsMatch(placement, @"GetColor\s*\(\s*building\.OwnerFactionId\s*\)"),
-            "Runtime owner marker color projection belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
+            "Runtime owner faction visual projection belongs in BuildingRuntimeOwnershipSystem, not BuildingPlacementSystem.");
         Assert.IsFalse(
             placement.Contains("new BuildingRuntimeOwnershipSystem.Context", StringComparison.Ordinal),
             "Runtime ownership context construction belongs in BuildingRuntimeContextSystem, not BuildingPlacementSystem.");
@@ -18862,7 +18870,7 @@ public sealed class GameplayArchitectureContractTests
         string unitPrefab = File.ReadAllText(unitPrefabPath);
 
         StringAssert.Contains("building selection marker visual ownership belongs in `BuildingSelectionMarkerSystem`", contract);
-        StringAssert.Contains("Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `SelectionMarker` children", contract);
+        StringAssert.Contains("Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `SelectionMarker` or `FactionMarker` children", contract);
         StringAssert.Contains("BuildingSelectionMarkerSystem", roadmap);
         StringAssert.Contains("internal sealed class BuildingSelectionMarkerSystem", markerSystem);
         StringAssert.Contains("internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();", compositionSource);
@@ -18895,6 +18903,69 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsEmpty(
             buildingPrefabViolations,
             "Building prefabs must not contain per-building SelectionMarker children:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, buildingPrefabViolations));
+    }
+
+    [Test]
+    public void BuildingFactionVisualsMustUseRendererTintBoundary()
+    {
+        const string roadmapPath = "Design/Architecture/building_faction_visual_roadmap.md";
+        const string factionVisualSystemPath = "Assets/Game/Scripts/Systems/BuildingFactionVisualSystem.cs";
+        const string runtimeVisualPath = "Assets/Game/Scripts/Systems/BuildingRuntimeVisualSystem.cs";
+        const string runtimeOwnershipPath = "Assets/Game/Scripts/Systems/BuildingRuntimeOwnershipSystem.cs";
+        const string runtimeDataPath = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
+        const string compositionSourcePath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
+        const string runtimeContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
+        const string buildingConfigPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
+
+        Assert.IsTrue(File.Exists(roadmapPath), "The building faction visual roadmap must be tracked.");
+        Assert.IsTrue(File.Exists(factionVisualSystemPath), "Building owner-faction visuals must live in BuildingFactionVisualSystem.");
+
+        string contract = File.ReadAllText(ContractPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string factionVisualSystem = File.ReadAllText(factionVisualSystemPath);
+        string runtimeVisual = File.ReadAllText(runtimeVisualPath);
+        string runtimeOwnership = File.ReadAllText(runtimeOwnershipPath);
+        string runtimeData = File.ReadAllText(runtimeDataPath);
+        string compositionSource = File.ReadAllText(compositionSourcePath);
+        string runtimeContext = File.ReadAllText(runtimeContextPath);
+        string buildingConfig = File.ReadAllText(buildingConfigPath);
+
+        StringAssert.Contains("building owner-faction visual projection belongs in `BuildingFactionVisualSystem`", contract);
+        StringAssert.Contains("must not contain `SelectionMarker` or `FactionMarker` children", contract);
+        StringAssert.Contains("BuildingFactionVisualSystem", roadmap);
+        StringAssert.Contains("internal sealed class BuildingFactionVisualSystem", factionVisualSystem);
+        StringAssert.Contains("CacheBuildingRenderers", factionVisualSystem);
+        StringAssert.Contains("ApplyOwnerFaction", factionVisualSystem);
+        StringAssert.Contains("internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem = new();", compositionSource);
+        StringAssert.Contains("new BuildingFactionVisualSystem.Context", runtimeVisual);
+        StringAssert.Contains("new BuildingFactionVisualSystem.Context", runtimeOwnership);
+        StringAssert.Contains("BuildingFactionTintStrength", buildingConfig);
+        StringAssert.Contains("FactionVisualRenderers", runtimeData);
+        StringAssert.Contains("CacheBuildingRenderers", runtimeVisual);
+        StringAssert.Contains("ApplyOwnerFaction", runtimeOwnership);
+
+        Assert.IsFalse(
+            runtimeData.Contains("FactionMarker", StringComparison.Ordinal),
+            "RuntimeBuildingData must not store per-building faction marker transforms or renderers.");
+        Assert.IsFalse(
+            runtimeVisual.Contains("FindDescendantByName(visualRoot, \"FactionMarker\")", StringComparison.Ordinal),
+            "BuildingRuntimeVisualSystem must not discover per-building faction markers.");
+        Assert.IsFalse(
+            runtimeOwnership.Contains("ApplyMarkerColor", StringComparison.Ordinal),
+            "Owner-faction projection must not tint per-building marker renderers.");
+
+        string[] buildingPrefabViolations = Directory.GetFiles("Assets/Game/Prefabs/Buildings", "*.prefab", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("/BuildingSelectionMarker.prefab", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("m_Name: FactionMarker", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            buildingPrefabViolations,
+            "Building prefabs must not contain per-building FactionMarker children:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, buildingPrefabViolations));
     }

@@ -386,7 +386,7 @@ public static class SharedPrefabPreviewCache
         while (current != null)
         {
             string name = current.name;
-            if (name == "SelectionMarker" || name == "FactionMarker" || name == "Destroyed")
+            if (name == "SelectionMarker" || name == "Destroyed")
                 return true;
 
             if (current == stopAncestor)

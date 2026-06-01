@@ -180,7 +180,6 @@ internal sealed class BuildingPlacementVisualSystem
         {
             string name = current.name;
             if (name == "Destroyed" ||
-                name == "FactionMarker" ||
                 name == "SelectionMarker" ||
                 name == "Door_Z")
             {

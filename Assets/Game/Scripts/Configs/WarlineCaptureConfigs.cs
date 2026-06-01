@@ -118,11 +118,12 @@ public class AIControllerConfig : ScriptableObject
 
 [CreateAssetMenu(menuName = "WarlineCapture/Config/Building Placement System")]
 public class BuildingPlacementSystemConfig : ScriptableObject
-{ [SerializeField] private Camera worldCamera; [SerializeField] private GameObject roadPreviewPrefab; [SerializeField] private GameObject buildingSelectionMarkerPrefab; [Min(0.1f), SerializeField] private float buildButtonPreviewDistanceMultiplier = 1f; [Min(0.1f), SerializeField] private float unitCommandButtonPreviewDistanceMultiplier = 1f; [SerializeField] private List<GameObject> spawnables = new(); [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig; [SerializeField] private InitialUnitsSpawnerAuthoringConfig initialUnitsConfig; [SerializeField] private float buildPlaneY; [SerializeField] private float placementOutlineHeight = 0.15f; [SerializeField] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f); [SerializeField] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
+{ [SerializeField] private Camera worldCamera; [SerializeField] private GameObject roadPreviewPrefab; [SerializeField] private GameObject buildingSelectionMarkerPrefab; [Range(0f, 1f), SerializeField] private float buildingFactionTintStrength = 0.18f; [Min(0.1f), SerializeField] private float buildButtonPreviewDistanceMultiplier = 1f; [Min(0.1f), SerializeField] private float unitCommandButtonPreviewDistanceMultiplier = 1f; [SerializeField] private List<GameObject> spawnables = new(); [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig; [SerializeField] private InitialUnitsSpawnerAuthoringConfig initialUnitsConfig; [SerializeField] private float buildPlaneY; [SerializeField] private float placementOutlineHeight = 0.15f; [SerializeField] private Color placementValidColor = new(0.15f, 0.85f, 0.2f, 1f); [SerializeField] private Color placementInvalidColor = new(0.9f, 0.2f, 0.2f, 1f);
 
     public Camera WorldCamera => worldCamera;
     public GameObject RoadPreviewPrefab => roadPreviewPrefab;
     public GameObject BuildingSelectionMarkerPrefab => buildingSelectionMarkerPrefab;
+    public float BuildingFactionTintStrength => Mathf.Clamp01(buildingFactionTintStrength);
     public float BuildButtonPreviewDistanceMultiplier => buildButtonPreviewDistanceMultiplier;
     public float UnitCommandButtonPreviewDistanceMultiplier => unitCommandButtonPreviewDistanceMultiplier;
     public List<GameObject> Spawnables => spawnables;

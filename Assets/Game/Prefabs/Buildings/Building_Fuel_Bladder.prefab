@@ -388,7 +388,6 @@ PrefabInstance:
       value: Building_Fuel_Bladder
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 3096862809359555956, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2674124398502211660, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}

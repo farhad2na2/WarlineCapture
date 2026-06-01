@@ -12,8 +12,8 @@ Building selection state stays in `RuntimeBuildingSystem`. Building selection ma
 - The marker prefab is passed through explicit building gameplay config/composition.
 - Building marker position is derived from selected runtime building origin, footprint, and grid cell size.
 - Building marker visibility is refreshed from `RuntimeBuildingSystem.CurrentActiveBuildingId`.
-- `BuildingRuntimeVisualSystem` initializes persistent per-building visuals only, including `FactionMarker`, `Door_Z`, `Destroyed`, alive roots, and animated parts.
-- `FactionMarker` remains per building because it represents persistent ownership/state.
+- `BuildingRuntimeVisualSystem` initializes persistent per-building visuals only, including `Door_Z`, `Destroyed`, alive roots, animated parts, and building faction visual renderer caches.
+- Building owner-faction visuals are handled by `BuildingFactionVisualSystem`, not per-building `FactionMarker` children.
 - Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain a `SelectionMarker` child.
 - Unit selection marker components and the `SelectionMarker` child in `Assets/Game/Prefabs/Characters/Unit.prefab` are intentionally allowed.
 

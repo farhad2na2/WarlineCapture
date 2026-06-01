@@ -8,20 +8,23 @@ internal sealed class BuildingRuntimeOwnershipSystem
     public readonly struct Context
     {
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
-        public readonly BuildingVisualSystem BuildingVisualSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
+        public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
+        public readonly float FactionTintStrength;
 
         public Context(
             TryGetEntityManagerDelegate tryGetEntityManager,
-            BuildingVisualSystem buildingVisualSystem,
             FactionVisualSettings factionVisualSettings,
-            MaterialPropertyBlock markerPropertyBlock)
+            MaterialPropertyBlock markerPropertyBlock,
+            BuildingFactionVisualSystem buildingFactionVisualSystem,
+            float factionTintStrength)
         {
             TryGetEntityManager = tryGetEntityManager;
-            BuildingVisualSystem = buildingVisualSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
+            BuildingFactionVisualSystem = buildingFactionVisualSystem;
+            FactionTintStrength = Mathf.Clamp01(factionTintStrength);
         }
     }
 
@@ -34,7 +37,7 @@ internal sealed class BuildingRuntimeOwnershipSystem
         building.OwnerFactionId = ownerFactionId.GetValueOrDefault();
         UpdateRuntimeGateFriendlyPassFaction(context, building, ownerFactionId);
         UpdateRuntimeCombatFaction(context, building);
-        ApplyRuntimeBuildingMarkerColor(context, building);
+        ApplyRuntimeBuildingFactionVisual(context, building);
     }
 
     private static void UpdateRuntimeCombatFaction(Context context, RuntimeBuildingData building)
@@ -84,22 +87,16 @@ internal sealed class BuildingRuntimeOwnershipSystem
             em.AddComponentData(building.BlockerEntity, pass);
     }
 
-    private static void ApplyRuntimeBuildingMarkerColor(Context context, RuntimeBuildingData building)
+    private static void ApplyRuntimeBuildingFactionVisual(Context context, RuntimeBuildingData building)
     {
-        if (context.BuildingVisualSystem == null)
+        if (context.BuildingFactionVisualSystem == null)
             return;
 
-        Color factionColor = ResolveFactionColor(context.FactionVisualSettings, building.OwnerFactionId);
-        context.BuildingVisualSystem.ApplyMarkerColor(building.FactionMarkerRenderers, factionColor, context.MarkerPropertyBlock);
-    }
-
-    private static Color ResolveFactionColor(FactionVisualSettings factionVisualSettings, byte ownerFactionId)
-    {
-        if (factionVisualSettings != null)
-            return factionVisualSettings.GetColor(ownerFactionId);
-
-        return ownerFactionId == 0
-            ? new Color(0.12f, 0.72f, 1f, 1f)
-            : new Color(0.92f, 0.2f, 0.16f, 1f);
+        context.BuildingFactionVisualSystem.ApplyOwnerFaction(
+            new BuildingFactionVisualSystem.Context(
+                context.FactionVisualSettings,
+                context.MarkerPropertyBlock,
+                context.FactionTintStrength),
+            building);
     }
 }

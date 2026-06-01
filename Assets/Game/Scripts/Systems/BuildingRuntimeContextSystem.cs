@@ -14,6 +14,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingSpawnPrefabSystem.Context SpawnPrefabContext;
         public readonly BuildingVisualSystem BuildingVisualSystem;
         public readonly BuildingRuntimeVisualSystem RuntimeVisualSystem;
+        public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
@@ -21,6 +22,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingProductionContextSystem ProductionContextSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
+        public readonly float BuildingFactionTintStrength;
         public readonly EntityQuery LiveUnitFootprintQuery;
         public readonly EntityQuery RedirectUnitsQuery;
         public readonly EntityQuery HaulerUnitsQuery;
@@ -51,6 +53,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingSpawnPrefabSystem.Context spawnPrefabContext,
             BuildingVisualSystem buildingVisualSystem,
             BuildingRuntimeVisualSystem runtimeVisualSystem,
+            BuildingFactionVisualSystem buildingFactionVisualSystem,
             BuildingBarrierSystem barrierSystem,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
@@ -58,6 +61,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingProductionContextSystem productionContextSystem,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
+            float buildingFactionTintStrength,
             EntityQuery liveUnitFootprintQuery,
             EntityQuery redirectUnitsQuery,
             EntityQuery haulerUnitsQuery,
@@ -87,6 +91,7 @@ internal sealed class BuildingRuntimeContextSystem
             SpawnPrefabContext = spawnPrefabContext;
             BuildingVisualSystem = buildingVisualSystem;
             RuntimeVisualSystem = runtimeVisualSystem;
+            BuildingFactionVisualSystem = buildingFactionVisualSystem;
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
             ResourceHaulerSystem = resourceHaulerSystem;
@@ -94,6 +99,7 @@ internal sealed class BuildingRuntimeContextSystem
             ProductionContextSystem = productionContextSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
+            BuildingFactionTintStrength = Mathf.Clamp01(buildingFactionTintStrength);
             LiveUnitFootprintQuery = liveUnitFootprintQuery;
             RedirectUnitsQuery = redirectUnitsQuery;
             HaulerUnitsQuery = haulerUnitsQuery;
@@ -150,8 +156,10 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingRuntimeCreationSystem.RuntimeAction RefreshMarkers;
         public readonly BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingVisualSystem BuildingVisualSystem;
+        public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
+        public readonly float BuildingFactionTintStrength;
         public readonly Func<int, bool> DeleteBuildingById;
         public readonly Action BeginDeferredRuntimeBuildingSideEffects;
         public readonly Action EndDeferredRuntimeBuildingSideEffects;
@@ -187,8 +195,10 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingRuntimeCreationSystem.RuntimeAction refreshMarkers,
             BuildingRuntimeOwnershipSystem.TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingVisualSystem buildingVisualSystem,
+            BuildingFactionVisualSystem buildingFactionVisualSystem,
             FactionVisualSettings factionVisualSettings,
             MaterialPropertyBlock markerPropertyBlock,
+            float buildingFactionTintStrength,
             Func<int, bool> deleteBuildingById,
             Action beginDeferredRuntimeBuildingSideEffects,
             Action endDeferredRuntimeBuildingSideEffects)
@@ -223,8 +233,10 @@ internal sealed class BuildingRuntimeContextSystem
             RefreshMarkers = refreshMarkers;
             TryGetEntityManager = tryGetEntityManager;
             BuildingVisualSystem = buildingVisualSystem;
+            BuildingFactionVisualSystem = buildingFactionVisualSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
+            BuildingFactionTintStrength = Mathf.Clamp01(buildingFactionTintStrength);
             DeleteBuildingById = deleteBuildingById;
             BeginDeferredRuntimeBuildingSideEffects = beginDeferredRuntimeBuildingSideEffects;
             EndDeferredRuntimeBuildingSideEffects = endDeferredRuntimeBuildingSideEffects;
@@ -294,9 +306,10 @@ internal sealed class BuildingRuntimeContextSystem
     {
         return new BuildingRuntimeOwnershipSystem.Context(
             source.TryGetEntityManager,
-            source.BuildingVisualSystem,
             source.FactionVisualSettings,
-            source.MarkerPropertyBlock);
+            source.MarkerPropertyBlock,
+            source.BuildingFactionVisualSystem,
+            source.BuildingFactionTintStrength);
     }
 
     public BuildingRuntimeCitySpawnSystem.Context CreateCitySpawnContext(
@@ -347,9 +360,11 @@ internal sealed class BuildingRuntimeContextSystem
         return new BuildingRuntimeVisualSystem.Context(
             source.RuntimeBuildingSystem.Buildings,
             source.BuildingVisualSystem,
+            source.BuildingFactionVisualSystem,
             source.BarrierSystem,
             source.FactionVisualSettings,
-            source.MarkerPropertyBlock);
+            source.MarkerPropertyBlock,
+            source.BuildingFactionTintStrength);
     }
 
     public BuildingSelectionMarkerSystem.Context CreateSelectionMarkerContext(

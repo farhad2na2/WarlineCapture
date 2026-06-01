@@ -130,6 +130,10 @@ public static class MapBuildingMeshGroupingMigration
         Dictionary<Mesh, List<string>> meshToPrefabNames,
         GroupingReport report)
     {
+        string nameCategory = ResolveCategoryByName(child.name);
+        if (!string.IsNullOrWhiteSpace(nameCategory))
+            return nameCategory;
+
         var scores = new Dictionary<string, int>(StringComparer.Ordinal);
         MeshFilter[] meshFilters = child.GetComponentsInChildren<MeshFilter>(true);
         for (int i = 0; i < meshFilters.Length; i++)
@@ -157,6 +161,16 @@ public static class MapBuildingMeshGroupingMigration
             report.Ambiguous.Add($"{GetPath(child)} => {string.Join(", ", best)}");
 
         return best[0];
+    }
+
+    private static string ResolveCategoryByName(string objectName)
+    {
+        if (string.IsNullOrWhiteSpace(objectName))
+            return null;
+
+        return objectName.StartsWith("SM_Bld_Shop_", StringComparison.Ordinal)
+            ? "Building_Shop"
+            : null;
     }
 
     private static int CategoryPriority(string category)

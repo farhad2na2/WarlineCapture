@@ -19034,6 +19034,27 @@ public sealed class GameplayArchitectureContractTests
             Environment.NewLine +
             string.Join(Environment.NewLine, buildingPrefabViolations));
 
+        string[] unloadableBuildingPrefabs = Directory.GetFiles("Assets/Game/Prefabs/Buildings", "*.prefab", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("/BuildingSelectionMarker.prefab", StringComparison.Ordinal))
+            .Where(path =>
+            {
+                string prefab = File.ReadAllText(path);
+                if (!prefab.StartsWith("%YAML 1.1", StringComparison.Ordinal))
+                    return true;
+
+                UnityEngine.GameObject asset = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(path);
+                return asset == null || asset.GetComponent<BuildingDefinitionAuthoring>() == null;
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            unloadableBuildingPrefabs,
+            "Live building prefabs must remain valid and loadable with BuildingDefinitionAuthoring:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, unloadableBuildingPrefabs));
+
         string[] missingDestroyedVisualConfigs = Directory.GetFiles("Assets/Game/Configs/Prefabs", "Prefab_BuildingDefinition_*_Config.asset", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
             .Where(path => File.ReadAllText(path).Contains("destroyedVisualPrefab: {fileID: 0}", StringComparison.Ordinal))

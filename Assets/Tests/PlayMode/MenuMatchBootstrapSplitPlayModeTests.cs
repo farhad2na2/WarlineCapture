@@ -254,6 +254,11 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
             HasSpawnedRuntimeUnits,
             MatchRuntimeContentMaxFrames,
             "Footer Deploy reached Match HUD but runtime units did not spawn.");
+
+        await WaitFor(
+            HasSpawnedRuntimeBuildings,
+            MatchRuntimeContentMaxFrames,
+            "Footer Deploy reached Match HUD but runtime buildings did not spawn.");
     }
 
     private static WarlineCaptureShellRouteButtonView FindFooterDeployButton(Scene scene)
@@ -449,6 +454,19 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<Faction>());
+        return query.CalculateEntityCount() > 0;
+    }
+
+    private static bool HasSpawnedRuntimeBuildings()
+    {
+        World world = World.DefaultGameObjectInjectionWorld;
+        if (world == null || !world.IsCreated)
+            return false;
+
+        EntityManager entityManager = world.EntityManager;
+        using EntityQuery query = entityManager.CreateEntityQuery(
+            ComponentType.ReadOnly<RuntimeBuildingCombatTag>(),
+            ComponentType.ReadOnly<RuntimeBuildingCombatInfo>());
         return query.CalculateEntityCount() > 0;
     }
 

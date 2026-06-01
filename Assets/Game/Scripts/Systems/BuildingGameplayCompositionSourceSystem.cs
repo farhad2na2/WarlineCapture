@@ -4,6 +4,7 @@ internal sealed class BuildingGameplayCompositionSourceSystem
     internal readonly RuntimeBuildingSystem<RuntimeBuildingData> RuntimeBuildingSystem = new();
     internal readonly BuildingVisualSystem BuildingVisualSystem = new();
     internal readonly BuildingRuntimeVisualSystem BuildingRuntimeVisualSystem = new();
+    internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();
     internal readonly BuildingCombatSystem BuildingCombatSystem = new();
     internal readonly FactionResourceSystem FactionResourceSystem = new();
     internal readonly ResourceHaulerSystem ResourceHaulerSystem = new();

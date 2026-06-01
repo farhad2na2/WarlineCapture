@@ -173,8 +173,13 @@ internal sealed class BuildingRuntimeCompositionSystem
             building => source.BuildingRuntimeVisualSystem.InitializeBuildingVisuals(
                 source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(CreateRuntimeSource()),
                 building),
-            () => source.BuildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(
-                source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(CreateRuntimeSource())),
+            () => source.BuildingSelectionMarkerSystem.Refresh(
+                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                    CreateRuntimeSource(),
+                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    markerPropertyBlock,
+                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
             (out EntityManager entityManager) => tryGetEntityManager(out entityManager),
             source.BuildingVisualSystem,
             source.BuildingGameplayDependencySystem.FactionVisualSettings,
@@ -263,15 +268,20 @@ internal sealed class BuildingRuntimeCompositionSystem
                 building),
             source.BuildingGameplayDependencySystem.NotifyHomeBuildingDestroyed,
             source.BuildingRuntimeObjectSystem.DestroyRuntimeObject,
-            () => source.BuildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(
-                source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(CreateRuntimeContextSource(
-                    source,
-                    tryGetEntityManager,
-                    tryGetGridData,
-                    isHouseBuilding,
-                    tryResolveBuildingFocusWorldPosition,
-                    tryGetRuntimeBuilding,
-                    getEffectivePlacementRect))),
+            () => source.BuildingSelectionMarkerSystem.Refresh(
+                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                    CreateRuntimeContextSource(
+                        source,
+                        tryGetEntityManager,
+                        tryGetGridData,
+                        isHouseBuilding,
+                        tryResolveBuildingFocusWorldPosition,
+                        tryGetRuntimeBuilding,
+                        getEffectivePlacementRect),
+                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    null,
+                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
             source.BuildingGameplayDependencySystem.NotifyStaticMinimapChanged,
             message => Debug.Log(message),
             false);

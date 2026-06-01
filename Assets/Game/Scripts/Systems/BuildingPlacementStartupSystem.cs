@@ -25,6 +25,7 @@ internal sealed class BuildingPlacementStartupSystem
     public BuildingDefinition SoldierTentDefinition => _soldierTentDefinition;
     public BuildingDefinition FactoryDefinition => _factoryDefinition;
     public GameObject RoadPreviewPrefab => _config != null ? _config.RoadPreviewPrefab : null;
+    public GameObject BuildingSelectionMarkerPrefab => _config != null ? _config.BuildingSelectionMarkerPrefab : null;
     public float BuildButtonPreviewDistanceMultiplier => _config != null ? _config.BuildButtonPreviewDistanceMultiplier : 1f;
     public float UnitCommandButtonPreviewDistanceMultiplier => _config != null ? _config.UnitCommandButtonPreviewDistanceMultiplier : 1f;
 

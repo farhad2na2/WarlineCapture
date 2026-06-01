@@ -66,7 +66,6 @@ internal sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuildin
     public Entity BlockerEntity { get; set; }
     public Transform FactionMarker;
     public Renderer[] FactionMarkerRenderers;
-    public Transform SelectionMarker;
     public Transform DoorZ;
     public float DoorClosedLocalEulerZ;
     public float DoorOpenLocalEulerZ;
@@ -93,7 +92,6 @@ internal sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuildin
     public float FuelBarrelsPerDay => Definition != null ? Definition.FuelBarrelsPerDay : 0f;
     public GameObject InstanceObject => Instance;
     public Transform FactionMarkerTransform => FactionMarker;
-    public Transform SelectionMarkerTransform => SelectionMarker;
     public Transform DestroyedVisualTransform => DestroyedVisual;
     public IReadOnlyList<Transform> AliveVisualRootTransforms => AliveVisualRoots;
 }

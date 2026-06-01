@@ -2643,7 +2643,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("Building placement config application, runtime building root creation, configured definition startup selection, build plane/camera/preview config state, and placement preview initialization belong in `BuildingPlacementStartupSystem`", contract);
         StringAssert.Contains("Building selection screen-click guards, screen-to-grid click routing, and selection-click context construction belong in `BuildingSelectionClickSystem`", contract);
         StringAssert.Contains("selection context construction, and runtime building cell hit-test/routing belong in `BuildingSelectionSystem`", contract);
-        StringAssert.Contains("Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; runtime building visual initialization, runtime resource animation updates, and runtime marker visibility projection belong in `BuildingRuntimeVisualSystem`", contract);
+        StringAssert.Contains("Building visual helper behavior, animated-part discovery, and animated-part updates belong in `BuildingVisualSystem`; runtime building visual initialization and runtime resource animation updates belong in `BuildingRuntimeVisualSystem`; building selection marker projection belongs in `BuildingSelectionMarkerSystem`", contract);
         StringAssert.Contains("Placement visual instance creation, placement visual positioning, prefab model bounds, and transformed bounds helpers belong in `BuildingPlacementVisualSystem`", contract);
         StringAssert.Contains("Building deletion orchestration, destruction state, cleanup timing, blocker cleanup, combat-health destruction checks, destroyed-entity callbacks, destroyed visual toggling, and destroyed building finalization belong in `BuildingCombatSystem`", contract);
         StringAssert.Contains("Resource storage classification, capacity display math, resource totals, faction economy snapshot contracts, sell/drain behavior, and resource production ticks belong in `FactionResourceSystem`", contract);
@@ -18832,6 +18832,71 @@ public sealed class GameplayArchitectureContractTests
             "Editor tests must not reference BuildingPlacementSystem. Use narrow systems or local fixtures:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, violations));
+    }
+
+    [Test]
+    public void BuildingSelectionMarkerMustUseSharedRuntimeMarkerBoundary()
+    {
+        const string roadmapPath = "Design/Architecture/building_single_selection_marker_roadmap.md";
+        const string markerSystemPath = "Assets/Game/Scripts/Systems/BuildingSelectionMarkerSystem.cs";
+        const string runtimeVisualPath = "Assets/Game/Scripts/Systems/BuildingRuntimeVisualSystem.cs";
+        const string runtimeDataPath = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
+        const string compositionSourcePath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
+        const string runtimeContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
+        const string buildingConfigPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
+        const string sharedMarkerPrefabPath = "Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab";
+        const string unitPrefabPath = "Assets/Game/Prefabs/Characters/Unit.prefab";
+
+        Assert.IsTrue(File.Exists(roadmapPath), "The single building marker roadmap must be tracked.");
+        Assert.IsTrue(File.Exists(markerSystemPath), "Building selection marker visual ownership must live in BuildingSelectionMarkerSystem.");
+        Assert.IsTrue(File.Exists(sharedMarkerPrefabPath), "Building selection must use one shared marker prefab.");
+
+        string contract = File.ReadAllText(ContractPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string markerSystem = File.ReadAllText(markerSystemPath);
+        string runtimeVisual = File.ReadAllText(runtimeVisualPath);
+        string runtimeData = File.ReadAllText(runtimeDataPath);
+        string compositionSource = File.ReadAllText(compositionSourcePath);
+        string runtimeContext = File.ReadAllText(runtimeContextPath);
+        string buildingConfig = File.ReadAllText(buildingConfigPath);
+        string unitPrefab = File.ReadAllText(unitPrefabPath);
+
+        StringAssert.Contains("building selection marker visual ownership belongs in `BuildingSelectionMarkerSystem`", contract);
+        StringAssert.Contains("Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `SelectionMarker` children", contract);
+        StringAssert.Contains("BuildingSelectionMarkerSystem", roadmap);
+        StringAssert.Contains("internal sealed class BuildingSelectionMarkerSystem", markerSystem);
+        StringAssert.Contains("internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();", compositionSource);
+        StringAssert.Contains("new BuildingSelectionMarkerSystem.Context", runtimeContext);
+        StringAssert.Contains("BuildingSelectionMarkerPrefab", buildingConfig);
+        StringAssert.Contains("SelectionMarkerAuthoring", unitPrefab);
+
+        Assert.IsFalse(
+            runtimeData.Contains("SelectionMarker", StringComparison.Ordinal),
+            "RuntimeBuildingData must not store per-building selection marker transforms.");
+        Assert.IsFalse(
+            runtimeVisual.Contains("FindDescendantByName(visualRoot, \"SelectionMarker\")", StringComparison.Ordinal),
+            "BuildingRuntimeVisualSystem must not discover per-building selection markers.");
+        Assert.IsFalse(
+            runtimeVisual.Contains("building.SelectionMarker", StringComparison.Ordinal),
+            "BuildingRuntimeVisualSystem must not toggle per-building selection markers.");
+
+        string[] buildingPrefabViolations = Directory.GetFiles("Assets/Game/Prefabs/Buildings", "*.prefab", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("/BuildingSelectionMarker.prefab", StringComparison.Ordinal))
+            .Where(path =>
+            {
+                string prefab = File.ReadAllText(path);
+                return prefab.Contains("m_Name: SelectionMarker", StringComparison.Ordinal) ||
+                    prefab.Contains("SelectionMarkerAuthoring", StringComparison.Ordinal);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            buildingPrefabViolations,
+            "Building prefabs must not contain per-building SelectionMarker children:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, buildingPrefabViolations));
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

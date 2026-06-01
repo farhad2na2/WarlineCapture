@@ -11,22 +11,19 @@ internal sealed class BuildingRuntimeVisualSystem
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly FactionVisualSettings FactionVisualSettings;
         public readonly MaterialPropertyBlock MarkerPropertyBlock;
-        public readonly Func<int?> GetActiveBuildingId;
 
         public Context(
             IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
             BuildingVisualSystem visualSystem,
             BuildingBarrierSystem barrierSystem,
             FactionVisualSettings factionVisualSettings,
-            MaterialPropertyBlock markerPropertyBlock,
-            Func<int?> getActiveBuildingId)
+            MaterialPropertyBlock markerPropertyBlock)
         {
             RuntimeBuildings = runtimeBuildings;
             VisualSystem = visualSystem;
             BarrierSystem = barrierSystem;
             FactionVisualSettings = factionVisualSettings;
             MarkerPropertyBlock = markerPropertyBlock;
-            GetActiveBuildingId = getActiveBuildingId;
         }
     }
 
@@ -40,7 +37,6 @@ internal sealed class BuildingRuntimeVisualSystem
             : building.Instance.transform;
 
         building.FactionMarker = context.VisualSystem.FindDescendantByName(visualRoot, "FactionMarker");
-        building.SelectionMarker = context.VisualSystem.FindDescendantByName(visualRoot, "SelectionMarker");
         building.DoorZ = context.VisualSystem.FindDescendantByName(visualRoot, "Door_Z");
         building.DestroyedVisual = context.VisualSystem.FindDescendantByName(visualRoot, "Destroyed");
 
@@ -60,8 +56,7 @@ internal sealed class BuildingRuntimeVisualSystem
         {
             Transform child = visualRoot.GetChild(i);
             if (child == building.DestroyedVisual ||
-                child == building.FactionMarker ||
-                child == building.SelectionMarker)
+                child == building.FactionMarker)
             {
                 continue;
             }
@@ -107,15 +102,12 @@ internal sealed class BuildingRuntimeVisualSystem
         if (context.RuntimeBuildings == null || context.VisualSystem == null)
             return;
 
-        int? activeBuildingId = context.GetActiveBuildingId?.Invoke();
         foreach (var entry in context.RuntimeBuildings)
         {
             RuntimeBuildingData building = entry.Value;
             if (building == null)
                 continue;
 
-            bool selected = !building.IsDestroyed && activeBuildingId.HasValue && activeBuildingId.Value == entry.Key;
-            context.VisualSystem.SetTransformVisible(building.SelectionMarker, selected);
             if (building.IsDestroyed)
                 context.VisualSystem.SetTransformVisible(building.FactionMarker, false);
         }

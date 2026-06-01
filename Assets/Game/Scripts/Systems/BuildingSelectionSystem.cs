@@ -270,6 +270,7 @@ internal sealed class BuildingSelectionSystem
 
             context.RuntimeBuildingSystem?.SelectBuilding(entry.Key);
             context.SuppressNextWorldClick?.Invoke();
+            context.RefreshMarkers?.Invoke();
             context.ClearFocusedUnit?.Invoke();
             return true;
         }

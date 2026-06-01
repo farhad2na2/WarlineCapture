@@ -15,6 +15,13 @@ internal sealed class BuildingRuntimeTickCompositionSystem
     {
         BuildingRuntimeContextSystem.RuntimeSource runtimeSource = createRuntimeContextSource(source);
         BuildingRuntimeVisualSystem.Context runtimeVisualContext = source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(runtimeSource);
+        BuildingSelectionMarkerSystem.Context selectionMarkerContext =
+            source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                runtimeSource,
+                source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
+                source.BuildingPlacementStartupSystem.BuildingRoot,
+                markerPropertyBlock,
+                source.BuildingRuntimeObjectSystem.DestroyRuntimeObject);
         BuildingCombatSystem.Context<RuntimeBuildingData> combatContext = source.BuildingRuntimeContextSystem.CreateCombatContext(runtimeSource);
         BuildingBarrierSystem.Context barrierContext = source.BuildingRuntimeContextSystem.CreateBarrierContext(runtimeSource);
         BuildingPlacementInputRuntimeTickSystem.Context inputContext = createInputRuntimeTickContext(source, interactionContext, markerPropertyBlock);
@@ -29,7 +36,7 @@ internal sealed class BuildingRuntimeTickCompositionSystem
             () => source.BuildingCombatSystem.UpdateDestroyedBuildings(combatContext, Time.time),
             () => source.BuildingBarrierSystem.UpdateRoadBarrierDoors(barrierContext, Time.deltaTime),
             () => source.BuildingPlacementRedirectSystem.FlushPendingMarkerRefresh(
-                () => source.BuildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(runtimeVisualContext)),
+                () => source.BuildingSelectionMarkerSystem.Refresh(selectionMarkerContext)),
             () => source.BuildingPlacementInputRuntimeTickSystem.Update(inputContext),
             CreateRuntimeTickDiagnosticsContext(source));
     }

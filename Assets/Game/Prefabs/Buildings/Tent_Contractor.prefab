@@ -586,14 +586,6 @@ PrefabInstance:
       propertyPath: displayName
       value: Tent_Contractor
       objectReference: {fileID: 0}
-    - target: {fileID: 6247470120559054060, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247470120559054060, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9098659505652251755, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.25999928

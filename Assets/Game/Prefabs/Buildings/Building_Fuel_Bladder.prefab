@@ -383,14 +383,6 @@ PrefabInstance:
       propertyPath: productions.Array.data[10].spawnUnitPrefab
       value: 
       objectReference: {fileID: 8579631638336695248, guid: b7087e56a58614db08d7c66c8845747b, type: 3}
-    - target: {fileID: 6247470120559054060, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247470120559054060, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9112959322384211678, guid: 7f40f52c9aed94fefb3dda0fc58866c0, type: 3}
       propertyPath: m_Name
       value: Building_Fuel_Bladder

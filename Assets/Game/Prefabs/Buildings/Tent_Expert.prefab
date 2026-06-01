@@ -595,14 +595,6 @@ PrefabInstance:
       propertyPath: productions.Array.data[6].spawnUnitPrefab
       value: 
       objectReference: {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}
-    - target: {fileID: 6247470120559054060, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6247470120559054060, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9098659505652251755, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.039999723

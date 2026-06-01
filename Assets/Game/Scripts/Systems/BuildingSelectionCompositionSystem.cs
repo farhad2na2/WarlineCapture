@@ -17,8 +17,13 @@ internal sealed class BuildingSelectionCompositionSystem
             (out GridConfig grid) => tryGetGridForSelection(source, out grid),
             (origin, footprint, grid) => source.BuildingPlacementGridSystem.GetFootprintCenter(origin, footprint, grid, source.BuildingPlacementStartupSystem.BuildPlaneY),
             () => source.RuntimeGameplayStateSystem.SuppressNextWorldClick = true,
-            () => source.BuildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(
-                source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(createRuntimeContextSource(source))),
+            () => source.BuildingSelectionMarkerSystem.Refresh(
+                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                    createRuntimeContextSource(source),
+                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    null,
+                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
             source.BuildingGameplayDependencySystem.IsBoardablePlayerTransportClick,

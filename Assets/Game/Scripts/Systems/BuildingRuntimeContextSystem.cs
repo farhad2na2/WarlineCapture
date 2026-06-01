@@ -349,8 +349,27 @@ internal sealed class BuildingRuntimeContextSystem
             source.BuildingVisualSystem,
             source.BarrierSystem,
             source.FactionVisualSettings,
-            source.MarkerPropertyBlock,
-            source.GetActiveBuildingId);
+            source.MarkerPropertyBlock);
+    }
+
+    public BuildingSelectionMarkerSystem.Context CreateSelectionMarkerContext(
+        RuntimeSource source,
+        GameObject markerPrefab,
+        Transform markerParent,
+        MaterialPropertyBlock markerPropertyBlock,
+        BuildingSelectionMarkerSystem.DestroyObjectDelegate destroyObject)
+    {
+        return new BuildingSelectionMarkerSystem.Context(
+            source.RuntimeBuildingSystem,
+            source.RuntimeBuildingSystem.Buildings,
+            (out GridConfig grid) => source.TryGetGridData(out _, out grid, out _, out _),
+            (originCell, footprintCells, grid) => source.GetFootprintCenter(originCell, footprintCells, grid),
+            markerPrefab,
+            markerParent,
+            source.BuildingVisualSystem,
+            source.FactionVisualSettings,
+            markerPropertyBlock ?? source.MarkerPropertyBlock,
+            destroyObject);
     }
 
     public BuildingPlacementRedirectSystem.Context CreateRedirectContext(RuntimeSource source)

@@ -47,8 +47,13 @@ internal sealed class BuildingRuntimeSideEffectCompositionSystem
                     querySource.BuildingRuntimeCompositionQuerySystem.GetEffectivePlacementRect(querySource, definition, originCell, grid, rotateVertical));
         source.BuildingPlacementRedirectSystem.EndDeferredRuntimeBuildingSideEffects(
             source.BuildingRuntimeContextSystem.CreateRedirectContext(runtimeSource),
-            () => source.BuildingRuntimeVisualSystem.RefreshBuildingMarkerVisibility(
-                source.BuildingRuntimeContextSystem.CreateRuntimeVisualContext(runtimeSource)),
+            () => source.BuildingSelectionMarkerSystem.Refresh(
+                source.BuildingRuntimeContextSystem.CreateSelectionMarkerContext(
+                    runtimeSource,
+                    source.BuildingPlacementStartupSystem.BuildingSelectionMarkerPrefab,
+                    source.BuildingPlacementStartupSystem.BuildingRoot,
+                    null,
+                    source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
             source.BuildingPlacementInvalidCellSystem.Clear);
     }
 }

@@ -488,9 +488,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: price
+      value: 10000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 44d8f9b6643f94e69a57b93dfef5e109, type: 2}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: maxHealth
+      value: 400
+      objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Description
       value: A support structure that blocks its grid footprint until destroyed.
@@ -500,8 +508,12 @@ PrefabInstance:
       value: Soldier Tent
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: description
+      value: Specialist field tent for expert personnel and advanced support teams.
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: displayName
-      value: Tent_Expert
+      value: Expert Tent
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: FootprintCells.x
@@ -514,6 +526,10 @@ PrefabInstance:
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Productions.Array.size
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.size
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: Productions.Array.data[0].ButtonText
@@ -551,6 +567,34 @@ PrefabInstance:
       propertyPath: Productions.Array.data[2].SpawnUnitPrefab
       value: 
       objectReference: {fileID: 8969431421773950753, guid: 12aa3f1b102194c0f87c119f847ebaf7, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[0].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: df81751e398174cd2bbc879d76a72b94, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[1].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: b3a1493b12f414f31a0d79a02ec4321d, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[2].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: 416e51ffcd246420794617d340bcbe6b, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[3].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: eacf82a9f686b47628592b95037d9770, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[4].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: d586b1b5678bb4c8396e9cb51b12ea21, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[5].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: 8be6a24b3cb444eceb6e9dd320de8fca, type: 3}
+    - target: {fileID: 5385380694625381001, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
+      propertyPath: productions.Array.data[6].spawnUnitPrefab
+      value: 
+      objectReference: {fileID: 3282182154612916099, guid: 5d6231a4823504efbbedb18b1d852c6b, type: 3}
     - target: {fileID: 6247470120559054060, guid: 2e5a8684acff547e298ae30fae289270, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -19,7 +19,10 @@ public static class MapBuildingMeshGroupingMigration
     {
         try
         {
-            Scene scene = EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+            Scene scene = SceneManager.GetSceneByPath(MatchScenePath);
+            if (!scene.IsValid() || !scene.isLoaded)
+                scene = EditorSceneManager.OpenScene(MatchScenePath, OpenSceneMode.Single);
+
             Transform source = FindRequiredTransform("Map/Buildings/Building");
             Transform groupsRoot = source.parent;
             Dictionary<Mesh, List<string>> meshToPrefabNames = BuildMeshToPrefabNameLookup();
@@ -168,9 +171,13 @@ public static class MapBuildingMeshGroupingMigration
         if (string.IsNullOrWhiteSpace(objectName))
             return null;
 
-        return objectName.StartsWith("SM_Bld_Shop_", StringComparison.Ordinal)
-            ? "Building_Shop"
-            : null;
+        if (objectName.StartsWith("SM_Bld_Shop_", StringComparison.Ordinal))
+            return "Building_Shop";
+
+        if (objectName.StartsWith("SM_Bld_Village_House_", StringComparison.Ordinal))
+            return "Building_House";
+
+        return null;
     }
 
     private static int CategoryPriority(string category)

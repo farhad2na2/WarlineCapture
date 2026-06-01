@@ -42,6 +42,9 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
     [SerializeField, HideInInspector] private List<ProductionDefinition> productions = new();
     [SerializeField, HideInInspector] private bool isWall;
 
+    [Header("Destroyed Visual")]
+    [SerializeField, HideInInspector] private GameObject destroyedVisualPrefab;
+
     [HideInInspector] public GameObject primarySpawnUnitPrefab;
 
     [HideInInspector] public GameObject secondarySpawnUnitPrefab;
@@ -65,6 +68,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
     public ThreatDetectionKind ConfiguredThreatDetectionKind => threatDetectionKind;
     public int ConfiguredThreatDetectionRadiusCells => Mathf.Max(0, threatDetectionRadiusCells);
     public int ConfiguredProductionCount => productions != null ? productions.Count : 0;
+    public GameObject ConfiguredDestroyedVisualPrefab => destroyedVisualPrefab;
 
     public ProductionDefinition GetProductionOrDefault(int index)
     {
@@ -110,6 +114,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
         refugeeUpkeepPerCitizenPerDay = config.RefugeeUpkeepPerCitizenPerDay;
         threatDetectionKind = config.ThreatDetectionKind;
         threatDetectionRadiusCells = config.ThreatDetectionRadiusCells;
+        destroyedVisualPrefab = config.DestroyedVisualPrefab;
         productions ??= new List<ProductionDefinition>();
         productions.Clear();
         if (config.Productions == null)

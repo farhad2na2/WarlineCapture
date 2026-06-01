@@ -237,6 +237,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingVisualSystem,
             source.BuildingRuntimeVisualSystem,
             source.BuildingFactionVisualSystem,
+            source.BuildingDestroyedVisualSystem,
             source.BuildingBarrierSystem,
             source.BuildingResourceHaulerBridgeSystem,
             source.ResourceHaulerSystem,

@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_OilRefinery_Config
   m_EditorClassIdentifier: 
   displayName: Oil Refinery
-  description: Industrial facility that processes crude oil into usable fuel and resources.
+  description: Industrial facility that processes crude oil into usable fuel and
+    resources.
   maxHealth: 1400
   role: 0
   isWall: 0
@@ -25,4 +26,7 @@ MonoBehaviour:
   fuelStorageCapacity: 5000
   refugeeCapacity: 0
   refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 3995122082911140010, guid: 6543e6ad8f7274049bf77c06e6aa4e4e, type: 3}
   productions: []

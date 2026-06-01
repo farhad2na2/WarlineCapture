@@ -13,7 +13,20 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Portaloo__Config
   m_EditorClassIdentifier: 
   displayName: Portable Toilet
-  description: Field sanitation unit that supports camps, work crews, and temporary bases.
+  description: Field sanitation unit that supports camps, work crews, and temporary
+    bases.
   maxHealth: 100
+  role: 0
+  isWall: 0
+  canRequest: 1
   price: 1000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 7576954688546254826, guid: a6092ee3a9f44411b83aea6c8974a18c, type: 3}
   productions: []

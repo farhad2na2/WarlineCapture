@@ -23,7 +23,6 @@ public sealed class BuildingCombatSystem
     public interface IRuntimeBuildingVisualState : IRuntimeBuilding
     {
         GameObject InstanceObject { get; }
-        Transform DestroyedVisualTransform { get; }
         IReadOnlyList<Transform> AliveVisualRootTransforms { get; }
     }
 
@@ -43,7 +42,8 @@ public sealed class BuildingCombatSystem
         public readonly TryGetEntityManagerDelegate TryGetEntityManager;
         public readonly BuildingAction<TBuilding> RememberOpenBaseBreach;
         public readonly BuildingIdAction NotifyHomeBuildingDestroyed;
-        public readonly TransformVisibilityAction SetTransformVisible;
+        public readonly BuildingDestroyedVisualSystem DestroyedVisualSystem;
+        public readonly BuildingDestroyedVisualSystem.Context DestroyedVisualContext;
         public readonly ObjectAction DestroyObject;
         public readonly System.Action RefreshBuildingMarkerVisibility;
         public readonly System.Action NotifyStaticMinimapChanged;
@@ -56,7 +56,8 @@ public sealed class BuildingCombatSystem
             TryGetEntityManagerDelegate tryGetEntityManager,
             BuildingAction<TBuilding> rememberOpenBaseBreach,
             BuildingIdAction notifyHomeBuildingDestroyed,
-            TransformVisibilityAction setTransformVisible,
+            BuildingDestroyedVisualSystem destroyedVisualSystem,
+            BuildingDestroyedVisualSystem.Context destroyedVisualContext,
             ObjectAction destroyObject,
             System.Action refreshBuildingMarkerVisibility,
             System.Action notifyStaticMinimapChanged,
@@ -68,7 +69,8 @@ public sealed class BuildingCombatSystem
             TryGetEntityManager = tryGetEntityManager;
             RememberOpenBaseBreach = rememberOpenBaseBreach;
             NotifyHomeBuildingDestroyed = notifyHomeBuildingDestroyed;
-            SetTransformVisible = setTransformVisible;
+            DestroyedVisualSystem = destroyedVisualSystem;
+            DestroyedVisualContext = destroyedVisualContext;
             DestroyObject = destroyObject;
             RefreshBuildingMarkerVisibility = refreshBuildingMarkerVisibility;
             NotifyStaticMinimapChanged = notifyStaticMinimapChanged;
@@ -250,14 +252,8 @@ public sealed class BuildingCombatSystem
             context.RuntimeBuildingSystem.ClearSelection();
         }
 
-        IReadOnlyList<Transform> aliveRoots = building.AliveVisualRootTransforms;
-        if (aliveRoots != null)
-        {
-            for (int i = 0; i < aliveRoots.Count; i++)
-                context.SetTransformVisible?.Invoke(aliveRoots[i], false);
-        }
-
-        context.SetTransformVisible?.Invoke(building.DestroyedVisualTransform, true);
+        if (building is RuntimeBuildingData runtimeBuilding)
+            context.DestroyedVisualSystem?.BeginDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
         context.RefreshBuildingMarkerVisibility?.Invoke();
         return true;
     }
@@ -289,6 +285,8 @@ public sealed class BuildingCombatSystem
         context.NotifyHomeBuildingDestroyed?.Invoke(buildingId);
         DestroyRuntimeBuildingEntities(context, building);
         context.RuntimeBuildingSystem.RemoveBuilding(buildingId);
+        if (building is RuntimeBuildingData runtimeBuilding)
+            context.DestroyedVisualSystem?.CleanupDestroyedVisual(context.DestroyedVisualContext, runtimeBuilding);
         DestroyRuntimeBuildingObject(context, building.InstanceObject);
         context.RefreshBuildingMarkerVisibility?.Invoke();
     }

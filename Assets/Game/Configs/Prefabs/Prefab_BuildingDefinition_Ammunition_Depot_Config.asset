@@ -15,5 +15,17 @@ MonoBehaviour:
   displayName: Ammunition Depot
   description: Secure storage facility for ammunition, explosives, and combat supplies.
   maxHealth: 900
+  role: 0
+  isWall: 0
+  canRequest: 1
   price: 45000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 7411731498533928270, guid: 980d46ba6b5b9425aa27f3b6f0c1e4ac, type: 3}
   productions: []

@@ -43,7 +43,6 @@ internal sealed class BuildingRuntimeVisualSystem
             : building.Instance.transform;
 
         building.DoorZ = context.VisualSystem.FindDescendantByName(visualRoot, "Door_Z");
-        building.DestroyedVisual = context.VisualSystem.FindDescendantByName(visualRoot, "Destroyed");
 
         if (building.DoorZ != null)
         {
@@ -57,23 +56,17 @@ internal sealed class BuildingRuntimeVisualSystem
         for (int i = 0; i < visualRoot.childCount; i++)
         {
             Transform child = visualRoot.GetChild(i);
-            if (child == building.DestroyedVisual)
-            {
-                continue;
-            }
-
             aliveRoots.Add(child);
         }
 
         building.AliveVisualRoots = aliveRoots.ToArray();
         building.AnimatedParts = context.VisualSystem.FindAnimatedBuildingParts(visualRoot);
-        context.FactionVisualSystem?.CacheBuildingRenderers(building, visualRoot, building.DestroyedVisual);
+        context.FactionVisualSystem?.CacheBuildingRenderers(building, visualRoot, null);
         context.FactionVisualSystem?.ApplyOwnerFaction(new BuildingFactionVisualSystem.Context(
             context.FactionVisualSettings,
             context.MarkerPropertyBlock,
             context.FactionTintStrength),
             building);
-        context.VisualSystem.SetTransformVisible(building.DestroyedVisual, false);
     }
 
     public void UpdateBuildingResourceVisuals(Context context, float time)

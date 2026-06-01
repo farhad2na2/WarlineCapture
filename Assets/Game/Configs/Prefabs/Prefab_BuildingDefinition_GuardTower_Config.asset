@@ -13,7 +13,20 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_GuardTower_Config
   m_EditorClassIdentifier: 
   displayName: Guard Tower
-  description: Elevated defensive post for spotting threats and protecting the base perimeter.
+  description: Elevated defensive post for spotting threats and protecting the base
+    perimeter.
   maxHealth: 700
+  role: 0
+  isWall: 0
+  canRequest: 1
   price: 22000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 283292409005639657, guid: cf44f9c81375a40c3ac7bbc696a537bd, type: 3}
   productions: []

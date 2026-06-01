@@ -410,7 +410,7 @@ public class StaticGridBlockerAuthoringConfig : ScriptableObject
 [CreateAssetMenu(menuName = "WarlineCapture/Config/Building Definition Authoring")]
 public class BuildingDefinitionAuthoringConfig : ScriptableObject
 { [SerializeField] private string displayName = "Building";
-    [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
+    [TextArea, SerializeField] private string description = "Operational building."; [SerializeField] private int maxHealth = 500; [SerializeField] private BuildingRole role; [SerializeField] private bool isWall; [SerializeField] private bool canRequest = true; [SerializeField, Min(0)] private int price = 20000; [SerializeField, Min(0f)] private float oilBarrelsPerDay; [SerializeField, Min(0)] private int oilStorageCapacity; [SerializeField, Min(0f)] private float fuelBarrelsPerDay; [SerializeField, Min(0)] private int fuelStorageCapacity; [Header("Refugees")] [SerializeField, Min(0)] private int refugeeCapacity; [SerializeField, Min(0)] private int refugeeUpkeepPerCitizenPerDay; [Header("Threat Detection")] [SerializeField] private ThreatDetectionKind threatDetectionKind; [SerializeField, Min(0)] private int threatDetectionRadiusCells; [Header("Destroyed Visual")] [SerializeField] private GameObject destroyedVisualPrefab; [SerializeField] private List<BuildingProductionConfigEntry> productions = new();
 
     private void OnValidate()
     {
@@ -433,6 +433,7 @@ public class BuildingDefinitionAuthoringConfig : ScriptableObject
     public int RefugeeUpkeepPerCitizenPerDay => Mathf.Max(0, refugeeUpkeepPerCitizenPerDay);
     public ThreatDetectionKind ThreatDetectionKind => threatDetectionKind;
     public int ThreatDetectionRadiusCells => Mathf.Max(0, threatDetectionRadiusCells);
+    public GameObject DestroyedVisualPrefab => destroyedVisualPrefab;
     public List<BuildingProductionConfigEntry> Productions => productions;
 }
 

@@ -25,6 +25,9 @@ MonoBehaviour:
   fuelStorageCapacity: 0
   refugeeCapacity: 0
   refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 8743816168242733730, guid: 606422127bfd24812a4f079967e8b066, type: 3}
   productions:
   - spawnUnitPrefab: {fileID: 3282182154612916099, guid: f7fab5771a1744644b5f6b8efff8b6ec, type: 3}
   - spawnUnitPrefab: {fileID: 3282182154612916099, guid: 058513b35b4a14b9cb012570502d1259, type: 3}

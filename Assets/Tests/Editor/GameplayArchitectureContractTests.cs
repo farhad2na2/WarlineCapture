@@ -18870,7 +18870,7 @@ public sealed class GameplayArchitectureContractTests
         string unitPrefab = File.ReadAllText(unitPrefabPath);
 
         StringAssert.Contains("building selection marker visual ownership belongs in `BuildingSelectionMarkerSystem`", contract);
-        StringAssert.Contains("Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `SelectionMarker` or `FactionMarker` children", contract);
+        StringAssert.Contains("Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `SelectionMarker`, `FactionMarker`, or `Destroyed` children", contract);
         StringAssert.Contains("BuildingSelectionMarkerSystem", roadmap);
         StringAssert.Contains("internal sealed class BuildingSelectionMarkerSystem", markerSystem);
         StringAssert.Contains("internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();", compositionSource);
@@ -18933,7 +18933,7 @@ public sealed class GameplayArchitectureContractTests
         string buildingConfig = File.ReadAllText(buildingConfigPath);
 
         StringAssert.Contains("building owner-faction visual projection belongs in `BuildingFactionVisualSystem`", contract);
-        StringAssert.Contains("must not contain `SelectionMarker` or `FactionMarker` children", contract);
+        StringAssert.Contains("must not contain `SelectionMarker`, `FactionMarker`, or `Destroyed` children", contract);
         StringAssert.Contains("BuildingFactionVisualSystem", roadmap);
         StringAssert.Contains("internal sealed class BuildingFactionVisualSystem", factionVisualSystem);
         StringAssert.Contains("CacheBuildingRenderers", factionVisualSystem);
@@ -18968,6 +18968,83 @@ public sealed class GameplayArchitectureContractTests
             "Building prefabs must not contain per-building FactionMarker children:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, buildingPrefabViolations));
+    }
+
+    [Test]
+    public void BuildingDestroyedVisualsMustUseConfiguredRuntimeVisualBoundary()
+    {
+        const string roadmapPath = "Design/Architecture/building_destroyed_visual_roadmap.md";
+        const string destroyedVisualSystemPath = "Assets/Game/Scripts/Systems/BuildingDestroyedVisualSystem.cs";
+        const string runtimeVisualPath = "Assets/Game/Scripts/Systems/BuildingRuntimeVisualSystem.cs";
+        const string runtimeDataPath = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
+        const string combatPath = "Assets/Game/Scripts/Systems/BuildingCombatSystem.cs";
+        const string definitionPath = "Assets/Game/Scripts/Systems/BuildingDefinition.cs";
+        const string authoringPath = "Assets/Game/Scripts/Authorings/BuildingDefinitionAuthoring.cs";
+        const string compositionSourcePath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
+        const string runtimeContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
+        const string configPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
+
+        Assert.IsTrue(File.Exists(roadmapPath), "The destroyed building visual roadmap must be tracked.");
+        Assert.IsTrue(File.Exists(destroyedVisualSystemPath), "Destroyed building visual projection must live in BuildingDestroyedVisualSystem.");
+
+        string contract = File.ReadAllText(ContractPath);
+        string roadmap = File.ReadAllText(roadmapPath);
+        string destroyedVisualSystem = File.ReadAllText(destroyedVisualSystemPath);
+        string runtimeVisual = File.ReadAllText(runtimeVisualPath);
+        string runtimeData = File.ReadAllText(runtimeDataPath);
+        string combat = File.ReadAllText(combatPath);
+        string definition = File.ReadAllText(definitionPath);
+        string authoring = File.ReadAllText(authoringPath);
+        string compositionSource = File.ReadAllText(compositionSourcePath);
+        string runtimeContext = File.ReadAllText(runtimeContextPath);
+        string config = File.ReadAllText(configPath);
+
+        StringAssert.Contains("destroyed building visual projection belongs in `BuildingDestroyedVisualSystem`", contract);
+        StringAssert.Contains("must not contain `SelectionMarker`, `FactionMarker`, or `Destroyed` children", contract);
+        StringAssert.Contains("BuildingDestroyedVisualSystem", roadmap);
+        StringAssert.Contains("public sealed class BuildingDestroyedVisualSystem", destroyedVisualSystem);
+        StringAssert.Contains("BeginDestroyedVisual", destroyedVisualSystem);
+        StringAssert.Contains("CleanupDestroyedVisual", destroyedVisualSystem);
+        StringAssert.Contains("DestroyedVisualPrefab", definition);
+        StringAssert.Contains("ConfiguredDestroyedVisualPrefab", authoring);
+        StringAssert.Contains("DestroyedVisualPrefab", config);
+        StringAssert.Contains("internal readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem = new();", compositionSource);
+        StringAssert.Contains("new BuildingDestroyedVisualSystem.Context", runtimeContext);
+        StringAssert.Contains("context.DestroyedVisualSystem?.BeginDestroyedVisual", combat);
+        StringAssert.Contains("context.DestroyedVisualSystem?.CleanupDestroyedVisual", combat);
+
+        Assert.IsFalse(
+            runtimeVisual.Contains("FindDescendantByName(visualRoot, \"Destroyed\")", StringComparison.Ordinal),
+            "BuildingRuntimeVisualSystem must not discover destroyed visual children.");
+        Assert.IsFalse(
+            runtimeData.Contains("Transform DestroyedVisual", StringComparison.Ordinal) ||
+            runtimeData.Contains("DestroyedVisualTransform", StringComparison.Ordinal),
+            "RuntimeBuildingData must not store a per-prefab Destroyed child transform.");
+
+        string[] buildingPrefabViolations = Directory.GetFiles("Assets/Game/Prefabs/Buildings", "*.prefab", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path => !path.EndsWith("/BuildingSelectionMarker.prefab", StringComparison.Ordinal))
+            .Where(path => File.ReadAllText(path).Contains("m_Name: Destroyed", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            buildingPrefabViolations,
+            "Live building prefabs must not contain Destroyed children:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, buildingPrefabViolations));
+
+        string[] missingDestroyedVisualConfigs = Directory.GetFiles("Assets/Game/Configs/Prefabs", "Prefab_BuildingDefinition_*_Config.asset", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path => File.ReadAllText(path).Contains("destroyedVisualPrefab: {fileID: 0}", StringComparison.Ordinal))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            missingDestroyedVisualConfigs,
+            "Building definition configs must reference configured destroyed visual prefabs:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, missingDestroyedVisualConfigs));
     }
 
     private static IEnumerable<string> GetTopLevelTypeNames(string file)

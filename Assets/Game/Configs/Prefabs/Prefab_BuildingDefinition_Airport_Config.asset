@@ -13,9 +13,22 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Airport_Config
   m_EditorClassIdentifier: 
   displayName: Airport
-  description: Air operations hub for receiving transport aircraft and deploying aircraft units.
+  description: Air operations hub for receiving transport aircraft and deploying
+    aircraft units.
   maxHealth: 1800
+  role: 0
+  isWall: 0
+  canRequest: 1
   price: 120000
+  oilBarrelsPerDay: 0
+  oilStorageCapacity: 0
+  fuelBarrelsPerDay: 0
+  fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 3627193632480292351, guid: 5811205d588fe46e9ad32483887215a8, type: 3}
   productions:
   - spawnUnitPrefab: {fileID: 5616646512338707422, guid: c0213638ba0c6466fadcd5bbe8fe0149, type: 3}
   - spawnUnitPrefab: {fileID: 5616646512338707422, guid: 7ed73828b6ecd4cf8a690c35e7311a1d, type: 3}

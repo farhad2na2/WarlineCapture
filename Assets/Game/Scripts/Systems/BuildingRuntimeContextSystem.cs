@@ -15,6 +15,7 @@ internal sealed class BuildingRuntimeContextSystem
         public readonly BuildingVisualSystem BuildingVisualSystem;
         public readonly BuildingRuntimeVisualSystem RuntimeVisualSystem;
         public readonly BuildingFactionVisualSystem BuildingFactionVisualSystem;
+        public readonly BuildingDestroyedVisualSystem BuildingDestroyedVisualSystem;
         public readonly BuildingBarrierSystem BarrierSystem;
         public readonly BuildingResourceHaulerBridgeSystem ResourceHaulerBridgeSystem;
         public readonly ResourceHaulerSystem ResourceHaulerSystem;
@@ -54,6 +55,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingVisualSystem buildingVisualSystem,
             BuildingRuntimeVisualSystem runtimeVisualSystem,
             BuildingFactionVisualSystem buildingFactionVisualSystem,
+            BuildingDestroyedVisualSystem buildingDestroyedVisualSystem,
             BuildingBarrierSystem barrierSystem,
             BuildingResourceHaulerBridgeSystem resourceHaulerBridgeSystem,
             ResourceHaulerSystem resourceHaulerSystem,
@@ -92,6 +94,7 @@ internal sealed class BuildingRuntimeContextSystem
             BuildingVisualSystem = buildingVisualSystem;
             RuntimeVisualSystem = runtimeVisualSystem;
             BuildingFactionVisualSystem = buildingFactionVisualSystem;
+            BuildingDestroyedVisualSystem = buildingDestroyedVisualSystem;
             BarrierSystem = barrierSystem;
             ResourceHaulerBridgeSystem = resourceHaulerBridgeSystem;
             ResourceHaulerSystem = resourceHaulerSystem;
@@ -405,7 +408,10 @@ internal sealed class BuildingRuntimeContextSystem
             (out EntityManager entityManager) => source.TryGetEntityManager(out entityManager),
             source.RememberOpenBaseBreach,
             source.NotifyHomeBuildingDestroyed,
-            source.BuildingVisualSystem.SetTransformVisible,
+            source.BuildingDestroyedVisualSystem,
+            new BuildingDestroyedVisualSystem.Context(
+                source.BuildingVisualSystem,
+                source.DestroyObject),
             source.DestroyObject,
             source.RefreshBuildingMarkerVisibility,
             source.NotifyStaticMinimapChanged,

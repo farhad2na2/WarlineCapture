@@ -292,6 +292,7 @@ internal sealed class BuildingDefinitionSystem
             TertiarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 2),
             QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
             Prefab = prefab,
+            DestroyedVisualPrefab = metadata.Authoring != null ? metadata.Authoring.ConfiguredDestroyedVisualPrefab : null,
             FootprintCells = metadata.HasVisualFootprint
                 ? metadata.VisualFootprint
                 : metadata.Authoring != null
@@ -357,6 +358,7 @@ internal sealed class BuildingDefinitionSystem
             TertiarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 2),
             QuaternarySpawnUnitPrefab = GetProductionPrefab(productionSlots, 3),
             Prefab = prefab,
+            DestroyedVisualPrefab = authoring != null ? authoring.ConfiguredDestroyedVisualPrefab : null,
             FootprintCells = hasVisualFootprint ? visualFootprint : authoringFootprint,
             Role = authoring != null ? authoring.ConfiguredRole : BuildingRole.None,
             IsWall = authoring != null && authoring.ConfiguredIsWall,

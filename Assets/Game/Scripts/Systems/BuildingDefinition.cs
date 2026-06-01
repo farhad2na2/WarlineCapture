@@ -17,6 +17,7 @@ internal sealed class BuildingDefinition
     public GameObject TertiarySpawnUnitPrefab;
     public GameObject QuaternarySpawnUnitPrefab;
     public GameObject Prefab;
+    public GameObject DestroyedVisualPrefab;
     public Vector2Int FootprintCells;
     public BuildingRole Role;
     public bool IsWall;

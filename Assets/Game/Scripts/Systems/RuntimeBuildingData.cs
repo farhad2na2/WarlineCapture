@@ -70,7 +70,7 @@ internal sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuildin
     public float DoorClosedLocalEulerZ;
     public float DoorOpenLocalEulerZ;
     public float DoorOpen01;
-    public Transform DestroyedVisual;
+    public GameObject DestroyedVisualInstance;
     public Transform[] AliveVisualRoots;
     public BuildingVisualSystem.AnimatedPart[] AnimatedParts;
     public Vector3[] ProductionSpawnLocalPositions;
@@ -91,6 +91,5 @@ internal sealed class RuntimeBuildingData : BuildingCombatSystem.IRuntimeBuildin
     public float OilBarrelsPerDay => Definition != null ? Definition.OilBarrelsPerDay : 0f;
     public float FuelBarrelsPerDay => Definition != null ? Definition.FuelBarrelsPerDay : 0f;
     public GameObject InstanceObject => Instance;
-    public Transform DestroyedVisualTransform => DestroyedVisual;
     public IReadOnlyList<Transform> AliveVisualRootTransforms => AliveVisualRoots;
 }

@@ -17,9 +17,15 @@ MonoBehaviour:
   maxHealth: 400
   role: 2
   isWall: 0
+  canRequest: 1
   price: 14000
   oilBarrelsPerDay: 0
   oilStorageCapacity: 0
   fuelBarrelsPerDay: 0
   fuelStorageCapacity: 0
+  refugeeCapacity: 0
+  refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 2140523290708807874, guid: 10826b4776fa247f88122e08f5120eb2, type: 3}
   productions: []

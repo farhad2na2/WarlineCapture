@@ -97,10 +97,6 @@ public sealed class BuildingSelectionMarkerSystemTests
         Object.DestroyImmediate(model.GetComponent<Collider>());
         model.name = "Model";
         model.transform.SetParent(modelRoot.transform, false);
-        GameObject destroyed = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        Object.DestroyImmediate(destroyed.GetComponent<Collider>());
-        destroyed.name = "Destroyed";
-        destroyed.transform.SetParent(modelRoot.transform, false);
 
         var building = new RuntimeBuildingData
         {
@@ -123,7 +119,6 @@ public sealed class BuildingSelectionMarkerSystemTests
         Assert.IsNotNull(building.FactionVisualRenderers);
         Assert.AreEqual(1, building.FactionVisualRenderers.Length);
         Assert.AreSame(model.GetComponent<Renderer>(), building.FactionVisualRenderers[0]);
-        CollectionAssert.DoesNotContain(building.FactionVisualRenderers, destroyed.GetComponent<Renderer>());
     }
 
     private BuildingSelectionMarkerSystem.Context CreateContext(RuntimeBuildingSystem<RuntimeBuildingData> runtimeBuildings)

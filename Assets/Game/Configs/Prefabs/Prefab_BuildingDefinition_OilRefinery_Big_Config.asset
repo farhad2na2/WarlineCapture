@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_OilRefinery_Big_Config
   m_EditorClassIdentifier: 
   displayName: Large Oil Refinery
-  description: High-capacity refinery for large-scale fuel production and resource processing.
+  description: High-capacity refinery for large-scale fuel production and resource
+    processing.
   maxHealth: 2200
   role: 0
   isWall: 0
@@ -25,4 +26,7 @@ MonoBehaviour:
   fuelStorageCapacity: 10000
   refugeeCapacity: 0
   refugeeUpkeepPerCitizenPerDay: 0
+  threatDetectionKind: 0
+  threatDetectionRadiusCells: 0
+  destroyedVisualPrefab: {fileID: 8037977459368749625, guid: 229dd2415c4b4400d8892a916e022cf5, type: 3}
   productions: []

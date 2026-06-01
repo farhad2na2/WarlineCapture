@@ -290,6 +290,13 @@ public static class RuntimeGroundingScreenshotProbe
         s_pendingData = data;
         s_pendingSurface = surface;
         s_pendingSoldier = soldier;
+        if (Application.isBatchMode)
+        {
+            WriteReport("completed", em, soldier, surface, data);
+            Finish("completed", "Runtime grounding data report captured.");
+            return;
+        }
+
         SessionState.SetInt(StageKey, 3);
         s_stageStartTime = EditorApplication.timeSinceStartup;
     }
@@ -888,6 +895,8 @@ public static class RuntimeGroundingScreenshotProbe
         AppendJson(json, "hasSceneOverlay", data.HasSceneOverlay, comma: true);
         AppendJson(json, "sceneOverlayHeight", data.SceneOverlayHeight, comma: true);
         AppendJson(json, "sceneOverlayHeightDelta", data.SceneOverlayHeightDelta, comma: true);
+        AppendSurfaceEntityJson(json, em);
+        AppendSoldierCohortJson(json, em);
         AppendJson(json, "surfaceDimensions", $"{surface.Dimensions.x}x{surface.Dimensions.y}", comma: true);
         AppendJson(json, "surfaceCellSize", surface.CellSize, comma: true);
         AppendJson(json, "surfaceGridOrigin", Format(surface.GridOrigin), comma: false);
@@ -895,6 +904,99 @@ public static class RuntimeGroundingScreenshotProbe
         Directory.CreateDirectory(Path.GetDirectoryName(ReportPath));
         File.WriteAllText(ReportPath, json.ToString());
         Debug.Log($"[RuntimeGroundingScreenshotProbe] result={result} screenshot={ScreenshotPath} report={ReportPath} source={data.SourceKey} y={data.Position.y:F3} expected={data.ExpectedGroundY:F3} error={data.YError:F4}");
+    }
+
+    private static void AppendSurfaceEntityJson(StringBuilder json, EntityManager em)
+    {
+        using EntityQuery surfaceQuery = em.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
+        using NativeArray<Entity> surfaceEntities = surfaceQuery.ToEntityArray(Allocator.Temp);
+        AppendJson(json, "surfaceEntityCount", surfaceEntities.Length, comma: true);
+        bool hasRuntimeTag = false;
+        bool hasFlatFallbackTag = false;
+        int sceneOverlayBufferLength = 0;
+        for (int i = 0; i < surfaceEntities.Length; i++)
+        {
+            Entity entity = surfaceEntities[i];
+            hasRuntimeTag |= em.HasComponent<MapSurfaceRuntimeBakedBlobTag>(entity);
+            hasFlatFallbackTag |= em.HasComponent<MapSurfaceFlatEquivalentRuntimeBlobTag>(entity);
+            if (em.HasBuffer<MapSurfaceSceneOverlay>(entity))
+                sceneOverlayBufferLength += em.GetBuffer<MapSurfaceSceneOverlay>(entity, true).Length;
+        }
+
+        AppendJson(json, "surfaceHasRuntimeBakedTag", hasRuntimeTag, comma: true);
+        AppendJson(json, "surfaceHasFlatFallbackTag", hasFlatFallbackTag, comma: true);
+        AppendJson(json, "sceneOverlayBufferLength", sceneOverlayBufferLength, comma: true);
+    }
+
+    private static void AppendSoldierCohortJson(StringBuilder json, EntityManager em)
+    {
+        json.AppendLine("  \"soldierCohort\": [");
+        using EntityQuery unitQuery = em.CreateEntityQuery(
+            ComponentType.ReadOnly<UnitSourcePrefabKey>(),
+            ComponentType.ReadOnly<LocalTransform>(),
+            ComponentType.ReadOnly<UnitSurfaceComponent>());
+        using NativeArray<Entity> entities = unitQuery.ToEntityArray(Allocator.Temp);
+        bool wroteAny = false;
+        int written = 0;
+        const int MaxSoldiers = 96;
+        for (int i = 0; i < entities.Length && written < MaxSoldiers; i++)
+        {
+            Entity entity = entities[i];
+            if (!IsGroundSoldier(em, entity))
+                continue;
+
+            LocalTransform transform = em.GetComponentData<LocalTransform>(entity);
+            UnitSurfaceComponent surface = em.GetComponentData<UnitSurfaceComponent>(entity);
+            float offset = em.HasComponent<UnitGroundOffsetComponent>(entity)
+                ? em.GetComponentData<UnitGroundOffsetComponent>(entity).Value
+                : 0f;
+            float expectedY = surface.LastSampledHeight + offset;
+            bool hasSceneOverlay = TryResolveSceneOverlay(em, transform.Position, out MapSurfaceSceneOverlay sceneOverlay, out int sceneOverlayCount);
+            bool hasRuntimeOverlay = TryResolveRuntimeOverlay(em, transform.Position, out BuildingRuntimeSurfaceOverlay runtimeOverlay, out int runtimeOverlayCount);
+            bool hasVisualRoot = TryResolveVisualRootY(em, entity, out float visualRootY);
+
+            if (wroteAny)
+                json.AppendLine(",");
+            json.Append("    {");
+            json.Append("\"entity\":\"").Append(EscapeJson(entity.ToString())).Append("\",");
+            json.Append("\"sourceKey\":\"").Append(EscapeJson(em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString())).Append("\",");
+            json.Append("\"position\":\"").Append(Format(transform.Position)).Append("\",");
+            json.Append("\"sampledHeight\":").Append(surface.LastSampledHeight.ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"groundOffset\":").Append(offset.ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"expectedY\":").Append(expectedY.ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"entityYMinusExpected\":").Append((transform.Position.y - expectedY).ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"hasVisualRoot\":").Append(hasVisualRoot ? "true" : "false").Append(",");
+            json.Append("\"visualRootY\":").Append(visualRootY.ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"visualRootYMinusExpected\":").Append((hasVisualRoot ? visualRootY - expectedY : 0f).ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"surfaceId\":").Append(surface.SurfaceId.ToString(CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"layerId\":").Append(surface.LayerId.ToString(CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"sceneOverlayCount\":").Append(sceneOverlayCount.ToString(CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"hasSceneOverlay\":").Append(hasSceneOverlay ? "true" : "false").Append(",");
+            json.Append("\"sceneOverlayHeightDelta\":").Append((hasSceneOverlay ? sceneOverlay.Height - surface.LastSampledHeight : 0f).ToString("F4", CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"runtimeOverlayCount\":").Append(runtimeOverlayCount.ToString(CultureInfo.InvariantCulture)).Append(",");
+            json.Append("\"hasRuntimeOverlay\":").Append(hasRuntimeOverlay ? "true" : "false").Append(",");
+            json.Append("\"runtimeOverlayHeightDelta\":").Append((hasRuntimeOverlay ? runtimeOverlay.Height - surface.LastSampledHeight : 0f).ToString("F4", CultureInfo.InvariantCulture));
+            json.Append("}");
+            wroteAny = true;
+            written++;
+        }
+
+        json.AppendLine();
+        json.AppendLine("  ],");
+    }
+
+    private static bool TryResolveVisualRootY(EntityManager em, Entity unit, out float visualRootY)
+    {
+        visualRootY = 0f;
+        if (!em.HasComponent<UnitModelInstanceReference>(unit))
+            return false;
+
+        Entity model = em.GetComponentData<UnitModelInstanceReference>(unit).Instance;
+        if (model == Entity.Null || !em.Exists(model) || !em.HasComponent<LocalToWorld>(model))
+            return false;
+
+        visualRootY = em.GetComponentData<LocalToWorld>(model).Position.y;
+        return true;
     }
 
     private static void Finish(string result, string detail)

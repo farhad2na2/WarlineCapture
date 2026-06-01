@@ -1565,7 +1565,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("[UpdateBefore(typeof(UnitGroundingSystem))]", tracking);
         StringAssert.Contains("[WithNone(typeof(UnitAirMovement))]", tracking);
         StringAssert.Contains("in LocalTransform transform", tracking);
-        StringAssert.Contains("TrySampleInterpolatedSurface(transform.Position, unitSurface, out MapSurfaceSample sample, out float height, out float3 normal)", tracking);
+        StringAssert.Contains("TrySampleInterpolatedSurface(transform.Position, unitSurface, movementBehavior, out MapSurfaceSample sample, out float height, out float3 normal)", tracking);
         StringAssert.Contains("unitSurface.SurfaceId = sample.SurfaceId;", tracking);
         StringAssert.Contains("unitSurface.LayerId = sample.LayerId;", tracking);
         StringAssert.Contains("unitSurface.LastSampledHeight = height;", tracking);
@@ -2137,7 +2137,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("[UpdateAfter(typeof(UnitGridMovementSystem))]", tracking);
         StringAssert.Contains("[UpdateBefore(typeof(UnitGroundingSystem))]", tracking);
         StringAssert.Contains("in LocalTransform transform", tracking);
-        StringAssert.Contains("TrySampleInterpolatedSurface(transform.Position, unitSurface, out MapSurfaceSample sample, out float height, out float3 normal)", tracking);
+        StringAssert.Contains("TrySampleInterpolatedSurface(transform.Position, unitSurface, movementBehavior, out MapSurfaceSample sample, out float height, out float3 normal)", tracking);
         StringAssert.Contains("unitSurface.SurfaceId = sample.SurfaceId;", tracking);
         StringAssert.Contains("unitSurface.LayerId = sample.LayerId;", tracking);
         StringAssert.Contains("unitSurface.LastSampledHeight = height;", tracking);

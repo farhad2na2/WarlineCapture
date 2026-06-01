@@ -9,6 +9,32 @@ using UnityEngine;
 
 public sealed class MapSurfaceLayeredGridFocusedTests
 {
+    public static void RunFocusedValidation()
+    {
+        try
+        {
+            var tests = new MapSurfaceLayeredGridFocusedTests();
+            tests.FlatEquivalentSurfaceSamplesPrimaryHeightAndNormal();
+            tests.SlopeSamplingAndClassificationUseBakedSampleData();
+            tests.BuildingFootprintValidationRejectsHeightDelta();
+            tests.LayeredBridgeAndLowerHighwayRemainIndependentlyWalkable();
+            tests.LayeredCellsDoNotPermitSurfaceJumpWithoutExplicitConnection();
+            tests.RuntimeValidationProbeCoversSlopeTankAndBridgeSeparation();
+            tests.PerformanceValidationProbeKeepsSurfaceSamplingAllocationBounded();
+            tests.MapSurfaceBakeUsesGroundHeightWhenBlockerOverlapsTerrain();
+            tests.MapSurfaceBakeKeepsRoadWalkableWhenBlockerMeshOverlaps();
+            tests.MapSurfaceBakePrefersRoadHeightOverHigherTerrain();
+            tests.MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps();
+            Debug.Log("[MapSurfaceLayeredGridFocusedValidation] result=Passed tests=11");
+        }
+        catch (System.Exception exception)
+        {
+            Debug.LogError("[MapSurfaceLayeredGridFocusedValidation] result=Failed");
+            Debug.LogException(exception);
+            throw;
+        }
+    }
+
     [Test]
     public void FlatEquivalentSurfaceSamplesPrimaryHeightAndNormal()
     {
@@ -211,6 +237,194 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         Assert.LessOrEqual(result.AllocatedBytes, MapSurfacePerformanceValidationSystem.MaxSamplingAllocationBytes);
     }
 
+    [Test]
+    public void MapSurfaceBakeUsesGroundHeightWhenBlockerOverlapsTerrain()
+    {
+        Mesh terrain = CreatePlaneMesh(0f);
+        Mesh blocker = CreatePlaneMesh(3f);
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            var bakeSystem = new MapSurfaceBakeSystem();
+            bool baked = bakeSystem.TryBuildSingleLayerTerrain(
+                new MapSurfaceBakeRequest(float3.zero, 1f, new int2(1, 1)),
+                new[]
+                {
+                    new MapSurfaceMeshBakeSource(
+                        terrain,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Terrain,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+                        0),
+                    new MapSurfaceMeshBakeSource(
+                        blocker,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Blocked,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.None,
+                        0)
+                },
+                Allocator.Persistent,
+                out blob);
+
+            Assert.IsTrue(baked);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            MapSurfaceSample sample = surface.Samples[0];
+            Assert.AreEqual(0f, sample.Height, 0.0001f);
+            Assert.AreEqual(MapSurfaceType.Blocked, sample.SurfaceType);
+            Assert.AreEqual(MapSurfaceMovementMask.None, sample.MovementMask);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(terrain);
+            UnityEngine.Object.DestroyImmediate(blocker);
+        }
+    }
+
+    [Test]
+    public void MapSurfaceBakeKeepsRoadWalkableWhenBlockerMeshOverlaps()
+    {
+        Mesh road = CreatePlaneMesh(0f);
+        Mesh blocker = CreatePlaneMesh(3f);
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            var bakeSystem = new MapSurfaceBakeSystem();
+            bool baked = bakeSystem.TryBuildSingleLayerTerrain(
+                new MapSurfaceBakeRequest(float3.zero, 1f, new int2(1, 1)),
+                new[]
+                {
+                    new MapSurfaceMeshBakeSource(
+                        road,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Road,
+                        MapSurfaceFlags.Road,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded,
+                        0),
+                    new MapSurfaceMeshBakeSource(
+                        blocker,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Blocked,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.None,
+                        0)
+                },
+                Allocator.Persistent,
+                out blob);
+
+            Assert.IsTrue(baked);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            MapSurfaceSample sample = surface.Samples[0];
+            Assert.AreEqual(0f, sample.Height, 0.0001f);
+            Assert.AreEqual(MapSurfaceType.Road, sample.SurfaceType);
+            Assert.IsTrue((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(road);
+            UnityEngine.Object.DestroyImmediate(blocker);
+        }
+    }
+
+    [Test]
+    public void MapSurfaceBakePrefersRoadHeightOverHigherTerrain()
+    {
+        Mesh road = CreatePlaneMesh(0f);
+        Mesh terrain = CreatePlaneMesh(3f);
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            var bakeSystem = new MapSurfaceBakeSystem();
+            bool baked = bakeSystem.TryBuildSingleLayerTerrain(
+                new MapSurfaceBakeRequest(float3.zero, 1f, new int2(1, 1)),
+                new[]
+                {
+                    new MapSurfaceMeshBakeSource(
+                        terrain,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Terrain,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+                        0),
+                    new MapSurfaceMeshBakeSource(
+                        road,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Road,
+                        MapSurfaceFlags.Road,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.AirGrounded,
+                        0)
+                },
+                Allocator.Persistent,
+                out blob);
+
+            Assert.IsTrue(baked);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            MapSurfaceSample sample = surface.Samples[0];
+            Assert.AreEqual(0f, sample.Height, 0.0001f);
+            Assert.AreEqual(MapSurfaceType.Road, sample.SurfaceType);
+            Assert.IsTrue((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(road);
+            UnityEngine.Object.DestroyImmediate(terrain);
+        }
+    }
+
+    [Test]
+    public void MapSurfaceBakeUsesLowestNonRoadGroundWhenAccidentalHigherGroundingMeshOverlaps()
+    {
+        Mesh ground = CreatePlaneMesh(0f);
+        Mesh propLikeGroundingMesh = CreatePlaneMesh(0.8f);
+        BlobAssetReference<MapSurfaceBlob> blob = default;
+        try
+        {
+            var bakeSystem = new MapSurfaceBakeSystem();
+            bool baked = bakeSystem.TryBuildSingleLayerTerrain(
+                new MapSurfaceBakeRequest(float3.zero, 1f, new int2(1, 1)),
+                new[]
+                {
+                    new MapSurfaceMeshBakeSource(
+                        ground,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Terrain,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+                        0),
+                    new MapSurfaceMeshBakeSource(
+                        propLikeGroundingMesh,
+                        Matrix4x4.identity,
+                        MapSurfaceType.Terrain,
+                        MapSurfaceFlags.None,
+                        MapSurfaceMovementMask.AllGroundUnits | MapSurfaceMovementMask.BuildingPlacement,
+                        0)
+                },
+                Allocator.Persistent,
+                out blob);
+
+            Assert.IsTrue(baked);
+            ref MapSurfaceBlob surface = ref blob.Value;
+            MapSurfaceSample sample = surface.Samples[0];
+            Assert.AreEqual(0f, sample.Height, 0.0001f);
+            Assert.AreEqual(MapSurfaceType.Terrain, sample.SurfaceType);
+            Assert.IsTrue((sample.MovementMask & MapSurfaceMovementMask.Infantry) != 0);
+        }
+        finally
+        {
+            if (blob.IsCreated)
+                blob.Dispose();
+            UnityEngine.Object.DestroyImmediate(ground);
+            UnityEngine.Object.DestroyImmediate(propLikeGroundingMesh);
+        }
+    }
+
 
     private static MapSurfaceCell[] FlatCells(int width, int height)
     {
@@ -274,6 +488,21 @@ public sealed class MapSurfaceLayeredGridFocusedTests
         BlobAssetReference<MapSurfaceBlob> blob = builder.CreateBlobAssetReference<MapSurfaceBlob>(Allocator.Persistent);
         builder.Dispose();
         return new SurfaceBlobScope(blob, dimensions);
+    }
+
+    private static Mesh CreatePlaneMesh(float y)
+    {
+        return new Mesh
+        {
+            vertices = new[]
+            {
+                new Vector3(0f, y, 0f),
+                new Vector3(1f, y, 0f),
+                new Vector3(0f, y, 1f),
+                new Vector3(1f, y, 1f)
+            },
+            triangles = new[] { 0, 2, 1, 1, 2, 3 }
+        };
     }
 
     private readonly struct SurfaceBlobScope : IDisposable

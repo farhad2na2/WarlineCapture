@@ -206,7 +206,7 @@ public sealed class MapSurfaceBakeSystem
                     InlineSurfaceIndex = (ushort)index
                 };
 
-                bool sampled = TrySampleHighestTerrain(
+                bool sampled = TrySampleHighestGroundingSurface(
                     spatialIndex,
                     cell,
                     new float2(worldCenter.x, worldCenter.z),
@@ -227,6 +227,23 @@ public sealed class MapSurfaceBakeSystem
                                    MapSurfaceMovementMask.AirGrounded |
                                    MapSurfaceMovementMask.BuildingPlacement;
                     layerId = 0;
+                }
+
+                bool blockerCoversCell = TrySampleHighestBlocker(
+                    spatialIndex,
+                    cell,
+                    new float2(worldCenter.x, worldCenter.z),
+                    out _,
+                    out _,
+                    out _,
+                    out _,
+                    out _,
+                    out _);
+                if (blockerCoversCell && !IsRoadLikeSurface(surfaceType, flags))
+                {
+                    surfaceType = MapSurfaceType.Blocked;
+                    flags = MapSurfaceFlags.None;
+                    movementMask = MapSurfaceMovementMask.None;
                 }
 
                 samples[index] = new MapSurfaceSample
@@ -250,7 +267,55 @@ public sealed class MapSurfaceBakeSystem
         return surfaceBlob.IsCreated;
     }
 
-    private static bool TrySampleHighestTerrain(
+    private static bool TrySampleHighestGroundingSurface(
+        SpatialTriangleIndex spatialIndex,
+        int2 cell,
+        float2 sampleXZ,
+        out float height,
+        out float3 normal,
+        out MapSurfaceType surfaceType,
+        out MapSurfaceFlags flags,
+        out MapSurfaceMovementMask movementMask,
+        out int layerId)
+    {
+        return TrySampleGroundingSurface(
+            spatialIndex,
+            cell,
+            sampleXZ,
+            out height,
+            out normal,
+            out surfaceType,
+            out flags,
+            out movementMask,
+            out layerId);
+    }
+
+    private static bool TrySampleHighestBlocker(
+        SpatialTriangleIndex spatialIndex,
+        int2 cell,
+        float2 sampleXZ,
+        out float height,
+        out float3 normal,
+        out MapSurfaceType surfaceType,
+        out MapSurfaceFlags flags,
+        out MapSurfaceMovementMask movementMask,
+        out int layerId)
+    {
+        return TrySampleHighestSurface(
+            spatialIndex,
+            cell,
+            sampleXZ,
+            includeBlocked: true,
+            preferRoadLike: false,
+            out height,
+            out normal,
+            out surfaceType,
+            out flags,
+            out movementMask,
+            out layerId);
+    }
+
+    private static bool TrySampleGroundingSurface(
         SpatialTriangleIndex spatialIndex,
         int2 cell,
         float2 sampleXZ,
@@ -278,16 +343,37 @@ public sealed class MapSurfaceBakeSystem
             return false;
 
         bool found = false;
+        bool foundRoadLike = false;
         for (int i = 0; i < candidates.Count; i++)
         {
             TriangleCandidate candidate = candidates[i];
+            bool isBlocked = candidate.SurfaceType == MapSurfaceType.Blocked ||
+                             candidate.MovementMask == MapSurfaceMovementMask.None;
+            if (isBlocked)
+                continue;
+
             if (!TrySampleTriangleHeight(sampleXZ, candidate.A, candidate.B, candidate.C, out float candidateHeight))
                 continue;
 
-            if (found && candidateHeight <= height)
-                continue;
+            bool candidateRoadLike = IsRoadLikeSurface(candidate.SurfaceType, candidate.Flags);
+            if (candidateRoadLike)
+            {
+                if (foundRoadLike && candidateHeight <= height)
+                    continue;
 
-            found = true;
+                found = true;
+                foundRoadLike = true;
+            }
+            else
+            {
+                if (foundRoadLike)
+                    continue;
+                if (found && candidateHeight >= height)
+                    continue;
+
+                found = true;
+            }
+
             height = candidateHeight;
             normal = candidate.Normal;
             surfaceType = candidate.SurfaceType;
@@ -297,6 +383,83 @@ public sealed class MapSurfaceBakeSystem
         }
 
         return found;
+    }
+
+    private static bool TrySampleHighestSurface(
+        SpatialTriangleIndex spatialIndex,
+        int2 cell,
+        float2 sampleXZ,
+        bool includeBlocked,
+        bool preferRoadLike,
+        out float height,
+        out float3 normal,
+        out MapSurfaceType surfaceType,
+        out MapSurfaceFlags flags,
+        out MapSurfaceMovementMask movementMask,
+        out int layerId)
+    {
+        height = 0f;
+        normal = new float3(0f, 1f, 0f);
+        surfaceType = MapSurfaceType.Terrain;
+        flags = MapSurfaceFlags.None;
+        movementMask = MapSurfaceMovementMask.AllGroundUnits |
+                       MapSurfaceMovementMask.AirGrounded |
+                       MapSurfaceMovementMask.BuildingPlacement;
+        layerId = 0;
+
+        if (spatialIndex == null)
+            return false;
+
+        List<TriangleCandidate> candidates = spatialIndex.GetCandidates(cell);
+        if (candidates == null || candidates.Count == 0)
+            return false;
+
+        bool found = false;
+        bool foundRoadLike = false;
+        for (int i = 0; i < candidates.Count; i++)
+        {
+            TriangleCandidate candidate = candidates[i];
+            bool isBlocked = candidate.SurfaceType == MapSurfaceType.Blocked ||
+                             candidate.MovementMask == MapSurfaceMovementMask.None;
+            if (includeBlocked != isBlocked)
+                continue;
+
+            if (!TrySampleTriangleHeight(sampleXZ, candidate.A, candidate.B, candidate.C, out float candidateHeight))
+                continue;
+
+            bool candidateRoadLike = IsRoadLikeSurface(candidate.SurfaceType, candidate.Flags);
+            if (preferRoadLike)
+            {
+                if (foundRoadLike && !candidateRoadLike)
+                    continue;
+                if (candidateRoadLike && !foundRoadLike)
+                    found = false;
+            }
+
+            if (found && candidateHeight <= height)
+                continue;
+
+            found = true;
+            foundRoadLike |= candidateRoadLike;
+            height = candidateHeight;
+            normal = candidate.Normal;
+            surfaceType = candidate.SurfaceType;
+            flags = candidate.Flags;
+            movementMask = candidate.MovementMask;
+            layerId = candidate.LayerId;
+        }
+
+        return found;
+    }
+
+    private static bool IsRoadLikeSurface(MapSurfaceType surfaceType, MapSurfaceFlags flags)
+    {
+        return surfaceType == MapSurfaceType.Road ||
+               surfaceType == MapSurfaceType.DirtRoad ||
+               surfaceType == MapSurfaceType.Highway ||
+               surfaceType == MapSurfaceType.BridgeDeck ||
+               surfaceType == MapSurfaceType.Ramp ||
+               (flags & MapSurfaceFlags.Road) != 0;
     }
 
     private static bool TrySampleTriangleHeight(float2 sampleXZ, float3 a, float3 b, float3 c, out float height)

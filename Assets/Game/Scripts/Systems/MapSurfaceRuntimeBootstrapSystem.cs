@@ -12,31 +12,31 @@ internal sealed class MapSurfaceRuntimeBootstrapSystem
         if (authoring == null)
             return false;
 
-        bool ensured = Ensure(world, authoring.BakedSurfaceData);
+        bool ensured = Ensure(world, authoring.BakedSurfaceData, out Entity surfaceEntity);
         if (ensured)
-            PublishSceneOverlays(world, authoring);
+            PublishSceneOverlays(world, authoring, surfaceEntity);
         return ensured;
     }
 
     public bool Ensure(World world, MapSurfaceDataAsset surfaceData)
     {
+        return Ensure(world, surfaceData, out _);
+    }
+
+    private bool Ensure(World world, MapSurfaceDataAsset surfaceData, out Entity surfaceEntity)
+    {
+        surfaceEntity = Entity.Null;
         if (world == null || !world.IsCreated || surfaceData == null)
             return false;
 
         EntityManager entityManager = world.EntityManager;
-        if (HasNonOwnedBakedSurface(entityManager, out Entity nonOwnedSurfaceEntity))
-        {
-            RemoveOwnedRuntimeSurfaces(entityManager, nonOwnedSurfaceEntity);
-            return true;
-        }
-
         if (!surfaceData.TryCreateRuntimeBlobAsset(Allocator.Persistent, out BlobAssetReference<MapSurfaceBlob> surfaceBlob))
         {
             Debug.LogWarning("[MapSurfaceRuntimeBootstrap] missingRuntimeSurfaceBlob");
             return false;
         }
 
-        Entity surfaceEntity = ResolveOwnedSurfaceEntity(entityManager);
+        surfaceEntity = ResolveRuntimeSurfaceEntity(entityManager);
         DisposeOwnedSurfaceBlob(entityManager, surfaceEntity);
 
         if (!entityManager.HasComponent<MapSurfaceComponent>(surfaceEntity))
@@ -72,16 +72,18 @@ internal sealed class MapSurfaceRuntimeBootstrapSystem
             entityManager.RemoveComponent<MapSurfaceFlatEquivalentRuntimeBlobTag>(surfaceEntity);
 
         entityManager.SetName(surfaceEntity, "RuntimeBakedMapSurface");
+        RemoveOtherSurfaceEntities(entityManager, surfaceEntity);
         return true;
     }
 
-    private static void PublishSceneOverlays(World world, MapSurfaceAuthoring authoring)
+    private static void PublishSceneOverlays(World world, MapSurfaceAuthoring authoring, Entity surfaceEntity)
     {
         if (world == null || !world.IsCreated || authoring == null)
             return;
 
         EntityManager entityManager = world.EntityManager;
-        Entity surfaceEntity = ResolveOwnedSurfaceEntity(entityManager);
+        if (surfaceEntity == Entity.Null || !entityManager.Exists(surfaceEntity))
+            surfaceEntity = ResolveRuntimeSurfaceEntity(entityManager);
         if (!entityManager.HasBuffer<MapSurfaceSceneOverlay>(surfaceEntity))
             entityManager.AddBuffer<MapSurfaceSceneOverlay>(surfaceEntity);
 
@@ -204,28 +206,7 @@ internal sealed class MapSurfaceRuntimeBootstrapSystem
         }
     }
 
-    private static bool HasNonOwnedBakedSurface(EntityManager entityManager, out Entity surfaceEntity)
-    {
-        surfaceEntity = Entity.Null;
-        using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
-        using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
-        for (int i = 0; i < entities.Length; i++)
-        {
-            Entity entity = entities[i];
-            if (entityManager.HasComponent<MapSurfaceRuntimeBakedBlobTag>(entity) ||
-                entityManager.HasComponent<MapSurfaceFlatEquivalentRuntimeBlobTag>(entity))
-            {
-                continue;
-            }
-
-            surfaceEntity = entity;
-            return true;
-        }
-
-        return false;
-    }
-
-    private static Entity ResolveOwnedSurfaceEntity(EntityManager entityManager)
+    private static Entity ResolveRuntimeSurfaceEntity(EntityManager entityManager)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
         using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
@@ -239,22 +220,26 @@ internal sealed class MapSurfaceRuntimeBootstrapSystem
             }
         }
 
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!entityManager.HasComponent<MapSurfaceRuntimeBakedBlobTag>(entity) &&
+                !entityManager.HasComponent<MapSurfaceFlatEquivalentRuntimeBlobTag>(entity))
+                return entity;
+        }
+
         return entityManager.CreateEntity();
     }
 
-    private static void RemoveOwnedRuntimeSurfaces(EntityManager entityManager, Entity keepEntity)
+    private static void RemoveOtherSurfaceEntities(EntityManager entityManager, Entity keepEntity)
     {
         using EntityQuery query = entityManager.CreateEntityQuery(ComponentType.ReadOnly<MapSurfaceComponent>());
         using NativeArray<Entity> entities = query.ToEntityArray(Allocator.Temp);
         for (int i = 0; i < entities.Length; i++)
         {
             Entity entity = entities[i];
-            if (entity == keepEntity ||
-                (!entityManager.HasComponent<MapSurfaceRuntimeBakedBlobTag>(entity) &&
-                 !entityManager.HasComponent<MapSurfaceFlatEquivalentRuntimeBlobTag>(entity)))
-            {
+            if (entity == keepEntity)
                 continue;
-            }
 
             DisposeOwnedSurfaceBlob(entityManager, entity);
             if (entityManager.Exists(entity))

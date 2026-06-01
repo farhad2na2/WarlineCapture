@@ -39,18 +39,18 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
         overlay = default;
         Transform instanceTransform = building.Instance.transform;
         BuildingDefinition definition = building.Definition;
-        Vector3 center = instanceTransform.TransformPoint(definition.RunwayLocalPosition);
+        Vector3 runwaySurfaceCenter = instanceTransform.TransformPoint(definition.RunwayLocalPosition);
+        Vector3 center = runwaySurfaceCenter;
         Quaternion rotation = instanceTransform.rotation * definition.RunwayLocalRotation;
-        Vector3 scaledHalfExtents = Vector3.Scale(definition.RunwayHalfExtents, instanceTransform.lossyScale);
 
-        float height = center.y + Mathf.Max(0f, scaledHalfExtents.y);
+        float height = ResolveRunwayOverlayHeight(runwaySurfaceCenter);
         if (!TryResolveRunwayBounds(instanceTransform, out Bounds visualBounds))
             return false;
 
         center = visualBounds.center;
+        center.y = height;
         rotation = Quaternion.identity;
-        scaledHalfExtents = visualBounds.extents;
-        height = visualBounds.max.y;
+        Vector3 scaledHalfExtents = visualBounds.extents;
 
         overlay = new BuildingRuntimeSurfaceOverlay
         {
@@ -66,6 +66,11 @@ internal sealed class BuildingRuntimeSurfaceOverlaySystem
             MovementMask = MapSurfaceMovementMask.AllGroundUnits
         };
         return true;
+    }
+
+    internal static float ResolveRunwayOverlayHeight(Vector3 runwaySurfaceCenter)
+    {
+        return runwaySurfaceCenter.y;
     }
 
     private static bool TryResolveRunwayBounds(Transform root, out Bounds bounds)

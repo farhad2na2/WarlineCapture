@@ -7,6 +7,7 @@ using Unity.Transforms;
 [UpdateBefore(typeof(UnitGroundingSystem))]
 public partial struct UnitSurfaceTrackingSystem : ISystem
 {
+    private const float MaxInfantryInterpolatedHeightSpan = 0.75f;
     private EntityQuery _surfaceQuery;
     private EntityQuery _runtimeSurfaceOverlayQuery;
 
@@ -77,7 +78,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
             in UnitMovementBehavior movementBehavior,
             in LocalTransform transform)
         {
-            if (!TrySampleInterpolatedSurface(transform.Position, unitSurface, out MapSurfaceSample sample, out float height, out float3 normal))
+            if (!TrySampleInterpolatedSurface(transform.Position, unitSurface, movementBehavior, out MapSurfaceSample sample, out float height, out float3 normal))
             {
                 if (!TryResolveSurface(unitGrid.Cell, unitSurface, out sample))
                     return;
@@ -90,7 +91,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
                 ? MapSurfaceMovementMask.AllGroundUnits
                 : MapSurfaceMovementMask.Infantry;
             if (TryResolveSceneSurfaceOverlay(transform.Position, movementMask, out MapSurfaceSceneOverlay sceneOverlay) &&
-                sceneOverlay.Height > height)
+                ShouldApplySceneOverlay(sceneOverlay, height))
             {
                 height = sceneOverlay.Height;
                 normal = math.normalizesafe(sceneOverlay.Normal, new float3(0f, 1f, 0f));
@@ -101,7 +102,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
             }
 
             if (TryResolveRuntimeSurfaceOverlay(transform.Position, movementMask, out BuildingRuntimeSurfaceOverlay overlay) &&
-                overlay.Height > height)
+                ShouldApplyRuntimeOverlay(overlay, height))
             {
                 height = overlay.Height;
                 normal = math.normalizesafe(overlay.Normal, new float3(0f, 1f, 0f));
@@ -120,6 +121,7 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
         private bool TrySampleInterpolatedSurface(
             float3 worldPosition,
             UnitSurfaceComponent unitSurface,
+            UnitMovementBehavior movementBehavior,
             out MapSurfaceSample sample,
             out float height,
             out float3 normal)
@@ -144,8 +146,12 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
                 (worldPosition.x - Surface.GridOrigin.x) / Surface.CellSize,
                 (worldPosition.z - Surface.GridOrigin.z) / Surface.CellSize));
 
-            if (!TryResolveSurface(currentCell, unitSurface, out sample) &&
-                !TryResolveSurface(minCell, unitSurface, out sample))
+            bool hasCurrentSample = TryResolveSurface(currentCell, unitSurface, out MapSurfaceSample currentSample);
+            if (hasCurrentSample)
+            {
+                sample = currentSample;
+            }
+            else if (!TryResolveSurface(minCell, unitSurface, out sample))
             {
                 return false;
             }
@@ -169,6 +175,15 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
             if (!TryResolveSurface(minCell + new int2(1, 1), unitSurface, out MapSurfaceSample s11))
                 s11 = s00;
 
+            if (hasCurrentSample &&
+                !CanInterpolateWithNeighborSamples(currentSample, s00, s10, s01, s11, movementBehavior))
+            {
+                sample = currentSample;
+                height = currentSample.Height;
+                normal = math.normalizesafe(currentSample.Normal, new float3(0f, 1f, 0f));
+                return true;
+            }
+
             float h10 = s10.Height;
             float h01 = s01.Height;
             float h11 = s11.Height;
@@ -182,6 +197,46 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
             float3 nx0 = math.lerp(n00, n10, t.x);
             float3 nx1 = math.lerp(n01, n11, t.x);
             normal = math.normalizesafe(math.lerp(nx0, nx1, t.y), new float3(0f, 1f, 0f));
+            return true;
+        }
+
+        private static bool CanInterpolateWithNeighborSamples(
+            MapSurfaceSample current,
+            MapSurfaceSample s00,
+            MapSurfaceSample s10,
+            MapSurfaceSample s01,
+            MapSurfaceSample s11,
+            UnitMovementBehavior movementBehavior)
+        {
+            bool currentRoadLike = IsRoadLikeSurface(current.SurfaceType, current.Flags);
+            if (!CanInterpolateSample(current, s00, currentRoadLike) ||
+                !CanInterpolateSample(current, s10, currentRoadLike) ||
+                !CanInterpolateSample(current, s01, currentRoadLike) ||
+                !CanInterpolateSample(current, s11, currentRoadLike))
+            {
+                return false;
+            }
+
+            float minHeight = math.min(math.min(s00.Height, s10.Height), math.min(s01.Height, s11.Height));
+            float maxHeight = math.max(math.max(s00.Height, s10.Height), math.max(s01.Height, s11.Height));
+            float maxSpan = movementBehavior.UsesVehicleMotion != 0
+                ? 0.5f
+                : MaxInfantryInterpolatedHeightSpan;
+            return maxHeight - minHeight <= maxSpan;
+        }
+
+        private static bool CanInterpolateSample(MapSurfaceSample current, MapSurfaceSample candidate, bool currentRoadLike)
+        {
+            if (candidate.LayerId != current.LayerId)
+                return false;
+
+            bool candidateRoadLike = IsRoadLikeSurface(candidate.SurfaceType, candidate.Flags);
+            if (candidateRoadLike != currentRoadLike)
+                return false;
+
+            if ((candidate.MovementMask & current.MovementMask) == 0)
+                return false;
+
             return true;
         }
 
@@ -212,6 +267,26 @@ public partial struct UnitSurfaceTrackingSystem : ISystem
             }
 
             return found;
+        }
+
+        private static bool ShouldApplySceneOverlay(MapSurfaceSceneOverlay overlay, float currentHeight)
+        {
+            return overlay.Height > currentHeight || IsRoadLikeSurface(overlay.SurfaceType, overlay.Flags);
+        }
+
+        private static bool ShouldApplyRuntimeOverlay(BuildingRuntimeSurfaceOverlay overlay, float currentHeight)
+        {
+            return overlay.Height > currentHeight || IsRoadLikeSurface(overlay.SurfaceType);
+        }
+
+        private static bool IsRoadLikeSurface(MapSurfaceType surfaceType, MapSurfaceFlags flags = MapSurfaceFlags.None)
+        {
+            return surfaceType == MapSurfaceType.Road ||
+                   surfaceType == MapSurfaceType.DirtRoad ||
+                   surfaceType == MapSurfaceType.Highway ||
+                   surfaceType == MapSurfaceType.BridgeDeck ||
+                   surfaceType == MapSurfaceType.Ramp ||
+                   (flags & MapSurfaceFlags.Road) != 0;
         }
 
         private static bool Contains(MapSurfaceSceneOverlay overlay, float3 worldPosition)

@@ -179,6 +179,10 @@ public struct VehicleSelectionMarkerPrefabReference : IComponentData
     public Entity Prefab;
 }
 
+public struct VehicleVisualPrefabReferencesBackfilledTag : IComponentData
+{
+}
+
 public struct VehicleSelectionMarkerInstanceReference : IComponentData
 {
     public Entity Instance;

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class SelectionRuntimeDiagnosticsSystem
 {
+    public static readonly bool EnableSelectionClickDiagnostics = false;
+
     private const string SelectionClickPrefix = "[SelectionClick]";
 
     public void EnqueueSelectionDiagnostic(string message)
@@ -19,8 +21,17 @@ public sealed class SelectionRuntimeDiagnosticsSystem
 
     public void LogSelectionClickDiagnostic(string message)
     {
+        if (!EnableSelectionClickDiagnostics)
+            return;
+
         Debug.Log($"{SelectionClickPrefix} {message}");
         EnqueueSelectionDiagnostic(message);
+    }
+
+    [System.Diagnostics.Conditional("WARLINE_SELECTION_CLICK_DIAGNOSTICS")]
+    public static void LogSelectionClickDebug(string message)
+    {
+        Debug.Log(message);
     }
 
     private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)

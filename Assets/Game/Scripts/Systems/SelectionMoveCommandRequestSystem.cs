@@ -37,7 +37,7 @@ public sealed class SelectionMoveCommandRequestSystem
         {
             RtsSelectionCommandIntentRequestElement request = _pendingMoveRequests[i];
             Vector2 screenPosition = new(request.ScreenPosition.x, request.ScreenPosition.y);
-            Debug.Log(
+            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
                 $"[SelectionClick] moveRequestProcess requestId={request.RequestId} requestFrame={request.Frame} " +
                 $"screen={screenPosition} pendingCount={_pendingMoveRequests.Count}");
             SelectedMoveOrderCommandSystem.Result result = selectedMoveOrderCommandSystem.TryIssueMoveOrder(
@@ -51,7 +51,7 @@ public sealed class SelectionMoveCommandRequestSystem
                 tryGetClickedCell,
                 request.Frame);
 
-            Debug.Log(
+            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
                 $"[SelectionClick] moveRequestResult requestId={request.RequestId} accepted={result.CommandResult.Accepted} " +
                 $"reason={result.CommandResult.ReasonCode} emitMarker={result.EmitScreenMarker} showWorldMarkers={result.ShowWorldMarkers}");
             AddCommandResult(em, commandEntity, commandResults, ToResultElement(request, result));

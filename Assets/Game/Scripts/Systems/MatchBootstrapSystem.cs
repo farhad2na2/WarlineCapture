@@ -694,20 +694,29 @@ internal sealed class MatchBootstrapSystem
         using EntityQuery registryQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitPrefabRegistryTag>());
         using EntityQuery prefabCandidateQuery = em.CreateEntityQuery(ComponentType.ReadOnly<Prefab>());
         using EntityQuery unitQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitGrid>(), ComponentType.ReadOnly<Faction>());
-        using EntityQuery modelQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitModelInstanceReference>());
+        using EntityQuery modelQuery = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            Any = new[]
+            {
+                ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
+            }
+        });
         using EntityQuery sourceKeyQuery = em.CreateEntityQuery(ComponentType.ReadOnly<UnitSourcePrefabKey>());
         using EntityQuery sourceKeyFallbackVisualQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
             ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
             ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitDetailedVisualReference>(),
             ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>(),
             ComponentType.Exclude<MissionRuntimeEntityId>());
         using EntityQuery missionFallbackVisualQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MissionRuntimeEntityId>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
             ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
-            ComponentType.Exclude<UnitModelInstanceReference>());
+            ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitDetailedVisualReference>());
         string activeMissionId = WarlineCaptureMissionSession.ActiveMissionId;
         int hasActiveMission = WarlineCaptureMissionSession.HasActiveMission ? 1 : 0;
         int isFirstContactMission = activeMissionId == ChapterOneMissionCatalog.FirstContactMissionId ? 1 : 0;

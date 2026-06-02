@@ -33,7 +33,7 @@ public sealed class UnitMoveOrderSystem
         int currentFrame)
     {
         MoveOrderCommandResult result = new() { Issued = true };
-        Debug.Log(
+        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
             $"[SelectionClick] unitMoveOrderGrouped caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} " +
             $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
 
@@ -85,7 +85,7 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueImmediateMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        Debug.Log($"[SelectionClick] unitMoveOrderImmediate caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderImmediate caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
@@ -104,7 +104,7 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
-        Debug.Log($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
+        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
         if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
             entityManager.AddComponent<ManualMoveOrderTag>(entity);

@@ -240,6 +240,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
                 ComponentType.ReadOnly<Disabled>(),
                 ComponentType.ReadOnly<StaticGridBlocker>(),
                 ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
                 ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>(),
             }
         });
@@ -261,6 +262,7 @@ public sealed class UnitImpostorRenderSystem : System.IDisposable
                 ComponentType.ReadOnly<Disabled>(),
                 ComponentType.ReadOnly<StaticGridBlocker>(),
                 ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
                 ComponentType.ReadOnly<UnitRenderBudgetCulledUnitTag>(),
                 ComponentType.ReadOnly<MissionRuntimeEntityId>(),
             }

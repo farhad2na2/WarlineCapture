@@ -31,6 +31,7 @@ public sealed class CustomGameStartupSystemTests
         RunWithLifecycle(tests, tests.InitializeFromLegacyConfigs_PreservesBakedInitialSpawnPrefabEntitiesWhenRegistryIsMissing);
         RunWithLifecycle(tests, tests.InitialUnitsSpawnSystem_SkipsSourceKeyUnitsWithoutConvertedPrefabs);
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFallbackOverRenderableSourceKeyUnits);
+        RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFallbackOverDetailedVisualSourceKeyUnits);
         RunWithLifecycle(tests, tests.UnitImpostorRenderSystem_DoesNotDrawFarImpostorOverVisibleRenderableUnits);
         RunWithLifecycle(tests, tests.InitialUnitsSpawnSystem_DoesNotRouteConvertedPrefabUnitsThroughSourceKeyImpostors);
         RunWithLifecycle(tests, tests.RuntimeGridBootstrapSystem_CreatesBuffersWithoutInvalidatingHandles);
@@ -432,6 +433,51 @@ public sealed class CustomGameStartupSystemTests
 
             Assert.AreEqual(0, impostors.LastSourceKeyFallbackCandidateCount, "Renderable 3D units must not receive source-key fallback impostor overlays.");
             Assert.AreEqual(0, impostors.LastMissionFallbackCandidateCount, "Renderable 3D units must not receive mission fallback impostor overlays.");
+        }
+        finally
+        {
+            impostors.Dispose();
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            Object.DestroyImmediate(cameraObject);
+        }
+    }
+
+    [Test]
+    public void UnitImpostorRenderSystem_DoesNotDrawFallbackOverDetailedVisualSourceKeyUnits()
+    {
+        EntityManager em = _world.EntityManager;
+        Entity visualRoot = em.CreateEntity(
+            typeof(LocalTransform),
+            typeof(RenderBounds));
+        em.SetComponentData(visualRoot, LocalTransform.Identity);
+        em.SetComponentData(visualRoot, new RenderBounds { Value = new AABB { Center = float3.zero, Extents = new float3(1f) } });
+
+        Entity entity = em.CreateEntity(
+            typeof(UnitGrid),
+            typeof(LocalTransform),
+            typeof(UnitSourcePrefabKey),
+            typeof(Faction),
+            typeof(UnitDetailedVisualReference));
+        em.SetComponentData(entity, new UnitGrid { Cell = new int2(12, 12) });
+        em.SetComponentData(entity, LocalTransform.FromPosition(new float3(12f, 0f, 12f)));
+        em.SetComponentData(entity, new UnitSourcePrefabKey { Value = new FixedString64Bytes("Unit_Chr_Soldier_Male_01") });
+        em.SetComponentData(entity, new Faction { Id = 1 });
+        em.SetComponentData(entity, new UnitDetailedVisualReference { Root = visualRoot });
+
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        GameObject cameraObject = new("DetailedVisualSourceKeyCamera");
+        UnitImpostorRenderSystem impostors = new();
+        try
+        {
+            World.DefaultGameObjectInjectionWorld = _world;
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.transform.position = new Vector3(12f, 20f, -12f);
+            camera.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
+            impostors.Init(camera, 0, null);
+            impostors.LateUpdate();
+
+            Assert.AreEqual(0, impostors.LastSourceKeyFallbackCandidateCount, "Detailed visual units must not receive source-key fallback impostor overlays.");
+            Assert.AreEqual(0, CountSpawnedSourceKeyFallbackVisuals(em), "Detailed visual units must not be reported as source-key fallback visuals.");
         }
         finally
         {
@@ -871,6 +917,7 @@ public sealed class CustomGameStartupSystemTests
             ComponentType.ReadOnly<LocalTransform>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
             ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitDetailedVisualReference>(),
             ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>(),
             ComponentType.Exclude<MissionRuntimeEntityId>());
         return query.CalculateEntityCount();

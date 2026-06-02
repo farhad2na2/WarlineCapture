@@ -17,6 +17,8 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
             ComponentType.ReadOnly<UnitTarget>(),
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<Faction>());
+        if (!SelectionRuntimeDiagnosticsSystem.EnableSelectionClickDiagnostics)
+            Enabled = false;
     }
 
     protected override void OnUpdate()
@@ -44,7 +46,7 @@ public partial class UnitMoveTargetDiagnosticSystem : SystemBase
                 continue;
 
             _lastTargets[entity] = target.Cell;
-            Debug.Log(
+            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
                 $"[SelectionClick] playerUnitTargetChanged frame={UnityEngine.Time.frameCount} entity={DescribeEntity(entity)} " +
                 $"previous={(previous.Equals(default) ? "none-or-default" : previous.ToString())} target={target.Cell} " +
                 $"pathRequest={ResolvePathRequest(entity)} pathFollow={EntityManager.HasComponent<UnitPathFollow>(entity)} " +

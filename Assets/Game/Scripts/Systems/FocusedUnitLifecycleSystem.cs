@@ -54,7 +54,7 @@ public sealed class FocusedUnitLifecycleSystem
         int cacheBefore = selectionStateSystem.CachedSelectedMoveEntities.Count;
         Entity focusedBefore = selectionStateSystem.FocusedUnit;
         if (entities.Length > 0 || cacheBefore > 0 || (focusedBefore != Entity.Null && em.Exists(focusedBefore)))
-            Debug.Log(
+            SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
                 $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={Time.frameCount} " +
                 $"selected={entities.Length} cacheBefore={cacheBefore} focusedBefore={DescribeSelectionEntity(em, focusedBefore)}");
         if (entities.Length > 0 || cacheBefore > 0)
@@ -82,7 +82,7 @@ public sealed class FocusedUnitLifecycleSystem
         {
             if (!em.Exists(focusedUnit))
             {
-                Debug.Log($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={Time.frameCount} focused={focusedUnit}");
+                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={Time.frameCount} focused={focusedUnit}");
                 selectionStateSystem.ClearFocusedUnit();
                 focusedUnit = Entity.Null;
             }
@@ -90,7 +90,7 @@ public sealed class FocusedUnitLifecycleSystem
                      !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(focusedUnit).Id) &&
                      em.HasComponent<SelectedUnitTag>(focusedUnit))
             {
-                Debug.Log(
+                SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
                     $"[SelectionClick] ONE_SELECTION_DEBUG action=RemoveSelected reason=FocusedNotPlayer frame={Time.frameCount} " +
                     $"focused={DescribeSelectionEntity(em, focusedUnit)}");
                 em.RemoveComponent<SelectedUnitTag>(focusedUnit);
@@ -166,7 +166,7 @@ public sealed class FocusedUnitLifecycleSystem
         bool cacheableAfterAdd = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
         selectionStateSystem.CacheSelectedMoveEntity(em, entity);
         string description = describeEntity != null ? describeEntity(em, entity) : entity.ToString();
-        Debug.Log(
+        SelectionRuntimeDiagnosticsSystem.LogSelectionClickDebug(
             $"[SelectionClick] ONE_SELECTION_DEBUG action=Focus source={diagnosticSource} frame={Time.frameCount} " +
             $"entity={description} selectedAfterAdd={selectedAfterAdd} cache={selectionStateSystem.CachedSelectedMoveEntities.Count} " +
             $"playerControlled={playerControlled}");

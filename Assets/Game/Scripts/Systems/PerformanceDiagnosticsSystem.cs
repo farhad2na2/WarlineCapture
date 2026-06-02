@@ -494,8 +494,14 @@ public sealed class PerformanceDiagnosticsSystem
         using EntityQuery unitQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitGrid>(),
             ComponentType.ReadOnly<Faction>());
-        using EntityQuery modelQuery = em.CreateEntityQuery(
-            ComponentType.ReadOnly<UnitModelInstanceReference>());
+        using EntityQuery modelQuery = em.CreateEntityQuery(new EntityQueryDesc
+        {
+            Any = new[]
+            {
+                ComponentType.ReadOnly<UnitModelInstanceReference>(),
+                ComponentType.ReadOnly<UnitDetailedVisualReference>(),
+            }
+        });
         using EntityQuery sourceKeyQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<UnitSourcePrefabKey>());
         using EntityQuery sourceKeyFallbackVisualQuery = em.CreateEntityQuery(
@@ -503,13 +509,15 @@ public sealed class PerformanceDiagnosticsSystem
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
             ComponentType.ReadOnly<LocalTransform>(),
             ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitDetailedVisualReference>(),
             ComponentType.Exclude<UnitRenderBudgetCulledUnitTag>(),
             ComponentType.Exclude<MissionRuntimeEntityId>());
         using EntityQuery missionFallbackVisualQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<MissionRuntimeEntityId>(),
             ComponentType.ReadOnly<UnitSourcePrefabKey>(),
             ComponentType.ReadOnly<LocalTransform>(),
-            ComponentType.Exclude<UnitModelInstanceReference>());
+            ComponentType.Exclude<UnitModelInstanceReference>(),
+            ComponentType.Exclude<UnitDetailedVisualReference>());
         using EntityQuery initialSpawnConfigQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<InitialUnitsSpawnConfig>());
         units = unitQuery.CalculateEntityCount();

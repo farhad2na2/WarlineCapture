@@ -22,6 +22,29 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
         DayNightSystem dayNight,
         Camera worldCamera)
     {
+        Initialize(
+            citizenPopulationCompositionBoundary,
+            citizenPopulationComposition,
+            runtimeResourcePrefabContextSystem,
+            runtimeResourcePrefabSource,
+            runtimeQuery,
+            runtimeQueryContext,
+            dayNight,
+            worldCamera,
+            populationEnabled: true);
+    }
+
+    public void Initialize(
+        CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
+        CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
+        BuildingRuntimeResourcePrefabContextSystem runtimeResourcePrefabContextSystem,
+        BuildingRuntimeResourcePrefabContextSystem.Source runtimeResourcePrefabSource,
+        BuildingRuntimeQuerySystem runtimeQuery,
+        BuildingRuntimeQuerySystem.Context runtimeQueryContext,
+        DayNightSystem dayNight,
+        Camera worldCamera,
+        bool populationEnabled)
+    {
         CitizenResourceSystem.Context resourceContext = runtimeResourcePrefabContextSystem.CreateCitizenResourceContext(runtimeResourcePrefabSource);
         CitizenPrefabSystem.Context prefabContext = runtimeResourcePrefabContextSystem.CreateCitizenPrefabContext(runtimeResourcePrefabSource);
         citizenPopulationCompositionBoundary.Init(
@@ -30,6 +53,7 @@ internal sealed class BuildingCitizenPopulationCompositionSystem
             runtimeQueryContext,
             dayNight,
             worldCamera,
+            populationEnabled,
             resourceContext,
             prefabContext);
     }

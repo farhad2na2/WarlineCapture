@@ -30,6 +30,7 @@ internal sealed class CitizenPopulationCompositionSystem
         public readonly UnitPathfindingPendingStateReadSystem UnitPathfindingPendingStateReadSystem = new();
         public DayNightSystem DayNightSystem;
         public Camera WorldCamera;
+        public bool PopulationEnabled;
     }
 
     public static Result Create()
@@ -43,6 +44,7 @@ internal sealed class CitizenPopulationCompositionSystem
         BuildingRuntimeQuerySystem.Context buildingRuntimeQueryContext,
         DayNightSystem dayNightSystem,
         Camera worldCamera,
+        bool populationEnabled,
         CitizenResourceSystem.Context citizenResourceContext,
         CitizenPrefabSystem.Context citizenPrefabContext)
     {
@@ -51,6 +53,7 @@ internal sealed class CitizenPopulationCompositionSystem
         result.CitizenPrefabContext = citizenPrefabContext;
         result.DayNightSystem = dayNightSystem;
         result.WorldCamera = worldCamera;
+        result.PopulationEnabled = populationEnabled;
         result.RuntimeUpdateSystem.Bind(result);
         result.EcsProjection.ResolveEntityManager();
         result.VisibleUnitSystem.ClearVisibleCitizens(result.State, result.EcsProjection);
@@ -72,6 +75,7 @@ internal sealed class CitizenPopulationCompositionSystem
             result.RuntimeUpdateSystem.StoreCitizen,
             result.RuntimeUpdateSystem.HandleCitizenDeath);
         result.EcsProjection.EnsurePopulationSummaryEntity();
+        result.ReadModel.Refresh(result.TotalsSystem, result.State, result.EcsProjection, syncSummaryEntity: true);
     }
 
     public void Dispose(Result result)
@@ -91,5 +95,6 @@ internal sealed class CitizenPopulationCompositionSystem
         result.EcsProjection.Reset();
         result.DayNightSystem = null;
         result.WorldCamera = null;
+        result.PopulationEnabled = false;
     }
 }

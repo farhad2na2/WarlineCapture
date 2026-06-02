@@ -138,6 +138,7 @@ internal sealed class ManagedGameplayStartupSystem
         MapBuildingPlacementConfig mapBuildingPlacementConfig,
         RTSSelectionSystemConfig rtsSelectionConfig,
         UnitAttackTraceSystemConfig unitAttackTraceConfig,
+        RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig,
         GameStringsConfig gameStringsConfig,
         PrefabPreviewCameraConfig prefabPreviewCameraConfig,
         Camera worldCamera,
@@ -195,7 +196,7 @@ internal sealed class ManagedGameplayStartupSystem
         var unitImpostors = new UnitImpostorRenderSystem();
         unitImpostors.Init(worldCamera, ownerLayer, buildingPlacementConfig != null ? buildingPlacementConfig.UnitPrefabRegistryConfig : null);
 
-        building.InitializeCitizenPopulation(dayNight, worldCamera);
+        building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig);
         building.BindCitizenPopulation(
             dayNight,
             selection.SelectionUiCamera,

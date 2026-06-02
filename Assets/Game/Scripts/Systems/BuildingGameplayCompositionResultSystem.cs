@@ -193,7 +193,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
                 selectionBuildingInteractionSystem);
         }
 
-        public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)
+        public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)
         {
             CitizenPopulationCompositionBridge.Initialize(
                 CitizenPopulationCompositionBoundary,
@@ -203,7 +203,8 @@ internal sealed class BuildingGameplayCompositionResultSystem
                 RuntimeQuery,
                 RuntimeQueryContext,
                 dayNight,
-                worldCamera);
+                worldCamera,
+                runtimeCitySpawnerConfig != null && runtimeCitySpawnerConfig.CityCount > 0);
         }
 
         public void DisposeCitizenPopulation()

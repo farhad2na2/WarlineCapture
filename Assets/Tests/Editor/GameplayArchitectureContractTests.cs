@@ -8381,10 +8381,10 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("runtimeTickContext = _runtimeTickContextSystem.Create(runtimeTickSource)", composition);
         StringAssert.Contains("new BuildingRuntimeUpdateSystem.Context(UpdateBuildingRuntimeTick)", composition);
         StringAssert.Contains("building.BindSelection(", managedStartup);
-        StringAssert.Contains("building.InitializeCitizenPopulation(dayNight, worldCamera)", managedStartup);
+        StringAssert.Contains("building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig)", managedStartup);
         StringAssert.Contains("building.BindCitizenPopulation(", managedStartup);
         StringAssert.Contains("public readonly struct Result", resultSystem);
-        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)", resultSystem);
+        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)", resultSystem);
         StringAssert.Contains("CitizenPopulationCompositionBridge.Initialize(", resultSystem);
         Assert.IsFalse(
             composition.Contains("public readonly struct Result", StringComparison.Ordinal),
@@ -16145,7 +16145,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("private readonly BuildingCitizenPopulationCompositionSystem _citizenPopulationCompositionSystem = new();", buildingComposition);
         StringAssert.Contains("_citizenPopulationCompositionSystem.CreateBoundary()", buildingComposition);
         StringAssert.Contains("CitizenPopulationCompositionSystem.Result citizenPopulationComposition,", buildingResult);
-        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)", buildingResult);
+        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)", buildingResult);
         StringAssert.Contains("CitizenPopulationCompositionBridge.Initialize(", buildingResult);
         StringAssert.Contains("public void DisposeCitizenPopulation()", buildingResult);
         StringAssert.Contains("CitizenPopulationCompositionBridge.Dispose(", buildingResult);
@@ -16181,6 +16181,30 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("hadSlowStep |= performanceDiagnosticsSystem.EndStep(\"CitizenPopulation\", stepStart);", gameplayRuntime);
         StringAssert.Contains("private Action _citizenPopulationRuntimeUpdate;", bootstrap);
         StringAssert.Contains("managedSystems.CitizenPopulationComposition.RuntimeUpdateSystem.Update", bootstrap);
+    }
+
+    [Test]
+    public void CitizenPopulationRuntimeMustRespectRuntimeCityCountGate()
+    {
+        const string bootstrapPath = MatchBootstrapSystemPath;
+        const string managedStartupPath = "Assets/Game/Scripts/Systems/ManagedGameplayStartupSystem.cs";
+        const string buildingResultPath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionResultSystem.cs";
+        const string compositionPath = "Assets/Game/Scripts/Systems/CitizenPopulationCompositionSystem.cs";
+        const string runtimeUpdatePath = "Assets/Game/Scripts/Systems/CitizenPopulationRuntimeUpdateSystem.cs";
+
+        string bootstrap = File.ReadAllText(bootstrapPath);
+        string managedStartup = File.ReadAllText(managedStartupPath);
+        string buildingResult = File.ReadAllText(buildingResultPath);
+        string composition = File.ReadAllText(compositionPath);
+        string runtimeUpdate = File.ReadAllText(runtimeUpdatePath);
+
+        StringAssert.Contains("RuntimeCitySpawnerConfig,", bootstrap);
+        StringAssert.Contains("RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig", managedStartup);
+        StringAssert.Contains("building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig)", managedStartup);
+        StringAssert.Contains("runtimeCitySpawnerConfig != null && runtimeCitySpawnerConfig.CityCount > 0", buildingResult);
+        StringAssert.Contains("public bool PopulationEnabled;", composition);
+        StringAssert.Contains("result.PopulationEnabled = populationEnabled;", composition);
+        StringAssert.Contains("if (!_systems.PopulationEnabled)", runtimeUpdate);
     }
 
     [Test]
@@ -16270,8 +16294,8 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(
             buildingComposition.Contains("public void InitializeCitizenPopulation(BuildingGameplayCompositionResultSystem.Result building", StringComparison.Ordinal),
             "BuildingGameplayCompositionSystem must not keep citizen population wrapper pass-throughs.");
-        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera)", buildingResult);
-        StringAssert.Contains("building.InitializeCitizenPopulation(dayNight, worldCamera)", managedStartup);
+        StringAssert.Contains("public void InitializeCitizenPopulation(DayNightSystem dayNight, Camera worldCamera, RuntimeCitySpawnerSystemConfig runtimeCitySpawnerConfig)", buildingResult);
+        StringAssert.Contains("building.InitializeCitizenPopulation(dayNight, worldCamera, runtimeCitySpawnerConfig)", managedStartup);
         StringAssert.Contains("CitizenPopulationCompositionBridge.Initialize(", buildingResult);
         StringAssert.Contains("public void DisposeCitizenPopulation()", buildingResult);
         StringAssert.Contains("CitizenPopulationCompositionBridge.Dispose(", buildingResult);

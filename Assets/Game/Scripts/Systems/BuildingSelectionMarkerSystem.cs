@@ -164,7 +164,7 @@ internal sealed class BuildingSelectionMarkerSystem
         _baseRendererSize = CalculateRendererSize(_markerRenderers);
 
         Color markerColor = context.FactionVisualSettings != null
-            ? context.FactionVisualSettings.GetColor(0)
+            ? context.FactionVisualSettings.GetColor(1)
             : new Color(0.15f, 0.85f, 0.2f, 1f);
         context.VisualSystem?.ApplyMarkerColor(_markerRenderers, markerColor, context.MarkerPropertyBlock);
         return true;

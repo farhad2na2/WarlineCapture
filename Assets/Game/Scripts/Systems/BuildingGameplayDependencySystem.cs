@@ -9,6 +9,7 @@ internal sealed class BuildingGameplayDependencySystem
     internal RuntimeCityCompositionSystem RuntimeCitySystem { get; private set; }
     internal CitizenPopulationEventSystem CitizenPopulationEventSystem { get; private set; }
     internal FactionVisualSettings FactionVisualSettings { get; private set; }
+    internal float BuildingFactionTintStrength => FactionVisualSettings != null ? FactionVisualSettings.BuildingFactionTintStrength : 0.45f;
     internal DayNightSystem DayNightSystem { get; private set; }
 
     internal void SetStartupDependencies(

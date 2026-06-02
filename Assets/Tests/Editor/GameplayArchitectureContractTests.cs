@@ -18857,7 +18857,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeDataPath = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
         const string compositionSourcePath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
         const string runtimeContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
-        const string buildingConfigPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
+        const string configPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
         const string sharedMarkerPrefabPath = "Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab";
         const string unitSelectionMarkerSystemPath = "Assets/Game/Scripts/Systems/UnitSelectionMarkerSystem.cs";
 
@@ -18872,7 +18872,7 @@ public sealed class GameplayArchitectureContractTests
         string runtimeData = File.ReadAllText(runtimeDataPath);
         string compositionSource = File.ReadAllText(compositionSourcePath);
         string runtimeContext = File.ReadAllText(runtimeContextPath);
-        string buildingConfig = File.ReadAllText(buildingConfigPath);
+        string configs = File.ReadAllText(configPath);
         string unitSelectionMarkerSystem = File.ReadAllText(unitSelectionMarkerSystemPath);
 
         StringAssert.Contains("building selection marker visual ownership belongs in `BuildingSelectionMarkerSystem`", contract);
@@ -18881,7 +18881,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("internal sealed class BuildingSelectionMarkerSystem", markerSystem);
         StringAssert.Contains("internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();", compositionSource);
         StringAssert.Contains("new BuildingSelectionMarkerSystem.Context", runtimeContext);
-        StringAssert.Contains("BuildingSelectionMarkerPrefab", buildingConfig);
+        StringAssert.Contains("BuildingSelectionMarkerPrefab", configs);
         StringAssert.Contains("UnitSelectionMarkerSystem", unitSelectionMarkerSystem);
 
         Assert.IsFalse(
@@ -18923,7 +18923,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeDataPath = "Assets/Game/Scripts/Systems/RuntimeBuildingData.cs";
         const string compositionSourcePath = "Assets/Game/Scripts/Systems/BuildingGameplayCompositionSourceSystem.cs";
         const string runtimeContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
-        const string buildingConfigPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
+        const string configPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
 
         Assert.IsTrue(File.Exists(roadmapPath), "The building faction visual roadmap must be tracked.");
         Assert.IsTrue(File.Exists(factionVisualSystemPath), "Building owner-faction visuals must live in BuildingFactionVisualSystem.");
@@ -18936,7 +18936,7 @@ public sealed class GameplayArchitectureContractTests
         string runtimeData = File.ReadAllText(runtimeDataPath);
         string compositionSource = File.ReadAllText(compositionSourcePath);
         string runtimeContext = File.ReadAllText(runtimeContextPath);
-        string buildingConfig = File.ReadAllText(buildingConfigPath);
+        string configs = File.ReadAllText(configPath);
 
         StringAssert.Contains("building owner-faction visual projection belongs in `BuildingFactionVisualSystem`", contract);
         StringAssert.Contains("must not contain `SelectionMarker`, `FactionMarker`, or `Destroyed` children", contract);
@@ -18947,7 +18947,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("internal readonly BuildingFactionVisualSystem BuildingFactionVisualSystem = new();", compositionSource);
         StringAssert.Contains("new BuildingFactionVisualSystem.Context", runtimeVisual);
         StringAssert.Contains("new BuildingFactionVisualSystem.Context", runtimeOwnership);
-        StringAssert.Contains("BuildingFactionTintStrength", buildingConfig);
+        StringAssert.Contains("public float BuildingFactionTintStrength => Mathf.Clamp01(buildingFactionTintStrength);", configs);
+        StringAssert.Contains("class FactionVisualSettingsConfig", configs);
         StringAssert.Contains("FactionVisualRenderers", runtimeData);
         StringAssert.Contains("CacheBuildingRenderers", runtimeVisual);
         StringAssert.Contains("ApplyOwnerFaction", runtimeOwnership);

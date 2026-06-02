@@ -185,7 +185,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingFactionVisualSystem,
             source.BuildingGameplayDependencySystem.FactionVisualSettings,
             markerPropertyBlock,
-            source.BuildingPlacementStartupSystem.BuildingFactionTintStrength,
+            source.BuildingGameplayDependencySystem.BuildingFactionTintStrength,
             buildingId => source.BuildingRuntimeEntitySystem.DeleteBuildingById(CreateRuntimeEntityContext(), buildingId),
             () => beginDeferredRuntimeBuildingSideEffects(source),
             () => endDeferredRuntimeBuildingSideEffects(source));
@@ -245,7 +245,7 @@ internal sealed class BuildingRuntimeCompositionSystem
             source.BuildingProductionContextSystem,
             source.BuildingGameplayDependencySystem.FactionVisualSettings,
             null,
-            source.BuildingPlacementStartupSystem.BuildingFactionTintStrength,
+            source.BuildingGameplayDependencySystem.BuildingFactionTintStrength,
             source.BuildingGameplayEcsQuerySystem.LiveUnitFootprintQuery,
             source.BuildingGameplayEcsQuerySystem.RedirectUnitsQuery,
             source.BuildingGameplayEcsQuerySystem.HaulerUnitsQuery,

@@ -15,7 +15,6 @@ MonoBehaviour:
   worldCamera: {fileID: 0}
   roadPreviewPrefab: {fileID: 6752715572181065886, guid: 02bcd840ebd8b4b3c84dd02b87e88691, type: 3}
   buildingSelectionMarkerPrefab: {fileID: 5733906895582332945, guid: 28130757d8fd4844b171b631fb2547ce, type: 3}
-  buildingFactionTintStrength: 0
   buildButtonPreviewDistanceMultiplier: 1.4
   unitCommandButtonPreviewDistanceMultiplier: 1
   spawnables:

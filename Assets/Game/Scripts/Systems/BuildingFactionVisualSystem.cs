@@ -32,12 +32,15 @@ internal sealed class BuildingFactionVisualSystem
             return;
         }
 
+        bool excludeRunwayRenderers = building.Definition != null && building.Definition.HasRunway;
         var visibleRenderers = new System.Collections.Generic.List<Renderer>(renderers.Length);
         var baseColors = new System.Collections.Generic.List<Color>(renderers.Length);
         for (int i = 0; i < renderers.Length; i++)
         {
             Renderer renderer = renderers[i];
             if (renderer == null || IsUnderTransform(renderer.transform, destroyedVisual))
+                continue;
+            if (excludeRunwayRenderers && IsRunwayVisual(renderer.transform))
                 continue;
 
             visibleRenderers.Add(renderer);
@@ -51,12 +54,6 @@ internal sealed class BuildingFactionVisualSystem
     public void ApplyOwnerFaction(Context context, RuntimeBuildingData building)
     {
         if (building == null)
-            return;
-
-        MapAuthoredBuildingVisualComponent mapAuthoredVisual = building.Instance != null
-            ? building.Instance.GetComponent<MapAuthoredBuildingVisualComponent>()
-            : null;
-        if (mapAuthoredVisual != null && mapAuthoredVisual.PreserveAuthoredMaterials)
             return;
 
         if (!building.HasOwnerFaction)
@@ -109,9 +106,12 @@ internal sealed class BuildingFactionVisualSystem
         if (factionVisualSettings != null)
             return factionVisualSettings.GetColor(ownerFactionId);
 
-        return ownerFactionId == 0
-            ? new Color(0.12f, 0.72f, 1f, 1f)
-            : new Color(0.92f, 0.2f, 0.16f, 1f);
+        return ownerFactionId switch
+        {
+            0 => new Color(0.82f, 0.82f, 0.82f, 1f),
+            1 => new Color(0.12f, 0.72f, 1f, 1f),
+            _ => new Color(0.92f, 0.2f, 0.16f, 1f)
+        };
     }
 
     private static Color ResolveBaseColor(Renderer renderer)
@@ -135,6 +135,19 @@ internal sealed class BuildingFactionVisualSystem
         while (current != null)
         {
             if (current == possibleParent)
+                return true;
+            current = current.parent;
+        }
+
+        return false;
+    }
+
+    private static bool IsRunwayVisual(Transform transform)
+    {
+        Transform current = transform;
+        while (current != null)
+        {
+            if (current.name.IndexOf("Runway", System.StringComparison.OrdinalIgnoreCase) >= 0)
                 return true;
             current = current.parent;
         }

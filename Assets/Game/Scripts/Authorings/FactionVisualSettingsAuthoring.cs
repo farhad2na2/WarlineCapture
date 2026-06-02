@@ -36,9 +36,9 @@ public sealed class FactionVisualSettingsAuthoring : MonoBehaviour
     {
         return factionId switch
         {
-            0 => playerColor,
-            1 => enemyColor,
-            _ => neutralColor
+            0 => neutralColor,
+            1 => playerColor,
+            _ => enemyColor
         };
     }
 

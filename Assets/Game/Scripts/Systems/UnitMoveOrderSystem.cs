@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Debug = UnityEngine.Debug;
 
 public sealed class UnitMoveOrderSystem
 {
@@ -31,6 +33,9 @@ public sealed class UnitMoveOrderSystem
         int currentFrame)
     {
         MoveOrderCommandResult result = new() { Issued = true };
+        Debug.Log(
+            $"[SelectionClick] unitMoveOrderGrouped caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} " +
+            $"goal={goal} issuePathNow={issueGroundPathNow} retry={useGroundPathRetryCooldown} resumeFrame={resumeFrame} frame={currentFrame}");
 
         result.StructuralRemoves += RemoveComponentIfPresent<EngageTarget>(entityManager, entity) ? 1 : 0;
         result.StructuralRemoves += RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity) ? 1 : 0;
@@ -80,6 +85,7 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueImmediateMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
+        Debug.Log($"[SelectionClick] unitMoveOrderImmediate caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         RemoveComponentIfPresent<EngageTarget>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathFollow>(entityManager, entity);
         RemoveComponentIfPresent<UnitPathRange>(entityManager, entity);
@@ -98,6 +104,7 @@ public sealed class UnitMoveOrderSystem
 
     public void IssueTargetOnlyMoveCommand(EntityManager entityManager, Entity entity, int2 goal)
     {
+        Debug.Log($"[SelectionClick] unitMoveOrderTargetOnly caller={ResolveCaller()} entity={DescribeMoveEntity(entityManager, entity)} goal={goal}");
         SetOrAdd(entityManager, entity, new UnitTarget { Cell = goal });
         if (!entityManager.HasComponent<ManualMoveOrderTag>(entity))
             entityManager.AddComponent<ManualMoveOrderTag>(entity);
@@ -367,5 +374,44 @@ public sealed class UnitMoveOrderSystem
             entityManager.AddComponentData(entity, value);
             result.StructuralAdds++;
         }
+    }
+
+    private static string ResolveCaller()
+    {
+        StackTrace stack = new(2, false);
+        int frameCount = math.min(6, stack.FrameCount);
+        for (int i = 0; i < frameCount; i++)
+        {
+            System.Reflection.MethodBase method = stack.GetFrame(i)?.GetMethod();
+            if (method == null)
+                continue;
+
+            string type = method.DeclaringType?.Name ?? "unknown";
+            if (type == nameof(UnitMoveOrderSystem))
+                continue;
+
+            return $"{type}.{method.Name}";
+        }
+
+        return "unknown";
+    }
+
+    private static string DescribeMoveEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return "null";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+        bool selected = em.HasComponent<SelectedUnitTag>(entity);
+        string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
+        string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
+        string path = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
+        bool follow = em.HasComponent<UnitPathFollow>(entity);
+        bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+        bool disabled = em.HasComponent<Disabled>(entity);
+        return $"{entity}/{source}/faction={faction}/selected={selected}/grid={grid}/target={target}/pathRequest={path}/pathFollow={follow}/manual={manual}/disabled={disabled}";
     }
 }

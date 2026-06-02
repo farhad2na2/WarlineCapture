@@ -111,15 +111,61 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: price
+      value: 12000
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: speed
+      value: 4.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 6095a30179ca49bb9e2759a1ace9da39, type: 2}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: maxHealth
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: walkSpeed
+      value: 1.65
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: canRequest
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: description
+      value: Hostile irregular fighter armed with a machine gun. Built for asymmetric
+        attacks and defensive ambushes.
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: displayName
+      value: Insurgent Gunner Male II
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackDamage
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: aggroRangeCells
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: weaponDisplayName
+      value: Machine Gun
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 0.35
+      objectReference: {fileID: 0}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
       value: Unit_Chr_Insurgent_Male_02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4122219727259473096, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 23759086217692639, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       insertIndex: -1

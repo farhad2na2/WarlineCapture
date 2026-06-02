@@ -36,6 +36,7 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action IssueHoldPositionOrder;
         public readonly Action IssueStopOrder;
         public readonly Action DestroyFocusedUnit;
+        public readonly Func<Vector2, bool> TryFocusScreenPosition;
         public readonly Func<bool> IssueFocusedMissileLauncherRadarAttack;
         public readonly Func<bool> ArmFocusedAttackTargetMode;
         public readonly Action CancelExplicitAttackTargetMode;
@@ -67,6 +68,7 @@ public sealed class RtsSelectionFocusCommandSystem
             Action issueHoldPositionOrder,
             Action issueStopOrder,
             Action destroyFocusedUnit,
+            Func<Vector2, bool> tryFocusScreenPosition,
             Func<bool> issueFocusedMissileLauncherRadarAttack,
             Func<bool> armFocusedAttackTargetMode,
             Action cancelExplicitAttackTargetMode)
@@ -97,22 +99,23 @@ public sealed class RtsSelectionFocusCommandSystem
             IssueHoldPositionOrder = issueHoldPositionOrder;
             IssueStopOrder = issueStopOrder;
             DestroyFocusedUnit = destroyFocusedUnit;
+            TryFocusScreenPosition = tryFocusScreenPosition;
             IssueFocusedMissileLauncherRadarAttack = issueFocusedMissileLauncherRadarAttack;
             ArmFocusedAttackTargetMode = armFocusedAttackTargetMode;
             CancelExplicitAttackTargetMode = cancelExplicitAttackTargetMode;
         }
     }
 
-    private readonly List<RtsSelectionCommandIntentKind> _externalSelectionCommandScratch = new();
+    private readonly List<RtsSelectionCommandIntentRequestElement> _externalSelectionCommandScratch = new();
 
-    public void ProcessExternalSelectionCommandRequests(Context context)
+    public bool ProcessExternalSelectionCommandRequests(Context context)
     {
         if (!context.InputSystem.TryGetCommandBuffers(
                 out _,
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out _))
         {
-            return;
+            return false;
         }
 
         _externalSelectionCommandScratch.Clear();
@@ -126,11 +129,13 @@ public sealed class RtsSelectionFocusCommandSystem
             }
 
             commandRequests.RemoveAt(i);
-            _externalSelectionCommandScratch.Add(request.Kind);
+            _externalSelectionCommandScratch.Add(request);
         }
 
+        bool processedAny = false;
         for (int i = 0; i < _externalSelectionCommandScratch.Count; i++)
-            ProcessExternalSelectionCommand(context, _externalSelectionCommandScratch[i]);
+            processedAny |= ProcessExternalSelectionCommand(context, _externalSelectionCommandScratch[i]);
+        return processedAny;
     }
 
     public void ClearFocusedUnit(Context context)
@@ -202,10 +207,16 @@ public sealed class RtsSelectionFocusCommandSystem
         }
 
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
+        context.InputSystem.ClearQueuedMoveOrder();
+        int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
         context.InputSystem.IgnoreNextLeftMouseRelease = true;
         context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
-        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = false;
         context.SetCameraDragging?.Invoke(false);
+        context.LogSelectionDiagnostic?.Invoke(
+            $"focusEntityInputGuard entity={entity} frame={Time.frameCount} " +
+            $"ignoreRelease={context.InputSystem.IgnoreNextLeftMouseRelease} ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} " +
+            $"suppress={context.RuntimeGameplayStateSystem.SuppressNextWorldClick} clearedMoveCommands={removedMoveCommands}");
         return true;
     }
 
@@ -228,6 +239,7 @@ public sealed class RtsSelectionFocusCommandSystem
     private static bool IsExternalSelectionCommand(RtsSelectionCommandIntentKind kind)
     {
         return kind == RtsSelectionCommandIntentKind.SelectAll ||
+               kind == RtsSelectionCommandIntentKind.FocusUnit ||
                kind == RtsSelectionCommandIntentKind.SelectAllSoldiers ||
                kind == RtsSelectionCommandIntentKind.SelectAllVehicles ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
@@ -238,41 +250,46 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.CancelAttackTargetMode;
     }
 
-    private void ProcessExternalSelectionCommand(Context context, RtsSelectionCommandIntentKind kind)
+    private bool ProcessExternalSelectionCommand(Context context, RtsSelectionCommandIntentRequestElement request)
     {
-        switch (kind)
+        switch (request.Kind)
         {
+            case RtsSelectionCommandIntentKind.FocusUnit:
+                return request.HasScreenPosition != 0 &&
+                       context.TryFocusScreenPosition?.Invoke(new Vector2(request.ScreenPosition.x, request.ScreenPosition.y)) == true;
             case RtsSelectionCommandIntentKind.SelectAll:
                 SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.All);
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.SelectAllSoldiers:
                 SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.Soldiers);
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.SelectAllVehicles:
                 SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.Vehicles);
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.HoldPosition:
                 context.IssueHoldPositionOrder?.Invoke();
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.Stop:
                 context.IssueStopOrder?.Invoke();
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
                 context.DestroyFocusedUnit?.Invoke();
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.ToggleAttackTargetMode:
                 if (context.IssueFocusedMissileLauncherRadarAttack == null ||
                     !context.IssueFocusedMissileLauncherRadarAttack())
                 {
                     context.ArmFocusedAttackTargetMode?.Invoke();
                 }
-                break;
+                return true;
             case RtsSelectionCommandIntentKind.CancelAttackTargetMode:
                 context.CancelExplicitAttackTargetMode?.Invoke();
-                break;
+                return true;
+            default:
+                return false;
         }
     }
 }

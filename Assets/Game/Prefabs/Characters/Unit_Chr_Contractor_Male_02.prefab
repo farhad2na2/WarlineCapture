@@ -49,15 +49,49 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: price
+      value: 9500
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: speed
+      value: 4.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: f3b791c74ffa471d8a3200bf7bf95815, type: 2}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: maxHealth
+      value: 115
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: walkSpeed
+      value: 1.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: description
+      value: Private contract rifleman armed with a rifle. Flexible support unit
+        for base security and patrol work.
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: displayName
+      value: Security Contractor Male II
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackDamage
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 0.9
+      objectReference: {fileID: 0}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
       value: Unit_Chr_Contractor_Male_02
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4122219727259473096, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 23759086217692639, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       insertIndex: -1

@@ -49,15 +49,65 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: price
+      value: 20000
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: speed
+      value: 4.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: d18bfee8a685475f925212742b379079, type: 2}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: maxHealth
+      value: 160
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: walkSpeed
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: canRequest
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackRange
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: description
+      value: Command unit armed with a metal pistol. Provides a high-value leadership
+        presence for coordinated infantry operations.
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: displayName
+      value: Field Commander
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackDamage
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: aggroRangeCells
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: weaponDisplayName
+      value: Metal Pistol
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 0.7
+      objectReference: {fileID: 0}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
       value: Unit_Chr_Leader_Male_01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4122219727259473096, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 23759086217692639, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       insertIndex: -1

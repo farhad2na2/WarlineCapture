@@ -162,10 +162,12 @@ internal sealed class SelectionGameplayStartupSystem
                 pointerPosition => IsPointerOverGameplayUi(pointerPosition, out _),
                 TryIssueAttackOrderToClickedUnit,
                 TryIssueBoardTransportOrderToClickedUnit,
-                TryFocusUnit,
+                QueueFocusUnitCommand,
                 screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
                 IssueMoveOrder,
-                ProcessSelectionRectangleRequests);
+                ProcessSelectionRectangleRequests,
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                BuildClickDebugSummary);
         }
 
         RtsSelectionRuntimeCameraSystem.Context CreateRuntimeCameraContext()
@@ -245,12 +247,13 @@ internal sealed class SelectionGameplayStartupSystem
                 CreateHudFeedbackContext(),
                 SetCameraDragging,
                 value => explicitAttackTargetModeActive = value,
-                selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity,
                 ValidateControllableEntity,
                 IssueHoldPositionOrder,
                 IssueStopOrder,
                 DestroyFocusedUnit,
+                TryFocusUnitDirect,
                 IssueFocusedMissileLauncherRadarAttack,
                 ArmFocusedAttackTargetMode,
                 CancelExplicitAttackTargetMode);
@@ -288,7 +291,7 @@ internal sealed class SelectionGameplayStartupSystem
                 ProcessAttackCommandRequests,
                 ProcessTransportCommandRequests,
                 ProcessMoveCommandRequests,
-                selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 DescribeTransportBoardingEntity);
         }
 
@@ -429,7 +432,20 @@ internal sealed class SelectionGameplayStartupSystem
             return rtsSelectionPointerTargetCommandSystem.TryIssueBoardTransportOrderToClickedUnit(CreatePointerTargetCommandContext(), screenPosition);
         }
 
-        bool TryFocusUnit(Vector2 screenPosition)
+        bool QueueFocusUnitCommand(Vector2 screenPosition)
+        {
+            if (!rtsSelectionInputSystem.QueueFocusUnitCommandRequest(screenPosition, Time.frameCount))
+            {
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic($"focusCommandEnqueue result=False pos={screenPosition} frame={Time.frameCount}");
+                return false;
+            }
+
+            bool processed = rtsSelectionFocusCommandSystem.ProcessExternalSelectionCommandRequests(CreateFocusCommandContext());
+            selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic($"focusCommandProcessed result={processed} pos={screenPosition} frame={Time.frameCount}");
+            return processed;
+        }
+
+        bool TryFocusUnitDirect(Vector2 screenPosition)
         {
             return rtsSelectionPointerTargetCommandSystem.TryFocusUnit(CreatePointerTargetCommandContext(), screenPosition);
         }
@@ -456,6 +472,47 @@ internal sealed class SelectionGameplayStartupSystem
                 screenPosition,
                 em,
                 out bestEntity);
+        }
+
+        string BuildClickDebugSummary(Vector2 screenPosition)
+        {
+            if (!TryGetDefaultEntityManager(out EntityManager em))
+                return "world=missing";
+
+            EnsureRuntimeSelectionDependencies(em);
+            string clickedCell = TryGetClickedCell(screenPosition, em, out int2 cell, out Vector3 worldPoint)
+                ? $"{cell}@{worldPoint.x:F1},{worldPoint.y:F1},{worldPoint.z:F1}"
+                : "none";
+            string focused = DescribeClickDebugEntity(em, selectionStateSystem.FocusedUnit);
+            List<Entity> cached = selectionStateSystem.CachedSelectedMoveEntities;
+            string selected0 = cached.Count > 0 ? DescribeClickDebugEntity(em, cached[0]) : "none";
+            int selectedTagCount = CountSelectedTags(em);
+            return $"clickedCell={clickedCell} focused={focused} cachedCount={cached.Count} selectedTags={selectedTagCount} selected0={selected0} suppress={runtimeGameplayStateSystem.SuppressNextWorldClick} ignoreUntil={rtsSelectionInputSystem.IgnoreWorldCommandsUntilFrame}";
+        }
+
+        int CountSelectedTags(EntityManager em)
+        {
+            using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadOnly<SelectedUnitTag>());
+            return query.CalculateEntityCount();
+        }
+
+        string DescribeClickDebugEntity(EntityManager em, Entity entity)
+        {
+            if (entity == Entity.Null || !em.Exists(entity))
+                return "null";
+
+            string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+                ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+                : em.GetName(entity);
+            byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+            string grid = em.HasComponent<UnitGrid>(entity) ? em.GetComponentData<UnitGrid>(entity).Cell.ToString() : "none";
+            string target = em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none";
+            string pathRequest = em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none";
+            bool selected = em.HasComponent<SelectedUnitTag>(entity);
+            bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
+            bool manual = em.HasComponent<ManualMoveOrderTag>(entity);
+            bool engage = em.HasComponent<EngageTarget>(entity);
+            return $"{entity}/{source}/faction={faction}/selected={selected}/grid={grid}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/manual={manual}/engage={engage}";
         }
 
         bool TryGetFocusedUnitEntity(out EntityManager em, out Entity entity)

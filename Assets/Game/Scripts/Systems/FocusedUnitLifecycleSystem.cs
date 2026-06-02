@@ -52,6 +52,11 @@ public sealed class FocusedUnitLifecycleSystem
         EnsureEntityQueries(em);
         using NativeArray<Entity> entities = _selectedTagQuery.ToEntityArray(Allocator.Temp);
         int cacheBefore = selectionStateSystem.CachedSelectedMoveEntities.Count;
+        Entity focusedBefore = selectionStateSystem.FocusedUnit;
+        if (entities.Length > 0 || cacheBefore > 0 || (focusedBefore != Entity.Null && em.Exists(focusedBefore)))
+            Debug.Log(
+                $"[SelectionClick] ONE_SELECTION_DEBUG action=Clear reason={reason} frame={Time.frameCount} " +
+                $"selected={entities.Length} cacheBefore={cacheBefore} focusedBefore={DescribeSelectionEntity(em, focusedBefore)}");
         if (entities.Length > 0 || cacheBefore > 0)
             logSelectionDiagnostic?.Invoke($"result=Clear reason={reason} selected={entities.Length} cache={cacheBefore}");
 
@@ -77,6 +82,7 @@ public sealed class FocusedUnitLifecycleSystem
         {
             if (!em.Exists(focusedUnit))
             {
+                Debug.Log($"[SelectionClick] ONE_SELECTION_DEBUG action=ClearFocused reason=FocusedEntityMissing frame={Time.frameCount} focused={focusedUnit}");
                 selectionStateSystem.ClearFocusedUnit();
                 focusedUnit = Entity.Null;
             }
@@ -84,6 +90,9 @@ public sealed class FocusedUnitLifecycleSystem
                      !FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(focusedUnit).Id) &&
                      em.HasComponent<SelectedUnitTag>(focusedUnit))
             {
+                Debug.Log(
+                    $"[SelectionClick] ONE_SELECTION_DEBUG action=RemoveSelected reason=FocusedNotPlayer frame={Time.frameCount} " +
+                    $"focused={DescribeSelectionEntity(em, focusedUnit)}");
                 em.RemoveComponent<SelectedUnitTag>(focusedUnit);
             }
         }
@@ -148,12 +157,25 @@ public sealed class FocusedUnitLifecycleSystem
             return false;
 
         ClearCurrentSelection(em, selectionStateSystem, clearReason, logSelectionDiagnostic, clearHudSelection);
-        if (FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id) && !em.HasComponent<SelectedUnitTag>(entity))
+        byte factionId = em.GetComponentData<Faction>(entity).Id;
+        bool playerControlled = FactionIdentitySystem.IsPlayerControlled(factionId);
+        if (playerControlled && !em.HasComponent<SelectedUnitTag>(entity))
             em.AddComponent<SelectedUnitTag>(entity);
 
+        bool selectedAfterAdd = em.HasComponent<SelectedUnitTag>(entity);
+        bool cacheableAfterAdd = SelectionStateSystem.IsCacheableSelectedMoveEntity(em, entity);
         selectionStateSystem.CacheSelectedMoveEntity(em, entity);
         string description = describeEntity != null ? describeEntity(em, entity) : entity.ToString();
-        logSelectionDiagnostic?.Invoke($"result=Focus source={diagnosticSource} entity={description} cache={selectionStateSystem.CachedSelectedMoveEntities.Count}");
+        Debug.Log(
+            $"[SelectionClick] ONE_SELECTION_DEBUG action=Focus source={diagnosticSource} frame={Time.frameCount} " +
+            $"entity={description} selectedAfterAdd={selectedAfterAdd} cache={selectionStateSystem.CachedSelectedMoveEntities.Count} " +
+            $"playerControlled={playerControlled}");
+        logSelectionDiagnostic?.Invoke(
+            $"result=Focus source={diagnosticSource} entity={description} " +
+            $"selectedAfterAdd={selectedAfterAdd} cacheable={cacheableAfterAdd} playerControlled={playerControlled} " +
+            $"hasMove={em.HasComponent<UnitMove>(entity)} hasGrid={em.HasComponent<UnitGrid>(entity)} " +
+            $"disabled={em.HasComponent<Disabled>(entity)} passenger={em.HasComponent<UnitTransportPassenger>(entity)} " +
+            $"cache={selectionStateSystem.CachedSelectedMoveEntities.Count}");
 
         selectionStateSystem.SetFocusedUnit(entity);
         if (em.HasComponent<UnitAirMovement>(entity))
@@ -200,5 +222,27 @@ public sealed class FocusedUnitLifecycleSystem
 
         focusedEntity = bestEntity;
         return true;
+    }
+
+    private static string DescribeSelectionEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null)
+            return "null";
+        if (!em.Exists(entity))
+            return $"{entity}/missing";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity)
+            ? em.GetComponentData<Faction>(entity).Id
+            : (byte)0;
+        string grid = em.HasComponent<UnitGrid>(entity)
+            ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
+            : "none";
+        string target = em.HasComponent<UnitTarget>(entity)
+            ? em.GetComponentData<UnitTarget>(entity).Cell.ToString()
+            : "none";
+        return $"{entity}/{source}/faction={faction}/selected={em.HasComponent<SelectedUnitTag>(entity)}/grid={grid}/target={target}";
     }
 }

@@ -15,4 +15,10 @@ public struct FactionTintColor : IComponentData
     public float4 Value;
 }
 
+[MaterialProperty("_SnivelerBaseColor")]
+public struct FactionSnivelerBaseColor : IComponentData
+{
+    public float4 Value;
+}
+
 public struct FactionTintTarget : IComponentData { }

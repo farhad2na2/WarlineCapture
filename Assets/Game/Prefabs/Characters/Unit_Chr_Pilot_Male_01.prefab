@@ -49,15 +49,65 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: price
+      value: 7000
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: speed
+      value: 3.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: cb36b84638d84fe2b8af7a8dfcc48333, type: 2}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: maxHealth
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: walkSpeed
+      value: 1.45
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: canRequest
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackRange
+      value: 5.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: description
+      value: Aircraft crew member armed with a compact pistol. Lightly equipped personnel
+        for aviation-related operations.
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: displayName
+      value: Pilot Male I
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackDamage
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: aggroRangeCells
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: weaponDisplayName
+      value: Compact Pistol
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 0.9
+      objectReference: {fileID: 0}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
       value: Unit_Chr_Pilot_Male_01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4122219727259473096, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 23759086217692639, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       insertIndex: -1

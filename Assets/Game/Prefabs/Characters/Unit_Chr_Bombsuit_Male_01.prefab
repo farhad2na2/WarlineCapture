@@ -111,15 +111,93 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: price
+      value: 18000
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: speed
+      value: 2.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: config
       value: 
       objectReference: {fileID: 11400000, guid: 865ed7d34b7c4443ba7c2c54a5b9484f, type: 2}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: maxHealth
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: walkSpeed
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackRange
+      value: 4.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: description
+      value: Armored explosive-ordnance specialist. Slow but durable unit intended
+        for hazardous objectives and high-risk pushes.
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: displayName
+      value: Bomb Suit Specialist
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackDamage
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: aggroRangeCells
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: weaponDisplayName
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: roadSpeedMultiplier
+      value: 1.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: attackCooldownSeconds
+      value: 1.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: animationOrder.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationOrder.Array.data[1]'
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationOrder.Array.data[2]'
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationOrder.Array.data[3]'
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationOrder.Array.data[4]'
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationOrder.Array.data[5]'
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: 'animationOrder.Array.data[6]'
+      value: 13
+      objectReference: {fileID: 0}
     - target: {fileID: 2254344950327853479, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: m_Name
       value: Unit_Chr_Bombsuit_Male_01
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4122219727259473096, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 23759086217692639, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       insertIndex: -1

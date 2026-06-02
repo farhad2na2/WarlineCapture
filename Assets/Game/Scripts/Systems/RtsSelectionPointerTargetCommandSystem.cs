@@ -5,6 +5,8 @@ using UnityEngine;
 
 public sealed class RtsSelectionPointerTargetCommandSystem
 {
+    private const float UnitClickScreenFallbackRadiusPixels = 54f;
+
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
     public delegate bool TryGetPointerPositionDelegate(out Vector2 pointerPosition);
 
@@ -127,9 +129,11 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     {
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
+        context.LogSelectionDiagnostic?.Invoke($"moveAttempt pos={screenPosition} frame={Time.frameCount}");
 
         if (!context.InputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount))
         {
+            context.LogSelectionDiagnostic?.Invoke($"moveAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
             context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             context.ClearHudCommandMode?.Invoke();
             return;
@@ -195,8 +199,12 @@ public sealed class RtsSelectionPointerTargetCommandSystem
     public bool TryFocusUnit(Context context, Vector2 screenPosition)
     {
         if (!context.TryGetEntityManager(out EntityManager em))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=False reason=NoEntityManager pos={screenPosition} frame={Time.frameCount}");
             return false;
+        }
 
+        context.LogSelectionDiagnostic?.Invoke($"focusAttempt pos={screenPosition} frame={Time.frameCount}");
         if (!context.FocusedUnitLifecycleSystem.TryFocusUnit(
                 em,
                 screenPosition,
@@ -211,27 +219,107 @@ public sealed class RtsSelectionPointerTargetCommandSystem
                 context.ApplyHudSelection,
                 out _))
         {
+            context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=False reason=TryFocusUnitFailed pos={screenPosition} frame={Time.frameCount}");
             return false;
         }
 
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.TryFocusUnit");
+        context.InputSystem.ClearQueuedMoveOrder();
+        int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
         context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
         context.SetCameraDragging?.Invoke(false);
+        context.LogSelectionDiagnostic?.Invoke($"focusAttempt result=True pos={screenPosition} ignoreWorldUntil={context.InputSystem.IgnoreWorldCommandsUntilFrame} clearedMoveCommands={removedMoveCommands}");
         return true;
     }
 
     public bool TryGetClickedUnitEntity(Context context, Vector2 screenPosition, EntityManager em, out Entity bestEntity)
     {
         bestEntity = Entity.Null;
-        if (!TryGetClickedCell(context, screenPosition, em, out int2 clickedCell, out _))
-            return false;
+        bool hasFlatClickedCell = TryGetFlatClickedCell(context, screenPosition, em, out int2 flatClickedCell);
+        if (hasFlatClickedCell &&
+            context.FocusableUnitLookupSystem.TryGetClickedUnitEntity(
+                em,
+                context.WorldCamera,
+                flatClickedCell,
+                screenPosition,
+                out bestEntity))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"unitLookup result=True route=FlatGrid pos={screenPosition} cell={flatClickedCell} entity={DescribeClickedEntity(em, bestEntity)}");
+            return true;
+        }
 
-        return context.FocusableUnitLookupSystem.TryGetClickedUnitEntity(
+        if (!TryGetClickedCell(context, screenPosition, em, out int2 clickedCell, out _) ||
+            (hasFlatClickedCell && clickedCell.Equals(flatClickedCell)))
+        {
+            bool fallbackHit = context.FocusableUnitLookupSystem.TryGetClickedUnitEntityByScreenDistance(
+                em,
+                context.WorldCamera,
+                screenPosition,
+                UnitClickScreenFallbackRadiusPixels,
+                out bestEntity);
+            context.LogSelectionDiagnostic?.Invoke($"unitLookup result={fallbackHit} route=ScreenDistanceAfterFlat pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell} entity={DescribeClickedEntity(em, bestEntity)} radius={UnitClickScreenFallbackRadiusPixels}");
+            return fallbackHit;
+        }
+
+        if (context.FocusableUnitLookupSystem.TryGetClickedUnitEntity(
             em,
             context.WorldCamera,
             clickedCell,
             screenPosition,
+            out bestEntity))
+        {
+            context.LogSelectionDiagnostic?.Invoke($"unitLookup result=True route=SurfaceGrid pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell} surfaceCell={clickedCell} entity={DescribeClickedEntity(em, bestEntity)}");
+            return true;
+        }
+
+        bool screenHit = context.FocusableUnitLookupSystem.TryGetClickedUnitEntityByScreenDistance(
+            em,
+            context.WorldCamera,
+            screenPosition,
+            UnitClickScreenFallbackRadiusPixels,
             out bestEntity);
+        context.LogSelectionDiagnostic?.Invoke($"unitLookup result={screenHit} route=ScreenDistanceAfterSurface pos={screenPosition} flatCellValid={hasFlatClickedCell} flatCell={flatClickedCell} surfaceCell={clickedCell} entity={DescribeClickedEntity(em, bestEntity)} radius={UnitClickScreenFallbackRadiusPixels}");
+        return screenHit;
+    }
+
+    private static string DescribeClickedEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return "null";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity)
+            ? em.GetComponentData<Faction>(entity).Id
+            : (byte)0;
+        bool selected = em.HasComponent<SelectedUnitTag>(entity);
+        bool hasMove = em.HasComponent<UnitMove>(entity);
+        bool hasGrid = em.HasComponent<UnitGrid>(entity);
+        bool disabled = em.HasComponent<Disabled>(entity);
+        bool passenger = em.HasComponent<UnitTransportPassenger>(entity);
+        return $"{entity}/{source}/faction={faction}/selected={selected}/move={hasMove}/grid={hasGrid}/disabled={disabled}/passenger={passenger}";
+    }
+
+    private bool TryGetFlatClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell)
+    {
+        cell = default;
+        if (context.WorldCamera == null)
+            return false;
+
+        EnsureEntityQueries(em);
+        if (_gridConfigQuery.IsEmptyIgnoreFilter)
+            return false;
+
+        GridConfig grid = em.GetComponentData<GridConfig>(_gridConfigQuery.GetSingletonEntity());
+        Ray ray = context.WorldCamera.ScreenPointToRay(screenPosition);
+        Plane plane = new(Vector3.up, new Vector3(0f, grid.Origin.y, 0f));
+        if (!plane.Raycast(ray, out float distance))
+            return false;
+
+        Vector3 worldPoint = ray.GetPoint(distance);
+        cell = GridUtils.WorldToCell(grid, worldPoint);
+        return GridUtils.InBounds(cell, grid.Width, grid.Height);
     }
 
     public bool TryGetClickedCell(Context context, Vector2 screenPosition, EntityManager em, out int2 cell, out Vector3 worldPoint)
@@ -260,6 +348,8 @@ public sealed class RtsSelectionPointerTargetCommandSystem
 
         cell = target.Cell;
         worldPoint = target.WorldPoint;
+        context.LogSelectionDiagnostic?.Invoke(
+            $"moveTargetResolved pos={screenPosition} cell={cell} world={worldPoint} surface={target.HasSurface} surfaceId={(target.HasSurface ? target.Surface.SurfaceId : -1)} layer={(target.HasSurface ? target.Surface.LayerId : -1)} height={(target.HasSurface ? target.Surface.Height : worldPoint.y):F2}");
         return true;
     }
 

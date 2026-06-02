@@ -5,6 +5,7 @@ public sealed class SelectionStateSystem
 {
     public Entity FocusedUnit { get; private set; } = Entity.Null;
     public List<Entity> CachedSelectedMoveEntities { get; } = new();
+    public string LastSelectionLifecycleDebug { get; private set; } = "none";
 
     public void SetFocusedUnit(Entity entity)
     {
@@ -19,6 +20,11 @@ public sealed class SelectionStateSystem
     public void ClearSelectedMoveCache()
     {
         CachedSelectedMoveEntities.Clear();
+    }
+
+    public void RecordSelectionLifecycleDebug(string message)
+    {
+        LastSelectionLifecycleDebug = message ?? "none";
     }
 
     public void CacheSelectedMoveEntities(EntityManager entityManager, IReadOnlyList<Entity> entities)

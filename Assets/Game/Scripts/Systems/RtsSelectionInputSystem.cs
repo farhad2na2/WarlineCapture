@@ -237,6 +237,39 @@ public sealed class RtsSelectionInputSystem
         WriteState(state);
     }
 
+    public void ClearQueuedMoveOrder()
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        state.QueuedMoveOrderToken++;
+        state.HasQueuedMoveOrder = 0;
+        state.QueuedMoveOrderScreenPosition = default;
+        state.QueuedMoveOrderFrame = -1;
+        WriteState(state);
+    }
+
+    public int ClearPendingMoveCommandRequests()
+    {
+        if (!_inputStateSystem.TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
+                out _))
+        {
+            return 0;
+        }
+
+        int removed = 0;
+        for (int i = commandRequests.Length - 1; i >= 0; i--)
+        {
+            if (commandRequests[i].Kind != RtsSelectionCommandIntentKind.Move)
+                continue;
+
+            commandRequests.RemoveAt(i);
+            removed++;
+        }
+
+        return removed;
+    }
+
     public bool QueueSelectionRectangleRequest(
         RtsSelectionPointerRequestKind kind,
         Rect screenRect,
@@ -259,6 +292,17 @@ public sealed class RtsSelectionInputSystem
         return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
         {
             Kind = RtsSelectionCommandIntentKind.Move,
+            Frame = frame,
+            ScreenPosition = ToFloat2(screenPosition),
+            HasScreenPosition = 1
+        });
+    }
+
+    public bool QueueFocusUnitCommandRequest(Vector2 screenPosition, int frame)
+    {
+        return _inputStateSystem.TryEnqueueCommandRequest(new RtsSelectionCommandIntentRequestElement
+        {
+            Kind = RtsSelectionCommandIntentKind.FocusUnit,
             Frame = frame,
             ScreenPosition = ToFloat2(screenPosition),
             HasScreenPosition = 1

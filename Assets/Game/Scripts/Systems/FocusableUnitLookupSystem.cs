@@ -7,6 +7,8 @@ using UnityEngine;
 
 public sealed class FocusableUnitLookupSystem
 {
+    private const float ClickScreenFallbackTorsoHeight = 0.85f;
+
     private struct FocusableUnitCoverage
     {
         public int2 Cell;
@@ -35,17 +37,20 @@ public sealed class FocusableUnitLookupSystem
         _focusableUnitsQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<LocalToWorld>());
         _changedFocusableGridQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<LocalToWorld>());
         _changedFocusableGridQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitGrid>());
         _changedFocusableFootprintQuery = em.CreateEntityQuery(
             ComponentType.ReadOnly<Faction>(),
             ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>(),
             ComponentType.ReadOnly<UnitFootprint>(),
             ComponentType.ReadOnly<LocalToWorld>());
         _changedFocusableFootprintQuery.SetChangedVersionFilter(ComponentType.ReadOnly<UnitFootprint>());
@@ -103,6 +108,43 @@ public sealed class FocusableUnitLookupSystem
 
         if (candidates.Count == 0)
             _focusableUnitsByCell.Remove(cellIndex);
+
+        return bestEntity != Entity.Null;
+    }
+
+    public bool TryGetClickedUnitEntityByScreenDistance(
+        EntityManager em,
+        Camera worldCamera,
+        Vector2 screenPosition,
+        float maxDistancePixels,
+        out Entity bestEntity)
+    {
+        bestEntity = Entity.Null;
+        if (worldCamera == null || maxDistancePixels <= 0f)
+            return false;
+
+        EnsureEntityQueries(em);
+        RefreshLookup(em);
+
+        float maxDistanceSq = maxDistancePixels * maxDistancePixels;
+        float bestDistanceSq = maxDistanceSq;
+        using NativeArray<Entity> entities = _focusableUnitsQuery.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < entities.Length; i++)
+        {
+            Entity entity = entities[i];
+            if (!IsFocusableUnitCandidate(em, entity))
+                continue;
+
+            Vector3 worldPosition = em.GetComponentData<LocalToWorld>(entity).Position;
+            float distanceSq = math.min(
+                ScreenDistanceSq(worldCamera, worldPosition, screenPosition),
+                ScreenDistanceSq(worldCamera, worldPosition + Vector3.up * ClickScreenFallbackTorsoHeight, screenPosition));
+            if (distanceSq < bestDistanceSq)
+            {
+                bestDistanceSq = distanceSq;
+                bestEntity = entity;
+            }
+        }
 
         return bestEntity != Entity.Null;
     }
@@ -211,6 +253,7 @@ public sealed class FocusableUnitLookupSystem
             !em.HasComponent<StaticGridBlocker>(entity) &&
             em.HasComponent<Faction>(entity) &&
             em.HasComponent<UnitGrid>(entity) &&
+            em.HasComponent<UnitMove>(entity) &&
             em.HasComponent<UnitFootprint>(entity) &&
             em.HasComponent<LocalToWorld>(entity);
     }
@@ -277,5 +320,14 @@ public sealed class FocusableUnitLookupSystem
     private static int GetFocusablePadding(EntityManager em, Entity entity)
     {
         return em.HasComponent<UnitAirMovement>(entity) ? 4 : 1;
+    }
+
+    private static float ScreenDistanceSq(Camera worldCamera, Vector3 worldPosition, Vector2 screenPosition)
+    {
+        Vector3 screen = worldCamera.WorldToScreenPoint(worldPosition);
+        if (screen.z <= 0f)
+            return float.MaxValue;
+
+        return (new Vector2(screen.x, screen.y) - screenPosition).sqrMagnitude;
     }
 }

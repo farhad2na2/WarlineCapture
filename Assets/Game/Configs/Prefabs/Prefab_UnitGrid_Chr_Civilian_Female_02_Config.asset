@@ -33,6 +33,9 @@ MonoBehaviour:
   arriveDistance: 0.05
   displayName: Civilian Female II
   description: Non-combatant female civilian. Can be targeted manually but does not automatically engage enemies.
+  unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  tintUnitModelRenderers: 1
   resourceHaulerBarrelCapacity: 0
   resourceHaulerFillDurationSeconds: 2
   resourceHaulerUnloadDurationSeconds: 1.5

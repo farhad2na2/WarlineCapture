@@ -32,18 +32,18 @@ public partial struct VehicleDestroyedVisualSystem : ISystem
         if (!em.Exists(vehicle))
             return;
 
-        if (em.HasComponent<VehicleSelectionMarkerInstanceReference>(vehicle))
+        if (em.HasComponent<UnitSelectionMarkerInstanceReference>(vehicle))
         {
-            VehicleSelectionMarkerInstanceReference marker = em.GetComponentData<VehicleSelectionMarkerInstanceReference>(vehicle);
+            UnitSelectionMarkerInstanceReference marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(vehicle);
             VehicleVisualEntityUtility.DestroyVisualTree(em, marker.Instance);
-            em.RemoveComponent<VehicleSelectionMarkerInstanceReference>(vehicle);
+            em.RemoveComponent<UnitSelectionMarkerInstanceReference>(vehicle);
         }
 
-        if (em.HasComponent<VehicleHealthBarInstanceReference>(vehicle))
+        if (em.HasComponent<UnitHealthBarInstanceReference>(vehicle))
         {
-            VehicleHealthBarInstanceReference healthBar = em.GetComponentData<VehicleHealthBarInstanceReference>(vehicle);
+            UnitHealthBarInstanceReference healthBar = em.GetComponentData<UnitHealthBarInstanceReference>(vehicle);
             VehicleVisualEntityUtility.DestroyVisualTree(em, healthBar.Instance);
-            em.RemoveComponent<VehicleHealthBarInstanceReference>(vehicle);
+            em.RemoveComponent<UnitHealthBarInstanceReference>(vehicle);
         }
 
         HideAliveVisuals(em, vehicle);

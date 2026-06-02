@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class SelectionRuntimeDiagnosticsSystem
 {
+    private const string SelectionClickPrefix = "[SelectionClick]";
+
     public void EnqueueSelectionDiagnostic(string message)
     {
         World world = World.DefaultGameObjectInjectionWorld;
@@ -13,6 +15,12 @@ public sealed class SelectionRuntimeDiagnosticsSystem
         EntityManager em = world.EntityManager;
         if (ShouldQueueTransportBoardingDiagnostics(em))
             EnqueueTransportBoardingDiagnostic(em, $"[Selection] {message}");
+    }
+
+    public void LogSelectionClickDiagnostic(string message)
+    {
+        Debug.Log($"{SelectionClickPrefix} {message}");
+        EnqueueSelectionDiagnostic(message);
     }
 
     private static bool ShouldQueueTransportBoardingDiagnostics(EntityManager em)

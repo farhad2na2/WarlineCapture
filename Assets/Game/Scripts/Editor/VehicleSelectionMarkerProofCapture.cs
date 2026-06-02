@@ -98,8 +98,8 @@ public static class VehicleSelectionMarkerProofCapture
             if (firstSelectedVehicle == Entity.Null)
                 firstSelectedVehicle = entity;
 
-            bool hasPrefabRef = em.HasComponent<VehicleSelectionMarkerPrefabReference>(entity);
-            bool hasMarkerRef = em.HasComponent<VehicleSelectionMarkerInstanceReference>(entity);
+            bool hasPrefabRef = em.HasComponent<UnitSelectionMarkerPrefabReference>(entity);
+            bool hasMarkerRef = em.HasComponent<UnitSelectionMarkerInstanceReference>(entity);
             if (hasPrefabRef)
                 selectedWithPrefabRef++;
             if (hasMarkerRef)
@@ -122,7 +122,7 @@ public static class VehicleSelectionMarkerProofCapture
 
             if (hasMarkerRef)
             {
-                Entity marker = em.GetComponentData<VehicleSelectionMarkerInstanceReference>(entity).Instance;
+                Entity marker = em.GetComponentData<UnitSelectionMarkerInstanceReference>(entity).Instance;
                 report.Append(" marker=");
                 report.Append(marker);
                 report.Append(" markerExists=");
@@ -208,9 +208,9 @@ public static class VehicleSelectionMarkerProofCapture
             vehiclePrefabs++;
             if (em.HasComponent<UnitSourcePrefabKey>(prefab))
                 vehiclePrefabsWithSourceKey++;
-            if (em.HasComponent<VehicleSelectionMarkerPrefabReference>(prefab))
+            if (em.HasComponent<UnitSelectionMarkerPrefabReference>(prefab))
                 vehiclePrefabsWithMarkerRef++;
-            if (em.HasComponent<VehicleHealthBarPrefabReference>(prefab))
+            if (em.HasComponent<UnitHealthBarPrefabReference>(prefab))
                 vehiclePrefabsWithHealthRef++;
             if (em.HasComponent<VehicleDestroyedVisualPrefabReference>(prefab))
                 vehiclePrefabsWithDestroyedRef++;
@@ -427,8 +427,8 @@ public static class VehicleSelectionMarkerProofCapture
 
         EntityManager em = world.EntityManager;
         return em.Exists(vehicle) &&
-               em.HasComponent<VehicleSelectionMarkerInstanceReference>(vehicle) &&
-               em.Exists(em.GetComponentData<VehicleSelectionMarkerInstanceReference>(vehicle).Instance);
+               em.HasComponent<UnitSelectionMarkerInstanceReference>(vehicle) &&
+               em.Exists(em.GetComponentData<UnitSelectionMarkerInstanceReference>(vehicle).Instance);
     }
 
     private static bool TryClickDeploy()

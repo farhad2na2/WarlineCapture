@@ -7,7 +7,13 @@ using Unity.Collections;
 public class InitialUnitsSpawnerAuthoring : MonoBehaviour
 {
     [SerializeField] private InitialUnitsSpawnerAuthoringConfig config;
+    [SerializeField] private GameObject unitSelectionMarkerPrefab;
+    [SerializeField] private GameObject unitHealthBarPrefab;
     private GameObject BlockerPrefab => config != null ? config.BlockerPrefab : null;
+    private GameObject UnitSelectionMarkerPrefab =>
+        unitSelectionMarkerPrefab != null ? unitSelectionMarkerPrefab : config != null ? config.UnitSelectionMarkerPrefab : null;
+    private GameObject UnitHealthBarPrefab =>
+        unitHealthBarPrefab != null ? unitHealthBarPrefab : config != null ? config.UnitHealthBarPrefab : null;
     private int BlockerCount => config != null ? config.BlockerCount : 2000;
     private int SpawnRadiusCells => config != null ? config.SpawnRadiusCells : 5;
     private float RespawnDelaySeconds => config != null ? config.RespawnDelaySeconds : 10f;
@@ -21,12 +27,21 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
     {
         public override void Bake(InitialUnitsSpawnerAuthoring authoring)
         {
+            if (authoring.config != null)
+                DependsOn(authoring.config);
+
             var entity = GetEntity(TransformUsageFlags.None);
 
             AddComponent(entity, new InitialUnitsSpawnConfig
             {
                 BlockerPrefab = authoring.BlockerPrefab != null
                     ? GetEntity(authoring.BlockerPrefab, TransformUsageFlags.Dynamic)
+                    : Entity.Null,
+                UnitSelectionMarkerPrefab = authoring.UnitSelectionMarkerPrefab != null
+                    ? GetEntity(authoring.UnitSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
+                    : Entity.Null,
+                UnitHealthBarPrefab = authoring.UnitHealthBarPrefab != null
+                    ? GetEntity(authoring.UnitHealthBarPrefab, TransformUsageFlags.Dynamic)
                     : Entity.Null,
                 BlockerCount = authoring.BlockerCount,
                 SpawnRadiusCells = math.max(0, authoring.SpawnRadiusCells),
@@ -59,6 +74,19 @@ public class InitialUnitsSpawnerAuthoring : MonoBehaviour
                     ? GetEntity(authoring.BlockerPrefab, TransformUsageFlags.Dynamic)
                     : Entity.Null
             });
+
+            if (authoring.UnitSelectionMarkerPrefab != null || authoring.UnitHealthBarPrefab != null)
+            {
+                AddComponent(entity, new UnitSharedVisualPrefabReferences
+                {
+                    SelectionMarkerPrefab = authoring.UnitSelectionMarkerPrefab != null
+                        ? GetEntity(authoring.UnitSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
+                        : Entity.Null,
+                    HealthBarPrefab = authoring.UnitHealthBarPrefab != null
+                        ? GetEntity(authoring.UnitHealthBarPrefab, TransformUsageFlags.Dynamic)
+                        : Entity.Null
+                });
+            }
 
             DynamicBuffer<InitialUnitsFactionSpawnEntry> factionSpawns = AddBuffer<InitialUnitsFactionSpawnEntry>(entity);
             DynamicBuffer<InitialUnitsFactionUnitSpawnEntry> unitSpawns = AddBuffer<InitialUnitsFactionUnitSpawnEntry>(entity);

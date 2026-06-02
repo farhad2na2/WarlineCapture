@@ -281,15 +281,6 @@ internal sealed class BuildingSelectionSystem
             return true;
         }
 
-        if (context.TryIssueMoveOrderToBuilding != null &&
-            context.TryIssueMoveOrderToBuilding(min, size))
-        {
-            context.SuppressNextWorldClick?.Invoke();
-            context.RuntimeBuildingSystem?.ClearSelection();
-            context.RefreshMarkers?.Invoke();
-            return true;
-        }
-
         context.RuntimeBuildingSystem?.SelectBuilding(buildingId);
         context.SuppressNextWorldClick?.Invoke();
         context.RefreshMarkers?.Invoke();

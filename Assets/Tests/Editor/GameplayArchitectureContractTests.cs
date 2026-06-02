@@ -18859,7 +18859,7 @@ public sealed class GameplayArchitectureContractTests
         const string runtimeContextPath = "Assets/Game/Scripts/Systems/BuildingRuntimeContextSystem.cs";
         const string buildingConfigPath = "Assets/Game/Scripts/Configs/WarlineCaptureConfigs.cs";
         const string sharedMarkerPrefabPath = "Assets/Game/Prefabs/Buildings/BuildingSelectionMarker.prefab";
-        const string unitPrefabPath = "Assets/Game/Prefabs/Characters/Unit.prefab";
+        const string unitSelectionMarkerSystemPath = "Assets/Game/Scripts/Systems/UnitSelectionMarkerSystem.cs";
 
         Assert.IsTrue(File.Exists(roadmapPath), "The single building marker roadmap must be tracked.");
         Assert.IsTrue(File.Exists(markerSystemPath), "Building selection marker visual ownership must live in BuildingSelectionMarkerSystem.");
@@ -18873,7 +18873,7 @@ public sealed class GameplayArchitectureContractTests
         string compositionSource = File.ReadAllText(compositionSourcePath);
         string runtimeContext = File.ReadAllText(runtimeContextPath);
         string buildingConfig = File.ReadAllText(buildingConfigPath);
-        string unitPrefab = File.ReadAllText(unitPrefabPath);
+        string unitSelectionMarkerSystem = File.ReadAllText(unitSelectionMarkerSystemPath);
 
         StringAssert.Contains("building selection marker visual ownership belongs in `BuildingSelectionMarkerSystem`", contract);
         StringAssert.Contains("Building prefabs under `Assets/Game/Prefabs/Buildings` must not contain `SelectionMarker`, `FactionMarker`, or `Destroyed` children", contract);
@@ -18882,7 +18882,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("internal readonly BuildingSelectionMarkerSystem BuildingSelectionMarkerSystem = new();", compositionSource);
         StringAssert.Contains("new BuildingSelectionMarkerSystem.Context", runtimeContext);
         StringAssert.Contains("BuildingSelectionMarkerPrefab", buildingConfig);
-        StringAssert.Contains("SelectionMarkerAuthoring", unitPrefab);
+        StringAssert.Contains("UnitSelectionMarkerSystem", unitSelectionMarkerSystem);
 
         Assert.IsFalse(
             runtimeData.Contains("SelectionMarker", StringComparison.Ordinal),
@@ -19078,20 +19078,29 @@ public sealed class GameplayArchitectureContractTests
     public void VehicleVisualAdornmentsMustUseRuntimeVisualBoundaries()
     {
         const string roadmapPath = "Design/Architecture/vehicle_visual_adornments_refactor_roadmap.md";
-        const string selectionMarkerSystemPath = "Assets/Game/Scripts/Systems/VehicleSelectionMarkerSystem.cs";
-        const string healthBarSystemPath = "Assets/Game/Scripts/Systems/VehicleHealthBarSystem.cs";
+        const string selectionMarkerSystemPath = "Assets/Game/Scripts/Systems/UnitSelectionMarkerSystem.cs";
+        const string healthBarSystemPath = "Assets/Game/Scripts/Systems/UnitRuntimeHealthBarSystem.cs";
         const string destroyedVisualSystemPath = "Assets/Game/Scripts/Systems/VehicleDestroyedVisualSystem.cs";
         const string visualComponentsPath = "Assets/Game/Scripts/Components/UnitVisualComponents.cs";
+        const string unitPrefabRegistryComponentsPath = "Assets/Game/Scripts/Components/UnitPrefabRegistryComponents.cs";
+        const string initialUnitsSpawnComponentsPath = "Assets/Game/Scripts/Components/InitialUnitsSpawnComponents.cs";
+        const string visualReferenceBackfillSystemPath = "Assets/Game/Scripts/Systems/UnitVisualPrefabReferenceBackfillSystem.cs";
+        const string unitPrefabRegistryAuthoringPath = "Assets/Game/Scripts/Authorings/UnitPrefabRegistryAuthoring.cs";
+        const string unitPrefabRegistryConfigPath = "Assets/Game/Scripts/Configs/UnitPrefabRegistryAuthoringConfig.cs";
         const string unitDeathSystemPath = "Assets/Game/Scripts/Systems/UnitDeathSystem.cs";
         const string factionVisualSystemPath = "Assets/Game/Scripts/Systems/FactionVisualSystem.cs";
+        const string factionTintBackfillSystemPath = "Assets/Game/Scripts/Systems/UnitFactionTintTargetBackfillSystem.cs";
         const string vehicleMarkerPrefabPath = "Assets/Game/Prefabs/Vehicles/VehicleSelectionMarker.prefab";
         const string vehicleHealthBarPrefabPath = "Assets/Game/Prefabs/Vehicles/VehicleHealthBar.prefab";
         const string characterUnitPrefabPath = "Assets/Game/Prefabs/Characters/Unit.prefab";
 
         Assert.IsTrue(File.Exists(roadmapPath), "The vehicle visual adornments roadmap must be tracked.");
-        Assert.IsTrue(File.Exists(selectionMarkerSystemPath), "Vehicle multi-selection markers must live in VehicleSelectionMarkerSystem.");
-        Assert.IsTrue(File.Exists(healthBarSystemPath), "Vehicle health bars must live in VehicleHealthBarSystem.");
+        Assert.IsTrue(File.Exists(selectionMarkerSystemPath), "Vehicle multi-selection markers must live in UnitSelectionMarkerSystem.");
+        Assert.IsTrue(File.Exists(healthBarSystemPath), "Vehicle health bars must live in UnitRuntimeHealthBarSystem.");
         Assert.IsTrue(File.Exists(destroyedVisualSystemPath), "Vehicle destroyed visuals must live in VehicleDestroyedVisualSystem.");
+        Assert.IsTrue(File.Exists(unitPrefabRegistryComponentsPath), "Shared unit visual prefab references must live on an explicit unit startup ECS boundary.");
+        Assert.IsTrue(File.Exists(initialUnitsSpawnComponentsPath), "Initial spawned units must be able to receive shared unit visual prefab references from the initial-spawn ECS boundary.");
+        Assert.IsTrue(File.Exists(factionTintBackfillSystemPath), "Unit faction tint targets must be projected by a runtime ECS backfill boundary.");
         Assert.IsTrue(File.Exists(vehicleMarkerPrefabPath), "Vehicle selection must use a shared marker prefab.");
         Assert.IsTrue(File.Exists(vehicleHealthBarPrefabPath), "Vehicle health bars must use a shared health bar prefab.");
 
@@ -19100,39 +19109,62 @@ public sealed class GameplayArchitectureContractTests
         string config = File.ReadAllText(WarlineCaptureConfigsPath);
         string unitAuthoring = File.ReadAllText(UnitGridAuthoringPath);
         string visualComponents = File.ReadAllText(visualComponentsPath);
+        string unitPrefabRegistryComponents = File.ReadAllText(unitPrefabRegistryComponentsPath);
+        string initialUnitsSpawnComponents = File.ReadAllText(initialUnitsSpawnComponentsPath);
+        string visualReferenceBackfillSystem = File.ReadAllText(visualReferenceBackfillSystemPath);
+        string unitPrefabRegistryAuthoring = File.ReadAllText(unitPrefabRegistryAuthoringPath);
+        string unitPrefabRegistryConfig = File.ReadAllText(unitPrefabRegistryConfigPath);
         string selectionMarkerSystem = File.ReadAllText(selectionMarkerSystemPath);
         string healthBarSystem = File.ReadAllText(healthBarSystemPath);
         string destroyedVisualSystem = File.ReadAllText(destroyedVisualSystemPath);
         string unitDeathSystem = File.ReadAllText(unitDeathSystemPath);
         string factionVisualSystem = File.ReadAllText(factionVisualSystemPath);
+        string factionTintBackfillSystem = File.ReadAllText(factionTintBackfillSystemPath);
         string characterUnitPrefab = File.ReadAllText(characterUnitPrefabPath);
         string vehicleMarkerPrefab = File.ReadAllText(vehicleMarkerPrefabPath);
         string vehicleHealthBarPrefab = File.ReadAllText(vehicleHealthBarPrefabPath);
 
-        StringAssert.Contains("Vehicle visual adjunct projection belongs in narrow ECS boundaries", contract);
+        StringAssert.Contains("Unit visual adjunct projection must share unit-level ECS boundaries for vehicles and characters", contract);
         StringAssert.Contains("Vehicle prefabs under `Assets/Game/Prefabs/Vehicles` must not contain or inherit `SelectionMarker`, `FactionMarker`, `HealthBar`, or `Destroyed` children", contract);
-        StringAssert.Contains("Character prefabs may keep their current child-authored marker", contract);
-        StringAssert.Contains("VehicleSelectionMarkerSystem", roadmap);
-        StringAssert.Contains("VehicleHealthBarSystem", roadmap);
+        StringAssert.Contains("Do not add duplicate vehicle-only or character-only marker/health-bar systems for unit visuals", contract);
+        StringAssert.Contains("UnitSelectionMarkerSystem", roadmap);
+        StringAssert.Contains("UnitRuntimeHealthBarSystem", roadmap);
         StringAssert.Contains("VehicleDestroyedVisualSystem", roadmap);
         StringAssert.Contains("VehicleDestroyedVisualPrefab", config);
+        StringAssert.Contains("UnitSelectionMarkerPrefab", config);
+        StringAssert.Contains("UnitHealthBarPrefab", config);
+        StringAssert.Contains("TintUnitModelRenderers", config);
         StringAssert.Contains("VehicleSelectionMarkerPrefab", config);
         StringAssert.Contains("VehicleHealthBarPrefab", config);
         StringAssert.Contains("TintVehicleModelRenderers", config);
         StringAssert.Contains("VehicleDestroyedVisualPrefabReference", unitAuthoring);
-        StringAssert.Contains("VehicleSelectionMarkerPrefabReference", unitAuthoring);
-        StringAssert.Contains("VehicleHealthBarPrefabReference", unitAuthoring);
-        StringAssert.Contains("AddVehicleFactionTintTargets", unitAuthoring);
+        StringAssert.Contains("UnitSelectionMarkerPrefabReference", unitAuthoring);
+        StringAssert.Contains("UnitHealthBarPrefabReference", unitAuthoring);
+        StringAssert.Contains("UnitSharedVisualPrefabReferences", unitPrefabRegistryComponents);
+        StringAssert.Contains("UnitSelectionMarkerPrefab", initialUnitsSpawnComponents);
+        StringAssert.Contains("UnitHealthBarPrefab", initialUnitsSpawnComponents);
+        StringAssert.Contains("MergeInitialSpawnReferences", visualReferenceBackfillSystem);
+        StringAssert.Contains("UnitSharedVisualPrefabReferences", unitPrefabRegistryAuthoring);
+        StringAssert.Contains("UnitSelectionMarkerPrefab", unitPrefabRegistryConfig);
+        StringAssert.Contains("UnitHealthBarPrefab", unitPrefabRegistryConfig);
+        Assert.IsFalse(unitAuthoring.Contains("AddUnitFactionTintTargets", StringComparison.Ordinal), "UnitGridAuthoring must not mutate nested model renderer entities during baking.");
+        StringAssert.Contains("UnitFactionTintTargetBackfillSystem", factionTintBackfillSystem);
+        StringAssert.Contains("MaterialMeshInfo", factionTintBackfillSystem);
+        StringAssert.Contains("UnitGrid", factionTintBackfillSystem);
+        StringAssert.Contains("SelectionMarkerTag", factionTintBackfillSystem);
+        StringAssert.Contains("HealthBarFill", factionTintBackfillSystem);
         StringAssert.Contains("VehicleDestroyedVisualSpawnRequest", visualComponents);
         StringAssert.Contains("VehicleDestroyedVisualSpawnRequest", unitDeathSystem);
-        StringAssert.Contains("VehicleSelectionMarkerInstanceReference", selectionMarkerSystem);
-        StringAssert.Contains("VehicleHealthBarInstanceReference", healthBarSystem);
+        StringAssert.Contains("UnitSelectionMarkerInstanceReference", selectionMarkerSystem);
+        StringAssert.Contains("UnitHealthBarInstanceReference", healthBarSystem);
         StringAssert.Contains("VehicleDestroyedVisualInstanceReference", destroyedVisualSystem);
         StringAssert.Contains("TryResolveFaction", factionVisualSystem);
         StringAssert.Contains("ParentLookup", factionVisualSystem);
-        StringAssert.Contains("SelectionMarkerAuthoring", characterUnitPrefab);
-        StringAssert.Contains("m_Name: FactionMarker", characterUnitPrefab);
-        StringAssert.Contains("UnitHealthBarAuthoring", characterUnitPrefab);
+        Assert.IsFalse(characterUnitPrefab.Contains("m_Name: SelectionMarker", StringComparison.Ordinal), "Character base prefab must not contain a child SelectionMarker.");
+        Assert.IsFalse(characterUnitPrefab.Contains("m_Name: FactionMarker", StringComparison.Ordinal), "Character base prefab must not contain a child FactionMarker.");
+        Assert.IsFalse(characterUnitPrefab.Contains("m_Name: HealthBar", StringComparison.Ordinal), "Character base prefab must not contain a child HealthBar.");
+        Assert.IsFalse(characterUnitPrefab.Contains("SelectionMarkerAuthoring", StringComparison.Ordinal), "Character base prefab must not depend on prefab-child SelectionMarkerAuthoring.");
+        Assert.IsFalse(characterUnitPrefab.Contains("UnitHealthBarAuthoring", StringComparison.Ordinal), "Character base prefab must not depend on prefab-child UnitHealthBarAuthoring.");
         Assert.IsFalse(
             vehicleMarkerPrefab.Contains("SelectionMarkerAuthoring", StringComparison.Ordinal),
             "The shared vehicle marker must not carry unit selection marker authoring.");
@@ -19160,6 +19192,27 @@ public sealed class GameplayArchitectureContractTests
             Environment.NewLine +
             string.Join(Environment.NewLine, vehiclePrefabViolations));
 
+        string[] characterPrefabViolations = Directory.GetFiles("Assets/Game/Prefabs/Characters", "Unit*.prefab", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path =>
+            {
+                UnityEngine.GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(path);
+                if (prefab == null)
+                    return true;
+
+                return prefab.transform.Find("SelectionMarker") != null ||
+                    prefab.transform.Find("FactionMarker") != null ||
+                    prefab.transform.Find("HealthBar") != null;
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            characterPrefabViolations,
+            "Character prefabs must not contain or inherit SelectionMarker, FactionMarker, or HealthBar children:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, characterPrefabViolations));
+
         string[] missingVehicleModels = Directory.GetFiles("Assets/Game/Prefabs/Vehicles", "Unit_Veh*.prefab", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
             .Where(path =>
@@ -19175,6 +19228,22 @@ public sealed class GameplayArchitectureContractTests
             "Vehicle prefabs must keep their Model child after visual adornment cleanup:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, missingVehicleModels));
+
+        string[] missingCharacterModels = Directory.GetFiles("Assets/Game/Prefabs/Characters", "Unit*.prefab", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path =>
+            {
+                UnityEngine.GameObject prefab = UnityEditor.AssetDatabase.LoadAssetAtPath<UnityEngine.GameObject>(path);
+                return prefab == null || prefab.transform.Find("Model") == null;
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            missingCharacterModels,
+            "Character prefabs must keep their Model child after visual adornment cleanup:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, missingCharacterModels));
 
         string[] missingVehicleVisualConfigs = Directory.GetFiles("Assets/Game/Configs/Prefabs", "Prefab_UnitGrid_Veh*.asset", SearchOption.TopDirectoryOnly)
             .Select(NormalizePath)
@@ -19193,6 +19262,23 @@ public sealed class GameplayArchitectureContractTests
             "Vehicle configs must reference destroyed visual, selection marker, and health bar prefabs:" +
             Environment.NewLine +
             string.Join(Environment.NewLine, missingVehicleVisualConfigs));
+
+        string[] missingCharacterVisualConfigs = Directory.GetFiles("Assets/Game/Configs/Prefabs", "Prefab_UnitGrid_Chr*.asset", SearchOption.TopDirectoryOnly)
+            .Select(NormalizePath)
+            .Where(path =>
+            {
+                string asset = File.ReadAllText(path);
+                return asset.Contains("unitSelectionMarkerPrefab: {fileID: 0}", StringComparison.Ordinal) ||
+                    asset.Contains("unitHealthBarPrefab: {fileID: 0}", StringComparison.Ordinal);
+            })
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.IsEmpty(
+            missingCharacterVisualConfigs,
+            "Character configs must reference shared unit selection marker and health bar prefabs:" +
+            Environment.NewLine +
+            string.Join(Environment.NewLine, missingCharacterVisualConfigs));
     }
 
     [Test]

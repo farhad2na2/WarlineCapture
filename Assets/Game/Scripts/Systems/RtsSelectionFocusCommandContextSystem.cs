@@ -28,6 +28,7 @@ public sealed class RtsSelectionFocusCommandContextSystem
         Action issueHoldPositionOrder,
         Action issueStopOrder,
         Action destroyFocusedUnit,
+        Func<Vector2, bool> tryFocusScreenPosition,
         Func<bool> issueFocusedMissileLauncherRadarAttack,
         Func<bool> armFocusedAttackTargetMode,
         Action cancelExplicitAttackTargetMode)
@@ -59,6 +60,7 @@ public sealed class RtsSelectionFocusCommandContextSystem
             issueHoldPositionOrder,
             issueStopOrder,
             destroyFocusedUnit,
+            tryFocusScreenPosition,
             issueFocusedMissileLauncherRadarAttack,
             armFocusedAttackTargetMode,
             cancelExplicitAttackTargetMode);

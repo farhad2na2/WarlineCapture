@@ -30,7 +30,11 @@ public class UnitPrefabRegistryAuthoringConfig : ScriptableObject
 {
     [SerializeField] private List<GameObject> unitSpawnPrefabs = new();
     [SerializeField] private List<UnitImpostorAtlasEntry> impostorAtlases = new();
+    [SerializeField] private GameObject unitSelectionMarkerPrefab;
+    [SerializeField] private GameObject unitHealthBarPrefab;
 
     public List<GameObject> UnitSpawnPrefabs => unitSpawnPrefabs;
     public List<UnitImpostorAtlasEntry> ImpostorAtlases => impostorAtlases;
+    public GameObject UnitSelectionMarkerPrefab => unitSelectionMarkerPrefab;
+    public GameObject UnitHealthBarPrefab => unitHealthBarPrefab;
 }

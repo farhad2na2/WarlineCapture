@@ -53,6 +53,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: a3d36fd8847164cc596e0b5ba7bd9bb9, type: 2}
     - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
+      propertyPath: displayName
+      value: Rifleman Male IV
+      objectReference: {fileID: 0}
+    - target: {fileID: 106347591433935587, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       propertyPath: attackTraceColor.b
       value: 0.4
       objectReference: {fileID: 0}
@@ -69,7 +73,8 @@ PrefabInstance:
       value: Unit_Chr_Soldier_Male_02_Alt_04
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4122219727259473096, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 23759086217692639, guid: 5680e7910ed3741beba6f07116b6b03c, type: 3}
       insertIndex: -1

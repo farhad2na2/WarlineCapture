@@ -3,11 +3,11 @@ using Unity.Entities;
 using Unity.Transforms;
 
 [UpdateBefore(typeof(UnitHealthBarSystem))]
-public partial struct VehicleHealthBarSystem : ISystem
+public partial struct UnitRuntimeHealthBarSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<VehicleHealthBarPrefabReference>();
+        state.RequireForUpdate<UnitHealthBarPrefabReference>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -16,19 +16,18 @@ public partial struct VehicleHealthBarSystem : ISystem
         var create = new NativeList<Entity>(Allocator.Temp);
         var remove = new NativeList<Entity>(Allocator.Temp);
 
-        foreach (var (movement, health, entity) in SystemAPI
-                 .Query<RefRO<UnitMovementBehavior>, RefRO<UnitHealth>>()
+        foreach (var (health, entity) in SystemAPI
+                 .Query<RefRO<UnitHealth>>()
                  .WithEntityAccess())
         {
-            if (movement.ValueRO.UsesVehicleMotion == 0)
-                continue;
-
             bool shouldShow = health.ValueRO.Current > 0 &&
                               em.HasComponent<RecentDamageHealthBarVisibility>(entity) &&
-                              em.HasComponent<VehicleHealthBarPrefabReference>(entity);
-            bool hasReference = em.HasComponent<VehicleHealthBarInstanceReference>(entity);
+                              em.HasComponent<UnitHealthBarPrefabReference>(entity) &&
+                              !em.HasComponent<UnitTransportPassenger>(entity) &&
+                              !em.HasComponent<UnitRenderBudgetCulledUnitTag>(entity);
+            bool hasReference = em.HasComponent<UnitHealthBarInstanceReference>(entity);
             bool hasInstance = hasReference &&
-                               em.Exists(em.GetComponentData<VehicleHealthBarInstanceReference>(entity).Instance);
+                               em.Exists(em.GetComponentData<UnitHealthBarInstanceReference>(entity).Instance);
             if (hasReference && !hasInstance)
             {
                 remove.Add(entity);
@@ -53,25 +52,25 @@ public partial struct VehicleHealthBarSystem : ISystem
         remove.Dispose();
     }
 
-    private static void CreateHealthBar(EntityManager em, Entity vehicle)
+    private static void CreateHealthBar(EntityManager em, Entity unit)
     {
-        VehicleHealthBarPrefabReference prefabRef = em.GetComponentData<VehicleHealthBarPrefabReference>(vehicle);
+        UnitHealthBarPrefabReference prefabRef = em.GetComponentData<UnitHealthBarPrefabReference>(unit);
         if (prefabRef.Prefab == Entity.Null || !em.Exists(prefabRef.Prefab))
             return;
 
         Entity healthBar = em.Instantiate(prefabRef.Prefab);
         if (!em.HasComponent<Parent>(healthBar))
-            em.AddComponentData(healthBar, new Parent { Value = vehicle });
+            em.AddComponentData(healthBar, new Parent { Value = unit });
         else
-            em.SetComponentData(healthBar, new Parent { Value = vehicle });
+            em.SetComponentData(healthBar, new Parent { Value = unit });
 
-        em.AddComponentData(vehicle, new VehicleHealthBarInstanceReference { Instance = healthBar });
+        em.AddComponentData(unit, new UnitHealthBarInstanceReference { Instance = healthBar });
     }
 
-    private static void DestroyHealthBar(EntityManager em, Entity vehicle)
+    private static void DestroyHealthBar(EntityManager em, Entity unit)
     {
-        VehicleHealthBarInstanceReference instance = em.GetComponentData<VehicleHealthBarInstanceReference>(vehicle);
+        UnitHealthBarInstanceReference instance = em.GetComponentData<UnitHealthBarInstanceReference>(unit);
         VehicleVisualEntityUtility.DestroyVisualTree(em, instance.Instance);
-        em.RemoveComponent<VehicleHealthBarInstanceReference>(vehicle);
+        em.RemoveComponent<UnitHealthBarInstanceReference>(unit);
     }
 }

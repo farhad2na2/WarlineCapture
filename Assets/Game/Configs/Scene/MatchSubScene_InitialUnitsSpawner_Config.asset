@@ -13,6 +13,10 @@ MonoBehaviour:
   m_Name: MatchSubScene_InitialUnitsSpawner_Config
   m_EditorClassIdentifier: 
   blockerPrefab: {fileID: 1237425064649014, guid: f6662b2cec4426449a750eba281d5fb0, type: 3}
+  unitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  unitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
+  sceneUnitSelectionMarkerPrefab: {fileID: 7141789922891347094, guid: d2834fbab75454c99b0b283a44cef502, type: 3}
+  sceneUnitHealthBarPrefab: {fileID: 4330714435077561203, guid: b6790ac587427481c8b1718ba9b38a3f, type: 3}
   factions:
   - factionId: 1
     spawnCell: {x: 150, y: 250}

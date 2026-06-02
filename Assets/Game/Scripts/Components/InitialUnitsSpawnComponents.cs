@@ -5,6 +5,8 @@ using Unity.Collections;
 public struct InitialUnitsSpawnConfig : IComponentData
 {
     public Entity BlockerPrefab;
+    public Entity UnitSelectionMarkerPrefab;
+    public Entity UnitHealthBarPrefab;
     public int BlockerCount;
     public int SpawnRadiusCells;
     public float RespawnDelaySeconds;

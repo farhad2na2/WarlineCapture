@@ -19,7 +19,9 @@ public sealed class RtsSelectionRuntimeInputContextSystem
         Func<Vector2, bool> tryFocusUnit,
         Action<Vector2> panCamera,
         Action<Vector2> issueMoveOrder,
-        Action processSelectionRectangleRequests)
+        Action processSelectionRectangleRequests,
+        Action<string> logClickDiagnostic,
+        Func<Vector2, string> buildClickDebugSummary)
     {
         return new RtsSelectionRuntimeInputSystem.Context(
             runtimeGameplayStateSystem,
@@ -38,6 +40,8 @@ public sealed class RtsSelectionRuntimeInputContextSystem
             tryFocusUnit,
             panCamera,
             issueMoveOrder,
-            processSelectionRectangleRequests);
+            processSelectionRectangleRequests,
+            logClickDiagnostic,
+            buildClickDebugSummary);
     }
 }

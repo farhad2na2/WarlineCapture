@@ -174,26 +174,26 @@ public struct UnitDestroyedVisualInitialized : IComponentData
 {
 }
 
-public struct VehicleSelectionMarkerPrefabReference : IComponentData
+public struct UnitSelectionMarkerPrefabReference : IComponentData
 {
     public Entity Prefab;
 }
 
-public struct VehicleVisualPrefabReferencesBackfilledTag : IComponentData
+public struct UnitVisualPrefabReferencesBackfilledTag : IComponentData
 {
 }
 
-public struct VehicleSelectionMarkerInstanceReference : IComponentData
+public struct UnitSelectionMarkerInstanceReference : IComponentData
 {
     public Entity Instance;
 }
 
-public struct VehicleHealthBarPrefabReference : IComponentData
+public struct UnitHealthBarPrefabReference : IComponentData
 {
     public Entity Prefab;
 }
 
-public struct VehicleHealthBarInstanceReference : IComponentData
+public struct UnitHealthBarInstanceReference : IComponentData
 {
     public Entity Instance;
 }

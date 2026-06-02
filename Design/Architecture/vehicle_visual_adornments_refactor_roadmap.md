@@ -18,9 +18,9 @@ Remove per-vehicle prefab child ownership for `Destroyed`, inherited `SelectionM
 - [x] 12. Confirm vehicle variants still keep `Model` and functional visual children.
 - [x] 13. Implement `VehicleDestroyedVisualSystem`.
 - [x] 14. Route vehicle death/wreck through configured destroyed visuals while preserving character death behavior.
-- [x] 15. Implement `VehicleSelectionMarkerSystem` with multi-selected vehicle support.
+- [x] 15. Implement shared `UnitSelectionMarkerSystem` with multi-selected vehicle support.
 - [x] 16. Wire marker refresh from ECS selection state.
-- [x] 17. Implement `VehicleHealthBarSystem` with configured runtime health bars.
+- [x] 17. Implement shared `UnitRuntimeHealthBarSystem` with configured runtime health bars.
 - [x] 18. Replace vehicle health bar child usage with runtime-spawned health bars.
 - [x] 19. Add vehicle model renderer faction tint baking.
 - [x] 20. Keep building tint and character visual behavior unchanged.
@@ -34,8 +34,8 @@ Remove per-vehicle prefab child ownership for `Destroyed`, inherited `SelectionM
 - [x] 28. Record validation result here.
 
 ## Ownership Rules
-- Vehicle selection marker projection belongs in `VehicleSelectionMarkerSystem`.
-- Vehicle health bar projection belongs in `VehicleHealthBarSystem`.
+- Vehicle selection marker projection belongs in shared `UnitSelectionMarkerSystem`.
+- Vehicle health bar projection belongs in shared `UnitRuntimeHealthBarSystem`.
 - Vehicle destroyed visual projection belongs in `VehicleDestroyedVisualSystem`.
 - Vehicle owner-faction visuals use renderer tint through ECS faction visual data.
 - Vehicle prefabs must not contain or inherit `SelectionMarker`, `FactionMarker`, `HealthBar`, or `Destroyed` children.

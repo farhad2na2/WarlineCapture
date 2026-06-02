@@ -39,6 +39,9 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector] private string displayName;
     [SerializeField, HideInInspector, TextArea] private string description;
     [SerializeField, HideInInspector] private string weaponDisplayName;
+    [SerializeField, HideInInspector] private GameObject unitSelectionMarkerPrefab;
+    [SerializeField, HideInInspector] private GameObject unitHealthBarPrefab;
+    [SerializeField, HideInInspector] private bool tintUnitModelRenderers = true;
     [SerializeField, HideInInspector] private GameObject vehicleDestroyedVisualPrefab;
     [SerializeField, HideInInspector] private GameObject vehicleSelectionMarkerPrefab;
     [SerializeField, HideInInspector] private GameObject vehicleHealthBarPrefab;
@@ -105,6 +108,9 @@ public class UnitGridAuthoring : MonoBehaviour
         displayName = config.DisplayName;
         description = config.Description;
         weaponDisplayName = config.WeaponDisplayName;
+        unitSelectionMarkerPrefab = config.UnitSelectionMarkerPrefab;
+        unitHealthBarPrefab = config.UnitHealthBarPrefab;
+        tintUnitModelRenderers = config.TintUnitModelRenderers;
         vehicleDestroyedVisualPrefab = config.VehicleDestroyedVisualPrefab;
         vehicleSelectionMarkerPrefab = config.VehicleSelectionMarkerPrefab;
         vehicleHealthBarPrefab = config.VehicleHealthBarPrefab;
@@ -154,6 +160,9 @@ public class UnitGridAuthoring : MonoBehaviour
     public GameObject LowLodPrefab => config != null ? config.LowLodPrefab : MidLodPrefab;
     public bool UsesTurretAim => config != null ? config.UsesTurretAim : usesTurretAim;
     public GameObject AttackImpactPrefab => attackImpactPrefab;
+    public GameObject UnitSelectionMarkerPrefab => config != null ? config.UnitSelectionMarkerPrefab : unitSelectionMarkerPrefab;
+    public GameObject UnitHealthBarPrefab => config != null ? config.UnitHealthBarPrefab : unitHealthBarPrefab;
+    public bool TintUnitModelRenderers => config != null ? config.TintUnitModelRenderers : tintUnitModelRenderers;
     public GameObject VehicleDestroyedVisualPrefab => config != null ? config.VehicleDestroyedVisualPrefab : vehicleDestroyedVisualPrefab;
     public GameObject VehicleSelectionMarkerPrefab => config != null ? config.VehicleSelectionMarkerPrefab : vehicleSelectionMarkerPrefab;
     public GameObject VehicleHealthBarPrefab => config != null ? config.VehicleHealthBarPrefab : vehicleHealthBarPrefab;
@@ -179,6 +188,9 @@ public class UnitGridAuthoring : MonoBehaviour
     {
         public override void Bake(UnitGridAuthoring authoring)
         {
+            if (authoring.config != null)
+                DependsOn(authoring.config);
+
             authoring.ApplyConfigIfAvailable();
             var entity = GetEntity(TransformUsageFlags.Dynamic);
             Bounds modelBounds;
@@ -381,9 +393,8 @@ public class UnitGridAuthoring : MonoBehaviour
                 DynamicBuffer<UnitHelicopterBladeReference> bladeBuffer = AddBuffer<UnitHelicopterBladeReference>(entity);
                 AddHelicopterBladeReferences(bladeBuffer, model);
 
-                if (authoring.usesVehicleMotion && authoring.TintVehicleModelRenderers)
-                    AddVehicleFactionTintTargets(model);
             }
+            AddUnitVisualPrefabReferences(authoring, entity);
             if (authoring.usesVehicleMotion)
             {
                 AddVehicleVisualPrefabReferences(authoring, entity);
@@ -517,6 +528,25 @@ public class UnitGridAuthoring : MonoBehaviour
             }
         }
 
+        private void AddUnitVisualPrefabReferences(UnitGridAuthoring authoring, Entity entity)
+        {
+            if (authoring.UnitSelectionMarkerPrefab != null)
+            {
+                AddComponent(entity, new UnitSelectionMarkerPrefabReference
+                {
+                    Prefab = GetEntity(authoring.UnitSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
+                });
+            }
+
+            if (authoring.UnitHealthBarPrefab != null)
+            {
+                AddComponent(entity, new UnitHealthBarPrefabReference
+                {
+                    Prefab = GetEntity(authoring.UnitHealthBarPrefab, TransformUsageFlags.Dynamic)
+                });
+            }
+        }
+
         private void AddVehicleVisualPrefabReferences(UnitGridAuthoring authoring, Entity entity)
         {
             if (authoring.VehicleDestroyedVisualPrefab != null)
@@ -524,40 +554,6 @@ public class UnitGridAuthoring : MonoBehaviour
                 AddComponent(entity, new VehicleDestroyedVisualPrefabReference
                 {
                     Prefab = GetEntity(authoring.VehicleDestroyedVisualPrefab, TransformUsageFlags.Dynamic)
-                });
-            }
-
-            if (authoring.VehicleSelectionMarkerPrefab != null)
-            {
-                AddComponent(entity, new VehicleSelectionMarkerPrefabReference
-                {
-                    Prefab = GetEntity(authoring.VehicleSelectionMarkerPrefab, TransformUsageFlags.Dynamic)
-                });
-            }
-
-            if (authoring.VehicleHealthBarPrefab != null)
-            {
-                AddComponent(entity, new VehicleHealthBarPrefabReference
-                {
-                    Prefab = GetEntity(authoring.VehicleHealthBarPrefab, TransformUsageFlags.Dynamic)
-                });
-            }
-        }
-
-        private void AddVehicleFactionTintTargets(Transform model)
-        {
-            Renderer[] renderers = model.GetComponentsInChildren<Renderer>(true);
-            for (int i = 0; i < renderers.Length; i++)
-            {
-                Renderer renderer = renderers[i];
-                if (renderer == null)
-                    continue;
-
-                Entity rendererEntity = GetEntity(renderer.gameObject, TransformUsageFlags.Renderable);
-                AddComponent<FactionTintTarget>(rendererEntity);
-                AddComponent(rendererEntity, new FactionTintColor
-                {
-                    Value = new float4(1f, 1f, 1f, 1f)
                 });
             }
         }

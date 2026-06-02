@@ -47,15 +47,29 @@ public sealed class SelectedMoveOrderCommandSystem
         ClickedCellResolver tryGetClickedCell,
         int currentFrame)
     {
-        if (tryGetClickedUnit != null && tryGetClickedUnit(screenPosition, em, out _))
+        Debug.Log($"[SelectionClick] selectedMoveStart frame={currentFrame} screen={screenPosition}");
+        if (tryGetClickedUnit != null && tryGetClickedUnit(screenPosition, em, out Entity clickedUnit))
+        {
+            Debug.Log($"[SelectionClick] selectedMoveRejected reason=ClickedUnit screen={screenPosition} clicked={DescribeMoveEntity(em, clickedUnit)}");
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        }
 
         using var entities = selectedMoveQuery.ToEntityArray(Allocator.Temp);
         if (entities.Length == 0)
+        {
+            Debug.Log($"[SelectionClick] selectedMoveRejected reason=NoSelection screen={screenPosition}");
             return Result.Rejected(TacticalCommandReasonCode.NoSelection);
+        }
 
         if (tryGetClickedCell == null || !tryGetClickedCell(screenPosition, em, out int2 goal, out Vector3 clickWorldPoint))
+        {
+            Debug.Log($"[SelectionClick] selectedMoveRejected reason=NoClickedCell screen={screenPosition} selected={entities.Length}");
             return Result.Rejected(TacticalCommandReasonCode.TargetNotAttackable);
+        }
+
+        Debug.Log(
+            $"[SelectionClick] selectedMoveTarget screen={screenPosition} desiredGoal={goal} clickWorld={clickWorldPoint} " +
+            $"selected={entities.Length} first={DescribeMoveEntity(em, entities[0])}");
 
         byte factionId = 0;
         if (em.HasComponent<Faction>(entities[0]))
@@ -99,11 +113,19 @@ public sealed class SelectedMoveOrderCommandSystem
                 goal,
                 i);
             issuedGoals[i] = issuedGoal;
+            if (i < 12)
+            {
+                Debug.Log(
+                    $"[SelectionClick] selectedMoveCandidate index={i} entity={DescribeMoveEntity(em, entity)} " +
+                    $"desiredGoal={goal} issuedGoal={issuedGoal} selectedCurrent={ResolveUnitCell(em, entity)}");
+            }
 
             if (IsAlreadyMovingToGoal(em, entity, issuedGoal))
             {
                 skipIssue[i] = true;
                 skippedAlreadyMovingCount++;
+                if (i < 12)
+                    Debug.Log($"[SelectionClick] selectedMoveSkip index={i} reason=AlreadyMoving issuedGoal={issuedGoal} entity={DescribeMoveEntity(em, entity)}");
             }
             else if (!em.HasComponent<UnitAirMovement>(entity))
             {
@@ -137,6 +159,14 @@ public sealed class SelectedMoveOrderCommandSystem
                 groundUnit && !issuePathNow,
                 resumeFrame,
                 currentFrame);
+            if (i < 12)
+            {
+                Debug.Log(
+                    $"[SelectionClick] selectedMoveIssued index={i} entity={DescribeMoveEntity(em, entity)} " +
+                    $"issuedGoal={issuedGoal} issuePathNow={issuePathNow} resumeFrame={resumeFrame} " +
+                    $"targetNow={(em.HasComponent<UnitTarget>(entity) ? em.GetComponentData<UnitTarget>(entity).Cell.ToString() : "none")} " +
+                    $"pathRequestNow={(em.HasComponent<UnitPathRequest>(entity) ? em.GetComponentData<UnitPathRequest>(entity).Goal.ToString() : "none")}");
+            }
 
             structuralAdds += commandResult.StructuralAdds;
             structuralRemoves += commandResult.StructuralRemoves;
@@ -152,7 +182,12 @@ public sealed class SelectedMoveOrderCommandSystem
         }
 
         if (!issuedMoveOrder)
+        {
+            Debug.Log(
+                $"[SelectionClick] selectedMoveRejected reason=TargetBlocked selected={entities.Length} desiredGoal={goal} " +
+                $"skippedAlreadyMoving={skippedAlreadyMovingCount} groundCandidates={groundPathCandidateCount}");
             return Result.Rejected(TacticalCommandReasonCode.TargetBlocked);
+        }
 
         if (EnableGroupMoveValidationLog && entities.Length > 1)
         {
@@ -168,7 +203,37 @@ public sealed class SelectedMoveOrderCommandSystem
                 $"airUnits={airUnitCount} skippedSameGoal={skippedAlreadyMovingCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves} " +
                 $"uniqueGoals={uniqueGoalCount} staggeredPathRequests={staggeredPathRequestCount} goal={goal}");
 
+        Debug.Log(
+            $"[SelectionClick] selectedMoveSuccess frame={currentFrame} selected={entities.Length} desiredGoal={goal} " +
+            $"pathRequests={pathRequestCount} staggeredPathRequests={staggeredPathRequestCount} skippedAlreadyMoving={skippedAlreadyMovingCount} " +
+            $"groundCandidates={groundPathCandidateCount} structuralAdds={structuralAdds} structuralRemoves={structuralRemoves}");
         return Result.Success();
+    }
+
+    private static string DescribeMoveEntity(EntityManager em, Entity entity)
+    {
+        if (entity == Entity.Null || !em.Exists(entity))
+            return "null";
+
+        string name = em.HasComponent<UnitSourcePrefabKey>(entity)
+            ? em.GetComponentData<UnitSourcePrefabKey>(entity).Value.ToString()
+            : em.GetName(entity);
+        byte faction = em.HasComponent<Faction>(entity) ? em.GetComponentData<Faction>(entity).Id : (byte)0;
+        bool selected = em.HasComponent<SelectedUnitTag>(entity);
+        bool move = em.HasComponent<UnitMove>(entity);
+        bool grid = em.HasComponent<UnitGrid>(entity);
+        bool target = em.HasComponent<UnitTarget>(entity);
+        bool pathRequest = em.HasComponent<UnitPathRequest>(entity);
+        bool pathFollow = em.HasComponent<UnitPathFollow>(entity);
+        bool disabled = em.HasComponent<Disabled>(entity);
+        return $"{entity}/{name}/faction={faction}/selected={selected}/move={move}/grid={grid}/target={target}/pathRequest={pathRequest}/pathFollow={pathFollow}/disabled={disabled}";
+    }
+
+    private static string ResolveUnitCell(EntityManager em, Entity entity)
+    {
+        return entity != Entity.Null && em.Exists(entity) && em.HasComponent<UnitGrid>(entity)
+            ? em.GetComponentData<UnitGrid>(entity).Cell.ToString()
+            : "none";
     }
 
     private static bool IsAlreadyMovingToGoal(EntityManager em, Entity entity, int2 goal)

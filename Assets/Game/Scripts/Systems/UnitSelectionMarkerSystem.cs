@@ -3,17 +3,19 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Rendering;
 using Unity.Transforms;
+using UnityEngine;
 
 [UpdateInGroup(typeof(PresentationSystemGroup))]
-public partial struct VehicleSelectionMarkerSystem : ISystem
+public partial struct UnitSelectionMarkerSystem : ISystem
 {
     private const float MarkerGroundLift = 0.04f;
     private const float MarkerFootprintScaleMultiplier = 1.35f;
     private const float MarkerMinimumVehicleScale = 2.5f;
+    private const float MarkerMinimumCharacterScale = 1f;
 
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<VehicleSelectionMarkerPrefabReference>();
+        state.RequireForUpdate<UnitSelectionMarkerPrefabReference>();
     }
 
     public void OnUpdate(ref SystemState state)
@@ -22,19 +24,17 @@ public partial struct VehicleSelectionMarkerSystem : ISystem
         var create = new NativeList<Entity>(Allocator.Temp);
         var remove = new NativeList<Entity>(Allocator.Temp);
 
-        foreach (var (movement, health, entity) in SystemAPI
-                 .Query<RefRO<UnitMovementBehavior>, RefRO<UnitHealth>>()
+        foreach (var (health, entity) in SystemAPI
+                 .Query<RefRO<UnitHealth>>()
                  .WithEntityAccess())
         {
-            if (movement.ValueRO.UsesVehicleMotion == 0)
-                continue;
-
             bool shouldShow = health.ValueRO.Current > 0 &&
                               em.HasComponent<SelectedUnitTag>(entity) &&
-                              em.HasComponent<VehicleSelectionMarkerPrefabReference>(entity);
-            bool hasReference = em.HasComponent<VehicleSelectionMarkerInstanceReference>(entity);
+                              em.HasComponent<UnitSelectionMarkerPrefabReference>(entity) &&
+                              !em.HasComponent<UnitTransportPassenger>(entity);
+            bool hasReference = em.HasComponent<UnitSelectionMarkerInstanceReference>(entity);
             bool hasInstance = hasReference &&
-                               em.Exists(em.GetComponentData<VehicleSelectionMarkerInstanceReference>(entity).Instance);
+                               em.Exists(em.GetComponentData<UnitSelectionMarkerInstanceReference>(entity).Instance);
             if (hasReference && !hasInstance)
             {
                 remove.Add(entity);
@@ -59,18 +59,19 @@ public partial struct VehicleSelectionMarkerSystem : ISystem
         remove.Dispose();
     }
 
-    private static void CreateMarker(EntityManager em, Entity vehicle)
+    private static void CreateMarker(EntityManager em, Entity unit)
     {
-        VehicleSelectionMarkerPrefabReference prefabRef = em.GetComponentData<VehicleSelectionMarkerPrefabReference>(vehicle);
+        UnitSelectionMarkerPrefabReference prefabRef = em.GetComponentData<UnitSelectionMarkerPrefabReference>(unit);
         if (prefabRef.Prefab == Entity.Null || !em.Exists(prefabRef.Prefab))
             return;
 
         Entity marker = em.Instantiate(prefabRef.Prefab);
-        em.SetName(marker, "VehicleSelectionMarker");
+        em.SetName(marker, "UnitSelectionMarker");
+        Debug.Log($"[SelectionClick] markerCreate unit={DescribeUnit(em, unit)} marker={marker} prefab={prefabRef.Prefab}");
         if (!em.HasComponent<Parent>(marker))
-            em.AddComponentData(marker, new Parent { Value = vehicle });
+            em.AddComponentData(marker, new Parent { Value = unit });
         else
-            em.SetComponentData(marker, new Parent { Value = vehicle });
+            em.SetComponentData(marker, new Parent { Value = unit });
 
         if (em.HasComponent<LocalTransform>(marker))
         {
@@ -81,8 +82,8 @@ public partial struct VehicleSelectionMarkerSystem : ISystem
             em.SetComponentData(marker, transform);
         }
 
-        EnsureSelectionMarkerComponents(em, marker, ResolveMarkerScale(em, vehicle));
-        em.AddComponentData(vehicle, new VehicleSelectionMarkerInstanceReference { Instance = marker });
+        EnsureSelectionMarkerComponents(em, marker, ResolveMarkerScale(em, unit));
+        em.AddComponentData(unit, new UnitSelectionMarkerInstanceReference { Instance = marker });
     }
 
     private static void EnsureSelectionMarkerComponents(EntityManager em, Entity marker, float visibleScale)
@@ -135,19 +136,39 @@ public partial struct VehicleSelectionMarkerSystem : ISystem
         return Entity.Null;
     }
 
-    private static float ResolveMarkerScale(EntityManager em, Entity vehicle)
+    private static float ResolveMarkerScale(EntityManager em, Entity unit)
     {
-        if (!em.HasComponent<UnitFootprint>(vehicle))
-            return MarkerMinimumVehicleScale;
+        float minimumScale = em.HasComponent<UnitMovementBehavior>(unit) &&
+                             em.GetComponentData<UnitMovementBehavior>(unit).UsesVehicleMotion != 0
+            ? MarkerMinimumVehicleScale
+            : MarkerMinimumCharacterScale;
 
-        int2 size = em.GetComponentData<UnitFootprint>(vehicle).Size;
-        return math.max(MarkerMinimumVehicleScale, math.max(size.x, size.y) * MarkerFootprintScaleMultiplier);
+        if (!em.HasComponent<UnitFootprint>(unit))
+            return minimumScale;
+
+        int2 size = em.GetComponentData<UnitFootprint>(unit).Size;
+        return math.max(minimumScale, math.max(size.x, size.y) * MarkerFootprintScaleMultiplier);
     }
 
-    private static void DestroyMarker(EntityManager em, Entity vehicle)
+    private static void DestroyMarker(EntityManager em, Entity unit)
     {
-        VehicleSelectionMarkerInstanceReference instance = em.GetComponentData<VehicleSelectionMarkerInstanceReference>(vehicle);
+        UnitSelectionMarkerInstanceReference instance = em.GetComponentData<UnitSelectionMarkerInstanceReference>(unit);
+        Debug.Log($"[SelectionClick] markerDestroy unit={DescribeUnit(em, unit)} marker={instance.Instance}");
         VehicleVisualEntityUtility.DestroyVisualTree(em, instance.Instance);
-        em.RemoveComponent<VehicleSelectionMarkerInstanceReference>(vehicle);
+        em.RemoveComponent<UnitSelectionMarkerInstanceReference>(unit);
+    }
+
+    private static string DescribeUnit(EntityManager em, Entity unit)
+    {
+        if (unit == Entity.Null || !em.Exists(unit))
+            return "null";
+
+        string source = em.HasComponent<UnitSourcePrefabKey>(unit)
+            ? em.GetComponentData<UnitSourcePrefabKey>(unit).Value.ToString()
+            : em.GetName(unit);
+        byte faction = em.HasComponent<Faction>(unit)
+            ? em.GetComponentData<Faction>(unit).Id
+            : (byte)0;
+        return $"{unit}/{source}/faction={faction}/selected={em.HasComponent<SelectedUnitTag>(unit)}";
     }
 }

@@ -265,6 +265,8 @@ public sealed class CustomGameStartupSystem
         InitialUnitsSpawnConfig config = new()
         {
             BlockerPrefab = Entity.Null,
+            UnitSelectionMarkerPrefab = Entity.Null,
+            UnitHealthBarPrefab = Entity.Null,
             BlockerCount = map != null ? map.BlockerCount : 0,
             SpawnRadiusCells = map != null ? math.max(0, map.SpawnRadiusCells) : 0,
             RespawnDelaySeconds = map != null ? math.max(0.01f, map.RespawnDelaySeconds) : 0.01f,
@@ -316,6 +318,8 @@ public sealed class CustomGameStartupSystem
         InitialUnitsSpawnConfig initialConfig = new()
         {
             BlockerPrefab = Entity.Null,
+            UnitSelectionMarkerPrefab = Entity.Null,
+            UnitHealthBarPrefab = Entity.Null,
             BlockerCount = config != null ? config.BlockerCount : 0,
             SpawnRadiusCells = config != null ? math.max(0, config.SpawnRadiusCells) : 0,
             RespawnDelaySeconds = config != null ? math.max(0.01f, config.RespawnDelaySeconds) : 0.01f,

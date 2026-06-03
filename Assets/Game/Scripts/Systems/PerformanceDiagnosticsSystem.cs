@@ -11,12 +11,13 @@ using UnityEngine.Profiling;
 public sealed class PerformanceDiagnosticsSystem
 {
     private const double FreezeLogThresholdSeconds = 0.15d;
-    private const double LowFpsDiagThreshold = 30d;
+    private const double LowFpsDiagThreshold = 55d;
     private const double FrameRateDiagIntervalSeconds = 2d;
     private const double FpsUiUpdateIntervalSeconds = 0.25d;
     private const double SlowFrameDiagThresholdSeconds = 0.025d;
     private const double SlowFrameDiagCooldownSeconds = 0.5d;
-    private const int MaxAutoProfilerMarkerRecorders = 80;
+    private const int MaxAutoProfilerMarkerRecorders = 200;
+    private const int MaxTopSystemProfilerMarkers = 8;
     private static readonly string[] PriorityProfilerMarkerNameFragments =
     {
         "UnitEngagementSystem",
@@ -30,7 +31,16 @@ public sealed class PerformanceDiagnosticsSystem
         "AIBuildPlannerSystem",
         "AIProductionSystem",
         "AIEconomySystem",
-        "AIFactionControlSystem"
+        "AIFactionControlSystem",
+        "UnitSurfaceTrackingSystem",
+        "UnitGroundingSystem",
+        "VehicleSlopeAlignmentSystem",
+        "UnitGridMovementSystem",
+        "UnitMoveOrderSystem",
+        "UnitEngagedMovementSystem",
+        "UnitIdleWanderSystem",
+        "UnitLookAtTargetSystem",
+        "UnitRenderBudgetSystem"
     };
 
     private readonly bool _enableFrameRateDiagnostics = true;
@@ -72,6 +82,12 @@ public sealed class PerformanceDiagnosticsSystem
     {
         public string Name;
         public ProfilerRecorder Recorder;
+    }
+
+    private struct ProfilerMarkerSample
+    {
+        public string Name;
+        public long Value;
     }
 
     public void Initialize()
@@ -347,6 +363,7 @@ public sealed class PerformanceDiagnosticsSystem
 
         return
             name.Contains("PlayerLoop", StringComparison.OrdinalIgnoreCase) ||
+            IsEcsSystemProfilerMarker(name) ||
             name.Contains("EditorLoop", StringComparison.OrdinalIgnoreCase) ||
             name.Contains("Update", StringComparison.OrdinalIgnoreCase) ||
             name.Contains("Render", StringComparison.OrdinalIgnoreCase) ||
@@ -372,6 +389,12 @@ public sealed class PerformanceDiagnosticsSystem
         }
 
         return false;
+    }
+
+    private bool IsEcsSystemProfilerMarker(string name)
+    {
+        return name.StartsWith("Default World ", StringComparison.OrdinalIgnoreCase) &&
+               name.Contains("System", StringComparison.OrdinalIgnoreCase);
     }
 
     private void DisposeProfilerRecorders()
@@ -440,7 +463,7 @@ public sealed class PerformanceDiagnosticsSystem
                 $"setPass={ReadProfilerRecorder(_setPassCallsRecorder)} tris={ReadProfilerRecorder(_trianglesRecorder)} verts={ReadProfilerRecorder(_verticesRecorder)} " +
                 $"units={units} models={modelInstances} sourceKeys={sourceKeys} sourceKeyFallbackVisuals={sourceKeyFallbackVisuals} missionFallbackVisuals={missionFallbackVisuals} initialSpawnConfigs={initialSpawnConfigs} impostors={impostorCount} " +
                 $"memory={BuildMemoryDiagString()} focused={(Application.isFocused ? 1 : 0)}{preGameDetails} " +
-                $"stepStats={BuildStepStatsString()} markers={BuildProfilerMarkerDiagString()}");
+                $"stepStats={BuildStepStatsString()} topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
         }
 
         _frameRateDiagFrames = 0;
@@ -574,7 +597,7 @@ public sealed class PerformanceDiagnosticsSystem
             $"memory={BuildMemoryDiagString()} uiToolkit=0 " +
             $"gameplayInitialized={(gameplayInitialized ? 1 : 0)} playRequested={(playRequested ? 1 : 0)} " +
             $"focused={(Application.isFocused ? 1 : 0)} vSync={QualitySettings.vSyncCount} targetFps={Application.targetFrameRate} " +
-            $"markers={BuildProfilerMarkerDiagString()}");
+            $"topSystems={BuildTopSystemProfilerMarkerString()} markers={BuildProfilerMarkerDiagString()}");
     }
 
     private string BuildStepStatsString()
@@ -649,6 +672,50 @@ public sealed class PerformanceDiagnosticsSystem
         }
 
         return builder.Length > 0 ? builder.ToString() : "none-active";
+    }
+
+    private string BuildTopSystemProfilerMarkerString()
+    {
+        if (_markerRecorders.Count == 0)
+            return "none";
+
+        List<ProfilerMarkerSample> samples = new();
+        for (int i = 0; i < _markerRecorders.Count; i++)
+        {
+            NamedProfilerRecorder entry = _markerRecorders[i];
+            if (!entry.Recorder.Valid || !IsEcsSystemProfilerMarker(entry.Name))
+                continue;
+
+            long value = entry.Recorder.LastValue;
+            if (value <= 0)
+                continue;
+
+            samples.Add(new ProfilerMarkerSample
+            {
+                Name = entry.Name,
+                Value = value
+            });
+        }
+
+        if (samples.Count == 0)
+            return "none-active";
+
+        samples.Sort((lhs, rhs) => rhs.Value.CompareTo(lhs.Value));
+        System.Text.StringBuilder builder = new();
+        int count = Math.Min(MaxTopSystemProfilerMarkers, samples.Count);
+        for (int i = 0; i < count; i++)
+        {
+            ProfilerMarkerSample sample = samples[i];
+            if (builder.Length > 0)
+                builder.Append("|");
+
+            builder.Append(sample.Name);
+            builder.Append("=");
+            builder.Append((sample.Value / 1000000d).ToString("F1"));
+            builder.Append("ms");
+        }
+
+        return builder.ToString();
     }
 
     private string BuildGcDeltaString()

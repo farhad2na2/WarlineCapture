@@ -1087,7 +1087,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -24}
+  m_AnchoredPosition: {x: 0, y: -23.999756}
   m_SizeDelta: {x: -128, y: -176}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1095061662
@@ -1618,7 +1618,7 @@ MonoBehaviour:
   regionRoot: {fileID: 1581662441}
   contentRoot: {fileID: 1757834266}
   canvasGroup: {fileID: 1581662443}
-  onScreenAnchoredPosition: {x: 720, y: -280}
+  onScreenAnchoredPosition: {x: 720, y: 0}
   offScreenDirection: {x: 0, y: 0}
 --- !u!225 &1581662443
 CanvasGroup:
@@ -2274,11 +2274,11 @@ RectTransform:
   - {fileID: 1107882281}
   m_Father: {fileID: 1818590227}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1920}
-  m_SizeDelta: {x: 4800, y: 240}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 280}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &2106161136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2295,8 +2295,8 @@ MonoBehaviour:
   regionRoot: {fileID: 2106161135}
   contentRoot: {fileID: 1107882281}
   canvasGroup: {fileID: 2106161137}
-  onScreenAnchoredPosition: {x: 0, y: -1920}
-  offScreenDirection: {x: 0, y: -1}
+  onScreenAnchoredPosition: {x: 0, y: 0}
+  offScreenDirection: {x: 0, y: 0}
 --- !u!225 &2106161137
 CanvasGroup:
   m_ObjectHideFlags: 0

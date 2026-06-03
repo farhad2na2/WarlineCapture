@@ -32,6 +32,7 @@ public partial struct UiShellBoundarySystem : ISystem
             IsComplete = 0
         });
         state.EntityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+        state.EntityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);

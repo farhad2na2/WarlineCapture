@@ -2156,7 +2156,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
   intent: 0
   route: 5
-  pushHistory: 0
+  pushHistory: 1
 --- !u!1 &943494020971408981
 GameObject:
   m_ObjectHideFlags: 0
@@ -10181,7 +10181,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
   intent: 0
   route: 5
-  pushHistory: 0
+  pushHistory: 1
 --- !u!1 &3466398861817963891
 GameObject:
   m_ObjectHideFlags: 0

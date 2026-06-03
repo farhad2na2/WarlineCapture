@@ -30,7 +30,8 @@ public enum UiShellRouteIntent
     OpenMenuRoute,
     EnterMatch,
     ReturnToMainMenu,
-    OpenSettings
+    OpenSettings,
+    BackMenuRoute
 }
 
 public enum UiShellPopupKind
@@ -115,6 +116,11 @@ public struct UiShellRouteRequestComponent : IBufferElementData
     public WarlineCaptureRoute Route;
     public UiShellRouteIntent Intent;
     public byte PushHistory;
+}
+
+public struct UiShellRouteHistoryComponent : IBufferElementData
+{
+    public WarlineCaptureRoute Route;
 }
 
 public struct UiShellPopupRequestComponent : IBufferElementData

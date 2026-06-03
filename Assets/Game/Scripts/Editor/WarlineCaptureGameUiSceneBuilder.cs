@@ -909,7 +909,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.MiddleRegion, "MiddleContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.RightRegion, "RightContent");
         RequireRegionChild(shellView, WarlineCaptureShellRegionId.FooterRegion, "FooterContent");
-        RequireRouteButton(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent/ArmoryTitleBlock/BackHotspot", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent/ArmoryTitleBlock/BackHotspot", UiShellRouteIntent.BackMenuRoute, WarlineCaptureRoute.MainMenu);
 
         contentPresenter.PrepareForCommandSequence(new[]
         {
@@ -1034,7 +1034,7 @@ public static class WarlineCaptureGameUiSceneBuilder
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.MiddleRegion, canvasRect, "MiddleContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.RightRegion, canvasRect, "RightContent");
         ValidateRegionContent(shellView, WarlineCaptureShellRegionId.FooterRegion, canvasRect, "FooterContent");
-        RequireRouteButton(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent/ArmoryTitleBlock/BackHotspot", UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
+        RequireRouteButton(shellView, WarlineCaptureShellRegionId.LeftRegion, "LeftContent/ArmoryTitleBlock/BackHotspot", UiShellRouteIntent.BackMenuRoute, WarlineCaptureRoute.MainMenu);
     }
 
     private static void ValidateMatchHudContentLayout(

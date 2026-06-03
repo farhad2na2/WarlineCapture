@@ -60,6 +60,7 @@ public class BuildScript
         var arg = Environment.GetCommandLineArgs();
         var buildType = GetArgument(arg, "-buildType");
         SwitchBuildTarget(BuildTargetGroup.Android, BuildTarget.Android);
+        ConfigureGradleUserHome();
         
         var outputDirectory = buildType switch
         {
@@ -140,6 +141,22 @@ public class BuildScript
         //PlayerSettings.Android.targetSdkVersion = (AndroidSdkVersions)34;
         EditorUserBuildSettings.buildAppBundle = buildAppBundle;
         UnityEngine.Debug.Log("[BuildScript] Android build configured: architectures=ARM64");
+    }
+
+    private static void ConfigureGradleUserHome()
+    {
+        const string variableName = "GRADLE_USER_HOME";
+        var configuredPath = Environment.GetEnvironmentVariable(variableName);
+        if (!string.IsNullOrWhiteSpace(configuredPath))
+        {
+            UnityEngine.Debug.Log($"[BuildScript] Using existing {variableName}: {configuredPath}");
+            return;
+        }
+
+        var projectGradleHome = Path.GetFullPath(Path.Combine("Library", "GradleCache"));
+        CreateDirectory(projectGradleHome);
+        Environment.SetEnvironmentVariable(variableName, projectGradleHome);
+        UnityEngine.Debug.Log($"[BuildScript] Redirected {variableName} to {projectGradleHome}");
     }
 
     private static void SwitchBuildTarget(BuildTargetGroup buildTargetGroup, BuildTarget buildTarget)

@@ -363,7 +363,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddArmoryMetric(armory.transform, "Vehicles", "scn03_icon_12_vehicle.png", "VEHICLES", "9", 360f, 66f);
         AddArmoryMetric(armory.transform, "Buildings", "scn03_icon_13_building.png", "BUILDINGS", "12", -360f, -84f);
         AddArmoryMetric(armory.transform, "Support", "scn03_icon_14_support_plus.png", "SUPPORT", "8", 360f, -84f);
-        AddCommanderCta(armory.transform, "OpenArmoryButton", "OPEN ARMORY", new Vector2(0f, -226f), new Vector2(1280f, 128f), WarlineCaptureRoute.Armory);
+        AddCommanderCta(armory.transform, "OpenArmoryButton", "OPEN ARMORY", new Vector2(0f, -226f), new Vector2(1280f, 128f), WarlineCaptureRoute.Armory, true);
 
         GameObject rewards = CreateTopLeftMainMenuRect("ProfileRewardsPanel", parent, new Rect(-900f, 700f, 1440f, 380f));
         AddCommanderProfileSpriteCentered(rewards.transform, "Frame", "scn03_chrome_07_profile_rewards_panel_frame.png", Vector2.zero, new Vector2(1440f, 380f), false);
@@ -393,7 +393,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddTextCentered(route.transform, "ArrowB", ">", new Vector2(418f, 0f), new Vector2(80f, 48f), 34f, TextAlignmentOptions.Center, Accent);
         AddTextCentered(route.transform, "Armory", "ARMORY", new Vector2(650f, 0f), new Vector2(300f, 48f), 30f, TextAlignmentOptions.Center, Text);
         AddRouteButtonHotspot(route.transform, "MainMenuHotspot", new Rect(160f, 20f, 430f, 92f), UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.MainMenu);
-        AddRouteButtonHotspot(route.transform, "ArmoryHotspot", new Rect(1300f, 20f, 360f, 92f), UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.Armory);
+        AddRouteButtonHotspot(route.transform, "ArmoryHotspot", new Rect(1300f, 20f, 360f, 92f), UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.Armory, true);
     }
 
     private static void AddCommanderProfileButton(Transform parent, string name, string icon, string label, Vector2 position, Vector2 size, WarlineCaptureRoute route)
@@ -429,13 +429,20 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddTextCentered(node.transform, "State", state, new Vector2(0f, -66f), new Vector2(160f, 36f), 23f, TextAlignmentOptions.Center, state == "READY" ? Accent : MutedText);
     }
 
-    private static void AddCommanderCta(Transform parent, string name, string label, Vector2 position, Vector2 size, WarlineCaptureRoute route)
+    private static void AddCommanderCta(
+        Transform parent,
+        string name,
+        string label,
+        Vector2 position,
+        Vector2 size,
+        WarlineCaptureRoute route,
+        bool pushHistory = false)
     {
         GameObject button = CreateCenteredRect(name, parent, position, size);
         AddCommanderProfileSpriteCentered(button.transform, "Frame", "scn03_chrome_14_primary_gold_cta_frame.png", Vector2.zero, size, false);
         AddTextCentered(button.transform, "Label", label, new Vector2(-34f, 0f), new Vector2(size.x - 160f, 56f), 40f, TextAlignmentOptions.Center, Color.black);
         AddCommanderProfileSpriteCentered(button.transform, "Chevron", "scn03_icon_20_claim_chevron.png", new Vector2(size.x * 0.5f - 76f, 0f), new Vector2(54f, 54f), true);
-        AddRouteButtonHotspot(button.transform, "Hotspot", StretchRect(), UiShellRouteIntent.OpenMenuRoute, route);
+        AddRouteButtonHotspot(button.transform, "Hotspot", StretchRect(), UiShellRouteIntent.OpenMenuRoute, route, pushHistory);
     }
 
     private static void AddCommanderHistoryRow(Transform parent, string name, string icon, string title, string subtitle, string time, float y)
@@ -532,7 +539,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddArmorySpriteCentered(title.transform, "ArmoryIcon", "scn19_icon_armory_crossed_weapons.png", new Vector2(-82f, 16f), new Vector2(88f, 88f), true);
         AddTextCentered(title.transform, "Title", "ARMORY", new Vector2(156f, 28f), new Vector2(310f, 60f), 48f, TextAlignmentOptions.Left, Text);
         AddTextCentered(title.transform, "Subtitle", "Roster Inspection", new Vector2(170f, -34f), new Vector2(350f, 42f), 28f, TextAlignmentOptions.Left, MutedText);
-        AddRouteButtonHotspot(title.transform, "BackHotspot", new Rect(0f, 0f, 144f, 150f), UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
+        AddRouteButtonHotspot(title.transform, "BackHotspot", new Rect(0f, 0f, 144f, 150f), UiShellRouteIntent.BackMenuRoute, WarlineCaptureRoute.MainMenu);
 
         AddArmoryCategory(parent, "Units", "scn19_icon_units_group.png", "UNITS", "24 / 48", 22f, 240f, true);
         AddArmoryCategory(parent, "Vehicles", "scn19_icon_vehicle_truck.png", "VEHICLES", "9 / 24", 22f, 442f, false);
@@ -1448,6 +1455,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddLockedCommanderRow(lockedRows.transform, "SquadManagementRow", "SQUAD MANAGEMENT\nLOCKED", 0f);
         AddLockedCommanderRow(lockedRows.transform, "IntelReportRow", "INTEL REPORT\nLOCKED", 190f);
 
+        AddRouteButtonHotspot(panel.transform, "CommanderPanelHotspot", StretchRect(), UiShellRouteIntent.OpenMenuRoute, WarlineCaptureRoute.CommanderProfile);
         AddRouteHotspot(parent, "CommanderPortraitButton", new Rect(83f, 246f, 528f, 507f), WarlineCaptureRoute.CommanderProfile);
     }
 
@@ -1646,7 +1654,8 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         string name,
         Rect rect,
         UiShellRouteIntent intent,
-        WarlineCaptureRoute route)
+        WarlineCaptureRoute route,
+        bool pushHistory = false)
     {
         GameObject obj = CreateRect(name, parent, rect);
         Image image = obj.AddComponent<Image>();
@@ -1662,7 +1671,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         button.colors = colors;
 
         WarlineCaptureShellRouteButtonView routeButton = obj.AddComponent<WarlineCaptureShellRouteButtonView>();
-        routeButton.Configure(intent, route, false);
+        routeButton.Configure(intent, route, pushHistory);
     }
 
     private static void AddResultConfirmButton(Transform parent, string name, string label, Rect rect)

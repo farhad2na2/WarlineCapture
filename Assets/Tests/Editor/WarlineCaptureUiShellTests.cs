@@ -12,8 +12,10 @@ public sealed class WarlineCaptureUiShellTests
 {
     private const string MatchScenePath = "Assets/Game/Scenes/Match.unity";
     private const string ShellPrefabPath = "Assets/Game/Prefabs/UI/Shell/WarlineCaptureAppCanvas.prefab";
+    private const string ShellMainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
+    private const string ShellCommanderProfileContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab";
+    private const string ShellArmoryContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab";
     private const string SplashPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_Splash.prefab";
-    private const string MainMenuPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab";
     private const string SplashBackgroundPath = "Assets/Game/Art/UI/Generated/Splash/Backgrounds/Splash_Background_CityDawn.png";
     private const string SplashLoadingPanelPath = "Assets/Game/Art/UI/Generated/Splash/Frames/Splash_LoadingPanel_9Slice.png";
     private const string SplashProgressTrackPath = "Assets/Game/Art/UI/Generated/Splash/Frames/Splash_ProgressTrackMask.png";
@@ -23,10 +25,9 @@ public sealed class WarlineCaptureUiShellTests
     private const string SplashLogoEmblemPath = "Assets/Game/Art/UI/Brand/WarlineCapture_LionLogo_Display.png";
     private const string SplashTitleWordmarkPath = "Assets/Game/Art/UI/Generated/Splash/Titles/Splash_Title_Wordmark.png";
     private const string OxaniumFontFolder = "Assets/Synty/InterfaceMilitaryCombatHUD/Fonts/Oxanium/";
-    private static readonly string[] ScreenPrefabPaths =
+    private static readonly string[] GenericShellScreenPrefabPaths =
     {
         "Assets/Game/Prefabs/UI/Screens/Screen_Splash.prefab",
-        "Assets/Game/Prefabs/UI/Screens/Screen_MainMenu.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_Settings.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_QuickCustomSetup.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_MatchOverlay.prefab",
@@ -34,7 +35,6 @@ public sealed class WarlineCaptureUiShellTests
         "Assets/Game/Prefabs/UI/Screens/Screen_MissionBriefing.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_LoadoutSquadPrep.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_CommanderProfile.prefab",
-        "Assets/Game/Prefabs/UI/Screens/Screen_Armory.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_CommandExchange.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_Inbox.prefab",
         "Assets/Game/Prefabs/UI/Screens/Screen_Events.prefab",
@@ -141,6 +141,43 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellMainMenuContent_ArmoryNavRoutesToArmoryContent()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMainMenuContentPrefabPath);
+        Assert.NotNull(prefab, ShellMainMenuContentPrefabPath);
+
+        AssertShellRouteButton(prefab, "LeftContent/LeftNavPanel/Nav_Armory/Hotspot", WarlineCaptureRoute.Armory, UiShellRouteIntent.OpenMenuRoute, true);
+    }
+
+    [Test]
+    public void ShellMainMenuContent_CommanderPanelRoutesToCommanderProfileContent()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMainMenuContentPrefabPath);
+        Assert.NotNull(prefab, ShellMainMenuContentPrefabPath);
+
+        AssertShellRouteButton(prefab, "RightContent/CommanderPanel/CommanderPanelHotspot", WarlineCaptureRoute.CommanderProfile);
+    }
+
+    [Test]
+    public void ShellCommanderProfileContent_ArmoryRoutesPushHistory()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellCommanderProfileContentPrefabPath);
+        Assert.NotNull(prefab, ShellCommanderProfileContentPrefabPath);
+
+        AssertShellRouteButton(prefab, "RightContent/ArmorySquadsPanel/OpenArmoryButton/Hotspot", WarlineCaptureRoute.Armory, UiShellRouteIntent.OpenMenuRoute, true);
+        AssertShellRouteButton(prefab, "FooterContent/RouteStrip/ArmoryHotspot", WarlineCaptureRoute.Armory, UiShellRouteIntent.OpenMenuRoute, true);
+    }
+
+    [Test]
+    public void ShellArmoryContent_BackUsesRouteHistoryWithMainMenuFallback()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
+        Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
+
+        AssertShellRouteButton(prefab, "LeftContent/ArmoryTitleBlock/BackHotspot", WarlineCaptureRoute.MainMenu, UiShellRouteIntent.BackMenuRoute, false);
+    }
+
+    [Test]
     public void MatchResultFlow_ShowsRuntimeMissionResultAndContinuesToReturnRoute()
     {
         GameObject shellPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellPrefabPath);
@@ -193,7 +230,7 @@ public sealed class WarlineCaptureUiShellTests
     [Test]
     public void ScreenPrefabs_UseOxaniumFamilyForAllText()
     {
-        foreach (string prefabPath in ScreenPrefabPaths)
+        foreach (string prefabPath in GenericShellScreenPrefabPaths)
         {
             string prefabText = File.ReadAllText(prefabPath);
             MatchCollection fontMatches = Regex.Matches(prefabText, @"m_fontAsset: \{fileID: 11400000, guid: ([a-f0-9]+), type: 2\}");
@@ -211,7 +248,7 @@ public sealed class WarlineCaptureUiShellTests
     [Test]
     public void ScreenPrefabs_DisableDecorativeGraphicRaycasts()
     {
-        foreach (string prefabPath in ScreenPrefabPaths)
+        foreach (string prefabPath in GenericShellScreenPrefabPaths)
         {
             GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
             Assert.NotNull(prefab, prefabPath);
@@ -222,28 +259,6 @@ public sealed class WarlineCaptureUiShellTests
                 Assert.AreEqual(expectedRaycast, graphic.raycastTarget, $"{prefabPath}:{GetHierarchyPath(graphic.transform)} has an incorrect raycastTarget value.");
             }
         }
-    }
-
-    [Test]
-    public void MainMenuPrefab_ContainsPhaseOneModeCards()
-    {
-        GameObject mainMenuPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(MainMenuPrefabPath);
-        Assert.NotNull(mainMenuPrefab);
-
-        Assert.NotNull(mainMenuPrefab.transform.Find("TopProfileBar/LogoImage"));
-        Assert.NotNull(mainMenuPrefab.transform.Find("TopProfileBar/CommanderNameText"));
-        Assert.NotNull(mainMenuPrefab.transform.Find("TopProfileBar/SettingsButton"));
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_Saga"));
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_Operation"));
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_QuickCustom"));
-        Assert.NotNull(mainMenuPrefab.transform.Find("BottomUtilityBar"));
-
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_Saga").GetComponent<WarlineCaptureModeCardView>());
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_Operation").GetComponent<WarlineCaptureModeCardView>());
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_QuickCustom").GetComponent<WarlineCaptureModeCardView>());
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_Saga/Button").GetComponent<ScreenRouteButton>());
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_Operation/Button").GetComponent<ScreenRouteButton>());
-        Assert.NotNull(mainMenuPrefab.transform.Find("ModeCardList/ModeCard_QuickCustom/Button").GetComponent<ScreenRouteButton>());
     }
 
     [Test]
@@ -481,6 +496,23 @@ public sealed class WarlineCaptureUiShellTests
         WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
         controller.SetRouteForTests(route);
         return screen;
+    }
+
+    private static void AssertShellRouteButton(
+        GameObject prefab,
+        string path,
+        WarlineCaptureRoute route,
+        UiShellRouteIntent intent = UiShellRouteIntent.OpenMenuRoute,
+        bool pushHistory = false)
+    {
+        Transform hotspot = prefab.transform.Find(path);
+        Assert.NotNull(hotspot, $"Main menu shell content must keep the route hotspot at {path}.");
+
+        WarlineCaptureShellRouteButtonView routeButton = hotspot.GetComponent<WarlineCaptureShellRouteButtonView>();
+        Assert.NotNull(routeButton, $"{path} must submit a shell route request.");
+        Assert.AreEqual(intent, routeButton.Intent);
+        Assert.AreEqual(route, routeButton.Route);
+        Assert.AreEqual(pushHistory, routeButton.PushHistory);
     }
 
     private static bool IsInteractiveRaycastGraphic(GameObject root, Graphic graphic)

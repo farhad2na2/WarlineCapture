@@ -2939,7 +2939,7 @@ namespace Game.Scripts.UI
                         _buildingUiQuerySystem.TryResolveLiveUnitPreviewPrefab(_buildingUiQueryContext, passenger.Entity, out GameObject prefab) &&
                         prefab != null)
                     {
-                        sprite = GetCampPreviewSprite(prefab);
+                        sprite = GetCampPortraitSprite(prefab);
                     }
 
                     item.Portrait.sprite = sprite;
@@ -3070,7 +3070,7 @@ namespace Game.Scripts.UI
                 displayName = _selectionUiReadModelSystem.FocusedUnitLabel;
             }
 
-            Sprite sprite = prefab != null ? GetCampPreviewSprite(prefab) : null;
+            Sprite sprite = prefab != null ? GetCampPortraitSprite(prefab) : null;
             _singleSelectionPortrait.sprite = sprite;
             _singleSelectionPortrait.enabled = sprite != null;
 
@@ -3483,7 +3483,7 @@ namespace Game.Scripts.UI
                 if (view.SelectedName != null)
                     view.SelectedName.text = _campEntries[i].DisplayName;
 
-                Sprite sprite = GetCampPreviewSprite(_campEntries[i].Prefab);
+                Sprite sprite = GetCampPortraitSprite(_campEntries[i].Prefab);
                 if (view.PortraitImage != null)
                     view.PortraitImage.sprite = sprite;
             }
@@ -3616,7 +3616,7 @@ namespace Game.Scripts.UI
             if (_campSelectedPanel != null)
                 _campSelectedPanel.SetActive(true);
             if (_campSelectedPortrait != null)
-                _campSelectedPortrait.sprite = GetCampPreviewSprite(entry.Prefab);
+                _campSelectedPortrait.sprite = GetCampPortraitSprite(entry.Prefab);
             UpdateCampSelectedWeaponPanels(entry.Prefab);
             if (_campSelectedName != null)
                 _campSelectedName.text = entry.DisplayName;
@@ -4562,6 +4562,26 @@ namespace Game.Scripts.UI
                 CollectDescendantImagesByName(root.GetChild(i), childName, results);
         }
 
+        private Sprite GetCampPortraitSprite(GameObject prefab)
+        {
+            if (prefab == null)
+                return null;
+
+            if (prefab.TryGetComponent(out UnitGridAuthoring unitAuthoring) &&
+                unitAuthoring.PortraitSprite != null)
+            {
+                return unitAuthoring.PortraitSprite;
+            }
+
+            if (prefab.TryGetComponent(out BuildingDefinitionAuthoring buildingAuthoring) &&
+                buildingAuthoring.ConfiguredPortraitSprite != null)
+            {
+                return buildingAuthoring.ConfiguredPortraitSprite;
+            }
+
+            return GetCampPreviewSprite(prefab);
+        }
+
         private Sprite GetCampPreviewSprite(GameObject prefab)
         {
             if (prefab == null)
@@ -5499,7 +5519,7 @@ namespace Game.Scripts.UI
                 return;
 
             if (view.Portrait != null)
-                view.Portrait.sprite = GetCampPreviewSprite(entry.Prefab);
+                view.Portrait.sprite = GetCampPortraitSprite(entry.Prefab);
 
             if (view.Countdown != null)
             {

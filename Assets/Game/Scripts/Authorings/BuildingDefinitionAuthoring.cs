@@ -16,6 +16,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
     [Header("Identity")]
     [SerializeField, HideInInspector] private string displayName = "Building";
     [SerializeField, HideInInspector, TextArea] private string description = "Operational building.";
+    [SerializeField, HideInInspector] private Sprite portraitSprite;
 
     [Header("Placement")]
     [SerializeField, HideInInspector] private Vector2Int footprintCells = new(10, 10);
@@ -53,6 +54,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
 
     public string ConfiguredDisplayName => displayName;
     public string ConfiguredDescription => description;
+    public Sprite ConfiguredPortraitSprite => config != null ? config.PortraitSprite : portraitSprite;
     public Vector2Int ConfiguredFootprintCells => footprintCells;
     public int ConfiguredMaxHealth => maxHealth;
     public BuildingRole ConfiguredRole => role;
@@ -101,6 +103,7 @@ public sealed class BuildingDefinitionAuthoring : MonoBehaviour, ISerializationC
 
         displayName = config.DisplayName;
         description = config.Description;
+        portraitSprite = config.PortraitSprite;
         maxHealth = config.MaxHealth;
         role = config.Role;
         canRequest = config.CanRequest;

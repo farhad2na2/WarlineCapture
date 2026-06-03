@@ -38,6 +38,7 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector, Min(0)] private int threatDetectionRadiusCells;
     [SerializeField, HideInInspector] private string displayName;
     [SerializeField, HideInInspector, TextArea] private string description;
+    [SerializeField, HideInInspector] private Sprite portraitSprite;
     [SerializeField, HideInInspector] private string weaponDisplayName;
     [SerializeField, HideInInspector] private GameObject unitSelectionMarkerPrefab;
     [SerializeField, HideInInspector] private GameObject unitHealthBarPrefab;
@@ -107,6 +108,7 @@ public class UnitGridAuthoring : MonoBehaviour
         groundOffset = config.GroundOffset;
         displayName = config.DisplayName;
         description = config.Description;
+        portraitSprite = config.PortraitSprite;
         weaponDisplayName = config.WeaponDisplayName;
         unitSelectionMarkerPrefab = config.UnitSelectionMarkerPrefab;
         unitHealthBarPrefab = config.UnitHealthBarPrefab;
@@ -167,6 +169,7 @@ public class UnitGridAuthoring : MonoBehaviour
     public GameObject VehicleSelectionMarkerPrefab => config != null ? config.VehicleSelectionMarkerPrefab : vehicleSelectionMarkerPrefab;
     public GameObject VehicleHealthBarPrefab => config != null ? config.VehicleHealthBarPrefab : vehicleHealthBarPrefab;
     public bool TintVehicleModelRenderers => config != null ? config.TintVehicleModelRenderers : tintVehicleModelRenderers;
+    public Sprite PortraitSprite => config != null ? config.PortraitSprite : portraitSprite;
     public Sprite WeaponSprite => config != null ? config.WeaponSprite : null;
     public string WeaponDisplayName => config != null ? config.WeaponDisplayName : weaponDisplayName;
     public string ConfiguredDisplayName

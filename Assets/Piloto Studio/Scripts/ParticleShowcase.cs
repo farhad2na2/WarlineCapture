@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 namespace PilotoStudio
 {
@@ -74,17 +77,17 @@ namespace PilotoStudio
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (GetKeyDown(KeyCode.Q))
             {
                 ActivatePrevious();
             }
 
-            if (Input.GetKeyDown(KeyCode.W))
+            if (GetKeyDown(KeyCode.W))
             {
                 ActivateNext();
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (GetKeyDown(KeyCode.Space))
             {
           
                 if (particles[currentlyActive].TryGetComponent<ParticleSystem>(out ParticleSystem ps))
@@ -93,6 +96,27 @@ namespace PilotoStudio
                 }
                 PostUpdateLogic() ;
             }
+        }
+
+        private static bool GetKeyDown(KeyCode keyCode)
+        {
+#if ENABLE_INPUT_SYSTEM
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null)
+                return false;
+
+            return keyCode switch
+            {
+                KeyCode.Q => keyboard.qKey.wasPressedThisFrame,
+                KeyCode.W => keyboard.wKey.wasPressedThisFrame,
+                KeyCode.Space => keyboard.spaceKey.wasPressedThisFrame,
+                _ => false
+            };
+#elif ENABLE_LEGACY_INPUT_MANAGER
+            return Input.GetKeyDown(keyCode);
+#else
+            return false;
+#endif
         }
 
     }

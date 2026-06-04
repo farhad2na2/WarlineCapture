@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_WaterTank_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: 9fd2ed0fd02940e88ead470228d8a45e, type: 3}
   displayName: Water Tank
   description: Water storage structure that supports base utilities and field operations.
   maxHealth: 700

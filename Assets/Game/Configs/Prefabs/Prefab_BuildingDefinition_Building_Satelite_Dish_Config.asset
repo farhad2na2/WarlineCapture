@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_Building_Satelite_Dish_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: bc4e95d4062f46cab616b6ecbe76c99e, type: 3}
   displayName: Satellite Dish
   description: Air surveillance dish that detects hostile aircraft approaching the base but cannot attack.
   maxHealth: 450

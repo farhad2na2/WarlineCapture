@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Chr_Insurgent_Male_02_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: 317b19b546474e91a4c2f0a00cbe8333, type: 3}
   weaponSprite: {fileID: 21300000, guid: 9115324b4de93a3449c4db6e78ce8e41, type: 3}
   weaponDisplayName: Machine Gun
   allowIdleWander: 1

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_GuardTower_Big_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: d977cc0dacbd4cf3a6e157a3ed93cdf7, type: 3}
   displayName: Heavy Guard Tower
   description: Reinforced watchtower with improved visibility and stronger defensive
     coverage.

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Chr_Soldier_Male_01_Alt_02_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: 9ce63256204740468c8dc3b78c5ee046, type: 3}
   weaponSprite: {fileID: 21300000, guid: 535c3aafd811a6b4a9edd86d102ad78d, type: 3}
   weaponDisplayName: Advanced Rifle
   allowIdleWander: 1

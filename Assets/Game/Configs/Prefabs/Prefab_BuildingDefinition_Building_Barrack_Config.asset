@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_Building_Barrack_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: e516a6ebde0441afb7884943519409b8, type: 3}
   displayName: Barracks
   description: Military housing and training facility used to support infantry operations.
   maxHealth: 1200

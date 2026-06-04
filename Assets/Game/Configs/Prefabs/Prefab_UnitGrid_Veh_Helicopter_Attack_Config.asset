@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Helicopter_Attack_Config
   m_EditorClassIdentifier:
+  portraitSprite: {fileID: 21300000, guid: 3d55834c15ae49a7868df399c7be113f, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

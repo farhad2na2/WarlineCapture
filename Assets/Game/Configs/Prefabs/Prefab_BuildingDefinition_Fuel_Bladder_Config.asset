@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_Fuel_Bladder_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: 9a7fe689e4974c7c896d6de9b59166c4, type: 3}
   displayName: Fuel Bladder
   description: Temporary fuel storage used to support vehicles, aircraft, and field logistics.
   maxHealth: 500

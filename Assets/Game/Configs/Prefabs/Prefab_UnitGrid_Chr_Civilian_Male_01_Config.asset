@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Chr_Civilian_Male_01_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: f01a1c256e594a8fb1795028076e5b2a, type: 3}
   allowIdleWander: 1
   autoCalculateFootprint: 0
   footprintCells: {x: 1, y: 1}

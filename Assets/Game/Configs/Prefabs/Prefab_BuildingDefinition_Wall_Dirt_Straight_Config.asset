@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000004, type: 3}
   m_Name: Prefab_BuildingDefinition_Wall_Dirt_Straight_Config
   m_EditorClassIdentifier: 
+  portraitSprite: {fileID: 21300000, guid: f4147fc79ad046c8a17a3233ecfc0bc1, type: 3}
   displayName: Dirt Wall
   description: Earthen defensive wall segment for blocking movement and reinforcing the perimeter.
   maxHealth: 2500

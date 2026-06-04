@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2010000000000000000000000000003, type: 3}
   m_Name: Prefab_UnitGrid_Veh_Plane_Transport_Config
   m_EditorClassIdentifier:
+  portraitSprite: {fileID: 21300000, guid: b7a333e5f22443cf9ab26cdc64da334f, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Portraits_Vehicles
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 0
+      compressionQuality: 0
+      maxTextureSize: 0
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 4
+      m_BuildTarget: Android
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 50
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: da90bbb95b2948f79fe4d46f11ef46ca, type: 3}
+    - {fileID: 2800000, guid: e2af8d7a2c154cd8a3048ed8f6e7d633, type: 3}
+    - {fileID: 2800000, guid: 0812b0a43e814f759f0c01120fa8985d, type: 3}
+    - {fileID: 2800000, guid: 1d4990ef85b24778bc5851fa5b0b79ef, type: 3}
+    - {fileID: 2800000, guid: 3d55834c15ae49a7868df399c7be113f, type: 3}
+    - {fileID: 2800000, guid: db851db3057940b790f1085fbf19fc55, type: 3}
+    - {fileID: 2800000, guid: 658dcfb93e6241ebbb389a425137e005, type: 3}
+    - {fileID: 2800000, guid: 2290abc9555b45cea2ba058c8a46312d, type: 3}
+    - {fileID: 2800000, guid: 093e1056f41b4328a7ac0eeed92dbb91, type: 3}
+    - {fileID: 2800000, guid: f9f3ffc1b5c14cc883c9c739e0bc4bdc, type: 3}
+    - {fileID: 2800000, guid: 412dc153dbd54e65a5c43935e970f4c5, type: 3}
+    - {fileID: 2800000, guid: 323e32a3ec3045d991506f0111879985, type: 3}
+    - {fileID: 2800000, guid: b7a333e5f22443cf9ab26cdc64da334f, type: 3}
+    - {fileID: 2800000, guid: ea90017a3cca4ba7848a0c9d0b83ff57, type: 3}
+    - {fileID: 2800000, guid: e8fc00db57b24585973dbc2ddf6ab63a, type: 3}
+    - {fileID: 2800000, guid: 4c6760d43db8417f83054bd07405395e, type: 3}
+    - {fileID: 2800000, guid: 36100ff912a840cc90cf516dabe50507, type: 3}
+    - {fileID: 2800000, guid: 443d92c6306249d0a8019294ce7a93c2, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys: []
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
+  m_RenderDataMap: {}
+  m_Tag: Portraits_Vehicles
+  m_IsVariant: 0

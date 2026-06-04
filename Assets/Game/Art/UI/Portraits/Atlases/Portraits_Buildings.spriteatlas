@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Portraits_Buildings
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 0
+      compressionQuality: 0
+      maxTextureSize: 0
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 4
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    - serializedVersion: 4
+      m_BuildTarget: Android
+      m_MaxTextureSize: 4096
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: 50
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 1
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: c9464cd2b5ef40b0bdac50dabde7f1ab, type: 3}
+    - {fileID: 2800000, guid: 6471f74de2fa4944a90d3792ef3f3629, type: 3}
+    - {fileID: 2800000, guid: e516a6ebde0441afb7884943519409b8, type: 3}
+    - {fileID: 2800000, guid: 9a7fe689e4974c7c896d6de9b59166c4, type: 3}
+    - {fileID: 2800000, guid: 35c0e33091ef48f6b4433d8fd639940d, type: 3}
+    - {fileID: 2800000, guid: d977cc0dacbd4cf3a6e157a3ed93cdf7, type: 3}
+    - {fileID: 2800000, guid: 0e43a879ab9d481a852f3eed0a2ed7db, type: 3}
+    - {fileID: 2800000, guid: 1d3fb3151ecda4acb8b2e0a6911296f1, type: 3}
+    - {fileID: 2800000, guid: 15b0c7725bf34a2fb540f476d1ab7fec, type: 3}
+    - {fileID: 2800000, guid: 85dd15d1582964c4dbe2911dd0296937, type: 3}
+    - {fileID: 2800000, guid: 14e4ebdcc7b245209d01a3265e89a5e3, type: 3}
+    - {fileID: 2800000, guid: d81ba656b9a045a89a8c14761b6f00c7, type: 3}
+    - {fileID: 2800000, guid: bc4e95d4062f46cab616b6ecbe76c99e, type: 3}
+    - {fileID: 2800000, guid: 683fb84a7fcf49fca92ec3dd3f1d3cee, type: 3}
+    - {fileID: 2800000, guid: a80e774ed94447bf8f085dab571caa11, type: 3}
+    - {fileID: 2800000, guid: 6182b054530d41ff96b5a60546aade2f, type: 3}
+    - {fileID: 2800000, guid: 6fc6c135e302460cac2cfe371374cba9, type: 3}
+    - {fileID: 2800000, guid: da7f7acd065143b9bcbd0b3ba54d7070, type: 3}
+    - {fileID: 2800000, guid: f4147fc79ad046c8a17a3233ecfc0bc1, type: 3}
+    - {fileID: 2800000, guid: da0c4d76bfa94887a97477ebc3b2e55b, type: 3}
+    - {fileID: 2800000, guid: 9fd2ed0fd02940e88ead470228d8a45e, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys: []
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites: []
+  m_PackedSpriteNamesToIndex: []
+  m_RenderDataMap: {}
+  m_Tag: Portraits_Buildings
+  m_IsVariant: 0

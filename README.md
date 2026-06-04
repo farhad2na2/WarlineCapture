@@ -286,6 +286,10 @@ Initial reward types should include:
 
 The gameplay architecture contract is `Design/Architecture/gameplay_solid_ecs_contract.md`. It is enforced by `Assets/Tests/Editor/GameplayArchitectureContractTests.cs` as a no-new-drift ratchet. Existing mixed-responsibility code is treated as migration debt; new gameplay work should follow the contract.
 
+Code and systems architecture overview:
+
+![WarlineCapture Code And Systems Architecture](Design/Architecture/CodeSystemsArchitecture.svg)
+
 - `Assets/Game/Scripts/Components`
   ECS component data for grid state, movement, combat, visuals, spawning, roads, buildings, and occupancy.
 - `Assets/Game/Scripts/Systems`

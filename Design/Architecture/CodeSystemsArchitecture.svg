@@ -1,0 +1,265 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="2200" viewBox="0 0 1800 2200" role="img" aria-labelledby="title desc">
+  <title id="title">WarlineCapture Code And Systems Architecture</title>
+  <desc id="desc">Top-level code architecture diagram showing bootstrap, UI shell, authoring/configs, ECS components, domain systems, diagnostics, and service boundaries.</desc>
+  <defs>
+    <style>
+      .bg { fill: #07100d; }
+      .panel { fill: #101a16; stroke: #2a5d4b; stroke-width: 2; rx: 14; }
+      .panel2 { fill: #111d24; stroke: #35617c; stroke-width: 2; rx: 14; }
+      .panel3 { fill: #1c1710; stroke: #8a6b2d; stroke-width: 2; rx: 14; }
+      .panel4 { fill: #1a1118; stroke: #7b4768; stroke-width: 2; rx: 14; }
+      .header { fill: #d9c27b; font: 700 34px Arial, sans-serif; letter-spacing: .5px; }
+      .subheader { fill: #f0e6b6; font: 700 22px Arial, sans-serif; }
+      .label { fill: #e8eddc; font: 700 18px Arial, sans-serif; }
+      .small { fill: #c8d3c0; font: 15px Arial, sans-serif; }
+      .tiny { fill: #aebbad; font: 13px Arial, sans-serif; }
+      .tag { fill: #121a14; stroke: #789f64; stroke-width: 1.5; rx: 8; }
+      .tagtext { fill: #e6f2cc; font: 700 14px Arial, sans-serif; }
+      .arrow { stroke: #c9b35e; stroke-width: 3; fill: none; marker-end: url(#arrowhead); }
+      .arrow2 { stroke: #67a9c9; stroke-width: 3; fill: none; marker-end: url(#arrowheadBlue); }
+      .arrow3 { stroke: #85b878; stroke-width: 3; fill: none; marker-end: url(#arrowheadGreen); }
+      .muted { stroke: #47534d; stroke-width: 2; fill: none; stroke-dasharray: 7 7; marker-end: url(#arrowheadMuted); }
+      .rule { stroke: #30483d; stroke-width: 2; }
+    </style>
+    <marker id="arrowhead" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#c9b35e"/>
+    </marker>
+    <marker id="arrowheadBlue" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#67a9c9"/>
+    </marker>
+    <marker id="arrowheadGreen" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#85b878"/>
+    </marker>
+    <marker id="arrowheadMuted" markerWidth="12" markerHeight="8" refX="11" refY="4" orient="auto">
+      <polygon points="0 0, 12 4, 0 8" fill="#47534d"/>
+    </marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1800" height="2200"/>
+  <text class="header" x="60" y="66">WarlineCapture Code And Systems Architecture</text>
+  <text class="small" x="62" y="98">ECS-first gameplay, Unity object code at the edges, config-driven composition, and narrow domain systems.</text>
+
+  <!-- Top-level ownership row -->
+  <rect class="panel3" x="50" y="140" width="1700" height="320"/>
+  <text class="subheader" x="80" y="182">Top-Level Classes And Ownership Boundaries</text>
+
+  <rect class="tag" x="80" y="220" width="245" height="170"/>
+  <text class="label" x="100" y="250">MenuBootstrapView</text>
+  <text class="small" x="100" y="282">Serialized scene references</text>
+  <text class="small" x="100" y="306">Menu canvas / shell refs</text>
+  <text class="small" x="100" y="330">No gameplay policy</text>
+  <text class="tiny" x="100" y="360">MonoBehaviour edge</text>
+
+  <rect class="tag" x="355" y="220" width="245" height="170"/>
+  <text class="label" x="375" y="250">MenuBootstrapSystem</text>
+  <text class="small" x="375" y="282">Persistent app lifetime</text>
+  <text class="small" x="375" y="306">Diagnostics setup</text>
+  <text class="small" x="375" y="330">Menu startup composition</text>
+  <text class="tiny" x="375" y="360">Shell system</text>
+
+  <rect class="tag" x="630" y="220" width="245" height="170"/>
+  <text class="label" x="650" y="250">MatchSceneView</text>
+  <text class="small" x="650" y="282">Match scene references</text>
+  <text class="small" x="650" y="306">Config asset links</text>
+  <text class="small" x="650" y="330">Camera and scene binders</text>
+  <text class="tiny" x="650" y="360">MonoBehaviour edge</text>
+
+  <rect class="tag" x="905" y="220" width="245" height="170"/>
+  <text class="label" x="925" y="250">MatchBootstrapSystem</text>
+  <text class="small" x="925" y="282">Match lifecycle</text>
+  <text class="small" x="925" y="306">World connection</text>
+  <text class="small" x="925" y="330">Delegates to startup/update</text>
+  <text class="tiny" x="925" y="360">No domain policy</text>
+
+  <rect class="tag" x="1180" y="220" width="245" height="170"/>
+  <text class="label" x="1200" y="250">WarlineCaptureUi*</text>
+  <text class="small" x="1200" y="282">UiBootstrap / Router</text>
+  <text class="small" x="1200" y="306">ShellView / region views</text>
+  <text class="small" x="1200" y="330">Route and Canvas binding</text>
+  <text class="tiny" x="1200" y="360">UI-only controllers</text>
+
+  <rect class="tag" x="1455" y="220" width="245" height="170"/>
+  <text class="label" x="1475" y="250">GameplaySceneBindingSystem</text>
+  <text class="small" x="1475" y="282">Explicit scene binding</text>
+  <text class="small" x="1475" y="306">No broad Find* lookup</text>
+  <text class="small" x="1475" y="330">Injects boundary refs</text>
+  <text class="tiny" x="1475" y="360">Shell-to-ECS edge</text>
+
+  <!-- Central flow -->
+  <rect class="panel2" x="50" y="540" width="1700" height="420"/>
+  <text class="subheader" x="80" y="582">Runtime Flow</text>
+
+  <rect class="panel" x="90" y="625" width="300" height="220"/>
+  <text class="label" x="115" y="660">Configs</text>
+  <text class="small" x="115" y="692">ScriptableObject data only</text>
+  <text class="small" x="115" y="718">Scene configs</text>
+  <text class="small" x="115" y="744">Prefab configs</text>
+  <text class="small" x="115" y="770">Faction visual settings</text>
+  <text class="small" x="115" y="796">Balance / roster data</text>
+
+  <rect class="panel" x="430" y="625" width="300" height="220"/>
+  <text class="label" x="455" y="660">Authorings + Bakers</text>
+  <text class="small" x="455" y="692">GridAuthoring</text>
+  <text class="small" x="455" y="718">UnitGridAuthoring</text>
+  <text class="small" x="455" y="744">BuildingDefinitionAuthoring</text>
+  <text class="small" x="455" y="770">InitialUnitsSpawnerAuthoring</text>
+  <text class="small" x="455" y="796">MapSurfaceAuthoring</text>
+
+  <rect class="panel3" x="770" y="625" width="300" height="220"/>
+  <text class="label" x="795" y="660">ECS Data Layer</text>
+  <text class="small" x="795" y="692">Components, buffers, tags</text>
+  <text class="small" x="795" y="718">Requests and read models</text>
+  <text class="small" x="795" y="744">Grid / path / surface state</text>
+  <text class="small" x="795" y="770">Selection / mission state</text>
+  <text class="small" x="795" y="796">No Unity object refs in hot data</text>
+
+  <rect class="panel3" x="1110" y="625" width="300" height="220"/>
+  <text class="label" x="1135" y="660">ManagedGameplayStartupSystem</text>
+  <text class="small" x="1135" y="692">Composes runtime domains</text>
+  <text class="small" x="1135" y="718">Builds explicit contexts</text>
+  <text class="small" x="1135" y="744">Wires UI command/query edges</text>
+  <text class="small" x="1135" y="770">Creates narrow delegates</text>
+  <text class="small" x="1135" y="796">No broad gameplay facade</text>
+
+  <rect class="panel3" x="1450" y="625" width="250" height="220"/>
+  <text class="label" x="1475" y="660">GameplayRuntimeUpdateSystem</text>
+  <text class="small" x="1475" y="692">Managed tick orchestration</text>
+  <text class="small" x="1475" y="718">Calls domain ticks</text>
+  <text class="small" x="1475" y="744">Keeps bootstrap thin</text>
+  <text class="small" x="1475" y="770">LateUpdate/OnGUI edge</text>
+  <text class="small" x="1475" y="796">Lifecycle disposal</text>
+
+  <path class="arrow3" d="M390 735 H430"/>
+  <path class="arrow3" d="M730 735 H770"/>
+  <path class="arrow" d="M1070 735 H1110"/>
+  <path class="arrow" d="M1410 735 H1450"/>
+  <path class="arrow2" d="M1025 390 C1025 480 1260 510 1260 625"/>
+  <path class="arrow2" d="M1302 390 C1302 490 1575 510 1575 625"/>
+  <path class="muted" d="M1575 390 C1575 480 1580 520 1575 625"/>
+
+  <!-- Domain systems -->
+  <rect class="panel" x="50" y="1040" width="1700" height="780"/>
+  <text class="subheader" x="80" y="1082">Gameplay Domain Systems</text>
+
+  <rect class="panel2" x="90" y="1130" width="355" height="255"/>
+  <text class="label" x="115" y="1163">Selection + Camera</text>
+  <text class="small" x="115" y="1195">RtsSelectionRuntimeInputSystem</text>
+  <text class="small" x="115" y="1221">FocusableUnitLookupSystem</text>
+  <text class="small" x="115" y="1247">VisibleUnitSelectionSystem</text>
+  <text class="small" x="115" y="1273">SelectedMoveOrderCommandSystem</text>
+  <text class="small" x="115" y="1299">AttackOrderCommandSystem</text>
+  <text class="small" x="115" y="1325">RtsCameraSystem / RequestSystem</text>
+  <text class="tiny" x="115" y="1355">Pointer input becomes ECS requests; systems mutate tags/read models.</text>
+
+  <rect class="panel2" x="485" y="1130" width="355" height="255"/>
+  <text class="label" x="510" y="1163">Units + Movement + Pathing</text>
+  <text class="small" x="510" y="1195">UnitGridMovementSystem</text>
+  <text class="small" x="510" y="1221">UnitPathfindingSystem + batch job</text>
+  <text class="small" x="510" y="1247">UnitPathRequest/Result systems</text>
+  <text class="small" x="510" y="1273">UnitGroundingSystem</text>
+  <text class="small" x="510" y="1299">UnitTransportBoardingSystem</text>
+  <text class="small" x="510" y="1325">UnitRenderBudgetSystem</text>
+  <text class="tiny" x="510" y="1355">Hot-path movement, path budgets, grounding, boarding, and LOD policy.</text>
+
+  <rect class="panel2" x="880" y="1130" width="355" height="255"/>
+  <text class="label" x="905" y="1163">Buildings + Production</text>
+  <text class="small" x="905" y="1195">BuildingGameplayCompositionSystem</text>
+  <text class="small" x="905" y="1221">BuildingRuntimeSystem</text>
+  <text class="small" x="905" y="1247">BuildingPlacement* systems</text>
+  <text class="small" x="905" y="1273">BuildingProduction* systems</text>
+  <text class="small" x="905" y="1299">BuildingSelectionMarkerSystem</text>
+  <text class="small" x="905" y="1325">BuildingFactionVisualSystem</text>
+  <text class="tiny" x="905" y="1355">Composition, placement, spawn, selection, production, tint, destruction.</text>
+
+  <rect class="panel2" x="1275" y="1130" width="385" height="255"/>
+  <text class="label" x="1300" y="1163">AI + Mission + Economy</text>
+  <text class="small" x="1300" y="1195">AIStartupSystem / AIPlanEntryStartupSystem</text>
+  <text class="small" x="1300" y="1221">AIEconomy / AIBuildPlanner / AIProduction</text>
+  <text class="small" x="1300" y="1247">AISquad / AITargeting / AICombatOrder</text>
+  <text class="small" x="1300" y="1273">MissionStartupSystem / MissionCameraSystem</text>
+  <text class="small" x="1300" y="1299">FactionIdentitySystem / FactionResourceSystem</text>
+  <text class="small" x="1300" y="1325">MatchStartSystem / SceneLifecycleSystem</text>
+  <text class="tiny" x="1300" y="1355">Faction policy, economy, AI intent, mission startup, lifecycle.</text>
+
+  <rect class="panel2" x="90" y="1445" width="355" height="255"/>
+  <text class="label" x="115" y="1478">Roads + Map Surface</text>
+  <text class="small" x="115" y="1510">RoadBuildCompositionSystem</text>
+  <text class="small" x="115" y="1536">RoadRuntimeGenerationSystem</text>
+  <text class="small" x="115" y="1562">RoadGridProjectionSystem</text>
+  <text class="small" x="115" y="1588">MapSurfaceRuntimeBootstrapSystem</text>
+  <text class="small" x="115" y="1614">MapSurfacePathfindingReadSystem</text>
+  <text class="small" x="115" y="1640">MapSurfaceSpawnGroundingSystem</text>
+  <text class="tiny" x="115" y="1670">Road visuals/grid semantics and baked layered surface data.</text>
+
+  <rect class="panel2" x="485" y="1445" width="355" height="255"/>
+  <text class="label" x="510" y="1478">Initial Spawn + Runtime City</text>
+  <text class="small" x="510" y="1510">InitialUnitsSpawnSystem</text>
+  <text class="small" x="510" y="1536">InitialUnitSpawnBatchSystem</text>
+  <text class="small" x="510" y="1562">InitialBlockerSpawnSystem</text>
+  <text class="small" x="510" y="1588">MapBuildingPlacementSpawnSystem</text>
+  <text class="small" x="510" y="1614">BuildingRuntimeCitySpawnSystem</text>
+  <text class="small" x="510" y="1640">RuntimeCity* placement systems</text>
+  <text class="tiny" x="510" y="1670">Config-backed initial units/buildings and authored map conversions.</text>
+
+  <rect class="panel2" x="880" y="1445" width="355" height="255"/>
+  <text class="label" x="905" y="1478">Combat + Visual Adornments</text>
+  <text class="small" x="905" y="1510">UnitAttackSystem / Engagement systems</text>
+  <text class="small" x="905" y="1536">BuildingCombatSystem</text>
+  <text class="small" x="905" y="1562">UnitSelectionMarkerSystem</text>
+  <text class="small" x="905" y="1588">UnitRuntimeHealthBarSystem</text>
+  <text class="small" x="905" y="1614">VehicleDestroyedVisualSystem</text>
+  <text class="small" x="905" y="1640">FactionVisualSystem</text>
+  <text class="tiny" x="905" y="1670">Damage, target sync, death visuals, health bars, selection markers, tint.</text>
+
+  <rect class="panel2" x="1275" y="1445" width="385" height="255"/>
+  <text class="label" x="1300" y="1478">Diagnostics + State Boundaries</text>
+  <text class="small" x="1300" y="1510">PerformanceDiagnosticsSystem</text>
+  <text class="small" x="1300" y="1536">RuntimeDiagnosticsSystem</text>
+  <text class="small" x="1300" y="1562">RuntimeGameplayStateSystem</text>
+  <text class="small" x="1300" y="1588">AIDiagnosticLogFlushSystem</text>
+  <text class="small" x="1300" y="1614">UnitPathfindingDiagnosticLogFlushSystem</text>
+  <text class="small" x="1300" y="1640">UnitRenderBudgetDiagnosticLogFlushSystem</text>
+  <text class="tiny" x="1300" y="1670">Structured logs, frame/per-system timing, compatibility state boundary.</text>
+
+  <path class="arrow" d="M1575 845 C1575 1000 1468 1010 1468 1130"/>
+  <path class="arrow" d="M1575 845 C1160 985 1058 1000 1058 1130"/>
+  <path class="arrow" d="M1575 845 C900 985 662 1000 662 1130"/>
+  <path class="arrow" d="M1575 845 C500 980 268 1000 268 1130"/>
+  <path class="arrow" d="M920 845 C720 1000 662 1325 662 1445"/>
+  <path class="arrow" d="M920 845 C250 1000 268 1325 268 1445"/>
+  <path class="arrow" d="M1260 845 C1200 1030 1058 1325 1058 1445"/>
+  <path class="arrow" d="M1575 845 C1625 1025 1468 1325 1468 1445"/>
+
+  <!-- UI/services edge -->
+  <rect class="panel4" x="50" y="1880" width="1700" height="240"/>
+  <text class="subheader" x="80" y="1922">Edges: UI, Services, Tests</text>
+
+  <rect class="tag" x="90" y="1965" width="370" height="105"/>
+  <text class="label" x="115" y="1995">UI Views And Controllers</text>
+  <text class="small" x="115" y="2026">WarlineCaptureShellView, ScreenRouteButton, screen controllers</text>
+  <text class="small" x="115" y="2052">Display read models and enqueue ECS/UI commands only</text>
+
+  <rect class="tag" x="500" y="1965" width="370" height="105"/>
+  <text class="label" x="525" y="1995">Services</text>
+  <text class="small" x="525" y="2026">SettingsService, logging/diagnostics, asset lookup, platform APIs</text>
+  <text class="small" x="525" y="2052">External concerns; no gameplay policy ownership</text>
+
+  <rect class="tag" x="910" y="1965" width="370" height="105"/>
+  <text class="label" x="935" y="1995">Editor Tooling</text>
+  <text class="small" x="935" y="2026">Bakers, atlas builders, map surface tools, prefab migrations</text>
+  <text class="small" x="935" y="2052">Offline generation and validation only</text>
+
+  <rect class="tag" x="1320" y="1965" width="370" height="105"/>
+  <text class="label" x="1345" y="1995">Architecture Tests</text>
+  <text class="small" x="1345" y="2026">GameplayArchitectureContractTests and focused EditMode tests</text>
+  <text class="small" x="1345" y="2052">Ratchet against drift, global lookup, singleton, prefab debt</text>
+
+  <path class="arrow2" d="M1302 390 C1302 1500 275 1750 275 1965"/>
+  <path class="arrow2" d="M1260 845 C1260 1760 275 1810 275 1965"/>
+  <path class="muted" d="M1468 1700 C1468 1810 1505 1850 1505 1965"/>
+  <path class="muted" d="M1095 2070 C1095 2110 1505 2110 1505 2070"/>
+
+  <!-- Legend -->
+  <line class="rule" x1="60" y1="2146" x2="1740" y2="2146"/>
+  <text class="tiny" x="80" y="2178">Rule: Bootstrap and UI compose or display only. Gameplay decisions live in ECS data and systems. Configs describe data. Authorings bake Unity references into ECS. Services handle external concerns.</text>
+</svg>

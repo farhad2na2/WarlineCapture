@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using TMPro;
+using Unity.Entities;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -206,6 +207,44 @@ public sealed class WarlineCaptureUiShellTests
         StringAssert.DoesNotContain("static event", File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationView.cs"));
         StringAssert.Contains("public sealed class ArmoryCatalogQuerySystem",
             File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCatalogQuerySystem.cs"));
+    }
+
+    [Test]
+    public void ShellArmoryContent_CategoryHotspotsSelectExpectedRuntimeCategories()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("ArmoryCategoryNavigationTestWorld");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        EntityManager entityManager = world.EntityManager;
+        Entity boundary = entityManager.CreateEntity(
+            typeof(UiShellBoundaryComponent),
+            typeof(UiShellArmoryCategoryComponent));
+        entityManager.SetComponentData(boundary, new UiShellArmoryCategoryComponent
+        {
+            Category = ArmoryCatalogCategory.Characters
+        });
+        entityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
+        entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+        SystemHandle categorySystem = world.CreateSystem<UiShellArmoryCategorySystem>();
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
+        Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
+                "LeftContent/LeftNavPanel/Nav_Vehicles/Frame/Hotspot", ArmoryCatalogCategory.Vehicles);
+            AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
+                "LeftContent/LeftNavPanel/Nav_Aircrafts/Frame/Hotspot", ArmoryCatalogCategory.Aircrafts);
+            AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
+                "LeftContent/LeftNavPanel/Nav_Buildings/Frame/Hotspot", ArmoryCatalogCategory.Buildings);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]
@@ -544,6 +583,37 @@ public sealed class WarlineCaptureUiShellTests
         Assert.AreEqual(intent, routeButton.Intent);
         Assert.AreEqual(route, routeButton.Route);
         Assert.AreEqual(pushHistory, routeButton.PushHistory);
+    }
+
+    private static void AssertArmoryCategoryHotspot(
+        GameObject root,
+        World world,
+        SystemHandle categorySystem,
+        EntityManager entityManager,
+        Entity boundary,
+        string path,
+        ArmoryCatalogCategory expectedCategory)
+    {
+        Transform hotspot = root.transform.Find(path);
+        Assert.NotNull(hotspot, $"{path} must exist on Armory content.");
+
+        Button button = hotspot.GetComponent<Button>();
+        Assert.NotNull(button, $"{path} must have a Button.");
+
+        WarlineCaptureShellRouteButtonView routeButton = hotspot.GetComponent<WarlineCaptureShellRouteButtonView>();
+        if (routeButton != null)
+            Assert.IsFalse(routeButton.enabled, $"{path} must not submit shell route requests.");
+
+        button.onClick.Invoke();
+        categorySystem.Update(world.Unmanaged);
+
+        UiShellArmoryCategoryComponent categoryState =
+            entityManager.GetComponentData<UiShellArmoryCategoryComponent>(boundary);
+        Assert.AreEqual(expectedCategory, categoryState.Category, path);
+
+        DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
+            entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
+        Assert.AreEqual(0, routeRequests.Length, $"{path} must not navigate away from Armory.");
     }
 
     private static bool IsInteractiveRaycastGraphic(GameObject root, Graphic graphic)

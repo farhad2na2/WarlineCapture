@@ -11,6 +11,15 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
     private World cachedWorld;
     private bool hasBoundaryQuery;
 
+    private void Awake()
+    {
+        DisableRouteButton("Nav_Characters");
+        DisableRouteButton("Nav_Vehicles");
+        DisableRouteButton("Nav_Aircrafts");
+        DisableRouteButton("Nav_Buildings");
+        DisableRouteButton("Nav_Support");
+    }
+
     private void OnEnable()
     {
         Wire("Nav_Characters", ArmoryCatalogCategory.Characters);
@@ -38,9 +47,31 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
         if (button == null)
             return;
 
+        DisableRouteButtonComponent(button);
+
         UnityEngine.Events.UnityAction action = () => SelectCategory(category);
         button.onClick.AddListener(action);
         bindings.Add(new ButtonBinding(button, action));
+    }
+
+    private void DisableRouteButton(string navName)
+    {
+        Transform nav = FindDeep(transform, navName);
+        if (nav == null)
+            return;
+
+        Button button = FindButton(nav);
+        DisableRouteButtonComponent(button);
+    }
+
+    private static void DisableRouteButtonComponent(Button button)
+    {
+        if (button == null)
+            return;
+
+        WarlineCaptureShellRouteButtonView routeButton = button.GetComponent<WarlineCaptureShellRouteButtonView>();
+        if (routeButton != null)
+            routeButton.enabled = false;
     }
 
     private void SelectCategory(ArmoryCatalogCategory category)

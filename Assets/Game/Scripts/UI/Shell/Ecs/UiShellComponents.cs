@@ -57,6 +57,15 @@ public enum UiMissionResultState
     SimulationResolved
 }
 
+public enum ArmoryCatalogCategory
+{
+    Characters = 0,
+    Vehicles = 1,
+    Aircrafts = 2,
+    Buildings = 3,
+    Support = 4
+}
+
 public enum UiShellCommandKind
 {
     ShowLoading,
@@ -102,6 +111,16 @@ public struct UiShellLoadingProgressComponent : IComponentData
     public float Progress01;
     public FixedString64Bytes Status;
     public byte IsComplete;
+}
+
+public struct UiShellArmoryCategoryComponent : IComponentData
+{
+    public ArmoryCatalogCategory Category;
+}
+
+public struct UiShellArmoryCategoryRequestComponent : IBufferElementData
+{
+    public ArmoryCatalogCategory Category;
 }
 
 public struct UiShellMissionResultComponent : IComponentData

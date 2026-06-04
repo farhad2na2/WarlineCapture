@@ -178,6 +178,37 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellArmoryContent_UsesViewsAndCatalogQueryForRuntimeRoster()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
+        Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
+
+        ArmoryCategoryNavigationView navigationView = prefab.transform
+            .Find("LeftContent")
+            .GetComponent<ArmoryCategoryNavigationView>();
+        Assert.NotNull(navigationView);
+
+        ArmoryContentListView listView = prefab.transform
+            .Find("MiddleContent")
+            .GetComponent<ArmoryContentListView>();
+        Assert.NotNull(listView);
+
+        var serializedList = new SerializedObject(listView);
+        Assert.NotNull(serializedList.FindProperty("unitPrefabRegistryConfig").objectReferenceValue);
+        Assert.NotNull(serializedList.FindProperty("buildingPlacementConfig").objectReferenceValue);
+        Assert.AreEqual(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content") as RectTransform,
+            serializedList.FindProperty("contentRoot").objectReferenceValue);
+        Assert.AreEqual(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView").gameObject,
+            serializedList.FindProperty("itemTemplate").objectReferenceValue);
+
+        Assert.IsFalse(File.Exists("Assets/Game/Scripts/UI/Screens/ArmoryContentListController.cs"));
+        Assert.IsFalse(File.Exists("Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationController.cs"));
+        StringAssert.DoesNotContain("static event", File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationView.cs"));
+        StringAssert.Contains("public sealed class ArmoryCatalogQuerySystem",
+            File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCatalogQuerySystem.cs"));
+    }
+
+    [Test]
     public void MatchResultFlow_ShowsRuntimeMissionResultAndContinuesToReturnRoute()
     {
         GameObject shellPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellPrefabPath);

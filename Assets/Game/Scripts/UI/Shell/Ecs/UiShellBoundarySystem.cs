@@ -31,6 +31,11 @@ public partial struct UiShellBoundarySystem : ISystem
             Status = new FixedString64Bytes("Starting"),
             IsComplete = 0
         });
+        state.EntityManager.AddComponentData(boundary, new UiShellArmoryCategoryComponent
+        {
+            Category = ArmoryCatalogCategory.Characters
+        });
+        state.EntityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
         state.EntityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);

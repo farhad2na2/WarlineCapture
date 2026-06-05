@@ -207,6 +207,12 @@ public sealed class WarlineCaptureUiShellTests
         StringAssert.DoesNotContain("static event", File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationView.cs"));
         StringAssert.Contains("public sealed class ArmoryCatalogQuerySystem",
             File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCatalogQuerySystem.cs"));
+
+        AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Characters", true);
+        AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Vehicles", false);
+        AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Aircrafts", false);
+        AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Buildings", false);
+        AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Support", false);
     }
 
     [Test]
@@ -231,14 +237,21 @@ public sealed class WarlineCaptureUiShellTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
         Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        instance.SetActive(false);
+        instance.SetActive(true);
+        ArmoryCategoryNavigationView navigationView = instance.GetComponentInChildren<ArmoryCategoryNavigationView>(true);
+        Assert.NotNull(navigationView);
+        InvokeArmoryNavigationOnEnable(navigationView);
         try
         {
             AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
-                "LeftContent/LeftNavPanel/Nav_Vehicles/Frame/Hotspot", ArmoryCatalogCategory.Vehicles);
+                "LeftContent/LeftNavPanel/Nav_Vehicles", ArmoryCatalogCategory.Vehicles);
             AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
-                "LeftContent/LeftNavPanel/Nav_Aircrafts/Frame/Hotspot", ArmoryCatalogCategory.Aircrafts);
+                "LeftContent/LeftNavPanel/Nav_Aircrafts", ArmoryCatalogCategory.Aircrafts);
             AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
-                "LeftContent/LeftNavPanel/Nav_Buildings/Frame/Hotspot", ArmoryCatalogCategory.Buildings);
+                "LeftContent/LeftNavPanel/Nav_Buildings", ArmoryCatalogCategory.Buildings);
+            AssertArmoryCategoryHotspot(instance, world, categorySystem, entityManager, boundary,
+                "LeftContent/LeftNavPanel/Nav_Support", ArmoryCatalogCategory.Support);
         }
         finally
         {
@@ -585,6 +598,22 @@ public sealed class WarlineCaptureUiShellTests
         Assert.AreEqual(pushHistory, routeButton.PushHistory);
     }
 
+    private static void AssertArmoryNavTabButton(GameObject prefab, string path, bool selected)
+    {
+        Transform nav = prefab.transform.Find(path);
+        Assert.NotNull(nav, $"{path} must exist on Armory content.");
+        Assert.NotNull(nav.GetComponent<Button>(), $"{path} must be the Armory tab Button.");
+        Assert.Null(nav.Find("Frame/Hotspot"), $"{path} must not keep a nested Frame/Hotspot button.");
+
+        Image frame = nav.Find("Frame")?.GetComponent<Image>();
+        Assert.NotNull(frame, $"{path}/Frame must keep the tab visual.");
+        string spriteName = frame.sprite != null ? frame.sprite.name : string.Empty;
+        if (selected)
+            StringAssert.Contains("selected", spriteName.ToLowerInvariant(), $"{path}/Frame must use the selected tab state.");
+        else
+            StringAssert.Contains("inactive", spriteName.ToLowerInvariant(), $"{path}/Frame must use the inactive tab state.");
+    }
+
     private static void AssertArmoryCategoryHotspot(
         GameObject root,
         World world,
@@ -610,10 +639,40 @@ public sealed class WarlineCaptureUiShellTests
         UiShellArmoryCategoryComponent categoryState =
             entityManager.GetComponentData<UiShellArmoryCategoryComponent>(boundary);
         Assert.AreEqual(expectedCategory, categoryState.Category, path);
+        AssertArmoryRuntimeSelectedState(root, expectedCategory);
 
         DynamicBuffer<UiShellRouteRequestComponent> routeRequests =
             entityManager.GetBuffer<UiShellRouteRequestComponent>(boundary);
         Assert.AreEqual(0, routeRequests.Length, $"{path} must not navigate away from Armory.");
+    }
+
+    private static void AssertArmoryRuntimeSelectedState(GameObject root, ArmoryCatalogCategory selectedCategory)
+    {
+        AssertArmoryRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Characters", selectedCategory == ArmoryCatalogCategory.Characters);
+        AssertArmoryRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Vehicles", selectedCategory == ArmoryCatalogCategory.Vehicles);
+        AssertArmoryRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Aircrafts", selectedCategory == ArmoryCatalogCategory.Aircrafts);
+        AssertArmoryRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Buildings", selectedCategory == ArmoryCatalogCategory.Buildings);
+        AssertArmoryRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Support", selectedCategory == ArmoryCatalogCategory.Support);
+    }
+
+    private static void AssertArmoryRuntimeTabState(GameObject root, string path, bool selected)
+    {
+        Image frame = root.transform.Find(path)?.Find("Frame")?.GetComponent<Image>();
+        Assert.NotNull(frame, $"{path}/Frame must exist.");
+        string spriteName = frame.sprite != null ? frame.sprite.name.ToLowerInvariant() : string.Empty;
+        if (selected)
+            StringAssert.Contains("selected", spriteName, $"{path} must show selected state.");
+        else
+            StringAssert.Contains("inactive", spriteName, $"{path} must show inactive state.");
+    }
+
+    private static void InvokeArmoryNavigationOnEnable(ArmoryCategoryNavigationView navigationView)
+    {
+        MethodInfo onEnable = typeof(ArmoryCategoryNavigationView).GetMethod(
+            "OnEnable",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(onEnable);
+        onEnable.Invoke(navigationView, null);
     }
 
     private static bool IsInteractiveRaycastGraphic(GameObject root, Graphic graphic)

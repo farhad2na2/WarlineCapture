@@ -147,7 +147,40 @@ public sealed class WarlineCaptureUiShellTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMainMenuContentPrefabPath);
         Assert.NotNull(prefab, ShellMainMenuContentPrefabPath);
 
-        AssertShellRouteButton(prefab, "LeftContent/LeftNavPanel/Nav_Armory/Hotspot", WarlineCaptureRoute.Armory, UiShellRouteIntent.OpenMenuRoute, true);
+        AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Leaderboards", WarlineCaptureRoute.MainMenu, true, false);
+        AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Armory", WarlineCaptureRoute.Armory, false, true);
+        AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Store", WarlineCaptureRoute.MainMenu, false, false);
+        AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Contests", WarlineCaptureRoute.MainMenu, false, false);
+        AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Tutorials", WarlineCaptureRoute.MainMenu, false, false);
+    }
+
+    [Test]
+    public void ShellMainMenuContent_LeftNavTabVisualsMoveOnClick()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMainMenuContentPrefabPath);
+        Assert.NotNull(prefab, ShellMainMenuContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            MainMenuNavigationView navigationView = instance.GetComponentInChildren<MainMenuNavigationView>(true);
+            Assert.NotNull(navigationView);
+            InvokeMainMenuNavigationOnEnable(navigationView);
+
+            AssertMainMenuRuntimeSelectedState(instance, "LeftContent/LeftNavPanel/Nav_Leaderboards");
+            InvokeButton(instance, "LeftContent/LeftNavPanel/Nav_Store");
+            AssertMainMenuRuntimeSelectedState(instance, "LeftContent/LeftNavPanel/Nav_Store");
+            InvokeMainMenuNavigationOnEnable(navigationView);
+            AssertMainMenuRuntimeSelectedState(instance, "LeftContent/LeftNavPanel/Nav_Store");
+            InvokeButton(instance, "LeftContent/LeftNavPanel/Nav_Contests");
+            AssertMainMenuRuntimeSelectedState(instance, "LeftContent/LeftNavPanel/Nav_Contests");
+            InvokeButton(instance, "LeftContent/LeftNavPanel/Nav_Armory");
+            AssertMainMenuRuntimeSelectedState(instance, "LeftContent/LeftNavPanel/Nav_Armory");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]
@@ -598,6 +631,61 @@ public sealed class WarlineCaptureUiShellTests
         Assert.AreEqual(pushHistory, routeButton.PushHistory);
     }
 
+    private static void AssertMainMenuNavTabButton(
+        GameObject prefab,
+        string path,
+        WarlineCaptureRoute route,
+        bool selected,
+        bool pushHistory)
+    {
+        Transform nav = prefab.transform.Find(path);
+        Assert.NotNull(nav, $"{path} must exist on Main Menu content.");
+        Assert.NotNull(nav.GetComponent<Button>(), $"{path} must be the Main Menu tab Button.");
+        Assert.Null(nav.Find("Hotspot"), $"{path} must not keep a nested Hotspot button.");
+        Assert.Null(nav.Find("Frame/Hotspot"), $"{path} must not keep a nested Frame/Hotspot button.");
+
+        WarlineCaptureShellRouteButtonView routeButton = nav.GetComponent<WarlineCaptureShellRouteButtonView>();
+        Assert.NotNull(routeButton, $"{path} must submit a shell route request.");
+        Assert.AreEqual(UiShellRouteIntent.OpenMenuRoute, routeButton.Intent);
+        Assert.AreEqual(route, routeButton.Route);
+        Assert.AreEqual(pushHistory, routeButton.PushHistory);
+
+        Image frame = nav.Find("Frame")?.GetComponent<Image>();
+        Assert.NotNull(frame, $"{path}/Frame must keep the tab visual.");
+        string spriteName = frame.sprite != null ? frame.sprite.name.ToLowerInvariant() : string.Empty;
+        if (selected)
+            StringAssert.Contains("selected", spriteName, $"{path}/Frame must use the selected tab state.");
+        else
+            StringAssert.Contains("inactive", spriteName, $"{path}/Frame must use the inactive tab state.");
+    }
+
+    private static void AssertMainMenuRuntimeSelectedState(GameObject root, string selectedPath)
+    {
+        AssertMainMenuRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Leaderboards", selectedPath == "LeftContent/LeftNavPanel/Nav_Leaderboards");
+        AssertMainMenuRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Armory", selectedPath == "LeftContent/LeftNavPanel/Nav_Armory");
+        AssertMainMenuRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Store", selectedPath == "LeftContent/LeftNavPanel/Nav_Store");
+        AssertMainMenuRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Contests", selectedPath == "LeftContent/LeftNavPanel/Nav_Contests");
+        AssertMainMenuRuntimeTabState(root, "LeftContent/LeftNavPanel/Nav_Tutorials", selectedPath == "LeftContent/LeftNavPanel/Nav_Tutorials");
+    }
+
+    private static void AssertMainMenuRuntimeTabState(GameObject root, string path, bool selected)
+    {
+        Image frame = root.transform.Find(path)?.Find("Frame")?.GetComponent<Image>();
+        Assert.NotNull(frame, $"{path}/Frame must exist.");
+        string spriteName = frame.sprite != null ? frame.sprite.name.ToLowerInvariant() : string.Empty;
+        if (selected)
+            StringAssert.Contains("selected", spriteName, $"{path} must show selected state.");
+        else
+            StringAssert.Contains("inactive", spriteName, $"{path} must show inactive state.");
+    }
+
+    private static void InvokeButton(GameObject root, string path)
+    {
+        Button button = root.transform.Find(path)?.GetComponent<Button>();
+        Assert.NotNull(button, $"{path} must have a Button.");
+        button.onClick.Invoke();
+    }
+
     private static void AssertArmoryNavTabButton(GameObject prefab, string path, bool selected)
     {
         Transform nav = prefab.transform.Find(path);
@@ -669,6 +757,15 @@ public sealed class WarlineCaptureUiShellTests
     private static void InvokeArmoryNavigationOnEnable(ArmoryCategoryNavigationView navigationView)
     {
         MethodInfo onEnable = typeof(ArmoryCategoryNavigationView).GetMethod(
+            "OnEnable",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(onEnable);
+        onEnable.Invoke(navigationView, null);
+    }
+
+    private static void InvokeMainMenuNavigationOnEnable(MainMenuNavigationView navigationView)
+    {
+        MethodInfo onEnable = typeof(MainMenuNavigationView).GetMethod(
             "OnEnable",
             BindingFlags.Instance | BindingFlags.NonPublic);
         Assert.NotNull(onEnable);

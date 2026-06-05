@@ -6,9 +6,11 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class MainMenuNavigationView : MonoBehaviour
 {
-    private const string DefaultSelectedNavName = "Nav_Leaderboards";
+    private const MainMenuNavigationTabId DefaultSelectedTab = MainMenuNavigationTabId.Leaderboards;
 
-    private static string activeNavName = DefaultSelectedNavName;
+    [SerializeField] private MainMenuNavigationTabView[] tabs;
+
+    private static MainMenuNavigationTabId activeTab = DefaultSelectedTab;
 
     private readonly List<TabBinding> bindings = new();
     private Sprite selectedFrameSprite;
@@ -26,7 +28,7 @@ public sealed class MainMenuNavigationView : MonoBehaviour
     private void OnEnable()
     {
         WireAll();
-        ApplyVisualState(activeNavName);
+        ApplyVisualState(activeTab);
     }
 
     private void OnDisable()
@@ -42,30 +44,27 @@ public sealed class MainMenuNavigationView : MonoBehaviour
         if (bindings.Count > 0)
             return;
 
-        Wire("Nav_Leaderboards");
-        Wire("Nav_Armory");
-        Wire("Nav_Store");
-        Wire("Nav_Contests");
-        Wire("Nav_Tutorials");
-    }
-
-    private void Wire(string navName)
-    {
-        Transform nav = FindDeep(transform, navName);
-        if (nav == null)
+        if (tabs == null)
             return;
 
-        Button button = nav.GetComponent<Button>();
+        for (int i = 0; i < tabs.Length; i++)
+            Wire(tabs[i]);
+    }
+
+    private void Wire(MainMenuNavigationTabView tab)
+    {
+        Button button = tab.Button;
         if (button == null)
             return;
 
-        Image frame = nav.Find("Frame")?.GetComponent<Image>();
-        TMP_Text label = nav.Find("Text")?.GetComponent<TMP_Text>();
+        Image frame = tab.Frame;
+        TMP_Text label = tab.Label;
         CacheVisualState(frame, label);
 
-        UnityEngine.Events.UnityAction action = () => SelectNav(navName);
+        MainMenuNavigationTabId tabId = tab.TabId;
+        UnityEngine.Events.UnityAction action = () => SelectNav(tabId);
         button.onClick.AddListener(action);
-        bindings.Add(new TabBinding(navName, button, frame, label, action));
+        bindings.Add(new TabBinding(tabId, button, frame, label, action));
     }
 
     private void CacheVisualState(Image frame, TMP_Text label)
@@ -94,13 +93,13 @@ public sealed class MainMenuNavigationView : MonoBehaviour
         }
     }
 
-    private void SelectNav(string navName)
+    private void SelectNav(MainMenuNavigationTabId tabId)
     {
-        activeNavName = navName;
-        ApplyVisualState(navName);
+        activeTab = tabId;
+        ApplyVisualState(tabId);
     }
 
-    private void ApplyVisualState(string selectedNavName)
+    private void ApplyVisualState(MainMenuNavigationTabId selectedTab)
     {
         for (int i = 0; i < bindings.Count; i++)
         {
@@ -108,7 +107,7 @@ public sealed class MainMenuNavigationView : MonoBehaviour
             if (frame == null)
                 continue;
 
-            bool selected = bindings[i].NavName == selectedNavName;
+            bool selected = bindings[i].TabId == selectedTab;
             Sprite sprite = selected ? selectedFrameSprite : inactiveFrameSprite;
             if (sprite != null)
                 frame.sprite = sprite;
@@ -119,40 +118,22 @@ public sealed class MainMenuNavigationView : MonoBehaviour
         }
     }
 
-    private static Transform FindDeep(Transform root, string targetName)
-    {
-        if (root == null)
-            return null;
-
-        if (root.name == targetName)
-            return root;
-
-        for (int i = 0; i < root.childCount; i++)
-        {
-            Transform matched = FindDeep(root.GetChild(i), targetName);
-            if (matched != null)
-                return matched;
-        }
-
-        return null;
-    }
-
     private readonly struct TabBinding
     {
-        public readonly string NavName;
+        public readonly MainMenuNavigationTabId TabId;
         public readonly Button Button;
         public readonly Image Frame;
         public readonly TMP_Text Label;
         public readonly UnityEngine.Events.UnityAction Action;
 
         public TabBinding(
-            string navName,
+            MainMenuNavigationTabId tabId,
             Button button,
             Image frame,
             TMP_Text label,
             UnityEngine.Events.UnityAction action)
         {
-            NavName = navName;
+            TabId = tabId;
             Button = button;
             Frame = frame;
             Label = label;

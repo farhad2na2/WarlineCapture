@@ -39,6 +39,8 @@ public class UnitGridAuthoring : MonoBehaviour
     [SerializeField, HideInInspector] private string displayName;
     [SerializeField, HideInInspector, TextArea] private string description;
     [SerializeField, HideInInspector] private Sprite portraitSprite;
+    [SerializeField, HideInInspector] private Sprite portraitCardSprite;
+    [SerializeField, HideInInspector] private Sprite portraitActionSprite;
     [SerializeField, HideInInspector] private string weaponDisplayName;
     [SerializeField, HideInInspector] private GameObject unitSelectionMarkerPrefab;
     [SerializeField, HideInInspector] private GameObject unitHealthBarPrefab;
@@ -109,6 +111,8 @@ public class UnitGridAuthoring : MonoBehaviour
         displayName = config.DisplayName;
         description = config.Description;
         portraitSprite = config.PortraitSprite;
+        portraitCardSprite = config.PortraitCardSprite;
+        portraitActionSprite = config.PortraitActionSprite;
         weaponDisplayName = config.WeaponDisplayName;
         unitSelectionMarkerPrefab = config.UnitSelectionMarkerPrefab;
         unitHealthBarPrefab = config.UnitHealthBarPrefab;
@@ -170,6 +174,8 @@ public class UnitGridAuthoring : MonoBehaviour
     public GameObject VehicleHealthBarPrefab => config != null ? config.VehicleHealthBarPrefab : vehicleHealthBarPrefab;
     public bool TintVehicleModelRenderers => config != null ? config.TintVehicleModelRenderers : tintVehicleModelRenderers;
     public Sprite PortraitSprite => config != null ? config.PortraitSprite : portraitSprite;
+    public Sprite PortraitCardSprite => config != null ? config.PortraitCardSprite : portraitCardSprite;
+    public Sprite PortraitActionSprite => config != null ? config.PortraitActionSprite : portraitActionSprite;
     public Sprite WeaponSprite => config != null ? config.WeaponSprite : null;
     public string WeaponDisplayName => config != null ? config.WeaponDisplayName : weaponDisplayName;
     public string ConfiguredDisplayName

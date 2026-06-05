@@ -123,10 +123,24 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         InstallSection(armoryContentPrefab, "MenuBackgroundContent", WarlineCaptureShellRegionId.MenuBackgroundRegion);
         InstallSection(armoryContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
         InstallSection(armoryContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
-        InstallSection(armoryContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
-        InstallSection(armoryContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
+        GameObject middle = InstallSection(armoryContentPrefab, "MiddleContent", WarlineCaptureShellRegionId.MiddleRegion);
+        GameObject right = InstallSection(armoryContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
+        WireArmorySections(middle, right);
         InstallSection(armoryContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
         ClearRegion(WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    private static void WireArmorySections(GameObject middle, GameObject right)
+    {
+        if (middle == null || right == null)
+            return;
+
+        ArmoryContentListView listView = middle.GetComponent<ArmoryContentListView>();
+        ArmoryRightContentView rightView = right.GetComponent<ArmoryRightContentView>();
+        if (listView == null || rightView == null)
+            return;
+
+        listView.SetInspectionPanel(rightView.InspectionPanel);
     }
 
     private void InstallMatchHud()

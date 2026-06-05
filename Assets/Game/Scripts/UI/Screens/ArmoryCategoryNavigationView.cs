@@ -6,6 +6,8 @@ using UnityEngine.UI;
 [DisallowMultipleComponent]
 public sealed class ArmoryCategoryNavigationView : MonoBehaviour
 {
+    [SerializeField] private ArmoryCategoryNavigationTabView[] tabs;
+
     private readonly List<TabBinding> bindings = new();
     private EntityQuery boundaryQuery;
     private World cachedWorld;
@@ -16,11 +18,6 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
 
     private void Awake()
     {
-        DisableRouteButton("Nav_Characters");
-        DisableRouteButton("Nav_Vehicles");
-        DisableRouteButton("Nav_Aircrafts");
-        DisableRouteButton("Nav_Buildings");
-        DisableRouteButton("Nav_Support");
         WireAll();
     }
 
@@ -34,11 +31,12 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
         if (bindings.Count > 0)
             return;
 
-        Wire("Nav_Characters", ArmoryCatalogCategory.Characters);
-        Wire("Nav_Vehicles", ArmoryCatalogCategory.Vehicles);
-        Wire("Nav_Aircrafts", ArmoryCatalogCategory.Aircrafts);
-        Wire("Nav_Buildings", ArmoryCatalogCategory.Buildings);
-        Wire("Nav_Support", ArmoryCatalogCategory.Support);
+        if (tabs == null)
+            return;
+
+        for (int i = 0; i < tabs.Length; i++)
+            Wire(tabs[i]);
+
         activeCategory = TryReadCategory(out ArmoryCatalogCategory category)
             ? category
             : ArmoryCatalogCategory.Characters;
@@ -62,34 +60,21 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
         ApplyVisualState(category);
     }
 
-    private void Wire(string navName, ArmoryCatalogCategory category)
+    private void Wire(ArmoryCategoryNavigationTabView tab)
     {
-        Transform nav = FindDeep(transform, navName);
-        if (nav == null)
-            return;
-
-        Button button = FindButton(nav);
+        Button button = tab.Button;
         if (button == null)
             return;
 
         DisableRouteButtonComponent(button);
 
+        ArmoryCatalogCategory category = tab.Category;
         UnityEngine.Events.UnityAction action = () => SelectCategory(category);
         button.onClick.AddListener(action);
 
-        Image frame = nav.Find("Frame")?.GetComponent<Image>();
+        Image frame = tab.Frame;
         CacheFrameSprite(category, frame);
         bindings.Add(new TabBinding(category, button, frame, action));
-    }
-
-    private void DisableRouteButton(string navName)
-    {
-        Transform nav = FindDeep(transform, navName);
-        if (nav == null)
-            return;
-
-        Button button = FindButton(nav);
-        DisableRouteButtonComponent(button);
     }
 
     private static void DisableRouteButtonComponent(Button button)
@@ -188,39 +173,6 @@ public sealed class ArmoryCategoryNavigationView : MonoBehaviour
             entityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
 
         return true;
-    }
-
-    private static Button FindButton(Transform nav)
-    {
-        if (nav == null)
-            return null;
-
-        if (nav.TryGetComponent(out Button navButton))
-            return navButton;
-
-        Transform hotspot = nav.Find("Frame/Hotspot");
-        if (hotspot != null && hotspot.TryGetComponent(out Button hotspotButton))
-            return hotspotButton;
-
-        return nav.GetComponentInChildren<Button>(true);
-    }
-
-    private static Transform FindDeep(Transform root, string targetName)
-    {
-        if (root == null)
-            return null;
-
-        if (root.name == targetName)
-            return root;
-
-        for (int i = 0; i < root.childCount; i++)
-        {
-            Transform matched = FindDeep(root.GetChild(i), targetName);
-            if (matched != null)
-                return matched;
-        }
-
-        return null;
     }
 
     private readonly struct TabBinding

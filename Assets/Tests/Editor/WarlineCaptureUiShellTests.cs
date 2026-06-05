@@ -152,6 +152,9 @@ public sealed class WarlineCaptureUiShellTests
         AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Store", WarlineCaptureRoute.MainMenu, false, false);
         AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Contests", WarlineCaptureRoute.MainMenu, false, false);
         AssertMainMenuNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Tutorials", WarlineCaptureRoute.MainMenu, false, false);
+        MainMenuNavigationView navigationView = prefab.GetComponentInChildren<MainMenuNavigationView>(true);
+        Assert.NotNull(navigationView);
+        AssertNavigationTabsAssigned(new SerializedObject(navigationView).FindProperty("tabs"), 5, "Main Menu");
     }
 
     [Test]
@@ -221,6 +224,7 @@ public sealed class WarlineCaptureUiShellTests
             .Find("LeftContent")
             .GetComponent<ArmoryCategoryNavigationView>();
         Assert.NotNull(navigationView);
+        AssertNavigationTabsAssigned(new SerializedObject(navigationView).FindProperty("tabs"), 5, "Armory");
 
         ArmoryContentListView listView = prefab.transform
             .Find("MiddleContent")
@@ -232,14 +236,33 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(serializedList.FindProperty("buildingPlacementConfig").objectReferenceValue);
         Assert.AreEqual(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content") as RectTransform,
             serializedList.FindProperty("contentRoot").objectReferenceValue);
-        Assert.AreEqual(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView").gameObject,
-            serializedList.FindProperty("itemTemplate").objectReferenceValue);
+        ArmoryCatalogItemView itemView = prefab.transform
+            .Find("MiddleContent/Scroll View/Viewport/Content/ItemView")
+            .GetComponent<ArmoryCatalogItemView>();
+        Assert.NotNull(itemView);
+        ArmoryInspectionPanelView inspectionPanel = prefab.transform
+            .Find("RightContent/InspectionPanel")
+            .GetComponent<ArmoryInspectionPanelView>();
+        Assert.NotNull(inspectionPanel);
+        Assert.AreEqual(itemView, serializedList.FindProperty("itemTemplate").objectReferenceValue);
+        Assert.Null(serializedList.FindProperty("inspectionPanel"));
+        ArmoryRightContentView rightContentView = prefab.transform
+            .Find("RightContent")
+            .GetComponent<ArmoryRightContentView>();
+        Assert.NotNull(rightContentView);
+        var serializedRightContent = new SerializedObject(rightContentView);
+        Assert.AreEqual(inspectionPanel, serializedRightContent.FindProperty("inspectionPanel").objectReferenceValue);
+        Assert.NotNull(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView").GetComponent<Image>());
+        Assert.NotNull(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView").GetComponent<Button>());
+        AssertArmoryItemRootButton(itemView);
+        AssertArmoryInspectionPanelReferences(inspectionPanel);
 
         Assert.IsFalse(File.Exists("Assets/Game/Scripts/UI/Screens/ArmoryContentListController.cs"));
         Assert.IsFalse(File.Exists("Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationController.cs"));
         StringAssert.DoesNotContain("static event", File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationView.cs"));
         StringAssert.Contains("public sealed class ArmoryCatalogQuerySystem",
             File.ReadAllText("Assets/Game/Scripts/UI/Screens/ArmoryCatalogQuerySystem.cs"));
+        AssertArmoryRuntimeUiCodeDoesNotUseHierarchyStringLookup();
 
         AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Characters", true);
         AssertArmoryNavTabButton(prefab, "LeftContent/LeftNavPanel/Nav_Vehicles", false);
@@ -257,7 +280,8 @@ public sealed class WarlineCaptureUiShellTests
         Transform template = prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView");
         Assert.NotNull(template);
 
-        GameObject item = (GameObject)PrefabUtility.InstantiatePrefab(template.gameObject);
+        ArmoryCatalogItemView item = ((GameObject)PrefabUtility.InstantiatePrefab(template.gameObject))
+            .GetComponent<ArmoryCatalogItemView>();
         Texture2D texture = new(2, 2);
         Sprite sprite = null;
         try
@@ -269,17 +293,17 @@ public sealed class WarlineCaptureUiShellTests
             texture.Apply();
             sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
 
-            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Character", sprite, ArmoryCatalogCategory.Characters));
-            AssertArmoryItemBackgroundState(item, "Background_Character", sprite);
+            item.Bind(new ArmoryCatalogItem("Character", sprite, ArmoryCatalogCategory.Characters));
+            AssertArmoryItemBackgroundState(item.gameObject, "Background_Character", sprite);
 
-            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Vehicle", sprite, ArmoryCatalogCategory.Vehicles));
-            AssertArmoryItemBackgroundState(item, "Background_Vehicle", sprite);
+            item.Bind(new ArmoryCatalogItem("Vehicle", sprite, ArmoryCatalogCategory.Vehicles));
+            AssertArmoryItemBackgroundState(item.gameObject, "Background_Vehicle", sprite);
 
-            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Aircraft", sprite, ArmoryCatalogCategory.Aircrafts));
-            AssertArmoryItemBackgroundState(item, "Background_Aircraft", sprite);
+            item.Bind(new ArmoryCatalogItem("Aircraft", sprite, ArmoryCatalogCategory.Aircrafts));
+            AssertArmoryItemBackgroundState(item.gameObject, "Background_Aircraft", sprite);
 
-            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Building", sprite, ArmoryCatalogCategory.Buildings));
-            AssertArmoryItemBackgroundState(item, "Background_Building", sprite);
+            item.Bind(new ArmoryCatalogItem("Building", sprite, ArmoryCatalogCategory.Buildings));
+            AssertArmoryItemBackgroundState(item.gameObject, "Background_Building", sprite);
         }
         finally
         {
@@ -287,7 +311,65 @@ public sealed class WarlineCaptureUiShellTests
                 UnityEngine.Object.DestroyImmediate(sprite);
 
             UnityEngine.Object.DestroyImmediate(texture);
-            UnityEngine.Object.DestroyImmediate(item);
+            UnityEngine.Object.DestroyImmediate(item.gameObject);
+        }
+    }
+
+    [Test]
+    public void ShellArmoryContent_ItemSelectionUpdatesInspectionPanel()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
+        Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
+
+        GameObject middle = (GameObject)PrefabUtility.InstantiatePrefab(prefab.transform.Find("MiddleContent").gameObject);
+        GameObject right = (GameObject)PrefabUtility.InstantiatePrefab(prefab.transform.Find("RightContent").gameObject);
+        Texture2D texture = new(2, 2);
+        Sprite sprite = null;
+        try
+        {
+            texture.SetPixel(0, 0, Color.white);
+            texture.SetPixel(1, 0, Color.white);
+            texture.SetPixel(0, 1, Color.white);
+            texture.SetPixel(1, 1, Color.white);
+            texture.Apply();
+            sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
+
+            ArmoryContentListView listView = middle.GetComponent<ArmoryContentListView>();
+            Assert.NotNull(listView);
+            ArmoryRightContentView rightContentView = right.GetComponent<ArmoryRightContentView>();
+            Assert.NotNull(rightContentView);
+            Assert.NotNull(rightContentView.InspectionPanel);
+            listView.SetInspectionPanel(rightContentView.InspectionPanel);
+
+            ArmoryCatalogItemView item = middle.transform
+                .Find("Scroll View/Viewport/Content/ItemView")
+                .GetComponent<ArmoryCatalogItemView>();
+            GameObject inspectionPanel = rightContentView.InspectionPanel.gameObject;
+
+            InvokeArmoryWireItemSelection(listView, item, new ArmoryCatalogItem("Character", sprite, ArmoryCatalogCategory.Characters));
+            item.SelectionButton.onClick.Invoke();
+            AssertArmoryItemBackgroundState(inspectionPanel, "Background_Character", sprite);
+
+            InvokeArmoryWireItemSelection(listView, item, new ArmoryCatalogItem("Vehicle", sprite, ArmoryCatalogCategory.Vehicles));
+            item.SelectionButton.onClick.Invoke();
+            AssertArmoryItemBackgroundState(inspectionPanel, "Background_Vehicle", sprite);
+
+            InvokeArmoryWireItemSelection(listView, item, new ArmoryCatalogItem("Aircraft", sprite, ArmoryCatalogCategory.Aircrafts));
+            item.SelectionButton.onClick.Invoke();
+            AssertArmoryItemBackgroundState(inspectionPanel, "Background_Aircraft", sprite);
+
+            InvokeArmoryWireItemSelection(listView, item, new ArmoryCatalogItem("Building", sprite, ArmoryCatalogCategory.Buildings));
+            item.SelectionButton.onClick.Invoke();
+            AssertArmoryItemBackgroundState(inspectionPanel, "Background_Building", sprite);
+        }
+        finally
+        {
+            if (sprite != null)
+                UnityEngine.Object.DestroyImmediate(sprite);
+
+            UnityEngine.Object.DestroyImmediate(texture);
+            UnityEngine.Object.DestroyImmediate(middle);
+            UnityEngine.Object.DestroyImmediate(right);
         }
     }
 
@@ -745,6 +827,68 @@ public sealed class WarlineCaptureUiShellTests
             StringAssert.Contains("inactive", spriteName.ToLowerInvariant(), $"{path}/Frame must use the inactive tab state.");
     }
 
+    private static void AssertArmoryItemRootButton(ArmoryCatalogItemView itemTemplate)
+    {
+        Assert.NotNull(itemTemplate, "Armory ItemView must exist.");
+
+        Button rootButton = itemTemplate.GetComponent<Button>();
+        Assert.NotNull(rootButton, "Armory ItemView must be its own Button.");
+        Assert.AreEqual(rootButton, itemTemplate.SelectionButton, "Armory ItemView selectionButton must reference the root Button.");
+        Assert.AreEqual(itemTemplate.transform, itemTemplate.SelectionButton.transform, "Armory ItemView must not use a child selection hotspot.");
+        Assert.Null(itemTemplate.GetComponent<WarlineCaptureShellRouteButtonView>(), "Armory ItemView root Button must not navigate away from Armory.");
+
+        Image image = itemTemplate.GetComponent<Image>();
+        Assert.NotNull(image, "Armory ItemView root Button must keep a raycast Image.");
+        Assert.IsTrue(image.raycastTarget, "Armory ItemView root Image must be raycastable.");
+    }
+
+    private static void AssertArmoryInspectionPanelReferences(ArmoryInspectionPanelView inspectionPanel)
+    {
+        var serializedInspection = new SerializedObject(inspectionPanel);
+        SerializedProperty categoryVisuals = serializedInspection.FindProperty("categoryVisuals");
+        Assert.NotNull(categoryVisuals);
+        Assert.AreEqual(4, categoryVisuals.arraySize);
+        for (int i = 0; i < categoryVisuals.arraySize; i++)
+        {
+            SerializedProperty visual = categoryVisuals.GetArrayElementAtIndex(i);
+            Assert.NotNull(visual.FindPropertyRelative("backgroundRoot").objectReferenceValue);
+            Assert.NotNull(visual.FindPropertyRelative("artImage").objectReferenceValue);
+        }
+    }
+
+    private static void AssertArmoryRuntimeUiCodeDoesNotUseHierarchyStringLookup()
+    {
+        string[] runtimeUiFiles =
+        {
+            "Assets/Game/Scripts/UI/Screens/ArmoryContentListView.cs",
+            "Assets/Game/Scripts/UI/Screens/ArmoryCatalogItemView.cs",
+            "Assets/Game/Scripts/UI/Screens/ArmoryInspectionPanelView.cs",
+            "Assets/Game/Scripts/UI/Screens/ArmoryRightContentView.cs",
+            "Assets/Game/Scripts/UI/Screens/ArmoryCategoryNavigationView.cs",
+            "Assets/Game/Scripts/UI/Screens/MainMenuNavigationView.cs"
+        };
+
+        foreach (string runtimeUiFile in runtimeUiFiles)
+        {
+            string text = File.ReadAllText(runtimeUiFile);
+            StringAssert.DoesNotContain("transform.Find", text, runtimeUiFile);
+            StringAssert.DoesNotContain(".Find(\"", text, runtimeUiFile);
+            StringAssert.DoesNotContain("GetComponentInChildren", text, runtimeUiFile);
+        }
+    }
+
+    private static void AssertNavigationTabsAssigned(SerializedProperty tabs, int expectedSize, string label)
+    {
+        Assert.NotNull(tabs, $"{label} navigation must expose serialized tabs.");
+        Assert.AreEqual(expectedSize, tabs.arraySize, $"{label} navigation tab count.");
+        for (int i = 0; i < tabs.arraySize; i++)
+        {
+            SerializedProperty tab = tabs.GetArrayElementAtIndex(i);
+            Assert.NotNull(tab.FindPropertyRelative("button").objectReferenceValue, $"{label} tab {i} button.");
+            Assert.NotNull(tab.FindPropertyRelative("frame").objectReferenceValue, $"{label} tab {i} frame.");
+        }
+    }
+
     private static void AssertArmoryCategoryHotspot(
         GameObject root,
         World world,
@@ -797,13 +941,16 @@ public sealed class WarlineCaptureUiShellTests
             StringAssert.Contains("inactive", spriteName, $"{path} must show inactive state.");
     }
 
-    private static void InvokeArmoryBindItem(GameObject item, ArmoryCatalogItem model)
+    private static void InvokeArmoryWireItemSelection(
+        ArmoryContentListView listView,
+        ArmoryCatalogItemView item,
+        ArmoryCatalogItem model)
     {
-        MethodInfo bindItem = typeof(ArmoryContentListView).GetMethod(
-            "BindItem",
-            BindingFlags.Static | BindingFlags.NonPublic);
-        Assert.NotNull(bindItem);
-        bindItem.Invoke(null, new object[] { item, model });
+        MethodInfo wireItemSelection = typeof(ArmoryContentListView).GetMethod(
+            "WireItemSelection",
+            BindingFlags.Instance | BindingFlags.NonPublic);
+        Assert.NotNull(wireItemSelection);
+        wireItemSelection.Invoke(listView, new object[] { item, model });
     }
 
     private static void AssertArmoryItemBackgroundState(GameObject item, string selectedBackground, Sprite expectedSprite)

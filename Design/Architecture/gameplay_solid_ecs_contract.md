@@ -90,6 +90,10 @@ Expected names:
 
 UI MonoBehaviours named `*View` are serialized-reference binders only. They connect Canvas objects, child widgets, visual references, and serialized fields to code. They may expose simple getters/setters for visual state and wire UnityEvents to ECS request components, but they must not own gameplay policy, UI flow policy, validation, resource rules, production rules, selection rules, mission rules, AI rules, or state transitions.
 
+UI runtime code must not discover child controls by hierarchy strings such as `transform.Find("Frame/Title")`, deep name searches, or route/path literals. When a screen needs a card, row, tab, inspection panel, or repeated item, create a narrow `*View` component for that UI element and assign its `Button`, `Image`, `TMP_Text`, `GameObject`, and child view references through serialized fields on the prefab. Editor-only migration utilities and tests may inspect prefab paths, but shipped/runtime UI code must use explicit references. Existing hierarchy lookup code is legacy debt; do not copy it into new UI work, and remove it when touching that feature.
+Clickable UI elements must put the `Button` on the view/root element that is conceptually clicked. Do not add hidden child hotspot buttons, null-sprite hit targets, or transparent proxy buttons to make a parent clickable; resize the actual button root/graphic and wire it through explicit serialized references.
+Shell content prefabs are installed as separate region instances. A view in `MiddleContent`, `LeftContent`, `RightContent`, `HeaderContent`, or `FooterContent` must not serialize direct references to sibling region objects because those references point at the prefab source, not the live shell instance. Cross-region coordination must be wired by the shell presenter through root `*View` components after the live sections are instantiated.
+
 Expected names:
 - `*View` for UI reference holders and widgets.
 

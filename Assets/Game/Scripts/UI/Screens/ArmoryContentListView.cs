@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using TMPro;
 using Unity.Entities;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,19 +9,22 @@ public sealed class ArmoryContentListView : MonoBehaviour
     [SerializeField] private UnitPrefabRegistryAuthoringConfig unitPrefabRegistryConfig;
     [SerializeField] private BuildingPlacementSystemConfig buildingPlacementConfig;
     [SerializeField] private RectTransform contentRoot;
-    [SerializeField] private GameObject itemTemplate;
+    [SerializeField] private ArmoryCatalogItemView itemTemplate;
 
     private readonly ArmoryCatalogQuerySystem catalogQuerySystem = new();
     private readonly List<ArmoryCatalogItem> itemScratch = new();
-    private readonly List<GameObject> runtimeItems = new();
+    private readonly List<ArmoryCatalogItemView> runtimeItems = new();
+    private readonly List<ItemClickBinding> itemClickBindings = new();
+    private ArmoryInspectionPanelView inspectionPanel;
+    private ArmoryCatalogItem activeInspectionItem;
     private ArmoryCatalogCategory activeCategory = ArmoryCatalogCategory.Characters;
     private EntityQuery boundaryQuery;
     private World cachedWorld;
+    private bool hasActiveInspectionItem;
     private bool hasBoundaryQuery;
 
     private void OnEnable()
     {
-        ResolveReferences();
         activeCategory = ArmoryCatalogCategory.Characters;
         TryQueueBoundaryCategory(activeCategory);
         Refresh(activeCategory);
@@ -46,12 +48,23 @@ public sealed class ArmoryContentListView : MonoBehaviour
         UnitPrefabRegistryAuthoringConfig unitRegistry,
         BuildingPlacementSystemConfig buildingPlacement,
         RectTransform content,
-        GameObject template)
+        ArmoryCatalogItemView template,
+        ArmoryInspectionPanelView inspection = null)
     {
         unitPrefabRegistryConfig = unitRegistry;
         buildingPlacementConfig = buildingPlacement;
         contentRoot = content;
         itemTemplate = template;
+        inspectionPanel = inspection;
+    }
+
+    public void SetInspectionPanel(ArmoryInspectionPanelView panel)
+    {
+        inspectionPanel = panel;
+        if (hasActiveInspectionItem)
+            BindInspectionPanel(activeInspectionItem);
+        else
+            ClearInspectionPanel();
     }
 
     public void RefreshForTests(ArmoryCatalogCategory category)
@@ -61,7 +74,6 @@ public sealed class ArmoryContentListView : MonoBehaviour
 
     private void Refresh(ArmoryCatalogCategory category)
     {
-        ResolveReferences();
         if (contentRoot == null || itemTemplate == null)
             return;
 
@@ -69,135 +81,105 @@ public sealed class ArmoryContentListView : MonoBehaviour
         Populate(itemScratch);
     }
 
-    private void ResolveReferences()
-    {
-        if (contentRoot == null)
-            contentRoot = transform.Find("Scroll View/Viewport/Content") as RectTransform;
-
-        if (itemTemplate == null && contentRoot != null)
-        {
-            Transform template = contentRoot.Find("ItemView");
-            if (template != null)
-                itemTemplate = template.gameObject;
-        }
-    }
-
     private void Populate(IReadOnlyList<ArmoryCatalogItem> items)
     {
         ClearRuntimeItems();
-        itemTemplate.SetActive(items != null && items.Count > 0);
+        itemTemplate.gameObject.SetActive(items != null && items.Count > 0);
 
         if (items == null || items.Count == 0)
+        {
+            ClearInspectionPanel();
             return;
+        }
 
-        BindItem(itemTemplate, items[0]);
-        itemTemplate.name = $"ItemView - {items[0].DisplayName}";
+        itemTemplate.Bind(items[0]);
+        itemTemplate.gameObject.name = $"ItemView - {items[0].DisplayName}";
 
         for (int i = 1; i < items.Count; i++)
         {
-            GameObject item = Instantiate(itemTemplate, contentRoot, false);
-            item.name = $"ItemView - {items[i].DisplayName}";
-            BindItem(item, items[i]);
-            item.SetActive(true);
+            ArmoryCatalogItemView item = Instantiate(itemTemplate, contentRoot, false);
+            item.gameObject.name = $"ItemView - {items[i].DisplayName}";
+            item.Bind(items[i]);
+            WireItemSelection(item, items[i]);
+            item.gameObject.SetActive(true);
             runtimeItems.Add(item);
         }
+
+        WireItemSelection(itemTemplate, items[0]);
+        BindInspectionPanel(items[0]);
     }
 
     private void ClearRuntimeItems()
     {
+        ClearItemSelectionBindings();
+
         for (int i = runtimeItems.Count - 1; i >= 0; i--)
         {
-            GameObject item = runtimeItems[i];
+            ArmoryCatalogItemView item = runtimeItems[i];
             if (item == null)
                 continue;
 
             if (Application.isPlaying)
-                Destroy(item);
+                Destroy(item.gameObject);
             else
-                DestroyImmediate(item);
+                DestroyImmediate(item.gameObject);
         }
 
         runtimeItems.Clear();
 
         if (itemTemplate != null)
-            itemTemplate.name = "ItemView";
+            itemTemplate.gameObject.name = "ItemView";
     }
 
-    private static void BindItem(GameObject item, ArmoryCatalogItem model)
+    private void ClearItemSelectionBindings()
+    {
+        for (int i = 0; i < itemClickBindings.Count; i++)
+        {
+            ItemClickBinding binding = itemClickBindings[i];
+            if (binding.Button != null)
+                binding.Button.onClick.RemoveListener(binding.Action);
+        }
+
+        itemClickBindings.Clear();
+    }
+
+    private void WireItemSelection(ArmoryCatalogItemView item, ArmoryCatalogItem model)
     {
         if (item == null)
             return;
 
-        TMP_Text title = FindComponent<TMP_Text>(item.transform, "Frame/Title");
-        if (title != null)
-            title.text = model.DisplayName;
-
-        Image art = BindCategoryBackgroundAndGetArt(item.transform, model.Category);
-        if (art != null)
-        {
-            art.sprite = model.Portrait;
-            art.preserveAspect = true;
-            art.enabled = model.Portrait != null;
-        }
-
-        TMP_Text type = FindComponent<TMP_Text>(item.transform, "Frame/Progress/Type");
-        if (type != null)
-            type.text = FormatCategory(model.Category);
-    }
-
-    private static Image BindCategoryBackgroundAndGetArt(Transform itemRoot, ArmoryCatalogCategory category)
-    {
-        Transform selectedBackground = null;
-        string selectedBackgroundName = GetBackgroundName(category);
-
-        SetBackgroundActive(itemRoot, "Background_Character", selectedBackgroundName, ref selectedBackground);
-        SetBackgroundActive(itemRoot, "Background_Vehicle", selectedBackgroundName, ref selectedBackground);
-        SetBackgroundActive(itemRoot, "Background_Aircraft", selectedBackgroundName, ref selectedBackground);
-        SetBackgroundActive(itemRoot, "Background_Building", selectedBackgroundName, ref selectedBackground);
-
-        Image categoryArt = selectedBackground != null
-            ? selectedBackground.Find("Art")?.GetComponent<Image>()
-            : null;
-        if (categoryArt != null)
-            return categoryArt;
-
-        return FindComponent<Image>(itemRoot, "Art");
-    }
-
-    private static void SetBackgroundActive(
-        Transform itemRoot,
-        string backgroundName,
-        string selectedBackgroundName,
-        ref Transform selectedBackground)
-    {
-        Transform background = itemRoot != null ? itemRoot.Find(backgroundName) : null;
-        if (background == null)
+        Button button = item.SelectionButton;
+        if (button == null)
             return;
 
-        bool selected = backgroundName == selectedBackgroundName;
-        background.gameObject.SetActive(selected);
-        if (selected)
-            selectedBackground = background;
-    }
+        WarlineCaptureShellRouteButtonView routeButton = button.GetComponent<WarlineCaptureShellRouteButtonView>();
+        if (routeButton != null)
+            routeButton.enabled = false;
 
-    private static string GetBackgroundName(ArmoryCatalogCategory category)
-    {
-        return category switch
+        UnityEngine.Events.UnityAction action = () =>
         {
-            ArmoryCatalogCategory.Aircrafts => "Background_Aircraft",
-            ArmoryCatalogCategory.Buildings => "Background_Building",
-            ArmoryCatalogCategory.Vehicles => "Background_Vehicle",
-            _ => "Background_Character"
+            Debug.Log($"[ArmoryItemView] click displayName={model.DisplayName} category={model.Category} frame={Time.frameCount} inspectionPanel={(inspectionPanel != null ? inspectionPanel.name : "null")}");
+            BindInspectionPanel(model);
         };
+        button.onClick.AddListener(action);
+        itemClickBindings.Add(new ItemClickBinding(button, action));
     }
 
-    private static T FindComponent<T>(Transform root, string path) where T : Component
+    private void BindInspectionPanel(ArmoryCatalogItem model)
     {
-        if (root == null)
-            return null;
+        activeInspectionItem = model;
+        hasActiveInspectionItem = true;
 
-        Transform child = root.Find(path);
-        return child != null ? child.GetComponent<T>() : null;
+        if (inspectionPanel != null)
+            inspectionPanel.Bind(model);
+    }
+
+    private void ClearInspectionPanel()
+    {
+        hasActiveInspectionItem = false;
+
+        if (inspectionPanel != null)
+            inspectionPanel.Clear();
     }
 
     private bool TryReadBoundaryCategory(out ArmoryCatalogCategory category)
@@ -261,15 +243,15 @@ public sealed class ArmoryContentListView : MonoBehaviour
         return true;
     }
 
-    private static string FormatCategory(ArmoryCatalogCategory category)
+    private readonly struct ItemClickBinding
     {
-        return category switch
+        public readonly Button Button;
+        public readonly UnityEngine.Events.UnityAction Action;
+
+        public ItemClickBinding(Button button, UnityEngine.Events.UnityAction action)
         {
-            ArmoryCatalogCategory.Aircrafts => "AIRCRAFT",
-            ArmoryCatalogCategory.Buildings => "BUILDING",
-            ArmoryCatalogCategory.Vehicles => "VEHICLE",
-            ArmoryCatalogCategory.Support => "SUPPORT",
-            _ => "CHARACTER"
-        };
+            Button = button;
+            Action = action;
+        }
     }
 }

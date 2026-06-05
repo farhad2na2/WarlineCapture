@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Leader_Male_01_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 1138e288c2ed4c6b9293e4509f9677ec, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: c1c8836d611c4a9d98816d65814c2c0a, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 63dcd855efa34e5f83153c3d2b9fb294, type: 3}
   weaponSprite: {fileID: 21300000, guid: db87b84122bfad448ac7b7ecc1e278be, type: 3}
   weaponDisplayName: Metal Pistol
   allowIdleWander: 1

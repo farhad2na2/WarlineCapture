@@ -801,7 +801,6 @@ public sealed class GameplayArchitectureContractTests
         "Assets/Game/Scripts/UI/Screens/DistrictDetailScreenController.cs",
         "Assets/Game/Scripts/UI/Screens/M01InfantryOnlyHudScopeController.cs",
         "Assets/Game/Scripts/UI/Screens/MatchObjectivePanelController.cs",
-        "Assets/Game/Scripts/UI/Screens/MatchOverlayCommandControlsController.cs",
         "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenController.cs",
         "Assets/Game/Scripts/UI/Screens/OperationCommandFeedScreenController.cs",
         "Assets/Game/Scripts/UI/Screens/OperationDashboardScreenController.cs",

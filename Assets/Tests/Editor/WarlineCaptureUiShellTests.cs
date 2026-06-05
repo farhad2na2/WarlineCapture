@@ -16,6 +16,7 @@ public sealed class WarlineCaptureUiShellTests
     private const string ShellMainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string ShellCommanderProfileContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab";
     private const string ShellArmoryContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab";
+    private const string ShellMatchHudContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
     private const string SplashPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_Splash.prefab";
     private const string SplashBackgroundPath = "Assets/Game/Art/UI/Generated/Splash/Backgrounds/Splash_Background_CityDawn.png";
     private const string SplashLoadingPanelPath = "Assets/Game/Art/UI/Generated/Splash/Frames/Splash_LoadingPanel_9Slice.png";
@@ -155,6 +156,31 @@ public sealed class WarlineCaptureUiShellTests
         MainMenuNavigationView navigationView = prefab.GetComponentInChildren<MainMenuNavigationView>(true);
         Assert.NotNull(navigationView);
         AssertNavigationTabsAssigned(new SerializedObject(navigationView).FindProperty("tabs"), 5, "Main Menu");
+    }
+
+    [Test]
+    public void ShellMatchHudContent_FooterSelectCommandIsClickable()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        Transform footer = prefab.transform.Find("FooterContent");
+        Assert.NotNull(footer, "Match HUD shell content must expose FooterContent because the shell clones sections independently.");
+
+        MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+        Assert.NotNull(view, "FooterContent must own command control references because the root prefab is not instantiated at runtime.");
+
+        Transform selectTransform = footer.Find("CommandRail/Frame/SelectCommand");
+        Assert.NotNull(selectTransform, "Match HUD footer must keep SelectCommand in the command rail.");
+
+        Button selectButton = selectTransform.GetComponent<Button>();
+        Assert.NotNull(selectButton, "SelectCommand must be a real Button on the shell content prefab.");
+        Assert.IsTrue(selectButton.interactable);
+        Assert.NotNull(selectButton.targetGraphic, "SelectCommand needs a raycastable target graphic for UI clicks.");
+        Assert.IsTrue(selectButton.targetGraphic.raycastTarget, "SelectCommand target graphic must receive pointer raycasts.");
+
+        SerializedObject serializedView = new(view);
+        Assert.AreEqual(selectButton, serializedView.FindProperty("selectButton").objectReferenceValue);
     }
 
     [Test]

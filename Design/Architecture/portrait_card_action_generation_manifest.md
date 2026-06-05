@@ -11,26 +11,26 @@ Status key:
 
 ## Characters
 
-- [ ] `Prefab_UnitGrid_Chr_Bombsuit_Male_01_Config.asset` - Bomb Suit Specialist - weapon: none
-- [ ] `Prefab_UnitGrid_Chr_Civilian_Female_01_Config.asset` - Civilian Female I - weapon: none
-- [ ] `Prefab_UnitGrid_Chr_Civilian_Female_02_Config.asset` - Civilian Female II - weapon: none
-- [ ] `Prefab_UnitGrid_Chr_Civilian_Male_01_Config.asset` - Civilian Male I - weapon: none
-- [ ] `Prefab_UnitGrid_Chr_Civilian_Male_02_Config.asset` - Civilian Male II - weapon: none
-- [ ] `Prefab_UnitGrid_Chr_Contractor_Female_01_Config.asset` - Security Contractor Female I - weapon: SMG
-- [ ] `Prefab_UnitGrid_Chr_Contractor_Male_01_Config.asset` - Security Contractor Male I - weapon: Pistol
-- [ ] `Prefab_UnitGrid_Chr_Contractor_Male_02_Config.asset` - Security Contractor Male II - weapon: Rifle
-- [ ] `Prefab_UnitGrid_Chr_Ghillie_Male_01_Config.asset` - Ghillie Rocketeer - weapon: Rocket Launcher
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Female_01_Config.asset` - Insurgent Rifleman Female I - weapon: Rifle
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Female_02_Config.asset` - Insurgent Sidearm Fighter Female II - weapon: Pistol
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Male_01_Config.asset` - Insurgent Rocketeer Male I - weapon: RPG
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Male_02_Config.asset` - Insurgent Gunner Male II - weapon: Machine Gun
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Male_03_Config.asset` - Insurgent Raider Male III - weapon: SMG
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Male_04_Config.asset` - Insurgent Sniper Male IV - weapon: Sniper Rifle
-- [ ] `Prefab_UnitGrid_Chr_Insurgent_Male_05_Config.asset` - Insurgent Rifleman Male V - weapon: Rifle
-- [ ] `Prefab_UnitGrid_Chr_Leader_Male_01_Config.asset` - Field Commander - weapon: Metal Pistol
-- [ ] `Prefab_UnitGrid_Chr_Pilot_Female_01_Config.asset` - Pilot Female I - weapon: Compact Pistol
-- [ ] `Prefab_UnitGrid_Chr_Pilot_Male_01_Config.asset` - Pilot Male I - weapon: Compact Pistol
-- [ ] `Prefab_UnitGrid_Chr_Soldier_Female_01_Alt_01_Config.asset` - Rifleman Female I - weapon: Rifle
+- [x] `Prefab_UnitGrid_Chr_Bombsuit_Male_01_Config.asset` - Bomb Suit Specialist - weapon: none - Card/Action assigned
+- [x] `Prefab_UnitGrid_Chr_Civilian_Female_01_Config.asset` - Civilian Female I - weapon: none - Card/Action assigned
+- [x] `Prefab_UnitGrid_Chr_Civilian_Female_02_Config.asset` - Civilian Female II - weapon: none - Card/Action assigned
+- [x] `Prefab_UnitGrid_Chr_Civilian_Male_01_Config.asset` - Civilian Male I - weapon: none - Card/Action assigned
+- [x] `Prefab_UnitGrid_Chr_Civilian_Male_02_Config.asset` - Civilian Male II - weapon: none - Card/Action assigned; Action: crouched cover + water supply checkpoint
+- [x] `Prefab_UnitGrid_Chr_Contractor_Female_01_Config.asset` - Security Contractor Female I - weapon: SMG - Card/Action assigned; Action: braced SMG at armored vehicle hangar doorway
+- [x] `Prefab_UnitGrid_Chr_Contractor_Male_01_Config.asset` - Security Contractor Male I - weapon: Pistol - Card/Action assigned; Action: rooftop radio call + low-ready pistol
+- [x] `Prefab_UnitGrid_Chr_Contractor_Male_02_Config.asset` - Security Contractor Male II - weapon: Rifle - Card/Action assigned; Action: kneeling rifle overwatch at refinery-yard sandbags
+- [x] `Prefab_UnitGrid_Chr_Ghillie_Male_01_Config.asset` - Ghillie Rocketeer - weapon: Rocket Launcher - Card/Action assigned; Action: crouched rocket ambush on desert ridge
+- [x] `Prefab_UnitGrid_Chr_Insurgent_Female_01_Config.asset` - Insurgent Rifleman Female I - weapon: Rifle - Card/Action assigned; Action: magazine check at barricade-line checkpoint
+- [x] `Prefab_UnitGrid_Chr_Insurgent_Female_02_Config.asset` - Insurgent Sidearm Fighter Female II - weapon: Pistol - Card/Action assigned; Action: fast pistol-ready turn at command-room doorway
+- [x] `Prefab_UnitGrid_Chr_Insurgent_Male_01_Config.asset` - Insurgent Rocketeer Male I - weapon: RPG - Card/Action assigned; Action: low sprint with RPG across convoy-road culvert
+- [x] `Prefab_UnitGrid_Chr_Insurgent_Male_02_Config.asset` - Insurgent Gunner Male II - weapon: Machine Gun - Card/Action assigned; Action: braced machine-gun support in repair bay
+- [-] `Prefab_UnitGrid_Chr_Insurgent_Male_03_Config.asset` - Insurgent Raider Male III - skipped by user after repeated generator infographic outputs
+- [-] `Prefab_UnitGrid_Chr_Insurgent_Male_04_Config.asset` - Insurgent Sniper Male IV - skipped by user after repeated generator infographic outputs
+- [-] `Prefab_UnitGrid_Chr_Insurgent_Male_05_Config.asset` - Insurgent Rifleman Male V - skipped by user after repeated generator infographic outputs
+- [x] `Prefab_UnitGrid_Chr_Leader_Male_01_Config.asset` - Field Commander - weapon: Metal Pistol - Card/Action assigned; Action: command-table brace in smoky operations bunker
+- [x] `Prefab_UnitGrid_Chr_Pilot_Female_01_Config.asset` - Pilot Female I - weapon: Compact Pistol - Card/Action assigned; Action: helicopter-door crouch in rotor wash
+- [x] `Prefab_UnitGrid_Chr_Pilot_Male_01_Config.asset` - Pilot Male I - weapon: Compact Pistol - Card/Action assigned; Action: cockpit-ladder climb on rainy flight deck
+- [x] `Prefab_UnitGrid_Chr_Soldier_Female_01_Alt_01_Config.asset` - Rifleman Female I - weapon: Rifle - Card/Action assigned; Action: kneeling checkpoint aim behind concrete barrier
 - [ ] `Prefab_UnitGrid_Chr_Soldier_Female_01_Alt_02_Config.asset` - Marksman Female II - weapon: Sniper Rifle
 - [ ] `Prefab_UnitGrid_Chr_Soldier_Female_01_Config.asset` - Marksman Female I - weapon: Sniper Rifle
 - [ ] `Prefab_UnitGrid_Chr_Soldier_Female_02_Alt_01_Config.asset` - Rifleman Female I - weapon: Rifle
@@ -95,4 +95,3 @@ Status key:
 ## Final Atlas
 
 - [ ] Create/update secondary portrait atlas after all non-skipped targets are complete.
-

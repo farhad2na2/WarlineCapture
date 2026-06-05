@@ -149,10 +149,10 @@ public sealed class BattleHudGameplayBridgeConnectionTests
 
         Assert.IsTrue(FocusUnit(em, unit, state));
 
-        MatchOverlayCommandControlsController controls = _overlay.GetComponent<MatchOverlayCommandControlsController>();
+        MatchOverlayCommandControlsView controls = _overlay.GetComponent<MatchOverlayCommandControlsView>();
         Assert.NotNull(controls);
-        controls.SetSelectionUiCommandSystemForTests(new SelectionUiCommandSystem());
-        InvokeAwake(controls);
+        var commandInputSystem = new MatchOverlayCommandInputSystem();
+        commandInputSystem.Bind(controls, new SelectionUiCommandSystem());
 
         Button holdButton = _overlay.transform.Find("CommandBar/HoldButton").GetComponent<Button>();
         Button stopButton = _overlay.transform.Find("CommandBar/StopButton").GetComponent<Button>();
@@ -183,6 +183,26 @@ public sealed class BattleHudGameplayBridgeConnectionTests
     }
 
     [Test]
+    public void MatchOverlay_SelectControlEntersSelectionMode()
+    {
+        MatchOverlayCommandControlsView controls = _overlay.GetComponent<MatchOverlayCommandControlsView>();
+        Assert.NotNull(controls);
+        var commandInputSystem = new MatchOverlayCommandInputSystem();
+        commandInputSystem.Bind(controls, new SelectionUiCommandSystem());
+
+        Button selectButton = _overlay.transform.Find("CommandBar/SelectButton").GetComponent<Button>();
+        Assert.NotNull(selectButton);
+        Assert.IsTrue(selectButton.gameObject.activeSelf, "Select must remain visible so players can enter explicit selection mode.");
+
+        selectButton.onClick.Invoke();
+        ProcessSelectionUiCommandRequests(_world.EntityManager);
+
+        Assert.IsTrue(new RuntimeGameplayStateSystem().SelectionModeActive);
+        Assert.IsTrue(new RuntimeGameplayStateSystem().SuppressNextWorldClick);
+        AssertText("CommandModeBanner/ModeText", "SELECT SQUAD");
+    }
+
+    [Test]
     public void MatchOverlay_CommandWheelStopControlInvokesStopAndClosesWheel()
     {
         EntityManager em = _world.EntityManager;
@@ -192,13 +212,13 @@ public sealed class BattleHudGameplayBridgeConnectionTests
 
         Assert.IsTrue(FocusUnit(em, unit, state));
 
-        MatchOverlayCommandControlsController controls = _overlay.GetComponent<MatchOverlayCommandControlsController>();
+        MatchOverlayCommandControlsView controls = _overlay.GetComponent<MatchOverlayCommandControlsView>();
         CommandWheelPanelController wheel = _overlay.GetComponent<CommandWheelPanelController>();
         Assert.NotNull(controls);
         Assert.NotNull(wheel);
-        controls.SetSelectionUiCommandSystemForTests(new SelectionUiCommandSystem());
+        var commandInputSystem = new MatchOverlayCommandInputSystem();
+        commandInputSystem.Bind(controls, new SelectionUiCommandSystem());
         InvokeAwake(wheel);
-        InvokeAwake(controls);
 
         wheel.Open();
         Assert.IsTrue(wheel.IsOpen);
@@ -358,6 +378,13 @@ public sealed class BattleHudGameplayBridgeConnectionTests
                 IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Hold);
             else if (kind == RtsSelectionCommandIntentKind.Stop)
                 IssueImmediateSelectedUnitOrder(em, TacticalCommandMode.Stop);
+            else if (kind == RtsSelectionCommandIntentKind.EnterSelectionMode)
+            {
+                var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
+                runtimeGameplayStateSystem.SelectionModeActive = true;
+                runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+                ApplyHudCommandMode(em, TacticalCommandMode.Select);
+            }
         }
     }
 

@@ -166,6 +166,23 @@ public sealed class RtsSelectionInputSystem
         state.LastPointerPosition = pointer;
         state.IsDraggingSelection = 0;
         state.SelectionModeHoldArmed = 0;
+        state.LastLiveSelectionRect = ToFloat4(Rect.MinMaxRect(pointer.x, pointer.y, pointer.x, pointer.y));
+        state.HasLiveSelectionRect = 0;
+        WriteState(state);
+    }
+
+    public void ResetSelectionDragState(Vector2 pointerPosition)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        float2 pointer = ToFloat2(pointerPosition);
+        state.DragStart = pointer;
+        state.DragCurrent = pointer;
+        state.LastPointerPosition = pointer;
+        state.PointerPressedOverUi = 0;
+        state.IsDraggingSelection = 0;
+        state.SelectionModeHoldArmed = 0;
+        state.LastLiveSelectionRect = ToFloat4(Rect.MinMaxRect(pointer.x, pointer.y, pointer.x, pointer.y));
+        state.HasLiveSelectionRect = 0;
         WriteState(state);
     }
 
@@ -209,6 +226,7 @@ public sealed class RtsSelectionInputSystem
         state.IgnoreNextLeftMouseRelease = 1;
         state.PointerPressedOverUi = 1;
         state.IsDraggingSelection = 0;
+        state.HasLiveSelectionRect = 0;
         WriteState(state);
     }
 
@@ -415,12 +433,12 @@ public sealed class RtsSelectionInputSystem
 
     private static Rect ToRect(float4 value)
     {
-        return new Rect(value.x, value.y, value.z, value.w);
+        return Rect.MinMaxRect(value.x, value.y, value.z, value.w);
     }
 
     private static float4 ToFloat4(Rect value)
     {
-        return new float4(value.x, value.y, value.width, value.height);
+        return new float4(value.xMin, value.yMin, value.xMax, value.yMax);
     }
 
 }

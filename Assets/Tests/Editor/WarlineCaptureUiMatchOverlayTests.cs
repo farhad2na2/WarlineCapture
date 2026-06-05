@@ -108,8 +108,10 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         Assert.NotNull(controller);
         Assert.AreEqual(WarlineCaptureRoute.Match, controller.Route);
         Assert.NotNull(prefab.GetComponent<BattleHudGameplayBridge>(), "Match overlay must expose a gameplay-to-HUD bridge for selection and command feedback.");
-        MatchOverlayCommandControlsController commandControls = prefab.GetComponent<MatchOverlayCommandControlsController>();
+        MatchOverlayCommandControlsView commandControls = prefab.GetComponent<MatchOverlayCommandControlsView>();
         Assert.NotNull(commandControls, "Match overlay must expose Hold/Stop command button wiring.");
+        Assert.NotNull(commandControls.SelectButton, "Select command button must be wired.");
+        Assert.IsTrue(commandControls.SelectButton.gameObject.activeSelf, "Select command button must stay visible for explicit selection mode.");
         Assert.NotNull(commandControls.HoldButton, "Hold command button must be wired.");
         Assert.NotNull(commandControls.StopButton, "Stop command button must be wired.");
         Assert.NotNull(commandControls.CommandWheelStopButton, "Command wheel Stop segment must be wired.");

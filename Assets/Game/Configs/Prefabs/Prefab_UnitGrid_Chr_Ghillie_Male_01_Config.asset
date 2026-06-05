@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Ghillie_Male_01_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 42d1a2b5f48140c49461b04227bfbe19, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: d565c8df6b6046e78e5b474a15a109fb, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: a4a06d20f4d14461a38dde394a3414f2, type: 3}
   weaponSprite: {fileID: 21300000, guid: a62f396e0ba48254c8ff453a67f92c66, type: 3}
   weaponDisplayName: Rocket Launcher
   allowIdleWander: 1

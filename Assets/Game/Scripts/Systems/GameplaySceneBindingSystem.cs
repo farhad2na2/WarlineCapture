@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class GameplaySceneBindingSystem
 {
+    private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
+
     public void BindRuntimeGridBlockerDebugViews(RuntimeGridBlockerSystem runtimeGridBlockers)
     {
         foreach (GridAuthoring grid in Resources.FindObjectsOfTypeAll<GridAuthoring>())
@@ -19,10 +21,19 @@ public sealed class GameplaySceneBindingSystem
         World world,
         SelectionUiCommandSystem selectionUiCommandSystem)
     {
-        foreach (MatchOverlayCommandControlsController controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsController>())
+        foreach (WarlineCaptureShellContentPresenterView presenter in Resources.FindObjectsOfTypeAll<WarlineCaptureShellContentPresenterView>())
         {
-            if (IsLoadedSceneObject(controls))
-                controls.BindDependencies(selectionUiCommandSystem);
+            if (IsLoadedSceneObject(presenter))
+                presenter.BindGameplayRuntimeDependencies(selectionUiCommandSystem);
+        }
+
+        foreach (MatchOverlayCommandControlsView controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsView>())
+        {
+            if (IsLoadedSceneObject(controls) &&
+                controls.GetComponentInParent<WarlineCaptureShellContentPresenterView>(true) == null)
+            {
+                _matchOverlayCommandInputSystem.Bind(controls, selectionUiCommandSystem);
+            }
         }
 
         foreach (AssistantRuntimeBinding binding in Resources.FindObjectsOfTypeAll<AssistantRuntimeBinding>())

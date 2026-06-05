@@ -49,6 +49,7 @@ public sealed class RtsSelectionFocusCommandContextSystem
             processSelectionRectangleRequests,
             (em, entity) => hudFeedbackSystem.ApplySelection(hudFeedbackContext, em, entity),
             result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
+            mode => hudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
             () => hudFeedbackSystem.ClearSelection(hudFeedbackContext),
             () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
             visible => hudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),

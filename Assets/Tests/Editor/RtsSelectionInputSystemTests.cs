@@ -35,7 +35,9 @@ public sealed class RtsSelectionInputSystemTests
         var inputSystem = new RtsSelectionInputSystem
         {
             IsDraggingSelection = true,
-            SelectionModeHoldArmed = true
+            SelectionModeHoldArmed = true,
+            HasLiveSelectionRect = true,
+            LastLiveSelectionRect = new Rect(100f, 200f, 300f, 400f)
         };
         Vector2 pointer = new(12f, 34f);
 
@@ -47,6 +49,44 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsTrue(inputSystem.PointerPressedOverUi);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
         Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.AreEqual(new Rect(pointer.x, pointer.y, 0f, 0f), inputSystem.LastLiveSelectionRect);
+    }
+
+    [Test]
+    public void ResetSelectionDragState_ClearsStaleRectangleAtPointerPosition()
+    {
+        var inputSystem = new RtsSelectionInputSystem
+        {
+            PointerPressedOverUi = true,
+            IsDraggingSelection = true,
+            SelectionModeHoldArmed = true,
+            HasLiveSelectionRect = true,
+            LastLiveSelectionRect = new Rect(10f, 20f, 500f, 600f)
+        };
+        Vector2 pointer = new(300f, 400f);
+
+        inputSystem.ResetSelectionDragState(pointer);
+
+        Assert.AreEqual(pointer, inputSystem.DragStart);
+        Assert.AreEqual(pointer, inputSystem.DragCurrent);
+        Assert.AreEqual(pointer, inputSystem.LastPointerPosition);
+        Assert.IsFalse(inputSystem.PointerPressedOverUi);
+        Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.SelectionModeHoldArmed);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
+        Assert.AreEqual(new Rect(pointer.x, pointer.y, 0f, 0f), inputSystem.LastLiveSelectionRect);
+    }
+
+    [Test]
+    public void LastLiveSelectionRect_RoundTripsAsMinMaxScreenRect()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Rect rightwardDrag = Rect.MinMaxRect(900f, 250f, 1200f, 500f);
+
+        inputSystem.LastLiveSelectionRect = rightwardDrag;
+
+        Assert.AreEqual(rightwardDrag, inputSystem.LastLiveSelectionRect);
     }
 
     [Test]
@@ -79,6 +119,7 @@ public sealed class RtsSelectionInputSystemTests
         Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
         Assert.IsTrue(inputSystem.PointerPressedOverUi);
         Assert.IsFalse(inputSystem.IsDraggingSelection);
+        Assert.IsFalse(inputSystem.HasLiveSelectionRect);
     }
 
     [Test]

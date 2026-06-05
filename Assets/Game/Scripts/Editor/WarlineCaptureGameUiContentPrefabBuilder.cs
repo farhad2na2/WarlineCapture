@@ -737,7 +737,8 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         BuildMatchHudRight(right.transform);
 
         GameObject footer = CreateGroup("FooterContent", root.transform, new Rect(0f, 1920f, MatchHudFooterSize.x, MatchHudFooterSize.y));
-        BuildMatchHudFooter(footer.transform);
+        MatchOverlayCommandControlsView commandControls = footer.AddComponent<MatchOverlayCommandControlsView>();
+        BuildMatchHudFooter(footer.transform, commandControls);
 
         return root;
     }
@@ -858,7 +859,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddMatchHudSpriteCentered(minimap.transform, "Focus", "scn08_minimap_focus_target_icon.png", new Vector2(-350f, -226f), new Vector2(64f, 64f), true);
     }
 
-    private static void BuildMatchHudFooter(Transform parent)
+    private static void BuildMatchHudFooter(Transform parent, MatchOverlayCommandControlsView commandControls)
     {
         GameObject tray = CreateTopLeftMainMenuRect("SquadTray", parent, new Rect(24f, -58f, 1480f, 276f));
         AddMatchHudSpriteCentered(tray.transform, "Frame", "scn08_squad_tray_frame.png", Vector2.zero, new Vector2(1480f, 276f), false);
@@ -869,14 +870,18 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
 
         GameObject rail = CreateTopLeftMainMenuRect("CommandRail", parent, new Rect(1670f, -34f, 1820f, 244f));
         AddMatchHudSpriteCentered(rail.transform, "Frame", "scn08_command_bar_rail_frame.png", Vector2.zero, new Vector2(1820f, 244f), false);
-        AddCommandButton(rail.transform, "Select", "scn08_command_select_cursor.png", "SELECT", -700f, false);
+        Button selectButton = AddCommandButton(rail.transform, "Select", "scn08_command_select_cursor.png", "SELECT", -700f, false);
         AddCommandButton(rail.transform, "Move", "scn08_command_move_chevrons.png", "MOVE", -500f, true);
         AddCommandButton(rail.transform, "Attack", "scn08_command_attack_crosshair.png", "ATTACK", -300f, false);
-        AddCommandButton(rail.transform, "Hold", "scn08_command_hold_shield.png", "HOLD", -100f, false);
-        AddCommandButton(rail.transform, "Stop", "scn08_command_stop_hand.png", "STOP", 100f, false);
+        Button holdButton = AddCommandButton(rail.transform, "Hold", "scn08_command_hold_shield.png", "HOLD", -100f, false);
+        Button stopButton = AddCommandButton(rail.transform, "Stop", "scn08_command_stop_hand.png", "STOP", 100f, false);
         AddCommandButton(rail.transform, "Build", "scn08_icon_build_tools.png", "BUILD", 300f, false);
         AddCommandButton(rail.transform, "Scan", "scn08_command_scan_radar.png", "SCAN", 500f, false);
         AddCommandButton(rail.transform, "Support", "scn08_icon_support_parachute.png", "SUPPORT", 700f, false);
+
+        SetSerializedObject(commandControls, "selectButton", selectButton);
+        SetSerializedObject(commandControls, "holdButton", holdButton);
+        SetSerializedObject(commandControls, "stopButton", stopButton);
     }
 
     private static void BuildMatchHudBattlefieldMarkers(Transform parent)
@@ -917,12 +922,26 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddMatchHudSpriteCentered(card.transform, "HealthFrame", "scn08_health_bar_small_frame.png", new Vector2(0f, -92f), new Vector2(168f, 32f), false);
     }
 
-    private static void AddCommandButton(Transform parent, string name, string icon, string label, float x, bool selected)
+    private static Button AddCommandButton(Transform parent, string name, string icon, string label, float x, bool selected)
     {
-        GameObject button = CreateCenteredRect($"{name}Command", parent, new Vector2(x, 4f), new Vector2(160f, 206f));
-        AddMatchHudSpriteCentered(button.transform, "Frame", selected ? "scn08_command_button_selected_frame.png" : "scn08_command_button_normal_frame.png", Vector2.zero, new Vector2(150f, 182f), false);
-        AddMatchHudSpriteCentered(button.transform, "Icon", icon, new Vector2(0f, 28f), new Vector2(82f, 82f), true);
-        AddTextCentered(button.transform, "Label", label, new Vector2(0f, -66f), new Vector2(140f, 40f), 24f, TextAlignmentOptions.Center, Text);
+        GameObject buttonObject = CreateCenteredRect($"{name}Command", parent, new Vector2(x, 4f), new Vector2(160f, 206f));
+        Image hitTarget = buttonObject.AddComponent<Image>();
+        hitTarget.color = Clear;
+        hitTarget.raycastTarget = true;
+
+        Button button = buttonObject.AddComponent<Button>();
+        button.targetGraphic = hitTarget;
+        ColorBlock colors = button.colors;
+        colors.normalColor = Color.white;
+        colors.highlightedColor = new Color(1f, 0.88f, 0.42f, 0.16f);
+        colors.pressedColor = new Color(1f, 0.72f, 0.18f, 0.24f);
+        colors.selectedColor = colors.highlightedColor;
+        button.colors = colors;
+
+        AddMatchHudSpriteCentered(buttonObject.transform, "Frame", selected ? "scn08_command_button_selected_frame.png" : "scn08_command_button_normal_frame.png", Vector2.zero, new Vector2(150f, 182f), false);
+        AddMatchHudSpriteCentered(buttonObject.transform, "Icon", icon, new Vector2(0f, 28f), new Vector2(82f, 82f), true);
+        AddTextCentered(buttonObject.transform, "Label", label, new Vector2(0f, -66f), new Vector2(140f, 40f), 24f, TextAlignmentOptions.Center, Text);
+        return button;
     }
 
     private static GameObject BuildBuildDrawerPopup()
@@ -2297,6 +2316,13 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         string guid = AssetDatabase.CreateFolder(parent, name);
         if (string.IsNullOrEmpty(guid))
             throw new InvalidOperationException($"Failed to create folder {fullPath}.");
+    }
+
+    private static void SetSerializedObject(UnityEngine.Object target, string propertyName, UnityEngine.Object value)
+    {
+        SerializedObject serializedObject = new(target);
+        serializedObject.FindProperty(propertyName).objectReferenceValue = value;
+        serializedObject.ApplyModifiedPropertiesWithoutUndo();
     }
 }
 #endif

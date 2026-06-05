@@ -15,6 +15,8 @@ Skip configs with no existing base `portraitSprite`. Do not create Card/Action p
 - The subject should still read like a portrait/cutout foreground subject, but now composited onto a creative high-quality background.
 - Use baked contact shadows and scene shadows where appropriate.
 - Backgrounds should be unique per config and match the subject identity: desert base, runway, checkpoint, hangar, refinery yard, supply camp, or similar tactical environment.
+- Do not reuse the same Action pose/background pattern across consecutive targets. If the last accepted Action portrait used a running/stepping pose, the next Action must use a different pose family such as crouched cover, turning alert, helping/guarding, radio call, object interaction, braced aim, weapon reload, vehicle maneuver, overhead approach, low-angle showcase, or environmental interaction as appropriate.
+- Card and Action backgrounds should vary by target. Rotate background families such as market lane, aid tent, checkpoint, rooftop edge, hangar bay, runway apron, convoy road, refinery yard, barricade line, interior command area, supply depot, desert ridge, and repair bay. Do not use the same desert-town aid-camp lane for multiple adjacent characters.
 - No transparent background, no chroma-key background, no UI frame, no text, no labels, no logos, no watermarks.
 
 ## Source Of Truth
@@ -56,10 +58,11 @@ Do not replace `portraitSprite`; it remains the transparent/cutout primary portr
 
 - Generate both a Card portrait and an Action portrait.
 - Card portrait may use a standing, ready, patrol, or calm tactical pose.
-- Action portrait should use a distinct pose: aiming, firing, kneeling, advancing, braced, commanding, piloting, or alert stance.
-- Civilian characters should use non-combat action: walking, alert, evacuation-ready, or guarded posture.
+- Action portrait should use a distinct pose family, not just another forward step. Use aiming, firing, kneeling, braced cover, reloading, radio call, dragging/carrying gear, commanding, piloting, low sprint, turning alert, vaulting, crouched inspection, or environmental interaction when it fits the character.
+- Civilian characters should use non-combat action with variety: shielding from dust, helping someone off-frame, carrying a small bag or water container, crouching near cover, looking up at aircraft, reaching toward a checkpoint, turning away from danger, or moving through a market lane. Do not repeat the same running/stepping pose for every civilian.
 - Do not use loaded prompt words that previously caused poster/infographic outputs. Describe concrete visual identity instead: clothing, headwear, gear, body type, weapon silhouette, color, and stance.
-- Avoid terms like `insurgent` and `sidearm` in generation prompts; use neutral concrete descriptions.
+- Never use `insurgent` in any character image-generation prompt, including as a display-name copy or exclusion term. It repeatedly pushed the generator into unrelated infographic outputs.
+- Avoid terms like `sidearm`, `SMG`, and structured labels such as `Use case` or `Asset type` when a target starts producing irrelevant layouts; use plain natural-language concrete descriptions instead.
 
 ## Vehicle Rules
 
@@ -82,15 +85,16 @@ Do not replace `portraitSprite`; it remains the transparent/cutout primary portr
 3. Resolve prefab path/reference plate.
 4. Resolve display name, description, and current base portrait path.
 5. For characters, resolve `weaponDisplayName`, `weaponSprite`, and prefab weapon model.
-6. Generate Card portrait at 512x512-style square composition.
-7. Generate Action portrait at 512x512-style square composition.
-8. Copy generated sources into `Assets/Game/Art/UI/Portraits/Secondary/`.
-9. Resize/crop final project PNGs to exactly `512x512`.
-10. Set Unity import metadata to Sprite, no mipmaps, sRGB, readable off.
-11. Assign `portraitCardSprite` and `portraitActionSprite` in the config.
-12. Inspect both images against the prefab/base portrait.
-13. Verify GUID assignment in the config YAML.
-14. Update `Design/Architecture/portrait_card_action_generation_manifest.md`.
+6. Review the last three completed manifest entries and choose a different Action pose family and background family before prompting.
+7. Generate Card portrait at 512x512-style square composition with a target-specific background.
+8. Generate Action portrait at 512x512-style square composition with the chosen non-repeated pose/background direction.
+9. Copy generated sources into `Assets/Game/Art/UI/Portraits/Secondary/`.
+10. Resize/crop final project PNGs to exactly `512x512`.
+11. Set Unity import metadata to Sprite, no mipmaps, sRGB, readable off.
+12. Assign `portraitCardSprite` and `portraitActionSprite` in the config.
+13. Inspect both images against the prefab/base portrait and reject Action results that repeat recent pose/background patterns.
+14. Verify GUID assignment in the config YAML.
+15. Update `Design/Architecture/portrait_card_action_generation_manifest.md` with a short note naming the accepted Action pose/background direction.
 
 ## Atlas Step
 
@@ -119,4 +123,3 @@ Completed sample:
 
 - Card: `Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_HeavyGunner_Card_512.png`
 - Action: `Assets/Game/Art/UI/Portraits/Secondary/Portrait_Unit_Chr_Soldier_Male_01_HeavyGunner_Action_512.png`
-

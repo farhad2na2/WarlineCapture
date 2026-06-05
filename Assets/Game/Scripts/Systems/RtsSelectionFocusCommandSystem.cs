@@ -25,6 +25,7 @@ public sealed class RtsSelectionFocusCommandSystem
         public readonly Action ProcessSelectionRectangleRequests;
         public readonly Action<EntityManager, Entity> ApplyHudSelection;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
+        public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
         public readonly Action ClearHudSelection;
         public readonly Action ClearHudCommandMode;
         public readonly Action<bool> SetHudWorldMarkersVisible;
@@ -57,6 +58,7 @@ public sealed class RtsSelectionFocusCommandSystem
             Action processSelectionRectangleRequests,
             Action<EntityManager, Entity> applyHudSelection,
             Action<TacticalCommandResult> applyHudCommandResult,
+            Action<TacticalCommandMode> applyHudCommandMode,
             Action clearHudSelection,
             Action clearHudCommandMode,
             Action<bool> setHudWorldMarkersVisible,
@@ -88,6 +90,7 @@ public sealed class RtsSelectionFocusCommandSystem
             ProcessSelectionRectangleRequests = processSelectionRectangleRequests;
             ApplyHudSelection = applyHudSelection;
             ApplyHudCommandResult = applyHudCommandResult;
+            ApplyHudCommandMode = applyHudCommandMode;
             ClearHudSelection = clearHudSelection;
             ClearHudCommandMode = clearHudCommandMode;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
@@ -242,6 +245,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.FocusUnit ||
                kind == RtsSelectionCommandIntentKind.SelectAllSoldiers ||
                kind == RtsSelectionCommandIntentKind.SelectAllVehicles ||
+               kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
@@ -265,6 +269,9 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.SelectAllVehicles:
                 SelectAllVisiblePlayerUnits(context, VisibleUnitSelectionSystem.Filter.Vehicles);
+                return true;
+            case RtsSelectionCommandIntentKind.EnterSelectionMode:
+                EnterExplicitSelectionMode(context);
                 return true;
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
@@ -291,5 +298,28 @@ public sealed class RtsSelectionFocusCommandSystem
             default:
                 return false;
         }
+    }
+
+    private static void EnterExplicitSelectionMode(Context context)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterSelectionMode");
+        context.InputSystem.ClearQueuedMoveOrder();
+        context.InputSystem.ClearPendingMoveCommandRequests();
+        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
+            ? context.InputSystem.LastKnownPointerPosition
+            : Vector2.zero;
+        context.InputSystem.ResetSelectionDragState(pointerPosition);
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.RuntimeGameplayStateSystem.SelectionModeActive = true;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Select);
+        context.LogSelectionDiagnostic?.Invoke($"selectionModeEntered source=ui frame={Time.frameCount} dragReset={pointerPosition}");
     }
 }

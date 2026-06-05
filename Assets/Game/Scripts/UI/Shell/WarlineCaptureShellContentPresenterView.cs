@@ -12,6 +12,8 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
     [SerializeField] private GameObject matchHudContentPrefab;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
     [SerializeField] private GameObject resultPopupPrefab;
+    private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
+    private SelectionUiCommandSystem _selectionUiCommandSystem;
 
     public WarlineCaptureShellView ShellView => shellView;
     public GameObject LoadingContentPrefab => loadingContentPrefab;
@@ -65,6 +67,12 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
                     break;
             }
         }
+    }
+
+    public void BindGameplayRuntimeDependencies(SelectionUiCommandSystem selectionUiCommandSystem)
+    {
+        _selectionUiCommandSystem = selectionUiCommandSystem;
+        BindMatchHudCommandControlsInRegion();
     }
 
     private void InstallLoading()
@@ -149,8 +157,29 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         InstallSection(matchHudContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
         InstallSection(matchHudContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
         InstallSection(matchHudContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
-        InstallSection(matchHudContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
+        GameObject footer = InstallSection(matchHudContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
+        BindMatchHudCommandControls(footer);
         ClearRegion(WarlineCaptureShellRegionId.MiddleRegion);
+    }
+
+    private void BindMatchHudCommandControlsInRegion()
+    {
+        if (!TryGetRegionContentRoot(WarlineCaptureShellRegionId.FooterRegion, out RectTransform contentRoot))
+            return;
+
+        MatchOverlayCommandControlsView view = contentRoot.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+        if (view != null)
+            _matchOverlayCommandInputSystem.Bind(view, _selectionUiCommandSystem);
+    }
+
+    private void BindMatchHudCommandControls(GameObject footer)
+    {
+        if (footer == null)
+            return;
+
+        MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+        if (view != null)
+            _matchOverlayCommandInputSystem.Bind(view, _selectionUiCommandSystem);
     }
 
     private void InstallResultPopup()

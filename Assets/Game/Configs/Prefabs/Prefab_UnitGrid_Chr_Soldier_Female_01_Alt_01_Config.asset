@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Soldier_Female_01_Alt_01_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: c84e351b1baf4f22acfe6f24cd011137, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 36125e86978541169d51e4341878fd45, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: a26e62ab95804e5fb4d0921270b0afda, type: 3}
   weaponSprite: {fileID: 21300000, guid: 8df26df7aedd94c49905cf6e9a2a457d, type: 3}
   weaponDisplayName: Rifle
   allowIdleWander: 1

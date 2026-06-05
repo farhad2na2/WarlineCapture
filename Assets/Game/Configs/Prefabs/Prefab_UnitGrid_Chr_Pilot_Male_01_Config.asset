@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Pilot_Male_01_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 9fa3fd0a12e44932ab3ae5e733cea77e, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 317601db2cf0496189fa76b7a2502b21, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 0c348fed1dbc4e7cae7ceab91f33a18c, type: 3}
   weaponSprite: {fileID: 21300000, guid: 4afd1c4a29a7cb340bbe0721e5c146bb, type: 3}
   weaponDisplayName: Compact Pistol
   allowIdleWander: 1

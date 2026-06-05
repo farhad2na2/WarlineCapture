@@ -3,6 +3,7 @@ using UnityEngine;
 public enum TacticalCommandMode
 {
     None,
+    Select,
     Move,
     Attack,
     Hold,
@@ -52,6 +53,7 @@ public static class TacticalCommandFeedbackText
     {
         return mode switch
         {
+            TacticalCommandMode.Select => "SELECT SQUAD",
             TacticalCommandMode.Move => "MOVE ORDER",
             TacticalCommandMode.Attack => "ATTACK ORDER",
             TacticalCommandMode.Hold => "HOLD POSITION",

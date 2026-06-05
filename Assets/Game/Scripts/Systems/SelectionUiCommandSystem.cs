@@ -31,6 +31,12 @@ public sealed class SelectionUiCommandSystem
         return Queue(RtsSelectionCommandIntentKind.SelectAllVehicles);
     }
 
+    public bool RequestEnterSelectionMode()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.EnterSelectionMode);
+    }
+
     public bool RequestHoldPosition()
     {
         return Queue(RtsSelectionCommandIntentKind.HoldPosition);

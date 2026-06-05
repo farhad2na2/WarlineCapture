@@ -3652,7 +3652,6 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         commandRailFrame.type = Image.Type.Sliced;
         commandRailFrame.raycastTarget = false;
         Button selectButton = CreateCommandButton("SelectButton", commandBar.transform, MatchHudOneGoIconSelectPath, "SELECT", 12f, 24f, false);
-        selectButton.gameObject.SetActive(false);
         Button stopButton = CreateCommandButton("StopButton", commandBar.transform, MatchHudOneGoIconStopPath, "STOP", 12f, 24f, false);
         Button holdButton = CreateCommandButton("HoldButton", commandBar.transform, MatchHudOneGoIconHoldPath, "HOLD", 115f, 24f, false);
         CreateCommandButton("MoveButton", commandBar.transform, MatchHudOneGoIconMovePath, "MOVE", 218f, 24f, true);
@@ -3698,11 +3697,12 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedArray(infantryOnlyHudScope, "shownDuringM01", rifleSquadCard, apcCard, tankCard, airSupportCard, commandBar);
 
         Button commandWheelStopButton = commandWheel.transform.Find("RadialCommandRoot/StopSegment").GetComponent<Button>();
-        MatchOverlayCommandControlsController commandControlsController = screen.AddComponent<MatchOverlayCommandControlsController>();
-        SetSerializedObject(commandControlsController, "holdButton", holdButton);
-        SetSerializedObject(commandControlsController, "stopButton", stopButton);
-        SetSerializedObject(commandControlsController, "commandWheelStopButton", commandWheelStopButton);
-        SetSerializedObject(commandControlsController, "commandWheelPanel", commandWheelController);
+        MatchOverlayCommandControlsView commandControlsView = screen.AddComponent<MatchOverlayCommandControlsView>();
+        SetSerializedObject(commandControlsView, "selectButton", selectButton);
+        SetSerializedObject(commandControlsView, "holdButton", holdButton);
+        SetSerializedObject(commandControlsView, "stopButton", stopButton);
+        SetSerializedObject(commandControlsView, "commandWheelStopButton", commandWheelStopButton);
+        SetSerializedObject(commandControlsView, "commandWheelPanel", commandWheelController);
 
         GameObject minimap = CreateMatchPanel("MiniMapPanel", screen.transform, string.Empty, 1344f, 592f, 318f, 306f);
         ConfigureFixedRightProportionalY((RectTransform)minimap.transform, 10f, 592f, 310f, 304f, MainMenuReferenceResolution.y);

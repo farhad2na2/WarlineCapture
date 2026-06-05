@@ -24,6 +24,7 @@ public enum RtsSelectionCommandIntentKind : byte
     SelectAll,
     SelectAllSoldiers,
     SelectAllVehicles,
+    EnterSelectionMode,
     DeselectAll,
     HoldPosition,
     Stop,

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Bombsuit_Male_01_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: aa66fd91d08448b191e35381d2214c1d, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: df1b6ca91be4a40e29e92c8f87c9bcab, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: b7911b21ac2cc4b6eb270c42d3968d31, type: 3}
   startCell: {x: 0, y: 0}
   goalCell: {x: 2, y: 2}
   allowIdleWander: 1

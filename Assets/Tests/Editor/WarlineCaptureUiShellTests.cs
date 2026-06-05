@@ -249,6 +249,49 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellArmoryContent_ItemTemplateUsesCategoryBackgroundsForPortraits()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
+        Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
+
+        Transform template = prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView");
+        Assert.NotNull(template);
+
+        GameObject item = (GameObject)PrefabUtility.InstantiatePrefab(template.gameObject);
+        Texture2D texture = new(2, 2);
+        Sprite sprite = null;
+        try
+        {
+            texture.SetPixel(0, 0, Color.white);
+            texture.SetPixel(1, 0, Color.white);
+            texture.SetPixel(0, 1, Color.white);
+            texture.SetPixel(1, 1, Color.white);
+            texture.Apply();
+            sprite = Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
+
+            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Character", sprite, ArmoryCatalogCategory.Characters));
+            AssertArmoryItemBackgroundState(item, "Background_Character", sprite);
+
+            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Vehicle", sprite, ArmoryCatalogCategory.Vehicles));
+            AssertArmoryItemBackgroundState(item, "Background_Vehicle", sprite);
+
+            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Aircraft", sprite, ArmoryCatalogCategory.Aircrafts));
+            AssertArmoryItemBackgroundState(item, "Background_Aircraft", sprite);
+
+            InvokeArmoryBindItem(item, new ArmoryCatalogItem("Building", sprite, ArmoryCatalogCategory.Buildings));
+            AssertArmoryItemBackgroundState(item, "Background_Building", sprite);
+        }
+        finally
+        {
+            if (sprite != null)
+                UnityEngine.Object.DestroyImmediate(sprite);
+
+            UnityEngine.Object.DestroyImmediate(texture);
+            UnityEngine.Object.DestroyImmediate(item);
+        }
+    }
+
+    [Test]
     public void ShellArmoryContent_CategoryHotspotsSelectExpectedRuntimeCategories()
     {
         World previousWorld = World.DefaultGameObjectInjectionWorld;
@@ -752,6 +795,45 @@ public sealed class WarlineCaptureUiShellTests
             StringAssert.Contains("selected", spriteName, $"{path} must show selected state.");
         else
             StringAssert.Contains("inactive", spriteName, $"{path} must show inactive state.");
+    }
+
+    private static void InvokeArmoryBindItem(GameObject item, ArmoryCatalogItem model)
+    {
+        MethodInfo bindItem = typeof(ArmoryContentListView).GetMethod(
+            "BindItem",
+            BindingFlags.Static | BindingFlags.NonPublic);
+        Assert.NotNull(bindItem);
+        bindItem.Invoke(null, new object[] { item, model });
+    }
+
+    private static void AssertArmoryItemBackgroundState(GameObject item, string selectedBackground, Sprite expectedSprite)
+    {
+        AssertArmoryItemBackground(item, "Background_Character", selectedBackground, expectedSprite);
+        AssertArmoryItemBackground(item, "Background_Vehicle", selectedBackground, expectedSprite);
+        AssertArmoryItemBackground(item, "Background_Aircraft", selectedBackground, expectedSprite);
+        AssertArmoryItemBackground(item, "Background_Building", selectedBackground, expectedSprite);
+    }
+
+    private static void AssertArmoryItemBackground(
+        GameObject item,
+        string backgroundName,
+        string selectedBackground,
+        Sprite expectedSprite)
+    {
+        Transform background = item.transform.Find(backgroundName);
+        Assert.NotNull(background, $"{backgroundName} must exist on the Armory item template.");
+
+        bool selected = backgroundName == selectedBackground;
+        Assert.AreEqual(selected, background.gameObject.activeSelf, $"{backgroundName} active state mismatch.");
+
+        Image art = background.Find("Art")?.GetComponent<Image>();
+        Assert.NotNull(art, $"{backgroundName}/Art must exist.");
+        if (selected)
+        {
+            Assert.AreEqual(expectedSprite, art.sprite, $"{backgroundName}/Art must receive the config portrait sprite.");
+            Assert.IsTrue(art.enabled, $"{backgroundName}/Art must be enabled when the model has a portrait.");
+            Assert.IsTrue(art.preserveAspect, $"{backgroundName}/Art must preserve portrait aspect.");
+        }
     }
 
     private static void InvokeArmoryNavigationOnEnable(ArmoryCategoryNavigationView navigationView)

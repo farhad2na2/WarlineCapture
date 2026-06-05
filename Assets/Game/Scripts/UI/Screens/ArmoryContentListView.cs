@@ -132,7 +132,7 @@ public sealed class ArmoryContentListView : MonoBehaviour
         if (title != null)
             title.text = model.DisplayName;
 
-        Image art = FindComponent<Image>(item.transform, "Art");
+        Image art = BindCategoryBackgroundAndGetArt(item.transform, model.Category);
         if (art != null)
         {
             art.sprite = model.Portrait;
@@ -143,6 +143,52 @@ public sealed class ArmoryContentListView : MonoBehaviour
         TMP_Text type = FindComponent<TMP_Text>(item.transform, "Frame/Progress/Type");
         if (type != null)
             type.text = FormatCategory(model.Category);
+    }
+
+    private static Image BindCategoryBackgroundAndGetArt(Transform itemRoot, ArmoryCatalogCategory category)
+    {
+        Transform selectedBackground = null;
+        string selectedBackgroundName = GetBackgroundName(category);
+
+        SetBackgroundActive(itemRoot, "Background_Character", selectedBackgroundName, ref selectedBackground);
+        SetBackgroundActive(itemRoot, "Background_Vehicle", selectedBackgroundName, ref selectedBackground);
+        SetBackgroundActive(itemRoot, "Background_Aircraft", selectedBackgroundName, ref selectedBackground);
+        SetBackgroundActive(itemRoot, "Background_Building", selectedBackgroundName, ref selectedBackground);
+
+        Image categoryArt = selectedBackground != null
+            ? selectedBackground.Find("Art")?.GetComponent<Image>()
+            : null;
+        if (categoryArt != null)
+            return categoryArt;
+
+        return FindComponent<Image>(itemRoot, "Art");
+    }
+
+    private static void SetBackgroundActive(
+        Transform itemRoot,
+        string backgroundName,
+        string selectedBackgroundName,
+        ref Transform selectedBackground)
+    {
+        Transform background = itemRoot != null ? itemRoot.Find(backgroundName) : null;
+        if (background == null)
+            return;
+
+        bool selected = backgroundName == selectedBackgroundName;
+        background.gameObject.SetActive(selected);
+        if (selected)
+            selectedBackground = background;
+    }
+
+    private static string GetBackgroundName(ArmoryCatalogCategory category)
+    {
+        return category switch
+        {
+            ArmoryCatalogCategory.Aircrafts => "Background_Aircraft",
+            ArmoryCatalogCategory.Buildings => "Background_Building",
+            ArmoryCatalogCategory.Vehicles => "Background_Vehicle",
+            _ => "Background_Character"
+        };
     }
 
     private static T FindComponent<T>(Transform root, string path) where T : Component

@@ -14508,6 +14508,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5406923442042087610}
   - component: {fileID: 1800108208000010005}
+  - component: {fileID: 1800108208000012000}
   m_Layer: 0
   m_Name: FooterContent
   m_TagString: Untagged
@@ -14557,6 +14558,21 @@ MonoBehaviour:
   commandWheelPanel: {fileID: 0}
   commandTabGroup: {fileID: 1800108208000011000}
   buildDrawerPopupPrefab: {fileID: 6681354990523575241, guid: f8fdfa57f1e92e74dbc1987ff731b3b3, type: 3}
+--- !u!114 &1800108208000012000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8399705092529502062}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e8f5116c64b646feac9096c321dc73e, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::BattleHudGameplayBridge
+  tacticalFeedback: {fileID: 0}
+  commandTabGroups:
+  - {fileID: 1800108208000011000}
 --- !u!1 &8514835543902700259
 GameObject:
   m_ObjectHideFlags: 0

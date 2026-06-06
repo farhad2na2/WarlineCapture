@@ -204,7 +204,9 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueClearCommandMode(em);
         ProcessPendingFeedback(em);
-        _commandTabFeedbackSystem.ClearCommandMode(null);
+        BattleHudGameplayBridge bridge = BattleHudGameplayBridge.ResolveActive();
+        if (bridge == null || bridge.StickyCommandMode == TacticalCommandMode.None)
+            _commandTabFeedbackSystem.ClearCommandMode(null);
     }
 
     public void ClearCommandMode(Context context)

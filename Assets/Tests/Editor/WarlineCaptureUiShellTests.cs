@@ -249,6 +249,13 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(tabGroup, "CommandRail/Frame must own the command tab group.");
         Assert.AreEqual(tabGroup, serializedView.FindProperty("commandTabGroup").objectReferenceValue);
         AssertCommandTabsAssigned(tabGroup, commandRailFrame);
+
+        BattleHudGameplayBridge bridge = footer.GetComponent<BattleHudGameplayBridge>();
+        Assert.NotNull(bridge, "The shell-instantiated Match HUD footer must own a live bridge for sticky command tab state.");
+        var serializedBridge = new SerializedObject(bridge);
+        SerializedProperty commandTabGroups = serializedBridge.FindProperty("commandTabGroups");
+        Assert.AreEqual(1, commandTabGroups.arraySize);
+        Assert.AreEqual(tabGroup, commandTabGroups.GetArrayElementAtIndex(0).objectReferenceValue);
     }
 
     [Test]
@@ -315,6 +322,8 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(topRightHotspot, "SCN09 top-right CloseButton must expose a clickable Hotspot button.");
         Assert.AreEqual(topRightHotspot, closeButton, "SCN09 close behavior must bind the visible top-right close hotspot.");
         Assert.AreEqual(prefab, popupRoot, "SCN09 close behavior must target only the popup root.");
+        Assert.AreEqual(TacticalCommandMode.Build, closeView.CommandModeToClear,
+            "SCN09 close must clear sticky Build mode without routing away from the match HUD.");
         Assert.AreEqual(0, topRightClose.GetComponentsInChildren<WarlineCaptureShellRouteButtonView>(true).Length,
             "SCN09 top-right close button must not submit a shell route request or return to MainMenu.");
     }
@@ -347,6 +356,47 @@ public sealed class WarlineCaptureUiShellTests
                 UnityEngine.Object.DestroyImmediate(instance);
             UnityEngine.Object.DestroyImmediate(sibling);
             UnityEngine.Object.DestroyImmediate(parent);
+        }
+    }
+
+    [Test]
+    public void ShellBuildDrawerPopup_CloseButtonClearsStickyBuildTab()
+    {
+        GameObject matchHudPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        GameObject drawerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellBuildDrawerPopupPrefabPath);
+        Assert.NotNull(matchHudPrefab, ShellMatchHudContentPrefabPath);
+        Assert.NotNull(drawerPrefab, ShellBuildDrawerPopupPrefabPath);
+
+        GameObject matchHud = (GameObject)PrefabUtility.InstantiatePrefab(matchHudPrefab);
+        GameObject drawer = (GameObject)PrefabUtility.InstantiatePrefab(drawerPrefab);
+        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
+        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        try
+        {
+            MatchOverlayCommandControlsView view = matchHud.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+            Assert.NotNull(view.CommandTabGroup);
+            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+
+            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
+            bridge.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+
+            WarlineCapturePopupCloseButton closeView = drawer.GetComponent<WarlineCapturePopupCloseButton>();
+            Assert.NotNull(closeView);
+            closeView.ClosePopup();
+
+            Assert.AreEqual(TacticalCommandMode.None, bridge.StickyCommandMode);
+            AssertNoCommandTabSelected(view.CommandTabGroup);
+            Assert.IsTrue(drawer == null, "Close must destroy the build drawer instance.");
+        }
+        finally
+        {
+            if (drawer != null)
+                UnityEngine.Object.DestroyImmediate(drawer);
+            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(matchHud);
         }
     }
 
@@ -534,6 +584,88 @@ public sealed class WarlineCaptureUiShellTests
         {
             UnityEngine.Object.DestroyImmediate(bridgeObject);
             UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_StickyBuildCommandModeSurvivesGenericClear()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
+        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+            Assert.NotNull(view.CommandTabGroup);
+
+            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+
+            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
+            bridge.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+
+            bridge.ClearCommandMode();
+
+            Assert.AreEqual(TacticalCommandMode.Build, bridge.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.Build, bridge.CurrentCommandMode);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+
+            bridge.ClearStickyCommandMode(TacticalCommandMode.Build);
+
+            Assert.AreEqual(TacticalCommandMode.None, bridge.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.None, bridge.CurrentCommandMode);
+            AssertNoCommandTabSelected(view.CommandTabGroup);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_SelectionHudClearCommandModeDoesNotClearStickyBuildTab()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("ShellMatchHudContent_StickyBuildClear");
+        World.DefaultGameObjectInjectionWorld = world;
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
+        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        try
+        {
+            MatchOverlayCommandControlsView view = instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+            Assert.NotNull(view.CommandTabGroup);
+
+            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
+            bridge.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+
+            new SelectionHudFeedbackSystem().ClearCommandMode(world.EntityManager);
+
+            Assert.AreEqual(TacticalCommandMode.Build, bridge.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.Build, bridge.CurrentCommandMode);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(instance);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
         }
     }
 

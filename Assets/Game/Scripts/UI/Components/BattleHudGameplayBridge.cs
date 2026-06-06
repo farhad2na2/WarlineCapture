@@ -92,12 +92,24 @@ public sealed class BattleHudGameplayBridge : MonoBehaviour
 
     public BattleHudTacticalFeedbackController TacticalFeedback => tacticalFeedback;
     public TacticalCommandMode CurrentCommandMode { get; private set; } = TacticalCommandMode.None;
+    public TacticalCommandMode StickyCommandMode { get; private set; } = TacticalCommandMode.None;
     public TacticalCommandResult LastCommandResult { get; private set; } = TacticalCommandResult.Success();
     public bool HasLastCommandResult { get; private set; }
 
     public static BattleHudGameplayBridge ResolveActive()
     {
         BattleHudGameplayBridge[] bridges = Resources.FindObjectsOfTypeAll<BattleHudGameplayBridge>();
+        for (int i = 0; i < bridges.Length; i++)
+        {
+            BattleHudGameplayBridge bridge = bridges[i];
+            if (bridge == null ||
+                !bridge.gameObject.scene.IsValid() ||
+                !bridge.gameObject.activeInHierarchy)
+                continue;
+
+            return bridge;
+        }
+
         for (int i = 0; i < bridges.Length; i++)
         {
             BattleHudGameplayBridge bridge = bridges[i];
@@ -150,7 +162,33 @@ public sealed class BattleHudGameplayBridge : MonoBehaviour
             tacticalFeedback.ShowCommandMode(displayText);
     }
 
+    public void ApplyStickyCommandMode(TacticalCommandMode mode)
+    {
+        StickyCommandMode = mode;
+        ApplyCommandMode(mode);
+    }
+
+    public void ClearStickyCommandMode(TacticalCommandMode mode)
+    {
+        if (StickyCommandMode != mode)
+            return;
+
+        StickyCommandMode = TacticalCommandMode.None;
+        ClearCommandModeInternal();
+    }
+
     public void ClearCommandMode()
+    {
+        if (StickyCommandMode != TacticalCommandMode.None)
+        {
+            ApplyCommandMode(StickyCommandMode);
+            return;
+        }
+
+        ClearCommandModeInternal();
+    }
+
+    private void ClearCommandModeInternal()
     {
         CurrentCommandMode = TacticalCommandMode.None;
         tacticalFeedback?.HideCommandMode();

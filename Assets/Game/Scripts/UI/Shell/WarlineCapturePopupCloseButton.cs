@@ -6,9 +6,11 @@ public sealed class WarlineCapturePopupCloseButton : MonoBehaviour
 {
     [SerializeField] private Button closeButton;
     [SerializeField] private GameObject popupRoot;
+    [SerializeField] private TacticalCommandMode commandModeToClear = TacticalCommandMode.None;
 
     public Button CloseButton => closeButton;
     public GameObject PopupRoot => popupRoot;
+    public TacticalCommandMode CommandModeToClear => commandModeToClear;
 
     private void OnEnable()
     {
@@ -24,6 +26,15 @@ public sealed class WarlineCapturePopupCloseButton : MonoBehaviour
 
     public void ClosePopup()
     {
+        if (commandModeToClear != TacticalCommandMode.None)
+        {
+            BattleHudGameplayBridge bridge = BattleHudGameplayBridge.ResolveActive();
+            if (bridge != null)
+                bridge.ClearStickyCommandMode(commandModeToClear);
+            else
+                new MatchOverlayCommandTabFeedbackSystem().ClearCommandMode(null);
+        }
+
         GameObject target = popupRoot != null ? popupRoot : gameObject;
 
         if (Application.isPlaying)

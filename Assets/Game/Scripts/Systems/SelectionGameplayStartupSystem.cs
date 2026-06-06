@@ -395,7 +395,9 @@ internal sealed class SelectionGameplayStartupSystem
         void ClearSelectionCommandMode()
         {
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-            matchOverlayCommandTabFeedbackSystem.ClearCommandMode(null);
+            BattleHudGameplayBridge bridge = BattleHudGameplayBridge.ResolveActive();
+            if (bridge == null || bridge.StickyCommandMode == TacticalCommandMode.None)
+                matchOverlayCommandTabFeedbackSystem.ClearCommandMode(null);
         }
 
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")

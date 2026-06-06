@@ -11885,6 +11885,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCapturePopupCloseButton
   closeButton: {fileID: 5634950188798638685}
   popupRoot: {fileID: 6681354990523575241}
+  commandModeToClear: 6
 --- !u!1 &6704298497101980290
 GameObject:
   m_ObjectHideFlags: 0

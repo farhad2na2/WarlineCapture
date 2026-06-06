@@ -15,6 +15,8 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
     private bool _draggingViewport;
     private bool _dragMoved;
+    private bool _hasManualViewportOverride;
+    private Rect _manualViewportNormalizedRect;
     private Vector2 _viewportDragOffset;
 
     public Image MapImage => mapImage;
@@ -23,6 +25,9 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
     public Button ZoomInButton => zoomInButton;
     public Button ZoomOutButton => zoomOutButton;
     public RectTransform MarkerRoot => markerRoot;
+    public bool IsDraggingViewport => _draggingViewport;
+    public bool HasManualViewportOverride => _hasManualViewportOverride;
+    public Rect ManualViewportNormalizedRect => _manualViewportNormalizedRect;
 
     public event Action<Vector2> FocusRequested;
     public event Action<int, bool> ZoomHeldChanged;
@@ -41,6 +46,7 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
         ZoomHeldChanged?.Invoke(-1, false);
         _draggingViewport = false;
         _dragMoved = false;
+        _hasManualViewportOverride = false;
     }
 
     public void Configure(
@@ -67,6 +73,8 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
         mapImage.sprite = sprite;
         mapImage.preserveAspect = false;
+        mapImage.enabled = true;
+        mapImage.raycastTarget = true;
     }
 
     public void SetViewportNormalizedRect(Rect normalizedRect)
@@ -169,7 +177,17 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
         float normalizedX = (left + (rectWidth * 0.5f)) / Mathf.Max(0.001f, map.width);
         float normalizedY = 1f - ((top + (rectHeight * 0.5f)) / Mathf.Max(0.001f, map.height));
-        FocusRequested?.Invoke(new Vector2(Mathf.Clamp01(normalizedX), Mathf.Clamp01(normalizedY)));
+        float normalizedWidth = rectWidth / Mathf.Max(0.001f, map.width);
+        float normalizedHeight = rectHeight / Mathf.Max(0.001f, map.height);
+        Vector2 normalizedCenter = new(Mathf.Clamp01(normalizedX), Mathf.Clamp01(normalizedY));
+        _manualViewportNormalizedRect = new Rect(
+            normalizedCenter.x - normalizedWidth * 0.5f,
+            normalizedCenter.y - normalizedHeight * 0.5f,
+            normalizedWidth,
+            normalizedHeight);
+        _hasManualViewportOverride = true;
+        SetViewportNormalizedRect(_manualViewportNormalizedRect);
+        FocusRequested?.Invoke(normalizedCenter);
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -187,6 +205,11 @@ public sealed class MatchHudMinimapView : MonoBehaviour, IPointerDownHandler, ID
 
         if (TryGetNormalizedPoint(eventData, out Vector2 normalized))
             FocusRequested?.Invoke(normalized);
+    }
+
+    public void ClearManualViewportOverride()
+    {
+        _hasManualViewportOverride = false;
     }
 
     private bool TryGetNormalizedPoint(PointerEventData eventData, out Vector2 normalized)

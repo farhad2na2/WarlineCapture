@@ -28,6 +28,7 @@ public sealed class SelectionUiCameraSystem
     }
 
     public bool IsNormalIsoModeActive => _cameraSystem.NormalIsoModeActive;
+    public bool IsCameraDragging => _cameraSystem.IsDragging;
     public Camera WorldCamera => _worldCamera;
 
     public void Init(RTSSelectionSystemConfig config, Camera worldCamera)

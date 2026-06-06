@@ -26,7 +26,7 @@ public readonly struct MatchHudMinimapProjectionGrid
 public static class MatchHudMinimapProjectionSystem
 {
     private const float MinLocalWindowHeight = 160f;
-    private const float LocalWindowVisibleScale = 2.5f;
+    private const float LocalWindowVisibleScale = 4.5f;
 
     public static bool TryGetGrid(out GridConfig grid)
     {
@@ -126,6 +126,17 @@ public static class MatchHudMinimapProjectionSystem
         if (!found)
             return TryGetFallbackCameraViewportRect(worldCamera, groundPlane, grid, out normalizedRect);
 
+        float width = Mathf.Max(0f, maxX - minX);
+        float height = Mathf.Max(0f, maxY - minY);
+        if (TryRaycastViewport(worldCamera, groundPlane, new Vector3(0.5f, 0.5f, 0f), out Vector3 centerWorld) &&
+            TryWorldToNormalized(grid, centerWorld, out Vector2 centerNormalized))
+        {
+            minX = centerNormalized.x - width * 0.5f;
+            maxX = centerNormalized.x + width * 0.5f;
+            minY = centerNormalized.y - height * 0.5f;
+            maxY = centerNormalized.y + height * 0.5f;
+        }
+
         minX = Mathf.Clamp01(minX);
         minY = Mathf.Clamp01(minY);
         maxX = Mathf.Clamp01(maxX);
@@ -134,17 +145,45 @@ public static class MatchHudMinimapProjectionSystem
         return normalizedRect.width > 0f && normalizedRect.height > 0f;
     }
 
+    public static bool TryGetCameraGroundBoundsCenter(Camera worldCamera, float groundY, out Vector3 center)
+    {
+        center = default;
+        if (worldCamera == null)
+            return false;
+
+        MatchHudMinimapProjectionGrid groundGrid = new(Vector3.up * groundY, 1f, 1f);
+        if (!TryGetCameraGroundBounds(worldCamera, groundGrid, out center, out _))
+            return false;
+
+        return true;
+    }
+
+    public static bool TryGetCameraGroundCenter(Camera worldCamera, float groundY, out Vector3 center)
+    {
+        center = default;
+        if (worldCamera == null)
+            return false;
+
+        Plane groundPlane = new(Vector3.up, new Vector3(0f, groundY, 0f));
+        return TryRaycastViewport(worldCamera, groundPlane, new Vector3(0.5f, 0.5f, 0f), out center);
+    }
+
     public static MatchHudMinimapProjectionGrid CreateCameraCenteredGrid(
         GridConfig fullGridConfig,
         Camera worldCamera,
         float mapAspect)
     {
         mapAspect = Mathf.Max(0.1f, mapAspect);
-        if (TryGetCameraGroundBounds(worldCamera, MatchHudMinimapProjectionGrid.FromGridConfig(fullGridConfig), out Vector3 center, out Vector2 visibleSize))
-            return CreateCenteredGrid(fullGridConfig, center, visibleSize, mapAspect);
-
         MatchHudMinimapProjectionGrid fullGrid = MatchHudMinimapProjectionGrid.FromGridConfig(fullGridConfig);
-        center = ResolveCameraGroundCenter(worldCamera, fullGrid);
+        if (TryGetCameraGroundBounds(worldCamera, fullGrid, out Vector3 boundsCenter, out Vector2 visibleSize))
+        {
+            Vector3 centeredOn = TryGetCameraGroundCenter(worldCamera, fullGrid.Origin.y, out Vector3 rayCenter)
+                ? rayCenter
+                : boundsCenter;
+            return CreateCenteredGrid(fullGridConfig, centeredOn, visibleSize, mapAspect);
+        }
+
+        Vector3 center = ResolveCameraGroundCenter(worldCamera, fullGrid);
         visibleSize = ResolveCameraGroundSize(worldCamera, fullGrid);
         return CreateCenteredGrid(fullGridConfig, center, visibleSize, mapAspect);
     }
@@ -177,13 +216,14 @@ public static class MatchHudMinimapProjectionSystem
             return;
 
         Vector3 center = grid.Origin + new Vector3(grid.Width * 0.5f, 0f, grid.Height * 0.5f);
+        float captureHeight = 128f;
         captureCamera.orthographic = true;
         captureCamera.orthographicSize = grid.Height * 0.5f;
         captureCamera.aspect = Mathf.Max(0.1f, grid.Width / Mathf.Max(0.001f, grid.Height));
-        captureCamera.transform.position = center + Vector3.up * Mathf.Max(80f, Mathf.Max(grid.Width, grid.Height));
+        captureCamera.transform.position = center + Vector3.up * captureHeight;
         captureCamera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
         captureCamera.nearClipPlane = 0.1f;
-        captureCamera.farClipPlane = Mathf.Max(100f, Mathf.Max(grid.Width, grid.Height) * 2f);
+        captureCamera.farClipPlane = captureHeight + 256f;
         captureCamera.clearFlags = CameraClearFlags.SolidColor;
         captureCamera.backgroundColor = new Color(0.025f, 0.035f, 0.035f, 1f);
         captureCamera.cullingMask = cullingMask;

@@ -282,12 +282,14 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(view, "MinimapPanel must own MatchHudMinimapView so runtime code uses serialized references.");
 
         Image mapImage = map.GetComponent<Image>();
+        RawImage mapRawImage = map.GetComponent<RawImage>();
         Button zoomInButton = zoomIn.GetComponent<Button>();
         Button zoomOutButton = zoomOut.GetComponent<Button>();
-        Assert.NotNull(mapImage);
+        Assert.NotNull(mapImage, "Map should remain the original Image so the Match HUD prefab is not rebuilt for minimap capture.");
+        Assert.IsNull(mapRawImage, "Map should not require a RawImage component.");
         Assert.NotNull(zoomInButton);
         Assert.NotNull(zoomOutButton);
-        Assert.IsTrue(mapImage.raycastTarget, "Map must receive pointer raycasts for click-to-focus and viewport dragging.");
+        Assert.IsTrue(mapImage.raycastTarget, "Runtime minimap image must receive pointer raycasts.");
 
         SerializedObject serializedView = new(view);
         Assert.AreEqual(mapImage, serializedView.FindProperty("mapImage").objectReferenceValue);

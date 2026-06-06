@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using Unity.Entities;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.UI;
@@ -71,6 +72,7 @@ public sealed class MatchHudMinimapProjectionSystemTests
 
             Assert.Less(localGrid.Width, 1000f);
             Assert.Less(localGrid.Height, 1000f);
+            Assert.GreaterOrEqual(localGrid.Height, 200f);
             Assert.AreEqual(500f, localGrid.Origin.x + localGrid.Width * 0.5f, 0.01f);
             Assert.AreEqual(500f, localGrid.Origin.z + localGrid.Height * 0.5f, 0.01f);
             Assert.AreEqual(1.5f, localGrid.Width / localGrid.Height, 0.01f);
@@ -254,6 +256,75 @@ public sealed class MatchHudMinimapProjectionSystemTests
         finally
         {
             Object.DestroyImmediate(panel);
+        }
+    }
+
+    [Test]
+    public void RuntimeMinimapReplacesDefaultSpriteOnExistingImageAndCentersViewportOnBind()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        World world = new("RuntimeMinimapReplacesDefaultSpriteAndCentersViewportOnBind");
+        World.DefaultGameObjectInjectionWorld = world;
+        GameObject panel = new("MinimapPanel_RuntimeBind");
+        GameObject cameraObject = new("MinimapRuntimeBindCamera");
+        Texture2D defaultTexture = new(4, 4, TextureFormat.RGBA32, false);
+        MatchHudMinimapInputSystem inputSystem = null;
+        try
+        {
+            EntityManager em = world.EntityManager;
+            Entity gridEntity = em.CreateEntity(typeof(GridConfig));
+            em.SetComponentData(gridEntity, new GridConfig
+            {
+                Width = 100,
+                Height = 100,
+                CellSize = 10f,
+                Origin = float3.zero
+            });
+
+            DynamicBuffer<GridRoad> roads = em.AddBuffer<GridRoad>(gridEntity);
+            roads.ResizeUninitialized(100 * 100);
+            for (int i = 0; i < roads.Length; i++)
+                roads[i] = new GridRoad { Value = (byte)(i % 17 == 0 ? 1 : 0) };
+
+            RectTransform panelRect = panel.AddComponent<RectTransform>();
+            panelRect.sizeDelta = new Vector2(900f, 610f);
+            RectTransform mapRect = CreateRect("Map", panelRect, new Vector2(832f, 562f), Vector2.zero);
+            Image mapImage = mapRect.gameObject.AddComponent<Image>();
+            mapImage.sprite = Sprite.Create(defaultTexture, new Rect(0, 0, 1, 1), Vector2.one * 0.5f);
+
+            RectTransform viewportRect = CreateRect("Viewport", panelRect, new Vector2(250f, 154f), Vector2.zero);
+            MatchHudMinimapView view = panel.AddComponent<MatchHudMinimapView>();
+            view.Configure(mapImage, mapRect, viewportRect, null, null, panelRect);
+
+            Camera camera = cameraObject.AddComponent<Camera>();
+            camera.orthographic = true;
+            camera.orthographicSize = 25f;
+            camera.aspect = mapRect.rect.width / mapRect.rect.height;
+            camera.transform.position = new Vector3(500f, 100f, 500f);
+            camera.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
+
+            SelectionUiCameraSystem cameraSystem = new(new RtsCameraSystem(), new RtsCameraRequestSystem());
+            cameraSystem.Init(null, camera);
+            inputSystem = new MatchHudMinimapInputSystem();
+            inputSystem.Bind(view, new RuntimeGameplayStateSystem(), cameraSystem);
+
+            Assert.IsTrue(mapImage.enabled, "Runtime minimap must keep the existing Map Image enabled.");
+            Assert.NotNull(mapImage.sprite, "Runtime minimap must assign a generated sprite to the existing Map Image.");
+            Assert.AreEqual("Runtime_MatchHudMinimapSprite", mapImage.sprite.name);
+
+            Rect viewportInPanel = GetRectInParent(viewportRect, panelRect);
+            Rect mapInPanel = GetRectInParent(mapRect, panelRect);
+            Assert.AreEqual(mapInPanel.center.x, viewportInPanel.center.x, 0.5f);
+            Assert.AreEqual(mapInPanel.center.y, viewportInPanel.center.y, 0.5f);
+        }
+        finally
+        {
+            inputSystem?.Dispose();
+            Object.DestroyImmediate(defaultTexture);
+            Object.DestroyImmediate(cameraObject);
+            Object.DestroyImmediate(panel);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+            world.Dispose();
         }
     }
 

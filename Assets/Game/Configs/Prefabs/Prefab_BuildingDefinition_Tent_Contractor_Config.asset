@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Tent_Contractor_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: a80e774ed94447bf8f085dab571caa11, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: a55ecaddfcef4267a122fcf05817dd9b, type: 3}
   displayName: Contractor Tent
   description: Field tent for contractors, workers, and temporary support staff.
   maxHealth: 350

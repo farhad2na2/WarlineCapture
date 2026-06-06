@@ -11,6 +11,7 @@ public sealed class SelectionRectangleRequestSystem
     public delegate void ApplyHudSelectionAction(EntityManager em, Entity entity);
     public delegate void ApplyHudSquadSelectionAction(int selectedCount);
     public delegate void LogSelectionAction(string message);
+    public delegate bool TrySelectBuildingInRectAction(Rect screenRect);
 
     private readonly List<RtsSelectionPointerRequestElement> _pendingRectangleRequests = new();
 
@@ -28,7 +29,8 @@ public sealed class SelectionRectangleRequestSystem
         ApplyHudSelectionAction applyHudSelection,
         ApplyHudSquadSelectionAction applyHudSquadSelection,
         LogSelectionAction logSelectionDiagnostic,
-        Action clearSelectedBuilding)
+        Action clearSelectedBuilding,
+        TrySelectBuildingInRectAction trySelectBuildingInRect)
     {
         _pendingRectangleRequests.Clear();
         for (int i = 0; i < pointerRequests.Length;)
@@ -62,7 +64,8 @@ public sealed class SelectionRectangleRequestSystem
                 applyHudSelection,
                 applyHudSquadSelection,
                 logSelectionDiagnostic,
-                clearSelectedBuilding);
+                clearSelectedBuilding,
+                trySelectBuildingInRect);
         }
 
         return _pendingRectangleRequests.Count > 0;
@@ -89,7 +92,8 @@ public sealed class SelectionRectangleRequestSystem
         ApplyHudSelectionAction applyHudSelection,
         ApplyHudSquadSelectionAction applyHudSquadSelection,
         LogSelectionAction logSelectionDiagnostic,
-        Action clearSelectedBuilding)
+        Action clearSelectedBuilding,
+        TrySelectBuildingInRectAction trySelectBuildingInRect)
     {
         int selectedCount = visibleUnitSelectionSystem.CollectVisiblePlayerUnits(
             em,
@@ -100,6 +104,12 @@ public sealed class SelectionRectangleRequestSystem
             selectedScratch);
 
         clearCurrentSelection(em, "SelectUnitsInRectangle");
+        if (selectedCount == 0 && trySelectBuildingInRect != null && trySelectBuildingInRect(screenRect))
+        {
+            logSelectionDiagnostic?.Invoke("result=SelectRectangleBuilding selected=0 building=True");
+            return;
+        }
+
         visibleUnitSelectionSystem.ApplySelectedUnitTags(em, selectedScratch);
         cacheSelectedMoveEntities(em, selectedScratch);
         logSelectionDiagnostic?.Invoke($"result=SelectRectangle filter={filter} selected={selectedCount} cache={selectionStateSystem.CachedSelectedMoveEntities.Count}");

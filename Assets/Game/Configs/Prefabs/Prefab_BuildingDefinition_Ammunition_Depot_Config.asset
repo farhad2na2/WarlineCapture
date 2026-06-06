@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Ammunition_Depot_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 6471f74de2fa4944a90d3792ef3f3629, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 40b519b51c9346bcbb090264ce0a3090, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 05e334f194de4fb6a0f9f6e15293aa53, type: 3}
   displayName: Ammunition Depot
   description: Secure storage facility for ammunition, explosives, and combat supplies.
   maxHealth: 900

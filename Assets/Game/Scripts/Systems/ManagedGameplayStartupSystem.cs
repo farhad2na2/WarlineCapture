@@ -179,6 +179,7 @@ internal sealed class ManagedGameplayStartupSystem
             roadBuildReadModel,
             building.Interaction,
             building.InteractionContext,
+            building.TrySelectFirstBuildingInScreenRect,
             factionVisuals);
 
         _roadBuildCompositionSystem.BindBuildingInteraction(

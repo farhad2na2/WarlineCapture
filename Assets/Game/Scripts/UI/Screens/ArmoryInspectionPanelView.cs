@@ -16,7 +16,7 @@ public sealed class ArmoryInspectionPanelView : MonoBehaviour
         if (typeText != null)
             typeText.text = ArmoryCatalogCategoryFormatter.Format(model.Category);
 
-        BindCategoryVisuals(model.Category, model.Portrait);
+        BindCategoryVisuals(model.Category, model.InspectionPortrait);
     }
 
     public void Clear()

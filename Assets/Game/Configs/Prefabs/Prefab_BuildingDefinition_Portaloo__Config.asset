@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Portaloo__Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 15b0c7725bf34a2fb540f476d1ab7fec, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 3c6358a607b549119ca1bcadc4b84d4b, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 4e9f6294d47b4325886e1bde19dd06b5, type: 3}
   displayName: Portable Toilet
   description: Field sanitation unit that supports camps, work crews, and temporary
     bases.

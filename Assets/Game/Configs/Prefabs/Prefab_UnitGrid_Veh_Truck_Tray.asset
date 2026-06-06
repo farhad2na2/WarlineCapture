@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Veh_Truck_Tray
   m_EditorClassIdentifier:
   portraitSprite: {fileID: 21300000, guid: 443d92c6306249d0a8019294ce7a93c2, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 6d410f4e455849f99837102fd5eaf8f2, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: ad2bb7f2e35a4773845528f6d6dd94ed, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Tent_Regular_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: da7f7acd065143b9bcbd0b3ba54d7070, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: db010046ab3146f69ae2abbff213f5f1, type: 3}
   displayName: Soldier Tent
   description: Basic military tent used to house and support infantry units.
   maxHealth: 450

@@ -86,6 +86,9 @@ public static class TacticalCommandFeedbackText
 public sealed class BattleHudGameplayBridge : MonoBehaviour
 {
     [SerializeField] private BattleHudTacticalFeedbackController tacticalFeedback;
+    [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
+
+    private readonly MatchOverlayCommandTabFeedbackSystem _commandTabFeedbackSystem = new();
 
     public BattleHudTacticalFeedbackController TacticalFeedback => tacticalFeedback;
     public TacticalCommandMode CurrentCommandMode { get; private set; } = TacticalCommandMode.None;
@@ -132,6 +135,11 @@ public sealed class BattleHudGameplayBridge : MonoBehaviour
     public void ApplyCommandMode(TacticalCommandMode mode)
     {
         CurrentCommandMode = mode;
+        if (mode == TacticalCommandMode.None)
+            _commandTabFeedbackSystem.ClearCommandMode(commandTabGroups);
+        else
+            _commandTabFeedbackSystem.ApplyCommandMode(commandTabGroups, mode);
+
         if (tacticalFeedback == null)
             return;
 
@@ -146,6 +154,7 @@ public sealed class BattleHudGameplayBridge : MonoBehaviour
     {
         CurrentCommandMode = TacticalCommandMode.None;
         tacticalFeedback?.HideCommandMode();
+        _commandTabFeedbackSystem.ClearCommandMode(commandTabGroups);
     }
 
     public void ApplyCommandResult(TacticalCommandResult result)

@@ -110,6 +110,9 @@ public sealed class VisibleUnitSelectionSystem
         if (!FactionIdentitySystem.IsPlayerControlled(em.GetComponentData<Faction>(entity).Id))
             return false;
 
+        if (!em.HasComponent<UnitMove>(entity))
+            return false;
+
         bool isVehicle = selectionUiQuerySystem.IsVehicleForVisibleSelection(em, entity);
         if (filter == Filter.Soldiers && isVehicle)
             return false;

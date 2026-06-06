@@ -4,7 +4,7 @@ using UnityEngine;
 
 public sealed class WarlineCaptureRouter : MonoBehaviour
 {
-    [SerializeField] private WarlineCaptureRoute initialRoute = WarlineCaptureRoute.Splash;
+    [SerializeField] private WarlineCaptureRoute initialRoute = WarlineCaptureRoute.MainMenu;
     [SerializeField] private Transform contentRoot;
     [SerializeField] private WarlineCaptureScreenController[] screens = Array.Empty<WarlineCaptureScreenController>();
     [SerializeField] private WarlineCaptureScreenController[] screenPrefabs = Array.Empty<WarlineCaptureScreenController>();

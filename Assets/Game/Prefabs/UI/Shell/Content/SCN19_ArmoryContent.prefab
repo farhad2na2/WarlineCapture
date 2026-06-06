@@ -11743,6 +11743,9 @@ MonoBehaviour:
   m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::ArmoryCatalogItemView
   selectionButton: {fileID: 1442927641513051754}
+  frameImage: {fileID: 4803638096280687090}
+  defaultFrameSprite: {fileID: 21300000, guid: 17340579b1db4584b3015ff7923c17aa, type: 3}
+  selectedFrameSprite: {fileID: 21300000, guid: a9d98b988399465894defb3bf94aa38a, type: 3}
   titleText: {fileID: 9150299389773386131}
   typeText: {fileID: 6950584235400198274}
   categoryVisuals:

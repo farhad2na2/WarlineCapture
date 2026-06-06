@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1877,7 +1877,6 @@ GameObject:
   - component: {fileID: 4539926994318057854}
   - component: {fileID: 422142207668615364}
   - component: {fileID: 6594245940121304737}
-  - component: {fileID: 9042446848124870988}
   m_Layer: 0
   m_Name: Hotspot
   m_TagString: Untagged
@@ -1986,21 +1985,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &9042446848124870988
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 975343643208965495}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
-  intent: 0
-  route: 4
-  pushHistory: 0
 --- !u!1 &990278158304204077
 GameObject:
   m_ObjectHideFlags: 0
@@ -10707,7 +10691,6 @@ GameObject:
   - component: {fileID: 5520187821486685625}
   - component: {fileID: 6615241371153718299}
   - component: {fileID: 5634950188798638685}
-  - component: {fileID: 4705857205881698564}
   m_Layer: 0
   m_Name: Hotspot
   m_TagString: Untagged
@@ -10816,21 +10799,6 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &4705857205881698564
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6087855075394204104}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b7a1cc3a67145f18de07b77e6bb6d8c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureShellRouteButtonView
-  intent: 0
-  route: 4
-  pushHistory: 0
 --- !u!1 &6135499886015250303
 GameObject:
   m_ObjectHideFlags: 0
@@ -11863,6 +11831,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3760682818757884108}
   - component: {fileID: 6907976355537455476}
+  - component: {fileID: 1800108209000000001}
   m_Layer: 0
   m_Name: SCN09_BuildDrawerPopup
   m_TagString: Untagged
@@ -11902,6 +11871,20 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1800108209000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6681354990523575241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 21f471838d104e2c933ef0f7ef333880, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::WarlineCapturePopupCloseButton
+  closeButton: {fileID: 5634950188798638685}
+  popupRoot: {fileID: 6681354990523575241}
 --- !u!1 &6704298497101980290
 GameObject:
   m_ObjectHideFlags: 0

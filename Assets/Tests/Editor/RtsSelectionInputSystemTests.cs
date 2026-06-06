@@ -164,6 +164,76 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
+        StringAssert.Contains("CompleteSelectionMode(context)", pointerReleased);
+    }
+
+    [Test]
+    public void BuildingSelectionInteraction_ClearFocusedUnitClearsSelectedUnitTags()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity selectedUnit = em.CreateEntity(typeof(Faction), typeof(UnitGrid), typeof(UnitMove), typeof(SelectedUnitTag));
+        em.SetComponentData(selectedUnit, new Faction { Id = FactionIdentitySystem.PlayerFactionId });
+        em.SetComponentData(selectedUnit, new UnitGrid { Cell = Unity.Mathematics.int2.zero });
+        em.SetComponentData(selectedUnit, new UnitMove { Speed = 1f });
+
+        var selectionState = new SelectionStateSystem();
+        selectionState.SetFocusedUnit(selectedUnit);
+        selectionState.CacheSelectedMoveEntity(em, selectedUnit);
+        var buildingInteractionSystem = new SelectionBuildingInteractionSystem();
+        buildingInteractionSystem.Init(selectionState, null, null);
+
+        buildingInteractionSystem.ClearFocusedUnit();
+
+        Assert.IsFalse(em.HasComponent<SelectedUnitTag>(selectedUnit));
+        Assert.AreEqual(Entity.Null, selectionState.FocusedUnit);
+        Assert.AreEqual(0, selectionState.CachedSelectedMoveEntities.Count);
+    }
+
+    [Test]
+    public void SelectionRectangle_SelectsBuildingFallbackWhenNoUnitsAreInRect()
+    {
+        EntityManager em = _testWorld.EntityManager;
+        Entity queueEntity = em.CreateEntity();
+        DynamicBuffer<RtsSelectionPointerRequestElement> pointerRequests = em.AddBuffer<RtsSelectionPointerRequestElement>(queueEntity);
+        pointerRequests.Add(new RtsSelectionPointerRequestElement
+        {
+            Kind = RtsSelectionPointerRequestKind.SelectionRectCommitted,
+            DragStart = new Unity.Mathematics.float2(10f, 20f),
+            DragCurrent = new Unity.Mathematics.float2(90f, 120f),
+            SelectionFilter = (byte)VisibleUnitSelectionSystem.Filter.All
+        });
+
+        bool clearedUnitSelection = false;
+        bool selectedBuildingFallback = false;
+        bool clearedBuildingSelection = false;
+        var system = new SelectionRectangleRequestSystem();
+
+        bool processed = system.ProcessPendingRequests(
+            em,
+            pointerRequests,
+            null,
+            new SelectionUiQuerySystem(),
+            new VisibleUnitSelectionSystem(),
+            new SelectionStateSystem(),
+            new FocusedUnitLifecycleSystem(),
+            new System.Collections.Generic.List<Entity>(),
+            (_, reason) => clearedUnitSelection = reason == "SelectUnitsInRectangle",
+            (_, _) => { },
+            (_, _) => Assert.Fail("Unit HUD selection should not be applied when building fallback is selected."),
+            _ => Assert.Fail("Squad HUD selection should not be applied when building fallback is selected."),
+            _ => { },
+            () => clearedBuildingSelection = true,
+            _ =>
+            {
+                selectedBuildingFallback = true;
+                return true;
+            });
+
+        Assert.IsTrue(processed);
+        Assert.IsTrue(clearedUnitSelection);
+        Assert.IsTrue(selectedBuildingFallback);
+        Assert.IsFalse(clearedBuildingSelection);
+        Assert.AreEqual(0, pointerRequests.Length);
     }
 
     [Test]

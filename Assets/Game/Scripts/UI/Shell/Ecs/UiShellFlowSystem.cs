@@ -41,12 +41,10 @@ public partial struct UiShellFlowSystem : ISystem
 
         if (shellState.CurrentMode == UiShellMode.None)
         {
-            BeginCommandSequence(ref shellState, commands, UiShellCommandKind.ShowLoading, UiShellRegionId.LoadingLayer, WarlineCaptureRoute.Splash, UiShellMode.Loading);
-            shellState.CurrentMode = UiShellMode.Loading;
+            BeginCommandSequence(ref shellState, commands, UiShellCommandKind.EnterMenu, UiShellRegionId.None, WarlineCaptureRoute.MainMenu, UiShellMode.MainMenu);
+            shellState.CurrentMode = UiShellMode.MainMenu;
             shellState.ActiveRoute = WarlineCaptureRoute.MainMenu;
-            shellState.Phase = UiShellTransitionPhase.ShowingLoading;
-            ResetLoading(ref loading, "Preparing command interface");
-            state.EntityManager.SetComponentData(boundary, loading);
+            shellState.Phase = UiShellTransitionPhase.EnteringMenu;
             state.EntityManager.SetComponentData(boundary, shellState);
             return;
         }

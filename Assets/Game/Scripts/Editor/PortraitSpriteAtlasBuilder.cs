@@ -8,6 +8,7 @@ using UnityEngine.U2D;
 public static class PortraitSpriteAtlasBuilder
 {
     private const string PortraitRoot = "Assets/Game/Art/UI/Portraits/Generated";
+    private const string SecondaryPortraitRoot = "Assets/Game/Art/UI/Portraits/Secondary";
     private const string AtlasRoot = "Assets/Game/Art/UI/Portraits/Atlases";
 
     [MenuItem("WarlineCapture/UI/Rebuild Portrait Sprite Atlases")]
@@ -30,6 +31,11 @@ public static class PortraitSpriteAtlasBuilder
             "Portraits_Buildings",
             FindPortraitTextures("Portrait_Building_"));
 
+        BuildAtlas(
+            $"{AtlasRoot}/Portraits_Secondary.spriteatlas",
+            "Portraits_Secondary",
+            FindPortraitTextures(SecondaryPortraitRoot, "Portrait_"));
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("[PortraitSpriteAtlasBuilder] Portrait sprite atlases rebuilt.");
@@ -37,8 +43,13 @@ public static class PortraitSpriteAtlasBuilder
 
     private static Object[] FindPortraitTextures(string prefix)
     {
+        return FindPortraitTextures(PortraitRoot, prefix);
+    }
+
+    private static Object[] FindPortraitTextures(string root, string prefix)
+    {
         var textures = new List<Object>();
-        foreach (string path in Directory.GetFiles(PortraitRoot, $"{prefix}*.png", SearchOption.TopDirectoryOnly))
+        foreach (string path in Directory.GetFiles(root, $"{prefix}*.png", SearchOption.TopDirectoryOnly))
         {
             Texture2D texture = AssetDatabase.LoadAssetAtPath<Texture2D>(path);
             if (texture != null)

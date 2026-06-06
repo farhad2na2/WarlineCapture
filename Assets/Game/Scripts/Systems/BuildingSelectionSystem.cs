@@ -232,6 +232,30 @@ internal sealed class BuildingSelectionSystem
         return false;
     }
 
+    public bool SelectFirstBuildingInScreenRect(Context context, Rect screenRect)
+    {
+        if (context.WorldCamera == null || context.RuntimeBuildings == null)
+            return false;
+
+        foreach (KeyValuePair<int, RuntimeBuildingData> entry in context.RuntimeBuildings)
+        {
+            RuntimeBuildingData building = entry.Value;
+            if (building?.Definition == null || building.IsDestroyed || building.Instance == null || !building.Instance.activeInHierarchy)
+                continue;
+
+            if (!TryGetBuildingScreenRect(context.WorldCamera, building, out Rect buildingRect, out _))
+                continue;
+            if (!screenRect.Overlaps(buildingRect))
+                continue;
+
+            Vector2Int min = building.OriginCell;
+            Vector2Int size = building.Definition.FootprintCells;
+            return SelectBuildingCandidate(context, entry.Key, min, size);
+        }
+
+        return false;
+    }
+
     public bool HandleBuildingSelectionClick(Context context, Vector2 screenPosition, Vector2Int cell)
     {
         if (context.RuntimeBuildings == null)

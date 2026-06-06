@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Veh_APC_Fast_Config
   m_EditorClassIdentifier:
   portraitSprite: {fileID: 21300000, guid: da90bbb95b2948f79fe4d46f11ef46ca, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 9b9095b2b39b43a18a8f6d92421b492e, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 4781003be98d45d880f44de5b9f891bb, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

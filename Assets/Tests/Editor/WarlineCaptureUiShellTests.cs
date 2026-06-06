@@ -16,7 +16,10 @@ public sealed class WarlineCaptureUiShellTests
     private const string ShellMainMenuContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN02_MainMenuContent.prefab";
     private const string ShellCommanderProfileContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN03_CommanderProfileContent.prefab";
     private const string ShellArmoryContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN19_ArmoryContent.prefab";
+    private const string ArmoryRosterCardDefaultFramePath = "Assets/Game/Art/UI/Final/scn19_roster_card_default_frame.png";
+    private const string ArmoryRosterCardSelectedFramePath = "Assets/Game/Art/UI/Final/scn19_roster_card_selected_frame.png";
     private const string ShellMatchHudContentPrefabPath = "Assets/Game/Prefabs/UI/Shell/Content/SCN08_MatchHudContent.prefab";
+    private const string ShellBuildDrawerPopupPrefabPath = "Assets/Game/Prefabs/UI/Shell/Popups/SCN09_BuildDrawerPopup.prefab";
     private const string SplashPrefabPath = "Assets/Game/Prefabs/UI/Screens/Screen_Splash.prefab";
     private const string SplashBackgroundPath = "Assets/Game/Art/UI/Generated/Splash/Backgrounds/Splash_Background_CityDawn.png";
     private const string SplashLoadingPanelPath = "Assets/Game/Art/UI/Generated/Splash/Frames/Splash_LoadingPanel_9Slice.png";
@@ -132,13 +135,61 @@ public sealed class WarlineCaptureUiShellTests
             Assert.NotNull(contentRoot.Find("Screen_CommandFeed"));
             Assert.NotNull(contentRoot.Find("Screen_OperationDashboard"));
             Assert.NotNull(contentRoot.Find("Screen_DistrictDetail"));
-            Assert.AreEqual(WarlineCaptureRoute.Splash, router.ActiveRoute);
-            Assert.IsTrue(contentRoot.Find("Screen_Splash").gameObject.activeSelf);
-            Assert.IsFalse(contentRoot.Find("Screen_MainMenu").gameObject.activeSelf);
+            Assert.AreEqual(WarlineCaptureRoute.MainMenu, router.ActiveRoute);
+            Assert.IsFalse(contentRoot.Find("Screen_Splash").gameObject.activeSelf);
+            Assert.IsTrue(contentRoot.Find("Screen_MainMenu").gameObject.activeSelf);
         }
         finally
         {
             UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellFlow_InitialStartupEntersMainMenuWithoutLoading()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("ShellFlow_InitialStartup_NoLoading");
+        World.DefaultGameObjectInjectionWorld = world;
+        try
+        {
+            EntityManager entityManager = world.EntityManager;
+            Entity boundary = entityManager.CreateEntity(typeof(UiShellBoundaryComponent));
+            entityManager.AddComponentData(boundary, new UiShellStateComponent
+            {
+                CurrentMode = UiShellMode.None,
+                ActiveRoute = WarlineCaptureRoute.Splash,
+                Phase = UiShellTransitionPhase.Idle
+            });
+            entityManager.AddComponentData(boundary, new UiShellLoadingProgressComponent());
+            entityManager.AddComponentData(boundary, new UiShellArmoryCategoryComponent
+            {
+                Category = ArmoryCatalogCategory.Characters
+            });
+            entityManager.AddBuffer<UiShellArmoryCategoryRequestComponent>(boundary);
+            entityManager.AddBuffer<UiShellRouteRequestComponent>(boundary);
+            entityManager.AddBuffer<UiShellRouteHistoryComponent>(boundary);
+            entityManager.AddBuffer<UiShellPopupRequestComponent>(boundary);
+            DynamicBuffer<UiShellPresentationCommandComponent> commands =
+                entityManager.AddBuffer<UiShellPresentationCommandComponent>(boundary);
+            entityManager.AddBuffer<UiShellTransitionCompleteComponent>(boundary);
+
+            SystemHandle flowSystem = world.CreateSystem<UiShellFlowSystem>();
+            flowSystem.Update(world.Unmanaged);
+
+            UiShellStateComponent state = entityManager.GetComponentData<UiShellStateComponent>(boundary);
+            Assert.AreEqual(UiShellMode.MainMenu, state.CurrentMode);
+            Assert.AreEqual(WarlineCaptureRoute.MainMenu, state.ActiveRoute);
+            Assert.AreEqual(UiShellTransitionPhase.EnteringMenu, state.Phase);
+            Assert.AreEqual(1, commands.Length);
+            Assert.AreEqual(UiShellCommandKind.EnterMenu, commands[0].Kind);
+            Assert.AreEqual(UiShellRegionId.None, commands[0].Region);
+            Assert.AreEqual(WarlineCaptureRoute.MainMenu, commands[0].Route);
+            Assert.AreEqual(UiShellMode.MainMenu, commands[0].TargetMode);
+        }
+        finally
+        {
+            World.DefaultGameObjectInjectionWorld = previousWorld;
         }
     }
 
@@ -172,15 +223,379 @@ public sealed class WarlineCaptureUiShellTests
 
         Transform selectTransform = footer.Find("CommandRail/Frame/SelectCommand");
         Assert.NotNull(selectTransform, "Match HUD footer must keep SelectCommand in the command rail.");
+        Transform buildTransform = footer.Find("CommandRail/Frame/BuildCommand");
+        Assert.NotNull(buildTransform, "Match HUD footer must keep BuildCommand in the command rail.");
 
         Button selectButton = selectTransform.GetComponent<Button>();
+        Button buildButton = buildTransform.GetComponent<Button>();
         Assert.NotNull(selectButton, "SelectCommand must be a real Button on the shell content prefab.");
+        Assert.NotNull(buildButton, "BuildCommand must be a real Button on the shell content prefab.");
         Assert.IsTrue(selectButton.interactable);
+        Assert.IsTrue(buildButton.interactable);
         Assert.NotNull(selectButton.targetGraphic, "SelectCommand needs a raycastable target graphic for UI clicks.");
+        Assert.NotNull(buildButton.targetGraphic, "BuildCommand needs a raycastable target graphic for UI clicks.");
         Assert.IsTrue(selectButton.targetGraphic.raycastTarget, "SelectCommand target graphic must receive pointer raycasts.");
+        Assert.IsTrue(buildButton.targetGraphic.raycastTarget, "BuildCommand target graphic must receive pointer raycasts.");
 
         SerializedObject serializedView = new(view);
         Assert.AreEqual(selectButton, serializedView.FindProperty("selectButton").objectReferenceValue);
+        Assert.AreEqual(buildButton, serializedView.FindProperty("buildButton").objectReferenceValue);
+        Assert.NotNull(serializedView.FindProperty("buildDrawerPopupPrefab").objectReferenceValue);
+
+        Transform commandRailFrame = footer.Find("CommandRail/Frame");
+        Assert.NotNull(commandRailFrame, "Match HUD footer must expose CommandRail/Frame as the tab parent.");
+
+        MatchOverlayCommandTabGroupView tabGroup = commandRailFrame.GetComponent<MatchOverlayCommandTabGroupView>();
+        Assert.NotNull(tabGroup, "CommandRail/Frame must own the command tab group.");
+        Assert.AreEqual(tabGroup, serializedView.FindProperty("commandTabGroup").objectReferenceValue);
+        AssertCommandTabsAssigned(tabGroup, commandRailFrame);
+    }
+
+    [Test]
+    public void ShellMatchHudContent_BuildCommandInstallsConfiguredPopupWithoutPresenter()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject canvasObject = new("Canvas");
+        canvasObject.AddComponent<Canvas>();
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        WarlineCaptureMissionSession.Clear();
+        try
+        {
+            instance.transform.SetParent(canvasObject.transform, false);
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+            Assert.NotNull(view.BuildDrawerPopupPrefab);
+
+            inputSystem.Bind(view, null);
+            view.BuildButton.onClick.Invoke();
+
+            Assert.NotNull(canvasObject.transform.Find("SCN09_BuildDrawerPopup"));
+            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
+            int otherIndex = buildIndex == 0 ? 1 : 0;
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+
+            view.CommandTabGroup.Tabs[otherIndex].Button.onClick.Invoke();
+
+            Assert.IsNull(canvasObject.transform.Find("SCN09_BuildDrawerPopup"));
+            AssertCommandTabSelected(view.CommandTabGroup, otherIndex);
+        }
+        finally
+        {
+            inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
+            UnityEngine.Object.DestroyImmediate(instance);
+            UnityEngine.Object.DestroyImmediate(canvasObject);
+            WarlineCaptureMissionSession.Clear();
+        }
+    }
+
+    [Test]
+    public void ShellBuildDrawerPopup_CloseButtonOnlyClosesPopup()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellBuildDrawerPopupPrefabPath);
+        Assert.NotNull(prefab, ShellBuildDrawerPopupPrefabPath);
+
+        WarlineCapturePopupCloseButton closeView = prefab.GetComponent<WarlineCapturePopupCloseButton>();
+        Assert.NotNull(closeView, "SCN09 popup root must own local close behavior.");
+
+        SerializedObject serializedCloseView = new(closeView);
+        Button closeButton = serializedCloseView.FindProperty("closeButton").objectReferenceValue as Button;
+        GameObject popupRoot = serializedCloseView.FindProperty("popupRoot").objectReferenceValue as GameObject;
+        Transform topRightClose = prefab.transform.Find("BuildDrawerRoot/CloseButton");
+        Assert.NotNull(topRightClose, "SCN09 must keep the top-right CloseButton.");
+        Button topRightHotspot = topRightClose.Find("Hotspot")?.GetComponent<Button>();
+
+        Assert.NotNull(closeButton, "SCN09 close behavior must serialize the CloseButton hotspot.");
+        Assert.NotNull(topRightHotspot, "SCN09 top-right CloseButton must expose a clickable Hotspot button.");
+        Assert.AreEqual(topRightHotspot, closeButton, "SCN09 close behavior must bind the visible top-right close hotspot.");
+        Assert.AreEqual(prefab, popupRoot, "SCN09 close behavior must target only the popup root.");
+        Assert.AreEqual(0, topRightClose.GetComponentsInChildren<WarlineCaptureShellRouteButtonView>(true).Length,
+            "SCN09 top-right close button must not submit a shell route request or return to MainMenu.");
+    }
+
+    [Test]
+    public void ShellBuildDrawerPopup_CloseButtonDestroysOnlyPopupInstance()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellBuildDrawerPopupPrefabPath);
+        Assert.NotNull(prefab, ShellBuildDrawerPopupPrefabPath);
+
+        GameObject parent = new("PopupLayer");
+        GameObject sibling = new("SiblingPopup");
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            sibling.transform.SetParent(parent.transform, false);
+            instance.transform.SetParent(parent.transform, false);
+
+            WarlineCapturePopupCloseButton closeView = instance.GetComponent<WarlineCapturePopupCloseButton>();
+            Assert.NotNull(closeView);
+
+            closeView.ClosePopup();
+
+            Assert.IsTrue(instance == null, "Close must destroy the SCN09 popup instance.");
+            Assert.IsFalse(sibling == null, "Close must not clear unrelated popup layer content.");
+        }
+        finally
+        {
+            if (instance != null)
+                UnityEngine.Object.DestroyImmediate(instance);
+            UnityEngine.Object.DestroyImmediate(sibling);
+            UnityEngine.Object.DestroyImmediate(parent);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_BuildCommandInvokesBuildDrawerAction()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        int buildDrawerOpenCount = 0;
+        WarlineCaptureMissionSession.Clear();
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+
+            inputSystem.Bind(view, null, () => buildDrawerOpenCount++);
+            view.BuildButton.onClick.Invoke();
+
+            Assert.AreEqual(1, buildDrawerOpenCount);
+            AssertCommandTabSelected(view.CommandTabGroup, FindCommandTabIndex(view.CommandTabGroup, view.BuildButton));
+            view.BuildButton.onClick.Invoke();
+            Assert.AreEqual(2, buildDrawerOpenCount);
+            AssertCommandTabSelected(view.CommandTabGroup, FindCommandTabIndex(view.CommandTabGroup, view.BuildButton));
+        }
+        finally
+        {
+            inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
+            UnityEngine.Object.DestroyImmediate(instance);
+            WarlineCaptureMissionSession.Clear();
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_BuildCommandClosesDrawerWhenAnotherCommandTabIsSelected()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        int buildDrawerOpenCount = 0;
+        int buildDrawerCloseCount = 0;
+        WarlineCaptureMissionSession.Clear();
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+            Assert.NotNull(view.CommandTabGroup);
+
+            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
+            int otherIndex = buildIndex == 0 ? 1 : 0;
+
+            inputSystem.Bind(
+                view,
+                null,
+                () => buildDrawerOpenCount++,
+                () => buildDrawerCloseCount++);
+
+            view.BuildButton.onClick.Invoke();
+            Assert.AreEqual(1, buildDrawerOpenCount);
+            Assert.AreEqual(0, buildDrawerCloseCount);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+
+            view.CommandTabGroup.Tabs[otherIndex].Button.onClick.Invoke();
+
+            Assert.AreEqual(1, buildDrawerOpenCount);
+            Assert.AreEqual(1, buildDrawerCloseCount);
+            AssertCommandTabSelected(view.CommandTabGroup, otherIndex);
+        }
+        finally
+        {
+            inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
+            UnityEngine.Object.DestroyImmediate(instance);
+            WarlineCaptureMissionSession.Clear();
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_CommandRailTabsKeepSingleSelectedSprite()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        var inputSystem = new MatchOverlayCommandInputSystem();
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.CommandTabGroup);
+
+            inputSystem.Bind(view, null);
+
+            AssertNoCommandTabSelected(view.CommandTabGroup);
+            view.CommandTabGroup.Tabs[1].Button.onClick.Invoke();
+            AssertCommandTabSelected(view.CommandTabGroup, 1);
+            view.CommandTabGroup.Tabs[1].Button.onClick.Invoke();
+            AssertNoCommandTabSelected(view.CommandTabGroup);
+            view.CommandTabGroup.Tabs[2].Button.onClick.Invoke();
+            AssertCommandTabSelected(view.CommandTabGroup, 2);
+            view.CommandTabGroup.Tabs[6].Button.onClick.Invoke();
+            AssertCommandTabSelected(view.CommandTabGroup, 6);
+        }
+        finally
+        {
+            inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_ClearCommandModeClearsCommandRailTabSelection()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
+        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        try
+        {
+            MatchOverlayCommandTabGroupView tabGroup = instance.GetComponentInChildren<MatchOverlayCommandTabGroupView>(true);
+            Assert.NotNull(tabGroup);
+
+            var tabVisualSystem = new MatchOverlayCommandTabVisualSystem(tabGroup);
+            tabVisualSystem.Select(tabGroup.Tabs[1]);
+            AssertCommandTabSelected(tabGroup, 1);
+
+            bridge.ClearCommandMode();
+
+            AssertNoCommandTabSelected(tabGroup);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_BuildCommandModeKeepsBuildTabSelected()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
+        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.BuildButton);
+            Assert.NotNull(view.CommandTabGroup);
+
+            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+
+            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
+            new MatchOverlayCommandTabVisualSystem(view.CommandTabGroup).Select(null);
+            AssertNoCommandTabSelected(view.CommandTabGroup);
+
+            bridge.ApplyCommandMode(TacticalCommandMode.Build);
+
+            Assert.AreEqual(TacticalCommandMode.Build, bridge.CurrentCommandMode);
+            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_CommandRailTabToggleUsesVisibleStateAfterExternalClear()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            MatchOverlayCommandTabGroupView tabGroup = instance.GetComponentInChildren<MatchOverlayCommandTabGroupView>(true);
+            Assert.NotNull(tabGroup);
+
+            var inputVisualSystem = new MatchOverlayCommandTabVisualSystem(tabGroup);
+            var bridgeVisualSystem = new MatchOverlayCommandTabVisualSystem(tabGroup);
+            MatchOverlayCommandTabView selectTab = tabGroup.Tabs[1];
+
+            Assert.IsTrue(inputVisualSystem.Toggle(selectTab));
+            AssertCommandTabSelected(tabGroup, 1);
+
+            bridgeVisualSystem.Select(null);
+            AssertNoCommandTabSelected(tabGroup);
+
+            Assert.IsTrue(inputVisualSystem.Toggle(selectTab),
+                "After drag completion clears the visible tab state, the input binding must treat Select as deselected.");
+            AssertCommandTabSelected(tabGroup, 1);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_SelectionHudClearCommandModeClearsTabWithoutBridge()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("ShellMatchHudContent_ClearCommandMode");
+        World.DefaultGameObjectInjectionWorld = world;
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            MatchOverlayCommandTabGroupView tabGroup = instance.GetComponentInChildren<MatchOverlayCommandTabGroupView>(true);
+            Assert.NotNull(tabGroup);
+
+            new MatchOverlayCommandTabVisualSystem(tabGroup).Select(tabGroup.Tabs[1]);
+            AssertCommandTabSelected(tabGroup, 1);
+
+            new SelectionHudFeedbackSystem().ClearCommandMode(world.EntityManager);
+
+            AssertNoCommandTabSelected(tabGroup);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
+        }
     }
 
     [Test]
@@ -281,6 +696,7 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView").GetComponent<Image>());
         Assert.NotNull(prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView").GetComponent<Button>());
         AssertArmoryItemRootButton(itemView);
+        AssertArmoryItemSelectionFrame(itemView);
         AssertArmoryInspectionPanelReferences(inspectionPanel);
 
         Assert.IsFalse(File.Exists("Assets/Game/Scripts/UI/Screens/ArmoryContentListController.cs"));
@@ -342,6 +758,73 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellArmoryContent_UsesSecondaryPortraitFallbacks()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
+        Assert.NotNull(prefab, ShellArmoryContentPrefabPath);
+
+        Transform template = prefab.transform.Find("MiddleContent/Scroll View/Viewport/Content/ItemView");
+        Assert.NotNull(template);
+
+        ArmoryCatalogItemView item = ((GameObject)PrefabUtility.InstantiatePrefab(template.gameObject))
+            .GetComponent<ArmoryCatalogItemView>();
+        GameObject right = (GameObject)PrefabUtility.InstantiatePrefab(prefab.transform.Find("RightContent").gameObject);
+        Texture2D baseTexture = null;
+        Texture2D cardTexture = null;
+        Texture2D actionTexture = null;
+        Sprite baseSprite = null;
+        Sprite cardSprite = null;
+        Sprite actionSprite = null;
+        try
+        {
+            baseSprite = CreateTestSprite(Color.white, out baseTexture);
+            cardSprite = CreateTestSprite(Color.cyan, out cardTexture);
+            actionSprite = CreateTestSprite(Color.red, out actionTexture);
+
+            ArmoryRightContentView rightContentView = right.GetComponent<ArmoryRightContentView>();
+            Assert.NotNull(rightContentView);
+            Assert.NotNull(rightContentView.InspectionPanel);
+
+            ArmoryCatalogItem fullSecondary =
+                new("Character", baseSprite, cardSprite, actionSprite, ArmoryCatalogCategory.Characters);
+            item.Bind(fullSecondary);
+            AssertArmoryItemBackgroundState(item.gameObject, "Background_Character", cardSprite);
+            rightContentView.InspectionPanel.Bind(fullSecondary);
+            AssertArmoryItemBackgroundState(rightContentView.InspectionPanel.gameObject, "Background_Character", actionSprite);
+
+            ArmoryCatalogItem noAction =
+                new("Character", baseSprite, cardSprite, null, ArmoryCatalogCategory.Characters);
+            rightContentView.InspectionPanel.Bind(noAction);
+            AssertArmoryItemBackgroundState(rightContentView.InspectionPanel.gameObject, "Background_Character", cardSprite);
+
+            ArmoryCatalogItem noSecondary =
+                new("Character", baseSprite, null, null, ArmoryCatalogCategory.Characters);
+            item.Bind(noSecondary);
+            AssertArmoryItemBackgroundState(item.gameObject, "Background_Character", baseSprite);
+            rightContentView.InspectionPanel.Bind(noSecondary);
+            AssertArmoryItemBackgroundState(rightContentView.InspectionPanel.gameObject, "Background_Character", baseSprite);
+        }
+        finally
+        {
+            if (actionSprite != null)
+                UnityEngine.Object.DestroyImmediate(actionSprite);
+            if (cardSprite != null)
+                UnityEngine.Object.DestroyImmediate(cardSprite);
+            if (baseSprite != null)
+                UnityEngine.Object.DestroyImmediate(baseSprite);
+            if (actionTexture != null)
+                UnityEngine.Object.DestroyImmediate(actionTexture);
+            if (cardTexture != null)
+                UnityEngine.Object.DestroyImmediate(cardTexture);
+            if (baseTexture != null)
+                UnityEngine.Object.DestroyImmediate(baseTexture);
+
+            UnityEngine.Object.DestroyImmediate(item.gameObject);
+            UnityEngine.Object.DestroyImmediate(right);
+        }
+    }
+
+    [Test]
     public void ShellArmoryContent_ItemSelectionUpdatesInspectionPanel()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellArmoryContentPrefabPath);
@@ -371,10 +854,14 @@ public sealed class WarlineCaptureUiShellTests
                 .Find("Scroll View/Viewport/Content/ItemView")
                 .GetComponent<ArmoryCatalogItemView>();
             GameObject inspectionPanel = rightContentView.InspectionPanel.gameObject;
+            Sprite defaultFrame = AssetDatabase.LoadAssetAtPath<Sprite>(ArmoryRosterCardDefaultFramePath);
+            Sprite selectedFrame = AssetDatabase.LoadAssetAtPath<Sprite>(ArmoryRosterCardSelectedFramePath);
+            Assert.AreEqual(defaultFrame, item.FrameImage.sprite);
 
             InvokeArmoryWireItemSelection(listView, item, new ArmoryCatalogItem("Character", sprite, ArmoryCatalogCategory.Characters));
             item.SelectionButton.onClick.Invoke();
             AssertArmoryItemBackgroundState(inspectionPanel, "Background_Character", sprite);
+            Assert.AreEqual(selectedFrame, item.FrameImage.sprite);
 
             InvokeArmoryWireItemSelection(listView, item, new ArmoryCatalogItem("Vehicle", sprite, ArmoryCatalogCategory.Vehicles));
             item.SelectionButton.onClick.Invoke();
@@ -868,6 +1355,42 @@ public sealed class WarlineCaptureUiShellTests
         Assert.IsTrue(image.raycastTarget, "Armory ItemView root Image must be raycastable.");
     }
 
+    private static void AssertArmoryItemSelectionFrame(ArmoryCatalogItemView itemTemplate)
+    {
+        Assert.NotNull(itemTemplate, "Armory ItemView must exist.");
+
+        Image frame = itemTemplate.transform.Find("Frame")?.GetComponent<Image>();
+        Assert.NotNull(frame, "Armory ItemView/Frame must keep the roster-card frame Image.");
+
+        var serializedItem = new SerializedObject(itemTemplate);
+        Assert.AreEqual(frame, serializedItem.FindProperty("frameImage").objectReferenceValue,
+            "Armory ItemView must serialize ItemView/Frame as its selected-state frame image.");
+
+        Sprite defaultFrame = AssetDatabase.LoadAssetAtPath<Sprite>(ArmoryRosterCardDefaultFramePath);
+        Sprite selectedFrame = AssetDatabase.LoadAssetAtPath<Sprite>(ArmoryRosterCardSelectedFramePath);
+        Assert.NotNull(defaultFrame, ArmoryRosterCardDefaultFramePath);
+        Assert.NotNull(selectedFrame, ArmoryRosterCardSelectedFramePath);
+        Assert.AreEqual(defaultFrame, serializedItem.FindProperty("defaultFrameSprite").objectReferenceValue,
+            "Armory ItemView default frame must use the final roster-card default sprite.");
+        Assert.AreEqual(selectedFrame, serializedItem.FindProperty("selectedFrameSprite").objectReferenceValue,
+            "Armory ItemView selected frame must use the final roster-card selected sprite.");
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(itemTemplate.gameObject);
+        try
+        {
+            ArmoryCatalogItemView item = instance.GetComponent<ArmoryCatalogItemView>();
+            item.SetSelected(false);
+            Assert.AreEqual(defaultFrame, item.FrameImage.sprite);
+
+            item.SetSelected(true);
+            Assert.AreEqual(selectedFrame, item.FrameImage.sprite);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
     private static void AssertArmoryInspectionPanelReferences(ArmoryInspectionPanelView inspectionPanel)
     {
         var serializedInspection = new SerializedObject(inspectionPanel);
@@ -912,6 +1435,75 @@ public sealed class WarlineCaptureUiShellTests
             SerializedProperty tab = tabs.GetArrayElementAtIndex(i);
             Assert.NotNull(tab.FindPropertyRelative("button").objectReferenceValue, $"{label} tab {i} button.");
             Assert.NotNull(tab.FindPropertyRelative("frame").objectReferenceValue, $"{label} tab {i} frame.");
+        }
+    }
+
+    private static void AssertCommandTabsAssigned(MatchOverlayCommandTabGroupView tabGroup, Transform commandRailFrame)
+    {
+        Assert.AreEqual(8, tabGroup.Tabs.Length, "Match HUD command rail tab count.");
+        Assert.AreEqual(-1, tabGroup.DefaultSelectedIndex, "Match HUD command rail must start with no selected tab.");
+
+        for (int i = 0; i < tabGroup.Tabs.Length; i++)
+        {
+            MatchOverlayCommandTabView tab = tabGroup.Tabs[i];
+            Assert.NotNull(tab, $"Match HUD command tab {i}.");
+            Assert.NotNull(tab.Button, $"Match HUD command tab {i} button.");
+            Assert.NotNull(tab.FrameImage, $"Match HUD command tab {i} frame image.");
+            Assert.NotNull(tab.NormalFrameSprite, $"Match HUD command tab {i} normal sprite.");
+            Assert.NotNull(tab.SelectedFrameSprite, $"Match HUD command tab {i} selected sprite.");
+        }
+
+        for (int i = 0; i < commandRailFrame.childCount; i++)
+        {
+            Transform child = commandRailFrame.GetChild(i);
+            Assert.NotNull(child.GetComponent<Button>(), $"{child.name} must be a direct Button tab.");
+        }
+    }
+
+    private static int FindCommandTabIndex(MatchOverlayCommandTabGroupView tabGroup, Button button)
+    {
+        Assert.NotNull(tabGroup);
+        Assert.NotNull(button);
+
+        for (int i = 0; i < tabGroup.Tabs.Length; i++)
+        {
+            if (tabGroup.Tabs[i]?.Button == button)
+                return i;
+        }
+
+        Assert.Fail($"No command tab is assigned to button {button.name}.");
+        return -1;
+    }
+
+    private static void AssignCommandTabGroups(BattleHudGameplayBridge bridge, params MatchOverlayCommandTabGroupView[] tabGroups)
+    {
+        SerializedObject serializedBridge = new(bridge);
+        SerializedProperty groups = serializedBridge.FindProperty("commandTabGroups");
+        groups.arraySize = tabGroups.Length;
+        for (int i = 0; i < tabGroups.Length; i++)
+            groups.GetArrayElementAtIndex(i).objectReferenceValue = tabGroups[i];
+
+        serializedBridge.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    private static void AssertCommandTabSelected(MatchOverlayCommandTabGroupView tabGroup, int selectedIndex)
+    {
+        Assert.NotNull(tabGroup);
+        for (int i = 0; i < tabGroup.Tabs.Length; i++)
+        {
+            MatchOverlayCommandTabView tab = tabGroup.Tabs[i];
+            Sprite expected = i == selectedIndex ? tab.SelectedFrameSprite : tab.NormalFrameSprite;
+            Assert.AreEqual(expected, tab.FrameImage.sprite, $"Match HUD command tab {i} selected state.");
+        }
+    }
+
+    private static void AssertNoCommandTabSelected(MatchOverlayCommandTabGroupView tabGroup)
+    {
+        Assert.NotNull(tabGroup);
+        for (int i = 0; i < tabGroup.Tabs.Length; i++)
+        {
+            MatchOverlayCommandTabView tab = tabGroup.Tabs[i];
+            Assert.AreEqual(tab.NormalFrameSprite, tab.FrameImage.sprite, $"Match HUD command tab {i} cleared state.");
         }
     }
 
@@ -1007,6 +1599,17 @@ public sealed class WarlineCaptureUiShellTests
             Assert.IsTrue(art.enabled, $"{backgroundName}/Art must be enabled when the model has a portrait.");
             Assert.IsTrue(art.preserveAspect, $"{backgroundName}/Art must preserve portrait aspect.");
         }
+    }
+
+    private static Sprite CreateTestSprite(Color color, out Texture2D texture)
+    {
+        texture = new Texture2D(2, 2);
+        texture.SetPixel(0, 0, color);
+        texture.SetPixel(1, 0, color);
+        texture.SetPixel(0, 1, color);
+        texture.SetPixel(1, 1, color);
+        texture.Apply();
+        return Sprite.Create(texture, new Rect(0, 0, 2, 2), new Vector2(0.5f, 0.5f));
     }
 
     private static void InvokeArmoryNavigationOnEnable(ArmoryCategoryNavigationView navigationView)

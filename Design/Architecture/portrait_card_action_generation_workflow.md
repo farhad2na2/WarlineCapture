@@ -2,12 +2,12 @@
 
 ## Goal
 
-Generate two additional 512x512 UI portrait sprites for every character, vehicle, and building that already has a base `portraitSprite` assigned:
+Generate secondary 512x512 UI portrait sprites for configs that already have a base `portraitSprite` assigned:
 
 - `portraitCardSprite`: same-identity, calmer unit-card portrait with a creative background.
-- `portraitActionSprite`: more dynamic pose/composition for panels that need energy or drama.
+- `portraitActionSprite`: already generated for completed characters and earlier completed vehicles/buildings, but no longer required for remaining vehicle/building targets.
 
-Skip configs with no existing base `portraitSprite`. Do not create Card/Action portraits for skipped base portraits until the base portrait is accepted and assigned.
+Skip configs with no existing base `portraitSprite`. Do not create secondary portraits for skipped base portraits until the base portrait is accepted and assigned.
 
 ## Output Style
 
@@ -15,8 +15,7 @@ Skip configs with no existing base `portraitSprite`. Do not create Card/Action p
 - The subject should still read like a portrait/cutout foreground subject, but now composited onto a creative high-quality background.
 - Use baked contact shadows and scene shadows where appropriate.
 - Backgrounds should be unique per config and match the subject identity: desert base, runway, checkpoint, hangar, refinery yard, supply camp, or similar tactical environment.
-- Do not reuse the same Action pose/background pattern across consecutive targets. If the last accepted Action portrait used a running/stepping pose, the next Action must use a different pose family such as crouched cover, turning alert, helping/guarding, radio call, object interaction, braced aim, weapon reload, vehicle maneuver, overhead approach, low-angle showcase, or environmental interaction as appropriate.
-- Card and Action backgrounds should vary by target. Rotate background families such as market lane, aid tent, checkpoint, rooftop edge, hangar bay, runway apron, convoy road, refinery yard, barricade line, interior command area, supply depot, desert ridge, and repair bay. Do not use the same desert-town aid-camp lane for multiple adjacent characters.
+- Do not reuse the same background pattern across consecutive targets. Rotate background families such as market lane, aid tent, checkpoint, rooftop edge, hangar bay, runway apron, convoy road, refinery yard, barricade line, interior command area, supply depot, desert ridge, and repair bay.
 - No transparent background, no chroma-key background, no UI frame, no text, no labels, no logos, no watermarks.
 
 ## Source Of Truth
@@ -29,7 +28,7 @@ Skip configs with no existing base `portraitSprite`. Do not create Card/Action p
 
 ## Output Paths
 
-Save Card/Action portraits under:
+Save secondary portraits under:
 
 `Assets/Game/Art/UI/Portraits/Secondary/`
 
@@ -48,9 +47,8 @@ Examples:
 Assign outputs to:
 
 - `UnitGridAuthoringConfig.portraitCardSprite`
-- `UnitGridAuthoringConfig.portraitActionSprite`
 - `BuildingDefinitionAuthoringConfig.portraitCardSprite`
-- `BuildingDefinitionAuthoringConfig.portraitActionSprite`
+- `portraitActionSprite` only for already completed targets that have an accepted Action image. For remaining buildings/vehicles, do not generate or assign new Action images.
 
 Do not replace `portraitSprite`; it remains the transparent/cutout primary portrait.
 
@@ -67,14 +65,14 @@ Do not replace `portraitSprite`; it remains the transparent/cutout primary portr
 ## Vehicle Rules
 
 - Card portrait should show the vehicle in a clean readable 3/4 showcase angle.
-- Action portrait should use a more dynamic scene: rolling, hovering, banking, turret-ready, launcher-ready, convoy movement, or dust/smoke motion.
+- Do not generate new Action portraits for remaining vehicle targets.
 - Preserve full silhouette. Do not crop rotors, wings, launch rails, turrets, or cargo beds.
 - Do not invent unrelated weapons.
 
 ## Building Rules
 
 - Card portrait should show the building from a clean readable 3/4 angle.
-- Action portrait should use stronger environment and lighting, but the building remains the subject.
+- Do not generate new Action portraits for remaining building targets.
 - For walls/barriers, use composition that makes the object readable as a gameplay asset.
 - For airport/runway configs, preserve the intended configured subject and avoid unrelated aircraft clutter unless it is already part of the identity.
 
@@ -85,23 +83,23 @@ Do not replace `portraitSprite`; it remains the transparent/cutout primary portr
 3. Resolve prefab path/reference plate.
 4. Resolve display name, description, and current base portrait path.
 5. For characters, resolve `weaponDisplayName`, `weaponSprite`, and prefab weapon model.
-6. Review the last three completed manifest entries and choose a different Action pose family and background family before prompting.
+6. Review the last three completed manifest entries and choose a different Card background family before prompting.
 7. Generate Card portrait at 512x512-style square composition with a target-specific background.
-8. Generate Action portrait at 512x512-style square composition with the chosen non-repeated pose/background direction.
-9. Copy generated sources into `Assets/Game/Art/UI/Portraits/Secondary/`.
+8. For remaining buildings/vehicles, skip Action generation entirely.
+9. Copy generated Card source into `Assets/Game/Art/UI/Portraits/Secondary/`.
 10. Resize/crop final project PNGs to exactly `512x512`.
 11. Set Unity import metadata to Sprite, no mipmaps, sRGB, readable off.
-12. Assign `portraitCardSprite` and `portraitActionSprite` in the config.
-13. Inspect both images against the prefab/base portrait and reject Action results that repeat recent pose/background patterns.
+12. Assign `portraitCardSprite` in the config. Do not add or change `portraitActionSprite` for remaining buildings/vehicles.
+13. Inspect the Card image against the prefab/base portrait.
 14. Verify GUID assignment in the config YAML.
-15. Update `Design/Architecture/portrait_card_action_generation_manifest.md` with a short note naming the accepted Action pose/background direction.
+15. Update `Design/Architecture/portrait_card_action_generation_manifest.md` with a short note naming the accepted Card background direction.
 
 ## Atlas Step
 
 After all non-skipped targets are complete:
 
 1. Extend or run the portrait atlas builder so the secondary portraits are packed.
-2. Create separate atlases for Card/Action or one `Portraits_Secondary.spriteatlas` under:
+2. Create or update one `Portraits_Secondary.spriteatlas` under:
    `Assets/Game/Art/UI/Portraits/Atlases/`
 3. Include the atlas in build.
 4. Verify all secondary sprites are packable and assigned.
@@ -110,12 +108,12 @@ After all non-skipped targets are complete:
 
 Do not mark an asset complete unless:
 
-- Both Card and Action PNGs exist in the project.
-- Both are exactly `512x512`.
-- Both import as Sprite.
-- Both visually match the config/prefab identity.
+- Card PNG exists in the project.
+- Card PNG is exactly `512x512`.
+- Card PNG imports as Sprite.
+- Card visually matches the config/prefab identity.
 - For characters, the weapon matches the config weapon sprite and prefab weapon.
-- The config has both new fields assigned to the correct GUIDs.
+- The config has `portraitCardSprite` assigned to the correct GUID. Existing `portraitActionSprite` assignments on completed targets can remain.
 
 ## Accepted Reference
 

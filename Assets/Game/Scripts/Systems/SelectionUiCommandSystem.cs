@@ -37,6 +37,12 @@ public sealed class SelectionUiCommandSystem
         return Queue(RtsSelectionCommandIntentKind.EnterSelectionMode);
     }
 
+    public bool RequestExitSelectionMode()
+    {
+        CaptureUiClickSequence();
+        return Queue(RtsSelectionCommandIntentKind.ExitSelectionMode);
+    }
+
     public bool RequestHoldPosition()
     {
         return Queue(RtsSelectionCommandIntentKind.HoldPosition);

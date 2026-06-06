@@ -20,6 +20,7 @@ public sealed class RtsSelectionRuntimeInputContextSystem
         Action<Vector2> panCamera,
         Action<Vector2> issueMoveOrder,
         Action processSelectionRectangleRequests,
+        Action clearCommandMode,
         Action<string> logClickDiagnostic,
         Func<Vector2, string> buildClickDebugSummary)
     {
@@ -41,6 +42,7 @@ public sealed class RtsSelectionRuntimeInputContextSystem
             panCamera,
             issueMoveOrder,
             processSelectionRectangleRequests,
+            clearCommandMode,
             logClickDiagnostic,
             buildClickDebugSummary);
     }

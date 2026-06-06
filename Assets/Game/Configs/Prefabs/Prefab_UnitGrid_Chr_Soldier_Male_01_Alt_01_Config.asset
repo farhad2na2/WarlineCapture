@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Soldier_Male_01_Alt_01_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 877041495a724e7292c3580bb3366129, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: cf6cd5e7592c496c94d5071602a6bd94, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: c6d2f971c03c400c9d98c49a07fceaeb, type: 3}
   weaponSprite: {fileID: 21300000, guid: bb7348bbeae1c554ca56f2a904886c04, type: 3}
   weaponDisplayName: Sniper Rifle
   allowIdleWander: 1

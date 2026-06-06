@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Veh_Missle_Launcher_Air_Config
   m_EditorClassIdentifier:
   portraitSprite: {fileID: 21300000, guid: 412dc153dbd54e65a5c43935e970f4c5, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: d04e7ef9199849849bbd2c1d2bf7c1b0, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 375b563047be40f6a0dfe5203f8f8706, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

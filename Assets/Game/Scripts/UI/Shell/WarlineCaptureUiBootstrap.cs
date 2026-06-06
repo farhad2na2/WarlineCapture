@@ -5,7 +5,7 @@ public sealed class WarlineCaptureUiBootstrap : MonoBehaviour
     [SerializeField] private GameObject appCanvasPrefab;
     [SerializeField] private WarlineCaptureUiStartupMode startupMode = WarlineCaptureUiStartupMode.UseLegacyMenu;
     [SerializeField] private bool enableParallelUiOnStart;
-    [SerializeField] private WarlineCaptureRoute parallelStartupRoute = WarlineCaptureRoute.Splash;
+    [SerializeField] private WarlineCaptureRoute parallelStartupRoute = WarlineCaptureRoute.MainMenu;
 
     public GameObject AppCanvasInstance { get; private set; }
     public WarlineCaptureUiStartupMode StartupMode => startupMode;

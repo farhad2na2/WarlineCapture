@@ -22,6 +22,7 @@ public sealed class RtsSelectionRuntimeInputSystem
         public readonly Action<Vector2> PanCamera;
         public readonly Action<Vector2> IssueMoveOrder;
         public readonly Action ProcessSelectionRectangleRequests;
+        public readonly Action ClearCommandMode;
         public readonly Action<string> LogClickDiagnostic;
         public readonly Func<Vector2, string> BuildClickDebugSummary;
 
@@ -43,6 +44,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             Action<Vector2> panCamera,
             Action<Vector2> issueMoveOrder,
             Action processSelectionRectangleRequests,
+            Action clearCommandMode,
             Action<string> logClickDiagnostic,
             Func<Vector2, string> buildClickDebugSummary)
         {
@@ -63,6 +65,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             PanCamera = panCamera;
             IssueMoveOrder = issueMoveOrder;
             ProcessSelectionRectangleRequests = processSelectionRectangleRequests;
+            ClearCommandMode = clearCommandMode;
             LogClickDiagnostic = logClickDiagnostic;
             BuildClickDebugSummary = buildClickDebugSummary;
         }
@@ -135,7 +138,7 @@ public sealed class RtsSelectionRuntimeInputSystem
             input.SkipNextWorldReleaseAfterSelection = false;
             runtime.SuppressNextWorldClick = false;
             if (runtime.SelectionModeActive && (input.IsDraggingSelection || input.HasLiveSelectionRect))
-                runtime.SelectionModeActive = false;
+                CompleteSelectionMode(context);
             input.IsDraggingSelection = false;
             context.SetCameraDragging?.Invoke(false);
             input.SelectionModeHoldArmed = false;
@@ -296,8 +299,7 @@ public sealed class RtsSelectionRuntimeInputSystem
                 }
             }
 
-            runtime.SelectionModeActive = false;
-            runtime.SuppressNextWorldClick = false;
+            CompleteSelectionMode(context);
         }
         else if (dragDistance < context.DragThresholdPixels)
         {
@@ -376,6 +378,17 @@ public sealed class RtsSelectionRuntimeInputSystem
         input.PointerPressedOverUi = false;
         input.SelectionModeHoldArmed = false;
         input.HasLiveSelectionRect = false;
+    }
+
+    private static void CompleteSelectionMode(Context context)
+    {
+        RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
+        if (!runtime.SelectionModeActive)
+            return;
+
+        runtime.SelectionModeActive = false;
+        runtime.SuppressNextWorldClick = false;
+        context.ClearCommandMode?.Invoke();
     }
 
     private static void LogOneClickDebug(Context context, Vector2 pointerPosition, string action)

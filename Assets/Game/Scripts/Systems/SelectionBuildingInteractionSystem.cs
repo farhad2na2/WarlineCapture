@@ -33,11 +33,19 @@ public sealed class SelectionBuildingInteractionSystem
 
     public void ClearFocusedUnit()
     {
-        _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
         if (!TryGetDefaultEntityManager(out EntityManager em))
+        {
+            _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
             return;
+        }
 
-        _selectionHudFeedbackSystem.QueueClearSelection(em);
+        _focusedUnitLifecycleSystem.ClearCurrentSelection(
+            em,
+            SelectionState,
+            "BuildingSelection",
+            null,
+            () => _selectionHudFeedbackSystem.QueueClearSelection(em));
+        _focusedUnitLifecycleSystem.ClearFocusedUnit(SelectionState);
         _selectionHudFeedbackSystem.QueueClearCommandMode(em);
         _selectionHudFeedbackSystem.QueueWorldMarkersVisible(em, false);
         _selectionHudFeedbackSystem.ProcessPendingFeedback(em);

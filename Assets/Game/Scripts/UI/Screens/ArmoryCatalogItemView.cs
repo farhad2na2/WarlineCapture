@@ -6,11 +6,15 @@ using UnityEngine.UI;
 public sealed class ArmoryCatalogItemView : MonoBehaviour
 {
     [SerializeField] private Button selectionButton;
+    [SerializeField] private Image frameImage;
+    [SerializeField] private Sprite defaultFrameSprite;
+    [SerializeField] private Sprite selectedFrameSprite;
     [SerializeField] private TMP_Text titleText;
     [SerializeField] private TMP_Text typeText;
     [SerializeField] private ArmoryCatalogCategoryVisualSet[] categoryVisuals;
 
     public Button SelectionButton => selectionButton;
+    public Image FrameImage => frameImage;
 
     public void Bind(ArmoryCatalogItem model)
     {
@@ -20,7 +24,18 @@ public sealed class ArmoryCatalogItemView : MonoBehaviour
         if (typeText != null)
             typeText.text = ArmoryCatalogCategoryFormatter.Format(model.Category);
 
-        BindCategoryVisuals(model.Category, model.Portrait);
+        BindCategoryVisuals(model.Category, model.CardPortrait);
+        SetSelected(false);
+    }
+
+    public void SetSelected(bool selected)
+    {
+        if (frameImage == null)
+            return;
+
+        Sprite targetSprite = selected ? selectedFrameSprite : defaultFrameSprite;
+        if (targetSprite != null)
+            frameImage.sprite = targetSprite;
     }
 
     private void BindCategoryVisuals(ArmoryCatalogCategory selectedCategory, Sprite portrait)

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Shop_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 683fb84a7fcf49fca92ec3dd3f1d3cee, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 5c8f8575d45e4be2ab4a622acbdcdc21, type: 3}
   displayName: Shop
   description: Civilian commercial building used by residents for daily supplies.
   maxHealth: 400

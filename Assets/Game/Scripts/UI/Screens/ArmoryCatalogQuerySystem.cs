@@ -5,12 +5,26 @@ public readonly struct ArmoryCatalogItem
 {
     public readonly string DisplayName;
     public readonly Sprite Portrait;
+    public readonly Sprite CardPortrait;
+    public readonly Sprite InspectionPortrait;
     public readonly ArmoryCatalogCategory Category;
 
     public ArmoryCatalogItem(string displayName, Sprite portrait, ArmoryCatalogCategory category)
+        : this(displayName, portrait, null, null, category)
+    {
+    }
+
+    public ArmoryCatalogItem(
+        string displayName,
+        Sprite portrait,
+        Sprite portraitCard,
+        Sprite portraitAction,
+        ArmoryCatalogCategory category)
     {
         DisplayName = string.IsNullOrWhiteSpace(displayName) ? "Item" : displayName;
         Portrait = portrait;
+        CardPortrait = portraitCard != null ? portraitCard : portrait;
+        InspectionPortrait = portraitAction != null ? portraitAction : CardPortrait;
         Category = category;
     }
 }
@@ -63,6 +77,8 @@ public sealed class ArmoryCatalogQuerySystem
             results.Add(new ArmoryCatalogItem(
                 ResolveUnitDisplayName(prefab, authoring),
                 authoring != null ? authoring.PortraitSprite : null,
+                authoring != null ? authoring.PortraitCardSprite : null,
+                authoring != null ? authoring.PortraitActionSprite : null,
                 category));
         }
 
@@ -92,6 +108,8 @@ public sealed class ArmoryCatalogQuerySystem
             results.Add(new ArmoryCatalogItem(
                 string.IsNullOrWhiteSpace(authoring.ConfiguredDisplayName) ? prefab.name : authoring.ConfiguredDisplayName,
                 authoring.ConfiguredPortraitSprite,
+                authoring.ConfiguredPortraitCardSprite,
+                authoring.ConfiguredPortraitActionSprite,
                 ArmoryCatalogCategory.Buildings));
         }
 

@@ -35,6 +35,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
         CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
         CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
         System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+        Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         Action<MainMenuPlayUI> bindMainMenu,
         Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
         Action dispose)
@@ -70,6 +71,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition,
             runtimeBuildings,
+            trySelectFirstBuildingInScreenRect,
             bindMainMenu,
             bindGameplayFeatures,
             dispose);
@@ -107,6 +109,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
         private readonly CitizenPopulationCompositionSystem CitizenPopulationCompositionBoundary;
         public readonly CitizenPopulationCompositionSystem.Result CitizenPopulationComposition;
         public readonly System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> RuntimeBuildings;
+        public readonly Func<Rect, bool> TrySelectFirstBuildingInScreenRect;
         public readonly Action<MainMenuPlayUI> BindMainMenu;
         public readonly Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> BindGameplayFeatures;
         public readonly Action Dispose;
@@ -142,6 +145,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
             CitizenPopulationCompositionSystem citizenPopulationCompositionBoundary,
             CitizenPopulationCompositionSystem.Result citizenPopulationComposition,
             System.Collections.Generic.IReadOnlyDictionary<int, RuntimeBuildingData> runtimeBuildings,
+            Func<Rect, bool> trySelectFirstBuildingInScreenRect,
             Action<MainMenuPlayUI> bindMainMenu,
             Action<MainMenuPlayUI, SelectionUiCameraSystem, SelectionBuildingInteractionSystem, RuntimeGridBlockerSystem, RuntimeCityCompositionSystem, CitizenPopulationEventSystem> bindGameplayFeatures,
             Action dispose)
@@ -176,6 +180,7 @@ internal sealed class BuildingGameplayCompositionResultSystem
             CitizenPopulationCompositionBoundary = citizenPopulationCompositionBoundary;
             CitizenPopulationComposition = citizenPopulationComposition;
             RuntimeBuildings = runtimeBuildings;
+            TrySelectFirstBuildingInScreenRect = trySelectFirstBuildingInScreenRect;
             BindMainMenu = bindMainMenu;
             BindGameplayFeatures = bindGameplayFeatures;
             Dispose = dispose;

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_GuardTower_Big_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: d977cc0dacbd4cf3a6e157a3ed93cdf7, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 2e1494aa8ba54254b5f26e6386d02776, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 88671a4069374950afe5fa8baceb3961, type: 3}
   displayName: Heavy Guard Tower
   description: Reinforced watchtower with improved visibility and stronger defensive
     coverage.

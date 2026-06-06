@@ -370,7 +370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78e1beb792c54b90b07569af70016e47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureRouter
-  initialRoute: 0
+  initialRoute: 1
   contentRoot: {fileID: 5776314590250312925}
   screens: []
   screenPrefabs:

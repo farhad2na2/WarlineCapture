@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Soldier_Male_01_Alt_02_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 9ce63256204740468c8dc3b78c5ee046, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 91b066a36b7744a1881c6ae416fecee4, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 8aabc8a58a724147932c4e6e7b0ba72e, type: 3}
   weaponSprite: {fileID: 21300000, guid: 535c3aafd811a6b4a9edd86d102ad78d, type: 3}
   weaponDisplayName: Advanced Rifle
   allowIdleWander: 1

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_House_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 0e43a879ab9d481a852f3eed0a2ed7db, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 4f92f2883458438abba7a9794e29fc72, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 44c1f4dd70004bc48855cb498d5e3b49, type: 3}
   displayName: House
   description: Civilian residence that provides housing for local households.
   maxHealth: 350

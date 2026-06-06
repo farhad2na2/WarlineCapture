@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_Road_Barrier_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: d81ba656b9a045a89a8c14761b6f00c7, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: a9a7fdbc00414248a25c693533176a25, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 9daf7fb0e8b8464a8387eb357714a46d, type: 3}
   displayName: Road Barrier
   description: Defensive road obstacle used to block routes and slow enemy movement.
   maxHealth: 800

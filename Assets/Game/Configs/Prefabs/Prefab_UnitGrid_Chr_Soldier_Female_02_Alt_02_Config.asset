@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Soldier_Female_02_Alt_02_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 5a9a12df73d7457a869e38ffafd30580, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 28aeb6bd0d254a59bfd220d91fa24919, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 5e60ab9e54ad4411a4c2288aa2038af1, type: 3}
   weaponSprite: {fileID: 21300000, guid: 3ccfa556fbbeda64ca72c0d514f4f2c7, type: 3}
   weaponDisplayName: SMG
   allowIdleWander: 1

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_BuildingDefinition_GuardTower_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 35c0e33091ef48f6b4433d8fd639940d, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 332bacdcb5664751ba6e71a692078234, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 2ce20a70d9a94693ad6956aeb22f427d, type: 3}
   displayName: Guard Tower
   description: Elevated defensive post for spotting threats and protecting the base
     perimeter.

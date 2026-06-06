@@ -169,7 +169,11 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
 
         MatchOverlayCommandControlsView view = contentRoot.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
         if (view != null)
-            _matchOverlayCommandInputSystem.Bind(view, _selectionUiCommandSystem);
+            _matchOverlayCommandInputSystem.Bind(
+                view,
+                _selectionUiCommandSystem,
+                () => InstallBuildDrawerPopup(),
+                CloseBuildDrawerPopup);
     }
 
     private void BindMatchHudCommandControls(GameObject footer)
@@ -179,7 +183,11 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
 
         MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
         if (view != null)
-            _matchOverlayCommandInputSystem.Bind(view, _selectionUiCommandSystem);
+            _matchOverlayCommandInputSystem.Bind(
+                view,
+                _selectionUiCommandSystem,
+                () => InstallBuildDrawerPopup(),
+                CloseBuildDrawerPopup);
     }
 
     private void InstallResultPopup()
@@ -201,6 +209,17 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
     public GameObject InstallBuildDrawerPopup()
     {
         return InstallRoot(buildDrawerPopupPrefab, WarlineCaptureShellRegionId.PopupLayer);
+    }
+
+    public void CloseBuildDrawerPopup()
+    {
+        if (buildDrawerPopupPrefab == null ||
+            !TryGetRegionContentRoot(WarlineCaptureShellRegionId.PopupLayer, out RectTransform contentRoot))
+            return;
+
+        Transform popup = contentRoot.Find(buildDrawerPopupPrefab.name);
+        if (popup != null)
+            DestroyObject(popup.gameObject);
     }
 
     private GameObject InstallRoot(GameObject prefab, WarlineCaptureShellRegionId regionId)
@@ -252,11 +271,19 @@ public sealed class WarlineCaptureShellContentPresenterView : MonoBehaviour
         for (int i = parent.childCount - 1; i >= 0; i--)
         {
             Transform child = parent.GetChild(i);
-            if (Application.isPlaying)
-                Destroy(child.gameObject);
-            else
-                DestroyImmediate(child.gameObject);
+            DestroyObject(child.gameObject);
         }
+    }
+
+    private static void DestroyObject(UnityEngine.Object target)
+    {
+        if (target == null)
+            return;
+
+        if (Application.isPlaying)
+            Destroy(target);
+        else
+            DestroyImmediate(target);
     }
 
     private static void Stretch(RectTransform rect)

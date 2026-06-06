@@ -246,6 +246,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.SelectAllSoldiers ||
                kind == RtsSelectionCommandIntentKind.SelectAllVehicles ||
                kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
+               kind == RtsSelectionCommandIntentKind.ExitSelectionMode ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
@@ -272,6 +273,9 @@ public sealed class RtsSelectionFocusCommandSystem
                 return true;
             case RtsSelectionCommandIntentKind.EnterSelectionMode:
                 EnterExplicitSelectionMode(context);
+                return true;
+            case RtsSelectionCommandIntentKind.ExitSelectionMode:
+                ExitExplicitSelectionMode(context);
                 return true;
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
@@ -321,5 +325,22 @@ public sealed class RtsSelectionFocusCommandSystem
         context.SetHudWorldMarkersVisible?.Invoke(false);
         context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Select);
         context.LogSelectionDiagnostic?.Invoke($"selectionModeEntered source=ui frame={Time.frameCount} dragReset={pointerPosition}");
+    }
+
+    private static void ExitExplicitSelectionMode(Context context)
+    {
+        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
+            ? context.InputSystem.LastKnownPointerPosition
+            : Vector2.zero;
+        context.InputSystem.ResetSelectionDragState(pointerPosition);
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.SkipNextWorldReleaseAfterSelection = false;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ClearHudCommandMode?.Invoke();
+        context.LogSelectionDiagnostic?.Invoke($"selectionModeExited source=ui frame={Time.frameCount} dragReset={pointerPosition}");
     }
 }

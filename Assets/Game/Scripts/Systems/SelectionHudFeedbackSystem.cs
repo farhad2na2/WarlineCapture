@@ -20,6 +20,7 @@ public sealed class SelectionHudFeedbackSystem
     }
 
     private BattleHudGameplayBridge _battleHudBridge;
+    private readonly MatchOverlayCommandTabFeedbackSystem _commandTabFeedbackSystem = new();
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
 
@@ -203,6 +204,7 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueClearCommandMode(em);
         ProcessPendingFeedback(em);
+        _commandTabFeedbackSystem.ClearCommandMode(null);
     }
 
     public void ClearCommandMode(Context context)

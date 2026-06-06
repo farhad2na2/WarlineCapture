@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Veh_Helicopter_Transport_Config
   m_EditorClassIdentifier:
   portraitSprite: {fileID: 21300000, guid: 658dcfb93e6241ebbb389a425137e005, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: c5649dff1ab8452bbf5c96fca911d710, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: c450b73ad93b4ecab4aa6bcd22a07ebd, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

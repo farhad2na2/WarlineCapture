@@ -524,6 +524,9 @@ internal sealed class BuildingGameplayCompositionSystem
             citizenPopulationCompositionBoundary,
             citizenPopulationComposition,
             childSystems.RuntimeBuildingSystem.Buildings,
+            screenRect => childSystems.BuildingSelectionSystem.SelectFirstBuildingInScreenRect(
+                createBuildingSelectionContext(childSystems),
+                screenRect),
             _bindingSystem.CreateMainMenuBinding(childSystems, dayNight),
             _bindingSystem.CreateGameplayFeatureBinding(childSystems, dayNight),
             _disposalCompositionSystem.CreateDisposeAction(

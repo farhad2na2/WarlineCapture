@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Chr_Insurgent_Male_04_Config
   m_EditorClassIdentifier: 
   portraitSprite: {fileID: 21300000, guid: 5827797dbf85441daa41507a6fccf27b, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 3725a22be8df4974ad86b8269039c7a3, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: be1b1b92108645d3890ca4508abeb25f, type: 3}
   weaponSprite: {fileID: 21300000, guid: ed84496a002ce984ca6a22c09da526ba, type: 3}
   weaponDisplayName: Sniper Rifle
   allowIdleWander: 1

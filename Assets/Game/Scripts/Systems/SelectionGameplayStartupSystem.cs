@@ -49,6 +49,7 @@ internal sealed class SelectionGameplayStartupSystem
         RoadBuildReadModelSystem roadBuildReadModel,
         BuildingPlacementInteractionSystem buildingInteraction,
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
+        System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
         FactionVisualSettings factionVisuals)
     {
         var selectionRuntimeDiagnosticsSystem = new SelectionRuntimeDiagnosticsSystem();
@@ -86,6 +87,7 @@ internal sealed class SelectionGameplayStartupSystem
         var selectionAttackCommandRequestSystem = new SelectionAttackCommandRequestSystem();
         var selectionOrderMarkerSystem = new SelectionOrderMarkerSystem();
         var selectionHudFeedbackSystem = new SelectionHudFeedbackSystem();
+        var matchOverlayCommandTabFeedbackSystem = new MatchOverlayCommandTabFeedbackSystem();
         var focusedUnitCommandSystem = new FocusedUnitCommandSystem();
         var focusedUnitLifecycleSystem = new FocusedUnitLifecycleSystem();
         var selectedUnitOrderSnapshotSystem = new SelectedUnitOrderSnapshotSystem();
@@ -166,6 +168,7 @@ internal sealed class SelectionGameplayStartupSystem
                 screenDelta => rtsSelectionRuntimeCameraSystem.PanCamera(CreateRuntimeCameraContext(), screenDelta),
                 IssueMoveOrder,
                 ProcessSelectionRectangleRequests,
+                ClearSelectionCommandMode,
                 selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
                 BuildClickDebugSummary);
         }
@@ -379,12 +382,20 @@ internal sealed class SelectionGameplayStartupSystem
                 (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity),
                 selectedCount => selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount),
                 selectionRuntimeDiagnosticsSystem.EnqueueSelectionDiagnostic,
-                ClearSelectedBuildingAfterRectangleSelection);
+                ClearSelectedBuildingAfterRectangleSelection,
+                screenRect => trySelectFirstBuildingInScreenRect != null &&
+                    trySelectFirstBuildingInScreenRect(screenRect));
         }
 
         void ClearSelectedBuildingAfterRectangleSelection()
         {
             buildingPlacementInteractionSystem?.ClearSelectedBuilding(buildingPlacementInteractionContext, "RTSSelection.SelectUnitsInRectangle");
+        }
+
+        void ClearSelectionCommandMode()
+        {
+            selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
+            matchOverlayCommandTabFeedbackSystem.ClearCommandMode(null);
         }
 
         void ClearCurrentSelection(EntityManager em, string reason = "Unspecified")

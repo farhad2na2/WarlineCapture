@@ -385,6 +385,13 @@ public sealed class BattleHudGameplayBridgeConnectionTests
                 runtimeGameplayStateSystem.SuppressNextWorldClick = true;
                 ApplyHudCommandMode(em, TacticalCommandMode.Select);
             }
+            else if (kind == RtsSelectionCommandIntentKind.ExitSelectionMode)
+            {
+                var runtimeGameplayStateSystem = new RuntimeGameplayStateSystem();
+                runtimeGameplayStateSystem.SelectionModeActive = false;
+                runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+                ClearHudCommandMode(em);
+            }
         }
     }
 

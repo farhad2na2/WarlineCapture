@@ -22,6 +22,7 @@ public sealed class ArmoryContentListView : MonoBehaviour
     private World cachedWorld;
     private bool hasActiveInspectionItem;
     private bool hasBoundaryQuery;
+    private ArmoryCatalogItemView activeItemView;
 
     private void OnEnable()
     {
@@ -107,6 +108,7 @@ public sealed class ArmoryContentListView : MonoBehaviour
 
         WireItemSelection(itemTemplate, items[0]);
         BindInspectionPanel(items[0]);
+        SetSelectedItem(itemTemplate);
     }
 
     private void ClearRuntimeItems()
@@ -128,7 +130,12 @@ public sealed class ArmoryContentListView : MonoBehaviour
         runtimeItems.Clear();
 
         if (itemTemplate != null)
+        {
             itemTemplate.gameObject.name = "ItemView";
+            itemTemplate.SetSelected(false);
+        }
+
+        activeItemView = null;
     }
 
     private void ClearItemSelectionBindings()
@@ -160,9 +167,20 @@ public sealed class ArmoryContentListView : MonoBehaviour
         {
             Debug.Log($"[ArmoryItemView] click displayName={model.DisplayName} category={model.Category} frame={Time.frameCount} inspectionPanel={(inspectionPanel != null ? inspectionPanel.name : "null")}");
             BindInspectionPanel(model);
+            SetSelectedItem(item);
         };
         button.onClick.AddListener(action);
         itemClickBindings.Add(new ItemClickBinding(button, action));
+    }
+
+    private void SetSelectedItem(ArmoryCatalogItemView item)
+    {
+        if (activeItemView != null && activeItemView != item)
+            activeItemView.SetSelected(false);
+
+        activeItemView = item;
+        if (activeItemView != null)
+            activeItemView.SetSelected(true);
     }
 
     private void BindInspectionPanel(ArmoryCatalogItem model)

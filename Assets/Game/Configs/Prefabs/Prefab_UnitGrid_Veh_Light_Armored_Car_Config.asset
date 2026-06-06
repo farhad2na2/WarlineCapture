@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: Prefab_UnitGrid_Veh_Light_Armored_Car_Config
   m_EditorClassIdentifier:
   portraitSprite: {fileID: 21300000, guid: f9f3ffc1b5c14cc883c9c739e0bc4bdc, type: 3}
+  portraitCardSprite: {fileID: 21300000, guid: 381cd4578d6e42ff80ba1c918579c408, type: 3}
+  portraitActionSprite: {fileID: 21300000, guid: 93cd6100779442cfa8bf75e75113c512, type: 3}
   weaponSprite: {fileID: 0}
   weaponDisplayName:
   allowIdleWander: 1

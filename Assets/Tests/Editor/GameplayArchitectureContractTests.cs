@@ -11899,7 +11899,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("roadBuildOnGui?.Invoke", runtimeUpdate);
         StringAssert.Contains("Action<MainMenuPlayUI> bindRoadMainMenu", menuStartup);
         StringAssert.Contains("bindRoadMainMenu?.Invoke(mainMenu)", menuStartup);
-        StringAssert.Contains("mainMenu.Init(selectionUiCommandSystem, dayNight)", menuStartup);
+        StringAssert.Contains("mainMenu.Init(selectionUiCommandSystem, dayNight, selectionUiCameraSystem)", menuStartup);
         StringAssert.Contains("_roadRuntimeUpdate", bootstrap);
         StringAssert.Contains("_roadOnGui", bootstrap);
         StringAssert.Contains("_bindRoadMainMenu", bootstrap);

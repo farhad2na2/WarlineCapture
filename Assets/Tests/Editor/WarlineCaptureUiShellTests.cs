@@ -259,6 +259,45 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellMatchHudContent_FooterMinimapViewIsSerialized()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        Transform footer = prefab.transform.Find("FooterContent");
+        Assert.NotNull(footer, "Match HUD shell content must expose FooterContent because the shell clones sections independently.");
+
+        Transform minimap = footer.Find("MinimapPanel");
+        Assert.NotNull(minimap, "Match HUD footer must keep the minimap in FooterContent/MinimapPanel.");
+        Transform map = minimap.Find("Map");
+        Transform viewport = minimap.Find("Viewport");
+        Transform zoomIn = minimap.Find("ZoomIn");
+        Transform zoomOut = minimap.Find("ZoomOut");
+        Assert.NotNull(map, "MinimapPanel must keep Map for the generated top-down background.");
+        Assert.NotNull(viewport, "MinimapPanel must keep Viewport for the camera rect overlay.");
+        Assert.NotNull(zoomIn, "MinimapPanel must keep ZoomIn.");
+        Assert.NotNull(zoomOut, "MinimapPanel must keep ZoomOut.");
+
+        MatchHudMinimapView view = minimap.GetComponent<MatchHudMinimapView>();
+        Assert.NotNull(view, "MinimapPanel must own MatchHudMinimapView so runtime code uses serialized references.");
+
+        Image mapImage = map.GetComponent<Image>();
+        Button zoomInButton = zoomIn.GetComponent<Button>();
+        Button zoomOutButton = zoomOut.GetComponent<Button>();
+        Assert.NotNull(mapImage);
+        Assert.NotNull(zoomInButton);
+        Assert.NotNull(zoomOutButton);
+        Assert.IsTrue(mapImage.raycastTarget, "Map must receive pointer raycasts for click-to-focus and viewport dragging.");
+
+        SerializedObject serializedView = new(view);
+        Assert.AreEqual(mapImage, serializedView.FindProperty("mapImage").objectReferenceValue);
+        Assert.AreEqual(map.GetComponent<RectTransform>(), serializedView.FindProperty("mapRect").objectReferenceValue);
+        Assert.AreEqual(viewport.GetComponent<RectTransform>(), serializedView.FindProperty("viewportRect").objectReferenceValue);
+        Assert.AreEqual(zoomInButton, serializedView.FindProperty("zoomInButton").objectReferenceValue);
+        Assert.AreEqual(zoomOutButton, serializedView.FindProperty("zoomOutButton").objectReferenceValue);
+    }
+
+    [Test]
     public void ShellMatchHudContent_SelectedSquadPanelIsDisabledOnInit()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);

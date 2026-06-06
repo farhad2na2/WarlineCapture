@@ -53,7 +53,7 @@ internal sealed class MenuStartupSystem
         try
         {
             var mainMenu = new MainMenuPlayUI();
-            mainMenu.Init(selectionUiCommandSystem, dayNight);
+            mainMenu.Init(selectionUiCommandSystem, dayNight, selectionUiCameraSystem);
             BindMenuDependencies(
                 mainMenu,
                 bindRoadMainMenu,
@@ -61,7 +61,7 @@ internal sealed class MenuStartupSystem
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
                 bindSelectionMainMenu);
-            BindSceneUi(sceneBindingSystem, world, selectionUiCommandSystem);
+            BindSceneUi(sceneBindingSystem, world, selectionUiCommandSystem, mainMenu);
             return mainMenu;
         }
         catch (Exception exception)
@@ -74,7 +74,7 @@ internal sealed class MenuStartupSystem
                 buildingPlacementInteractionContext,
                 bindBuildingMainMenu,
                 bindSelectionMainMenu);
-            BindSceneUi(sceneBindingSystem, world, selectionUiCommandSystem);
+            BindSceneUi(sceneBindingSystem, world, selectionUiCommandSystem, null);
             return null;
         }
     }
@@ -117,10 +117,12 @@ internal sealed class MenuStartupSystem
     private void BindSceneUi(
         GameplaySceneBindingSystem sceneBindingSystem,
         World world,
-        SelectionUiCommandSystem selectionUiCommandSystem)
+        SelectionUiCommandSystem selectionUiCommandSystem,
+        MainMenuPlayUI mainMenu)
     {
         sceneBindingSystem?.BindGameplayUiRuntimeDependencies(
             world,
-            selectionUiCommandSystem);
+            selectionUiCommandSystem,
+            mainMenu);
     }
 }

@@ -19,12 +19,13 @@ public sealed class GameplaySceneBindingSystem
 
     public void BindGameplayUiRuntimeDependencies(
         World world,
-        SelectionUiCommandSystem selectionUiCommandSystem)
+        SelectionUiCommandSystem selectionUiCommandSystem,
+        MainMenuPlayUI mainMenuPlayUi = null)
     {
         foreach (WarlineCaptureShellContentSystem contentSystem in Resources.FindObjectsOfTypeAll<WarlineCaptureShellContentSystem>())
         {
             if (IsLoadedSceneObject(contentSystem))
-                contentSystem.BindGameplayRuntimeDependencies(selectionUiCommandSystem);
+                contentSystem.BindGameplayRuntimeDependencies(selectionUiCommandSystem, mainMenuPlayUi);
         }
 
         foreach (MatchOverlayCommandControlsView controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsView>())

@@ -3,13 +3,17 @@ using UnityEngine;
 public sealed class MainMenuPlayUI
 {
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
+    private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
+    private SelectionUiCameraSystem _selectionUiCameraSystem;
 
     public void Init(
         SelectionUiCommandSystem selectionUiCommandSystem,
-        DayNightSystem dayNightSystem)
+        DayNightSystem dayNightSystem,
+        SelectionUiCameraSystem selectionUiCameraSystem = null)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
+        _selectionUiCameraSystem = selectionUiCameraSystem;
         _runtimeGameplayStateSystem.PlayRequested = false;
         _runtimeGameplayStateSystem.SelectionModeActive = false;
         _runtimeGameplayStateSystem.BuildModeActive = false;
@@ -20,15 +24,27 @@ public sealed class MainMenuPlayUI
 
     public void Dispose()
     {
+        _matchHudMinimapInputSystem.Dispose();
         _selectionUiCommandSystem = null;
+        _selectionUiCameraSystem = null;
     }
 
     public void Update()
     {
+        _matchHudMinimapInputSystem.Update();
     }
 
     public void NotifyStaticMinimapChanged()
     {
+        _matchHudMinimapInputSystem.NotifyStaticMapChanged();
+    }
+
+    public void BindMatchHudMinimap(MatchHudMinimapView minimapView)
+    {
+        _matchHudMinimapInputSystem.Bind(
+            minimapView,
+            _runtimeGameplayStateSystem,
+            _selectionUiCameraSystem);
     }
 
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)

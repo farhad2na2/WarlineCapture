@@ -5,12 +5,14 @@ public sealed class SelectionUiCameraSystem
 {
     private const float DefaultMinZoomHeight = 10f;
     private const float DefaultMaxZoomHeight = 45f;
+    private const float DefaultZoomSpeed = 20f;
 
     private readonly RtsCameraSystem _cameraSystem;
     private readonly RtsCameraRequestSystem _cameraRequestSystem;
     private Camera _worldCamera;
     private float _minZoomHeight = DefaultMinZoomHeight;
     private float _maxZoomHeight = DefaultMaxZoomHeight;
+    private float _zoomSpeed = DefaultZoomSpeed;
     private float _normalModeZoomHeight = 24f;
     private float _normalModePitch = 58f;
     private float _normalModeYaw = 10f;
@@ -26,6 +28,7 @@ public sealed class SelectionUiCameraSystem
     }
 
     public bool IsNormalIsoModeActive => _cameraSystem.NormalIsoModeActive;
+    public Camera WorldCamera => _worldCamera;
 
     public void Init(RTSSelectionSystemConfig config, Camera worldCamera)
     {
@@ -34,6 +37,7 @@ public sealed class SelectionUiCameraSystem
         {
             _minZoomHeight = config.MinZoomHeight;
             _maxZoomHeight = config.MaxZoomHeight;
+            _zoomSpeed = config.ZoomSpeed;
             _normalModeZoomHeight = config.NormalModeZoomHeight;
             _normalModePitch = config.NormalModePitch;
             _normalModeYaw = config.NormalModeYaw;
@@ -47,6 +51,8 @@ public sealed class SelectionUiCameraSystem
             _minZoomHeight = DefaultMinZoomHeight;
         if (_maxZoomHeight <= _minZoomHeight)
             _maxZoomHeight = Mathf.Max(DefaultMaxZoomHeight, _minZoomHeight + 1f);
+        if (_zoomSpeed <= 0f)
+            _zoomSpeed = DefaultZoomSpeed;
         if (_normalModeZoomHeight <= 0f)
             _normalModeZoomHeight = 24f;
         _normalModeZoomHeight = Mathf.Min(_normalModeZoomHeight, _maxZoomHeight);
@@ -68,6 +74,21 @@ public sealed class SelectionUiCameraSystem
             return;
 
         _cameraRequestSystem.QueueMoveGroundCenterTo(em, focusWorldPosition);
+        ProcessCameraRequests(em);
+    }
+
+    public void ZoomPerspective(float direction, float deltaTime)
+    {
+        if (_worldCamera == null || Mathf.Approximately(direction, 0f) || !TryGetDefaultEntityManager(out EntityManager em))
+            return;
+
+        _cameraRequestSystem.QueuePerspectiveZoom(
+            em,
+            Mathf.Sign(direction),
+            _zoomSpeed,
+            Mathf.Max(deltaTime, 1f / 60f),
+            _minZoomHeight,
+            _maxZoomHeight);
         ProcessCameraRequests(em);
     }
 

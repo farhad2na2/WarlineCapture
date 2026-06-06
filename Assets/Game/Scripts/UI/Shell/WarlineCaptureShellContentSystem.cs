@@ -14,6 +14,7 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
     [SerializeField] private GameObject resultPopupPrefab;
     private readonly MatchOverlayCommandInputSystem _matchOverlayCommandInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
+    private MainMenuPlayUI _mainMenuPlayUi;
 
     public WarlineCaptureShellView ShellView => shellView;
     public GameObject LoadingContentPrefab => loadingContentPrefab;
@@ -69,10 +70,12 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         }
     }
 
-    public void BindGameplayRuntimeDependencies(SelectionUiCommandSystem selectionUiCommandSystem)
+    public void BindGameplayRuntimeDependencies(SelectionUiCommandSystem selectionUiCommandSystem, MainMenuPlayUI mainMenuPlayUi = null)
     {
         _selectionUiCommandSystem = selectionUiCommandSystem;
+        _mainMenuPlayUi = mainMenuPlayUi;
         BindMatchHudCommandControlsInRegion();
+        BindMatchHudMinimapInRegion();
     }
 
     private void InstallLoading()
@@ -160,6 +163,7 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         InstallSection(matchHudContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
         GameObject footer = InstallSection(matchHudContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
         BindMatchHudCommandControls(footer);
+        BindMatchHudMinimap(footer);
         ClearRegion(WarlineCaptureShellRegionId.MiddleRegion);
     }
 
@@ -194,6 +198,16 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
                 CloseBuildDrawerPopup);
     }
 
+    private void BindMatchHudMinimapInRegion()
+    {
+        if (!TryGetRegionContentRoot(WarlineCaptureShellRegionId.FooterRegion, out RectTransform contentRoot))
+            return;
+
+        MatchHudMinimapView view = contentRoot.GetComponentInChildren<MatchHudMinimapView>(true);
+        if (view != null)
+            _mainMenuPlayUi?.BindMatchHudMinimap(view);
+    }
+
     private void BindMatchHudCommandControls(GameObject footer)
     {
         if (footer == null)
@@ -206,6 +220,16 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
                 _selectionUiCommandSystem,
                 () => InstallBuildDrawerPopup(),
                 CloseBuildDrawerPopup);
+    }
+
+    private void BindMatchHudMinimap(GameObject footer)
+    {
+        if (footer == null)
+            return;
+
+        MatchHudMinimapView view = footer.GetComponentInChildren<MatchHudMinimapView>(true);
+        if (view != null)
+            _mainMenuPlayUi?.BindMatchHudMinimap(view);
     }
 
     private void InstallResultPopup()

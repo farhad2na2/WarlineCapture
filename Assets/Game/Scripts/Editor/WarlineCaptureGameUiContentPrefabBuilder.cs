@@ -847,22 +847,12 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddQuickAction(quick.transform, "Support", "scn08_icon_support_parachute.png", -82f);
         AddQuickAction(quick.transform, "Settings", "scn08_icon_settings_gear.png", -246f);
 
-        GameObject minimap = CreateTopLeftMainMenuRect("MinimapPanel", parent, new Rect(-218f, 1010f, 900f, 610f));
-        AddMatchHudSpriteCentered(minimap.transform, "Frame", "scn08_minimap_panel_frame.png", Vector2.zero, new Vector2(900f, 610f), false);
-        AddMatchHudSpriteCentered(minimap.transform, "Map", "scn08_minimap_content.png", new Vector2(0f, 18f), new Vector2(760f, 440f), false);
-        AddMatchHudSpriteCentered(minimap.transform, "Viewport", "scn08_marker_minimap_viewport_rect.png", new Vector2(52f, 20f), new Vector2(250f, 154f), false);
-        AddMatchHudSpriteCentered(minimap.transform, "North", "scn08_minimap_north_arrow.png", new Vector2(-356f, 246f), new Vector2(64f, 64f), true);
-        AddMatchHudSpriteCentered(minimap.transform, "FriendlyA", "scn08_marker_friendly_minimap_dot.png", new Vector2(-120f, 34f), new Vector2(34f, 34f), true);
-        AddMatchHudSpriteCentered(minimap.transform, "FriendlyB", "scn08_marker_friendly_minimap_dot.png", new Vector2(38f, -80f), new Vector2(34f, 34f), true);
-        AddMatchHudSpriteCentered(minimap.transform, "HostileA", "scn08_marker_hostile_minimap_dot.png", new Vector2(184f, 114f), new Vector2(38f, 38f), true);
-        AddMatchHudSpriteCentered(minimap.transform, "Civilian", "scn08_marker_civilian_minimap_dot.png", new Vector2(-230f, -110f), new Vector2(32f, 32f), true);
-        AddMinimapButton(minimap.transform, "ZoomIn", "scn08_minimap_zoom_plus_icon.png", 300f, -222f);
-        AddMinimapButton(minimap.transform, "ZoomOut", "scn08_minimap_zoom_minus_icon.png", 388f, -222f);
-        AddMatchHudSpriteCentered(minimap.transform, "Focus", "scn08_minimap_focus_target_icon.png", new Vector2(-350f, -226f), new Vector2(64f, 64f), true);
     }
 
     private static void BuildMatchHudFooter(Transform parent, MatchOverlayCommandControlsView commandControls)
     {
+        AddMatchHudMinimap(parent);
+
         GameObject tray = CreateTopLeftMainMenuRect("SquadTray", parent, new Rect(24f, -58f, 1480f, 276f));
         AddMatchHudSpriteCentered(tray.transform, "Frame", "scn08_squad_tray_frame.png", Vector2.zero, new Vector2(1480f, 276f), false);
         AddSquadCard(tray.transform, "RifleSquad", "scn08_portrait_rifle_squad.png", "1", true, -520f);
@@ -886,6 +876,31 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         SetSerializedObject(commandControls, "stopButton", stopButton);
     }
 
+    private static void AddMatchHudMinimap(Transform parent)
+    {
+        GameObject minimap = CreateTopRightMainMenuRect("MinimapPanel", parent, 16f, -386f, new Vector2(900f, 610f));
+        MatchHudMinimapView view = minimap.AddComponent<MatchHudMinimapView>();
+        AddMatchHudSpriteCentered(minimap.transform, "Frame", "scn08_minimap_panel_frame.png", Vector2.zero, new Vector2(900f, 610f), false);
+        Image map = AddMatchHudSpriteCentered(minimap.transform, "Map", "scn08_minimap_content.png", new Vector2(0f, 18f), new Vector2(832f, 562f), false);
+        map.raycastTarget = true;
+        Image viewportImage = AddMatchHudSpriteCentered(minimap.transform, "Viewport", "scn08_marker_minimap_viewport_rect.png", new Vector2(52f, 20f), new Vector2(250f, 154f), false);
+        AddMatchHudSpriteCentered(minimap.transform, "North", "scn08_minimap_north_arrow.png", new Vector2(-356f, 246f), new Vector2(64f, 64f), true);
+        AddMatchHudSpriteCentered(minimap.transform, "FriendlyA", "scn08_marker_friendly_minimap_dot.png", new Vector2(-120f, 34f), new Vector2(34f, 34f), true);
+        AddMatchHudSpriteCentered(minimap.transform, "FriendlyB", "scn08_marker_friendly_minimap_dot.png", new Vector2(38f, -80f), new Vector2(34f, 34f), true);
+        AddMatchHudSpriteCentered(minimap.transform, "HostileA", "scn08_marker_hostile_minimap_dot.png", new Vector2(184f, 114f), new Vector2(38f, 38f), true);
+        AddMatchHudSpriteCentered(minimap.transform, "Civilian", "scn08_marker_civilian_minimap_dot.png", new Vector2(-230f, -110f), new Vector2(32f, 32f), true);
+        Button zoomIn = AddMinimapButton(minimap.transform, "ZoomIn", "scn08_minimap_zoom_plus_icon.png", 245.8f, -206.7f);
+        Button zoomOut = AddMinimapButton(minimap.transform, "ZoomOut", "scn08_minimap_zoom_minus_icon.png", 339.3f, -206.7f);
+        AddMatchHudSpriteCentered(minimap.transform, "Focus", "scn08_minimap_focus_target_icon.png", new Vector2(-350f, -226f), new Vector2(64f, 64f), true);
+
+        SetSerializedObject(view, "mapImage", map);
+        SetSerializedObject(view, "mapRect", map.rectTransform);
+        SetSerializedObject(view, "viewportRect", viewportImage.rectTransform);
+        SetSerializedObject(view, "zoomInButton", zoomIn);
+        SetSerializedObject(view, "zoomOutButton", zoomOut);
+        SetSerializedObject(view, "markerRoot", minimap.transform as RectTransform);
+    }
+
     private static void BuildMatchHudBattlefieldMarkers(Transform parent)
     {
         AddMatchHudSpriteCentered(parent, "SelectedSquadRing", "scn08_marker_selection_ring.png", new Vector2(-210f, -500f), new Vector2(540f, 170f), true);
@@ -906,11 +921,17 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddMatchHudSpriteCentered(button.transform, "Icon", icon, Vector2.zero, new Vector2(70f, 70f), true);
     }
 
-    private static void AddMinimapButton(Transform parent, string name, string icon, float x, float y)
+    private static Button AddMinimapButton(Transform parent, string name, string icon, float x, float y)
     {
         GameObject button = CreateCenteredRect(name, parent, new Vector2(x, y), new Vector2(72f, 72f));
+        Image hitTarget = button.AddComponent<Image>();
+        hitTarget.color = Clear;
+        hitTarget.raycastTarget = true;
+        Button buttonComponent = button.AddComponent<Button>();
+        buttonComponent.targetGraphic = hitTarget;
         AddMatchHudSpriteCentered(button.transform, "Frame", "scn08_minimap_zoom_button_frame.png", Vector2.zero, new Vector2(72f, 72f), false);
         AddMatchHudSpriteCentered(button.transform, "Icon", icon, Vector2.zero, new Vector2(42f, 42f), true);
+        return buttonComponent;
     }
 
     private static void AddSquadCard(Transform parent, string name, string portrait, string number, bool selected, float x)

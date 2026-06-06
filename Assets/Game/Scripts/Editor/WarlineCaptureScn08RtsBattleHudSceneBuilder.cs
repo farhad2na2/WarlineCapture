@@ -81,7 +81,7 @@ public static class WarlineCaptureScn08RtsBattleHudSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController controller = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = root.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Match);
 
         GameObject visualRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN08_LayeredCanvas", root.transform);

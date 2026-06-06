@@ -7,10 +7,10 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
 {
     [SerializeField] private WarlineCaptureRouter router;
     [SerializeField] private Transform modalOverlay;
-    [SerializeField] private MissionResultPopupController missionResultPopupPrefab;
+    [SerializeField] private MissionResultPopupSystem missionResultPopupPrefab;
 
     private readonly SceneLifecycleSystem sceneLifecycleSystem = new();
-    private MissionResultPopupController _activePopup;
+    private MissionResultPopupSystem _activePopup;
     private EntityQuery boundaryQuery;
     private World cachedWorld;
     private bool hasBoundaryQuery;
@@ -102,7 +102,7 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
         return preview.Victory;
     }
 
-    private void WirePopupButtons(MissionResultPopupController popup, WarlineCaptureRoute returnRoute)
+    private void WirePopupButtons(MissionResultPopupSystem popup, WarlineCaptureRoute returnRoute)
     {
         Button continueButton = FindButton(popup.transform, "Frame/ButtonRow/ContinueButton");
         if (continueButton != null)

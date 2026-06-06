@@ -5,7 +5,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public sealed class AssistantRuntimeBinding : MonoBehaviour
 {
-    [SerializeField] private AssistantPanelController panelController;
+    [SerializeField] private AssistantPanelSystem panelController;
     [SerializeField] private AssistantButtonView buttonView;
     [SerializeField] private bool refreshOnUpdate = true;
     [SerializeField] private float refreshIntervalSeconds = 0.25f;
@@ -18,10 +18,10 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
     private float _nextRefreshTime;
     private AssistantContext _lastContext;
     private AssistantRecommendation _lastRecommendation;
-    private AssistantPanelController _wiredPanelController;
+    private AssistantPanelSystem _wiredPanelController;
     private bool _lastPlayerInputOverrideHandled;
 
-    public AssistantPanelController PanelController => panelController;
+    public AssistantPanelSystem PanelController => panelController;
     public AssistantButtonView ButtonView => buttonView;
     public WarlineCaptureAssistantService AssistantService => _assistantService;
     public AssistantContext LastContext => _lastContext;
@@ -57,7 +57,7 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
     }
 
     public void SetRuntimeForTests(
-        AssistantPanelController controller,
+        AssistantPanelSystem controller,
         AssistantButtonView assistantButton,
         WarlineCaptureAssistantService service,
         Func<TutorialSessionState, AssistantContext> contextFactory,
@@ -74,16 +74,16 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
 
     public void BindRuntimeDependencies(
         World world,
-        BattleHudGameplayBridge gameplayBridge,
+        BattleHudRuntimeFeedbackView runtimeFeedbackView,
         WarlineCaptureRouter router = null,
         WarlineCaptureMatchResultFlow resultFlow = null,
-        MatchObjectivePanelController objectivePanel = null)
+        MatchObjectivePanelSystem objectivePanel = null)
     {
         EnsureRuntime();
         _contextFactory = null;
         _contextProvider = new AssistantContextProvider(
             world,
-            gameplayBridge,
+            runtimeFeedbackView,
             router,
             resultFlow,
             objectivePanel);
@@ -193,7 +193,7 @@ public sealed class AssistantRuntimeBinding : MonoBehaviour
     private void ResolveReferences()
     {
         if (panelController == null)
-            panelController = GetComponent<AssistantPanelController>();
+            panelController = GetComponent<AssistantPanelSystem>();
 
         if (buttonView == null)
             buttonView = null;

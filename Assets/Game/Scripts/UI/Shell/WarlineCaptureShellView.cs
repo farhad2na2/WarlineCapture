@@ -7,18 +7,18 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
 {
     [SerializeField] private WarlineCaptureUiMotionHostView motionHost;
     [SerializeField] private WarlineCaptureShellRegionView[] regions;
-    [SerializeField] private WarlineCaptureShellContentPresenterView contentPresenter;
+    [SerializeField] private WarlineCaptureShellContentSystem contentSystem;
 
     private readonly Dictionary<WarlineCaptureShellRegionId, WarlineCaptureShellRegionView> regionById = new();
 
     public WarlineCaptureUiMotionHostView MotionHost => motionHost;
     public IReadOnlyList<WarlineCaptureShellRegionView> Regions => regions;
-    public WarlineCaptureShellContentPresenterView ContentPresenter => contentPresenter;
+    public WarlineCaptureShellContentSystem ContentSystem => contentSystem;
 
     private void Awake()
     {
-        if (contentPresenter == null)
-            contentPresenter = GetComponent<WarlineCaptureShellContentPresenterView>();
+        if (contentSystem == null)
+            contentSystem = GetComponent<WarlineCaptureShellContentSystem>();
         RebuildRegionLookup();
     }
 
@@ -32,15 +32,15 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
     public void Configure(
         WarlineCaptureUiMotionHostView host,
         WarlineCaptureShellRegionView[] shellRegions,
-        WarlineCaptureShellContentPresenterView presenter)
+        WarlineCaptureShellContentSystem shellContentSystem)
     {
         Configure(host, shellRegions);
-        contentPresenter = presenter;
+        contentSystem = shellContentSystem;
     }
 
-    public void SetContentPresenter(WarlineCaptureShellContentPresenterView presenter)
+    public void SetContentSystem(WarlineCaptureShellContentSystem shellContentSystem)
     {
-        contentPresenter = presenter;
+        contentSystem = shellContentSystem;
     }
 
     public bool TryGetRegion(WarlineCaptureShellRegionId id, out WarlineCaptureShellRegionView region)
@@ -60,7 +60,7 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
             return;
         }
 
-        contentPresenter?.PrepareForCommandSequence(commands);
+        contentSystem?.PrepareForCommandSequence(commands);
 
         int transitionId = motionHost.BeginTransition();
         List<WarlineCaptureUiMotionStep> steps = new();
@@ -351,7 +351,7 @@ public sealed class WarlineCaptureShellView : MonoBehaviour
         WarlineCaptureShellRegionView right,
         WarlineCaptureShellRegionView footer)
     {
-        contentPresenter?.InstallMenuRouteBody(route);
+        contentSystem?.InstallMenuRouteBody(route);
 
         if (left != null)
         {

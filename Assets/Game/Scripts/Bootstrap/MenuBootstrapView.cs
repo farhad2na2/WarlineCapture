@@ -8,15 +8,15 @@ public sealed class MenuBootstrapView : MonoBehaviour
     [SerializeField] private Camera uiCamera;
     [SerializeField] private Canvas uiCanvas;
     [SerializeField] private WarlineCaptureShellView shellView;
-    [SerializeField] private WarlineCaptureShellEcsBridgeView shellEcsBridge;
-    [SerializeField] private WarlineCaptureShellContentPresenterView contentPresenter;
+    [SerializeField] private WarlineCaptureShellEcsPresentationSystem shellEcsPresentation;
+    [SerializeField] private WarlineCaptureShellContentSystem contentSystem;
     [SerializeField] private WarlineCaptureRouter router;
 
     public Camera UiCamera => uiCamera;
     public Canvas UiCanvas => uiCanvas;
     public WarlineCaptureShellView ShellView => shellView;
-    public WarlineCaptureShellEcsBridgeView ShellEcsBridge => shellEcsBridge;
-    public WarlineCaptureShellContentPresenterView ContentPresenter => contentPresenter;
+    public WarlineCaptureShellEcsPresentationSystem ShellEcsPresentation => shellEcsPresentation;
+    public WarlineCaptureShellContentSystem ContentSystem => contentSystem;
     public WarlineCaptureRouter Router => router;
     public PerformanceDiagnosticsSystem PerformanceDiagnostics => menuBootstrapSystem.PerformanceDiagnostics;
 
@@ -24,15 +24,15 @@ public sealed class MenuBootstrapView : MonoBehaviour
         Camera configuredUiCamera,
         Canvas configuredUiCanvas,
         WarlineCaptureShellView configuredShellView,
-        WarlineCaptureShellEcsBridgeView configuredShellEcsBridge,
-        WarlineCaptureShellContentPresenterView configuredContentPresenter,
+        WarlineCaptureShellEcsPresentationSystem configuredShellEcsPresentation,
+        WarlineCaptureShellContentSystem configuredContentSystem,
         WarlineCaptureRouter configuredRouter)
     {
         uiCamera = configuredUiCamera;
         uiCanvas = configuredUiCanvas;
         shellView = configuredShellView;
-        shellEcsBridge = configuredShellEcsBridge;
-        contentPresenter = configuredContentPresenter;
+        shellEcsPresentation = configuredShellEcsPresentation;
+        contentSystem = configuredContentSystem;
         router = configuredRouter;
     }
 

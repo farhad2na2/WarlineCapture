@@ -4,10 +4,10 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class CommanderProfileScreenControllerTests
+public sealed class CommanderProfileScreenSystemTests
 {
     [Test]
-    public void CommanderProfileScreenController_BindsSavedProfileSummary()
+    public void CommanderProfileScreenSystem_BindsSavedProfileSummary()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Screens/Screen_CommanderProfile.prefab");
         Assert.NotNull(prefab);
@@ -15,7 +15,7 @@ public sealed class CommanderProfileScreenControllerTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            CommanderProfileScreenController controller = instance.GetComponent<CommanderProfileScreenController>();
+            CommanderProfileScreenSystem controller = instance.GetComponent<CommanderProfileScreenSystem>();
             Assert.NotNull(controller);
 
             controller.SetProfileForTests(new PlayerProfileSaveData
@@ -66,7 +66,7 @@ public sealed class CommanderProfileScreenControllerTests
     }
 
     [Test]
-    public void CommanderProfileScreenController_ClaimsFirstAvailableRewardTrackNode()
+    public void CommanderProfileScreenSystem_ClaimsFirstAvailableRewardTrackNode()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Screens/Screen_CommanderProfile.prefab");
         Assert.NotNull(prefab);
@@ -74,7 +74,7 @@ public sealed class CommanderProfileScreenControllerTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            CommanderProfileScreenController controller = instance.GetComponent<CommanderProfileScreenController>();
+            CommanderProfileScreenSystem controller = instance.GetComponent<CommanderProfileScreenSystem>();
             Assert.NotNull(controller);
 
             PlayerProfileSaveData profile = new PlayerProfileSaveData
@@ -102,7 +102,7 @@ public sealed class CommanderProfileScreenControllerTests
     }
 
     [Test]
-    public void CommanderProfileScreenController_ClaimsSelectedRewardTrackNode()
+    public void CommanderProfileScreenSystem_ClaimsSelectedRewardTrackNode()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Screens/Screen_CommanderProfile.prefab");
         Assert.NotNull(prefab);
@@ -110,7 +110,7 @@ public sealed class CommanderProfileScreenControllerTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            CommanderProfileScreenController controller = instance.GetComponent<CommanderProfileScreenController>();
+            CommanderProfileScreenSystem controller = instance.GetComponent<CommanderProfileScreenSystem>();
             Assert.NotNull(controller);
 
             PlayerProfileSaveData profile = new PlayerProfileSaveData
@@ -136,7 +136,7 @@ public sealed class CommanderProfileScreenControllerTests
     }
 
     [Test]
-    public void CommanderProfileScreenController_RewardTrackClickShowsDetailModalAndClaims()
+    public void CommanderProfileScreenSystem_RewardTrackClickShowsDetailModalAndClaims()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Screens/Screen_CommanderProfile.prefab");
         Assert.NotNull(prefab);
@@ -158,13 +158,13 @@ public sealed class CommanderProfileScreenControllerTests
 
             TMP_Text titleText = titleObject.AddComponent<TextMeshProUGUI>();
             TMP_Text bodyText = bodyObject.AddComponent<TextMeshProUGUI>();
-            WarlineCaptureModalController modal = shellRoot.AddComponent<WarlineCaptureModalController>();
+            WarlineCaptureModalSystem modal = shellRoot.AddComponent<WarlineCaptureModalSystem>();
             SetPrivateField(modal, "modalOverlay", overlay);
             SetPrivateField(modal, "placeholderContent", placeholder);
             SetPrivateField(modal, "placeholderTitleText", titleText);
             SetPrivateField(modal, "placeholderBodyText", bodyText);
 
-            CommanderProfileScreenController controller = instance.GetComponent<CommanderProfileScreenController>();
+            CommanderProfileScreenSystem controller = instance.GetComponent<CommanderProfileScreenSystem>();
             Assert.NotNull(controller);
 
             PlayerProfileSaveData profile = new PlayerProfileSaveData
@@ -193,7 +193,7 @@ public sealed class CommanderProfileScreenControllerTests
     }
 
     [Test]
-    public void CommanderProfileScreenController_LocalTabsSwitchProfileContent()
+    public void CommanderProfileScreenSystem_LocalTabsSwitchProfileContent()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Screens/Screen_CommanderProfile.prefab");
         Assert.NotNull(prefab);
@@ -201,7 +201,7 @@ public sealed class CommanderProfileScreenControllerTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            CommanderProfileScreenController controller = instance.GetComponent<CommanderProfileScreenController>();
+            CommanderProfileScreenSystem controller = instance.GetComponent<CommanderProfileScreenSystem>();
             Assert.NotNull(controller);
 
             controller.SetProfileForTests(new PlayerProfileSaveData

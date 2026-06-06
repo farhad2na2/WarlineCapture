@@ -84,7 +84,7 @@ public static class WarlineCaptureScn03CommanderProfileSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController controller = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = root.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.CommanderProfile);
 
         GameObject visualRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN03_LayeredCanvas", root.transform);

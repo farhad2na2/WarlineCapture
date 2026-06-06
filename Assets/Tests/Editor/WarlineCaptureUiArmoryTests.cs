@@ -14,7 +14,7 @@ public sealed class WarlineCaptureUiArmoryTests
     public void ArmoryScreen_HasLayeredVisualLockHierarchy()
     {
         GameObject prefab = LoadPrefab();
-        WarlineCaptureScreenController controller = prefab.GetComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = prefab.GetComponent<WarlineCaptureScreenSystem>();
         Assert.NotNull(controller);
         Assert.AreEqual(WarlineCaptureRoute.Armory, controller.Route);
         Assert.IsNull(prefab.GetComponent<Image>(), "Armory must not bake the full target image into the screen root.");

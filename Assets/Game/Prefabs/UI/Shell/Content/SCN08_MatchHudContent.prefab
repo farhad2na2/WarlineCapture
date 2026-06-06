@@ -14569,7 +14569,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0e8f5116c64b646feac9096c321dc73e, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::BattleHudGameplayBridge
+  m_EditorClassIdentifier: Assembly-CSharp::BattleHudRuntimeFeedbackView
   tacticalFeedback: {fileID: 0}
   commandTabGroups:
   - {fileID: 1800108208000011000}

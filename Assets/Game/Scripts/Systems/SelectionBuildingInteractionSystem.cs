@@ -28,7 +28,7 @@ public sealed class SelectionBuildingInteractionSystem
         _selectionStateSystem = selectionStateSystem;
         _screenMarkerSystem = screenMarkerSystem;
         _worldCamera = worldCamera;
-        _selectionHudFeedbackSystem.ResetBridgeCache();
+        _selectionHudFeedbackSystem.ResetViewCache();
     }
 
     public void ClearFocusedUnit()

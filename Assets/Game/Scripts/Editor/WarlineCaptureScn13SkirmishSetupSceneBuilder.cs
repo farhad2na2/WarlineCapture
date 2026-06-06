@@ -86,7 +86,7 @@ public static class WarlineCaptureScn13SkirmishSetupSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController screenController = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem screenController = root.AddComponent<WarlineCaptureScreenSystem>();
         screenController.SetRouteForTests(WarlineCaptureRoute.QuickCustomSetup);
 
         GameObject artRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN13_LayeredCanvas", root.transform);

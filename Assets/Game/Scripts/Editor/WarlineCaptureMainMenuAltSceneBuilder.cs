@@ -106,7 +106,7 @@ public static class WarlineCaptureMainMenuAltSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController screenController = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem screenController = root.AddComponent<WarlineCaptureScreenSystem>();
         screenController.SetRouteForTests(WarlineCaptureRoute.MainMenu);
 
         GameObject artRoot = CreateRectObject("MainMenuAltLayeredCanvas", root.transform);

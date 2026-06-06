@@ -132,7 +132,7 @@ public sealed class WarlineCaptureUiAssistantRuntimeBindingTests
         try
         {
             WarlineCaptureMatchResultFlow resultFlow = flowHost.AddComponent<WarlineCaptureMatchResultFlow>();
-            MissionResultPopupController popupController = popup.AddComponent<MissionResultPopupController>();
+            MissionResultPopupSystem popupController = popup.AddComponent<MissionResultPopupSystem>();
             popup.SetActive(true);
             SetPrivateField(resultFlow, "_activePopup", popupController);
 
@@ -172,7 +172,7 @@ public sealed class WarlineCaptureUiAssistantRuntimeBindingTests
         Assert.NotNull(prefab);
 
         AssistantRuntimeBinding binding = prefab.GetComponent<AssistantRuntimeBinding>();
-        AssistantPanelController controller = prefab.GetComponent<AssistantPanelController>();
+        AssistantPanelSystem controller = prefab.GetComponent<AssistantPanelSystem>();
         AssistantButtonView buttonView = prefab.transform.Find("AssistantLayer/AssistantEntryButton").GetComponent<AssistantButtonView>();
 
         Assert.NotNull(binding);
@@ -285,7 +285,7 @@ public sealed class WarlineCaptureUiAssistantRuntimeBindingTests
             GameObject host,
             GameObject panelInstance,
             GameObject buttonInstance,
-            AssistantPanelController controller,
+            AssistantPanelSystem controller,
             AssistantPanelView panelView,
             AssistantButtonView buttonView,
             AssistantRuntimeBinding binding,
@@ -301,7 +301,7 @@ public sealed class WarlineCaptureUiAssistantRuntimeBindingTests
             Service = service;
         }
 
-        public AssistantPanelController Controller { get; }
+        public AssistantPanelSystem Controller { get; }
         public AssistantPanelView PanelView { get; }
         public AssistantButtonView ButtonView { get; }
         public AssistantRuntimeBinding Binding { get; }
@@ -315,7 +315,7 @@ public sealed class WarlineCaptureUiAssistantRuntimeBindingTests
 
             AssistantPanelView panelView = panelInstance.GetComponent<AssistantPanelView>();
             AssistantButtonView buttonView = buttonInstance.GetComponent<AssistantButtonView>();
-            AssistantPanelController controller = host.AddComponent<AssistantPanelController>();
+            AssistantPanelSystem controller = host.AddComponent<AssistantPanelSystem>();
             AssistantRuntimeBinding binding = host.AddComponent<AssistantRuntimeBinding>();
             WarlineCaptureAssistantService service = new(new M01AssistantRecommendationProvider(), new TutorialSessionState());
 

@@ -80,7 +80,7 @@ public static class WarlineCaptureScn01SplashLoadingSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController controller = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = root.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Splash);
 
         GameObject visualRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN01_LayeredCanvas", root.transform);

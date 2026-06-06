@@ -111,7 +111,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         selectionUiCamera.Init(rtsSelectionConfig, worldCamera);
         selectionBuildingInteraction.Init(selectionStateSystem, selectionScreenMarkers, worldCamera);
-        selectionHudFeedbackSystem.ResetBridgeCache();
+        selectionHudFeedbackSystem.ResetViewCache();
         selectionOrderMarkerSystem.Initialize(
             runtimeConfig.MoveOrderMarkerPrefab,
             runtimeConfig.AttackOrderMarkerPrefab,
@@ -395,8 +395,9 @@ internal sealed class SelectionGameplayStartupSystem
         void ClearSelectionCommandMode()
         {
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
-            BattleHudGameplayBridge bridge = BattleHudGameplayBridge.ResolveActive();
-            if (bridge == null || bridge.StickyCommandMode == TacticalCommandMode.None)
+            BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
+            if (view == null ||
+                BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode == TacticalCommandMode.None)
                 matchOverlayCommandTabFeedbackSystem.ClearCommandMode(null);
         }
 

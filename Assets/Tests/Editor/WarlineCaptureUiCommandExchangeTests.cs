@@ -13,7 +13,7 @@ public sealed class WarlineCaptureUiCommandExchangeTests
     public void CommandExchangeScreen_HasLayeredVisualLockHierarchy()
     {
         GameObject prefab = LoadPrefab();
-        WarlineCaptureScreenController controller = prefab.GetComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = prefab.GetComponent<WarlineCaptureScreenSystem>();
         Assert.NotNull(controller);
         Assert.AreEqual(WarlineCaptureRoute.CommandExchange, controller.Route);
         Assert.IsNull(prefab.GetComponent<Image>(), "Command Exchange must not bake the full target image into the root.");

@@ -441,7 +441,7 @@ public static class WarlineCaptureScn02LayerCanvasBuilder
         rootImage.color = new Color(0.004f, 0.018f, 0.022f, 1f);
         rootImage.raycastTarget = false;
 
-        WarlineCaptureScreenController screenController = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem screenController = root.AddComponent<WarlineCaptureScreenSystem>();
         screenController.SetRouteForTests(WarlineCaptureRoute.MainMenu);
 
         GameObject artRoot = CreateRectObject("GeneratedLayerArtRoot", root.transform);
@@ -502,7 +502,7 @@ public static class WarlineCaptureScn02LayerCanvasBuilder
         rootImage.color = new Color(0.004f, 0.018f, 0.022f, 1f);
         rootImage.raycastTarget = false;
 
-        WarlineCaptureScreenController screenController = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem screenController = root.AddComponent<WarlineCaptureScreenSystem>();
         screenController.SetRouteForTests(WarlineCaptureRoute.MainMenu);
 
         GameObject artRoot = CreateRectObject("ComponentPlateArtRoot", root.transform);

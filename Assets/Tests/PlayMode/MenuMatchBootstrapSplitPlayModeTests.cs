@@ -182,8 +182,8 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
             menuBootstrap.UiCamera,
             menuBootstrap.UiCanvas,
             menuBootstrap.ShellView,
-            menuBootstrap.ShellEcsBridge,
-            menuBootstrap.ContentPresenter,
+            menuBootstrap.ShellEcsPresentation,
+            menuBootstrap.ContentSystem,
             menuBootstrap.Router);
 
         return menuScene;

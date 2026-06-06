@@ -8,9 +8,9 @@ public sealed class AssistantContextProviderTests
     private bool _previousPlayRequested;
     private World _previousWorld;
     private World _world;
-    private GameObject _bridgeObject;
+    private GameObject _viewObject;
     private GameObject _objectivePanelObject;
-    private BattleHudGameplayBridge _bridge;
+    private BattleHudRuntimeFeedbackView _feedbackView;
     private Chapter01M01PlayableRuntime.RuntimeState _runtimeState;
 
     [SetUp]
@@ -24,10 +24,10 @@ public sealed class AssistantContextProviderTests
         _world = new World("AssistantContextProviderTests");
         World.DefaultGameObjectInjectionWorld = _world;
         Assert.IsTrue(Chapter01M01PlayableRuntime.TryInitializeActiveMission(_world, out _runtimeState));
-        _bridgeObject = new GameObject("AssistantContextProviderBridge");
-        _bridge = _bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        _viewObject = new GameObject("AssistantContextProviderBattleHudView");
+        _feedbackView = _viewObject.AddComponent<BattleHudRuntimeFeedbackView>();
         _objectivePanelObject = new GameObject("AssistantContextProviderObjectivePanel");
-        _objectivePanelObject.AddComponent<MatchObjectivePanelController>();
+        _objectivePanelObject.AddComponent<MatchObjectivePanelSystem>();
     }
 
     [TearDown]
@@ -35,8 +35,8 @@ public sealed class AssistantContextProviderTests
     {
         if (_objectivePanelObject != null)
             Object.DestroyImmediate(_objectivePanelObject);
-        if (_bridgeObject != null)
-            Object.DestroyImmediate(_bridgeObject);
+        if (_viewObject != null)
+            Object.DestroyImmediate(_viewObject);
         if (_world != null && _world.IsCreated)
             _world.Dispose();
         World.DefaultGameObjectInjectionWorld = _previousWorld;
@@ -110,10 +110,12 @@ public sealed class AssistantContextProviderTests
     }
 
     [Test]
-    public void BuildContext_SourcesLatestRejectedCommandResultFromGameplayBridge()
+    public void BuildContext_SourcesLatestRejectedCommandResultFromRuntimeFeedbackSystem()
     {
         var session = new TutorialSessionState();
-        _bridge.ApplyCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
+            _feedbackView,
+            TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
 
         AssistantContext context = CreateProvider().BuildContext(session);
 
@@ -176,10 +178,10 @@ public sealed class AssistantContextProviderTests
     {
         return new AssistantContextProvider(
             _world,
-            _bridge,
+            _feedbackView,
             router: null,
             resultFlow: null,
-            objectivePanel: _objectivePanelObject.GetComponent<MatchObjectivePanelController>());
+            objectivePanel: _objectivePanelObject.GetComponent<MatchObjectivePanelSystem>());
     }
 
     private static string ResolveRepoFilePath(string relativePath)

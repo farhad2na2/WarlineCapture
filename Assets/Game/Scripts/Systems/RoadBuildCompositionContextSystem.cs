@@ -334,11 +334,11 @@ internal sealed class RoadBuildCompositionContextSystem
 
     private static void ApplyBuildCommandMode()
     {
-        BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build);
+        BattleHudRuntimeFeedbackSystem.ApplyCommandMode(TacticalCommandMode.Build);
     }
 
     private static void ClearCommandMode()
     {
-        BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode();
+        BattleHudRuntimeFeedbackSystem.ClearCommandMode();
     }
 }

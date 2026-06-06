@@ -13,7 +13,7 @@ public static class WarlineCaptureMissionRules
         if (IsBuildAllowedForActiveMission())
             return false;
 
-        BattleHudGameplayBridge.ResolveActive()?.ApplyCommandResult(
+        BattleHudRuntimeFeedbackSystem.ApplyCommandResult(
             TacticalCommandResult.Rejected(
                 TacticalCommandReasonCode.MissionDoesNotAllowBuild,
                 M01BuildDisabledMessage));

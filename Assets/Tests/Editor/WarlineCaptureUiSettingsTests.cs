@@ -72,7 +72,7 @@ public sealed class WarlineCaptureUiSettingsTests
     public void SettingsPrefab_WiresControllerControls()
     {
         GameObject prefab = LoadSettingsPrefab();
-        SettingsScreenController controller = prefab.GetComponent<SettingsScreenController>();
+        SettingsScreenSystem controller = prefab.GetComponent<SettingsScreenSystem>();
         Assert.NotNull(controller);
 
         var serializedObject = new SerializedObject(controller);
@@ -91,7 +91,7 @@ public sealed class WarlineCaptureUiSettingsTests
         AssertReference(serializedObject, "applyButton");
         AssertReference(serializedObject, "accessibilityApplier");
 
-        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<ScreenRouteButton>());
+        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<ScreenRouteSystem>());
         Assert.NotNull(prefab.transform.Find("FooterButtons/ApplyButton").GetComponent<Button>());
         Assert.NotNull(prefab.transform.Find("FooterButtons/ResetButton").GetComponent<Button>());
     }

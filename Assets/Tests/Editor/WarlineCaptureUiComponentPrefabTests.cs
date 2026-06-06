@@ -443,11 +443,11 @@ public sealed class WarlineCaptureUiComponentPrefabTests
     }
 
     [Test]
-    public void MissionResultPopupController_BindsRuntimeResultData()
+    public void MissionResultPopupSystem_BindsRuntimeResultData()
     {
         WithPrefab($"{PopupFolder}/MissionResultPopup.prefab", root =>
         {
-            MissionResultPopupController controller = root.GetComponent<MissionResultPopupController>();
+            MissionResultPopupSystem controller = root.GetComponent<MissionResultPopupSystem>();
             Assert.NotNull(controller);
 
             var result = new MissionResultData(
@@ -493,7 +493,7 @@ public sealed class WarlineCaptureUiComponentPrefabTests
     }
 
     [Test]
-    public void MissionResultPopupController_PrioritizesOperationRewardsForOperationMission()
+    public void MissionResultPopupSystem_PrioritizesOperationRewardsForOperationMission()
     {
         MissionConfig mission = ChapterOneMissionCatalog.GetMission("saga.ch01.m05.breach_assault");
         WarlineCaptureMissionSession.BeginMissionForTests(mission, WarlineCaptureRoute.OperationDashboard);
@@ -501,7 +501,7 @@ public sealed class WarlineCaptureUiComponentPrefabTests
         {
             WithPrefab($"{PopupFolder}/MissionResultPopup.prefab", root =>
             {
-                MissionResultPopupController controller = root.GetComponent<MissionResultPopupController>();
+                MissionResultPopupSystem controller = root.GetComponent<MissionResultPopupSystem>();
                 Assert.NotNull(controller);
 
                 var result = new MissionResultData(

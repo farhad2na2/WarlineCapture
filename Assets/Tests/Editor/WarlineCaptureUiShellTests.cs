@@ -67,7 +67,7 @@ public sealed class WarlineCaptureUiShellTests
 
         Transform contentRoot = shellPrefab.transform.Find("SafeAreaRoot/ContentRoot");
         Assert.NotNull(contentRoot);
-        Assert.AreEqual(0, contentRoot.GetComponentsInChildren<WarlineCaptureScreenController>(true).Length);
+        Assert.AreEqual(0, contentRoot.GetComponentsInChildren<WarlineCaptureScreenSystem>(true).Length);
         RectTransform contentRect = contentRoot.GetComponent<RectTransform>();
         Assert.AreEqual(Vector2.zero, contentRect.anchorMin);
         Assert.AreEqual(Vector2.one, contentRect.anchorMax);
@@ -76,7 +76,7 @@ public sealed class WarlineCaptureUiShellTests
 
         var router = shellPrefab.GetComponent<WarlineCaptureRouter>();
         Assert.NotNull(router);
-        Assert.NotNull(shellPrefab.GetComponent<WarlineCaptureModalController>());
+        Assert.NotNull(shellPrefab.GetComponent<WarlineCaptureModalSystem>());
         WarlineCaptureMatchResultFlow resultFlow = shellPrefab.GetComponent<WarlineCaptureMatchResultFlow>();
         Assert.NotNull(resultFlow);
         WarlineCaptureUiAccessibilityApplier accessibilityApplier = shellPrefab.GetComponent<WarlineCaptureUiAccessibilityApplier>();
@@ -117,7 +117,7 @@ public sealed class WarlineCaptureUiShellTests
 
             Transform contentRoot = instance.transform.Find("SafeAreaRoot/ContentRoot");
             Assert.NotNull(contentRoot);
-            Assert.AreEqual(17, contentRoot.GetComponentsInChildren<WarlineCaptureScreenController>(true).Length);
+            Assert.AreEqual(17, contentRoot.GetComponentsInChildren<WarlineCaptureScreenSystem>(true).Length);
             Assert.NotNull(contentRoot.Find("Screen_Splash"));
             Assert.NotNull(contentRoot.Find("Screen_MainMenu"));
             Assert.NotNull(contentRoot.Find("Screen_Settings"));
@@ -250,10 +250,10 @@ public sealed class WarlineCaptureUiShellTests
         Assert.AreEqual(tabGroup, serializedView.FindProperty("commandTabGroup").objectReferenceValue);
         AssertCommandTabsAssigned(tabGroup, commandRailFrame);
 
-        BattleHudGameplayBridge bridge = footer.GetComponent<BattleHudGameplayBridge>();
-        Assert.NotNull(bridge, "The shell-instantiated Match HUD footer must own a live bridge for sticky command tab state.");
-        var serializedBridge = new SerializedObject(bridge);
-        SerializedProperty commandTabGroups = serializedBridge.FindProperty("commandTabGroups");
+        BattleHudRuntimeFeedbackView hudView = footer.GetComponent<BattleHudRuntimeFeedbackView>();
+        Assert.NotNull(hudView, "The shell-instantiated Match HUD footer must own a live view for sticky command tab state.");
+        var serializedHudView = new SerializedObject(hudView);
+        SerializedProperty commandTabGroups = serializedHudView.FindProperty("commandTabGroups");
         Assert.AreEqual(1, commandTabGroups.arraySize);
         Assert.AreEqual(tabGroup, commandTabGroups.GetArrayElementAtIndex(0).objectReferenceValue);
     }
@@ -308,8 +308,9 @@ public sealed class WarlineCaptureUiShellTests
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellBuildDrawerPopupPrefabPath);
         Assert.NotNull(prefab, ShellBuildDrawerPopupPrefabPath);
 
-        WarlineCapturePopupCloseButton closeView = prefab.GetComponent<WarlineCapturePopupCloseButton>();
-        Assert.NotNull(closeView, "SCN09 popup root must own local close behavior.");
+        WarlineCapturePopupCloseView closeView = prefab.GetComponent<WarlineCapturePopupCloseView>();
+        Assert.NotNull(closeView, "SCN09 popup root must own local close references.");
+        Assert.NotNull(prefab.GetComponent<WarlineCapturePopupCloseSystem>(), "SCN09 popup root must own local close behavior system.");
 
         SerializedObject serializedCloseView = new(closeView);
         Button closeButton = serializedCloseView.FindProperty("closeButton").objectReferenceValue as Button;
@@ -342,10 +343,10 @@ public sealed class WarlineCaptureUiShellTests
             sibling.transform.SetParent(parent.transform, false);
             instance.transform.SetParent(parent.transform, false);
 
-            WarlineCapturePopupCloseButton closeView = instance.GetComponent<WarlineCapturePopupCloseButton>();
-            Assert.NotNull(closeView);
+            WarlineCapturePopupCloseSystem closeSystem = instance.GetComponent<WarlineCapturePopupCloseSystem>();
+            Assert.NotNull(closeSystem);
 
-            closeView.ClosePopup();
+            closeSystem.ClosePopup();
 
             Assert.IsTrue(instance == null, "Close must destroy the SCN09 popup instance.");
             Assert.IsFalse(sibling == null, "Close must not clear unrelated popup layer content.");
@@ -369,25 +370,25 @@ public sealed class WarlineCaptureUiShellTests
 
         GameObject matchHud = (GameObject)PrefabUtility.InstantiatePrefab(matchHudPrefab);
         GameObject drawer = (GameObject)PrefabUtility.InstantiatePrefab(drawerPrefab);
-        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
-        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        GameObject hudViewObject = new("BattleHudRuntimeFeedbackViewTest");
+        var hudView = hudViewObject.AddComponent<BattleHudRuntimeFeedbackView>();
         try
         {
             MatchOverlayCommandControlsView view = matchHud.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
             Assert.NotNull(view);
             Assert.NotNull(view.BuildButton);
             Assert.NotNull(view.CommandTabGroup);
-            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+            AssignCommandTabGroups(hudView, view.CommandTabGroup);
 
             int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
-            bridge.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(hudView, TacticalCommandMode.Build);
             AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
 
-            WarlineCapturePopupCloseButton closeView = drawer.GetComponent<WarlineCapturePopupCloseButton>();
-            Assert.NotNull(closeView);
-            closeView.ClosePopup();
+            WarlineCapturePopupCloseSystem closeSystem = drawer.GetComponent<WarlineCapturePopupCloseSystem>();
+            Assert.NotNull(closeSystem);
+            closeSystem.ClosePopup();
 
-            Assert.AreEqual(TacticalCommandMode.None, bridge.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.None, BattleHudRuntimeFeedbackSystem.GetState(hudView).StickyCommandMode);
             AssertNoCommandTabSelected(view.CommandTabGroup);
             Assert.IsTrue(drawer == null, "Close must destroy the build drawer instance.");
         }
@@ -395,7 +396,7 @@ public sealed class WarlineCaptureUiShellTests
         {
             if (drawer != null)
                 UnityEngine.Object.DestroyImmediate(drawer);
-            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(hudViewObject);
             UnityEngine.Object.DestroyImmediate(matchHud);
         }
     }
@@ -528,8 +529,8 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
 
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
-        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        GameObject viewObject = new("BattleHudRuntimeFeedbackViewTest");
+        var feedbackView = viewObject.AddComponent<BattleHudRuntimeFeedbackView>();
         try
         {
             MatchOverlayCommandTabGroupView tabGroup = instance.GetComponentInChildren<MatchOverlayCommandTabGroupView>(true);
@@ -539,13 +540,13 @@ public sealed class WarlineCaptureUiShellTests
             tabVisualSystem.Select(tabGroup.Tabs[1]);
             AssertCommandTabSelected(tabGroup, 1);
 
-            bridge.ClearCommandMode();
+            BattleHudRuntimeFeedbackSystem.ClearCommandMode(feedbackView);
 
             AssertNoCommandTabSelected(tabGroup);
         }
         finally
         {
-            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(viewObject);
             UnityEngine.Object.DestroyImmediate(instance);
         }
     }
@@ -557,32 +558,32 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
 
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
-        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        GameObject viewObject = new("BattleHudRuntimeFeedbackViewTest");
+        var feedbackView = viewObject.AddComponent<BattleHudRuntimeFeedbackView>();
         try
         {
             Transform footer = instance.transform.Find("FooterContent");
             Assert.NotNull(footer);
 
-            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
-            Assert.NotNull(view);
-            Assert.NotNull(view.BuildButton);
-            Assert.NotNull(view.CommandTabGroup);
+            MatchOverlayCommandControlsView controlsView = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(controlsView);
+            Assert.NotNull(controlsView.BuildButton);
+            Assert.NotNull(controlsView.CommandTabGroup);
 
-            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+            AssignCommandTabGroups(feedbackView, controlsView.CommandTabGroup);
 
-            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
-            new MatchOverlayCommandTabVisualSystem(view.CommandTabGroup).Select(null);
-            AssertNoCommandTabSelected(view.CommandTabGroup);
+            int buildIndex = FindCommandTabIndex(controlsView.CommandTabGroup, controlsView.BuildButton);
+            new MatchOverlayCommandTabVisualSystem(controlsView.CommandTabGroup).Select(null);
+            AssertNoCommandTabSelected(controlsView.CommandTabGroup);
 
-            bridge.ApplyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ApplyCommandMode(feedbackView, TacticalCommandMode.Build);
 
-            Assert.AreEqual(TacticalCommandMode.Build, bridge.CurrentCommandMode);
-            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+            Assert.AreEqual(TacticalCommandMode.Build, BattleHudRuntimeFeedbackSystem.GetState(feedbackView).CurrentCommandMode);
+            AssertCommandTabSelected(controlsView.CommandTabGroup, buildIndex);
         }
         finally
         {
-            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(viewObject);
             UnityEngine.Object.DestroyImmediate(instance);
         }
     }
@@ -594,39 +595,41 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
 
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
-        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        GameObject viewObject = new("BattleHudRuntimeFeedbackViewTest");
+        var feedbackView = viewObject.AddComponent<BattleHudRuntimeFeedbackView>();
         try
         {
             Transform footer = instance.transform.Find("FooterContent");
             Assert.NotNull(footer);
 
-            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
-            Assert.NotNull(view);
-            Assert.NotNull(view.BuildButton);
-            Assert.NotNull(view.CommandTabGroup);
+            MatchOverlayCommandControlsView controlsView = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(controlsView);
+            Assert.NotNull(controlsView.BuildButton);
+            Assert.NotNull(controlsView.CommandTabGroup);
 
-            AssignCommandTabGroups(bridge, view.CommandTabGroup);
+            AssignCommandTabGroups(feedbackView, controlsView.CommandTabGroup);
 
-            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
-            bridge.ApplyStickyCommandMode(TacticalCommandMode.Build);
-            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+            int buildIndex = FindCommandTabIndex(controlsView.CommandTabGroup, controlsView.BuildButton);
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(feedbackView, TacticalCommandMode.Build);
+            AssertCommandTabSelected(controlsView.CommandTabGroup, buildIndex);
 
-            bridge.ClearCommandMode();
+            BattleHudRuntimeFeedbackSystem.ClearCommandMode(feedbackView);
 
-            Assert.AreEqual(TacticalCommandMode.Build, bridge.StickyCommandMode);
-            Assert.AreEqual(TacticalCommandMode.Build, bridge.CurrentCommandMode);
-            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+            BattleHudRuntimeFeedbackState state = BattleHudRuntimeFeedbackSystem.GetState(feedbackView);
+            Assert.AreEqual(TacticalCommandMode.Build, state.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.Build, state.CurrentCommandMode);
+            AssertCommandTabSelected(controlsView.CommandTabGroup, buildIndex);
 
-            bridge.ClearStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(feedbackView, TacticalCommandMode.Build);
 
-            Assert.AreEqual(TacticalCommandMode.None, bridge.StickyCommandMode);
-            Assert.AreEqual(TacticalCommandMode.None, bridge.CurrentCommandMode);
-            AssertNoCommandTabSelected(view.CommandTabGroup);
+            state = BattleHudRuntimeFeedbackSystem.GetState(feedbackView);
+            Assert.AreEqual(TacticalCommandMode.None, state.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.None, state.CurrentCommandMode);
+            AssertNoCommandTabSelected(controlsView.CommandTabGroup);
         }
         finally
         {
-            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(viewObject);
             UnityEngine.Object.DestroyImmediate(instance);
         }
     }
@@ -641,29 +644,30 @@ public sealed class WarlineCaptureUiShellTests
         using var world = new World("ShellMatchHudContent_StickyBuildClear");
         World.DefaultGameObjectInjectionWorld = world;
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
-        GameObject bridgeObject = new("BattleHudGameplayBridgeTest");
-        var bridge = bridgeObject.AddComponent<BattleHudGameplayBridge>();
+        GameObject viewObject = new("BattleHudRuntimeFeedbackViewTest");
+        var feedbackView = viewObject.AddComponent<BattleHudRuntimeFeedbackView>();
         try
         {
-            MatchOverlayCommandControlsView view = instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
-            Assert.NotNull(view);
-            Assert.NotNull(view.BuildButton);
-            Assert.NotNull(view.CommandTabGroup);
+            MatchOverlayCommandControlsView controlsView = instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true);
+            Assert.NotNull(controlsView);
+            Assert.NotNull(controlsView.BuildButton);
+            Assert.NotNull(controlsView.CommandTabGroup);
 
-            AssignCommandTabGroups(bridge, view.CommandTabGroup);
-            int buildIndex = FindCommandTabIndex(view.CommandTabGroup, view.BuildButton);
-            bridge.ApplyStickyCommandMode(TacticalCommandMode.Build);
-            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+            AssignCommandTabGroups(feedbackView, controlsView.CommandTabGroup);
+            int buildIndex = FindCommandTabIndex(controlsView.CommandTabGroup, controlsView.BuildButton);
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(feedbackView, TacticalCommandMode.Build);
+            AssertCommandTabSelected(controlsView.CommandTabGroup, buildIndex);
 
             new SelectionHudFeedbackSystem().ClearCommandMode(world.EntityManager);
 
-            Assert.AreEqual(TacticalCommandMode.Build, bridge.StickyCommandMode);
-            Assert.AreEqual(TacticalCommandMode.Build, bridge.CurrentCommandMode);
-            AssertCommandTabSelected(view.CommandTabGroup, buildIndex);
+            BattleHudRuntimeFeedbackState state = BattleHudRuntimeFeedbackSystem.GetState(feedbackView);
+            Assert.AreEqual(TacticalCommandMode.Build, state.StickyCommandMode);
+            Assert.AreEqual(TacticalCommandMode.Build, state.CurrentCommandMode);
+            AssertCommandTabSelected(controlsView.CommandTabGroup, buildIndex);
         }
         finally
         {
-            UnityEngine.Object.DestroyImmediate(bridgeObject);
+            UnityEngine.Object.DestroyImmediate(viewObject);
             UnityEngine.Object.DestroyImmediate(instance);
             World.DefaultGameObjectInjectionWorld = previousWorld;
         }
@@ -702,7 +706,7 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
-    public void ShellMatchHudContent_SelectionHudClearCommandModeClearsTabWithoutBridge()
+    public void ShellMatchHudContent_SelectionHudClearCommandModeClearsTabWithoutRuntimeFeedbackView()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
         Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
@@ -1165,8 +1169,8 @@ public sealed class WarlineCaptureUiShellTests
         Assert.NotNull(splashPrefab.transform.Find("BottomStatusStrip/CenterStatusText"));
         Assert.NotNull(splashPrefab.transform.Find("BottomStatusStrip/SyncDataText"));
         Assert.IsNull(splashPrefab.transform.Find("StartButton"));
-        Assert.IsNull(splashPrefab.GetComponentInChildren<ScreenRouteButton>(true));
-        SplashScreenController splashController = splashPrefab.GetComponent<SplashScreenController>();
+        Assert.IsNull(splashPrefab.GetComponentInChildren<ScreenRouteSystem>(true));
+        SplashScreenSystem splashController = splashPrefab.GetComponent<SplashScreenSystem>();
         Assert.NotNull(splashController);
         var splashSerialized = new SerializedObject(splashController);
         Assert.IsNull(splashSerialized.FindProperty("fakeLoadingSeconds"));
@@ -1213,9 +1217,9 @@ public sealed class WarlineCaptureUiShellTests
             router.ConfigureForTests(
                 new[]
                 {
-                    splash.GetComponent<WarlineCaptureScreenController>(),
-                    mainMenu.GetComponent<WarlineCaptureScreenController>(),
-                    settings.GetComponent<WarlineCaptureScreenController>()
+                    splash.GetComponent<WarlineCaptureScreenSystem>(),
+                    mainMenu.GetComponent<WarlineCaptureScreenSystem>(),
+                    settings.GetComponent<WarlineCaptureScreenSystem>()
                 },
                 WarlineCaptureRoute.Splash);
 
@@ -1283,7 +1287,7 @@ public sealed class WarlineCaptureUiShellTests
         {
             splash.transform.SetParent(root.transform);
             WarlineCaptureRouter router = root.AddComponent<WarlineCaptureRouter>();
-            router.ConfigureForTests(new[] { splash.GetComponent<WarlineCaptureScreenController>() }, WarlineCaptureRoute.Splash);
+            router.ConfigureForTests(new[] { splash.GetComponent<WarlineCaptureScreenSystem>() }, WarlineCaptureRoute.Splash);
 
             InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => router.GoTo(WarlineCaptureRoute.Settings));
             StringAssert.Contains("Settings", exception.Message);
@@ -1304,7 +1308,7 @@ public sealed class WarlineCaptureUiShellTests
         {
             overlay.transform.SetParent(root.transform);
             overlay.SetActive(true);
-            WarlineCaptureModalController modal = root.AddComponent<WarlineCaptureModalController>();
+            WarlineCaptureModalSystem modal = root.AddComponent<WarlineCaptureModalSystem>();
             SetPrivateField(modal, "modalOverlay", overlay);
             InvokePrivate(modal, "Awake");
 
@@ -1348,7 +1352,7 @@ public sealed class WarlineCaptureUiShellTests
             statusObject.transform.SetParent(root.transform);
             tipObject.transform.SetParent(root.transform);
 
-            SplashScreenController splash = root.AddComponent<SplashScreenController>();
+            SplashScreenSystem splash = root.AddComponent<SplashScreenSystem>();
             Image fill = fillObject.AddComponent<Image>();
             TMP_Text percent = percentObject.AddComponent<TextMeshProUGUI>();
             TMP_Text status = statusObject.AddComponent<TextMeshProUGUI>();
@@ -1379,7 +1383,7 @@ public sealed class WarlineCaptureUiShellTests
     private static GameObject CreateScreen(string name, WarlineCaptureRoute route)
     {
         var screen = new GameObject(name, typeof(RectTransform));
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(route);
         return screen;
     }
@@ -1607,15 +1611,15 @@ public sealed class WarlineCaptureUiShellTests
         return -1;
     }
 
-    private static void AssignCommandTabGroups(BattleHudGameplayBridge bridge, params MatchOverlayCommandTabGroupView[] tabGroups)
+    private static void AssignCommandTabGroups(BattleHudRuntimeFeedbackView view, params MatchOverlayCommandTabGroupView[] tabGroups)
     {
-        SerializedObject serializedBridge = new(bridge);
-        SerializedProperty groups = serializedBridge.FindProperty("commandTabGroups");
+        SerializedObject serializedView = new(view);
+        SerializedProperty groups = serializedView.FindProperty("commandTabGroups");
         groups.arraySize = tabGroups.Length;
         for (int i = 0; i < tabGroups.Length; i++)
             groups.GetArrayElementAtIndex(i).objectReferenceValue = tabGroups[i];
 
-        serializedBridge.ApplyModifiedPropertiesWithoutUndo();
+        serializedView.ApplyModifiedPropertiesWithoutUndo();
     }
 
     private static void AssertCommandTabSelected(MatchOverlayCommandTabGroupView tabGroup, int selectedIndex)

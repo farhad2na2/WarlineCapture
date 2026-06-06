@@ -182,7 +182,7 @@ Do not use ad hoc string-only error reporting inside selection, movement, attack
 
 ### 4. Replace Mouse-Only Prototype Input
 
-`M01PlayableVisualPrototypeController` is still a design-target prototype. If it remains in use, add Android touch support:
+`M01PlayableVisualPrototypeSystem` is still a design-target prototype. If it remains in use, add Android touch support:
 
 - Primary touch press should behave like mouse click.
 - Convert screen position to the active tactical map plane consistently.

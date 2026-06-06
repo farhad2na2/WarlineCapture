@@ -104,10 +104,10 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     public void MatchOverlay_HasTacticalHudHierarchy()
     {
         GameObject prefab = LoadPrefab();
-        WarlineCaptureScreenController controller = prefab.GetComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = prefab.GetComponent<WarlineCaptureScreenSystem>();
         Assert.NotNull(controller);
         Assert.AreEqual(WarlineCaptureRoute.Match, controller.Route);
-        Assert.NotNull(prefab.GetComponent<BattleHudGameplayBridge>(), "Match overlay must expose a gameplay-to-HUD bridge for selection and command feedback.");
+        Assert.NotNull(prefab.GetComponent<BattleHudRuntimeFeedbackView>(), "Match overlay must expose a runtime feedback view for selection and command feedback.");
         MatchOverlayCommandControlsView commandControls = prefab.GetComponent<MatchOverlayCommandControlsView>();
         Assert.NotNull(commandControls, "Match overlay must expose Hold/Stop command button wiring.");
         Assert.NotNull(commandControls.SelectButton, "Select command button must be wired.");
@@ -218,7 +218,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         Transform drawer = prefab.transform.Find("BuildDrawerCanvas");
         Assert.NotNull(drawer);
         Assert.IsFalse(drawer.gameObject.activeSelf, "Build drawer should be hidden until the HUD Build button is pressed.");
-        Assert.NotNull(prefab.GetComponent<BuildDrawerPanelController>());
+        Assert.NotNull(prefab.GetComponent<BuildDrawerPanelSystem>());
         Assert.Greater(
             drawer.GetSiblingIndex(),
             prefab.transform.Find("MiniMapPanel").GetSiblingIndex(),
@@ -299,9 +299,9 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            BuildDrawerPanelController controller = instance.GetComponent<BuildDrawerPanelController>();
+            BuildDrawerPanelSystem controller = instance.GetComponent<BuildDrawerPanelSystem>();
             Assert.NotNull(controller);
-            var awake = typeof(BuildDrawerPanelController).GetMethod(
+            var awake = typeof(BuildDrawerPanelSystem).GetMethod(
                 "Awake",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotNull(awake);
@@ -329,7 +329,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            M01InfantryOnlyHudScopeController scope = instance.GetComponent<M01InfantryOnlyHudScopeController>();
+            M01InfantryOnlyHudScopeSystem scope = instance.GetComponent<M01InfantryOnlyHudScopeSystem>();
             Assert.NotNull(scope);
             scope.Refresh();
 
@@ -399,7 +399,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            M01InfantryOnlyHudScopeController scope = instance.GetComponent<M01InfantryOnlyHudScopeController>();
+            M01InfantryOnlyHudScopeSystem scope = instance.GetComponent<M01InfantryOnlyHudScopeSystem>();
             Assert.NotNull(scope);
             scope.Refresh();
 
@@ -422,7 +422,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         Transform wheel = prefab.transform.Find("CommandWheelCanvas");
         Assert.NotNull(wheel);
         Assert.IsFalse(wheel.gameObject.activeSelf, "Command wheel should be hidden until a command opens it.");
-        Assert.NotNull(prefab.GetComponent<CommandWheelPanelController>());
+        Assert.NotNull(prefab.GetComponent<CommandWheelPanelSystem>());
         Assert.Greater(
             wheel.GetSiblingIndex(),
             prefab.transform.Find("MiniMapPanel").GetSiblingIndex(),
@@ -464,7 +464,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     public void MatchOverlay_AssistantEntryMountsPanelControllerWithoutShowingPanel()
     {
         GameObject prefab = LoadPrefab();
-        AssistantPanelController controller = prefab.GetComponent<AssistantPanelController>();
+        AssistantPanelSystem controller = prefab.GetComponent<AssistantPanelSystem>();
         Assert.NotNull(controller);
         Assert.NotNull(controller.PanelPrefab);
         Assert.AreEqual(AssistantPanelPrefabPath, AssetDatabase.GetAssetPath(controller.PanelPrefab));
@@ -488,9 +488,9 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            AssistantPanelController controller = instance.GetComponent<AssistantPanelController>();
+            AssistantPanelSystem controller = instance.GetComponent<AssistantPanelSystem>();
             Assert.NotNull(controller);
-            var awake = typeof(AssistantPanelController).GetMethod(
+            var awake = typeof(AssistantPanelSystem).GetMethod(
                 "Awake",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotNull(awake);
@@ -547,9 +547,9 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(prefab);
         try
         {
-            CommandWheelPanelController controller = instance.GetComponent<CommandWheelPanelController>();
+            CommandWheelPanelSystem controller = instance.GetComponent<CommandWheelPanelSystem>();
             Assert.NotNull(controller);
-            var awake = typeof(CommandWheelPanelController).GetMethod(
+            var awake = typeof(CommandWheelPanelSystem).GetMethod(
                 "Awake",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotNull(awake);
@@ -576,9 +576,9 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            BattleHudTacticalFeedbackController controller = instance.GetComponent<BattleHudTacticalFeedbackController>();
+            BattleHudTacticalFeedbackSystem controller = instance.GetComponent<BattleHudTacticalFeedbackSystem>();
             Assert.NotNull(controller);
-            var awake = typeof(BattleHudTacticalFeedbackController).GetMethod(
+            var awake = typeof(BattleHudTacticalFeedbackSystem).GetMethod(
                 "Awake",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
             Assert.NotNull(awake);
@@ -607,33 +607,28 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     }
 
     [Test]
-    public void MatchOverlay_GameplayBridgeMapsCommandResultsToTacticalFeedback()
+    public void MatchOverlay_RuntimeFeedbackSystemMapsCommandResultsToTacticalFeedback()
     {
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            BattleHudGameplayBridge bridge = instance.GetComponent<BattleHudGameplayBridge>();
-            Assert.NotNull(bridge);
-            var awake = typeof(BattleHudGameplayBridge).GetMethod(
-                "Awake",
-                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
-            Assert.NotNull(awake);
-            awake.Invoke(bridge, null);
+            BattleHudRuntimeFeedbackView view = instance.GetComponent<BattleHudRuntimeFeedbackView>();
+            Assert.NotNull(view);
 
-            bridge.ApplySelection("Rifle Squad", "READY");
+            BattleHudRuntimeFeedbackSystem.ApplySelection(view, "Rifle Squad", "READY");
             Assert.IsTrue(instance.transform.Find("SelectedEntityPanel").gameObject.activeSelf);
             AssertText(instance, "SelectedEntityPanel/NameText", "Rifle Squad");
             AssertText(instance, "SelectedEntityPanel/StatusText", "READY");
 
-            bridge.ApplyCommandMode(TacticalCommandMode.Attack);
+            BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, TacticalCommandMode.Attack);
             Assert.IsTrue(instance.transform.Find("CommandModeBanner").gameObject.activeSelf);
             AssertText(instance, "CommandModeBanner/ModeText", "ATTACK ORDER");
 
-            bridge.ApplyCommandResult(TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetBlocked));
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetBlocked));
             Assert.IsTrue(instance.transform.Find("InvalidCommandToast").gameObject.activeSelf);
             AssertText(instance, "InvalidCommandToast/MessageText", "Route is blocked.");
 
-            bridge.ApplyCommandResult(TacticalCommandResult.Success());
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, TacticalCommandResult.Success());
             Assert.IsFalse(instance.transform.Find("InvalidCommandToast").gameObject.activeSelf);
         }
         finally
@@ -948,7 +943,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            MatchObjectivePanelController controller = instance.GetComponent<MatchObjectivePanelController>();
+            MatchObjectivePanelSystem controller = instance.GetComponent<MatchObjectivePanelSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();
@@ -984,7 +979,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
-            MatchObjectivePanelController controller = instance.GetComponent<MatchObjectivePanelController>();
+            MatchObjectivePanelSystem controller = instance.GetComponent<MatchObjectivePanelSystem>();
             Assert.NotNull(controller);
             controller.RefreshForTests();
 

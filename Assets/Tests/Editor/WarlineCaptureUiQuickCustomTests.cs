@@ -84,7 +84,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
     public void QuickCustomPrefab_WiresControllerAndLaunchButton()
     {
         GameObject prefab = LoadQuickCustomPrefab();
-        QuickCustomScreenController controller = prefab.GetComponent<QuickCustomScreenController>();
+        QuickCustomScreenSystem controller = prefab.GetComponent<QuickCustomScreenSystem>();
         Assert.NotNull(controller);
 
         var serializedObject = new SerializedObject(controller);
@@ -104,7 +104,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
         AssertReference(serializedObject, "resetButton");
         AssertReference(serializedObject, "launchButton");
 
-        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<ScreenRouteButton>());
+        Assert.NotNull(prefab.transform.Find("HeaderBar/BackButton").GetComponent<ScreenRouteSystem>());
         Assert.NotNull(prefab.transform.Find("LaunchButton").GetComponent<Button>());
     }
 
@@ -227,7 +227,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         try
         {
-            QuickCustomScreenController controller = instance.GetComponent<QuickCustomScreenController>();
+            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
             Assert.NotNull(controller);
 
             QuickGameConfig config = QuickGameConfig.Defaults;
@@ -269,9 +269,9 @@ public sealed class WarlineCaptureUiQuickCustomTests
 
         Transform buttonTransform = prefab.transform.Find("ModeCardList/ModeCard_QuickCustom/Button");
         Assert.NotNull(buttonTransform);
-        Assert.IsNull(buttonTransform.GetComponent<WarlineCaptureLegacyGameStartButton>());
+        Assert.IsNull(buttonTransform.GetComponent<WarlineCaptureLegacyGameStartSystem>());
 
-        ScreenRouteButton routeButton = buttonTransform.GetComponent<ScreenRouteButton>();
+        ScreenRouteSystem routeButton = buttonTransform.GetComponent<ScreenRouteSystem>();
         Assert.NotNull(routeButton);
         var serializedObject = new SerializedObject(routeButton);
         Assert.AreEqual((int)WarlineCaptureRoute.QuickCustomSetup, serializedObject.FindProperty("route").enumValueIndex);
@@ -297,13 +297,13 @@ public sealed class WarlineCaptureUiQuickCustomTests
             router.ConfigureForTests(
                 new[]
                 {
-                    mainMenu.GetComponent<WarlineCaptureScreenController>(),
-                    quickCustom.GetComponent<WarlineCaptureScreenController>()
+                    mainMenu.GetComponent<WarlineCaptureScreenSystem>(),
+                    quickCustom.GetComponent<WarlineCaptureScreenSystem>()
                 },
                 WarlineCaptureRoute.MainMenu);
 
             Button quickCustomButton = mainMenu.transform.Find("ModeCardList/ModeCard_QuickCustom/Button").GetComponent<Button>();
-            ScreenRouteButton routeButton = quickCustomButton.GetComponent<ScreenRouteButton>();
+            ScreenRouteSystem routeButton = quickCustomButton.GetComponent<ScreenRouteSystem>();
             Assert.NotNull(routeButton);
             InvokeAwake(routeButton);
 
@@ -338,7 +338,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
             CreateRouterScreen(routerRoot.transform, WarlineCaptureRoute.Match);
             instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             instance.transform.SetParent(routerRoot.transform, false);
-            QuickCustomScreenController controller = instance.GetComponent<QuickCustomScreenController>();
+            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
             Assert.NotNull(controller);
 
             controller.Bind(QuickGameConfig.Defaults);
@@ -375,7 +375,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
             instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             instance.transform.SetParent(routerRoot.transform, false);
 
-            QuickCustomScreenController controller = instance.GetComponent<QuickCustomScreenController>();
+            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
             Assert.NotNull(controller);
             InvokeAwake(controller);
 
@@ -441,7 +441,7 @@ public sealed class WarlineCaptureUiQuickCustomTests
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         try
         {
-            QuickCustomScreenController controller = instance.GetComponent<QuickCustomScreenController>();
+            QuickCustomScreenSystem controller = instance.GetComponent<QuickCustomScreenSystem>();
             Assert.NotNull(controller);
 
             QuickGameConfig config = QuickGameConfig.Defaults;
@@ -698,11 +698,11 @@ public sealed class WarlineCaptureUiQuickCustomTests
         awake.Invoke(behaviour, null);
     }
 
-    private static WarlineCaptureScreenController CreateRouterScreen(Transform parent, WarlineCaptureRoute route)
+    private static WarlineCaptureScreenSystem CreateRouterScreen(Transform parent, WarlineCaptureRoute route)
     {
         GameObject screen = new($"Screen_{route}", typeof(RectTransform));
         screen.transform.SetParent(parent, false);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(route);
         return controller;
     }

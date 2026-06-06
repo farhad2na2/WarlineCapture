@@ -6,10 +6,10 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
 {
     [SerializeField] private WarlineCaptureRoute initialRoute = WarlineCaptureRoute.MainMenu;
     [SerializeField] private Transform contentRoot;
-    [SerializeField] private WarlineCaptureScreenController[] screens = Array.Empty<WarlineCaptureScreenController>();
-    [SerializeField] private WarlineCaptureScreenController[] screenPrefabs = Array.Empty<WarlineCaptureScreenController>();
+    [SerializeField] private WarlineCaptureScreenSystem[] screens = Array.Empty<WarlineCaptureScreenSystem>();
+    [SerializeField] private WarlineCaptureScreenSystem[] screenPrefabs = Array.Empty<WarlineCaptureScreenSystem>();
 
-    private readonly Dictionary<WarlineCaptureRoute, WarlineCaptureScreenController> _screenByRoute = new();
+    private readonly Dictionary<WarlineCaptureRoute, WarlineCaptureScreenSystem> _screenByRoute = new();
     private readonly Stack<WarlineCaptureRoute> _backStack = new();
     private bool _initialized;
 
@@ -35,10 +35,10 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
             GoTo(initialRoute, false);
     }
 
-    public void ConfigureForTests(WarlineCaptureScreenController[] configuredScreens, WarlineCaptureRoute route)
+    public void ConfigureForTests(WarlineCaptureScreenSystem[] configuredScreens, WarlineCaptureRoute route)
     {
-        screens = configuredScreens ?? Array.Empty<WarlineCaptureScreenController>();
-        screenPrefabs = Array.Empty<WarlineCaptureScreenController>();
+        screens = configuredScreens ?? Array.Empty<WarlineCaptureScreenSystem>();
+        screenPrefabs = Array.Empty<WarlineCaptureScreenSystem>();
         initialRoute = route;
         _initialized = false;
         _screenByRoute.Clear();
@@ -47,7 +47,7 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
         Initialize();
     }
 
-    public void Register(WarlineCaptureScreenController screen)
+    public void Register(WarlineCaptureScreenSystem screen)
     {
         if (screen == null)
             return;
@@ -64,7 +64,7 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
     {
         InitializeIfNeededWithoutRouting();
 
-        if (!_screenByRoute.TryGetValue(route, out WarlineCaptureScreenController nextScreen))
+        if (!_screenByRoute.TryGetValue(route, out WarlineCaptureScreenSystem nextScreen))
             throw new InvalidOperationException($"No WarlineCapture screen registered for route '{route}'.");
 
         if (HasActiveRoute && ActiveRoute.Equals(route))
@@ -73,7 +73,7 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
         if (pushCurrentRoute && HasActiveRoute)
             _backStack.Push(ActiveRoute);
 
-        if (HasActiveRoute && _screenByRoute.TryGetValue(ActiveRoute, out WarlineCaptureScreenController currentScreen))
+        if (HasActiveRoute && _screenByRoute.TryGetValue(ActiveRoute, out WarlineCaptureScreenSystem currentScreen))
             currentScreen.Hide();
 
         nextScreen.Show();
@@ -91,7 +91,7 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
         return true;
     }
 
-    public bool TryGetRegisteredScreen(WarlineCaptureRoute route, out WarlineCaptureScreenController screen)
+    public bool TryGetRegisteredScreen(WarlineCaptureRoute route, out WarlineCaptureScreenSystem screen)
     {
         InitializeIfNeededWithoutRouting();
         return _screenByRoute.TryGetValue(route, out screen);
@@ -115,10 +115,10 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
         if (contentRoot == null)
             contentRoot = transform;
 
-        foreach (WarlineCaptureScreenController screen in screens)
+        foreach (WarlineCaptureScreenSystem screen in screens)
             Register(screen);
 
-        foreach (WarlineCaptureScreenController screen in contentRoot.GetComponentsInChildren<WarlineCaptureScreenController>(true))
+        foreach (WarlineCaptureScreenSystem screen in contentRoot.GetComponentsInChildren<WarlineCaptureScreenSystem>(true))
             Register(screen);
 
         InstantiateScreenPrefabs();
@@ -126,12 +126,12 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
 
     private void InstantiateScreenPrefabs()
     {
-        foreach (WarlineCaptureScreenController screenPrefab in screenPrefabs)
+        foreach (WarlineCaptureScreenSystem screenPrefab in screenPrefabs)
         {
             if (screenPrefab == null || _screenByRoute.ContainsKey(screenPrefab.Route))
                 continue;
 
-            WarlineCaptureScreenController screen = Instantiate(screenPrefab, contentRoot, false);
+            WarlineCaptureScreenSystem screen = Instantiate(screenPrefab, contentRoot, false);
             screen.name = screenPrefab.name;
             Register(screen);
         }
@@ -139,7 +139,7 @@ public sealed class WarlineCaptureRouter : MonoBehaviour
 
     private void HideAllScreens()
     {
-        foreach (WarlineCaptureScreenController screen in _screenByRoute.Values)
+        foreach (WarlineCaptureScreenSystem screen in _screenByRoute.Values)
             screen.Hide();
     }
 

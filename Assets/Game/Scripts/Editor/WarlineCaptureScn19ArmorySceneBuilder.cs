@@ -248,7 +248,7 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         rootRect.pivot = new Vector2(0.5f, 0.5f);
         rootRect.sizeDelta = new Vector2(CanvasWidth, CanvasHeight);
 
-        WarlineCaptureScreenController controller = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = root.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Armory);
 
         GameObject visualRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("SCN19_LayeredCanvas", root.transform);
@@ -327,7 +327,7 @@ public static class WarlineCaptureScn19ArmorySceneBuilder
         AddSliced(parent, "TitleBackPanel", "scn19_title_back_panel_frame.png", rect, new Vector4(42, 42, 18, 18), Color.white);
         Button back = AddButton(parent, "HeaderBar/BackButton", "scn19_small_counter_chip_frame.png", new RectInt(18, rect.y, 78, 78), false, true);
         WarlineCaptureLayeredUiBuilderUtility.AddFittedImage(back.transform, LayerRoot, "IconImage", "scn19_icon_back_arrow.png", new RectInt(10, 8, 52, 48), 42, 42, TextMain);
-        ScreenRouteButton routeButton = back.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem routeButton = back.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(routeButton, "useBackNavigation", true);
 
         AddFitted(parent, "TitleIcon", "scn19_icon_armory_crossed_weapons.png", new RectInt(rect.x + 26, rect.y + 16, 70, 58), 58, 50, TextMuted);

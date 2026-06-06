@@ -7,10 +7,10 @@ using UnityEngine;
 public sealed class AssistantContextProvider
 {
     private readonly World _world;
-    private readonly BattleHudGameplayBridge _gameplayBridge;
+    private readonly BattleHudRuntimeFeedbackView _runtimeFeedbackView;
     private readonly WarlineCaptureRouter _router;
     private readonly WarlineCaptureMatchResultFlow _resultFlow;
-    private readonly MatchObjectivePanelController _objectivePanel;
+    private readonly MatchObjectivePanelSystem _objectivePanel;
     private readonly RuntimeGameplayStateSystem _runtimeGameplayStateSystem = new();
 
     public AssistantContextProvider()
@@ -19,13 +19,13 @@ public sealed class AssistantContextProvider
 
     public AssistantContextProvider(
         World world,
-        BattleHudGameplayBridge gameplayBridge,
+        BattleHudRuntimeFeedbackView runtimeFeedbackView,
         WarlineCaptureRouter router = null,
         WarlineCaptureMatchResultFlow resultFlow = null,
-        MatchObjectivePanelController objectivePanel = null)
+        MatchObjectivePanelSystem objectivePanel = null)
     {
         _world = world;
-        _gameplayBridge = gameplayBridge;
+        _runtimeFeedbackView = runtimeFeedbackView;
         _router = router;
         _resultFlow = resultFlow;
         _objectivePanel = objectivePanel;
@@ -34,10 +34,10 @@ public sealed class AssistantContextProvider
     public AssistantContext BuildContext(TutorialSessionState sessionState = null)
     {
         World world = ResolveWorld();
-        BattleHudGameplayBridge bridge = _gameplayBridge ?? BattleHudGameplayBridge.ResolveActive();
+        BattleHudRuntimeFeedbackView view = _runtimeFeedbackView ?? BattleHudRuntimeFeedbackSystem.ResolveActiveView();
         WarlineCaptureRouter router = _router ?? ResolveActiveRouter();
         WarlineCaptureMatchResultFlow resultFlow = _resultFlow ?? ResolveResultFlow();
-        MatchObjectivePanelController objectivePanel = _objectivePanel ?? ResolveObjectivePanel();
+        MatchObjectivePanelSystem objectivePanel = _objectivePanel ?? ResolveObjectivePanel();
         bool playRequested = _runtimeGameplayStateSystem.PlayRequested;
 
         var context = new AssistantContext
@@ -58,7 +58,7 @@ public sealed class AssistantContextProvider
         };
 
         ApplyRuntimeEntityState(context, sessionState, world);
-        ApplyLatestCommandResult(context, sessionState, bridge);
+        ApplyLatestCommandResult(context, sessionState, view);
         return context;
     }
 
@@ -120,11 +120,12 @@ public sealed class AssistantContextProvider
     private static void ApplyLatestCommandResult(
         AssistantContext context,
         TutorialSessionState sessionState,
-        BattleHudGameplayBridge bridge)
+        BattleHudRuntimeFeedbackView view)
     {
-        context.CurrentCommandMode = bridge != null ? bridge.CurrentCommandMode : TacticalCommandMode.None;
+        BattleHudRuntimeFeedbackState state = BattleHudRuntimeFeedbackSystem.GetState(view);
+        context.CurrentCommandMode = state.CurrentCommandMode;
 
-        if (bridge == null || !bridge.HasLastCommandResult)
+        if (!state.HasLastCommandResult)
         {
             context.LastCommandResultAccepted = true;
             context.LastCommandReasonCode = TacticalCommandReasonCode.None;
@@ -132,7 +133,7 @@ public sealed class AssistantContextProvider
             return;
         }
 
-        TacticalCommandResult result = bridge.LastCommandResult;
+        TacticalCommandResult result = state.LastCommandResult;
         context.LastCommandResultAccepted = result.Accepted;
         context.LastCommandReasonCode = result.ReasonCode;
         context.LastCommandReasonText = !string.IsNullOrWhiteSpace(result.Message)
@@ -174,12 +175,12 @@ public sealed class AssistantContextProvider
         return null;
     }
 
-    private static MatchObjectivePanelController ResolveObjectivePanel()
+    private static MatchObjectivePanelSystem ResolveObjectivePanel()
     {
-        MatchObjectivePanelController[] panels = Resources.FindObjectsOfTypeAll<MatchObjectivePanelController>();
+        MatchObjectivePanelSystem[] panels = Resources.FindObjectsOfTypeAll<MatchObjectivePanelSystem>();
         for (int i = 0; i < panels.Length; i++)
         {
-            MatchObjectivePanelController panel = panels[i];
+            MatchObjectivePanelSystem panel = panels[i];
             if (panel != null && panel.gameObject.scene.IsValid())
                 return panel;
         }
@@ -201,7 +202,7 @@ public sealed class AssistantContextProvider
             router != null && router.HasActiveRoute && router.ActiveRoute == WarlineCaptureRoute.Match;
     }
 
-    private static bool ResolveObjectivePanelVisible(MatchObjectivePanelController objectivePanel, WarlineCaptureRouter router, bool playRequested)
+    private static bool ResolveObjectivePanelVisible(MatchObjectivePanelSystem objectivePanel, WarlineCaptureRouter router, bool playRequested)
     {
         if (objectivePanel != null)
             return objectivePanel.gameObject.activeInHierarchy;

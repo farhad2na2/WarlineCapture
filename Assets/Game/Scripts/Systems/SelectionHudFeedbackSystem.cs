@@ -19,14 +19,14 @@ public sealed class SelectionHudFeedbackSystem
         }
     }
 
-    private BattleHudGameplayBridge _battleHudBridge;
+    private BattleHudRuntimeFeedbackView _battleHudView;
     private readonly MatchOverlayCommandTabFeedbackSystem _commandTabFeedbackSystem = new();
     private World _queryWorld;
     private EntityQuery _feedbackQuery;
 
-    public void ResetBridgeCache()
+    public void ResetViewCache()
     {
-        _battleHudBridge = null;
+        _battleHudView = null;
     }
 
     public Entity EnsureFeedbackQueue(EntityManager em)
@@ -135,15 +135,15 @@ public sealed class SelectionHudFeedbackSystem
         if (feedback.Length == 0)
             return;
 
-        BattleHudGameplayBridge bridge = ResolveBattleHudBridge();
-        if (bridge == null)
+        BattleHudRuntimeFeedbackView view = ResolveBattleHudView();
+        if (view == null)
         {
             feedback.Clear();
             return;
         }
 
         for (int i = 0; i < feedback.Length; i++)
-            ApplyFeedback(bridge, feedback[i]);
+            ApplyFeedback(view, feedback[i]);
         feedback.Clear();
     }
 
@@ -204,8 +204,9 @@ public sealed class SelectionHudFeedbackSystem
     {
         QueueClearCommandMode(em);
         ProcessPendingFeedback(em);
-        BattleHudGameplayBridge bridge = BattleHudGameplayBridge.ResolveActive();
-        if (bridge == null || bridge.StickyCommandMode == TacticalCommandMode.None)
+        BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
+        if (view == null ||
+            BattleHudRuntimeFeedbackSystem.GetState(view).StickyCommandMode == TacticalCommandMode.None)
             _commandTabFeedbackSystem.ClearCommandMode(null);
     }
 
@@ -252,30 +253,30 @@ public sealed class SelectionHudFeedbackSystem
                context.TryGetDefaultEntityManager(out em);
     }
 
-    private static void ApplyFeedback(BattleHudGameplayBridge bridge, SelectionHudFeedbackElement feedback)
+    private static void ApplyFeedback(BattleHudRuntimeFeedbackView view, SelectionHudFeedbackElement feedback)
     {
         switch (feedback.Kind)
         {
             case SelectionHudFeedbackKind.Selection:
             case SelectionHudFeedbackKind.SquadSelection:
-                bridge.ApplySelection(feedback.Label.ToString(), feedback.Status.ToString());
+                BattleHudRuntimeFeedbackSystem.ApplySelection(view, feedback.Label.ToString(), feedback.Status.ToString());
                 break;
             case SelectionHudFeedbackKind.ClearSelection:
-                bridge.ClearSelection();
+                BattleHudRuntimeFeedbackSystem.ClearSelection(view);
                 break;
             case SelectionHudFeedbackKind.CommandMode:
-                bridge.ApplyCommandMode((TacticalCommandMode)feedback.CommandMode);
+                BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, (TacticalCommandMode)feedback.CommandMode);
                 break;
             case SelectionHudFeedbackKind.ClearCommandMode:
-                bridge.ClearCommandMode();
+                BattleHudRuntimeFeedbackSystem.ClearCommandMode(view);
                 break;
             case SelectionHudFeedbackKind.CommandResult:
-                bridge.ApplyCommandResult(feedback.CommandAccepted != 0
+                BattleHudRuntimeFeedbackSystem.ApplyCommandResult(view, feedback.CommandAccepted != 0
                     ? TacticalCommandResult.Success()
                     : TacticalCommandResult.Rejected((TacticalCommandReasonCode)feedback.ReasonCode));
                 break;
             case SelectionHudFeedbackKind.WorldMarkersVisible:
-                bridge.SetWorldMarkersVisible(feedback.Visible != 0);
+                BattleHudRuntimeFeedbackSystem.SetWorldMarkersVisible(view, feedback.Visible != 0);
                 break;
         }
     }
@@ -289,12 +290,12 @@ public sealed class SelectionHudFeedbackSystem
         return result;
     }
 
-    private BattleHudGameplayBridge ResolveBattleHudBridge()
+    private BattleHudRuntimeFeedbackView ResolveBattleHudView()
     {
-        if (_battleHudBridge != null)
-            return _battleHudBridge;
+        if (_battleHudView != null)
+            return _battleHudView;
 
-        _battleHudBridge = BattleHudGameplayBridge.ResolveActive();
-        return _battleHudBridge;
+        _battleHudView = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
+        return _battleHudView;
     }
 }

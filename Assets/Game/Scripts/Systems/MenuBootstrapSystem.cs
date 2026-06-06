@@ -39,8 +39,8 @@ internal sealed class MenuBootstrapSystem
         bool wasInitialized = initialized;
         EnsurePersistentDiagnosticsInitialized();
 
-        if (view.ShellEcsBridge != null)
-            view.ShellEcsBridge.Configure(view.ShellView);
+        if (view.ShellEcsPresentation != null)
+            view.ShellEcsPresentation.Configure(view.ShellView);
         if (view.Router != null)
             view.Router.Initialize();
 

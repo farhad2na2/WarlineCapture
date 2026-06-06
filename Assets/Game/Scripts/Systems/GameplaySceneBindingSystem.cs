@@ -21,16 +21,16 @@ public sealed class GameplaySceneBindingSystem
         World world,
         SelectionUiCommandSystem selectionUiCommandSystem)
     {
-        foreach (WarlineCaptureShellContentPresenterView presenter in Resources.FindObjectsOfTypeAll<WarlineCaptureShellContentPresenterView>())
+        foreach (WarlineCaptureShellContentSystem contentSystem in Resources.FindObjectsOfTypeAll<WarlineCaptureShellContentSystem>())
         {
-            if (IsLoadedSceneObject(presenter))
-                presenter.BindGameplayRuntimeDependencies(selectionUiCommandSystem);
+            if (IsLoadedSceneObject(contentSystem))
+                contentSystem.BindGameplayRuntimeDependencies(selectionUiCommandSystem);
         }
 
         foreach (MatchOverlayCommandControlsView controls in Resources.FindObjectsOfTypeAll<MatchOverlayCommandControlsView>())
         {
             if (IsLoadedSceneObject(controls) &&
-                controls.GetComponentInParent<WarlineCaptureShellContentPresenterView>(true) == null)
+                controls.GetComponentInParent<WarlineCaptureShellContentSystem>(true) == null)
             {
                 _matchOverlayCommandInputSystem.Bind(controls, selectionUiCommandSystem);
             }
@@ -43,14 +43,14 @@ public sealed class GameplaySceneBindingSystem
 
             WarlineCaptureRouter router = binding.GetComponentInParent<WarlineCaptureRouter>(true);
             WarlineCaptureMatchResultFlow resultFlow = binding.GetComponentInParent<WarlineCaptureMatchResultFlow>(true);
-            MatchObjectivePanelController objectivePanel = binding.GetComponentInParent<MatchObjectivePanelController>(true);
-            BattleHudGameplayBridge bridge = binding.GetComponentInParent<BattleHudGameplayBridge>(true);
-            if (bridge == null)
-                bridge = FindLoadedSceneComponent<BattleHudGameplayBridge>();
+            MatchObjectivePanelSystem objectivePanel = binding.GetComponentInParent<MatchObjectivePanelSystem>(true);
+            BattleHudRuntimeFeedbackView view = binding.GetComponentInParent<BattleHudRuntimeFeedbackView>(true);
+            if (view == null)
+                view = FindLoadedSceneComponent<BattleHudRuntimeFeedbackView>();
 
             binding.BindRuntimeDependencies(
                 world,
-                bridge,
+                view,
                 router,
                 resultFlow,
                 objectivePanel);

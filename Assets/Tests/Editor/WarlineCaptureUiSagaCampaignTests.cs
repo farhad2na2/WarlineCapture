@@ -31,7 +31,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         AssertText(prefab, "MapViewport/MissionNodeContainer/Node_1_1/CodeText", "1-1");
         AssertText(prefab, "MapViewport/MissionNodeContainer/Node_1_2/TitleText", ChapterOneMissionCatalog.All[1].DisplayName);
         AssertChapterOneNodeMetadata(prefab);
-        Assert.NotNull(prefab.GetComponent<SagaMapScreenController>());
+        Assert.NotNull(prefab.GetComponent<SagaMapScreenSystem>());
         AssertText(prefab, "NodeInfoPanel/SelectedTitleText", "SELECTED: 1-2 ESTABLISH THE BASE");
         AssertText(prefab, "NodeInfoPanel/SelectedStatusText", "AVAILABLE");
         AssertText(prefab, "NodeInfoPanel/SelectedStarsText", "0 / 3 STARS");
@@ -57,7 +57,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_SagaMap"));
         try
         {
-            SagaMapScreenController controller = instance.GetComponent<SagaMapScreenController>();
+            SagaMapScreenSystem controller = instance.GetComponent<SagaMapScreenSystem>();
             Assert.NotNull(controller);
             controller.RefreshForTests();
 
@@ -100,7 +100,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_SagaMap"));
         try
         {
-            SagaMapScreenController controller = instance.GetComponent<SagaMapScreenController>();
+            SagaMapScreenSystem controller = instance.GetComponent<SagaMapScreenSystem>();
             Assert.NotNull(controller);
             controller.RefreshForTests();
 
@@ -151,7 +151,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_MissionBriefing"));
         try
         {
-            MissionBriefingScreenController controller = instance.GetComponent<MissionBriefingScreenController>();
+            MissionBriefingScreenSystem controller = instance.GetComponent<MissionBriefingScreenSystem>();
             Assert.NotNull(controller);
             controller.RefreshForTests();
 
@@ -195,7 +195,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_MissionBriefing"));
         try
         {
-            MissionBriefingScreenController controller = instance.GetComponent<MissionBriefingScreenController>();
+            MissionBriefingScreenSystem controller = instance.GetComponent<MissionBriefingScreenSystem>();
             Assert.NotNull(controller);
             controller.RefreshForTests();
 
@@ -220,7 +220,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_MissionBriefing"));
         try
         {
-            MissionBriefingScreenController controller = instance.GetComponent<MissionBriefingScreenController>();
+            MissionBriefingScreenSystem controller = instance.GetComponent<MissionBriefingScreenSystem>();
             Assert.NotNull(controller);
             controller.RefreshForTests();
 
@@ -271,7 +271,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
 
     private static void AssertRoute(GameObject prefab, WarlineCaptureRoute expected)
     {
-        WarlineCaptureScreenController controller = prefab.GetComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = prefab.GetComponent<WarlineCaptureScreenSystem>();
         Assert.NotNull(controller);
         Assert.AreEqual(expected, controller.Route);
     }
@@ -291,7 +291,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
         Assert.NotNull(target, path);
         Button button = target.GetComponent<Button>();
         Assert.NotNull(button, path);
-        ScreenRouteButton route = target.GetComponent<ScreenRouteButton>();
+        ScreenRouteSystem route = target.GetComponent<ScreenRouteSystem>();
         Assert.NotNull(route, path);
         var serialized = new SerializedObject(route);
         Assert.AreEqual((int)expected, serialized.FindProperty("route").enumValueIndex, path);
@@ -301,7 +301,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
     {
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
-        WarlineCaptureMissionSessionButton sessionButton = target.GetComponent<WarlineCaptureMissionSessionButton>();
+        WarlineCaptureMissionSessionSystem sessionButton = target.GetComponent<WarlineCaptureMissionSessionSystem>();
         Assert.NotNull(sessionButton, path);
         var serialized = new SerializedObject(sessionButton);
         Assert.AreEqual(expectedMissionId, serialized.FindProperty("missionId").stringValue, path);

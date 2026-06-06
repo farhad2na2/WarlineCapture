@@ -1647,7 +1647,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
     private static void OpenBuildDrawerForCapture(GameObject instance)
     {
-        BuildDrawerPanelController drawerController = instance.GetComponent<BuildDrawerPanelController>();
+        BuildDrawerPanelSystem drawerController = instance.GetComponent<BuildDrawerPanelSystem>();
         if (drawerController != null)
         {
             drawerController.Open();
@@ -1671,7 +1671,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetCaptureRootActive(instance, "AssistantLayer/AssistantEntryButton", true);
         SetCaptureRootActive(instance, "AssistantLayer/AssistantPanelDock", true);
 
-        AssistantPanelController assistantPanelController = instance.GetComponent<AssistantPanelController>();
+        AssistantPanelSystem assistantPanelController = instance.GetComponent<AssistantPanelSystem>();
         if (assistantPanelController != null)
         {
             assistantPanelController.TogglePresentation();
@@ -1685,7 +1685,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
     private static void OpenCommandWheelForCapture(GameObject instance)
     {
-        CommandWheelPanelController wheelController = instance.GetComponent<CommandWheelPanelController>();
+        CommandWheelPanelSystem wheelController = instance.GetComponent<CommandWheelPanelSystem>();
         if (wheelController != null)
         {
             wheelController.Open();
@@ -1706,7 +1706,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             preview.SetAsFirstSibling();
         }
 
-        BattleHudTacticalFeedbackController feedbackController = instance.GetComponent<BattleHudTacticalFeedbackController>();
+        BattleHudTacticalFeedbackSystem feedbackController = instance.GetComponent<BattleHudTacticalFeedbackSystem>();
         if (feedbackController != null)
         {
             feedbackController.SetWorldMarkersVisible(true);
@@ -1945,7 +1945,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         router.Initialize();
         router.GoTo(WarlineCaptureRoute.Match, false);
 
-        WarlineCaptureScreenController matchScreen = FindRouteScreenForCapture(shell, WarlineCaptureRoute.Match);
+        WarlineCaptureScreenSystem matchScreen = FindRouteScreenForCapture(shell, WarlineCaptureRoute.Match);
         if (matchScreen == null)
             throw new MissingReferenceException("Route-driven capture could not resolve Screen_MatchOverlay after routing to Match.");
 
@@ -1990,9 +1990,9 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         safeAreaRect.offsetMax = Vector2.zero;
     }
 
-    private static WarlineCaptureScreenController FindRouteScreenForCapture(GameObject shell, WarlineCaptureRoute route)
+    private static WarlineCaptureScreenSystem FindRouteScreenForCapture(GameObject shell, WarlineCaptureRoute route)
     {
-        foreach (WarlineCaptureScreenController screen in shell.GetComponentsInChildren<WarlineCaptureScreenController>(true))
+        foreach (WarlineCaptureScreenSystem screen in shell.GetComponentsInChildren<WarlineCaptureScreenSystem>(true))
         {
             if (screen != null && screen.Route == route)
                 return screen;
@@ -2024,7 +2024,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static void ConfigureM01IntegratedCaptureState(GameObject instance, M01IntegratedCaptureState state)
     {
         ConfigureM01NoSelectionCaptureState(instance);
-        BattleHudTacticalFeedbackController feedbackController = instance.GetComponent<BattleHudTacticalFeedbackController>();
+        BattleHudTacticalFeedbackSystem feedbackController = instance.GetComponent<BattleHudTacticalFeedbackSystem>();
 
         switch (state)
         {
@@ -2071,25 +2071,25 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         InitialUnitsRuntimeState.PlayRequested = true;
         EnableM01IntegratedPreview(instance);
 
-        MatchObjectivePanelController objectivePanel = instance.GetComponent<MatchObjectivePanelController>();
+        MatchObjectivePanelSystem objectivePanel = instance.GetComponent<MatchObjectivePanelSystem>();
         objectivePanel?.RefreshForTests();
 
-        M01InfantryOnlyHudScopeController m01Scope = instance.GetComponent<M01InfantryOnlyHudScopeController>();
+        M01InfantryOnlyHudScopeSystem m01Scope = instance.GetComponent<M01InfantryOnlyHudScopeSystem>();
         m01Scope?.Refresh();
 
-        BattleHudTacticalFeedbackController feedbackController = instance.GetComponent<BattleHudTacticalFeedbackController>();
+        BattleHudTacticalFeedbackSystem feedbackController = instance.GetComponent<BattleHudTacticalFeedbackSystem>();
         feedbackController?.HideSelectedEntity();
         feedbackController?.HideCommandMode();
         feedbackController?.HideInvalidCommand();
         feedbackController?.SetWorldMarkersVisible(false);
 
-        AssistantPanelController assistantPanelController = instance.GetComponent<AssistantPanelController>();
+        AssistantPanelSystem assistantPanelController = instance.GetComponent<AssistantPanelSystem>();
         assistantPanelController?.Hide();
 
-        BuildDrawerPanelController buildDrawerController = instance.GetComponent<BuildDrawerPanelController>();
+        BuildDrawerPanelSystem buildDrawerController = instance.GetComponent<BuildDrawerPanelSystem>();
         buildDrawerController?.Close();
 
-        CommandWheelPanelController commandWheelController = instance.GetComponent<CommandWheelPanelController>();
+        CommandWheelPanelSystem commandWheelController = instance.GetComponent<CommandWheelPanelSystem>();
         commandWheelController?.Close();
 
         SetCaptureRootActive(instance, "AssistantLayer/AssistantEntryButton", false);
@@ -2113,7 +2113,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         }
     }
 
-    private static void ShowM01SelectedSquad(BattleHudTacticalFeedbackController feedbackController)
+    private static void ShowM01SelectedSquad(BattleHudTacticalFeedbackSystem feedbackController)
     {
         feedbackController?.ShowSelectedEntity("RIFLE SQUAD 01", "120 / 120");
     }
@@ -2134,7 +2134,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetCaptureRootActive(instance, "AssistantLayer/AssistantEntryButton", true);
         SetCaptureRootActive(instance, "AssistantLayer/AssistantPanelDock", true);
 
-        AssistantPanelController controller = instance.GetComponent<AssistantPanelController>();
+        AssistantPanelSystem controller = instance.GetComponent<AssistantPanelSystem>();
         if (controller != null)
         {
             controller.ShowCurrentPresentation();
@@ -2166,7 +2166,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             popupRect.localScale = Vector3.one;
         }
 
-        MissionResultPopupController controller = popup.GetComponent<MissionResultPopupController>();
+        MissionResultPopupSystem controller = popup.GetComponent<MissionResultPopupSystem>();
         controller?.Show(CreateM01MissionResultDataForCapture());
         popup.transform.SetAsLastSibling();
     }
@@ -2305,7 +2305,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             scaler.matchWidthOrHeight = 0.5f;
 
             WarlineCaptureRouter router = root.AddComponent<WarlineCaptureRouter>();
-            WarlineCaptureModalController modal = root.AddComponent<WarlineCaptureModalController>();
+            WarlineCaptureModalSystem modal = root.AddComponent<WarlineCaptureModalSystem>();
             WarlineCaptureMatchResultFlow resultFlow = root.AddComponent<WarlineCaptureMatchResultFlow>();
             WarlineCaptureOperationModalFlow operationFlow = root.AddComponent<WarlineCaptureOperationModalFlow>();
             WarlineCaptureUiAccessibilityApplier accessibilityApplier = root.AddComponent<WarlineCaptureUiAccessibilityApplier>();
@@ -2374,7 +2374,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateSplashScreen()
     {
         GameObject screen = CreateRectObject("Screen_Splash", null);
-        SplashScreenController controller = screen.AddComponent<SplashScreenController>();
+        SplashScreenSystem controller = screen.AddComponent<SplashScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Splash);
 
         Image background = screen.AddComponent<Image>();
@@ -2510,7 +2510,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GameObject screen = CreateRectObject("Screen_MainMenu", null);
         SetSize(screen, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
         ((RectTransform)screen.transform).sizeDelta = Vector2.zero;
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.MainMenu);
         Image background = screen.AddComponent<Image>();
         background.color = new Color(0.006f, 0.020f, 0.024f, 1f);
@@ -2617,7 +2617,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)settingsIcon.transform, 20f, 20f, 34f, 34f, 74f, 74f);
         RectTransform settingsRect = (RectTransform)settingsButton.transform;
         ConfigurePixelRect(settingsRect, 1572f, 18f, 74f, 74f, 1672f, 120f);
-        ScreenRouteButton settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(settingsRoute, "route", (int)WarlineCaptureRoute.Settings);
 
         GameObject leftNav = CreateRectObject("LeftNav", screen.transform);
@@ -2665,38 +2665,38 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)profileButton.transform, 0f, 306f, 350f, 66f, 350f, 667f);
         ApplyButtonAnimationPose(profileButton, true);
         profileButton.gameObject.SetActive(false);
-        UnityEngine.Object.DestroyImmediate(profileButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton profileRoute = profileButton.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(profileButton.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem profileRoute = profileButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(profileRoute, "route", (int)WarlineCaptureRoute.CommanderProfile);
         Button inboxButton = CreateMainMenuNavButton("InboxButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconInboxPath, "Inbox", "Inbox and alerts are planned for the live operations layer.");
         ConfigurePixelRect((RectTransform)inboxButton.transform, 0f, 312f, 350f, 56f, 350f, 667f);
         AddDesignedUnavailableBadge(inboxButton.transform, "UNAVAILABLE");
-        UnityEngine.Object.DestroyImmediate(inboxButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton inboxRoute = inboxButton.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(inboxButton.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem inboxRoute = inboxButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(inboxRoute, "route", (int)WarlineCaptureRoute.Inbox);
         Button storeButton = CreateMainMenuNavButton("StoreButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconStorePath, "Store", "Store and resource purchase flows are not active in this build.");
         ConfigurePixelRect((RectTransform)storeButton.transform, 0f, 374f, 350f, 56f, 350f, 667f);
         AddDesignedUnavailableBadge(storeButton.transform, "UNAVAILABLE");
-        UnityEngine.Object.DestroyImmediate(storeButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton storeRoute = storeButton.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(storeButton.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem storeRoute = storeButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(storeRoute, "route", (int)WarlineCaptureRoute.CommandExchange);
         Button eventsButton = CreateMainMenuNavButton("EventsButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconEventsPath, "Events", "Event mode cards will use the same ModeCardView component.");
         ConfigurePixelRect((RectTransform)eventsButton.transform, 0f, 436f, 350f, 56f, 350f, 667f);
         AddDesignedUnavailableBadge(eventsButton.transform, "UNAVAILABLE");
-        UnityEngine.Object.DestroyImmediate(eventsButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton eventsRoute = eventsButton.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(eventsButton.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem eventsRoute = eventsButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(eventsRoute, "route", (int)WarlineCaptureRoute.Events);
         Button rankingButton = CreateMainMenuNavButton("RankingButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconRankingPath, "Ranking", "Ranking is planned after profile and results are persisted.");
         ConfigurePixelRect((RectTransform)rankingButton.transform, 0f, 498f, 350f, 56f, 350f, 667f);
         AddDesignedUnavailableBadge(rankingButton.transform, "UNAVAILABLE");
-        UnityEngine.Object.DestroyImmediate(rankingButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton rankingRoute = rankingButton.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(rankingButton.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem rankingRoute = rankingButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(rankingRoute, "route", (int)WarlineCaptureRoute.Ranking);
         Button commandFeedButton = CreateMainMenuNavButton("CommandFeedRouteButton", leftNav.transform, MainMenuLayeredLeftNavRowFramePath, MainMenuLayeredLeftNavIconCommandFeedPath, "Command Feed", "Command Feed is designed unavailable until feed data is live.");
         ConfigurePixelRect((RectTransform)commandFeedButton.transform, 0f, 560f, 350f, 56f, 350f, 667f);
         AddDesignedUnavailableBadge(commandFeedButton.transform, "UNAVAILABLE");
-        UnityEngine.Object.DestroyImmediate(commandFeedButton.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton commandFeedRoute = commandFeedButton.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(commandFeedButton.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem commandFeedRoute = commandFeedButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(commandFeedRoute, "route", (int)WarlineCaptureRoute.CommandFeed);
 
         GameObject modeCardList = CreateRectObject("ModeCardList", screen.transform);
@@ -2704,20 +2704,20 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect(listRect, 398f, 148f, 1236f, 620f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
 
         GameObject sagaCard = CreateMainMenuTargetModeCard("ModeCard_Saga", modeCardList.transform, "Saga Campaign", "Chapter 1: First Contact", "Play through the story arc\nand reclaim key districts.", MainMenuLayeredModeCardArtSagaPath, new Color(0.12f, 0.82f, 0.95f, 1f), false, 0f, 0f, 374f, 588f);
-        ScreenRouteButton sagaRoute = GetModeCardClickTarget(sagaCard).AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem sagaRoute = GetModeCardClickTarget(sagaCard).AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(sagaRoute, "route", (int)WarlineCaptureRoute.SagaMap);
 
         GameObject operationCard = CreateMainMenuTargetModeCard("ModeCard_Operation", modeCardList.transform, "Persistent Operation", "District pressure rising", "Maintain control and manage\ndistrict and city operations.", MainMenuLayeredModeCardArtOperationPath, new Color(1f, 0.66f, 0.10f, 1f), true, 396f, 0f, 386f, 588f);
-        ScreenRouteButton operationRoute = GetModeCardClickTarget(operationCard).AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem operationRoute = GetModeCardClickTarget(operationCard).AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(operationRoute, "route", (int)WarlineCaptureRoute.OperationDashboard);
 
         GameObject quickCustomCard = CreateMainMenuTargetModeCard("ModeCard_QuickCustom", modeCardList.transform, "Quick Custom Game", "Skirmish setup route available.", "Set up a custom scenario\nand jump into battle.", MainMenuLayeredModeCardArtQuickCustomPath, new Color(0.62f, 0.88f, 0.38f, 1f), false, 804f, 0f, 432f, 588f);
-        ScreenRouteButton quickCustomRoute = GetModeCardClickTarget(quickCustomCard).AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem quickCustomRoute = GetModeCardClickTarget(quickCustomCard).AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(quickCustomRoute, "route", (int)WarlineCaptureRoute.QuickCustomSetup);
 
         Button deployButton = CreateMainMenuDeployButton("DeployCommandButton", screen.transform);
         ConfigurePixelRect((RectTransform)deployButton.transform, 1132f, 780f, 506f, 102f, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
-        ScreenRouteButton deployRoute = deployButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem deployRoute = deployButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(deployRoute, "route", (int)WarlineCaptureRoute.SagaMap);
 
         GameObject standardAspectRoot = CreateRectObject("StandardAspectOnlyRoot", screen.transform);
@@ -2803,7 +2803,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateSettingsScreen()
     {
         GameObject screen = CreateRectObject("Screen_Settings", null);
-        SettingsScreenController controller = screen.AddComponent<SettingsScreenController>();
+        SettingsScreenSystem controller = screen.AddComponent<SettingsScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Settings);
         Image background = screen.AddComponent<Image>();
         background.color = new Color(0.004f, 0.016f, 0.019f, 1f);
@@ -2828,7 +2828,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         TMP_Text backLabel = backButton.GetComponentInChildren<TMP_Text>();
         if (backLabel != null)
             backLabel.fontSize = 54f;
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text titleText = CreateText("TitleText", headerBar.transform, "SETTINGS", 58f, TextAlignmentOptions.Left);
@@ -2923,7 +2923,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateQuickCustomSetupScreen()
     {
         GameObject screen = CreateRectObject("Screen_QuickCustomSetup", null);
-        QuickCustomScreenController controller = screen.AddComponent<QuickCustomScreenController>();
+        QuickCustomScreenSystem controller = screen.AddComponent<QuickCustomScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.QuickCustomSetup);
 
         Image background = screen.AddComponent<Image>();
@@ -2942,7 +2942,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         Button backButton = CreateSettingsBackButton("BackButton", headerBar.transform);
         ConfigurePixelRect((RectTransform)backButton.transform, 14f, 18f, 104f, 70f, 1604f, 104f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text titleText = CreateText("TitleText", headerBar.transform, "CUSTOM GAME SETUP", 56f, TextAlignmentOptions.Left);
@@ -3520,7 +3520,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateMatchOverlayScreen()
     {
         GameObject screen = CreateRectObject("Screen_MatchOverlay", null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Match);
         GameObject tacticalMapQaPreview = CreateTacticalMapQaPreview(screen.transform);
         tacticalMapQaPreview.SetActive(false);
@@ -3545,7 +3545,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CreateMatchDivider("StarDivider", objectivePanel.transform, 34f, 230f, 298f, 1f, 358f, 282f);
         GameObject starGoalRow1 = CreateMatchObjectiveRow("StarGoal_1", objectivePanel.transform, "Complete Mission", 28f, 232f, 304f, 28f, true);
         AddMatchFrameChrome(objectivePanel.transform, "ObjectivePanel");
-        MatchObjectivePanelController objectiveController = screen.AddComponent<MatchObjectivePanelController>();
+        MatchObjectivePanelSystem objectiveController = screen.AddComponent<MatchObjectivePanelSystem>();
         SetSerializedObject(objectiveController, "objectivePanel", objectivePanel);
         SetSerializedArray(objectiveController, "objectiveRows", objectiveRow1, objectiveRow2, objectiveRow3);
         SetSerializedArray(
@@ -3611,7 +3611,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigureFixedLeftProportionalY((RectTransform)assistantPanelDock.transform, 674f, 90f, 660f, 620f, MainMenuReferenceResolution.y);
         Button assistantEntryButton = CreateAssistantEntryButton(assistantLayer.transform);
         ConfigureFixedLeftProportionalY((RectTransform)assistantEntryButton.transform, 14f, 316f, 190f, 96f, MainMenuReferenceResolution.y);
-        AssistantPanelController assistantPanelController = screen.AddComponent<AssistantPanelController>();
+        AssistantPanelSystem assistantPanelController = screen.AddComponent<AssistantPanelSystem>();
         AssistantPanelView assistantPanelPrefab = AssetDatabase.LoadAssetAtPath<AssistantPanelView>(AssistantPanelPrefabPath);
         SetSerializedObject(assistantPanelController, "panelPrefab", assistantPanelPrefab);
         SetSerializedObject(assistantPanelController, "panelRoot", assistantPanelDock.transform);
@@ -3673,20 +3673,20 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         GameObject buildDrawer = CreateBuildDrawerCanvas(screen.transform, out Button buildDrawerCloseButton);
         buildDrawer.SetActive(false);
-        BuildDrawerPanelController buildDrawerController = screen.AddComponent<BuildDrawerPanelController>();
+        BuildDrawerPanelSystem buildDrawerController = screen.AddComponent<BuildDrawerPanelSystem>();
         SetSerializedObject(buildDrawerController, "drawerRoot", buildDrawer);
         SetSerializedObject(buildDrawerController, "openButton", buildButton);
         SetSerializedObject(buildDrawerController, "closeButton", buildDrawerCloseButton);
 
         GameObject commandWheel = CreateCommandWheelCanvas(screen.transform, out Button commandWheelCloseButton, out Button commandWheelScrimButton);
         commandWheel.SetActive(false);
-        CommandWheelPanelController commandWheelController = screen.AddComponent<CommandWheelPanelController>();
+        CommandWheelPanelSystem commandWheelController = screen.AddComponent<CommandWheelPanelSystem>();
         SetSerializedObject(commandWheelController, "wheelRoot", commandWheel);
         SetSerializedObject(commandWheelController, "openButton", specialButton);
         SetSerializedObject(commandWheelController, "closeButton", commandWheelCloseButton);
         SetSerializedObject(commandWheelController, "scrimButton", commandWheelScrimButton);
 
-        M01InfantryOnlyHudScopeController infantryOnlyHudScope = screen.AddComponent<M01InfantryOnlyHudScopeController>();
+        M01InfantryOnlyHudScopeSystem infantryOnlyHudScope = screen.AddComponent<M01InfantryOnlyHudScopeSystem>();
         SetSerializedArray(
             infantryOnlyHudScope,
             "hiddenDuringM01",
@@ -3724,7 +3724,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         commandModeBanner.SetActive(false);
         selectedEntityPanel.SetActive(false);
         invalidCommandToast.SetActive(false);
-        BattleHudTacticalFeedbackController tacticalFeedback = screen.AddComponent<BattleHudTacticalFeedbackController>();
+        BattleHudTacticalFeedbackSystem tacticalFeedback = screen.AddComponent<BattleHudTacticalFeedbackSystem>();
         SetSerializedObject(tacticalFeedback, "selectedEntityPanel", selectedEntityPanel);
         SetSerializedObject(tacticalFeedback, "commandModeBanner", commandModeBanner);
         SetSerializedObject(tacticalFeedback, "worldCommandMarkerLayer", worldCommandMarkerLayer);
@@ -3734,8 +3734,8 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         SetSerializedObject(tacticalFeedback, "selectedEntityStatusText", selectedEntityPanel.transform.Find("StatusText").GetComponent<TMP_Text>());
         SetSerializedObject(tacticalFeedback, "commandModeText", commandModeBanner.transform.Find("ModeText").GetComponent<TMP_Text>());
         SetSerializedObject(tacticalFeedback, "invalidCommandText", invalidCommandToast.transform.Find("MessageText").GetComponent<TMP_Text>());
-        BattleHudGameplayBridge gameplayBridge = screen.AddComponent<BattleHudGameplayBridge>();
-        SetSerializedObject(gameplayBridge, "tacticalFeedback", tacticalFeedback);
+        BattleHudRuntimeFeedbackView runtimeFeedbackView = screen.AddComponent<BattleHudRuntimeFeedbackView>();
+        SetSerializedObject(runtimeFeedbackView, "tacticalFeedback", tacticalFeedback);
         invalidCommandToast.transform.SetAsLastSibling();
         commandModeBanner.transform.SetAsLastSibling();
 
@@ -3942,9 +3942,9 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateSagaMapScreen()
     {
         GameObject screen = CreateRectObject("Screen_SagaMap", null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.SagaMap);
-        SagaMapScreenController sagaController = screen.AddComponent<SagaMapScreenController>();
+        SagaMapScreenSystem sagaController = screen.AddComponent<SagaMapScreenSystem>();
 
         CreateCampaignShell(screen.transform, SagaMapGeneratedRoot);
         CreateCampaignHeader(screen.transform, SagaMapGeneratedRoot, "SAGA MAP");
@@ -4063,10 +4063,10 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         if (routesToBriefing)
         {
-            WarlineCaptureMissionSessionButton missionSession = node.gameObject.AddComponent<WarlineCaptureMissionSessionButton>();
+            WarlineCaptureMissionSessionSystem missionSession = node.gameObject.AddComponent<WarlineCaptureMissionSessionSystem>();
             SetSerializedString(missionSession, "missionId", mission.MissionId);
             SetSerializedEnum(missionSession, "returnRoute", (int)WarlineCaptureRoute.SagaMap);
-            ScreenRouteButton route = node.gameObject.AddComponent<ScreenRouteButton>();
+            ScreenRouteSystem route = node.gameObject.AddComponent<ScreenRouteSystem>();
             SetSerializedEnum(route, "route", (int)WarlineCaptureRoute.MissionBriefing);
         }
 
@@ -4091,7 +4091,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         MissionConfig fallbackMission = ChapterOneMissionCatalog.GetMission(fallbackMissionId);
         RewardItemConfig[] fallbackRewards = CollectMissionRewardPreviewItems(fallbackMission);
         GameObject screen = CreateRectObject("Screen_MissionBriefing", null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.MissionBriefing);
 
         CreateCampaignShell(screen.transform, MissionBriefingGeneratedRoot);
@@ -4136,14 +4136,14 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         startText.fontStyle = FontStyles.Bold;
         startText.color = new Color(1f, 0.78f, 0.14f, 1f);
         ConfigurePixelRect((RectTransform)startText.transform, 14f, 15f, 272f, 44f, 300f, 78f);
-        ScreenRouteButton matchRoute = start.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem matchRoute = start.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(matchRoute, "route", (int)WarlineCaptureRoute.LoadoutSquadPrep);
-        WarlineCaptureMissionSessionButton missionSession = start.gameObject.AddComponent<WarlineCaptureMissionSessionButton>();
+        WarlineCaptureMissionSessionSystem missionSession = start.gameObject.AddComponent<WarlineCaptureMissionSessionSystem>();
         SetSerializedString(missionSession, "missionId", fallbackMissionId);
         SetSerializedEnum(missionSession, "returnRoute", (int)WarlineCaptureRoute.SagaMap);
         SetSerializedBool(missionSession, "useActiveMissionWhenAvailable", true);
 
-        MissionBriefingScreenController briefingController = screen.AddComponent<MissionBriefingScreenController>();
+        MissionBriefingScreenSystem briefingController = screen.AddComponent<MissionBriefingScreenSystem>();
         SetSerializedString(briefingController, "fallbackMissionId", fallbackMissionId);
         SetSerializedObject(briefingController, "missionTitleText", title);
         SetSerializedArray(
@@ -4179,7 +4179,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateLoadoutSquadPrepScreen()
     {
         GameObject screen = CreateRectObject("Screen_LoadoutSquadPrep", null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.LoadoutSquadPrep);
 
         CreateLoadoutShell(screen.transform);
@@ -4232,9 +4232,9 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)deployText.transform, 74f, 15f, 340f, 58f, 512f, 88f);
         Image deployIcon = CreateCampaignImage("BoltIcon", deploy.transform, LoadoutGeneratedRoot, "icon_bolt.png");
         ConfigurePixelRect((RectTransform)deployIcon.transform, 414f, 17f, 54f, 54f, 512f, 88f);
-        ScreenRouteButton matchRoute = deploy.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem matchRoute = deploy.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(matchRoute, "route", (int)WarlineCaptureRoute.Match);
-        WarlineCaptureMissionSessionButton missionSession = deploy.gameObject.AddComponent<WarlineCaptureMissionSessionButton>();
+        WarlineCaptureMissionSessionSystem missionSession = deploy.gameObject.AddComponent<WarlineCaptureMissionSessionSystem>();
         SetSerializedString(missionSession, "missionId", "saga.ch01.m05.breach_assault");
         SetSerializedEnum(missionSession, "returnRoute", (int)WarlineCaptureRoute.SagaMap);
         SetSerializedBool(missionSession, "launchExistingGameplay", true);
@@ -4280,7 +4280,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Image backIcon = CreateCampaignImage("IconImage", backButton.transform, LoadoutTargetCropRoot, "back_chevron_target_icon.png");
         backIcon.preserveAspect = true;
         ConfigurePixelRect((RectTransform)backIcon.transform, 32f, 16f, 52f, 48f, 116f, 80f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text title = CreateText("TitleText", header.transform, "LOADOUT / SQUAD PREP", 48f, TextAlignmentOptions.Left);
@@ -4305,7 +4305,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Image homeIcon = CreateCampaignImage("IconImage", home.transform, LoadoutTargetCropRoot, "home_target_icon.png");
         homeIcon.preserveAspect = true;
         ConfigurePixelRect((RectTransform)homeIcon.transform, 30f, 13f, 56f, 54f, 116f, 80f);
-        ScreenRouteButton homeRoute = home.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem homeRoute = home.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(homeRoute, "route", (int)WarlineCaptureRoute.MainMenu);
     }
 
@@ -4631,7 +4631,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)backButton.transform, 22f, 12f, 94f, 58f, 1640f, 82f);
         Image backIcon = CreateCampaignImage("IconImage", backButton.transform, generatedRoot, "back_chevron_icon.png");
         ConfigurePixelRect((RectTransform)backIcon.transform, 24f, 11f, 46f, 36f, 94f, 58f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text titleText = CreateText("TitleText", header.transform, title, title.Length > 12 ? 38f : 42f, TextAlignmentOptions.Left);
@@ -4650,7 +4650,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)settings.transform, 1542f, 12f, 78f, 58f, 1640f, 82f);
         Image gearIcon = CreateCampaignImage("GearIcon", settings.transform, generatedRoot, "settings_gear_icon.png");
         ConfigurePixelRect((RectTransform)gearIcon.transform, 21f, 10f, 38f, 38f, 78f, 58f);
-        ScreenRouteButton settingsRoute = settings.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem settingsRoute = settings.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(settingsRoute, "route", (int)WarlineCaptureRoute.Settings);
     }
 
@@ -4746,7 +4746,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateArmoryScreen()
     {
         GameObject screen = CreateRectObject("Screen_Armory", null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Armory);
 
         Image shellFill = CreateImage("ShellFill", screen.transform, Color.white);
@@ -4793,7 +4793,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)backButton.transform, 28f, 8f, 86f, 66f, 1664f, 84f);
         Image backIcon = CreateArmoryIcon("IconImage", backButton.transform, "icon_back.png");
         ConfigurePixelRect((RectTransform)backIcon.transform, 22f, 14f, 42f, 38f, 86f, 66f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text title = CreateText("TitleText", header.transform, "ARMORY", 54f, TextAlignmentOptions.Left);
@@ -5113,7 +5113,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateCommandExchangeScreen()
     {
         GameObject screen = CreateRectObject("Screen_CommandExchange", null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.CommandExchange);
 
         Image shellFill = CreateImage("ShellFill", screen.transform, Color.white);
@@ -5169,7 +5169,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)backButton.transform, 22f, 12f, 94f, 58f, 1640f, 82f);
         Image backIcon = CreateCommandExchangeIcon("IconImage", backButton.transform, "TargetIcons/target_header_back_chevron.png");
         ConfigurePixelRect((RectTransform)backIcon.transform, 26f, 8f, 42f, 42f, 94f, 58f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text title = CreateText("TitleText", header.transform, "COMMAND EXCHANGE", 41f, TextAlignmentOptions.Left);
@@ -5186,7 +5186,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)settingsButton.transform, 1542f, 12f, 78f, 58f, 1640f, 82f);
         Image gearIcon = CreateCommandExchangeIcon("GearIcon", settingsButton.transform, "TargetIcons/target_header_settings_gear.png");
         ConfigurePixelRect((RectTransform)gearIcon.transform, 14f, 5f, 50f, 50f, 78f, 58f);
-        ScreenRouteButton settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(settingsRoute, "route", (int)WarlineCaptureRoute.Settings);
     }
 
@@ -5245,7 +5245,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         if (route.HasValue)
         {
-            ScreenRouteButton routeButton = button.gameObject.AddComponent<ScreenRouteButton>();
+            ScreenRouteSystem routeButton = button.gameObject.AddComponent<ScreenRouteSystem>();
             SetSerializedEnum(routeButton, "route", (int)route.Value);
         }
     }
@@ -5555,7 +5555,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             });
         CreateCommanderProfileRewardTrackPanel(screen.transform, CommanderProfileGeneratedRoot);
         ApplyCommanderProfileTargetLayout(screen.transform, CommanderProfileGeneratedRoot);
-        screen.AddComponent<CommanderProfileScreenController>();
+        screen.AddComponent<CommanderProfileScreenSystem>();
         return screen;
     }
 
@@ -6058,7 +6058,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
                 new DesignedUnavailableFeed("REWARD", "Claim queue will stay deterministic."),
                 new DesignedUnavailableFeed("OPERATION", "Reports are stored locally before live sync.")
             });
-        screen.AddComponent<OperationInboxScreenController>();
+        screen.AddComponent<OperationInboxScreenSystem>();
         return screen;
     }
 
@@ -6085,7 +6085,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
                 new DesignedUnavailableFeed("CONFIG", "Event state provider is offline."),
                 new DesignedUnavailableFeed("REWARD", "Reward tables wait for config validation.")
             });
-        screen.AddComponent<OperationEventsScreenController>();
+        screen.AddComponent<OperationEventsScreenSystem>();
         return screen;
     }
 
@@ -6137,7 +6137,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
                 new DesignedUnavailableFeed("REWARD", "Reward unlocks will post here."),
                 new DesignedUnavailableFeed("SOCIAL", "Social provider not connected.")
             });
-        screen.AddComponent<OperationCommandFeedScreenController>();
+        screen.AddComponent<OperationCommandFeedScreenSystem>();
         return screen;
     }
 
@@ -6191,7 +6191,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             "ActiveWarningsPanel/SectionTitleText",
             "EndDayButton/LabelText");
         ConfigureOperationText(screen);
-        screen.AddComponent<OperationDashboardScreenController>();
+        screen.AddComponent<OperationDashboardScreenSystem>();
         return screen;
     }
 
@@ -6248,14 +6248,14 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             "KnownThreatPanel/SectionTitleText",
             "RecentActivityPanel/SectionTitleText");
         ConfigureOperationText(screen);
-        screen.AddComponent<DistrictDetailScreenController>();
+        screen.AddComponent<DistrictDetailScreenSystem>();
         return screen;
     }
 
     private static GameObject CreateOperationRouteRoot(string screenName, WarlineCaptureRoute route)
     {
         GameObject screen = CreateRectObject(screenName, null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(route);
 
         Image shellFill = CreateImage("ShellFill", screen.transform, new Color(0.003f, 0.018f, 0.022f, 1f));
@@ -6269,7 +6269,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     {
         GameObject header = CreateOperationPanel("HeaderBar", parent, 32f, 30f, 1608f, 78f, OperationPanelFrameCyanPath);
         Button backButton = CreateOperationIconButton("BackButton", header.transform, OperationIconBackPath, 10f, 8f, 96f, 62f, 1608f, 78f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text titleText = CreateText("TitleText", header.transform, title, title.Length > 18 ? 40f : 48f, TextAlignmentOptions.Left);
@@ -6292,7 +6292,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CreateOperationResourceCounter("PopulationCounter", header.transform, OperationIconPeoplePath, "68/80", 1438f, 130f);
 
         Button settings = CreateOperationIconButton("SettingsButton", header.transform, OperationIconGearPath, 1568f, 8f, 58f, 62f, 1608f, 78f);
-        ScreenRouteButton settingsRoute = settings.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem settingsRoute = settings.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(settingsRoute, "route", (int)WarlineCaptureRoute.Settings);
     }
 
@@ -6574,7 +6574,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         DesignedUnavailableFeed[] feedItems)
     {
         GameObject screen = CreateRectObject(screenName, null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(route);
 
         Image shellFill = CreateImage("ShellFill", screen.transform, FlatTargetScreenFill);
@@ -6644,7 +6644,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         TMP_Text backIcon = CreateText("IconText", backButton.transform, "<", 48f, TextAlignmentOptions.Center);
         backIcon.fontStyle = FontStyles.Bold;
         ConfigurePixelRect((RectTransform)backIcon.transform, 0f, -2f, 78f, 54f, 78f, 54f);
-        ScreenRouteButton backRoute = backButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem backRoute = backButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedBool(backRoute, "useBackNavigation", true);
 
         TMP_Text titleText = CreateText("TitleText", header.transform, title, title.Length > 16 ? 37f : 40f, TextAlignmentOptions.Left);
@@ -6662,7 +6662,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         TMP_Text gearIcon = CreateText("GearIcon", settingsButton.transform, "□", 26f, TextAlignmentOptions.Center);
         gearIcon.color = new Color(0.82f, 0.92f, 0.92f, 1f);
         ConfigurePixelRect((RectTransform)gearIcon.transform, 0f, 5f, 68f, 42f, 68f, 54f);
-        ScreenRouteButton settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteButton>();
+        ScreenRouteSystem settingsRoute = settingsButton.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(settingsRoute, "route", (int)WarlineCaptureRoute.Settings);
     }
 
@@ -7808,7 +7808,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             plusText.color = new Color(0.9f, 0.96f, 1f, 1f);
         }
         plusButton.gameObject.SetActive(showPlusButton);
-        WarlineCapturePlaceholderModalButton placeholderButton = plusButton.gameObject.AddComponent<WarlineCapturePlaceholderModalButton>();
+        WarlineCapturePlaceholderModalSystem placeholderButton = plusButton.gameObject.AddComponent<WarlineCapturePlaceholderModalSystem>();
         SetSerializedString(placeholderButton, "title", "Resource");
         SetSerializedString(placeholderButton, "body", "Resource purchase and economy flows will be connected after progression is implemented.");
 
@@ -8165,7 +8165,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static Button CreatePlaceholderButton(string name, Transform parent, string label, string title, string body)
     {
         Button button = CreateTextButton(name, parent, label, 220f, 86f);
-        WarlineCapturePlaceholderModalButton placeholderButton = button.gameObject.AddComponent<WarlineCapturePlaceholderModalButton>();
+        WarlineCapturePlaceholderModalSystem placeholderButton = button.gameObject.AddComponent<WarlineCapturePlaceholderModalSystem>();
         SetSerializedString(placeholderButton, "title", title);
         SetSerializedString(placeholderButton, "body", body);
         return button;
@@ -8184,7 +8184,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         button.targetGraphic = background;
         ConfigureAnimatedButton(button, selectedOnEnable);
 
-        WarlineCapturePlaceholderModalButton placeholderButton = buttonObject.AddComponent<WarlineCapturePlaceholderModalButton>();
+        WarlineCapturePlaceholderModalSystem placeholderButton = buttonObject.AddComponent<WarlineCapturePlaceholderModalSystem>();
         SetSerializedString(placeholderButton, "title", title);
         SetSerializedString(placeholderButton, "body", body);
 
@@ -8217,8 +8217,8 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         Button button = CreateMainMenuNavButton(name, parent, MainMenuLayeredLeftNavRowFramePath, iconPath, title, body);
         ConfigurePixelRect((RectTransform)button.transform, 0f, y, 505f, 63f, 505f, 630f);
         AddDesignedUnavailableBadge(button.transform, "UNAVAILABLE");
-        UnityEngine.Object.DestroyImmediate(button.GetComponent<WarlineCapturePlaceholderModalButton>());
-        ScreenRouteButton routeButton = button.gameObject.AddComponent<ScreenRouteButton>();
+        UnityEngine.Object.DestroyImmediate(button.GetComponent<WarlineCapturePlaceholderModalSystem>());
+        ScreenRouteSystem routeButton = button.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(routeButton, "route", (int)route);
         return button;
     }
@@ -8226,7 +8226,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static Button CreateFooterIconButton(string name, Transform parent, string iconPath, string title, string body)
     {
         Button button = CreatePlateSpriteButton(name, parent, iconPath, 112f, 74f);
-        WarlineCapturePlaceholderModalButton placeholderButton = button.gameObject.AddComponent<WarlineCapturePlaceholderModalButton>();
+        WarlineCapturePlaceholderModalSystem placeholderButton = button.gameObject.AddComponent<WarlineCapturePlaceholderModalSystem>();
         SetSerializedString(placeholderButton, "title", title);
         SetSerializedString(placeholderButton, "body", body);
 
@@ -8622,7 +8622,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
     private static GameObject CreateEmptyScreen(string name, WarlineCaptureRoute route, string title)
     {
         GameObject screen = CreateRectObject(name, null);
-        WarlineCaptureScreenController controller = screen.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = screen.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(route);
 
         GameObject titleObject = CreateRectObject("TitleText", screen.transform);
@@ -9918,7 +9918,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         GameObject root = CreateRectObject("MissionResultPopup", null);
         SetSize(root, MainMenuReferenceResolution.x, MainMenuReferenceResolution.y);
         WarlineCapturePopupFrameView view = root.AddComponent<WarlineCapturePopupFrameView>();
-        root.AddComponent<MissionResultPopupController>();
+        root.AddComponent<MissionResultPopupSystem>();
 
         Image background = CreateImage("BackgroundTacticalArt", root.transform, Color.white);
         background.sprite = AssetDatabase.LoadAssetAtPath<Sprite>(MissionResultBackgroundPath);
@@ -12279,21 +12279,21 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
             new[] { "Assets/Game/Art/UI/Brand" });
     }
 
-    private static WarlineCaptureScreenController LoadScreenPrefabController(string prefabName)
+    private static WarlineCaptureScreenSystem LoadScreenPrefabController(string prefabName)
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>($"{ScreensFolder}/{prefabName}.prefab");
-        return prefab == null ? null : prefab.GetComponent<WarlineCaptureScreenController>();
+        return prefab == null ? null : prefab.GetComponent<WarlineCaptureScreenSystem>();
     }
 
-    private static MissionResultPopupController LoadMissionResultPopupPrefabController()
+    private static MissionResultPopupSystem LoadMissionResultPopupPrefabController()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Game/Prefabs/UI/Popups/MissionResultPopup.prefab");
         if (prefab == null)
             throw new System.InvalidOperationException("Missing MissionResultPopup prefab.");
 
-        MissionResultPopupController controller = prefab.GetComponent<MissionResultPopupController>();
+        MissionResultPopupSystem controller = prefab.GetComponent<MissionResultPopupSystem>();
         if (controller == null)
-            throw new System.InvalidOperationException("MissionResultPopup prefab is missing MissionResultPopupController.");
+            throw new System.InvalidOperationException("MissionResultPopup prefab is missing MissionResultPopupSystem.");
 
         return controller;
     }

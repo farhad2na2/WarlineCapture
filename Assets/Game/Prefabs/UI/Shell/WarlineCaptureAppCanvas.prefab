@@ -402,7 +402,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eff101f731414281895867d3784428a9, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureModalController
+  m_EditorClassIdentifier: Assembly-CSharp::WarlineCaptureModalSystem
   modalOverlay: {fileID: 5274870277464286974}
   placeholderContent: {fileID: 927853368903133120}
   placeholderTitleText: {fileID: 1819444510067328972}

@@ -310,7 +310,7 @@ public sealed class WarlineCaptureUiMainMenuTests
         Transform counterTransform = prefab.transform.Find(path);
         Assert.NotNull(counterTransform, path);
         Assert.NotNull(counterTransform.GetComponent<WarlineCaptureResourceCounterView>(), path);
-        Assert.NotNull(counterTransform.Find("PlusButton").GetComponent<WarlineCapturePlaceholderModalButton>(), path);
+        Assert.NotNull(counterTransform.Find("PlusButton").GetComponent<WarlineCapturePlaceholderModalSystem>(), path);
         AssertText(prefab, $"{path}/ValueText", expectedValue);
     }
 
@@ -849,7 +849,7 @@ public sealed class WarlineCaptureUiMainMenuTests
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
         Assert.NotNull(target.GetComponent<Button>(), path);
-        ScreenRouteButton routeButton = target.GetComponent<ScreenRouteButton>();
+        ScreenRouteSystem routeButton = target.GetComponent<ScreenRouteSystem>();
         Assert.NotNull(routeButton, path);
 
         var serializedObject = new SerializedObject(routeButton);
@@ -861,12 +861,12 @@ public sealed class WarlineCaptureUiMainMenuTests
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
         Assert.NotNull(target.GetComponent<Button>(), path);
-        Assert.NotNull(target.GetComponent<WarlineCapturePlaceholderModalButton>(), path);
+        Assert.NotNull(target.GetComponent<WarlineCapturePlaceholderModalSystem>(), path);
     }
 
     private static void AssertNoActivePlaceholderModalButtons(GameObject prefab)
     {
-        foreach (WarlineCapturePlaceholderModalButton placeholder in prefab.GetComponentsInChildren<WarlineCapturePlaceholderModalButton>(true))
+        foreach (WarlineCapturePlaceholderModalSystem placeholder in prefab.GetComponentsInChildren<WarlineCapturePlaceholderModalSystem>(true))
         {
             if (placeholder.gameObject.activeSelf)
                 Assert.Fail($"{GetHierarchyPath(placeholder.transform)} is an active placeholder modal trigger. Visible Main Menu buttons must route to designed screens.");
@@ -878,7 +878,7 @@ public sealed class WarlineCaptureUiMainMenuTests
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
         Assert.NotNull(target.GetComponent<Button>(), path);
-        Assert.NotNull(target.GetComponent<WarlineCaptureLegacyGameStartButton>(), path);
-        Assert.IsNull(target.GetComponent<ScreenRouteButton>(), path);
+        Assert.NotNull(target.GetComponent<WarlineCaptureLegacyGameStartSystem>(), path);
+        Assert.IsNull(target.GetComponent<ScreenRouteSystem>(), path);
     }
 }

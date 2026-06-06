@@ -235,8 +235,8 @@
   <text class="subheader" x="80" y="1922">Edges: UI, Services, Tests</text>
 
   <rect class="tag" x="90" y="1965" width="370" height="105"/>
-  <text class="label" x="115" y="1995">UI Views And Controllers</text>
-  <text class="small" x="115" y="2026">WarlineCaptureShellView, ScreenRouteButton, screen controllers</text>
+  <text class="label" x="115" y="1995">UI Views And Systems</text>
+  <text class="small" x="115" y="2026">WarlineCaptureShellView, ScreenRouteSystem, screen systems</text>
   <text class="small" x="115" y="2052">Display read models and enqueue ECS/UI commands only</text>
 
   <rect class="tag" x="500" y="1965" width="370" height="105"/>

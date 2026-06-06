@@ -791,28 +791,28 @@ public sealed class GameplayArchitectureContractTests
 
     private static readonly string[] LegacyControllerFiles =
     {
-        "Assets/Game/Scripts/TacticalMaps/M01PlayableVisualPrototypeController.cs",
-        "Assets/Game/Scripts/UI/Components/BattleHudTacticalFeedbackController.cs",
-        "Assets/Game/Scripts/UI/Popups/MissionResultPopupController.cs",
-        "Assets/Game/Scripts/UI/Screens/AssistantPanelController.cs",
-        "Assets/Game/Scripts/UI/Screens/BuildDrawerPanelController.cs",
-        "Assets/Game/Scripts/UI/Screens/CommandWheelPanelController.cs",
-        "Assets/Game/Scripts/UI/Screens/CommanderProfileScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/DistrictDetailScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/M01InfantryOnlyHudScopeController.cs",
-        "Assets/Game/Scripts/UI/Screens/MatchObjectivePanelController.cs",
-        "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/OperationCommandFeedScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/OperationDashboardScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/OperationEventsScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/OperationInboxScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/OperationLedgerScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/QuickCustomScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/SagaMapScreenController.cs",
-        "Assets/Game/Scripts/UI/Screens/SplashScreenController.cs",
-        "Assets/Game/Scripts/UI/Settings/SettingsScreenController.cs",
-        "Assets/Game/Scripts/UI/Shell/WarlineCaptureModalController.cs",
-        "Assets/Game/Scripts/UI/Shell/WarlineCaptureScreenController.cs"
+        "Assets/Game/Scripts/TacticalMaps/M01PlayableVisualPrototypeSystem.cs",
+        "Assets/Game/Scripts/UI/Components/BattleHudTacticalFeedbackSystem.cs",
+        "Assets/Game/Scripts/UI/Popups/MissionResultPopupSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/AssistantPanelSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/BuildDrawerPanelSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/CommandWheelPanelSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/CommanderProfileScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/DistrictDetailScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/M01InfantryOnlyHudScopeSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/MatchObjectivePanelSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/MissionBriefingScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationCommandFeedScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationDashboardScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationEventsScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationInboxScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/OperationLedgerScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/QuickCustomScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/SagaMapScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Screens/SplashScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Settings/SettingsScreenSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/WarlineCaptureModalSystem.cs",
+        "Assets/Game/Scripts/UI/Shell/WarlineCaptureScreenSystem.cs"
     };
 
     private static readonly string[] LegacyBootstrapRootFiles =
@@ -2675,7 +2675,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("focused-unit UI read-model publication, focused labels/descriptions, health/capacity/status projection, focused transport passenger row projection, world-position projection, and portrait pose projection belong in `FocusedUnitUiReadModelSystem`", contract);
         StringAssert.Contains("attack-click target resolution, selected attacker query ownership, attack target validation dispatch, base-breach target resolution bridge, and attack issue result ownership belong in `AttackOrderCommandSystem`", contract);
         StringAssert.Contains("move/attack order marker prefab instantiation, runtime marker GameObject ownership, marker material property block ownership, marker show/hide timers, marker grid-blocked validation, and marker world positioning belong in `SelectionOrderMarkerSystem`", contract);
-        StringAssert.Contains("HUD selection feedback, squad-selection labels, command mode feedback, command result feedback, world-marker visibility forwarding, the HUD feedback context contract, ECS feedback queue publication/consumption, and `BattleHudGameplayBridge` lookup/cache ownership belong in `SelectionHudFeedbackSystem`", contract);
+        StringAssert.Contains("HUD selection feedback, squad-selection labels, command mode feedback, command result feedback, world-marker visibility forwarding, the HUD feedback context contract, ECS feedback queue publication/consumption, and `BattleHudRuntimeFeedbackView` lookup/cache ownership belong in `SelectionHudFeedbackSystem`", contract);
         StringAssert.Contains("camera drag state, smooth focus state, zoom transition state, camera mode math, camera ground projection, camera pan/zoom mutation, and camera mode interpolation belong in `RtsCameraSystem`", contract);
         StringAssert.Contains("runtime camera context construction belongs in `RtsSelectionRuntimeCameraContextSystem`", contract);
         StringAssert.Contains("selected move-order click rejection, selected move-query consumption, manual move goal assignment orchestration, group path-request staggering, selected move-order diagnostics, and move-order command results belong in `SelectedMoveOrderCommandSystem`", contract);
@@ -8280,8 +8280,8 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public BuildingPlacementContextSystem.Source CreateContextSource(", placementCommandCompositionSystem);
         StringAssert.Contains("source.BuildingPlacementContextSystem.CreateCommandContext", placementCommandCompositionSystem);
         StringAssert.Contains("new BuildingPlacementContextSystem.Source", placementCommandCompositionSystem);
-        StringAssert.Contains("BattleHudGameplayBridge.ResolveActive()?.ApplyCommandMode(TacticalCommandMode.Build)", placementCommandCompositionSystem);
-        StringAssert.Contains("BattleHudGameplayBridge.ResolveActive()?.ClearCommandMode()", placementCommandCompositionSystem);
+        StringAssert.Contains("BattleHudRuntimeFeedbackSystem.ApplyCommandMode(TacticalCommandMode.Build)", placementCommandCompositionSystem);
+        StringAssert.Contains("BattleHudRuntimeFeedbackSystem.ClearCommandMode", placementCommandCompositionSystem);
         StringAssert.Contains("internal readonly BuildingPlacementVisualCompositionSystem BuildingPlacementVisualCompositionSystem = new()", compositionSource);
         StringAssert.Contains("source.BuildingPlacementVisualCompositionSystem.UpdatePlacementVisual(", composition);
         StringAssert.Contains("source.BuildingPlacementVisualCompositionSystem.FocusActivePlacement(", composition);
@@ -16620,7 +16620,7 @@ public sealed class GameplayArchitectureContractTests
         Assert.IsFalse(runtime.Contains("RTSSelectionSystem", StringComparison.Ordinal), "M01AssistantCommandRuntime must not depend on RTSSelectionSystem.");
         Assert.IsFalse(executor.Contains("RTSSelectionSystem", StringComparison.Ordinal), "CommandIntentExecutor must not depend on RTSSelectionSystem.");
         Assert.IsFalse(contextProvider.Contains("RTSSelectionSystem", StringComparison.Ordinal), "AssistantContextProvider typed command readiness must not depend on RTSSelectionSystem.");
-        Assert.IsFalse(runtime.Contains("BattleHudGameplayBridge.ResolveActive()?.ApplyCommandResult", StringComparison.Ordinal), "Assistant command results must flow through ECS feedback/results, not direct HUD bridge calls.");
+        Assert.IsFalse(runtime.Contains("BattleHudRuntimeFeedbackSystem.ApplyCommandResult", StringComparison.Ordinal), "Assistant command results must flow through ECS feedback/results, not direct HUD view calls.");
     }
 
     [Test]

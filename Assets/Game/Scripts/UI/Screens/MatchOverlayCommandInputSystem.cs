@@ -171,7 +171,7 @@ public sealed class MatchOverlayCommandInputSystem
 
             _tabVisualSystem?.Select(_buildCommandTab);
             _buildDrawerOpen = true;
-            BattleHudGameplayBridge.ResolveActive()?.ApplyStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ApplyStickyCommandMode(TacticalCommandMode.Build);
         }
 
         private void CloseBuildDrawerIfOpen()
@@ -185,7 +185,7 @@ public sealed class MatchOverlayCommandInputSystem
                 CloseBuildDrawerPopupFallback();
 
             _buildDrawerOpen = false;
-            BattleHudGameplayBridge.ResolveActive()?.ClearStickyCommandMode(TacticalCommandMode.Build);
+            BattleHudRuntimeFeedbackSystem.ClearStickyCommandMode(TacticalCommandMode.Build);
         }
 
         private void InstallBuildDrawerPopupFallback()

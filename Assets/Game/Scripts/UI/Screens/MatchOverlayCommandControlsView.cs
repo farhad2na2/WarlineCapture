@@ -8,7 +8,7 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     [SerializeField] private Button holdButton;
     [SerializeField] private Button stopButton;
     [SerializeField] private Button commandWheelStopButton;
-    [SerializeField] private CommandWheelPanelController commandWheelPanel;
+    [SerializeField] private CommandWheelPanelSystem commandWheelPanel;
     [SerializeField] private MatchOverlayCommandTabGroupView commandTabGroup;
     [SerializeField] private GameObject buildDrawerPopupPrefab;
 
@@ -17,7 +17,7 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     public Button HoldButton => holdButton;
     public Button StopButton => stopButton;
     public Button CommandWheelStopButton => commandWheelStopButton;
-    public CommandWheelPanelController CommandWheelPanel => commandWheelPanel;
+    public CommandWheelPanelSystem CommandWheelPanel => commandWheelPanel;
     public MatchOverlayCommandTabGroupView CommandTabGroup => commandTabGroup;
     public GameObject BuildDrawerPopupPrefab => buildDrawerPopupPrefab;
 }

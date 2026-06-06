@@ -4,19 +4,19 @@ using NUnit.Framework;
 using UnityEditor;
 using UnityEngine;
 
-public sealed class WarlineCaptureUiAssistantPanelControllerTests
+public sealed class WarlineCaptureUiAssistantPanelSystemTests
 {
     private const string PrefabPath = "Assets/Game/Prefabs/UI/Components/PREFAB-05_AssistantPanel.prefab";
-    private const string ControllerPath = "Assets/Game/Scripts/UI/Screens/AssistantPanelController.cs";
+    private const string ControllerPath = "Assets/Game/Scripts/UI/Screens/AssistantPanelSystem.cs";
 
     [Test]
-    public void AssistantPanelController_InstantiatesShowsHidesAndBindsRecommendation()
+    public void AssistantPanelSystem_InstantiatesShowsHidesAndBindsRecommendation()
     {
-        GameObject host = new("AssistantPanelControllerHost");
+        GameObject host = new("AssistantPanelSystemHost");
         GameObject root = new("AssistantPanelRoot");
         try
         {
-            AssistantPanelController controller = host.AddComponent<AssistantPanelController>();
+            AssistantPanelSystem controller = host.AddComponent<AssistantPanelSystem>();
             controller.SetPanelRootForTests(root.transform);
             controller.SetPanelPrefabForTests(LoadPrefab().GetComponent<AssistantPanelView>());
             InvokeAwake(controller);
@@ -60,9 +60,9 @@ public sealed class WarlineCaptureUiAssistantPanelControllerTests
     }
 
     [Test]
-    public void AssistantPanelController_UsesViewReferencesNotChildNamesForBinding()
+    public void AssistantPanelSystem_UsesViewReferencesNotChildNamesForBinding()
     {
-        GameObject host = new("AssistantPanelControllerHost");
+        GameObject host = new("AssistantPanelSystemHost");
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(LoadPrefab());
         try
         {
@@ -74,7 +74,7 @@ public sealed class WarlineCaptureUiAssistantPanelControllerTests
             view.DoItButton.name = "RenamedDoItButton";
             view.StopButton.name = "RenamedStopButton";
 
-            AssistantPanelController controller = host.AddComponent<AssistantPanelController>();
+            AssistantPanelSystem controller = host.AddComponent<AssistantPanelSystem>();
             controller.SetPanelViewForTests(view);
             InvokeAwake(controller);
 
@@ -102,14 +102,14 @@ public sealed class WarlineCaptureUiAssistantPanelControllerTests
     }
 
     [Test]
-    public void AssistantPanelController_ExposesFutureSafeButtonCallbackSeams()
+    public void AssistantPanelSystem_ExposesFutureSafeButtonCallbackSeams()
     {
-        GameObject host = new("AssistantPanelControllerHost");
+        GameObject host = new("AssistantPanelSystemHost");
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(LoadPrefab());
         try
         {
             AssistantPanelView view = instance.GetComponent<AssistantPanelView>();
-            AssistantPanelController controller = host.AddComponent<AssistantPanelController>();
+            AssistantPanelSystem controller = host.AddComponent<AssistantPanelSystem>();
             controller.SetPanelViewForTests(view);
             InvokeAwake(controller);
 
@@ -146,7 +146,7 @@ public sealed class WarlineCaptureUiAssistantPanelControllerTests
     }
 
     [Test]
-    public void AssistantPanelController_DoesNotUseScreenCoordinatesOrChildPathLookups()
+    public void AssistantPanelSystem_DoesNotUseScreenCoordinatesOrChildPathLookups()
     {
         string source = File.ReadAllText(ResolveRepoFilePath(ControllerPath));
 

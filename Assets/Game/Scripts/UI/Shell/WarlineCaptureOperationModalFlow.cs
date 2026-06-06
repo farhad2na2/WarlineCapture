@@ -47,7 +47,7 @@ public sealed class WarlineCaptureOperationModalFlow : MonoBehaviour
         if (popup == null)
             return;
 
-        string districtName = OperationDashboardScreenController.FormatDistrictName(district.districtId);
+        string districtName = OperationDashboardScreenSystem.FormatDistrictName(district.districtId);
         OperationIntelEvidenceData evidence = WarlineCaptureOperationRuntime.LatestEvidence(district.districtId);
         SetText(popup, "Frame/Header/TitleText", "INTEL REVEALED");
         SetText(popup, "Frame/BodyRoot/SubheadingText", evidence != null ? evidence.body : $"{districtName} scan raised confidence to {district.intel}.");
@@ -76,7 +76,7 @@ public sealed class WarlineCaptureOperationModalFlow : MonoBehaviour
         if (popup == null)
             return;
 
-        string districtName = OperationDashboardScreenController.FormatDistrictName(district.districtId);
+        string districtName = OperationDashboardScreenSystem.FormatDistrictName(district.districtId);
         SetText(popup, "Frame/BodyRoot/TargetPanel/TargetNameText", "BREACH ASSAULT");
         SetText(popup, "Frame/BodyRoot/TargetPanel/TargetInfoCard/DistrictText", districtName);
         SetText(popup, "Frame/BodyRoot/TargetPanel/TargetInfoCard/ThreatText", $"Threat {district.threat} / Heat {district.heat}");

@@ -114,7 +114,7 @@ public static class WarlineCaptureScn02MainMenuV15CSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController screenController = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem screenController = root.AddComponent<WarlineCaptureScreenSystem>();
         screenController.SetRouteForTests(WarlineCaptureRoute.MainMenu);
 
         GameObject artRoot = CreateRectObject("MainMenuV15C_OneGo_LayeredCanvas", root.transform);

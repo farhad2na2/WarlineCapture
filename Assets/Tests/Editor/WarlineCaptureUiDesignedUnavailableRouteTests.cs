@@ -20,7 +20,7 @@ public sealed class WarlineCaptureUiDesignedUnavailableRouteTests
         foreach (RouteCase routeCase in Cases)
         {
             GameObject prefab = LoadPrefab(routeCase);
-            WarlineCaptureScreenController controller = prefab.GetComponent<WarlineCaptureScreenController>();
+            WarlineCaptureScreenSystem controller = prefab.GetComponent<WarlineCaptureScreenSystem>();
             Assert.NotNull(controller, routeCase.ScreenName);
             Assert.AreEqual(routeCase.Route, controller.Route, routeCase.ScreenName);
             Assert.IsNull(prefab.GetComponent<Image>(), $"{routeCase.ScreenName} must not bake a full target image into the root.");

@@ -32,7 +32,7 @@ public sealed class OperationUiBindingTests
         GameObject root = InstantiatePrefab(DashboardPrefabPath);
         try
         {
-            OperationDashboardScreenController controller = root.GetComponent<OperationDashboardScreenController>();
+            OperationDashboardScreenSystem controller = root.GetComponent<OperationDashboardScreenSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();
@@ -69,7 +69,7 @@ public sealed class OperationUiBindingTests
         GameObject root = InstantiatePrefab(DistrictPrefabPath);
         try
         {
-            DistrictDetailScreenController controller = root.GetComponent<DistrictDetailScreenController>();
+            DistrictDetailScreenSystem controller = root.GetComponent<DistrictDetailScreenSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();
@@ -101,7 +101,7 @@ public sealed class OperationUiBindingTests
         GameObject root = InstantiatePrefab(DistrictPrefabPath);
         try
         {
-            DistrictDetailScreenController controller = root.GetComponent<DistrictDetailScreenController>();
+            DistrictDetailScreenSystem controller = root.GetComponent<DistrictDetailScreenSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();
@@ -146,12 +146,12 @@ public sealed class OperationUiBindingTests
             router.GoTo(WarlineCaptureRoute.OperationDashboard, false);
             Transform contentRoot = router.ContentRoot;
             Transform dashboard = contentRoot.Find("Screen_OperationDashboard");
-            dashboard.GetComponent<OperationDashboardScreenController>().RefreshForTests();
+            dashboard.GetComponent<OperationDashboardScreenSystem>().RefreshForTests();
             dashboard.Find("StatusCard_1").GetComponent<Button>().onClick.Invoke();
 
             Assert.AreEqual(WarlineCaptureRoute.DistrictDetail, router.ActiveRoute);
             Transform district = contentRoot.Find("Screen_DistrictDetail");
-            district.GetComponent<DistrictDetailScreenController>().RefreshForTests();
+            district.GetComponent<DistrictDetailScreenSystem>().RefreshForTests();
             district.Find("StatusCard_2").GetComponent<Button>().onClick.Invoke();
 
             Transform modalOverlay = root.transform.Find("SafeAreaRoot/ModalOverlay");
@@ -198,7 +198,7 @@ public sealed class OperationUiBindingTests
 
             router.GoTo(WarlineCaptureRoute.OperationDashboard, false);
             Transform dashboard = router.ContentRoot.Find("Screen_OperationDashboard");
-            dashboard.GetComponent<OperationDashboardScreenController>().RefreshForTests();
+            dashboard.GetComponent<OperationDashboardScreenSystem>().RefreshForTests();
 
             dashboard.Find("HeroPanel/UnavailableButton").GetComponent<Button>().onClick.Invoke();
 
@@ -227,7 +227,7 @@ public sealed class OperationUiBindingTests
         GameObject root = InstantiatePrefab(InboxPrefabPath);
         try
         {
-            OperationInboxScreenController controller = root.GetComponent<OperationInboxScreenController>();
+            OperationInboxScreenSystem controller = root.GetComponent<OperationInboxScreenSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();
@@ -257,7 +257,7 @@ public sealed class OperationUiBindingTests
         GameObject root = InstantiatePrefab(EventsPrefabPath);
         try
         {
-            OperationEventsScreenController controller = root.GetComponent<OperationEventsScreenController>();
+            OperationEventsScreenSystem controller = root.GetComponent<OperationEventsScreenSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();
@@ -286,7 +286,7 @@ public sealed class OperationUiBindingTests
         GameObject root = InstantiatePrefab(CommandFeedPrefabPath);
         try
         {
-            OperationCommandFeedScreenController controller = root.GetComponent<OperationCommandFeedScreenController>();
+            OperationCommandFeedScreenSystem controller = root.GetComponent<OperationCommandFeedScreenSystem>();
             Assert.NotNull(controller);
 
             controller.RefreshForTests();

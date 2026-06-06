@@ -254,7 +254,7 @@ public static class WarlineCapturePop05MissionResultSceneBuilder
         baseImage.color = Color.black;
         baseImage.raycastTarget = false;
 
-        WarlineCaptureScreenController controller = root.AddComponent<WarlineCaptureScreenController>();
+        WarlineCaptureScreenSystem controller = root.AddComponent<WarlineCaptureScreenSystem>();
         controller.SetRouteForTests(WarlineCaptureRoute.Match);
 
         GameObject visualRoot = WarlineCaptureLayeredUiBuilderUtility.CreateRectObject("POP05_LayeredCanvas", root.transform);

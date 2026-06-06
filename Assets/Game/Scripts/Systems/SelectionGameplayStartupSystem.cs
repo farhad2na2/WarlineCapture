@@ -50,6 +50,7 @@ internal sealed class SelectionGameplayStartupSystem
         BuildingPlacementInteractionSystem buildingInteraction,
         BuildingPlacementInteractionSystem.Context buildingInteractionContext,
         System.Func<Rect, bool> trySelectFirstBuildingInScreenRect,
+        SelectionHudFeedbackSystem.ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite,
         FactionVisualSettings factionVisuals)
     {
         var selectionRuntimeDiagnosticsSystem = new SelectionRuntimeDiagnosticsSystem();
@@ -300,7 +301,10 @@ internal sealed class SelectionGameplayStartupSystem
 
         SelectionHudFeedbackSystem.Context CreateHudFeedbackContext()
         {
-            return new SelectionHudFeedbackSystem.Context(selectionUiQuerySystem, TryGetDefaultEntityManager);
+            return new SelectionHudFeedbackSystem.Context(
+                selectionUiQuerySystem,
+                TryGetDefaultEntityManager,
+                resolveSelectionPortraitSprite);
         }
 
         bool TryGetDefaultEntityManager(out EntityManager em)

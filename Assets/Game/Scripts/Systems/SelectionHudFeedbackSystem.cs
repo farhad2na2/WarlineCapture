@@ -1,21 +1,26 @@
 using Unity.Collections;
 using Unity.Entities;
+using UnityEngine;
 
 public sealed class SelectionHudFeedbackSystem
 {
     public delegate bool TryGetEntityManagerDelegate(out EntityManager em);
+    public delegate Sprite ResolveSelectionPortraitSpriteDelegate(EntityManager em, Entity entity);
 
     public readonly struct Context
     {
         public readonly SelectionUiQuerySystem SelectionUiQuerySystem;
         public readonly TryGetEntityManagerDelegate TryGetDefaultEntityManager;
+        public readonly ResolveSelectionPortraitSpriteDelegate ResolveSelectionPortraitSprite;
 
         public Context(
             SelectionUiQuerySystem selectionUiQuerySystem,
-            TryGetEntityManagerDelegate tryGetDefaultEntityManager)
+            TryGetEntityManagerDelegate tryGetDefaultEntityManager,
+            ResolveSelectionPortraitSpriteDelegate resolveSelectionPortraitSprite = null)
         {
             SelectionUiQuerySystem = selectionUiQuerySystem;
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
+            ResolveSelectionPortraitSprite = resolveSelectionPortraitSprite;
         }
     }
 
@@ -155,7 +160,15 @@ public sealed class SelectionHudFeedbackSystem
 
     public void ApplySelection(Context context, EntityManager em, Entity entity)
     {
-        ApplySelection(em, entity, context.SelectionUiQuerySystem);
+        Sprite portraitSprite = context.ResolveSelectionPortraitSprite?.Invoke(em, entity);
+        ApplySelection(em, entity, context.SelectionUiQuerySystem, portraitSprite);
+    }
+
+    private void ApplySelection(EntityManager em, Entity entity, SelectionUiQuerySystem selectionUiQuerySystem, Sprite portraitSprite)
+    {
+        QueueSelection(em, entity, selectionUiQuerySystem);
+        ProcessPendingFeedback(em);
+        MatchHudSelectionPanelSystem.SetActiveSelectionPortrait(portraitSprite);
     }
 
     public void ApplySquadSelection(EntityManager em, int selectedCount)
@@ -172,9 +185,9 @@ public sealed class SelectionHudFeedbackSystem
         ApplySquadSelection(em, selectedCount);
     }
 
-    public void ApplyBuildingSelection()
+    public void ApplyBuildingSelection(Sprite portraitSprite)
     {
-        MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true);
+        MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true, portraitSprite);
     }
 
     public void ClearSelection(EntityManager em)

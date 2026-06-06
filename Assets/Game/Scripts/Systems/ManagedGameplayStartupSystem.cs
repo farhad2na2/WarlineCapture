@@ -1,4 +1,5 @@
 using Game.Scripts.UI;
+using Unity.Entities;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -172,6 +173,13 @@ internal sealed class ManagedGameplayStartupSystem
             mapBuildingPlacementConfig,
             mapBuildingAuthoringRoot);
 
+        Sprite ResolveSelectionPortraitSprite(EntityManager em, Entity entity)
+        {
+            return building.UiQuery.TryResolveLiveUnitPreviewPrefab(building.UiQueryContext, entity, out GameObject prefab)
+                ? SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(prefab)
+                : null;
+        }
+
         SelectionGameplayStartupSystem.Result selection = _selectionGameplayStartupSystem.Initialize(
             rtsSelectionConfig,
             worldCamera,
@@ -180,6 +188,7 @@ internal sealed class ManagedGameplayStartupSystem
             building.Interaction,
             building.InteractionContext,
             building.TrySelectFirstBuildingInScreenRect,
+            ResolveSelectionPortraitSprite,
             factionVisuals);
 
         _roadBuildCompositionSystem.BindBuildingInteraction(

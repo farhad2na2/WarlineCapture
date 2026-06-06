@@ -10132,7 +10132,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1828835096339733202
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11872,6 +11872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MatchHudSelectionPanelSystem
   selectedSquadPanel: {fileID: 6100291839165307813}
+  selectedPortraitImage: {fileID: 6802404043073543796}
 --- !u!1 &6764696033042498354
 GameObject:
   m_ObjectHideFlags: 0

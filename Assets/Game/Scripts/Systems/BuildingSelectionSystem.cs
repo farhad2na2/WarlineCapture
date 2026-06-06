@@ -10,6 +10,7 @@ internal sealed class BuildingSelectionSystem
     public delegate bool ScreenPositionPredicate(Vector2 screenPosition);
     public delegate bool BuildingDefinitionPredicate(BuildingDefinition definition);
     public delegate void RuntimeAction();
+    public delegate void BuildingHudSelectionAction(RuntimeBuildingData building);
     public delegate void CameraFocusAction(Vector3 worldPosition);
 
     public readonly struct Source
@@ -22,7 +23,7 @@ internal sealed class BuildingSelectionSystem
         public readonly RuntimeAction SuppressNextWorldClick;
         public readonly RuntimeAction RefreshMarkers;
         public readonly RuntimeAction ClearFocusedUnit;
-        public readonly RuntimeAction ShowHudSelection;
+        public readonly BuildingHudSelectionAction ShowHudSelection;
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
         public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
@@ -38,7 +39,7 @@ internal sealed class BuildingSelectionSystem
             RuntimeAction suppressNextWorldClick,
             RuntimeAction refreshMarkers,
             RuntimeAction clearFocusedUnit,
-            RuntimeAction showHudSelection,
+            BuildingHudSelectionAction showHudSelection,
             CameraFocusAction smoothMoveCameraGroundCenterTo,
             ScreenPositionPredicate isBoardablePlayerTransportClick,
             BuildingIdAction tryAssignSelectedHaulerOrders,
@@ -72,7 +73,7 @@ internal sealed class BuildingSelectionSystem
         public readonly RuntimeAction SuppressNextWorldClick;
         public readonly RuntimeAction RefreshMarkers;
         public readonly RuntimeAction ClearFocusedUnit;
-        public readonly RuntimeAction ShowHudSelection;
+        public readonly BuildingHudSelectionAction ShowHudSelection;
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
         public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
@@ -88,7 +89,7 @@ internal sealed class BuildingSelectionSystem
             RuntimeAction suppressNextWorldClick,
             RuntimeAction refreshMarkers,
             RuntimeAction clearFocusedUnit,
-            RuntimeAction showHudSelection,
+            BuildingHudSelectionAction showHudSelection,
             CameraFocusAction smoothMoveCameraGroundCenterTo,
             ScreenPositionPredicate isBoardablePlayerTransportClick,
             BuildingIdAction tryAssignSelectedHaulerOrders,
@@ -155,7 +156,7 @@ internal sealed class BuildingSelectionSystem
         RuntimeAction suppressNextWorldClick,
         RuntimeAction refreshMarkers,
         RuntimeAction clearFocusedUnit,
-        RuntimeAction showHudSelection,
+        BuildingHudSelectionAction showHudSelection,
         CameraFocusAction smoothMoveCameraGroundCenterTo,
         ScreenPositionPredicate isBoardablePlayerTransportClick,
         BuildingIdAction tryAssignSelectedHaulerOrders,
@@ -188,7 +189,7 @@ internal sealed class BuildingSelectionSystem
         context.SuppressNextWorldClick?.Invoke();
         context.RefreshMarkers?.Invoke();
         context.ClearFocusedUnit?.Invoke();
-        context.ShowHudSelection?.Invoke();
+        context.ShowHudSelection?.Invoke(building);
 
         Vector3 focusWorldPosition = ResolveBuildingFocusWorldPosition(context, building);
         context.SmoothMoveCameraGroundCenterTo?.Invoke(focusWorldPosition);
@@ -319,7 +320,11 @@ internal sealed class BuildingSelectionSystem
         context.SuppressNextWorldClick?.Invoke();
         context.RefreshMarkers?.Invoke();
         context.ClearFocusedUnit?.Invoke();
-        context.ShowHudSelection?.Invoke();
+        RuntimeBuildingData selectedBuilding = context.RuntimeBuildings != null &&
+                                               context.RuntimeBuildings.TryGetValue(buildingId, out RuntimeBuildingData building)
+            ? building
+            : null;
+        context.ShowHudSelection?.Invoke(selectedBuilding);
         return true;
     }
 

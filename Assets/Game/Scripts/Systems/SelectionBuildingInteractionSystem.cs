@@ -51,9 +51,9 @@ public sealed class SelectionBuildingInteractionSystem
         _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
     }
 
-    public void ApplyBuildingSelectionHudFeedback()
+    public void ApplyBuildingSelectionHudFeedback(Sprite portraitSprite)
     {
-        _selectionHudFeedbackSystem.ApplyBuildingSelection();
+        _selectionHudFeedbackSystem.ApplyBuildingSelection(portraitSprite);
     }
 
     public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)

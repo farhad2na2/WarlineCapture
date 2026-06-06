@@ -287,8 +287,19 @@ public sealed class WarlineCaptureUiShellTests
             selectionPanelSystem.ShowSelection();
             Assert.IsTrue(panel.gameObject.activeSelf, "SelectedSquadPanel must be visible when selection HUD feedback reports a selected unit, squad, or building.");
 
+            Image portraitFrame = instance.transform.Find("LeftContent/SelectedSquadPanel/Frame/PortraitFrame").GetComponent<Image>();
+            Assert.NotNull(portraitFrame, "SelectedSquadPanel must expose the PortraitFrame image for selected unit/building portrait art.");
+            Texture2D texture = new(4, 4);
+            Sprite selectedPortrait = Sprite.Create(texture, new Rect(0f, 0f, 4f, 4f), new Vector2(0.5f, 0.5f));
+            MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true, selectedPortrait);
+            Assert.AreEqual(selectedPortrait, portraitFrame.sprite, "Selected unit/building portraitActionSprite must update the PortraitFrame image.");
+            Assert.IsTrue(portraitFrame.enabled);
+            Assert.IsTrue(portraitFrame.preserveAspect);
+
             MatchHudSelectionPanelSystem.SetActiveSelectionVisible(false);
             Assert.IsFalse(panel.gameObject.activeSelf, "SelectedSquadPanel must hide when selection HUD feedback reports no active selection.");
+            UnityEngine.Object.DestroyImmediate(selectedPortrait);
+            UnityEngine.Object.DestroyImmediate(texture);
         }
         finally
         {

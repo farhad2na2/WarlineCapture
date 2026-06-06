@@ -26,7 +26,8 @@ internal sealed class BuildingSelectionCompositionSystem
                     null,
                     source.BuildingRuntimeObjectSystem.DestroyRuntimeObject)),
             source.BuildingGameplayDependencySystem.ClearFocusedUnit,
-            source.BuildingGameplayDependencySystem.ShowHudSelection,
+            building => source.BuildingGameplayDependencySystem.ShowHudSelection(
+                SelectionPortraitSpriteResolverSystem.ResolveSelectionPortraitSprite(building)),
             source.BuildingGameplayDependencySystem.SmoothMoveCameraGroundCenterTo,
             source.BuildingGameplayDependencySystem.IsBoardablePlayerTransportClick,
             clickedBuildingId => source.BuildingRuntimeContextSystem.TryAssignSelectedHaulerOrders(

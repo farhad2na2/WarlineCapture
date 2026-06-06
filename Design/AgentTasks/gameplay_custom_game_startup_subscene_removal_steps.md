@@ -70,7 +70,7 @@ These configs may reuse existing config data during migration, but Custom Game s
 
 ### Game Mode Separation
 
-Custom Game / Skirmish must not create or read `WarlineCaptureMissionSession`.
+Custom Game / Skirmish must not create or read `ActiveMissionSession`.
 
 Mission/campaign systems remain separate and may keep mission-specific startup through `MissionStartupSystem`. Custom Game startup must not initialize chapter, tutorial, M01, mission objective, assistant, or mission result flow.
 
@@ -256,7 +256,7 @@ Change `GameBootstrap.BeginGameplay()` so Custom Game startup calls the new boun
 
 Rules:
 
-- If `WarlineCaptureMissionSession.HasActiveMission` is true, mission startup remains under `MissionStartupSystem`.
+- If `new ActiveMissionSession().HasActiveMission` is true, mission startup remains under `MissionStartupSystem`.
 - If no mission is active, Custom Game startup runs through `CustomGameStartupSystem`.
 - `GameBootstrap` must not create spawn buffers or resolve unit visual policy directly.
 - `GameBootstrap` must not use platform branches.

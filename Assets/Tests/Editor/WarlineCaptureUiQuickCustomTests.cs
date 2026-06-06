@@ -346,12 +346,12 @@ public sealed class WarlineCaptureUiQuickCustomTests
 
             Assert.IsTrue(legacyCanvas.activeSelf);
             Assert.IsFalse(routerRoot.activeSelf);
-            Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission);
+            Assert.IsFalse(new ActiveMissionSession().HasActiveMission);
         }
         finally
         {
             AISettingsRuntimeState.ResetDefaults();
-            WarlineCaptureMissionSession.Clear();
+            new ActiveMissionSession().Clear();
             if (instance != null)
                 Object.DestroyImmediate(instance);
             Object.DestroyImmediate(routerRoot);
@@ -385,12 +385,12 @@ public sealed class WarlineCaptureUiQuickCustomTests
 
             Assert.IsTrue(legacyCanvas.activeSelf);
             Assert.IsFalse(routerRoot.activeSelf);
-            Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission);
+            Assert.IsFalse(new ActiveMissionSession().HasActiveMission);
         }
         finally
         {
             AISettingsRuntimeState.ResetDefaults();
-            WarlineCaptureMissionSession.Clear();
+            new ActiveMissionSession().Clear();
             if (instance != null)
                 Object.DestroyImmediate(instance);
             Object.DestroyImmediate(routerRoot);

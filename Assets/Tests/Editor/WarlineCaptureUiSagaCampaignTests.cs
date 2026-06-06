@@ -9,14 +9,14 @@ public sealed class WarlineCaptureUiSagaCampaignTests
     [SetUp]
     public void SetUp()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         ClearChapterOneProgress();
     }
 
     [TearDown]
     public void TearDown()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         ClearChapterOneProgress();
     }
 
@@ -116,8 +116,8 @@ public sealed class WarlineCaptureUiSagaCampaignTests
             Assert.IsFalse(node14.Find("StarIcon").gameObject.activeSelf);
 
             node13.GetComponent<Button>().onClick.Invoke();
-            Assert.IsTrue(WarlineCaptureMissionSession.HasActiveMission);
-            Assert.AreEqual(ChapterOneMissionCatalog.All[2].MissionId, WarlineCaptureMissionSession.ActiveMission.MissionId);
+            Assert.IsTrue(new ActiveMissionSession().HasActiveMission);
+            Assert.AreEqual(ChapterOneMissionCatalog.All[2].MissionId, new ActiveMissionSession().ActiveMission.MissionId);
             AssertText(instance, "NodeInfoPanel/SelectedTitleText", "SELECTED: 1-3 RADAR WARNING");
             AssertText(instance, "NodeInfoPanel/SelectedStatusText", "AVAILABLE");
         }
@@ -147,7 +147,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
     [Test]
     public void MissionBriefing_BindsSelectedMissionObjectivesAndRewardConfigPreview()
     {
-        WarlineCaptureMissionSession.BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_MissionBriefing"));
         try
         {
@@ -190,7 +190,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
                         new RewardItemConfig(RewardType.OperationInfrastructure, 4, "port_breach")
                     })
             });
-        WarlineCaptureMissionSession.BeginMissionForTests(mission, WarlineCaptureRoute.OperationDashboard);
+        new ActiveMissionSession().BeginMissionForTests(mission, WarlineCaptureRoute.OperationDashboard);
 
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_MissionBriefing"));
         try
@@ -216,7 +216,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
     [Test]
     public void MissionBriefing_PrioritizesOperationRewardsForOperationLaunch()
     {
-        WarlineCaptureMissionSession.BeginMission("saga.ch01.m05.breach_assault", WarlineCaptureRoute.OperationDashboard);
+        new ActiveMissionSession().BeginMission("saga.ch01.m05.breach_assault", WarlineCaptureRoute.OperationDashboard);
         GameObject instance = Object.Instantiate(LoadPrefab("Screen_MissionBriefing"));
         try
         {
@@ -301,7 +301,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
     {
         Transform target = prefab.transform.Find(path);
         Assert.NotNull(target, path);
-        WarlineCaptureMissionSessionSystem sessionButton = target.GetComponent<WarlineCaptureMissionSessionSystem>();
+        MissionLaunchActionSystem sessionButton = target.GetComponent<MissionLaunchActionSystem>();
         Assert.NotNull(sessionButton, path);
         var serialized = new SerializedObject(sessionButton);
         Assert.AreEqual(expectedMissionId, serialized.FindProperty("missionId").stringValue, path);
@@ -320,7 +320,7 @@ public sealed class WarlineCaptureUiSagaCampaignTests
             Assert.NotNull(target, path);
 
             AssertText(prefab, $"{path}/TitleText", mission.DisplayName);
-            WarlineCaptureSagaMissionNodeMetadata metadata = target.GetComponent<WarlineCaptureSagaMissionNodeMetadata>();
+            SagaMissionNodeView metadata = target.GetComponent<SagaMissionNodeView>();
             Assert.NotNull(metadata, path);
             Assert.AreEqual(mission.MissionId, metadata.MissionId, path);
             Assert.AreEqual(1, metadata.ChapterIndex, path);

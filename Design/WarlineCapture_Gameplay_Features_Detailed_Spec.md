@@ -830,7 +830,7 @@ Add:
 Current implementation note:
 
 - `CampaignMapScreenController` applies the initial Chapter 1 unlock rule in the UI layer. Existing `SagaMapScreenController` / `SagaProgressStore` names may remain as runtime compatibility until renamed.
-- Locked mission nodes remain selectable for their info panel but do not start a mission. Unlocked mission nodes update selected state, seed `WarlineCaptureMissionSession`, and route toward Mission Briefing when a shell router is present.
+- Locked mission nodes remain selectable for their info panel but do not start a mission. Unlocked mission nodes update selected state, seed `ActiveMissionSession`, and route toward Mission Briefing when a shell router is present.
 
 ## Phase 10 - Operations
 

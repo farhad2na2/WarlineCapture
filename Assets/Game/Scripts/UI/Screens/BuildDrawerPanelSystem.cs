@@ -36,7 +36,7 @@ public sealed class BuildDrawerPanelSystem : MonoBehaviour
 
     public void Open()
     {
-        if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
+        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
             return;
 
         if (drawerRoot != null)
@@ -57,7 +57,7 @@ public sealed class BuildDrawerPanelSystem : MonoBehaviour
             return;
 
         bool shouldOpen = !drawerRoot.activeSelf;
-        if (shouldOpen && WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
+        if (shouldOpen && new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
             return;
 
         drawerRoot.SetActive(shouldOpen);

@@ -44,7 +44,7 @@ public sealed class MatchObjectivePanelSystem : MonoBehaviour
         if (objectivePanel != null)
             objectivePanel.SetActive(true);
 
-        if (!WarlineCaptureMissionSession.HasActiveMission)
+        if (!new ActiveMissionSession().HasActiveMission)
         {
             RestoreFallbackText();
             SetRowsActive(objectiveRows, true);
@@ -52,7 +52,7 @@ public sealed class MatchObjectivePanelSystem : MonoBehaviour
             return;
         }
 
-        MissionConfig mission = WarlineCaptureMissionSession.ActiveMission;
+        MissionConfig mission = new ActiveMissionSession().ActiveMission;
         GameRuntimeStats.Snapshot snapshot = GameRuntimeStats.GetSnapshot();
         var manager = new ObjectiveManager();
         manager.Initialize(mission);

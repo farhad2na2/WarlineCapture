@@ -19,15 +19,15 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
 
     public void CompleteActiveMissionAndShowResult()
     {
-        if (!WarlineCaptureMissionSession.HasActiveMission)
+        if (!new ActiveMissionSession().HasActiveMission)
             return;
 
-        MissionResultData result = WarlineCaptureMissionSession.BuildCurrentResult(GameRuntimeStats.GetSnapshot());
-        RewardGrantResult[] rewards = ApplyRewardsAndPersist(WarlineCaptureMissionSession.ActiveMission, result);
+        MissionResultData result = new ActiveMissionSession().BuildCurrentResult(GameRuntimeStats.GetSnapshot());
+        RewardGrantResult[] rewards = ApplyRewardsAndPersist(new ActiveMissionSession().ActiveMission, result);
         result = result.WithRewards(rewards);
         SagaProgressStore.ApplyMissionResult(result);
-        ShowResult(result, WarlineCaptureMissionSession.ReturnRoute);
-        WarlineCaptureMissionSession.Clear();
+        ShowResult(result, new ActiveMissionSession().ReturnRoute);
+        new ActiveMissionSession().Clear();
     }
 
     public void ShowResult(MissionResultData result, WarlineCaptureRoute returnRoute)
@@ -88,7 +88,7 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
 
     public static bool CanCompleteActiveMissionFromLoadedScene()
     {
-        if (!WarlineCaptureMissionSession.HasActiveMission)
+        if (!new ActiveMissionSession().HasActiveMission)
             return false;
 
         World world = World.DefaultGameObjectInjectionWorld;
@@ -98,7 +98,7 @@ public sealed class WarlineCaptureMatchResultFlow : MonoBehaviour
             return false;
         }
 
-        MissionResultData preview = WarlineCaptureMissionSession.BuildCurrentResult(GameRuntimeStats.GetSnapshot());
+        MissionResultData preview = new ActiveMissionSession().BuildCurrentResult(GameRuntimeStats.GetSnapshot());
         return preview.Victory;
     }
 

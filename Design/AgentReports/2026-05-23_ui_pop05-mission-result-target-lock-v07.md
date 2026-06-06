@@ -3,7 +3,7 @@ Lane: UI
 Task: Iterate POP-05 Mission Result target-lock conversion, prioritizing the Consequences panel.
 
 Files changed:
-- Assets/Game/Scripts/Editor/WarlineCapturePop05MissionResultSceneBuilder.cs
+- Assets/Game/Scripts/Editor/Pop05MissionResultTargetLockSceneBuilder.cs
 - Assets/Game/Prefabs/UI/Screens/Screen_POP05_MissionResult_TargetLock.prefab
 - Assets/Game/Scenes/DesignTargets/POP05_MissionResult_TargetLock.unity
 - Design/AgentReports/Captures/POP05_MissionResult_TargetLock_V07_2400x1080.png
@@ -21,7 +21,7 @@ User-visible behavior:
 
 Validation run:
 - Unity 6000.4.0f1 batchmode in WarlineCapture-CodexUnity2:
-  /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity2 -executeMethod WarlineCapturePop05MissionResultSceneBuilder.CaptureScene -logFile /private/tmp/warlinecapture-pop05-result-v07.log
+  /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity2 -executeMethod Pop05MissionResultTargetLockSceneBuilder.CaptureScene -logFile /private/tmp/warlinecapture-pop05-result-v07.log
 
 Validation result:
 - Passed. Unity built and captured V07 successfully.

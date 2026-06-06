@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(Button))]
-public sealed class WarlineCaptureMissionSessionSystem : MonoBehaviour
+public sealed class MissionLaunchActionSystem : MonoBehaviour
 {
     [SerializeField] private string missionId = "saga.ch01.m05.breach_assault";
     [SerializeField] private WarlineCaptureRoute returnRoute = WarlineCaptureRoute.SagaMap;
@@ -25,10 +25,11 @@ public sealed class WarlineCaptureMissionSessionSystem : MonoBehaviour
 
     private void HandleClick()
     {
-        string selectedMissionId = useActiveMissionWhenAvailable && WarlineCaptureMissionSession.HasActiveMission
-            ? WarlineCaptureMissionSession.ActiveMission.MissionId
+        ActiveMissionSession activeMissionSession = new();
+        string selectedMissionId = useActiveMissionWhenAvailable && activeMissionSession.HasActiveMission
+            ? activeMissionSession.ActiveMission.MissionId
             : missionId;
-        WarlineCaptureMissionSession.BeginMission(selectedMissionId, returnRoute);
+        activeMissionSession.BeginMission(selectedMissionId, returnRoute);
 
         if (launchExistingGameplay)
             WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this);

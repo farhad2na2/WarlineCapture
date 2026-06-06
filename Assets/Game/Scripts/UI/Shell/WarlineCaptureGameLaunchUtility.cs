@@ -26,8 +26,8 @@ public static class WarlineCaptureGameLaunchUtility
 
     public static bool ShouldUseWarlineCaptureProductionRoute()
     {
-        return WarlineCaptureMissionSession.HasActiveMission &&
-            WarlineCaptureMissionSession.ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
+        return new ActiveMissionSession().HasActiveMission &&
+            new ActiveMissionSession().ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
     }
 
     private static void StartM01ProductionRoute(Component source, Scene preferredScene)

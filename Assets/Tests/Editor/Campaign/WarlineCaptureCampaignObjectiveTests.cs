@@ -13,7 +13,7 @@ public sealed class WarlineCaptureCampaignObjectiveTests
     public void TearDown()
     {
         GameRuntimeStats.Reset();
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         SagaProgressStore.ClearMission("test.m01");
     }
 
@@ -111,15 +111,15 @@ public sealed class WarlineCaptureCampaignObjectiveTests
     [Test]
     public void MissionSession_TracksActiveMissionAndBuildsResult()
     {
-        WarlineCaptureMissionSession.BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
         GameRuntimeStats.RecordBuildingBuilt();
         for (int i = 0; i < 8; i++)
             GameRuntimeStats.RecordMilitaryDeath(1);
 
-        MissionResultData result = WarlineCaptureMissionSession.BuildCurrentResult(GameRuntimeStats.GetSnapshot());
+        MissionResultData result = new ActiveMissionSession().BuildCurrentResult(GameRuntimeStats.GetSnapshot());
 
-        Assert.IsTrue(WarlineCaptureMissionSession.HasActiveMission);
-        Assert.AreEqual("Establish The Base", WarlineCaptureMissionSession.ActiveMission.DisplayName);
+        Assert.IsTrue(new ActiveMissionSession().HasActiveMission);
+        Assert.AreEqual("Establish The Base", new ActiveMissionSession().ActiveMission.DisplayName);
         Assert.IsTrue(result.Victory);
         Assert.AreEqual("saga.ch01.m02.establish_base", result.MissionId);
     }

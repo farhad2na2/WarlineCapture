@@ -1,8 +1,12 @@
 using System;
 using UnityEngine;
 
-public static class SagaProgressStore
+public sealed class SagaProgressStore
 {
+    private SagaProgressStore()
+    {
+    }
+
     private const string Prefix = "WarlineCapture.Saga.";
 
     public static void ApplyMissionResult(MissionResultData result)

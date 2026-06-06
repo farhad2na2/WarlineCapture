@@ -3,7 +3,7 @@ Lane: UI
 Task: POP-05 mission result target-lock variants: victory, partial success, defeat/lost, withdrawn, and simulation resolved.
 
 Files changed:
-- Assets/Game/Scripts/Editor/WarlineCapturePop05MissionResultSceneBuilder.cs
+- Assets/Game/Scripts/Editor/Pop05MissionResultTargetLockSceneBuilder.cs
 - Assets/Game/Art/UI/Generated/MissionResult/TargetLockV01/pop05_defeat_*.png(.meta)
 - Assets/Game/Art/UI/Generated/MissionResult/TargetLockV01/pop05_partial_*.png(.meta)
 - Assets/Game/Art/UI/Generated/MissionResult/TargetLockV01/pop05_withdrawn_*.png(.meta)
@@ -37,7 +37,7 @@ User-visible behavior:
 - The long labels that clipped in the first capture pass were tightened: defeat CTA, adjust-loadout action, unresolved status, route notes, partial summary title, and long consequence values.
 
 Validation run:
-- /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity2 -executeMethod WarlineCapturePop05MissionResultSceneBuilder.CaptureAllVariants -logFile /private/tmp/warlinecapture-pop05-result-variants-v03.log
+- /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity2 -executeMethod Pop05MissionResultTargetLockSceneBuilder.CaptureAllVariants -logFile /private/tmp/warlinecapture-pop05-result-variants-v03.log
 - Visual review of all five 2400x1080 captures.
 
 Validation result:

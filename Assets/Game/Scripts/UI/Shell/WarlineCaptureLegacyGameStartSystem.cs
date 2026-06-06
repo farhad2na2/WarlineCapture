@@ -20,7 +20,7 @@ public sealed class WarlineCaptureLegacyGameStartSystem : MonoBehaviour
 
     private void HandleClick()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
     }
 }

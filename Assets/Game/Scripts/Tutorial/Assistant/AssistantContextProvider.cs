@@ -43,12 +43,12 @@ public sealed class AssistantContextProvider
         var context = new AssistantContext
         {
             ActiveRoute = ResolveActiveRoute(router, playRequested),
-            MissionId = WarlineCaptureMissionSession.ActiveMissionId,
-            ScenarioSetupId = WarlineCaptureMissionSession.ActiveScenarioSetupId,
-            LevelId = WarlineCaptureMissionSession.ActiveLevelId,
-            IsoMapId = WarlineCaptureMissionSession.ActiveIsoMapId,
-            MapPreviewArtId = WarlineCaptureMissionSession.ActiveMapPreviewArtId,
-            MinimapArtId = WarlineCaptureMissionSession.ActiveMinimapArtId,
+            MissionId = new ActiveMissionSession().ActiveMissionId,
+            ScenarioSetupId = new ActiveMissionSession().ActiveScenarioSetupId,
+            LevelId = new ActiveMissionSession().ActiveLevelId,
+            IsoMapId = new ActiveMissionSession().ActiveIsoMapId,
+            MapPreviewArtId = new ActiveMissionSession().ActiveMapPreviewArtId,
+            MinimapArtId = new ActiveMissionSession().ActiveMinimapArtId,
             IsMatchOverlayActive = ResolveMatchOverlayActive(router, playRequested),
             ObjectivePanelVisible = ResolveObjectivePanelVisible(objectivePanel, router, playRequested),
             ResultPopupVisible = resultFlow != null && resultFlow.HasActivePopup,
@@ -207,7 +207,7 @@ public sealed class AssistantContextProvider
         if (objectivePanel != null)
             return objectivePanel.gameObject.activeInHierarchy;
 
-        return ResolveMatchOverlayActive(router, playRequested) && WarlineCaptureMissionSession.HasActiveMission;
+        return ResolveMatchOverlayActive(router, playRequested) && new ActiveMissionSession().HasActiveMission;
     }
 
     private static AssistantControlOwnerState ResolveControlOwnerState(TutorialSessionState sessionState)

@@ -1,8 +1,12 @@
 using System;
 using System.Linq;
 
-public static class MissionResultBuilder
+public sealed class MissionResultBuilder
 {
+    private MissionResultBuilder()
+    {
+    }
+
     public static MissionResultData Build(MissionConfig mission, GameRuntimeStats.Snapshot snapshot)
     {
         if (mission == null)

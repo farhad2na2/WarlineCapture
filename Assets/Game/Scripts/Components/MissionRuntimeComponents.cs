@@ -7,6 +7,12 @@ public struct MissionRuntimeEntityId : IComponentData
     public FixedString64Bytes Value;
 }
 
+public struct ActiveMissionSessionComponent : IComponentData
+{
+    public FixedString128Bytes MissionId;
+    public int ReturnRoute;
+}
+
 public struct MissionRuntimeCommandSquadTag : IComponentData
 {
 }

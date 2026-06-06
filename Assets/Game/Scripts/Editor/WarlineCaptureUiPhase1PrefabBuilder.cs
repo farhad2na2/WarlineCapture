@@ -1661,7 +1661,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
     private static void OpenAssistantPanelForCapture(GameObject instance)
     {
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         InitialUnitsRuntimeState.PlayRequested = true;
 
         AssistantRuntimeBinding assistantRuntimeBinding = instance.GetComponent<AssistantRuntimeBinding>();
@@ -1951,7 +1951,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         if (state == M01IntegratedCaptureState.ResultPopup)
         {
-            WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+            new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
             InitialUnitsRuntimeState.PlayRequested = true;
             ConfigureM01IntegratedCaptureState(matchScreen.gameObject, M01IntegratedCaptureState.SquadSelected);
 
@@ -2067,7 +2067,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
     private static void ConfigureM01NoSelectionCaptureState(GameObject instance)
     {
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         InitialUnitsRuntimeState.PlayRequested = true;
         EnableM01IntegratedPreview(instance);
 
@@ -2120,7 +2120,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
     private static void ShowM01AssistantTakeoverForCapture(GameObject instance)
     {
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         InitialUnitsRuntimeState.PlayRequested = true;
 
         AssistantRuntimeBinding binding = instance.GetComponent<AssistantRuntimeBinding>();
@@ -3980,11 +3980,11 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         CreateSagaRouteLine("Route_2_3", nodes.transform, 430f, 346f, 260f, 46f, -16f);
         CreateSagaRouteLine("Route_3_4", nodes.transform, 648f, 390f, 260f, 46f, -22f);
         CreateSagaRouteLine("Route_4_5", nodes.transform, 860f, 310f, 260f, 46f, 20f);
-        WarlineCaptureSagaMissionNodeMetadata node11 = CreateSagaNode("Node_1_1", nodes.transform, "1-1", ChapterOneMissionCatalog.All[0], "mission_node_completed_frame.png", 88f, 408f, false, false, string.Empty);
-        WarlineCaptureSagaMissionNodeMetadata node12 = CreateSagaNode("Node_1_2", nodes.transform, "1-2", ChapterOneMissionCatalog.All[1], "mission_node_selected_frame.png", 310f, 316f, true, false, string.Empty);
-        WarlineCaptureSagaMissionNodeMetadata node13 = CreateSagaNode("Node_1_3", nodes.transform, "1-3", ChapterOneMissionCatalog.All[2], "mission_node_locked_frame.png", 520f, 390f, false, true, "Complete 1-2 to unlock.");
-        WarlineCaptureSagaMissionNodeMetadata node14 = CreateSagaNode("Node_1_4", nodes.transform, "1-4", ChapterOneMissionCatalog.All[3], "mission_node_locked_frame.png", 740f, 256f, false, true, "Complete 1-3 to unlock.");
-        WarlineCaptureSagaMissionNodeMetadata node15 = CreateSagaNode("Node_1_5", nodes.transform, "1-5", ChapterOneMissionCatalog.All[4], "mission_node_locked_frame.png", 940f, 346f, false, true, "Complete 1-4 to unlock.");
+        SagaMissionNodeView node11 = CreateSagaNode("Node_1_1", nodes.transform, "1-1", ChapterOneMissionCatalog.All[0], "mission_node_completed_frame.png", 88f, 408f, false, false, string.Empty);
+        SagaMissionNodeView node12 = CreateSagaNode("Node_1_2", nodes.transform, "1-2", ChapterOneMissionCatalog.All[1], "mission_node_selected_frame.png", 310f, 316f, true, false, string.Empty);
+        SagaMissionNodeView node13 = CreateSagaNode("Node_1_3", nodes.transform, "1-3", ChapterOneMissionCatalog.All[2], "mission_node_locked_frame.png", 520f, 390f, false, true, "Complete 1-2 to unlock.");
+        SagaMissionNodeView node14 = CreateSagaNode("Node_1_4", nodes.transform, "1-4", ChapterOneMissionCatalog.All[3], "mission_node_locked_frame.png", 740f, 256f, false, true, "Complete 1-3 to unlock.");
+        SagaMissionNodeView node15 = CreateSagaNode("Node_1_5", nodes.transform, "1-5", ChapterOneMissionCatalog.All[4], "mission_node_locked_frame.png", 940f, 346f, false, true, "Complete 1-4 to unlock.");
 
         GameObject info = CreateCampaignPanel("NodeInfoPanel", screen.transform, SagaMapGeneratedRoot, "starter_pack_card_frame.png", 382f, 768f, 758f, 120f);
         TMP_Text selectedTitle = CreateText("SelectedTitleText", info.transform, "SELECTED: 1-2 ESTABLISH THE BASE", 24f, TextAlignmentOptions.Left);
@@ -4032,12 +4032,12 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         route.transform.localEulerAngles = new Vector3(0f, 0f, z);
     }
 
-    private static WarlineCaptureSagaMissionNodeMetadata CreateSagaNode(string name, Transform parent, string code, MissionConfig mission, string frameLayer, float x, float y, bool routesToBriefing, bool locked = false, string lockedReason = "")
+    private static SagaMissionNodeView CreateSagaNode(string name, Transform parent, string code, MissionConfig mission, string frameLayer, float x, float y, bool routesToBriefing, bool locked = false, string lockedReason = "")
     {
         Button node = CreateCampaignButton(name, parent, SagaMapGeneratedRoot, frameLayer, !locked, 144f, 118f);
         node.interactable = !locked;
         ConfigurePixelRect((RectTransform)node.transform, x, y, 144f, 118f, 1198f, 618f);
-        WarlineCaptureSagaMissionNodeMetadata metadata = node.gameObject.AddComponent<WarlineCaptureSagaMissionNodeMetadata>();
+        SagaMissionNodeView metadata = node.gameObject.AddComponent<SagaMissionNodeView>();
         SetSerializedString(metadata, "missionId", mission.MissionId);
         SetSerializedInt(metadata, "chapterIndex", 1);
         SetSerializedInt(metadata, "missionIndex", GetMissionIndexFromCode(code));
@@ -4063,7 +4063,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
 
         if (routesToBriefing)
         {
-            WarlineCaptureMissionSessionSystem missionSession = node.gameObject.AddComponent<WarlineCaptureMissionSessionSystem>();
+            MissionLaunchActionSystem missionSession = node.gameObject.AddComponent<MissionLaunchActionSystem>();
             SetSerializedString(missionSession, "missionId", mission.MissionId);
             SetSerializedEnum(missionSession, "returnRoute", (int)WarlineCaptureRoute.SagaMap);
             ScreenRouteSystem route = node.gameObject.AddComponent<ScreenRouteSystem>();
@@ -4138,7 +4138,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)startText.transform, 14f, 15f, 272f, 44f, 300f, 78f);
         ScreenRouteSystem matchRoute = start.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(matchRoute, "route", (int)WarlineCaptureRoute.LoadoutSquadPrep);
-        WarlineCaptureMissionSessionSystem missionSession = start.gameObject.AddComponent<WarlineCaptureMissionSessionSystem>();
+        MissionLaunchActionSystem missionSession = start.gameObject.AddComponent<MissionLaunchActionSystem>();
         SetSerializedString(missionSession, "missionId", fallbackMissionId);
         SetSerializedEnum(missionSession, "returnRoute", (int)WarlineCaptureRoute.SagaMap);
         SetSerializedBool(missionSession, "useActiveMissionWhenAvailable", true);
@@ -4234,7 +4234,7 @@ public static class WarlineCaptureUiPhase1PrefabBuilder
         ConfigurePixelRect((RectTransform)deployIcon.transform, 414f, 17f, 54f, 54f, 512f, 88f);
         ScreenRouteSystem matchRoute = deploy.gameObject.AddComponent<ScreenRouteSystem>();
         SetSerializedEnum(matchRoute, "route", (int)WarlineCaptureRoute.Match);
-        WarlineCaptureMissionSessionSystem missionSession = deploy.gameObject.AddComponent<WarlineCaptureMissionSessionSystem>();
+        MissionLaunchActionSystem missionSession = deploy.gameObject.AddComponent<MissionLaunchActionSystem>();
         SetSerializedString(missionSession, "missionId", "saga.ch01.m05.breach_assault");
         SetSerializedEnum(missionSession, "returnRoute", (int)WarlineCaptureRoute.SagaMap);
         SetSerializedBool(missionSession, "launchExistingGameplay", true);

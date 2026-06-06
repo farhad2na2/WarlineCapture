@@ -9350,7 +9350,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public void BeginSoldierTentPlacement(Context context)", commandSystem);
         StringAssert.Contains("public void BeginFactoryPlacement(Context context)", commandSystem);
         StringAssert.Contains("public bool BeginPlacementForConfiguredSpawnable(Context context, GameObject prefab)", commandSystem);
-        StringAssert.Contains("WarlineCaptureMissionRules.TryRejectBuildForActiveMission", commandSystem);
+        StringAssert.Contains("new MissionCommandPolicySystem().TryRejectBuildForActiveOperation", commandSystem);
         StringAssert.Contains("context.DefinitionSystem.TryGetConfiguredDefinition", commandSystem);
         StringAssert.Contains("context.SessionSystem?.BeginPlacement(context.SessionContext, definition)", commandSystem);
         StringAssert.Contains("BuildingPlacementCommandSystem is missing the Soldier Base spawnable prefab reference.", commandSystem);
@@ -9369,7 +9369,7 @@ public sealed class GameplayArchitectureContractTests
 
         string[] broadShellCommandDebt =
         {
-            "WarlineCaptureMissionRules.TryRejectBuildForActiveMission",
+            "new MissionCommandPolicySystem().TryRejectBuildForActiveOperation",
             "BuildingGameplaySystem is missing the Soldier Base spawnable prefab reference.",
             "BuildingGameplaySystem is missing the Soldier Tent spawnable prefab reference.",
             "BuildingGameplaySystem is missing the Factory spawnable prefab reference.",
@@ -11268,7 +11268,7 @@ public sealed class GameplayArchitectureContractTests
         StringAssert.Contains("public readonly RoadBuildSessionSystem.Context SessionContext", commandSystem);
         StringAssert.Contains("public readonly Action ClearRoadBuildDragState", commandSystem);
         StringAssert.Contains("public bool SetBuildMode(Context context, bool enabled)", commandSystem);
-        StringAssert.Contains("WarlineCaptureMissionRules.TryRejectBuildForActiveMission", commandSystem);
+        StringAssert.Contains("new MissionCommandPolicySystem().TryRejectBuildForActiveOperation", commandSystem);
         StringAssert.Contains("context.RuntimeGameplayStateSystem.BuildModeActive = enabled", commandSystem);
         StringAssert.Contains("context.RuntimeGameplayStateSystem.SelectionModeActive = false", commandSystem);
         StringAssert.Contains("public bool ActivateRoadBuildMode(Context context)", commandSystem);
@@ -11412,7 +11412,7 @@ public sealed class GameplayArchitectureContractTests
             "public void CreateSoldierFromSelectedBuilding()",
             "public void DeleteSelectedBuilding()",
             "public void ClearSelectedBuilding()",
-            "public void BeginSoldierBasePlacement()\n    {\n        if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())",
+            "public void BeginSoldierBasePlacement()\n    {\n        if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())",
             "if (_soldierBaseDefinition == null || soldierBasePrefab == null)",
             "BeginBuildingPlacement(_soldierBaseDefinition)",
             "PlaceBuilding(_activeBuildingPlacement)",

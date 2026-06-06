@@ -15,7 +15,7 @@ public sealed class CommandIntentExecutorTests
     public void SetUp()
     {
         GameRuntimeStats.Reset();
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("CommandIntentExecutorTests");
         World.DefaultGameObjectInjectionWorld = _world;
@@ -28,7 +28,7 @@ public sealed class CommandIntentExecutorTests
         if (_world != null && _world.IsCreated)
             _world.Dispose();
         World.DefaultGameObjectInjectionWorld = _previousWorld;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
     }
 
@@ -231,7 +231,7 @@ public sealed class CommandIntentExecutorTests
         TacticalCommandResult result = executor.GetBuildCommandResult();
 
         AssertRejected(result, TacticalCommandReasonCode.MissionDoesNotAllowBuild);
-        Assert.AreEqual(WarlineCaptureMissionRules.M01BuildDisabledMessage, result.Message);
+        Assert.AreEqual(new MissionCommandPolicySystem().FirstContactBuildDisabledMessage, result.Message);
         Assert.AreEqual(TacticalCommandReasonCode.MissionDoesNotAllowBuild, session.LastRejectedReasonCode);
     }
 

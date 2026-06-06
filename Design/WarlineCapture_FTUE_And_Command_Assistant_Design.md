@@ -313,7 +313,7 @@ Define small, auditable action primitives:
 | Intent | Existing Anchor |
 |---|---|
 | Route to screen | `WarlineCaptureRouter.GoTo(WarlineCaptureRoute)` |
-| Select mission | `WarlineCaptureMissionSession.BeginMission(...)` and Campaign controllers |
+| Select mission | `new ActiveMissionSession().BeginMission(...)` and Campaign controllers |
 | Start mission briefing | `MissionBriefingScreenController` state |
 | Select unit/squad | `RTSSelectionSystem` |
 | Move selected units | `RTSSelectionSystem` move order path |
@@ -412,7 +412,7 @@ Recommendations should be ranked by urgency, relevance, confidence, and player p
 | Source | Use |
 |---|---|
 | `WarlineCaptureRouter.ActiveRoute` | Determine screen context. |
-| `WarlineCaptureMissionSession.ActiveMission` | Mission objectives, rewards, return route. |
+| `new ActiveMissionSession().ActiveMission` | Mission objectives, rewards, return route. |
 | `ObjectiveManager` and `GameRuntimeStats` | In-match objective progress and stuck detection. |
 | `ThreatWarningRuntimeState` | Threat alerts and jump-to-threat recommendations. |
 | `WarlineCaptureOperationRuntime.State` | District pressure, supplies, latest events, selected district. |

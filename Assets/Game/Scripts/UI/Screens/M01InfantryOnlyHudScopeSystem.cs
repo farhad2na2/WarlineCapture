@@ -32,8 +32,8 @@ public sealed class M01InfantryOnlyHudScopeSystem : MonoBehaviour
 
     public void Refresh()
     {
-        bool m01Active = WarlineCaptureMissionSession.HasActiveMission &&
-            WarlineCaptureMissionSession.ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
+        bool m01Active = new ActiveMissionSession().HasActiveMission &&
+            new ActiveMissionSession().ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
         IsM01ScopeActive = m01Active;
 
         ApplyM01SuppressedRoots(hiddenDuringM01, m01Active);

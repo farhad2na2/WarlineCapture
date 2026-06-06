@@ -34,8 +34,8 @@ public sealed class MissionBriefingScreenSystem : MonoBehaviour
 
     private MissionConfig ResolveMission()
     {
-        if (WarlineCaptureMissionSession.HasActiveMission)
-            return WarlineCaptureMissionSession.ActiveMission;
+        if (new ActiveMissionSession().HasActiveMission)
+            return new ActiveMissionSession().ActiveMission;
 
         try
         {
@@ -71,8 +71,8 @@ public sealed class MissionBriefingScreenSystem : MonoBehaviour
 
     private void BindRewards(MissionConfig mission)
     {
-        bool operationFirst = WarlineCaptureMissionSession.HasActiveMission
-            && WarlineCaptureMissionSession.ReturnRoute == WarlineCaptureRoute.OperationDashboard;
+        bool operationFirst = new ActiveMissionSession().HasActiveMission
+            && new ActiveMissionSession().ReturnRoute == WarlineCaptureRoute.OperationDashboard;
         RewardItemConfig[] previewItems = CollectPreviewItems(mission, operationFirst);
         for (int i = 0; i < rewardLabels.Length; i++)
         {

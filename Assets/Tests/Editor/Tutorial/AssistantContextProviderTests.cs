@@ -19,7 +19,7 @@ public sealed class AssistantContextProviderTests
         GameRuntimeStats.Reset();
         _previousPlayRequested = InitialUnitsRuntimeState.PlayRequested;
         InitialUnitsRuntimeState.PlayRequested = true;
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("AssistantContextProviderTests");
         World.DefaultGameObjectInjectionWorld = _world;
@@ -40,7 +40,7 @@ public sealed class AssistantContextProviderTests
         if (_world != null && _world.IsCreated)
             _world.Dispose();
         World.DefaultGameObjectInjectionWorld = _previousWorld;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         InitialUnitsRuntimeState.PlayRequested = _previousPlayRequested;
         GameRuntimeStats.Reset();
     }

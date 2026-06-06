@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public sealed class WarlineCaptureSagaMissionNodeMetadata : MonoBehaviour
+public sealed class SagaMissionNodeView : MonoBehaviour
 {
     [SerializeField] private string missionId;
     [SerializeField] private int chapterIndex;

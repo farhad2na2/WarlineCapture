@@ -222,7 +222,7 @@ internal sealed class MatchBootstrapSystem
             BuildingPlacementConfig,
             _aiStartupSystem,
             AIControllerConfigs);
-        if (WarlineCaptureMissionSession.HasActiveMission)
+        if (new ActiveMissionSession().HasActiveMission)
         {
             LogRuntimeEcsBootstrapState("beforeMissionInit");
             _missionStartupSystem.Initialize(
@@ -717,8 +717,8 @@ internal sealed class MatchBootstrapSystem
             ComponentType.ReadOnly<Unity.Transforms.LocalTransform>(),
             ComponentType.Exclude<UnitModelInstanceReference>(),
             ComponentType.Exclude<UnitDetailedVisualReference>());
-        string activeMissionId = WarlineCaptureMissionSession.ActiveMissionId;
-        int hasActiveMission = WarlineCaptureMissionSession.HasActiveMission ? 1 : 0;
+        string activeMissionId = new ActiveMissionSession().ActiveMissionId;
+        int hasActiveMission = new ActiveMissionSession().HasActiveMission ? 1 : 0;
         int isFirstContactMission = activeMissionId == ChapterOneMissionCatalog.FirstContactMissionId ? 1 : 0;
 
         Debug.Log(

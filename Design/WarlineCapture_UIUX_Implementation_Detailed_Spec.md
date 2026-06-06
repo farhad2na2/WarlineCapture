@@ -843,7 +843,7 @@ Current implementation note:
 - `ObjectiveManager` evaluates mission objectives from `GameRuntimeStats.Snapshot`.
 - `GameRuntimeStats.Snapshot` now exposes all initial Phase 8 objective inputs: enemy kills, elapsed mission seconds, protected civilians, buildings built, captured/destroyed buildings, own losses, and resources earned.
 - `MissionResultBuilder` creates `MissionResultData` for `POP-05 Mission Result`.
-- `WarlineCaptureMissionSession` tracks the active mission and return route. `StartMissionButton` and `DeployButton` seed this state, and Deploy launches the current legacy gameplay path.
+- `ActiveMissionSession` tracks the active mission and return route. `StartMissionButton` and `DeployButton` seed this state, and Deploy launches the current legacy gameplay path.
 - `CampaignMapScreenController` binds the Campaign Map node info panel from Chapter 1 mission node metadata, mission config objectives, and local completion/star progress. Existing `SagaMapScreenController` / `Screen_SagaMap` names may remain as runtime compatibility until renamed. It also refreshes node locked/available/selected visuals from Campaign progress, keeps locked nodes selectable for info only, and starts unlocked mission nodes into the briefing flow.
 - `CampaignProgressStore` persists local mission completion and best stars. Existing `SagaProgressStore` may remain as the compatibility backing store until renamed.
 - `SaveService` provides split JSON files for profile, Campaign, Operations, Settings, and Skirmish data under the planned save scope. Existing `Saga` / `QuickCustom` filenames may remain as compatibility storage until migrated.

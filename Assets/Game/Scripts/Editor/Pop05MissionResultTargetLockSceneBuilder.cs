@@ -6,8 +6,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public static class WarlineCapturePop05MissionResultSceneBuilder
+public sealed class Pop05MissionResultTargetLockSceneBuilder
 {
+    private Pop05MissionResultTargetLockSceneBuilder()
+    {
+    }
+
     private const int CanvasWidth = 2400;
     private const int CanvasHeight = 1080;
     private const string LayerRoot = "Assets/Game/Art/UI/Generated/MissionResult/TargetLockV01";

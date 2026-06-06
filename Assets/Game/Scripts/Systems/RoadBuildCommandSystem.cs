@@ -24,7 +24,7 @@ public sealed class RoadBuildCommandSystem
 
     public bool SetBuildMode(Context context, bool enabled)
     {
-        if (enabled && WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
+        if (enabled && new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
         {
             context.RuntimeGameplayStateSystem.BuildModeActive = false;
             return false;

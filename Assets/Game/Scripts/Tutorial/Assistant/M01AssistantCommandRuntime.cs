@@ -63,12 +63,13 @@ public static class M01AssistantCommandRuntime
 
     public static TacticalCommandResult GetBuildCommandResult()
     {
-        if (WarlineCaptureMissionRules.IsBuildAllowedForActiveMission())
+        MissionCommandPolicySystem missionCommandPolicySystem = new();
+        if (missionCommandPolicySystem.IsBuildAllowedForActiveOperation())
             return TacticalCommandResult.Success();
 
         return TacticalCommandResult.Rejected(
             TacticalCommandReasonCode.MissionDoesNotAllowBuild,
-            WarlineCaptureMissionRules.M01BuildDisabledMessage);
+            missionCommandPolicySystem.FirstContactBuildDisabledMessage);
     }
 
     private static bool IsM01CommandAllowed()

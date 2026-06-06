@@ -242,7 +242,7 @@ Earlier bridge aliases (`InvalidTarget`, `BlockedRoute`, `OutOfRange`, `BuildMod
 
 | Data | Source |
 |---|---|
-| Active mission ids | `WarlineCaptureMissionSession.ActiveMissionId`, `ActiveScenarioSetupId`, `ActiveLevelId`, `ActiveOperationMapId`, `ActivePlanningCameraId`, `ActiveMinimapProjectionId` |
+| Active mission ids | `new ActiveMissionSession().ActiveMissionId`, `ActiveScenarioSetupId`, `ActiveLevelId`, `ActiveOperationMapId`, `ActivePlanningCameraId`, `ActiveMinimapProjectionId` |
 | Selected entity name/status | Gameplay selection state, bridged through `BattleHudGameplayBridge.ApplySelection` |
 | Current command mode | `BattleHudGameplayBridge.ApplyCommandMode` / `ClearCommandMode` |
 | Last command result | `BattleHudGameplayBridge.ApplyCommandResult(TacticalCommandResult)` |

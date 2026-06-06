@@ -3,8 +3,8 @@ Lane: UI
 Task: Convert POP-05 Mission Result target lock into a Unity canvas scene using the current layered result-screen asset pack.
 
 Files changed:
-- Assets/Game/Scripts/Editor/WarlineCapturePop05MissionResultSceneBuilder.cs
-- Assets/Game/Scripts/Editor/WarlineCapturePop05MissionResultSceneBuilder.cs.meta
+- Assets/Game/Scripts/Editor/Pop05MissionResultTargetLockSceneBuilder.cs
+- Assets/Game/Scripts/Editor/Pop05MissionResultTargetLockSceneBuilder.cs.meta
 - Assets/Game/Art/UI/Generated/MissionResult/TargetLockV01/
 - Assets/Game/Prefabs/UI/Screens/Screen_POP05_MissionResult_TargetLock.prefab
 - Assets/Game/Prefabs/UI/Screens/Screen_POP05_MissionResult_TargetLock.prefab.meta
@@ -24,7 +24,7 @@ User-visible behavior:
 
 Validation run:
 - Unity 6000.4.0f1 batchmode in WarlineCapture-CodexUnity2:
-  /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity2 -executeMethod WarlineCapturePop05MissionResultSceneBuilder.CaptureScene -logFile /private/tmp/warlinecapture-pop05-result-v02.log
+  /Applications/Unity/Hub/Editor/6000.4.0f1/Unity.app/Contents/MacOS/Unity -batchmode -quit -projectPath /Users/farhad/Projects/WarlineCapture-CodexUnity2 -executeMethod Pop05MissionResultTargetLockSceneBuilder.CaptureScene -logFile /private/tmp/warlinecapture-pop05-result-v02.log
 
 Validation result:
 - Passed. Unity built the prefab and scene, generated the V02 capture, and exited batchmode successfully.

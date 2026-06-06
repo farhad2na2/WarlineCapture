@@ -61,7 +61,7 @@ Restored/reverted v2 drift:
 - Restored normal app flow: Splash/loading, Main Menu, Quick Custom, and Match routes remain present and are used for the proof path.
 - M01 launch now goes through the existing Quick Custom mission launch route:
   - `QuickCustomScreenController.LaunchMission`
-  - `WarlineCaptureMissionSession.BeginMission(saga.ch01.m01.first_contact, WarlineCaptureRoute.QuickCustomSetup)`
+  - `new ActiveMissionSession().BeginMission(saga.ch01.m01.first_contact, WarlineCaptureRoute.QuickCustomSetup)`
   - `WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter`
   - `GameBootstrap.BeginGameplay`
 - No M01-specific scene startup replacement remains.

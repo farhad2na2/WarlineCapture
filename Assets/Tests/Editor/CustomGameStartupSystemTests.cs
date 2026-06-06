@@ -56,14 +56,14 @@ public sealed class CustomGameStartupSystemTests
     [SetUp]
     public void SetUp()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         _world = new World("CustomGameStartupSystemTests");
     }
 
     [TearDown]
     public void TearDown()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         InitialUnitsRuntimeState.PlayRequested = false;
         if (_world != null && _world.IsCreated)
             _world.Dispose();
@@ -118,11 +118,11 @@ public sealed class CustomGameStartupSystemTests
     [Test]
     public void Initialize_DoesNotCreateMissionSession()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
 
         new CustomGameStartupSystem().Initialize(_world, CreateStartupConfig());
 
-        Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission);
+        Assert.IsFalse(new ActiveMissionSession().HasActiveMission);
     }
 
     [Test]
@@ -988,7 +988,7 @@ public sealed class CustomGameStartupSystemTests
 
     private static void AssertNoMissionTutorialRuntimeStarted(EntityManager em)
     {
-        Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission);
+        Assert.IsFalse(new ActiveMissionSession().HasActiveMission);
         Assert.IsFalse(Chapter01M01PlayableRuntime.IsActiveMission());
         Assert.AreEqual(0, CountComponents<MissionRuntimeEntityId>(em));
         Assert.AreEqual(0, CountComponents<MissionRuntimeObjectiveTarget>(em));

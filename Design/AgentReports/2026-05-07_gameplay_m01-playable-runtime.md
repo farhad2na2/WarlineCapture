@@ -9,8 +9,8 @@ Files changed:
 - Assets/Game/Scripts/Components/MissionRuntimeComponents.cs.meta
 - Assets/Game/Scripts/Campaign/Chapter01M01PlayableRuntime.cs
 - Assets/Game/Scripts/Campaign/Chapter01M01PlayableRuntime.cs.meta
-- Assets/Game/Scripts/Campaign/WarlineCaptureMissionRules.cs
-- Assets/Game/Scripts/Campaign/WarlineCaptureMissionRules.cs.meta
+- Assets/Game/Scripts/Campaign/MissionCommandPolicySystem.cs
+- Assets/Game/Scripts/Campaign/MissionCommandPolicySystem.cs.meta
 - Assets/Game/Scripts/Campaign/ChapterOneMissionCatalog.cs
 - Assets/Game/Scripts/TacticalMaps/Chapter01MissionTacticalRuntimeBinder.cs
 - Assets/Game/Scripts/Bootstrap/GameBootstrap.cs
@@ -24,7 +24,7 @@ Files changed:
 - Assets/Tests/Editor/Campaign/WarlineCaptureCampaignObjectiveTests.cs
 
 Contracts touched:
-- M01 active ids remain resolved from WarlineCaptureMissionSession: MissionId, ScenarioSetupId, LevelId, IsoMapId, MapPreviewArtId, MinimapArtId.
+- M01 active ids remain resolved from ActiveMissionSession: MissionId, ScenarioSetupId, LevelId, IsoMapId, MapPreviewArtId, MinimapArtId.
 - M01 tactical anchors now drive runtime squad/patrol/objective/camera positions on GameplayXZ.
 - Runtime entity ids added: unit.player.rifle_squad_01 and unit.enemy.patrol_01.
 - M01 objective now treats the hostile patrol group as one required patrol defeat and adds required command_squad_survives guard.

@@ -1,8 +1,12 @@
 using System;
 using UnityEngine;
 
-public static class MissionHistoryService
+public sealed class MissionHistoryService
 {
+    private MissionHistoryService()
+    {
+    }
+
     public const int MaxEntries = 20;
 
     public static void RecordResult(PlayerProfileSaveData profile, MissionResultData result)

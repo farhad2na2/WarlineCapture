@@ -29,7 +29,7 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
         InitialUnitsRuntimeState.FullscreenMapOpen = false;
         InitialUnitsRuntimeState.FullscreenMapIsoMode = false;
         InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
         Time.timeScale = 1f;
         SetLogAssertIgnoreFailingMessages(false);
@@ -162,7 +162,7 @@ public sealed class MenuMatchBootstrapSplitPlayModeTests
     private static async Task<Scene> LoadMenuScene()
     {
         InitialUnitsRuntimeState.PlayRequested = false;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         IgnoreFailingPackageLogsForNographicsRunner();
 
         Scene loadedMenuScene = EditorSceneManager.LoadSceneInPlayMode(

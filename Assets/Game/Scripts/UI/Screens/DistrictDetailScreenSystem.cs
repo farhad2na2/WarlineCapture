@@ -135,7 +135,7 @@ public sealed class DistrictDetailScreenSystem : MonoBehaviour
         if (!result.StartsRaidMission)
             return;
 
-        WarlineCaptureMissionSession.BeginMission(RaidMissionId, WarlineCaptureRoute.OperationDashboard);
+        new ActiveMissionSession().BeginMission(RaidMissionId, WarlineCaptureRoute.OperationDashboard);
         WarlineCaptureRouter router = FindRouter();
         if (router != null)
             router.GoTo(WarlineCaptureRoute.MissionBriefing);

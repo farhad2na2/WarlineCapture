@@ -89,14 +89,14 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     [SetUp]
     public void SetUp()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
     }
 
     [TearDown]
     public void TearDown()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
     }
 
@@ -325,7 +325,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     [Test]
     public void MatchOverlay_M01ScopeHidesBuildFromNoSelectionCommandSet()
     {
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {
@@ -939,7 +939,7 @@ public sealed class WarlineCaptureUiMatchOverlayTests
     [Test]
     public void MatchOverlay_ObjectivePanelBindsActiveMissionRuntimeState()
     {
-        WarlineCaptureMissionSession.BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
         GameObject instance = Object.Instantiate(LoadPrefab());
         try
         {

@@ -496,7 +496,7 @@ public sealed class WarlineCaptureUiComponentPrefabTests
     public void MissionResultPopupSystem_PrioritizesOperationRewardsForOperationMission()
     {
         MissionConfig mission = ChapterOneMissionCatalog.GetMission("saga.ch01.m05.breach_assault");
-        WarlineCaptureMissionSession.BeginMissionForTests(mission, WarlineCaptureRoute.OperationDashboard);
+        new ActiveMissionSession().BeginMissionForTests(mission, WarlineCaptureRoute.OperationDashboard);
         try
         {
             WithPrefab($"{PopupFolder}/MissionResultPopup.prefab", root =>
@@ -538,7 +538,7 @@ public sealed class WarlineCaptureUiComponentPrefabTests
         }
         finally
         {
-            WarlineCaptureMissionSession.Clear();
+            new ActiveMissionSession().Clear();
         }
     }
 

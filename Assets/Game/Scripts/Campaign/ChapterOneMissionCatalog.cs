@@ -1,8 +1,12 @@
 using System;
 using System.Collections.Generic;
 
-public static class ChapterOneMissionCatalog
+public sealed class ChapterOneMissionCatalog
 {
+    private ChapterOneMissionCatalog()
+    {
+    }
+
     public const string ChapterId = "saga.ch01";
     public const string FirstContactMissionId = "saga.ch01.m01.first_contact";
     private const string FirstContactRiflelineUnlockId = "Unit_Chr_Soldier_Male_02_Alt_04";

@@ -22,7 +22,7 @@ Required output:
 - command targeting calls `ApplyCommandMode` and `ClearCommandMode`
 - rejected commands produce `TacticalCommandResult` with `TacticalCommandReasonCode` and call `ApplyCommandResult`
 - production gameplay remains on the XZ plane
-- mission/map routing uses `WarlineCaptureMissionSession` active ids
+- mission/map routing uses `ActiveMissionSession` active ids
 - required focused tests pass or failures are reported as blockers
 
 ## Fixed Now
@@ -65,7 +65,7 @@ Updated files:
 
 - `Assets/Game/Scripts/Campaign/MissionConfig.cs`
 - `Assets/Game/Scripts/Campaign/ChapterOneMissionCatalog.cs`
-- `Assets/Game/Scripts/Campaign/WarlineCaptureMissionSession.cs`
+- `Assets/Game/Scripts/Campaign/ActiveMissionSession.cs`
 - `Assets/Game/Scripts/Campaign/ScenarioSetup.cs`
 
 The first mission uses:
@@ -195,11 +195,11 @@ Production gameplay must use XZ.
 Use the active session to resolve map data:
 
 ```csharp
-WarlineCaptureMissionSession.ActiveMissionId
-WarlineCaptureMissionSession.ActiveScenarioSetupId
-WarlineCaptureMissionSession.ActiveOperationMapId
-WarlineCaptureMissionSession.ActivePlanningCameraId
-WarlineCaptureMissionSession.ActiveMinimapProjectionId
+new ActiveMissionSession().ActiveMissionId
+new ActiveMissionSession().ActiveScenarioSetupId
+new ActiveMissionSession().ActiveIsoMapId
+new ActiveMissionSession().ActiveMapPreviewArtId
+new ActiveMissionSession().ActiveMinimapArtId
 ```
 
 The gameplay agent should not hard-code M01 except as a fallback while other maps are not authored.
@@ -245,7 +245,7 @@ Implement the gameplay-side wiring for:
 2. Move, Attack, Hold, Stop, Build, and Special command modes -> BattleHudGameplayBridge.ApplyCommandMode / ClearCommandMode.
 3. Rejected commands -> TacticalCommandResult with TacticalCommandReasonCode, then BattleHudGameplayBridge.ApplyCommandResult.
 4. Android touch input parity for production tactical selection, camera drag, command targeting, road/wall/build placement, and green rectangle selection.
-5. Active mission/session routing through WarlineCaptureMissionSession.ActiveMissionId, ActiveScenarioSetupId, ActiveOperationMapId, ActivePlanningCameraId, and ActiveMinimapProjectionId.
+5. Active mission/session routing through new ActiveMissionSession().ActiveMissionId, ActiveScenarioSetupId, ActiveIsoMapId, ActiveMapPreviewArtId, and ActiveMinimapArtId.
 
 Respect the production XZ plane. Do not reintroduce XY gameplay coordinates into ECS pathing, selection, movement, attack, build placement, or operation-map loading. Use the operation-map runtime loader or compatibility `TacticalMapRuntimeLoader.MapWorldToRuntimeWorld` plus existing GridHelpers/CellToWorldCenter/WorldToCell APIs.
 

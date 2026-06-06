@@ -45,7 +45,7 @@ Assets/Game/Configs/Tutorial
 ## Data Flow
 
 ```text
-WarlineCaptureMissionSession
+ActiveMissionSession
 Chapter01M01PlayableRuntime
 Objective/runtime result state
 RTSSelectionSystem / selected entity state
@@ -330,7 +330,7 @@ Implemented first pass:
 - `TutorialSessionState` tracks completed step ids, dismissed recommendation ids, active recommendation id, active preview/takeover ids, last rejected command, and M01 move/attack/result session flags.
 - `WarlineCaptureAssistantService.CreatePresentationData()` converts the current recommendation into `AssistantPanelPresentationData` for `AssistantPanelController`.
 - `CommandIntentExecutor` executes approved M01 `Do It` intents through accepted typed gameplay hooks and records accepted/rejected session outcomes.
-- `AssistantContextProvider` builds the live M01 context snapshot from `WarlineCaptureMissionSession`, ECS runtime ids, `TacticalMapRuntimeLoader` anchors, `BattleHudGameplayBridge` command feedback, and `WarlineCaptureMatchResultFlow` result visibility.
+- `AssistantContextProvider` builds the live M01 context snapshot from `ActiveMissionSession`, ECS runtime ids, `TacticalMapRuntimeLoader` anchors, `BattleHudGameplayBridge` command feedback, and `WarlineCaptureMatchResultFlow` result visibility.
 
 Recommendations' `Do It` availability remains gated by `AssistantContext.TypedCommandHooksAvailable`, now sourced from runtime readiness rather than test-authored snapshots.
 

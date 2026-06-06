@@ -16,13 +16,13 @@ public sealed class OperationUiBindingTests
     public void SetUp()
     {
         WarlineCaptureOperationRuntime.ResetForTests();
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
     }
 
     [TearDown]
     public void TearDown()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         WarlineCaptureOperationRuntime.ResetForTests();
     }
 
@@ -83,9 +83,9 @@ public sealed class OperationUiBindingTests
 
             root.transform.Find("StatusCard_3").GetComponent<Button>().onClick.Invoke();
 
-            Assert.IsTrue(WarlineCaptureMissionSession.HasActiveMission);
-            Assert.AreEqual("saga.ch01.m05.breach_assault", WarlineCaptureMissionSession.ActiveMission.MissionId);
-            Assert.AreEqual(WarlineCaptureRoute.OperationDashboard, WarlineCaptureMissionSession.ReturnRoute);
+            Assert.IsTrue(new ActiveMissionSession().HasActiveMission);
+            Assert.AreEqual("saga.ch01.m05.breach_assault", new ActiveMissionSession().ActiveMission.MissionId);
+            Assert.AreEqual(WarlineCaptureRoute.OperationDashboard, new ActiveMissionSession().ReturnRoute);
             Assert.AreEqual(54, WarlineCaptureOperationRuntime.SelectedDistrict.threat);
         }
         finally
@@ -177,8 +177,8 @@ public sealed class OperationUiBindingTests
 
             confirmPopup.Find("Frame/ButtonRow/ConfirmButton").GetComponent<Button>().onClick.Invoke();
 
-            Assert.IsTrue(WarlineCaptureMissionSession.HasActiveMission);
-            Assert.AreEqual("saga.ch01.m05.breach_assault", WarlineCaptureMissionSession.ActiveMission.MissionId);
+            Assert.IsTrue(new ActiveMissionSession().HasActiveMission);
+            Assert.AreEqual("saga.ch01.m05.breach_assault", new ActiveMissionSession().ActiveMission.MissionId);
             Assert.AreEqual(WarlineCaptureRoute.MissionBriefing, router.ActiveRoute);
         }
         finally

@@ -13,7 +13,7 @@ public sealed class M01AssistantCommandRuntimeTests
     public void SetUp()
     {
         GameRuntimeStats.Reset();
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("M01AssistantCommandRuntimeTests");
         World.DefaultGameObjectInjectionWorld = _world;
@@ -26,7 +26,7 @@ public sealed class M01AssistantCommandRuntimeTests
         if (_world != null && _world.IsCreated)
             _world.Dispose();
         World.DefaultGameObjectInjectionWorld = _previousWorld;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
     }
 
@@ -160,7 +160,7 @@ public sealed class M01AssistantCommandRuntimeTests
         TacticalCommandResult result = M01AssistantCommandRuntime.GetBuildCommandResult();
 
         AssertRejected(result, TacticalCommandReasonCode.MissionDoesNotAllowBuild);
-        Assert.AreEqual(WarlineCaptureMissionRules.M01BuildDisabledMessage, result.Message);
+        Assert.AreEqual(new MissionCommandPolicySystem().FirstContactBuildDisabledMessage, result.Message);
     }
 
     private static void AssertRejected(TacticalCommandResult result, TacticalCommandReasonCode reasonCode)

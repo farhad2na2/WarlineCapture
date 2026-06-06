@@ -268,7 +268,7 @@ public sealed class WarlineCaptureUiShellTests
         canvasObject.AddComponent<Canvas>();
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         var inputSystem = new MatchOverlayCommandInputSystem();
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         try
         {
             instance.transform.SetParent(canvasObject.transform, false);
@@ -298,7 +298,7 @@ public sealed class WarlineCaptureUiShellTests
             inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
             UnityEngine.Object.DestroyImmediate(instance);
             UnityEngine.Object.DestroyImmediate(canvasObject);
-            WarlineCaptureMissionSession.Clear();
+            new ActiveMissionSession().Clear();
         }
     }
 
@@ -410,7 +410,7 @@ public sealed class WarlineCaptureUiShellTests
         GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
         var inputSystem = new MatchOverlayCommandInputSystem();
         int buildDrawerOpenCount = 0;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         try
         {
             Transform footer = instance.transform.Find("FooterContent");
@@ -433,7 +433,7 @@ public sealed class WarlineCaptureUiShellTests
         {
             inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
             UnityEngine.Object.DestroyImmediate(instance);
-            WarlineCaptureMissionSession.Clear();
+            new ActiveMissionSession().Clear();
         }
     }
 
@@ -447,7 +447,7 @@ public sealed class WarlineCaptureUiShellTests
         var inputSystem = new MatchOverlayCommandInputSystem();
         int buildDrawerOpenCount = 0;
         int buildDrawerCloseCount = 0;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         try
         {
             Transform footer = instance.transform.Find("FooterContent");
@@ -482,7 +482,7 @@ public sealed class WarlineCaptureUiShellTests
         {
             inputSystem.Unbind(instance.GetComponentInChildren<MatchOverlayCommandControlsView>(true));
             UnityEngine.Object.DestroyImmediate(instance);
-            WarlineCaptureMissionSession.Clear();
+            new ActiveMissionSession().Clear();
         }
     }
 

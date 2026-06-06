@@ -109,7 +109,7 @@ public sealed class MissionResultPopupSystem : MonoBehaviour
                 grantedRewards.Add(rewards[i]);
         }
 
-        if (WarlineCaptureMissionSession.HasActiveMission && WarlineCaptureMissionSession.ReturnRoute == WarlineCaptureRoute.OperationDashboard)
+        if (new ActiveMissionSession().HasActiveMission && new ActiveMissionSession().ReturnRoute == WarlineCaptureRoute.OperationDashboard)
             PrioritizeOperationRewards(grantedRewards);
 
         return grantedRewards;

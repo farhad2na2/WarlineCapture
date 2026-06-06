@@ -18,7 +18,7 @@ public sealed class Chapter01M01PlayableRuntimeTests
     public void SetUp()
     {
         GameRuntimeStats.Reset();
-        WarlineCaptureMissionSession.BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(ChapterOneMissionCatalog.FirstContactMissionId, WarlineCaptureRoute.SagaMap);
         _previousWorld = World.DefaultGameObjectInjectionWorld;
         _world = new World("Chapter01M01PlayableRuntimeTests");
         World.DefaultGameObjectInjectionWorld = _world;
@@ -35,21 +35,21 @@ public sealed class Chapter01M01PlayableRuntimeTests
         InitialUnitsRuntimeState.PlayRequested = false;
         InitialUnitsRuntimeState.SelectionModeActive = false;
         InitialUnitsRuntimeState.BuildModeActive = false;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
     }
 
     [Test]
     public void M01ActiveMissionSession_ResolvesProductionContractIds()
     {
-        MissionConfig mission = WarlineCaptureMissionSession.ActiveMission;
+        MissionConfig mission = new ActiveMissionSession().ActiveMission;
 
-        Assert.AreEqual("saga.ch01.m01.first_contact", WarlineCaptureMissionSession.ActiveMissionId);
-        Assert.AreEqual("scenario.ch01.m01.first_contact", WarlineCaptureMissionSession.ActiveScenarioSetupId);
-        Assert.AreEqual("level.ch01.district_edge_01", WarlineCaptureMissionSession.ActiveLevelId);
-        Assert.AreEqual("iso.ch01.district_edge_01", WarlineCaptureMissionSession.ActiveIsoMapId);
-        Assert.AreEqual("preview.ch01.first_contact", WarlineCaptureMissionSession.ActiveMapPreviewArtId);
-        Assert.AreEqual("minimap.ch01.first_contact", WarlineCaptureMissionSession.ActiveMinimapArtId);
+        Assert.AreEqual("saga.ch01.m01.first_contact", new ActiveMissionSession().ActiveMissionId);
+        Assert.AreEqual("scenario.ch01.m01.first_contact", new ActiveMissionSession().ActiveScenarioSetupId);
+        Assert.AreEqual("level.ch01.district_edge_01", new ActiveMissionSession().ActiveLevelId);
+        Assert.AreEqual("iso.ch01.district_edge_01", new ActiveMissionSession().ActiveIsoMapId);
+        Assert.AreEqual("preview.ch01.first_contact", new ActiveMissionSession().ActiveMapPreviewArtId);
+        Assert.AreEqual("minimap.ch01.first_contact", new ActiveMissionSession().ActiveMinimapArtId);
         Assert.AreEqual(1, mission.Objectives[0].TargetAmount);
         Assert.AreEqual("command_squad_survives", mission.Objectives[1].Id);
     }
@@ -134,7 +134,7 @@ public sealed class Chapter01M01PlayableRuntimeTests
         GameRuntimeStats.RecordMilitaryDeath(0);
         GameRuntimeStats.RecordMilitaryDeath(1);
 
-        MissionResultData result = WarlineCaptureMissionSession.BuildCurrentResult(GameRuntimeStats.GetSnapshot());
+        MissionResultData result = new ActiveMissionSession().BuildCurrentResult(GameRuntimeStats.GetSnapshot());
         Assert.IsFalse(result.Victory);
         Assert.IsTrue(Chapter01M01PlayableRuntime.TryEvaluateActiveMission(_world, out Chapter01M01PlayableRuntime.Evaluation evaluation));
         Assert.IsFalse(evaluation.CommandSquadAlive);
@@ -145,11 +145,11 @@ public sealed class Chapter01M01PlayableRuntimeTests
     [Test]
     public void Build_IsDisabledForM01WithSharedMissionReason()
     {
-        Assert.IsFalse(WarlineCaptureMissionRules.IsBuildAllowedForActiveMission());
+        Assert.IsFalse(new MissionCommandPolicySystem().IsBuildAllowedForActiveOperation());
         Assert.AreEqual("Building unlocks in the next mission.", TacticalCommandFeedbackText.ToDisplayText(TacticalCommandReasonCode.MissionDoesNotAllowBuild));
 
-        WarlineCaptureMissionSession.BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
-        Assert.IsTrue(WarlineCaptureMissionRules.IsBuildAllowedForActiveMission());
+        new ActiveMissionSession().BeginMission("saga.ch01.m02.establish_base", WarlineCaptureRoute.SagaMap);
+        Assert.IsTrue(new MissionCommandPolicySystem().IsBuildAllowedForActiveOperation());
     }
 
     [Test]

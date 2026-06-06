@@ -23,7 +23,7 @@ public sealed class GameSceneIsolationPlayModeTests
         InitialUnitsRuntimeState.ZoomOutHeld = false;
         InitialUnitsRuntimeState.SuppressNextWorldClick = false;
         InitialUnitsRuntimeState.PlayerAutoModeEnabled = false;
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         GameRuntimeStats.Reset();
         Time.timeScale = 1f;
     }
@@ -31,7 +31,7 @@ public sealed class GameSceneIsolationPlayModeTests
     [Test]
     public async Task GameScene_PlayUsesPromotedDefaultCanvasWithoutOld2DRoute()
     {
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         Scene defaultScene = EditorSceneManager.LoadSceneInPlayMode(DefaultScenePath, new LoadSceneParameters(LoadSceneMode.Single));
         await NextFrame();
         await NextFrame();
@@ -66,7 +66,7 @@ public sealed class GameSceneIsolationPlayModeTests
             await NextFrame();
 
         Assert.IsTrue(InitialUnitsRuntimeState.PlayRequested, "Default Game button should start the promoted prototype gameplay path.");
-        Assert.IsFalse(WarlineCaptureMissionSession.HasActiveMission, "Default Match scene Play must not create a production M01 mission session.");
+        Assert.IsFalse(new ActiveMissionSession().HasActiveMission, "Default Match scene Play must not create a production M01 mission session.");
         Assert.IsFalse(Chapter01M01PlayableRuntime.IsActiveMission(), "Default Match scene Play must not enter the old 2D/isometric M01 runtime.");
         Assert.IsNull(FindSceneComponent<WarlineCaptureUiBootstrap>(defaultScene), "Default Game play must not instantiate the old 2D production UI bootstrap.");
         Assert.IsNull(FindSceneComponent<WarlineCaptureRouter>(defaultScene), "Default Game play must not instantiate the public app router.");

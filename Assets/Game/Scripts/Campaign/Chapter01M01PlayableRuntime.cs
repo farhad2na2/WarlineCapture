@@ -88,8 +88,8 @@ public static class Chapter01M01PlayableRuntime
 
     public static bool IsActiveMission()
     {
-        return WarlineCaptureMissionSession.HasActiveMission &&
-            WarlineCaptureMissionSession.ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
+        return new ActiveMissionSession().HasActiveMission &&
+            new ActiveMissionSession().ActiveMissionId == ChapterOneMissionCatalog.FirstContactMissionId;
     }
 
     public static bool TryInitializeActiveMission(World world, out RuntimeState runtimeState)
@@ -146,7 +146,7 @@ public static class Chapter01M01PlayableRuntime
         bool playerAlive = IsAlive(em, player);
         bool patrolDestroyed = enemy == Entity.Null || !IsAlive(em, enemy);
         bool objectiveComplete = playerAlive && patrolDestroyed;
-        bool resultRouteReady = objectiveComplete && WarlineCaptureMissionSession.BuildCurrentResult(GameRuntimeStats.GetSnapshot()).Victory;
+        bool resultRouteReady = objectiveComplete && new ActiveMissionSession().BuildCurrentResult(GameRuntimeStats.GetSnapshot()).Victory;
 
         evaluation = new Evaluation(true, playerAlive, patrolDestroyed, objectiveComplete, resultRouteReady);
         return true;

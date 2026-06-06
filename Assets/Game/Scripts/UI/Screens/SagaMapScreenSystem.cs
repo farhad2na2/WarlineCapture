@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public sealed class SagaMapScreenSystem : MonoBehaviour
 {
     [SerializeField] private string defaultSelectedMissionId = "saga.ch01.m02.establish_base";
-    [SerializeField] private WarlineCaptureSagaMissionNodeMetadata[] missionNodes = Array.Empty<WarlineCaptureSagaMissionNodeMetadata>();
+    [SerializeField] private SagaMissionNodeView[] missionNodes = Array.Empty<SagaMissionNodeView>();
     [SerializeField] private TMP_Text selectedTitleText;
     [SerializeField] private TMP_Text selectedBodyText;
     [SerializeField] private TMP_Text selectedStatusText;
@@ -49,11 +49,11 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
             return;
 
         if (missionNodes == null || missionNodes.Length == 0)
-            missionNodes = GetComponentsInChildren<WarlineCaptureSagaMissionNodeMetadata>(true);
+            missionNodes = GetComponentsInChildren<SagaMissionNodeView>(true);
 
         for (int i = 0; i < missionNodes.Length; i++)
         {
-            WarlineCaptureSagaMissionNodeMetadata metadata = missionNodes[i];
+            SagaMissionNodeView metadata = missionNodes[i];
             if (metadata == null)
                 continue;
 
@@ -75,7 +75,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
         _nodesRefreshing = true;
         for (int i = 0; i < missionNodes.Length; i++)
         {
-            WarlineCaptureSagaMissionNodeMetadata metadata = missionNodes[i];
+            SagaMissionNodeView metadata = missionNodes[i];
             if (metadata == null)
                 continue;
 
@@ -100,7 +100,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
         _nodesRefreshing = false;
     }
 
-    private void HandleNodeClick(WarlineCaptureSagaMissionNodeMetadata metadata)
+    private void HandleNodeClick(SagaMissionNodeView metadata)
     {
         if (metadata == null)
             return;
@@ -113,7 +113,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
         if (HasExplicitRoute(metadata))
             return;
 
-        WarlineCaptureMissionSession.BeginMission(metadata.MissionId, WarlineCaptureRoute.SagaMap);
+        new ActiveMissionSession().BeginMission(metadata.MissionId, WarlineCaptureRoute.SagaMap);
         WarlineCaptureRouter router = FindRouter();
         if (router != null)
             router.GoTo(WarlineCaptureRoute.MissionBriefing);
@@ -125,7 +125,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
             return;
 
         MissionConfig mission = ChapterOneMissionCatalog.GetMission(missionId);
-        WarlineCaptureSagaMissionNodeMetadata metadata = FindMetadata(missionId);
+        SagaMissionNodeView metadata = FindMetadata(missionId);
         _selectedMissionId = missionId;
 
         int missionIndex = metadata != null && metadata.MissionIndex > 0 ? metadata.MissionIndex : FindMissionIndex(missionId);
@@ -151,7 +151,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
         SetText(selectedStarsText, $"{SagaProgressStore.GetStars(missionId)} / 3 STARS");
     }
 
-    private void RefreshSelectedVisuals(WarlineCaptureSagaMissionNodeMetadata selectedMetadata)
+    private void RefreshSelectedVisuals(SagaMissionNodeView selectedMetadata)
     {
         if (_nodesRefreshing)
             return;
@@ -165,7 +165,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
             background.sprite = selectedNodeSprite;
     }
 
-    private bool IsNodeUnlocked(WarlineCaptureSagaMissionNodeMetadata metadata)
+    private bool IsNodeUnlocked(SagaMissionNodeView metadata)
     {
         if (metadata == null)
             return false;
@@ -177,7 +177,7 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
         return previousMission != null && SagaProgressStore.IsCompleted(previousMission.MissionId);
     }
 
-    private Sprite GetUnlockedSprite(WarlineCaptureSagaMissionNodeMetadata metadata)
+    private Sprite GetUnlockedSprite(SagaMissionNodeView metadata)
     {
         if (metadata != null && metadata.MissionId == _selectedMissionId && selectedNodeSprite != null)
             return selectedNodeSprite;
@@ -185,21 +185,21 @@ public sealed class SagaMapScreenSystem : MonoBehaviour
         return availableNodeSprite;
     }
 
-    private static bool HasExplicitRoute(WarlineCaptureSagaMissionNodeMetadata metadata)
+    private static bool HasExplicitRoute(SagaMissionNodeView metadata)
     {
         return metadata != null
             && metadata.GetComponent<ScreenRouteSystem>() != null
-            && metadata.GetComponent<WarlineCaptureMissionSessionSystem>() != null;
+            && metadata.GetComponent<MissionLaunchActionSystem>() != null;
     }
 
-    private WarlineCaptureSagaMissionNodeMetadata FindMetadata(string missionId)
+    private SagaMissionNodeView FindMetadata(string missionId)
     {
         if (missionNodes == null)
             return null;
 
         for (int i = 0; i < missionNodes.Length; i++)
         {
-            WarlineCaptureSagaMissionNodeMetadata metadata = missionNodes[i];
+            SagaMissionNodeView metadata = missionNodes[i];
             if (metadata != null && metadata.MissionId == missionId)
                 return metadata;
         }

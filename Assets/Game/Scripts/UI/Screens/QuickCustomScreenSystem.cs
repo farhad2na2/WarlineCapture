@@ -126,7 +126,7 @@ public sealed class QuickCustomScreenSystem : WarlineCaptureScreenSystem
     public void LaunchMission()
     {
         ApplyCurrentConfigToRuntime();
-        WarlineCaptureMissionSession.Clear();
+        new ActiveMissionSession().Clear();
         WarlineCaptureGameLaunchUtility.StartExistingGameplayAndHideRouter(this);
     }
 

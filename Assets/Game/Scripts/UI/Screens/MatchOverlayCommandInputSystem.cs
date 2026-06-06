@@ -157,7 +157,7 @@ public sealed class MatchOverlayCommandInputSystem
 
         private void OnBuildButtonClicked()
         {
-            if (WarlineCaptureMissionRules.TryRejectBuildForActiveMission())
+            if (new MissionCommandPolicySystem().TryRejectBuildForActiveOperation())
             {
                 _tabVisualSystem?.Select(null);
                 _buildDrawerOpen = false;

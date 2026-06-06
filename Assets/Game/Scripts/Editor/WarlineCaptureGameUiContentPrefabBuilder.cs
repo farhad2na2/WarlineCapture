@@ -731,6 +731,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         BuildMatchHudHeader(header.transform);
 
         GameObject left = CreateGroup("LeftContent", root.transform, new Rect(0f, MatchHudHeaderSize.y, MatchHudSideSize.x, MatchHudSideSize.y));
+        left.AddComponent<MatchHudSelectionPanelSystem>();
         BuildMatchHudLeft(left.transform);
 
         GameObject right = CreateGroup("RightContent", root.transform, new Rect(4080f, MatchHudHeaderSize.y, MatchHudSideSize.x, MatchHudSideSize.y));
@@ -796,6 +797,7 @@ public static class WarlineCaptureGameUiContentPrefabBuilder
         AddTextCentered(objectives.transform, "Elapsed", "Elapsed: 07:42", new Vector2(-80f, -206f), new Vector2(460f, 50f), 28f, TextAlignmentOptions.Left, MutedText);
 
         GameObject squad = CreateTopLeftMainMenuRect("SelectedSquadPanel", parent, new Rect(16f, 570f, 690f, 1000f));
+        squad.SetActive(false);
         AddMatchHudSpriteCentered(squad.transform, "Frame", "scn08_selected_entity_panel_frame.png", Vector2.zero, new Vector2(690f, 1000f), false);
         AddMatchHudSpriteCentered(squad.transform, "Badge", "scn08_icon_shield_rank_badge.png", new Vector2(-270f, 396f), new Vector2(100f, 132f), true);
         AddTextCentered(squad.transform, "Title", "RIFLE SQUAD", new Vector2(60f, 414f), new Vector2(430f, 60f), 42f, TextAlignmentOptions.Left, Text);

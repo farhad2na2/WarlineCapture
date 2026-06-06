@@ -90,6 +90,11 @@ internal sealed class BuildingGameplayDependencySystem
         SelectionBuildingInteractionSystem?.ClearFocusedUnit();
     }
 
+    internal void ShowHudSelection()
+    {
+        SelectionBuildingInteractionSystem?.ApplyBuildingSelectionHudFeedback();
+    }
+
     internal bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
     {
         return SelectionBuildingInteractionSystem != null &&

@@ -172,6 +172,11 @@ public sealed class SelectionHudFeedbackSystem
         ApplySquadSelection(em, selectedCount);
     }
 
+    public void ApplyBuildingSelection()
+    {
+        MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true);
+    }
+
     public void ClearSelection(EntityManager em)
     {
         QueueClearSelection(em);
@@ -260,9 +265,11 @@ public sealed class SelectionHudFeedbackSystem
             case SelectionHudFeedbackKind.Selection:
             case SelectionHudFeedbackKind.SquadSelection:
                 BattleHudRuntimeFeedbackSystem.ApplySelection(view, feedback.Label.ToString(), feedback.Status.ToString());
+                MatchHudSelectionPanelSystem.SetActiveSelectionVisible(true);
                 break;
             case SelectionHudFeedbackKind.ClearSelection:
                 BattleHudRuntimeFeedbackSystem.ClearSelection(view);
+                MatchHudSelectionPanelSystem.SetActiveSelectionVisible(false);
                 break;
             case SelectionHudFeedbackKind.CommandMode:
                 BattleHudRuntimeFeedbackSystem.ApplyCommandMode(view, (TacticalCommandMode)feedback.CommandMode);

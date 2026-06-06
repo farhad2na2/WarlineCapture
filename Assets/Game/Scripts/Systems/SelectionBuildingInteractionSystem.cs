@@ -51,6 +51,11 @@ public sealed class SelectionBuildingInteractionSystem
         _selectionHudFeedbackSystem.ProcessPendingFeedback(em);
     }
 
+    public void ApplyBuildingSelectionHudFeedback()
+    {
+        _selectionHudFeedbackSystem.ApplyBuildingSelection();
+    }
+
     public bool IsBoardablePlayerTransportClick(Vector2 screenPosition)
     {
         if (!TryGetDefaultEntityManager(out EntityManager em))

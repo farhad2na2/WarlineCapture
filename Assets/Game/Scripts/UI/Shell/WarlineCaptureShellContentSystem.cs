@@ -155,11 +155,29 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
     {
         ClearRegion(WarlineCaptureShellRegionId.MenuBackgroundRegion);
         InstallSection(matchHudContentPrefab, "HeaderContent", WarlineCaptureShellRegionId.HeaderRegion);
-        InstallSection(matchHudContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
+        GameObject left = InstallSection(matchHudContentPrefab, "LeftContent", WarlineCaptureShellRegionId.LeftRegion);
+        HideMatchHudSelectedSquadPanel(left);
         InstallSection(matchHudContentPrefab, "RightContent", WarlineCaptureShellRegionId.RightRegion);
         GameObject footer = InstallSection(matchHudContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
         BindMatchHudCommandControls(footer);
         ClearRegion(WarlineCaptureShellRegionId.MiddleRegion);
+    }
+
+    private static void HideMatchHudSelectedSquadPanel(GameObject leftContent)
+    {
+        if (leftContent == null)
+            return;
+
+        MatchHudSelectionPanelSystem panelSystem = leftContent.GetComponent<MatchHudSelectionPanelSystem>();
+        if (panelSystem != null)
+        {
+            panelSystem.HideSelection();
+            return;
+        }
+
+        Transform panel = leftContent.transform.Find("SelectedSquadPanel");
+        if (panel != null)
+            panel.gameObject.SetActive(false);
     }
 
     private void BindMatchHudCommandControlsInRegion()

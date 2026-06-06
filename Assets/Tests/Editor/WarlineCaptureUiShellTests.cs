@@ -259,6 +259,44 @@ public sealed class WarlineCaptureUiShellTests
     }
 
     [Test]
+    public void ShellMatchHudContent_SelectedSquadPanelIsDisabledOnInit()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        Transform prefabPanel = prefab.transform.Find("LeftContent/SelectedSquadPanel");
+        Assert.NotNull(prefabPanel, "Match HUD shell content must keep the selected squad panel in the left content region.");
+        Assert.IsFalse(prefabPanel.gameObject.activeSelf, "SelectedSquadPanel must be disabled by default before any unit/building selection exists.");
+        Assert.IsNull(prefab.GetComponent<BattleHudTacticalFeedbackSystem>(), "SCN08 root must not own gameplay feedback; shell installs match HUD regions separately.");
+        MatchHudSelectionPanelSystem prefabSelectionPanelSystem = prefab.transform.Find("LeftContent").GetComponent<MatchHudSelectionPanelSystem>();
+        Assert.NotNull(prefabSelectionPanelSystem, "LeftContent must own match HUD selection panel init because the shell installs left and footer regions separately.");
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            Transform panel = instance.transform.Find("LeftContent/SelectedSquadPanel");
+            Assert.NotNull(panel);
+            Assert.IsFalse(panel.gameObject.activeSelf);
+
+            MatchHudSelectionPanelSystem selectionPanelSystem = instance.transform.Find("LeftContent").GetComponent<MatchHudSelectionPanelSystem>();
+            Assert.NotNull(selectionPanelSystem);
+            panel.gameObject.SetActive(true);
+            InvokePrivate(selectionPanelSystem, "OnEnable");
+            Assert.IsFalse(panel.gameObject.activeSelf, "Match HUD init must deactivate SelectedSquadPanel even if a stale active state leaks into launch.");
+
+            selectionPanelSystem.ShowSelection();
+            Assert.IsTrue(panel.gameObject.activeSelf, "SelectedSquadPanel must be visible when selection HUD feedback reports a selected unit, squad, or building.");
+
+            MatchHudSelectionPanelSystem.SetActiveSelectionVisible(false);
+            Assert.IsFalse(panel.gameObject.activeSelf, "SelectedSquadPanel must hide when selection HUD feedback reports no active selection.");
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
     public void ShellMatchHudContent_BuildCommandInstallsConfiguredPopupWithoutPresenter()
     {
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);

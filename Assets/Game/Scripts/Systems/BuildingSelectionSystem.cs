@@ -22,6 +22,7 @@ internal sealed class BuildingSelectionSystem
         public readonly RuntimeAction SuppressNextWorldClick;
         public readonly RuntimeAction RefreshMarkers;
         public readonly RuntimeAction ClearFocusedUnit;
+        public readonly RuntimeAction ShowHudSelection;
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
         public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
@@ -37,6 +38,7 @@ internal sealed class BuildingSelectionSystem
             RuntimeAction suppressNextWorldClick,
             RuntimeAction refreshMarkers,
             RuntimeAction clearFocusedUnit,
+            RuntimeAction showHudSelection,
             CameraFocusAction smoothMoveCameraGroundCenterTo,
             ScreenPositionPredicate isBoardablePlayerTransportClick,
             BuildingIdAction tryAssignSelectedHaulerOrders,
@@ -51,6 +53,7 @@ internal sealed class BuildingSelectionSystem
             SuppressNextWorldClick = suppressNextWorldClick;
             RefreshMarkers = refreshMarkers;
             ClearFocusedUnit = clearFocusedUnit;
+            ShowHudSelection = showHudSelection;
             SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
             IsBoardablePlayerTransportClick = isBoardablePlayerTransportClick;
             TryAssignSelectedHaulerOrders = tryAssignSelectedHaulerOrders;
@@ -69,6 +72,7 @@ internal sealed class BuildingSelectionSystem
         public readonly RuntimeAction SuppressNextWorldClick;
         public readonly RuntimeAction RefreshMarkers;
         public readonly RuntimeAction ClearFocusedUnit;
+        public readonly RuntimeAction ShowHudSelection;
         public readonly CameraFocusAction SmoothMoveCameraGroundCenterTo;
         public readonly ScreenPositionPredicate IsBoardablePlayerTransportClick;
         public readonly BuildingIdAction TryAssignSelectedHaulerOrders;
@@ -84,6 +88,7 @@ internal sealed class BuildingSelectionSystem
             RuntimeAction suppressNextWorldClick,
             RuntimeAction refreshMarkers,
             RuntimeAction clearFocusedUnit,
+            RuntimeAction showHudSelection,
             CameraFocusAction smoothMoveCameraGroundCenterTo,
             ScreenPositionPredicate isBoardablePlayerTransportClick,
             BuildingIdAction tryAssignSelectedHaulerOrders,
@@ -98,6 +103,7 @@ internal sealed class BuildingSelectionSystem
             SuppressNextWorldClick = suppressNextWorldClick;
             RefreshMarkers = refreshMarkers;
             ClearFocusedUnit = clearFocusedUnit;
+            ShowHudSelection = showHudSelection;
             SmoothMoveCameraGroundCenterTo = smoothMoveCameraGroundCenterTo;
             IsBoardablePlayerTransportClick = isBoardablePlayerTransportClick;
             TryAssignSelectedHaulerOrders = tryAssignSelectedHaulerOrders;
@@ -132,6 +138,7 @@ internal sealed class BuildingSelectionSystem
             source.SuppressNextWorldClick,
             source.RefreshMarkers,
             source.ClearFocusedUnit,
+            source.ShowHudSelection,
             source.SmoothMoveCameraGroundCenterTo,
             source.IsBoardablePlayerTransportClick,
             source.TryAssignSelectedHaulerOrders,
@@ -148,6 +155,7 @@ internal sealed class BuildingSelectionSystem
         RuntimeAction suppressNextWorldClick,
         RuntimeAction refreshMarkers,
         RuntimeAction clearFocusedUnit,
+        RuntimeAction showHudSelection,
         CameraFocusAction smoothMoveCameraGroundCenterTo,
         ScreenPositionPredicate isBoardablePlayerTransportClick,
         BuildingIdAction tryAssignSelectedHaulerOrders,
@@ -163,6 +171,7 @@ internal sealed class BuildingSelectionSystem
             suppressNextWorldClick,
             refreshMarkers,
             clearFocusedUnit,
+            showHudSelection,
             smoothMoveCameraGroundCenterTo,
             isBoardablePlayerTransportClick,
             tryAssignSelectedHaulerOrders,
@@ -179,6 +188,7 @@ internal sealed class BuildingSelectionSystem
         context.SuppressNextWorldClick?.Invoke();
         context.RefreshMarkers?.Invoke();
         context.ClearFocusedUnit?.Invoke();
+        context.ShowHudSelection?.Invoke();
 
         Vector3 focusWorldPosition = ResolveBuildingFocusWorldPosition(context, building);
         context.SmoothMoveCameraGroundCenterTo?.Invoke(focusWorldPosition);
@@ -309,6 +319,7 @@ internal sealed class BuildingSelectionSystem
         context.SuppressNextWorldClick?.Invoke();
         context.RefreshMarkers?.Invoke();
         context.ClearFocusedUnit?.Invoke();
+        context.ShowHudSelection?.Invoke();
         return true;
     }
 

@@ -27,6 +27,7 @@ public sealed class MatchHudMinimapInputSystem
     private const float CameraCenteredMapSizeRefreshFraction = 0.08f;
     private const float CameraDragRecaptureDebounceSeconds = 0.45f;
     private const float CameraViewportEdgeRefreshMargin = 0.12f;
+    private const float MinimapZoomedInScale = 0.5f;
     private const int MinRasterFeatureCount = 24;
 
     private MatchHudMinimapView _view;
@@ -46,6 +47,7 @@ public sealed class MatchHudMinimapInputSystem
     private MatchHudMinimapProjectionGrid _capturedProjectionGrid;
     private MatchHudMinimapProjectionGrid _currentProjectionGrid;
     private float _cameraDragRefreshBlockedUntil;
+    private bool _minimapZoomedIn;
 
     public void Bind(
         MatchHudMinimapView view,
@@ -71,6 +73,7 @@ public sealed class MatchHudMinimapInputSystem
         _nextStaticMapRetryTime = 0f;
         _cameraDragRefreshBlockedUntil = 0f;
         _warmupStaticMapRefreshesRemaining = 0;
+        _minimapZoomedIn = false;
         _staticMapDirty = true;
         Update();
     }
@@ -115,6 +118,7 @@ public sealed class MatchHudMinimapInputSystem
             grid,
             worldCamera,
             ResolveMapAspect());
+        desiredProjectionGrid = ApplyMinimapZoom(desiredProjectionGrid);
         bool cameraRefreshBlocked = IsCameraRefreshBlocked();
 
         if (ShouldRefreshCameraCenteredMap(desiredProjectionGrid, worldCamera, cameraRefreshBlocked))
@@ -185,7 +189,6 @@ public sealed class MatchHudMinimapInputSystem
         }
 
         UpdateMarkers(projectionGrid);
-        UpdateHeldZoom();
     }
 
     private void HandleFocusRequested(Vector2 normalized)
@@ -224,6 +227,20 @@ public sealed class MatchHudMinimapInputSystem
             return 1f;
 
         return Mathf.Max(0.1f, mapRect.rect.width / mapRect.rect.height);
+    }
+
+    private MatchHudMinimapProjectionGrid ApplyMinimapZoom(MatchHudMinimapProjectionGrid projectionGrid)
+    {
+        if (!_minimapZoomedIn)
+            return projectionGrid;
+
+        float width = Mathf.Max(1f, projectionGrid.Width * MinimapZoomedInScale);
+        float height = Mathf.Max(1f, projectionGrid.Height * MinimapZoomedInScale);
+        Vector3 center = projectionGrid.Origin + new Vector3(projectionGrid.Width * 0.5f, 0f, projectionGrid.Height * 0.5f);
+        return new MatchHudMinimapProjectionGrid(
+            new Vector3(center.x - width * 0.5f, projectionGrid.Origin.y, center.z - height * 0.5f),
+            width,
+            height);
     }
 
     private bool ShouldRefreshCameraCenteredMap(
@@ -267,22 +284,20 @@ public sealed class MatchHudMinimapInputSystem
 
     private void HandleZoomHeldChanged(int direction, bool held)
     {
-        if (_runtimeGameplayStateSystem == null)
+        if (!held || direction == 0)
             return;
 
-        if (held)
-            _view?.ClearManualViewportOverride();
+        bool zoomedIn = direction > 0;
+        if (_minimapZoomedIn == zoomedIn)
+            return;
 
-        if (direction > 0)
-            _runtimeGameplayStateSystem.ZoomInHeld = held;
-        else if (direction < 0)
-            _runtimeGameplayStateSystem.ZoomOutHeld = held;
-
-        if (held)
-        {
+        _minimapZoomedIn = zoomedIn;
+        _view?.ClearManualViewportOverride();
+        if (_runtimeGameplayStateSystem != null)
             _runtimeGameplayStateSystem.SuppressNextWorldClick = true;
-            ApplyZoomStep(direction);
-        }
+        _staticMapDirty = true;
+        _nextStaticMapRetryTime = 0f;
+        Update();
     }
 
     private bool RenderStaticMap(
@@ -308,10 +323,7 @@ public sealed class MatchHudMinimapInputSystem
 
     private void ApplyRenderedMapToView()
     {
-        if (_view == null)
-            return;
-
-        if (_view.MapImage == null)
+        if (_view == null || _view.MapImage == null)
             return;
 
         ReadRenderTextureInto(_readbackTexture);
@@ -326,29 +338,6 @@ public sealed class MatchHudMinimapInputSystem
         }
 
         _view.SetMapSprite(_captureSprite);
-    }
-
-    private void ApplyZoomStep(int direction)
-    {
-        if (direction == 0 ||
-            _selectionUiCameraSystem == null ||
-            _selectionUiCameraSystem.WorldCamera == null)
-        {
-            return;
-        }
-
-        _selectionUiCameraSystem.ZoomPerspective(Mathf.Sign(direction), Time.unscaledDeltaTime);
-    }
-
-    private void UpdateHeldZoom()
-    {
-        if (_runtimeGameplayStateSystem == null)
-            return;
-
-        if (_runtimeGameplayStateSystem.ZoomInHeld)
-            ApplyZoomStep(1);
-        if (_runtimeGameplayStateSystem.ZoomOutHeld)
-            ApplyZoomStep(-1);
     }
 
     private void UpdateMarkers(MatchHudMinimapProjectionGrid grid)

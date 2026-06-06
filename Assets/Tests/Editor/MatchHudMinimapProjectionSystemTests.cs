@@ -293,8 +293,10 @@ public sealed class MatchHudMinimapProjectionSystemTests
             mapImage.sprite = Sprite.Create(defaultTexture, new Rect(0, 0, 1, 1), Vector2.one * 0.5f);
 
             RectTransform viewportRect = CreateRect("Viewport", panelRect, new Vector2(250f, 154f), Vector2.zero);
+            Button zoomInButton = CreateRect("ZoomIn", panelRect, new Vector2(32f, 32f), Vector2.zero).gameObject.AddComponent<Button>();
+            Button zoomOutButton = CreateRect("ZoomOut", panelRect, new Vector2(32f, 32f), Vector2.zero).gameObject.AddComponent<Button>();
             MatchHudMinimapView view = panel.AddComponent<MatchHudMinimapView>();
-            view.Configure(mapImage, mapRect, viewportRect, null, null, panelRect);
+            view.Configure(mapImage, mapRect, viewportRect, zoomInButton, zoomOutButton, panelRect);
 
             Camera camera = cameraObject.AddComponent<Camera>();
             camera.orthographic = true;
@@ -305,8 +307,9 @@ public sealed class MatchHudMinimapProjectionSystemTests
 
             SelectionUiCameraSystem cameraSystem = new(new RtsCameraSystem(), new RtsCameraRequestSystem());
             cameraSystem.Init(null, camera);
+            RuntimeGameplayStateSystem runtimeState = new();
             inputSystem = new MatchHudMinimapInputSystem();
-            inputSystem.Bind(view, new RuntimeGameplayStateSystem(), cameraSystem);
+            inputSystem.Bind(view, runtimeState, cameraSystem);
 
             Assert.IsTrue(mapImage.enabled, "Runtime minimap must keep the existing Map Image enabled.");
             Assert.NotNull(mapImage.sprite, "Runtime minimap must assign a generated sprite to the existing Map Image.");
@@ -316,6 +319,21 @@ public sealed class MatchHudMinimapProjectionSystemTests
             Rect mapInPanel = GetRectInParent(mapRect, panelRect);
             Assert.AreEqual(mapInPanel.center.x, viewportInPanel.center.x, 0.5f);
             Assert.AreEqual(mapInPanel.center.y, viewportInPanel.center.y, 0.5f);
+
+            float zoomedOutViewportWidth = viewportInPanel.width;
+            zoomInButton.GetComponent<MatchHudMinimapZoomPressRelay>().OnPointerDown(null);
+            viewportInPanel = GetRectInParent(viewportRect, panelRect);
+
+            Assert.Greater(viewportInPanel.width, zoomedOutViewportWidth);
+            Assert.IsFalse(runtimeState.ZoomInHeld);
+            Assert.IsFalse(runtimeState.ZoomOutHeld);
+
+            zoomOutButton.GetComponent<MatchHudMinimapZoomPressRelay>().OnPointerDown(null);
+            viewportInPanel = GetRectInParent(viewportRect, panelRect);
+
+            Assert.AreEqual(zoomedOutViewportWidth, viewportInPanel.width, 0.5f);
+            Assert.IsFalse(runtimeState.ZoomInHeld);
+            Assert.IsFalse(runtimeState.ZoomOutHeld);
         }
         finally
         {

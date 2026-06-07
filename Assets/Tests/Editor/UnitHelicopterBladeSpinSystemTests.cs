@@ -11,13 +11,20 @@ using UnityEngine;
 public sealed class UnitHelicopterBladeSpinSystemTests
 {
     [Test]
-    public void IdleAirUnitRotatesVisibleDetailBlade()
+    public void AirborneAirUnitRotatesVisibleDetailBlade()
     {
-        using var world = new World(nameof(IdleAirUnitRotatesVisibleDetailBlade));
+        using var world = new World(nameof(AirborneAirUnitRotatesVisibleDetailBlade));
         EntityManager em = world.EntityManager;
-        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState));
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
         em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
         em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, LocalTransform.FromPosition(new float3(0f, 6f, 0f)));
+        em.SetComponentData(helicopter, new UnitAirState
+        {
+            HomePosition = float3.zero,
+            HomeInitialized = 1,
+            Airborne = 1
+        });
 
         Entity root = em.CreateEntity(typeof(LocalTransform));
         Entity blade = em.CreateEntity(typeof(LocalTransform));
@@ -36,17 +43,24 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         system.Update(world.Unmanaged);
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
-        Assert.Greater(math.length(after.value - before.value), 0.01f, "Helicopter blades must rotate continuously while idle or hovering, not only while movement flags are set.");
+        Assert.Greater(math.length(after.value - before.value), 0.01f, "Helicopter blades must rotate while airborne or hovering, not only while movement flags are set.");
     }
 
     [Test]
-    public void IdleAirUnitRotatesBakedBladeReference()
+    public void AirborneAirUnitRotatesBakedBladeReference()
     {
-        using var world = new World(nameof(IdleAirUnitRotatesBakedBladeReference));
+        using var world = new World(nameof(AirborneAirUnitRotatesBakedBladeReference));
         EntityManager em = world.EntityManager;
-        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState));
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
         em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
         em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, LocalTransform.FromPosition(new float3(0f, 6f, 0f)));
+        em.SetComponentData(helicopter, new UnitAirState
+        {
+            HomePosition = float3.zero,
+            HomeInitialized = 1,
+            Airborne = 1
+        });
 
         Entity blade = em.CreateEntity(typeof(LocalTransform));
         em.SetComponentData(blade, LocalTransform.Identity);
@@ -60,7 +74,75 @@ public sealed class UnitHelicopterBladeSpinSystemTests
         system.Update(world.Unmanaged);
 
         quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
-        Assert.Greater(math.length(after.value - before.value), 0.01f, "The baked blade buffer path must rotate idle helicopters without relying on entity names.");
+        Assert.Greater(math.length(after.value - before.value), 0.01f, "The baked blade buffer path must rotate airborne helicopters without relying on entity names.");
+    }
+
+    [Test]
+    public void LandedAirUnitDoesNotRotateBakedBladeReference()
+    {
+        using var world = new World(nameof(LandedAirUnitDoesNotRotateBakedBladeReference));
+        EntityManager em = world.EntityManager;
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
+        em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
+        em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, LocalTransform.Identity);
+        em.SetComponentData(helicopter, new UnitAirState
+        {
+            HomePosition = float3.zero,
+            HomeInitialized = 1,
+            Airborne = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            ReturningHome = 0
+        });
+
+        Entity blade = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(blade, LocalTransform.Identity);
+        DynamicBuffer<UnitHelicopterBladeReference> blades = em.AddBuffer<UnitHelicopterBladeReference>(helicopter);
+        blades.Add(new UnitHelicopterBladeReference { Blade = blade, Axis = 1 });
+
+        quaternion before = em.GetComponentData<LocalTransform>(blade).Rotation;
+        SystemHandle system = world.CreateSystem<UnitHelicopterBladeSpinSystem>();
+        world.SetTime(new TimeData(1d, 0.25f));
+
+        system.Update(world.Unmanaged);
+
+        quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
+        Assert.Less(math.length(after.value - before.value), 0.0001f, "Landed helicopters must not spin their blades by default.");
+    }
+
+    [Test]
+    public void GroundedReturningAirUnitDoesNotRotateBakedBladeReference()
+    {
+        using var world = new World(nameof(GroundedReturningAirUnitDoesNotRotateBakedBladeReference));
+        EntityManager em = world.EntityManager;
+        Entity helicopter = em.CreateEntity(typeof(UnitAirMovement), typeof(UnitMoveVisualState), typeof(LocalTransform), typeof(UnitAirState));
+        em.SetComponentData(helicopter, new UnitAirMovement { CruiseHeight = 6f, RunwayTaxiSpeed = 0f });
+        em.SetComponentData(helicopter, new UnitMoveVisualState { IsMoving = 0, StillSeconds = 10f });
+        em.SetComponentData(helicopter, LocalTransform.Identity);
+        em.SetComponentData(helicopter, new UnitAirState
+        {
+            HomePosition = float3.zero,
+            HomeInitialized = 1,
+            Airborne = 0,
+            TakeoffRolling = 0,
+            LandingRolling = 0,
+            ReturningHome = 1
+        });
+
+        Entity blade = em.CreateEntity(typeof(LocalTransform));
+        em.SetComponentData(blade, LocalTransform.Identity);
+        DynamicBuffer<UnitHelicopterBladeReference> blades = em.AddBuffer<UnitHelicopterBladeReference>(helicopter);
+        blades.Add(new UnitHelicopterBladeReference { Blade = blade, Axis = 1 });
+
+        quaternion before = em.GetComponentData<LocalTransform>(blade).Rotation;
+        SystemHandle system = world.CreateSystem<UnitHelicopterBladeSpinSystem>();
+        world.SetTime(new TimeData(1d, 0.25f));
+
+        system.Update(world.Unmanaged);
+
+        quaternion after = em.GetComponentData<LocalTransform>(blade).Rotation;
+        Assert.Less(math.length(after.value - before.value), 0.0001f, "A grounded return/taxi state must not keep helicopter blades spinning.");
     }
 
     [Test]

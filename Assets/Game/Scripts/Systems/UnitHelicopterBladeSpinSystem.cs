@@ -8,6 +8,7 @@ using UnityEngine;
 [UpdateAfter(typeof(UnitModelSpawnSystem))]
 public partial struct UnitHelicopterBladeSpinSystem : ISystem
 {
+    private const float FlyingHeightEpsilon = 0.25f;
     private static bool s_DiagnosticLogged;
 
     public void OnCreate(ref SystemState state)
@@ -29,6 +30,8 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         var displayLookup = SystemAPI.GetComponentLookup<UnitDisplayInfo>(true);
         var visualStateLookup = SystemAPI.GetComponentLookup<UnitRenderVisualState>(true);
         var airLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
+        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirState>(true);
+        var transformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true);
         using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
 
         foreach (var (_, entity) in SystemAPI
@@ -37,6 +40,37 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
                      .WithEntityAccess()
                      )
         {
+            bool shouldSpin = ShouldSpinBlades(entity, transformLookup, airStateLookup);
+            if (!shouldSpin)
+            {
+                if (!s_DiagnosticLogged && IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
+                {
+                    s_DiagnosticLogged = true;
+                    LogHelicopterBladeDiagnostic(
+                        em,
+                        childLookup,
+                        entity,
+                        bladeLookup,
+                        detailLookup,
+                        modelLookup,
+                        midLookup,
+                        lowLookup,
+                        sourceLookup,
+                        displayLookup,
+                        visualStateLookup,
+                        airLookup,
+                        airStateLookup,
+                        transformLookup,
+                        false,
+                        0,
+                        0,
+                        0,
+                        SystemAPI.Time.DeltaTime);
+                }
+
+                continue;
+            }
+
             rotatedBlades.Clear();
 
             int detailRotated = 0;
@@ -68,6 +102,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
                     displayLookup,
                     visualStateLookup,
                     airLookup,
+                    airStateLookup,
+                    transformLookup,
+                    true,
                     detailRotated,
                     modelRotated,
                     bakedRotated,
@@ -100,6 +137,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
                     displayLookup,
                     visualStateLookup,
                     airLookup,
+                    airStateLookup,
+                    transformLookup,
+                    false,
                     0,
                     0,
                     0,
@@ -107,6 +147,28 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
                 break;
             }
         }
+    }
+
+    private static bool ShouldSpinBlades(
+        Entity entity,
+        ComponentLookup<LocalTransform> transformLookup,
+        ComponentLookup<UnitAirState> airStateLookup)
+    {
+        if (!airStateLookup.HasComponent(entity))
+            return false;
+
+        UnitAirState airState = airStateLookup[entity];
+        if (airState.Airborne != 0 ||
+            airState.TakeoffRolling != 0 ||
+            airState.LandingRolling != 0)
+        {
+            return true;
+        }
+
+        if (airState.HomeInitialized == 0 || !transformLookup.HasComponent(entity))
+            return false;
+
+        return transformLookup[entity].Position.y > airState.HomePosition.y + FlyingHeightEpsilon;
     }
 
     private static int RotateBakedBlades(
@@ -253,6 +315,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         ComponentLookup<UnitDisplayInfo> displayLookup,
         ComponentLookup<UnitRenderVisualState> visualStateLookup,
         ComponentLookup<UnitAirMovement> airLookup,
+        ComponentLookup<UnitAirState> airStateLookup,
+        ComponentLookup<LocalTransform> transformLookup,
+        bool shouldSpin,
         int detailRotated,
         int modelRotated,
         int bakedRotated,
@@ -264,6 +329,7 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             ? $"{(UnitRenderVisualKind)visualStateLookup[entity].Current}->{(UnitRenderVisualKind)visualStateLookup[entity].Desired}"
             : "<none>";
         bool hasAir = airLookup.HasComponent(entity);
+        string airState = FormatAirState(entity, airStateLookup, transformLookup);
         int bakedCount = bladeLookup.HasBuffer(entity) ? bladeLookup[entity].Length : 0;
         Entity detailRoot = detailLookup.HasComponent(entity) ? detailLookup[entity].Root : Entity.Null;
         Entity modelRoot = modelLookup.HasComponent(entity) ? modelLookup[entity].Instance : Entity.Null;
@@ -272,12 +338,25 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
 
         Debug.Log(
             "[HeliBladeDiag] " +
-            $"unit={FormatEntity(entity)} source={source} display={display} air={hasAir} visual={visual} dt={deltaTime:F4} " +
+            $"unit={FormatEntity(entity)} source={source} display={display} air={hasAir} spin={shouldSpin} state={airState} visual={visual} dt={deltaTime:F4} " +
             $"detail={FormatRoot(em, childLookup, detailRoot)} detailRot={detailRotated} " +
             $"model={FormatRoot(em, childLookup, modelRoot)} modelRot={modelRotated} " +
             $"mid={FormatRoot(em, childLookup, midRoot)} " +
             $"low={FormatRoot(em, childLookup, lowRoot)} " +
             $"bakedBlades={bakedCount} bakedRot={bakedRotated}");
+    }
+
+    private static string FormatAirState(
+        Entity entity,
+        ComponentLookup<UnitAirState> airStateLookup,
+        ComponentLookup<LocalTransform> transformLookup)
+    {
+        if (!airStateLookup.HasComponent(entity))
+            return "<none>";
+
+        UnitAirState airState = airStateLookup[entity];
+        float currentY = transformLookup.HasComponent(entity) ? transformLookup[entity].Position.y : float.NaN;
+        return $"homeInit={airState.HomeInitialized}:airborne={airState.Airborne}:takeoff={airState.TakeoffRolling}:landing={airState.LandingRolling}:returning={airState.ReturningHome}:y={currentY:F2}:homeY={airState.HomePosition.y:F2}";
     }
 
     private static string FormatRoot(EntityManager em, BufferLookup<Child> childLookup, Entity root)

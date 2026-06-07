@@ -96,6 +96,7 @@ internal sealed class SelectionGameplayStartupSystem
         var transportBoardingCommandSystem = new TransportBoardingCommandSystem();
         var selectionTransportCommandRequestSystem = new SelectionTransportCommandRequestSystem();
         var focusableUnitLookupSystem = new FocusableUnitLookupSystem();
+        var matchHudSquadTraySelectionSystem = new MatchHudSquadTraySelectionSystem();
         var unitTransportCapacitySystem = new UnitTransportCapacitySystem();
         var unitTransportBoardingQuerySystem = new UnitTransportBoardingQuerySystem();
         var unitTransportBoardingRuleSystem = new UnitTransportBoardingRuleSystem();
@@ -136,6 +137,18 @@ internal sealed class SelectionGameplayStartupSystem
             roadBuildReadState = roadBuildReadModel;
             buildingPlacementInteractionSystem = buildingInteraction;
             buildingPlacementInteractionContext = buildingInteractionContext;
+            mainMenuPlayUi?.ConfigureMatchHudSquadTrayBinding(BindMatchHudSquadTray);
+        }
+
+        void BindMatchHudSquadTray(MatchHudSquadTrayView view)
+        {
+            if (view == null)
+                return;
+
+            view.Bind(slot => matchHudSquadTraySelectionSystem.SelectSlot(
+                CreateSquadTraySelectionContext(),
+                view,
+                slot));
         }
 
         void UpdateSelectionRuntimePhases()
@@ -305,6 +318,23 @@ internal sealed class SelectionGameplayStartupSystem
                 selectionUiQuerySystem,
                 TryGetDefaultEntityManager,
                 resolveSelectionPortraitSprite);
+        }
+
+        MatchHudSquadTraySelectionSystem.Context CreateSquadTraySelectionContext()
+        {
+            return new MatchHudSquadTraySelectionSystem.Context(
+                runtimeConfig.WorldCamera,
+                TryGetDefaultEntityManager,
+                EnsureRuntimeSelectionDependencies,
+                ClearCurrentSelection,
+                () => buildingPlacementInteractionSystem?.ClearSelectedBuilding(
+                    buildingPlacementInteractionContext,
+                    "MatchHudSquadTray"),
+                (entityManager, entity) => selectionHudFeedbackSystem.ApplySelection(CreateHudFeedbackContext(), entityManager, entity),
+                selectedCount => selectionHudFeedbackSystem.ApplySquadSelection(CreateHudFeedbackContext(), selectedCount),
+                selectionRuntimeDiagnosticsSystem.LogSelectionClickDiagnostic,
+                selectionStateSystem,
+                focusedUnitLifecycleSystem);
         }
 
         bool TryGetDefaultEntityManager(out EntityManager em)

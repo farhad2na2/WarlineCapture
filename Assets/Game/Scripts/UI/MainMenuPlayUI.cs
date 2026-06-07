@@ -6,6 +6,8 @@ public sealed class MainMenuPlayUI
     private readonly MatchHudMinimapInputSystem _matchHudMinimapInputSystem = new();
     private SelectionUiCommandSystem _selectionUiCommandSystem;
     private SelectionUiCameraSystem _selectionUiCameraSystem;
+    private MatchHudSquadTrayView _matchHudSquadTrayView;
+    private System.Action<MatchHudSquadTrayView> _bindMatchHudSquadTray;
 
     public void Init(
         SelectionUiCommandSystem selectionUiCommandSystem,
@@ -25,6 +27,9 @@ public sealed class MainMenuPlayUI
     public void Dispose()
     {
         _matchHudMinimapInputSystem.Dispose();
+        _matchHudSquadTrayView?.Unbind();
+        _matchHudSquadTrayView = null;
+        _bindMatchHudSquadTray = null;
         _selectionUiCommandSystem = null;
         _selectionUiCameraSystem = null;
     }
@@ -45,6 +50,20 @@ public sealed class MainMenuPlayUI
             minimapView,
             _runtimeGameplayStateSystem,
             _selectionUiCameraSystem);
+    }
+
+    public void ConfigureMatchHudSquadTrayBinding(System.Action<MatchHudSquadTrayView> bindMatchHudSquadTray)
+    {
+        _bindMatchHudSquadTray = bindMatchHudSquadTray;
+        if (_matchHudSquadTrayView != null)
+            _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
+    }
+
+    public void BindMatchHudSquadTray(MatchHudSquadTrayView squadTrayView)
+    {
+        _matchHudSquadTrayView?.Unbind();
+        _matchHudSquadTrayView = squadTrayView;
+        _bindMatchHudSquadTray?.Invoke(_matchHudSquadTrayView);
     }
 
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)

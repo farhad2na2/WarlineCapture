@@ -76,6 +76,7 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         _mainMenuPlayUi = mainMenuPlayUi;
         BindMatchHudCommandControlsInRegion();
         BindMatchHudMinimapInRegion();
+        BindMatchHudSquadTrayInRegion();
     }
 
     private void InstallLoading()
@@ -164,6 +165,7 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         GameObject footer = InstallSection(matchHudContentPrefab, "FooterContent", WarlineCaptureShellRegionId.FooterRegion);
         BindMatchHudCommandControls(footer);
         BindMatchHudMinimap(footer);
+        BindMatchHudSquadTray(footer);
         ClearRegion(WarlineCaptureShellRegionId.MiddleRegion);
     }
 
@@ -208,6 +210,16 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
             _mainMenuPlayUi?.BindMatchHudMinimap(view);
     }
 
+    private void BindMatchHudSquadTrayInRegion()
+    {
+        if (!TryGetRegionContentRoot(WarlineCaptureShellRegionId.FooterRegion, out RectTransform contentRoot))
+            return;
+
+        MatchHudSquadTrayView view = contentRoot.GetComponentInChildren<MatchHudSquadTrayView>(true);
+        if (view != null)
+            _mainMenuPlayUi?.BindMatchHudSquadTray(view);
+    }
+
     private void BindMatchHudCommandControls(GameObject footer)
     {
         if (footer == null)
@@ -230,6 +242,16 @@ public sealed class WarlineCaptureShellContentSystem : MonoBehaviour
         MatchHudMinimapView view = footer.GetComponentInChildren<MatchHudMinimapView>(true);
         if (view != null)
             _mainMenuPlayUi?.BindMatchHudMinimap(view);
+    }
+
+    private void BindMatchHudSquadTray(GameObject footer)
+    {
+        if (footer == null)
+            return;
+
+        MatchHudSquadTrayView view = footer.GetComponentInChildren<MatchHudSquadTrayView>(true);
+        if (view != null)
+            _mainMenuPlayUi?.BindMatchHudSquadTray(view);
     }
 
     private void InstallResultPopup()

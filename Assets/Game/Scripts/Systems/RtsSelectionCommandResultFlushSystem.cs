@@ -40,6 +40,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
         public readonly TryGetEntityManagerAction TryGetDefaultEntityManager;
         public readonly Action<EntityManager> EnsureEntityQueries;
         public readonly ClearCurrentSelectionAction ClearCurrentSelection;
+        public readonly Action<TacticalCommandMode> ApplyHudCommandMode;
         public readonly Action<TacticalCommandResult> ApplyHudCommandResult;
         public readonly Action ClearHudCommandMode;
         public readonly Action<bool> SetHudWorldMarkersVisible;
@@ -79,6 +80,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             TryGetEntityManagerAction tryGetDefaultEntityManager,
             Action<EntityManager> ensureEntityQueries,
             ClearCurrentSelectionAction clearCurrentSelection,
+            Action<TacticalCommandMode> applyHudCommandMode,
             Action<TacticalCommandResult> applyHudCommandResult,
             Action clearHudCommandMode,
             Action<bool> setHudWorldMarkersVisible,
@@ -117,6 +119,7 @@ public sealed class RtsSelectionCommandResultFlushSystem
             TryGetDefaultEntityManager = tryGetDefaultEntityManager;
             EnsureEntityQueries = ensureEntityQueries;
             ClearCurrentSelection = clearCurrentSelection;
+            ApplyHudCommandMode = applyHudCommandMode;
             ApplyHudCommandResult = applyHudCommandResult;
             ClearHudCommandMode = clearHudCommandMode;
             SetHudWorldMarkersVisible = setHudWorldMarkersVisible;
@@ -148,8 +151,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
                 out DynamicBuffer<RtsSelectionCommandIntentRequestElement> commandRequests,
                 out DynamicBuffer<RtsSelectionCommandResultElement> commandResults))
         {
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             context.ClearHudCommandMode?.Invoke();
+            context.InputSystem.ClearActiveCommandMode();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return;
         }
 
@@ -174,8 +178,23 @@ public sealed class RtsSelectionCommandResultFlushSystem
         for (int i = 0; i < _moveCommandResultScratch.Count; i++)
         {
             RtsSelectionCommandResultElement result = _moveCommandResultScratch[i];
-            context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
-            context.ClearHudCommandMode?.Invoke();
+            bool clearCommandMode = context.InputSystem.ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode.Move);
+            if (clearCommandMode)
+                context.InputSystem.ClearActiveCommandMode();
+            if (result.Accepted != 0)
+            {
+                context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+                if (clearCommandMode)
+                    context.ClearHudCommandMode?.Invoke();
+                else
+                    context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
+            }
+            else
+            {
+                if (clearCommandMode)
+                    context.ClearHudCommandMode?.Invoke();
+                context.ApplyHudCommandResult?.Invoke(ToTacticalCommandResult(result));
+            }
             if (result.EmitScreenMarker != 0)
                 context.RequestMoveOrderScreenMarker?.Invoke(new Vector2(result.ScreenPosition.x, result.ScreenPosition.y));
             if (result.ShowWorldMarkers != 0)
@@ -185,8 +204,9 @@ public sealed class RtsSelectionCommandResultFlushSystem
 
         if (!handled)
         {
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             context.ClearHudCommandMode?.Invoke();
+            context.InputSystem.ClearActiveCommandMode();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
         }
     }
 

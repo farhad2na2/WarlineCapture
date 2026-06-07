@@ -433,6 +433,7 @@ internal sealed class SelectionGameplayStartupSystem
 
         void ClearSelectionCommandMode()
         {
+            rtsSelectionInputSystem.ClearActiveCommandMode();
             selectionHudFeedbackSystem.ClearCommandMode(CreateHudFeedbackContext());
             BattleHudRuntimeFeedbackView view = BattleHudRuntimeFeedbackSystem.ResolveActiveView();
             if (view == null ||

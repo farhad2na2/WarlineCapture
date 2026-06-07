@@ -4,6 +4,8 @@ using UnityEngine.UI;
 public sealed class MatchOverlayCommandControlsView : MonoBehaviour
 {
     [SerializeField] private Button selectButton;
+    [SerializeField] private Button moveButton;
+    [SerializeField] private Button attackButton;
     [SerializeField] private Button buildButton;
     [SerializeField] private Button holdButton;
     [SerializeField] private Button stopButton;
@@ -13,6 +15,8 @@ public sealed class MatchOverlayCommandControlsView : MonoBehaviour
     [SerializeField] private GameObject buildDrawerPopupPrefab;
 
     public Button SelectButton => selectButton;
+    public Button MoveButton => moveButton;
+    public Button AttackButton => attackButton;
     public Button BuildButton => buildButton;
     public Button HoldButton => holdButton;
     public Button StopButton => stopButton;

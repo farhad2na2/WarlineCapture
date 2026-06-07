@@ -134,8 +134,9 @@ public sealed class RtsSelectionPointerTargetCommandSystem
         if (!context.InputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount))
         {
             context.LogSelectionDiagnostic?.Invoke($"moveAttempt result=False reason=QueueFailed pos={screenPosition} frame={Time.frameCount}");
-            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             context.ClearHudCommandMode?.Invoke();
+            context.InputSystem.ClearActiveCommandMode();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
             return;
         }
 

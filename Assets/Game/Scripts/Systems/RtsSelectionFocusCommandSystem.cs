@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 
@@ -145,6 +146,7 @@ public sealed class RtsSelectionFocusCommandSystem
     {
         context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.InputSystem.ClearActiveCommandMode();
         context.ClearHudSelection?.Invoke();
         context.ClearHudCommandMode?.Invoke();
         context.SetHudWorldMarkersVisible?.Invoke(false);
@@ -156,6 +158,7 @@ public sealed class RtsSelectionFocusCommandSystem
         {
             context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
             context.SetExplicitAttackTargetModeActive?.Invoke(false);
+            context.InputSystem.ClearActiveCommandMode();
             context.ClearHudSelection?.Invoke();
             context.ClearHudCommandMode?.Invoke();
             context.SetHudWorldMarkersVisible?.Invoke(false);
@@ -165,6 +168,7 @@ public sealed class RtsSelectionFocusCommandSystem
         context.ClearCurrentSelection?.Invoke(em, reason);
         context.FocusedUnitLifecycleSystem.ClearFocusedUnit(context.SelectionStateSystem);
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.InputSystem.ClearActiveCommandMode();
         context.ClearHudSelection?.Invoke();
         context.ClearHudCommandMode?.Invoke();
         context.SetHudWorldMarkersVisible?.Invoke(false);
@@ -210,6 +214,7 @@ public sealed class RtsSelectionFocusCommandSystem
         }
 
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(context.BuildingPlacementInteractionContext, "RTSSelection.FocusUnitEntity");
+        context.InputSystem.ClearActiveCommandMode();
         context.InputSystem.ClearQueuedMoveOrder();
         int removedMoveCommands = context.InputSystem.ClearPendingMoveCommandRequests();
         context.InputSystem.IgnoreNextLeftMouseRelease = true;
@@ -248,6 +253,7 @@ public sealed class RtsSelectionFocusCommandSystem
                kind == RtsSelectionCommandIntentKind.EnterSelectionMode ||
                kind == RtsSelectionCommandIntentKind.ExitSelectionMode ||
                kind == RtsSelectionCommandIntentKind.DeselectAll ||
+               kind == RtsSelectionCommandIntentKind.EnterMoveTargetMode ||
                kind == RtsSelectionCommandIntentKind.HoldPosition ||
                kind == RtsSelectionCommandIntentKind.Stop ||
                kind == RtsSelectionCommandIntentKind.DestroyFocusedUnit ||
@@ -280,10 +286,15 @@ public sealed class RtsSelectionFocusCommandSystem
             case RtsSelectionCommandIntentKind.DeselectAll:
                 DeselectAllUnits(context, "SelectionUiCommandSystem");
                 return true;
+            case RtsSelectionCommandIntentKind.EnterMoveTargetMode:
+                EnterMoveTargetMode(context);
+                return true;
             case RtsSelectionCommandIntentKind.HoldPosition:
+                context.InputSystem.ClearActiveCommandMode();
                 context.IssueHoldPositionOrder?.Invoke();
                 return true;
             case RtsSelectionCommandIntentKind.Stop:
+                context.InputSystem.ClearActiveCommandMode();
                 context.IssueStopOrder?.Invoke();
                 return true;
             case RtsSelectionCommandIntentKind.DestroyFocusedUnit:
@@ -307,6 +318,7 @@ public sealed class RtsSelectionFocusCommandSystem
     private static void EnterExplicitSelectionMode(Context context)
     {
         context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.InputSystem.ClearActiveCommandMode();
         context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
             context.BuildingPlacementInteractionContext,
             "SelectionUiCommandSystem.EnterSelectionMode");
@@ -329,6 +341,7 @@ public sealed class RtsSelectionFocusCommandSystem
 
     private static void ExitExplicitSelectionMode(Context context)
     {
+        context.InputSystem.ClearActiveCommandMode();
         Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
             ? context.InputSystem.LastKnownPointerPosition
             : Vector2.zero;
@@ -342,5 +355,74 @@ public sealed class RtsSelectionFocusCommandSystem
         context.SetHudWorldMarkersVisible?.Invoke(false);
         context.ClearHudCommandMode?.Invoke();
         context.LogSelectionDiagnostic?.Invoke($"selectionModeExited source=ui frame={Time.frameCount} dragReset={pointerPosition}");
+    }
+
+    private static void EnterMoveTargetMode(Context context)
+    {
+        context.SetExplicitAttackTargetModeActive?.Invoke(false);
+        context.BuildingPlacementInteractionSystem?.ClearSelectedBuilding(
+            context.BuildingPlacementInteractionContext,
+            "SelectionUiCommandSystem.EnterMoveTargetMode");
+        context.InputSystem.ClearQueuedMoveOrder();
+        context.InputSystem.ClearPendingMoveCommandRequests();
+
+        if (!TryHasSelectedMovableUnit(context))
+        {
+            context.InputSystem.ClearActiveCommandMode();
+            context.ClearHudCommandMode?.Invoke();
+            context.ApplyHudCommandResult?.Invoke(TacticalCommandResult.Rejected(TacticalCommandReasonCode.NoSelection));
+            context.SetCameraDragging?.Invoke(false);
+            context.LogSelectionDiagnostic?.Invoke($"moveModeEntered result=False reason=NoSelection frame={Time.frameCount}");
+            return;
+        }
+
+        Vector2 pointerPosition = context.InputSystem.HasLastKnownPointerPosition
+            ? context.InputSystem.LastKnownPointerPosition
+            : Vector2.zero;
+        context.InputSystem.ResetSelectionDragState(pointerPosition);
+        context.InputSystem.IgnoreNextLeftMouseRelease = true;
+        context.InputSystem.SkipNextWorldReleaseAfterSelection = true;
+        context.InputSystem.IgnoreWorldCommandsUntilFrame = Time.frameCount + 1;
+        context.InputSystem.ArmCommandMode(
+            TacticalCommandMode.Move,
+            Time.frameCount,
+            oneShot: true,
+            requiresWorldTarget: true);
+        context.RuntimeGameplayStateSystem.SelectionModeActive = false;
+        context.RuntimeGameplayStateSystem.SuppressNextWorldClick = true;
+        context.SetCameraDragging?.Invoke(false);
+        context.SetHudWorldMarkersVisible?.Invoke(false);
+        context.ApplyHudCommandMode?.Invoke(TacticalCommandMode.Move);
+        context.LogSelectionDiagnostic?.Invoke($"moveModeEntered result=True frame={Time.frameCount} dragReset={pointerPosition}");
+    }
+
+    private static bool TryHasSelectedMovableUnit(Context context)
+    {
+        if (!context.TryGetEntityManager(out EntityManager em))
+            return false;
+
+        context.EnsureEntityQueries?.Invoke(em);
+        List<Entity> cached = context.SelectionStateSystem.CachedSelectedMoveEntities;
+        for (int i = 0; i < cached.Count; i++)
+        {
+            if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, cached[i]))
+                return true;
+        }
+
+        using EntityQuery query = em.CreateEntityQuery(
+            ComponentType.ReadOnly<SelectedUnitTag>(),
+            ComponentType.ReadOnly<UnitGrid>(),
+            ComponentType.ReadOnly<UnitMove>());
+        if (query.IsEmptyIgnoreFilter)
+            return false;
+
+        using NativeArray<Entity> selectedEntities = query.ToEntityArray(Allocator.Temp);
+        for (int i = 0; i < selectedEntities.Length; i++)
+        {
+            if (SelectionStateSystem.IsCacheableSelectedMoveEntity(em, selectedEntities[i]))
+                return true;
+        }
+
+        return false;
     }
 }

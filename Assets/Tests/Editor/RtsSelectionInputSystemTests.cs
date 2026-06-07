@@ -140,6 +140,66 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void CommandModeState_ArmsAndClearsWorldTargetMode()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+
+        Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+
+        inputSystem.ArmCommandMode(
+            TacticalCommandMode.Move,
+            frame: 42,
+            oneShot: true,
+            requiresWorldTarget: true);
+
+        Assert.IsTrue(inputSystem.TryGetActiveCommandMode(out TacticalCommandMode activeMode));
+        Assert.AreEqual(TacticalCommandMode.Move, activeMode);
+        Assert.IsTrue(inputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode targetMode));
+        Assert.AreEqual(TacticalCommandMode.Move, targetMode);
+
+        inputSystem.ClearActiveCommandMode();
+
+        Assert.IsFalse(inputSystem.TryGetActiveCommandMode(out _));
+        Assert.IsFalse(inputSystem.HasActiveWorldTargetCommandMode(out _));
+    }
+
+    [Test]
+    public void MoveTargetDoubleClick_RequiresRecentNearbyMoveTargetClick()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 firstClick = new(100f, 200f);
+        Vector2 nearbySecondClick = new(118f, 214f);
+        Vector2 farSecondClick = new(240f, 320f);
+
+        Assert.IsFalse(inputSystem.IsMoveTargetDoubleClick(firstClick, currentTime: 10f));
+
+        inputSystem.RecordMoveTargetClick(firstClick, currentTime: 10f);
+
+        Assert.IsTrue(inputSystem.IsMoveTargetDoubleClick(nearbySecondClick, currentTime: 10.2f));
+        Assert.IsFalse(inputSystem.IsMoveTargetDoubleClick(farSecondClick, currentTime: 10.2f));
+        Assert.IsFalse(inputSystem.IsMoveTargetDoubleClick(nearbySecondClick, currentTime: 11f));
+    }
+
+    [Test]
+    public void SelectionUiCommandSystem_MoveButtonQueuesEnterMoveTargetModeAndSuppressesRelease()
+    {
+        var commandSystem = new SelectionUiCommandSystem();
+
+        Assert.IsTrue(commandSystem.RequestMoveCommandMode());
+
+        var inputSystem = new RtsSelectionInputSystem();
+        Assert.IsTrue(inputSystem.IgnoreUiClickUntilRelease);
+        Assert.IsTrue(inputSystem.IgnoreNextLeftMouseRelease);
+        Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+            out _,
+            out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+            out _));
+        Assert.AreEqual(1, requests.Length);
+        Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+    }
+
+    [Test]
     public void QueueMoveOrder_ConsumesOnlyAtOrAfterExecutionFrame()
     {
         var inputSystem = new RtsSelectionInputSystem();
@@ -181,6 +241,11 @@ public sealed class RtsSelectionInputSystemTests
         StringAssert.Contains("context.TryFocusUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
         StringAssert.Contains("context.TryIssueBoardTransportOrderToClickedUnit?.Invoke(pointerPosition)", pointerReleased);
+        StringAssert.Contains("input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode)", pointerReleased);
+        StringAssert.Contains("input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime)", pointerReleased);
+        StringAssert.Contains("HandlePersistentMoveTargetDoubleClick", pointerReleased);
+        StringAssert.Contains("action=NoCommand", pointerReleased);
+        Assert.IsFalse(pointerReleased.Contains("QueueMoveOrder(", StringComparison.Ordinal));
         StringAssert.Contains("CompleteSelectionMode(context)", pointerReleased);
     }
 

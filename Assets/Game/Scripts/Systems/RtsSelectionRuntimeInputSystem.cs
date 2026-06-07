@@ -76,6 +76,13 @@ public sealed class RtsSelectionRuntimeInputSystem
         if (!context.InputSystem.TryConsumeQueuedMoveOrder(Time.frameCount, out Vector2 screenPosition))
             return;
 
+        if (!context.InputSystem.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode) ||
+            activeMode != TacticalCommandMode.Move)
+        {
+            context.LogClickDiagnostic?.Invoke($"queuedMoveCanceled reason=MoveModeInactive activeMode={activeMode} pos={screenPosition} frame={Time.frameCount}");
+            return;
+        }
+
         if (!context.RuntimeGameplayStateSystem.PlayRequested || context.RuntimeGameplayStateSystem.BuildModeActive)
         {
             context.LogClickDiagnostic?.Invoke(
@@ -329,7 +336,19 @@ public sealed class RtsSelectionRuntimeInputSystem
 
             if (!releasePointerOverBlockingUi)
             {
-                if (context.GetExplicitAttackTargetModeActive?.Invoke() == true)
+                if (input.HasActiveWorldTargetCommandMode(out TacticalCommandMode activeMode))
+                {
+                    bool handledCommandTarget = HandleWorldTargetCommand(context, input, activeMode, pointerPosition);
+                    context.LogClickDiagnostic?.Invoke($"clickWorldTargetCommand mode={activeMode} result={handledCommandTarget} pos={pointerPosition}");
+                    LogOneClickDebug(context, pointerPosition, handledCommandTarget ? $"{activeMode}Target" : $"{activeMode}TargetUnhandled");
+                }
+                else if (input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime))
+                {
+                    bool handledDoubleClick = HandlePersistentMoveTargetDoubleClick(context, input, pointerPosition);
+                    context.LogClickDiagnostic?.Invoke($"clickMoveDoubleClickRetain result={handledDoubleClick} pos={pointerPosition}");
+                    LogOneClickDebug(context, pointerPosition, handledDoubleClick ? "MoveDoubleClickRetain" : "MoveDoubleClickRetainFailed");
+                }
+                else if (context.GetExplicitAttackTargetModeActive?.Invoke() == true)
                 {
                     bool attackIssued = context.TryIssueAttackOrderToClickedUnit?.Invoke(pointerPosition) == true;
                     context.LogClickDiagnostic?.Invoke($"clickExplicitAttack result={attackIssued} pos={pointerPosition}");
@@ -361,9 +380,8 @@ public sealed class RtsSelectionRuntimeInputSystem
                 }
                 else
                 {
-                    context.LogClickDiagnostic?.Invoke($"clickFocus result=False action=QueueMoveOrder pos={pointerPosition}");
-                    input.QueueMoveOrder(pointerPosition, Time.frameCount + 1);
-                    LogOneClickDebug(context, pointerPosition, "QueueMoveOrder");
+                    context.LogClickDiagnostic?.Invoke($"clickFocus result=False action=NoCommand pos={pointerPosition}");
+                    LogOneClickDebug(context, pointerPosition, "NoCommand");
                 }
             }
         }
@@ -380,6 +398,59 @@ public sealed class RtsSelectionRuntimeInputSystem
         input.HasLiveSelectionRect = false;
     }
 
+    private static bool HandleWorldTargetCommand(
+        Context context,
+        RtsSelectionInputSystem input,
+        TacticalCommandMode activeMode,
+        Vector2 pointerPosition)
+    {
+        if (activeMode == TacticalCommandMode.Move)
+        {
+            if (context.IssueMoveOrder == null)
+            {
+                input.ClearActiveCommandMode();
+                context.ClearCommandMode?.Invoke();
+                return false;
+            }
+
+            bool persistentMove = input.IsMoveTargetDoubleClick(pointerPosition, Time.unscaledTime);
+            if (persistentMove)
+            {
+                input.ArmCommandMode(
+                    TacticalCommandMode.Move,
+                    Time.frameCount,
+                    oneShot: false,
+                    requiresWorldTarget: true);
+            }
+
+            input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
+            context.IssueMoveOrder.Invoke(pointerPosition);
+            return true;
+        }
+
+        input.ClearActiveCommandMode();
+        context.ClearCommandMode?.Invoke();
+        return false;
+    }
+
+    private static bool HandlePersistentMoveTargetDoubleClick(
+        Context context,
+        RtsSelectionInputSystem input,
+        Vector2 pointerPosition)
+    {
+        if (context.IssueMoveOrder == null)
+            return false;
+
+        input.ArmCommandMode(
+            TacticalCommandMode.Move,
+            Time.frameCount,
+            oneShot: false,
+            requiresWorldTarget: true);
+        input.RecordMoveTargetClick(pointerPosition, Time.unscaledTime);
+        context.IssueMoveOrder.Invoke(pointerPosition);
+        return true;
+    }
+
     private static void CompleteSelectionMode(Context context)
     {
         RuntimeGameplayStateSystem runtime = context.RuntimeGameplayStateSystem;
@@ -388,6 +459,7 @@ public sealed class RtsSelectionRuntimeInputSystem
 
         runtime.SelectionModeActive = false;
         runtime.SuppressNextWorldClick = false;
+        context.InputSystem.ClearActiveCommandMode();
         context.ClearCommandMode?.Invoke();
     }
 

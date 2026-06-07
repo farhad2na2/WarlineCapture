@@ -66,6 +66,7 @@ public sealed class RtsSelectionCommandResultContextSystem
             tryGetDefaultEntityManager,
             ensureRuntimeSelectionDependencies,
             clearCurrentSelection,
+            mode => hudFeedbackSystem.ApplyCommandMode(hudFeedbackContext, mode),
             result => hudFeedbackSystem.ApplyCommandResult(hudFeedbackContext, result),
             () => hudFeedbackSystem.ClearCommandMode(hudFeedbackContext),
             visible => hudFeedbackSystem.SetWorldMarkersVisible(hudFeedbackContext, visible),

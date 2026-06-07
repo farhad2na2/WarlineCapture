@@ -223,22 +223,38 @@ public sealed class WarlineCaptureUiShellTests
 
         Transform selectTransform = footer.Find("CommandRail/Frame/SelectCommand");
         Assert.NotNull(selectTransform, "Match HUD footer must keep SelectCommand in the command rail.");
+        Transform moveTransform = footer.Find("CommandRail/Frame/MoveCommand");
+        Assert.NotNull(moveTransform, "Match HUD footer must keep MoveCommand in the command rail.");
+        Transform attackTransform = footer.Find("CommandRail/Frame/AttackCommand");
+        Assert.NotNull(attackTransform, "Match HUD footer must keep AttackCommand in the command rail.");
         Transform buildTransform = footer.Find("CommandRail/Frame/BuildCommand");
         Assert.NotNull(buildTransform, "Match HUD footer must keep BuildCommand in the command rail.");
 
         Button selectButton = selectTransform.GetComponent<Button>();
+        Button moveButton = moveTransform.GetComponent<Button>();
+        Button attackButton = attackTransform.GetComponent<Button>();
         Button buildButton = buildTransform.GetComponent<Button>();
         Assert.NotNull(selectButton, "SelectCommand must be a real Button on the shell content prefab.");
+        Assert.NotNull(moveButton, "MoveCommand must be a real Button on the shell content prefab.");
+        Assert.NotNull(attackButton, "AttackCommand must be a real Button on the shell content prefab.");
         Assert.NotNull(buildButton, "BuildCommand must be a real Button on the shell content prefab.");
         Assert.IsTrue(selectButton.interactable);
+        Assert.IsTrue(moveButton.interactable);
+        Assert.IsTrue(attackButton.interactable);
         Assert.IsTrue(buildButton.interactable);
         Assert.NotNull(selectButton.targetGraphic, "SelectCommand needs a raycastable target graphic for UI clicks.");
+        Assert.NotNull(moveButton.targetGraphic, "MoveCommand needs a raycastable target graphic for UI clicks.");
+        Assert.NotNull(attackButton.targetGraphic, "AttackCommand needs a raycastable target graphic for UI clicks.");
         Assert.NotNull(buildButton.targetGraphic, "BuildCommand needs a raycastable target graphic for UI clicks.");
         Assert.IsTrue(selectButton.targetGraphic.raycastTarget, "SelectCommand target graphic must receive pointer raycasts.");
+        Assert.IsTrue(moveButton.targetGraphic.raycastTarget, "MoveCommand target graphic must receive pointer raycasts.");
+        Assert.IsTrue(attackButton.targetGraphic.raycastTarget, "AttackCommand target graphic must receive pointer raycasts.");
         Assert.IsTrue(buildButton.targetGraphic.raycastTarget, "BuildCommand target graphic must receive pointer raycasts.");
 
         SerializedObject serializedView = new(view);
         Assert.AreEqual(selectButton, serializedView.FindProperty("selectButton").objectReferenceValue);
+        Assert.AreEqual(moveButton, serializedView.FindProperty("moveButton").objectReferenceValue);
+        Assert.AreEqual(attackButton, serializedView.FindProperty("attackButton").objectReferenceValue);
         Assert.AreEqual(buildButton, serializedView.FindProperty("buildButton").objectReferenceValue);
         Assert.NotNull(serializedView.FindProperty("buildDrawerPopupPrefab").objectReferenceValue);
 
@@ -303,6 +319,47 @@ public sealed class WarlineCaptureUiShellTests
         finally
         {
             UnityEngine.Object.DestroyImmediate(instance);
+        }
+    }
+
+    [Test]
+    public void ShellMatchHudContent_MoveControlQueuesExplicitMoveMode()
+    {
+        World previousWorld = World.DefaultGameObjectInjectionWorld;
+        using var world = new World("ShellMatchHudContent_MoveControlQueuesExplicitMoveMode");
+        World.DefaultGameObjectInjectionWorld = world;
+
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            MatchOverlayCommandControlsView view = footer.GetComponent<MatchOverlayCommandControlsView>();
+            Assert.NotNull(view);
+            Assert.NotNull(view.MoveButton);
+
+            var inputBinding = new MatchOverlayCommandInputSystem();
+            inputBinding.Bind(view, new SelectionUiCommandSystem());
+
+            view.MoveButton.onClick.Invoke();
+
+            var inputSystem = new RtsSelectionInputSystem();
+            Assert.IsTrue(inputSystem.TryGetCommandBuffers(
+                out _,
+                out DynamicBuffer<RtsSelectionCommandIntentRequestElement> requests,
+                out _));
+            Assert.AreEqual(1, requests.Length);
+            Assert.AreEqual(RtsSelectionCommandIntentKind.EnterMoveTargetMode, requests[0].Kind);
+            Assert.AreNotEqual(RtsSelectionCommandIntentKind.Move, requests[0].Kind);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+            World.DefaultGameObjectInjectionWorld = previousWorld;
         }
     }
 

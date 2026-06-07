@@ -27,6 +27,7 @@ public enum RtsSelectionCommandIntentKind : byte
     EnterSelectionMode,
     ExitSelectionMode,
     DeselectAll,
+    EnterMoveTargetMode,
     HoldPosition,
     Stop,
     ReturnToBase,
@@ -61,6 +62,13 @@ public struct RtsSelectionInputStateComponent : IComponentData
     public byte HasLiveSelectionRect;
     public float2 LastKnownPointerPosition;
     public byte HasLastKnownPointerPosition;
+    public int ActiveCommandMode;
+    public int ActiveCommandModeFrame;
+    public byte ActiveCommandModeOneShot;
+    public byte ActiveCommandModeRequiresWorldTarget;
+    public byte HasLastMoveTargetClick;
+    public float2 LastMoveTargetClickScreenPosition;
+    public float LastMoveTargetClickTime;
 }
 
 public struct RtsSelectionPointerRequestElement : IBufferElementData

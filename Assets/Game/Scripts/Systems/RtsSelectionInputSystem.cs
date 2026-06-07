@@ -4,6 +4,9 @@ using UnityEngine;
 
 public sealed class RtsSelectionInputSystem
 {
+    public const float MoveTargetDoubleClickSeconds = 0.35f;
+    public const float MoveTargetDoubleClickPixels = 48f;
+
     private readonly RtsSelectionInputStateSystem _inputStateSystem = new();
 
     public Vector2 DragStart
@@ -155,6 +158,71 @@ public sealed class RtsSelectionInputSystem
 
     public Vector2 LastKnownPointerPosition => ToVector2(ReadState().LastKnownPointerPosition);
     public bool HasLastKnownPointerPosition => ToBool(ReadState().HasLastKnownPointerPosition);
+
+    public bool TryGetActiveCommandMode(out TacticalCommandMode mode)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        mode = (TacticalCommandMode)state.ActiveCommandMode;
+        return mode != TacticalCommandMode.None;
+    }
+
+    public bool HasActiveWorldTargetCommandMode(out TacticalCommandMode mode)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        mode = (TacticalCommandMode)state.ActiveCommandMode;
+        return mode != TacticalCommandMode.None &&
+               state.ActiveCommandModeRequiresWorldTarget != 0;
+    }
+
+    public void ArmCommandMode(TacticalCommandMode mode, int frame, bool oneShot, bool requiresWorldTarget)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        state.ActiveCommandMode = (int)mode;
+        state.ActiveCommandModeFrame = frame;
+        state.ActiveCommandModeOneShot = ToByte(oneShot);
+        state.ActiveCommandModeRequiresWorldTarget = ToByte(requiresWorldTarget);
+        WriteState(state);
+    }
+
+    public void ClearActiveCommandMode()
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        state.ActiveCommandMode = (int)TacticalCommandMode.None;
+        state.ActiveCommandModeFrame = 0;
+        state.ActiveCommandModeOneShot = 0;
+        state.ActiveCommandModeRequiresWorldTarget = 0;
+        WriteState(state);
+    }
+
+    public bool ShouldClearActiveCommandModeAfterCommand(TacticalCommandMode mode)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        return (TacticalCommandMode)state.ActiveCommandMode == mode &&
+               state.ActiveCommandModeOneShot != 0;
+    }
+
+    public bool IsMoveTargetDoubleClick(Vector2 screenPosition, float currentTime)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        if (state.HasLastMoveTargetClick == 0)
+            return false;
+
+        float elapsed = currentTime - state.LastMoveTargetClickTime;
+        if (elapsed < 0f || elapsed > MoveTargetDoubleClickSeconds)
+            return false;
+
+        Vector2 previous = ToVector2(state.LastMoveTargetClickScreenPosition);
+        return Vector2.Distance(previous, screenPosition) <= MoveTargetDoubleClickPixels;
+    }
+
+    public void RecordMoveTargetClick(Vector2 screenPosition, float currentTime)
+    {
+        RtsSelectionInputStateComponent state = ReadState();
+        state.HasLastMoveTargetClick = 1;
+        state.LastMoveTargetClickScreenPosition = ToFloat2(screenPosition);
+        state.LastMoveTargetClickTime = currentTime;
+        WriteState(state);
+    }
 
     public void BeginPointerPress(Vector2 pointerPosition, bool pointerPressedOverUi)
     {

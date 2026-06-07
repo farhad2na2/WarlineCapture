@@ -256,6 +256,54 @@ public sealed class WarlineCaptureUiShellTests
         SerializedProperty commandTabGroups = serializedHudView.FindProperty("commandTabGroups");
         Assert.AreEqual(1, commandTabGroups.arraySize);
         Assert.AreEqual(tabGroup, commandTabGroups.GetArrayElementAtIndex(0).objectReferenceValue);
+
+        Transform feedbackPanel = footer.Find("FeedbackPanel");
+        Assert.NotNull(feedbackPanel, "FooterContent must expose FeedbackPanel for transient command hints.");
+        Assert.IsFalse(feedbackPanel.gameObject.activeSelf, "FeedbackPanel must be hidden by default.");
+        TMP_Text feedbackText = feedbackPanel.Find("Frame/Feedback")?.GetComponent<TMP_Text>();
+        Assert.NotNull(feedbackText, "FeedbackPanel/Frame/Feedback must be a real TMP text target.");
+        Assert.AreEqual(feedbackPanel.gameObject, serializedHudView.FindProperty("feedbackPanel").objectReferenceValue);
+        Assert.AreEqual(feedbackText, serializedHudView.FindProperty("feedbackText").objectReferenceValue);
+    }
+
+    [Test]
+    public void ShellMatchHudContent_FeedbackPanelShowsOnlyForCommandFeedback()
+    {
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(ShellMatchHudContentPrefabPath);
+        Assert.NotNull(prefab, ShellMatchHudContentPrefabPath);
+
+        GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
+        try
+        {
+            Transform footer = instance.transform.Find("FooterContent");
+            Assert.NotNull(footer);
+
+            BattleHudRuntimeFeedbackView feedbackView = footer.GetComponent<BattleHudRuntimeFeedbackView>();
+            Assert.NotNull(feedbackView);
+            Transform feedbackPanel = footer.Find("FeedbackPanel");
+            Assert.NotNull(feedbackPanel);
+            TMP_Text feedbackText = feedbackPanel.Find("Frame/Feedback")?.GetComponent<TMP_Text>();
+            Assert.NotNull(feedbackText);
+            Assert.IsFalse(feedbackPanel.gameObject.activeSelf);
+
+            BattleHudRuntimeFeedbackSystem.ApplyCommandMode(feedbackView, TacticalCommandMode.Move);
+            Assert.IsTrue(feedbackPanel.gameObject.activeSelf);
+            Assert.AreEqual("Choose destination", feedbackText.text);
+
+            BattleHudRuntimeFeedbackSystem.ClearCommandMode(feedbackView);
+            Assert.IsFalse(feedbackPanel.gameObject.activeSelf);
+
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(feedbackView, TacticalCommandResult.Rejected(TacticalCommandReasonCode.TargetBlocked));
+            Assert.IsTrue(feedbackPanel.gameObject.activeSelf);
+            Assert.AreEqual("Route is blocked.", feedbackText.text);
+
+            BattleHudRuntimeFeedbackSystem.ApplyCommandResult(feedbackView, TacticalCommandResult.Success());
+            Assert.IsFalse(feedbackPanel.gameObject.activeSelf);
+        }
+        finally
+        {
+            UnityEngine.Object.DestroyImmediate(instance);
+        }
     }
 
     [Test]

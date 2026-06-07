@@ -186,20 +186,18 @@ public sealed class BattleHudRuntimeFeedbackSystem
         state.LastCommandResult = result;
         state.HasLastCommandResult = true;
 
-        BattleHudTacticalFeedbackSystem feedback = ResolveTacticalFeedback(view);
-        if (feedback == null)
-            return;
-
         if (result.Accepted)
         {
-            feedback.HideInvalidCommand();
+            ResolveTacticalFeedback(view)?.HideInvalidCommand();
+            view.HideFeedbackMessage();
             return;
         }
 
         string reason = !string.IsNullOrWhiteSpace(result.Message)
             ? result.Message
             : TacticalCommandFeedbackText.ToDisplayText(result.ReasonCode);
-        feedback.ShowInvalidCommand(reason);
+        ResolveTacticalFeedback(view)?.ShowInvalidCommand(reason);
+        view.ShowFeedbackMessage(reason);
     }
 
     public static void SetWorldMarkersVisible(BattleHudRuntimeFeedbackView view, bool visible)
@@ -217,6 +215,12 @@ public sealed class BattleHudRuntimeFeedbackSystem
             CommandTabFeedbackSystem.ApplyCommandMode(view.CommandTabGroups, mode);
 
         BattleHudTacticalFeedbackSystem feedback = ResolveTacticalFeedback(view);
+        string instruction = TacticalCommandFeedbackText.ToInstructionText(mode);
+        if (string.IsNullOrWhiteSpace(instruction))
+            view.HideFeedbackMessage();
+        else
+            view.ShowFeedbackMessage(instruction);
+
         if (feedback == null)
             return;
 
@@ -230,6 +234,7 @@ public sealed class BattleHudRuntimeFeedbackSystem
     private static void ClearCommandModeInternal(BattleHudRuntimeFeedbackView view, MutableState state)
     {
         state.CurrentCommandMode = TacticalCommandMode.None;
+        view.HideFeedbackMessage();
         ResolveTacticalFeedback(view)?.HideCommandMode();
         CommandTabFeedbackSystem.ClearCommandMode(view.CommandTabGroups);
     }

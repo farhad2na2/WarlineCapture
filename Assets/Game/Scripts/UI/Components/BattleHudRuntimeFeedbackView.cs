@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public enum TacticalCommandMode
@@ -80,6 +81,16 @@ public static class TacticalCommandFeedbackText
             _ => string.Empty
         };
     }
+
+    public static string ToInstructionText(TacticalCommandMode mode)
+    {
+        return mode switch
+        {
+            TacticalCommandMode.Move => "Choose destination",
+            TacticalCommandMode.Attack => "Choose target",
+            _ => string.Empty
+        };
+    }
 }
 
 [DisallowMultipleComponent]
@@ -87,7 +98,36 @@ public sealed class BattleHudRuntimeFeedbackView : MonoBehaviour
 {
     [SerializeField] private BattleHudTacticalFeedbackSystem tacticalFeedback;
     [SerializeField] private MatchOverlayCommandTabGroupView[] commandTabGroups;
+    [SerializeField] private GameObject feedbackPanel;
+    [SerializeField] private TMP_Text feedbackText;
 
     public BattleHudTacticalFeedbackSystem TacticalFeedback => tacticalFeedback;
     public MatchOverlayCommandTabGroupView[] CommandTabGroups => commandTabGroups;
+    public GameObject FeedbackPanel => feedbackPanel;
+    public TMP_Text FeedbackText => feedbackText;
+
+    private void Awake()
+    {
+        HideFeedbackMessage();
+    }
+
+    public void ShowFeedbackMessage(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            HideFeedbackMessage();
+            return;
+        }
+
+        if (feedbackText != null)
+            feedbackText.text = message;
+        if (feedbackPanel != null)
+            feedbackPanel.SetActive(true);
+    }
+
+    public void HideFeedbackMessage()
+    {
+        if (feedbackPanel != null)
+            feedbackPanel.SetActive(false);
+    }
 }

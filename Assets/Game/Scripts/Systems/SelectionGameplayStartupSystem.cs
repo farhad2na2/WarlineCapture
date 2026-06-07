@@ -145,10 +145,15 @@ internal sealed class SelectionGameplayStartupSystem
             if (view == null)
                 return;
 
-            view.Bind(slot => matchHudSquadTraySelectionSystem.SelectSlot(
-                CreateSquadTraySelectionContext(),
-                view,
-                slot));
+            view.Bind(slot =>
+            {
+                selectionUiCommand.CaptureUiClickSequence();
+                runtimeGameplayStateSystem.SuppressNextWorldClick = true;
+                matchHudSquadTraySelectionSystem.SelectSlot(
+                    CreateSquadTraySelectionContext(),
+                    view,
+                    slot);
+            });
         }
 
         void UpdateSelectionRuntimePhases()

@@ -222,12 +222,18 @@ public sealed class RtsSelectionInputSystem
     public void CaptureUiClickSequence()
     {
         RtsSelectionInputStateComponent state = ReadState();
+        state.QueuedMoveOrderToken++;
+        state.HasQueuedMoveOrder = 0;
+        state.QueuedMoveOrderScreenPosition = default;
+        state.QueuedMoveOrderFrame = -1;
+        state.IgnoreWorldCommandsUntilFrame = math.max(state.IgnoreWorldCommandsUntilFrame, Time.frameCount + 1);
         state.IgnoreUiClickUntilRelease = 1;
         state.IgnoreNextLeftMouseRelease = 1;
         state.PointerPressedOverUi = 1;
         state.IsDraggingSelection = 0;
         state.HasLiveSelectionRect = 0;
         WriteState(state);
+        ClearPendingMoveCommandRequests();
     }
 
     public void UpdateLastKnownPointerPosition(Vector2 pointerPosition)

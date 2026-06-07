@@ -104,6 +104,23 @@ public sealed class MatchHudSquadTrayView : MonoBehaviour
         _disabledFlashUntil = Time.unscaledTime + disabledFlashSeconds;
     }
 
+    public bool ContainsScreenPoint(Vector2 screenPosition)
+    {
+        if (!isActiveAndEnabled)
+            return false;
+
+        RectTransform rectTransform = transform as RectTransform;
+        if (rectTransform == null)
+            return false;
+
+        Canvas canvas = GetComponentInParent<Canvas>();
+        Camera eventCamera = null;
+        if (canvas != null && canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            eventCamera = canvas.worldCamera != null ? canvas.worldCamera : Camera.main;
+
+        return RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition, eventCamera);
+    }
+
     private void CacheBaseFrameColors()
     {
         for (int i = 0; i < cards.Length; i++)

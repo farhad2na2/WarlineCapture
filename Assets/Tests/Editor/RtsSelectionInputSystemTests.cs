@@ -123,6 +123,23 @@ public sealed class RtsSelectionInputSystemTests
     }
 
     [Test]
+    public void CaptureUiClickSequence_CancelsQueuedAndPendingMoveOrders()
+    {
+        var inputSystem = new RtsSelectionInputSystem();
+        Vector2 screenPosition = new(123f, 456f);
+
+        inputSystem.QueueMoveOrder(screenPosition, Time.frameCount);
+        Assert.IsTrue(inputSystem.QueueMoveCommandRequest(screenPosition, Time.frameCount));
+
+        inputSystem.CaptureUiClickSequence();
+
+        Assert.IsFalse(inputSystem.HasQueuedMoveOrder);
+        Assert.IsFalse(inputSystem.TryConsumeQueuedMoveOrder(Time.frameCount + 10, out _));
+        Assert.AreEqual(0, inputSystem.ClearPendingMoveCommandRequests());
+        Assert.GreaterOrEqual(inputSystem.IgnoreWorldCommandsUntilFrame, Time.frameCount + 1);
+    }
+
+    [Test]
     public void QueueMoveOrder_ConsumesOnlyAtOrAfterExecutionFrame()
     {
         var inputSystem = new RtsSelectionInputSystem();

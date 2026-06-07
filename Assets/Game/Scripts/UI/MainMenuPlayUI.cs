@@ -68,6 +68,12 @@ public sealed class MainMenuPlayUI
 
     public bool IsPointerOverAnyGameplayUi(Vector2 screenPosition, out string source)
     {
+        if (_matchHudSquadTrayView != null && _matchHudSquadTrayView.ContainsScreenPoint(screenPosition))
+        {
+            source = "MatchHudSquadTray";
+            return true;
+        }
+
         source = null;
         return false;
     }

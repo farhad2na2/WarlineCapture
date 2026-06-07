@@ -2,70 +2,129 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using Unity.Collections;
+using Unity.Rendering;
+using UnityEngine;
 
 [UpdateAfter(typeof(UnitModelSpawnSystem))]
 public partial struct UnitHelicopterBladeSpinSystem : ISystem
 {
+    private static bool s_DiagnosticLogged;
+
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<UnitAirMovement>();
+        s_DiagnosticLogged = false;
     }
 
     public void OnUpdate(ref SystemState state)
     {
         var em = state.EntityManager;
-        float dt = SystemAPI.Time.DeltaTime;
-        float radians = math.radians(1440f) * dt;
+        float radians = math.radians(1440f) * SystemAPI.Time.DeltaTime;
         var bladeLookup = SystemAPI.GetBufferLookup<UnitHelicopterBladeReference>(true);
         var childLookup = SystemAPI.GetBufferLookup<Child>(true);
         var modelLookup = SystemAPI.GetComponentLookup<UnitModelInstanceReference>(true);
-        var airStateLookup = SystemAPI.GetComponentLookup<UnitAirState>(true);
-        var targetLookup = SystemAPI.GetComponentLookup<UnitTarget>(true);
-        var engageLookup = SystemAPI.GetComponentLookup<EngageTarget>(true);
+        var detailLookup = SystemAPI.GetComponentLookup<UnitDetailedVisualReference>(true);
+        var midLookup = SystemAPI.GetComponentLookup<UnitMidLodInstanceReference>(true);
+        var lowLookup = SystemAPI.GetComponentLookup<UnitLowLodInstanceReference>(true);
+        var sourceLookup = SystemAPI.GetComponentLookup<UnitSourcePrefabKey>(true);
+        var displayLookup = SystemAPI.GetComponentLookup<UnitDisplayInfo>(true);
+        var visualStateLookup = SystemAPI.GetComponentLookup<UnitRenderVisualState>(true);
+        var airLookup = SystemAPI.GetComponentLookup<UnitAirMovement>(true);
+        using var rotatedBlades = new NativeHashSet<Entity>(32, Allocator.Temp);
 
-        foreach (var (transform, moveVisual, entity) in SystemAPI
-                     .Query<RefRO<LocalTransform>, RefRO<UnitMoveVisualState>>()
-                     .WithAll<UnitAirMovement>()
+        foreach (var (_, entity) in SystemAPI
+                     .Query<RefRO<UnitAirMovement>>()
                      .WithNone<UnitDeathAnimationState>()
                      .WithEntityAccess()
                      )
         {
-            bool hasModel = modelLookup.HasComponent(entity) && em.Exists(modelLookup[entity].Instance);
-            bool shouldSpin = moveVisual.ValueRO.IsMoving != 0;
-            if (airStateLookup.HasComponent(entity))
-            {
-                UnitAirState airState = airStateLookup[entity];
-                bool isAboveHomeGround = transform.ValueRO.Position.y > airState.HomePosition.y + 0.25f;
-                shouldSpin =
-                    shouldSpin ||
-                    isAboveHomeGround ||
-                    airState.Airborne != 0 ||
-                    airState.ReturningHome != 0 ||
-                    airState.TakeoffRolling != 0 ||
-                    airState.LandingRolling != 0;
-            }
-            shouldSpin = shouldSpin || targetLookup.HasComponent(entity) || engageLookup.HasComponent(entity);
+            rotatedBlades.Clear();
 
-            if (!shouldSpin)
-                continue;
+            int detailRotated = 0;
+            int modelRotated = 0;
+            int bakedRotated = 0;
 
-            int spunCount = 0;
+            if (detailLookup.HasComponent(entity))
+                detailRotated = RotateBladeDescendants(em, childLookup, detailLookup[entity].Root, radians, rotatedBlades);
+
+            if (modelLookup.HasComponent(entity))
+                modelRotated = RotateBladeDescendants(em, childLookup, modelLookup[entity].Instance, radians, rotatedBlades);
+
             if (bladeLookup.HasBuffer(entity))
-                spunCount = RotateBakedBlades(em, bladeLookup[entity], radians);
+                bakedRotated = RotateBakedBlades(em, bladeLookup[entity], radians, rotatedBlades);
 
-            if (spunCount == 0 && hasModel)
-                spunCount = RotateBladeDescendants(em, childLookup, modelLookup[entity].Instance, radians);
+            if (!s_DiagnosticLogged && IsHelicopterDiagnosticCandidate(em, childLookup, entity, bladeLookup, detailLookup, modelLookup, midLookup, lowLookup, sourceLookup))
+            {
+                s_DiagnosticLogged = true;
+                LogHelicopterBladeDiagnostic(
+                    em,
+                    childLookup,
+                    entity,
+                    bladeLookup,
+                    detailLookup,
+                    modelLookup,
+                    midLookup,
+                    lowLookup,
+                    sourceLookup,
+                    displayLookup,
+                    visualStateLookup,
+                    airLookup,
+                    detailRotated,
+                    modelRotated,
+                    bakedRotated,
+                    SystemAPI.Time.DeltaTime);
+            }
+        }
+
+        if (!s_DiagnosticLogged)
+        {
+            foreach (var (sourceKey, entity) in SystemAPI
+                         .Query<RefRO<UnitSourcePrefabKey>>()
+                         .WithAll<UnitGrid>()
+                         .WithNone<UnitDeathAnimationState>()
+                         .WithEntityAccess())
+            {
+                if (!sourceKey.ValueRO.Value.ToString().Contains("Helicopter", System.StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                s_DiagnosticLogged = true;
+                LogHelicopterBladeDiagnostic(
+                    em,
+                    childLookup,
+                    entity,
+                    bladeLookup,
+                    detailLookup,
+                    modelLookup,
+                    midLookup,
+                    lowLookup,
+                    sourceLookup,
+                    displayLookup,
+                    visualStateLookup,
+                    airLookup,
+                    0,
+                    0,
+                    0,
+                    SystemAPI.Time.DeltaTime);
+                break;
+            }
         }
     }
 
-    private static int RotateBakedBlades(EntityManager em, DynamicBuffer<UnitHelicopterBladeReference> blades, float radians)
+    private static int RotateBakedBlades(
+        EntityManager em,
+        DynamicBuffer<UnitHelicopterBladeReference> blades,
+        float radians,
+        NativeHashSet<Entity> rotatedBlades)
     {
         int spunCount = 0;
         for (int i = 0; i < blades.Length; i++)
         {
             UnitHelicopterBladeReference bladeRef = blades[i];
-            if (!em.Exists(bladeRef.Blade) || !em.HasComponent<LocalTransform>(bladeRef.Blade))
+            if (!em.Exists(bladeRef.Blade) ||
+                !em.HasComponent<LocalTransform>(bladeRef.Blade) ||
+                !rotatedBlades.Add(bladeRef.Blade))
+            {
                 continue;
+            }
 
             LocalTransform transform = em.GetComponentData<LocalTransform>(bladeRef.Blade);
             transform.Rotation = math.mul(transform.Rotation, CreateBladeDeltaRotation(bladeRef.Axis, radians));
@@ -76,8 +135,16 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         return spunCount;
     }
 
-    private static int RotateBladeDescendants(EntityManager em, BufferLookup<Child> childLookup, Entity root, float radians)
+    private static int RotateBladeDescendants(
+        EntityManager em,
+        BufferLookup<Child> childLookup,
+        Entity root,
+        float radians,
+        NativeHashSet<Entity> rotatedBlades)
     {
+        if (root == Entity.Null || !em.Exists(root))
+            return 0;
+
         int spunCount = 0;
         using var stack = new NativeList<Entity>(Allocator.Temp);
         stack.Add(root);
@@ -87,7 +154,9 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
             stack.RemoveAt(stack.Length - 1);
 
             FixedString64Bytes name = em.GetName(current);
-            if (TryGetBladeAxis(name.ToString(), out byte axis) && em.HasComponent<LocalTransform>(current))
+            if (TryGetBladeAxis(name.ToString(), out byte axis) &&
+                em.HasComponent<LocalTransform>(current) &&
+                rotatedBlades.Add(current))
             {
                 LocalTransform transform = em.GetComponentData<LocalTransform>(current);
                 transform.Rotation = math.mul(transform.Rotation, CreateBladeDeltaRotation(axis, radians));
@@ -137,5 +206,126 @@ public partial struct UnitHelicopterBladeSpinSystem : ISystem
         }
 
         return false;
+    }
+
+    private static bool IsHelicopterDiagnosticCandidate(
+        EntityManager em,
+        BufferLookup<Child> childLookup,
+        Entity entity,
+        BufferLookup<UnitHelicopterBladeReference> bladeLookup,
+        ComponentLookup<UnitDetailedVisualReference> detailLookup,
+        ComponentLookup<UnitModelInstanceReference> modelLookup,
+        ComponentLookup<UnitMidLodInstanceReference> midLookup,
+        ComponentLookup<UnitLowLodInstanceReference> lowLookup,
+        ComponentLookup<UnitSourcePrefabKey> sourceLookup)
+    {
+        if (sourceLookup.HasComponent(entity) &&
+            sourceLookup[entity].Value.ToString().Contains("Helicopter", System.StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        if (bladeLookup.HasBuffer(entity) && bladeLookup[entity].Length > 0)
+            return true;
+
+        if (detailLookup.HasComponent(entity) && CountBladeDescendants(em, childLookup, detailLookup[entity].Root) > 0)
+            return true;
+        if (modelLookup.HasComponent(entity) && CountBladeDescendants(em, childLookup, modelLookup[entity].Instance) > 0)
+            return true;
+        if (midLookup.HasComponent(entity) && CountBladeDescendants(em, childLookup, midLookup[entity].Instance) > 0)
+            return true;
+        if (lowLookup.HasComponent(entity) && CountBladeDescendants(em, childLookup, lowLookup[entity].Instance) > 0)
+            return true;
+
+        return false;
+    }
+
+    private static void LogHelicopterBladeDiagnostic(
+        EntityManager em,
+        BufferLookup<Child> childLookup,
+        Entity entity,
+        BufferLookup<UnitHelicopterBladeReference> bladeLookup,
+        ComponentLookup<UnitDetailedVisualReference> detailLookup,
+        ComponentLookup<UnitModelInstanceReference> modelLookup,
+        ComponentLookup<UnitMidLodInstanceReference> midLookup,
+        ComponentLookup<UnitLowLodInstanceReference> lowLookup,
+        ComponentLookup<UnitSourcePrefabKey> sourceLookup,
+        ComponentLookup<UnitDisplayInfo> displayLookup,
+        ComponentLookup<UnitRenderVisualState> visualStateLookup,
+        ComponentLookup<UnitAirMovement> airLookup,
+        int detailRotated,
+        int modelRotated,
+        int bakedRotated,
+        float deltaTime)
+    {
+        string source = sourceLookup.HasComponent(entity) ? sourceLookup[entity].Value.ToString() : "<none>";
+        string display = displayLookup.HasComponent(entity) ? displayLookup[entity].Name.ToString() : "<none>";
+        string visual = visualStateLookup.HasComponent(entity)
+            ? $"{(UnitRenderVisualKind)visualStateLookup[entity].Current}->{(UnitRenderVisualKind)visualStateLookup[entity].Desired}"
+            : "<none>";
+        bool hasAir = airLookup.HasComponent(entity);
+        int bakedCount = bladeLookup.HasBuffer(entity) ? bladeLookup[entity].Length : 0;
+        Entity detailRoot = detailLookup.HasComponent(entity) ? detailLookup[entity].Root : Entity.Null;
+        Entity modelRoot = modelLookup.HasComponent(entity) ? modelLookup[entity].Instance : Entity.Null;
+        Entity midRoot = midLookup.HasComponent(entity) ? midLookup[entity].Instance : Entity.Null;
+        Entity lowRoot = lowLookup.HasComponent(entity) ? lowLookup[entity].Instance : Entity.Null;
+
+        Debug.Log(
+            "[HeliBladeDiag] " +
+            $"unit={FormatEntity(entity)} source={source} display={display} air={hasAir} visual={visual} dt={deltaTime:F4} " +
+            $"detail={FormatRoot(em, childLookup, detailRoot)} detailRot={detailRotated} " +
+            $"model={FormatRoot(em, childLookup, modelRoot)} modelRot={modelRotated} " +
+            $"mid={FormatRoot(em, childLookup, midRoot)} " +
+            $"low={FormatRoot(em, childLookup, lowRoot)} " +
+            $"bakedBlades={bakedCount} bakedRot={bakedRotated}");
+    }
+
+    private static string FormatRoot(EntityManager em, BufferLookup<Child> childLookup, Entity root)
+    {
+        if (root == Entity.Null)
+            return "null";
+        if (!em.Exists(root))
+            return $"{FormatEntity(root)} missing";
+
+        string name = em.GetName(root).ToString();
+        bool disabled = em.HasComponent<Disabled>(root);
+        bool hidden = em.HasComponent<DisableRendering>(root);
+        bool culled = em.HasComponent<UnitRenderBudgetCulledTag>(root);
+        int directChildren = childLookup.HasBuffer(root) ? childLookup[root].Length : 0;
+        int bladeCount = CountBladeDescendants(em, childLookup, root);
+        return $"{FormatEntity(root)}:{name}:disabled={disabled}:hidden={hidden}:culled={culled}:children={directChildren}:blades={bladeCount}";
+    }
+
+    private static int CountBladeDescendants(EntityManager em, BufferLookup<Child> childLookup, Entity root)
+    {
+        if (root == Entity.Null || !em.Exists(root))
+            return 0;
+
+        int count = 0;
+        using var stack = new NativeList<Entity>(Allocator.Temp);
+        stack.Add(root);
+        while (stack.Length > 0)
+        {
+            Entity current = stack[stack.Length - 1];
+            stack.RemoveAt(stack.Length - 1);
+
+            FixedString64Bytes name = em.GetName(current);
+            if (TryGetBladeAxis(name.ToString(), out _))
+                count++;
+
+            if (!childLookup.HasBuffer(current))
+                continue;
+
+            DynamicBuffer<Child> children = childLookup[current];
+            for (int i = 0; i < children.Length; i++)
+                stack.Add(children[i].Value);
+        }
+
+        return count;
+    }
+
+    private static string FormatEntity(Entity entity)
+    {
+        return $"{entity.Index}:{entity.Version}";
     }
 }

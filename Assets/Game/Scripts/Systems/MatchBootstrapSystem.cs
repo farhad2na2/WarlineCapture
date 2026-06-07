@@ -3,6 +3,7 @@ using UnityEngine.Rendering;
 using System;
 using System.Collections.Generic;
 using Unity.Entities;
+using Unity.Mathematics;
 using Game.Scripts.UI;
 
 internal sealed class MatchBootstrapSystem
@@ -212,6 +213,7 @@ internal sealed class MatchBootstrapSystem
     public void BeginGameplay()
     {
         GameRuntimeStats.Reset();
+        ProjectFactionVisualConfig(World.DefaultGameObjectInjectionWorld, FactionVisualConfig);
         ProjectRuntimeStartupConfig(
             World.DefaultGameObjectInjectionWorld,
             _runtimeGridBootstrapSystem,
@@ -467,6 +469,26 @@ internal sealed class MatchBootstrapSystem
             ownerLayer);
     }
 
+    public void ProjectFactionVisualConfig(World world, FactionVisualSettingsConfig factionVisualConfig)
+    {
+        if (world == null || !world.IsCreated || factionVisualConfig == null)
+            return;
+
+        EntityManager em = world.EntityManager;
+        FactionVisualConfig config = new()
+        {
+            PlayerColor = ToFloat4(factionVisualConfig.PlayerColor),
+            EnemyColor = ToFloat4(factionVisualConfig.EnemyColor),
+            NeutralColor = ToFloat4(factionVisualConfig.NeutralColor)
+        };
+
+        using EntityQuery query = em.CreateEntityQuery(ComponentType.ReadWrite<FactionVisualConfig>());
+        Entity entity = query.IsEmptyIgnoreFilter
+            ? em.CreateEntity(typeof(FactionVisualConfig))
+            : query.GetSingletonEntity();
+        em.SetComponentData(entity, config);
+    }
+
     public void ProjectRuntimeStartupConfig(
         World world,
         RuntimeGridBootstrapSystem runtimeGridBootstrapSystem,
@@ -495,6 +517,11 @@ internal sealed class MatchBootstrapSystem
             world,
             buildingPlacementConfig != null ? buildingPlacementConfig.InitialUnitsConfig : null);
         aiStartupSystem.LogConfigValidation(aiControllerConfigs);
+    }
+
+    private static float4 ToFloat4(Color color)
+    {
+        return new float4(color.r, color.g, color.b, color.a);
     }
 
     public AIStartupSystem.Result InitializeAiStartupConfig(

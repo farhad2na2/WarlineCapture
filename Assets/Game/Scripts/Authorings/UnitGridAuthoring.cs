@@ -401,7 +401,8 @@ public class UnitGridAuthoring : MonoBehaviour
 
                 DynamicBuffer<UnitHelicopterBladeReference> bladeBuffer = AddBuffer<UnitHelicopterBladeReference>(entity);
                 AddHelicopterBladeReferences(bladeBuffer, model);
-
+                if (bladeBuffer.Length == 0)
+                    AddHelicopterBladeReferences(bladeBuffer, authoring.transform);
             }
             AddUnitVisualPrefabReferences(authoring, entity);
             if (authoring.usesVehicleMotion)
@@ -518,6 +519,9 @@ public class UnitGridAuthoring : MonoBehaviour
 
         private void AddHelicopterBladeReferences(DynamicBuffer<UnitHelicopterBladeReference> bladeBuffer, Transform root)
         {
+            if (root == null)
+                return;
+
             var stack = new Stack<Transform>();
             stack.Push(root);
             while (stack.Count > 0)
@@ -525,9 +529,17 @@ public class UnitGridAuthoring : MonoBehaviour
                 Transform current = stack.Pop();
                 if (TryGetBladeAxis(current.name, out byte axis))
                 {
+                    Entity bladeEntity = GetEntity(current.gameObject, TransformUsageFlags.Dynamic);
+                    if (HasBladeReference(bladeBuffer, bladeEntity))
+                    {
+                        for (int i = 0; i < current.childCount; i++)
+                            stack.Push(current.GetChild(i));
+                        continue;
+                    }
+
                     bladeBuffer.Add(new UnitHelicopterBladeReference
                     {
-                        Blade = GetEntity(current.gameObject, TransformUsageFlags.Dynamic),
+                        Blade = bladeEntity,
                         Axis = axis
                     });
                 }
@@ -535,6 +547,17 @@ public class UnitGridAuthoring : MonoBehaviour
                 for (int i = 0; i < current.childCount; i++)
                     stack.Push(current.GetChild(i));
             }
+        }
+
+        private static bool HasBladeReference(DynamicBuffer<UnitHelicopterBladeReference> bladeBuffer, Entity blade)
+        {
+            for (int i = 0; i < bladeBuffer.Length; i++)
+            {
+                if (bladeBuffer[i].Blade == blade)
+                    return true;
+            }
+
+            return false;
         }
 
         private void AddUnitVisualPrefabReferences(UnitGridAuthoring authoring, Entity entity)
